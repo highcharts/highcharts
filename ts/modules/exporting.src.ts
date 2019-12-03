@@ -1539,7 +1539,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             filename: string = (this.options.exporting as any).filename;
 
         if (filename) {
-            return filename;
+            return filename.replace(/\//g, '-');
         }
 
         if (typeof s === 'string') {
@@ -1602,7 +1602,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // do the post
         H.post(exportingOptions.url as any, {
-            filename: exportingOptions.filename || this.getFilename(),
+            filename: exportingOptions.filename ? exportingOptions.filename.replace(/\//g, '-') : this.getFilename(),
             type: exportingOptions.type,
             // IE8 fails to post undefined correctly, so use 0
             width: exportingOptions.width || 0,
