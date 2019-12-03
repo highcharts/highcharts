@@ -31,8 +31,8 @@ import EventProvider from './utils/EventProvider.js';
  *        Map of component names to AccessibilityComponent objects.
  * @name Highcharts.KeyboardNavigation
  */
-function KeyboardNavigation(chart, components, order) {
-    this.init(chart, components, order);
+function KeyboardNavigation(chart, components) {
+    this.init(chart, components);
 }
 KeyboardNavigation.prototype = {
     /**
@@ -81,19 +81,14 @@ KeyboardNavigation.prototype = {
             order.length) {
             // We (still) have keyboard navigation. Update module list
             this.modules = order.reduce(function (modules, componentName) {
-                var navModules = components[componentName]
-                    .getKeyboardNavigation();
-                // If we didn't get back a list of modules, just push the one
-                if (!navModules.length) {
-                    modules.push(navModules);
-                    return modules;
-                }
-                // Add all of the modules
+                var navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
             }, [
                 // Add an empty module at the start of list, to allow users to
                 // tab into the chart.
-                new KeyboardNavigationHandler(this.chart, {})
+                new KeyboardNavigationHandler(this.chart, {
+                    init: function () { }
+                })
             ]);
             this.updateExitAnchor();
         }

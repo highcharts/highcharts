@@ -84,10 +84,9 @@ declare global {
 function KeyboardNavigation(
     this: Highcharts.KeyboardNavigation,
     chart: Highcharts.Chart,
-    components: Highcharts.AccessibilityComponentsObject,
-    order?: unknown
+    components: Highcharts.AccessibilityComponentsObject
 ): void {
-    (this.init as any)(chart, components, order);
+    this.init(chart, components);
 }
 KeyboardNavigation.prototype = {
 
@@ -163,19 +162,14 @@ KeyboardNavigation.prototype = {
                 modules: Array<Highcharts.KeyboardNavigationHandler>,
                 componentName: keyof Highcharts.AccessibilityComponentsObject
             ): Array<Highcharts.KeyboardNavigationHandler> {
-                var navModules = components[componentName]
-                    .getKeyboardNavigation();
-                // If we didn't get back a list of modules, just push the one
-                if (!(navModules as any).length) {
-                    modules.push(navModules as any);
-                    return modules;
-                }
-                // Add all of the modules
+                var navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
             }, [
                 // Add an empty module at the start of list, to allow users to
                 // tab into the chart.
-                new (KeyboardNavigationHandler as any)(this.chart, {} as any)
+                new (KeyboardNavigationHandler as any)(this.chart, {
+                    init: (): void => {}
+                })
             ]);
 
             this.updateExitAnchor();
