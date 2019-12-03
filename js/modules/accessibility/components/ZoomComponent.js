@@ -24,9 +24,9 @@ var setElAttrs = HTMLUtilities.setElAttrs, removeElement = HTMLUtilities.removeE
  * @private
  */
 function chartHasMapZoom(chart) {
-    return chart.mapZoom &&
+    return !!(chart.mapZoom &&
         chart.mapNavButtons &&
-        chart.mapNavButtons.length;
+        chart.mapNavButtons.length);
 }
 /**
  * Pan along axis in a direction (1 or -1), optionally with a defined

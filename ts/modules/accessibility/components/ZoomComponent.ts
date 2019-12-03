@@ -89,10 +89,12 @@ declare global {
  */
 function chartHasMapZoom(
     chart: Highcharts.MapNavigationChart
-): (number|undefined) {
-    return chart.mapZoom &&
+): boolean {
+    return !!(
+        chart.mapZoom &&
         chart.mapNavButtons &&
-        chart.mapNavButtons.length;
+        chart.mapNavButtons.length
+    );
 }
 
 
@@ -314,7 +316,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                 ]
             ],
 
-            validate: function (): (number|undefined) {
+            validate: function (): boolean {
                 return chartHasMapZoom(chart as any);
             },
 
