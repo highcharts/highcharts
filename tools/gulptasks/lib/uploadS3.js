@@ -1,5 +1,8 @@
 const log = require('./log');
 const AWSS3 = require('aws-sdk').S3;
+const S3 = new AWSS3({
+    region: process.env.AWS_REGION || 'eu-west-1'
+});
 
 /**
  * Adds number of days to the given date.
@@ -37,10 +40,6 @@ const HTTP_EXPIRES = {
  * @return {Promise<unknown>} result which is assumed to be parsable to string.
  */
 async function getS3Object(bucket, key) {
-    const S3 = new AWSS3({
-        region: process.env.AWS_REGION || 'eu-central-1'
-    });
-
     return new Promise((resolve, reject) => {
         S3.getObject({
             Bucket: bucket,
@@ -52,6 +51,42 @@ async function getS3Object(bucket, key) {
                 resolve(data.Body.toString('utf-8'));
             }
         });
+    });
+}
+
+/**
+ * Put a object to s3 using the specfied config.
+ * The config can override all defaults.
+ *
+ * @param {string} key to store
+ * @param {body} body to store. Expects a json serializable object as default.
+ *                  Can override both key and payload in specified in config.
+ * @param {object} config to use. See AWS SDK for putObject.
+ * @return {Promise<unknown>} result
+ */
+async function putS3Object(key, body, config = {}) {
+    log.message(`Put to ${config.Bucket}/${key}`);
+    return new Promise((resolve, reject) => {
+        try {
+            S3.putObject({
+                Bucket: config.Bucket,
+                Key: key,
+                Body: JSON.stringify(body),
+                ContentType: 'application/json; charset=utf-8',
+                ACL: 'public-read',
+                ...config
+            }, function (error, resp) {
+                if (!error) {
+                    log.success(`Saved object to ${key}`);
+                    resolve(resp);
+                } else {
+                    log.warn(`An error occured while storing an object to ${config.BUCKET}/${key}`, error);
+                    reject(error);
+                }
+            });
+        } catch (err) {
+            reject(err);
+        }
     });
 }
 
@@ -280,5 +315,6 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
 module.exports = {
     uploadFiles,
     uploadProductPackage,
-    getS3Object
+    getS3Object,
+    putS3Object
 };

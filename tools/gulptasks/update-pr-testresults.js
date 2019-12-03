@@ -7,11 +7,13 @@ const request = require('request');
 const fs = require('fs');
 const logLib = require('./lib/log');
 const argv = require('yargs').argv;
+const highchartsVersion = require('../../package').version;
 const { getFilesChanged } = require('./lib/git');
-const { uploadFiles, getS3Object } = require('./lib/uploadS3');
+const { uploadFiles, getS3Object, putS3Object } = require('./lib/uploadS3');
 
-const DEFAULT_PR_ASSET_S3_BASEPATH = 'visualtests/diffs/pullrequests';
-const DEFAULT_COMMENT_MATCH = '## Visual test results';
+const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
+const S3_REVIEWS_PATH = 'visualtests/reviews';
+const DEFAULT_COMMENT_TITLE = '## Visual test results';
 const DEFAULT_OPTIONS = {
     method: 'GET',
     json: true,
@@ -84,7 +86,7 @@ async function fetchPRComments(pr, user, filterText) {
  */
 async function updatePRComment(commentId, newComment) {
     if (argv.dryrun) {
-        logLib.message('Dryrun (skipping update of PR comment)..');
+        logLib.message('Dryrun (skipping update of PR comment): ', newComment);
         // eslint-disable-next-line camelcase
         return Promise.resolve({ html_url: 'No where' });
     }
@@ -98,7 +100,8 @@ async function updatePRComment(commentId, newComment) {
             body: { body: newComment }
         })
             .then(response => {
-                logLib.message('Successfully updated comment with id ' + commentId);
+                logLib.message(`Comment updated at ${response.html_url}`);
+
                 resolve(response);
             })
             .catch(err => {
@@ -116,7 +119,7 @@ async function updatePRComment(commentId, newComment) {
  */
 async function createPRComment(pr, comment) {
     if (argv.dryrun) {
-        logLib.message('(Dryrun) Skipping creation of pr comment..');
+        logLib.message('(Dryrun) Skipping creation of pr comment: ', comment);
         // eslint-disable-next-line camelcase
         return Promise.resolve({ html_url: 'No where' });
     }
@@ -129,7 +132,7 @@ async function createPRComment(pr, comment) {
             body: { body: comment }
         })
             .then(result => {
-                logLib.success(`Created comment on PR #${pr}`);
+                logLib.message(`Comment created at ${result.html_url}`);
                 resolve(result);
             })
             .catch(err => {
@@ -200,7 +203,7 @@ function createTemplateForChangedSamples() {
     gitChangedFiles = gitChangedFiles.split('\n').filter(line => line && /samples\/(highcharts|maps|stock|gantt).*demo.js$/.test(line));
     let samplesChangedTemplate = '';
     if (gitChangedFiles && gitChangedFiles.length > 0) {
-        samplesChangedTemplate = '<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
+        samplesChangedTemplate = '---\n<details>\n<summary>Samples changed</summary><p>\n\n| Change type | Sample |\n| --- | --- |\n' +
             gitChangedFiles.map(line => {
                 const parts = line.split('\t');
                 return `|  ${resolveGitFileStatus(parts[0])} | ${parts[1]} |`;
@@ -213,7 +216,7 @@ function createTemplateForChangedSamples() {
 
 /* eslint-disable require-jsdoc,valid-jsdoc */
 function buildImgS3Path(filename, sample, pr) {
-    return `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/${sample}/${filename}`;
+    return `${S3_PULLREQUEST_PATH}/${pr}/${sample}/${filename}`;
 }
 
 function createMarkdownLink(link, message = 'link') {
@@ -231,12 +234,52 @@ async function fetchExistingReview(pr) {
     let existingReview;
     try {
         // if we have and existing review we want to keep certains parts of it.
-        existingReview = await JSON.parse(await getS3Object(VISUAL_TESTS_BUCKET, `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/review-pr-${pr}.json`));
+        existingReview = await JSON.parse(await getS3Object(VISUAL_TESTS_BUCKET, `${S3_PULLREQUEST_PATH}/${pr}/review-pr-${pr}.json`));
         logLib.message('Found existing review for pr: ' + existingReview.meta.pr);
     } catch (err) {
         logLib.message('No existing review found or error occured: ' + err);
     }
     return existingReview;
+}
+
+async function fetchAllReviewsForVersion(version) {
+    let alLReviews;
+    try {
+        // if we have and existing review we want to keep certains parts of it.
+        alLReviews = await JSON.parse(await getS3Object(VISUAL_TESTS_BUCKET, `${S3_REVIEWS_PATH}/all-reviews-${version}.json`));
+    } catch (err) {
+        logLib.message(`Couldn't fetch all reviews for version ${version}` + err);
+    }
+    return alLReviews;
+}
+
+/**
+ * Checks if the approved reviews contains a match for a sample
+ * for the given pull request (pr). I.e if a review has been approved
+ * and then the pr changes so that the sample no longer is diffing we
+ * need to remove the approval.
+ *
+ * @return {Promise<void>}
+ */
+async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
+    const allReviews = await fetchAllReviewsForVersion(highchartsVersion);
+    if (allReviews && allReviews.samples) {
+        const approvedSamplesToRemove = Object.keys(allReviews.samples).filter(sampleName => (
+            // only keep approvals for this pr that are still having a diff > 0 in the test results.
+            allReviews.samples[sampleName].some(s => s.pr === pr && !diffingSampleEntries.some(e => e[0] === sampleName))
+        ));
+
+        approvedSamplesToRemove.forEach(s => {
+            logLib.message(`Removing previously approved sample ${s} for current pr #${pr} as it is no longer different.`);
+            allReviews.samples[s] = allReviews.samples[s].filter(approvedSample => approvedSample.pr !== pr);
+        });
+
+        if (approvedSamplesToRemove && approvedSamplesToRemove.length && !argv.dryrun) {
+            const key = `${S3_REVIEWS_PATH}/all-reviews-${highchartsVersion}.json`;
+            return putS3Object(key, allReviews, { Bucket: VISUAL_TESTS_BUCKET });
+        }
+    }
+    return Promise.resolve();
 }
 
 /**
@@ -251,7 +294,7 @@ async function createPRReviewFile(testResults, pr) {
     let existingApprovedSamples = [];
     const existingReview = await fetchExistingReview(pr);
     if (existingReview && existingReview.samples) {
-        // this is not first run, so get whisch samples are already approved
+        // this is not first run, so get which samples are already approved
         existingApprovedSamples = existingReview.samples.filter(sample => sample.approved);
     }
 
@@ -307,14 +350,14 @@ function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = true) {
 
         files.push({
             from: 'test/visual-test-results.json',
-            to: `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/visual-test-results.json`
+            to: `${S3_PULLREQUEST_PATH}/${pr}/visual-test-results.json`
         });
 
         if (includeReview) {
             const reviewFilename = `review-pr-${pr}.json`;
             files.push({
                 from: `test/${reviewFilename}`,
-                to: `${DEFAULT_PR_ASSET_S3_BASEPATH}/${pr}/${reviewFilename}`
+                to: `${S3_PULLREQUEST_PATH}/${pr}/${reviewFilename}`
             });
         }
 
@@ -361,39 +404,35 @@ async function commentOnPR() {
 
     const newReview = await createPRReviewFile(testResults, pr);
     uploadVisualTestFiles(diffingSamples, pr, newReview.samples.length > 0);
+    checkAndUpdateApprovedReviews(diffingSamples, pr);
 
     let commentTemplate = diffingSamples.length === 0 ?
-        `${DEFAULT_COMMENT_MATCH}\nNo difference found` :
-        `${DEFAULT_COMMENT_MATCH}\nDifferences found\n` +
-            `Found ${newReview.samples.length} diffing samples. Please ${createMarkdownLink(
+        `${DEFAULT_COMMENT_TITLE} - No difference found` :
+        `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
+            `Found **${newReview.samples.length}** diffing sample(s). ${createMarkdownLink(
                 'https://vrevs.highsoft.com/pr/' + pr + '/review',
-                ' review the differences.'
+                'Please review the differences.'
             )}\n`;
 
     const changedSamplesTemplate = createTemplateForChangedSamples();
     commentTemplate += `\n\n${changedSamplesTemplate}`;
 
-    const { containsText = DEFAULT_COMMENT_MATCH } = argv;
+    const { containsText = DEFAULT_COMMENT_TITLE } = argv;
     const existingComments = await fetchPRComments(pr, user, containsText);
 
     try {
-        let result;
         if (!alwaysAdd && existingComments.length > 0) {
             logLib.message(`Updating existing comment for #${pr}`);
-            result = await updatePRComment(existingComments[0].id, commentTemplate);
-            logLib.message(`Comment updated at ${result.html_url}`);
-        } else {
-            logLib.message(`Creating new comment for #${pr}`);
-            result = await createPRComment(pr, commentTemplate);
-            logLib.message(`Comment created at ${result.html_url}`);
+            return await updatePRComment(existingComments[0].id, commentTemplate);
         }
-        return Promise.resolve(result);
+        logLib.message(`Creating new comment for #${pr}`);
+        return await createPRComment(pr, commentTemplate);
     } catch (err) {
         return completeTask(err || err.message);
     }
 }
 
-commentOnPR.description = 'Comments any diff from test/visual-test-results.json';
+commentOnPR.description = 'Updates/creates reviews for pr and comments any diffs from test/visual-test-results.json';
 commentOnPR.flags = {
     '--pr': 'Pull request number',
     '--user': 'Github user',
