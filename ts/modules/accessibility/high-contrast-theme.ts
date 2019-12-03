@@ -44,7 +44,7 @@ var theme: Highcharts.Options = {
     colorAxis: {
         minColor: 'windowText',
         maxColor: 'windowText',
-        stops: null as any
+        stops: []
     },
     colors: ['windowText'],
     xAxis: {

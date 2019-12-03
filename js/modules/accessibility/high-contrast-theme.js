@@ -27,7 +27,7 @@ var theme = {
     colorAxis: {
         minColor: 'windowText',
         maxColor: 'windowText',
-        stops: null
+        stops: []
     },
     colors: ['windowText'],
     xAxis: {
