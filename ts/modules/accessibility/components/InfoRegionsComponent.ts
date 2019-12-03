@@ -86,14 +86,14 @@ declare global {
             /** @requires modules/accessibility */
             getTypeDescription(types: Array<string>): string;
         }
-        interface InfoRegionsComponentFormatContextObject {
+        interface InfoRegionsComponentTypeDescFormatContextObject {
             chart: Chart;
             mapTitle: (string|undefined);
             numSeries: number;
             numPoints: number;
         }
         interface InfoRegionsComponentScreenReaderSectionObject {
-            afterInserted: Function;
+            afterInserted?: Function;
             element: (HTMLDOMElement|null);
             buildContent: Function;
             insertIntoDOM: Function;
@@ -109,7 +109,7 @@ declare global {
  */
 function getTypeDescForMapChart(
     chart: Highcharts.Chart,
-    formatContext: Highcharts.InfoRegionsComponentFormatContextObject
+    formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return formatContext.mapTitle ?
         chart.langFormat('accessibility.chartTypes.mapTypeDescription',
@@ -123,7 +123,7 @@ function getTypeDescForMapChart(
  */
 function getTypeDescForCombinationChart(
     chart: Highcharts.Chart,
-    formatContext: Highcharts.InfoRegionsComponentFormatContextObject
+    formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return chart.langFormat('accessibility.chartTypes.combinationChart',
         formatContext);
@@ -134,7 +134,7 @@ function getTypeDescForCombinationChart(
  */
 function getTypeDescForEmptyChart(
     chart: Highcharts.Chart,
-    formatContext: Highcharts.InfoRegionsComponentFormatContextObject
+    formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return chart.langFormat('accessibility.chartTypes.emptyChart',
         formatContext);
@@ -146,7 +146,7 @@ function getTypeDescForEmptyChart(
 function buildTypeDescriptionFromSeries(
     chart: Highcharts.Chart,
     types: Array<string>,
-    context: Highcharts.InfoRegionsComponentFormatContextObject
+    context: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     var firstType = types[0],
         typeExplaination = chart.langFormat(
@@ -216,7 +216,7 @@ function stringToSimpleHTML(str: string): string {
 H.Chart.prototype.getTypeDescription = function (types: Array<string>): string {
     var firstType = types[0],
         firstSeries = this.series && this.series[0] || {},
-        formatContext: Highcharts.InfoRegionsComponentFormatContextObject = {
+        formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject = {
             numSeries: this.series.length,
             numPoints: firstSeries.points && firstSeries.points.length,
             chart: this,
@@ -312,9 +312,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     );
                 },
                 afterInserted: function (): void {
-                    component.initDataTableButton(
-                        component.dataTableButtonId as any
-                    );
+                    if (typeof component.dataTableButtonId !== 'undefined') {
+                        component.initDataTableButton(component.dataTableButtonId);
+                    }
                 }
             },
 
@@ -323,14 +323,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 buildContent: function (
                     chart: Highcharts.AccessibilityChart
                 ): string {
-                    var formatter: (
-                        Highcharts.ScreenReaderFormatterCallbackFunction<(
-                            Highcharts.Chart
-                        )>
-                    ) = (chart.options.accessibility as any)
-                        .screenReaderSection.afterChartFormatter;
+                    var formatter = chart.options.accessibility.screenReaderSection
+                        .afterChartFormatter;
                     return formatter ? formatter(chart) :
-                        (component.defaultAfterChartFormatter as any)(chart);
+                        component.defaultAfterChartFormatter();
                 },
                 insertIntoDOM: function (
                     el: Highcharts.HTMLDOMElement,
@@ -339,12 +335,6 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart.renderTo.insertBefore(
                         el, chart.container.nextSibling
                     );
-                },
-                afterInserted: function (): void {
-                    if ((component as any).endOfChartMarkerId) {
-                        (component.chart as any).endOfChartMarker =
-                            getElement((component as any).endOfChartMarkerId);
-                    }
                 }
             }
         };
@@ -381,11 +371,11 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             return;
         }
 
-        if ((linkedDescOption as any).innerHTML) {
-            return linkedDescOption as any;
+        if (typeof linkedDescOption !== 'string') {
+            return linkedDescOption;
         }
 
-        var query = format(linkedDescOption as any, this.chart),
+        var query = format(linkedDescOption, this.chart),
             queryMatch = doc.querySelectorAll(query);
 
         if (queryMatch.length === 1) {
@@ -670,12 +660,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         this: Highcharts.InfoRegionsComponent,
         tableButtonId: string
     ): void {
-        var el = this.viewDataTableButton = (
-                tableButtonId &&
-                getElement(tableButtonId)
-            ),
+        var el = this.viewDataTableButton = getElement(tableButtonId),
             chart = this.chart,
-            tableId = tableButtonId && tableButtonId.replace('hc-linkto-', '');
+            tableId = tableButtonId.replace('hc-linkto-', '');
 
         if (el) {
             setElAttrs(el, {
@@ -715,13 +702,13 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     defaultCondition
                 );
             },
-            hasNoMap = (chart.types as any).indexOf('map') < 0,
-            hasCartesian = chart.hasCartesianSeries,
+            hasNoMap = !!chart.types && chart.types.indexOf('map') < 0,
+            hasCartesian = !!chart.hasCartesianSeries,
             showXAxes = shouldDescribeColl(
-                'xAxis', !chart.angular && hasCartesian && hasNoMap as any
+                'xAxis', !chart.angular && hasCartesian && hasNoMap
             ),
             showYAxes = shouldDescribeColl(
-                'yAxis', hasCartesian && hasNoMap as any
+                'yAxis', hasCartesian && hasNoMap
             ),
             desc: Highcharts.Dictionary<string> = {};
 
@@ -814,14 +801,19 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         axis: Highcharts.Axis
     ): string {
         var chart = this.chart;
-        return chart.langFormat(
-            'accessibility.axis.rangeCategories',
-            {
-                chart: chart,
-                axis: axis,
-                numCategories: (axis.dataMax as any) - (axis.dataMin as any) + 1
-            }
-        );
+
+        if (axis.dataMax && axis.dataMin) {
+            return chart.langFormat(
+                'accessibility.axis.rangeCategories',
+                {
+                    chart: chart,
+                    axis: axis,
+                    numCategories: axis.dataMax - axis.dataMin + 1
+                }
+            );
+        }
+
+        return '';
     },
 
 
@@ -838,7 +830,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             range: Highcharts.Dictionary<number> = {},
             rangeUnit = 'Seconds';
 
-        range.Seconds = ((axis.max as any) - (axis.min as any)) / 1000;
+        range.Seconds = ((axis.max || 0) - (axis.min || 0)) / 1000;
         range.Minutes = range.Seconds / 60;
         range.Hours = range.Minutes / 60;
         range.Days = range.Hours / 24;
@@ -849,10 +841,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             }
         });
 
-        range.value = range[rangeUnit].toFixed(
+        const rangeValue: string = range[rangeUnit].toFixed(
             rangeUnit !== 'Seconds' &&
             rangeUnit !== 'Minutes' ? 1 : 0 // Use decimals for days/hours
-        ) as any;
+        );
 
         // We have the range and the unit to use, find the desc format
         return chart.langFormat(
@@ -860,7 +852,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             {
                 chart: chart,
                 axis: axis,
-                range: (range.value as any).replace('.0', '')
+                range: rangeValue.replace('.0', '')
             }
         );
     },

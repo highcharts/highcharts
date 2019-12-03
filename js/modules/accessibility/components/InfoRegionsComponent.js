@@ -148,25 +148,21 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart.renderTo.insertBefore(el, chart.renderTo.firstChild);
                 },
                 afterInserted: function () {
-                    component.initDataTableButton(component.dataTableButtonId);
+                    if (typeof component.dataTableButtonId !== 'undefined') {
+                        component.initDataTableButton(component.dataTableButtonId);
+                    }
                 }
             },
             after: {
                 element: null,
                 buildContent: function (chart) {
-                    var formatter = chart.options.accessibility
-                        .screenReaderSection.afterChartFormatter;
+                    var formatter = chart.options.accessibility.screenReaderSection
+                        .afterChartFormatter;
                     return formatter ? formatter(chart) :
-                        component.defaultAfterChartFormatter(chart);
+                        component.defaultAfterChartFormatter();
                 },
                 insertIntoDOM: function (el, chart) {
                     chart.renderTo.insertBefore(el, chart.container.nextSibling);
-                },
-                afterInserted: function () {
-                    if (component.endOfChartMarkerId) {
-                        component.chart.endOfChartMarker =
-                            getElement(component.endOfChartMarkerId);
-                    }
                 }
             }
         };
@@ -190,7 +186,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         if (!linkedDescOption) {
             return;
         }
-        if (linkedDescOption.innerHTML) {
+        if (typeof linkedDescOption !== 'string') {
             return linkedDescOption;
         }
         var query = format(linkedDescOption, this.chart), queryMatch = doc.querySelectorAll(query);
@@ -357,8 +353,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @param {string} tableButtonId
      */
     initDataTableButton: function (tableButtonId) {
-        var el = this.viewDataTableButton = (tableButtonId &&
-            getElement(tableButtonId)), chart = this.chart, tableId = tableButtonId && tableButtonId.replace('hc-linkto-', '');
+        var el = this.viewDataTableButton = getElement(tableButtonId), chart = this.chart, tableId = tableButtonId.replace('hc-linkto-', '');
         if (el) {
             setElAttrs(el, {
                 role: 'button',
@@ -384,7 +379,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             return axes.length > 1 || axes[0] &&
                 pick(axes[0].options.accessibility &&
                     axes[0].options.accessibility.enabled, defaultCondition);
-        }, hasNoMap = chart.types.indexOf('map') < 0, hasCartesian = chart.hasCartesianSeries, showXAxes = shouldDescribeColl('xAxis', !chart.angular && hasCartesian && hasNoMap), showYAxes = shouldDescribeColl('yAxis', hasCartesian && hasNoMap), desc = {};
+        }, hasNoMap = !!chart.types && chart.types.indexOf('map') < 0, hasCartesian = !!chart.hasCartesianSeries, showXAxes = shouldDescribeColl('xAxis', !chart.angular && hasCartesian && hasNoMap), showYAxes = shouldDescribeColl('yAxis', hasCartesian && hasNoMap), desc = {};
         if (showXAxes) {
             desc.xAxis = this.getAxisDescriptionText('xAxis');
         }
@@ -443,11 +438,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     getCategoryAxisRangeDesc: function (axis) {
         var chart = this.chart;
-        return chart.langFormat('accessibility.axis.rangeCategories', {
-            chart: chart,
-            axis: axis,
-            numCategories: axis.dataMax - axis.dataMin + 1
-        });
+        if (axis.dataMax && axis.dataMin) {
+            return chart.langFormat('accessibility.axis.rangeCategories', {
+                chart: chart,
+                axis: axis,
+                numCategories: axis.dataMax - axis.dataMin + 1
+            });
+        }
+        return '';
     },
     /**
      * @private
@@ -456,7 +454,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     getAxisTimeLengthDesc: function (axis) {
         var chart = this.chart, range = {}, rangeUnit = 'Seconds';
-        range.Seconds = (axis.max - axis.min) / 1000;
+        range.Seconds = ((axis.max || 0) - (axis.min || 0)) / 1000;
         range.Minutes = range.Seconds / 60;
         range.Hours = range.Minutes / 60;
         range.Days = range.Hours / 24;
@@ -465,14 +463,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 rangeUnit = unit;
             }
         });
-        range.value = range[rangeUnit].toFixed(rangeUnit !== 'Seconds' &&
+        var rangeValue = range[rangeUnit].toFixed(rangeUnit !== 'Seconds' &&
             rangeUnit !== 'Minutes' ? 1 : 0 // Use decimals for days/hours
         );
         // We have the range and the unit to use, find the desc format
         return chart.langFormat('accessibility.axis.timeRange' + rangeUnit, {
             chart: chart,
             axis: axis,
-            range: range.value.replace('.0', '')
+            range: rangeValue.replace('.0', '')
         });
     },
     /**
