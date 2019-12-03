@@ -92,8 +92,8 @@ declare global {
 /**
  * @private
  */
-function chartHasAnnounceEnabled(chart: Highcharts.Chart): (boolean|undefined) {
-    return (chart.options.accessibility as any).announceNewData.enabled;
+function chartHasAnnounceEnabled(chart: Highcharts.Chart): boolean {
+    return !!(chart.options.accessibility as any).announceNewData.enabled;
 }
 
 
@@ -268,7 +268,7 @@ extend(NewDataAnnouncer.prototype, {
             this.dirty.allSeries[series.name + series.index] = series;
             // Add it to newSeries storage unless we already have one
             this.dirty.newSeries = defined(this.dirty.newSeries) ?
-                null as any : series;
+                void 0 : series;
         }
     },
 
@@ -287,7 +287,7 @@ extend(NewDataAnnouncer.prototype, {
         if (this.chart === chart && chartHasAnnounceEnabled(chart)) {
             // Add it to newPoint storage unless we already have one
             this.dirty.newPoint = defined(this.dirty.newPoint) ?
-                null as any : point;
+                void 0 : point;
         }
     },
 
@@ -456,9 +456,9 @@ extend(NewDataAnnouncer.prototype, {
 
         // User supplied formatter?
         if (annOptions.announcementFormatter) {
-            var formatterRes: (false|string) = annOptions.announcementFormatter(
+            var formatterRes = annOptions.announcementFormatter(
                 dirtySeries, newSeries, newPoint
-            ) as any;
+            );
             if (formatterRes !== false) {
                 return formatterRes.length ? formatterRes : null;
             }

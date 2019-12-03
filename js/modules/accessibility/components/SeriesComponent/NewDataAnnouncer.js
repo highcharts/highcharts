@@ -28,7 +28,7 @@ import DOMElementProvider from '../../utils/DOMElementProvider.js';
  * @private
  */
 function chartHasAnnounceEnabled(chart) {
-    return chart.options.accessibility.announceNewData.enabled;
+    return !!chart.options.accessibility.announceNewData.enabled;
 }
 /**
  * @private
@@ -138,7 +138,7 @@ extend(NewDataAnnouncer.prototype, {
             this.dirty.allSeries[series.name + series.index] = series;
             // Add it to newSeries storage unless we already have one
             this.dirty.newSeries = defined(this.dirty.newSeries) ?
-                null : series;
+                void 0 : series;
         }
     },
     /**
@@ -151,7 +151,7 @@ extend(NewDataAnnouncer.prototype, {
         if (this.chart === chart && chartHasAnnounceEnabled(chart)) {
             // Add it to newPoint storage unless we already have one
             this.dirty.newPoint = defined(this.dirty.newPoint) ?
-                null : point;
+                void 0 : point;
         }
     },
     /**
