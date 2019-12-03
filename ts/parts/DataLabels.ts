@@ -687,6 +687,8 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                                 !!seriesOptions.stacking ?
                                 point.contrastColor :
                                 '${palette.neutralColor100}';
+                        } else {
+                            delete point.contrastColor;
                         }
                         if (seriesOptions.cursor) {
                             (style as any).cursor = seriesOptions.cursor;

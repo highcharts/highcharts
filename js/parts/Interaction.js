@@ -686,8 +686,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @function Highcharts.Point#setState
      *
      * @param {Highcharts.PointStateValue|""} [state]
-     *        The new state, can be one of `''` (an empty string), `hover`,
-     *        `select` or `inactive`.
+     *        The new state, can be one of `'hover'`, `'select'`, `'inactive'`,
+     *        or `''` (an empty string), `'normal'` or `undefined` to set to
+     *        normal state.
      * @param {boolean} [move]
      *        State for animation.
      *
@@ -808,7 +809,8 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         if (haloOptions &&
             haloOptions.size &&
             markerGraphic &&
-            markerVisibility !== 'hidden') {
+            markerVisibility !== 'hidden' &&
+            !point.isCluster) {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
@@ -927,7 +929,9 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      * @function Highcharts.Series#setState
      *
      * @param {Highcharts.SeriesStateValue|""} [state]
-     *        Can be either `hover` or undefined to set to normal state.
+     *        The new state, can be either `'hover'`, `'inactive'`, `'select'`,
+     *        or `''` (an empty string), `'normal'` or `undefined` to set to
+     *        normal state.
      * @param {boolean} [inherit]
      *        Determines if state should be inherited by points too.
      */

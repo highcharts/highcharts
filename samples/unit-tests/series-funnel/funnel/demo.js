@@ -200,7 +200,8 @@ QUnit.test('Funnel dataLabels', function (assert) {
         series = chart.series[0],
         point = series.points[2],
         pointBBox = point.graphic.getBBox(),
-        pointWidth;
+        pointWidth,
+        dataLabel;
 
     assert.strictEqual(
         Math.round(
@@ -307,5 +308,36 @@ QUnit.test('Funnel dataLabels', function (assert) {
         ),
         point.dataLabel.y,
         'DataLabels inside the funnel and centered vertically (#10036)'
+    );
+
+    chart.update({
+        plotOptions: {
+            series: {
+                center: ['50%', '50%'],
+                dataLabels: {
+                    inside: false,
+                    verticalAlign: 'bottom',
+                    allowOverlap: false
+                },
+                reversed: false,
+                width: '50%',
+                showInLegend: true
+            }
+        },
+        legend: {
+            enabled: true
+        }
+    });
+
+    chart.series[0].points[0].legendGroup.element.onclick();
+    chart.series[0].points[0].legendGroup.element.onclick();
+    chart.series[0].points[0].legendGroup.element.onclick();
+
+    dataLabel = chart.series[0].points[1].dataLabel;
+
+    assert.notEqual(
+        dataLabel.x,
+        dataLabel.alignAttr.x,
+        'DataLabels with allowOverlap set to false should be positioned correctly after point hide (#12350)'
     );
 });

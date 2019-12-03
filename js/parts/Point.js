@@ -482,8 +482,9 @@ Highcharts.Point.prototype = {
      * @return boolean|undefined
      */
     hasNewShapeType: function () {
-        return this.graphic &&
-            this.graphic.element.nodeName !== this.shapeType;
+        var oldShapeType = this.graphic &&
+            (this.graphic.symbolName || this.graphic.element.nodeName);
+        return oldShapeType !== this.shapeType;
     },
     /**
      * Destroy a point to clear memory. Its reference still stays in

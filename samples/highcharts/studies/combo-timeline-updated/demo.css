@@ -1,6 +1,15 @@
 #container {
     min-width: 300px;
-    max-width: 1000px;
-    height: 420px;
+    max-width: 2000px;
     margin: 1em auto;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table td,
+table th {
+    border: 1px solid silver;
+    padding: 0.5em;
 }

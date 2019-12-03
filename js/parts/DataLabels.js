@@ -334,6 +334,9 @@ Series.prototype.drawDataLabels = function () {
                                 point.contrastColor :
                                 '${palette.neutralColor100}';
                         }
+                        else {
+                            delete point.contrastColor;
+                        }
                         if (seriesOptions.cursor) {
                             style.cursor = seriesOptions.cursor;
                         }

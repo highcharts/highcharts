@@ -54,9 +54,12 @@ import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 
-var merge = H.merge,
-    Point = H.Point,
-    seriesType = H.seriesType;
+const {
+    merge,
+    Point,
+    Series,
+    seriesType
+} = H;
 
 /**
  * @private
@@ -98,7 +101,13 @@ seriesType<Highcharts.MapPointSeries>(
     // Prototype members
     }, {
         type: 'mappoint',
-        forceDL: true
+        forceDL: true,
+        drawDataLabels: function (this: Highcharts.MapPointSeries): void {
+            Series.prototype.drawDataLabels.call(this);
+            if (this.dataLabelsGroup) {
+                this.dataLabelsGroup.clip(this.chart.clipRect);
+            }
+        }
     // Point class
     }, {
         applyOptions: function (

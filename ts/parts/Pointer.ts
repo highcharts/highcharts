@@ -231,6 +231,7 @@ const {
     isNumber,
     isObject,
     objectEach,
+    offset,
     pick,
     splat
 } = U;
@@ -245,7 +246,6 @@ var H = Highcharts,
     css = H.css,
     find = H.find,
     fireEvent = H.fireEvent,
-    offset = H.offset,
     Tooltip = H.Tooltip;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

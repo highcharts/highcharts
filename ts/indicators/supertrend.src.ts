@@ -44,7 +44,7 @@ declare global {
         }
 
         interface SupertrendLineObject {
-            [index: string]: (Dictionary<CSSObject>|undefined);
+            [index: string]: (Dictionary<SVGAttributes>|undefined);
         }
 
         class SupertrendIndicator extends SMAIndicator {
@@ -76,9 +76,9 @@ declare global {
 
         interface SupertrendIndicatorOptions extends SMAIndicatorOptions {
             changeTrendLine?: Dictionary<CSSObject>;
-            fallingTrendColor?: ColorString;
+            fallingTrendColor?: ColorType;
             params?: SupertrendIndicatorParamsOptions;
-            risingTrendColor?: ColorString;
+            risingTrendColor?: ColorType;
         }
 
         interface SeriesTypesDictionary {
@@ -138,10 +138,10 @@ H.seriesType<Highcharts.SupertrendIndicator>(
      * @extends      plotOptions.sma
      * @since        7.0.0
      * @product      highstock
-     * @excluding    allAreas, color, cropThreshold, negativeColor, colorAxis,
-     *               joinBy, keys, navigatorOptions, pointInterval,
-     *               pointIntervalUnit, pointPlacement, pointRange, pointStart,
-     *               showInNavigator, stacking, threshold
+     * @excluding    allAreas, cropThreshold, negativeColor, colorAxis, joinBy,
+     *               keys, navigatorOptions, pointInterval, pointIntervalUnit,
+     *               pointPlacement, pointRange, pointStart, showInNavigator,
+     *               stacking, threshold
      * @requires     stock/indicators/indicators
      * @requires     stock/indicators/supertrend
      * @optionparent plotOptions.supertrend
@@ -170,7 +170,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with risingTrendColor
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         risingTrendColor: '${palette.indicatorPositiveLine}',
         /**
@@ -179,7 +179,7 @@ H.seriesType<Highcharts.SupertrendIndicator>(
          * @sample {highstock} stock/indicators/supertrend/
          *         Example with fallingTrendColor
          *
-         * @type {Highcharts.ColorString}
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
          */
         fallingTrendColor: '${palette.indicatorNegativeLine}',
         /**
@@ -281,14 +281,20 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                     top: {
                         styles: {
                             lineWidth: indicOptions.lineWidth,
-                            lineColor: indicOptions.fallingTrendColor,
+                            lineColor: (
+                                indicOptions.fallingTrendColor ||
+                                indicOptions.color
+                            ),
                             dashStyle: indicOptions.dashStyle
                         }
                     },
                     bottom: {
                         styles: {
                             lineWidth: indicOptions.lineWidth,
-                            lineColor: indicOptions.risingTrendColor,
+                            lineColor: (
+                                indicOptions.risingTrendColor ||
+                                indicOptions.color
+                            ),
                             dashStyle: indicOptions.dashStyle
                         }
                     },
@@ -411,16 +417,20 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                         point.y >= mainPoint.close &&
                         nextPoint.y >= nextMainPoint.close
                     ) {
-                        point.color =
-                            pointColor || indicOptions.fallingTrendColor;
+                        point.color = (
+                            pointColor || indicOptions.fallingTrendColor ||
+                            indicOptions.color
+                        );
                         groupedPoitns.top.push(newPoint);
 
                     } else if (
                         point.y < mainPoint.close &&
                         nextPoint.y < nextMainPoint.close
                     ) {
-                        point.color =
-                            pointColor || indicOptions.risingTrendColor;
+                        point.color = (
+                            pointColor || indicOptions.risingTrendColor ||
+                            indicOptions.color
+                        );
                         groupedPoitns.bottom.push(newPoint);
 
                     } else {
@@ -436,10 +446,14 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                             point.y >= mainPoint.close &&
                             nextPoint.y < nextMainPoint.close
                         ) {
-                            point.color =
-                                pointColor || indicOptions.fallingTrendColor;
-                            nextPoint.color =
-                                pointColor || indicOptions.risingTrendColor;
+                            point.color = (
+                                pointColor || indicOptions.fallingTrendColor ||
+                                indicOptions.color
+                            );
+                            nextPoint.color = (
+                                pointColor || indicOptions.risingTrendColor ||
+                                indicOptions.color
+                            );
                             groupedPoitns.top.push(newPoint);
                             groupedPoitns.top.push(merge(newNextPoint, {
                                 isNull: true
@@ -448,10 +462,14 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                             point.y < mainPoint.close &&
                             nextPoint.y >= nextMainPoint.close
                         ) {
-                            point.color =
-                                pointColor || indicOptions.risingTrendColor;
-                            nextPoint.color =
-                                pointColor || indicOptions.fallingTrendColor;
+                            point.color = (
+                                pointColor || indicOptions.risingTrendColor ||
+                                indicOptions.color
+                            );
+                            nextPoint.color = (
+                                pointColor || indicOptions.fallingTrendColor ||
+                                indicOptions.color
+                            );
                             groupedPoitns.bottom.push(newPoint);
                             groupedPoitns.bottom.push(merge(newNextPoint, {
                                 isNull: true
@@ -460,12 +478,16 @@ H.seriesType<Highcharts.SupertrendIndicator>(
                     }
                 } else if (mainPoint) {
                     if (point.y >= mainPoint.close) {
-                        point.color =
-                            pointColor || indicOptions.fallingTrendColor;
+                        point.color = (
+                            pointColor || indicOptions.fallingTrendColor ||
+                            indicOptions.color
+                        );
                         groupedPoitns.top.push(newPoint);
                     } else {
-                        point.color =
-                            pointColor || indicOptions.risingTrendColor;
+                        point.color = (
+                            pointColor || indicOptions.risingTrendColor ||
+                            indicOptions.color
+                        );
                         groupedPoitns.bottom.push(newPoint);
                     }
                 }
@@ -646,10 +668,10 @@ H.seriesType<Highcharts.SupertrendIndicator>(
  * @extends   series,plotOptions.supertrend
  * @since     7.0.0
  * @product   highstock
- * @excluding allAreas, color, colorAxis, cropThreshold, data, dataParser,
- *            dataURL, joinBy, keys, navigatorOptions, negativeColor,
- *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
- *            pointStart, showInNavigator, stacking, threshold
+ * @excluding allAreas, colorAxis, cropThreshold, data, dataParser, dataURL,
+ *            joinBy, keys, navigatorOptions, negativeColor, pointInterval,
+ *            pointIntervalUnit, pointPlacement, pointRange, pointStart,
+ *            showInNavigator, stacking, threshold
  * @requires  stock/indicators/indicators
  * @requires  stock/indicators/supertrend
  * @apioption series.supertrend

@@ -284,12 +284,13 @@ Chart.prototype.getStacks = function () {
  * @return {void}
  */
 Axis.prototype.buildStacks = function () {
-    var axisSeries = this.series, reversedStacks = pick(this.options.reversedStacks, true), len = axisSeries.length, i;
+    var axisSeries = this.series, reversedStacks = pick(this.options.reversedStacks, true), len = axisSeries.length, actualSeries, i;
     if (!this.isXAxis) {
         this.usePercentage = false;
         i = len;
         while (i--) {
-            axisSeries[reversedStacks ? i : len - i - 1].setStackedPoints();
+            actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
+            actualSeries.setStackedPoints();
         }
         // Loop up again to compute percent and stream stack
         for (i = 0; i < len; i++) {
