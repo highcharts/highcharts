@@ -59,7 +59,7 @@ declare global {
 var ContainerComponent: typeof Highcharts.ContainerComponent =
     function (): void {} as any;
 ContainerComponent.prototype = new (AccessibilityComponent as any)();
-extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ { // eslint-disable-line
+extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */ {
 
     /**
      * Called on first render/updates to the chart, including options changes.
@@ -168,22 +168,20 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
     makeCreditsAccessible: function (
         this: Highcharts.ContainerComponent
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
-            creditsEl = chart.credits && chart.credits.element;
+        var chart = this.chart,
+            credits = chart.credits;
 
-        if (creditsEl) {
-            if ((chart.credits as any).textStr) {
-                creditsEl.setAttribute(
+        if (credits) {
+            if (credits.textStr) {
+                credits.element.setAttribute(
                     'aria-label', stripHTMLTags(
                         chart.langFormat(
-                            'accessibility.credits', {
-                                creditsStr: (chart.credits as any).textStr
-                            }
+                            'accessibility.credits', { creditsStr: credits.textStr }
                         )
                     )
                 );
             }
-            unhideChartElementFromAT(chart, creditsEl);
+            unhideChartElementFromAT(chart, credits.element);
         }
     },
 

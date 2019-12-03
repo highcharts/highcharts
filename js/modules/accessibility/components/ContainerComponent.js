@@ -97,14 +97,12 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * @private
      */
     makeCreditsAccessible: function () {
-        var chart = this.chart, creditsEl = chart.credits && chart.credits.element;
-        if (creditsEl) {
-            if (chart.credits.textStr) {
-                creditsEl.setAttribute('aria-label', stripHTMLTags(chart.langFormat('accessibility.credits', {
-                    creditsStr: chart.credits.textStr
-                })));
+        var chart = this.chart, credits = chart.credits;
+        if (credits) {
+            if (credits.textStr) {
+                credits.element.setAttribute('aria-label', stripHTMLTags(chart.langFormat('accessibility.credits', { creditsStr: credits.textStr })));
             }
-            unhideChartElementFromAT(chart, creditsEl);
+            unhideChartElementFromAT(chart, credits.element);
         }
     },
     /**
