@@ -52,7 +52,7 @@ declare global {
                 )
             ): void;
             public proxyLegendItems(): void;
-            public shouldHaveLegendNavigation(): (boolean|undefined);
+            public shouldHaveLegendNavigation(): (boolean);
             public updateLegendItemProxyVisibility(): void;
             public updateProxies(): void;
         }
@@ -92,15 +92,17 @@ function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
 /**
  * @private
  */
-function shouldDoLegendA11y(chart: Highcharts.Chart): (boolean|number) {
+function shouldDoLegendA11y(chart: Highcharts.Chart): boolean {
     var items = chart.legend && chart.legend.allItems,
         legendA11yOptions: Highcharts.LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
         );
 
-    return items && items.length &&
+    return !!(
+        items && items.length &&
         !(chart.colorAxis && chart.colorAxis.length) &&
-        legendA11yOptions.enabled !== false;
+        legendA11yOptions.enabled !== false
+    );
 }
 
 
@@ -261,11 +263,9 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     proxyLegendItems: function (this: Highcharts.LegendComponent): void {
         var component = this,
-            items: (Array<(
-                Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
-            )>|undefined) = (
+            items = (
                 this.chart.legend &&
-                this.chart.legend.allItems
+                this.chart.legend.allItems || []
             );
 
         items.forEach(function (
@@ -349,7 +349,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 ]
             ],
 
-            validate: function (): (boolean|undefined) {
+            validate: function (): (boolean) {
                 return component.shouldHaveLegendNavigation();
             },
 
@@ -430,7 +430,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     shouldHaveLegendNavigation: function (
         this: Highcharts.LegendComponent
-    ): (boolean|undefined) {
+    ): (boolean) {
         var chart = this.chart,
             legendOptions = chart.options.legend || {},
             hasLegend = chart.legend && chart.legend.allItems,
@@ -441,12 +441,14 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 legendOptions.accessibility || {}
             );
 
-        return hasLegend &&
+        return !!(
+            hasLegend &&
             chart.legend.display &&
             !hasColorAxis &&
             legendA11yOptions.enabled &&
             legendA11yOptions.keyboardNavigation &&
-            legendA11yOptions.keyboardNavigation.enabled;
+            legendA11yOptions.keyboardNavigation.enabled
+        );
     },
 
 

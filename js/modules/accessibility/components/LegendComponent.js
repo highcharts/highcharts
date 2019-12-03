@@ -32,9 +32,9 @@ function scrollLegendToItem(legend, itemIx) {
  */
 function shouldDoLegendA11y(chart) {
     var items = chart.legend && chart.legend.allItems, legendA11yOptions = (chart.options.legend.accessibility || {});
-    return items && items.length &&
+    return !!(items && items.length &&
         !(chart.colorAxis && chart.colorAxis.length) &&
-        legendA11yOptions.enabled !== false;
+        legendA11yOptions.enabled !== false);
 }
 /**
  * Highlight legend item by index.
@@ -142,7 +142,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     proxyLegendItems: function () {
         var component = this, items = (this.chart.legend &&
-            this.chart.legend.allItems);
+            this.chart.legend.allItems || []);
         items.forEach(function (item) {
             if (item.legendItem && item.legendItem.element) {
                 component.proxyLegendItem(item);
@@ -241,12 +241,12 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     shouldHaveLegendNavigation: function () {
         var chart = this.chart, legendOptions = chart.options.legend || {}, hasLegend = chart.legend && chart.legend.allItems, hasColorAxis = chart.colorAxis && chart.colorAxis.length, legendA11yOptions = (legendOptions.accessibility || {});
-        return hasLegend &&
+        return !!(hasLegend &&
             chart.legend.display &&
             !hasColorAxis &&
             legendA11yOptions.enabled &&
             legendA11yOptions.keyboardNavigation &&
-            legendA11yOptions.keyboardNavigation.enabled;
+            legendA11yOptions.keyboardNavigation.enabled);
     },
     /**
      * @private
