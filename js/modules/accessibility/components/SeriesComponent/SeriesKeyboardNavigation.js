@@ -348,7 +348,7 @@ function highlightFirstValidPointInChart(chart) {
     delete chart.highlightedPoint;
     res = chart.series.reduce(function (acc, cur) {
         return acc || cur.highlightFirstValidPoint();
-    }, null);
+    }, false);
     return res;
 }
 /**
@@ -396,7 +396,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
     init: function () {
         var keyboardNavigation = this, chart = this.chart, e = this.eventProvider = new EventProvider();
         e.addEvent(H.Series, 'destroy', function () {
-            return keyboardNavigation.onSeriesDestroy();
+            return keyboardNavigation.onSeriesDestroy(this);
         });
         e.addEvent(chart, 'afterDrilldown', function () {
             updateChartFocusAfterDrilling(this);
@@ -406,7 +406,7 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
             keyboardNavigation.lastDrilledDownPoint = {
                 x: point.x,
                 y: point.y,
-                seriesName: series ? series.name : null
+                seriesName: series ? series.name : ''
             };
         });
         e.addEvent(chart, 'drillupall', function () {
@@ -418,7 +418,10 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
     onDrillupAll: function () {
         // After drillup we want to find the point that was drilled down to and
         // highlight it.
-        var last = this.lastDrilledDownPoint, chart = this.chart, series = getSeriesFromName(chart, last.seriesName), point = series && getPointFromXY(series, last.x, last.y);
+        var last = this.lastDrilledDownPoint, chart = this.chart, series = last && getSeriesFromName(chart, last.seriesName), point;
+        if (last && series && defined(last.x) && defined(last.y)) {
+            point = getPointFromXY(series, last.x, last.y);
+        }
         // Container focus can be lost on drillup due to deleted elements.
         if (chart.container) {
             chart.container.focus();
@@ -543,9 +546,9 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
     /**
      * @private
      */
-    onSeriesDestroy: function () {
+    onSeriesDestroy: function (series) {
         var chart = this.chart, currentHighlightedPointDestroyed = chart.highlightedPoint &&
-            chart.highlightedPoint.series === this;
+            chart.highlightedPoint.series === series;
         if (currentHighlightedPointDestroyed) {
             delete chart.highlightedPoint;
             if (chart.focusElement) {
