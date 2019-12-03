@@ -209,7 +209,7 @@ H.i18nFormat = function (formatString, context, chart) {
                 type: 'statement'
             });
         }
-        cursor = (bracketRes && bracketRes.end + 1);
+        cursor = bracketRes ? bracketRes.end + 1 : cursor + 1;
     } while (bracketRes);
     // Perform the formatting. The formatArrayStatement function returns the
     // statement in brackets if it is not an array statement, which means it
@@ -246,6 +246,6 @@ H.Chart.prototype.langFormat = function (langKey, context) {
     for (; i < keys.length; ++i) {
         formatString = formatString && formatString[keys[i]];
     }
-    return ((typeof formatString === 'string') &&
-        H.i18nFormat(formatString, context, this));
+    return typeof formatString === 'string' ?
+        H.i18nFormat(formatString, context, this) : '';
 };

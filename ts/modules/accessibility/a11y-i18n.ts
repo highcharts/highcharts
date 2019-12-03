@@ -295,7 +295,7 @@ H.i18nFormat = function (
             });
         }
 
-        cursor = (bracketRes && bracketRes.end + 1) as any;
+        cursor = bracketRes ? bracketRes.end + 1 : cursor + 1;
     } while (bracketRes);
 
     // Perform the formatting. The formatArrayStatement function returns the
@@ -345,8 +345,6 @@ H.Chart.prototype.langFormat = function (
     for (; i < keys.length; ++i) {
         formatString = formatString && (formatString as any)[keys[i]];
     }
-    return (
-        ((typeof formatString === 'string') as any) &&
-        H.i18nFormat(formatString, context, this)
-    );
+    return typeof formatString === 'string' ?
+        H.i18nFormat(formatString, context, this) : '';
 };
