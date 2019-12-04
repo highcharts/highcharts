@@ -3,7 +3,8 @@ name: Candlestick
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highstock demo
 categories:
   - Chart types
 ...
