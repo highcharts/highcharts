@@ -3,7 +3,8 @@ name: 'Tile map, honeycomb'
 authors:
   - Mustapha Mekhatria
 js_wrap: b
-tags: []
+tags:
+  - Highmaps demo
 categories:
   - Series types
 ...

@@ -3,7 +3,8 @@ name: GeoJSON areas
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highmaps demo
 categories:
   - Input formats
 ...
