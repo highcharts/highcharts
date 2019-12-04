@@ -1,7 +1,8 @@
 ---
 name: Bell curve
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - More chart types
 ...

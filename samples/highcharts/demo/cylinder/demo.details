@@ -7,7 +7,8 @@ js_wrap: b
 alt_text: >-
   Highcharts 3D cylinder chart JavaScript example graph compares variables as
   three dimensional vertical color bar chart.
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - 3D charts
 ...

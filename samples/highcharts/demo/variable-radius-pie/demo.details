@@ -3,7 +3,8 @@ name: Variable radius pie
 authors:
   - Grzegorz Blachliński
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Pie charts
 ...

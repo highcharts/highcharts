@@ -6,7 +6,8 @@ js_wrap: b
 alt_text: >-
   Highcharts basic pie chart JavaScript example compares Chrome Firefox Safari
   browser market share as proportional segments.
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Pie charts
 ...

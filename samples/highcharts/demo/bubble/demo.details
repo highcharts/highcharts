@@ -4,7 +4,8 @@ authors:
   - Torstein Hønsi
 compareTooltips: true
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Scatter and bubble charts
 ...
