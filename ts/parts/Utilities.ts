@@ -34,6 +34,9 @@ type Nullable = null|undefined;
  * @private
  */
 declare global {
+    type DeepPartial<T> = {
+        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
+    }
     interface Math {
         easeInOutSine(pos: number): number;
     }
@@ -73,9 +76,13 @@ declare global {
         interface CSSObject {
             [key: string]: (boolean|number|string|undefined);
             backgroundColor?: ColorString;
+            borderRadius?: (number|string);
             color?: ('contrast'|ColorString);
             cursor?: CursorValue;
             fontSize?: (number|string);
+            lineWidth?: (number|string);
+            stroke?: ColorString;
+            strokeWidth?: (number|string);
         }
         interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;

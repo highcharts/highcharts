@@ -6,24 +6,20 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 import H from '../../parts/Globals.js';
 var addEvent = H.addEvent;
-
 import U from '../../parts/Utilities.js';
-var extend = U.extend,
-    pick = U.pick;
-
-
+var extend = U.extend, pick = U.pick;
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /*
  * Add focus border functionality to SVGElements. Draws a new rect on top of
  * element around its bounding box. This is used by multiple components.
  */
 extend(H.SVGElement.prototype, {
-
     /**
      * @private
      * @function Highcharts.SVGElement#addFocusBorder
@@ -38,25 +34,15 @@ extend(H.SVGElement.prototype, {
             this.removeFocusBorder();
         }
         // Add the border rect
-        var bb = this.getBBox(),
-            pad = pick(margin, 3);
-
+        var bb = this.getBBox(), pad = pick(margin, 3);
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
-
-        this.focusBorder = this.renderer.rect(
-            bb.x - pad,
-            bb.y - pad,
-            bb.width + 2 * pad,
-            bb.height + 2 * pad,
-            style && style.borderRadius
-        )
+        this.focusBorder = this.renderer.rect(bb.x - pad, bb.y - pad, bb.width + 2 * pad, bb.height + 2 * pad, parseInt((style && style.borderRadius || 0).toString(), 10))
             .addClass('highcharts-focus-border')
             .attr({
-                zIndex: 99
-            })
+            zIndex: 99
+        })
             .add(this.parentGroup);
-
         if (!this.renderer.styledMode) {
             this.focusBorder.attr({
                 stroke: style && style.stroke,
@@ -64,7 +50,6 @@ extend(H.SVGElement.prototype, {
             });
         }
     },
-
     /**
      * @private
      * @function Highcharts.SVGElement#removeFocusBorder
@@ -76,8 +61,6 @@ extend(H.SVGElement.prototype, {
         }
     }
 });
-
-
 /**
  * Set chart's focus to an SVGElement. Calls focus() on it, and draws the focus
  * border. This is used by multiple components.
@@ -93,26 +76,17 @@ extend(H.SVGElement.prototype, {
  *        to focusElement.
  */
 H.Chart.prototype.setFocusToElement = function (svgElement, focusElement) {
-    var focusBorderOptions = this.options.accessibility
-            .keyboardNavigation.focusBorder,
-        browserFocusElement = focusElement || svgElement.element;
-
+    var focusBorderOptions = this.options.accessibility.keyboardNavigation.focusBorder, browserFocusElement = focusElement || svgElement.element;
     // Set browser focus if possible
-    if (
-        browserFocusElement &&
-        browserFocusElement.focus
-    ) {
+    if (browserFocusElement &&
+        browserFocusElement.focus) {
         // If there is no focusin-listener, add one to work around Edge issue
         // where Narrator is not reading out points despite calling focus().
-        if (!(
-            browserFocusElement.hcEvents &&
-            browserFocusElement.hcEvents.focusin
-        )) {
-            addEvent(browserFocusElement, 'focusin', function () {});
+        if (!(browserFocusElement.hcEvents &&
+            browserFocusElement.hcEvents.focusin)) {
+            addEvent(browserFocusElement, 'focusin', function () { });
         }
-
         browserFocusElement.focus();
-
         // Hide default focus ring
         if (focusBorderOptions.hideBrowserFocusOutline) {
             browserFocusElement.style.outline = 'none';
