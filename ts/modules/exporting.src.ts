@@ -212,6 +212,8 @@ declare global {
             chart: Chart,
             moveTo: HTMLDOMElement
         ): void;
+
+        let printingChart: (Chart|undefined);
     }
 }
 
@@ -1388,9 +1390,28 @@ H.afterPrint = function (
     }
 
     delete chart.printReverseInfo;
+    delete H.printingChart;
 
     fireEvent(chart, 'afterPrint');
 };
+
+if (H.isSafari) {
+    H.win.matchMedia('print').addListener(
+        function (
+            this: MediaQueryList,
+            mqlEvent: MediaQueryListEvent
+        ): void {
+            if (!H.printingChart) {
+                return void 0;
+            }
+            if (mqlEvent.matches) {
+                H.beforePrint(H.printingChart);
+            } else {
+                H.afterPrint(H.printingChart);
+            }
+        }
+    );
+}
 
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
@@ -1793,6 +1814,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.isPrinting) { // block the button while in printing mode
             return;
         }
+
+        H.printingChart = chart;
 
         if (!H.isSafari) {
             H.beforePrint(chart);
