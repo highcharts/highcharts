@@ -457,28 +457,17 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
     // Math.round for rounding errors (#2683), alignTo to allow column
     // labels (#2700)
     alignAttr, // the final position;
-    justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify', isXaxisHorizontal = defined((series.xAxis || {}).horiz) ?
-        series.xAxis.horiz : !inverted, horizontalAxisReversed = ((isXaxisHorizontal ? series.xAxis : series.yAxis) || {}).reversed, verticalAxisReversed = ((isXaxisHorizontal ? series.yAxis : series.xAxis) || {}).reversed, horizontalOffset = horizontalAxisReversed ? 1 : -1, verticalOffset = verticalAxisReversed ? -1 : 1, setStartPos = function (alignOptions) {
+    justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify', visible = this.visible &&
+        (point.series.forceDL ||
+            (enabledDataSorting && !justify) ||
+            isInsidePlot ||
+            (alignTo && chart.isInsidePlot(plotX, inverted ?
+                alignTo.x + 1 :
+                alignTo.y + alignTo.height - 1, inverted))), setStartPos = function (alignOptions) {
         if (enabledDataSorting && series.xAxis && !justify) {
             series.setDataLabelStartPos(point, dataLabel, isNew, isInsidePlot, alignOptions);
         }
-    }, plotSizeY = inverted ? chart.plotWidth : chart.plotHeight, pointY, visible;
-    if (!point.isInside && alignTo) {
-        pointY = inverted ? alignTo.x : alignTo.y;
-        if (pointY >= 0 &&
-            pointY <= plotSizeY &&
-            alignTo.height > 0 &&
-            alignTo.width > 0) {
-            horizontalOffset = 1;
-            verticalOffset = -1;
-        }
-    }
-    visible = this.visible && (point.series.forceDL ||
-        (enabledDataSorting && !justify) ||
-        isInsidePlot ||
-        (alignTo && chart.isInsidePlot(plotX, inverted ?
-            alignTo.x + horizontalOffset :
-            alignTo.y + alignTo.height + verticalOffset, inverted)));
+    };
     if (visible) {
         baseline = chart.renderer.fontMetrics(chart.styledMode ? void 0 : options.style.fontSize, dataLabel).b;
         // The alignment box is a singular point
@@ -1178,6 +1167,13 @@ if (seriesTypes.column) {
         options.verticalAlign = pick(options.verticalAlign, inverted || inside ? 'middle' : below ? 'top' : 'bottom');
         // Call the parent method
         Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+        // Hide dataLabel when column is outside plotArea (#12370).
+        if (alignTo &&
+            ((alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
+                (alignTo.width <= 0 && alignTo.x === 0))) {
+            dataLabel.hide(true);
+            dataLabel.placed = false; // don't animate back in
+        }
         // If label was justified and we have contrast, set it:
         if (options.inside && point.contrastColor) {
             dataLabel.css({

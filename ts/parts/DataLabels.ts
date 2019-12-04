@@ -871,14 +871,22 @@ Series.prototype.alignDataLabel = function (
             options.overflow,
             (enabledDataSorting ? 'none' : 'justify')
         ) === 'justify',
-        isXaxisHorizontal = defined((series.xAxis || {}).horiz) ?
-            series.xAxis.horiz : !inverted,
-        horizontalAxisReversed =
-            ((isXaxisHorizontal ? series.xAxis : series.yAxis) || {}).reversed,
-        verticalAxisReversed =
-            ((isXaxisHorizontal ? series.yAxis : series.xAxis) || {}).reversed,
-        horizontalOffset = horizontalAxisReversed ? 1 : -1,
-        verticalOffset = verticalAxisReversed ? -1 : 1,
+        visible =
+            this.visible &&
+            (
+                point.series.forceDL ||
+                (enabledDataSorting && !justify) ||
+                isInsidePlot ||
+                (
+                    alignTo && chart.isInsidePlot(
+                        plotX,
+                        inverted ?
+                            alignTo.x + 1 :
+                            alignTo.y + alignTo.height - 1,
+                        inverted
+                    )
+                )
+            ),
         setStartPos = function (alignOptions: Highcharts.AlignObject): void {
             if (enabledDataSorting && series.xAxis && !justify) {
                 series.setDataLabelStartPos(
@@ -889,39 +897,7 @@ Series.prototype.alignDataLabel = function (
                     alignOptions
                 );
             }
-        },
-        plotSizeY = inverted ? chart.plotWidth : chart.plotHeight,
-        pointY,
-        visible;
-
-    if (!point.isInside && alignTo) {
-        pointY = inverted ? alignTo.x : alignTo.y;
-
-        if (
-            pointY >= 0 &&
-            pointY <= plotSizeY &&
-            alignTo.height > 0 &&
-            alignTo.width > 0
-        ) {
-            horizontalOffset = 1;
-            verticalOffset = -1;
-        }
-    }
-
-    visible = this.visible && (
-        point.series.forceDL ||
-        (enabledDataSorting && !justify) ||
-        isInsidePlot ||
-        (
-            alignTo && chart.isInsidePlot(
-                plotX,
-                inverted ?
-                    alignTo.x + horizontalOffset :
-                    alignTo.y + alignTo.height + verticalOffset,
-                inverted
-            )
-        )
-    );
+        };
 
     if (visible) {
 
@@ -1928,6 +1904,18 @@ if (seriesTypes.column) {
             alignTo,
             isNew
         );
+
+        // Hide dataLabel when column is outside plotArea (#12370).
+        if (
+            alignTo &&
+            (
+                (alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
+                (alignTo.width <= 0 && alignTo.x === 0)
+            )
+        ) {
+            dataLabel.hide(true);
+            dataLabel.placed = false; // don't animate back in
+        }
 
         // If label was justified and we have contrast, set it:
         if (options.inside && point.contrastColor) {
