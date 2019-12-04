@@ -1188,71 +1188,34 @@ seriesType<Highcharts.TreemapSeries>(
             });
         },
         setPointValues: function (this: Highcharts.TreemapSeries): void {
-            var series = this,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis;
+            const series = this;
+            const { points, xAxis, yAxis } = series;
+            const styledMode = series.chart.styledMode;
 
-            series.points.forEach(function (
-                point: Highcharts.TreemapPoint
-            ): void {
-                var node = point.node,
-                    values = node.pointValues,
-                    x1,
-                    x2,
-                    y1,
-                    y2,
-                    crispCorr = 0;
+            // Get the crisp correction in classic mode. For this to work in
+            // styled mode, we would need to first add the shape (without x,
+            // y, width and height), then read the rendered stroke width
+            // using point.graphic.strokeWidth(), then modify and apply the
+            // shapeArgs. This applies also to column series, but the
+            // downside is performance and code complexity.
+            const getCrispCorrection = (point: Highcharts.TreemapPoint): number => (
+                styledMode ?
+                    0 :
+                    ((series.pointAttribs(point)['stroke-width'] || 0) % 2) / 2
+            );
 
-                // Get the crisp correction in classic mode. For this to work in
-                // styled mode, we would need to first add the shape (without x,
-                // y, width and height), then read the rendered stroke width
-                // using point.graphic.strokeWidth(), then modify and apply the
-                // shapeArgs. This applies also to column series, but the
-                // downside is performance and code complexity.
-                if (!series.chart.styledMode) {
-                    crispCorr = (
-                        (series.pointAttribs(point)['stroke-width'] || 0) % 2
-                    ) / 2;
-                }
+            points.forEach(function (point: Highcharts.TreemapPoint): void {
+                const { pointValues: values, visible } = point.node;
 
                 // Points which is ignored, have no values.
-                if (values && node.visible) {
-                    x1 = Math.round(
-                        xAxis.translate(
-                            values.x,
-                            0 as any,
-                            0 as any,
-                            0 as any,
-                            1 as any
-                        ) as any
-                    ) - crispCorr;
-                    x2 = Math.round(
-                        xAxis.translate(
-                            values.x + values.width,
-                            0 as any,
-                            0 as any,
-                            0 as any,
-                            1 as any
-                        ) as any
-                    ) - crispCorr;
-                    y1 = Math.round(
-                        yAxis.translate(
-                            values.y as any,
-                            0 as any,
-                            0 as any,
-                            0 as any,
-                            1 as any
-                        ) as any
-                    ) - crispCorr;
-                    y2 = Math.round(
-                        yAxis.translate(
-                            (values.y as any) + (values.height as any),
-                            0 as any,
-                            0 as any,
-                            0 as any,
-                            1 as any
-                        ) as any
-                    ) - crispCorr;
+                if (values && visible) {
+                    const { height, width, x, y } = values;
+                    const crispCorr = getCrispCorrection(point);
+                    const x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
+                    const x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
+                    const y1 = Math.round(yAxis.toPixels(100 - y, true)) - crispCorr;
+                    const y2 = Math.round(yAxis.toPixels(100 - y - height, true)) - crispCorr;
+
                     // Set point values
                     point.shapeArgs = {
                         x: Math.min(x1, x2),
