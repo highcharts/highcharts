@@ -3,7 +3,8 @@ name: Stacked percentage column
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Column and bar charts
 ...

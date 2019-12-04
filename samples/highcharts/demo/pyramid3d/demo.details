@@ -4,7 +4,8 @@ authors:
   - Kacper Madej
 js_wrap: b
 isNew: true
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - 3D charts
 ...

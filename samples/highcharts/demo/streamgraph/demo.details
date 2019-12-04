@@ -3,7 +3,8 @@ name: Streamgraph
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Area charts
 ...

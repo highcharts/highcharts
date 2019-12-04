@@ -4,7 +4,8 @@ authors:
   - Torstein Hønsi
 js_wrap: b
 isNew: true
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - More chart types
 ...

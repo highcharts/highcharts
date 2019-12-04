@@ -3,7 +3,8 @@ name: 3D column
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - 3D charts
 ...
