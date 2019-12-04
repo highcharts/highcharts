@@ -49,10 +49,6 @@ KeyboardNavigation.prototype = {
         this.components = components;
         this.modules = [];
         this.currentModuleIx = 0;
-        // Make chart container reachable by tab
-        if (!chart.container.hasAttribute('tabIndex')) {
-            chart.container.setAttribute('tabindex', '0');
-        }
         // Add keydown event
         e.addEvent(chart.renderTo, 'keydown', function (e) {
             keyboardNavigation.onKeydown(e);
@@ -75,6 +71,7 @@ KeyboardNavigation.prototype = {
      */
     update: function (order) {
         var a11yOptions = this.chart.options.accessibility, keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation, components = this.components;
+        this.updateContainerTabindex();
         if (keyboardOptions &&
             keyboardOptions.enabled &&
             order &&
@@ -207,6 +204,7 @@ KeyboardNavigation.prototype = {
      * setting focus to this div and not preventing the default tab action. We
      * also use this when users come back into the chart by tabbing back, in
      * order to navigate from the end of the chart.
+     * @private
      */
     updateExitAnchor: function () {
         var endMarkerId = 'highcharts-end-of-chart-marker-' + this.chart.index, endMarker = getElement(endMarkerId);
@@ -217,6 +215,19 @@ KeyboardNavigation.prototype = {
         }
         else {
             this.createExitAnchor();
+        }
+    },
+    /**
+     * Chart container should have tabindex if navigation is enabled.
+     * @private
+     */
+    updateContainerTabindex: function () {
+        var a11yOptions = this.chart.options.accessibility, keyboardOptions = a11yOptions && a11yOptions.keyboardNavigation, shouldHaveTabindex = !(keyboardOptions && keyboardOptions.enabled === false), container = this.chart.container, curTabindex = container.getAttribute('tabIndex');
+        if (shouldHaveTabindex && !curTabindex) {
+            container.setAttribute('tabindex', '0');
+        }
+        else if (!shouldHaveTabindex && curTabindex === '0') {
+            container.removeAttribute('tabindex');
         }
     },
     /**
@@ -301,6 +312,9 @@ KeyboardNavigation.prototype = {
     destroy: function () {
         this.removeExitAnchor();
         this.eventProvider.removeAddedEvents();
+        if (this.chart.container.getAttribute('tabindex') === '0') {
+            this.chart.container.removeAttribute('tabindex');
+        }
     }
 };
 export default KeyboardNavigation;
