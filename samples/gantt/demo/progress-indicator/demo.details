@@ -4,7 +4,8 @@ js_wrap: b
 authors:
   - Lars Cabrera
 compareTooltips: true
-tags: []
+tags:
+  - Gantt demo
 categories:
   - Highcharts Gantt
 ...
