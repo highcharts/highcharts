@@ -698,24 +698,31 @@ seriesType('treemap', 'scatter'
         });
     },
     setPointValues: function () {
-        var series = this, xAxis = series.xAxis, yAxis = series.yAxis;
-        series.points.forEach(function (point) {
-            var node = point.node, values = node.pointValues, x1, x2, y1, y2, crispCorr = 0;
-            // Get the crisp correction in classic mode. For this to work in
-            // styled mode, we would need to first add the shape (without x,
-            // y, width and height), then read the rendered stroke width
-            // using point.graphic.strokeWidth(), then modify and apply the
-            // shapeArgs. This applies also to column series, but the
-            // downside is performance and code complexity.
-            if (!series.chart.styledMode) {
-                crispCorr = ((series.pointAttribs(point)['stroke-width'] || 0) % 2) / 2;
-            }
+        var series = this;
+        var points = series.points, xAxis = series.xAxis, yAxis = series.yAxis;
+        var styledMode = series.chart.styledMode;
+        var translateX = function (value) { return Math.round(xAxis.translate(value, false, false, false, true)); };
+        var translateY = function (value) { return Math.round(
+        // Flip y-values so that 0 is top of the axis
+        yAxis.translate(100 - value, false, true, false, true)); };
+        // Get the crisp correction in classic mode. For this to work in
+        // styled mode, we would need to first add the shape (without x,
+        // y, width and height), then read the rendered stroke width
+        // using point.graphic.strokeWidth(), then modify and apply the
+        // shapeArgs. This applies also to column series, but the
+        // downside is performance and code complexity.
+        var getCrispCorrection = function (point) { return (styledMode ?
+            0 :
+            ((series.pointAttribs(point)['stroke-width'] || 0) % 2) / 2); };
+        points.forEach(function (point) {
+            var _a = point.node, values = _a.pointValues, visible = _a.visible;
             // Points which is ignored, have no values.
-            if (values && node.visible) {
-                x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1)) - crispCorr;
-                x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1)) - crispCorr;
-                y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1)) - crispCorr;
-                y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1)) - crispCorr;
+            if (values && visible) {
+                var crispCorr = getCrispCorrection(point);
+                var x1 = translateX(values.x) - crispCorr;
+                var x2 = translateX(values.x + values.width) - crispCorr;
+                var y1 = translateY(values.y) - crispCorr;
+                var y2 = translateY(values.y + values.height) - crispCorr;
                 // Set point values
                 point.shapeArgs = {
                     x: Math.min(x1, x2),
