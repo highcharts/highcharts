@@ -310,6 +310,13 @@ var getDrillId = function getDrillId(point, idRoot, mapIdToNode) {
     }
     return drillId;
 };
+var getLevelFromAndTo = function getLevelFromAndTo(_a) {
+    var level = _a.level, height = _a.height;
+    //  Never displays level below 1
+    var from = level > 0 ? level : 1;
+    var to = level + height;
+    return { from: from, to: to };
+};
 var cbSetTreeValuesBefore = function before(node, options) {
     var mapIdToNode = options.mapIdToNode, nodeParent = mapIdToNode[node.parent], series = options.series, chart = series.chart, points = series.points, point = points[node.i], colors = (series.options.colors || chart && chart.options.colors), colorInfo = getColor(node, {
         colors: colors,
@@ -706,10 +713,11 @@ var sunburstSeries = {
         nodeRoot = mapIdToNode[rootId];
         idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
         nodeTop = mapIdToNode[idTop];
+        var _a = getLevelFromAndTo(nodeRoot), from = _a.from, to = _a.to;
         mapOptionsToLevel = getLevelOptions({
-            from: nodeRoot.level > 0 ? nodeRoot.level : 1,
+            from: from,
             levels: series.options.levels,
-            to: tree.height,
+            to: to,
             defaults: {
                 colorByPoint: options.colorByPoint,
                 dataLabels: options.dataLabels,
@@ -722,8 +730,8 @@ var sunburstSeries = {
         // getLevelOptions
         mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
             diffRadius: diffRadius,
-            from: nodeRoot.level > 0 ? nodeRoot.level : 1,
-            to: tree.height
+            from: from,
+            to: to
         });
         // TODO Try to combine setTreeValues & setColorRecursive to avoid
         //  unnecessary looping.
@@ -801,6 +809,7 @@ var sunburstSeries = {
     },
     utils: {
         calculateLevelSizes: calculateLevelSizes,
+        getLevelFromAndTo: getLevelFromAndTo,
         range: range
     }
 };

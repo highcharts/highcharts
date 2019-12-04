@@ -58,12 +58,15 @@ extend(Highcharts, {
     isString: U.isString,
     numberFormat: U.numberFormat,
     objectEach: U.objectEach,
+    offset: U.offset,
     pad: U.pad,
     pick: U.pick,
     pInt: U.pInt,
+    relativeLength: U.relativeLength,
     setAnimation: U.setAnimation,
     splat: U.splat,
-    syncTimeout: U.syncTimeout
+    syncTimeout: U.syncTimeout,
+    wrap: U.wrap
 });
 
 export default Highcharts;

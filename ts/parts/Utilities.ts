@@ -34,6 +34,9 @@ type Nullable = null|undefined;
  * @private
  */
 declare global {
+    type DeepPartial<T> = {
+        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
+    }
     interface Math {
         easeInOutSine(pos: number): number;
     }
@@ -73,9 +76,13 @@ declare global {
         interface CSSObject {
             [key: string]: (boolean|number|string|undefined);
             backgroundColor?: ColorString;
+            borderRadius?: (number|string);
             color?: ('contrast'|ColorString);
             cursor?: CursorValue;
             fontSize?: (number|string);
+            lineWidth?: (number|string);
+            stroke?: ColorString;
+            strokeWidth?: (number|string);
         }
         interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;
@@ -1841,7 +1848,7 @@ function pad(number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (
+function relativeLength(
     value: Highcharts.RelativeSize,
     base: number,
     offset?: number
@@ -1849,7 +1856,7 @@ H.relativeLength = function (
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
-};
+}
 
 /**
  * Wrap a method with extended functionality, preserving the original function.
@@ -1870,7 +1877,7 @@ H.relativeLength = function (
  *
  * @return {void}
  */
-H.wrap = function (
+function wrap(
     obj: any,
     method: string,
     func: Highcharts.WrapProceedFunction
@@ -1891,7 +1898,7 @@ H.wrap = function (
         ctx.proceed = null;
         return ret;
     };
-};
+}
 
 
 /**
@@ -2684,7 +2691,7 @@ H.keys = Object.keys;
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-H.offset = function (el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
+function offset(el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
     var docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
@@ -2696,7 +2703,7 @@ H.offset = function (el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-};
+}
 
 /**
  * Stop running animation.
@@ -3385,7 +3392,7 @@ if ((win as any).jQuery) {
 
             // Create the chart
             if (args[0]) {
-                new (H as any)[ // eslint-disable-line no-new
+                new (H as any)[ // eslint-disable-line computed-property-spacing, no-new
                     // Constructor defaults to Chart
                     isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);
@@ -3421,12 +3428,15 @@ const utils = {
     isString,
     numberFormat,
     objectEach,
+    offset,
     pad,
     pick,
     pInt,
+    relativeLength,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    wrap
 };
 
 export default utils;

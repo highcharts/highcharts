@@ -6,14 +6,14 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
 var extend = U.extend;
-
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
  * @class
@@ -22,22 +22,21 @@ var EventProvider = function () {
     this.eventRemovers = [];
 };
 extend(EventProvider.prototype, {
-
     /**
      * Add an event to an element and keep track of it for later removal.
-     * Same args as Highcharts.addEvent
+     * Same args as Highcharts.addEvent.
      * @private
+     * @return {Function}
      */
     addEvent: function () {
         var remover = H.addEvent.apply(H, arguments);
         this.eventRemovers.push(remover);
         return remover;
     },
-
-
     /**
-     * Remove all added events
+     * Remove all added events.
      * @private
+     * @return {void}
      */
     removeAddedEvents: function () {
         this.eventRemovers.forEach(function (remover) {
@@ -45,7 +44,5 @@ extend(EventProvider.prototype, {
         });
         this.eventRemovers = [];
     }
-
 });
-
 export default EventProvider;

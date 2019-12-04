@@ -62,6 +62,7 @@ declare global {
             public allowShadow?: boolean;
             public barX: number;
             public group?: SVGElement;
+            public opacity?: number;
             public options: ColumnPointOptions;
             public pointWidth: number;
             public series: ColumnSeries;
@@ -106,22 +107,6 @@ declare global {
  * Offset of the columns.
  * @name Highcharts.ColumnMetricsObject#offset
  * @type {number}
- */
-
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * A name for the dash style to use for the column or bar. Overrides dashStyle
- * on the series. In styled mode, the stroke dash-array can be set with the same
- * classes as listed under {@link Highcharts.PointOptionsObject#color}.
- * @name Highcharts.PointOptionsObject#dashStyle
- * @type {Highcharts.DashStyleValue|undefined}
- *//**
-
- * A pixel value specifying a fixed width for the column or bar. Overrides
- * pointWidth on the series.
- * @name Highcharts.PointOptionsObject#pointWidth
- * @type {number|undefined}
  */
 
 import U from './Utilities.js';
@@ -387,6 +372,8 @@ seriesType<Highcharts.ColumnSeries>(
          *
          * The default `null` means it is computed automatically, but this
          * option can be used to override the automatic value.
+         *
+         * This option is set by default to 1 if data sorting is enabled.
          *
          * @sample {highcharts} highcharts/plotoptions/column-pointrange/
          *         Set the point range to one day on a data set with one week
@@ -948,7 +935,7 @@ seriesType<Highcharts.ColumnSeries>(
          */
         pointAttribs: function (
             this: Highcharts.ColumnSeries,
-            point: Highcharts.ColumnPoint,
+            point: Highcharts.ColumnPoint|undefined,
             state: string
         ): Highcharts.SVGAttributes {
             var options = this.options,
@@ -970,7 +957,7 @@ seriesType<Highcharts.ColumnSeries>(
                     (this as any)[strokeWidthOption] || 0,
                 dashstyle =
                     (point && point.options.dashStyle) || options.dashStyle,
-                opacity = pick(options.opacity, 1),
+                opacity = pick(point && point.opacity, options.opacity, 1),
                 zone,
                 brightness;
 
@@ -993,7 +980,7 @@ seriesType<Highcharts.ColumnSeries>(
             }
 
             // Select or hover states
-            if (state) {
+            if (state && point) {
                 stateOptions = merge(
                     (options.states as any)[state],
                     // #6401
@@ -1052,6 +1039,7 @@ seriesType<Highcharts.ColumnSeries>(
             ): void {
                 var plotY = point.plotY,
                     graphic = point.graphic,
+                    hasGraphic = !!graphic,
                     verb = graphic && chart.pointCount < animationLimit ?
                         'animate' : 'attr';
 
@@ -1064,15 +1052,37 @@ seriesType<Highcharts.ColumnSeries>(
                         graphic = graphic.destroy();
                     }
 
-                    if (graphic) { // update
-                        graphic[verb](
-                            merge(shapeArgs)
-                        );
+                    // Set starting position for point sliding animation.
+                    if (series.enabledDataSorting) {
+                        point.startXPos = series.xAxis.reversed ?
+                            -(shapeArgs ? shapeArgs.width : 0) :
+                            series.xAxis.width;
+                    }
 
-                    } else {
+                    if (!graphic) {
                         point.graphic = graphic =
                             (renderer as any)[point.shapeType as any](shapeArgs)
                                 .add(point.group || series.group);
+
+                        if (
+                            graphic &&
+                            series.enabledDataSorting &&
+                            chart.hasRendered &&
+                            chart.pointCount < animationLimit
+                        ) {
+                            graphic.attr({
+                                x: point.startXPos
+                            });
+
+                            hasGraphic = true;
+                            verb = 'animate';
+                        }
+                    }
+
+                    if (graphic && hasGraphic) { // update
+                        graphic[verb](
+                            merge(shapeArgs)
+                        );
                     }
 
                     // Border radius is not stylable (#6900)

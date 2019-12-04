@@ -93,14 +93,14 @@ const {
     extend,
     isNumber,
     pick,
-    pInt
+    pInt,
+    wrap
 } = U;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 
-var wrap = H.wrap,
-    Renderer = H.Renderer,
+var Renderer = H.Renderer,
     colorAxisMethods: Partial<Highcharts.SolidGaugeAxis>;
 
 /**
@@ -532,19 +532,19 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
                                 'sweep-flag': 0
                             })
                             .add(series.group);
+                    }
 
-                        if (!series.chart.styledMode) {
-                            if (options.linecap !== 'square') {
-                                graphic.attr({
-                                    'stroke-linecap': 'round',
-                                    'stroke-linejoin': 'round'
-                                });
-                            }
+                    if (!series.chart.styledMode) {
+                        if (options.linecap !== 'square') {
                             graphic.attr({
-                                stroke: options.borderColor || 'none',
-                                'stroke-width': options.borderWidth || 0
+                                'stroke-linecap': 'round',
+                                'stroke-linejoin': 'round'
                             });
                         }
+                        graphic.attr({
+                            stroke: options.borderColor || 'none',
+                            'stroke-width': options.borderWidth || 0
+                        });
                     }
 
                     if (graphic) {

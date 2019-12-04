@@ -142,6 +142,35 @@ QUnit.test('Bindings general tests', function (assert) {
         }
     );
 
+    // Test control points, measure-y annotation
+    controller.click(
+        chart.plotLeft + chart.plotWidth / 2,
+        chart.plotTop + chart.plotHeight / 2
+    );
+
+    controller.mouseDown(
+        chart.plotLeft + chart.plotWidth / 2,
+        chart.plotTop + chart.plotHeight / 2 +
+            chart.annotations[16].shapes[1].graphic.getBBox().height / 2
+    );
+
+    controller.mouseMove(
+        chart.plotLeft + chart.plotWidth / 2,
+        chart.plotTop + chart.plotHeight / 2 + 10
+    );
+
+    controller.mouseUp(
+        chart.plotLeft + chart.plotWidth / 2,
+        chart.plotTop + chart.plotHeight / 2 + 10
+    );
+
+    assert.close(
+        chart.annotations[16].yAxisMax,
+        chart.yAxis[0].toValue(chart.plotHeight / 2 + 10),
+        1,
+        'Annotation should updated after control point\'s drag&drop (#12459)'
+    );
+
     // Individual button events:
 
     // Current Price Indicator
@@ -287,8 +316,8 @@ QUnit.test('Bindings general tests', function (assert) {
     points = chart.series[0].points;
     chart.navigationBindings.popup.closePopup();
     controller.click(
-        points[2].plotX + plotLeft - 5,
-        points[2].plotY + plotTop - 25
+        points[2].plotX + plotLeft + 15,
+        points[2].plotY + plotTop + 25
     );
     assert.strictEqual(
         chart.navigationBindings.popup.container.classList

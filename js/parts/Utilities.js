@@ -1248,11 +1248,11 @@ function pad(number, length, padder) {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (value, base, offset) {
+function relativeLength(value, base, offset) {
     return (/%$/).test(value) ?
         (base * parseFloat(value) / 100) + (offset || 0) :
         parseFloat(value);
-};
+}
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
@@ -1272,7 +1272,7 @@ H.relativeLength = function (value, base, offset) {
  *
  * @return {void}
  */
-H.wrap = function (obj, method, func) {
+function wrap(obj, method, func) {
     var proceed = obj[method];
     obj[method] = function () {
         var args = Array.prototype.slice.call(arguments), outerArgs = arguments, ctx = this, ret;
@@ -1284,7 +1284,7 @@ H.wrap = function (obj, method, func) {
         ctx.proceed = null;
         return ret;
     };
-};
+}
 /**
  * Recursively converts all Date properties to timestamps.
  *
@@ -1929,7 +1929,7 @@ H.keys = Object.keys;
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-H.offset = function (el) {
+function offset(el) {
     var docElem = doc.documentElement, box = (el.parentElement || el.parentNode) ?
         el.getBoundingClientRect() :
         { top: 0, left: 0 };
@@ -1939,7 +1939,7 @@ H.offset = function (el) {
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-};
+}
 /**
  * Stop running animation.
  *
@@ -2503,7 +2503,7 @@ if (win.jQuery) {
         if (this[0]) { // this[0] is the renderTo div
             // Create the chart
             if (args[0]) {
-                new H[ // eslint-disable-line no-new
+                new H[ // eslint-disable-line computed-property-spacing, no-new
                 // Constructor defaults to Chart
                 isString(args[0]) ? args.shift() : 'Chart'](this[0], args[0], args[1]);
                 return this;
@@ -2536,11 +2536,14 @@ var utils = {
     isString: isString,
     numberFormat: numberFormat,
     objectEach: objectEach,
+    offset: offset,
     pad: pad,
     pick: pick,
     pInt: pInt,
+    relativeLength: relativeLength,
     setAnimation: setAnimation,
     splat: splat,
-    syncTimeout: syncTimeout
+    syncTimeout: syncTimeout,
+    wrap: wrap
 };
 export default utils;

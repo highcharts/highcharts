@@ -265,7 +265,7 @@ seriesType('timeline', 'line',
                 }
             });
         });
-        addEvent(series.chart, 'afterHideOverlappingLabels', function () {
+        addEvent(series.chart, 'afterHideOverlappingLabel', function () {
             series.points.forEach(function (p) {
                 if (p.connector &&
                     p.dataLabel &&

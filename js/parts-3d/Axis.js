@@ -12,11 +12,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, pick = U.pick, splat = U.splat;
+var extend = U.extend, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Tick.js';
-var ZAxis, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, perspective3D = H.perspective3D, shapeArea = H.shapeArea, Tick = H.Tick, wrap = H.wrap;
+var ZAxis, addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, perspective3D = H.perspective3D, shapeArea = H.shapeArea, Tick = H.Tick;
 /**
  * @optionparent xAxis
  */
@@ -430,6 +430,11 @@ addEvent(Axis, 'destroy', function () {
 /*
 Z-AXIS
  */
+Chart.prototype.addZAxis = function (options) {
+    return new ZAxis(this, options);
+};
+Chart.prototype.collectionsWithUpdate.push('zAxis');
+Chart.prototype.collectionsWithInit.zAxis = [Chart.prototype.addZAxis];
 Axis.prototype.swapZ = function (p, insidePlotArea) {
     if (this.isZAxis) {
         var plotLeft = insidePlotArea ? 0 : this.chart.plotLeft;
@@ -502,7 +507,7 @@ addEvent(Chart, 'afterGetAxes', function () {
         axisOptions.index = i;
         // Z-Axis is shown horizontally, so it's kind of a X-Axis
         axisOptions.isX = true;
-        var zAxis = new ZAxis(chart, axisOptions);
+        var zAxis = chart.addZAxis(axisOptions);
         zAxis.setScale();
     });
 });

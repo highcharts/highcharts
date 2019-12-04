@@ -231,6 +231,7 @@ const {
     isNumber,
     isObject,
     objectEach,
+    offset,
     pick,
     splat
 } = U;
@@ -245,7 +246,6 @@ var H = Highcharts,
     css = H.css,
     find = H.find,
     fireEvent = H.fireEvent,
-    offset = H.offset,
     Tooltip = H.Tooltip;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -1147,6 +1147,9 @@ Highcharts.Pointer.prototype = {
             selectionMarker = this.selectionMarker,
             mouseDownX = this.mouseDownX,
             mouseDownY = this.mouseDownY,
+            panningEnabled = isObject(chartOptions.panning) ?
+                chartOptions.panning && chartOptions.panning.enabled :
+                chartOptions.panning,
             panKey = (
                 chartOptions.panKey && (e as any)[chartOptions.panKey + 'Key']
             );
@@ -1236,7 +1239,10 @@ Highcharts.Pointer.prototype = {
             }
 
             // panning
-            if (clickedInside && !selectionMarker && chartOptions.panning) {
+            if (clickedInside &&
+                !selectionMarker &&
+                panningEnabled
+            ) {
                 (chart.pan as any)(e, chartOptions.panning);
             }
         }

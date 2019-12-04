@@ -45,7 +45,8 @@ const {
     erase,
     isArray,
     isNumber,
-    pick
+    pick,
+    wrap
 } = U;
 
 var addEvent = H.addEvent,
@@ -58,7 +59,6 @@ var addEvent = H.addEvent,
         return U.isObject(x, true);
     },
     merge = H.merge,
-    wrap = H.wrap,
     Chart = H.Chart,
     Axis = H.Axis,
     Tick = H.Tick;

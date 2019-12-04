@@ -469,7 +469,7 @@ seriesProto.processData = function () {
                     xAxis.min === xAxis.dataMin) {
                     xAxis.min = Math.min(groupedXData[0], xAxis.min);
                 }
-                xAxis.dataMin = groupedXData[0];
+                xAxis.dataMin = Math.min(groupedXData[0], xAxis.dataMin);
             }
             // We calculated all group positions but we should render
             // only the ones within the visible range
@@ -746,8 +746,8 @@ export default dataGrouping;
  * time range and the current data grouping.
  *
  * The default formats are:
- *
- * <pre>{
+ * ```js
+ * {
  *     millisecond: [
  *         '%A, %b %e, %H:%M:%S.%L', '%A, %b %e, %H:%M:%S.%L', '-%H:%M:%S.%L'
  *     ],
@@ -758,7 +758,8 @@ export default dataGrouping;
  *     week: ['Week from %A, %b %e, %Y', '%A, %b %e', '-%A, %b %e, %Y'],
  *     month: ['%B %Y', '%B', '-%B %Y'],
  *     year: ['%Y', '%Y', '-%Y']
- * }</pre>
+ * }
+ * ```
  *
  * For each of these array definitions, the first item is the format
  * used when the active time span is one unit. For instance, if the
@@ -841,9 +842,10 @@ export default dataGrouping;
  * An array determining what time intervals the data is allowed to be
  * grouped to. Each array item is an array where the first value is
  * the time unit and the second value another array of allowed multiples.
- * Defaults to:
  *
- * <pre>units: [[
+ * Defaults to:
+ * ```js
+ * units: [[
  *     'millisecond', // unit name
  *     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
  * ], [
@@ -867,7 +869,8 @@ export default dataGrouping;
  * ], [
  *     'year',
  *     null
- * ]]</pre>
+ * ]]
+ * ```
  *
  * @type      {Array<Array<string,(Array<number>|null)>>}
  * @product   highstock

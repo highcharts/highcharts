@@ -99,7 +99,7 @@ import H from './Globals.js';
 *        and call {@link Chart#redraw} after.
 */
 import U from './Utilities.js';
-var animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
@@ -384,6 +384,41 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         series = new Constr();
         series.init(this, options);
         return series;
+    },
+    /**
+     * Internal function to set data for all series with enabled sorting.
+     *
+     * @private
+     * @function Highcharts.Chart#setSeriesData
+     *
+     * @param {Highcharts.SeriesOptions} options
+     *
+     * @return {void}
+     */
+    setSeriesData: function () {
+        this.getSeriesOrderByLinks().forEach(function (series) {
+            // We need to set data for series with sorting after series init
+            if (!series.points && !series.data && series.enabledDataSorting) {
+                series.setData(series.options.data, false);
+            }
+        });
+    },
+    /**
+     * Sort and return chart series in order depending on the number of linked
+     * series.
+     *
+     * @private
+     * @function Highcharts.Series#getSeriesOrderByLinks
+     *
+     * @return {Array<Highcharts.Series>}
+     */
+    getSeriesOrderByLinks: function () {
+        return this.series.concat().sort(function (a, b) {
+            if (a.linkedSeries.length || b.linkedSeries.length) {
+                return b.linkedSeries.length - a.linkedSeries.length;
+            }
+            return 0;
+        });
     },
     /**
      * Order all series above a given index. When series are added and ordered
@@ -911,7 +946,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @name Highcharts.Chart#chartHeight
          * @type {number}
          */
-        chart.chartHeight = Math.max(0, H.relativeLength(heightOption, chart.chartWidth) ||
+        chart.chartHeight = Math.max(0, relativeLength(heightOption, chart.chartWidth) ||
             (chart.containerHeight > 1 ?
                 chart.containerHeight :
                 400));
@@ -1619,6 +1654,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 if (linkedTo && linkedTo.linkedParent !== series) {
                     linkedTo.linkedSeries.push(series);
                     series.linkedParent = linkedTo;
+                    if (linkedTo.enabledDataSorting) {
+                        series.setDataSortingOptions();
+                    }
                     series.visible = pick(series.options.visible, linkedTo.options.visible, series.visible); // #3879
                 }
             }
@@ -1931,6 +1969,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.initSeries(serieOptions);
         });
         chart.linkSeries();
+        chart.setSeriesData();
         // Run an event after axes and series are initialized, but before
         // render. At this stage, the series data is indexed and cached in the
         // xData and yData arrays, so we can access those before rendering. Used

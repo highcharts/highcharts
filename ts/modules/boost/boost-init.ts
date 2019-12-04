@@ -32,7 +32,10 @@ declare global {
 }
 
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    extend,
+    wrap
+} = U;
 
 import '../../parts/Series.js';
 
@@ -43,7 +46,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    wrap = H.wrap,
     noop = function (): void {},
     eachAsync = butils.eachAsync,
     pointDrawHandler = butils.pointDrawHandler,

@@ -606,6 +606,15 @@ var getDrillId = function getDrillId(
     return drillId;
 };
 
+const getLevelFromAndTo = function getLevelFromAndTo(
+    { level, height }: Highcharts.SunburstNodeObject
+): { from: number; to: number } {
+    //  Never displays level below 1
+    const from = level > 0 ? level : 1;
+    const to = level + height;
+    return { from, to };
+};
+
 var cbSetTreeValuesBefore = function before(
     node: Highcharts.SunburstNodeObject,
     options: Highcharts.SunburstNodeValuesObject
@@ -1141,10 +1150,11 @@ var sunburstSeries = {
         nodeRoot = mapIdToNode[rootId];
         idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
         nodeTop = mapIdToNode[idTop];
+        const { from, to } = getLevelFromAndTo(nodeRoot);
         mapOptionsToLevel = getLevelOptions<Highcharts.SunburstSeries>({
-            from: nodeRoot.level > 0 ? nodeRoot.level : 1,
+            from,
             levels: series.options.levels,
-            to: tree.height,
+            to,
             defaults: {
                 colorByPoint: options.colorByPoint,
                 dataLabels: options.dataLabels,
@@ -1156,9 +1166,9 @@ var sunburstSeries = {
         // NOTE consider doing calculateLevelSizes in a callback to
         // getLevelOptions
         mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
-            diffRadius: diffRadius,
-            from: nodeRoot.level > 0 ? nodeRoot.level : 1,
-            to: tree.height
+            diffRadius,
+            from,
+            to
         }) as any;
         // TODO Try to combine setTreeValues & setColorRecursive to avoid
         //  unnecessary looping.
@@ -1253,8 +1263,9 @@ var sunburstSeries = {
         }
     },
     utils: {
-        calculateLevelSizes: calculateLevelSizes,
-        range: range
+        calculateLevelSizes,
+        getLevelFromAndTo,
+        range
     } as any
 };
 

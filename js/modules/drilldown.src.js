@@ -158,7 +158,7 @@ extend(defaultOptions.lang,
  * The drilldown feature requires the drilldown.js file to be loaded,
  * found in the modules directory of the download package, or online at
  * [code.highcharts.com/modules/drilldown.js
- * ](code.highcharts.com/modules/drilldown.js).
+ * ](https://code.highcharts.com/modules/drilldown.js).
  *
  * @product      highcharts highmaps
  * @requires     modules/drilldown
@@ -351,7 +351,7 @@ defaultOptions.drilldown = {
  *
  * Event arguments:
  *
- * - `category`: If a category label was clicked, which index.</dd>
+ * - `category`: If a category label was clicked, which index.
  *
  * - `originalEvent`: The original browser event (usually click) that triggered
  *   the drilldown.
@@ -359,7 +359,7 @@ defaultOptions.drilldown = {
  * - `point`: The originating point.
  *
  * - `points`: If a category label was clicked, this array holds all points
- *   corresponing to the category.</dd>
+ *   corresponing to the category.
  *
  * - `seriesOptions`: Options for the new series.
  *

@@ -120,20 +120,13 @@ declare global {
     }
 }
 
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * Pie series only. Whether to display a slice offset from the center.
- * @name Highcharts.PointOptionsObject#sliced
- * @type {boolean|undefined}
- */
-
 import U from './Utilities.js';
 const {
     clamp,
     defined,
     isNumber,
     pick,
+    relativeLength,
     setAnimation
 } = U;
 
@@ -178,9 +171,9 @@ seriesType<Highcharts.PieSeries>(
      *
      * @extends      plotOptions.line
      * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
-     *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
-     *               getExtremesFromAll, label, lineWidth, marker,
-     *               negativeColor, pointInterval, pointIntervalUnit,
+     *               cropThreshold, dashStyle, dataSorting, dragDrop,
+     *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
+     *               marker, negativeColor, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointStart, softThreshold, stacking, step,
      *               threshold, turboThreshold, zoneAxis, zones
      * @product      highcharts
@@ -762,20 +755,21 @@ seriesType<Highcharts.PieSeries>(
                     var graphic = point.graphic,
                         args = point.shapeArgs;
 
-                    if (graphic) {
+                    if (graphic && args) {
                     // start values
                         graphic.attr({
                         // animate from inner radius (#779)
-                            r: point.startR || (series.center[3] / 2),
+                            r: pick(point.startR,
+                                (series.center && series.center[3] / 2)),
                             start: startAngleRad,
                             end: startAngleRad
                         });
 
                         // animate
                         graphic.animate({
-                            r: (args as any).r,
-                            start: (args as any).start,
-                            end: (args as any).end
+                            r: args.r,
+                            start: args.start,
+                            end: args.end
                         }, series.options.animation);
                     }
                 });
@@ -961,7 +955,7 @@ seriesType<Highcharts.PieSeries>(
 
                 // Compute point.labelDistance if it's defined as percentage
                 // of slice radius (#8854)
-                point.labelDistance = H.relativeLength(
+                point.labelDistance = relativeLength(
                     point.labelDistance as any,
                     point.shapeArgs.r
                 );
@@ -1542,7 +1536,7 @@ seriesType<Highcharts.PieSeries>(
                     plotLeft = series.chart.plotLeft,
                     alignment = labelPosition.alignment,
                     radius = (this.shapeArgs as any).r,
-                    crookDistance = H.relativeLength( // % to fraction
+                    crookDistance = relativeLength( // % to fraction
                         options.crookDistance as any, 1
                     ),
                     crookX = alignment === 'left' ?

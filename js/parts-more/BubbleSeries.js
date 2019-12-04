@@ -31,6 +31,7 @@ var Axis = H.Axis, color = H.color, noop = H.noop, Point = H.Point, Series = H.S
  *         Bubble chart
  *
  * @extends      plotOptions.scatter
+ * @excluding    cluster
  * @product      highcharts highstock
  * @requires     highcharts-more
  * @optionparent plotOptions.bubble

@@ -117,6 +117,9 @@
         "../../code/modules/map-parser.d.ts",
         "../../code/modules/map-parser.src.d.ts",
 
+        "../../code/modules/marker-clusters.d.ts",
+        "../../code/modules/marker-clusters.src.d.ts",
+
         "../../code/modules/networkgraph.d.ts",
         "../../code/modules/networkgraph.src.d.ts",
 

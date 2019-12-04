@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
+var pick = U.pick, wrap = U.wrap;
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this
  * node's children will hang below their parent, allowing a tighter packing of
@@ -240,7 +240,7 @@ H.seriesType('organization', 'sankey',
         var column = base.createNodeColumn.call(this);
         // Wrap the offset function so that the hanging node's children are
         // aligned to their parent
-        H.wrap(column, 'offset', function (proceed, node, factor) {
+        wrap(column, 'offset', function (proceed, node, factor) {
             var offset = proceed.call(this, node, factor); // eslint-disable-line no-invalid-this
             // Modify the default output if the parent's layout is 'hanging'
             if (node.hangsFrom) {

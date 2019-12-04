@@ -451,7 +451,16 @@ QUnit.test('Data grouping and extremes change', function (assert) {
         }),
         series = chart.series[0],
         controller = new TestController(chart),
-        expectedMin;
+        expectedMin,
+        expectedMax;
+
+    function panTo(side, x, y, change) {
+        const sign = side === 'left' ? 1 : -1;
+
+        controller.mouseDown(x, y);
+        controller.mouseMove(x + sign * change, y);
+        controller.mouseUp(x + sign * change, y);
+    }
 
     assert.strictEqual(
         chart.xAxis[0].getExtremes().min,
@@ -493,20 +502,7 @@ QUnit.test('Data grouping and extremes change', function (assert) {
     );
     expectedMin = chart.xAxis[0].toValue(-30, true);
 
-    controller.mouseDown(
-        series.points[7].plotX,
-        series.points[7].plotY
-    );
-
-    controller.mouseMove(
-        series.points[7].plotX + 30,
-        series.points[7].plotY
-    );
-
-    controller.mouseUp(
-        series.points[7].plotX + 30,
-        series.points[7].plotY
-    );
+    panTo('left', series.points[7].plotX, series.points[7].plotY, 30);
 
     assert.strictEqual(
         chart.xAxis[0].getExtremes().min,
@@ -516,26 +512,46 @@ QUnit.test('Data grouping and extremes change', function (assert) {
 
     expectedMin = chart.xAxis[0].toValue(30, true);
 
-    controller.mouseDown(
-        series.points[7].plotX,
-        series.points[7].plotY
-    );
-
-    controller.mouseMove(
-        series.points[7].plotX - 30,
-        series.points[7].plotY
-    );
-
-    controller.mouseUp(
-        series.points[7].plotX - 30,
-        series.points[7].plotY
-    );
+    panTo('right', series.points[7].plotX, series.points[7].plotY, 30);
 
     assert.strictEqual(
         chart.xAxis[0].getExtremes().min,
         expectedMin,
         'DataGrouping should not prevent panning to the RIGHT (#12099)'
     );
+
+    chart.xAxis[0].setExtremes(null, null); // reset old extremes
+
+    chart.update({
+        xAxis: {
+            ordinal: true
+        },
+        series: [{
+            data: usdeur // dataset must have gaps and datagrouping
+        }]
+    });
+
+    chart.xAxis[0].setExtremes(
+        chart.xAxis[0].toValue(100, true),
+        null
+    );
+
+    expectedMax = chart.xAxis[0].max;
+    panTo('left', series.points[150].plotX, series.points[7].plotY, 30);
+
+    assert.ok(
+        chart.xAxis[0].getExtremes().max !== expectedMax,
+        'DataGrouping should not prevent panning to the LEFT (#12099)'
+    );
+
+    panTo('right', series.points[150].plotX, series.points[7].plotY, 30);
+
+    assert.strictEqual(
+        chart.xAxis[0].getExtremes().max,
+        expectedMax,
+        'DataGrouping should not prevent panning to the RIGHT (#12099)'
+    );
+    chart.xAxis[0].setExtremes(null, null); // reset old extremes
 });
 
 QUnit.test('Data grouping, keys and turboThreshold', function (assert) {

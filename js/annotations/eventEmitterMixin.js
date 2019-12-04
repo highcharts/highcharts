@@ -23,6 +23,14 @@ var eventEmitterMixin = {
     addEvents: function () {
         var emitter = this;
 
+        H.addEvent(
+            emitter.graphic.element,
+            'mousedown',
+            function (e) {
+                emitter.onMouseDown(e);
+            }
+        );
+
         objectEach(emitter.options.events, function (event, type) {
             var eventHandler = function (e) {
                 if (type !== 'click' || !emitter.cancelClick) {
@@ -42,13 +50,6 @@ var eventEmitterMixin = {
         });
 
         if (emitter.options.draggable) {
-            H.addEvent(
-                emitter.graphic.element,
-                'mousedown',
-                function (e) {
-                    emitter.onMouseDown(e);
-                }
-            );
 
             H.addEvent(emitter, 'drag', emitter.onDrag);
 
