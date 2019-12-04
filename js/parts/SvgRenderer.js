@@ -2073,6 +2073,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 while (tspans.length) {
                     // Remove "y" from tspans, as Firefox translates them
                     tspans[0].setAttribute('y', 0);
+                    // Remove "x" from tspans
+                    tspans[0].setAttribute('x', -attrs.dx);
                     textPathElement.appendChild(tspans[0]);
                 }
             }
@@ -2126,26 +2128,40 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             delete this.applyTextOutline;
             // Restore DOM structure:
             this.destroyTextPath(elem, path);
+            // Bring attributes back
+            this.updateTransform();
+            // Set textOutline back for text()
+            if (this.options.rotation) {
+                this.applyTextOutline(this.options.style.textOutline);
+            }
         }
         return this;
     },
     destroyTextPath: function (elem, path) {
         var tspans, textElement = elem.getElementsByTagName('text')[0];
-        // Remove textPath attributes
-        textElement.removeAttribute('dx');
-        textElement.removeAttribute('dy');
-        // Remove ID's:
-        path.element.setAttribute('id', '');
-        // Check if textElement includes textPath,
-        if (textElement.getElementsByTagName('textPath').length) {
-            // Move nodes to <text>
-            tspans = this.textPathWrapper.element.childNodes;
-            // Now move all <tspan>'s to the <textPath> node
-            while (tspans.length) {
-                textElement.appendChild(tspans[0]);
+        if (textElement) {
+            // Remove textPath attributes
+            textElement.removeAttribute('dx');
+            textElement.removeAttribute('dy');
+            // Remove ID's:
+            path.element.setAttribute('id', '');
+            // Check if textElement includes textPath,
+            if (textElement.getElementsByTagName('textPath').length) {
+                // Move nodes to <text>
+                tspans = this.textPathWrapper.element.childNodes;
+                // Now move all <tspan>'s to the <textPath> node
+                while (tspans.length) {
+                    textElement.appendChild(tspans[0]);
+                }
+                // Remove <textPath> from the DOM
+                textElement.removeChild(this.textPathWrapper.element);
             }
-            // Remove <textPath> from the DOM
-            textElement.removeChild(this.textPathWrapper.element);
+        }
+        else if (elem.getAttribute('dx') || elem.getAttribute('dy')) {
+            // Remove textPath attributes from elem
+            // to get correct text-outline position
+            elem.removeAttribute('dx');
+            elem.removeAttribute('dy');
         }
         // Set textPathWrapper to undefined and destroy it
         this.textPathWrapper = this.textPathWrapper.destroy();
@@ -3825,7 +3841,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // end from becoming equal on 360 arcs (related: #1561)
             end = options.end - proximity, innerRadius = options.innerR, open = pick(options.open, fullCircle), cosStart = Math.cos(start), sinStart = Math.sin(start), cosEnd = Math.cos(end), sinEnd = Math.sin(end), 
             // Proximity takes care of rounding errors around PI (#6971)
-            longArc = options.end - start - Math.PI < proximity ? 0 : 1, arc;
+            longArc = pick(options.longArc, options.end - start - Math.PI < proximity ? 0 : 1), arc;
             arc = [
                 'M',
                 x + rx * cosStart,
@@ -3845,11 +3861,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 innerRadius, // y radius
                 0, // slanting
                 longArc, // long or short arc
-                0, // clockwise
-                x + innerRadius * cosStart, y + innerRadius * sinStart);
-            }
-            if (defined(options.longArc)) {
-                arc[7] = options.longArc;
+                // Clockwise - opposite to the outer arc clockwise
+                defined(options.clockwise) ? 1 - options.clockwise : 0, x + innerRadius * cosStart, y + innerRadius * sinStart);
             }
             arc.push(open ? '' : 'Z'); // close
             return arc;

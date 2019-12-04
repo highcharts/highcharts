@@ -160,46 +160,45 @@ var getDlOptions = function getDlOptions(params) {
         {})[0], options = merge({
         style: {}
     }, optionsLevel, optionsPoint), rotationRad, rotation, rotationMode = options.rotationMode;
-    if (options.textPath) {
-        if (point.shapeExisting.innerR === 0 &&
-            optionsLevel.textPath &&
-            optionsLevel.textPath.enabled) {
-            // Center dataLabel - disable textPath
-            options.textPath.enabled = false;
-            // Setting width and padding
-            options.style.width = Math.max(((point.shapeExisting.r * 2)) -
-                2 * (options.padding || 0), 1);
-        }
-        else if (point.dlOptions &&
-            point.dlOptions.textPath &&
-            !point.dlOptions.textPath.enabled &&
-            optionsLevel.textPath.enabled) {
-            // Bring dataLabel back if was a center dataLabel
-            options.textPath.enabled = true;
-        }
-        // Rest of the dataLabels
-        if (options.textPath.enabled) {
-            // Setting width and padding
-            options.style.width = Math.max(((point.outerArcLength +
-                point.innerArcLength) / 2) -
-                2 * (options.padding || 0), 1);
-        }
-    }
-    else if (!isNumber(options.rotation)) {
-        if (rotationMode === 'auto') {
+    if (!isNumber(options.rotation)) {
+        if (rotationMode === 'auto' || rotationMode === 'circular') {
             if (point.innerArcLength < 1 &&
                 point.outerArcLength > shape.radius) {
                 rotationRad = 0;
+                // Triger setTextPath function to get textOutline etc.
+                if (point.dataLabelPath && rotationMode === 'circular') {
+                    options.textPath = {
+                        enabled: true
+                    };
+                }
             }
             else if (point.innerArcLength > 1 &&
                 point.outerArcLength > 1.5 * shape.radius) {
-                rotationMode = 'parallel';
+                if (rotationMode === 'circular') {
+                    options.textPath = {
+                        enabled: true,
+                        attributes: {
+                            dy: 5
+                        }
+                    };
+                }
+                else {
+                    rotationMode = 'parallel';
+                }
             }
             else {
+                // Trigger the destroyTextPath function
+                if (point.dataLabel &&
+                    point.dataLabel.textPathWrapper &&
+                    rotationMode === 'circular') {
+                    options.textPath = {
+                        enabled: false
+                    };
+                }
                 rotationMode = 'perpendicular';
             }
         }
-        if (rotationMode !== 'auto') {
+        if (rotationMode !== 'auto' && rotationMode !== 'circular') {
             rotationRad = (shape.end -
                 (shape.end - shape.start) / 2);
         }
@@ -227,6 +226,33 @@ var getDlOptions = function getDlOptions(params) {
             rotation += 180;
         }
         options.rotation = rotation;
+    }
+    if (options.textPath) {
+        if (point.shapeExisting.innerR === 0 &&
+            options.textPath.enabled) {
+            // Enable rotation to render text
+            options.rotation = 0;
+            // Center dataLabel - disable textPath
+            options.textPath.enabled = false;
+            // Setting width and padding
+            options.style.width = Math.max((point.shapeExisting.r * 2) -
+                2 * (options.padding || 0), 1);
+        }
+        else if (point.dlOptions &&
+            point.dlOptions.textPath &&
+            !point.dlOptions.textPath.enabled &&
+            (rotationMode === 'circular')) {
+            // Bring dataLabel back if was a center dataLabel
+            options.textPath.enabled = true;
+        }
+        if (options.textPath.enabled) {
+            // Enable rotation to render text
+            options.rotation = 0;
+            // Setting width and padding
+            options.style.width = Math.max((point.outerArcLength +
+                point.innerArcLength) / 2 -
+                2 * (options.padding || 0), 1);
+        }
     }
     // NOTE: alignDataLabel positions the data label differntly when rotation is
     // 0. Avoiding this by setting rotation to a small number.
