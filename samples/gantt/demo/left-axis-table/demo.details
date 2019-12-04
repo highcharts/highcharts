@@ -3,7 +3,8 @@ name: Left axis as a table
 js_wrap: b
 authors:
   - Lars Cabrera
-tags: []
+tags:
+  - Gantt demo
 categories:
   - Highcharts Gantt
 ...

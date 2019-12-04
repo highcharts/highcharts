@@ -3,7 +3,8 @@ name: With navigation
 js_wrap: b
 authors:
   - Torstein Hønsi
-tags: []
+tags:
+  - Gantt demo
 categories:
   - Highcharts Gantt
 ...
