@@ -440,7 +440,8 @@ AccessibilityComponent.prototype = {
         var component = this;
 
         [
-            'click', 'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
+            'click', 'touchstart', 'touchend', 'touchcancel', 'touchmove',
+            'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
         ].forEach(function (evtType: string): void {
             component.addEvent(button, evtType, function (e: MouseEvent): void {
                 const clonedEvent = component.cloneMouseEvent(e);

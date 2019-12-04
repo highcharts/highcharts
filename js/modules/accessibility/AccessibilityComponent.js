@@ -275,7 +275,8 @@ AccessibilityComponent.prototype = {
     proxyMouseEventsForButton: function (source, button) {
         var component = this;
         [
-            'click', 'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
+            'click', 'touchstart', 'touchend', 'touchcancel', 'touchmove',
+            'mouseover', 'mouseenter', 'mouseleave', 'mouseout'
         ].forEach(function (evtType) {
             component.addEvent(button, evtType, function (e) {
                 var clonedEvent = component.cloneMouseEvent(e);
