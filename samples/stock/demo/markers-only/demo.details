@@ -3,7 +3,8 @@ name: Point markers only
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highstock demo
 categories:
   - Chart types
 ...
