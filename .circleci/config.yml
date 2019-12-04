@@ -62,7 +62,9 @@ commands:
       - run: "npx karma start test/karma-conf.js --tests maps/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests stock/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
       - run: "npx karma start test/karma-conf.js --tests gantt/*/* --reference --browsercount << parameters.browsercount >> --no-fail-on-empty-test-suite"
-
+  set_highcharts_version_env_var:
+    steps:
+      - run: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
 jobs:
   checkout_and_install:
     <<: *defaults
@@ -218,9 +220,7 @@ jobs:
         default: "ChromeHeadless"
     steps:
       - <<: *load_workspace
-      - run:
-          name: "Set application version env var"
-          command: echo "export HIGHCHARTS_VERSION=$(node -p "require('./package.json').version")" >> $BASH_ENV
+      - set_highcharts_version_env_var
       - generate_references_command
       - aws-s3/sync: # overwrite with remote reference images before uploading any new ones
           from: "s3://${HIGHCHARTS_VISUAL_TESTS_BUCKET}/visualtests/reference/latest/"
@@ -323,6 +323,7 @@ jobs:
       - <<: *add_gh_keys
       - <<: *add_to_ssh_config
       - <<: *add_gh_user_config
+      - set_highcharts_version_env_var
       - run:
           name: Clone highcharts-dist repository
           command: git clone -b master --single-branch git@github.com:highcharts/highcharts-dist.git --depth=1 /home/circleci/repo/highcharts-dist
@@ -333,13 +334,19 @@ jobs:
           name: Run copy-release
           command: cd ../highcharts && node copy-release
       - run:
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+      - run:
           name: Push to highcharts-dist nightly branch
           command: |
             cd ../highcharts-dist
             git checkout -b nightly
             git add .
             git commit -m"Nightly build - ${CIRCLE_BUILD_NUM}"
+            npm version ${HIGHCHARTS_VERSION}.$(date +%Y%m%d) --no-git-tag-version
             git push -u origin nightly
+            echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+            npm publish --tag next
 workflows:
   version: 2
   build_and_test:
