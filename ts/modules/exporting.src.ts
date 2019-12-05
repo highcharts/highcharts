@@ -40,6 +40,10 @@ declare global {
             /** @requires modules/exporting */
             addButton(options: ExportingButtonOptions): void;
             /** @requires modules/exporting */
+            afterPrint(): void;
+            /** @requires modules/exporting */
+            beforePrint(): void;
+            /** @requires modules/exporting */
             contextMenu(
                 className: string,
                 items: Array<(string|ExportingMenuObject)>,
@@ -69,6 +73,8 @@ declare global {
             ): string;
             /** @requires modules/exporting */
             inlineStyles(): void;
+            /** @requires modules/exporting */
+            moveContainers(moveTo: HTMLDOMElement): void;
             /** @requires modules/exporting */
             print(): void;
             /** @requires modules/exporting */
@@ -198,19 +204,6 @@ declare global {
             url: string,
             data: object,
             formAttributes?: Dictionary<string>
-        ): void;
-        /** @requires modules/exporting */
-        function afterPrint(
-            chart: Chart
-        ): void;
-        /** @requires modules/exporting */
-        function beforePrint(
-            chart: Chart
-        ): void;
-        /** @requires modules/exporting */
-        function moveContainers(
-            chart: Chart,
-            moveTo: HTMLDOMElement
         ): void;
 
         let printingChart: (Chart|undefined);
@@ -1259,141 +1252,6 @@ H.post = function (
     discardElement(form);
 };
 
-/**
-* Move the chart container(s) to another div.
-*
-* @function Highcharts#moveContainers
-*
-* @private
-*
-* @param {Highcharts.Chart} chart
-*        Move from chart
-* @param {Highcharts.HTMLDOMElement} moveTo
-*        Move target
-* @return {void}
-*/
-H.moveContainers = function (
-    chart: Highcharts.Chart,
-    moveTo: Highcharts.HTMLDOMElement
-): void {
-    (
-        chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
-            [chart.fixedDiv, chart.scrollingContainer as any] :
-            [chart.container]
-
-    ).forEach(function (div: Highcharts.HTMLDOMElement): void {
-        moveTo.appendChild(div);
-    });
-};
-
-/**
-* Prepare chart and document before printing a chart.
-*
-* @function Highcharts#beforePrint
-*
-* @private
-*
-* @param {Highcharts.Chart} chart
-*        Chart to be printed
-* @return {void}
-*
-* @fires Highcharts.Chart#event:beforePrint
-*/
-H.beforePrint = function (
-    chart: Highcharts.Chart
-): void {
-    const body = doc.body,
-        printMaxWidth: number =
-            (chart.options.exporting as any).printMaxWidth,
-        printReverseInfo: Highcharts.PrintReverseInfoObject = {
-            childNodes: body.childNodes,
-            origDisplay: [],
-            resetParams: void 0
-        };
-
-    var handleMaxWidth: (boolean|number);
-
-    chart.isPrinting = true;
-    chart.pointer.reset(null as any, 0);
-
-    fireEvent(chart, 'beforePrint');
-
-    // Handle printMaxWidth
-    handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
-    if (handleMaxWidth) {
-        printReverseInfo.resetParams = [
-            (chart.options.chart as any).width,
-            void 0,
-            false
-        ];
-        chart.setSize(printMaxWidth, void 0, false);
-    }
-
-    // hide all body content
-    [].forEach.call(printReverseInfo.childNodes, function (
-        node: Highcharts.HTMLDOMElement,
-        i: number
-    ): void {
-        if (node.nodeType === 1) {
-            printReverseInfo.origDisplay[i] = node.style.display;
-            node.style.display = 'none';
-        }
-    });
-
-    // pull out the chart
-    H.moveContainers(chart, body);
-    // Storage details for undo action after printing
-    chart.printReverseInfo = printReverseInfo;
-};
-
-/**
-* Clena up after printing a chart.
-*
-* @function Highcharts#afterPrint
-*
-* @private
-*
-* @param {Highcharts.Chart} chart
-*        Chart that was (or suppose to be) printed
-* @return {void}
-*
-* @fires Highcharts.Chart#event:afterPrint
-*/
-H.afterPrint = function (
-    chart: Highcharts.Chart
-): void {
-    if (!chart.printReverseInfo) {
-        return void 0;
-    }
-    const childNodes = chart.printReverseInfo.childNodes,
-        origDisplay = chart.printReverseInfo.origDisplay,
-        resetParams = chart.printReverseInfo.resetParams;
-
-    // put the chart back in
-    H.moveContainers(chart, chart.renderTo);
-
-    // restore all body content
-    [].forEach.call(childNodes, function (
-        node: Highcharts.HTMLDOMElement,
-        i: number
-    ): void {
-        if (node.nodeType === 1) {
-            node.style.display = (origDisplay[i] || '');
-        }
-    });
-
-    chart.isPrinting = false;
-
-    // Reset printMaxWidth
-    if (resetParams) {
-        chart.setSize.apply(chart, resetParams);
-    }
-
-    delete chart.printReverseInfo;
-    delete H.printingChart;
-
-    fireEvent(chart, 'afterPrint');
-};
 
 if (H.isSafari) {
     H.win.matchMedia('print').addListener(
@@ -1405,9 +1263,9 @@ if (H.isSafari) {
                 return void 0;
             }
             if (mqlEvent.matches) {
-                H.beforePrint(H.printingChart);
+                H.printingChart.beforePrint();
             } else {
-                H.afterPrint(H.printingChart);
+                H.printingChart.afterPrint();
             }
         }
     );
@@ -1791,6 +1649,142 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     },
 
     /**
+    * Move the chart container(s) to another div.
+    *
+    * @function Highcharts#moveContainers
+    *
+    * @private
+    *
+    * @param {Highcharts.HTMLDOMElement} moveTo
+    *        Move target
+    * @return {void}
+    */
+    moveContainers: function (
+        this: Highcharts.Chart,
+        moveTo: Highcharts.HTMLDOMElement
+    ): void {
+        const chart = this;
+        (
+            chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
+                [chart.fixedDiv, chart.scrollingContainer as any] :
+                [chart.container]
+
+        ).forEach(function (div: Highcharts.HTMLDOMElement): void {
+            moveTo.appendChild(div);
+        });
+    },
+
+    /**
+    * Prepare chart and document before printing a chart.
+    *
+    * @function Highcharts#beforePrint
+    *
+    * @private
+    *
+    * @return {void}
+    *
+    * @fires Highcharts.Chart#event:beforePrint
+    */
+    beforePrint: function (
+        this: Highcharts.Chart
+    ): void {
+        const chart = this,
+            body = doc.body,
+            printMaxWidth: number =
+                (chart.options.exporting as any).printMaxWidth,
+            printReverseInfo: Highcharts.PrintReverseInfoObject = {
+                childNodes: body.childNodes,
+                origDisplay: [],
+                resetParams: void 0
+            };
+
+        var handleMaxWidth: (boolean|number);
+
+        chart.isPrinting = true;
+        chart.pointer.reset(null as any, 0);
+
+        fireEvent(chart, 'beforePrint');
+
+        // Handle printMaxWidth
+        handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
+        if (handleMaxWidth) {
+            printReverseInfo.resetParams = [
+                (chart.options.chart as any).width,
+                void 0,
+                false
+            ];
+            chart.setSize(printMaxWidth, void 0, false);
+        }
+
+        // hide all body content
+        [].forEach.call(printReverseInfo.childNodes, function (
+            node: Highcharts.HTMLDOMElement,
+            i: number
+        ): void {
+            if (node.nodeType === 1) {
+                printReverseInfo.origDisplay[i] = node.style.display;
+                node.style.display = 'none';
+            }
+        });
+
+        // pull out the chart
+        chart.moveContainers(body);
+        // Storage details for undo action after printing
+        chart.printReverseInfo = printReverseInfo;
+    },
+
+    /**
+    * Clena up after printing a chart.
+    *
+    * @function Highcharts#afterPrint
+    *
+    * @private
+    *
+    * @param {Highcharts.Chart} chart
+    *        Chart that was (or suppose to be) printed
+    * @return {void}
+    *
+    * @fires Highcharts.Chart#event:afterPrint
+    */
+    afterPrint: function (
+        this: Highcharts.Chart
+    ): void {
+        const chart = this;
+
+        if (!chart.printReverseInfo) {
+            return void 0;
+        }
+        const childNodes = chart.printReverseInfo.childNodes,
+            origDisplay = chart.printReverseInfo.origDisplay,
+            resetParams = chart.printReverseInfo.resetParams;
+
+        // put the chart back in
+        chart.moveContainers(chart.renderTo);
+
+        // restore all body content
+        [].forEach.call(childNodes, function (
+            node: Highcharts.HTMLDOMElement,
+            i: number
+        ): void {
+            if (node.nodeType === 1) {
+                node.style.display = (origDisplay[i] || '');
+            }
+        });
+
+        chart.isPrinting = false;
+
+        // Reset printMaxWidth
+        if (resetParams) {
+            chart.setSize.apply(chart, resetParams);
+        }
+
+        delete chart.printReverseInfo;
+        delete H.printingChart;
+
+        fireEvent(chart, 'afterPrint');
+    },
+
+    /**
      * Exporting module required. Clears away other elements in the page and
      * prints the chart as it is displayed. By default, when the exporting
      * module is enabled, a context button with a drop down menu in the upper
@@ -1818,7 +1812,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         H.printingChart = chart;
 
         if (!H.isSafari) {
-            H.beforePrint(chart);
+            chart.beforePrint();
         }
 
         // Give the browser time to draw WebGL content, an issue that randomly
@@ -1831,7 +1825,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // allow the browser to prepare before reverting
             if (!H.isSafari) {
                 setTimeout(function (): void {
-                    H.afterPrint(chart);
+                    chart.afterPrint();
                 }, 1000);
             }
         }, 1);
