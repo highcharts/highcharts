@@ -481,13 +481,13 @@ H.addEvent(H.Chart, 'redraw', function () {
     if (patterns.length) {
         // Look through the DOM for usage of the patterns. This can be points,
         // series, tooltips etc.
-        [].forEach.call(this.renderTo.querySelectorAll('[color^="url(#"], [fill^="url(#"], [stroke^="url(#"]'), function (node) {
+        [].forEach.call(this.renderTo.querySelectorAll('[color^="url("], [fill^="url("], [stroke^="url("]'), function (node) {
             var id = node.getAttribute('fill') ||
                 node.getAttribute('color') ||
                 node.getAttribute('stroke');
             if (id) {
                 usedIds.push(id
-                    .substring(id.indexOf('url(#') + 5)
+                    .substring(id.indexOf('url(') + 5)
                     .replace(')', ''));
             }
         });
