@@ -60,11 +60,11 @@ const SOURCE_GLOBS = [
     'js/modules/timeline.src.js',
     'js/modules/networkgraph/*.js',
     'js/modules/sonification/*.js',
-    'js/annotations/annotations.src.js'
+    'js/annotations/annotations.src.js',
+    'js/annotations/ControlPoint.js',
+    'js/annotations/MockPoint.js'
     /*
     'js/annotations/eventEmitterMixin.js',
-    'js/annotations/MockPoint.js',
-    'js/annotations/ControlPoint.js',
     'js/annotations/controllable/controllableMixin.js',
     'js/annotations/controllable/ControllableCircle.js',
     'js/annotations/controllable/ControllableImage.js',

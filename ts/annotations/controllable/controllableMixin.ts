@@ -101,15 +101,6 @@ declare global {
     }
 }
 
-import U from './../../parts/Utilities.js';
-var isObject = U.isObject,
-    isString = U.isString,
-    splat = U.splat;
-
-import './../../parts/Tooltip.js';
-import ControlPoint from './../ControlPoint.js';
-import MockPoint from './../MockPoint.js';
-
 /**
  * An object which denots a controllable's anchor positions - relative and
  * absolute.
@@ -125,6 +116,33 @@ import MockPoint from './../MockPoint.js';
  * @type {Highcharts.BBoxObject}
  */
 
+/**
+ * @interface Highcharts.AnnotationControllable
+ *//**
+ * @name Highcharts.AnnotationControllable#annotation
+ * @type {Highcharts.Annotation}
+ *//**
+ * @name Highcharts.AnnotationControllable#chart
+ * @type {Highcharts.Chart}
+ *//**
+ * @name Highcharts.AnnotationControllable#collection
+ * @type {string}
+ *//**
+ * @name Highcharts.AnnotationControllable#controlPoints
+ * @type {Array<Highcharts.AnnotationControlPoint>}
+ *//**
+ * @name Highcharts.AnnotationControllable#points
+ * @type {Array<Highcharts.AnnotationPointType>}
+ */
+
+import U from './../../parts/Utilities.js';
+var isObject = U.isObject,
+    isString = U.isString,
+    splat = U.splat;
+
+import './../../parts/Tooltip.js';
+import ControlPoint from './../ControlPoint.js';
+import MockPoint from './../MockPoint.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -219,7 +237,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
     /**
      * Returns object which denotes anchor position - relative and absolute.
      *
-     * @param {Annotation.AnnotationPointType} point
+     * @param {Highcharts.AnnotationPointType} point
      * A point like object.
      *
      * @return {Highcharts.AnnotationAnchorObject} a controllable anchor

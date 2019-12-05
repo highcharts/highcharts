@@ -28,24 +28,35 @@ var merge = H.merge, addEvent = H.addEvent, fireEvent = H.fireEvent, find = H.fi
  *
  ******************************************************************** */
 /**
+ * @callback Highcharts.AnnotationControlPointPositioner
+ * @param {Highcharts.AnnotationControllable} target
+ * @return {Highcharts.PositionObject} position
+ */
+/**
+ * @typedef {""|"x"|"xy"|"y"} Highcharts.AnnotationDraggableValue
+ */
+/**
  * @typedef {
  *          Highcharts.AnnotationControllableCircle|
  *          Highcharts.AnnotationControllableImage|
  *          Highcharts.AnnotationControllablePath|
  *          Highcharts.AnnotationControllableRect
  *          }
- *          Annotation.Shape
+ *          Highcharts.AnnotationShapeType
+ * @requires modules/annotations
  */
 /**
  * @typedef {
  *          Highcharts.AnnotationControllableLabel
  *          }
  *          Highcharts.AnnotationLabelType
+ * @requires modules/annotations
  */
 /**
- * @callback Highcharts.AnnotationControlPointPositioner
- * @param {Highcharts.AnnotationControllable} target
- * @return {Highcharts.PositionObject} position
+ * A point-like object, a mock point or a point used in series.
+ *
+ * @typedef {Highcharts.AnnotationMockPoint|Highcharts.Point} Highcharts.AnnotationPointType
+ * @requires modules/annotations
  */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -481,7 +492,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * defined x, y properties and optionally axes.
          *
          * @declare   Highcharts.AnnotationMockPointOptionsObject
-         * @type      {string|Highcharts.MockPointOptionsObject}
+         * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
          * @extends   annotations.labels.point
          * @apioption annotations.shapes.point
          */

@@ -132,8 +132,8 @@ declare global {
         type AnnotationShapeType = AnnotationControllable;
         interface AnnotationMockPointOptionsObject {
             x: number;
-            y: number;
             xAxis?: (number|string|Axis|null);
+            y: number;
             yAxis?: (number|string|Axis|null);
         }
         interface AnnotationPoint extends Point {
@@ -262,13 +262,24 @@ var merge = H.merge,
  ******************************************************************** */
 
 /**
+ * @callback Highcharts.AnnotationControlPointPositioner
+ * @param {Highcharts.AnnotationControllable} target
+ * @return {Highcharts.PositionObject} position
+ */
+
+/**
+ * @typedef {""|"x"|"xy"|"y"} Highcharts.AnnotationDraggableValue
+ */
+
+/**
  * @typedef {
  *          Highcharts.AnnotationControllableCircle|
  *          Highcharts.AnnotationControllableImage|
  *          Highcharts.AnnotationControllablePath|
  *          Highcharts.AnnotationControllableRect
  *          }
- *          Annotation.Shape
+ *          Highcharts.AnnotationShapeType
+ * @requires modules/annotations
  */
 
 /**
@@ -276,12 +287,14 @@ var merge = H.merge,
  *          Highcharts.AnnotationControllableLabel
  *          }
  *          Highcharts.AnnotationLabelType
+ * @requires modules/annotations
  */
 
 /**
- * @callback Highcharts.AnnotationControlPointPositioner
- * @param {Highcharts.AnnotationControllable} target
- * @return {Highcharts.PositionObject} position
+ * A point-like object, a mock point or a point used in series.
+ *
+ * @typedef {Highcharts.AnnotationMockPoint|Highcharts.Point} Highcharts.AnnotationPointType
+ * @requires modules/annotations
  */
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -782,7 +795,7 @@ merge(
              * defined x, y properties and optionally axes.
              *
              * @declare   Highcharts.AnnotationMockPointOptionsObject
-             * @type      {string|Highcharts.MockPointOptionsObject}
+             * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
              * @extends   annotations.labels.point
              * @apioption annotations.shapes.point
              */

@@ -54,7 +54,8 @@ import eventEmitterMixin from './eventEmitterMixin.js';
  * A control point class which is a connection between controllable
  * transform methods and a user actions.
  *
- * @constructor
+ * @class
+ * @name Highcharts.AnnotationControlPoint
  * @mixes eventEmitterMixin
  *
  * @param {Highcharts.Chart} chart
