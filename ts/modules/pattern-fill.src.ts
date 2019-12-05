@@ -687,7 +687,7 @@ H.addEvent(H.Chart, 'redraw', function (): void {
         // series, tooltips etc.
         [].forEach.call(
             this.renderTo.querySelectorAll(
-                '[color^="url(#"], [fill^="url(#"], [stroke^="url(#"]'
+                '[color^="url("], [fill^="url("], [stroke^="url("]'
             ),
             function (node: Highcharts.SVGDOMElement): void {
                 var id = node.getAttribute('fill') ||
@@ -697,7 +697,7 @@ H.addEvent(H.Chart, 'redraw', function (): void {
                 if (id) {
                     usedIds.push(
                         id
-                            .substring(id.indexOf('url(#') + 5)
+                            .substring(id.indexOf('url(') + 5)
                             .replace(')', '')
                     );
                 }
