@@ -402,7 +402,7 @@ workflows:
           filters:
             branches:
               only: [master]
-          context: highcharts-staging
+          context: highcharts-prod
 
   nightly:
     triggers:
