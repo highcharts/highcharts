@@ -16,6 +16,7 @@ declare global {
     namespace Highcharts {
         interface ColorPoint extends Point {
             series: ColorSeries;
+            value?: (number|null);
             setVisible(vis?: boolean): void;
         }
         interface ColorPointMixin {
@@ -106,7 +107,7 @@ H.colorSeriesMixin = {
 
             color = point.options.color ||
                 (
-                    point.isNull ?
+                    point.isNull || point.value === null ?
                         nullColor :
                         (colorAxis && typeof value !== 'undefined') ?
                             colorAxis.toColor(value, point) :

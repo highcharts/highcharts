@@ -393,11 +393,10 @@ seriesType('tilemap', 'heatmap'
         var _this = this;
         // In styled mode, use CSS, otherwise the fill used in the style
         // sheet will take precedence over the fill attribute.
-        var func = this.chart.styledMode ? 'css' : 'animate';
         H.seriesTypes.column.prototype.drawPoints.call(this);
         this.points.forEach(function (point) {
             point.graphic &&
-                point.graphic[func](_this.colorAttribs(point));
+                point.graphic[_this.chart.styledMode ? 'css' : 'animate'](_this.colorAttribs(point));
         });
     },
     // Set tile shape object on series

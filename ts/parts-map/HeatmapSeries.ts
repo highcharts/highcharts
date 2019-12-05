@@ -28,6 +28,7 @@ declare global {
             public x: number;
             public y: number;
             public getCellAttributes(): HeatmapPointCellAttributes;
+            public hasNullValue(): boolean;
         }
         class HeatmapSeries
             extends ScatterSeries
@@ -135,8 +136,7 @@ var colorMapPointMixin = H.colorMapPointMixin,
     Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    symbols = H.SVGRenderer.prototype.symbols,
-    UNDEFINED: undefined;
+    symbols = H.SVGRenderer.prototype.symbols;
 
 /**
  * @private
@@ -262,7 +262,7 @@ seriesType<Highcharts.HeatmapSeries>(
             symbol: 'rect',
             /** @ignore-option */
             radius: 0,
-            lineColor: UNDEFINED
+            lineColor: void 0
         },
 
         clip: true,
@@ -313,7 +313,7 @@ seriesType<Highcharts.HeatmapSeries>(
         init: function (this: Highcharts.HeatmapSeries): void {
             var options;
 
-            seriesTypes.scatter.prototype.init.apply(this, arguments as any);
+            Series.prototype.init.apply(this, arguments as any);
 
             options = this.options;
             // #3758, prevent resetting in setData
@@ -327,7 +327,7 @@ seriesType<Highcharts.HeatmapSeries>(
                 rect: symbols.square
             });
         },
-        getSymbol: seriesTypes.scatter.prototype.getSymbol,
+        getSymbol: Series.prototype.getSymbol,
 
         /**
          * @private
@@ -362,7 +362,7 @@ seriesType<Highcharts.HeatmapSeries>(
                 point: Highcharts.HeatmapPoint
             ): void {
                 var pointAttr,
-                    dif,
+                    sizeDif,
                     hasImage =
                         (point.marker && point.marker.symbol || shape || '')
                             .match(/url/),
@@ -377,11 +377,11 @@ seriesType<Highcharts.HeatmapSeries>(
                 // If marker shape is regular (symetric), find shorter
                 // cell's side.
                 if (hasRegularShape) {
-                    dif = Math.abs(shapeArgs.width - shapeArgs.height);
+                    sizeDif = Math.abs(shapeArgs.width - shapeArgs.height);
                     shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2) +
-                        (shapeArgs.width < shapeArgs.height ? 0 : dif / 2);
+                        (shapeArgs.width < shapeArgs.height ? 0 : sizeDif / 2);
                     shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2) +
-                        (shapeArgs.width < shapeArgs.height ? dif / 2 : 0);
+                        (shapeArgs.width < shapeArgs.height ? sizeDif / 2 : 0);
                     shapeArgs.width = shapeArgs.height =
                         Math.min(shapeArgs.width, shapeArgs.height);
                 }
@@ -425,7 +425,7 @@ seriesType<Highcharts.HeatmapSeries>(
             point: Highcharts.HeatmapPoint,
             state?: string
         ): Highcharts.SVGAttributes {
-            var attr = seriesTypes.scatter.prototype.pointAttribs
+            var attr = Series.prototype.pointAttribs
                     .call(this, point, state),
                 seriesOptions = this.options || {},
                 stateOptions,
@@ -447,10 +447,8 @@ seriesType<Highcharts.HeatmapSeries>(
                 brightness = stateOptions.brightness;
 
                 attr.fill =
-                    stateOptions.color || (brightness !== UNDEFINED &&
-                        H.color(attr.fill)
-                            .brighten(brightness)
-                            .get()) || attr.fill;
+                    stateOptions.color ||
+                    H.color(attr.fill).brighten(brightness || 0).get();
 
                 attr.stroke = stateOptions.lineColor;
             }
@@ -499,19 +497,18 @@ seriesType<Highcharts.HeatmapSeries>(
 
             // In styled mode, use CSS, otherwise the fill used in the style
             // sheet will take precedence over the fill attribute.
-            var func = this.chart.styledMode ? 'css' : 'animate',
-                seriesMarkerOptions = this.options.marker || {};
+            var seriesMarkerOptions = this.options.marker || {};
 
             if (seriesMarkerOptions.enabled || this._hasPointMarkers) {
-                seriesTypes.scatter.prototype.drawPoints.call(this);
-                this.points.forEach(function (
+                Series.prototype.drawPoints.call(this);
+                this.points.forEach((
                     point: Highcharts.HeatmapPoint
-                ): void {
-                    if (!point.isNull) {
-                        point.graphic &&
-                        point.graphic[func](this.colorAttribs(point));
-                    }
-                }, this);
+                ): void => {
+                    point.graphic &&
+                    point.graphic[
+                        this.chart.styledMode ? 'css' : 'animate'
+                    ](this.colorAttribs(point));
+                });
             }
         },
 
@@ -578,27 +575,34 @@ seriesType<Highcharts.HeatmapSeries>(
             this: Highcharts.HeatmapSeries,
             itemOptions: Highcharts.SeriesOptionsType
         ): Highcharts.HeatmapSeriesOptions {
-            var newOptions,
-                propsMap = {
-                    borderWidth: 'lineWidth',
-                    borderColor: 'lineColor'
-                };
+            var chart = this.chart,
+                plotOptions = chart.options && chart.options.plotOptions || {},
+                newOptions: Highcharts.HeatmapSeriesOptions | undefined;
 
-            // Keep backward compatibility for borderWidth
-            for (const prop in propsMap) {
-                if (H.defined((itemOptions as any)[prop])) {
-                    const markerOptions: Highcharts.Dictionary<number> = {};
+            [
+                ['borderWidth', 'lineWidth'],
+                ['borderColor', 'lineColor']
+            ].forEach((prop): void => {
+                const oldProp = (itemOptions as any)[prop[0]] ||
+                    (
+                        plotOptions.series &&
+                        (plotOptions.series as any)[prop[0]]
+                    ) ||
+                    (plotOptions as any)[this.type][prop[0]];
 
-                    markerOptions[(propsMap as any)[prop]] =
-                        (itemOptions as any)[prop];
+                if (oldProp) {
+                    const markerOptions = {};
 
-                    newOptions = merge(newOptions, itemOptions, {
-                        marker: merge(itemOptions.marker, markerOptions)
+                    // Remap property into marker object
+                    (markerOptions as any)[prop[1]] = oldProp;
+
+                    newOptions = H.merge(newOptions, itemOptions, {
+                        marker: H.merge(itemOptions.marker, markerOptions)
                     });
                 }
-            }
+            });
 
-            return Series.prototype.setOptions
+            return H.Series.prototype.setOptions
                 .apply(this, [newOptions || itemOptions]);
         }
 
@@ -620,6 +624,42 @@ seriesType<Highcharts.HeatmapSeries>(
          */
 
         /* eslint-disable valid-jsdoc */
+
+        /**
+         * @private
+         * @function Highcharts.Point#applyOptions
+         * @param {Highcharts.HeatmapPointOptions} options
+         * @param {number} x
+         * @return {Highcharts.SVGPathArray}
+         */
+        applyOptions: function (
+            this: Highcharts.HeatmapPoint,
+            options: Highcharts.HeatmapPointOptions,
+            x?: number
+        ): Highcharts.HeatmapPoint {
+            var point = H.Point.prototype
+                .applyOptions.call(this, options, x) as any;
+
+            point.formatPrefix =
+                point.isNull || point.value === null ?
+                    'null' : 'point';
+
+            return point;
+        },
+        /**
+         * Color points have a value option that determines whether or not it is
+         * a null point
+         * @private
+         * @function Highcharts.HeatmapPoint.isValid
+         * @return {boolean}
+         */
+        isValid: function (this: Highcharts.HeatmapPoint): boolean {
+            // undefined is allowed
+            return (
+                this.value !== Infinity &&
+                this.value !== -Infinity
+            );
+        },
 
         /**
          * @private
@@ -713,7 +753,7 @@ seriesType<Highcharts.HeatmapSeries>(
             // and pointPadding while calculating cell attributes.
             ['width', 'height'].forEach(function (prop: string): void {
                 const direction = prop === 'width' ? 'x' : 'y',
-                    coords = [`${direction}1`, `${direction}2`];
+                    coords = [direction + '1', direction + '2'];
 
                 const side = Math.abs(
                         cellAttr[coords[0]] - cellAttr[coords[1]]

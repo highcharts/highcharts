@@ -798,12 +798,13 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
         ): void {
             // In styled mode, use CSS, otherwise the fill used in the style
             // sheet will take precedence over the fill attribute.
-            var func = this.chart.styledMode ? 'css' : 'animate';
             H.seriesTypes.column.prototype.drawPoints.call(this);
             this.points.forEach(
                 (point: Highcharts.TilemapPoint): void => {
                     point.graphic &&
-                    point.graphic[func](this.colorAttribs(point));
+                        point.graphic[
+                            this.chart.styledMode ? 'css' : 'animate'
+                        ](this.colorAttribs(point));
                 }
             );
         },
