@@ -49,7 +49,7 @@ declare global {
                 minFontSize?: number
             ): number;
             public drawPoints(): void;
-            public getPlotBox(): Dictionary<number>;
+            public getPlotBox(): SeriesPlotBoxObject;
             public hasData(): boolean;
             public pointAttribs(
                 point: WordcloudPoint,
@@ -1188,7 +1188,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
     },
     getPlotBox: function (
         this: Highcharts.WordcloudSeries
-    ): Highcharts.Dictionary<number> {
+    ): Highcharts.SeriesPlotBoxObject {
         var series = this,
             chart = series.chart,
             inverted = chart.inverted,

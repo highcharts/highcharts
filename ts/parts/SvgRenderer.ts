@@ -322,6 +322,7 @@ declare global {
             ): SVGElement;
             public circle(attribs: SVGAttributes): SVGElement;
             public circle(x?: number, y?: number, r?: number): SVGElement;
+            public clipRect(attribs: SVGAttributes): ClipRectElement;
             public clipRect(
                 x?: number,
                 y?: number,

@@ -377,7 +377,7 @@ bindingsUtils.updateHeight = function (
     annotation.update({
         typeOptions: {
             height: this.chart.pointer.getCoordinates(e).yAxis[0].value -
-                annotation.options.typeOptions.points[1].y
+                (annotation.options.typeOptions.points as any)[1].y
         }
     });
 };
@@ -458,7 +458,7 @@ bindingsUtils.updateNthPoint = function (
             x = coords.xAxis[0].value,
             y = coords.yAxis[0].value;
 
-        options.points.forEach(function (
+        (options.points as any).forEach(function (
             point: Highcharts.Point,
             index: number
         ): void {
@@ -2214,7 +2214,7 @@ var stockToolsBindings = {
         ): void {
             var navigation = this,
                 chart = navigation.chart,
-                annotations: Array<Highcharts.AnnotationOptions> = [],
+                annotations: Array<Highcharts.AnnotationsOptions> = [],
                 indicators: Array<Highcharts.SeriesOptions> = [],
                 flags: Array<Highcharts.SeriesOptions> = [],
                 yAxes: Array<Highcharts.YAxisOptions> = [];

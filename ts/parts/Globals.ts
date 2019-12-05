@@ -19,12 +19,6 @@ declare global {
      * [[include:README.md]]
      */
     namespace Highcharts {
-        interface Annotation { // @todo annotations
-            [key: string]: any; // @todo annotations
-        }
-        interface AnnotationOptions { // @todo annotations
-            [key: string]: any; // @todo annotations
-        }
         interface Axis {
             rightWall?: any; // @todo
             beforePadding?: Function; // @todo
@@ -69,8 +63,6 @@ declare global {
         interface Tick {
             slotWidth?: any; // @todo
         }
-        const Annotation: any; // @todo annotations
-        const AnnotationOptions: any; // @todo annotations
         const NavigationBindings: any; // @todo annotations
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
