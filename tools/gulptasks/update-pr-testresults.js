@@ -8,7 +8,7 @@ const fs = require('fs');
 const logLib = require('./lib/log');
 const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
-const { getFilesChanged } = require('./lib/git');
+const { getFilesChanged, getLatestCommitShaSync } = require('./lib/git');
 const { uploadFiles, getS3Object, putS3Object } = require('./lib/uploadS3');
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
@@ -75,6 +75,49 @@ async function fetchPRComments(pr, user, filterText) {
                 reject(new Error(`Failed to fetch comments for PR #${pr}.: ` + err));
             });
     });
+}
+
+/**
+ * Updates the status of the commit on github with the provided status in order to display it in pr.
+ *
+ * @param {string|number} pr that the commit is for
+ * @param {string} status of commit. error, failure, pending, or success.
+ * @return {Promise<Promise|void>} result
+ */
+async function postGitCommitStatusUpdate(pr, status = 'pending') {
+    if (argv.dryrun) {
+        const message = 'Dryrun (skipping github status update)..';
+        logLib.message(message);
+        return Promise.resolve(message);
+    }
+    const commitSha = getLatestCommitShaSync();
+
+    return new Promise((resolve, reject) => {
+        doRequest({
+            ...DEFAULT_OPTIONS,
+            url: `https://api.github.com/repos/highcharts/highcharts/statuses/${commitSha}`,
+            method: 'POST',
+            body: {
+                owner: 'highcharts',
+                repo: 'highcharts',
+                sha: commitSha,
+                state: status,
+                // eslint-disable-next-line camelcase
+                target_url: `https://vrevs.highsoft.com/pr/${pr}/review`,
+                description: 'Pending review of changed samples',
+                context: 'Highcharts review tool'
+            }
+        })
+            .then(response => {
+                logLib.message(`Github status for ${commitSha} created with ${status}`);
+                resolve(response);
+            })
+            .catch(err => {
+                logLib.warn(`Failed to create github status for sha ${commitSha}: ${err.message}`);
+                reject(err);
+            });
+    });
+
 }
 
 /**
@@ -419,6 +462,15 @@ async function commentOnPR() {
 
     const { containsText = DEFAULT_COMMENT_TITLE } = argv;
     const existingComments = await fetchPRComments(pr, user, containsText);
+
+    try {
+        if (diffingSamples.length > 0) {
+            await postGitCommitStatusUpdate(pr);
+        }
+    } catch (err) {
+        // dont fail task just because status update failed
+        logLib.warn('Failed to update github status for pr ' + pr);
+    }
 
     try {
         if (!alwaysAdd && existingComments.length > 0) {
