@@ -351,10 +351,12 @@ H.SVGRenderer.prototype.addPattern = function (
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
-        id = 'highcharts-pattern-' + (this.chartIndex || 0) + '-' +
-            this.idCounter;
+        id = 'highcharts-pattern-' + this.idCounter;
         ++this.idCounter;
     }
+
+    // Add chart index
+    id += '-' + (this.chartIndex || 0);
 
     // Do nothing if ID already exists
     this.defIds = this.defIds || [];
@@ -538,18 +540,25 @@ addEvent(H.Point, 'afterInit', function (): void {
 H.addEvent(H.SVGRenderer, 'complexColor', function (
     args: {
         args: [
-            Highcharts.PatternObject,
+            Highcharts.PatternObject | string,
             string,
             Highcharts.SVGDOMElement
         ];
     }
 ): boolean {
-    var color = args.args[0],
+    const color = args.args[0],
         prop = args.args[1],
         element = args.args[2],
-        pattern = color.pattern,
-        value = '#343434',
-        forceHashId;
+        chartIndex = (this.chartIndex || 0);
+
+    // Handle url() colors by adding the chart index.
+    if (typeof color === 'string') {
+        element.setAttribute(prop, color.replace(')', `-${chartIndex})`));
+        return false;
+    }
+
+    let pattern = color.pattern,
+        value = '#343434';
 
     // Skip and call default if there is no pattern
     if (!pattern) {
@@ -568,7 +577,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (
         // point render, meaning they are drawn before autocalculated image
         // width/heights. We don't want them to highjack the width/height for
         // this ID if it is defined by users.
-        forceHashId = element.parentNode &&
+        let forceHashId = element.parentNode &&
             (element.parentNode as any).getAttribute('class');
         forceHashId = forceHashId &&
             forceHashId.indexOf('highcharts-legend') > -1;
@@ -589,8 +598,8 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (
         if (forceHashId || !pattern.id) {
             // Make a copy so we don't accidentally edit options when setting ID
             pattern = merge({}, pattern);
-            pattern.id = 'highcharts-pattern-' + (this.chartIndex || 0) + '-' +
-                hashFromObject(pattern) + hashFromObject(pattern, true);
+            pattern.id = 'highcharts-pattern-' + hashFromObject(pattern) +
+                hashFromObject(pattern, true);
         }
 
         // Add it. This function does nothing if an element with this ID
@@ -601,7 +610,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (
             { duration: 100 }
         ));
 
-        value = 'url(' + this.url + '#' + pattern.id + ')';
+        value = `url(${this.url}#${pattern.id}-${chartIndex})`;
 
     } else {
         // Not a full pattern definition, just add color
@@ -715,9 +724,7 @@ H.addEvent(H.Chart, 'redraw', function (): void {
 
 // Add the predefined patterns
 H.Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
-    var colors: Array<string> = H.getOptions().colors as any,
-        index = chart.index,
-        forExport: boolean = (chart.options.chart as any).forExport;
+    var colors: Array<string> = H.getOptions().colors as any;
 
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
@@ -732,8 +739,7 @@ H.Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
         'M 0 0 L 5 10 L 10 0'
     ].forEach(function (pattern: string, i: number): void {
         chart.renderer.addPattern({
-            id: 'highcharts-default-pattern-' +
-                (index && !forExport ? index + '-' : '') + i,
+            id: 'highcharts-default-pattern-' + i,
             path: pattern,
             color: colors[i],
             width: 10,

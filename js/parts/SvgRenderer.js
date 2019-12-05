@@ -514,6 +514,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         H.fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function () {
+            // Default handling of basic string values
+            if (typeof color === 'string') {
+                elem.setAttribute(prop, color);
+                return;
+            }
             // Apply linear or radial gradients
             if (color.radialGradient) {
                 gradName = 'radialGradient';
@@ -2142,7 +2147,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @return {void}
      */
     fillSetter: function (value, key, element) {
-        if (typeof value === 'string') {
+        if (typeof value === 'string' && value.indexOf('url(') !== 0) {
             element.setAttribute(key, value);
         }
         else if (value) {
