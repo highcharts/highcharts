@@ -163,7 +163,7 @@ declare global {
             ): SVGElement;
             public clip(clipRect?: ClipRectElement): SVGElement;
             public complexColor(
-                color: GradientColorObject|string,
+                color: GradientColorObject,
                 prop: string,
                 elem: SVGDOMElement
             ): void;
@@ -1009,7 +1009,7 @@ extend((
      */
     complexColor: function (
         this: Highcharts.SVGElement,
-        color: Highcharts.GradientColorObject|string,
+        color: Highcharts.GradientColorObject,
         prop: string,
         elem: Highcharts.SVGDOMElement
     ): void {
@@ -1031,12 +1031,6 @@ extend((
         H.fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function (): void {
-            // Default handling of basic string values
-            if (typeof color === 'string') {
-                elem.setAttribute(prop, color);
-                return;
-            }
-
             // Apply linear or radial gradients
             if (color.radialGradient) {
                 gradName = 'radialGradient';
@@ -3198,7 +3192,7 @@ extend((
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {
-        if (typeof value === 'string' && value.indexOf('url(') !== 0) {
+        if (typeof value === 'string') {
             element.setAttribute(key, value);
         } else if (value) {
             this.complexColor(value as any, key, element);
