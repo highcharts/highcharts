@@ -1,8 +1,13 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
 import H from './../../parts/Globals.js';
-import './../../parts/Chart.js';
 import U from './../../parts/Utilities.js';
-var defined = U.defined, objectEach = U.objectEach, splat = U.splat;
+var defined = U.defined, objectEach = U.objectEach;
+import './../../parts/Chart.js';
 import './../../parts/SvgRenderer.js';
 /**
  * Options for configuring markers for annotations.
@@ -27,15 +32,21 @@ import './../../parts/SvgRenderer.js';
  *   }
  * }
  * </pre>
- * @type {Object}
+ *
  * @sample highcharts/annotations/custom-markers/
  *         Define a custom marker for annotations
+ *
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
- * @since 6.0.0
- * @apioption defs
+ *
+ * @type         {Highcharts.Dictionary<Highcharts.SVGDefinitionObject>}
+ * @since        6.0.0
+ * @optionparent defs
  */
 var defaultMarkers = {
+    /**
+     * @type {Highcharts.SVGDefinitionObject}
+     */
     arrow: {
         tagName: 'marker',
         render: false,
@@ -44,12 +55,18 @@ var defaultMarkers = {
         refX: 9,
         markerWidth: 10,
         markerHeight: 10,
+        /**
+         * @type {Array<Highcharts.DefsOptions>}
+         */
         children: [{
                 tagName: 'path',
                 d: 'M 0 0 L 10 5 L 0 10 Z',
                 strokeWidth: 0
             }]
     },
+    /**
+     * @type {Highcharts.SVGDefinitionObject}
+     */
     'reverse-arrow': {
         tagName: 'marker',
         render: false,
@@ -85,6 +102,7 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     marker.id = id;
     return marker;
 };
+/* eslint-disable no-invalid-this, valid-jsdoc */
 var createMarkerSetter = function (markerType) {
     return function (value) {
         this.attr(markerType, 'url(#' + value + ')');
@@ -97,10 +115,10 @@ var createMarkerSetter = function (markerType) {
 var markerMixin = {
     markerEndSetter: createMarkerSetter('marker-end'),
     markerStartSetter: createMarkerSetter('marker-start'),
-    /*
+    /**
      * Set markers.
-     *
-     * @param {Controllable} item
+     * @private
+     * @param {Highcharts.AnnotationControllablePath} item
      */
     setItemMarkers: function (item) {
         var itemOptions = item.options, chart = item.chart, defs = chart.options.defs, fill = itemOptions.fill, color = defined(fill) && fill !== 'none' ?
@@ -108,9 +126,10 @@ var markerMixin = {
             itemOptions.stroke, setMarker = function (markerType) {
             var markerId = itemOptions[markerType], def, predefinedMarker, key, marker;
             if (markerId) {
-                for (key in defs) {
+                for (key in defs) { // eslint-disable-line guard-for-in
                     def = defs[key];
-                    if (markerId === def.id && def.tagName === 'marker') {
+                    if (markerId === def.id &&
+                        def.tagName === 'marker') {
                         predefinedMarker = def;
                         break;
                     }
@@ -125,37 +144,6 @@ var markerMixin = {
         };
         ['markerStart', 'markerEnd'].forEach(setMarker);
     }
-};
-// In a styled mode definition is implemented
-H.SVGRenderer.prototype.definition = function (def) {
-    var ren = this;
-    function recurse(config, parent) {
-        var ret;
-        splat(config).forEach(function (item) {
-            var node = ren.createElement(item.tagName), attr = {};
-            // Set attributes
-            objectEach(item, function (val, key) {
-                if (key !== 'tagName' &&
-                    key !== 'children' &&
-                    key !== 'textContent') {
-                    attr[key] = val;
-                }
-            });
-            node.attr(attr);
-            // Add to the tree
-            node.add(parent || ren.defs);
-            // Add text content
-            if (item.textContent) {
-                node.element.appendChild(H.doc.createTextNode(item.textContent));
-            }
-            // Recurse
-            recurse(item.children || [], node);
-            ret = node;
-        });
-        // Return last node added (on top level it's the only one)
-        return ret;
-    }
-    return recurse(def);
 };
 H.addEvent(H.Chart, 'afterGetContainer', function () {
     this.options.defs = H.merge(defaultMarkers, this.options.defs || {});

@@ -1,3 +1,8 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
 import H from './../../parts/Globals.js';
 import U from './../../parts/Utilities.js';
@@ -6,22 +11,28 @@ import controllableMixin from './controllableMixin.js';
 import markerMixin from './markerMixin.js';
 // See TRACKER_FILL in highcharts.src.js
 var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable path class.
  *
  * @class
+ * @name Highcharts.AnnotationControllablePath
  * @mixes Annotation.controllableMixin
  * @mixes Annotation.markerMixin
- * @memberOf Annotation
  *
  * @param {Highcharts.Annotation}
- * @param {Object} options a path's options object
- * @param {number} index of the path
+ * Related annotation.
+ *
+ * @param {Highcharts.AnnotationsShapeOptions} options
+ * A path's options object.
+ *
+ * @param {number} index
+ * Index of the path.
  **/
-function ControllablePath(annotation, options, index) {
+var ControllablePath = function (annotation, options, index) {
     this.init(annotation, options, index);
     this.collection = 'shapes';
-}
+};
 /**
  * @typedef {Object} Annotation.ControllablePath.AttrsMap
  * @property {string} dashStyle=dashstyle
@@ -42,16 +53,17 @@ ControllablePath.attrsMap = {
     fill: 'fill',
     zIndex: 'zIndex'
 };
-H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Annotation.ControllablePath# */ {
+H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts.AnnotationControllablePath# */ {
     /**
      * @type 'path'
      */
     type: 'path',
     setMarkers: markerMixin.setItemMarkers,
     /**
-     * Map the controllable path to 'd' path attribute
+     * Map the controllable path to 'd' path attribute.
      *
-     * @return {Array<(string|number)>} a path's d attribute
+     * @return {Highcharts.SVGPathArray|null}
+     * A path's d attribute.
      */
     toD: function () {
         var d = this.options.d;
@@ -61,7 +73,7 @@ H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Annotati
                 d;
         }
         var points = this.points, len = points.length, showPath = len, point = points[0], position = showPath && this.anchor(point).absolutePosition, pointIndex = 0, dIndex = 2, command;
-        d = position && ['M', position.x, position.y];
+        d = (position && ['M', position.x, position.y]);
         while (++pointIndex < len && showPath) {
             point = points[pointIndex];
             command = point.command || 'L';
@@ -83,8 +95,7 @@ H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Annotati
             null;
     },
     shouldBeDrawn: function () {
-        return controllableMixin.shouldBeDrawn.call(this) ||
-            Boolean(this.options.d);
+        return (controllableMixin.shouldBeDrawn.call(this) || Boolean(this.options.d));
     },
     render: function (parent) {
         var options = this.options, attrs = this.attrsFromOptions(options);

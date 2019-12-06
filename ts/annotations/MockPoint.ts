@@ -62,6 +62,7 @@ declare global {
             visible: boolean;
         }
         interface AnnotationPoint {
+            command?: undefined;
             mock?: undefined;
         }
         type AnnotationPointType = (AnnotationMockPoint|AnnotationPoint);

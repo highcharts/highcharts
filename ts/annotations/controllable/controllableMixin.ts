@@ -25,6 +25,8 @@ declare global {
             graphic: SVGElement;
             index: number;
             itemType?: ('label'|'shape');
+            markerEnd?: SVGElement;
+            markerStart?: SVGElement;
             options: AnnotationControllableOptionsObject;
             points: Array<AnnotationPointType>;
             tracker?: SVGElement;
@@ -32,8 +34,8 @@ declare global {
         interface AnnotationControllableMixin {
             addControlPoints(this: AnnotationControllable): void;
             anchor(this: AnnotationControllable, point: AnnotationPointType): AnnotationAnchorObject;
-            attr(this: AnnotationControllable): void;
-            attrsFromOptions(this: AnnotationControllable, options: SVGAttributes): SVGAttributes;
+            attr: SVGElement['attr'];
+            attrsFromOptions(this: AnnotationControllable, options: AnnotationControllableOptionsObject): SVGAttributes;
             destroy(this: AnnotationControllable): void;
             getPointsOptions(this: AnnotationControllable): Array<AnnotationMockPointOptionsObject>;
             init(
@@ -92,9 +94,17 @@ declare global {
             update(this: Highcharts.AnnotationControllable, newOptions: AnnotationControllableOptionsObject): void;
         }
         interface AnnotationControllableOptionsObject {
+            className?: string;
             controlPoints?: Array<AnnotationControlPointOptionsObject>;
+            d?: (string|Function);
+            fill?: ColorType;
+            id?: (number|string);
+            markerEnd?: string;
+            markerStart?: string;
             point?: (string|AnnotationMockPointOptionsObject);
             points?: Array<(string|AnnotationMockPointOptionsObject)>;
+            snap?: number;
+            stroke?: ColorType;
             x?: number;
             y?: number;
         }
@@ -180,7 +190,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
      */
     attr: function (this: Highcharts.AnnotationControllable): void {
         this.graphic.attr.apply(this.graphic, arguments);
-    },
+    } as any,
 
 
     /**
@@ -201,14 +211,14 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
      * Utility function for mapping item's options
      * to element's attribute
      *
-     * @param {Highcharts.SVGAttributes} options
+     * @param {Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions} options
      *
      * @return {Highcharts.SVGAttributes}
      * Mapped options.
      */
     attrsFromOptions: function (
         this: Highcharts.AnnotationControllable,
-        options: Highcharts.SVGAttributes
+        options: Highcharts.AnnotationControllableOptionsObject
     ): Highcharts.SVGAttributes {
         var map: Highcharts.SVGAttributes = (this.constructor as any).attrsMap,
             attrs: Highcharts.SVGAttributes = {},
@@ -227,7 +237,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
                         .indexOf(mappedKey) === -1
                 )
             ) {
-                attrs[mappedKey] = options[key];
+                attrs[mappedKey] = (options as any)[key];
             }
         }
 

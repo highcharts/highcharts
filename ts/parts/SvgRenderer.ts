@@ -86,7 +86,7 @@ declare global {
             zIndex?: number;
         }
         interface SVGDefinitionObject {
-            [key: string]: (number|string|Array<SVGDefinitionObject>|undefined);
+            [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
             children?: Array<SVGDefinitionObject>;
             tagName?: string;
             textContent?: string;
@@ -688,7 +688,7 @@ declare global {
  * @interface Highcharts.SVGDefinitionObject
  *//**
  * @name Highcharts.SVGDefinitionObject#[key:string]
- * @type {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+ * @type {boolean|number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
  *//**
  * @name Highcharts.SVGDefinitionObject#children
  * @type {Array<Highcharts.SVGDefinitionObject>|undefined}
@@ -3675,7 +3675,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 item: Highcharts.SVGDefinitionObject
             ): void {
                 var node = ren.createElement(item.tagName as any),
-                    attr = {} as Highcharts.SVGAttributes;
+                    attr: Highcharts.SVGAttributes = {};
 
                 // Set attributes
                 objectEach(item, function (val: string, key: string): void {

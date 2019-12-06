@@ -46,7 +46,7 @@ declare global
             public index: AnnotationControllable['index'];
             public init: AnnotationControllableMixin['init'];
             public linkPoints: AnnotationControllableMixin['linkPoints'];
-            public options: (AnnotationsLabelsOptions&AnnotationControllableOptionsObject);
+            public options: AnnotationsLabelsOptions;
             public point: AnnotationControllableMixin['point'];
             public points: AnnotationControllable['points'];
             public rotate: AnnotationControllableMixin['rotate'];

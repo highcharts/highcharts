@@ -85,7 +85,7 @@ var controllableMixin = {
      * Utility function for mapping item's options
      * to element's attribute
      *
-     * @param {Highcharts.SVGAttributes} options
+     * @param {Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions} options
      *
      * @return {Highcharts.SVGAttributes}
      * Mapped options.

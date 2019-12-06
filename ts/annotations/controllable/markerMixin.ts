@@ -1,12 +1,41 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 import H from './../../parts/Globals.js';
-import './../../parts/Chart.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface AnnotationMarkerMixin {
+            markerEndSetter(this: SVGElement, value: string): void;
+            markerStartSetter(this: SVGElement, value: string): void;
+            setItemMarkers(this: AnnotationControllablePath, item: AnnotationControllablePath): void;
+        }
+        interface AnnotationChart {
+            afterGetContainer(): void;
+        }
+        interface Options {
+            defs?: Dictionary<SVGDefinitionObject>;
+        }
+        interface SVGRenderer {
+            addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
+        }
+    }
+}
+
 
 import U from './../../parts/Utilities.js';
 var defined = U.defined,
-    objectEach = U.objectEach,
-    splat = U.splat;
+    objectEach = U.objectEach;
 
+import './../../parts/Chart.js';
 import './../../parts/SvgRenderer.js';
 
 /**
@@ -32,15 +61,21 @@ import './../../parts/SvgRenderer.js';
  *   }
  * }
  * </pre>
- * @type {Object}
+ *
  * @sample highcharts/annotations/custom-markers/
  *         Define a custom marker for annotations
+ *
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
- * @since 6.0.0
- * @apioption defs
+ *
+ * @type         {Highcharts.Dictionary<Highcharts.SVGDefinitionObject>}
+ * @since        6.0.0
+ * @optionparent defs
  */
-var defaultMarkers = {
+var defaultMarkers: Highcharts.Dictionary<Highcharts.SVGDefinitionObject> = {
+    /**
+     * @type {Highcharts.SVGDefinitionObject}
+     */
     arrow: {
         tagName: 'marker',
         render: false,
@@ -49,13 +84,18 @@ var defaultMarkers = {
         refX: 9,
         markerWidth: 10,
         markerHeight: 10,
+        /**
+         * @type {Array<Highcharts.DefsOptions>}
+         */
         children: [{
             tagName: 'path',
             d: 'M 0 0 L 10 5 L 0 10 Z', // triangle (used as an arrow)
             strokeWidth: 0
         }]
     },
-
+    /**
+     * @type {Highcharts.SVGDefinitionObject}
+     */
     'reverse-arrow': {
         tagName: 'marker',
         render: false,
@@ -73,15 +113,20 @@ var defaultMarkers = {
     }
 };
 
-H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
-    var options = { id: id };
+H.SVGRenderer.prototype.addMarker = function (
+    id: string,
+    markerOptions: Highcharts.SVGAttributes
+): Highcharts.SVGElement {
+    var options: Highcharts.SVGDefinitionObject = { id: id } as any;
 
-    var attrs = {
+    var attrs: Highcharts.SVGAttributes = {
         stroke: markerOptions.color || 'none',
         fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
     };
 
-    options.children = markerOptions.children.map(function (child) {
+    options.children = markerOptions.children.map(function (
+        child: Highcharts.SVGDefinitionObject
+    ): Highcharts.SVGDefinitionObject {
         return H.merge(attrs, child);
     });
 
@@ -98,8 +143,10 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
     return marker;
 };
 
-var createMarkerSetter = function (markerType) {
-    return function (value) {
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
+var createMarkerSetter = function (markerType: string): Highcharts.AnnotationMarkerMixin['markerStartSetter'] {
+    return function (this: Highcharts.SVGElement, value: string): void {
         this.attr(markerType, 'url(#' + value + ')');
     };
 };
@@ -108,16 +155,19 @@ var createMarkerSetter = function (markerType) {
  * @private
  * @mixin
  */
-var markerMixin = {
+var markerMixin: Highcharts.AnnotationMarkerMixin = {
     markerEndSetter: createMarkerSetter('marker-end'),
     markerStartSetter: createMarkerSetter('marker-start'),
 
-    /*
+    /**
      * Set markers.
-     *
-     * @param {Controllable} item
+     * @private
+     * @param {Highcharts.AnnotationControllablePath} item
      */
-    setItemMarkers: function (item) {
+    setItemMarkers: function (
+        this: Highcharts.AnnotationControllablePath,
+        item: Highcharts.AnnotationControllablePath
+    ): void {
         var itemOptions = item.options,
             chart = item.chart,
             defs = chart.options.defs,
@@ -126,7 +176,7 @@ var markerMixin = {
                 fill :
                 itemOptions.stroke,
 
-            setMarker = function (markerType) {
+            setMarker = function (markerType: ('markerEnd'|'markerStart')): void {
                 var markerId = itemOptions[markerType],
                     def,
                     predefinedMarker,
@@ -134,11 +184,12 @@ var markerMixin = {
                     marker;
 
                 if (markerId) {
-                    for (key in defs) {
+                    for (key in defs) { // eslint-disable-line guard-for-in
                         def = defs[key];
 
                         if (
-                            markerId === def.id && def.tagName === 'marker'
+                            markerId === def.id &&
+                            def.tagName === 'marker'
                         ) {
                             predefinedMarker = def;
                             break;
@@ -153,66 +204,21 @@ var markerMixin = {
                                 H.merge(predefinedMarker, { color: color })
                             );
 
-                        item.attr(markerType, marker.attr('id'));
+                        item.attr(markerType, marker.attr('id') as any);
                     }
                 }
             };
 
-        ['markerStart', 'markerEnd'].forEach(setMarker);
+        (['markerStart', 'markerEnd'] as Array<('markerEnd'|'markerStart')>).forEach(setMarker);
     }
 };
 
-// In a styled mode definition is implemented
-H.SVGRenderer.prototype.definition = function (def) {
-    var ren = this;
-
-    function recurse(config, parent) {
-        var ret;
-
-        splat(config).forEach(function (item) {
-            var node = ren.createElement(item.tagName),
-                attr = {};
-
-            // Set attributes
-            objectEach(item, function (val, key) {
-                if (
-                    key !== 'tagName' &&
-                    key !== 'children' &&
-                    key !== 'textContent'
-                ) {
-                    attr[key] = val;
-                }
-            });
-            node.attr(attr);
-
-            // Add to the tree
-            node.add(parent || ren.defs);
-
-            // Add text content
-            if (item.textContent) {
-                node.element.appendChild(
-                    H.doc.createTextNode(item.textContent)
-                );
-            }
-
-            // Recurse
-            recurse(item.children || [], node);
-
-            ret = node;
-        });
-
-        // Return last node added (on top level it's the only one)
-        return ret;
-    }
-    return recurse(def);
-};
-
-H.addEvent(H.Chart, 'afterGetContainer', function () {
+H.addEvent(H.Chart as any, 'afterGetContainer', function (this: Highcharts.AnnotationChart): void {
     this.options.defs = H.merge(defaultMarkers, this.options.defs || {});
 
-    objectEach(this.options.defs, function (def) {
+    objectEach(this.options.defs, function (def: Highcharts.SVGDefinitionObject): void {
         if (def.tagName === 'marker' && def.render !== false) {
-            this.renderer.addMarker(def.id, def);
+            this.renderer.addMarker(def.id as any, def);
         }
     }, this);
 });

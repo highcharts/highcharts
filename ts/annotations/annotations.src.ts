@@ -100,12 +100,16 @@ declare global {
         interface AnnotationChart extends Chart {
             annotations: Array<Annotation>;
             controlPointsGroup: SVGElement;
-            options: { annotations: Array<AnnotationsOptions> };
+            options: AnnotationChartOptionsObject;
             plotBoxClip: SVGElement;
             addAnnotation(userOptions: AnnotationsOptions, redraw?: boolean): void;
             drawAnnotations(): void;
             initAnnotation(userOptions: AnnotationsOptions): Annotation;
             removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
+        }
+        interface AnnotationChartOptionsObject extends Options {
+            annotations: Array<AnnotationsOptions>;
+            defs: Dictionary<SVGDefinitionObject>;
         }
         interface AnnotationControllableLabel {
             itemType: 'label';
