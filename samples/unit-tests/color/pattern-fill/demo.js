@@ -1,8 +1,15 @@
 /* Unit tests for pattern-fill module */
 
+function getPointFillId(point) {
+    const fill = point.graphic.element.getAttribute('fill');
+    return fill.replace('url(#', '').replace(')', '');
+}
+
+const doc = Highcharts.win.document;
+
+
 QUnit.test('SVGRenderer used directly', function (assert) {
-    var doc = Highcharts.win.document,
-        renderer = new Highcharts.Renderer(
+    var renderer = new Highcharts.Renderer(
             doc.getElementById('container'),
             400,
             400
@@ -26,7 +33,7 @@ QUnit.test('SVGRenderer used directly', function (assert) {
             y: 40,
             r: 10
         }).add(),
-        pattern = doc.getElementById('custom-id-0');
+        pattern = doc.getElementById('custom-id');
 
     assert.strictEqual(
         renderer.defs.element.firstChild,
@@ -53,7 +60,7 @@ QUnit.test('SVGRenderer used directly', function (assert) {
 
     assert.strictEqual(
         circle.element.getAttribute('fill'),
-        'url(#custom-id-0)',
+        'url(#custom-id)',
         'Circle has pattern ref as fill'
     );
 });
@@ -78,17 +85,16 @@ QUnit.test('Pattern fill set on series', function (assert) {
                     }
                 },
                 data: [
-                    [1, 'url(#highcharts-default-pattern-0)'],
+                    [1, { patternIndex: 0 }],
                     2,
                     3
                 ]
             }]
         }),
         points = chart.series[0].points,
-        doc = Highcharts.win.document,
-        chartIndex = chart.index || 0,
-        firstPattern = doc.getElementById('highcharts-default-pattern-0-' + chartIndex),
-        secondPattern = doc.getElementById('custom-id-' + chartIndex);
+        firstPatternId = getPointFillId(points[0]),
+        firstPattern = doc.getElementById(firstPatternId),
+        secondPattern = doc.getElementById('custom-id');
 
     assert.strictEqual(
         firstPattern.tagName.toLowerCase(),
@@ -103,12 +109,6 @@ QUnit.test('Pattern fill set on series', function (assert) {
     );
 
     assert.strictEqual(
-        points[0].graphic.element.getAttribute('fill'),
-        `url(#highcharts-default-pattern-0-${chartIndex})`,
-        'First point has pattern link as color'
-    );
-
-    assert.strictEqual(
         firstPattern.firstChild.getAttribute('stroke'),
         Highcharts.getOptions().colors[0],
         'First pattern has same color as first color in colors array'
@@ -116,7 +116,7 @@ QUnit.test('Pattern fill set on series', function (assert) {
 
     assert.strictEqual(
         points[1].graphic.element.getAttribute('fill'),
-        `url(#custom-id-${chartIndex})`,
+        'url(#custom-id)',
         'Second point has pattern link as color'
     );
 
@@ -134,7 +134,7 @@ QUnit.test('Pattern fill set on series', function (assert) {
 
     assert.strictEqual(
         points[2].graphic.element.getAttribute('fill'),
-        `url(#custom-id-${chartIndex})`,
+        'url(#custom-id)',
         'Third point has pattern link as color'
     );
 });
@@ -146,7 +146,7 @@ QUnit.test('Pattern fills set on points', function (assert) {
                 type: 'bubble',
                 keys: ['x', 'y', 'z', 'color'],
                 data: [
-                    [1, 1, 1, 'url(#highcharts-default-pattern-0)'],
+                    [1, 1, 1, { patternIndex: 0 }],
                     [2, 1, 1, {
                         pattern: {
                             id: 'custom-1',
@@ -168,11 +168,10 @@ QUnit.test('Pattern fills set on points', function (assert) {
             }]
         }),
         points = chart.series[0].points,
-        doc = Highcharts.win.document,
-        chartIndex = chart.index || 0,
-        firstPattern = doc.getElementById('highcharts-default-pattern-0-' + chartIndex),
-        secondPattern = doc.getElementById('custom-1-' + chartIndex),
-        thirdPattern = doc.getElementById('custom-2-' + chartIndex);
+        firstPatternId = getPointFillId(points[0]),
+        firstPattern = doc.getElementById(firstPatternId),
+        secondPattern = doc.getElementById('custom-1'),
+        thirdPattern = doc.getElementById('custom-2');
 
     assert.strictEqual(
         firstPattern.tagName.toLowerCase(),
@@ -193,20 +192,14 @@ QUnit.test('Pattern fills set on points', function (assert) {
     );
 
     assert.strictEqual(
-        points[0].graphic.element.getAttribute('fill'),
-        `url(#highcharts-default-pattern-0-${chartIndex})`,
-        'First point has pattern link as color'
-    );
-
-    assert.strictEqual(
         points[1].graphic.element.getAttribute('fill'),
-        `url(#custom-1-${chartIndex})`,
+        'url(#custom-1)',
         'Second point has pattern link as color'
     );
 
     assert.strictEqual(
         points[2].graphic.element.getAttribute('fill'),
-        `url(#custom-2-${chartIndex})`,
+        'url(#custom-2)',
         'Third point has pattern link as color'
     );
 
@@ -241,8 +234,8 @@ QUnit.test('Auto IDs and no duplicate elements', function (assert) {
                 },
                 data: [
                     1,
-                    [1, 'url(#highcharts-default-pattern-0)'],
-                    [1, 'url(#highcharts-default-pattern-0)'],
+                    [1, { patternIndex: 0 }],
+                    [1, { patternIndex: 0 }],
                     [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 Z' } }],
                     [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 L 3 8 Z' } }],
                     [1, { pattern: { path: 'M 3 3 L 8 3 L 8 8 Z' } }],
@@ -257,23 +250,20 @@ QUnit.test('Auto IDs and no duplicate elements', function (assert) {
         }),
         defs = chart.renderer.defs.element,
         patterns = defs.getElementsByTagName('pattern'),
-        ids = [],
-        customPattern;
+        customPatternId = getPointFillId(chart.series[0].points[4]),
+        customPattern = doc.getElementById(customPatternId);
 
     assert.strictEqual(
         patterns.length,
-        13,
-        'Number of pattern defs should be 10 defaults + 3 unique'
+        4,
+        'Number of pattern defs should be 1 used default + 3 unique'
     );
 
+    var ids = [];
     Highcharts.each(patterns, function (pattern) {
         var id = pattern.getAttribute('id');
-        if (id.indexOf('highcharts-pattern-') > -1) {
-            customPattern = pattern;
-        }
         if (Highcharts.inArray(id, ids) > -1) {
-            assert.ok(false,
-                'Expected unique ids for patterns. Duplicate: ' + id);
+            assert.ok(false, 'Expected unique ids for patterns. Duplicate: ' + id);
         }
         ids.push(id);
     });
@@ -345,8 +335,8 @@ QUnit.test('Images (dummy images, not loaded)', function (assert) {
 
     assert.strictEqual(
         patterns.length,
-        13,
-        'Number of pattern defs should be 10 defaults + 3 unique'
+        3,
+        'Number of pattern defs should be 3 unique (defaults patterns not added unless used)'
     );
 
     Highcharts.each(patterns, function (pattern) {
@@ -416,12 +406,12 @@ QUnit.test('Image auto resize with aspect ratio - map', function (assert) {
         norwayPoint = chart.series[0].points[0],
         austriaPoint = chart.series[0].points[1],
         test = function () {
-            var norwayPattern = document.getElementById(
+            var norwayPattern = doc.getElementById(
                     norwayPoint.graphic.element.getAttribute('fill')
                         .replace('url(#', '')
                         .replace(')', '')
                 ),
-                austriaPattern = document.getElementById(
+                austriaPattern = doc.getElementById(
                     austriaPoint.graphic.element.getAttribute('fill')
                         .replace('url(#', '')
                         .replace(')', '')
@@ -505,7 +495,7 @@ QUnit.test('Image auto resize with aspect ratio - column', function (assert) {
         }),
         point = chart.series[0].points[0],
         test = function () {
-            var columnPattern = document.getElementById(
+            var columnPattern = doc.getElementById(
                     point.graphic.element.getAttribute('fill')
                         .replace('url(#', '')
                         .replace(')', '')
@@ -537,7 +527,7 @@ QUnit.test('Image animation opacity', function (assert) {
         columnPattern;
 
     try {
-        const chart = Highcharts.chart('container', {
+        Highcharts.chart('container', {
             chart: {
                 type: 'column',
                 animation: {
@@ -572,7 +562,7 @@ QUnit.test('Image animation opacity', function (assert) {
             }]
         });
 
-        columnPattern = document.getElementById('test-pattern-' + chart.index);
+        columnPattern = doc.getElementById('test-pattern');
 
         assert.strictEqual(
             columnPattern.firstChild.getAttribute('opacity'),
@@ -606,21 +596,18 @@ QUnit.test('Destroy and recreate chart', function (assert) {
                     }
                 },
                 data: [
-                    [1, 'url(#highcharts-default-pattern-0)'],
+                    [1, { patternIndex: 2 }],
                     2,
                     3
                 ]
             }]
         },
-        doc = Highcharts.win.document,
         firstChart = Highcharts.chart('container', options);
 
     function testChart(chart) {
         const points = chart.series[0].points,
-            getPatternId = point => point.graphic.element.getAttribute('fill')
-                .replace('url(#', '').replace(')', ''),
-            firstPointPatternId = getPatternId(points[0]),
-            secondPointPatternId = getPatternId(points[1]),
+            firstPointPatternId = getPointFillId(points[0]),
+            secondPointPatternId = getPointFillId(points[1]),
             firstPattern = doc.getElementById(firstPointPatternId),
             secondPattern = doc.getElementById(secondPointPatternId);
 
@@ -638,8 +625,8 @@ QUnit.test('Destroy and recreate chart', function (assert) {
 
         assert.strictEqual(
             firstPattern && firstPattern.firstChild.getAttribute('stroke'),
-            Highcharts.getOptions().colors[0],
-            'First pattern has same color as first color in colors array'
+            Highcharts.getOptions().colors[2],
+            'First pattern has same color as third color in colors array'
         );
 
         assert.strictEqual(
