@@ -262,12 +262,12 @@ extend(Legend.prototype, {
      * @fires Highcharts.Point#event:legendItemClick
      * @fires Highcharts.Series#event:legendItemClick
      */
-    setItemEvents: function (item, legendItem, useHTML) {
+    setItemEvents: function (item, legendItem, itemToSet) {
         var legend = this, boxWrapper = legend.chart.renderer.boxWrapper, isPoint = item instanceof Point, activeClass = 'highcharts-legend-' +
             (isPoint ? 'point' : 'series') + '-active', styledMode = legend.chart.styledMode;
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
-        (useHTML ? legendItem : item.legendGroup)
+        itemToSet
             .on('mouseover', function () {
             if (item.visible) {
                 legend.allItems.forEach(function (inactiveItem) {

@@ -30,7 +30,7 @@ declare global {
             setItemEvents(
                 item: (BubbleLegend|Point|Series),
                 legendItem: SVGElement,
-                useHTML?: boolean
+                itemToSet: SVGElement
             ): void;
         }
         interface Point {
@@ -445,7 +445,7 @@ extend(Legend.prototype, {
         this: Highcharts.Legend,
         item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
         legendItem: Highcharts.SVGElement,
-        useHTML?: boolean
+        itemToSet: Highcharts.SVGElement
     ): void {
         var legend = this,
             boxWrapper = legend.chart.renderer.boxWrapper,
@@ -456,7 +456,7 @@ extend(Legend.prototype, {
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
-        (useHTML ? legendItem : (item.legendGroup as any))
+        itemToSet
             .on('mouseover', function (): void {
 
                 if (item.visible) {
