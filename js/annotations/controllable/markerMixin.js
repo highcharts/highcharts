@@ -111,6 +111,7 @@ var createMarkerSetter = function (markerType) {
 /**
  * @private
  * @mixin
+ * @name Highcharts.AnnotaitonMarkerMixin
  */
 var markerMixin = {
     markerEndSetter: createMarkerSetter('marker-end'),

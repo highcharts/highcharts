@@ -61,25 +61,8 @@ const SOURCE_GLOBS = [
     'js/modules/networkgraph/*.js',
     'js/modules/sonification/*.js',
     'js/annotations/annotations.src.js',
-    'js/annotations/ControlPoint.js',
-    'js/annotations/MockPoint.js'
-    /*
-    'js/annotations/eventEmitterMixin.js',
     'js/annotations/controllable/controllableMixin.js',
-    'js/annotations/controllable/ControllableCircle.js',
-    'js/annotations/controllable/ControllableImage.js',
-    'js/annotations/controllable/ControllableLabel.js',
-    'js/annotations/controllable/ControllablePath.js',
-    'js/annotations/controllable/ControllableRect.js',
-    'js/annotations/types/CrookedLine.js',
-    'js/annotations/types/ElliottWave.js',
-    'js/annotations/types/Tunnel.js',
-    'js/annotations/types/Fibonacci.js',
-    'js/annotations/types/InfinityLine.js',
-    'js/annotations/types/Measure.js',
-    'js/annotations/types/Pitchfork.js',
-    'js/annotations/types/VerticalLine.js'
-    */
+    'js/annotations/ControlPoint.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');

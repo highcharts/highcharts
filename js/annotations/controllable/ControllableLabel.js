@@ -14,19 +14,19 @@ import MockPoint from './../MockPoint.js';
 /**
  * A controllable label class.
  *
+ * @requires modules/annotations
+ *
  * @private
  * @class
  * @name Highcharts.AnnotationControllableLabel
  *
- * @mixes Highcharts.AnnotationControllableMixin
- *
  * @param {Highcharts.Annotation} annotation
  * An annotation instance.
- * @param {Highcharts.AnnotationsOptions} options
+ * @param {Highcharts.AnnotationsLabelOptions} options
  * A label's options.
  * @param {number} index
  * Index of the label.
- **/
+ */
 var ControllableLabel = function (annotation, options, index) {
     this.init(annotation, options, index);
     this.collection = 'labels';

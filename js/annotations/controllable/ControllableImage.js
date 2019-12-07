@@ -1,33 +1,41 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 'use strict';
 import H from './../../parts/Globals.js';
 import './../../parts/Utilities.js';
 import controllableMixin from './controllableMixin.js';
 import ControllableLabel from './ControllableLabel.js';
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable image class.
  *
- * @class
- * @mixes Annotation.controllableMixin
- * @memberOf Annotation
+ * @requires modules/annotations
  *
- * @param {Highcharts.Annotation} annotation - an annotation instance
- * @param {Object} options a controllable's options
- * @param {number} index of the image
+ * @private
+ * @class
+ * @name Highcharts.AnnotationControllableImage
+ *
+ * @param {Highcharts.Annotation} annotation
+ * An annotation instance.
+ *
+ * @param {Highcharts.AnnotationsShapeOptions} options
+ * A controllable's options.
+ *
+ * @param {number} index
+ * Index of the image.
  **/
-function ControllableImage(annotation, options, index) {
+var ControllableImage = function (annotation, options, index) {
     this.init(annotation, options, index);
     this.collection = 'shapes';
-}
-/**
- * @typedef {Object} Annotation.ControllableImage.AttrsMap
- * @property {string} width=width
- * @property {string} height=height
- * @property {string} zIndex=zIndex
- */
+};
 /**
  * A map object which allows to map options attributes to element attributes
  *
- * @type {Annotation.ControllableImage.AttrsMap}
+ * @name Highcharts.AnnotationControllableImage.attrsMap
+ * @type {Highcharts.Dictionary<string>}
  */
 ControllableImage.attrsMap = {
     width: 'width',

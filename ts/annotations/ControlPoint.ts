@@ -16,7 +16,7 @@ declare global {
             public constructor(
                 chart: AnnotationChart,
                 target: AnnotationControllable,
-                options: (AnnotationControlPointOptionsObject&Partial<AnnotationControlPointOptionsObject>),
+                options: Partial<AnnotationControlPointOptionsObject>,
                 index?: number
             );
             public addEvents: AnnotationEventEmitterMixin['addEvents'];
@@ -36,7 +36,7 @@ declare global {
             public destroy(): void;
             public redraw(animation?: boolean): void;
             public render(): void;
-            public setVisibility(visible?: boolean): void;
+            public setVisibility(visible: boolean): void;
             public update(userOptions: Partial<AnnotationControlPointOptionsObject>): void;
         }
     }
@@ -54,9 +54,12 @@ import eventEmitterMixin from './eventEmitterMixin.js';
  * A control point class which is a connection between controllable
  * transform methods and a user actions.
  *
+ * @requires modules/annotations
+ *
  * @class
  * @name Highcharts.AnnotationControlPoint
- * @mixes eventEmitterMixin
+ *
+ * @hideconstructor
  *
  * @param {Highcharts.Chart} chart
  * A chart instance.
@@ -83,23 +86,6 @@ const ControlPoint: typeof Highcharts.AnnotationControlPoint = function (
     this.index = pick((options as any).index, index);
 } as any;
 
-/**
- * @typedef {Object} Annotation.ControlPoint.Position
- * @property {number} x
- * @property {number} y
- */
-
-/**
- * @typedef {Object} Annotation.ControlPoint.Options
- * @property {string} symbol
- * @property {number} width
- * @property {number} height
- * @property {Object} style
- * @property {boolean} visible
- * @property {Annotation.ControlPoint.Positioner} positioner
- * @property {Object} events
- */
-
 extend(
     ControlPoint.prototype,
     eventEmitterMixin
@@ -108,17 +94,23 @@ extend(
 /**
  * List of events for `anntation.options.events` that should not be
  * added to `annotation.graphic` but to the `annotation`.
- *
+ * @private
+ * @name Highcharts.AnnotationControlPoint#nonDOMEvents
  * @type {Array<string>}
  */
 ControlPoint.prototype.nonDOMEvents = ['drag'];
 
 /**
- * Set the visibility.
+ * Set the visibility of the control point.
  *
- * @param {boolean} [visible]
- **/
-ControlPoint.prototype.setVisibility = function (visible?: boolean): void {
+ * @function Highcharts.AnnotationControlPoint#setVisibility
+ *
+ * @param {boolean} visible
+ * Visibility of the control point.
+ *
+ * @return {void}
+ */
+ControlPoint.prototype.setVisibility = function (visible: boolean): void {
     this.graphic.attr('visibility', visible ? 'visible' : 'hidden');
 
     this.options.visible = visible as any;
@@ -126,6 +118,7 @@ ControlPoint.prototype.setVisibility = function (visible?: boolean): void {
 
 /**
  * Render the control point.
+ * @private
  */
 ControlPoint.prototype.render = function (): void {
     var chart = this.chart,
@@ -148,7 +141,7 @@ ControlPoint.prototype.render = function (): void {
 
 /**
  * Redraw the control point.
- *
+ * @private
  * @param {boolean} [animation]
  */
 ControlPoint.prototype.redraw = function (animation?: boolean): void {
@@ -160,6 +153,7 @@ ControlPoint.prototype.redraw = function (animation?: boolean): void {
 
 /**
  * Destroy the control point.
+ * @private
  */
 ControlPoint.prototype.destroy = function (): void {
     eventEmitterMixin.destroy.call(this);
@@ -175,8 +169,18 @@ ControlPoint.prototype.destroy = function (): void {
 
 /**
  * Update the control point.
+ *
+ * @function Highcharts.AnnotationControlPoint#update
+ *
+ * @param {Partial<Highcharts.AnnotationControlPointOptionsObject>} userOptions
+ * New options for the control point.
+ *
+ * @return {void}
  */
-ControlPoint.prototype.update = function (userOptions: Partial<Highcharts.AnnotationControlPointOptionsObject>): void {
+ControlPoint.prototype.update = function (
+    this: Highcharts.AnnotationControlPoint,
+    userOptions: Partial<Highcharts.AnnotationControlPointOptionsObject>
+): void {
     var chart = this.chart,
         target = this.target,
         index = this.index,

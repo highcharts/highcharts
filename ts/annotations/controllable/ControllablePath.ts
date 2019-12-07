@@ -15,13 +15,14 @@ declare global {
     namespace Highcharts {
         class AnnotationControllablePath implements AnnotationControllable {
             public static attrsMap: Dictionary<string>;
+            public constructor(annotation: Annotation, options: AnnotationsShapeOptions, index: number);
             public addControlPoints: AnnotationControllableMixin['addControlPoints'];
             public anchor: AnnotationControllableMixin['anchor'];
             public annotation: AnnotationControllable['annotation'];
             public attr: AnnotationControllableMixin['attr'];
             public attrsFromOptions: AnnotationControllableMixin['attrsFromOptions'];
             public chart: AnnotationControllable['chart'];
-            public collection: AnnotationControllable['collection'];
+            public collection: 'shapes';
             public controlPoints: AnnotationControllable['controlPoints'];
             public destroy: AnnotationControllableMixin['destroy'];
             public getPointsOptions: AnnotationControllableMixin['getPointsOptions'];
@@ -31,7 +32,7 @@ declare global {
             public linkPoints: AnnotationControllableMixin['linkPoints'];
             public markerEnd?: SVGElement;
             public markerStart?: SVGElement;
-            public options: AnnotationControllable['options'];
+            public options: AnnotationsShapeOptions;
             public point: AnnotationControllableMixin['point'];
             public points: AnnotationControllable['points'];
             public rotate: AnnotationControllableMixin['rotate'];
@@ -73,10 +74,11 @@ var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 /**
  * A controllable path class.
  *
+ * @requires modules/annotations
+ *
+ * @private
  * @class
  * @name Highcharts.AnnotationControllablePath
- * @mixes Annotation.controllableMixin
- * @mixes Annotation.markerMixin
  *
  * @param {Highcharts.Annotation}
  * Related annotation.
@@ -98,18 +100,10 @@ const ControllablePath: typeof Highcharts.AnnotationControllablePath = function 
 } as any;
 
 /**
- * @typedef {Object} Annotation.ControllablePath.AttrsMap
- * @property {string} dashStyle=dashstyle
- * @property {string} strokeWidth=stroke-width
- * @property {string} stroke=stroke
- * @property {string} fill=fill
- * @property {string} zIndex=zIndex
- */
-
-/**
  * A map object which allows to map options attributes to element attributes
  *
- * @type {Annotation.ControllablePath.AttrsMap}
+ * @name Highcharts.AnnotationControllablePath.attrsMap
+ * @type {Highcharts.Dictionary<string>}
  */
 ControllablePath.attrsMap = {
     dashStyle: 'dashstyle',

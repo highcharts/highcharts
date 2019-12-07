@@ -23,7 +23,7 @@ declare global
             public static attrsMap: Dictionary<string>;
             public static shapesWithoutBackground: Array<string>;
             public static alignedPosition(
-                alignOptions: Partial<AnnotationsLabelsOptions>,
+                alignOptions: AnnotationAlignObject,
                 box: BBoxObject
             ): PositionObject;
             public static justifiedOptions(
@@ -32,7 +32,7 @@ declare global
                 alignOptions: AnnotationAlignObject,
                 alignAttr: SVGAttributes
             ): AnnotationAlignObject;
-            public constructor(annotation: Annotation, options: AnnotationsLabelsOptions, index: number);
+            public constructor(annotation: Annotation, options: AnnotationsLabelOptions, index: number);
             public addControlPoints: AnnotationControllableMixin['addControlPoints'];
             public annotation: AnnotationControllable['annotation'];
             public attr: AnnotationControllableMixin['attr'];
@@ -46,7 +46,7 @@ declare global
             public index: AnnotationControllable['index'];
             public init: AnnotationControllableMixin['init'];
             public linkPoints: AnnotationControllableMixin['linkPoints'];
-            public options: AnnotationsLabelsOptions;
+            public options: AnnotationsLabelOptions;
             public point: AnnotationControllableMixin['point'];
             public points: AnnotationControllable['points'];
             public rotate: AnnotationControllableMixin['rotate'];
@@ -58,7 +58,7 @@ declare global
             public translateShape: AnnotationControllableMixin['translateShape'];
             public update: AnnotationControllableMixin['update'];
             public anchor(): AnnotationAnchorObject;
-            public position(): (PositionObject|null|undefined);
+            public position(anchor: AnnotationAnchorObject): (PositionObject|null|undefined);
             public redraw(animation?: boolean): void;
             public render(parent: SVGElement): void;
             public translate(dx: number, dy: number): void;
@@ -88,23 +88,23 @@ import MockPoint from './../MockPoint.js';
 /**
  * A controllable label class.
  *
+ * @requires modules/annotations
+ *
  * @private
  * @class
  * @name Highcharts.AnnotationControllableLabel
  *
- * @mixes Highcharts.AnnotationControllableMixin
- *
  * @param {Highcharts.Annotation} annotation
  * An annotation instance.
- * @param {Highcharts.AnnotationsOptions} options
+ * @param {Highcharts.AnnotationsLabelOptions} options
  * A label's options.
  * @param {number} index
  * Index of the label.
- **/
+ */
 const ControllableLabel: typeof Highcharts.AnnotationControllableLabel = function (
     this: Highcharts.AnnotationControllableLabel,
     annotation: Highcharts.Annotation,
-    options: (Highcharts.AnnotationsLabelsOptions&Highcharts.AnnotationControllableOptionsObject),
+    options: Highcharts.AnnotationsLabelOptions,
     index: number
 ): void {
     this.init(annotation, options, index);

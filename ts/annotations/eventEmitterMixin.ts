@@ -21,7 +21,7 @@ declare global {
             labels?: Array<AnnotationLabelType>;
             nonDOMEvents?: Array<string>;
             options: Partial<(AnnotationControlPointOptionsObject|AnnotationsOptions)>;
-            points?: Array<Point>;
+            points?: Array<AnnotationPointType>;
             removeDrag?: Function;
             removeMouseUp?: Function;
             shapes?: Array<AnnotationShapeType>;

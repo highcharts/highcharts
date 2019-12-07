@@ -28,14 +28,21 @@ var merge = H.merge, addEvent = H.addEvent, fireEvent = H.fireEvent, find = H.fi
  *
  ******************************************************************** */
 /**
- * @callback Highcharts.AnnotationControlPointPositioner
+ * Callback to modify annotation's possitioner controls.
+ *
+ * @callback Highcharts.AnnotationControlPointPositionerFunction
+ * @param {Highcharts.AnnotationControlPoint} this
  * @param {Highcharts.AnnotationControllable} target
- * @return {Highcharts.PositionObject} position
+ * @return {Highcharts.PositionObject}
  */
 /**
- * @typedef {""|"x"|"xy"|"y"} Highcharts.AnnotationDraggableValue
+ * Possible directions for draggable annotations. An empty string (`''`)
+ * makes the annotation undraggable.
+ *
+ * @typedef {''|'x'|'xy'|'y'} Highcharts.AnnotationDraggableValue
  */
 /**
+ * @private
  * @typedef {
  *          Highcharts.AnnotationControllableCircle|
  *          Highcharts.AnnotationControllableImage|
@@ -46,6 +53,7 @@ var merge = H.merge, addEvent = H.addEvent, fireEvent = H.fireEvent, find = H.fi
  * @requires modules/annotations
  */
 /**
+ * @private
  * @typedef {
  *          Highcharts.AnnotationControllableLabel
  *          }
@@ -54,7 +62,7 @@ var merge = H.merge, addEvent = H.addEvent, fireEvent = H.fireEvent, find = H.fi
  */
 /**
  * A point-like object, a mock point or a point used in series.
- *
+ * @private
  * @typedef {Highcharts.AnnotationMockPoint|Highcharts.Point} Highcharts.AnnotationPointType
  * @requires modules/annotations
  */
@@ -87,6 +95,8 @@ var Annotation = H.Annotation = function (chart, userOptions) {
     /**
      * The array of control points.
      *
+     * @private
+     * @name Highcharts.Annotation#controlPoints
      * @type {Array<Annotation.ControlPoint>}
      */
     this.controlPoints = [];
@@ -94,24 +104,30 @@ var Annotation = H.Annotation = function (chart, userOptions) {
     /**
      * The array of labels which belong to the annotation.
      *
-     * @type {Array<Annotation.Label>}
+     * @private
+     * @name Highcharts.Annotation#labels
+     * @type {Array<Highcharts.AnnotationLabelType>}
      */
     this.labels = [];
     /**
      * The array of shapes which belong to the annotation.
      *
-     * @type {Array<Annotation.Shape>}
+     * @private
+     * @name Highcharts.Annotation#shapes
+     * @type {Array<Highcharts.AnnotationShapeType>}
      */
     this.shapes = [];
     /**
      * The options for the annotations.
      *
+     * @name Highcharts.Annotation#options
      * @type {Highcharts.AnnotationsOptions}
      */
     this.options = merge(this.defaultOptions, userOptions);
     /**
      * The user options for the annotations.
      *
+     * @name Highcharts.Annotation#userOptions
      * @type {Highcharts.AnnotationsOptions}
      */
     this.userOptions = userOptions;
@@ -123,41 +139,38 @@ var Annotation = H.Annotation = function (chart, userOptions) {
     /**
      * The callback that reports to the overlapping-labels module which
      * labels it should account for.
-     *
-     * @name labelCollector
-     * @memberOf Annotation#
+     * @private
+     * @name Highcharts.Annotation#labelCollector
      * @type {Function}
      */
     /**
      * The group svg element.
      *
-     * @name group
-     * @memberOf Annotation#
+     * @name Highcharts.Annotation#group
      * @type {Highcharts.SVGElement}
      */
     /**
      * The group svg element of the annotation's shapes.
      *
-     * @name shapesGroup
-     * @memberOf Annotation#
+     * @name Highcharts.Annotation#shapesGroup
      * @type {Highcharts.SVGElement}
      */
     /**
      * The group svg element of the annotation's labels.
      *
-     * @name labelsGroup
-     * @memberOf Annotation#
+     * @name Highcharts.Annotation#labelsGroup
      * @type {Highcharts.SVGElement}
      */
     this.init(chart, this.options);
 };
 merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin, 
-/** @lends Annotation# */
+/** @lends Highcharts.Annotation# */
 {
     /**
      * List of events for `annotation.options.events` that should not be
      * added to `annotation.graphic` but to the `annotation`.
      *
+     * @private
      * @type {Array<string>}
      */
     nonDOMEvents: ['add', 'afterUpdate', 'drag', 'remove'],
@@ -181,6 +194,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @since        6.0.0
      * @requires     modules/annotations
      * @optionparent annotations
+     *
+     * @private
      */
     defaultOptions: {
         /**
@@ -200,7 +215,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         visible: true,
         /**
          * Allow an annotation to be draggable by a user. Possible
-         * values are `"x"`, `"xy"`, `"y"` and `""` (disabled).
+         * values are `'x'`, `'xy'`, `'y'` and `''` (disabled).
          *
          * @sample highcharts/annotations/draggable/
          *         Annotations draggable: 'xy'
@@ -618,7 +633,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          */
         controlPointOptions: {
             /**
-             * @type      {Highcharts.AnnotationControlPointPositioner}
+             * @type      {Highcharts.AnnotationControlPointPositionerFunction}
              * @apioption annotations.controlPointOptions.positioner
              */
             symbol: 'circle',
@@ -667,6 +682,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     /**
      * Initialize the annotation.
+     * @private
      */
     init: function () {
         this.linkPoints();
@@ -741,7 +757,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     /**
      * Set an annotation options.
-     *
+     * @private
      * @param {Highcharts.AnnotationsOptions} - user options for an annotation
      */
     setOptions: function (userOptions) {
@@ -760,6 +776,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         controllableMixin.redraw.call(this, animation);
     },
     /**
+     * @private
      * @param {Array<Highcharts.AnnotationControllable>} items
      * @param {boolean} [animation]
      */
@@ -803,7 +820,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     /**
      * Set the annotation's visibility.
-     *
+     * @private
      * @param {boolean} [visible]
      * Whether to show or hide an annotation. If the param is omitted, the
      * annotation's visibility is toggled.
@@ -829,6 +846,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * that the annotation belongs to (all annotations are kept in
      * the chart.annotations array) - it is recommended to use
      * {@link Highcharts.Chart#removeAnnotation} instead.
+     * @private
      */
     destroy: function () {
         var chart = this.chart, destroyItem = function (item) {
@@ -845,11 +863,22 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     /**
      * See {@link Highcharts.Chart#removeAnnotation}.
+     * @private
      */
     remove: function () {
         // Let chart.update() remove annoations on demand
         return this.chart.removeAnnotation(this);
     },
+    /**
+     * Updates an annotation.
+     *
+     * @function Highcharts.Annotation#update
+     *
+     * @param {Partial<Highcharts.AnnotationsOptions>} userOptions
+     * New user options for the annotation.
+     *
+     * @return {void}
+     */
     update: function (userOptions) {
         var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = H.merge(true, this.userOptions, userOptions);
         options.labels = labelsAndShapes.labels;
@@ -869,7 +898,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      **************************************************************** */
     /**
      * Initialisation of a single shape
-     *
+     * @private
      * @param {Object} shapeOptions - a confg object for a single shape
      */
     initShape: function (shapeOptions, index) {
@@ -882,6 +911,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     /**
      * Initialisation of a single label
+     * @private
      */
     initLabel: function (labelOptions, index) {
         var options = merge(this.options.labelOptions, {
@@ -893,7 +923,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     /**
      * Redraw a single item.
-     *
+     * @private
      * @param {Annotation.Label|Annotation.Shape} item
      * @param {boolean} [animation]
      */
@@ -914,7 +944,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     /**
      * Hide or show annotaiton attached to points.
-     *
+     * @private
      * @param {Annotation.Label|Annotation.Shape} item
      */
     adjustVisibility: function (item) {
@@ -934,7 +964,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     /**
      * Destroy a single item.
-     *
+     * @private
      * @param {Annotation.Label|Annotation.Shape} item
      */
     destroyItem: function (item) {

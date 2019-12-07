@@ -12,9 +12,12 @@ import eventEmitterMixin from './eventEmitterMixin.js';
  * A control point class which is a connection between controllable
  * transform methods and a user actions.
  *
+ * @requires modules/annotations
+ *
  * @class
  * @name Highcharts.AnnotationControlPoint
- * @mixes eventEmitterMixin
+ *
+ * @hideconstructor
  *
  * @param {Highcharts.Chart} chart
  * A chart instance.
@@ -34,40 +37,32 @@ var ControlPoint = function (chart, target, options, index) {
     this.options = options;
     this.index = pick(options.index, index);
 };
-/**
- * @typedef {Object} Annotation.ControlPoint.Position
- * @property {number} x
- * @property {number} y
- */
-/**
- * @typedef {Object} Annotation.ControlPoint.Options
- * @property {string} symbol
- * @property {number} width
- * @property {number} height
- * @property {Object} style
- * @property {boolean} visible
- * @property {Annotation.ControlPoint.Positioner} positioner
- * @property {Object} events
- */
 extend(ControlPoint.prototype, eventEmitterMixin);
 /**
  * List of events for `anntation.options.events` that should not be
  * added to `annotation.graphic` but to the `annotation`.
- *
+ * @private
+ * @name Highcharts.AnnotationControlPoint#nonDOMEvents
  * @type {Array<string>}
  */
 ControlPoint.prototype.nonDOMEvents = ['drag'];
 /**
- * Set the visibility.
+ * Set the visibility of the control point.
  *
- * @param {boolean} [visible]
- **/
+ * @function Highcharts.AnnotationControlPoint#setVisibility
+ *
+ * @param {boolean} visible
+ * Visibility of the control point.
+ *
+ * @return {void}
+ */
 ControlPoint.prototype.setVisibility = function (visible) {
     this.graphic.attr('visibility', visible ? 'visible' : 'hidden');
     this.options.visible = visible;
 };
 /**
  * Render the control point.
+ * @private
  */
 ControlPoint.prototype.render = function () {
     var chart = this.chart, options = this.options;
@@ -80,7 +75,7 @@ ControlPoint.prototype.render = function () {
 };
 /**
  * Redraw the control point.
- *
+ * @private
  * @param {boolean} [animation]
  */
 ControlPoint.prototype.redraw = function (animation) {
@@ -88,6 +83,7 @@ ControlPoint.prototype.redraw = function (animation) {
 };
 /**
  * Destroy the control point.
+ * @private
  */
 ControlPoint.prototype.destroy = function () {
     eventEmitterMixin.destroy.call(this);
@@ -100,6 +96,13 @@ ControlPoint.prototype.destroy = function () {
 };
 /**
  * Update the control point.
+ *
+ * @function Highcharts.AnnotationControlPoint#update
+ *
+ * @param {Partial<Highcharts.AnnotationControlPointOptionsObject>} userOptions
+ * New options for the control point.
+ *
+ * @return {void}
  */
 ControlPoint.prototype.update = function (userOptions) {
     var chart = this.chart, target = this.target, index = this.index, options = H.merge(true, this.options, userOptions);

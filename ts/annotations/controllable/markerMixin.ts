@@ -154,6 +154,7 @@ var createMarkerSetter = function (markerType: string): Highcharts.AnnotationMar
 /**
  * @private
  * @mixin
+ * @name Highcharts.AnnotaitonMarkerMixin
  */
 var markerMixin: Highcharts.AnnotationMarkerMixin = {
     markerEndSetter: createMarkerSetter('marker-end'),

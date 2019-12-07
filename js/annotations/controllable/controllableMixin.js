@@ -9,6 +9,7 @@ import H from './../../parts/Globals.js';
  * An object which denots a controllable's anchor positions - relative and
  * absolute.
  *
+ * @private
  * @interface Highcharts.AnnotationAnchorObject
  */ /**
 * Relative to the plot area position
@@ -31,11 +32,12 @@ import H from './../../parts/Globals.js';
 * @name Highcharts.AnnotationControllable#collection
 * @type {string}
 */ /**
+* @private
 * @name Highcharts.AnnotationControllable#controlPoints
 * @type {Array<Highcharts.AnnotationControlPoint>}
 */ /**
 * @name Highcharts.AnnotationControllable#points
-* @type {Array<Highcharts.AnnotationPointType>}
+* @type {Array<Highcharts.Point>}
 */
 import U from './../../parts/Utilities.js';
 var isObject = U.isObject, isString = U.isString, splat = U.splat;
@@ -49,7 +51,7 @@ import MockPoint from './../MockPoint.js';
  *
  * @private
  * @mixin
- * @memberOf Annotation
+ * @name Highcharts.AnnotationControllableMixin
  */
 var controllableMixin = {
     /**
@@ -324,7 +326,7 @@ var controllableMixin = {
     /**
      * Set control points' visibility.
      *
-     * @param {boolean} [visible]
+     * @param {boolean} visible
      */
     setControlPointsVisibility: function (visible) {
         this.controlPoints.forEach(function (controlPoint) {

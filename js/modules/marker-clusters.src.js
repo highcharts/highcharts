@@ -72,6 +72,8 @@ oldPointsStateId = [];
  * @product      highcharts highmaps
  * @since        next
  * @optionparent plotOptions.scatter.cluster
+ *
+ * @private
  */
 var clusterDefaultOptions = {
     /**

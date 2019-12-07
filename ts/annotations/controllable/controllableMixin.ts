@@ -54,7 +54,7 @@ declare global {
             render(this: AnnotationControllable, parentGroup?: SVGElement): void;
             rotate(this: AnnotationControllable, cx: number, cy: number, radians: number): void;
             scale(this: AnnotationControllable, cx: number, cy: number, sx: number, sy: number): void;
-            setControlPointsVisibility(this: Highcharts.AnnotationControllable, visible?: boolean): void;
+            setControlPointsVisibility(this: Highcharts.AnnotationControllable, visible: boolean): void;
             shouldBeDrawn(this: AnnotationControllable): boolean;
             transform(
                 this: AnnotationControllable,
@@ -96,15 +96,11 @@ declare global {
         interface AnnotationControllableOptionsObject {
             className?: string;
             controlPoints?: Array<AnnotationControlPointOptionsObject>;
-            d?: (string|Function);
-            fill?: ColorType;
             id?: (number|string);
             markerEnd?: string;
             markerStart?: string;
             point?: (string|AnnotationMockPointOptionsObject);
             points?: Array<(string|AnnotationMockPointOptionsObject)>;
-            snap?: number;
-            stroke?: ColorType;
             x?: number;
             y?: number;
         }
@@ -115,6 +111,7 @@ declare global {
  * An object which denots a controllable's anchor positions - relative and
  * absolute.
  *
+ * @private
  * @interface Highcharts.AnnotationAnchorObject
  *//**
  * Relative to the plot area position
@@ -138,11 +135,12 @@ declare global {
  * @name Highcharts.AnnotationControllable#collection
  * @type {string}
  *//**
+ * @private
  * @name Highcharts.AnnotationControllable#controlPoints
  * @type {Array<Highcharts.AnnotationControlPoint>}
  *//**
  * @name Highcharts.AnnotationControllable#points
- * @type {Array<Highcharts.AnnotationPointType>}
+ * @type {Array<Highcharts.Point>}
  */
 
 import U from './../../parts/Utilities.js';
@@ -162,7 +160,7 @@ import MockPoint from './../MockPoint.js';
  *
  * @private
  * @mixin
- * @memberOf Annotation
+ * @name Highcharts.AnnotationControllableMixin
  */
 var controllableMixin: Highcharts.AnnotationControllableMixin = {
     /**
@@ -549,9 +547,9 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
     /**
      * Set control points' visibility.
      *
-     * @param {boolean} [visible]
+     * @param {boolean} visible
      */
-    setControlPointsVisibility: function (this: Highcharts.AnnotationControllable, visible?: boolean): void {
+    setControlPointsVisibility: function (this: Highcharts.AnnotationControllable, visible: boolean): void {
         this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
             controlPoint.setVisibility(visible);
         });

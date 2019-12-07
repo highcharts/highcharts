@@ -5,6 +5,7 @@
  * */
 import H from '../parts/Globals.js';
 /**
+ * @private
  * @interface Highcharts.AnnotationMockLabelOptionsObject
  */ /**
 * Point instance of the point.
@@ -21,7 +22,7 @@ import H from '../parts/Globals.js';
 */
 /**
  * A mock series instance imitating a real series from a real point.
- *
+ * @private
  * @interface Highcharts.AnnotationMockSeries
  */ /**
 * Whether a series is visible.
@@ -29,13 +30,17 @@ import H from '../parts/Globals.js';
 * @type {boolean}
 */ /**
 * A chart instance.
-*
 * @name Highcharts.AnnotationMockSeries#chart
 * @type {Highcharts.Chart}
 */ /**
 * @name Highcharts.AnnotationMockSeries#getPlotBox
 * @type {Function}
 */
+/**
+ * Indicates if this is a mock point for an annotation.
+ * @name Highcharts.Point#mock
+ * @type {boolean|undefined}
+ */
 import U from '../parts/Utilities.js';
 var defined = U.defined, extend = U.extend;
 import '../parts/Axis.js';
@@ -48,8 +53,11 @@ import '../parts/Series.js';
  *
  * @requires modules/annotations
  *
+ * @private
  * @class
  * @name Highcharts.AnnotationMockPoint
+ *
+ * @hideconstructor
  *
  * @param {Highcharts.Chart} chart
  * The chart instance.
@@ -178,7 +186,8 @@ MockPoint.pointToPixels = function (point, paneCoordinates) {
  *
  * @param {Highcharts.AnnotationPointType} point
  *
- * @return {Highcharts.AnnotationMockPointOptionsObject} mock point's options
+ * @return {Highcharts.AnnotationMockPointOptionsObject}
+ * A mock point's options.
  */
 MockPoint.pointToOptions = function (point) {
     return {

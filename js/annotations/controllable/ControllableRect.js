@@ -1,22 +1,35 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
 import H from '../../parts/Globals.js';
 import '../../parts/Utilities.js';
 import controllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable rect class.
  *
- * @class
- * @mixes Annotation.controllableMixin
- * @memberOf Annotation
+ * @requires modules/annotations
  *
- * @param {Highcharts.Annotation} annotation an annotation instance
- * @param {Object} options a rect's options
- * @param {number} index of the rectangle
- **/
-function ControllableRect(annotation, options, index) {
+ * @private
+ * @class
+ * @name Highcharts.AnnotationControllableRect
+ *
+ * @param {Highcharts.Annotation} annotation
+ * An annotation instance.
+ *
+ * @param {Highcharts.AnnotationsShapeOptions} options
+ * A rect's options.
+ *
+ * @param {number} index
+ * Index of the rectangle
+ */
+var ControllableRect = function (annotation, options, index) {
     this.init(annotation, options, index);
     this.collection = 'shapes';
-}
+};
 /**
  * @typedef {Annotation.ControllablePath.AttrsMap}
  *          Annotation.ControllableRect.AttrsMap

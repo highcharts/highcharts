@@ -15,10 +15,11 @@ var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 /**
  * A controllable path class.
  *
+ * @requires modules/annotations
+ *
+ * @private
  * @class
  * @name Highcharts.AnnotationControllablePath
- * @mixes Annotation.controllableMixin
- * @mixes Annotation.markerMixin
  *
  * @param {Highcharts.Annotation}
  * Related annotation.
@@ -34,17 +35,10 @@ var ControllablePath = function (annotation, options, index) {
     this.collection = 'shapes';
 };
 /**
- * @typedef {Object} Annotation.ControllablePath.AttrsMap
- * @property {string} dashStyle=dashstyle
- * @property {string} strokeWidth=stroke-width
- * @property {string} stroke=stroke
- * @property {string} fill=fill
- * @property {string} zIndex=zIndex
- */
-/**
  * A map object which allows to map options attributes to element attributes
  *
- * @type {Annotation.ControllablePath.AttrsMap}
+ * @name Highcharts.AnnotationControllablePath.attrsMap
+ * @type {Highcharts.Dictionary<string>}
  */
 ControllablePath.attrsMap = {
     dashStyle: 'dashstyle',
