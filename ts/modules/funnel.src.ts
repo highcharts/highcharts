@@ -208,7 +208,8 @@ seriesType<Highcharts.FunnelSeries>(
         size: true as any,
 
         dataLabels: {
-            connectorWidth: 1
+            connectorWidth: 1,
+            verticalAlign: 'middle'
         },
 
         /**
