@@ -3092,9 +3092,11 @@ extend((
                 // Now move all <tspan>'s to the <textPath> node
                 while (tspans.length) {
                     // Remove "y" from tspans, as Firefox translates them
-                    tspans[0].setAttribute('y', 0 as any);
+                    tspans[0].setAttribute('y', 0);
                     // Remove "x" from tspans
-                    tspans[0].setAttribute('x', -attrs.dx as any);
+                    if (isNumber(attrs.dx)) {
+                        tspans[0].setAttribute('x', -attrs.dx);
+                    }
                     textPathElement.appendChild(tspans[0]);
                 }
             }
