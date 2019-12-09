@@ -37,10 +37,10 @@ var Highcharts = require('highcharts/highmaps');
 Installing nightly builds of Highcharts
 --------------------------------------
 Nightly builds allows the access to the next Highcharts version prior to release and testing. Currently this is available via the [highcharts-dist nightly branch](https://github.com/highcharts/highcharts-dist/tree/nightly) on Github.
-Note that we do not recommend the use of the nightly build in production environments as these **may contain bugs and are not considered stable.**
+Note that we do not recommend the use of the nightly build in production environments as it **may contain bugs and are not considered stable.**
 
-The nightly builds can be installed by running `npm install --save highcharts/highcharts-dist#nightly`. 
+The nightly build can be installed by running `npm install --save highcharts/highcharts-dist#nightly`. 
 
-As this is a dependency to a Github branch you will not be able to update the dependency using `npm update`. 
+As this is a dependency to a GitHub branch you will not be able to update the dependency using `npm update`. 
 Updating requires that you uninstall and then reinstall by running `npm uninstall highcharts && npm install --save highcharts/highcharts-dist#nightly`. 
 Uninstalling is also necessary when moving from a nightly build to a production version of Highcharts.
