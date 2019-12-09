@@ -184,7 +184,8 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
         if (points[1] === points[4]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[1] = points[4] = Math.floor(points[1] as any);
+            points[1] = points[4] =
+                Math.floor(points[1] as any) + (width % 2 / 2);
         }
         if (points[2] === points[5]) {
             points[2] = points[5] =
@@ -325,7 +326,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     ): void {
         var series = this,
             animationLimit = pick(series.options.animationLimit, 250),
-            verb = series.chart.pointCount < animationLimit ?
+            verb = point.connector && series.chart.pointCount < animationLimit ?
                 'animate' : 'attr';
 
         if (!point.connector) {
