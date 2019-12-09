@@ -821,6 +821,7 @@ const {
     objectEach,
     pick,
     pInt,
+    removeEvent,
     splat
 } = U;
 
@@ -843,7 +844,6 @@ var SVGElement: Highcharts.SVGElement,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
-    removeEvent = H.removeEvent,
     stop = H.stop,
     svg = H.svg,
     SVG_NS = H.SVG_NS,

@@ -2958,7 +2958,7 @@ H.addEvent = function<T> (
 
     // Return a function that can be called to remove this event.
     return function (): void {
-        H.removeEvent(el, type, fn);
+        removeEvent(el, type, fn);
     };
 };
 
@@ -2981,7 +2981,7 @@ H.addEvent = function<T> (
  *
  * @return {void}
  */
-H.removeEvent = function<T> (
+function removeEvent<T>(
     el: (Highcharts.Class<T>|T),
     type?: string,
     fn?: (Highcharts.EventCallbackFunction<T>|Function)
@@ -3067,7 +3067,7 @@ H.removeEvent = function<T> (
             }
         }
     });
-};
+}
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -3433,6 +3433,7 @@ const utils = {
     pick,
     pInt,
     relativeLength,
+    removeEvent,
     setAnimation,
     splat,
     syncTimeout,

@@ -361,15 +361,15 @@ const {
     isNumber,
     isObject,
     syncTimeout,
-    pick
+    pick,
+    removeEvent
 } = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
     fireEvent = H.fireEvent,
     format = H.format,
-    uniqueKey = H.uniqueKey,
-    removeEvent = H.removeEvent;
+    uniqueKey = H.uniqueKey;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

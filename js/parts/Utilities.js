@@ -2160,7 +2160,7 @@ H.addEvent = function (el, type, fn, options) {
     });
     // Return a function that can be called to remove this event.
     return function () {
-        H.removeEvent(el, type, fn);
+        removeEvent(el, type, fn);
     };
 };
 /* eslint-disable valid-jsdoc */
@@ -2182,7 +2182,7 @@ H.addEvent = function (el, type, fn, options) {
  *
  * @return {void}
  */
-H.removeEvent = function (el, type, fn) {
+function removeEvent(el, type, fn) {
     /* eslint-enable valid-jsdoc */
     var events;
     /**
@@ -2246,7 +2246,7 @@ H.removeEvent = function (el, type, fn) {
             }
         }
     });
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Fire an event that was registered with {@link Highcharts#addEvent}.
@@ -2541,6 +2541,7 @@ var utils = {
     pick: pick,
     pInt: pInt,
     relativeLength: relativeLength,
+    removeEvent: removeEvent,
     setAnimation: setAnimation,
     splat: splat,
     syncTimeout: syncTimeout,
