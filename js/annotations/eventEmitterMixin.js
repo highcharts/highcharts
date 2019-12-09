@@ -1,7 +1,8 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var objectEach = U.objectEach,
-    pick = U.pick;
+    pick = U.pick,
+    removeEvent = U.removeEvent;
 
 var fireEvent = H.fireEvent;
 
@@ -277,7 +278,7 @@ var eventEmitterMixin = {
     destroy: function () {
         this.removeDocEvents();
 
-        H.removeEvent(this);
+        removeEvent(this);
 
         this.hcEvents = null;
     }

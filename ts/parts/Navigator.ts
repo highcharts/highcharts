@@ -197,6 +197,7 @@ const {
     isArray,
     isNumber,
     pick,
+    removeEvent,
     splat
 } = U;
 
@@ -215,7 +216,6 @@ var addEvent = H.addEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
-    removeEvent = H.removeEvent,
     Scrollbar = H.Scrollbar,
     Series = H.Series,
     seriesTypes = H.seriesTypes,

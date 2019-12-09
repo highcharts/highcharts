@@ -305,6 +305,7 @@ const {
     pick,
     pInt,
     relativeLength,
+    removeEvent,
     setAnimation,
     splat,
     syncTimeout
@@ -329,7 +330,6 @@ var addEvent = H.addEvent,
     marginNames = H.marginNames,
     merge = H.merge,
     Pointer = H.Pointer, // @todo add as requirement
-    removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
     win = H.win;
 
