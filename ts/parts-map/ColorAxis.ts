@@ -167,6 +167,9 @@ var addEvent = H.addEvent,
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 
+Chart.prototype.collectionsWithUpdate.push('colorAxis');
+Chart.prototype.collectionsWithInit.colorAxis = [Chart.prototype.addColorAxis];
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The ColorAxis object for inclusion in gradient legends.
@@ -235,10 +238,10 @@ extend(ColorAxis.prototype, {
      *
      * @extends      xAxis
      * @excluding    alignTicks, allowDecimals, alternateGridColor, breaks,
-     *               categories, crosshair, dateTimeLabelFormats, lineWidth,
-     *               linkedTo, maxZoom, minRange, minTickInterval, offset,
-     *               opposite, pane, plotBands, plotLines, reversedStacks,
-     *               showEmpty, title, zoomEnabled
+     *               categories, crosshair, dateTimeLabelFormats, height, left,
+     *               lineWidth, linkedTo, maxZoom, minRange, minTickInterval,
+     *               offset, opposite, pane, plotBands, plotLines,
+     *               reversedStacks, showEmpty, title, top, width, zoomEnabled
      * @product      highcharts highstock highmaps
      * @type         {*|Array<*>}
      * @optionparent colorAxis
@@ -472,6 +475,7 @@ extend(ColorAxis.prototype, {
          * @sample {highmaps} maps/coloraxis/marker/
          *         Black marker
          *
+         * @declare Highcharts.PointMarkerOptionsObject
          * @product highcharts highstock highmaps
          */
         marker: {
@@ -481,15 +485,14 @@ extend(ColorAxis.prototype, {
              * `false` to disable animation. Defaults to `{ duration: 50 }`.
              *
              * @type    {boolean|Highcharts.AnimationOptionsObject}
-             * @default {"duration": 50}
              * @product highcharts highstock highmaps
              */
             animation: {
-                /** @ignore */
+                /** @internal */
                 duration: 50
             },
 
-            /** @ignore */
+            /** @internal */
             width: 0.01,
 
             /**
@@ -1384,6 +1387,7 @@ extend(ColorAxis.prototype, {
                 var vis = true,
                     from = dataClass.from,
                     to = dataClass.to;
+                const { numberFormatter } = chart;
 
                 // Assemble the default name. This can be overridden
                 // by legend.options.labelFormatter
@@ -1394,14 +1398,13 @@ extend(ColorAxis.prototype, {
                     name = '> ';
                 }
                 if (typeof from !== 'undefined') {
-                    name += H.numberFormat(from, valueDecimals) +
-                        valueSuffix;
+                    name += numberFormatter(from, valueDecimals) + valueSuffix;
                 }
                 if (typeof from !== 'undefined' && typeof to !== 'undefined') {
                     name += ' - ';
                 }
                 if (typeof to !== 'undefined') {
-                    name += H.numberFormat(to, valueDecimals) + valueSuffix;
+                    name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
                 // Add a mock object to the legend items
                 legendItems.push(extend(

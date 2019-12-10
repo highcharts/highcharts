@@ -69,6 +69,9 @@ seriesType('gantt', 'xrange'
     },
     connectors: {
         type: 'simpleConnect',
+        /**
+         * @declare Highcharts.ConnectorsAnimationOptionsObject
+         */
         animation: {
             reversed: true // Dependencies go from child to parent
         },
@@ -225,6 +228,7 @@ seriesType('gantt', 'xrange'
 /**
  * Data for a Gantt series.
  *
+ * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data
  * @excluding className, color, colorIndex, connect, dataLabels, events, id,

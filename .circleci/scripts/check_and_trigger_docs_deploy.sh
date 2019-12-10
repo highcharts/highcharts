@@ -36,9 +36,16 @@ DOCS_COMMIT=$(git log -1 --format=format:%H --full-diff docs/)
 
 if [ $DOCS_COMMIT = $LATEST_COMMIT ]; then
     echo "Files in docs/ has changed, triggering deploy of docs via doc-builder to bucket ${BUCKET}"
+    payload="{ \"branch\":\"master\", \"parameters\": { \"run_deploy\": true, \"target_bucket\": \"${BUCKET}\" }}"
+    echo "$payload"
+
     # Circle API v2
-    curl -X POST -H 'Content-Type: application/json' -d '{ "branch":"master", "parameters": { "run_deploy": true, "target_bucket": "${BUCKET}" }}' \
-    https://circleci.com/api/v2/project/github/highcharts/doc-builder/pipeline?circle-token=${TOKEN}&branch=master
+    httpUrl="https://circleci.com/api/v2/project/github/highcharts/doc-builder/pipeline?circle-token=${TOKEN}&branch=master"
+    rep=$(curl -f -X POST -H "Content-Type: application/json" -d "$payload" "$httpUrl")
+    status="$?"
+    echo "$rep"
+    exit "$status"
+
 else
      echo "No change in docs/ folder found."
      exit 0;

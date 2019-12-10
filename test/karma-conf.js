@@ -4,7 +4,10 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
 const os = require('os');
+const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
 
+const VISUAL_TEST_REPORT_PATH = 'test/visual-test-results.json';
+const version = require('../package.json').version;
 // Internal reference
 const hasJSONSources = {};
 
@@ -574,10 +577,15 @@ module.exports = function (config) {
         }
     };
 
+    if (argv.reference) {
+        saveGitShaToTestReportFile();
+        options.referenceRun = true;
+    }
+
     if (argv.visualcompare || argv.reference) {
         options.reporters.push('imagecapture');
         options.imageCapture = {
-            resultsOutputPath: 'test/visual-test-results.json',
+            resultsOutputPath: VISUAL_TEST_REPORT_PATH,
         };
         options.browserDisconnectTolerance = 1; // default 0
         options.browserDisconnectTimeout = 30000; // default 2000
@@ -616,7 +624,7 @@ module.exports = function (config) {
         options.browserDisconnectTimeout = 30000; // default 2000
         options.browserDisconnectTolerance = 1; // default 0
         options.browserNoActivityTimeout = 4 * 60 * 1000; // default 10000
-        options.browserSocketTimeout = 20000;
+        options.browserSocketTimeout = 30000;
         options.captureTimeout = 120000;
 
         options.plugins = [
@@ -718,4 +726,14 @@ function createVisualTestTemplate(argv, path, js, assertion) {
             ${useFakeTime ? 'TestUtilities.lolexUninstall(clock);' : ''}
         });
     `;
+}
+
+function saveGitShaToTestReportFile() {
+    const metaData = {
+        meta: {
+            referenceGitSha: getLatestCommitShaSync(),
+            referenceVersion: version
+        }
+    };
+    fs.writeFileSync(VISUAL_TEST_REPORT_PATH, JSON.stringify(metaData, null, ' '));
 }

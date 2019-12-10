@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
+var clamp = U.clamp, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
@@ -194,7 +194,6 @@ seriesType('gauge', 'line', {
      *         Allow 5 degrees overshoot
      *
      * @type      {number}
-     * @default   0
      * @since     3.0.10
      * @product   highcharts
      * @apioption plotOptions.gauge.overshoot
@@ -299,12 +298,10 @@ seriesType('gauge', 'line', {
                 100), rearLength = ((pInt(pick(dialOptions.rearLength, '10%')) * radius) /
                 100), baseWidth = dialOptions.baseWidth || 3, topWidth = dialOptions.topWidth || 1, overshoot = options.overshoot, rotation = yAxis.startAngleRad + yAxis.translate(point.y, null, null, null, true);
             // Handle the wrap and overshoot options
-            if (isNumber(overshoot)) {
-                overshoot = overshoot / 180 * Math.PI;
-                rotation = Math.max(yAxis.startAngleRad - overshoot, Math.min(yAxis.endAngleRad + overshoot, rotation));
-            }
-            else if (options.wrap === false) {
-                rotation = Math.max(yAxis.startAngleRad, Math.min(yAxis.endAngleRad, rotation));
+            if (isNumber(overshoot) || options.wrap === false) {
+                overshoot = isNumber(overshoot) ?
+                    (overshoot / 180 * Math.PI) : 0;
+                rotation = clamp(rotation, yAxis.startAngleRad - overshoot, yAxis.endAngleRad + overshoot);
             }
             rotation = rotation * 180 / Math.PI;
             point.shapeType = 'path';

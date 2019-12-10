@@ -103,6 +103,7 @@ import U from '../parts/Utilities.js';
 const {
     arrayMax,
     arrayMin,
+    clamp,
     extend,
     isNumber,
     pick,
@@ -135,6 +136,7 @@ var Axis = H.Axis,
  *         Bubble chart
  *
  * @extends      plotOptions.scatter
+ * @excluding    cluster
  * @product      highcharts highstock
  * @requires     highcharts-more
  * @optionparent plotOptions.bubble
@@ -677,14 +679,12 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
                 // Find the min and max Z
                 zData = (series.zData as any).filter(isNumber);
                 if (zData.length) { // #1735
-                    zMin = pick(seriesOptions.zMin, Math.min(
-                        zMin,
-                        Math.max(
-                            arrayMin(zData),
-                            seriesOptions.displayNegative === false ?
-                                (seriesOptions.zThreshold as any) :
-                                -Number.MAX_VALUE
-                        )
+                    zMin = pick(seriesOptions.zMin, clamp(
+                        arrayMin(zData),
+                        seriesOptions.displayNegative === false ?
+                            (seriesOptions.zThreshold as any) :
+                            -Number.MAX_VALUE,
+                        zMin
                     ));
                     zMax = pick(
                         seriesOptions.zMax,
@@ -710,7 +710,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
                 if (
                     isNumber(data[i]) &&
                     (axis.dataMin as any) <= data[i] &&
-                    data[i] <= (axis.dataMax as any)
+                    data[i] <= (axis.max as any)
                 ) {
                     radius = series.radii ? series.radii[i] : 0;
                     pxMin = Math.min(

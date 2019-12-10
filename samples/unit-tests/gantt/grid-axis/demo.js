@@ -1521,3 +1521,41 @@ QUnit.test('Chart.update', assert => {
         'should still have two updated labels and a new one after update.'
     );
 });
+
+QUnit.test(
+    'Secondary tick interval when years in primary (#11427)',
+    assert => {
+        const chart = Highcharts.ganttChart('container', {
+            chart: {
+                width: 1200
+            },
+            series: [{
+                data: [{
+                    end: 1574946000000,
+                    start: 1488200400000
+                },
+                {
+                    end: 1640696400000,
+                    start: 1563458400000
+                }]
+            },
+            {
+                data: [{
+                    end: 1579525200000,
+                    start: 1526133600000
+                },
+                {
+                    end: 1629986400000,
+                    start: 1552136400000
+                }]
+            }]
+        });
+
+        assert.notDeepEqual(
+            chart.xAxis[0].tickPositions,
+            chart.xAxis[1].tickPositions,
+            'The secondary axis should have longer range ticks'
+        );
+
+    }
+);

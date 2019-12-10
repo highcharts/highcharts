@@ -22,6 +22,7 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         class SunburstPoint extends TreemapPoint {
+            public dataLabelPath?: SVGElement;
             public innerArcLength?: number;
             public outerArcLength?: number;
             public node: SunburstNodeObject;
@@ -29,6 +30,7 @@ declare global {
             public series: SunburstSeries;
             public shapeExisting: SunburstNodeValuesObject;
             public sliced?: boolean;
+            public getDataLabelPath(label: SVGElement): SVGElement;
         }
         class SunburstSeries extends TreemapSeries {
             public center: Array<number>;
@@ -55,6 +57,11 @@ declare global {
                 mapOptionsToLevel: Dictionary<SunburstSeriesOptions>
             ): void;
             public translate(): void;
+            public alignDataLabel(
+                point: SunburstPoint,
+                dataLabel: SVGElement,
+                labelOptions: DataLabelsOptionsObject
+            ): void;
         }
         interface SeriesTypesDictionary {
             sunburst: typeof SunburstSeries;
@@ -158,17 +165,19 @@ declare global {
             range(from: unknown, to: unknown): Array<number>;
         }
         type SunburstDataLabelsRotationValue = (
-            'auto'|'perpendicular'|'parallel'
+            'auto'|'perpendicular'|'parallel'|'circular'
         );
     }
 }
 
 import U from '../parts/Utilities.js';
 const {
+    correctFloat,
     extend,
     isNumber,
     isObject,
-    isString
+    isString,
+    splat
 } = U;
 
 import '../mixins/centered-series.js';
@@ -390,11 +399,13 @@ var getDlOptions = function getDlOptions(
                 params.optionsPoint.dataLabels :
                 {}
         ),
-        optionsLevel = (
+        // The splat was used because levels dataLabels
+        // options doesn't work as an array
+        optionsLevel = splat(
             isObject(params.level) ?
                 params.level.dataLabels :
                 {}
-        ),
+        )[0],
         options = merge<Highcharts.SunburstDataLabelsOptionsObject>({
             style: {}
         }, optionsLevel, optionsPoint),
@@ -403,23 +414,48 @@ var getDlOptions = function getDlOptions(
         rotationMode = options.rotationMode;
 
     if (!isNumber(options.rotation)) {
-        if (rotationMode === 'auto') {
+        if (rotationMode === 'auto' || rotationMode === 'circular') {
             if (
                 (point.innerArcLength as any) < 1 &&
                 (point.outerArcLength as any) > (shape.radius as any)
             ) {
                 rotationRad = 0;
+                // Triger setTextPath function to get textOutline etc.
+                if (point.dataLabelPath && rotationMode === 'circular') {
+                    options.textPath = {
+                        enabled: true
+                    };
+                }
             } else if (
                 (point.innerArcLength as any) > 1 &&
                 (point.outerArcLength as any) > 1.5 * (shape.radius as any)
             ) {
-                rotationMode = 'parallel';
+                if (rotationMode === 'circular') {
+                    options.textPath = {
+                        enabled: true,
+                        attributes: {
+                            dy: 5
+                        }
+                    };
+                } else {
+                    rotationMode = 'parallel';
+                }
             } else {
+                // Trigger the destroyTextPath function
+                if (
+                    point.dataLabel &&
+                    point.dataLabel.textPathWrapper &&
+                    rotationMode === 'circular'
+                ) {
+                    options.textPath = {
+                        enabled: false
+                    };
+                }
                 rotationMode = 'perpendicular';
             }
         }
 
-        if (rotationMode !== 'auto') {
+        if (rotationMode !== 'auto' && rotationMode !== 'circular') {
             rotationRad = (
                 (shape.end as any) -
                 ((shape.end as any) - (shape.start as any)) / 2
@@ -463,6 +499,39 @@ var getDlOptions = function getDlOptions(
         }
 
         options.rotation = rotation;
+    }
+
+    if (options.textPath) {
+        if (
+            point.shapeExisting.innerR === 0 &&
+            options.textPath.enabled
+        ) {
+            // Enable rotation to render text
+            options.rotation = 0;
+            // Center dataLabel - disable textPath
+            options.textPath.enabled = false;
+            // Setting width and padding
+            (options.style as any).width = Math.max(
+                (point.shapeExisting.r * 2) -
+                2 * (options.padding || 0), 1);
+        } else if (
+            point.dlOptions &&
+            point.dlOptions.textPath &&
+            !point.dlOptions.textPath.enabled &&
+            (rotationMode === 'circular')
+        ) {
+            // Bring dataLabel back if was a center dataLabel
+            options.textPath.enabled = true;
+        }
+        if (options.textPath.enabled) {
+            // Enable rotation to render text
+            options.rotation = 0;
+            // Setting width and padding
+            (options.style as any).width = Math.max(
+                ((point.outerArcLength as any) +
+                (point.innerArcLength as any)) / 2 -
+                2 * (options.padding || 0), 1);
+        }
     }
     // NOTE: alignDataLabel positions the data label differntly when rotation is
     // 0. Avoiding this by setting rotation to a small number.
@@ -564,6 +633,15 @@ var getDrillId = function getDrillId(
         }
     }
     return drillId;
+};
+
+const getLevelFromAndTo = function getLevelFromAndTo(
+    { level, height }: Highcharts.SunburstNodeObject
+): { from: number; to: number } {
+    //  Never displays level below 1
+    const from = level > 0 ? level : 1;
+    const to = level + height;
+    return { from, to };
 };
 
 var cbSetTreeValuesBefore = function before(
@@ -1101,10 +1179,11 @@ var sunburstSeries = {
         nodeRoot = mapIdToNode[rootId];
         idTop = isString(nodeRoot.parent) ? nodeRoot.parent : '';
         nodeTop = mapIdToNode[idTop];
+        const { from, to } = getLevelFromAndTo(nodeRoot);
         mapOptionsToLevel = getLevelOptions<Highcharts.SunburstSeries>({
-            from: nodeRoot.level > 0 ? nodeRoot.level : 1,
+            from,
             levels: series.options.levels,
-            to: tree.height,
+            to,
             defaults: {
                 colorByPoint: options.colorByPoint,
                 dataLabels: options.dataLabels,
@@ -1116,9 +1195,9 @@ var sunburstSeries = {
         // NOTE consider doing calculateLevelSizes in a callback to
         // getLevelOptions
         mapOptionsToLevel = calculateLevelSizes(mapOptionsToLevel, {
-            diffRadius: diffRadius,
-            from: nodeRoot.level > 0 ? nodeRoot.level : 1,
-            to: tree.height
+            diffRadius,
+            from,
+            to
         }) as any;
         // TODO Try to combine setTreeValues & setColorRecursive to avoid
         //  unnecessary looping.
@@ -1154,6 +1233,19 @@ var sunburstSeries = {
 
         // reset object
         nodeIds = {};
+    },
+
+    alignDataLabel: function (
+        this: Highcharts.SunburstSeries,
+        point: Highcharts.SunburstPoint,
+        dataLabel: Highcharts.SVGElement,
+        labelOptions: Highcharts.DataLabelsOptionsObject): void {
+
+        if (labelOptions.textPath && labelOptions.textPath.enabled) {
+            return;
+        }
+        return seriesTypes.treemap.prototype.alignDataLabel
+            .apply(this, arguments);
     },
 
     // Animate the slices in. Similar to the animation of polar charts.
@@ -1200,8 +1292,9 @@ var sunburstSeries = {
         }
     },
     utils: {
-        calculateLevelSizes: calculateLevelSizes,
-        range: range
+        calculateLevelSizes,
+        getLevelFromAndTo,
+        range
     } as any
 };
 
@@ -1213,6 +1306,60 @@ var sunburstPoint = {
     },
     isValid: function isValid(this: Highcharts.SunburstPoint): boolean {
         return true;
+    },
+    getDataLabelPath: function (
+        this: Highcharts.SunburstPoint,
+        label: Highcharts.SVGElement
+    ): Highcharts.SVGElement {
+        var renderer = this.series.chart.renderer,
+            shapeArgs = this.shapeExisting,
+            start = shapeArgs.start,
+            end = shapeArgs.end,
+            angle = start + (end - start) / 2, // arc middle value
+            upperHalf = angle < 0 &&
+                angle > -Math.PI ||
+                angle > Math.PI,
+            r = (shapeArgs.r + (label.options.distance || 0)),
+            moreThanHalf;
+
+        // Check if point is a full circle
+        if (
+            start === -Math.PI / 2 &&
+            correctFloat(end) === correctFloat(Math.PI * 1.5)
+        ) {
+            start = -Math.PI + Math.PI / 360;
+            end = -Math.PI / 360;
+            upperHalf = true;
+        }
+        // Check if dataLabels should be render in the
+        // upper half of the circle
+        if (end - start > Math.PI) {
+            upperHalf = false;
+            moreThanHalf = true;
+        }
+
+        if (this.dataLabelPath) {
+            this.dataLabelPath = this.dataLabelPath.destroy();
+        }
+
+        this.dataLabelPath = renderer
+            .arc({
+                open: true,
+                longArc: moreThanHalf ? 1 : 0
+            })
+            // Add it inside the data label group so it gets destroyed
+            // with the label
+            .add(label);
+
+        this.dataLabelPath.attr({
+            start: (upperHalf ? start : end),
+            end: (upperHalf ? end : start),
+            clockwise: +upperHalf,
+            x: shapeArgs.x,
+            y: shapeArgs.y,
+            r: (r + shapeArgs.innerR) / 2
+        });
+        return this.dataLabelPath;
     }
 };
 

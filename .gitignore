@@ -33,16 +33,14 @@
 /highcharts.com.site-error.log
 /test/last-run.json
 /test/visual-test-results.json
+/test/pr-review-*.json
 /utils/issue-by-commit/demo.js
 /utils/issue-by-commit/demo.html
 /utils/issue-by-commit/log.txt
 /utils/samples/temp/
 /utils/samples/nightly/
 
-/tree.json
-/tree-error.json
-/tree-namespace.json
-/tree-typescript.json
+/tree*.json
 
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.amazon
 exporting-server/java/highcharts-export/highcharts-export-web/pom.xml.github

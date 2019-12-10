@@ -3,7 +3,8 @@ name: Tree map with levels
 authors:
   - Jon Arild Nygård
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Heat and tree maps
 ...

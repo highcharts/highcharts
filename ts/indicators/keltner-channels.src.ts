@@ -38,10 +38,10 @@ declare global {
             public getTranslatedLinesNames: MultipleLinesMixin[
                 'getTranslatedLinesNames'
             ];
-            public getValues(
-                series: KeltnerChannelsLinkedParentSeries,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: KeltnerChannelsIndicatorParamsOptions
-            ): (IndicatorMultipleValuesObject|undefined)
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined)
         }
 
         interface KeltnerChannelsIndicatorOptions
@@ -191,10 +191,12 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 }
             }, this.options);
         },
-        getValues: function (
-            series: Highcharts.KeltnerChannelsLinkedParentSeries,
+        getValues: function<
+            TLinkedSeries extends Highcharts.KeltnerChannelsLinkedParentSeries
+        > (
+            series: TLinkedSeries,
             params: Highcharts.KeltnerChannelsIndicatorParamsOptions
-        ): (Highcharts.IndicatorMultipleValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var period = (params.period as any),
                 periodATR: number = (params.periodATR as any),
                 multiplierATR: number = (params.multiplierATR as any),
@@ -210,15 +212,16 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 BL: number,
                 date: number,
                 seriesEMA: (
-                    Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ) = EMA.prototype.getValues(series,
                     {
                         period: period,
                         index: index
                     }),
-                seriesATR: (Highcharts.IndicatorValuesObject|undefined) =
+                seriesATR: (
+                    Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined
+                ) =
                     ATR.prototype.getValues(series,
                         {
                             period: periodATR
@@ -249,9 +252,9 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 values: KC,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
-    } as Partial<Highcharts.KeltnerChannelsIndicator>)
+    })
 );
 
 /**

@@ -86,7 +86,7 @@ declare global {
         }
         interface VennUtilsObject {
             geometry: GeometryMixin;
-            geometryCircles: GeometryCircleMixin;
+            geometryCircles: object;
             nelderMead: NelderMeadMixin;
             addOverlapToSets(
                 relations: Array<VennRelationObject>
@@ -126,7 +126,18 @@ declare global {
 
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
-import geometryCircles from '../mixins/geometry-circles.js';
+import GeometryCircleMixin from '../mixins/geometry-circles.js';
+const {
+    getAreaOfCircle,
+    getAreaOfIntersectionBetweenCircles,
+    getCircleCircleIntersection,
+    getCirclesIntersectionPolygon,
+    getOverlapBetweenCircles: getOverlapBetweenCirclesByDistance,
+    isCircle1CompletelyOverlappingCircle2,
+    isPointInsideAllCircles,
+    isPointInsideCircle,
+    isPointOutsideAllCircles
+} = GeometryCircleMixin;
 
 import NelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
@@ -146,19 +157,8 @@ import '../parts/Series.js';
 var addEvent = H.addEvent,
     color = H.Color,
     extend = H.extend,
-    getAreaOfCircle = geometryCircles.getAreaOfCircle,
-    getAreaOfIntersectionBetweenCircles =
-        geometryCircles.getAreaOfIntersectionBetweenCircles,
-    getCirclesIntersectionPolygon =
-        geometryCircles.getCirclesIntersectionPolygon,
-    getCircleCircleIntersection = geometryCircles.getCircleCircleIntersection,
     getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    getOverlapBetweenCirclesByDistance =
-        geometryCircles.getOverlapBetweenCircles,
-    isPointInsideAllCircles = geometryCircles.isPointInsideAllCircles,
-    isPointInsideCircle = geometryCircles.isPointInsideCircle,
-    isPointOutsideAllCircles = geometryCircles.isPointOutsideAllCircles,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
@@ -552,62 +552,58 @@ var getLabelWidth = function getLabelWidth(
 };
 
 /**
- * Calulates data label values for a list of relations.
+ * Calulates data label values for a given relations object.
+ *
  * @private
  * @todo add unit tests
- * @todo NOTE: may be better suited as a part of the layout function.
- * @param {Array<Highcharts.VennRelationObject>} relations
- * The list of relations.
- * @return {Highcharts.Dictionary<Highcharts.VennLabelValuesObject>}
- * Returns a map from id to the data label values.
+ * @param {Highcharts.VennRelationObject} relation A relations object.
+ * @param {Array<Highcharts.VennRelationObject>} setRelations The list of
+ * relations that is a set.
+ * @return {Highcharts.VennLabelValuesObject}
+ * Returns an object containing position and width of the label.
  */
-var getLabelValues = function getLabelValues(
-    relations: Array<Highcharts.VennRelationObject>
-): Highcharts.Dictionary<Highcharts.VennLabelValuesObject> {
-    var singleSets = relations.filter(isSet);
+function getLabelValues(
+    relation: Highcharts.VennRelationObject,
+    setRelations: Array<Highcharts.VennRelationObject>
+): Highcharts.VennLabelValuesObject {
+    const sets = relation.sets;
+    // Create a list of internal and external circles.
+    const data = setRelations.reduce(function (
+        data: Highcharts.Dictionary<(Array<Highcharts.CircleObject>)>,
+        set: Highcharts.VennRelationObject
+    ): Highcharts.Dictionary<Array<Highcharts.CircleObject>> {
+        // If the set exists in this relation, then it is internal,
+        // otherwise it will be external.
+        const isInternal = sets.indexOf(set.sets[0]) > -1;
+        const property = isInternal ? 'internal' : 'external';
 
-    return relations.reduce(function (
-        map: Highcharts.Dictionary<Highcharts.VennLabelValuesObject>,
-        relation: Highcharts.VennRelationObject
-    ): Highcharts.Dictionary<Highcharts.VennLabelValuesObject> {
-        if (relation.value) {
-            var sets = relation.sets,
-                id = sets.join(),
-                // Create a list of internal and external circles.
-                data = singleSets.reduce(function (
-                    data: Highcharts.Dictionary<(
-                        Array<Highcharts.CircleObject>
-                    )>,
-                    set: Highcharts.VennRelationObject
-                ): Highcharts.Dictionary<Array<Highcharts.CircleObject>> {
-                    // If the set exists in this relation, then it is internal,
-                    // otherwise it will be external.
-                    var isInternal = sets.indexOf(set.sets[0]) > -1,
-                        property = isInternal ? 'internal' : 'external';
+        // Add the circle to the list.
+        data[property].push(set.circle);
+        return data;
+    }, {
+        internal: [],
+        external: []
+    });
 
-                    // Add the circle to the list.
-                    data[property].push(set.circle as any);
-                    return data;
-                }, {
-                    internal: [],
-                    external: []
-                }),
-                // Calulate the label position.
-                position = getLabelPosition(
-                    data.internal,
-                    data.external
-                ),
-                // Calculate the label width
-                width = getLabelWidth(position, data.internal, data.external);
+    // Filter out external circles that are completely overlapping all internal
+    data.external = data.external.filter((externalCircle): boolean =>
+        data.internal.some((internalCircle): boolean =>
+            !isCircle1CompletelyOverlappingCircle2(
+                externalCircle, internalCircle
+            )
+        )
+    );
 
-            map[id] = {
-                position: position,
-                width: width
-            };
-        }
-        return map;
-    }, {});
-};
+    // Calulate the label position.
+    const position = getLabelPosition(data.internal, data.external);
+    // Calculate the label width
+    const width = getLabelWidth(position, data.internal, data.external);
+
+    return {
+        position,
+        width
+    };
+}
 
 /**
  * Takes an array of relations and adds the properties `totalOverlap` and
@@ -845,47 +841,62 @@ var layoutGreedyVenn = function layoutGreedyVenn(
 };
 
 /**
- * Calculates the positions of all the sets in the venn diagram.
+ * Calculates the positions, and the label values of all the sets in the venn
+ * diagram.
+ *
  * @private
  * @todo Add support for constrained MDS.
  * @param {Array<Highchats.VennRelationObject>} relations
  * List of the overlap between two or more sets, or the size of a single set.
- * @return {Highcharts.Dictionary<(Highcharts.CircleObject|Highcharts.GeometryIntersectionObject)>}
+ * @return {Highcharts.Dictionary<*>}
  * List of circles and their calculated positions.
  */
-var layout = function (
+function layout(
     relations: Array<Highcharts.VennRelationObject>
-): Highcharts.Dictionary<(
+): ({
+        mapOfIdToShape: Highcharts.Dictionary<(
+            Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
+        )>;
+        mapOfIdToLabelValues: Highcharts.Dictionary<(
+            Highcharts.VennLabelValuesObject
+        )>;
+    }) {
+    const mapOfIdToShape: Highcharts.Dictionary<(
         Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
-    )> {
-    var mapOfIdToShape: Highcharts.Dictionary<(
-        Highcharts.CircleObject|Highcharts.GeometryIntersectionObject
+    )> = {};
+    const mapOfIdToLabelValues: Highcharts.Dictionary<(
+        Highcharts.VennLabelValuesObject
     )> = {};
 
     // Calculate best initial positions by using greedy layout.
     if (relations.length > 0) {
-        mapOfIdToShape = layoutGreedyVenn(relations);
+        const mapOfIdToCircles = layoutGreedyVenn(relations);
+        const setRelations = relations.filter(isSet);
 
         relations
-            .filter(function (x: Highcharts.VennRelationObject): boolean {
-                return !isSet(x);
-            })
             .forEach(function (relation: Highcharts.VennRelationObject): void {
-                var sets = relation.sets,
-                    id = sets.join(),
-                    circles = sets.map(function (
-                        set: string
-                    ): Highcharts.CircleObject {
-                        return mapOfIdToShape[set] as any;
-                    });
+                const sets = relation.sets;
+                const id = sets.join();
 
-                // Add intersection shape to map
-                mapOfIdToShape[id] =
-                    getAreaOfIntersectionBetweenCircles(circles) as any;
+                // Get shape from map of circles, or calculate intersection.
+                const shape = isSet(relation) ?
+                    mapOfIdToCircles[id] :
+                    getAreaOfIntersectionBetweenCircles(
+                        sets.map((set): Highcharts.CircleObject =>
+                            mapOfIdToCircles[set])
+                    );
+
+                // Calculate label values if the set has a shape
+                if (shape) {
+                    mapOfIdToShape[id] = shape;
+                    mapOfIdToLabelValues[id] = getLabelValues(
+                        relation, setRelations
+                    );
+                }
             });
     }
-    return mapOfIdToShape;
-};
+    return { mapOfIdToShape, mapOfIdToLabelValues };
+}
 
 var isValidRelation = function (
     x: (Highcharts.VennPointOptions|Highcharts.VennRelationObject)
@@ -1139,10 +1150,7 @@ var vennSeries = {
         var relations = processVennData(this.options.data as any);
 
         // Calculate the positions of each circle.
-        var mapOfIdToShape = layout(relations);
-
-        // Calculate positions of each data label
-        var mapOfIdToLabelValues = getLabelValues(relations);
+        const { mapOfIdToShape, mapOfIdToLabelValues } = layout(relations);
 
         // Calculate the scale, and center of the plot area.
         var field = Object.keys(mapOfIdToShape)
@@ -1366,7 +1374,7 @@ var vennSeries = {
     utils: {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
-        geometryCircles: geometryCircles,
+        geometryCircles: GeometryCircleMixin,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,

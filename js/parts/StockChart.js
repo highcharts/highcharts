@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat;
 import './Chart.js';
 import './Axis.js';
 import './Point.js';
@@ -50,7 +50,8 @@ var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, format = H.format, me
  */
 /**
  * Defines if comparison should start from the first point within the visible
- * range or should start from the first point <b>before</b> the range.
+ * range or should start from the first point **before** the range.
+ *
  * In other words, this flag determines if first point within the visible range
  * will have 0% (`compareStart=true`) or should have been already calculated
  * according to the previous point (`compareStart=false`).
@@ -118,13 +119,13 @@ var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, format = H.format, me
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, 
     // to increase performance, don't merge the data
-    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, 
+    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, panning = options.chart && options.chart.panning, 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
-    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), disableStartOnTick = navigatorEnabled ? {
+    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning && /y/.test(panning.type), disableStartOnTick = {
         startOnTick: false,
         endOnTick: false
-    } : null;
+    };
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
         return merge({
@@ -145,7 +146,7 @@ H.StockChart = H.stockChart = function (a, b, c) {
         {
             type: 'datetime',
             categories: null
-        }, disableStartOnTick);
+        }, (navigatorEnabled ? disableStartOnTick : null));
     });
     // apply Y axis options to both single and multi y axes
     options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
@@ -171,13 +172,16 @@ H.StockChart = H.stockChart = function (a, b, c) {
             }
         }, defaultOptions.yAxis, // #3802
         defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
-        yAxisOptions // user options
-        );
+        yAxisOptions, // user options
+        (verticalPanningEnabled ? disableStartOnTick : null));
     });
     options.series = null;
     options = merge({
         chart: {
-            panning: true,
+            panning: {
+                enabled: true,
+                type: 'x'
+            },
             pinchType: 'x'
         },
         navigator: {
@@ -342,7 +346,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
                     if (force !== 'pass' &&
                         (x1 < axisLeft || x1 > axisLeft + axis.width)) {
                         if (force) {
-                            x1 = x2 = Math.min(Math.max(axisLeft, x1), axisLeft + axis.width);
+                            x1 = x2 = clamp(x1, axisLeft, axisLeft + axis.width);
                         }
                         else {
                             skip = true;
@@ -363,7 +367,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
                     if (force !== 'pass' &&
                         (y1 < axisTop || y1 > axisTop + axis.height)) {
                         if (force) {
-                            y1 = y2 = Math.min(Math.max(axisTop, y1), axis.top + axis.height);
+                            y1 = y2 = clamp(y1, axisTop, axisTop + axis.height);
                         }
                         else {
                             skip = true;
@@ -497,7 +501,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         this.toValue(horiz ? e.chartX : e.chartY);
     crossLabel.attr({
         text: formatOption ?
-            format(formatOption, { value: value }, chart.time) :
+            format(formatOption, { value: value }, chart) :
             options.formatter.call(this, value),
         x: posx,
         y: posy,
@@ -701,7 +705,8 @@ Axis.prototype.setCompare = function (compare, redraw) {
  */
 Point.prototype.tooltipFormatter = function (pointFormat) {
     var point = this;
-    pointFormat = pointFormat.replace('{point.change}', (point.change > 0 ? '+' : '') + H.numberFormat(point.change, pick(point.series.tooltipOptions.changeDecimals, 2)));
+    var numberFormatter = point.series.chart.numberFormatter;
+    pointFormat = pointFormat.replace('{point.change}', (point.change > 0 ? '+' : '') + numberFormatter(point.change, pick(point.series.tooltipOptions.changeDecimals, 2)));
     return pointTooltipFormatter.apply(this, [pointFormat]);
 };
 /* ************************************************************************** *
@@ -761,5 +766,29 @@ addEvent(Chart, 'update', function (e) {
         merge(true, this.options.scrollbar, options.scrollbar);
         this.navigator.update({}, false);
         delete options.scrollbar;
+    }
+});
+// Extend the Axis prototype to calculate start min/max values
+// (including min/maxPadding). This is related to using vertical panning
+// (#11315).
+addEvent(Axis, 'afterSetScale', function () {
+    var axis = this, panning = axis.chart.options.chart &&
+        axis.chart.options.chart.panning;
+    if (panning &&
+        (panning.type === 'y' ||
+            panning.type === 'xy') &&
+        !axis.isXAxis &&
+        !defined(axis.panningState)) {
+        var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
+        axis.series.forEach(function (series) {
+            min = Math.min(H.arrayMin(series.yData), min) -
+                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
+            max = Math.max(H.arrayMax(series.yData), max) +
+                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
+        });
+        axis.panningState = {
+            startMin: min,
+            startMax: max
+        };
     }
 });

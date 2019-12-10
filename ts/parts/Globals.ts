@@ -60,9 +60,6 @@ declare global {
             useCommonDataGrouping?: any; // @todo indicators
             getPoint: Function; // @todo boost module
         }
-        interface SeriesOptions {
-            accessibility?: any; // @todo
-        }
         interface SeriesTypesDictionary {
             [key: string]: typeof Series;
         }
@@ -116,6 +113,10 @@ declare global {
         mozRequestFullScreen: Function;
         msRequestFullscreen: Function;
         webkitRequestFullscreen: Function;
+        setAttribute(
+            qualifiedName: string,
+            value: (boolean|number|string)
+        ): void;
     }
     interface OscillatorNode extends AudioNode {
     }

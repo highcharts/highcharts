@@ -57,9 +57,12 @@
 	"code/modules/no-data-to-display.src.js",
 	"code/modules/drag-panes.src.js",
 	"code/modules/debugger.src.js",
+	"code/modules/dumbbell.src.js",
+	"code/modules/lollipop.src.js",
 	"code/modules/cylinder.src.js",
 	"code/modules/organization.src.js",
 	"code/modules/dotplot.src.js",
+	"code/modules/marker-clusters.src.js",
 
 	"code/indicators/indicators-all.src.js",
 

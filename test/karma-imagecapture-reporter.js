@@ -8,6 +8,7 @@
 
 const fs = require('fs');
 const { getLatestCommitShaSync } = require('../tools/gulptasks/lib/git');
+const version = require('../package.json').version;
 
 /* eslint-disable require-jsdoc */
 function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
@@ -17,7 +18,8 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     const {
         imageCapture = {
             resultsOutputPath: 'test/visual-test-results.json'
-        }
+        },
+        referenceRun = false
     } = config;
 
     /**
@@ -91,14 +93,17 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     this.onBrowserStart = function (browser) {
         const filename = imageCapture.resultsOutputPath;
         LOG.info('Starting visual tests. Results stored in ' + filename);
-        const today = new Date().toISOString().slice(0, 10);
+        const now = new Date();
+        const today = now.toISOString().slice(0, 10);
         const testResults = readExistingResult(filename);
-        testResults.meta = {
+        testResults.meta = Object.assign(testResults.meta || {}, {
             browser: browser.name,
-            runId: browser.id,
+            runId: process.env.CIRCLE_BUILD_NUM || browser.id,
             runDate: today,
-            gitSha: gitSha || 'unknown'
-        };
+            runDateTs: now.getTime(),
+            gitSha: gitSha || 'unknown',
+            version: version
+        });
         fs.writeFileSync(filename, JSON.stringify(testResults, null, ' '));
     };
 
@@ -109,6 +114,10 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
      * @return {void}
      */
     this.specSuccess = this.specSkipped = this.specFailure = function (browser, testResult) {
+        if (referenceRun) {
+            // no need to log results test results if the test run is for references/baselines
+            return;
+        }
         const { log = [], skipped, success } = testResult;
         const filename = imageCapture.resultsOutputPath;
         const diffResults = readExistingResult(filename);

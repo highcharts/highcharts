@@ -37,6 +37,7 @@ declare global {
             rightCliff?: number;
         }
         interface Series {
+            isRadialBar?: boolean;
             negStacks?: any; // @todo
             singleStacks?: any; // @todo
             stack?: OptionsStackingValue;
@@ -291,7 +292,7 @@ H.StackItem.prototype = {
             formatOption = options.format,
             attr = {},
             str = formatOption ? // format the text in the label
-                format(formatOption, this, chart.time) :
+                format(formatOption, this, chart) :
                 (options.formatter as any).call(this);
 
         // Change the text to reflect the new total and set visibility to hidden
@@ -535,13 +536,15 @@ Axis.prototype.buildStacks = function (this: Highcharts.Axis): void {
     var axisSeries = this.series,
         reversedStacks = pick(this.options.reversedStacks, true),
         len = axisSeries.length,
+        actualSeries,
         i;
 
     if (!this.isXAxis) {
         this.usePercentage = false;
         i = len;
         while (i--) {
-            axisSeries[reversedStacks ? i : len - i - 1].setStackedPoints();
+            actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
+            actualSeries.setStackedPoints();
         }
 
         // Loop up again to compute percent and stream stack

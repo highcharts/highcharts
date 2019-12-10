@@ -290,7 +290,8 @@ QUnit.test('Series.update.', function (assert) {
                 data: [1, 2, 3]
             }]
         }),
-        series = chart.series[0];
+        series = chart.series[0],
+        controller = new TestController(chart);
     assert.strictEqual(
         series.color,
         '#7cb5ec',
@@ -303,5 +304,56 @@ QUnit.test('Series.update.', function (assert) {
         series.color,
         '#ff0000',
         'series.color should equal #ff0000 after update.'
+    );
+
+    series.update({
+        dataLabels: {
+            enabled: false
+        },
+        allowDrillToNode: true,
+        data: [{
+            id: '0.0',
+            parent: ''
+        }, {
+            id: '1.1',
+            parent: '0.0'
+        }, {
+            id: '1.2',
+            parent: '0.0'
+        }, {
+            parent: '1.1',
+            value: 3
+        }, {
+            parent: '1.1',
+            value: 2
+        }, {
+            parent: '1.1',
+            value: 1
+        }, {
+            parent: '1.2',
+            value: 3
+        }, {
+            parent: '1.2',
+            value: 2
+        }, {
+            parent: '1.2',
+            value: 1
+        }]
+    });
+
+    controller.mouseOver(
+        series.center[0] - series.center[2] / 4 + chart.plotLeft,
+        series.center[1] + chart.plotTop
+    );
+
+    controller.click(
+        series.center[0] - series.center[2] / 4 + chart.plotLeft,
+        series.center[1] + chart.plotTop
+    );
+
+    assert.strictEqual(
+        chart.series[0].rootNode,
+        '1.2',
+        'Drilldown should work after series.update (#12425).'
     );
 });

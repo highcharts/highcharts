@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, pick = U.pick, setAnimation = U.setAnimation;
+var clamp = U.clamp, defined = U.defined, extend = U.extend, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
 var addEvent = H.addEvent, Chart = H.Chart;
@@ -315,7 +315,7 @@ H.layouts['reingold-fruchterman'].prototype, {
                     // Node can not repulse itself:
                     node !== repNode &&
                         // Only close nodes affect each other:
-                        /* layout.getDistR(node, repNode) < 2 * k && */
+                        // layout.getDistR(node, repNode) < 2 * k &&
                         // Not dragged:
                         !node.fixedPosition) {
                         distanceXY = layout.getDistXY(node, repNode);
@@ -395,9 +395,9 @@ H.layouts['reingold-fruchterman'].prototype, {
 
         */
         // Limit X-coordinates:
-        node.plotX = Math.max(Math.min(node.plotX, box.width - radius), box.left + radius);
+        node.plotX = clamp(node.plotX, box.left + radius, box.width - radius);
         // Limit Y-coordinates:
-        node.plotY = Math.max(Math.min(node.plotY, box.height - radius), box.top + radius);
+        node.plotY = clamp(node.plotY, box.top + radius, box.height - radius);
     },
     /**
      * From "A comparison of simulated annealing cooling strategies" by

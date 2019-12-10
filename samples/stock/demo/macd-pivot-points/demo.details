@@ -3,7 +3,8 @@ name: MACD pivot points
 authors:
   - Pawel fus
 js_wrap: b
-tags: []
+tags:
+  - Highstock demo
 categories:
   - Flags and Indicators
 ...

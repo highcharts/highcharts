@@ -1,7 +1,7 @@
 Flag series (Highstock only)
 ================
 
-A flag series consists of flags marking events or points of interests. Used alone flag series will make no sense. Flags can be placed on either the serie of the chart or on the axis.
+A flag series consists of flags marking events or points of interests. Used alone flag series will make no sense. Flags can be placed on either the series of the chart or on the axis.
 
 Flag series belong to Highstock, but they can also be applied to a regular Highcharts chart created with the Highcharts.Chart() constructor as long as the highstock.js file is loaded in the page. See the [FAQ item](https://highcharts.com/docs/frequently-asked-questions#highstock-features-in-highcharts) on the matter. 
 

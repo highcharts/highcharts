@@ -3,7 +3,8 @@ name: 'Tile map, diamonds'
 authors:
   - Øystein Moseng
 js_wrap: b
-tags: []
+tags:
+  - Highmaps demo
 categories:
   - Series types
 ...

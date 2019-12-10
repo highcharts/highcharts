@@ -85,18 +85,6 @@ declare global {
     }
 }
 
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * Range series only. The high or maximum value for each data point.
- * @name Highcharts.PointOptionsObject#high
- * @type {number|undefined}
- *//**
- * Range series only. The low or minimum value for each data point.
- * @name Highcharts.PointOptionsObject#low
- * @type {number|undefined}
- */
-
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -861,7 +849,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
  */
 
 /**
- * @type      {Highcharts.SeriesAreaRangeDataLabelsOptionsObject|Array<Highcharts.SeriesAreaRangeDataLabelsOptionsObject>}
+ * @extends   series.arearange.dataLabels
  * @product   highcharts highstock
  * @apioption series.arearange.data.dataLabels
  */

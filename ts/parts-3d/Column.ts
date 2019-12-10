@@ -49,7 +49,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    pick
+    pick,
+    wrap
 } = U;
 
 import '../parts/Series.js';
@@ -58,8 +59,7 @@ var addEvent = H.addEvent,
     perspective = H.perspective,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    svg = H.svg,
-    wrap = H.wrap;
+    svg = H.svg;
 
 /**
  * Depth of the columns in a 3D column chart.

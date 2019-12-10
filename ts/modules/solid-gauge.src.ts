@@ -89,17 +89,18 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     extend,
     isNumber,
     pick,
-    pInt
+    pInt,
+    wrap
 } = U;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 
-var wrap = H.wrap,
-    Renderer = H.Renderer,
+var Renderer = H.Renderer,
     colorAxisMethods: Partial<Highcharts.SolidGaugeAxis>;
 
 /**
@@ -489,17 +490,15 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
                     }
 
                     // Handle overshoot and clipping to axis max/min
-                    rotation = Math.max(
+                    rotation = clamp(
+                        rotation,
                         axisMinAngle - overshootVal,
-                        Math.min(axisMaxAngle + overshootVal, rotation)
+                        axisMaxAngle + overshootVal
                     );
 
                     // Handle the wrap option
                     if (options.wrap === false) {
-                        rotation = Math.max(
-                            axisMinAngle,
-                            Math.min(axisMaxAngle, rotation)
-                        );
+                        rotation = clamp(rotation, axisMinAngle, axisMaxAngle);
                     }
 
                     minAngle = Math.min(rotation, series.thresholdAngleRad);
@@ -533,19 +532,19 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
                                 'sweep-flag': 0
                             })
                             .add(series.group);
+                    }
 
-                        if (!series.chart.styledMode) {
-                            if (options.linecap !== 'square') {
-                                graphic.attr({
-                                    'stroke-linecap': 'round',
-                                    'stroke-linejoin': 'round'
-                                });
-                            }
+                    if (!series.chart.styledMode) {
+                        if (options.linecap !== 'square') {
                             graphic.attr({
-                                stroke: options.borderColor || 'none',
-                                'stroke-width': options.borderWidth || 0
+                                'stroke-linecap': 'round',
+                                'stroke-linejoin': 'round'
                             });
                         }
+                        graphic.attr({
+                            stroke: options.borderColor || 'none',
+                            'stroke-width': options.borderWidth || 0
+                        });
                     }
 
                     if (graphic) {

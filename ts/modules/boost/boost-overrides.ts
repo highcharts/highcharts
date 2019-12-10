@@ -49,7 +49,10 @@ declare global {
 }
 
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    isNumber,
+    wrap
+} = U;
 
 import '../../parts/Color.js';
 import '../../parts/Series.js';
@@ -69,7 +72,6 @@ var boostEnabled = butils.boostEnabled,
     seriesTypes = H.seriesTypes,
     addEvent = H.addEvent,
     pick = H.pick,
-    wrap = H.wrap,
     plotOptions: Highcharts.PlotOptions = H.getOptions().plotOptions as any;
 
 /**

@@ -83,8 +83,9 @@ declare global {
             marginLeft?: number;
             marginRight?: number;
             marginTop?: number;
+            numberFormatter?: NumberFormatterCallbackFunction;
             panKey?: string;
-            panning?: boolean;
+            panning?: PanningOptions;
             pinchType?: string;
             plotBackgroundColor?: (
                 ColorString|GradientColorObject|PatternObject
@@ -258,6 +259,14 @@ declare global {
             labelStyle?: CSSObject;
             showDuration?: number;
             style?: CSSObject;
+        }
+        interface NumberFormatterCallbackFunction {
+            (
+                number: number,
+                decimals: number,
+                decimalPoint?: string,
+                thousandsSep?: string
+            ): string;
         }
         interface Options {
             chart?: ChartOptions;
@@ -585,14 +594,16 @@ H.defaultOptions = {
      * ### Legacy
      *
      * In Highcharts 3.x, the default colors were:
-     *
-     * <pre>colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
-     *     '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a']</pre>
+     * ```js
+     * colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce',
+     *         '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a']
+     * ```
      *
      * In Highcharts 2.x, the default colors were:
-     *
-     * <pre>colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
-     *    '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']</pre>
+     * ```js
+     * colors: ['#4572A7', '#AA4643', '#89A54E', '#80699B', '#3D96AE',
+     *         '#DB843D', '#92A8CD', '#A47D7C', '#B5CA92']
+     * ```
      *
      * @sample {highcharts} highcharts/chart/colors/
      *         Assign a global color theme
@@ -624,7 +635,8 @@ H.defaultOptions = {
      * initialization. Instead, use `Highcharts.setOptions` to set it before any
      * chart is initialized.
      *
-     * <pre>Highcharts.setOptions({
+     * ```js
+     * Highcharts.setOptions({
      *     lang: {
      *         months: [
      *             'Janvier', 'Février', 'Mars', 'Avril',
@@ -636,7 +648,8 @@ H.defaultOptions = {
      *             'Jeudi', 'Vendredi', 'Samedi'
      *         ]
      *     }
-     * });</pre>
+     * });
+     * ```
      */
     lang: {
 
@@ -798,12 +811,13 @@ H.defaultOptions = {
      * the `lang` options, must be set using the `Highcharts.setOptions`
      * method.
      *
-     * <pre>Highcharts.setOptions({
+     * ```js
+     * Highcharts.setOptions({
      *     global: {
      *         useUTC: false
      *     }
-     * });</pre>
-     *
+     * });
+     * ```
      */
 
     /**
@@ -963,20 +977,11 @@ H.defaultOptions = {
          * duration of 500 ms. If used as a configuration object, the following
          * properties are supported:
          *
-         * <dl>
+         * - **duration**: The duration of the animation in milliseconds.
          *
-         * <dt>duration</dt>
-         *
-         * <dd>The duration of the animation in milliseconds.</dd>
-         *
-         * <dt>easing</dt>
-         *
-         * <dd>A string reference to an easing function set on the `Math`
-         * object. See [the easing
-         * demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
-         * </dd>
-         *
-         * </dl>
+         * - **easing**: A string reference to an easing function set on the
+         *   `Math` object. See
+         *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          *
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
@@ -1037,12 +1042,14 @@ H.defaultOptions = {
          * are `event.xAxis[0]` and `event.yAxis[0]`. Remember the unit of a
          * datetime axis is milliseconds since 1970-01-01 00:00:00.
          *
-         * <pre>click: function(e) {
+         * ```js
+         * click: function(e) {
          *     console.log(
          *         Highcharts.dateFormat('%Y-%m-%d %H:%M:%S', e.xAxis[0].value),
          *         e.yAxis[0].value
          *     )
-         * }</pre>
+         * }
+         * ```
          *
          * @sample {highcharts} highcharts/chart/events-click/
          *         Alert coordinates on click
@@ -1129,7 +1136,8 @@ H.defaultOptions = {
          * `event.xAxis[0]` and `event.yAxis[0]`. Remember the unit of a
          * datetime axis is milliseconds since 1970-01-01 00:00:00.
          *
-         * <pre>selection: function(event) {
+         * ```js
+         * selection: function(event) {
          *     // log the min and max of the primary, datetime x-axis
          *     console.log(
          *         Highcharts.dateFormat(
@@ -1143,7 +1151,8 @@ H.defaultOptions = {
          *     );
          *     // log the min and max of the y axis
          *     console.log(event.yAxis[0].min, event.yAxis[0].max);
-         * }</pre>
+         * }
+         * ```
          *
          * @sample {highcharts} highcharts/chart/events-selection/
          *         Report on selection and reset
@@ -1247,6 +1256,17 @@ H.defaultOptions = {
          */
 
         /**
+         * Callback function to override the default function that formats all
+         * the numbers in the chart. Returns a string with the formatted number.
+         *
+         * @sample highcharts/members/highcharts-numberformat
+         *      Arabic digits in Highcharts
+         * @type {Highcharts.NumberFormatterCallbackFunction}
+         * @since next
+         * @apioption chart.numberFormatter
+         */
+
+        /**
          * Allows setting a key to switch between zooming and panning. Can be
          * one of `alt`, `ctrl`, `meta` (the command key on Mac and Windows
          * key on Windows) or `shift`. The keys are mapped directly to the key
@@ -1269,16 +1289,31 @@ H.defaultOptions = {
          * requires two fingers. To allow panning with one finger, set
          * `followTouchMove` to `false`.
          *
-         * @sample {highcharts} highcharts/chart/pankey/ Zooming and panning
+         * @sample  {highcharts} highcharts/chart/pankey/ Zooming and panning
+         * @sample  {highstock} stock/chart/panning/ Zooming and xy panning
+         *
+         * @product highcharts highstock gantt
+         * @apioption chart.panning
+         */
+
+        /**
+         * Enable or disable chart panning.
          *
          * @type      {boolean}
          * @default   {highcharts} false
          * @default   {highstock} true
-         * @since     4.0.3
-         * @product   highcharts highstock gantt
-         * @apioption chart.panning
+         * @apioption chart.panning.enabled
          */
 
+        /**
+         * Decides in what dimensions the user can pan the chart. Can be
+         * one of `x`, `y`, or `xy`.
+         *
+         * @type    {string}
+         * @validvalue ["x", "y", "xy"]
+         * @default x
+         * @apioption chart.panning.type
+         */
 
         /**
          * Equivalent to [zoomType](#chart.zoomType), but for multitouch
@@ -2383,11 +2418,12 @@ H.defaultOptions = {
         /**
          * CSS styles for each label. To position the label, use left and top
          * like this:
-         *
-         * <pre>style: {
+         * ```js
+         * style: {
          *     left: '100px',
          *     top: '100px'
-         * }</pre>
+         * }
+         * ```
          *
          * @deprecated
          * @type      {Highcharts.CSSObject}
@@ -3306,6 +3342,8 @@ H.defaultOptions = {
     /**
      * Options for the tooltip that appears when the user hovers over a
      * series or point.
+     *
+     * @declare Highcharts.TooltipOptions
      */
     tooltip: {
 
@@ -3338,7 +3376,7 @@ H.defaultOptions = {
         /**
          * Since 4.1, the crosshair definitions are moved to the Axis object
          * in order for a better separation from the tooltip. See
-         * [xAxis.crosshair](#xAxis.crosshair)<a>.</a>
+         * [xAxis.crosshair](#xAxis.crosshair).
          *
          * @sample {highcharts} highcharts/tooltip/crosshairs-x/
          *         Enable a crosshair for the x value
@@ -3406,10 +3444,10 @@ H.defaultOptions = {
          *
          * A subset of HTML is supported. Unless `useHTML` is true, the HTML of
          * the tooltip is parsed and converted to SVG, therefore this isn't a
-         * complete HTML renderer. The following tags are supported: `<b>`,
-         * `<strong>`, `<i>`, `<em>`, `<br/>`, `<span>`. Spans can be styled
-         * with a `style` attribute, but only text-related CSS that is shared
-         * with SVG is handled.
+         * complete HTML renderer. The following HTML tags are supported: `b`,
+         * `br`, `em`, `i`, `span`, `strong`. Spans can be styled with a `style`
+         * attribute, but only text-related CSS, that is shared with SVG, is
+         * handled.
          *
          * The available data in the formatter differ a bit depending on whether
          * the tooltip is shared or split, or belongs to a single point. In a
@@ -3418,45 +3456,31 @@ H.defaultOptions = {
          *
          * Available data are:
          *
-         * <dl>
+         * - **this.percentage (not shared) /**
+         *   **this.points[i].percentage (shared)**:
+         *   Stacked series and pies only. The point's percentage of the total.
          *
-         * <dt>this.percentage (not shared) / this.points[i].percentage (shared)
-         * </dt>
+         * - **this.point (not shared) / this.points[i].point (shared)**:
+         *   The point object. The point name, if defined, is available through
+         *   `this.point.name`.
          *
-         * <dd>Stacked series and pies only. The point's percentage of the
-         * total.
-         * </dd>
+         * - **this.points**:
+         *   In a shared tooltip, this is an array containing all other
+         *   properties for each point.
          *
-         * <dt>this.point (not shared) / this.points[i].point (shared)</dt>
+         * - **this.series (not shared) / this.points[i].series (shared)**:
+         *   The series object. The series name is available through
+         *   `this.series.name`.
          *
-         * <dd>The point object. The point name, if defined, is available
-         * through `this.point.name`.</dd>
+         * - **this.total (not shared) / this.points[i].total (shared)**:
+         *   Stacked series only. The total value at this point's x value.
          *
-         * <dt>this.points</dt>
+         * - **this.x**:
+         *   The x value. This property is the same regardless of the tooltip
+         *   being shared or not.
          *
-         * <dd>In a shared tooltip, this is an array containing all other
-         * properties for each point.</dd>
-         *
-         * <dt>this.series (not shared) / this.points[i].series (shared)</dt>
-         *
-         * <dd>The series object. The series name is available through
-         * `this.series.name`.</dd>
-         *
-         * <dt>this.total (not shared) / this.points[i].total (shared)</dt>
-         *
-         * <dd>Stacked series only. The total value at this point's x value.
-         * </dd>
-         *
-         * <dt>this.x</dt>
-         *
-         * <dd>The x value. This property is the same regardless of the tooltip
-         * being shared or not.</dd>
-         *
-         * <dt>this.y (not shared) / this.points[i].y (shared)</dt>
-         *
-         * <dd>The y value.</dd>
-         *
-         * </dl>
+         * - **this.y (not shared) / this.points[i].y (shared)**:
+         *   The y value.
          *
          * @sample {highcharts} highcharts/tooltip/formatter-simple/
          *         Simple string formatting
@@ -3782,13 +3806,21 @@ H.defaultOptions = {
          * @product highcharts highstock gantt
          */
         dateTimeLabelFormats: {
+            /** @internal */
             millisecond: '%A, %b %e, %H:%M:%S.%L',
+            /** @internal */
             second: '%A, %b %e, %H:%M:%S',
+            /** @internal */
             minute: '%A, %b %e, %H:%M',
+            /** @internal */
             hour: '%A, %b %e, %H:%M',
+            /** @internal */
             day: '%A, %b %e, %Y',
+            /** @internal */
             week: 'Week from %A, %b %e, %Y',
+            /** @internal */
             month: '%B %Y',
+            /** @internal */
             year: '%Y'
         },
 
@@ -3881,7 +3913,6 @@ H.defaultOptions = {
          *         Format demo
          *
          * @type       {string}
-         * @default    <span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y}</b><br/>
          * @since      2.2
          * @apioption  tooltip.pointFormat
          */
@@ -3961,29 +3992,18 @@ H.defaultOptions = {
          * @sample {highcharts} highcharts/tooltip/style/
          *         Greater padding, bold text
          *
-         * @type    {Highcharts.CSSObject}
-         * @default {"color": "#333333", "cursor": "default", "fontSize": "12px", "pointerEvents": "none", "whiteSpace": "nowrap"}
+         * @type {Highcharts.CSSObject}
          */
         style: {
-            /**
-             * @ignore
-             */
+            /** @internal */
             color: '${palette.neutralColor80}',
-            /**
-             * @ignore
-             */
+            /** @internal */
             cursor: 'default',
-            /**
-             * @ignore
-             */
+            /** @internal */
             fontSize: '12px',
-            /**
-             * @ignore
-             */
+            /** @internal */
             pointerEvents: 'none',
-            /**
-             * @ignore
-             */
+            /** @internal */
             whiteSpace: 'nowrap'
         }
     },
@@ -4079,21 +4099,14 @@ H.defaultOptions = {
          * @see In styled mode, credits styles can be set with the
          *      `.highcharts-credits` class.
          *
-         * @type    {Highcharts.CSSObject}
-         * @default {"cursor": "pointer", "color": "#999999", "fontSize": "10px"}
+         * @type {Highcharts.CSSObject}
          */
         style: {
-            /**
-             * @ignore
-             */
+            /** @internal */
             cursor: 'pointer',
-            /**
-             * @ignore
-             */
+            /** @internal */
             color: '${palette.neutralColor40}',
-            /**
-             * @ignore
-             */
+            /** @internal */
             fontSize: '9px'
         },
 

@@ -34,6 +34,9 @@ type Nullable = null|undefined;
  * @private
  */
 declare global {
+    type DeepPartial<T> = {
+        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
+    }
     interface Math {
         easeInOutSine(pos: number): number;
     }
@@ -51,6 +54,7 @@ declare global {
             'Dash'|'DashDot'|'Dot'|'LongDash'|'LongDashDot'|'LongDashDotDot'|
             'ShortDash'|'ShortDashDot'|'ShortDashDotDot'|'ShortDot'|'Solid'
         );
+        type ExtractArrayType<T> = T extends (infer U)[] ? U : never;
         type HTMLAttributes = (
             Dictionary<(boolean|number|string|Function|undefined)>
         );
@@ -72,9 +76,13 @@ declare global {
         interface CSSObject {
             [key: string]: (boolean|number|string|undefined);
             backgroundColor?: ColorString;
+            borderRadius?: (number|string);
             color?: ('contrast'|ColorString);
             cursor?: CursorValue;
             fontSize?: (number|string);
+            lineWidth?: (number|string);
+            stroke?: ColorString;
+            strokeWidth?: (number|string);
         }
         interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;
@@ -209,8 +217,8 @@ declare global {
             eventArguments?: (Dictionary<any>|Event),
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
-        function format(str: string, ctx: any, time?: Time): string;
-        function formatSingle(format: string, val: any, time?: Time): string;
+        function format(str: string, ctx: any, chart?: Chart): string;
+        function formatSingle(format: string, val: any, chart?: Chart): string;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -1784,7 +1792,7 @@ H.createElement = function (
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-H.extendClass = function<T, TReturn = T> (
+function extendClass <T, TReturn = T>(
     parent: Highcharts.Class<T>,
     members: any
 ): Highcharts.Class<TReturn> {
@@ -1793,7 +1801,7 @@ H.extendClass = function<T, TReturn = T> (
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-};
+}
 
 /**
  * Left-pad a string to a given length by adding a character repetetively.
@@ -1812,7 +1820,7 @@ H.extendClass = function<T, TReturn = T> (
  * @return {string}
  *         The padded string.
  */
-H.pad = function (number: number, length?: number, padder?: string): string {
+function pad(number: number, length?: number, padder?: string): string {
     return new Array(
         (length || 2) +
         1 -
@@ -1820,7 +1828,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
             .replace('-', '')
             .length
     ).join(padder || '0') + number;
-};
+}
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
@@ -1840,7 +1848,7 @@ H.pad = function (number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-H.relativeLength = function (
+function relativeLength(
     value: Highcharts.RelativeSize,
     base: number,
     offset?: number
@@ -1848,7 +1856,7 @@ H.relativeLength = function (
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
-};
+}
 
 /**
  * Wrap a method with extended functionality, preserving the original function.
@@ -1869,7 +1877,7 @@ H.relativeLength = function (
  *
  * @return {void}
  */
-H.wrap = function (
+function wrap(
     obj: any,
     method: string,
     func: Highcharts.WrapProceedFunction
@@ -1890,7 +1898,7 @@ H.wrap = function (
         ctx.proceed = null;
         return ret;
     };
-};
+}
 
 
 /**
@@ -1927,9 +1935,8 @@ H.datePropsToTimestamps = function (obj: any): void {
  * @param {*} val
  *        The value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted representation of the value.
@@ -1937,18 +1944,20 @@ H.datePropsToTimestamps = function (obj: any): void {
 H.formatSingle = function (
     format: string,
     val: any,
-    time?: Highcharts.Time
+    chart?: Highcharts.Chart
 ): string {
     var floatRegex = /f$/,
         decRegex = /\.([0-9])/,
         lang = H.defaultOptions.lang,
         decimals: number;
+    const time = chart && chart.time || H.time;
+    const numberFormatter = chart && chart.numberFormatter || numberFormat;
 
     if (floatRegex.test(format)) { // float
         decimals = format.match(decRegex) as any;
         decimals = decimals ? (decimals as any)[1] : -1;
         if (val !== null) {
-            val = H.numberFormat(
+            val = numberFormatter(
                 val,
                 decimals,
                 (lang as any).decimalPoint,
@@ -1956,7 +1965,7 @@ H.formatSingle = function (
             );
         }
     } else {
-        val = (time || H.time).dateFormat(format, val);
+        val = time.dateFormat(format, val);
     }
     return val;
 };
@@ -1981,14 +1990,13 @@ H.formatSingle = function (
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
- * @param {Highcharts.Time} [time]
- *        A `Time` instance that determines the date formatting, for example
- *        for applying time zone corrections to the formatted date.
+ * @param {Highcharts.Chart} [chart]
+ *        A `Chart` instance used to get numberFormatter and time.
  *
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
+H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
@@ -2024,7 +2032,7 @@ H.format = function (str: string, ctx: any, time?: Highcharts.Time): string {
 
             // Format the replacement
             if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, time);
+                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
             }
 
             // Push the result and advance the cursor
@@ -2414,7 +2422,7 @@ H.timeUnits = {
  * @return {string}
  *         The formatted number.
  */
-H.numberFormat = function (
+function numberFormat(
     number: number,
     decimals: number,
     decimalPoint?: string,
@@ -2501,7 +2509,7 @@ H.numberFormat = function (
     }
 
     return ret;
-};
+}
 
 /**
  * Easing definition
@@ -2683,7 +2691,7 @@ H.keys = Object.keys;
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-H.offset = function (el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
+function offset(el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
     var docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
@@ -2695,7 +2703,7 @@ H.offset = function (el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-};
+}
 
 /**
  * Stop running animation.
@@ -3297,7 +3305,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
     );
 
     // Create the class
-    seriesTypes[type] = H.extendClass(
+    seriesTypes[type] = extendClass(
         seriesTypes[parent] || function (): void {},
         props
     );
@@ -3306,7 +3314,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
     // Create the point class if needed
     if (pointProps) {
         seriesTypes[type].prototype.pointClass =
-            H.extendClass(H.Point, pointProps);
+            extendClass(H.Point, pointProps);
     }
 
     return seriesTypes[type];
@@ -3384,7 +3392,7 @@ if ((win as any).jQuery) {
 
             // Create the chart
             if (args[0]) {
-                new (H as any)[ // eslint-disable-line no-new
+                new (H as any)[ // eslint-disable-line computed-property-spacing, no-new
                     // Constructor defaults to Chart
                     isString(args[0]) ? args.shift() : 'Chart'
                 ](this[0], args[0], args[1]);
@@ -3411,18 +3419,24 @@ const utils = {
     discardElement,
     erase,
     extend,
+    extendClass,
     isArray,
     isClass,
     isDOMElement,
     isNumber,
     isObject,
     isString,
+    numberFormat,
     objectEach,
+    offset,
+    pad,
     pick,
     pInt,
+    relativeLength,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    wrap
 };
 
 export default utils;

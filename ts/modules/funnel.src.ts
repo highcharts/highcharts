@@ -105,6 +105,7 @@ import '../parts/Series.js';
 var seriesType = Highcharts.seriesType,
     seriesTypes = Highcharts.seriesTypes,
     fireEvent = Highcharts.fireEvent,
+    addEvent = Highcharts.addEvent,
     noop = Highcharts.noop;
 
 /**
@@ -207,7 +208,8 @@ seriesType<Highcharts.FunnelSeries>(
         size: true as any,
 
         dataLabels: {
-            connectorWidth: 1
+            connectorWidth: 1,
+            verticalAlign: 'middle'
         },
 
         /**
@@ -427,7 +429,7 @@ seriesType<Highcharts.FunnelSeries>(
                     y: y1,
                     topWidth: x2 - x1,
                     bottomWidth: x4 - x3,
-                    height: Math.abs(pick(y3, y5) - y1),
+                    height: Math.abs(pick(y5, y3) - y1),
                     width: NaN
                 };
 
@@ -543,6 +545,8 @@ seriesType<Highcharts.FunnelSeries>(
                 dlBox = point.dlBox || point.shapeArgs,
                 align = options.align,
                 verticalAlign = options.verticalAlign,
+                inside =
+                    ((series.options || {}).dataLabels || {}).inside,
                 centerY = series.center[1],
                 pointPlotY = (
                     reversed ?
@@ -588,25 +592,48 @@ seriesType<Highcharts.FunnelSeries>(
             options.verticalAlign = 'bottom';
 
             // Call the parent method
-            Highcharts.Series.prototype.alignDataLabel.call(
-                this,
-                point,
-                dataLabel,
-                options,
-                alignTo,
-                isNew
-            );
+            if (!inside || point.visible) {
+                Highcharts.Series.prototype.alignDataLabel.call(
+                    this,
+                    point,
+                    dataLabel,
+                    options,
+                    alignTo,
+                    isNew
+                );
+            }
 
-            // If label was justified and we have contrast, set it:
-            if (options.inside && point.contrastColor) {
-                dataLabel.css({
-                    color: point.contrastColor
-                });
+            if (inside) {
+                if (!point.visible && point.dataLabel) {
+                    // Avoid animation from top
+                    point.dataLabel.placed = false;
+                }
+
+                // If label is inside and we have contrast, set it:
+                if (point.contrastColor) {
+                    dataLabel.css({
+                        color: point.contrastColor
+                    });
+                }
             }
         }
     }
 );
 
+/* eslint-disable no-invalid-this */
+addEvent(Highcharts.Chart, 'afterHideAllOverlappingLabels', function (
+    this: Highcharts.Chart
+): void {
+    this.series.forEach(function (series): void {
+        if (
+            series instanceof seriesTypes.pie &&
+            series.placeDataLabels &&
+            !((series.options || {}).dataLabels || {}).inside
+        ) {
+            series.placeDataLabels();
+        }
+    });
+});
 
 /**
  * A `funnel` series. If the [type](#series.funnel.type) option is

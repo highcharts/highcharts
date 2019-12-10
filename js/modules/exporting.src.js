@@ -664,7 +664,7 @@ defaultOptions.exporting = {
      * See [navigation.buttonOptions](#navigation.buttonOptions) for general
      * options.
      *
-     * @type     {Highcharts.Dictionary<Highcharts.ExportingButtonsContextButtonOptions>}
+     * @type     {Highcharts.Dictionary<*>}
      * @requires modules/exporting
      */
     buttons: {
@@ -674,6 +674,7 @@ defaultOptions.exporting = {
          * In styled mode, export button styles can be applied with the
          * `.highcharts-contextbutton` class.
          *
+         * @declare  Highcharts.ExportingButtonsOptionsObject
          * @extends  navigation.buttonOptions
          * @requires modules/exporting
          */
@@ -932,6 +933,19 @@ H.post = function (url, data, formAttributes) {
     // clean up
     discardElement(form);
 };
+if (H.isSafari) {
+    H.win.matchMedia('print').addListener(function (mqlEvent) {
+        if (!H.printingChart) {
+            return void 0;
+        }
+        if (mqlEvent.matches) {
+            H.printingChart.beforePrint();
+        }
+        else {
+            H.printingChart.afterPrint();
+        }
+    });
+}
 extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
@@ -1152,7 +1166,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     getFilename: function () {
         var s = this.userOptions.title && this.userOptions.title.text, filename = this.options.exporting.filename;
         if (filename) {
-            return filename;
+            return filename.replace(/\//g, '-');
         }
         if (typeof s === 'string') {
             filename = s
@@ -1204,13 +1218,111 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         exportingOptions = merge(this.options.exporting, exportingOptions);
         // do the post
         H.post(exportingOptions.url, {
-            filename: exportingOptions.filename || this.getFilename(),
+            filename: exportingOptions.filename ? exportingOptions.filename.replace(/\//g, '-') : this.getFilename(),
             type: exportingOptions.type,
             // IE8 fails to post undefined correctly, so use 0
             width: exportingOptions.width || 0,
             scale: exportingOptions.scale,
             svg: svg
         }, exportingOptions.formAttributes);
+    },
+    /**
+    * Move the chart container(s) to another div.
+    *
+    * @function Highcharts#moveContainers
+    *
+    * @private
+    *
+    * @param {Highcharts.HTMLDOMElement} moveTo
+    *        Move target
+    * @return {void}
+    */
+    moveContainers: function (moveTo) {
+        var chart = this;
+        (chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
+            [chart.fixedDiv, chart.scrollingContainer] :
+            [chart.container]).forEach(function (div) {
+            moveTo.appendChild(div);
+        });
+    },
+    /**
+    * Prepare chart and document before printing a chart.
+    *
+    * @function Highcharts#beforePrint
+    *
+    * @private
+    *
+    * @return {void}
+    *
+    * @fires Highcharts.Chart#event:beforePrint
+    */
+    beforePrint: function () {
+        var chart = this, body = doc.body, printMaxWidth = chart.options.exporting.printMaxWidth, printReverseInfo = {
+            childNodes: body.childNodes,
+            origDisplay: [],
+            resetParams: void 0
+        };
+        var handleMaxWidth;
+        chart.isPrinting = true;
+        chart.pointer.reset(null, 0);
+        fireEvent(chart, 'beforePrint');
+        // Handle printMaxWidth
+        handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
+        if (handleMaxWidth) {
+            printReverseInfo.resetParams = [
+                chart.options.chart.width,
+                void 0,
+                false
+            ];
+            chart.setSize(printMaxWidth, void 0, false);
+        }
+        // hide all body content
+        [].forEach.call(printReverseInfo.childNodes, function (node, i) {
+            if (node.nodeType === 1) {
+                printReverseInfo.origDisplay[i] = node.style.display;
+                node.style.display = 'none';
+            }
+        });
+        // pull out the chart
+        chart.moveContainers(body);
+        // Storage details for undo action after printing
+        chart.printReverseInfo = printReverseInfo;
+    },
+    /**
+    * Clena up after printing a chart.
+    *
+    * @function Highcharts#afterPrint
+    *
+    * @private
+    *
+    * @param {Highcharts.Chart} chart
+    *        Chart that was (or suppose to be) printed
+    * @return {void}
+    *
+    * @fires Highcharts.Chart#event:afterPrint
+    */
+    afterPrint: function () {
+        var chart = this;
+        if (!chart.printReverseInfo) {
+            return void 0;
+        }
+        var childNodes = chart.printReverseInfo.childNodes, origDisplay = chart.printReverseInfo.origDisplay, resetParams = chart.printReverseInfo.resetParams;
+        // put the chart back in
+        chart.moveContainers(chart.renderTo);
+        // restore all body content
+        [].forEach.call(childNodes, function (node, i) {
+            if (node.nodeType === 1) {
+                node.style.display = (origDisplay[i] || '');
+            }
+        });
+        chart.isPrinting = false;
+        // Reset printMaxWidth
+        if (resetParams) {
+            chart.setSize.apply(chart, resetParams);
+        }
+        delete chart.printReverseInfo;
+        delete H.printingChart;
+        fireEvent(chart, 'afterPrint');
     },
     /**
      * Exporting module required. Clears away other elements in the page and
@@ -1231,68 +1343,25 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     print: function () {
-        var chart = this, origDisplay = [], body = doc.body, childNodes = body.childNodes, printMaxWidth = chart.options.exporting.printMaxWidth, resetParams, handleMaxWidth;
-        /**
-         * Move the chart container(s) to another div.
-         * @private
-         * @param {Highcharts.HTMLDOMElement} moveTo
-         *        Move target
-         * @return {void}
-         */
-        function moveContainers(moveTo) {
-            (chart.fixedDiv ? // When scrollablePlotArea is active (#9533)
-                [chart.fixedDiv, chart.scrollingContainer] :
-                [chart.container]).forEach(function (div) {
-                moveTo.appendChild(div);
-            });
-        }
+        var chart = this;
         if (chart.isPrinting) { // block the button while in printing mode
             return;
         }
-        chart.isPrinting = true;
-        chart.pointer.reset(null, 0);
-        fireEvent(chart, 'beforePrint');
-        // Handle printMaxWidth
-        handleMaxWidth = printMaxWidth && chart.chartWidth > printMaxWidth;
-        if (handleMaxWidth) {
-            resetParams = [
-                chart.options.chart.width,
-                void 0,
-                false
-            ];
-            chart.setSize(printMaxWidth, void 0, false);
+        H.printingChart = chart;
+        if (!H.isSafari) {
+            chart.beforePrint();
         }
-        // hide all body content
-        [].forEach.call(childNodes, function (node, i) {
-            if (node.nodeType === 1) {
-                origDisplay[i] = node.style.display;
-                node.style.display = 'none';
-            }
-        });
-        // pull out the chart
-        moveContainers(body);
         // Give the browser time to draw WebGL content, an issue that randomly
         // appears (at least) in Chrome ~67 on the Mac (#8708).
         setTimeout(function () {
             win.focus(); // #1510
             win.print();
             // allow the browser to prepare before reverting
-            setTimeout(function () {
-                // put the chart back in
-                moveContainers(chart.renderTo);
-                // restore all body content
-                [].forEach.call(childNodes, function (node, i) {
-                    if (node.nodeType === 1) {
-                        node.style.display = (origDisplay[i] || '');
-                    }
-                });
-                chart.isPrinting = false;
-                // Reset printMaxWidth
-                if (handleMaxWidth) {
-                    chart.setSize.apply(chart, resetParams);
-                }
-                fireEvent(chart, 'afterPrint');
-            }, 1000);
+            if (!H.isSafari) {
+                setTimeout(function () {
+                    chart.afterPrint();
+                }, 1000);
+            }
         }, 1);
     },
     /**

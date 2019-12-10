@@ -19,10 +19,10 @@ declare global {
         class ChaikinIndicator extends EMAIndicator {
             public data: Array<ChaikinIndicatorPoint>;
             public init(): void;
-            public getValues(
-                series: Series,
+            public getValues<TLinkedSeries extends Series>(
+                series: TLinkedSeries,
                 params: ChaikinIndicatorParamsOptions
-            ): (IndicatorValuesObject|undefined)
+            ): (IndicatorValuesObject<TLinkedSeries>|undefined)
             public nameBase: string;
             public nameComponents: Array<string>;
             public options: ChaikinIndicatorOptions;
@@ -137,29 +137,29 @@ H.seriesType<Highcharts.ChaikinIndicator>(
                 }
             );
         },
-        getValues: function (
-            series: Highcharts.Series,
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
+            series: TLinkedSeries,
             params: Highcharts.ChaikinIndicatorParamsOptions
-        ): (Highcharts.IndicatorValuesObject|undefined) {
+        ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var periods: Array<number> = (params.periods as any),
                 period: number = (params.period as any),
                 // Accumulation Distribution Line data
-                ADL: (Highcharts.IndicatorValuesObject|undefined),
+                ADL: (
+                    Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined
+                ),
                 // 0- date, 1- Chaikin Oscillator
-                CHA: Array<[number, number]> = [],
+                CHA: Array<Array<number>> = [],
                 xData: Array<number> = [],
                 yData: Array<number> = [],
                 periodsOffset: number,
                 // Shorter Period EMA
                 SPE: (
-                    Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 // Longer Period EMA
                 LPE: (
-                    Highcharts.IndicatorValuesObject|
-                    Highcharts.IndicatorNullableValuesObject|
+                    Highcharts.IndicatorValuesObject<TLinkedSeries>|
                     undefined
                 ),
                 oscillator: number,
@@ -177,7 +177,7 @@ H.seriesType<Highcharts.ChaikinIndicator>(
             ADL = AD.prototype.getValues.call(this, series, {
                 volumeSeriesID: params.volumeSeriesID,
                 period: period
-            });
+            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
 
             // Check if adl is calculated properly, if not skip
             if (!ADL) {
@@ -186,11 +186,11 @@ H.seriesType<Highcharts.ChaikinIndicator>(
 
             SPE = EMA.prototype.getValues.call(this, (ADL as any), {
                 period: periods[0]
-            });
+            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
 
             LPE = EMA.prototype.getValues.call(this, (ADL as any), {
                 period: periods[1]
-            });
+            }) as Highcharts.IndicatorValuesObject<TLinkedSeries>;
 
             // Check if ema is calculated properly, if not skip
             if (!SPE || !LPE) {
@@ -214,7 +214,7 @@ H.seriesType<Highcharts.ChaikinIndicator>(
                 values: CHA,
                 xData: xData,
                 yData: yData
-            };
+            } as Highcharts.IndicatorValuesObject<TLinkedSeries>;
         }
     }
 );

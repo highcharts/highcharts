@@ -9,15 +9,8 @@
  * */
 'use strict';
 import H from './Globals.js';
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- */ /**
-* Pie series only. Whether to display a slice offset from the center.
-* @name Highcharts.PointOptionsObject#sliced
-* @type {boolean|undefined}
-*/
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, pick = U.pick, setAnimation = U.setAnimation;
+var clamp = U.clamp, defined = U.defined, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
 import './Legend.js';
@@ -44,9 +37,9 @@ seriesType('pie', 'line',
  *
  * @extends      plotOptions.line
  * @excluding    animationLimit, boostThreshold, connectEnds, connectNulls,
- *               cropThreshold, dashStyle, dragDrop, findNearestPointBy,
- *               getExtremesFromAll, label, lineWidth, marker,
- *               negativeColor, pointInterval, pointIntervalUnit,
+ *               cropThreshold, dashStyle, dataSorting, dragDrop,
+ *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
+ *               marker, negativeColor, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointStart, softThreshold, stacking, step,
  *               threshold, turboThreshold, zoneAxis, zones
  * @product      highcharts
@@ -573,11 +566,11 @@ seriesType('pie', 'line',
         if (!init) {
             points.forEach(function (point) {
                 var graphic = point.graphic, args = point.shapeArgs;
-                if (graphic) {
+                if (graphic && args) {
                     // start values
                     graphic.attr({
                         // animate from inner radius (#779)
-                        r: point.startR || (series.center[3] / 2),
+                        r: pick(point.startR, (series.center && series.center[3] / 2)),
                         start: startAngleRad,
                         end: startAngleRad
                     });
@@ -651,8 +644,7 @@ seriesType('pie', 'line',
         radius = this.radii ?
             this.radii[point.index] :
             center[2] / 2, angle, x;
-        angle = Math.asin(Math.max(Math.min(((y - center[1]) /
-            (radius + point.labelDistance)), 1), -1));
+        angle = Math.asin(clamp((y - center[1]) / (radius + point.labelDistance), -1, 1));
         x = center[0] +
             (left ? -1 : 1) *
                 (Math.cos(angle) * (radius + point.labelDistance)) +
@@ -706,7 +698,7 @@ seriesType('pie', 'line',
                 point.options.dataLabels.distance), labelDistance);
             // Compute point.labelDistance if it's defined as percentage
             // of slice radius (#8854)
-            point.labelDistance = H.relativeLength(point.labelDistance, point.shapeArgs.r);
+            point.labelDistance = relativeLength(point.labelDistance, point.shapeArgs.r);
             // Saved for later dataLabels distance calculation.
             series.maxLabelDistance = Math.max(series.maxLabelDistance || 0, point.labelDistance);
             // The angle must stay within -90 and 270 (#2645)
@@ -1128,7 +1120,7 @@ seriesType('pie', 'line',
             ];
         },
         crookedLine: function (labelPosition, connectorPosition, options) {
-            var touchingSliceAt = connectorPosition.touchingSliceAt, series = this.series, pieCenterX = series.center[0], plotWidth = series.chart.plotWidth, plotLeft = series.chart.plotLeft, alignment = labelPosition.alignment, radius = this.shapeArgs.r, crookDistance = H.relativeLength(// % to fraction
+            var touchingSliceAt = connectorPosition.touchingSliceAt, series = this.series, pieCenterX = series.center[0], plotWidth = series.chart.plotWidth, plotLeft = series.chart.plotLeft, alignment = labelPosition.alignment, radius = this.shapeArgs.r, crookDistance = relativeLength(// % to fraction
             options.crookDistance, 1), crookX = alignment === 'left' ?
                 pieCenterX + radius + (plotWidth + plotLeft -
                     pieCenterX - radius) * (1 - crookDistance) :

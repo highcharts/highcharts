@@ -183,14 +183,14 @@ H.Tooltip.prototype = {
          */
         this.isHidden = true;
         /**
-         * True, if the tooltip is splitted into one label per series, with the
+         * True, if the tooltip is split into one label per series, with the
          * header close to the axis.
          *
          * @readonly
          * @name Highcharts.Tooltip#split
          * @type {boolean|undefined}
          */
-        this.split = options.split && !chart.inverted;
+        this.split = options.split && !chart.inverted && !chart.polar;
         /**
          * When the tooltip is shared, the entire plot area will capture mouse
          * movement or touch events.
@@ -1202,7 +1202,7 @@ H.Tooltip.prototype = {
             e.text = format(formatString, {
                 point: labelConfig,
                 series: series
-            }, this.chart.time);
+            }, this.chart);
         });
         return evt.text;
     },

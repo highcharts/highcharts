@@ -149,17 +149,15 @@ const {
     arrayMin,
     isNumber,
     objectEach,
-    pick
+    pick,
+    wrap
 } = U;
 
 var Series = H.Series,
     Legend = H.Legend,
     Chart = H.Chart,
-
     addEvent = H.addEvent,
-    wrap = H.wrap,
     color = H.color,
-    numberFormat = H.numberFormat,
     merge = H.merge,
     noop = H.noop,
     stableSort = H.stableSort,
@@ -909,10 +907,11 @@ H.BubbleLegend.prototype = {
         var options = this.options,
             formatter = (options.labels as any).formatter,
             format = (options.labels as any).format;
+        const { numberFormatter } = this.chart;
 
         return format ? H.format(format, range) :
             formatter ? formatter.call(range) :
-                numberFormat(range.value, 1);
+                numberFormatter(range.value, 1);
     },
 
     /**

@@ -29,6 +29,7 @@ declare global {
         interface PatternObject {
             animation?: AnimationOptionsObject;
             pattern: PatternOptionsObject;
+            patternIndex?: number;
         }
         interface PatternOptionsObject {
             _height?: (number|string);
@@ -39,7 +40,7 @@ declare global {
             backgroundColor?: ColorString;
             color: ColorString;
             height: number;
-            id: string;
+            id?: string;
             image?: string;
             opacity?: number;
             path: (string|SVGAttributes);
@@ -60,6 +61,7 @@ declare global {
                 animation?: (boolean|AnimationOptionsObject)
             ): (SVGElement|undefined);
         }
+        let patterns: Array<PatternOptionsObject>|undefined;
     }
 }
 
@@ -121,7 +123,7 @@ declare global {
  * identical patterns are reused. To refer to an existing pattern for a
  * Highcharts color, use `color: "url(#pattern-id)"`.
  * @name Highcharts.PatternOptionsObject#id
- * @type {string}
+ * @type {string|undefined}
  */
 
 /**
@@ -158,18 +160,54 @@ declare global {
  * Animation options for the image pattern loading.
  * @name Highcharts.PatternObject#animation
  * @type {boolean|Highcharts.AnimationOptionsObject|undefined}
+ *//**
+ * Optionally an index referencing which pattern to use. Highcharts adds
+ * 10 default patterns to the `Highcharts.patterns` array. Additional
+ * pattern definitions can be pushed to this array if desired. This option
+ * is an index into this array.
+ * @name Highcharts.PatternObject#patternIndex
+ * @type {number|undefined}
  */
 
 import U from '../parts/Utilities.js';
 const {
     animObject,
     erase,
-    pick
+    pick,
+    wrap
 } = U;
 
 var addEvent = H.addEvent,
-    wrap = H.wrap,
     merge = H.merge;
+
+
+// Add the predefined patterns
+H.patterns = ((): Array<Highcharts.PatternOptionsObject> => {
+    const patterns: Array<Highcharts.PatternOptionsObject> = [],
+        colors: Array<string> = H.getOptions().colors as any;
+
+    [
+        'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
+        'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
+        'M 3 0 L 3 10 M 8 0 L 8 10',
+        'M 0 3 L 10 3 M 0 8 L 10 8',
+        'M 0 3 L 5 3 L 5 0 M 5 10 L 5 7 L 10 7',
+        'M 3 3 L 8 3 L 8 8 L 3 8 Z',
+        'M 5 5 m -4 0 a 4 4 0 1 1 8 0 a 4 4 0 1 1 -8 0',
+        'M 10 3 L 5 3 L 5 0 M 5 10 L 5 7 L 0 7',
+        'M 2 5 L 5 2 L 8 5 L 5 8 Z',
+        'M 0 0 L 5 10 L 10 0'
+    ].forEach((pattern: string, i: number): void => {
+        patterns.push({
+            path: pattern,
+            color: colors[i],
+            width: 10,
+            height: 10
+        });
+    });
+
+    return patterns;
+})();
 
 
 /**
@@ -351,8 +389,7 @@ H.SVGRenderer.prototype.addPattern = function (
 
     if (!id) {
         this.idCounter = this.idCounter || 0;
-        id = 'highcharts-pattern-' + (this.chartIndex || 0) + '-' +
-            this.idCounter;
+        id = 'highcharts-pattern-' + this.idCounter + '-' + (this.chartIndex || 0);
         ++this.idCounter;
     }
 
@@ -544,12 +581,18 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (
         ];
     }
 ): boolean {
-    var color = args.args[0],
+    const color = args.args[0],
         prop = args.args[1],
         element = args.args[2],
-        pattern = color.pattern,
-        value = '#343434',
-        forceHashId;
+        chartIndex = (this.chartIndex || 0);
+
+    let pattern = color.pattern,
+        value = '#343434';
+
+    // Handle patternIndex
+    if (typeof color.patternIndex !== 'undefined' && H.patterns) {
+        pattern = H.patterns[color.patternIndex];
+    }
 
     // Skip and call default if there is no pattern
     if (!pattern) {
@@ -568,7 +611,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (
         // point render, meaning they are drawn before autocalculated image
         // width/heights. We don't want them to highjack the width/height for
         // this ID if it is defined by users.
-        forceHashId = element.parentNode &&
+        let forceHashId = element.parentNode &&
             (element.parentNode as any).getAttribute('class');
         forceHashId = forceHashId &&
             forceHashId.indexOf('highcharts-legend') > -1;
@@ -589,7 +632,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (
         if (forceHashId || !pattern.id) {
             // Make a copy so we don't accidentally edit options when setting ID
             pattern = merge({}, pattern);
-            pattern.id = 'highcharts-pattern-' + (this.chartIndex || 0) + '-' +
+            pattern.id = 'highcharts-pattern-' + chartIndex + '-' +
                 hashFromObject(pattern) + hashFromObject(pattern, true);
         }
 
@@ -601,7 +644,7 @@ H.addEvent(H.SVGRenderer, 'complexColor', function (
             { duration: 100 }
         ));
 
-        value = 'url(' + this.url + '#' + pattern.id + ')';
+        value = `url(${this.url}#${pattern.id})`;
 
     } else {
         // Not a full pattern definition, just add color
@@ -678,7 +721,7 @@ H.addEvent(H.Chart, 'redraw', function (): void {
         // series, tooltips etc.
         [].forEach.call(
             this.renderTo.querySelectorAll(
-                '[color^="url(#"], [fill^="url(#"], [stroke^="url(#"]'
+                '[color^="url("], [fill^="url("], [stroke^="url("]'
             ),
             function (node: Highcharts.SVGDOMElement): void {
                 var id = node.getAttribute('fill') ||
@@ -688,7 +731,7 @@ H.addEvent(H.Chart, 'redraw', function (): void {
                 if (id) {
                     usedIds.push(
                         id
-                            .substring(id.indexOf('url(#') + 5)
+                            .substring(id.indexOf('url(') + 5)
                             .replace(')', '')
                     );
                 }
@@ -711,33 +754,3 @@ H.addEvent(H.Chart, 'redraw', function (): void {
 });
 
 /* eslint-enable no-invalid-this */
-
-
-// Add the predefined patterns
-H.Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
-    var colors: Array<string> = H.getOptions().colors as any,
-        index = chart.index,
-        forExport: boolean = (chart.options.chart as any).forExport;
-
-    [
-        'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
-        'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
-        'M 3 0 L 3 10 M 8 0 L 8 10',
-        'M 0 3 L 10 3 M 0 8 L 10 8',
-        'M 0 3 L 5 3 L 5 0 M 5 10 L 5 7 L 10 7',
-        'M 3 3 L 8 3 L 8 8 L 3 8 Z',
-        'M 5 5 m -4 0 a 4 4 0 1 1 8 0 a 4 4 0 1 1 -8 0',
-        'M 10 3 L 5 3 L 5 0 M 5 10 L 5 7 L 0 7',
-        'M 2 5 L 5 2 L 8 5 L 5 8 Z',
-        'M 0 0 L 5 10 L 10 0'
-    ].forEach(function (pattern: string, i: number): void {
-        chart.renderer.addPattern({
-            id: 'highcharts-default-pattern-' +
-                (index && !forExport ? index + '-' : '') + i,
-            path: pattern,
-            color: colors[i],
-            width: 10,
-            height: 10
-        });
-    });
-});

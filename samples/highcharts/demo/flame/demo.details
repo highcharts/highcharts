@@ -1,0 +1,13 @@
+---
+name: Flame chart
+authors:
+  - Kacper Madej
+js_wrap: b
+alt_text: >-
+  Highcharts flame chart JavaScript example graph shows a chart rendering
+  process as stacked tasks and subtasks.
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+...

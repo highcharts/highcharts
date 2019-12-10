@@ -21,10 +21,10 @@ import H from '../parts/Globals.js';
 * @type {boolean|undefined}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt;
+var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
-var wrap = H.wrap, Renderer = H.Renderer, colorAxisMethods;
+var Renderer = H.Renderer, colorAxisMethods;
 /**
  * Symbol definition of an arc with round edges.
  *
@@ -268,10 +268,10 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
                     point.color = toColor;
                 }
                 // Handle overshoot and clipping to axis max/min
-                rotation = Math.max(axisMinAngle - overshootVal, Math.min(axisMaxAngle + overshootVal, rotation));
+                rotation = clamp(rotation, axisMinAngle - overshootVal, axisMaxAngle + overshootVal);
                 // Handle the wrap option
                 if (options.wrap === false) {
-                    rotation = Math.max(axisMinAngle, Math.min(axisMaxAngle, rotation));
+                    rotation = clamp(rotation, axisMinAngle, axisMaxAngle);
                 }
                 minAngle = Math.min(rotation, series.thresholdAngleRad);
                 maxAngle = Math.max(rotation, series.thresholdAngleRad);
@@ -302,18 +302,18 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
                         'sweep-flag': 0
                     })
                         .add(series.group);
-                    if (!series.chart.styledMode) {
-                        if (options.linecap !== 'square') {
-                            graphic.attr({
-                                'stroke-linecap': 'round',
-                                'stroke-linejoin': 'round'
-                            });
-                        }
+                }
+                if (!series.chart.styledMode) {
+                    if (options.linecap !== 'square') {
                         graphic.attr({
-                            stroke: options.borderColor || 'none',
-                            'stroke-width': options.borderWidth || 0
+                            'stroke-linecap': 'round',
+                            'stroke-linejoin': 'round'
                         });
                     }
+                    graphic.attr({
+                        stroke: options.borderColor || 'none',
+                        'stroke-width': options.borderWidth || 0
+                    });
                 }
                 if (graphic) {
                     graphic.addClass(point.getClassName(), true);

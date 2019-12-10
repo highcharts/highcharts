@@ -1,0 +1,10 @@
+---
+name: Radial bar chart
+authors:
+  - Pawel Dalek
+js_wrap: b
+tags:
+  - Highcharts demo
+categories:
+  - More chart types
+...

@@ -94,7 +94,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
-    pick
+    pick,
+    relativeLength
 } = U;
 
 import '../parts/ColumnSeries.js';
@@ -106,7 +107,6 @@ var charts = H.charts,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    relativeLength = H.relativeLength,
     // Use H.Renderer instead of H.SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,
     //

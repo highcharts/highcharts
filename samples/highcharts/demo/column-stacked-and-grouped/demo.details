@@ -3,7 +3,8 @@ name: Stacked and grouped column
 js_wrap: b
 authors:
   - Torstein Hønsi
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Column and bar charts
 ...

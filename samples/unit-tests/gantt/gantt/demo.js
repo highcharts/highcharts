@@ -309,4 +309,63 @@
             'Ticks are mainated when collapsing two series'
         );
     });
+
+    QUnit.test('Point.update', assert => {
+        const today = +new Date();
+        const day = 24 * 60 * 60 * 1000;
+        const {
+            series: [{
+                points,
+                points: [point]
+            }]
+        } = Highcharts.ganttChart('container', {
+            series: [{
+                data: [{
+                    name: 'Planning',
+                    start: today,
+                    end: today + day
+                }, {
+                    name: 'Moving',
+                    id: 'moving',
+                    collapsed: true
+                }, {
+                    name: 'Packing',
+                    parent: 'moving',
+                    start: today + 2 * day,
+                    end: today + 4 * day
+                }, {
+                    name: 'Wash down',
+                    parent: 'moving',
+                    start: today + 4 * day,
+                    end: today + 5 * day
+                }]
+            }]
+        });
+        const updateValues = {
+            start: today + day,
+            end: today + 2 * day
+        };
+
+        // Run Point.update
+        point.update(updateValues);
+
+        // Test that point values are as expected.
+        assert.strictEqual(
+            point.start,
+            updateValues.start,
+            'Should have point.start equal the updated value'
+        );
+        assert.strictEqual(
+            point.end,
+            updateValues.end,
+            'Should have point.end equal the updated value'
+        );
+
+        // Test that number of points has not changed
+        assert.strictEqual(
+            points.length,
+            4,
+            'Should not change the number of points after update. #11231, #11486'
+        );
+    });
 }());

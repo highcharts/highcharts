@@ -50,6 +50,19 @@ QUnit.test('#6487: Column\'s data label with contrast after justification.', fun
         `Contrast color should not be used when dataLabel does not collide  
             with column (#6657).`
     );
+
+    chart.series[1].update({
+        dataLabels: {
+            inside: true,
+            color: 'red'
+        }
+    });
+    assert.strictEqual(
+        chart.series[1].points[11].dataLabel.element.childNodes[0].style.color,
+        'red',
+        `After updating from contrast color,
+            label should have new color (#12500)`
+    );
 });
 
 QUnit.test('Pie dataLabels and contrast', function (assert) {

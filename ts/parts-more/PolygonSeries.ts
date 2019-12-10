@@ -67,7 +67,7 @@ var LegendSymbolMixin = H.LegendSymbolMixin,
  *
  * @extends      plotOptions.scatter
  * @since        4.1.0
- * @excluding    jitter, softThreshold, threshold
+ * @excluding    jitter, softThreshold, threshold, cluster
  * @product      highcharts highstock
  * @requires     highcharts-more
  * @optionparent plotOptions.polygon

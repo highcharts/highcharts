@@ -6,12 +6,11 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 var langOptions = {
-
     /**
      * Configure the accessibility strings in the chart. Requires the
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
@@ -34,7 +33,6 @@ var langOptions = {
         svgContainerLabel: 'Interactive chart',
         drillUpButton: '{buttonText}',
         credits: 'Chart credits: {creditsStr}',
-
         /**
          * Thousands separator to use when formatting numbers for screen
          * readers. Note that many screen readers will not handle space as a
@@ -46,7 +44,6 @@ var langOptions = {
          * @since 7.1.0
          */
         thousandsSep: ',',
-
         /**
          * Title element text for the chart SVG element. Leave this
          * empty to disable adding the title element. Browsers will display
@@ -56,15 +53,14 @@ var langOptions = {
          * @since 6.0.8
          */
         svgContainerTitle: '',
-
         /**
          * Set a label on the container wrapping the SVG.
          *
          * @see [chartContainerLabel](#lang.accessibility.chartContainerLabel)
+         *
          * @since next
          */
         graphicContainerLabel: '',
-
         /**
          * Language options for the screen reader information sections added
          * before and after the charts.
@@ -74,7 +70,6 @@ var langOptions = {
         screenReaderSection: {
             beforeRegionLabel: 'Chart screen reader information.',
             afterRegionLabel: '',
-
             /**
              * Label for the end of the chart. Announced by screen readers.
              *
@@ -82,7 +77,6 @@ var langOptions = {
              */
             endOfChartMarker: 'End of interactive chart.'
         },
-
         /**
          * Language options for accessibility of the legend.
          *
@@ -92,7 +86,6 @@ var langOptions = {
             legendLabel: 'Toggle series visibility',
             legendItem: 'Toggle visibility of {itemName}'
         },
-
         /**
          * Chart and map zoom accessibility language options.
          *
@@ -103,7 +96,6 @@ var langOptions = {
             mapZoomOut: 'Zoom out chart',
             resetZoomButton: 'Reset zoom'
         },
-
         /**
          * Range selector language options for accessibility.
          *
@@ -114,7 +106,6 @@ var langOptions = {
             maxInputLabel: 'Select end date.',
             buttonText: 'Select range {buttonText}'
         },
-
         /**
          * Accessibility language options for the data table.
          *
@@ -124,7 +115,6 @@ var langOptions = {
             viewAsDataTableButtonText: 'View as data table. {chartTitle}',
             tableSummary: 'Table representation of chart.'
         },
-
         /**
          * Default announcement for new data in charts. If addPoint or
          * addSeries is used, and only one series/point is added, the
@@ -140,12 +130,9 @@ var langOptions = {
             newDataAnnounce: 'Updated data for chart {chartTitle}',
             newSeriesAnnounceSingle: 'New data series: {seriesDesc}',
             newPointAnnounceSingle: 'New data point: {pointDesc}',
-            newSeriesAnnounceMultiple:
-                'New data series in chart {chartTitle}: {seriesDesc}',
-            newPointAnnounceMultiple:
-                'New data point in chart {chartTitle}: {pointDesc}'
+            newSeriesAnnounceMultiple: 'New data series in chart {chartTitle}: {seriesDesc}',
+            newPointAnnounceMultiple: 'New data point in chart {chartTitle}: {pointDesc}'
         },
-
         /**
          * Descriptions of lesser known series types. The relevant
          * description is added to the screen reader information region
@@ -155,28 +142,27 @@ var langOptions = {
          */
         seriesTypeDescriptions: {
             boxplot: 'Box plot charts are typically used to display ' +
-            'groups of statistical data. Each data point in the ' +
-            'chart can have up to 5 values: minimum, lower quartile, ' +
-            'median, upper quartile, and maximum.',
+                'groups of statistical data. Each data point in the ' +
+                'chart can have up to 5 values: minimum, lower quartile, ' +
+                'median, upper quartile, and maximum.',
             arearange: 'Arearange charts are line charts displaying a ' +
-            'range between a lower and higher value for each point.',
+                'range between a lower and higher value for each point.',
             areasplinerange: 'These charts are line charts displaying a ' +
-            'range between a lower and higher value for each point.',
+                'range between a lower and higher value for each point.',
             bubble: 'Bubble charts are scatter charts where each data ' +
-            'point also has a size value.',
+                'point also has a size value.',
             columnrange: 'Columnrange charts are column charts ' +
-            'displaying a range between a lower and higher value for ' +
-            'each point.',
+                'displaying a range between a lower and higher value for ' +
+                'each point.',
             errorbar: 'Errorbar series are used to display the ' +
-            'variability of the data.',
+                'variability of the data.',
             funnel: 'Funnel charts are used to display reduction of data ' +
-            'in stages.',
+                'in stages.',
             pyramid: 'Pyramid charts consist of a single pyramid with ' +
-            'item heights corresponding to each point value.',
+                'item heights corresponding to each point value.',
             waterfall: 'A waterfall chart is a column chart where each ' +
-            'column contributes towards a total end value.'
+                'column contributes towards a total end value.'
         },
-
         /**
          * Chart type description strings. This is added to the chart
          * information region.
@@ -213,15 +199,14 @@ var langOptions = {
             boxplotMultiple: 'Boxplot with {numSeries} data series.',
             bubbleSingle: 'Bubble chart with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
             bubbleMultiple: 'Bubble chart with {numSeries} data series.'
-        }, /* eslint-enable max-len */
-
+        },
         /**
          * Axis description format strings.
          *
          * @since 6.0.6
          */
         axis: {
-        /* eslint-disable max-len */
+            /* eslint-disable max-len */
             xAxisDescriptionSingular: 'The chart has 1 X axis displaying {names[0]}. {ranges[0]}',
             xAxisDescriptionPlural: 'The chart has {numAxes} X axes displaying {#each(names, -1), }and {names[-1]}.',
             yAxisDescriptionSingular: 'The chart has 1 Y axis displaying {names[0]}. {ranges[0]}',
@@ -232,8 +217,7 @@ var langOptions = {
             timeRangeSeconds: 'Range: {range} seconds.',
             rangeFromTo: 'Range: {rangeFrom} to {rangeTo}.',
             rangeCategories: 'Range: {numCategories} categories.'
-        }, /* eslint-enable max-len */
-
+        },
         /**
          * Exporting menu format strings for accessibility module.
          *
@@ -244,7 +228,6 @@ var langOptions = {
             menuButtonLabel: 'View chart menu',
             exportRegionLabel: 'Chart menu'
         },
-
         /**
          * Lang configuration for different series types. For more dynamic
          * control over the series element descriptions, see
@@ -293,8 +276,7 @@ var langOptions = {
                 maplineCombination: '{name}, series {ix} of {numSeries}. Line with {numPoints} data {#plural(numPoints, points, point)}.',
                 mapbubble: '{name}, bubble series {ix} of {numSeries} with {numPoints} {#plural(numPoints, bubbles, bubble)}.',
                 mapbubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.'
-            }, /* eslint-enable max-len */
-
+            },
             /**
              * User supplied description text. This is added after the main
              * summary if present.
@@ -302,7 +284,6 @@ var langOptions = {
              * @since 6.0.6
              */
             description: '{description}',
-
             /**
              * xAxis description for series if there are multiple xAxes in
              * the chart.
@@ -310,7 +291,6 @@ var langOptions = {
              * @since 6.0.6
              */
             xAxisDescription: 'X axis, {name}',
-
             /**
              * yAxis description for series if there are multiple yAxes in
              * the chart.
@@ -318,16 +298,13 @@ var langOptions = {
              * @since 6.0.6
              */
             yAxisDescription: 'Y axis, {name}',
-
             /**
              * Description for the value of null points.
              *
              * @since next
              */
             nullPointValue: 'No value'
-
         }
     }
 };
-
 export default langOptions;

@@ -22,7 +22,7 @@ import H from '../parts/Globals.js';
 * @type {number|null|undefined}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend, pick = U.pick;
+var clamp = U.clamp, extend = U.extend, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
@@ -54,7 +54,7 @@ seriesType('heatmap', 'scatter',
  *               findNearestPointBy, getExtremesFromAll, jitter, linecap,
  *               lineWidth, marker, pointInterval, pointIntervalUnit,
  *               pointRange, pointStart, shadow, softThreshold, stacking,
- *               step, threshold
+ *               step, threshold, cluster
  * @product      highcharts highmaps
  * @optionparent plotOptions.heatmap
  */
@@ -186,14 +186,12 @@ seriesType('heatmap', 'scatter',
      * @return {void}
      */
     translate: function () {
-        var series = this, options = series.options, xAxis = series.xAxis, yAxis = series.yAxis, seriesPointPadding = options.pointPadding || 0, between = function (x, a, b) {
-            return Math.min(Math.max(a, x), b);
-        }, pointPlacement = series.pointPlacementToXValue(); // #7860
+        var series = this, options = series.options, xAxis = series.xAxis, yAxis = series.yAxis, seriesPointPadding = options.pointPadding || 0, pointPlacement = series.pointPlacementToXValue(); // #7860
         series.generatePoints();
         series.points.forEach(function (point) {
-            var xPad = (options.colsize || 1) / 2, yPad = (options.rowsize || 1) / 2, x1 = between(Math.round(xAxis.len -
-                xAxis.translate(point.x - xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), x2 = between(Math.round(xAxis.len -
-                xAxis.translate(point.x + xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), y1 = between(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), y2 = between(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), pointPadding = pick(point.pointPadding, seriesPointPadding);
+            var xPad = (options.colsize || 1) / 2, yPad = (options.rowsize || 1) / 2, x1 = clamp(Math.round(xAxis.len -
+                xAxis.translate(point.x - xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), x2 = clamp(Math.round(xAxis.len -
+                xAxis.translate(point.x + xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), y1 = clamp(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), y2 = clamp(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), pointPadding = pick(point.pointPadding, seriesPointPadding);
             // Set plotX and plotY for use in K-D-Tree and more
             point.plotX = point.clientX = (x1 + x2) / 2;
             point.plotY = (y1 + y2) / 2;

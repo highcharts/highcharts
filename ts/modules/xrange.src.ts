@@ -104,6 +104,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    clamp,
     correctFloat,
     defined,
     isNumber,
@@ -114,6 +115,7 @@ const {
 var addEvent = H.addEvent,
     color = H.color,
     columnType = H.seriesTypes.column,
+    find = H.find,
     merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
@@ -350,17 +352,12 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             this: Highcharts.XRangeSeries,
             options: Highcharts.XRangePointOptions
         ): (number|undefined) {
-            var series = this,
-                // Search in data, since broken-axis can remove points inside a
-                // break.
-                points = series.data,
-                oldData = series.points,
-                id = options.id,
-                point: (Highcharts.XRangePoint|undefined),
-                pointIndex: (number|undefined);
+            const { cropped, cropStart, points } = this;
+            const { id } = options;
+            let pointIndex: (number|undefined);
 
             if (id) {
-                point = H.find(points, function (
+                const point = find(points, function (
                     point: Highcharts.XRangePoint
                 ): boolean {
                     return point.id === id;
@@ -369,14 +366,13 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             }
 
             if (typeof pointIndex === 'undefined') {
-                point = H.find(points, function (
+                const point = find(points, function (
                     point: Highcharts.XRangePoint
                 ): boolean {
                     return (
                         point.x === options.x &&
                         point.x2 === options.x2 &&
-                        !(oldData[pointIndex as any] &&
-                        oldData[pointIndex as any].touched)
+                        !point.touched
                     );
                 });
                 pointIndex = point ? point.index : void 0;
@@ -384,10 +380,12 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
 
             // Reduce pointIndex if data is cropped
             if (
-                series.cropped &&
-                (pointIndex as any) >= (series.cropStart as any)
+                cropped &&
+                isNumber(pointIndex) &&
+                isNumber(cropStart) &&
+                pointIndex >= cropStart
             ) {
-                (pointIndex as any) -= (series.cropStart as any);
+                pointIndex -= cropStart;
             }
 
             return pointIndex;
@@ -405,7 +403,8 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             var series = this,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
-                metrics = series.columnMetrics,
+                metrics: Highcharts.ColumnMetricsObject =
+                    series.columnMetrics as any,
                 options = series.options,
                 minPointLength = options.minPointLength || 0,
                 plotX = point.plotX,
@@ -427,8 +426,8 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                 inverted = this.chart.inverted,
                 borderWidth = pick(options.borderWidth, 1),
                 crisper = borderWidth % 2 / 2,
-                yOffset = (metrics as any).offset,
-                pointHeight = Math.round((metrics as any).width),
+                yOffset = metrics.offset,
+                pointHeight = Math.round(metrics.width),
                 dlLeft,
                 dlRight,
                 dlWidth,
@@ -444,7 +443,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             }
 
             plotX = Math.max((plotX as any), -10);
-            plotX2 = Math.min(Math.max((plotX2 as any), -10), xAxis.len + 10);
+            plotX2 = clamp(plotX2 as any, -10, xAxis.len + 10);
 
             // Handle individual pointWidth
             if (defined(point.options.pointWidth)) {
@@ -472,7 +471,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
 
             point.shapeArgs = {
                 x: Math.floor(Math.min(plotX, plotX2)) + crisper,
-                y: Math.floor(point.plotY + yOffset) + crisper,
+                y: Math.floor((point.plotY as any) + yOffset) + crisper,
                 width: Math.round(Math.abs(plotX2 - plotX)),
                 height: pointHeight,
                 r: series.options.borderRadius
@@ -482,8 +481,8 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             dlLeft = point.shapeArgs.x;
             dlRight = dlLeft + point.shapeArgs.width;
             if (dlLeft < 0 || dlRight > xAxis.len) {
-                dlLeft = Math.min(xAxis.len, Math.max(0, dlLeft));
-                dlRight = Math.max(0, Math.min(dlRight, xAxis.len));
+                dlLeft = clamp(dlLeft, 0, xAxis.len);
+                dlRight = clamp(dlRight, 0, xAxis.len);
                 dlWidth = dlRight - dlLeft;
                 point.dlBox = merge(point.shapeArgs, {
                     x: dlLeft,
@@ -496,31 +495,25 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             }
 
             // Tooltip position
-            if (!inverted) {
-                (point.tooltipPos as any)[0] +=
-                    length / 2 * (xAxis.reversed ? -1 : 1);
-                (point.tooltipPos as any)[1] -= (metrics as any).width / 2;
-
-                // Limit position by the correct axis size (#9727)
-                (point.tooltipPos as any)[0] = Math.max(
-                    Math.min((point.tooltipPos as any)[0], xAxis.len - 1), 0
-                );
-                (point.tooltipPos as any)[1] = Math.max(
-                    Math.min((point.tooltipPos as any)[1], yAxis.len - 1), 0
-                );
-            } else {
-                (point.tooltipPos as any)[1] +=
-                    length / 2 * (xAxis.reversed ? 1 : -1);
-                (point.tooltipPos as any)[0] += (metrics as any).width / 2;
-
-                // Limit position by the correct axis size (#9727)
-                (point.tooltipPos as any)[1] = Math.max(
-                    Math.min((point.tooltipPos as any)[1], xAxis.len - 1), 0
-                );
-                (point.tooltipPos as any)[0] = Math.max(
-                    Math.min((point.tooltipPos as any)[0], yAxis.len - 1), 0
-                );
-            }
+            const tooltipPos: number[] = (point.tooltipPos as any);
+            const xIndex = !inverted ? 0 : 1;
+            const yIndex = !inverted ? 1 : 0;
+            // Limit position by the correct axis size (#9727)
+            tooltipPos[xIndex] = clamp(
+                tooltipPos[xIndex] + (
+                    (!inverted ? 1 : -1) * (xAxis.reversed ? -1 : 1) *
+                    (length / 2)
+                ),
+                0,
+                xAxis.len - 1
+            );
+            tooltipPos[yIndex] = clamp(
+                tooltipPos[yIndex] + (
+                    (!inverted ? -1 : 1) * (metrics.width / 2)
+                ),
+                0,
+                yAxis.len - 1
+            );
 
             // Add a partShapeArgs to the point, based on the shapeArgs property
             partialFill = point.partialFill;
@@ -925,6 +918,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
  * @sample {highcharts} highcharts/series/data-array-of-objects/
  *         Config objects
  *
+ * @declare   Highcharts.XrangePointOptionsObject
  * @type      {Array<*>}
  * @extends   series.line.data
  * @product   highcharts highstock gantt
@@ -972,6 +966,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
  * @sample {highcharts} highcharts/demo/x-range
  *         X-range with partial fill
  *
+ * @declare   Highcharts.XrangePointPartialFillOptionsObject
  * @product   highcharts highstock gantt
  * @apioption series.xrange.data.partialFill
  */
