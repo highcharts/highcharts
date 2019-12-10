@@ -19,6 +19,7 @@ import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
 /* eslint-disable no-invalid-this */
+var AXIS_MAX = 100;
 var seriesType = H.seriesType, seriesTypes = H.seriesTypes, addEvent = H.addEvent, merge = H.merge, error = H.error, noop = H.noop, fireEvent = H.fireEvent, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
 // @todo Similar to eachObject, this function is likely redundant
 isBoolean = function (x) {
@@ -689,6 +690,9 @@ seriesType('treemap', 'scatter'
             });
             child.pointValues = merge(values, {
                 x: (values.x / series.axisRatio),
+                // Flip y-values to avoid visual regression with csvCoord in
+                // Axis.translate at setPointValues. #12488
+                y: AXIS_MAX - values.y - values.height,
                 width: (values.width / series.axisRatio)
             });
             // If node has children, then call method recursively
@@ -718,8 +722,8 @@ seriesType('treemap', 'scatter'
                 var crispCorr = getCrispCorrection(point);
                 var x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
                 var x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
-                var y1 = Math.round(yAxis.toPixels(100 - y, true)) - crispCorr;
-                var y2 = Math.round(yAxis.toPixels(100 - y - height, true)) - crispCorr;
+                var y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
+                var y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
                 // Set point values
                 point.shapeArgs = {
                     x: Math.min(x1, x2),
@@ -994,8 +998,8 @@ seriesType('treemap', 'scatter'
         series.nodeMap[''].pointValues = pointValues = {
             x: 0,
             y: 0,
-            width: 100,
-            height: 100
+            width: AXIS_MAX,
+            height: AXIS_MAX
         };
         series.nodeMap[''].values = seriesArea = merge(pointValues, {
             width: (pointValues.width * series.axisRatio),
@@ -1365,8 +1369,8 @@ seriesType('treemap', 'scatter'
             min: 0,
             dataMin: 0,
             minPadding: 0,
-            max: 100,
-            dataMax: 100,
+            max: AXIS_MAX,
+            dataMax: AXIS_MAX,
             maxPadding: 0,
             startOnTick: false,
             title: null,

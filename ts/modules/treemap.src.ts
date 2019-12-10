@@ -305,6 +305,7 @@ import '../parts/Series.js';
 import '../parts/Color.js';
 
 /* eslint-disable no-invalid-this */
+const AXIS_MAX = 100;
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
@@ -1179,6 +1180,9 @@ seriesType<Highcharts.TreemapSeries>(
                 });
                 child.pointValues = merge(values, {
                     x: (values.x / series.axisRatio),
+                    // Flip y-values to avoid visual regression with csvCoord in
+                    // Axis.translate at setPointValues. #12488
+                    y: AXIS_MAX - values.y - values.height,
                     width: (values.width / series.axisRatio)
                 } as Highcharts.TreemapNodeValuesObject);
                 // If node has children, then call method recursively
@@ -1213,8 +1217,8 @@ seriesType<Highcharts.TreemapSeries>(
                     const crispCorr = getCrispCorrection(point);
                     const x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
                     const x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
-                    const y1 = Math.round(yAxis.toPixels(100 - y, true)) - crispCorr;
-                    const y2 = Math.round(yAxis.toPixels(100 - y - height, true)) - crispCorr;
+                    const y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
+                    const y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
 
                     // Set point values
                     point.shapeArgs = {
@@ -1616,8 +1620,8 @@ seriesType<Highcharts.TreemapSeries>(
             series.nodeMap[''].pointValues = pointValues = {
                 x: 0,
                 y: 0,
-                width: 100,
-                height: 100
+                width: AXIS_MAX,
+                height: AXIS_MAX
             } as any;
             series.nodeMap[''].values = seriesArea = merge(pointValues, {
                 width: (pointValues.width * series.axisRatio),
@@ -2142,8 +2146,8 @@ seriesType<Highcharts.TreemapSeries>(
                 min: 0,
                 dataMin: 0,
                 minPadding: 0,
-                max: 100,
-                dataMax: 100,
+                max: AXIS_MAX,
+                dataMax: AXIS_MAX,
                 maxPadding: 0,
                 startOnTick: false,
                 title: null,
