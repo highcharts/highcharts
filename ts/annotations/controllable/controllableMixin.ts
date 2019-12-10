@@ -101,6 +101,7 @@ declare global {
             markerStart?: string;
             point?: (string|AnnotationMockPointOptionsObject);
             points?: Array<(string|AnnotationMockPointOptionsObject)>;
+            r?: number;
             x?: number;
             y?: number;
         }

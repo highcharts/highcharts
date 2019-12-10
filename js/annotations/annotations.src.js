@@ -28,14 +28,6 @@ var merge = H.merge, addEvent = H.addEvent, fireEvent = H.fireEvent, find = H.fi
  *
  ******************************************************************** */
 /**
- * Callback to modify annotation's possitioner controls.
- *
- * @callback Highcharts.AnnotationControlPointPositionerFunction
- * @param {Highcharts.AnnotationControlPoint} this
- * @param {Highcharts.AnnotationControllable} target
- * @return {Highcharts.PositionObject}
- */
-/**
  * Possible directions for draggable annotations. An empty string (`''`)
  * makes the annotation undraggable.
  *

@@ -33,6 +33,9 @@ declare global {
         interface AxisLabelsFormatterContextObject {
             point?: Point;
         }
+        interface Tick {
+            slotWidth?: number;
+        }
         interface XAxisOptions {
             isInternal?: boolean;
         }

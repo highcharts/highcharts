@@ -102,7 +102,7 @@ declare global {
             controlPointsGroup: SVGElement;
             options: AnnotationChartOptionsObject;
             plotBoxClip: SVGElement;
-            addAnnotation(userOptions: AnnotationsOptions, redraw?: boolean): void;
+            addAnnotation(userOptions: AnnotationsOptions, redraw?: boolean): Annotation;
             drawAnnotations(): void;
             initAnnotation(userOptions: AnnotationsOptions): Annotation;
             removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
@@ -110,12 +110,13 @@ declare global {
         interface AnnotationChartOptionsObject extends Options {
             annotations: Array<AnnotationsOptions>;
             defs: Dictionary<SVGDefinitionObject>;
+            navigation: NavigationOptions;
         }
         interface AnnotationControllableLabel {
             itemType: 'label';
         }
         interface AnnotationControlPointEventsOptionsObject {
-            drag?: Function;
+            drag?: AnnotationControlPointDragEventFunction;
         }
         interface AnnotationControlPointOptionsObject {
             draggable?: undefined;
@@ -127,9 +128,6 @@ declare global {
             symbol: string;
             visible: boolean;
             width: number;
-        }
-        interface AnnotationControlPointPositionerFunction {
-            (target: AnnotationControllable): PositionObject;
         }
         type AnnotationDraggableValue = (''|'x'|'y'|'xy');
         type AnnotationLabelType = AnnotationControllableLabel;
@@ -153,6 +151,7 @@ declare global {
         interface AnnotationsEventsOptions {
             afterUpdate?: EventCallbackFunction<Annotation>;
             add?: EventCallbackFunction<Annotation>;
+            click?: EventCallbackFunction<Annotation>;
             remove?: EventCallbackFunction<Annotation>;
         }
         interface AnnotationsLabelOptions extends AnnotationControllableOptionsObject {
@@ -180,16 +179,19 @@ declare global {
         }
         interface AnnotationsLabelsOptions extends AnnotationsLabelOptions {
             point?: (string|AnnotationMockPointOptionsObject);
+            itemType?: string;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
             controlPointOptions: AnnotationControlPointOptionsObject;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
+            itemType?: string;
             labelOptions: AnnotationsLabelOptions;
             labels: Array<AnnotationsLabelsOptions>;
             shapeOptions: AnnotationsShapeOptions;
             shapes: Array<AnnotationsShapesOptions>;
+            type?: string;
             typeOptions: AnnotationsTypeOptions;
             visible: boolean;
             zIndex: number;
@@ -199,6 +201,7 @@ declare global {
             fill: ColorType;
             height?: number;
             r: number;
+            shapes: Array<AnnotationsShapeOptions>;
             snap: number;
             src: string;
             stroke: ColorString;
@@ -216,6 +219,7 @@ declare global {
             background?: SVGAttributes;
             height?: number;
             line?: SVGAttributes;
+            point: AnnotationMockPointOptionsObject;
             points?: Array<AnnotationsTypePointsOptions>;
             xAxis?: number;
             yAxis?: number;
@@ -269,15 +273,6 @@ var merge = H.merge,
  * ANNOTATION
  *
  ******************************************************************** */
-
-/**
- * Callback to modify annotation's possitioner controls.
- *
- * @callback Highcharts.AnnotationControlPointPositionerFunction
- * @param {Highcharts.AnnotationControlPoint} this
- * @param {Highcharts.AnnotationControllable} target
- * @return {Highcharts.PositionObject}
- */
 
 /**
  * Possible directions for draggable annotations. An empty string (`''`)

@@ -4,6 +4,14 @@
  *
  * */
 import H from './../parts/Globals.js';
+/**
+ * Callback to modify annotation's possitioner controls.
+ *
+ * @callback Highcharts.AnnotationControlPointPositionerFunction
+ * @param {Highcharts.AnnotationControlPoint} this
+ * @param {Highcharts.AnnotationControllable} target
+ * @return {Highcharts.PositionObject}
+ */
 import U from './../parts/Utilities.js';
 var extend = U.extend, pick = U.pick;
 import eventEmitterMixin from './eventEmitterMixin.js';

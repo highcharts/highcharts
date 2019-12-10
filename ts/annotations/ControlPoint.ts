@@ -39,8 +39,23 @@ declare global {
             public setVisibility(visible: boolean): void;
             public update(userOptions: Partial<AnnotationControlPointOptionsObject>): void;
         }
+        interface AnnotationControlPointDragEventFunction {
+            (this: Annotation, evt: AnnotationEventObject, target: AnnotationControllableCircle): void;
+        }
+        interface AnnotationControlPointPositionerFunction {
+            (this: AnnotationControlPoint, target: AnnotationControllable): PositionObject;
+        }
     }
 }
+
+/**
+ * Callback to modify annotation's possitioner controls.
+ *
+ * @callback Highcharts.AnnotationControlPointPositionerFunction
+ * @param {Highcharts.AnnotationControlPoint} this
+ * @param {Highcharts.AnnotationControllable} target
+ * @return {Highcharts.PositionObject}
+ */
 
 import U from './../parts/Utilities.js';
 var extend = U.extend,

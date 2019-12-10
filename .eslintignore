@@ -1,9 +1,6 @@
 docs/sidebars.js
+js/annotations/*.js
 js/annotations/controllable/**/*.js
-js/annotations/annotations.src.js
-js/annotations/ControlPoint.js
-js/annotations/eventEmitterMixin.js
-js/annotations/MockPoint.js
 js/indicators/**/*.js
 js/modules/**/*.js
 js/mixins/**/*.js

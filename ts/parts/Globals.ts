@@ -31,13 +31,9 @@ declare global {
             frameShapes?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
             hideOverlappingLabels: Function; // @todo overlapping module
-            navigationBindings?: any; // @todo annotations
         }
         interface ChartOptions {
             forExport?: any; // @todo
-        }
-        interface NavigationBindings { // @todo annotations
-            [key: string]: any; // @todo annotations
         }
         interface Options {
             toolbar?: any; // @todo stock-tools
@@ -57,13 +53,6 @@ declare global {
         interface SeriesTypesDictionary {
             [key: string]: typeof Series;
         }
-        interface StockToolsFieldsObject { // @todo annotations
-            [key: string]: any; // @todo annotations
-        }
-        interface Tick {
-            slotWidth?: any; // @todo
-        }
-        const NavigationBindings: any; // @todo annotations
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
@@ -103,7 +92,9 @@ declare global {
     }
     interface Element {
         mozRequestFullScreen: Function;
+        msMatchesSelector: Element['matches'];
         msRequestFullscreen: Function;
+        webkitMatchesSelector: Element['matches'];
         webkitRequestFullscreen: Function;
         setAttribute(
             qualifiedName: string,
