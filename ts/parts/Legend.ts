@@ -815,14 +815,7 @@ Highcharts.Legend.prototype = {
             series.drawLegendSymbol(legend, item);
 
             if (legend.setItemEvents) {
-                if (useHTML && item.legendSymbol) {
-                    // With useHTML symbol is rendered in other group
-                    // so trigger setItemEvents for the symbol
-                    legend.setItemEvents(item, li, item.legendSymbol);
-                    legend.setItemEvents(item, li, li);
-                } else {
-                    legend.setItemEvents(item, li, item.legendGroup);
-                }
+                legend.setItemEvents(item, li, useHTML);
             }
 
         }

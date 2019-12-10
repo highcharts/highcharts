@@ -262,71 +262,82 @@ extend(Legend.prototype, {
      * @fires Highcharts.Point#event:legendItemClick
      * @fires Highcharts.Series#event:legendItemClick
      */
-    setItemEvents: function (item, legendItem, itemToSet) {
+    setItemEvents: function (item, legendItem, useHTML) {
         var legend = this, boxWrapper = legend.chart.renderer.boxWrapper, isPoint = item instanceof Point, activeClass = 'highcharts-legend-' +
-            (isPoint ? 'point' : 'series') + '-active', styledMode = legend.chart.styledMode;
+            (isPoint ? 'point' : 'series') + '-active', styledMode = legend.chart.styledMode, 
+        // When useHTML symbol is rendered in other group, so
+        // it is need to put in array with the item to setting properties
+        legendItems = useHTML ?
+            [legendItem, item.legendSymbol] :
+            [item.legendGroup];
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
-        itemToSet
-            .on('mouseover', function () {
-            if (item.visible) {
-                legend.allItems.forEach(function (inactiveItem) {
-                    if (item !== inactiveItem) {
-                        inactiveItem.setState('inactive', !isPoint);
+        legendItems.forEach(function (element) {
+            if (element) {
+                element
+                    .on('mouseover', function () {
+                    if (item.visible) {
+                        legend.allItems.forEach(function (inactiveItem) {
+                            if (item !== inactiveItem) {
+                                inactiveItem.setState('inactive', !isPoint);
+                            }
+                        });
+                    }
+                    item.setState('hover');
+                    // A CSS class to dim or hide other than the hovered
+                    // series.
+                    // Works only if hovered series is visible (#10071).
+                    if (item.visible) {
+                        boxWrapper.addClass(activeClass);
+                    }
+                    if (!styledMode) {
+                        legendItem.css(legend.options.itemHoverStyle);
+                    }
+                })
+                    .on('mouseout', function () {
+                    if (!legend.chart.styledMode) {
+                        legendItem.css(merge(item.visible ?
+                            legend.itemStyle :
+                            legend.itemHiddenStyle));
+                    }
+                    legend.allItems.forEach(function (inactiveItem) {
+                        if (item !== inactiveItem) {
+                            inactiveItem.setState('', !isPoint);
+                        }
+                    });
+                    // A CSS class to dim or hide other than the hovered
+                    // series.
+                    boxWrapper.removeClass(activeClass);
+                    item.setState();
+                })
+                    .on('click', function (event) {
+                    var strLegendItemClick = 'legendItemClick', fnLegendItemClick = function () {
+                        if (item.setVisible) {
+                            item.setVisible();
+                        }
+                        // Reset inactive state
+                        legend.allItems.forEach(function (inactiveItem) {
+                            if (item !== inactiveItem) {
+                                inactiveItem.setState(item.visible ? 'inactive' : '', !isPoint);
+                            }
+                        });
+                    };
+                    // A CSS class to dim or hide other than the hovered
+                    // series. Event handling in iOS causes the activeClass
+                    // to be added prior to click in some cases (#7418).
+                    boxWrapper.removeClass(activeClass);
+                    // Pass over the click/touch event. #4.
+                    event = {
+                        browserEvent: event
+                    };
+                    // click the name or symbol
+                    if (item.firePointEvent) { // point
+                        item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
+                    }
+                    else {
+                        fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
                     }
                 });
-            }
-            item.setState('hover');
-            // A CSS class to dim or hide other than the hovered series.
-            // Works only if hovered series is visible (#10071).
-            if (item.visible) {
-                boxWrapper.addClass(activeClass);
-            }
-            if (!styledMode) {
-                legendItem.css(legend.options.itemHoverStyle);
-            }
-        })
-            .on('mouseout', function () {
-            if (!legend.chart.styledMode) {
-                legendItem.css(merge(item.visible ?
-                    legend.itemStyle :
-                    legend.itemHiddenStyle));
-            }
-            legend.allItems.forEach(function (inactiveItem) {
-                if (item !== inactiveItem) {
-                    inactiveItem.setState('', !isPoint);
-                }
-            });
-            // A CSS class to dim or hide other than the hovered series
-            boxWrapper.removeClass(activeClass);
-            item.setState();
-        })
-            .on('click', function (event) {
-            var strLegendItemClick = 'legendItemClick', fnLegendItemClick = function () {
-                if (item.setVisible) {
-                    item.setVisible();
-                }
-                // Reset inactive state
-                legend.allItems.forEach(function (inactiveItem) {
-                    if (item !== inactiveItem) {
-                        inactiveItem.setState(item.visible ? 'inactive' : '', !isPoint);
-                    }
-                });
-            };
-            // A CSS class to dim or hide other than the hovered series.
-            // Event handling in iOS causes the activeClass to be added
-            // prior to click in some cases (#7418).
-            boxWrapper.removeClass(activeClass);
-            // Pass over the click/touch event. #4.
-            event = {
-                browserEvent: event
-            };
-            // click the name or symbol
-            if (item.firePointEvent) { // point
-                item.firePointEvent(strLegendItemClick, event, fnLegendItemClick);
-            }
-            else {
-                fireEvent(item, strLegendItemClick, event, fnLegendItemClick);
             }
         });
     },
