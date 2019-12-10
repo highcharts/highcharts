@@ -1,21 +1,17 @@
-#container {
-    height: 600px;
-}
-
 .highcharts-figure, .highcharts-data-table table {
-    min-width: 320px; 
+    min-width: 310px; 
     max-width: 800px;
     margin: 1em auto;
 }
 
 .highcharts-data-table table {
-	font-family: Verdana, sans-serif;
-	border-collapse: collapse;
-	border: 1px solid #EBEBEB;
-	margin: 10px auto;
-	text-align: center;
-	width: 100%;
-	max-width: 500px;
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    border: 1px solid #EBEBEB;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
 }
 .highcharts-data-table caption {
     padding: 1em 0;
@@ -34,17 +30,4 @@
 }
 .highcharts-data-table tr:hover {
     background: #f1f7ff;
-}
-
-.ld-label {
-	width:200px;
-	display: inline-block;
-}
-
-.ld-url-input {
-	width: 500px; 
-}
-
-.ld-time-input {
-	width: 40px;
 }
