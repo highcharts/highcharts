@@ -1,6 +1,8 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.11
+  slack: circleci/slack@3.4.1
+
 parameters:
   run_reset_tests:
     type: boolean
@@ -125,11 +127,19 @@ jobs:
         description: "Number of browser instances"
         type: integer
         default: 1
+      notify_on_failure:
+        type: boolean
+        default: false
     steps:
       - << : *load_workspace
       - run:
           command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
           no_output_timeout: 20m
+      - when:
+          condition: << parameters.notify_on_failure >>
+          steps:
+            - slack/status:
+                fail_only: true
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
@@ -283,6 +293,8 @@ jobs:
       - run:
           name: Upload code to S3
           command: npx gulp dist-upload
+      - slack/status:
+          fail_only: true
 
   deploy_api_docs:
     <<: *defaults
@@ -295,6 +307,8 @@ jobs:
           name: Upload api docs to S3
           command: npx gulp upload-api --silent --noextensions
       - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
+      - slack/status:
+          fail_only: true
 
   deploy_changelog:
     <<: *defaults
@@ -315,6 +329,8 @@ jobs:
           name: Changelog - Upload changelog
           command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
       - run: echo -e "Changelog deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_CHANGELOG_BUCKET}/changelog/changelog.html"
+      - slack/status:
+          fail_only: true
 
   deploy_to_highcharts_dist:
     <<: *defaults
@@ -340,6 +356,8 @@ jobs:
             git add .
             git commit -m"Nightly build - ${CIRCLE_BUILD_NUM}"
             git push -u origin nightly
+      - slack/status:
+          fail_only: true
 workflows:
   version: 2
   build_and_test:
@@ -423,20 +441,24 @@ workflows:
           name: "test-Mac.Safari"
           requires: [checkout_and_install]
           browsers: "Mac.Safari"
+          notify_on_failure: true
       - test_browsers:
           name: "test-Win.Chrome"
           browsercount: 2
           requires: ["test-Mac.Safari"]
           browsers: "Win.Chrome"
+          notify_on_failure: true
       - test_browsers:
           name: "test-Mac.Firefox"
           browsercount: 2
           requires: ["test-Win.Chrome"]
           browsers: "Mac.Firefox"
+          notify_on_failure: true
       - test_browsers:
           name: "test-Win.IE8"
           requires: ["test-Mac.Firefox"]
           browsers: "Win.IE8 --oldie"
+          notify_on_failure: true
       - build_dist:
           requires: [checkout_and_install, "test-Win.IE8"]
       - deploy_code:
