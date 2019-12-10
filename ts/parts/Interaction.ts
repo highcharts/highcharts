@@ -30,7 +30,7 @@ declare global {
             setItemEvents(
                 item: (BubbleLegend|Point|Series),
                 legendItem: SVGElement,
-                itemToSet: SVGElement
+                useHTML?: boolean
             ): void;
         }
         interface Point {
@@ -445,81 +445,65 @@ extend(Legend.prototype, {
         this: Highcharts.Legend,
         item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
         legendItem: Highcharts.SVGElement,
-        itemToSet: Highcharts.SVGElement
+        useHTML?: boolean
     ): void {
         var legend = this,
             boxWrapper = legend.chart.renderer.boxWrapper,
             isPoint = item instanceof Point,
             activeClass = 'highcharts-legend-' +
                 (isPoint ? 'point' : 'series') + '-active',
-            styledMode = legend.chart.styledMode;
+            styledMode = legend.chart.styledMode,
+            // When useHTML symbol is rendered in other group, so
+            // it is need to put in array with the item to setting properties
+            legendItems = useHTML ?
+                [legendItem, item.legendSymbol] :
+                [item.legendGroup];
 
         // Set the events on the item group, or in case of useHTML, the item
         // itself (#1249)
-        itemToSet
-            .on('mouseover', function (): void {
-
-                if (item.visible) {
-                    legend.allItems.forEach(function (
-                        inactiveItem: (
-                            Highcharts.BubbleLegend|Highcharts.Point|
-                            Highcharts.Series
-                        )
-                    ): void {
-                        if (item !== inactiveItem) {
-                            inactiveItem.setState('inactive', !isPoint);
+        legendItems.forEach(function (element): void {
+            if (element) {
+                element
+                    .on('mouseover', function (): void {
+                        if (item.visible) {
+                            legend.allItems.forEach(function (
+                                inactiveItem: (
+                                    Highcharts.BubbleLegend|Highcharts.Point|
+                                    Highcharts.Series
+                                )
+                            ): void {
+                                if (item !== inactiveItem) {
+                                    inactiveItem.setState('inactive', !isPoint);
+                                }
+                            });
                         }
-                    });
-                }
 
-                item.setState('hover');
+                        item.setState('hover');
 
-                // A CSS class to dim or hide other than the hovered series.
-                // Works only if hovered series is visible (#10071).
-                if (item.visible) {
-                    boxWrapper.addClass(activeClass);
-                }
-
-                if (!styledMode) {
-                    legendItem.css(
-                        legend.options.itemHoverStyle as Highcharts.CSSObject
-                    );
-                }
-            })
-            .on('mouseout', function (): void {
-                if (!legend.chart.styledMode) {
-                    legendItem.css(
-                        merge(
-                            item.visible ?
-                                legend.itemStyle as Highcharts.CSSObject :
-                                legend.itemHiddenStyle as Highcharts.CSSObject
-                        )
-                    );
-                }
-
-                legend.allItems.forEach(function (
-                    inactiveItem: (
-                        Highcharts.BubbleLegend|Highcharts.Point|
-                        Highcharts.Series
-                    )
-                ): void {
-                    if (item !== inactiveItem) {
-                        inactiveItem.setState('', !isPoint);
-                    }
-                });
-
-                // A CSS class to dim or hide other than the hovered series
-                boxWrapper.removeClass(activeClass);
-
-                item.setState();
-            })
-            .on('click', function (event: Highcharts.PointerEventObject): void {
-                var strLegendItemClick = 'legendItemClick',
-                    fnLegendItemClick = function (): void {
-                        if ((item as any).setVisible) {
-                            (item as any).setVisible();
+                        // A CSS class to dim or hide other than the hovered
+                        // series.
+                        // Works only if hovered series is visible (#10071).
+                        if (item.visible) {
+                            boxWrapper.addClass(activeClass);
                         }
-                        // Reset inactive state
+
+                        if (!styledMode) {
+                            legendItem.css(
+                                legend.options.itemHoverStyle as Highcharts.CSSObject
+                            );
+                        }
+                    })
+                    .on('mouseout', function (): void {
+                        if (!legend.chart.styledMode) {
+                            legendItem.css(
+                                merge(
+                                    item.visible ?
+                                        legend.itemStyle as Highcharts.CSSObject :
+                                        legend.itemHiddenStyle as Highcharts.CSSObject
+                                )
+                            );
+                        }
+
                         legend.allItems.forEach(function (
                             inactiveItem: (
                                 Highcharts.BubbleLegend|Highcharts.Point|
@@ -527,37 +511,63 @@ extend(Legend.prototype, {
                             )
                         ): void {
                             if (item !== inactiveItem) {
-                                inactiveItem.setState(
-                                    item.visible ? 'inactive' : '',
-                                    !isPoint
-                                );
+                                inactiveItem.setState('', !isPoint);
                             }
                         });
-                    };
 
-                // A CSS class to dim or hide other than the hovered series.
-                // Event handling in iOS causes the activeClass to be added
-                // prior to click in some cases (#7418).
-                boxWrapper.removeClass(activeClass);
+                        // A CSS class to dim or hide other than the hovered
+                        // series.
+                        boxWrapper.removeClass(activeClass);
 
-                // Pass over the click/touch event. #4.
-                event = {
-                    browserEvent: event
-                } as any;
+                        item.setState();
+                    })
+                    .on('click', function (event: Highcharts.PointerEventObject): void {
+                        var strLegendItemClick = 'legendItemClick',
+                            fnLegendItemClick = function (): void {
+                                if ((item as any).setVisible) {
+                                    (item as any).setVisible();
+                                }
+                                // Reset inactive state
+                                legend.allItems.forEach(function (
+                                    inactiveItem: (
+                                        Highcharts.BubbleLegend|Highcharts.Point|
+                                        Highcharts.Series
+                                    )
+                                ): void {
+                                    if (item !== inactiveItem) {
+                                        inactiveItem.setState(
+                                            item.visible ? 'inactive' : '',
+                                            !isPoint
+                                        );
+                                    }
+                                });
+                            };
 
-                // click the name or symbol
-                if ((item as any).firePointEvent) { // point
-                    (item as any).firePointEvent(
-                        strLegendItemClick,
-                        event,
-                        fnLegendItemClick
-                    );
-                } else {
-                    fireEvent(
-                        item, strLegendItemClick, event, fnLegendItemClick
-                    );
-                }
-            });
+                        // A CSS class to dim or hide other than the hovered
+                        // series. Event handling in iOS causes the activeClass
+                        // to be added prior to click in some cases (#7418).
+                        boxWrapper.removeClass(activeClass);
+
+                        // Pass over the click/touch event. #4.
+                        event = {
+                            browserEvent: event
+                        } as any;
+
+                        // click the name or symbol
+                        if ((item as any).firePointEvent) { // point
+                            (item as any).firePointEvent(
+                                strLegendItemClick,
+                                event,
+                                fnLegendItemClick
+                            );
+                        } else {
+                            fireEvent(
+                                item, strLegendItemClick, event, fnLegendItemClick
+                            );
+                        }
+                    });
+            }
+        });
     },
 
     /**
