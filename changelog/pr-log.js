@@ -43,15 +43,33 @@ module.exports = async since => {
     const after = Date.parse(commit.headers['last-modified']);
 
     while (page < 20) {
-        const allPulls = await octokit.pulls.list({
-            owner: 'highcharts',
-            repo: 'highcharts',
-            state: 'closed',
-            base: 'master',
-            page
-        }).catch(error);
+        const baseBranches = [
+            'master',
+            'feature/a11y-various'
+        ];
+        const pageData = [];
+        for (const base of baseBranches) {
 
-        const pageData = allPulls.data.filter(d => Date.parse(d.merged_at) > after);
+            let { data } = await octokit.pulls.list({
+                owner: 'highcharts',
+                repo: 'highcharts',
+                state: 'closed',
+                base,
+                page
+            }).catch(error);
+
+            // On the master, keep only PRs that have been closed since last
+            // release
+            if (base === 'master') {
+                data = data.filter(d => Date.parse(d.merged_at) > after);
+
+            // On feature branches, keep all incoming PRs
+            } else {
+                data = data.filter(d => d.state === 'closed');
+            }
+
+            pageData.push.apply(pageData, data);
+        }
 
         console.log(`Loaded pulls page ${page} (${pageData.length} items)`.green);
 
