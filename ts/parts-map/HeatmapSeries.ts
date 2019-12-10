@@ -262,7 +262,12 @@ seriesType<Highcharts.HeatmapSeries>(
             symbol: 'rect',
             /** @ignore-option */
             radius: 0,
-            lineColor: void 0
+            lineColor: void 0,
+            states: {
+                hover: {
+                    lineWidthPlus: 0
+                }
+            }
         },
 
         clip: true,
@@ -364,7 +369,7 @@ seriesType<Highcharts.HeatmapSeries>(
                 var pointAttr,
                     sizeDif,
                     hasImage =
-                        (point.marker && point.marker.symbol || shape || '')
+                        (point.marker && point.marker.symbol || symbol || '')
                             .match(/url/),
                     cellAttr = point.getCellAttributes(),
                     shapeArgs = {
@@ -463,29 +468,56 @@ seriesType<Highcharts.HeatmapSeries>(
          */
         markerAttribs: function (
             this: Highcharts.HeatmapSeries,
-            point: Highcharts.HeatmapPoint
+            point: Highcharts.HeatmapPoint,
+            state?: string
         ): Highcharts.SVGAttributes {
-            var symbol = (
+            var pointMarkerOptions = point.marker || {},
+                seriesMarkerOptions = this.options.marker || {},
+                seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
+                pointStateOptions: Highcharts.PointStatesHoverOptionsObject,
+                symbol = (
                     point.marker &&
                     point.marker.symbol || (this.options.marker || {}).symbol
                 ),
-                shapeArgs = point.shapeArgs || {};
-
-            point.hasImage = (symbol && symbol.indexOf('url') === 0) || false;
-
-            if (point.hasImage) {
-                return {
-                    x: point.plotX,
-                    y: point.plotY
+                shapeArgs = point.shapeArgs || {},
+                hasImage =
+                    (symbol && symbol.indexOf('url') === 0) || false,
+                attribs: Highcharts.SVGAttributes = {
+                    x: hasImage ? point.plotX : shapeArgs.x,
+                    y: hasImage ? point.plotY : shapeArgs.y,
+                    width: shapeArgs.width,
+                    height: shapeArgs.height
                 };
+
+            point.hasImage = hasImage;
+
+            // Setting the width and height on image does not affect
+            // on its dimensions.
+            if (state && !hasImage) {
+                seriesStateOptions = (seriesMarkerOptions as any).states[state] || {};
+                pointStateOptions = pointMarkerOptions.states &&
+                    (pointMarkerOptions.states as any)[state] || {};
+
+                [['width', 'x'], ['height', 'y']].forEach(function (
+                    dimension
+                ): void {
+                    // Set new width and height basing on state options.
+                    attribs[dimension[0]] = (
+                        (pointStateOptions as any)[dimension[0]] ||
+                        (seriesStateOptions as any)[dimension[0]] ||
+                        attribs[dimension[0]]
+                    ) + (
+                        (pointStateOptions as any)[dimension[0] + 'Plus'] ||
+                        (seriesStateOptions as any)[dimension[0] + 'Plus'] || 0
+                    );
+
+                    // Align marker by a new size.
+                    attribs[dimension[1]] +=
+                        (shapeArgs[dimension[0]] - attribs[dimension[0]]) / 2;
+                });
             }
 
-            return {
-                x: shapeArgs.x,
-                y: shapeArgs.y,
-                width: shapeArgs.width,
-                height: shapeArgs.height
-            };
+            return attribs;
         },
 
         /**
