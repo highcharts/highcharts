@@ -44,8 +44,7 @@ module.exports = async since => {
 
     while (page < 20) {
         const baseBranches = [
-            'master',
-            'feature/a11y-various'
+            'master'
         ];
         const pageData = [];
         for (const base of baseBranches) {
