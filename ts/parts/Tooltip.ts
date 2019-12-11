@@ -22,7 +22,8 @@ const {
     isString,
     pick,
     splat,
-    syncTimeout
+    syncTimeout,
+    timeUnits
 } = U;
 
 /**
@@ -256,8 +257,7 @@ declare global {
 
 var doc = H.doc,
     format = H.format,
-    merge = H.merge,
-    timeUnits = H.timeUnits;
+    merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

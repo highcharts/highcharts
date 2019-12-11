@@ -1675,7 +1675,7 @@ function animObject(animation) {
  *
  * @ignore
  */
-H.timeUnits = {
+var timeUnits = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -2546,6 +2546,7 @@ var utils = {
     splat: splat,
     stableSort: stableSort,
     syncTimeout: syncTimeout,
+    timeUnits: timeUnits,
     wrap: wrap
 };
 export default utils;
