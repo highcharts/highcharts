@@ -92,4 +92,4 @@ There are two ways to add the bubble legend to the chart:
 API document
 ------------
 
-For more details check the [API document link.](https://api.highcharts.com/highcharts/legend.bubbleLegend)
+For more details check the [API documentation](https://api.highcharts.com/highcharts/legend.bubbleLegend).
