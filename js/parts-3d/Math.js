@@ -108,13 +108,21 @@ H.perspective3D = function (coordinate, origin, distance) {
  * @param {boolean} [insidePlotArea]
  * Wether to verifiy the points are inside the plotArea
  *
+ * @param {boolean} [useInvertedPersp]
+ * Wether to use inverted perspective in calculations
+ *
  * @return {Array<Highcharts.Position3dObject>}
  * An array of transformed points
  *
  * @requires highcharts-3d
  */
-H.perspective = function (points, chart, insidePlotArea) {
-    var options3d = chart.options.chart.options3d, inverted = insidePlotArea ? chart.inverted : false, origin = {
+H.perspective = function (points, chart, insidePlotArea, useInvertedPersp) {
+    var options3d = chart.options.chart.options3d, 
+    /* The useInvertedPersp argument is used for
+     * inverted charts with already inverted elements,
+     * such as dataLabels or tooltip positions.
+     */
+    inverted = pick(useInvertedPersp, insidePlotArea ? chart.inverted : false), origin = {
         x: chart.plotWidth / 2,
         y: chart.plotHeight / 2,
         z: options3d.depth / 2,
