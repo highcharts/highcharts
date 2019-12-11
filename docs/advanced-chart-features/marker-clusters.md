@@ -2,7 +2,7 @@ Marker clusters
 ===
 
 ## Introduction
-Marker clusters is the concept of sampling the data values into larger blocks in order to ease readability and increase performance. Is a simple solution to display a large number of markers on a map or a chart. The number on a cluster shows how many markers it contains. As you zoom into the map the points will start to show and the cluster will contain less markers.
+Marker clusters is the concept of sampling the data values into larger blocks in order to ease readability and increase performance. It is a simple solution to display a large number of markers on a map, or a chart. The number on a cluster shows how many markers it contains. As you zoom into the map the points will start to show, and the cluster will contain fewer markers.
 
 The `marker-clusters` module supports `mappoint` and `scatter` series types.
 
@@ -28,13 +28,13 @@ The clustering algorithm options can be set in the `cluster.layoutAlgorithm` obj
 
 1) `grid` - grid-based clustering technique. Points are assigned to squares of set size depending on their position on the plot area. Points inside the grid square are combined into a cluster. The grid size can be controlled by the `gridSize` property (grid size changes at certain zoom levels).
 
-2) `kmeans` - based on the K-Means clustering technique. In the first step, points are divided using the grid method (distance property is the grid size) to find the initial amount of clusters. Next, each point is classified by computing the distance between each cluster center and that point. When the closest cluster distance is lower than the distance property set by the user, the point is added to this cluster. Otherwise it is classified as `noise`. The algorithm is repeated until each cluster center does not change its previous position more than one pixel. This technique is more accurate but also more time consuming than the `grid` algorithm, especially for big datasets.
+2) `kmeans` - based on the K-Means clustering technique. In the first step, points are divided using the grid method (distance property is the grid size) to find the initial amount of clusters. Next, each point is classified by computing the distance between each cluster center and that point. When the closest cluster distance is lower than the distance property set by the user, the point is added to this cluster. Otherwise, it is classified as `noise`. The algorithm is repeated until each cluster center does not change its previous position more than one pixel. This technique is more accurate but also more time consuming than the `grid` algorithm, especially for big datasets.
 
-3) `optimizedKmeans` - based on the K-Means clustering technique. This algorithm uses the K-Means algorithm only on the chart initialization or when chart extremes have greater range than on initialization. When a chart is redrawn the algorithm checks only clustered points distance from the cluster center and rebuild it when the point is spaced enough to be outside the cluster. It provides performance improvement and more stable clusters position yet can be used rather on small and sparse datasets.
+3) `optimizedKmeans` - based on the K-Means clustering technique. This algorithm uses the K-Means algorithm only on the chart initialization or when chart extremes have greater range than on initialization. When a chart is redrawn, the algorithm checks only clustered points distance from the cluster center and rebuilds it when the point is spaced enough to be outside the cluster. It provides performance improvement and a more stable clusters position yet can be used rather on small and sparse datasets.
 
-By default, the algorithm depends on visible quantity of points and `kmeansThreshold`. When there are more visible points than the `kmeansThreshold` the `grid` algorithm is used, otherwise `kmeans`.
+By default, the algorithm depends on a visible quantity of points and `kmeansThreshold`. When there are more visible points than the `kmeansThreshold` the `grid` algorithm is used, otherwise `kmeans`.
 
-A custom clustering algorithm can be added by assigning a callback function as the type property. This function takes an array of visible points `X data`, `Y data`, `X data` indexes (in the whole data array) and `layoutAlgorithm` options as arguments and should return an object with grouped data.
+A custom clustering algorithm can be added by assigning a callback function as the type property. This function takes an array of visible points `X data`, `Y data`, `X data` indexes (in the whole data array), and `layoutAlgorithm` options as arguments and should return an object with grouped data.
 
 The custom algorithm should return an object like this:
 
