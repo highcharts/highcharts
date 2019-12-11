@@ -68,13 +68,11 @@ Pattern fills
 Since Highcharts v6.1, pattern fills are supported natively.
 
 To enable this new functionality, load the pattern-fill.js module. Example loading the latest version from our CDN:
-
     
     <script src="https://code.highcharts.com/modules/pattern-fill.js"></script>
 
 Then, to define a color as a pattern, we can do as follows with any color option:
 
-    
     color: {
         pattern: {
             // Pattern options here
@@ -83,5 +81,5 @@ Then, to define a color as a pattern, we can do as follows with any color option
 
 Further reading:
 
-*   [The pattern-fills blog article](https://www.highcharts.com/blog/a11y/pattern-fills/) for a tutorial.
+*   [Pattern fills tutorial](https://www.highcharts.com/docs/chart-design-and-style/pattern-fills/)
 *   [PatternOptions](https://api.highcharts.com/class-reference/global.html#PatternOptions) in the API for options details.

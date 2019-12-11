@@ -76,9 +76,9 @@ import H from './Globals.js';
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat;
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
-var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
+var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -429,6 +429,11 @@ Series.prototype.drawDataLabels = function () {
                     if (labelOptions.textPath && !labelOptions.useHTML) {
                         dataLabel.setTextPath((point.getDataLabelPath &&
                             point.getDataLabelPath(dataLabel)) || point.graphic, labelOptions.textPath);
+                        if (point.dataLabelPath &&
+                            !labelOptions.textPath.enabled) {
+                            // clean the DOM
+                            point.dataLabelPath = point.dataLabelPath.destroy();
+                        }
                     }
                     // Now the data label is created and placed at 0,0, so we
                     // need to align it

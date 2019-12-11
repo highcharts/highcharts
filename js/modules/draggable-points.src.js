@@ -2010,17 +2010,15 @@ function getFirstProp(obj) {
  * @return {void}
  */
 function mouseOver(point) {
-    var series = point.series, chart = series && series.chart, dragDropData = chart && chart.dragDropData;
+    var series = point.series, chart = series && series.chart, dragDropData = chart && chart.dragDropData, is3d = chart && chart.is3d && chart.is3d();
     if (chart &&
         !(dragDropData &&
             dragDropData.isDragging && // Ignore if dragging a point
             dragDropData.draggedPastSensitivity) &&
         !chart.isDragDropAnimating && // Ignore if animating
         series.options.dragDrop && // No need to compute handles without this
-        !(chart.options &&
-            chart.options.chart &&
-            chart.options.chart.options3d // No 3D support
-        )) {
+        !is3d // No 3D support
+    ) {
         // Hide the handles if they exist on another point already
         if (chart.dragHandles) {
             chart.hideDragHandles();

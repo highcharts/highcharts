@@ -141,6 +141,7 @@ module.exports = {
         'Chart design and style': [
             'chart-design-and-style/design-and-style',
             'chart-design-and-style/colors',
+            'chart-design-and-style/pattern-fills',
             'chart-design-and-style/themes',
             'chart-design-and-style/style-by-css',
             'chart-design-and-style/custom-themes-in-styled-mode',

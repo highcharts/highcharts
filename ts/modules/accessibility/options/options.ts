@@ -235,7 +235,7 @@ var options: DeepPartial<Highcharts.Options> = {
          * Accessibility options for the screen reader information sections
          * added before and after the chart.
          *
-         * @since next
+         * @since 8.0.0
          */
         screenReaderSection: {
             /**
@@ -246,7 +246,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * representation of the chart.
              *
              * @type      {Highcharts.ScreenReaderClickCallbackFunction}
-             * @since     next
+             * @since 8.0.0
              * @apioption accessibility.screenReaderSection.onViewDataTableClick
              */
 
@@ -259,7 +259,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * [beforeChartFormat](#accessibility.screenReaderSection.beforeChartFormat).
              *
              * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
-             * @since     next
+             * @since 8.0.0
              * @apioption accessibility.screenReaderSection.beforeChartFormatter
              */
 
@@ -271,7 +271,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * `<button>` in the format `<tag id="abcd">`. Numbers, lower- and
              * uppercase letters, "-" and "#" are valid characters in IDs.
              *
-             * @since next
+             * @since 8.0.0
              */
             beforeChartFormat:
                 '<h5>{chartTitle}</h5>' +
@@ -288,7 +288,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * [beforeChartFormatter](#accessibility.screenReaderSection.beforeChartFormatter).
              *
              * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Chart>}
-             * @since     next
+             * @since 8.0.0
              * @apioption accessibility.screenReaderSection.afterChartFormatter
              */
 
@@ -296,7 +296,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * Format for the screen reader information region after the chart.
              * Analogous to [beforeChartFormat](#accessibility.screenReaderSection.beforeChartFormat).
              *
-             * @since next
+             * @since 8.0.0
              */
             afterChartFormat: '{endOfChartMarker}',
 
@@ -308,7 +308,7 @@ var options: DeepPartial<Highcharts.Options> = {
              *
              * @see [point.dateFormat](#accessibility.point.dateFormat)
              *
-             * @since next
+             * @since 8.0.0
              */
             axisRangeDateFormat: '%Y-%m-%d %H:%M:%S'
         },
@@ -318,7 +318,7 @@ var options: DeepPartial<Highcharts.Options> = {
          * can also have specific [accessibility options](#plotOptions.series.accessibility)
          * set.
          *
-         * @since next
+         * @since 8.0.0
          */
         series: {
             /**
@@ -331,7 +331,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * @see [series.description](#plotOptions.series.description)
              *
              * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Series>}
-             * @since     next
+             * @since 8.0.0
              * @apioption accessibility.series.descriptionFormatter
              */
 
@@ -339,7 +339,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * Whether or not to add series descriptions to charts with a single
              * series.
              *
-             * @since next
+             * @since 8.0.0
              */
             describeSingleSeries: false,
 
@@ -350,7 +350,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * Set to `false` to disable.
              *
              * @type  {boolean|number}
-             * @since next
+             * @since 8.0.0
              */
             pointDescriptionEnabledThreshold: 200
         },
@@ -408,7 +408,7 @@ var options: DeepPartial<Highcharts.Options> = {
          *         Accessible line chart
          *
          * @type  {string|Highcharts.HTMLDOMElement}
-         * @since next
+         * @since 8.0.0
          */
         linkedDescription: '*[data-highcharts-chart="{index}"] + .highcharts-description', // eslint-disable-line
 
@@ -481,7 +481,7 @@ var options: DeepPartial<Highcharts.Options> = {
         /**
          * Options for descriptions of individual data points.
          *
-         * @since     next
+         * @since 8.0.0
          * @apioption accessibility.point
          */
 
@@ -497,7 +497,7 @@ var options: DeepPartial<Highcharts.Options> = {
          * @see [dateFormatter](#accessibility.point.dateFormatter)
          *
          * @type      {string}
-         * @since     next
+         * @since 8.0.0
          * @apioption accessibility.point.dateFormat
          */
 
@@ -511,7 +511,7 @@ var options: DeepPartial<Highcharts.Options> = {
          * @see [dateFormat](#accessibility.point.dateFormat)
          *
          * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-         * @since     next
+         * @since 8.0.0
          * @apioption accessibility.point.dateFormatter
          */
 
@@ -520,7 +520,7 @@ var options: DeepPartial<Highcharts.Options> = {
          * [tooltip.valuePrefix](#tooltip.valuePrefix) if not defined.
          *
          * @type        {string}
-         * @since       next
+         * @since 8.0.0
          * @apioption   accessibility.point.valuePrefix
          */
 
@@ -529,7 +529,7 @@ var options: DeepPartial<Highcharts.Options> = {
          * [tooltip.valueSuffix](#tooltip.valueSuffix) if not defined.
          *
          * @type        {string}
-         * @since       next
+         * @since 8.0.0
          * @apioption   accessibility.point.valueSuffix
          */
 
@@ -538,7 +538,7 @@ var options: DeepPartial<Highcharts.Options> = {
          * [tooltip.valueDecimals](#tooltip.valueDecimals) if not defined.
          *
          * @type        {number}
-         * @since       next
+         * @since 8.0.0
          * @apioption   accessibility.point.valueDecimals
          */
 
@@ -553,7 +553,7 @@ var options: DeepPartial<Highcharts.Options> = {
          * @see [point.accessibility.description](#series.line.data.accessibility.description)
          *
          * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-         * @since     next
+         * @since 8.0.0
          * @apioption accessibility.point.descriptionFormatter
          */
 
@@ -650,7 +650,7 @@ var options: DeepPartial<Highcharts.Options> = {
              * Options for the keyboard navigation of data points and series.
              *
              * @declare Highcharts.KeyboardNavigationSeriesNavigationOptionsObject
-             * @since   next
+             * @since 8.0.0
              */
             seriesNavigation: {
                 /**
@@ -669,7 +669,7 @@ var options: DeepPartial<Highcharts.Options> = {
                  *
                  * @type       {string}
                  * @default    normal
-                 * @since      next
+                 * @since 8.0.0
                  * @validvalue ["normal", "serialize"]
                  * @apioption  accessibility.keyboardNavigation.seriesNavigation.mode
                  */
@@ -678,7 +678,7 @@ var options: DeepPartial<Highcharts.Options> = {
                  * Skip null points when navigating through points with the
                  * keyboard.
                  *
-                 * @since next
+                 * @since 8.0.0
                  */
                 skipNullPoints: true,
 
@@ -689,7 +689,7 @@ var options: DeepPartial<Highcharts.Options> = {
                  * Set to `false` to disable.
                  *
                  * @type  {boolean|number}
-                 * @since next
+                 * @since 8.0.0
                  */
                 pointNavigationEnabledThreshold: false
             }

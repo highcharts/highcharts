@@ -89,6 +89,7 @@ declare global {
             connectors?: Array<SVGElement>;
             contrastColor?: ColorString;
             dataLabel?: SVGElement;
+            dataLabelPath?: SVGElement;
             dataLabels?: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
             dlBox?: BBoxObject;
@@ -251,7 +252,8 @@ const {
     objectEach,
     pick,
     relativeLength,
-    splat
+    splat,
+    stableSort
 } = U;
 
 import './Series.js';
@@ -260,8 +262,7 @@ var format = H.format,
     merge = H.merge,
     noop = H.noop,
     Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    stableSort = H.stableSort;
+    seriesTypes = H.seriesTypes;
 
 /* eslint-disable valid-jsdoc */
 
@@ -811,6 +812,14 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                             ) || point.graphic,
                             labelOptions.textPath
                         );
+
+                        if (
+                            point.dataLabelPath &&
+                            !labelOptions.textPath.enabled
+                        ) {
+                            // clean the DOM
+                            point.dataLabelPath = point.dataLabelPath.destroy();
+                        }
                     }
 
                     // Now the data label is created and placed at 0,0, so we

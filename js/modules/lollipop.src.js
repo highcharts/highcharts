@@ -25,7 +25,7 @@ var seriesType = H.seriesType, areaProto = H.seriesTypes.area.prototype, colProt
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking, lowColor,
  *               stickyTracking, trackByArea
- * @since        next
+ * @since 8.0.0
  * @optionparent plotOptions.lollipop
  */
 seriesType('lollipop', 'dumbbell', {

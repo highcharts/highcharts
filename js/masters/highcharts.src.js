@@ -63,10 +63,12 @@ extend(Highcharts, {
     pick: U.pick,
     pInt: U.pInt,
     relativeLength: U.relativeLength,
+    removeEvent: U.removeEvent,
     setAnimation: U.setAnimation,
     splat: U.splat,
     syncTimeout: U.syncTimeout,
     timeUnits: U.timeUnits,
+    stableSort: U.stableSort,
     wrap: U.wrap
 });
 

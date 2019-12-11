@@ -24,7 +24,7 @@ var pick = H.pick, seriesType = H.seriesType, seriesTypes = H.seriesTypes, serie
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
  *               stickyTracking, trackByArea
- * @since        next
+ * @since 8.0.0
  * @optionparent plotOptions.dumbbell
  */
 seriesType('dumbbell', 'arearange', {
@@ -38,7 +38,7 @@ seriesType('dumbbell', 'arearange', {
     /**
      * Pixel width of the line that connects the dumbbell point's values.
      *
-     * @since     next
+     * @since 8.0.0
      * @product   highcharts highstock
      */
     connectorWidth: 1,
@@ -50,7 +50,7 @@ seriesType('dumbbell', 'arearange', {
      * Color of the start markers in a dumbbell graph.
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since     next
+     * @since 8.0.0
      * @product   highcharts highstock
      */
     lowColor: '${palette.neutralColor80}',
@@ -60,7 +60,7 @@ seriesType('dumbbell', 'arearange', {
      *
      * @type      {string}
      * @product   highcharts highstock
-     * @since     next
+     * @since 8.0.0
      * @apioption plotOptions.dumbbell.connectorColor
      */
     states: {
@@ -70,7 +70,7 @@ seriesType('dumbbell', 'arearange', {
             /**
              * The additional connector line width for a hovered point.
              *
-             * @since next
+             * @since 8.0.0
              * @product   highcharts highstock
              */
             connectorWidthPlus: 1,
