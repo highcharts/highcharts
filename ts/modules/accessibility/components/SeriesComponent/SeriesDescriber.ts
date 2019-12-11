@@ -61,6 +61,19 @@ function findFirstPointWithGraphic(
 /**
  * @private
  */
+function shouldAddDummyPoint(point: Highcharts.Point): boolean {
+    // Note: Sunburst series use isNull for hidden points on drilldown.
+    // Ignore these.
+    const isSunburst = point.series && point.series.type === 'sunburst',
+        isNull = point.isNull;
+
+    return isNull && !isSunburst;
+}
+
+
+/**
+ * @private
+ */
 function makeDummyElement(
     point: Highcharts.Point,
     pos: Highcharts.PositionObject
@@ -467,9 +480,8 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
         series.points.forEach(function (
             point: Highcharts.AccessibilityPoint
         ): void {
-            var shouldAddDummyPoint = point.isNull,
-                pointEl = point.graphic && point.graphic.element ||
-                    shouldAddDummyPoint && addDummyPointElement(point);
+            var pointEl = point.graphic && point.graphic.element ||
+                    shouldAddDummyPoint(point) && addDummyPointElement(point);
 
             if (pointEl) {
                 // We always set tabindex, as long as we are setting
