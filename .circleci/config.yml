@@ -144,9 +144,14 @@ jobs:
   check_for_docs_changes_and_deploy:
     <<: *defaults
     description: Checks for changes in docs/ and triggers deploy via doc-builder
+    parameters:
+      always_deploy:
+        description: "Deploy regardless of finding changes in docs/ on last commit"
+        type: boolean
+        default: false
     steps:
       - <<: *load_workspace
-      - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN}
+      - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >>
 
   generate_release_reference_images:
     <<: *defaults
@@ -167,7 +172,7 @@ jobs:
 
   reset_visual_references_job:
     <<: *defaults
-    description: Reset reference images stored on S3 based on
+    description: Reset reference images stored on S3 based. I.e recently added/changed samples will be treated as always being a part of this release.
     parameters:
       reset_tests:
         description: "Which tests to run?"
@@ -420,6 +425,16 @@ workflows:
           filters:
             branches:
               only: [master]
+          context: highcharts-prod
+      - check_for_docs_changes_and_deploy:
+          # need to add this release deploy job separately as it has different requires tag than master branch.
+          requires: [generate_release_reference_images]
+          always_deploy: true
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-prod
 
   nightly:
