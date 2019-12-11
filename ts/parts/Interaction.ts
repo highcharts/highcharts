@@ -20,7 +20,7 @@ declare global {
     namespace Highcharts {
         interface Chart {
             resetZoomButton?: SVGElement;
-            pan(e: PointerEventObject, panning: string): void;
+            pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
             showResetZoom(): void;
             zoom(event: SelectEventObject): void;
             zoomOut(): void;
@@ -62,6 +62,10 @@ declare global {
         }
         interface PointUnselectCallbackFunction {
             (this: Point, event: PointInteractionEventObject): void;
+        }
+        interface PanningOptions {
+            type: string;
+            enabled: boolean;
         }
         interface Series {
             _hasTracking?: boolean;
@@ -756,12 +760,29 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
     pan: function (
         this: Highcharts.Chart,
         e: Highcharts.PointerEventObject,
-        panning: string
+        panning: Highcharts.PanningOptions|boolean
     ): void {
 
         var chart = this,
             hoverPoints = chart.hoverPoints,
-            doRedraw: boolean;
+            panningOptions: Highcharts.PanningOptions,
+            chartOptions = chart.options.chart,
+            doRedraw: boolean,
+            type: string;
+
+        if (typeof panning === 'object') {
+            panningOptions = panning;
+        } else {
+            panningOptions = {
+                enabled: panning,
+                type: 'x'
+            };
+        }
+
+        if (chartOptions && chartOptions.panning) {
+            chartOptions.panning = panningOptions;
+        }
+        type = panningOptions.type;
 
         fireEvent(this, 'pan', { originalEvent: e }, function (): void {
 
@@ -772,11 +793,22 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 });
             }
 
-            // xy is used in maps
-            (panning === 'xy' ? [1, 0] : [1]).forEach(function (
+            // panning axis mapping
+
+            var xy = [1]; // x
+
+            if (type === 'xy') {
+                xy = [1, 0];
+            } else if (type === 'y') {
+                xy = [0];
+            }
+
+            xy.forEach(function (
                 isX: number
             ): void {
+
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
+                    axisOpt = axis.options,
                     horiz = axis.horiz,
                     mousePos = e[horiz ? 'chartX' : 'chartY'],
                     mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',
@@ -818,37 +850,51 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     ),
                     spill;
 
-                // If the new range spills over, either to the min or max,
-                // adjust the new range.
-                spill = paddedMin - newMin;
-                if (spill > 0) {
-                    newMax += spill;
-                    newMin = paddedMin;
-                }
-                spill = newMax - paddedMax;
-                if (spill > 0) {
-                    newMax = paddedMax;
-                    newMin -= spill;
-                }
+                // It is not necessary to calculate extremes on ordinal axis,
+                // because the are already calculated, so we don't want to
+                // override them.
+                if (!axisOpt.ordinal) {
+                    // If the new range spills over, either to the min or max,
+                    // adjust the new range.
+                    if (isX) {
+                        spill = paddedMin - newMin;
+                        if (spill > 0) {
+                            newMax += spill;
+                            newMin = paddedMin;
+                        }
+                        spill = newMax - paddedMax;
+                        if (spill > 0) {
+                            newMax = paddedMax;
+                            newMin -= spill;
+                        }
+                    }
 
-                // Set new extremes if they are actually new
-                if (
-                    axis.series.length &&
-                    newMin !== extremes.min &&
-                    newMax !== extremes.max
-                ) {
-                    axis.setExtremes(
-                        newMin,
-                        newMax,
-                        false,
-                        false,
-                        { trigger: 'pan' }
-                    );
-                    doRedraw = true;
-                }
+                    // Set new extremes if they are actually new
+                    if (
+                        axis.series.length &&
+                            newMin !== extremes.min &&
+                            newMax !== extremes.max &&
+                            isX ? true : (
+                                axis.panningState &&
+                                newMin >= axis.panningState
+                                    .startMin &&
+                                newMax <= axis.panningState
+                                    .startMax //
+                            )
+                    ) {
+                        axis.setExtremes(
+                            newMin,
+                            newMax,
+                            false,
+                            false,
+                            { trigger: 'pan' }
+                        );
+                        doRedraw = true;
+                    }
 
-                // set new reference for next run:
-                (chart as any)[mouseDown] = mousePos;
+                    // set new reference for next run:
+                    (chart as any)[mouseDown] = mousePos;
+                }
             });
 
             if (doRedraw) {
@@ -1050,8 +1096,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @function Highcharts.Point#setState
      *
      * @param {Highcharts.PointStateValue|""} [state]
-     *        The new state, can be one of `''` (an empty string), `hover`,
-     *        `select` or `inactive`.
+     *        The new state, can be one of `'hover'`, `'select'`, `'inactive'`,
+     *        or `''` (an empty string), `'normal'` or `undefined` to set to
+     *        normal state.
      * @param {boolean} [move]
      *        State for animation.
      *
@@ -1256,7 +1303,9 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
         if (haloOptions &&
             haloOptions.size &&
             markerGraphic &&
-            markerVisibility !== 'hidden') {
+            markerVisibility !== 'hidden' &&
+            !point.isCluster
+        ) {
             if (!halo) {
                 series.halo = halo = chart.renderer.path()
                     // #5818, #5903, #6705
@@ -1417,7 +1466,9 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      * @function Highcharts.Series#setState
      *
      * @param {Highcharts.SeriesStateValue|""} [state]
-     *        Can be either `hover` or undefined to set to normal state.
+     *        The new state, can be either `'hover'`, `'inactive'`, `'select'`,
+     *        or `''` (an empty string), `'normal'` or `undefined` to set to
+     *        normal state.
      * @param {boolean} [inherit]
      *        Determines if state should be inherited by points too.
      */

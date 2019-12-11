@@ -152,15 +152,20 @@ function task() {
 
             processLib.isRunning('scripts_incomplete', true, true);
 
-            gulp.series('scripts-ts', 'scripts-css', 'scripts-js')(
-                err => {
+            gulp.series(
+                'scripts-ts',
+                'scripts-css',
+                'scripts-js',
+                'scripts-code'
+            )(
+                function (error) {
 
                     processLib.isRunning('scripts_incomplete', false, true);
 
                     saveRun();
 
-                    if (err) {
-                        reject(err);
+                    if (error) {
+                        reject(error);
                     } else {
                         resolve();
                     }

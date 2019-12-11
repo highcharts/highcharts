@@ -351,8 +351,9 @@ seriesType('treemap', 'scatter'
      */
     /**
      * Set the dash style of the border of all the point which lies on the
-     * level. See <a href"#plotoptions.scatter.dashstyle">
-     * plotOptions.scatter.dashStyle</a> for possible options.
+     * level. See
+     * [plotOptions.scatter.dashStyle](#plotoptions.scatter.dashstyle)
+     * for possible options.
      *
      * @type      {Highcharts.DashStyleValue}
      * @since     4.1.0
@@ -579,7 +580,7 @@ seriesType('treemap', 'scatter'
             this.colorAttribs = colorMapSeriesMixin.colorAttribs;
         }
         // Handle deprecated options.
-        addEvent(series, 'setOptions', function (event) {
+        series.eventsToUnbind.push(addEvent(series, 'setOptions', function (event) {
             var options = event.userOptions;
             if (defined(options.allowDrillToNode) &&
                 !defined(options.allowTraversingTree)) {
@@ -591,10 +592,10 @@ seriesType('treemap', 'scatter'
                 options.traverseUpButton = options.drillUpButton;
                 delete options.drillUpButton;
             }
-        });
+        }));
         Series.prototype.init.call(series, chart, options);
         if (series.options.allowTraversingTree) {
-            addEvent(series, 'click', series.onClickDrillToNode);
+            series.eventsToUnbind.push(addEvent(series, 'click', series.onClickDrillToNode));
         }
     },
     buildNode: function (id, i, level, list, parent) {

@@ -342,3 +342,83 @@ QUnit.test('Pan all the way to extremes (#5863)', function (assert) {
         'Right ticks'
     );
 });
+
+QUnit.test('Pan in vertical direction, and both directions. (Highstock only)', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        chart: {
+            width: 600,
+            panning: {
+                type: 'y'
+            }
+        },
+        title: {
+            text: 'AAPL stock price by minute'
+        },
+        rangeSelector: {
+            selected: 1,
+            inputEnabled: false
+        },
+        series: [{
+            data: (function () {
+                var arr = [];
+                var y = 1;
+                for (
+                    var x = Date.UTC(2017, 0, 1); x < Date.UTC(2017, 11, 31); x += 24 * 36e5
+                ) {
+                    if (y % 7 !== 0) {
+                        arr.push([x, y]);
+                    }
+                    y++;
+                }
+                return arr;
+            }())
+        }]
+    });
+
+    var controller = new TestController(chart);
+
+    var initialMin = chart.yAxis[0].min,
+        initialRange = chart.yAxis[0].max - chart.yAxis[0].min;
+
+    // Pan in vertical direction
+    controller.pan([100, 200], [100, 100]);
+
+    assert.ok(
+        chart.yAxis[0].min < initialMin,
+        'Has panned in Y direction.'
+    );
+
+    assert.strictEqual(
+        Highcharts.correctFloat(chart.yAxis[0].max - chart.yAxis[0].min),
+        Highcharts.correctFloat(initialRange),
+        'Has preserved range.'
+    );
+
+    chart.update({
+        chart: {
+            panning: {
+                type: 'xy'
+            }
+        }
+    });
+
+    var initialXMin = chart.xAxis[0].min,
+        initialYMin = chart.yAxis[0].min,
+        initialXRange = chart.xAxis[0].max - chart.xAxis[0].min,
+        initialYRange = Highcharts.correctFloat(chart.yAxis[0].max - chart.yAxis[0].min);
+
+    // Pan in both directions
+    controller.pan([100, 100], [150, 150]);
+
+    assert.ok(
+        chart.xAxis[0].min < initialXMin &&
+        chart.yAxis[0].min > initialYMin,
+        'Has panned in both directions.'
+    );
+
+    assert.ok(
+        chart.xAxis[0].max - chart.xAxis[0].min === initialXRange &&
+        Highcharts.correctFloat(chart.yAxis[0].max - chart.yAxis[0].min) === initialYRange,
+        'Has preserved range.'
+    );
+});

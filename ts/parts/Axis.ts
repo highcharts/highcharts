@@ -1202,9 +1202,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * different units may be used, for example the `day` unit can be used
          * on midnight and `hour` unit be used for intermediate values on the
          * same axis. For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#dateFormat). Defaults to:
+         * [dateFormat](/class-reference/Highcharts#dateFormat).
          *
-         * <pre>{
+         * Defaults to:
+         * ```js
+         * {
          *     millisecond: '%H:%M:%S.%L',
          *     second: '%H:%M:%S',
          *     minute: '%H:%M',
@@ -1213,7 +1215,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *     week: '%e. %b',
          *     month: '%b \'%y',
          *     year: '%Y'
-         * }</pre>
+         * }
+         * ```
          *
          * @sample {highcharts} highcharts/xaxis/datetimelabelformats/
          *         Different day format on X axis
@@ -1291,8 +1294,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * the `maxPadding` option to control the axis end.
          *
          * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when the navigator is
-         * enabled, to prevent jumpy scrolling.
+         * In Highstock, `endOnTick` is always false when the navigator or
+         * vertical panning is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/chart/reflow-true/
          *         True by default
@@ -1453,6 +1456,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         /**
          * The axis labels show the number or category for each tick.
          *
+         * Since v8.0.0: Labels are animated in categorized x-axis with
+         * updating data if `tickInterval` and `step` is set to 1.
+         *
          * @productdesc {highmaps}
          * X and Y axis labels are by default disabled in Highmaps, but the
          * functionality is inherited from Highcharts and used on `colorAxis`,
@@ -1562,10 +1568,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              * `this.axis.defaultLabelFormatter.call(this)` within the function.
              *
              * Defaults to:
-             *
-             * <pre>function() {
+             * ```js
+             * function() {
              *     return this.value;
-             * }</pre>
+             * }
+             * ```
              *
              * @sample {highcharts} highcharts/xaxis/labels-formatter-linked/
              *         Linked category names
@@ -2300,8 +2307,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * the `minPadding` option to control the axis start.
          *
          * @productdesc {highstock}
-         * In Highstock, `startOnTick` is always false when the navigator is
-         * enabled, to prevent jumpy scrolling.
+         * In Highstock, `startOnTick` is always false when either the
+         * navigator or vertical panning is enabled, to prevent jumpy
+         * scrolling.
          *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default
@@ -2555,8 +2563,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
              */
 
             /**
-             * The actual text of the axis title. It can contain basic HTML text
-             * markup like <b>, <i> and spans with style.
+             * The actual text of the axis title. It can contain basic HTML tags
+             * like `b`, `i` and `span` with style.
              *
              * @sample {highcharts} highcharts/xaxis/title-text/
              *         Custom HTML
@@ -2721,9 +2729,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * Datetime axis only. An array determining what time intervals the
          * ticks are allowed to fall on. Each array item is an array where the
          * first value is the time unit and the second value another array of
-         * allowed multiples. Defaults to:
+         * allowed multiples.
          *
-         * <pre>units: [[
+         * Defaults to:
+         * ```js
+         * units: [[
          *     'millisecond', // unit name
          *     [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
          * ], [
@@ -2747,7 +2757,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * ], [
          *     'year',
          *     null
-         * ]]</pre>
+         * ]]
+         * ```
          *
          * @type      {Array<Array<string,(Array<number>|null)>>}
          * @product   highcharts highstock gantt
@@ -3159,8 +3170,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         /**
          * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when the navigator is
-         * enabled, to prevent jumpy scrolling.
+         * In Highstock, `endOnTick` is always false when either the
+         * navigator or vertical panning is enabled, to prevent jumpy
+         * scrolling.
          */
         endOnTick: true,
 
@@ -6347,6 +6359,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // Get the longest label length
         tickPositions.forEach(function (tick: (number|Highcharts.Tick)): void {
             tick = ticks[tick as any];
+
+            // Replace label - sorting animation
+            if (tick.movedLabel) {
+                tick.replaceMovedLabel();
+            }
+
             if (
                 tick &&
                 (tick as any).label &&

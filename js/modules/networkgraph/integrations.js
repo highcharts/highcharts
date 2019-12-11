@@ -305,22 +305,15 @@ H.networkgraphIntegrations = {
          *
          * Euler:
          *
-         * Basic form:
-         * `x(n+1) = x(n) + v(n)`
+         * Basic form: `x(n+1) = x(n) + v(n)`
          *
          * With Rengoild-Fruchterman we get:
-         * <pre>
-         *       x(n+1) = x(n) +
-         *           v(n) / length(v(n)) *
-         *           min(v(n), temperature(n))
-         * </pre>
+         * `x(n+1) = x(n) + v(n) / length(v(n)) * min(v(n), temperature(n))`
          * where:
-         * <pre>
-         *       x(n+1) - next position
-         *       x(n) - current position
-         *       v(n) - velocity (comes from net force)
-         *       temperature(n) - current temperature
-         * </pre>
+         * - `x(n+1)`: next position
+         * - `x(n)`: current position
+         * - `v(n)`: velocity (comes from net force)
+         * - `temperature(n)`: current temperature
          *
          * Known issues:
          * Oscillations when force vector has the same magnitude but opposite

@@ -28,6 +28,9 @@ declare global {
         }
         interface Chart {
             zAxis?: Array<ZAxis>;
+            addZAxis(
+                options: ZAxisOptions
+            ): Axis;
         }
         interface Options {
             zAxis?: (ZAxisOptions|Array<ZAxisOptions>);
@@ -599,6 +602,15 @@ addEvent(Axis, 'destroy', function (): void {
 Z-AXIS
  */
 
+Chart.prototype.addZAxis = function (
+    options: Highcharts.ZAxisOptions
+): Highcharts.Axis {
+    return new ZAxis(this, options);
+};
+
+Chart.prototype.collectionsWithUpdate.push('zAxis');
+Chart.prototype.collectionsWithInit.zAxis = [Chart.prototype.addZAxis];
+
 Axis.prototype.swapZ = function (
     this: Highcharts.Axis,
     p: Highcharts.Position3dObject,
@@ -708,7 +720,7 @@ addEvent(Chart, 'afterGetAxes', function (): void {
         axisOptions.index = i;
         // Z-Axis is shown horizontally, so it's kind of a X-Axis
         axisOptions.isX = true;
-        var zAxis = new ZAxis(chart, axisOptions);
+        var zAxis = chart.addZAxis(axisOptions);
 
         zAxis.setScale();
     });

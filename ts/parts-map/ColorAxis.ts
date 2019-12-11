@@ -169,6 +169,9 @@ var addEvent = H.addEvent,
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 
+Chart.prototype.collectionsWithUpdate.push('colorAxis');
+Chart.prototype.collectionsWithInit.colorAxis = [Chart.prototype.addColorAxis];
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The ColorAxis object for inclusion in gradient legends.

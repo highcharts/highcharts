@@ -137,6 +137,19 @@ function getCirclesIntersectionPoints(circles) {
     }, []);
 }
 /**
+ * Tests wether the first circle is completely overlapping the second circle.
+ *
+ * @private
+ * @param {Highcharts.CircleObject} circle1 The first circle.
+ * @param {Highcharts.CircleObject} circle2 The The second circle.
+ * @return {boolean} Returns true if circle1 is completely overlapping circle2,
+ * false if not.
+ */
+function isCircle1CompletelyOverlappingCircle2(circle1, circle2) {
+    return getDistanceBetweenPoints(circle1, circle2) + circle2.r <
+        circle1.r + 1e-10;
+}
+/**
  * Tests wether a point lies within a given circle.
  * @private
  * @param {Highcharts.PositionObject} point
@@ -297,6 +310,7 @@ var geometryCircles = {
     getCirclesIntersectionPolygon: getCirclesIntersectionPolygon,
     getCircularSegmentArea: getCircularSegmentArea,
     getOverlapBetweenCircles: getOverlapBetweenCircles,
+    isCircle1CompletelyOverlappingCircle2: isCircle1CompletelyOverlappingCircle2,
     isPointInsideCircle: isPointInsideCircle,
     isPointInsideAllCircles: isPointInsideAllCircles,
     isPointOutsideAllCircles: isPointOutsideAllCircles,

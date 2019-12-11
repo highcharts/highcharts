@@ -83,6 +83,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 series = chart.initSeries(options);
                 chart.isDirtyLegend = true;
                 chart.linkSeries();
+                if (series.enabledDataSorting) {
+                    // We need to call `setData` after `linkSeries`
+                    series.setData(options.data, false);
+                }
                 fireEvent(chart, 'afterAddSeries', { series: series });
                 if (redraw) {
                     chart.redraw(animation);
@@ -346,9 +350,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         'xAxis',
         'yAxis',
         'zAxis',
-        'colorAxis',
-        'series',
-        'pane'
+        'series'
     ],
     /**
      * A generic function to update any element of the chart. Elements can be
@@ -570,9 +572,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Certain options require the whole series structure to be thrown away
         // and rebuilt
         if (updateAllSeries) {
-            chart.series.forEach(function (series) {
-                series.update({}, false);
-            });
+            chart.getSeriesOrderByLinks().forEach(function (series) {
+                // Avoid removed navigator series
+                if (series.chart) {
+                    series.update({}, false);
+                }
+            }, this);
         }
         // For loading, just update the options, do not redraw
         if (options.loading) {
@@ -648,7 +653,6 @@ Chart.prototype.collectionsWithInit = {
     // collectionName: [ initializingMethod, [extraArguments] ]
     xAxis: [Chart.prototype.addAxis, [true]],
     yAxis: [Chart.prototype.addAxis, [false]],
-    colorAxis: [Chart.prototype.addColorAxis, [false]],
     series: [Chart.prototype.addSeries]
 };
 // extend the Point prototype for dynamic methods
@@ -1063,6 +1067,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 preserve.push(key + 'Data');
             });
             if (options.data) {
+                // setData uses dataSorting options so we need to update them
+                // earlier
+                if (options.dataSorting) {
+                    extend(series.options.dataSorting, options.dataSorting);
+                }
                 this.setData(options.data, false);
             }
         }
