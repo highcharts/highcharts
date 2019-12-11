@@ -324,7 +324,7 @@ extend(MockPoint.prototype, /** @lends Highcharts.AnnotationMockPoint# */ {
      */
     getOptions: function (this: Highcharts.AnnotationMockPoint): Highcharts.AnnotationMockPointOptionsObject {
         return this.hasDynamicOptions() ?
-            (this.options as any)(this.target) :
+            (this.options as Function)(this.target) :
             this.options;
     },
 

@@ -1,5 +1,41 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 import H from '../../parts/Globals.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class AnnotationTunnel extends AnnotationCrookedLine {
+            public options: AnnotationTunnelOptionsObject;
+            public addBackground(): void;
+            public addControlPoints: () => void;
+            public addLine(): void;
+            public addShapes(): void;
+            public getControlPointsOptions(): Array<AnnotationMockPointOptionsObject>;
+            public heightPointOptions(pointOptions: AnnotationMockPointOptionsObject): AnnotationMockPointOptionsObject;
+            public translateHeight(dh: number): void;
+            public translateSide(dx: number, dy: number, end?: boolean): void;
+        }
+        interface AnnotationTunnelOptionsObject extends AnnotationCrookedLineOptionsObject {
+            typeOptions: AnnotationTunnelTypeOptionsObject;
+        }
+        interface AnnotationTunnelTypeOptionsObject extends AnnotationCrookedLineTypeOptionsObject {
+            height: number;
+            heightControlPoint: AnnotationControlPointOptionsObject;
+        }
+        interface AnnotationTypesDictionary {
+            tunnel: typeof AnnotationTunnel;
+        }
+    }
+}
 import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
@@ -7,27 +43,33 @@ var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
     MockPoint = Annotation.MockPoint;
 
-function getSecondCoordinate(p1, p2, x) {
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
+/**
+ * @private
+ */
+function getSecondCoordinate(
+    p1: Highcharts.PositionObject,
+    p2: Highcharts.PositionObject,
+    x: number
+): number {
     return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
 }
 
-/**
- * @class
- * @extends Annotation.CrookedLine
- * @memberOf Annotation
- **/
-function Tunnel() {
-    CrookedLine.apply(this, arguments);
-}
+const Tunnel: typeof Highcharts.AnnotationTunnel = function (
+    this: Highcharts.AnnotationCrookedLine
+): void {
+    CrookedLine.apply(this, arguments as any);
+} as any;
 
 H.extendAnnotation(
     Tunnel,
     CrookedLine,
-    /** @lends Annotation.Tunnel# */
     {
-        getPointsOptions: function () {
-            var pointsOptions =
-                CrookedLine.prototype.getPointsOptions.call(this);
+        getPointsOptions: function (
+            this: Highcharts.AnnotationTunnel
+        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
+            var pointsOptions = CrookedLine.prototype.getPointsOptions.call(this);
 
             pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
             pointsOptions[3] = this.heightPointOptions(pointsOptions[0]);
@@ -35,11 +77,16 @@ H.extendAnnotation(
             return pointsOptions;
         },
 
-        getControlPointsOptions: function () {
+        getControlPointsOptions: function (
+            this: Highcharts.AnnotationTunnel
+        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
             return this.getPointsOptions().slice(0, 2);
         },
 
-        heightPointOptions: function (pointOptions) {
+        heightPointOptions: function (
+            this: Highcharts.AnnotationTunnel,
+            pointOptions: Highcharts.AnnotationMockPointOptionsObject
+        ): Highcharts.AnnotationMockPointOptionsObject {
             var heightPointOptions = H.merge(pointOptions);
 
             heightPointOptions.y += this.options.typeOptions.height;
@@ -47,7 +94,7 @@ H.extendAnnotation(
             return heightPointOptions;
         },
 
-        addControlPoints: function () {
+        addControlPoints: function (this: Highcharts.AnnotationTunnel): void {
             CrookedLine.prototype.addControlPoints.call(this);
 
             var options = this.options,
@@ -66,19 +113,19 @@ H.extendAnnotation(
             options.typeOptions.heightControlPoint = controlPoint.options;
         },
 
-        addShapes: function () {
+        addShapes: function (this: Highcharts.AnnotationTunnel): void {
             this.addLine();
             this.addBackground();
         },
 
-        addLine: function () {
+        addLine: function (this: Highcharts.AnnotationTunnel): void {
             var line = this.initShape(
                 H.merge(this.options.typeOptions.line, {
                     type: 'path',
                     points: [
                         this.points[0],
                         this.points[1],
-                        function (target) {
+                        function (target: any): Highcharts.AnnotationMockPointOptionsObject {
                             var pointOptions = MockPoint.pointToOptions(
                                 target.annotation.points[2]
                             );
@@ -88,20 +135,20 @@ H.extendAnnotation(
                             return pointOptions;
                         },
                         this.points[3]
-                    ]
+                    ] as any
                 }),
-                false
+                false as any
             );
 
             this.options.typeOptions.line = line.options;
         },
 
-        addBackground: function () {
-            var background = this.initShape(H.merge(
+        addBackground: function (this: Highcharts.AnnotationTunnel): void {
+            var background = (this.initShape as any)(H.merge(
                 this.options.typeOptions.background,
                 {
                     type: 'path',
-                    points: this.points.slice()
+                    points: this.points.slice() as any
                 }
             ));
 
@@ -115,7 +162,7 @@ H.extendAnnotation(
          * @param {number} dy - the amount of y translation
          * @param {boolean} [end] - whether to translate start or end side
          */
-        translateSide: function (dx, dy, end) {
+        translateSide: function (this: Highcharts.AnnotationTunnel, dx: number, dy: number, end?: boolean): void {
             var topIndex = Number(end),
                 bottomIndex = topIndex === 0 ? 3 : 2;
 
@@ -128,12 +175,11 @@ H.extendAnnotation(
          *
          * @param {number} dh - the amount of height translation
          */
-        translateHeight: function (dh) {
+        translateHeight: function (this: Highcharts.AnnotationTunnel, dh: number): void {
             this.translatePoint(0, dh, 2);
             this.translatePoint(0, dh, 3);
 
-            this.options.typeOptions.height =
-                this.points[3].y - this.points[0].y;
+            this.options.typeOptions.height = (this.points[3].y as any) - (this.points[0].y as any);
         }
     },
 
@@ -178,7 +224,10 @@ H.extendAnnotation(
              * @excluding positioner, events
              */
             heightControlPoint: {
-                positioner: function (target) {
+                positioner: function (
+                    this: Highcharts.AnnotationControlPoint,
+                    target: Highcharts.AnnotationControllable
+                ): Highcharts.PositionObject {
                     var startXY = MockPoint.pointToPixels(target.points[2]),
                         endXY = MockPoint.pointToPixels(target.points[3]),
                         x = (startXY.x + endXY.x) / 2;
@@ -190,7 +239,11 @@ H.extendAnnotation(
                     };
                 },
                 events: {
-                    drag: function (e, target) {
+                    drag: function (
+                        this: Highcharts.AnnotationTunnel,
+                        e: Highcharts.AnnotationEventObject,
+                        target: Highcharts.AnnotationTunnel
+                    ): void {
                         if (
                             target.chart.isInsidePlot(
                                 e.chartX - target.chart.plotLeft,
@@ -214,7 +267,11 @@ H.extendAnnotation(
          */
         controlPointOptions: {
             events: {
-                drag: function (e, target) {
+                drag: function (
+                    this: Highcharts.AnnotationTunnel,
+                    e: Highcharts.AnnotationEventObject,
+                    target: Highcharts.AnnotationTunnel
+                ): void {
                     if (
                         target.chart.isInsidePlot(
                             e.chartX - target.chart.plotLeft,
@@ -226,7 +283,7 @@ H.extendAnnotation(
                         target.translateSide(
                             translation.x,
                             translation.y,
-                            this.index
+                            this.index as any
                         );
 
                         target.redraw(false);

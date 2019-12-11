@@ -1225,7 +1225,7 @@ H.setOptions({
 
                                     target.setRadius(
                                         Math.max(
-                                            target.options.r +
+                                            (target.options.r as any) +
                                                 position.y /
                                                 Math.sin(Math.PI / 4),
                                             5
@@ -1237,7 +1237,7 @@ H.setOptions({
                                         target.options;
 
                                     target.redraw(false);
-                                }
+                                } as any
                             }
                         }];
 
@@ -1509,7 +1509,7 @@ H.setOptions({
                                 drag: function (
                                     this: Highcharts.Annotation,
                                     e: Highcharts.AnnotationEventObject,
-                                    target: Highcharts.AnnotationControllableCircle
+                                    target: Highcharts.AnnotationControllable
                                 ): void {
                                     var xy = this.mouseMoveToTranslation(e);
 

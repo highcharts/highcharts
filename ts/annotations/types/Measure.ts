@@ -1,5 +1,97 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 import H from '../../parts/Globals.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class AnnotationMeasure extends Annotation {
+            public addControlPoints: () => void;
+            public average: (''|number);
+            public bins: (''|number);
+            public calculations: AnnotationMeasureCalculationObject
+            public min: (''|number);
+            public max: (''|number);
+            public offsetX: number;
+            public offsetY: number;
+            public onDrag: (e: AnnotationEventObject) => void;
+            public options: AnnotationMeasureOptionsObject;
+            public resizeX: number;
+            public resizeY: number;
+            public startXMax: number;
+            public startXMin: number;
+            public startYMax: number;
+            public startYMin: number;
+            public translate: (dx: number, dy: number) => void;
+            public xAxisMin: number;
+            public xAxisMax: number;
+            public yAxisMin: number;
+            public yAxisMax: number;
+            public addBackground(): void;
+            public addCrosshairs(): void;
+            public addShapes(): void;
+            public addValues(resize?: boolean): void;
+            public pointsOptions(): Array<AnnotationMockPointOptionsObject>;
+            public redraw(animation: boolean, resize?: boolean, setStartPoints?: boolean): void;
+            public resize(dx: number, dy: number, cpIndex?: number, selectType?: AnnotationDraggableValue): void;
+            public setClipAxes(): void;
+            public shapePointsOptions(): Array<AnnotationMockPointOptionsObject>;
+        }
+        interface AnnotationMeasureCalculationObject {
+            average(this: Highcharts.AnnotationMeasure): (''|number);
+            bins(this: Highcharts.AnnotationMeasure): (''|number);
+            defaultFormatter(this: Highcharts.AnnotationMeasure): string;
+            getExtremes(xAxisMin: number, xAxisMax: number, yAxisMin: number, yAxisMax: number): Dictionary<number>;
+            getPointPos(axis: Axis, value: number, offset: number): number;
+            init(this: AnnotationMeasure): void;
+            max(this: AnnotationMeasure): (''|number);
+            min(this: AnnotationMeasure): (''|number);
+            recalculate(this: AnnotationMeasure, resize?: boolean): void;
+            updateStartPoints(
+                this: AnnotationMeasure,
+                redraw: boolean,
+                resize: boolean,
+                cpIndex: number,
+                dx: number,
+                dy: number
+            ): void;
+        }
+        interface AnnotationMeasureOptionsObject extends AnnotationsOptions {
+            typeOptions: AnnotationMeasureTypeOptionsObject;
+        }
+        interface AnnotationMeasureTypeCrosshairOptionsObject {
+            dashStyle: DashStyleValue;
+            enabled: boolean;
+            markerEnd: string;
+            zIndex: number;
+        }
+        interface AnnotationsMeasureTypeLabelOptionsObject {
+            enabled: boolean;
+            formatter?: FormatterCallbackFunction<AnnotationMeasure>;
+            style: CSSObject;
+        }
+        interface AnnotationMeasureTypeOptionsObject extends AnnotationsTypeOptions {
+            background: AnnotationsShapeOptions;
+            crosshairX: AnnotationMeasureTypeCrosshairOptionsObject;
+            crosshairY: AnnotationMeasureTypeCrosshairOptionsObject;
+            label: AnnotationsMeasureTypeLabelOptionsObject;
+            selectType: AnnotationDraggableValue;
+            xAxis: number;
+            yAxis: number;
+        }
+        interface AnnotationTypesDictionary {
+            measure: typeof AnnotationMeasure;
+        }
+    }
+}
 
 import U from '../../parts/Utilities.js';
 var extend = U.extend,
@@ -9,24 +101,21 @@ var Annotation = H.Annotation,
     ControlPoint = Annotation.ControlPoint,
     merge = H.merge;
 
-/**
- * @class
- * @extends Annotation
- * @memberOf Annotation
- */
-function Measure() {
-    Annotation.apply(this, arguments);
-}
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
+const Measure: typeof Highcharts.AnnotationMeasure = function (this: Highcharts.AnnotationMeasure): void {
+    Annotation.apply(this, arguments as any);
+} as any;
 
 Annotation.types.measure = Measure;
 
 H.extendAnnotation(Measure, null,
-    /** @lends Annotation.Measure# */
     {
         /**
          * Init annotation object.
+         * @private
          */
-        init: function () {
+        init: function (this: Highcharts.AnnotationMeasure): void {
             Annotation.prototype.init.apply(this, arguments);
 
             this.offsetX = 0;
@@ -41,27 +130,32 @@ H.extendAnnotation(Measure, null,
 
         /**
          * Overrides default setter to get axes from typeOptions.
+         * @private
          */
-        setClipAxes: function () {
+        setClipAxes: function (this: Highcharts.AnnotationMeasure): void {
             this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis];
             this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis];
         },
 
         /**
          * Get measure points configuration objects.
-         *
-         * @return {Array<Highcharts.MockPointOptions>}
+         * @private
+         * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
          */
-        pointsOptions: function () {
-            return this.options.options.points;
+        pointsOptions: function (
+            this: Highcharts.AnnotationMeasure
+        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
+            return this.options.points as any;
         },
 
         /**
          * Get points configuration objects for shapes.
-         *
-         * @return {Array<Highcharts.MockPointOptions>}
+         * @private
+         * @return {Array<Highcharts.AnnotationMockPointOptionsObject>}
          */
-        shapePointsOptions: function () {
+        shapePointsOptions: function (
+            this: Highcharts.AnnotationMeasure
+        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
 
             var options = this.options.typeOptions,
                 xAxis = options.xAxis,
@@ -95,7 +189,7 @@ H.extendAnnotation(Measure, null,
             ];
         },
 
-        addControlPoints: function () {
+        addControlPoints: function (this: Highcharts.AnnotationMeasure): void {
             var selectType = this.options.typeOptions.selectType,
                 controlPoint;
 
@@ -122,10 +216,11 @@ H.extendAnnotation(Measure, null,
         },
         /**
          * Add label with calculated values (min, max, average, bins).
-         *
-         * @param {boolean} resize - the flag for resize shape
+         * @private
+         * @param {boolean} [resize]
+         * The flag for resize shape
          */
-        addValues: function (resize) {
+        addValues: function (this: Highcharts.AnnotationMeasure, resize: boolean): void {
             var typeOptions = this.options.typeOptions,
                 formatter = typeOptions.label.formatter;
 
@@ -137,11 +232,11 @@ H.extendAnnotation(Measure, null,
             }
 
             if (this.labels.length > 0) {
-                this.labels[0].text = (formatter && formatter.call(this)) ||
+                (this.labels[0] as any).text = (formatter && formatter.call(this)) ||
                             this.calculations.defaultFormatter.call(this);
 
             } else {
-                this.initLabel(extend({
+                (this.initLabel as any)(extend({
                     shape: 'rect',
                     backgroundColor: 'none',
                     color: 'black',
@@ -151,8 +246,8 @@ H.extendAnnotation(Measure, null,
                     align: 'left',
                     vertical: 'top',
                     crop: true,
-                    point: function (target) {
-                        var annotation = target.annotation,
+                    point: function (target: any): Highcharts.PositionObject {
+                        var annotation: Highcharts.AnnotationMeasure = target.annotation,
                             chart = annotation.chart,
                             inverted = chart.inverted,
                             xAxis = chart.xAxis[typeOptions.xAxis],
@@ -173,17 +268,19 @@ H.extendAnnotation(Measure, null,
             }
         },
         /**
-         * Crosshair, background (rect)
+         * Crosshair, background (rect).
+         * @private
          */
-        addShapes: function () {
+        addShapes: function (this: Highcharts.AnnotationMeasure): void {
             this.addCrosshairs();
             this.addBackground();
         },
 
         /**
          * Add background shape.
+         * @private
          */
-        addBackground: function () {
+        addBackground: function (this: Highcharts.AnnotationMeasure): void {
             var shapePoints = this.shapePointsOptions();
 
             if (typeof shapePoints[0].x === 'undefined') {
@@ -193,13 +290,14 @@ H.extendAnnotation(Measure, null,
             this.initShape(extend({
                 type: 'path',
                 points: this.shapePointsOptions()
-            }, this.options.typeOptions.background), false);
+            }, this.options.typeOptions.background), false as any);
         },
 
         /**
-         * Add internal crosshair shapes (on top and bottom)
+         * Add internal crosshair shapes (on top and bottom).
+         * @private
          */
-        addCrosshairs: function () {
+        addCrosshairs: function (this: Highcharts.AnnotationMeasure): void {
             var chart = this.chart,
                 options = this.options.typeOptions,
                 point = this.options.typeOptions.point,
@@ -214,8 +312,8 @@ H.extendAnnotation(Measure, null,
                     point: point,
                     type: 'path'
                 },
-                pathH = [],
-                pathV = [],
+                pathH: Highcharts.SVGPathArray = [],
+                pathV: Highcharts.SVGPathArray = [],
                 crosshairOptionsX,
                 crosshairOptionsY,
                 temp;
@@ -267,16 +365,16 @@ H.extendAnnotation(Measure, null,
 
                 this.initShape(extend({
                     d: pathH
-                }, crosshairOptionsX), false);
+                }, crosshairOptionsX), false as any);
 
                 this.initShape(extend({
                     d: pathV
-                }, crosshairOptionsY), false);
+                }, crosshairOptionsY), false as any);
 
             }
         },
 
-        onDrag: function (e) {
+        onDrag: function (this: Highcharts.AnnotationMeasure, e: Highcharts.AnnotationEventObject): void {
             var translation = this.mouseMoveToTranslation(e),
                 selectType = this.options.typeOptions.selectType,
                 x = selectType === 'y' ? 0 : translation.x,
@@ -294,13 +392,19 @@ H.extendAnnotation(Measure, null,
         /**
          * Translate start or end ("left" or "right") side of the measure.
          * Update start points (startXMin, startXMax, startYMin, startYMax)
-         *
+         * @private
          * @param {number} dx - the amount of x translation
          * @param {number} dy - the amount of y translation
          * @param {number} cpIndex - index of control point
-         * @param {number} selectType - x / y / xy
+         * @param {Highcharts.AnnotationDraggableValue} selectType - x / y / xy
          */
-        resize: function (dx, dy, cpIndex, selectType) {
+        resize: function (
+            this: Highcharts.AnnotationMeasure,
+            dx: number,
+            dy: number,
+            cpIndex?: number,
+            selectType?: Highcharts.AnnotationDraggableValue
+        ): void {
 
             // background shape
             var bckShape = this.shapes[2];
@@ -328,7 +432,7 @@ H.extendAnnotation(Measure, null,
             }
 
             this.calculations.updateStartPoints
-                .call(this, false, true, cpIndex, dx, dy);
+                .call(this, false, true, cpIndex as any, dx, dy);
 
             this.options.typeOptions.background.height = Math.abs(
                 this.startYMax - this.startYMin
@@ -339,14 +443,18 @@ H.extendAnnotation(Measure, null,
             );
         },
         /**
-         * Redraw event which render elements and update start points
-         * if needed
-         *
-         * @param {Boolean} animation
-         * @param {Boolean} resize - flag if resized
-         * @param {Boolean} setStartPoints - update position of start points
+         * Redraw event which render elements and update start points if needed.
+         * @private
+         * @param {boolean} animation
+         * @param {boolean} [resize] - flag if resized
+         * @param {boolean} [setStartPoints] - update position of start points
          */
-        redraw: function (animation, resize, setStartPoints) {
+        redraw: function (
+            this: Highcharts.AnnotationMeasure,
+            animation: boolean,
+            resize: boolean,
+            setStartPoints?: boolean
+        ): void {
 
             this.linkPoints();
 
@@ -355,7 +463,7 @@ H.extendAnnotation(Measure, null,
             }
 
             if (setStartPoints) {
-                this.calculations.updateStartPoints.call(this, true, false);
+                (this.calculations.updateStartPoints.call as any)(this, true, false as any);
             }
 
             // #11174 - clipBox was not recalculate during resize / redraw
@@ -369,12 +477,12 @@ H.extendAnnotation(Measure, null,
             this.redrawItems(this.labels, animation);
 
             // redraw control point to run positioner
-            this.controlPoints.forEach(function (controlPoint) {
+            this.controlPoints.forEach(function (controlPoint: Highcharts.AnnotationControlPoint): void {
                 controlPoint.redraw();
             });
         },
-        translate: function (dx, dy) {
-            this.shapes.forEach(function (item) {
+        translate: function (this: Highcharts.AnnotationMeasure, dx: number, dy: number): void {
+            this.shapes.forEach(function (item: Highcharts.AnnotationShapeType): void {
                 item.translate(dx, dy);
             });
 
@@ -386,7 +494,7 @@ H.extendAnnotation(Measure, null,
              * Set starting points
              * @private
              */
-            init: function () {
+            init: function (this: Highcharts.AnnotationMeasure): void {
                 var options = this.options.typeOptions,
                     chart = this.chart,
                     getPointPos = this.calculations.getPointPos,
@@ -394,8 +502,8 @@ H.extendAnnotation(Measure, null,
                     xAxis = chart.xAxis[options.xAxis],
                     yAxis = chart.yAxis[options.yAxis],
                     bck = options.background,
-                    width = inverted ? bck.height : bck.width,
-                    height = inverted ? bck.width : bck.height,
+                    width: number = inverted ? bck.height : bck.width as any,
+                    height: number = inverted ? bck.width : bck.height as any,
                     selectType = options.selectType,
                     top = inverted ? chart.plotLeft : chart.plotTop,
                     left = inverted ? chart.plotTop : chart.plotLeft;
@@ -437,13 +545,14 @@ H.extendAnnotation(Measure, null,
              * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
              * Calculations of measure values (min, max, average, bins).
              * @private
-             * @param {Boolean} resize - flag if shape is resized
+             * @param {boolean} [resize]
+             * Flag if shape is resized.
              */
-            recalculate: function (resize) {
+            recalculate: function (this: Highcharts.AnnotationMeasure, resize?: boolean): void {
                 var calc = this.calculations,
                     options = this.options.typeOptions,
-                    xAxis = this.chart.xAxis[options.xAxis],
-                    yAxis = this.chart.yAxis[options.yAxis],
+                    xAxis = this.chart.xAxis[options.xAxis as any],
+                    yAxis = this.chart.yAxis[options.yAxis as any],
                     getPointPos = this.calculations.getPointPos,
                     offsetX = this.offsetX,
                     offsetY = this.offsetY;
@@ -467,28 +576,39 @@ H.extendAnnotation(Measure, null,
              * Set current xAxisMin, xAxisMax, yAxisMin, yAxisMax.
              * Calculations of measure values (min, max, average, bins).
              * @private
-             * @param {Object} axis - x or y axis reference
-             * @param {Number} value - point's value (x or y)
-             * @param {Number} offset - amount of pixels
+             * @param {Highcharts.Axis} axis
+             * X or y axis reference
+             * @param {number} value
+             * Point's value (x or y)
+             * @param {number} offset
+             * Amount of pixels
              */
-            getPointPos: function (axis, value, offset) {
-                return axis.toValue(
-                    axis.toPixels(value) + offset
-                );
+            getPointPos: function (axis: Highcharts.Axis, value: number, offset: number): number {
+                return axis.toValue(axis.toPixels(value) + offset);
             },
             /**
              * Update position of start points
              * (startXMin, startXMax, startYMin, startYMax)
              * @private
-             * @param {Boolean} redraw - flag if shape is redraw
-             * @param {Boolean} resize - flag if shape is resized
-             * @param {Boolean} cpIndex - index of controlPoint
+             * @param {boolean} redraw
+             * Flag if shape is redraw
+             * @param {boolean} resize
+             * Flag if shape is resized
+             * @param {number} cpIndex
+             * Index of controlPoint
              */
-            updateStartPoints: function (redraw, resize, cpIndex, dx, dy) {
+            updateStartPoints: function (
+                this: Highcharts.AnnotationMeasure,
+                redraw: boolean,
+                resize: boolean,
+                cpIndex: number,
+                dx: number,
+                dy: number
+            ): void {
                 var options = this.options.typeOptions,
                     selectType = options.selectType,
-                    xAxis = this.chart.xAxis[options.xAxis],
-                    yAxis = this.chart.yAxis[options.yAxis],
+                    xAxis = this.chart.xAxis[options.xAxis as any],
+                    yAxis = this.chart.yAxis[options.yAxis as any],
                     getPointPos = this.calculations.getPointPos,
                     startXMin = this.startXMin,
                     startXMax = this.startXMax,
@@ -530,7 +650,7 @@ H.extendAnnotation(Measure, null,
              * Default formatter of label's content
              * @private
              */
-            defaultFormatter: function () {
+            defaultFormatter: function (this: Highcharts.AnnotationMeasure): string {
                 return 'Min: ' + this.min +
                     '<br>Max: ' + this.max +
                     '<br>Average: ' + this.average +
@@ -541,7 +661,12 @@ H.extendAnnotation(Measure, null,
              * when chart is inverted
              * @private
              */
-            getExtremes: function (xAxisMin, xAxisMax, yAxisMin, yAxisMax) {
+            getExtremes: function (
+                xAxisMin: number,
+                xAxisMax: number,
+                yAxisMin: number,
+                yAxisMax: number
+            ): Highcharts.Dictionary<number> {
                 return {
                     xAxisMin: Math.min(xAxisMax, xAxisMin),
                     xAxisMax: Math.max(xAxisMax, xAxisMin),
@@ -553,8 +678,8 @@ H.extendAnnotation(Measure, null,
              * Definitions of calculations (min, max, average, bins)
              * @private
              */
-            min: function () {
-                var min = Infinity,
+            min: function (this: Highcharts.AnnotationMeasure): (''|number) {
+                var min: (''|number) = Infinity,
                     series = this.chart.series,
                     ext = this.calculations.getExtremes(
                         this.xAxisMin,
@@ -564,21 +689,21 @@ H.extendAnnotation(Measure, null,
                     ),
                     isCalculated = false; // to avoid Infinity in formatter
 
-                series.forEach(function (serie) {
+                series.forEach(function (serie: Highcharts.Series): void {
                     if (
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point) {
+                        serie.points.forEach(function (point: Highcharts.Point): void {
                             if (
                                 !point.isNull &&
-                                point.y < min &&
-                                point.x > ext.xAxisMin &&
-                                point.x <= ext.xAxisMax &&
-                                point.y > ext.yAxisMin &&
-                                point.y <= ext.yAxisMax
+                                (point.y as any) < min &&
+                                (point.x as any) > ext.xAxisMin &&
+                                (point.x as any) <= ext.xAxisMax &&
+                                (point.y as any) > ext.yAxisMin &&
+                                (point.y as any) <= ext.yAxisMax
                             ) {
-                                min = point.y;
+                                min = point.y as any;
                                 isCalculated = true;
                             }
                         });
@@ -591,8 +716,8 @@ H.extendAnnotation(Measure, null,
 
                 return min;
             },
-            max: function () {
-                var max = -Infinity,
+            max: function (this: Highcharts.AnnotationMeasure): (''|number) {
+                var max: (''|number) = -Infinity,
                     series = this.chart.series,
                     ext = this.calculations.getExtremes(
                         this.xAxisMin,
@@ -602,21 +727,21 @@ H.extendAnnotation(Measure, null,
                     ),
                     isCalculated = false; // to avoid Infinity in formatter
 
-                series.forEach(function (serie) {
+                series.forEach(function (serie: Highcharts.Series): void {
                     if (
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point) {
+                        serie.points.forEach(function (point: Highcharts.Point): void {
                             if (
                                 !point.isNull &&
-                                point.y > max &&
-                                point.x > ext.xAxisMin &&
-                                point.x <= ext.xAxisMax &&
-                                point.y > ext.yAxisMin &&
-                                point.y <= ext.yAxisMax
+                                (point.y as any) > max &&
+                                (point.x as any) > ext.xAxisMin &&
+                                (point.x as any) <= ext.xAxisMax &&
+                                (point.y as any) > ext.yAxisMin &&
+                                (point.y as any) <= ext.yAxisMax
                             ) {
-                                max = point.y;
+                                max = point.y as any;
                                 isCalculated = true;
                             }
                         });
@@ -629,8 +754,8 @@ H.extendAnnotation(Measure, null,
 
                 return max;
             },
-            average: function () {
-                var average = '';
+            average: function (this: Highcharts.AnnotationMeasure): (''|number) {
+                var average: (''|number) = '';
 
                 if (this.max !== '' && this.min !== '') {
                     average = (this.max + this.min) / 2;
@@ -638,8 +763,8 @@ H.extendAnnotation(Measure, null,
 
                 return average;
             },
-            bins: function () {
-                var bins = 0,
+            bins: function (this: Highcharts.AnnotationMeasure): (''|number) {
+                var bins: (''|number) = 0,
                     series = this.chart.series,
                     ext = this.calculations.getExtremes(
                         this.xAxisMin,
@@ -649,20 +774,20 @@ H.extendAnnotation(Measure, null,
                     ),
                     isCalculated = false; // to avoid Infinity in formatter
 
-                series.forEach(function (serie) {
+                series.forEach(function (serie: Highcharts.Series): void {
                     if (
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point) {
+                        serie.points.forEach(function (point: Highcharts.Point): void {
                             if (
                                 !point.isNull &&
-                                point.x > ext.xAxisMin &&
-                                point.x <= ext.xAxisMax &&
-                                point.y > ext.yAxisMin &&
-                                point.y <= ext.yAxisMax
+                                (point.x as any) > ext.xAxisMin &&
+                                (point.x as any) <= ext.xAxisMax &&
+                                (point.y as any) > ext.yAxisMin &&
+                                (point.y as any) <= ext.yAxisMax
                             ) {
-                                bins++;
+                                (bins as any)++;
                                 isCalculated = true;
                             }
                         });
@@ -859,7 +984,10 @@ H.extendAnnotation(Measure, null,
             }
         },
         controlPointOptions: {
-            positioner: function (target) {
+            positioner: function (
+                this: Highcharts.AnnotationControllable,
+                target: Highcharts.AnnotationMeasure
+            ): Highcharts.PositionObject {
                 var cpIndex = this.index,
                     chart = target.chart,
                     options = target.options,
@@ -912,7 +1040,11 @@ H.extendAnnotation(Measure, null,
                 };
             },
             events: {
-                drag: function (e, target) {
+                drag: function (
+                    this: Highcharts.AnnotationMeasure,
+                    e: Highcharts.AnnotationEventObject,
+                    target: Highcharts.AnnotationMeasure
+                ): void {
                     var translation = this.mouseMoveToTranslation(e),
                         selectType = target.options.typeOptions.selectType,
                         index = this.index,
@@ -928,7 +1060,7 @@ H.extendAnnotation(Measure, null,
 
                     target.resizeX += x;
                     target.resizeY += y;
-                    target.redraw(false, true);
+                    (target.redraw as any)(false, true);
                 }
             }
         }

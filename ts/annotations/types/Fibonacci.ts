@@ -1,21 +1,68 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 import H from '../../parts/Globals.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface Annotation {
+            endRetracements?: Array<AnnotationMockPoint>;
+            startRetracements?: Array<AnnotationMockPoint>;
+        }
+        class AnnotationFibonacci extends AnnotationTunnel {
+            public static levels: Array<number>;
+            public options: AnnotationFibonacciOptionsObject;
+            public endRetracements: Array<AnnotationMockPoint>;
+            public startRetracements: Array<AnnotationMockPoint>;
+            public addLabels(): void;
+            public addShapes(): void;
+            public linkPoints: () => undefined;
+            public linkRetracementPoint(
+                pointIndex: number,
+                x: number,
+                y: number,
+                retracements: Array<AnnotationMockPoint>
+            ): void;
+            public linkRetracementsPoints(): void;
+        }
+        interface AnnotationFibonacciOptionsObject extends AnnotationTunnelOptionsObject {
+            typeOptions: AnnotationFibonacciTypeOptionsObject;
+        }
+        interface AnnotationFibonacciTypeOptionsObject extends AnnotationTunnelTypeOptionsObject {
+            backgroundColors: Array<ColorString>;
+            labels: Array<AnnotationCrookedLineOptionsObject['labelOptions']>;
+            lineColor: ColorString;
+            lineColors: Array<ColorString>;
+        }
+    }
+}
+
 import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
     Tunnel = Annotation.types.tunnel;
 
-var createPathDGenerator = function (retracementIndex, isBackground) {
-    return function () {
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
+var createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
+    return function (this: Highcharts.AnnotationControllable): Highcharts.SVGPathArray {
         var annotation = this.annotation,
             leftTop = this.anchor(
-                annotation.startRetracements[retracementIndex]
+                (annotation.startRetracements as any)[retracementIndex]
             ).absolutePosition,
             rightTop = this.anchor(
-                annotation.endRetracements[retracementIndex]
+                (annotation.endRetracements as any)[retracementIndex]
             ).absolutePosition,
-            d = [
+            d: Highcharts.SVGPathArray = [
                 'M',
                 Math.round(leftTop.x),
                 Math.round(leftTop.y),
@@ -23,16 +70,16 @@ var createPathDGenerator = function (retracementIndex, isBackground) {
                 Math.round(rightTop.x),
                 Math.round(rightTop.y)
             ],
-            rightBottom,
-            leftBottom;
+            rightBottom: Highcharts.PositionObject,
+            leftBottom: Highcharts.PositionObject;
 
         if (isBackground) {
             rightBottom = this.anchor(
-                annotation.endRetracements[retracementIndex - 1]
+                (annotation.endRetracements as any)[retracementIndex - 1]
             ).absolutePosition;
 
             leftBottom = this.anchor(
-                annotation.startRetracements[retracementIndex - 1]
+                (annotation.startRetracements as any)[retracementIndex - 1]
             ).absolutePosition;
 
             d.push(
@@ -49,39 +96,35 @@ var createPathDGenerator = function (retracementIndex, isBackground) {
     };
 };
 
-/**
- * @class
- * @extends Annotation.Tunnel
- * @memberOf Annotation
- **/
-function Fibonacci() {
+const Fibonacci: typeof Highcharts.AnnotationFibonacci = function (this: Highcharts.AnnotationFibonacci): void {
     this.startRetracements = [];
     this.endRetracements = [];
 
-    Tunnel.apply(this, arguments);
-}
+    Tunnel.apply(this, arguments as any);
+} as any;
 
 Fibonacci.levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
 
 H.extendAnnotation(Fibonacci, Tunnel,
-    /** @lends Annotation.Fibonacci# */
     {
-        linkPoints: function () {
+        linkPoints: function (this: Highcharts.AnnotationFibonacci): undefined {
             Tunnel.prototype.linkPoints.call(this);
 
             this.linkRetracementsPoints();
+
+            return;
         },
 
-        linkRetracementsPoints: function () {
+        linkRetracementsPoints: function (this: Highcharts.AnnotationFibonacci): void {
             var points = this.points,
-                startDiff = points[0].y - points[3].y,
-                endDiff = points[1].y - points[2].y,
-                startX = points[0].x,
-                endX = points[1].x;
+                startDiff = (points[0].y as any) - (points[3].y as any),
+                endDiff = (points[1].y as any) - (points[2].y as any),
+                startX: number = points[0].x as any,
+                endX: number = points[1].x as any;
 
-            Fibonacci.levels.forEach(function (level, i) {
-                var startRetracement = points[0].y - startDiff * level,
-                    endRetracement = points[1].y - endDiff * level;
+            Fibonacci.levels.forEach(function (level: number, i: number): void {
+                var startRetracement = (points[0].y as any) - startDiff * level,
+                    endRetracement = (points[1].y as any) - endDiff * level;
 
                 this.linkRetracementPoint(
                     i,
@@ -100,11 +143,12 @@ H.extendAnnotation(Fibonacci, Tunnel,
         },
 
         linkRetracementPoint: function (
-            pointIndex,
-            x,
-            y,
-            retracements
-        ) {
+            this: Highcharts.AnnotationFibonacci,
+            pointIndex: number,
+            x: number,
+            y: number,
+            retracements: Array<Highcharts.AnnotationMockPoint>
+        ): void {
             var point = retracements[pointIndex],
                 typeOptions = this.options.typeOptions;
 
@@ -120,22 +164,22 @@ H.extendAnnotation(Fibonacci, Tunnel,
                     }
                 );
             } else {
-                point.options.x = x;
-                point.options.y = y;
+                (point.options as any).x = x;
+                (point.options as any).y = y;
 
                 point.refresh();
             }
         },
 
-        addShapes: function () {
-            Fibonacci.levels.forEach(function (level, i) {
+        addShapes: function (this: Highcharts.AnnotationFibonacci): void {
+            Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, _level: number, i: number): void {
                 this.initShape({
                     type: 'path',
                     d: createPathDGenerator(i)
-                }, false);
+                }, false as any);
 
                 if (i > 0) {
-                    this.initShape({
+                    (this.initShape as any)({
                         type: 'path',
                         fill: this.options.typeOptions.backgroundColors[i - 1],
                         strokeWidth: 0,
@@ -145,12 +189,12 @@ H.extendAnnotation(Fibonacci, Tunnel,
             }, this);
         },
 
-        addLabels: function () {
-            Fibonacci.levels.forEach(function (level, i) {
+        addLabels: function (this: Highcharts.AnnotationFibonacci): void {
+            Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, level: number, i: number): void {
                 var options = this.options.typeOptions,
-                    label = this.initLabel(
+                    label = (this.initLabel as any)(
                         H.merge(options.labels[i], {
-                            point: function (target) {
+                            point: function (target: any): Highcharts.AnnotationMockPointOptionsObject {
                                 var point = MockPoint.pointToOptions(
                                     target.annotation.startRetracements[i]
                                 );
@@ -219,7 +263,7 @@ H.extendAnnotation(Fibonacci, Tunnel,
             /**
              * An array with options for the labels.
              *
-             * @type      {Array<object>}
+             * @type      {Array<*>}
              * @extends   annotations.crookedLine.labelOptions
              * @apioption annotations.fibonacci.typeOptions.labels
              */
@@ -232,7 +276,7 @@ H.extendAnnotation(Fibonacci, Tunnel,
             backgroundColor: 'none',
             borderWidth: 0,
             crop: false,
-            overflow: 'none',
+            overflow: 'none' as any,
             shape: 'rect',
             style: {
                 color: 'grey'

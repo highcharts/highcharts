@@ -22,7 +22,7 @@ declare global {
             public static ControlPoint: typeof AnnotationControlPoint;
             public static MockPoint: typeof AnnotationMockPoint;
             public static shapesMap: Dictionary<Function>;
-            public static types: Dictionary<(typeof Annotation)>;
+            public static types: AnnotationTypesDictionary;
             public constructor(chart: AnnotationChart, userOptions: AnnotationsOptions);
             public annotation: AnnotationControllable['annotation'];
             public addControlPoints: AnnotationControllableMixin['addControlPoints'];
@@ -172,6 +172,7 @@ declare global {
             shape: SymbolKeyValue;
             style: CSSObject;
             text?: string;
+            type?: string;
             useHTML: boolean;
             verticalAlign: VerticalAlignValue;
             x: number;
@@ -197,7 +198,7 @@ declare global {
             zIndex: number;
         }
         interface AnnotationsShapeOptions extends AnnotationControllableOptionsObject {
-            d?: (string|Function);
+            d?: (string|Function|SVGPathArray);
             fill: ColorType;
             height?: number;
             r: number;
@@ -216,9 +217,9 @@ declare global {
             points?: Array<(string|AnnotationMockPointOptionsObject)>;
         }
         interface AnnotationsTypeOptions {
-            background?: SVGAttributes;
+            background?: AnnotationsShapeOptions;
             height?: number;
-            line?: SVGAttributes;
+            line?: AnnotationsShapeOptions;
             point: AnnotationMockPointOptionsObject;
             points?: Array<AnnotationsTypePointsOptions>;
             xAxis?: number;
@@ -227,13 +228,18 @@ declare global {
         interface AnnotationsTypePointsOptions {
             controlPoint?: number;
             x?: number;
+            xAxis?: number;
             y?: number;
+            yAxis?: number;
         }
-        function extendAnnotation<T>(
-            Constructor: any,
-            BaseConstructor: any,
-            prototype: T,
-            defaultOptions: AnnotationsOptions
+        interface AnnotationTypesDictionary {
+            [key: string]: typeof Annotation;
+        }
+        function extendAnnotation<T extends typeof Annotation>(
+            Constructor: T,
+            BaseConstructor: (Function|null),
+            prototype: Partial<T['prototype']>,
+            defaultOptions?: DeepPartial<T['prototype']['options']>
         ): void;
         interface Options {
             annotations?: (AnnotationsOptions|Array<AnnotationsOptions>);
@@ -1496,16 +1502,16 @@ Annotation.shapesMap = {
     'image': ControllableImage
 };
 
-Annotation.types = {};
+Annotation.types = {} as any;
 
 Annotation.MockPoint = MockPoint;
 Annotation.ControlPoint = ControlPoint;
 
-H.extendAnnotation = function (
-    Constructor,
-    BaseConstructor,
-    prototype,
-    defaultOptions
+H.extendAnnotation = function <T extends typeof Highcharts.Annotation> (
+    Constructor: T,
+    BaseConstructor: (Function|null),
+    prototype: Partial<T['prototype']>,
+    defaultOptions?: DeepPartial<T['prototype']['options']>
 ): void {
     BaseConstructor = BaseConstructor || Annotation;
 

@@ -1,27 +1,68 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 import H from '../../parts/Globals.js';
+
+/**
+ * Internal types
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class AnnotationInfinityLine extends AnnotationCrookedLine {
+            public static endEdgePoint: Function;
+            public static startEdgePoint: Function;
+            public static findEdgeCoordinate(
+                firstPoint: PositionObject,
+                secondPoint: PositionObject,
+                xOrY: ('x'|'y'),
+                edgePointFirstCoordinate: number
+            ): number;
+            public static findEdgePoint(
+                firstPoint: AnnotationPointType,
+                secondPoint: AnnotationPointType
+            ): PositionObject;
+            public options: AnnotationInfinityLineOptionsObject;
+            public addShapes(): void;
+        }
+        interface AnnotationInfinityLineOptionsObject extends AnnotationCrookedLineOptionsObject {
+            typeOptions: AnnotationInfinityLineTypeOptionsObject;
+        }
+        interface AnnotationInfinityLineTypeOptionsObject extends AnnotationCrookedLineTypeOptionsObject {
+            type: string;
+        }
+        interface AnnotationTypesDictionary {
+            infinityLine: typeof AnnotationInfinityLine;
+        }
+    }
+}
+
+
 import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
     CrookedLine = Annotation.types.crookedLine;
 
-/**
- * @class
- * @extends Annotation.CrookedLine
- * @memberOf Annotation
- */
-function InfinityLine() {
-    CrookedLine.apply(this, arguments);
-}
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
+const InfinityLine: typeof Highcharts.AnnotationInfinityLine = function (
+    this: Highcharts.AnnotationInfinityLine
+): void {
+    CrookedLine.apply(this, arguments as any);
+} as any;
 
 InfinityLine.findEdgeCoordinate = function (
-    firstPoint,
-    secondPoint,
-    xOrY,
-    edgePointFirstCoordinate
-) {
-    var xOrYOpposite = xOrY === 'x' ? 'y' : 'x';
+    firstPoint: Highcharts.PositionObject,
+    secondPoint: Highcharts.PositionObject,
+    xOrY: ('x'|'y'),
+    edgePointFirstCoordinate: number
+): number {
+    var xOrYOpposite: ('x'|'y') = xOrY === 'x' ? 'y' : 'x';
 
     // solves equation for x or y
     // y - y1 = (y2 - y1) / (x2 - x1) * (x - x1)
@@ -33,9 +74,12 @@ InfinityLine.findEdgeCoordinate = function (
     );
 };
 
-InfinityLine.findEdgePoint = function (firstPoint, secondPoint) {
-    var xAxis = firstPoint.series.xAxis,
-        yAxis = secondPoint.series.yAxis,
+InfinityLine.findEdgePoint = function (
+    firstPoint: Highcharts.AnnotationPointType,
+    secondPoint: Highcharts.AnnotationPointType
+): Highcharts.PositionObject {
+    var xAxis: Highcharts.Axis = firstPoint.series.xAxis as any,
+        yAxis: Highcharts.Axis = secondPoint.series.yAxis as any,
         firstPointPixels = MockPoint.pointToPixels(firstPoint),
         secondPointPixels = MockPoint.pointToPixels(secondPoint),
         deltaX = secondPointPixels.x - firstPointPixels.x,
@@ -90,8 +134,8 @@ InfinityLine.findEdgePoint = function (firstPoint, secondPoint) {
     return edgePoint;
 };
 
-var edgePoint = function (startIndex, endIndex) {
-    return function (target) {
+var edgePoint = function (startIndex: number, endIndex: number): Function {
+    return function (target: any): Highcharts.PositionObject {
         var annotation = target.annotation,
             points = annotation.points,
             type = annotation.options.typeOptions.type;
@@ -142,9 +186,8 @@ InfinityLine.startEdgePoint = edgePoint(1, 0);
 H.extendAnnotation(
     InfinityLine,
     CrookedLine,
-    /** @lends Annotation.InfinityLine# */
     {
-        addShapes: function () {
+        addShapes: function (this: Highcharts.AnnotationInfinityLine): void {
             var typeOptions = this.options.typeOptions,
                 points = [
                     this.points[0],
@@ -160,7 +203,7 @@ H.extendAnnotation(
                     type: 'path',
                     points: points
                 }),
-                false
+                false as any
             );
 
             typeOptions.line = line.options;

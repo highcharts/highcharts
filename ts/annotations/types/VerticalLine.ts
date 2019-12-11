@@ -1,21 +1,59 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 import H from '../../parts/Globals.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class AnnotationVerticalLine extends Annotation {
+            public static connectorFirstPoint: Function;
+            public static connectorSecondPoint: Function;
+            public getPointsOptions: () => Array<AnnotationMockPointOptionsObject>;
+            public options: AnnotationVerticalLineOptionsObject;
+            public addLabels(): void;
+            public addShapes(): void;
+        }
+        interface AnnotationVerticalLineOptionsObject extends AnnotationsOptions {
+            typeOptions: AnnotationVerticalLineTypeOptionsObject;
+        }
+        interface AnnotationVerticalLineTypeLabelOptionsObject extends AnnotationsLabelOptions {
+            offset: number;
+        }
+        interface AnnotationVerticalLineTypeOptionsObject extends AnnotationsTypeOptions {
+            connector: AnnotationsShapeOptions;
+            label: AnnotationVerticalLineTypeLabelOptionsObject;
+            yOffset: number;
+        }
+        interface AnnotationTypesDictionary {
+            verticalLine: typeof AnnotationVerticalLine;
+        }
+    }
+}
+
+
 import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint;
 
-/**
- * @class
- * @extends Annotation
- * @memberOf Highcharts
- */
-function VerticalLine() {
-    H.Annotation.apply(this, arguments);
-}
+/* eslint-disable no-invalid-this, valid-jsdoc */
 
-VerticalLine.connectorFirstPoint = function (target) {
-    var annotation = target.annotation,
+const VerticalLine: typeof Highcharts.AnnotationVerticalLine = function (
+    this: Highcharts.AnnotationVerticalLine
+): void {
+    H.Annotation.apply(this, arguments as any);
+} as any;
+
+VerticalLine.connectorFirstPoint = function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+    var annotation: Highcharts.AnnotationVerticalLine = target.annotation as any,
         point = annotation.points[0],
         xy = MockPoint.pointToPixels(point, true),
         y = xy.y,
@@ -26,14 +64,14 @@ VerticalLine.connectorFirstPoint = function (target) {
     }
 
     return {
-        x: point.x,
+        x: point.x as any,
         xAxis: point.series.xAxis,
         y: y + offset
     };
 };
 
-VerticalLine.connectorSecondPoint = function (target) {
-    var annotation = target.annotation,
+VerticalLine.connectorSecondPoint = function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+    var annotation: Highcharts.AnnotationVerticalLine = target.annotation as any,
         typeOptions = annotation.options.typeOptions,
         point = annotation.points[0],
         yOffset = typeOptions.yOffset,
@@ -45,21 +83,21 @@ VerticalLine.connectorSecondPoint = function (target) {
     }
 
     return {
-        x: point.x,
+        x: point.x as any,
         xAxis: point.series.xAxis,
         y: y + yOffset
     };
 };
 
 H.extendAnnotation(VerticalLine, null,
-
-    /** @lends Annotation.VerticalLine# */
     {
-        getPointsOptions: function () {
+        getPointsOptions: function (
+            this: Highcharts.AnnotationVerticalLine
+        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
             return [this.options.typeOptions.point];
         },
 
-        addShapes: function () {
+        addShapes: function (this: Highcharts.AnnotationVerticalLine): void {
             var typeOptions = this.options.typeOptions,
                 connector = this.initShape(
                     H.merge(typeOptions.connector, {
@@ -69,28 +107,28 @@ H.extendAnnotation(VerticalLine, null,
                             VerticalLine.connectorSecondPoint
                         ]
                     }),
-                    false
+                    false as any
                 );
 
             typeOptions.connector = connector.options;
         },
 
-        addLabels: function () {
+        addLabels: function (this: Highcharts.AnnotationVerticalLine): void {
             var typeOptions = this.options.typeOptions,
                 labelOptions = typeOptions.label,
                 x = 0,
                 y = labelOptions.offset,
-                verticalAlign = labelOptions.offset < 0 ? 'bottom' : 'top',
+                verticalAlign = (labelOptions.offset as any) < 0 ? 'bottom' : 'top',
                 align = 'center';
 
             if (this.chart.inverted) {
-                x = labelOptions.offset;
+                x = labelOptions.offset as any;
                 y = 0;
                 verticalAlign = 'middle';
-                align = labelOptions.offset < 0 ? 'right' : 'left';
+                align = (labelOptions.offset as any) < 0 ? 'right' : 'left';
             }
 
-            var label = this.initLabel(
+            var label = (this.initLabel as any)(
                 H.merge(labelOptions, {
                     verticalAlign: verticalAlign,
                     align: align,
@@ -128,14 +166,14 @@ H.extendAnnotation(VerticalLine, null,
              */
             label: {
                 offset: -40,
-                point: function (target) {
+                point: function (target: Highcharts.AnnotationControllable): Highcharts.AnnotationPointType {
                     return target.annotation.points[0];
-                },
+                } as any,
                 allowOverlap: true,
                 backgroundColor: 'none',
                 borderWidth: 0,
                 crop: true,
-                overflow: 'none',
+                overflow: 'none' as any,
                 shape: 'rect',
                 text: '{y:.2f}'
             },

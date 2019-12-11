@@ -1,39 +1,78 @@
+/* *
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
 'use strict';
 import H from '../../parts/Globals.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        class AnnotationPitchfork extends AnnotationInfinityLine {
+            public static bottomLineEdgePoint: Function;
+            public static topLineEdgePoint: Function;
+            public static findEdgePoint(
+                point: AnnotationPointType,
+                firstAnglePoint: AnnotationPointType,
+                secondAnglePoint?: AnnotationPointType
+            ): PositionObject;
+            public static middleLineEdgePoint(target: Annotation): PositionObject;
+            public options: AnnotationPitchforkOptionsObject;
+            public addBackgrounds(): void;
+            public addLines(): void;
+            public addShapes(): void;
+            public midPointOptions(): AnnotationMockPointOptionsObject;
+        }
+        interface AnnotationPitchforkOptionsObject extends AnnotationInfinityLineOptionsObject {
+            typeOptions: AnnotationPitchforkTypeOptionsObject;
+        }
+        interface AnnotationPitchforkTypeOptionsObject extends AnnotationInfinityLineTypeOptionsObject {
+            innerBackground: AnnotationsShapeOptions;
+            outerBackground: AnnotationsShapeOptions;
+        }
+        interface AnnotationTypesDictionary {
+            pitchfork: typeof AnnotationPitchfork;
+        }
+    }
+}
+
+
 import '../../parts/Utilities.js';
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
     InfinityLine = Annotation.types.infinityLine;
 
-/**
- * @class
- * @extends Highcharts.InfinityLine
- * @memberOf Highcharts
- **/
-function Pitchfork() {
-    InfinityLine.apply(this, arguments);
-}
+/* eslint-disable no-invalid-this, valid-jsdoc */
+
+const Pitchfork: typeof Highcharts.AnnotationPitchfork = function (this: Highcharts.AnnotationInfinityLine): void {
+    InfinityLine.apply(this, arguments as any);
+} as any;
 
 Pitchfork.findEdgePoint = function (
-    point,
-    firstAnglePoint,
-    secondAnglePoint
-) {
+    point: Highcharts.AnnotationPointType,
+    firstAnglePoint: Highcharts.AnnotationPointType,
+    secondAnglePoint?: Highcharts.AnnotationPointType
+): Highcharts.PositionObject {
     var angle = Math.atan2(
-            secondAnglePoint.plotY - firstAnglePoint.plotY,
-            secondAnglePoint.plotX - firstAnglePoint.plotX
+            (secondAnglePoint as any).plotY - (firstAnglePoint.plotY as any),
+            (secondAnglePoint as any).plotX - (firstAnglePoint.plotX as any)
         ),
         distance = 1e7;
 
     return {
-        x: point.plotX + distance * Math.cos(angle),
-        y: point.plotY + distance * Math.sin(angle)
+        x: (point.plotX as any) + distance * Math.cos(angle),
+        y: (point.plotY as any) + distance * Math.sin(angle)
     };
 };
 
-Pitchfork.middleLineEdgePoint = function (target) {
-    var annotation = target.annotation,
+Pitchfork.middleLineEdgePoint = function (target: Highcharts.Annotation): Highcharts.PositionObject {
+    var annotation: Highcharts.AnnotationPitchfork = target.annotation as any,
         points = annotation.points;
 
     return InfinityLine.findEdgePoint(
@@ -46,9 +85,9 @@ Pitchfork.middleLineEdgePoint = function (target) {
     );
 };
 
-var outerLineEdgePoint = function (firstPointIndex) {
-    return function (target) {
-        var annotation = target.annotation,
+var outerLineEdgePoint = function (firstPointIndex: number): Function {
+    return function (target: any): Highcharts.PositionObject {
+        var annotation: Highcharts.AnnotationPitchfork = target.annotation,
             points = annotation.points;
 
         return Pitchfork.findEdgePoint(
@@ -68,57 +107,57 @@ Pitchfork.bottomLineEdgePoint = outerLineEdgePoint(0);
 
 H.extendAnnotation(Pitchfork, InfinityLine,
     {
-        midPointOptions: function () {
+        midPointOptions: function (this: Highcharts.AnnotationPitchfork): Highcharts.AnnotationMockPointOptionsObject {
             var points = this.points;
 
             return {
-                x: (points[1].x + points[2].x) / 2,
-                y: (points[1].y + points[2].y) / 2,
+                x: ((points[1].x as any) + (points[2].x as any)) / 2,
+                y: ((points[1].y as any) + (points[2].y as any)) / 2,
                 xAxis: points[0].series.xAxis,
                 yAxis: points[0].series.yAxis
             };
         },
 
-        addShapes: function () {
+        addShapes: function (this: Highcharts.AnnotationPitchfork): void {
             this.addLines();
             this.addBackgrounds();
         },
 
-        addLines: function () {
+        addLines: function (this: Highcharts.AnnotationPitchfork): void {
             this.initShape({
                 type: 'path',
                 points: [
                     this.points[0],
-                    Pitchfork.middleLineEdgePoint
+                    Pitchfork.middleLineEdgePoint as any
                 ]
-            }, false);
+            }, false as any);
 
             this.initShape({
                 type: 'path',
                 points: [
                     this.points[1],
-                    Pitchfork.topLineEdgePoint
+                    Pitchfork.topLineEdgePoint as any
                 ]
-            }, false);
+            }, false as any);
 
             this.initShape({
                 type: 'path',
                 points: [
                     this.points[2],
-                    Pitchfork.bottomLineEdgePoint
+                    Pitchfork.bottomLineEdgePoint as any
                 ]
-            }, false);
+            }, false as any);
         },
 
-        addBackgrounds: function () {
+        addBackgrounds: function (this: Highcharts.AnnotationPitchfork): void {
             var shapes = this.shapes,
                 typeOptions = this.options.typeOptions;
 
-            var innerBackground = this.initShape(
+            var innerBackground = (this.initShape as any)(
                 H.merge(typeOptions.innerBackground, {
                     type: 'path',
                     points: [
-                        function (target) {
+                        function (target: any): Highcharts.AnnotationMockPointOptionsObject {
                             var annotation = target.annotation,
                                 points = annotation.points,
                                 midPointOptions = annotation.midPointOptions();
@@ -132,7 +171,7 @@ H.extendAnnotation(Pitchfork, InfinityLine,
                         },
                         shapes[1].points[1],
                         shapes[2].points[1],
-                        function (target) {
+                        function (target: any): Highcharts.AnnotationMockPointOptionsObject {
                             var annotation = target.annotation,
                                 points = annotation.points,
                                 midPointOptions = annotation.midPointOptions();
@@ -148,7 +187,7 @@ H.extendAnnotation(Pitchfork, InfinityLine,
                 })
             );
 
-            var outerBackground = this.initShape(
+            var outerBackground = (this.initShape as any)(
                 H.merge(typeOptions.outerBackground, {
                     type: 'path',
                     points: [
