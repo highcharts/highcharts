@@ -117,16 +117,6 @@ wrap(seriesTypes.column.prototype, 'translate', function (
     }
 });
 
-// In 3D we need to pass point.outsidePlot option to the justifyDataLabel
-// method for disabling justifying dataLabels in columns outside plot
-wrap(H.Series.prototype, 'alignDataLabel', function (
-    this: Highcharts.ColumnSeries,
-    proceed: Function
-): void {
-    arguments[3].outside3dPlot = arguments[1].outside3dPlot;
-    proceed.apply(this, [].slice.call(arguments, 1));
-});
-
 // Don't use justifyDataLabel when point is outsidePlot
 wrap(H.Series.prototype, 'justifyDataLabel', function (
     this: Highcharts.ColumnSeries,
@@ -140,10 +130,10 @@ wrap(H.Series.prototype, 'justifyDataLabel', function (
 seriesTypes.column.prototype.translate3dPoints = function (): void {};
 seriesTypes.column.prototype.translate3dShapes = function (): void {
 
-    var series = this as Highcharts.ColumnSeries,
+    var series: Highcharts.ColumnSeries = this,
         chart = series.chart,
         seriesOptions = series.options,
-        depth = seriesOptions.depth || 25,
+        depth = (seriesOptions as any).depth,
         stack = seriesOptions.stacking ?
             (seriesOptions.stack || 0) :
             series.index, // #4743
@@ -385,7 +375,7 @@ addEvent(Series, 'afterInit', function (): void {
         this.chart.is3d() &&
         (this as Highcharts.ColumnSeries).handle3dGrouping
     ) {
-        var seriesOptions = this.options,
+        var seriesOptions: Highcharts.ColumnSeriesOptions = this.options,
             grouping = seriesOptions.grouping,
             stacking = seriesOptions.stacking,
             reversedStacks = pick(this.yAxis.options.reversedStacks, true),
@@ -411,7 +401,7 @@ addEvent(Series, 'afterInit', function (): void {
                 z = (stacks.totalStacks * 10) - z;
             }
         }
-
+        seriesOptions.depth = seriesOptions.depth || 25;
         seriesOptions.zIndex = z;
     }
 });
@@ -502,6 +492,10 @@ wrap(Series.prototype, 'alignDataLabel', function (
     this: Highcharts.Series,
     proceed: Function
 ): void {
+
+    // In 3D we need to pass point.outsidePlot option to the justifyDataLabel
+    // method for disabling justifying dataLabels in columns outside plot
+    arguments[3].outside3dPlot = arguments[1].outside3dPlot;
 
     // Only do this for 3D columns and it's derived series
     if (

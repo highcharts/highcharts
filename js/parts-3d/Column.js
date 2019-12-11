@@ -59,12 +59,6 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
         this.translate3dShapes();
     }
 });
-// In 3D we need to pass point.outsidePlot option to the justifyDataLabel
-// method for disabling justifying dataLabels in columns outside plot
-wrap(H.Series.prototype, 'alignDataLabel', function (proceed) {
-    arguments[3].outside3dPlot = arguments[1].outside3dPlot;
-    proceed.apply(this, [].slice.call(arguments, 1));
-});
 // Don't use justifyDataLabel when point is outsidePlot
 wrap(H.Series.prototype, 'justifyDataLabel', function (proceed) {
     return !(arguments[2].outside3dPlot) ?
@@ -73,7 +67,7 @@ wrap(H.Series.prototype, 'justifyDataLabel', function (proceed) {
 });
 seriesTypes.column.prototype.translate3dPoints = function () { };
 seriesTypes.column.prototype.translate3dShapes = function () {
-    var series = this, chart = series.chart, seriesOptions = series.options, depth = seriesOptions.depth || 25, stack = seriesOptions.stacking ?
+    var series = this, chart = series.chart, seriesOptions = series.options, depth = seriesOptions.depth, stack = seriesOptions.stacking ?
         (seriesOptions.stack || 0) :
         series.index, // #4743
     z = stack * (depth + (seriesOptions.groupZPadding || 1)), borderCrisp = series.borderWidth % 2 ? 0.5 : 0;
@@ -265,6 +259,7 @@ addEvent(Series, 'afterInit', function () {
                 z = (stacks.totalStacks * 10) - z;
             }
         }
+        seriesOptions.depth = seriesOptions.depth || 25;
         seriesOptions.zIndex = z;
     }
 });
@@ -325,6 +320,9 @@ if (seriesTypes.columnrange) {
         seriesTypes.column.prototype.setVisible;
 }
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
+    // In 3D we need to pass point.outsidePlot option to the justifyDataLabel
+    // method for disabling justifying dataLabels in columns outside plot
+    arguments[3].outside3dPlot = arguments[1].outside3dPlot;
     // Only do this for 3D columns and it's derived series
     if (this.chart.is3d() &&
         this instanceof seriesTypes.column) {
