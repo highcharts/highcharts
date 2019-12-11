@@ -392,11 +392,18 @@ g.highcharts-series,
     stroke-width: 2px;
  }
 
-/* Dumbbell/lollipop connector */
 .highcharts-lollipop-stem {
 	stroke: $neutral-color-100;
 }
 
+.highcharts-focus-border {
+    fill: none;
+    stroke-width: 2px;
+}
+
+.highcharts-legend-item-hidden .highcharts-focus-border {
+    fill: none !important;
+}
 
 /* Legend */
 .highcharts-legend-box {
