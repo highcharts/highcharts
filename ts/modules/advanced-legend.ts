@@ -140,7 +140,7 @@ var marginNames = H.marginNames,
  */
 H.Chart.prototype.isAdvancedLegendEnabled =
     function (this: Highcharts.Chart): boolean {
-        return Array.isArray((this.options as any).legend);
+        return H.isArray((this.options as any).legend);
     };
 
 /**
