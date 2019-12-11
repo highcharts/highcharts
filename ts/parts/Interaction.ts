@@ -453,8 +453,8 @@ extend(Legend.prototype, {
             activeClass = 'highcharts-legend-' +
                 (isPoint ? 'point' : 'series') + '-active',
             styledMode = legend.chart.styledMode,
-            // When useHTML symbol is rendered in other group, so
-            // it is need to put in array with the item to setting properties
+            // When `useHTML`, the symbol is rendered in other group, so
+            // we need to apply events listeners to both places
             legendItems = useHTML ?
                 [legendItem, item.legendSymbol] :
                 [item.legendGroup];
