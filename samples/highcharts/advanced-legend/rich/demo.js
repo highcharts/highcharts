@@ -65,11 +65,7 @@ Highcharts.chart('container', {
         ]
     }],
 
-    legend: { // General options for all legends and sublegends
-        symbolWidth: 30
-    },
-
-    legends: [{ // Legend 1.
+    legend: [{ // Legend 1.
         id: 'legend1',
         title: {
             text: 'Legend 1 (line series)',

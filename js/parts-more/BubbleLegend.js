@@ -720,6 +720,11 @@ H.BubbleLegend.prototype = {
             zIndex: 1
         })
             .add(this.legend.scrollGroup);
+        // Baseline has to be set if the bubble legend
+        // is the first legend item.
+        if (!this.legend.baseline) {
+            this.legend.baseline = 15;
+        }
         this.drawLegendSymbol(this.legend);
         // Bubble legend item size depends on bubble series point sizes.
         // Legend is rendered before series thus bubble legend item

@@ -18,7 +18,7 @@ QUnit.test('Items are rendered in sublegends.', function (assert) {
                 data: [1, 9],
                 legend: 's2'
             }],
-            legends: [{
+            legend: [{
                 layout: 'vertical',
                 borderWidth: 1,
                 sublegends: [{
@@ -37,13 +37,13 @@ QUnit.test('Items are rendered in sublegends.', function (assert) {
 
 
     assert.strictEqual(
-        chart.legends[0].sublegends[0].allItems.reduce(sumElements, 0),
+        chart.legend[0].sublegends[0].allItems.reduce(sumElements, 0),
         1,
         'First sublegend contains 1 item.'
     );
 
     assert.strictEqual(
-        chart.legends[0].sublegends[1].allItems.reduce(sumElements, 0),
+        chart.legend[0].sublegends[1].allItems.reduce(sumElements, 0),
         2,
         'Second sublegend contains 2 items.'
     );

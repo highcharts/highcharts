@@ -148,7 +148,7 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     setOptions: function (options) {
-        var padding = pick(options.padding, 8), spacingBox = this.chart.spacingBox;
+        var padding = pick(options.padding, 8);
         /**
          * Legend options.
          *
@@ -168,12 +168,6 @@ Highcharts.Legend.prototype = {
         this.symbolWidth = pick(options.symbolWidth, 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
-        // Below options represend translated user input
-        // TODO: these values can be NaN's - handle them better.
-        this.widthOption = relativeLength(options.width, spacingBox.width - padding);
-        this.heightOption = relativeLength(options.height, spacingBox.height - padding);
-        this.xOption = relativeLength(options.x, spacingBox.width - padding);
-        this.yOption = relativeLength(options.y, spacingBox.height - padding);
         fireEvent(this, 'afterSetOptions');
     },
     /**
@@ -903,6 +897,28 @@ Highcharts.Legend.prototype = {
         }, this);
     },
     /**
+     * Convert legend.width, legend.height, legend.x & legend.y options
+     * to pixels (they can be defined as percentages in user options).
+     *
+     * @private
+     * @function Highcharts.convertBBoxUserOptions
+     * @return {void}
+     */
+    applyBBoxUserOptions: function () {
+        var chart = this.chart, options = this.options, padding = this.padding, bBoxOptions = {
+            widthOption: relativeLength(options.width, chart.spacingBox.width - padding),
+            heightOption: relativeLength(options.height, chart.spacingBox.height - padding),
+            xOption: relativeLength(options.x, chart.spacingBox.width - padding),
+            yOption: relativeLength(options.y, chart.spacingBox.height - padding)
+        };
+        // Ignore all values that aren't numbers.
+        H.objectEach(bBoxOptions, function (value, option) {
+            if (!isNaN(value)) {
+                this[option] = value;
+            }
+        }, this);
+    },
+    /**
      * Render the legend. This method can be called both before and after
      * `chart.render`. If called after, it will only rearrange items instead
      * of creating new ones. Called internally on initial render and after
@@ -913,18 +929,19 @@ Highcharts.Legend.prototype = {
      * @return {void}
      */
     render: function () {
-        var legend = this, allItems, padding = legend.padding, allowedWidth;
+        var allItems, padding = this.padding, allowedWidth;
         fireEvent(this, 'beforeRender');
-        legend.itemX = padding;
-        legend.itemY = legend.initialItemY;
-        legend.offsetWidth = 0;
-        legend.lastItemY = 0;
+        this.applyBBoxUserOptions();
+        this.itemX = padding;
+        this.itemY = this.initialItemY;
+        this.offsetWidth = 0;
+        this.lastItemY = 0;
         allowedWidth = this.getAllowedWidth();
-        legend.maxLegendWidth = legend.widthOption || allowedWidth;
-        legend.renderLegendGroup();
-        legend.renderTitle();
+        this.maxLegendWidth = this.widthOption || allowedWidth;
+        this.renderLegendGroup();
+        this.renderTitle();
         // add each series or point
-        this.allItems = allItems = legend.getAllItems();
+        this.allItems = allItems = this.getAllItems();
         this.sortItems();
         /**
          * All items for the legend, which is an array of series for most series
@@ -934,16 +951,16 @@ Highcharts.Legend.prototype = {
          * @name Highcharts.Legend#allItems
          * @type {Array<(Highcharts.Point|Highcharts.Series)>}
          */
-        legend.allItems = allItems;
+        this.allItems = allItems;
         // Don't display legend without items
-        legend.display = !!allItems.length;
+        this.display = !!allItems.length;
         // Render the items. renderItems() sets the text and properties
         // and read all the bounding boxes. layoutItems() computes items'
         // positions based on the bounding boxes.
-        legend.lastLineHeight = 0;
-        legend.maxItemWidth = 0;
-        legend.totalItemWidth = 0;
-        legend.itemHeight = 0;
+        this.lastLineHeight = 0;
+        this.maxItemWidth = 0;
+        this.totalItemWidth = 0;
+        this.itemHeight = 0;
         this.renderItems();
         this.layoutItems();
         this.findLegendSize();
@@ -966,7 +983,7 @@ Highcharts.Legend.prototype = {
      * @return {number}
      */
     handleOverflow: function (legendHeight) {
-        var legend = this, chart = this.chart, renderer = chart.renderer, options = this.options, padding = this.padding, spaceHeight = legend.getSpaceHeight(), maxHeight = options.maxHeight, clipHeight, clipRect = this.clipRect, navOptions = options.navigation, animation = pick(navOptions.animation, true), arrowSize = navOptions.arrowSize || 12, nav = this.nav, pages = this.pages, lastY, allItems = this.allItems, clipToHeight = function (height) {
+        var legend = this, chart = this.chart, renderer = chart.renderer, options = this.options, padding = this.padding, spaceHeight = legend.getSpaceHeight(), maxHeight = options.maxHeight, clipHeight, clipRect = this.clipRect, navOptions = options.navigation, animation = pick(navOptions.animation, true), arrowSize = navOptions.arrowSize || 12, nav = this.nav, pages = this.pages, clipToHeight = function (height) {
             if (typeof height === 'number') {
                 clipRect.attr({
                     height: height
@@ -1010,33 +1027,7 @@ Highcharts.Legend.prototype = {
                 Math.max(spaceHeight - 20 - this.titleHeight - padding, 0);
             this.currentPage = pick(this.currentPage, 1);
             this.fullHeight = legendHeight;
-            // Fill pages with Y positions so that the top of each a legend item
-            // defines the scroll top for each page (#2098)
-            allItems.forEach(function (item, i) {
-                var y = item._legendItemPos[1], h = item.legendItem ?
-                    Math.round(item.legendItem.getBBox().height) :
-                    0, len = pages.length;
-                if (!len || (y - pages[len - 1] > clipHeight &&
-                    (lastY || y) !== pages[len - 1])) {
-                    pages.push(lastY || y);
-                    len++;
-                }
-                // Keep track of which page each item is on
-                item.pageIx = len - 1;
-                if (lastY) {
-                    allItems[i - 1].pageIx = len - 1;
-                }
-                if (i === allItems.length - 1 &&
-                    y + h - pages[len - 1] > clipHeight &&
-                    y !== lastY // #2617
-                ) {
-                    pages.push(y);
-                    item.pageIx = len;
-                }
-                if (y !== lastY) {
-                    lastY = y;
-                }
-            });
+            this.createPages(clipHeight);
             // Only apply clipping if needed. Clipping causes blurred legend in
             // PDF export (#1787)
             if (!clipRect) {
@@ -1085,6 +1076,36 @@ Highcharts.Legend.prototype = {
             this.clipHeight = 0; // #1379
         }
         return this.heightOption || legendHeight;
+    },
+    createPages: function (clipHeight) {
+        var lastY, allItems = this.allItems, pages = this.pages;
+        // Fill pages with Y positions so that the top of each a legend item
+        // defines the scroll top for each page (#2098)
+        allItems.forEach(function (item, i) {
+            var y = item._legendItemPos[1] - 1, len = pages.length, h = item.legendItem ?
+                Math.round(item.legendItem.getBBox().height) :
+                0;
+            if (!len || (y - pages[len - 1] > clipHeight &&
+                (lastY || y) !== pages[len - 1])) {
+                pages.push(lastY || y);
+                len++;
+            }
+            // Keep track of which page each item is on
+            item.pageIx = len - 1;
+            if (lastY) {
+                allItems[i - 1].pageIx = len - 1;
+            }
+            if (i === allItems.length - 1 &&
+                y + h - pages[len - 1] > clipHeight &&
+                y !== lastY // #2617
+            ) {
+                pages.push(y);
+                item.pageIx = len;
+            }
+            if (y !== lastY) {
+                lastY = y;
+            }
+        });
     },
     /**
      * Return the maximum potential height that legend can occupy.

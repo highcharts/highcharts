@@ -2443,10 +2443,24 @@ H.defaultOptions = {
      * It is possible to override the symbol creator function and create
      * [custom legend symbols](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-custom-symbol/).
      *
+     * There can be many legends in one chart since v8.0.0 thanks to
+     * Advanced Legend Module. `legend` option can be initialized as
+     * an array if you additionaly import `highcharts-more`, `modules/heatmap`
+     * and `modules/advanced-legend` files.
+     * Two new properties were added: `id` & `sublegends`.
+     *
      * @productdesc {highmaps}
      * A Highmaps legend by default contains one legend item per series, but if
      * a `colorAxis` is defined, the axis will be displayed in the legend.
      * Either as a gradient, or as multiple legend items for `dataClasses`.
+     *
+     * @type         {*|Array<*>}
+     * @optionparent legend
+     *
+     * @sample highcharts/advanced-legend/basic/
+     *         Multiple legends with sublegends
+     * @sample highcharts/advanced-legend/rich/
+     *         Multiple legends with sublegends, color axes and bubble legend
      */
     legend: {
 

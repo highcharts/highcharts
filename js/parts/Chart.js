@@ -461,7 +461,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     redraw: function (animation) {
         fireEvent(this, 'beforeRedraw');
-        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
+        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legendUserOptions = chart.userOptions.legend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);
@@ -500,24 +500,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     if (serie.updateTotals) {
                         serie.updateTotals();
                     }
-                    redrawLegend = true;
+                    chart.isDirtyLegend = true;
                 }
                 else if (legendUserOptions &&
                     (legendUserOptions.labelFormatter ||
                         legendUserOptions.labelFormat)) {
-                    redrawLegend = true; // #2165
+                    chart.isDirtyLegend = true; // #2165
                 }
             }
             if (serie.isDirtyData) {
                 fireEvent(serie, 'updatedData');
             }
         });
-        // handle added or removed series
-        if (redrawLegend && legend && legend.options.enabled) {
-            // draw legend graphics
-            legend.render();
-            chart.isDirtyLegend = false;
-        }
+        chart.redrawLegend();
         // reset stacks
         if (hasStackedSeries) {
             chart.getStacks();
@@ -1996,5 +1991,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @type {Highcharts.Legend}
          */
         this.legend = new Legend(this, this.options.legend);
+    },
+    /**
+     * This method provides the logic for redrawing the legend.
+     *
+     * @private
+     * @function Highcharts.Chart#redrawLegend
+     * @return {void}
+     */
+    redrawLegend: function () {
+        var legend = this.legend;
+        // handle added or removed series
+        if (this.isDirtyLegend && legend && legend.options.enabled) {
+            // draw legend graphics
+            legend.render();
+            this.isDirtyLegend = false;
+        }
     }
 }); // end Chart
