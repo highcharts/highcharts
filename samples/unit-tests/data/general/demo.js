@@ -194,3 +194,57 @@ QUnit.test('Data config on updates', function (assert) {
         'Switching back switchRowsAndColumns should restore number of series (#11095).'
     );
 });
+
+QUnit.test("Data module - empty point should be parsed to null (#12566).", function (assert) {
+    document.body.innerHTML += `<table id="secondTable">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Jane</th>
+            <th>John</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Apples</th>
+            <td>-3,4</td>
+        </tr>
+        <tr>
+            <th>Pears</th>
+            <td>-1,2</td>
+        </tr>
+        <tr>
+            <th>Plums</th>
+            <td>5,1</td>
+            <td>11,1</td>
+        </tr>
+        <tr>
+            <th>Bananas</th>
+            <td>-1,1</td>
+            <td>-1,1</td>
+        </tr>
+        <tr>
+            <th>Oranges</th>
+            <td>-3,12</td>
+            <td>-2,9</td>
+        </tr>
+    </tbody>
+    </table>`;
+
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+
+        data: {
+            table: 'secondTable',
+            decimalPoint: ','
+        }
+    });
+
+    assert.strictEqual(
+        chart.data.columns[2][0],
+        null,
+        'Empty point should be parsed to null instead of undefined.'
+    );
+});

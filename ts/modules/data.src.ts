@@ -20,7 +20,7 @@ import Highcharts from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type DataValueType = (number|string|null);
+        type DataValueType = (number | string | null);
         interface Chart {
             data?: Data;
             hasDataDef?: boolean;
@@ -74,13 +74,13 @@ declare global {
             startColumn?: number;
             startRow?: number;
             switchRowsAndColumns?: boolean;
-            table?: (string|GlobalHTMLElement);
+            table?: (string | GlobalHTMLElement);
         }
         interface DataParseDateCallbackFunction {
             (dateValue: string): number;
         }
         interface DataParsedCallbackFunction {
-            (columns: Array<Array<DataValueType>>): (boolean|undefined);
+            (columns: Array<Array<DataValueType>>): (boolean | undefined);
         }
         interface DataValueCountObject {
             global: number;
@@ -93,7 +93,7 @@ declare global {
             data?: DataOptions;
         }
         interface SeriesBuilderReaderObject {
-            columnIndex: (number|undefined);
+            columnIndex: (number | undefined);
             configName: string;
         }
         class Data {
@@ -116,9 +116,9 @@ declare global {
             public valueCount?: DataValueCountObject;
             public complete(): void;
             public dataFound(): void;
-            public fetchLiveData(): (boolean|string);
+            public fetchLiveData(): (boolean | string);
             public getColumnDistribution(): void;
-            public getData(): (Array<Array<DataValueType>>|undefined);
+            public getData(): (Array<Array<DataValueType>> | undefined);
             public getFreeIndexes(
                 numberOfColumns: number,
                 seriesBuilders: Array<SeriesBuilder>
@@ -132,15 +132,15 @@ declare global {
             public parseColumn(column: Array<DataValueType>, col: number): void;
             public parseCSV(
                 inOptions?: Highcharts.DataOptions
-            ): Array<Array<(number|string)>>;
-            public parsed(): (boolean|undefined);
+            ): Array<Array<(number | string)>>;
+            public parsed(): (boolean | undefined);
             public parseDate(val: string): number;
             public parseGoogleSpreadsheet(): boolean;
-            public parseTable(): Array<Array<(number|string)>>;
+            public parseTable(): Array<Array<(number | string)>>;
             public parseTypes(): void;
             public rowsToColumns(
-                rows: (Array<Array<DataValueType>>|undefined)
-            ): (Array<Array<DataValueType>>|undefined);
+                rows: (Array<Array<DataValueType>> | undefined)
+            ): (Array<Array<DataValueType>> | undefined);
             public trim(str: string, inside?: boolean): string;
         }
         class SeriesBuilder {
@@ -148,16 +148,16 @@ declare global {
             public readers: Array<SeriesBuilderReaderObject>;
             public pointIsArray: boolean;
             public addColumnReader(
-                columnIndex: (number|undefined),
+                columnIndex: (number | undefined),
                 configName: string
             ): void;
             public getReferencedColumnIndexes(): Array<number>;
-            public hasReader(configName: string): (boolean|undefined);
+            public hasReader(configName: string): (boolean | undefined);
             public populateColumns(freeIndexes: Array<number>): boolean;
             public read<DataItemType>(
                 columns: Array<Array<DataItemType>>,
                 rowIndex: number
-            ): (Array<DataItemType>|Dictionary<DataItemType>);
+            ): (Array<DataItemType> | Dictionary<DataItemType>);
         }
         function data(
             dataOptions: DataOptions,
@@ -203,15 +203,15 @@ declare global {
  *
  * @interface Highcharts.DataDateFormatObject
  *//**
- * @name Highcharts.DataDateFormatObject#alternative
- * @type {string|undefined}
- *//**
- * @name Highcharts.DataDateFormatObject#parser
- * @type {Highcharts.DataDateFormatCallbackFunction}
- *//**
- * @name Highcharts.DataDateFormatObject#regex
- * @type {global.RegExp}
- */
+* @name Highcharts.DataDateFormatObject#alternative
+* @type {string|undefined}
+*//**
+* @name Highcharts.DataDateFormatObject#parser
+* @type {Highcharts.DataDateFormatCallbackFunction}
+*//**
+* @name Highcharts.DataDateFormatObject#regex
+* @type {global.RegExp}
+*/
 
 /**
  * Possible types for a data item in a column or row.
@@ -808,7 +808,7 @@ extend(Data.prototype, {
             },
             getPointArrayMap = function (
                 type: string
-            ): (Array<string>|undefined) {
+            ): (Array<string> | undefined) {
                 return Highcharts.seriesTypes[type || 'line']
                     .prototype.pointArrayMap;
             },
@@ -991,41 +991,42 @@ extend(Data.prototype, {
         columns = this.columns = [];
 
         /*
-            This implementation is quite verbose. It will be shortened once
-            it's stable and passes all the test.
+             This implementation is quite verbose. It will be shortened once
+             it's stable and passes all the test.
 
-            It's also not written with speed in mind, instead everything is
-            very seggregated, and there a several redundant loops.
-            This is to make it easier to stabilize the code initially.
+             It's also not written with speed in mind, instead everything is
+             very seggregated, and there a several redundant loops.
+             This is to make it easier to stabilize the code initially.
 
-            We do a pre-pass on the first 4 rows to make some intelligent
-            guesses on the set. Guessed delimiters are in this pass counted.
+             We do a pre-pass on the first 4 rows to make some intelligent
+             guesses on the set. Guessed delimiters are in this pass counted.
 
-            Auto detecting delimiters
-                - If we meet a quoted string, the next symbol afterwards
-                  (that's not \s, \t) is the delimiter
-                - If we meet a date, the next symbol afterwards is the delimiter
+             Auto detecting delimiters
+                  - If we meet a quoted string, the next symbol afterwards
+                     (that's not \s, \t) is the delimiter
+                  - If we meet a date, the next symbol afterwards is the
+                     delimiter
 
-            Date formats
-                - If we meet a column with date formats, check all of them to
-                  see if one of the potential months crossing 12. If it does,
-                  we now know the format
+             Date formats
+                  - If we meet a column with date formats, check all of them to
+                     see if one of the potential months crossing 12. If it does,
+                     we now know the format
 
-            It would make things easier to guess the delimiter before
-            doing the actual parsing.
+             It would make things easier to guess the delimiter before
+             doing the actual parsing.
 
-            General rules:
-                - Quoting is allowed, e.g: "Col 1",123,321
-                - Quoting is optional, e.g.: Col1,123,321
-                - Doubble quoting is escaping, e.g. "Col ""Hello world""",123
-                - Spaces are considered part of the data: Col1 ,123
-                - New line is always the row delimiter
-                - Potential column delimiters are , ; \t
-                - First row may optionally contain headers
-                - The last row may or may not have a row delimiter
-                - Comments are optionally supported, in which case the comment
-                  must start at the first column, and the rest of the line will
-                  be ignored
+             General rules:
+                  - Quoting is allowed, e.g: "Col 1",123,321
+                  - Quoting is optional, e.g.: Col1,123,321
+                  - Doubble quoting is escaping, e.g. "Col ""Hello world""",123
+                  - Spaces are considered part of the data: Col1 ,123
+                  - New line is always the row delimiter
+                  - Potential column delimiters are , ; \t
+                  - First row may optionally contain headers
+                  - The last row may or may not have a row delimiter
+                  - Comments are optionally supported, in which case the comment
+                     must start at the first column, and the rest of the line
+                     will be ignored
         */
 
         /**
@@ -1136,17 +1137,17 @@ extend(Data.prototype, {
                         read(++i);
                     }
 
-                // Perform "plugin" handling
+                    // Perform "plugin" handling
                 } else if (callbacks && callbacks[c]) {
                     if (callbacks[c](c, token)) {
                         push();
                     }
 
-                // Delimiter - push current token
+                    // Delimiter - push current token
                 } else if (c === itemDelimiter) {
                     push();
 
-                // Actual column data
+                    // Actual column data
                 } else {
                     token += c;
                 }
@@ -1170,7 +1171,7 @@ extend(Data.prototype, {
             lines.some(function (
                 columnStr: string,
                 i: number
-            ): (boolean|undefined) {
+            ): (boolean | undefined) {
                 var inStr = false,
                     c,
                     cn,
@@ -1510,7 +1511,7 @@ extend(Data.prototype, {
      */
     parseTable: function (
         this: Highcharts.Data
-    ): (Array<Array<Highcharts.DataValueType>>|undefined) {
+    ): (Array<Array<Highcharts.DataValueType>> | undefined) {
         var options = this.options,
             table: HTMLElement = options.table as any,
             columns = this.columns,
@@ -1534,6 +1535,9 @@ extend(Data.prototype, {
                         item: Element,
                         colNo: number
                     ): void {
+                        const row = (columns as any)[colNo - startColumn];
+                        let i = 1;
+
                         if (
                             (
                                 item.tagName === 'TD' ||
@@ -1549,6 +1553,16 @@ extend(Data.prototype, {
                             (columns as any)[colNo - startColumn][
                                 rowNo - startRow
                             ] = item.innerHTML;
+
+                            // Loop over all previous indices and make sure
+                            // they are nulls, not undefined.
+                            while (
+                                rowNo - startRow >= i &&
+                                row[rowNo - startRow - i] === void 0
+                            ) {
+                                row[rowNo - startRow - i] = null;
+                                i++;
+                            }
                         }
                     });
                 }
@@ -1601,7 +1615,7 @@ extend(Data.prototype, {
              * @private
              */
             function request(
-                url: (string|undefined),
+                url: (string | undefined),
                 done: Function,
                 tp?: string
             ): boolean {
@@ -1633,7 +1647,7 @@ extend(Data.prototype, {
                     url: url,
                     dataType: tp || 'json',
                     success: function (
-                        res: (string|Highcharts.JSONType)
+                        res: (string | Highcharts.JSONType)
                     ): void {
                         if (chart && chart.series) {
                             done(res);
@@ -1644,7 +1658,7 @@ extend(Data.prototype, {
                     },
                     error: function (
                         xhr: XMLHttpRequest,
-                        text: (string|Error)
+                        text: (string | Error)
                     ): void {
                         if (++currentRetries < maxRetries) {
                             poll();
@@ -1660,7 +1674,7 @@ extend(Data.prototype, {
             if (!request(
                 originalOptions.csvURL,
                 function (
-                    res: (string|Highcharts.JSONType)
+                    res: (string | Highcharts.JSONType)
                 ): void {
                     chart.update({
                         data: {
@@ -1671,7 +1685,7 @@ extend(Data.prototype, {
                 'text'
             )) {
                 if (!request(originalOptions.rowsURL, function (
-                    res: (string|Highcharts.JSONType)
+                    res: (string | Highcharts.JSONType)
                 ): void {
                     chart.update({
                         data: {
@@ -1680,7 +1694,7 @@ extend(Data.prototype, {
                     });
                 })) {
                     request(originalOptions.columnsURL, function (
-                        res: (string|Highcharts.JSONType)
+                        res: (string | Highcharts.JSONType)
                     ): void {
                         chart.update({
                             data: {
@@ -1754,7 +1768,7 @@ extend(Data.prototype, {
                 },
                 error: function (
                     xhr: XMLHttpRequest,
-                    text: (string|Error)
+                    text: (string | Error)
                 ): void {
                     return options.error && options.error(text, xhr);
                 }
@@ -1767,7 +1781,7 @@ extend(Data.prototype, {
 
             fetchSheet(function (
                 json: Highcharts.JSONType
-            ): (boolean|undefined) {
+            ): (boolean | undefined) {
                 // Prepare the data from the spreadsheat
                 var columns: Array<Array<Highcharts.DataValueType>> = [],
                     cells = json.feed.entry,
@@ -1991,8 +2005,8 @@ extend(Data.prototype, {
                     descending = floatVal > (column[row + 1] as any);
                 }
 
-            // String, continue to determine if it is a date string or really a
-            // string
+                // String, continue to determine if it is a date string
+                // or really a string
             } else {
                 if (trimVal && trimVal.length) {
                     dateVal = this.parseDate(val as any);
@@ -2151,7 +2165,7 @@ extend(Data.prototype, {
                         break;
                     }
                 }
-            // Next time, use the one previously found
+                // Next time, use the one previously found
             } else {
                 format = this.dateFormats[dateFormat];
 
@@ -2183,7 +2197,7 @@ extend(Data.prototype, {
                         60000
                     );
 
-                // Timestamp
+                    // Timestamp
                 } else if (isNumber(match)) {
                     ret = match - (new Date(match)).getTimezoneOffset() * 60000;
                 }
@@ -2203,13 +2217,13 @@ extend(Data.prototype, {
      */
     rowsToColumns: function (
         this: Highcharts.Data,
-        rows: (Array<Array<(number|string)>>|undefined)
-    ): (Array<Array<(number|string)>>|undefined) {
+        rows: (Array<Array<(number | string)>> | undefined)
+    ): (Array<Array<(number | string)>> | undefined) {
         var row,
             rowsLength,
             col,
             colsLength,
-            columns: (Array<Array<(number|string)>>|undefined);
+            columns: (Array<Array<(number | string)>> | undefined);
 
         if (rows) {
             columns = [];
@@ -2243,7 +2257,7 @@ extend(Data.prototype, {
      */
     getData: function (
         this: Highcharts.Data
-    ): (Array<Array<(number|string)>>|undefined) {
+    ): (Array<Array<(number | string)>> | undefined) {
         if (this.columns) {
             return (this.rowsToColumns(this.columns) as any).slice(1);
         }
@@ -2256,7 +2270,7 @@ extend(Data.prototype, {
      *
      * @return {boolean|undefined}
      */
-    parsed: function (this: Highcharts.Data): (boolean|undefined) {
+    parsed: function (this: Highcharts.Data): (boolean | undefined) {
         if (this.options.parsed) {
             return this.options.parsed.call(this, this.columns as any);
         }
@@ -2549,8 +2563,8 @@ addEvent(
     function (
         e: Event & {
             args: [
-                (Highcharts.Options|undefined),
-                (Highcharts.ChartCallbackFunction|undefined)
+                (Highcharts.Options | undefined),
+                (Highcharts.ChartCallbackFunction | undefined)
             ];
         }
     ): void {
@@ -2694,7 +2708,7 @@ SeriesBuilder.prototype.read = function <T> (
     this: Highcharts.SeriesBuilder,
     columns: Array<Array<T>>,
     rowIndex: number
-): (Array<T>|Highcharts.Dictionary<T>) {
+): (Array<T> | Highcharts.Dictionary<T>) {
     var builder = this,
         pointIsArray = builder.pointIsArray,
         point =
@@ -2755,7 +2769,7 @@ SeriesBuilder.prototype.read = function <T> (
  */
 SeriesBuilder.prototype.addColumnReader = function (
     this: Highcharts.SeriesBuilder,
-    columnIndex: (number|undefined),
+    columnIndex: (number | undefined),
     configName: string
 ): void {
     this.readers.push({
@@ -2809,7 +2823,7 @@ SeriesBuilder.prototype.getReferencedColumnIndexes = function (
 SeriesBuilder.prototype.hasReader = function (
     this: Highcharts.SeriesBuilder,
     configName: string
-): (boolean|undefined) {
+): (boolean | undefined) {
     var i, columnReader;
 
     for (i = 0; i < this.readers.length; i = i + 1) {
