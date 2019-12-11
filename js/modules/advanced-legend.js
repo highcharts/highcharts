@@ -32,7 +32,7 @@ var marginNames = H.marginNames, addEvent = H.addEvent, wrap = H.wrap, fireEvent
  */
 H.Chart.prototype.isAdvancedLegendEnabled =
     function () {
-        return Array.isArray(this.options.legend);
+        return H.isArray(this.options.legend);
     };
 /**
  * Extended version of Highcharts.Legend. It's used by Advanced Legend Module
