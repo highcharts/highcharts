@@ -109,7 +109,8 @@ This feature provides a possibility to animate `xAxis` labels. If category `xAxi
 
 **Dependent sorting**
 
-It is also possible to make the sorting of one series dependent on the other. If some series do not have defined individual `dataSorting` property and is linked to another with enabled `dataSorting`, the series points, regardless of their values will be matched by index and will have the same `x` value as the points from the master series.
+It is also possible to make the sorting of one series dependent on another series (master series).
+If a `dataSorting` property is defined in the master series but not in the other series, then the series points, regardless of their values, are matched by index, and they will have the same `x` value as the points from the master series.
 
     {
         series: [{
