@@ -133,8 +133,8 @@ seriesTypes.column.prototype.translate3dShapes = function () {
             tooltipPos = perspective([{
                     x: tooltipPos[0],
                     y: tooltipPos[1],
-                    z: z
-                }], chart, true)[0];
+                    z: z + depth / 2 // The center of column in Z dimension
+                }], chart, true, false)[0];
             point.tooltipPos = [tooltipPos.x, tooltipPos.y];
         }
     });

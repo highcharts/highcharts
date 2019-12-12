@@ -218,10 +218,11 @@ seriesTypes.column.prototype.translate3dShapes = function (): void {
                 [{
                     x: (tooltipPos as any)[0],
                     y: (tooltipPos as any)[1],
-                    z: z
+                    z: z + depth / 2 // The center of column in Z dimension
                 }],
                 chart,
-                true
+                true,
+                false
             )[0] as any;
             point.tooltipPos = [(tooltipPos as any).x, (tooltipPos as any).y];
         }
