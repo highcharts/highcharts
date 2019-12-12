@@ -96,7 +96,7 @@ jobs:
            - /home/circleci/repo/highcharts/node_modules
          key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
-     - run: git diff --name-only --exit-code || (echo "Untracked files found. Failing build.." && exit 1)
+     - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
      - <<: *persist_workspace
 
   generate_ts_declarations:
