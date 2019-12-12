@@ -40,8 +40,8 @@ function prepareRelease() {
 
         if (argv.cleanup) {
             const stagedChanges = ChildProcess.execSync('git diff --cached --name-only').toString();
-            ChildProcess.execSync(`sed -i s/${buildPropsVersion}.*/${packageJsonVersion}-modified/g build.properties`);
-            ChildProcess.execSync('sed -i s/date=.*/date=/ build.properties');
+            ChildProcess.execSync(`sed -i -e s/${buildPropsVersion}.*/${packageJsonVersion}-modified/g build.properties`);
+            ChildProcess.execSync('sed -i -e s/date=.*/date=/ build.properties');
 
             if (argv.commit) {
                 if (stagedChanges) {
@@ -69,15 +69,15 @@ function prepareRelease() {
             sometimes have proven not to be, we make sure to replace the existing version in the exact file
             with the next version
         */
-        ChildProcess.execSync(`sed -i '/version/s/"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
-        ChildProcess.execSync(`sed -i '/version/s/"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
-        ChildProcess.execSync(`sed -i s/${buildPropsVersion}/${nextVersion}/ build.properties`);
+        ChildProcess.execSync(`sed -i -e '/version/s/"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
+        ChildProcess.execSync(`sed -i -e '/version/s/"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
+        ChildProcess.execSync(`sed -i -e s/${buildPropsVersion}/${nextVersion}/ build.properties`);
 
         // replace/fill in date in build.properties
-        ChildProcess.execSync('sed -i s/date=.*/date=$(date +%Y-%m-%d)/ build.properties');
+        ChildProcess.execSync('sed -i -e s/date=.*/date=$(date +%Y-%m-%d)/ build.properties');
 
         // replace occurences of @ since next in docs with @since x.y.z
-        ChildProcess.execSync(`grep -Rl --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+\\next" . | xargs -r sed -i 's/@since *next/@since ${nextVersion}/'`);
+        ChildProcess.execSync(`grep -Rl --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+\\next" . | xargs -r sed -i -e 's/@since *next/@since ${nextVersion}/'`);
 
         LogLib.success('Updated version in package.json, bower.json, build.properties and replaced @ since next' +
                         ' in the docs. Please review changes and commit & push when ready.');
