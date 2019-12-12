@@ -1,1 +1,0 @@
-Advanced chart features - Home
