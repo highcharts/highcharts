@@ -670,42 +670,41 @@ extend(Data.prototype, {
         };
         columns = this.columns = [];
         /*
-             This implementation is quite verbose. It will be shortened once
-             it's stable and passes all the test.
+            This implementation is quite verbose. It will be shortened once
+            it's stable and passes all the test.
 
-             It's also not written with speed in mind, instead everything is
-             very seggregated, and there a several redundant loops.
-             This is to make it easier to stabilize the code initially.
+            It's also not written with speed in mind, instead everything is
+            very seggregated, and there a several redundant loops.
+            This is to make it easier to stabilize the code initially.
 
-             We do a pre-pass on the first 4 rows to make some intelligent
-             guesses on the set. Guessed delimiters are in this pass counted.
+            We do a pre-pass on the first 4 rows to make some intelligent
+            guesses on the set. Guessed delimiters are in this pass counted.
 
-             Auto detecting delimiters
-                  - If we meet a quoted string, the next symbol afterwards
-                     (that's not \s, \t) is the delimiter
-                  - If we meet a date, the next symbol afterwards is the
-                     delimiter
+            Auto detecting delimiters
+                - If we meet a quoted string, the next symbol afterwards
+                  (that's not \s, \t) is the delimiter
+                - If we meet a date, the next symbol afterwards is the delimiter
 
-             Date formats
-                  - If we meet a column with date formats, check all of them to
-                     see if one of the potential months crossing 12. If it does,
-                     we now know the format
+            Date formats
+                - If we meet a column with date formats, check all of them to
+                  see if one of the potential months crossing 12. If it does,
+                  we now know the format
 
-             It would make things easier to guess the delimiter before
-             doing the actual parsing.
+            It would make things easier to guess the delimiter before
+            doing the actual parsing.
 
-             General rules:
-                  - Quoting is allowed, e.g: "Col 1",123,321
-                  - Quoting is optional, e.g.: Col1,123,321
-                  - Doubble quoting is escaping, e.g. "Col ""Hello world""",123
-                  - Spaces are considered part of the data: Col1 ,123
-                  - New line is always the row delimiter
-                  - Potential column delimiters are , ; \t
-                  - First row may optionally contain headers
-                  - The last row may or may not have a row delimiter
-                  - Comments are optionally supported, in which case the comment
-                     must start at the first column, and the rest of the line
-                     will be ignored
+            General rules:
+                - Quoting is allowed, e.g: "Col 1",123,321
+                - Quoting is optional, e.g.: Col1,123,321
+                - Doubble quoting is escaping, e.g. "Col ""Hello world""",123
+                - Spaces are considered part of the data: Col1 ,123
+                - New line is always the row delimiter
+                - Potential column delimiters are , ; \t
+                - First row may optionally contain headers
+                - The last row may or may not have a row delimiter
+                - Comments are optionally supported, in which case the comment
+                  must start at the first column, and the rest of the line will
+                  be ignored
         */
         /**
          * Parse a single row.
@@ -1421,8 +1420,8 @@ extend(Data.prototype, {
                 if (typeof column[row + 1] !== 'undefined') {
                     descending = floatVal > column[row + 1];
                 }
-                // String, continue to determine if it is a date string
-                // or really a string
+                // String, continue to determine if it is a date string or really a
+                // string
             }
             else {
                 if (trimVal && trimVal.length) {
