@@ -2816,6 +2816,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
         /**
          * @declare Highcharts.SeriesStatesOptionsObject
+         *
+         * @private
          */
         states: {
 
