@@ -440,7 +440,12 @@ async function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = tr
         }
 
         if (!argv.dryrun) {
-            result = await uploadFiles({ files, bucket: VISUAL_TESTS_BUCKET, name: `image diff on PR #${pr}` });
+            result = await uploadFiles({
+                files,
+                bucket: VISUAL_TESTS_BUCKET,
+                profile: argv.profile,
+                name: `image diff on PR #${pr}`
+            });
         } else {
             logLib.message('Dry run - Skipping upload of files.');
         }
@@ -512,7 +517,9 @@ commentOnPR.flags = {
     '--contains-text': 'Filter text used to find PR comment to overwrite',
     '--always-add': 'If present any old test results comment won\'t be overwritten',
     '--fail-silently': 'Will always return exitCode 0 (success)',
-    '--dryrun': 'Just runs through the task for testing purposes without doing external requests. '
+    '--dryrun': 'Just runs through the task for testing purposes without doing external requests. ',
+    '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
+        'standard AWS environment variables for credentials will be used. (optional)'
 };
 
 gulp.task('update-pr-testresults', commentOnPR);
