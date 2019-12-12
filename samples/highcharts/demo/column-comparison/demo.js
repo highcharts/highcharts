@@ -1,112 +1,153 @@
-var dataName = function (flagNumber) {
-    return '<span><img src="https://image.flaticon.com/icons/svg/197/' + flagNumber + '.svg" style="width: 40px; height: 40px;"/><br></span>';
-};
-
 var dataPrev = {
     2016: [
-        [0, 'South Korea'],
-        [0, 'Japan'],
-        [0, 'Australia'],
-        [11, 'Germany'],
-        [24, 'Russia'],
-        [38, 'China'],
-        [29, 'Great Britain'],
-        [46, 'United States']
+        ['South Korea', 0],
+        ['Japan', 0],
+        ['Australia', 0],
+        ['Germany', 11],
+        ['Russia', 24],
+        ['China', 38],
+        ['Great Britain', 29],
+        ['United States', 46]
     ],
     2012: [
-        [13, 'South Korea'],
-        [0, 'Japan'],
-        [0, 'Australia'],
-        [0, 'Germany'],
-        [22, 'Russia'],
-        [51, 'China'],
-        [19, 'Great Britain'],
-        [36, 'United States']
+        ['South Korea', 13],
+        ['Japan', 0],
+        ['Australia', 0],
+        ['Germany', 0],
+        ['Russia', 22],
+        ['China', 51],
+        ['Great Britain', 19],
+        ['United States', 36]
     ],
     2008: [
-        [0, 'South Korea'],
-        [0, 'Japan'],
-        [0, 'Australia'],
-        [13, 'Germany'],
-        [27, 'Russia'],
-        [32, 'China'],
-        [9, 'Great Britain'],
-        [37, 'United States']
+        ['South Korea', 0],
+        ['Japan', 0],
+        ['Australia', 0],
+        ['Germany', 13],
+        ['Russia', 27],
+        ['China', 32],
+        ['Great Britain', 9],
+        ['United States', 37]
     ],
     2004: [
-        [0, 'South Korea'],
-        [5, 'Japan'],
-        [16, 'Australia'],
-        [0, 'Germany'],
-        [32, 'Russia'],
-        [28, 'China'],
-        [0, 'Great Britain'],
-        [36, 'United States']
+        ['South Korea', 0],
+        ['Japan', 5],
+        ['Australia', 16],
+        ['Germany', 0],
+        ['Russia', 32],
+        ['China', 28],
+        ['Great Britain', 0],
+        ['United States', 36]
     ],
     2000: [
-        [0, 'South Korea'],
-        [0, 'Japan'],
-        [9, 'Australia'],
-        [20, 'Germany'],
-        [26, 'Russia'],
-        [16, 'China'],
-        [0, 'Great Britain'],
-        [44, 'United States']
+        ['South Korea', 0],
+        ['Japan', 0],
+        ['Australia', 9],
+        ['Germany', 20],
+        ['Russia', 26],
+        ['China', 16],
+        ['Great Britain', 0],
+        ['United States', 44]
     ]
 };
 
 var data = {
     2016: [
-        [0, dataName(197582), 'rgb(201, 36, 39)'],
-        [0, dataName(197604), 'rgb(201, 36, 39)'],
-        [0, dataName(197507), 'rgb(0, 82, 180)'],
-        [17, dataName(197571), 'rgb(0, 0, 0)'],
-        [19, dataName(197408), 'rgb(240, 240, 240)'],
-        [26, dataName(197375), 'rgb(255, 217, 68)'],
-        [27, dataName(197374), 'rgb(0, 82, 180)'],
-        [46, dataName(197484), 'rgb(215, 0, 38)']
+        ['South Korea', 0],
+        ['Japan', 0],
+        ['Australia', 0],
+        ['Germany', 17],
+        ['Russia', 19],
+        ['China', 26],
+        ['Great Britain', 27],
+        ['United States', 46]
     ],
     2012: [
-        [13, dataName(197582), 'rgb(201, 36, 39)'],
-        [0, dataName(197604), 'rgb(201, 36, 39)'],
-        [0, dataName(197507), 'rgb(0, 82, 180)'],
-        [0, dataName(197571), 'rgb(0, 0, 0)'],
-        [24, dataName(197408), 'rgb(240, 240, 240)'],
-        [38, dataName(197375), 'rgb(255, 217, 68)'],
-        [29, dataName(197374), 'rgb(0, 82, 180)'],
-        [46, dataName(197484), 'rgb(215, 0, 38)']
+        ['South Korea', 13],
+        ['Japan', 0],
+        ['Australia', 0],
+        ['Germany', 0],
+        ['Russia', 24],
+        ['China', 38],
+        ['Great Britain', 29],
+        ['United States', 46]
     ],
     2008: [
-        [0, dataName(197582), 'rgb(201, 36, 39)'],
-        [0, dataName(197604), 'rgb(201, 36, 39)'],
-        [0, dataName(197507), 'rgb(0, 82, 180)'],
-        [16, dataName(197571), 'rgb(0, 0, 0)'],
-        [22, dataName(197408), 'rgb(240, 240, 240)'],
-        [51, dataName(197375), 'rgb(255, 217, 68)'],
-        [19, dataName(197374), 'rgb(0, 82, 180)'],
-        [36, dataName(197484), 'rgb(215, 0, 38)']
+        ['South Korea', 0],
+        ['Japan', 0],
+        ['Australia', 0],
+        ['Germany', 16],
+        ['Russia', 22],
+        ['China', 51],
+        ['Great Britain', 19],
+        ['United States', 36]
     ],
     2004: [
-        [0, dataName(197582), 'rgb(201, 36, 39)'],
-        [16, dataName(197604), 'rgb(201, 36, 39)'],
-        [17, dataName(197507), 'rgb(0, 82, 180)'],
-        [0, dataName(197571), 'rgb(0, 0, 0)'],
-        [27, dataName(197408), 'rgb(240, 240, 240)'],
-        [32, dataName(197375), 'rgb(255, 217, 68)'],
-        [0, dataName(197374), 'rgb(0, 82, 180)'],
-        [37, dataName(197484), 'rgb(215, 0, 38)']
+        ['South Korea', 0],
+        ['Japan', 16],
+        ['Australia', 17],
+        ['Germany', 0],
+        ['Russia', 27],
+        ['China', 32],
+        ['Great Britain', 0],
+        ['United States', 37]
     ],
     2000: [
-        [0, dataName(197582), 'rgb(201, 36, 39)'],
-        [0, dataName(197604), 'rgb(201, 36, 39)'],
-        [16, dataName(197507), 'rgb(0, 82, 180)'],
-        [13, dataName(197571), 'rgb(0, 0, 0)'],
-        [32, dataName(197408), 'rgb(240, 240, 240)'],
-        [28, dataName(197375), 'rgb(255, 217, 68)'],
-        [0, dataName(197374), 'rgb(0, 82, 180)'],
-        [36, dataName(197484), 'rgb(215, 0, 38)']
+        ['South Korea', 0],
+        ['Japan', 0],
+        ['Australia', 16],
+        ['Germany', 13],
+        ['Russia', 32],
+        ['China', 28],
+        ['Great Britain', 0],
+        ['United States', 36]
     ]
 };
+
+var countries = [{
+    name: 'South Korea',
+    flag: 197582,
+    color: 'rgb(201, 36, 39)'
+}, {
+    name: 'Japan',
+    flag: 197604,
+    color: 'rgb(201, 36, 39)'
+}, {
+    name: 'Australia',
+    flag: 197507,
+    color: 'rgb(0, 82, 180)'
+}, {
+    name: 'Germany',
+    flag: 197571,
+    color: 'rgb(0, 0, 0)'
+}, {
+    name: 'Russia',
+    flag: 197408,
+    color: 'rgb(240, 240, 240)'
+}, {
+    name: 'China',
+    flag: 197375,
+    color: 'rgb(255, 217, 68)'
+}, {
+    name: 'Great Britain',
+    flag: 197374,
+    color: 'rgb(0, 82, 180)'
+}, {
+    name: 'United States',
+    flag: 197484,
+    color: 'rgb(215, 0, 38)'
+}];
+
+
+function getData(data) {
+    return data.map(function (country, i) {
+        return {
+            name: country[0],
+            y: country[1],
+            color: countries[i].color
+        };
+    });
+}
 
 var chart = Highcharts.chart('container', {
     chart: {
@@ -129,7 +170,7 @@ var chart = Highcharts.chart('container', {
     },
     tooltip: {
         shared: true,
-        headerFormat: '<span style="font-size: 15px">{point.point.shortName}</span><br/>',
+        headerFormat: '<span style="font-size: 15px">{point.point.name}</span><br/>',
         pointFormat: '<span style="color:{point.color}">\u25CF</span> {series.name}: <b>{point.y} medals</b><br/>'
     },
     xAxis: {
@@ -137,7 +178,19 @@ var chart = Highcharts.chart('container', {
         max: 4,
         labels: {
             useHTML: true,
-            animate: true
+            animate: true,
+            formatter: function () {
+                var value = this.value,
+                    output;
+
+                countries.forEach(function (country) {
+                    if (country.name === value) {
+                        output = country.flag;
+                    }
+                });
+
+                return '<span><img src="https://image.flaticon.com/icons/svg/197/' + output + '.svg" style="width: 40px; height: 40px;"/><br></span>';
+            }
         }
     },
     yAxis: [{
@@ -151,8 +204,7 @@ var chart = Highcharts.chart('container', {
         pointPlacement: -0.2,
         linkedTo: 'main',
         data: dataPrev[2016].slice(),
-        name: '2012',
-        keys: ['y', 'shortName']
+        name: '2012'
     }, {
         name: '2016',
         id: 'main',
@@ -167,8 +219,7 @@ var chart = Highcharts.chart('container', {
                 fontSize: '16px'
             }
         }],
-        keys: ['y', 'name', 'color'],
-        data: data[2016].slice()
+        data: getData(data[2016]).slice()
     }],
     exporting: {
         allowHTML: true
@@ -199,7 +250,7 @@ years.forEach(function (year) {
                 data: dataPrev[year].slice()
             }, {
                 name: year,
-                data: data[year].slice()
+                data: getData(data[year]).slice()
             }]
         }, true, false, {
             duration: 800
