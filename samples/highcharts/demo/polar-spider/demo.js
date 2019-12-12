@@ -60,7 +60,8 @@ Highcharts.chart('container', {
             chartOptions: {
                 legend: {
                     align: 'center',
-                    verticalAlign: 'bottom'
+                    verticalAlign: 'bottom',
+                    layout: 'horizontal'
                 },
                 pane: {
                     size: '70%'
