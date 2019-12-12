@@ -35,8 +35,17 @@ const error = require('./errors');
 
 const builtIns = {
   s3: (config) => {
+    const AWS = require('aws-sdk');
+    if (config.profile) {
+      AWS.config.credentials = new AWS.SharedIniFileCredentials({ profile: config.profile });
+
+      if (!AWS.config.credentials.accessKeyId) {
+        return { error: { message: 'No accessKeyId found for profile ' + config.profile }};
+      }
+    }
+
     return (filename, data, mime, s3Params = {}) => {
-      var s3 = new (require('aws-sdk').S3)();
+      var s3 = new (AWS.S3)();
 
       return new Promise((resolve, reject) => {
         s3.putObject({
