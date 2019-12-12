@@ -76,8 +76,9 @@ function prepareRelease() {
         // replace/fill in date in build.properties
         ChildProcess.execSync('sed -i -e s/date=.*/date=$(date +%Y-%m-%d)/ build.properties');
 
-        // replace occurences of @ since next in docs with @since x.y.z
-        ChildProcess.execSync(`grep -Rl --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+\\next" . | xargs -r sed -i -e 's/@since *next/@since ${nextVersion}/'`);
+        // replace occurences of @ since next in docs with @since x.y.z, first checking if xargs is on gnu (linux) or bsd (osx).
+        const isGNU = ChildProcess.execSync('xargs --version 2>&1 |grep -s GNU >/dev/null && echo true || echo false').toString().replace('\n', '') === 'true';
+        ChildProcess.execSync(`grep -Rl --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+\\next" . | xargs ${isGNU ? '-r' : ''} sed -i -e 's/@since *next/@since ${nextVersion}/'`);
 
         LogLib.success('Updated version in package.json, bower.json, build.properties and replaced @ since next' +
                         ' in the docs. Please review changes and commit & push when ready.');
