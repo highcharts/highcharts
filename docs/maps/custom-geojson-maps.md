@@ -50,7 +50,7 @@ We will now go through the process of importing a Shapefile in QGIS and converti
 
 ![custom-geojson-maps-10.jpg](custom-geojson-maps-10.jpg)
 
-9. To quickly test your map, paste your GeoJSON into [this boilerplate jsFiddle](https://jsfiddle.net/highcharts/xbzxfx2L "GeoJSON maps boilerplate"). The result should look something like this:
+9. To quickly test your map, paste your GeoJSON into [this boilerplate jsFiddle](https://jsfiddle.net/Johnbosco/5zmh7k6d/ "GeoJSON maps boilerplate"). The result should look something like this:
 
 ![custom-geojson-maps-11.jpg](custom-geojson-maps-11.jpg)
 
