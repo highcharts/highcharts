@@ -201,11 +201,14 @@ seriesType('heatmap', 'scatter',
      * @function Highcharts.seriesTypes.heatmap#setClip
      * @return {void}
      */
-    setClip: function () {
-        Series.prototype.setClip.apply(this, arguments);
-        if (this.options.clip !== false && this.markerGroup) {
-            this.markerGroup
-                .clip(this.chart.clipRect);
+    setClip: function (animation) {
+        var series = this, chart = series.chart;
+        Series.prototype.setClip.apply(series, arguments);
+        if (series.options.clip !== false || animation) {
+            series.markerGroup
+                .clip((animation || series.clipBox) && series.sharedClipKey ?
+                chart[series.sharedClipKey] :
+                chart.clipRect);
         }
     },
     /**
@@ -217,21 +220,23 @@ seriesType('heatmap', 'scatter',
         var series = this, options = series.options, symbol = options.marker && options.marker.symbol || '', shape = symbols[symbol] ? symbol : 'rect', options = series.options, hasRegularShape = ['circle', 'square'].indexOf(shape) !== -1;
         series.generatePoints();
         series.points.forEach(function (point) {
-            var pointAttr, sizeDif, hasImage = (point.marker && point.marker.symbol || symbol || '')
-                .match(/url/), cellAttr = point.getCellAttributes(), shapeArgs = {
+            var pointAttr, sizeDiff, hasImage, cellAttr = point.getCellAttributes(), shapeArgs = {
                 x: Math.min(cellAttr.x1, cellAttr.x2),
                 y: Math.min(cellAttr.y1, cellAttr.y2),
                 width: Math.max(Math.abs(cellAttr.x2 - cellAttr.x1), 0),
                 height: Math.max(Math.abs(cellAttr.y2 - cellAttr.y1), 0)
             };
+            hasImage = point.hasImage =
+                (point.marker && point.marker.symbol || symbol || '')
+                    .indexOf('url') === 0;
             // If marker shape is regular (symetric), find shorter
             // cell's side.
             if (hasRegularShape) {
-                sizeDif = Math.abs(shapeArgs.width - shapeArgs.height);
+                sizeDiff = Math.abs(shapeArgs.width - shapeArgs.height);
                 shapeArgs.x = Math.min(cellAttr.x1, cellAttr.x2) +
-                    (shapeArgs.width < shapeArgs.height ? 0 : sizeDif / 2);
+                    (shapeArgs.width < shapeArgs.height ? 0 : sizeDiff / 2);
                 shapeArgs.y = Math.min(cellAttr.y1, cellAttr.y2) +
-                    (shapeArgs.width < shapeArgs.height ? sizeDif / 2 : 0);
+                    (shapeArgs.width < shapeArgs.height ? sizeDiff / 2 : 0);
                 shapeArgs.width = shapeArgs.height =
                     Math.min(shapeArgs.width, shapeArgs.height);
             }
@@ -287,17 +292,16 @@ seriesType('heatmap', 'scatter',
      * @return {Highcharts.SVGAttributes}
      */
     markerAttribs: function (point, state) {
-        var pointMarkerOptions = point.marker || {}, seriesMarkerOptions = this.options.marker || {}, seriesStateOptions, pointStateOptions, symbol = (point.marker &&
-            point.marker.symbol || (this.options.marker || {}).symbol), shapeArgs = point.shapeArgs || {}, hasImage = (symbol && symbol.indexOf('url') === 0) || false, attribs = {
-            x: hasImage ? point.plotX : shapeArgs.x,
-            y: hasImage ? point.plotY : shapeArgs.y,
-            width: shapeArgs.width,
-            height: shapeArgs.height
-        };
-        point.hasImage = hasImage;
-        // Setting the width and height on image does not affect
+        var pointMarkerOptions = point.marker || {}, seriesMarkerOptions = this.options.marker || {}, seriesStateOptions, pointStateOptions, shapeArgs = point.shapeArgs || {}, hasImage = point.hasImage, attribs = merge(shapeArgs);
+        if (hasImage) {
+            return {
+                x: point.plotX,
+                y: point.plotY
+            };
+        }
+        // Setting width and height attributes on image does not affect
         // on its dimensions.
-        if (state && !hasImage) {
+        if (state) {
             seriesStateOptions = seriesMarkerOptions.states[state] || {};
             pointStateOptions = pointMarkerOptions.states &&
                 pointMarkerOptions.states[state] || {};
