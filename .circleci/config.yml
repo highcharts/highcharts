@@ -298,7 +298,7 @@ jobs:
       - <<: *load_workspace
       - run:
           name: Upload code to S3
-          command: npx gulp dist-upload
+          command: npx gulp dist-upload-code --bucket ${HIGHCHARTS_S3_BUCKET}
       - slack/status:
           fail_only: true
 
