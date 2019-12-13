@@ -159,7 +159,11 @@ function checkDocsConsistency() {
 
     const sidebar = require('../../docs/sidebars.js');
     const { unlisted } = require('../../docs/doc-config.js');
-    const sidebarDocs = Object.keys(sidebar.docs).flatMap(key => Object.values(sidebar.docs[key]));
+    const sidebarDocs = [];
+
+    Object
+        .keys(sidebar.docs)
+        .forEach(key => sidebarDocs.push(...Object.values(sidebar.docs[key])));
 
     const dirs = FS.readdirSync('docs/');
     const foundDocs = [];

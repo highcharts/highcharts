@@ -1477,7 +1477,7 @@ H.Tooltip.prototype = {
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        H.distribute(boxes as any, maxLength, void 0 as any);
+        H.distribute(boxes as any, maxLength);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
             const { anchorX, anchorY, pos, x } = box;
             // Put the label in place
