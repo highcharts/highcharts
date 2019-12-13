@@ -40,8 +40,9 @@ function prepareRelease() {
 
         if (argv.cleanup) {
             const stagedChanges = ChildProcess.execSync('git diff --cached --name-only').toString();
-            ChildProcess.execSync(`sed -i'' -e s/${buildPropsVersion}.*/${packageJsonVersion}-modified/g build.properties`);
-            ChildProcess.execSync('sed -i\'\' -e s/date=.*/date=/ build.properties');
+            ChildProcess.execSync('mkdir -p tmp');
+            ChildProcess.execSync(`sed -i'tmp/*.bak' -e s/${buildPropsVersion}.*/${packageJsonVersion}-modified/g build.properties`);
+            ChildProcess.execSync('sed -i\'tmp/*.bak\' -e s/date=.*/date=/ build.properties');
 
             if (argv.commit) {
                 if (stagedChanges) {
@@ -69,16 +70,17 @@ function prepareRelease() {
             sometimes have proven not to be, we make sure to replace the existing version in the exact file
             with the next version
         */
-        ChildProcess.execSync(`sed -i'' -e '/version/s/"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
-        ChildProcess.execSync(`sed -i'' -e '/version/s/"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
-        ChildProcess.execSync(`sed -i'' -e s/${buildPropsVersion}/${nextVersion}/ build.properties`);
+        ChildProcess.execSync('mkdir -p tmp');
+        ChildProcess.execSync(`sed -i'tmp/*.bak' -e '/version/s/"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
+        ChildProcess.execSync(`sed -i'tmp/*.bak' -e '/version/s/"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
+        ChildProcess.execSync(`sed -i'tmp/*.bak' -e s/${buildPropsVersion}/${nextVersion}/ build.properties`);
 
         // replace/fill in date in build.properties
-        ChildProcess.execSync('sed -i\'\' -e s/date=.*/date=$(date +%Y-%m-%d)/ build.properties');
+        ChildProcess.execSync('sed -i\'tmp/*.bak\' -e s/date=.*/date=$(date +%Y-%m-%d)/ build.properties');
 
         // replace occurences of @ since next in docs with @since x.y.z, first checking if xargs is on gnu (linux) or bsd (osx).
         const isGNU = ChildProcess.execSync('xargs --version 2>&1 |grep -s GNU >/dev/null && echo true || echo false').toString().replace('\n', '') === 'true';
-        ChildProcess.execSync(`grep -Rl --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+\\next" . | xargs ${isGNU ? '-r' : ''} sed -i'' -e 's/@since *next/@since ${nextVersion}/'`);
+        ChildProcess.execSync(`grep -Rl --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+\\next" . | xargs ${isGNU ? '-r' : ''} sed -i'tmp/*.bak' -e 's/@since *next/@since ${nextVersion}/'`);
 
         LogLib.success('Updated version in package.json, bower.json, build.properties and replaced @ since next' +
                         ' in the docs. Please review changes and commit & push when ready.');
