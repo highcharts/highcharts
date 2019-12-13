@@ -274,6 +274,7 @@ seriesType('pie', 'line',
          * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/
          *         Data labels on top of the pie
          *
+         * @type    {number|string}
          * @since   2.1
          * @product highcharts
          */
