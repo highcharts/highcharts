@@ -326,11 +326,21 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
     // Only do this for 3D columns and it's derived series
     if (this.chart.is3d() &&
         this instanceof seriesTypes.column) {
-        var series = this, chart = series.chart;
-        var args = arguments, alignTo = args[4], point = args[1];
-        var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
-        pos = perspective([pos], chart, true)[0];
-        alignTo.x = pos.x;
+        var args = arguments, alignTo = args[4], point = args[1], dLOptions = args[3];
+        var series = this, seriesOptions = series.options, chart = series.chart, inside = pick(dLOptions.inside, !!series.options.stacking), pos = ({
+            x: alignTo.x + point.pointWidth / 2,
+            y: alignTo.y,
+            z: series.z + seriesOptions.depth / 2
+        });
+        if (this.chart.inverted && inside) {
+            // Inside dataLabels are positioned according to above
+            // logic and there is no need to position them using
+            // non-3D algorighm (that use alignTo.width)
+            alignTo.width = 0;
+            pos.x += point.shapeArgs.height / 2;
+        }
+        pos = perspective([pos], chart, true, false)[0];
+        alignTo.x = pos.x - point.pointWidth / 2;
         // #7103 If point is outside of plotArea, hide data label.
         alignTo.y = point.outside3dPlot ? -9e9 : pos.y;
     }
@@ -339,16 +349,35 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed) {
 // Added stackLabels position calculation for 3D charts.
 wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) {
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
-    // Only do this for 3D chart.
+    // Only do this for 3D column and iherited series.
     if (chart.is3d()) {
-        var pos = ({
-            x: stackBox.x,
-            y: stackBox.y,
-            z: 0
+        var columnSeries;
+        // Check if any series iherits from column 3D
+        chart.series.forEach(function (series) {
+            if (series instanceof seriesTypes.column && series.data.length) {
+                columnSeries = series;
+            }
         });
-        pos = H.perspective([pos], chart, true)[0];
-        stackBox.x = pos.x;
-        stackBox.y = pos.y;
+        // If any series is a column series, use its barW, z and depth
+        // parameters for correct stackLabels position calculation
+        if (columnSeries) {
+            var height = arguments[6], pos = ({
+                x: stackBox.x +
+                    (chart.inverted ?
+                        height :
+                        columnSeries.barW / 2),
+                y: stackBox.y,
+                z: columnSeries.z + columnSeries.options.depth / 2
+            });
+            if (chart.inverted) {
+                // Do not use default offset calculation logic for 3D
+                // inverted stackLabels.
+                stackBox.width = 0;
+            }
+            pos = H.perspective([pos], chart, true, false)[0];
+            stackBox.x = pos.x - columnSeries.barW / 2;
+            stackBox.y = pos.y;
+        }
     }
     return stackBox;
 });

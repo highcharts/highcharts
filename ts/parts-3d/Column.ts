@@ -503,17 +503,32 @@ wrap(Series.prototype, 'alignDataLabel', function (
         this.chart.is3d() &&
         this instanceof seriesTypes.column
     ) {
-        var series = this as Highcharts.ColumnSeries,
-            chart = series.chart;
-
         var args = arguments,
             alignTo = args[4],
-            point = args[1];
+            point = args[1],
+            dLOptions = args[3];
 
-        var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
+        var series = this as Highcharts.ColumnSeries,
+            seriesOptions: Highcharts.ColumnSeriesOptions = series.options,
+            chart = series.chart,
+            inside = pick(dLOptions.inside, !!series.options.stacking),
+            pos = ({
+                x: alignTo.x + point.pointWidth / 2,
+                y: alignTo.y,
+                z: series.z + (seriesOptions as any).depth / 2
+            });
 
-        pos = perspective([pos], chart, true)[0];
-        alignTo.x = pos.x;
+        if (this.chart.inverted && inside) {
+            // Inside dataLabels are positioned according to above
+            // logic and there is no need to position them using
+            // non-3D algorighm (that use alignTo.width)
+            alignTo.width = 0;
+            pos.x += point.shapeArgs.height / 2;
+        }
+
+        pos = perspective([pos], chart, true, false)[0];
+
+        alignTo.x = pos.x - point.pointWidth / 2;
         // #7103 If point is outside of plotArea, hide data label.
         alignTo.y = point.outside3dPlot ? -9e9 : pos.y;
     }
@@ -528,18 +543,42 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
     chart: Highcharts.Chart
 ): void { // #3946
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
-
-    // Only do this for 3D chart.
+    // Only do this for 3D column and iherited series.
     if (chart.is3d()) {
-        var pos = ({
-            x: stackBox.x,
-            y: stackBox.y,
-            z: 0
+        var columnSeries: Highcharts.ColumnSeries | undefined;
+        // Check if any series iherits from column 3D
+        chart.series.forEach(function (
+            series: Highcharts.Series
+        ): void {
+            if (series instanceof seriesTypes.column && series.data.length) {
+                columnSeries = series;
+            }
         });
+        // If any series is a column series, use its barW, z and depth
+        // parameters for correct stackLabels position calculation
+        if (columnSeries) {
+            var height: number = arguments[6],
+                pos = ({
+                    x: stackBox.x +
+                        (
+                            chart.inverted ?
+                                height :
+                                (columnSeries as any).barW / 2
+                        ),
+                    y: stackBox.y,
+                    z: columnSeries.z + (columnSeries.options as any).depth / 2
+                });
 
-        pos = H.perspective([pos], chart, true)[0];
-        stackBox.x = pos.x;
-        stackBox.y = pos.y;
+            if (chart.inverted) {
+                // Do not use default offset calculation logic for 3D
+                // inverted stackLabels.
+                stackBox.width = 0;
+            }
+
+            pos = H.perspective([pos], chart, true, false)[0];
+            stackBox.x = pos.x - (columnSeries as any).barW / 2;
+            stackBox.y = pos.y;
+        }
     }
 
     return stackBox;
