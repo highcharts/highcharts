@@ -542,7 +542,7 @@ seriesType<Highcharts.HeatmapSeries>(
                     point: Highcharts.HeatmapPoint
                 ): void => {
                     point.graphic &&
-                    point.graphic[
+                    (point.graphic as any)[
                         this.chart.styledMode ? 'css' : 'animate'
                     ](this.colorAttribs(point));
                 });

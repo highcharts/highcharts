@@ -802,7 +802,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
             this.points.forEach(
                 (point: Highcharts.TilemapPoint): void => {
                     point.graphic &&
-                        point.graphic[
+                        (point.graphic as any)[
                             this.chart.styledMode ? 'css' : 'animate'
                         ](this.colorAttribs(point));
                 }
