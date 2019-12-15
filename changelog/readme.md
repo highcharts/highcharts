@@ -9,6 +9,7 @@ line break `\n` is removed.
 * For consistency, bug fixes should start with "Fixed #xxxx".
 * Since the changelog refers to changes that were done by a past release, write
 in past tense.
+* Describe bug fixes in a way that users recognize and can relate to their issue. It should describe the bug it fixes, rather than (or in addition to) describing the internals of how it was fixed.
 * Names of API members should be written with code formatting.
     * Bad: Fixed issue with dataGrouping.
     * Good: Fixed issue with `dataGrouping`.

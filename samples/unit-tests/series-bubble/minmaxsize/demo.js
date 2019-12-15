@@ -54,7 +54,12 @@ QUnit.test('Distinct min and max for bubble padding.(#4313)', function (assert) 
             }]
         }).highcharts(),
         topPoint = chart.series[0].points[0],
-        rightPoint = chart.series[0].points[1];
+        rightPoint = chart.series[0].points[1],
+        result,
+        point,
+        xAxis,
+        approximateMin,
+        maxDifference;
 
     assert.strictEqual(
         topPoint.graphic.y > 0,
@@ -66,6 +71,60 @@ QUnit.test('Distinct min and max for bubble padding.(#4313)', function (assert) 
         true,
         'Proper padding for xAxis.max'
     );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bubble',
+            plotBorderWidth: 1
+        },
+        xAxis: {
+            max: 2060
+        },
+        series: [{
+            marker: {
+                lineWidth: 0
+            },
+            data: [{
+                x: 2900,
+                y: 3300,
+                z: 13.79
+            }, {
+                x: 2000,
+                y: 2600,
+                z: 30
+            }, {
+                x: 1200,
+                y: 1500,
+                z: 25
+            }]
+        }]
+    });
+
+    result = false;
+    point = chart.series[0].points[2];
+    xAxis = chart.xAxis[0];
+    approximateMin = point.x - (xAxis.toValue(point.graphic.radius) - xAxis.toValue(0));
+    maxDifference = xAxis.toValue(5) - xAxis.toValue(0);
+
+    if (Math.abs(xAxis.min - approximateMin) < maxDifference) {
+        result = true;
+    }
+
+    assert.ok(result, 'Proper xAxis.min when xAxis.max is set (#12543).');
+
+    xAxis.update({
+        max: 1500
+    });
+
+    result = false;
+    approximateMin = point.x - (xAxis.toValue(point.graphic.radius) - xAxis.toValue(0));
+    maxDifference = xAxis.toValue(5) - xAxis.toValue(0);
+
+    if (Math.abs(xAxis.min - approximateMin) < maxDifference) {
+        result = true;
+    }
+
+    assert.ok(result, 'Proper xAxis.min after update when xAxis.max is set (#12543).');
 });
 
 QUnit.test('Set min/max size', function (assert) {

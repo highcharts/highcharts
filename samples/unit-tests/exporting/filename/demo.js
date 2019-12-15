@@ -119,6 +119,48 @@ QUnit.test('POST filename', function (assert) {
         Highcharts.post = originalPost;
 
     }
+    try {
+
+        Highcharts.post = function (url, data) {
+            postData = data;
+        };
 
 
+        // Run export width custom file name
+        chart.exportChart({
+            type: 'application/pdf',
+            filename: 'lorem/ipsum'
+        });
+
+        assert.strictEqual(
+            postData.filename,
+            'lorem-ipsum',
+            'Forward slash in filename was replaced'
+        );
+
+    } finally {
+
+        Highcharts.post = originalPost;
+
+    }
+
+
+});
+
+QUnit.test("Filename option", assert => {
+    const chart = title => Highcharts
+        .chart('container', {
+            title: {
+                text: 'Title text'
+            },
+            exporting: {
+                filename: title
+            }
+        });
+
+    assert.strictEqual(
+        chart('Medical/Dental office').getFilename(),
+        'Medical-Dental office',
+        'Forward slash should be replaced with dash'
+    );
 });

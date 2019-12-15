@@ -1,6 +1,8 @@
 version: 2.1
 orbs:
   aws-s3: circleci/aws-s3@1.0.11
+  slack: circleci/slack@3.4.1
+
 parameters:
   run_reset_tests:
     type: boolean
@@ -94,6 +96,7 @@ jobs:
            - /home/circleci/repo/highcharts/node_modules
          key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
+     - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
      - <<: *persist_workspace
 
   generate_ts_declarations:
@@ -125,18 +128,31 @@ jobs:
         description: "Number of browser instances"
         type: integer
         default: 1
+      notify_on_failure:
+        type: boolean
+        default: false
     steps:
       - << : *load_workspace
       - run:
           command: "npx cross-env NODE_OPTIONS=--max_old_space_size=3072 karma start test/karma-conf.js --single-run --splitbrowsers << parameters.browsers >> --browsercount << parameters.browsercount >>"
           no_output_timeout: 20m
+      - when:
+          condition: << parameters.notify_on_failure >>
+          steps:
+            - slack/status:
+                fail_only: true
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
     description: Checks for changes in docs/ and triggers deploy via doc-builder
+    parameters:
+      always_deploy:
+        description: "Deploy regardless of finding changes in docs/ on last commit"
+        type: boolean
+        default: false
     steps:
       - <<: *load_workspace
-      - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN}
+      - run: ./.circleci/scripts/check_and_trigger_docs_deploy.sh  --bucket=${DOCS_DEPLOY_BUCKET} --token=${CIRCLE_API_TOKEN} <<# parameters.always_deploy >>-f<</ parameters.always_deploy >>
 
   generate_release_reference_images:
     <<: *defaults
@@ -157,7 +173,7 @@ jobs:
 
   reset_visual_references_job:
     <<: *defaults
-    description: Reset reference images stored on S3 based on
+    description: Reset reference images stored on S3 based. I.e recently added/changed samples will be treated as always being a part of this release.
     parameters:
       reset_tests:
         description: "Which tests to run?"
@@ -283,6 +299,8 @@ jobs:
       - run:
           name: Upload code to S3
           command: npx gulp dist-upload
+      - slack/status:
+          fail_only: true
 
   deploy_api_docs:
     <<: *defaults
@@ -295,6 +313,8 @@ jobs:
           name: Upload api docs to S3
           command: npx gulp upload-api --silent --noextensions
       - run: echo -e "API docs deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_APIDOCS_BUCKET}/highcharts/index.html"
+      - slack/status:
+          fail_only: true
 
   deploy_changelog:
     <<: *defaults
@@ -315,6 +335,8 @@ jobs:
           name: Changelog - Upload changelog
           command: git ls-files -m --others --exclude-standard | grep -i changelog | tr '\n' ',' | sed 's/,$/\n/' | xargs npx gulp upload-files --bucket ${HIGHCHARTS_CHANGELOG_BUCKET} --files
       - run: echo -e "Changelog deployed to https://s3.eu-central-1.amazonaws.com/${HIGHCHARTS_CHANGELOG_BUCKET}/changelog/changelog.html"
+      - slack/status:
+          fail_only: true
 
   deploy_to_highcharts_dist:
     <<: *defaults
@@ -340,6 +362,8 @@ jobs:
             git add .
             git commit -m"Nightly build - ${CIRCLE_BUILD_NUM}"
             git push -u origin nightly
+      - slack/status:
+          fail_only: true
 workflows:
   version: 2
   build_and_test:
@@ -402,7 +426,17 @@ workflows:
           filters:
             branches:
               only: [master]
-          context: highcharts-staging
+          context: highcharts-prod
+      - check_for_docs_changes_and_deploy:
+          # need to add this release deploy job separately as it has different requires tag than master branch.
+          requires: [generate_release_reference_images]
+          always_deploy: true
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v\d+(?:\.\d+)+?$/
+          context: highcharts-prod
 
   nightly:
     triggers:
@@ -423,20 +457,24 @@ workflows:
           name: "test-Mac.Safari"
           requires: [checkout_and_install]
           browsers: "Mac.Safari"
+          notify_on_failure: true
       - test_browsers:
           name: "test-Win.Chrome"
           browsercount: 2
           requires: ["test-Mac.Safari"]
           browsers: "Win.Chrome"
+          notify_on_failure: true
       - test_browsers:
           name: "test-Mac.Firefox"
           browsercount: 2
           requires: ["test-Win.Chrome"]
           browsers: "Mac.Firefox"
+          notify_on_failure: true
       - test_browsers:
           name: "test-Win.IE8"
           requires: ["test-Mac.Firefox"]
           browsers: "Win.IE8 --oldie"
+          notify_on_failure: true
       - build_dist:
           requires: [checkout_and_install, "test-Win.IE8"]
       - deploy_code:

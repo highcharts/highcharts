@@ -1,0 +1,6 @@
+---
+ name: Cybertruck Chart with Highcharts
+ authors:
+   - Torstein Hønsi
+ js_wrap: b
+...

@@ -14,16 +14,17 @@ import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Color.js';
 /* eslint-disable no-invalid-this */
+var AXIS_MAX = 100;
 var seriesType = H.seriesType, seriesTypes = H.seriesTypes, addEvent = H.addEvent, merge = H.merge, error = H.error, noop = H.noop, fireEvent = H.fireEvent, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
 // @todo Similar to eachObject, this function is likely redundant
 isBoolean = function (x) {
     return typeof x === 'boolean';
-}, Series = H.Series, stableSort = H.stableSort, color = H.Color, 
+}, Series = H.Series, color = H.Color, 
 // @todo Similar to recursive, this function is likely redundant
 eachObject = function (list, func, context) {
     context = context || this;
@@ -689,6 +690,9 @@ seriesType('treemap', 'scatter'
             });
             child.pointValues = merge(values, {
                 x: (values.x / series.axisRatio),
+                // Flip y-values to avoid visual regression with csvCoord in
+                // Axis.translate at setPointValues. #12488
+                y: AXIS_MAX - values.y - values.height,
                 width: (values.width / series.axisRatio)
             });
             // If node has children, then call method recursively
@@ -698,24 +702,28 @@ seriesType('treemap', 'scatter'
         });
     },
     setPointValues: function () {
-        var series = this, xAxis = series.xAxis, yAxis = series.yAxis;
-        series.points.forEach(function (point) {
-            var node = point.node, values = node.pointValues, x1, x2, y1, y2, crispCorr = 0;
-            // Get the crisp correction in classic mode. For this to work in
-            // styled mode, we would need to first add the shape (without x,
-            // y, width and height), then read the rendered stroke width
-            // using point.graphic.strokeWidth(), then modify and apply the
-            // shapeArgs. This applies also to column series, but the
-            // downside is performance and code complexity.
-            if (!series.chart.styledMode) {
-                crispCorr = ((series.pointAttribs(point)['stroke-width'] || 0) % 2) / 2;
-            }
+        var series = this;
+        var points = series.points, xAxis = series.xAxis, yAxis = series.yAxis;
+        var styledMode = series.chart.styledMode;
+        // Get the crisp correction in classic mode. For this to work in
+        // styled mode, we would need to first add the shape (without x,
+        // y, width and height), then read the rendered stroke width
+        // using point.graphic.strokeWidth(), then modify and apply the
+        // shapeArgs. This applies also to column series, but the
+        // downside is performance and code complexity.
+        var getCrispCorrection = function (point) { return (styledMode ?
+            0 :
+            ((series.pointAttribs(point)['stroke-width'] || 0) % 2) / 2); };
+        points.forEach(function (point) {
+            var _a = point.node, values = _a.pointValues, visible = _a.visible;
             // Points which is ignored, have no values.
-            if (values && node.visible) {
-                x1 = Math.round(xAxis.translate(values.x, 0, 0, 0, 1)) - crispCorr;
-                x2 = Math.round(xAxis.translate(values.x + values.width, 0, 0, 0, 1)) - crispCorr;
-                y1 = Math.round(yAxis.translate(values.y, 0, 0, 0, 1)) - crispCorr;
-                y2 = Math.round(yAxis.translate(values.y + values.height, 0, 0, 0, 1)) - crispCorr;
+            if (values && visible) {
+                var height = values.height, width = values.width, x = values.x, y = values.y;
+                var crispCorr = getCrispCorrection(point);
+                var x1 = Math.round(xAxis.toPixels(x, true)) - crispCorr;
+                var x2 = Math.round(xAxis.toPixels(x + width, true)) - crispCorr;
+                var y1 = Math.round(yAxis.toPixels(y, true)) - crispCorr;
+                var y2 = Math.round(yAxis.toPixels(y + height, true)) - crispCorr;
                 // Set point values
                 point.shapeArgs = {
                     x: Math.min(x1, x2),
@@ -990,8 +998,8 @@ seriesType('treemap', 'scatter'
         series.nodeMap[''].pointValues = pointValues = {
             x: 0,
             y: 0,
-            width: 100,
-            height: 100
+            width: AXIS_MAX,
+            height: AXIS_MAX
         };
         series.nodeMap[''].values = seriesArea = merge(pointValues, {
             width: (pointValues.width * series.axisRatio),
@@ -1361,8 +1369,8 @@ seriesType('treemap', 'scatter'
             min: 0,
             dataMin: 0,
             minPadding: 0,
-            max: 100,
-            dataMax: 100,
+            max: AXIS_MAX,
+            dataMax: AXIS_MAX,
             maxPadding: 0,
             startOnTick: false,
             title: null,

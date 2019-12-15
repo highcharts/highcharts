@@ -38,6 +38,21 @@ QUnit.test('Accessibility disabled', function (assert) {
     );
 });
 
+QUnit.test('Keyboard nav disabled', function (assert) {
+    const chart = Highcharts.chart('container', {
+        accessibility: {
+            keyboardNavigation: {
+                enabled: false
+            }
+        },
+        series: [{
+            data: [1]
+        }]
+    });
+
+    assert.notOk(chart.container.getAttribute('tabindex'), 'There is no tabindex on container');
+});
+
 QUnit.test('No data', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{}]

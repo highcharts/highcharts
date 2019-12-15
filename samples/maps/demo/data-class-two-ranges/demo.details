@@ -3,7 +3,8 @@ name: Data classes and popup
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highmaps demo
 categories:
   - General
 ...

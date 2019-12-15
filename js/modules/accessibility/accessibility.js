@@ -6,39 +6,16 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
-/**
- * @interface Highcharts.PointAccessibilityOptionsObject
- *//**
- * Provide a description of the data point, announced to screen readers.
- * @name Highcharts.PointAccessibilityOptionsObject#description
- * @type {string|undefined}
- * @requires modules/accessibility
- * @since 7.1.0
- */
-
-/* *
- * @interface Highcharts.PointOptionsObject in parts/Point.ts
- *//**
- * @name Highcharts.PointOptionsObject#accessibility
- * @type {Highcharts.PointAccessibilityOptionsObject|undefined}
- * @requires modules/accessibility
- * @since 7.1.0
- */
-
 'use strict';
-
+import ChartUtilities from './utils/chartUtilities.js';
 import H from '../../parts/Globals.js';
-var addEvent = H.addEvent,
-    doc = H.win.document,
-    merge = H.merge,
-    fireEvent = H.fireEvent;
-
+import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import U from '../../parts/Utilities.js';
 var extend = U.extend;
-
-import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+var addEvent = H.addEvent, doc = H.win.document, merge = H.merge, fireEvent = H.fireEvent;
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './components/LegendComponent.js';
@@ -48,7 +25,6 @@ import ZoomComponent from './components/ZoomComponent.js';
 import RangeSelectorComponent from './components/RangeSelectorComponent.js';
 import InfoRegionsComponent from './components/InfoRegionsComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
-import ChartUtilities from './utils/chartUtilities.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
 import defaultOptions from './options/options.js';
@@ -56,8 +32,6 @@ import defaultLangOptions from './options/langOptions.js';
 import copyDeprecatedOptions from './options/deprecatedOptions.js';
 import './a11y-i18n.js';
 import './focusBorder.js';
-
-
 // Add default options
 merge(true, H.defaultOptions, defaultOptions, {
     accessibility: {
@@ -65,14 +39,11 @@ merge(true, H.defaultOptions, defaultOptions, {
     },
     lang: defaultLangOptions
 });
-
-
 // Expose functionality on Highcharts namespace
 H.A11yChartUtilities = ChartUtilities;
 H.KeyboardNavigationHandler = KeyboardNavigationHandler;
 H.AccessibilityComponent = AccessibilityComponent;
-
-
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Accessibility class
  *
@@ -88,9 +59,7 @@ H.AccessibilityComponent = AccessibilityComponent;
 function Accessibility(chart) {
     this.init(chart);
 }
-
 Accessibility.prototype = {
-
     /**
      * Initialize the accessibility class
      * @private
@@ -99,32 +68,23 @@ Accessibility.prototype = {
      */
     init: function (chart) {
         this.chart = chart;
-
         // Abort on old browsers
         if (!doc.addEventListener || !chart.renderer.isSVG) {
             chart.renderTo.setAttribute('aria-hidden', true);
             return;
         }
-
         // Copy over any deprecated options that are used. We could do this on
         // every update, but it is probably not needed.
         copyDeprecatedOptions(chart);
-
         this.initComponents();
-        this.keyboardNavigation = new KeyboardNavigation(
-            chart, this.components
-        );
+        this.keyboardNavigation = new KeyboardNavigation(chart, this.components);
         this.update();
     },
-
-
     /**
      * @private
      */
     initComponents: function () {
-        var chart = this.chart,
-            a11yOptions = chart.options.accessibility;
-
+        var chart = this.chart, a11yOptions = chart.options.accessibility;
         this.components = {
             container: new ContainerComponent(),
             infoRegions: new InfoRegionsComponent(),
@@ -137,7 +97,6 @@ Accessibility.prototype = {
         if (a11yOptions.customComponents) {
             extend(this.components, a11yOptions.customComponents);
         }
-
         var components = this.components;
         // Refactor to use Object.values if we polyfill
         Object.keys(components).forEach(function (componentName) {
@@ -145,78 +104,55 @@ Accessibility.prototype = {
             components[componentName].init();
         });
     },
-
-
     /**
      * Update all components.
      */
     update: function () {
-        var components = this.components,
-            chart = this.chart,
-            a11yOptions = chart.options.accessibility;
-
+        var components = this.components, chart = this.chart, a11yOptions = chart.options.accessibility;
         fireEvent(chart, 'beforeA11yUpdate');
-
         // Update the chart type list as this is used by multiple modules
         chart.types = this.getChartTypes();
-
         // Update markup
         Object.keys(components).forEach(function (componentName) {
             components[componentName].onChartUpdate();
-
             fireEvent(chart, 'afterA11yComponentUpdate', {
                 name: componentName,
                 component: components[componentName]
             });
         });
-
         // Update keyboard navigation
-        this.keyboardNavigation.update(
-            a11yOptions.keyboardNavigation.order
-        );
-
+        this.keyboardNavigation.update(a11yOptions.keyboardNavigation.order);
         // Handle high contrast mode
-        if (
-            !chart.highContrastModeActive && // Only do this once
-            whcm.isHighContrastModeActive(chart)
-        ) {
+        if (!chart.highContrastModeActive && // Only do this once
+            whcm.isHighContrastModeActive()) {
             whcm.setHighContrastTheme(chart);
         }
-
         fireEvent(chart, 'afterA11yUpdate');
     },
-
-
     /**
      * Destroy all elements.
      */
     destroy: function () {
         var chart = this.chart || {};
-
         // Destroy components
         var components = this.components;
         Object.keys(components).forEach(function (componentName) {
             components[componentName].destroy();
             components[componentName].destroyBase();
         });
-
         // Kill keyboard nav
         if (this.keyboardNavigation) {
             this.keyboardNavigation.destroy();
         }
-
         // Hide container from screen readers if it exists
         if (chart.renderTo) {
             chart.renderTo.setAttribute('aria-hidden', true);
         }
-
         // Remove focus border if it exists
         if (chart.focusElement) {
             chart.focusElement.removeFocusBorder();
         }
     },
-
-
     /**
      * Return a list of the types of series we have in the chart.
      * @private
@@ -229,32 +165,31 @@ Accessibility.prototype = {
         return Object.keys(types);
     }
 };
-
-
 /**
  * @private
  */
 H.Chart.prototype.updateA11yEnabled = function () {
-    var a11y = this.accessibility,
-        accessibilityOptions = this.options.accessibility;
+    var a11y = this.accessibility, accessibilityOptions = this.options.accessibility;
     if (accessibilityOptions && accessibilityOptions.enabled) {
         if (a11y) {
             a11y.update();
-        } else {
+        }
+        else {
             this.accessibility = a11y = new Accessibility(this);
         }
-    } else if (a11y) {
+    }
+    else if (a11y) {
         // Destroy if after update we have a11y and it is disabled
         if (a11y.destroy) {
             a11y.destroy();
         }
         delete this.accessibility;
-    } else {
+    }
+    else {
         // Just hide container
         this.renderTo.setAttribute('aria-hidden', true);
     }
 };
-
 // Handle updates to the module and send render updates to components
 addEvent(H.Chart, 'render', function (e) {
     // Update/destroy
@@ -262,15 +197,13 @@ addEvent(H.Chart, 'render', function (e) {
         delete this.a11yDirty;
         this.updateA11yEnabled();
     }
-
     var a11y = this.accessibility;
     if (a11y) {
         Object.keys(a11y.components).forEach(function (componentName) {
-            a11y.components[componentName].onChartRender(e);
+            a11y.components[componentName].onChartRender();
         });
     }
 });
-
 // Update with chart/series/point updates
 addEvent(H.Chart, 'update', function (e) {
     // Merge new options
@@ -289,11 +222,9 @@ addEvent(H.Chart, 'update', function (e) {
             delete this.accessibility;
         }
     }
-
     // Mark dirty for update
     this.a11yDirty = true;
 });
-
 // Mark dirty for update
 addEvent(H.Point, 'update', function () {
     if (this.series.chart.accessibility) {
@@ -312,7 +243,6 @@ addEvent(H.Point, 'update', function () {
         }
     });
 });
-
 // Direct updates (events happen after render)
 [
     'afterDrilldown', 'drillupall'
@@ -323,7 +253,6 @@ addEvent(H.Point, 'update', function () {
         }
     });
 });
-
 // Destroy with chart
 addEvent(H.Chart, 'destroy', function () {
     if (this.accessibility) {

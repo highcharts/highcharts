@@ -98,7 +98,7 @@ var pick = H.pick,
  * @product      highcharts highstock
  * @excluding    fillColor, fillOpacity, lineWidth, stack, stacking,
  *               stickyTracking, trackByArea
- * @since        next
+ * @since 8.0.0
  * @optionparent plotOptions.dumbbell
  */
 seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
@@ -112,7 +112,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     /**
      * Pixel width of the line that connects the dumbbell point's values.
      *
-     * @since     next
+     * @since 8.0.0
      * @product   highcharts highstock
      */
     connectorWidth: 1,
@@ -124,7 +124,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
      * Color of the start markers in a dumbbell graph.
      *
      * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     * @since     next
+     * @since 8.0.0
      * @product   highcharts highstock
      */
     lowColor: '${palette.neutralColor80}',
@@ -134,7 +134,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
      *
      * @type      {string}
      * @product   highcharts highstock
-     * @since     next
+     * @since 8.0.0
      * @apioption plotOptions.dumbbell.connectorColor
      */
     states: {
@@ -144,7 +144,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
             /**
              * The additional connector line width for a hovered point.
              *
-             * @since next
+             * @since 8.0.0
              * @product   highcharts highstock
              */
             connectorWidthPlus: 1,
@@ -184,7 +184,8 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
         if (points[1] === points[4]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[1] = points[4] = Math.floor(points[1] as any);
+            points[1] = points[4] =
+                Math.floor(points[1] as any) + (width % 2 / 2);
         }
         if (points[2] === points[5]) {
             points[2] = points[5] =
@@ -325,7 +326,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     ): void {
         var series = this,
             animationLimit = pick(series.options.animationLimit, 250),
-            verb = series.chart.pointCount < animationLimit ?
+            verb = point.connector && series.chart.pointCount < animationLimit ?
                 'animate' : 'attr';
 
         if (!point.connector) {

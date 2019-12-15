@@ -3,7 +3,8 @@ name: 'Column, line and pie'
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Combinations
 ...

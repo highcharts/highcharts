@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick, splat = U.splat, wrap = U.wrap;
+var defined = U.defined, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -106,12 +106,18 @@ seriesProto.getConnectors = function (segment, index, calculateNeighbours, conne
  * @private
  */
 seriesProto.toXY = function (point) {
-    var xy, chart = this.chart, plotX = point.plotX, plotY = point.plotY, clientX;
+    var xy, chart = this.chart, xAxis = this.xAxis, yAxis = this.yAxis, plotX = point.plotX, plotY = point.plotY, series = point.series, inverted = chart.inverted, pointY = point.y, clientX;
+    // Corrected y position of inverted series other than column
+    if (inverted && series && !series.isRadialBar) {
+        point.plotY = plotY =
+            typeof pointY === 'number' ? (yAxis.translate(pointY) || 0) : 0;
+    }
     // Save rectangular plotX, plotY for later computation
     point.rectPlotX = plotX;
     point.rectPlotY = plotY;
     // Find the polar plotX and plotY
-    xy = this.xAxis.postTranslate(point.plotX, this.yAxis.len - plotY);
+    xy = inverted ? xAxis.postTranslate(plotY, plotX) :
+        xAxis.postTranslate(plotX, yAxis.len - plotY);
     point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
     point.plotY = point.polarPlotY = xy.y - chart.plotTop;
     // If shared tooltip, record the angle in degrees in order to align X
@@ -119,7 +125,7 @@ seriesProto.toXY = function (point) {
     // in two dimensions.
     if (this.kdByAngle) {
         clientX = ((plotX / Math.PI * 180) +
-            this.xAxis.pane.options.startAngle) % 360;
+            xAxis.pane.options.startAngle) % 360;
         if (clientX < 0) { // #2665
             clientX += 360;
         }
@@ -283,40 +289,47 @@ var polarAnimate = function (proceed, init) {
     var chart = this.chart, animation = this.options.animation, group = this.group, markerGroup = this.markerGroup, center = this.xAxis.center, plotLeft = chart.plotLeft, plotTop = chart.plotTop, attribs;
     // Specific animation for polar charts
     if (chart.polar) {
-        // Enable animation on polar charts only in SVG. In VML, the scaling
-        // is different, plus animation would be so slow it would't matter.
-        if (chart.renderer.isSVG) {
-            if (animation === true) {
-                animation = {};
+        if (this.isRadialBar) {
+            if (!init) {
+                // Run the pie animation for radial bars
+                this.startAngleRad = pick(this.translatedThreshold, this.xAxis.startAngleRad);
+                H.seriesTypes.pie.prototype.animate.call(this, init);
             }
-            // Initialize the animation
-            if (init) {
-                // Scale down the group and place it in the center
-                attribs = {
-                    translateX: center[0] + plotLeft,
-                    translateY: center[1] + plotTop,
-                    scaleX: 0.001,
-                    scaleY: 0.001
-                };
-                group.attr(attribs);
-                if (markerGroup) {
-                    markerGroup.attr(attribs);
+        }
+        else {
+            // Enable animation on polar charts only in SVG. In VML, the scaling
+            // is different, plus animation would be so slow it would't matter.
+            if (chart.renderer.isSVG) {
+                animation = H.animObject(animation);
+                // Initialize the animation
+                if (init) {
+                    // Scale down the group and place it in the center
+                    attribs = {
+                        translateX: center[0] + plotLeft,
+                        translateY: center[1] + plotTop,
+                        scaleX: 0.001,
+                        scaleY: 0.001
+                    };
+                    group.attr(attribs);
+                    if (markerGroup) {
+                        markerGroup.attr(attribs);
+                    }
+                    // Run the animation
                 }
-                // Run the animation
-            }
-            else {
-                attribs = {
-                    translateX: plotLeft,
-                    translateY: plotTop,
-                    scaleX: 1,
-                    scaleY: 1
-                };
-                group.animate(attribs, animation);
-                if (markerGroup) {
-                    markerGroup.animate(attribs, animation);
+                else {
+                    attribs = {
+                        translateX: plotLeft,
+                        translateY: plotTop,
+                        scaleX: 1,
+                        scaleY: 1
+                    };
+                    group.animate(attribs, animation);
+                    if (markerGroup) {
+                        markerGroup.animate(attribs, animation);
+                    }
+                    // Delete this function to allow it only once
+                    this.animate = null;
                 }
-                // Delete this function to allow it only once
-                this.animate = null;
             }
         }
         // For non-polar charts, revert to the basic animation
@@ -347,61 +360,229 @@ if (seriesTypes.column) {
      * @private
      */
     wrap(colProto, 'translate', function (proceed) {
-        var xAxis = this.xAxis, startAngleRad = xAxis.startAngleRad, start, points, point, i;
-        this.preventPostTranslate = true;
+        var series = this, options = series.options, threshold = options.threshold, stacking = options.stacking, chart = series.chart, xAxis = series.xAxis, yAxis = series.yAxis, reversed = yAxis.reversed, center = xAxis.center, startAngleRad = xAxis.startAngleRad, endAngleRad = xAxis.endAngleRad, visibleRange = endAngleRad - startAngleRad, thresholdAngleRad, points, point, i, yMin, yMax, start, end, tooltipPos, pointX, pointY, stackValues, stack, barX, innerR, r;
+        series.preventPostTranslate = true;
         // Run uber method
-        proceed.call(this);
+        proceed.call(series);
         // Postprocess plot coordinates
         if (xAxis.isRadial) {
-            points = this.points;
+            points = series.points;
             i = points.length;
+            yMin = yAxis.translate(yAxis.min);
+            yMax = yAxis.translate(yAxis.max);
+            threshold = options.threshold || 0;
+            if (chart.inverted) {
+                // Finding a correct threshold
+                if (H.isNumber(threshold)) {
+                    thresholdAngleRad = yAxis.translate(threshold);
+                    // Checks if threshold is outside the visible range
+                    if (defined(thresholdAngleRad)) {
+                        if (thresholdAngleRad < 0) {
+                            thresholdAngleRad = 0;
+                        }
+                        else if (thresholdAngleRad > visibleRange) {
+                            thresholdAngleRad = visibleRange;
+                        }
+                        // Adding start angle offset
+                        series.translatedThreshold =
+                            thresholdAngleRad + startAngleRad;
+                    }
+                }
+            }
             while (i--) {
                 point = points[i];
-                start = point.barX + startAngleRad;
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: this.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth)
-                };
-                // Provide correct plotX, plotY for tooltip
-                this.toXY(point);
-                point.tooltipPos = [point.plotX, point.plotY];
-                point.ttBelow = point.plotY > xAxis.center[1];
+                barX = point.barX;
+                pointX = point.x;
+                pointY = point.y;
+                if (chart.inverted) {
+                    point.shapeType = 'arc';
+                    point.plotY = yAxis.translate(pointY);
+                    if (stacking) {
+                        stack = yAxis.stacks[(pointY < 0 ? '-' : '') +
+                            series.stackKey];
+                        if (series.visible && stack && stack[pointX]) {
+                            if (!point.isNull) {
+                                stackValues = stack[pointX].points[series.getStackIndicator(void 0, pointX, series.index).key];
+                                // Translating to radial values
+                                start = yAxis.translate(stackValues[0]);
+                                end = yAxis.translate(stackValues[1]);
+                                // If starting point is beyond the
+                                // range, set it to 0
+                                if (defined(start)) {
+                                    start = U.clamp(start, 0, visibleRange);
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        // Initial start and end angles for radial bar
+                        start = thresholdAngleRad;
+                        end = point.plotY;
+                    }
+                    if (start > end) {
+                        // Swapping start and end
+                        end = [start, start = end][0];
+                    }
+                    // Prevent from rendering point outside the
+                    // acceptable circular range
+                    if (!reversed) {
+                        if (start < yMin) {
+                            start = yMin;
+                        }
+                        else if (end > yMax) {
+                            end = yMax;
+                        }
+                        else if (end < yMin || start > yMax) {
+                            start = end = 0;
+                        }
+                    }
+                    else {
+                        if (end > yMin) {
+                            end = yMin;
+                        }
+                        else if (start < yMax) {
+                            start = yMax;
+                        }
+                        else if (start > yMin || end < yMax) {
+                            start = end = visibleRange;
+                        }
+                    }
+                    if (yAxis.min > yAxis.max) {
+                        start = end = reversed ? visibleRange : 0;
+                    }
+                    start += startAngleRad;
+                    end += startAngleRad;
+                    // In case when radius, inner radius or both are
+                    // negative, a point is rendered but partially or as
+                    // a center point
+                    innerR = Math.max(barX, 0);
+                    r = Math.max(barX + point.pointWidth, 0);
+                    point.shapeArgs = {
+                        x: center[0],
+                        y: center[1],
+                        r: r,
+                        innerR: innerR,
+                        start: start,
+                        end: end
+                    };
+                    // Fade out the points if not inside the polar "plot area"
+                    point.opacity = start === end ? 0 : void 0;
+                    // A correct value for stacked or not fully visible
+                    // point
+                    point.plotY = (defined(series.translatedThreshold) &&
+                        (start < series.translatedThreshold ? start : end)) -
+                        startAngleRad;
+                }
+                else {
+                    point.shapeType = 'path';
+                    start = barX + startAngleRad;
+                    point.shapeArgs = {
+                        d: series.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth)
+                    };
+                }
+                // Provided a correct coordinates for the tooltip
+                series.toXY(point);
+                if (chart.inverted) {
+                    tooltipPos = xAxis.postTranslate(point.rectPlotY, point.barX + point.pointWidth / 2);
+                    point.tooltipPos = [
+                        tooltipPos.x - chart.plotLeft,
+                        tooltipPos.y - chart.plotTop
+                    ];
+                }
+                else {
+                    point.tooltipPos = [point.plotX, point.plotY];
+                }
+                point.ttBelow = point.plotY > center[1];
             }
         }
     });
+    /**
+     * Find correct align and vertical align based on an angle in polar chart
+     * @private
+     */
+    colProto.findAlignments = function (angle, options) {
+        var align, verticalAlign;
+        if (options.align === null) {
+            if (angle > 20 && angle < 160) {
+                align = 'left'; // right hemisphere
+            }
+            else if (angle > 200 && angle < 340) {
+                align = 'right'; // left hemisphere
+            }
+            else {
+                align = 'center'; // top or bottom
+            }
+            options.align = align;
+        }
+        if (options.verticalAlign === null) {
+            if (angle < 45 || angle > 315) {
+                verticalAlign = 'bottom'; // top part
+            }
+            else if (angle > 135 && angle < 225) {
+                verticalAlign = 'top'; // bottom part
+            }
+            else {
+                verticalAlign = 'middle'; // left or right
+            }
+            options.verticalAlign = verticalAlign;
+        }
+        return options;
+    };
     /**
      * Align column data labels outside the columns. #1199.
      * @private
      */
     wrap(colProto, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo, isNew) {
-        if (this.chart.polar) {
-            var angle = point.rectPlotX / Math.PI * 180, align, verticalAlign;
-            // Align nicely outside the perimeter of the columns
-            if (options.align === null) {
-                if (angle > 20 && angle < 160) {
-                    align = 'left'; // right hemisphere
-                }
-                else if (angle > 200 && angle < 340) {
-                    align = 'right'; // left hemisphere
-                }
-                else {
-                    align = 'center'; // top or bottom
-                }
-                options.align = align;
+        var chart = this.chart, inside = pick(options.inside, !!this.options.stacking), angle, 
+        // align: Highcharts.AlignValue,
+        // verticalAlign: Highcharts.VerticalAlignValue,
+        shapeArgs, labelPos;
+        if (chart.polar) {
+            angle = point.rectPlotX / Math.PI * 180;
+            if (!chart.inverted) {
+                // Align nicely outside the perimeter of the columns
+                options = this.findAlignments(angle, options);
             }
-            if (options.verticalAlign === null) {
-                if (angle < 45 || angle > 315) {
-                    verticalAlign = 'bottom'; // top part
+            else { // Required corrections for data labels of inverted bars
+                // The plotX and plotY are correctly set therefore they
+                // don't need to be swapped (inverted argument is false)
+                this.forceDL = chart.isInsidePlot(point.plotX, Math.round(point.plotY), false);
+                // Checks if labels should be positioned inside
+                if (inside && point.shapeArgs) {
+                    shapeArgs = point.shapeArgs;
+                    // Calculates pixel positions for a data label to be
+                    // inside
+                    labelPos =
+                        this.xAxis.postTranslate(
+                        // angle
+                        (shapeArgs.start + shapeArgs.end) / 2 -
+                            this
+                                .xAxis.startAngleRad, 
+                        // radius
+                        point.barX +
+                            point.pointWidth / 2);
+                    alignTo = {
+                        x: labelPos.x - chart.plotLeft,
+                        y: labelPos.y - chart.plotTop
+                    };
                 }
-                else if (angle > 135 && angle < 225) {
-                    verticalAlign = 'top'; // bottom part
+                else if (point.tooltipPos) {
+                    alignTo = {
+                        x: point.tooltipPos[0],
+                        y: point.tooltipPos[1]
+                    };
                 }
-                else {
-                    verticalAlign = 'middle'; // left or right
-                }
-                options.verticalAlign = verticalAlign;
+                options.align = pick(options.align, 'center');
+                options.verticalAlign =
+                    pick(options.verticalAlign, 'middle');
             }
             seriesProto.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
+            // Hide label of a point (only inverted) that is outside the
+            // visible y range
+            if (this.isRadialBar && point.shapeArgs &&
+                point.shapeArgs.start === point.shapeArgs.end) {
+                dataLabel.hide(true);
+            }
         }
         else {
             proceed.call(this, point, dataLabel, options, alignTo, isNew);
@@ -462,6 +643,16 @@ H.addEvent(H.Chart, 'afterDrawChartBox', function () {
     this.pane.forEach(function (pane) {
         pane.render();
     });
+});
+H.addEvent(H.Series, 'afterInit', function () {
+    var chart = this.chart;
+    // Add flags that identifies radial inverted series
+    if (chart.inverted && chart.polar) {
+        this.isRadialSeries = true;
+        if (this instanceof seriesTypes.column) {
+            this.isRadialBar = true;
+        }
+    }
 });
 /**
  * Extend chart.get to also search in panes. Used internally in

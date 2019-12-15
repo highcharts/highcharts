@@ -1170,7 +1170,7 @@ sunburstButton.onclick = function () {
             reversed: true
         }],
         title: {
-            text: 'Flame chart (layout: flame)'
+            text: 'Flame chart (layout: sunburst)'
         },
         series: [{
             visible: false

@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var clamp = U.clamp, defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var clamp = U.clamp, defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -108,7 +108,7 @@ var clamp = U.clamp, defined = U.defined, discardElement = U.discardElement, ext
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 ''; // separates doclets above from variables below
-var doc = H.doc, format = H.format, merge = H.merge, timeUnits = H.timeUnits;
+var doc = H.doc, format = H.format, merge = H.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Tooltip of a chart.
@@ -183,14 +183,14 @@ H.Tooltip.prototype = {
          */
         this.isHidden = true;
         /**
-         * True, if the tooltip is splitted into one label per series, with the
+         * True, if the tooltip is split into one label per series, with the
          * header close to the axis.
          *
          * @readonly
          * @name Highcharts.Tooltip#split
          * @type {boolean|undefined}
          */
-        this.split = options.split && !chart.inverted;
+        this.split = options.split && !chart.inverted && !chart.polar;
         /**
          * When the tooltip is shared, the entire plot area will capture mouse
          * movement or touch events.

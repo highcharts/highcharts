@@ -3,7 +3,8 @@ name: Subtasks
 js_wrap: b
 authors:
   - Lars Cabrera
-tags: []
+tags:
+  - Gantt demo
 categories:
   - Highcharts Gantt
 ...

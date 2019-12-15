@@ -3,7 +3,8 @@ name: Data defined in a HTML table
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Column and bar charts
 ...

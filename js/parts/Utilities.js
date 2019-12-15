@@ -1504,7 +1504,7 @@ H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimal
  *
  * @return {void}
  */
-H.stableSort = function (arr, sortFunction) {
+function stableSort(arr, sortFunction) {
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
     // function
@@ -1521,7 +1521,7 @@ H.stableSort = function (arr, sortFunction) {
     for (i = 0; i < length; i++) {
         delete arr[i].safeI; // stable sort index
     }
-};
+}
 /**
  * Non-recursive method to find the lowest member of an array. `Math.min` raises
  * a maximum call stack size exceeded error in Chrome when trying to apply more
@@ -1675,7 +1675,7 @@ function animObject(animation) {
  *
  * @ignore
  */
-H.timeUnits = {
+var timeUnits = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -1929,7 +1929,7 @@ H.keys = Object.keys;
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-H.offset = function (el) {
+function offset(el) {
     var docElem = doc.documentElement, box = (el.parentElement || el.parentNode) ?
         el.getBoundingClientRect() :
         { top: 0, left: 0 };
@@ -1939,7 +1939,7 @@ H.offset = function (el) {
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-};
+}
 /**
  * Stop running animation.
  *
@@ -2160,7 +2160,7 @@ H.addEvent = function (el, type, fn, options) {
     });
     // Return a function that can be called to remove this event.
     return function () {
-        H.removeEvent(el, type, fn);
+        removeEvent(el, type, fn);
     };
 };
 /* eslint-disable valid-jsdoc */
@@ -2182,7 +2182,7 @@ H.addEvent = function (el, type, fn, options) {
  *
  * @return {void}
  */
-H.removeEvent = function (el, type, fn) {
+function removeEvent(el, type, fn) {
     /* eslint-enable valid-jsdoc */
     var events;
     /**
@@ -2246,7 +2246,7 @@ H.removeEvent = function (el, type, fn) {
             }
         }
     });
-};
+}
 /* eslint-disable valid-jsdoc */
 /**
  * Fire an event that was registered with {@link Highcharts#addEvent}.
@@ -2536,13 +2536,17 @@ var utils = {
     isString: isString,
     numberFormat: numberFormat,
     objectEach: objectEach,
+    offset: offset,
     pad: pad,
     pick: pick,
     pInt: pInt,
     relativeLength: relativeLength,
+    removeEvent: removeEvent,
     setAnimation: setAnimation,
     splat: splat,
+    stableSort: stableSort,
     syncTimeout: syncTimeout,
+    timeUnits: timeUnits,
     wrap: wrap
 };
 export default utils;
