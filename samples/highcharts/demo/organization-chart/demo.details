@@ -3,7 +3,6 @@ name: Organization chart
 authors:
   - Torstein Hønsi
 js_wrap: b
-isNew: true
 tags:
   - Highcharts demo
 categories:

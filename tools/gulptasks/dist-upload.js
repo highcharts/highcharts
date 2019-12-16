@@ -45,7 +45,7 @@ function distUpload() {
         return uploadPackage(product, properties[product].product);
     });
 
-    promises.push(uploadFiles({ files: productJs, name: 'products.js' }));
+    promises.push(uploadFiles({ files: productJs, name: 'products.js', profile: argv.profile }));
     return Promise.all(promises);
 }
 

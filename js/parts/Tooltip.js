@@ -1013,7 +1013,7 @@ H.Tooltip.prototype = {
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
         // Distribute and put in place
-        H.distribute(boxes, maxLength, void 0);
+        H.distribute(boxes, maxLength);
         boxes.forEach(function (box) {
             var anchorX = box.anchorX, anchorY = box.anchorY, pos = box.pos, x = box.x;
             // Put the label in place

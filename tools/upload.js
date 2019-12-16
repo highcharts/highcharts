@@ -58,6 +58,7 @@ const uploadFiles = params => {
     const {
         batchSize,
         bucket,
+        profile,
         callback,
         onError = Promise.reject,
         files,
@@ -67,8 +68,14 @@ const uploadFiles = params => {
     let result;
     if (isString(bucket) && isArray(files)) {
         const cdn = storage.strategy.s3({
-            Bucket: bucket
+            Bucket: bucket,
+            profile
         });
+
+        if (cdn.error) {
+            return Promise.reject(cdn.error.message);
+        }
+
         const uploadFile = file => {
             const { from, to } = file;
             let filePromise;
