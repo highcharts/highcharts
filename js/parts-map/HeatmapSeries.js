@@ -469,7 +469,7 @@ seriesType('heatmap', 'scatter',
         ];
     },
     getCellAttributes: function () {
-        var point = this, series = point.series, seriesOptions = series.options, xPad = (seriesOptions.colsize || 1) / 2, yPad = (seriesOptions.rowsize || 1) / 2, xAxis = series.xAxis, yAxis = series.yAxis, seriesMarkerOptions = series.options.marker, pointPlacement = series.pointPlacementToXValue(), // #7860
+        var point = this, series = point.series, seriesOptions = series.options, xPad = (seriesOptions.colsize || 1) / 2, yPad = (seriesOptions.rowsize || 1) / 2, xAxis = series.xAxis, yAxis = series.yAxis, markerOptions = point.options.marker || series.options.marker, pointPlacement = series.pointPlacementToXValue(), // #7860
         pointPadding = pick(point.pointPadding, seriesOptions.pointPadding, 0), cellAttr = {
             x1: clamp(Math.round(xAxis.len -
                 (xAxis.translate(point.x - xPad, false, true, false, true, -pointPlacement) || 0)), -xAxis.len, 2 * xAxis.len),
@@ -482,13 +482,13 @@ seriesType('heatmap', 'scatter',
         // and pointPadding while calculating cell attributes.
         ['width', 'height'].forEach(function (prop) {
             var direction = prop === 'width' ? 'x' : 'y', coords = [direction + '1', direction + '2'];
-            var side = Math.abs(cellAttr[coords[0]] - cellAttr[coords[1]]), borderWidth = seriesMarkerOptions &&
-                seriesMarkerOptions.lineWidth || 0, plotPos = Math.abs(cellAttr[coords[0]] + cellAttr[coords[1]]) / 2;
-            if (seriesMarkerOptions[prop] &&
-                seriesMarkerOptions[prop] < side) {
-                cellAttr[coords[0]] = plotPos - (seriesMarkerOptions[prop] / 2) -
+            var side = Math.abs(cellAttr[coords[0]] - cellAttr[coords[1]]), borderWidth = markerOptions &&
+                markerOptions.lineWidth || 0, plotPos = Math.abs(cellAttr[coords[0]] + cellAttr[coords[1]]) / 2;
+            if (markerOptions[prop] &&
+                markerOptions[prop] < side) {
+                cellAttr[coords[0]] = plotPos - (markerOptions[prop] / 2) -
                     (borderWidth / 2);
-                cellAttr[coords[1]] = plotPos + (seriesMarkerOptions[prop] / 2) +
+                cellAttr[coords[1]] = plotPos + (markerOptions[prop] / 2) +
                     (borderWidth / 2);
             }
             // Handle pointPadding

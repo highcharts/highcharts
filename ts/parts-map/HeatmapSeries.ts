@@ -737,7 +737,7 @@ seriesType<Highcharts.HeatmapSeries>(
                 yPad = (seriesOptions.rowsize || 1) / 2,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
-                seriesMarkerOptions = series.options.marker,
+                markerOptions = point.options.marker || series.options.marker,
                 pointPlacement = series.pointPlacementToXValue(), // #7860
                 pointPadding = pick(
                     point.pointPadding, seriesOptions.pointPadding, 0
@@ -795,23 +795,23 @@ seriesType<Highcharts.HeatmapSeries>(
                 const side = Math.abs(
                         cellAttr[coords[0]] - cellAttr[coords[1]]
                     ),
-                    borderWidth = seriesMarkerOptions &&
-                        seriesMarkerOptions.lineWidth || 0,
+                    borderWidth = markerOptions &&
+                        markerOptions.lineWidth || 0,
                     plotPos = Math.abs(
                         cellAttr[coords[0]] + cellAttr[coords[1]]
                     ) / 2;
 
 
                 if (
-                    (seriesMarkerOptions as any)[prop] &&
-                    (seriesMarkerOptions as any)[prop] < side
+                    (markerOptions as any)[prop] &&
+                    (markerOptions as any)[prop] < side
                 ) {
                     cellAttr[coords[0]] = plotPos - (
-                        (seriesMarkerOptions as any)[prop] / 2) -
+                        (markerOptions as any)[prop] / 2) -
                         (borderWidth / 2);
 
                     cellAttr[coords[1]] = plotPos + (
-                        (seriesMarkerOptions as any)[prop] / 2) +
+                        (markerOptions as any)[prop] / 2) +
                         (borderWidth / 2);
                 }
 

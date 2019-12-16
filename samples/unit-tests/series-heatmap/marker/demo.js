@@ -63,4 +63,24 @@ QUnit.test('General marker tests', function (assert) {
         'Marker\'s fixed width and height are set correctly through series.marker options.'
     );
 
+    var point = heatmap.points[4];
+
+    point.update({
+        marker: {
+            width: 20,
+            height: 20,
+            lineColor: 'red',
+            lineWidth: 5
+        }
+    });
+
+    bBox = point.graphic.getBBox();
+
+    assert.strictEqual(
+        bBox.width - point.options.marker.lineWidth === 20 &&
+        bBox.height - point.options.marker.lineWidth === 20,
+        true,
+        'Marker\'s fixed width and height are set correctly through point.marker, and marker\'s lineWidth and color as well.'
+    );
+
 });
