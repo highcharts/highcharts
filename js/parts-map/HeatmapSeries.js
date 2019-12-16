@@ -292,7 +292,7 @@ seriesType('heatmap', 'scatter',
      * @return {Highcharts.SVGAttributes}
      */
     markerAttribs: function (point, state) {
-        var pointMarkerOptions = point.marker || {}, seriesMarkerOptions = this.options.marker || {}, seriesStateOptions, pointStateOptions, shapeArgs = point.shapeArgs || {}, hasImage = point.hasImage, attribs = merge(shapeArgs);
+        var pointMarkerOptions = point.marker || {}, seriesMarkerOptions = this.options.marker || {}, seriesStateOptions, pointStateOptions, shapeArgs = point.shapeArgs || {}, hasImage = point.hasImage, attribs = {};
         if (hasImage) {
             return {
                 x: point.plotX,
@@ -309,14 +309,14 @@ seriesType('heatmap', 'scatter',
                 // Set new width and height basing on state options.
                 attribs[dimension[0]] = (pointStateOptions[dimension[0]] ||
                     seriesStateOptions[dimension[0]] ||
-                    attribs[dimension[0]]) + (pointStateOptions[dimension[0] + 'Plus'] ||
+                    shapeArgs[dimension[0]]) + (pointStateOptions[dimension[0] + 'Plus'] ||
                     seriesStateOptions[dimension[0] + 'Plus'] || 0);
                 // Align marker by a new size.
-                attribs[dimension[1]] +=
+                attribs[dimension[1]] = shapeArgs[dimension[1]] +
                     (shapeArgs[dimension[0]] - attribs[dimension[0]]) / 2;
             });
         }
-        return attribs;
+        return state ? attribs : shapeArgs;
     },
     /**
      * @private

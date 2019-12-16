@@ -487,7 +487,7 @@ seriesType<Highcharts.HeatmapSeries>(
                 pointStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 shapeArgs = point.shapeArgs || {},
                 hasImage = point.hasImage,
-                attribs: Highcharts.SVGAttributes = merge(shapeArgs);
+                attribs: Highcharts.SVGAttributes = {};
 
             if (hasImage) {
                 return {
@@ -510,19 +510,19 @@ seriesType<Highcharts.HeatmapSeries>(
                     attribs[dimension[0]] = (
                         (pointStateOptions as any)[dimension[0]] ||
                         (seriesStateOptions as any)[dimension[0]] ||
-                        attribs[dimension[0]]
+                        shapeArgs[dimension[0]]
                     ) + (
                         (pointStateOptions as any)[dimension[0] + 'Plus'] ||
                         (seriesStateOptions as any)[dimension[0] + 'Plus'] || 0
                     );
 
                     // Align marker by a new size.
-                    attribs[dimension[1]] +=
+                    attribs[dimension[1]] = shapeArgs[dimension[1]] +
                         (shapeArgs[dimension[0]] - attribs[dimension[0]]) / 2;
                 });
             }
 
-            return attribs;
+            return state ? attribs : shapeArgs;
         },
 
         /**
