@@ -319,64 +319,60 @@ if (seriesTypes.columnrange) {
     seriesTypes.columnrange.prototype.setVisible =
         seriesTypes.column.prototype.setVisible;
 }
-wrap(Series.prototype, 'alignDataLabel', function (proceed) {
+wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
+    var chart = this.chart;
     // In 3D we need to pass point.outsidePlot option to the justifyDataLabel
     // method for disabling justifying dataLabels in columns outside plot
-    arguments[3].outside3dPlot = arguments[1].outside3dPlot;
+    options.outside3dPlot = point.outside3dPlot;
     // Only do this for 3D columns and it's derived series
-    if (this.chart.is3d() &&
+    if (chart.is3d() &&
         this instanceof seriesTypes.column) {
-        var args = arguments, alignTo = args[4], point = args[1], dLOptions = args[3];
-        var series = this, seriesOptions = series.options, chart = series.chart, inside = pick(dLOptions.inside, !!series.options.stacking), pos = ({
+        var series = this, seriesOptions = series.options, inside = pick(options.inside, !!series.options.stacking);
+        var dLPosition = {
             x: alignTo.x + point.pointWidth / 2,
             y: alignTo.y,
             z: series.z + seriesOptions.depth / 2
-        });
-        if (this.chart.inverted && inside) {
+        };
+        if (chart.inverted && inside) {
             // Inside dataLabels are positioned according to above
             // logic and there is no need to position them using
             // non-3D algorighm (that use alignTo.width)
             alignTo.width = 0;
-            pos.x += point.shapeArgs.height / 2;
+            dLPosition.x += point.shapeArgs.height / 2;
         }
-        pos = perspective([pos], chart, true, false)[0];
-        alignTo.x = pos.x - point.pointWidth / 2;
+        // dLPosition is recalculated for 3D graphs
+        dLPosition = perspective([dLPosition], chart, true, false)[0];
+        alignTo.x = dLPosition.x - point.pointWidth / 2;
         // #7103 If point is outside of plotArea, hide data label.
-        alignTo.y = point.outside3dPlot ? -9e9 : pos.y;
+        alignTo.y = point.outside3dPlot ? -9e9 : dLPosition.y;
     }
     proceed.apply(this, [].slice.call(arguments, 1));
 });
 // Added stackLabels position calculation for 3D charts.
-wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) {
+wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x, y, xWidth, h, axis) {
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
     // Only do this for 3D column and iherited series.
-    if (chart.is3d()) {
-        var columnSeries;
-        // Check if any series iherits from column 3D
-        chart.series.forEach(function (series) {
-            if (series instanceof seriesTypes.column && series.data.length) {
-                columnSeries = series;
-            }
-        });
+    if (chart.is3d() && stackItem.base) {
+        // First element of stackItem.base is an index of base series.
+        var baseSeriesInd = +(stackItem.base).split(',')[0];
+        var columnSeries = chart.series[baseSeriesInd];
         // If any series is a column series, use its barW, z and depth
         // parameters for correct stackLabels position calculation
-        if (columnSeries) {
-            var height = arguments[6], pos = ({
-                x: stackBox.x +
-                    (chart.inverted ?
-                        height :
-                        columnSeries.barW / 2),
+        if (columnSeries &&
+            columnSeries instanceof seriesTypes.column) {
+            var dLPosition = {
+                x: stackBox.x + (chart.inverted ? h : xWidth / 2),
                 y: stackBox.y,
-                z: columnSeries.z + columnSeries.options.depth / 2
-            });
+                z: columnSeries.options.depth / 2
+            };
             if (chart.inverted) {
                 // Do not use default offset calculation logic for 3D
                 // inverted stackLabels.
                 stackBox.width = 0;
             }
-            pos = H.perspective([pos], chart, true, false)[0];
-            stackBox.x = pos.x - columnSeries.barW / 2;
-            stackBox.y = pos.y;
+            dLPosition = perspective([dLPosition], chart, true, false)[0];
+            stackBox.x = dLPosition.x - xWidth / 2;
+            stackBox.y = dLPosition.y;
         }
     }
     return stackBox;
