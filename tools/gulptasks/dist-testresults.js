@@ -20,7 +20,9 @@ function uploadVisualTestResults() {
     const argv = require('yargs').argv;
     const dateString = new Date().toISOString().slice(0, 10);
     const promises = [];
-    const defaultParams = {};
+    const defaultParams = {
+        profile: argv.profile
+    };
 
     if (argv.bucket) {
         defaultParams.bucket = argv.bucket;

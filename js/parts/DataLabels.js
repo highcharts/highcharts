@@ -91,7 +91,7 @@ var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, series
  * @function Highcharts.distribute
  * @param {Highcharts.DataLabelsBoxArray} boxes
  * @param {number} len
- * @param {number} maxDistance
+ * @param {number} [maxDistance]
  * @return {void}
  */
 H.distribute = function (boxes, len, maxDistance) {
@@ -180,8 +180,8 @@ H.distribute = function (boxes, len, maxDistance) {
             // maxDistance, abort the loop and decrease the length in increments
             // of 10% to recursively reduce the  number of visible boxes by
             // rank. Once all boxes are within the maxDistance, we're good.
-            if (Math.abs(origBoxes[i].pos - origBoxes[i].target) >
-                maxDistance) {
+            if (typeof maxDistance !== 'undefined' &&
+                Math.abs(origBoxes[i].pos - origBoxes[i].target) > maxDistance) {
                 // Reset the positions that are already set
                 origBoxes.slice(0, i + 1).forEach(function (box) {
                     delete box.pos;
