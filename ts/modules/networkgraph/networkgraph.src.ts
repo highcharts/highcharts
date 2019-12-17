@@ -262,7 +262,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
      *               getExtremesFromAll, label, linecap, negativeColor,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointStart, softThreshold, stack, stacking, step,
-     *               threshold, xAxis, yAxis, zoneAxis
+     *               threshold, xAxis, yAxis, zoneAxis, dataSorting
      * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
      */
@@ -1367,7 +1367,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
  *            connectNulls, dragDrop, getExtremesFromAll, label, linecap,
  *            negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking,
- *            step, threshold, xAxis, yAxis, zoneAxis
+ *            step, threshold, xAxis, yAxis, zoneAxis, dataSorting
  * @product   highcharts
  * @requires  modules/networkgraph
  * @apioption series.networkgraph

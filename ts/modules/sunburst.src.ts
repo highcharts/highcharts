@@ -1368,7 +1368,7 @@ var sunburstPoint = {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.sunburst
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, stack, dataSorting
  * @product   highcharts
  * @requires  modules/sunburst.js
  * @apioption series.sunburst

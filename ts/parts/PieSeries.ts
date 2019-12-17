@@ -175,7 +175,7 @@ seriesType<Highcharts.PieSeries>(
      *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
      *               marker, negativeColor, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointStart, softThreshold, stacking, step,
-     *               threshold, turboThreshold, zoneAxis, zones
+     *               threshold, turboThreshold, zoneAxis, zones, dataSorting
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
@@ -425,6 +425,7 @@ seriesType<Highcharts.PieSeries>(
              * @sample {highcharts} highcharts/plotoptions/pie-datalabels-distance/
              *         Data labels on top of the pie
              *
+             * @type    {number|string}
              * @since   2.1
              * @product highcharts
              */
@@ -1604,7 +1605,7 @@ seriesType<Highcharts.PieSeries>(
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
  * @product   highcharts
  * @apioption series.pie
  */

@@ -47,7 +47,9 @@
                 "01:50",
                 "02:00"
             ],
-            'Ten minutes, UTC. There should be a continuous range from 23:00 to 02:00'
+            'Ten minutes, UTC. There should be a continuous range from 23:00 to 02:00. ' +
+            'Current time: ' + new Date().toString() + '. Timezone offset: ' +
+            new Date().getTimezoneOffset()
         );
 
         if (isCET) {
@@ -424,6 +426,56 @@
                 "15-10-2018"
             ],
             'All ticks created (#7051).'
+        );
+    });
+
+    QUnit.test('Time ticks, Indian time (#8768)', function (assert) {
+        var time = new Highcharts.Time({
+            timezone: 'America/New_York'
+        });
+
+        var ticks = time.getTimeTicks(
+            {
+                unitRange: 60000,
+                count: 5
+            },
+            Date.UTC(2018, 7, 8, 9, 0),
+            Date.UTC(2018, 7, 8, 9, 99)
+        );
+
+        assert.deepEqual(
+            ticks.map(function (tick) {
+                return [
+                    Highcharts.pad(new Date(tick).getUTCHours(), 2),
+                    Highcharts.pad(new Date(tick).getUTCMinutes(), 2)
+                ].join(':');
+            }),
+            [
+                "09:00",
+                "09:05",
+                "09:10",
+                "09:15",
+                "09:20",
+                "09:25",
+                "09:30",
+                "09:35",
+                "09:40",
+                "09:45",
+                "09:50",
+                "09:55",
+                "10:00",
+                "10:05",
+                "10:10",
+                "10:15",
+                "10:20",
+                "10:25",
+                "10:30",
+                "10:35",
+                "10:40"
+            ],
+            'Relevant test when the timezone is India. Should start at 09:00. ' +
+            'Current time: ' + new Date().toString() + '. Timezone offset: ' +
+            new Date().getTimezoneOffset()
         );
     });
 }());

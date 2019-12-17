@@ -73,11 +73,7 @@ nbproject/
 /samples/**/diff.gif
 /samples/**/reference.svg
 
-/tmp/report.html
-
-/tmp/missing.in.code.json
-
-/tmp/processed.api.json
+tmp/
 /package-lock.json
 /temp.*
 /env.file

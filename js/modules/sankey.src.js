@@ -139,7 +139,7 @@ seriesType('sankey', 'column',
  *               pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth,
  *               shadow, softThreshold, stacking, threshold, zoneAxis,
- *               zones, minPointLength
+ *               zones, minPointLength, dataSorting
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  */
@@ -785,7 +785,7 @@ seriesType('sankey', 'column',
  *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
  *            pointStart, pointWidth, shadow, softThreshold, stacking,
- *            threshold, zoneAxis, zones
+ *            threshold, zoneAxis, zones, dataSorting
  * @product   highcharts
  * @requires  modules/sankey
  * @apioption series.sankey
