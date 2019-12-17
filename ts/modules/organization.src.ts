@@ -158,7 +158,7 @@ H.seriesType<Highcharts.OrganizationSeries>(
      *               Centered layout
      *
      * @extends      plotOptions.sankey
-     * @excluding    allowPointSelect, curveFactor
+     * @excluding    allowPointSelect, curveFactor, dataSorting
      * @since        7.1.0
      * @product      highcharts
      * @requires     modules/organization
@@ -673,6 +673,7 @@ H.seriesType<Highcharts.OrganizationSeries>(
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.organization
+ * @exclude   dataSorting
  * @product   highcharts
  * @requires  modules/organization
  * @apioption series.organization

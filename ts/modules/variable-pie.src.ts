@@ -488,7 +488,7 @@ seriesType<Highcharts.VariablePieSeries>(
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.variablepie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
  * @product   highcharts
  * @requires  modules/variable-pie.js
  * @apioption series.variablepie

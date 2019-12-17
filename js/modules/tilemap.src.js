@@ -321,7 +321,8 @@ seriesType('tilemap', 'heatmap'
  *
  * @extends      plotOptions.heatmap
  * @since        6.0.0
- * @excluding    jitter, joinBy, shadow, allAreas, mapData, data
+ * @excluding    jitter, joinBy, shadow, allAreas, mapData, data,
+ *               dataSorting
  * @product      highcharts highmaps
  * @requires     modules/tilemap.js
  * @optionparent plotOptions.tilemap
@@ -447,7 +448,7 @@ seriesType('tilemap', 'heatmap'
  *
  * @extends   series,plotOptions.tilemap
  * @excluding allAreas, dataParser, dataURL, joinBy, mapData, marker,
- *            pointRange, shadow, stack
+ *            pointRange, shadow, stack, dataSorting
  * @product   highcharts highmaps
  * @requires  modules/tilemap.js
  * @apioption series.tilemap

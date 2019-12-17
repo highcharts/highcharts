@@ -175,7 +175,7 @@ seriesType<Highcharts.PieSeries>(
      *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
      *               marker, negativeColor, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointStart, softThreshold, stacking, step,
-     *               threshold, turboThreshold, zoneAxis, zones
+     *               threshold, turboThreshold, zoneAxis, zones, dataSorting
      * @product      highcharts
      * @optionparent plotOptions.pie
      */
@@ -1605,7 +1605,7 @@ seriesType<Highcharts.PieSeries>(
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
  * @product   highcharts
  * @apioption series.pie
  */
