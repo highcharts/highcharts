@@ -618,7 +618,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              *
              * @type      {string}
              * @since     7.0.0
-             * @apioption plotOptions.packedBubble.dataLabels.format
+             * @apioption plotOptions.packedbubble.dataLabels.format
              */
 
             // eslint-disable-next-line valid-jsdoc
@@ -642,7 +642,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             /**
              * @type      {string}
              * @since     7.1.0
-             * @apioption plotOptions.packedBubble.dataLabels.parentNodeFormat
+             * @apioption plotOptions.packedbubble.dataLabels.parentNodeFormat
              */
 
             // eslint-disable-next-line valid-jsdoc
@@ -681,7 +681,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                  *
                  * @type      {Highcharts.SVGAttributes}
                  * @since     7.1.0
-                 * @apioption plotOptions.packedBubble.dataLabels.attributes
+                 * @apioption plotOptions.packedbubble.dataLabels.attributes
                  */
 
                 /**
@@ -701,7 +701,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              * **Note:** Only SVG-based renderer supports this option.
              *
              * @extends   plotOptions.series.dataLabels.textPath
-             * @apioption plotOptions.packedBubble.dataLabels.textPath
+             * @apioption plotOptions.packedbubble.dataLabels.textPath
              */
 
             padding: 0
