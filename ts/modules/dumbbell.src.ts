@@ -573,3 +573,99 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
         point.connector[verb](series.getConnectorAttribs(point));
     }
 });
+
+/**
+ * The `dumbbell` series. If the [type](#series.dumbbell.type) option is
+ * not specified, it is inherited from [chart.type](#chart.type).
+ *
+ * @extends   series,plotOptions.dumbbell
+ * @product   highcharts highstock
+ * @requires  highcharts-more
+ * @requires  modules/dumbbell
+ * @apioption series.dumbbell
+ */
+/**
+ * An array of data points for the series. For the `dumbbell` series
+ * type, points can be given in the following ways:
+ *
+ * 1. An array of arrays with 3 or 2 values. In this case, the values correspond
+ *    to `x,low,high`. If the first value is a string, it is applied as the name
+ *    of the point, and the `x` value is inferred. The `x` value can also be
+ *    omitted, in which case the inner arrays should be of length 2\. Then the
+ *    `x` value is automatically calculated, either starting at 0 and
+ *    incremented by 1, or from `pointStart` and `pointInterval` given in the
+ *    series options.
+ *    ```js
+ *    data: [
+ *        [0, 4, 2],
+ *        [1, 2, 1],
+ *        [2, 9, 10]
+ *    ]
+ *    ```
+ *
+ * 2. An array of objects with named values. The following snippet shows only a
+ *    few settings, see the complete options set below. If the total number of
+ *    data points exceeds the series'
+ *    [turboThreshold](#series.dumbbell.turboThreshold), this option is not
+ *    available.
+ *    ```js
+ *    data: [{
+ *        x: 1,
+ *        low: 0,
+ *        high: 4,
+ *        name: "Point2",
+ *        color: "#00FF00",
+ *        lowColor: "#00FFFF",
+ *        connectorWidth: 3,
+ *        connectorColor: "#FF00FF"
+ *    }, {
+ *        x: 1,
+ *        low: 5,
+ *        high: 3,
+ *        name: "Point1",
+ *        color: "#FF00FF"
+ *    }]
+ *    ```
+ *
+ * @sample {highcharts} highcharts/series/data-array-of-arrays/
+ *         Arrays of numeric x and y
+ * @sample {highcharts} highcharts/series/data-array-of-arrays-datetime/
+ *         Arrays of datetime x and y
+ * @sample {highcharts} highcharts/series/data-array-of-name-value/
+ *         Arrays of point.name and y
+ * @sample {highcharts} highcharts/series/data-array-of-objects/
+ *         Config objects
+ *
+ * @type      {Array<Array<(number|string),number>|Array<(number|string),number,number>|*>}
+ * @extends   series.arearange.data
+ * @product   highcharts highstock
+ * @apioption series.dumbbell.data
+ */
+/**
+ * Color of the line that connects the dumbbell point's values.
+ * By default it is the series' color.
+ *
+ * @type        {string}
+ * @since       8.0.0
+ * @product     highcharts highstock
+ * @apioption   series.dumbbell.data.connectorColor
+ */
+/**
+ * Pixel width of the line that connects the dumbbell point's values.
+ *
+ * @type        {number}
+ * @since       8.0.0
+ * @default     1
+ * @product     highcharts highstock
+ * @apioption   series.dumbbell.data.connectorWidth
+ */
+/**
+ * Color of the start markers in a dumbbell graph.
+ *
+ * @type        {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+ * @since       8.0.0
+ * @default     ${palette.neutralColor80}
+ * @product     highcharts highstock
+ * @apioption   series.dumbbell.data.lowColor
+ */
+''; // adds doclets above to transpiled file
