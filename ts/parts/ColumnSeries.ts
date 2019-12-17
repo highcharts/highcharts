@@ -803,7 +803,12 @@ seriesType<Highcharts.ColumnSeries>(
             series.points.forEach(function (
                 point: Highcharts.ColumnPoint
             ): void {
-                var yBottom = pick(point.yBottom, translatedThreshold as any),
+                var yBottom = pick(
+                        point.yBottom,
+                        translatedThreshold as any,
+                        0 // Handle the situation when the plot area is not
+                        // visible because of multiple legends.
+                    ),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
                     // Don't draw too far outside plot area (#1303, #2241,
