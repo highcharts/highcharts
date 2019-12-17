@@ -784,7 +784,14 @@ seriesType<Highcharts.ColumnSeries>(
                     Math.max(seriesPointWidth, 1 + 2 * borderWidth),
                 seriesXOffset = series.pointXOffset = metrics.offset,
                 dataMin = series.dataMin,
-                dataMax = series.dataMax;
+                dataMax = series.dataMax,
+                topFactor = H.relativeLength(
+                    (series.xAxis.options || {}).top || 0, 1
+                ),
+                heightFactor = H.relativeLength(
+                    (series.xAxis.options || {}).height || 1, 1
+                ),
+                offsetX = (series.xAxis.len / heightFactor) * topFactor;
 
             if (chart.inverted) {
                 (translatedThreshold as any) -= 0.5; // #3355
@@ -870,7 +877,9 @@ seriesType<Highcharts.ColumnSeries>(
                 point.tooltipPos = chart.inverted ?
                     [
                         yAxis.len + (yAxis.pos as any) - chart.plotLeft - plotY,
-                        series.xAxis.len - barX - barW / 2, barH
+                        // Additional offset when xAxis top or height set
+                        // (#12589).
+                        series.xAxis.len + offsetX - barX - barW / 2, barH
                     ] :
                     [barX + barW / 2, plotY + (yAxis.pos as any) -
                     chart.plotTop, barH];

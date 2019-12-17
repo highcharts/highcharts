@@ -563,7 +563,7 @@ seriesType('column', 'line',
             yAxis.getThreshold(threshold), minPointLength = pick(options.minPointLength, 5), metrics = series.getColumnMetrics(), seriesPointWidth = metrics.width, 
         // postprocessed for border width
         seriesBarW = series.barW =
-            Math.max(seriesPointWidth, 1 + 2 * borderWidth), seriesXOffset = series.pointXOffset = metrics.offset, dataMin = series.dataMin, dataMax = series.dataMax;
+            Math.max(seriesPointWidth, 1 + 2 * borderWidth), seriesXOffset = series.pointXOffset = metrics.offset, dataMin = series.dataMin, dataMax = series.dataMax, topFactor = H.relativeLength((series.xAxis.options || {}).top || 0, 1), heightFactor = H.relativeLength((series.xAxis.options || {}).height || 1, 1), offsetX = (series.xAxis.len / heightFactor) * topFactor;
         if (chart.inverted) {
             translatedThreshold -= 0.5; // #3355
         }
@@ -620,7 +620,9 @@ seriesType('column', 'line',
             point.tooltipPos = chart.inverted ?
                 [
                     yAxis.len + yAxis.pos - chart.plotLeft - plotY,
-                    series.xAxis.len - barX - barW / 2, barH
+                    // Additional offset when xAxis top or height set
+                    // (#12589).
+                    series.xAxis.len + offsetX - barX - barW / 2, barH
                 ] :
                 [barX + barW / 2, plotY + yAxis.pos -
                         chart.plotTop, barH];

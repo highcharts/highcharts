@@ -92,7 +92,12 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         lineYPos = linePoint.plotY,
         columnPoint = chart.series[1].points[0],
         columnXPos = columnPoint.plotX,
-        columnYPos = chart.series[1].group.translateY + columnPoint.plotY;
+        columnYPos = chart.series[1].group.translateY + columnPoint.plotY,
+        series,
+        offsetTop,
+        point0,
+        point1,
+        barSpace;
 
     controller.moveTo((lineXPos + 1), (lineYPos + 1));
     assert.ok(
@@ -118,5 +123,37 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
     assert.ok(
         (tooltipYPos < columnYPos) && (tooltipYPos > lineYPos),
         'Tooltip of second series should be over second series, but under first series'
+    );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'bar',
+            width: 600
+        },
+        xAxis: {
+            height: '63%',
+            top: '19%',
+            startOnTick: true,
+            min: 0
+        },
+        series: [{
+            data: [5, 3, 4, 7, 2]
+        }]
+    });
+
+    controller = new TestController(chart);
+    series = chart.series[0];
+    offsetTop = chart.plotHeight * Highcharts.relativeLength(chart.xAxis[0].options.top, 1);
+    point0 = chart.series[0].points[0];
+    point1 = chart.series[0].points[1];
+    barSpace = Math.abs(series.points[1].plotX - series.points[0].plotX) - point0.shapeArgs.width;
+    tooltipYPos = offsetTop + chart.plotTop + point0.shapeArgs.width +
+        (barSpace * 3) / 2 + point1.shapeArgs.width / 2;
+
+    controller.moveTo(chart.plotLeft + 1, tooltipYPos);
+    assert.strictEqual(
+        chart.tooltip.now.anchorY,
+        Math.round(tooltipYPos),
+        'Tooltip position should be correct when bar chart xAxis has top and height set (#12589).'
     );
 });
