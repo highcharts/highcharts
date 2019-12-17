@@ -601,18 +601,7 @@ extend(H.LegendAdapter.prototype, {
                 legend.render();
             }
         });
-    },
-
-    update: function (
-        this: Highcharts.LegendAdapter,
-        options: Highcharts.LegendOptions,
-        redraw?: boolean
-    ): void {
-        this.legends.forEach(function (legend): void {
-            legend.update(merge(true, options, legend.options), redraw);
-        });
     }
-
 });
 
 wrap(H.Chart.prototype, 'renderLegend', function (

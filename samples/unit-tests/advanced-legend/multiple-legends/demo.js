@@ -1,31 +1,31 @@
 QUnit.test('Multiple legends are rendered.', function (assert) {
 
-    var chart = Highcharts.chart('container', {
+    var message1 = 'Title updated',
+        chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
 
-        chart: {
-            type: 'column'
-        },
+            series: [{
+                data: [1],
+                legend: 'l1'
+            }, {
+                data: [2],
+                legend: 'l2'
+            }, {
+                data: [3],
+                legend: 'l2'
+            }],
 
-        series: [{
-            data: [1],
-            legend: 'l1'
-        }, {
-            data: [2],
-            legend: 'l2'
-        }, {
-            data: [3],
-            legend: 'l2'
-        }],
+            legend: [{
+                id: 'l1'
+            }, {
+                id: 'l2',
+                align: 'left',
+                verticalAlign: 'middle'
+            }]
 
-        legend: [{
-            id: 'l1'
-        }, {
-            id: 'l2',
-            align: 'left',
-            verticalAlign: 'middle'
-        }]
-
-    });
+        });
 
     assert.strictEqual(
         chart.legend.length,
@@ -33,16 +33,16 @@ QUnit.test('Multiple legends are rendered.', function (assert) {
         'Two legends were created.'
     );
 
-    // chart.legends[1].update({
-    //     title: {
-    //         text: message1
-    //     }
-    // });
+    chart.legend[1].update({
+        title: {
+            text: message1
+        }
+    });
 
-    // assert.ok(
-    //     chart.legends[1].title.text.element.innerHTML.indexOf(message1) > -1,
-    //     message1
-    // );
+    assert.ok(
+        chart.legend[1].title.text.element.innerHTML.indexOf(message1) > -1,
+        message1
+    );
 
 });
 
@@ -156,5 +156,51 @@ QUnit.test('Color axes are correctly rendered in their destination legends.', fu
         'Second color axis is rendered in the second legend.'
     );
 
+
+});
+
+QUnit.test('Add & Remove a legend.', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        legend: [{
+            id: 'legend1',
+            align: 'left',
+            verticalAlign: 'middle'
+        }, {
+            id: 'legend2'
+        }],
+        series: [{
+            data: [1, 2, 3, 4],
+            legend: 'legend1'
+        }, {
+            data: [2, 3, 5, 1],
+            legend: 'legend2',
+            name: "Series 2"
+        }]
+    });
+
+    assert.strictEqual(
+        chart.legend.length,
+        2,
+        'There are two legends in one chart.'
+    );
+
+    chart.legend[1].remove();
+
+    assert.strictEqual(
+        chart.legend.length,
+        1,
+        'There is only one legend in a chart.'
+    );
+
+    chart.addLegend({
+        id: 'legend2'
+    });
+
+    assert.strictEqual(
+        chart.legend[1].allItems[0].name,
+        "Series 2",
+        'The legend was successfully added and contains the correct item.'
+    );
 
 });

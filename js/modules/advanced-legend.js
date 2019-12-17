@@ -383,11 +383,6 @@ extend(H.LegendAdapter.prototype, {
             }
         });
     },
-    update: function (options, redraw) {
-        this.legends.forEach(function (legend) {
-            legend.update(merge(true, options, legend.options), redraw);
-        });
-    }
 });
 wrap(H.Chart.prototype, 'renderLegend', function (originalFunc) {
     if (!this.isAdvancedLegendEnabled()) {
