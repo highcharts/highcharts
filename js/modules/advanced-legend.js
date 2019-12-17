@@ -382,7 +382,7 @@ extend(H.LegendAdapter.prototype, {
                 legend.render();
             }
         });
-    },
+    }
 });
 wrap(H.Chart.prototype, 'renderLegend', function (originalFunc) {
     if (!this.isAdvancedLegendEnabled()) {
