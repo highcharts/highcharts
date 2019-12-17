@@ -397,6 +397,7 @@ module.exports = function (config) {
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
+        reportSlowerThan: 3000,
         plugins: [
             'karma-*',
             require('./karma-imagecapture-reporter.js')
