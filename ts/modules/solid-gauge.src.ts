@@ -578,7 +578,8 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
  *            cropThreshold, dashStyle, dataParser, dataURL, dial,
  *            findNearestPointBy, getExtremesFromAll, marker, negativeColor,
  *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
- *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones
+ *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones,
+ *            dataSorting
  * @product   highcharts
  * @requires  modules/solid-gauge
  * @apioption series.solidgauge

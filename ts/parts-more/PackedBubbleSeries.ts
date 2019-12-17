@@ -535,7 +535,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
      * @extends      plotOptions.bubble
      * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
      *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
-     *               zMax, zMin
+     *               zMax, zMin, dataSorting
      * @product      highcharts
      * @since        7.0.0
      * @requires     highcharts-more
@@ -1895,7 +1895,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser,dataURL,stack,dataSorting
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.packedbubble
