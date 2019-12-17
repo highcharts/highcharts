@@ -51,10 +51,10 @@ function distUploadCode() {
 distUploadCode.description = 'Uploads distribution files (zipped/binary) to code bucket.';
 distUploadCode.flags = {
     '--bucket': 'S3 bucket to upload to. Is overridden if --use-git-ignore-me is defined.',
-    '--products': 'Comma-separated list of products to upload. E.g highcharts,highmaps',
+    '--products': 'Comma-separated list of products to upload. E.g highcharts,highmaps (optional - default is all products defined in build.properties).',
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)',
-    '--use-git-ignore-me': 'Will look for bucket in git-ignore-me.properties file (fallback as previously used by ant build)'
+    '--use-git-ignore-me': 'Will look for bucket in git-ignore-me.properties file (fallback as previously used by ant build). Required if ---bucket not specified.'
 };
 
 gulp.task('dist-upload-code', distUploadCode);
