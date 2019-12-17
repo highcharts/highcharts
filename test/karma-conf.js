@@ -600,7 +600,8 @@ module.exports = function (config) {
             localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
             retryLimit: 1,
-            pollingTimeout: 5000 // to avoid rate limit errors with browserstack.
+            pollingTimeout: 5000, // to avoid rate limit errors with browserstack.
+            'browserstack.timezone': 'UTC'
         };
         options.customLaunchers = argv.oldie ?
             {
@@ -643,7 +644,6 @@ module.exports = function (config) {
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
             `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}.`
         );
-
     }
 
     config.set(options);
