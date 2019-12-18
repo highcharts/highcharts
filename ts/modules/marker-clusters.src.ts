@@ -288,6 +288,8 @@ var Series = H.Series,
  * @product      highcharts highmaps
  * @since 8.0.0
  * @optionparent plotOptions.scatter.cluster
+ *
+ * @private
  */
 var clusterDefaultOptions = {
     /**

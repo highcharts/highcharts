@@ -520,6 +520,9 @@ Highcharts.Point.prototype = {
                 point[prop] = null;
             }
         }
+        if (point.legendItem) { // pies have legend items
+            chart.legend.destroyItem(point);
+        }
         // Remove properties after animation
         if (!dataSorting || !dataSorting.enabled) {
             destroyPoint();
@@ -529,9 +532,6 @@ Highcharts.Point.prototype = {
             syncTimeout(destroyPoint, animation.duration);
         }
         chart.pointCount--;
-        if (point.legendItem) { // pies have legend items
-            chart.legend.destroyItem(point);
-        }
     },
     /**
      * Animate SVG elements associated with the point.

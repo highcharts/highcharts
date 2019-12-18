@@ -2185,6 +2185,8 @@ null,
     softThreshold: true,
     /**
      * @declare Highcharts.SeriesStatesOptionsObject
+     *
+     * @private
      */
     states: {
         /**
