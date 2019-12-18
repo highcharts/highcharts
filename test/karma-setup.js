@@ -555,11 +555,11 @@ function createCanvas(id) {
  * @return {String}       The image data
  */
 function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
 
         var candidateSVG = getSVG(chart);
         if (!candidateSVG || !path) {
-            Promise.reject(new Error('No candidate SVG found for path: ' + path));
+            reject(new Error('No candidate SVG found for path: ' + path));
         }
 
         var referenceCanvas = createCanvas('reference');
@@ -592,10 +592,11 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
                 }
                 resolve(diff);
             })
-            .catch(function (error) {
-               console.log(error && error.message);
-               resolve(); // skip and continue processing
+            ['catch'](function (error) { // to avoid IE8 failure
+                console.log(error && error.message);
+                resolve(error && error.message); // skip and continue processing
             });
+
     });
 }
 
