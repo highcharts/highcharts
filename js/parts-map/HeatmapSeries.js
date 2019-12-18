@@ -480,24 +480,28 @@ seriesType('heatmap', 'scatter',
         };
         // Handle marker's fixed width, and height values including border
         // and pointPadding while calculating cell attributes.
-        ['width', 'height'].forEach(function (prop) {
-            var direction = prop === 'width' ? 'x' : 'y', coords = [direction + '1', direction + '2'];
-            var side = Math.abs(cellAttr[coords[0]] - cellAttr[coords[1]]), borderWidth = markerOptions &&
-                markerOptions.lineWidth || 0, plotPos = Math.abs(cellAttr[coords[0]] + cellAttr[coords[1]]) / 2;
-            if (markerOptions[prop] &&
-                markerOptions[prop] < side) {
-                cellAttr[coords[0]] = plotPos - (markerOptions[prop] / 2) -
+        [['width', 'x'], ['height', 'y']].forEach(function (dimension) {
+            // const direction = prop === 'width' ? 'x' : 'y',
+            //     coords = [direction + '1', direction + '2'];
+            var size = dimension[0], direction = dimension[1];
+            var start = direction + '1', end = direction + '2';
+            var side = Math.abs(cellAttr[start] - cellAttr[end]), borderWidth = markerOptions &&
+                markerOptions.lineWidth || 0, plotPos = Math.abs(cellAttr[start] + cellAttr[end]) / 2;
+            if (markerOptions[size] &&
+                markerOptions[size] < side) {
+                cellAttr[start] = plotPos - (markerOptions[size] / 2) -
                     (borderWidth / 2);
-                cellAttr[coords[1]] = plotPos + (markerOptions[prop] / 2) +
+                cellAttr[end] = plotPos + (markerOptions[size] / 2) +
                     (borderWidth / 2);
             }
             // Handle pointPadding
             if (pointPadding) {
                 if (direction === 'y') {
-                    coords.reverse();
+                    start = end;
+                    end = direction + '1';
                 }
-                cellAttr[coords[0]] += pointPadding;
-                cellAttr[coords[1]] -= pointPadding;
+                cellAttr[start] += pointPadding;
+                cellAttr[end] -= pointPadding;
             }
         });
         return cellAttr;
