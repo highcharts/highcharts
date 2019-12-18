@@ -47,6 +47,8 @@ var labelDistance = 3, addEvent = H.addEvent, Series = H.Series, SVGRenderer = H
 H.setOptions({
     /**
      * @optionparent plotOptions
+     *
+     * @private
      */
     plotOptions: {
         series: {

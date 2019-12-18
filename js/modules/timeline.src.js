@@ -92,6 +92,8 @@ seriesType('timeline', 'line',
     },
     /**
      * @declare Highcharts.TimelineDataLabelsOptionsObject
+     *
+     * @private
      */
     dataLabels: {
         enabled: true,

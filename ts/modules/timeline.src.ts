@@ -213,6 +213,8 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
         },
         /**
          * @declare Highcharts.TimelineDataLabelsOptionsObject
+         *
+         * @private
          */
         dataLabels: {
 
