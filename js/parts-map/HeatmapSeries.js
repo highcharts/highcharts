@@ -481,17 +481,15 @@ seriesType('heatmap', 'scatter',
         // Handle marker's fixed width, and height values including border
         // and pointPadding while calculating cell attributes.
         [['width', 'x'], ['height', 'y']].forEach(function (dimension) {
-            // const direction = prop === 'width' ? 'x' : 'y',
-            //     coords = [direction + '1', direction + '2'];
-            var size = dimension[0], direction = dimension[1];
+            var prop = dimension[0], direction = dimension[1];
             var start = direction + '1', end = direction + '2';
             var side = Math.abs(cellAttr[start] - cellAttr[end]), borderWidth = markerOptions &&
                 markerOptions.lineWidth || 0, plotPos = Math.abs(cellAttr[start] + cellAttr[end]) / 2;
-            if (markerOptions[size] &&
-                markerOptions[size] < side) {
-                cellAttr[start] = plotPos - (markerOptions[size] / 2) -
+            if (markerOptions[prop] &&
+                markerOptions[prop] < side) {
+                cellAttr[start] = plotPos - (markerOptions[prop] / 2) -
                     (borderWidth / 2);
-                cellAttr[end] = plotPos + (markerOptions[size] / 2) +
+                cellAttr[end] = plotPos + (markerOptions[prop] / 2) +
                     (borderWidth / 2);
             }
             // Handle pointPadding
