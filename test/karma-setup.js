@@ -444,23 +444,18 @@ function getSVG(chart) {
  * Compares the image data of two canvases
  * @param  {Array} data1 Pixel data for image1.
  * @param  {Array} data2 Pixel data for image2.
- * @return {Number}      The amount of different pixels, where 0 is idenitcal
+ * @return {Number}      The amount of different pixels, where 0 is identical
  */
 function compare(data1, data2) { // eslint-disable-line no-unused-vars
     var i = data1.length,
-        diff = 0,
-        pixels = [],
-        pixel;
+        diff = 0;
 
     // loops over all reds, greens, blues and alphas
     while (i--) {
-        pixel = Math.floor(i / 4);
-        if (Math.abs(data1[i] - data2[i]) !== 0 && !pixels[pixel]) {
-            pixels[pixel] = true;
+        if (!data1[i] === data2[i]) {
             diff++;
         }
     }
-
     return diff;
 }
 
@@ -519,11 +514,11 @@ function saveSVGSnapshot(svg, path) {
 
 
 function svgToPixels(svg, canvas) {
+    var DOMURL = (window.URL || window.webkitURL || window);
     var ctx = canvas.getContext && canvas.getContext('2d');
 
-    var DOMURL = (window.URL || window.webkitURL || window);
     // Invalidate images, loading external images will throw an error
-    svg = svg.replace(/xlink:href/g, 'data-href');
+    // svg = svg.replace(/xlink:href/g, 'data-href');
     var blob = new Blob([svg], { type: 'image/svg+xml' });
 
     var img = new Image(CANVAS_WIDTH, CANVAS_HEIGHT);
@@ -539,7 +534,6 @@ function svgToPixels(svg, canvas) {
         img.onerror = function () {
             DOMURL.revokeObjectURL(img.src);
             reject(new Error('Error loading SVG on canvas.'));
-
         };
     });
 }
