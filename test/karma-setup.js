@@ -26,10 +26,6 @@ var demoHTML = document.createElement('div');
 demoHTML.setAttribute('id', 'demo-html');
 document.body.appendChild(demoHTML);
 
-var canvas = document.createElement('canvas');
-canvas.setAttribute('width', CANVAS_WIDTH);
-canvas.setAttribute('height', CANVAS_HEIGHT);
-var ctx = canvas.getContext && canvas.getContext('2d');
 
 var currentTests = [];
 
@@ -470,7 +466,7 @@ function compare(data1, data2) { // eslint-disable-line no-unused-vars
 
 /**
  * Vanilla request for fetching an url using GET.
- * @param {String} url to fetch
+ * @param {String} url to fetch
  * @param {Function} callback to call when done.
  */
 function xhrLoad(url, callback) {
@@ -485,82 +481,8 @@ function xhrLoad(url, callback) {
     xhr.send();
 }
 
-/**
- * Get a PNG image or image data from the chart SVG.
- * @param  {Object} chart The chart instance
- * @param  {String} path  The sample path
- * @return {String}       The image data
- */
-function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
-
+function loadReferenceSVG(path) {
     return new Promise(function (resolve, reject) {
-
-        var referenceData,
-            candidateSVG = getSVG(chart),
-            candidateData;
-
-        function svgToPixels(svg, callback) { // eslint-disable-line require-jsdoc
-            try {
-                var DOMURL = (window.URL || window.webkitURL || window);
-
-                // Invalidate images, loading external images will throw an
-                // error
-                svg = svg.replace(/xlink:href/g, 'data-href');
-
-                var img = new Image(),
-                    blob = new Blob([svg], { type: 'image/svg+xml' }),
-                    url = DOMURL.createObjectURL(blob);
-                img.onload = function () {
-                    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-                    ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-                    callback(ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT).data);
-                };
-                img.onerror = function () {
-                    // console.log(svg)
-                    reject(
-                        new Error('Error loading SVG on canvas.')
-                    );
-                };
-                img.src = url;
-            } catch (e) {
-                reject(e.message);
-            }
-        }
-
-        function doComparison() { // eslint-disable-line require-jsdoc
-            if (referenceData && candidateData) {
-                var diff = compare(referenceData, candidateData);
-
-                if (diff !== 0) {
-                    __karma__.info({
-                        filename: './samples/' + path + '/diff.gif',
-                        canvasWidth: CANVAS_WIDTH,
-                        canvasHeight: CANVAS_HEIGHT,
-                        frames: [
-                            referenceData,
-                            candidateData
-                        ]
-                    });
-                    __karma__.info({
-                        filename: './samples/' + path + '/candidate.svg',
-                        data: candidateSVG
-                    });
-                }
-
-                resolve(diff);
-            }
-        }
-
-        // Handle candidate
-        if (candidateSVG) {
-            svgToPixels(candidateSVG, function (data) {
-                candidateData = data;
-                doComparison();
-            });
-        } else {
-            reject(new Error('No candidate SVG found'));
-        }
-
         var remotelocation = __karma__.config.cliArgs && __karma__.config.cliArgs.remotelocation;
         // Handle reference, load SVG from bucket or file
         var url = 'base/samples/' + path + '/reference.svg';
@@ -568,18 +490,118 @@ function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
             url = 'http://' + remotelocation + '.s3.eu-central-1.amazonaws.com/visualtests/reference/latest/' + path + '/reference.svg';
         }
         xhrLoad(url, function onXHRDone(xhr) {
-            if (xhr.status == 200) {
+            if (xhr.status === 200) {
                 var svg = xhr.responseText;
-                svgToPixels(svg, function (data) {
-                    referenceData = data;
-                    doComparison();
-                })
+                resolve(svg);
             } else {
-                console.log('No reference.svg for test ' + path + ' found. Skipping comparison.'
-                + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.');
-                resolve();
+                var errMsg = 'Unable to load svg for test ' + path + ' found. Skipping comparison.'
+                    + ' Status returned is ' + xhr.status + ' ' + xhr.statusText + '.';
+                reject(new Error(errMsg));
             }
         });
+    })
+}
+
+/**
+ *  Creates a SVG snapshot of the chart and sends to karma for storage.
+ *
+ * @param  {string} svg The chart svg
+ * @param  {string} path of the sample/test
+ */
+function saveSVGSnapshot(svg, path) {
+    if (svg) {
+        __karma__.info({
+            filename: './samples/' + path,
+            data: svg
+        });
+    }
+}
+
+
+function svgToPixels(svg, canvas) {
+    var ctx = canvas.getContext && canvas.getContext('2d');
+
+    var DOMURL = (window.URL || window.webkitURL || window);
+    // Invalidate images, loading external images will throw an error
+    svg = svg.replace(/xlink:href/g, 'data-href');
+    var blob = new Blob([svg], { type: 'image/svg+xml' });
+
+    var img = new Image(CANVAS_WIDTH, CANVAS_HEIGHT);
+    img.src = DOMURL.createObjectURL(blob);
+
+    return new Promise(function (resolve, reject) {
+        img.onload = function () {
+            ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            ctx.drawImage(img, 0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+            resolve(ctx.getImageData(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT).data);
+            DOMURL.revokeObjectURL(img.src);
+        };
+        img.onerror = function () {
+            DOMURL.revokeObjectURL(img.src);
+            reject(new Error('Error loading SVG on canvas.'));
+
+        };
+    });
+}
+
+function createCanvas(id) {
+    var canvas = document.createElement('canvas');
+    canvas.setAttribute('id', id);
+    canvas.setAttribute('width', CANVAS_WIDTH);
+    canvas.setAttribute('height', CANVAS_HEIGHT);
+    return canvas;
+}
+
+/**
+ * Get a PNG image or image data from the chart SVG
+ * and compares it with a reference svg already stored on the system.
+ *
+ * @param  {Object} chart The chart instance
+ * @param  {String} path  The sample path
+ * @return {String}       The image data
+ */
+function compareToReference(chart, path) { // eslint-disable-line no-unused-vars
+    return new Promise(function (resolve) {
+
+        var candidateSVG = getSVG(chart);
+        if (!candidateSVG || !path) {
+            Promise.reject(new Error('No candidate SVG found for path: ' + path));
+        }
+
+        var referenceCanvas = createCanvas('reference');
+        var candidateCanvas = createCanvas('candidate');
+        var candidatePixels = svgToPixels(candidateSVG, candidateCanvas);
+
+        loadReferenceSVG(path)
+            .then(function (referenceSVG) {
+                return Promise.all([
+                    svgToPixels(referenceSVG, referenceCanvas),
+                    candidatePixels
+                ]);
+            })
+            .then(function (pixelsInFile) {
+                var referencePixels = pixelsInFile[0];
+                var candidatePixels = pixelsInFile[1];
+                var diff = compare(referencePixels, candidatePixels);
+
+                if (diff !== 0) {
+                    __karma__.info({
+                        filename: './samples/' + path + '/diff.gif',
+                        canvasWidth: CANVAS_WIDTH,
+                        canvasHeight: CANVAS_HEIGHT,
+                        frames: [
+                            referencePixels,
+                            candidatePixels
+                        ]
+                    });
+                    saveSVGSnapshot(candidateSVG, path + '/candidate.svg');
+                }
+                resolve(diff);
+            })
+            .catch(function (error) {
+               console.log(error && error.message);
+               resolve(); // skip and continue processing
+            });
     });
 }
 

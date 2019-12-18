@@ -522,13 +522,8 @@ module.exports = function (config) {
                     if (argv.reference) {
                         assertion = `
                             let svg = getSVG(chart);
-
-                            if (svg) {
-                                __karma__.info({
-                                    filename: './samples/${path}/reference.svg',
-                                    data: svg
-                                });
-                            }
+                            saveSVGSnapshot(svg, '${path}/reference.svg');
+                            
                             assert.ok(
                                 svg,
                                 '${path}: SVG and reference.svg file should be generated'
