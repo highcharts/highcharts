@@ -131,7 +131,7 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
             width: 600
         },
         xAxis: {
-            height: '63%',
+            height: '31%',
             top: '19%',
             startOnTick: true,
             min: 0
