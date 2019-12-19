@@ -841,14 +841,17 @@ var sunburstOptions: Highcharts.SunburstSeriesOptions = {
         /**
          * Decides how the data label will be rotated relative to the perimeter
          * of the sunburst. Valid values are `auto`, `circular`, `parallel` and
-         * `perpendicular`. When `auto` or `circular`, the best fit will be
-         * computed for the point, where `circular` use the textPath feature.
+         * `perpendicular`. When `auto`, the best fit will be
+         * computed for the point. The `circular` options works similiar
+         * to `auto`, but uses the textPath feature - labels are curved,
+         * what makes a better layout, however the multiple lines
+         * and `textOutline` are not supported.
          *
          * The `series.rotation` option takes precedence over `rotationMode`.
          *
          * @type       {string}
          * @sample {highcharts} highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/
-         *         rotationMode: circular
+         *         Circular rotation mode
          * @validvalue ["auto", "perpendicular", "parallel", "circular"]
          * @since      6.0.0
          */
