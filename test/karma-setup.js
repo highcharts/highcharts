@@ -448,14 +448,19 @@ function getSVG(chart) {
  */
 function compare(data1, data2) { // eslint-disable-line no-unused-vars
     var i = data1.length,
-        diff = 0;
+        diff = 0,
+        pixels = [],
+        pixel;
 
     // loops over all reds, greens, blues and alphas
     while (i--) {
-        if (!data1[i] === data2[i]) {
+        pixel = Math.floor(i / 4);
+        if (Math.abs(data1[i] - data2[i]) !== 0 && !pixels[pixel]) {
+            pixels[pixel] = true;
             diff++;
         }
     }
+
     return diff;
 }
 
