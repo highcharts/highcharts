@@ -107,6 +107,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

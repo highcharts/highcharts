@@ -67,6 +67,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/pt/pt-all'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

@@ -52,6 +52,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/as/as-all'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

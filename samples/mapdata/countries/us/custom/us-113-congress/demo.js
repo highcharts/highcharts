@@ -484,6 +484,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/us/custom/us-113-congress'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]
