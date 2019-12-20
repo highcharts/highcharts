@@ -35,6 +35,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-copy',
     'dist-examples',
     'dist-productsjs',
+    'dist-release',
     'jsdoc',
     'jsdoc-classes',
     'jsdoc-clean',
