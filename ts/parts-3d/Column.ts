@@ -25,6 +25,7 @@ declare global {
             height?: number;
             outside3dPlot?: (boolean|null);
             shapey?: number;
+            pos3d?: Position3dObject;
         }
         interface ColumnPointOptions {
             visible?: boolean;
@@ -141,7 +142,8 @@ seriesTypes.column.prototype.translate3dShapes = function (): void {
             (seriesOptions.stack || 0) :
             series.index, // #4743
         z = (stack as any) * (depth + (seriesOptions.groupZPadding || 1)),
-        borderCrisp = series.borderWidth % 2 ? 0.5 : 0;
+        borderCrisp = series.borderWidth % 2 ? 0.5 : 0,
+        point2dPos; // Position of point in 2D, used for 3D position calculation.
 
     if (chart.inverted && !series.yAxis.reversed) {
         borderCrisp *= -1;
@@ -215,6 +217,23 @@ seriesTypes.column.prototype.translate3dShapes = function (): void {
             (shapeArgs as any).z = z;
             (shapeArgs as any).depth = depth;
             (shapeArgs as any).insidePlotArea = true;
+
+            // Point's position in 2D
+            point2dPos = {
+                x: (shapeArgs as any).x + (shapeArgs as any).width / 2,
+                y: (shapeArgs as any).y,
+                z: z + depth / 2 // The center of column in Z dimension
+            };
+
+            // Recalculate point positions for inverted graphs
+            if (chart.inverted) {
+                point2dPos.x = (shapeArgs as any).height;
+                point2dPos.y = point.clientX;
+            }
+
+            // Calculate and store point's position in 3D,
+            // using perspective method.
+            point.pos3d = perspective([point2dPos], chart, true, false)[0];
 
             // Translate the tooltip position in 3d space
             tooltipPos = perspective(
@@ -513,7 +532,8 @@ wrap(Series.prototype, 'alignDataLabel', function (
     ) {
         const series = this as Highcharts.ColumnSeries,
             seriesOptions: Highcharts.ColumnSeriesOptions = series.options,
-            inside = pick(options.inside, !!series.options.stacking);
+            inside = pick(options.inside, !!series.options.stacking),
+            options3d = (chart.options.chart as any).options3d;
 
         let dLPosition = {
             x: alignTo.x + point.pointWidth / 2,
@@ -521,12 +541,21 @@ wrap(Series.prototype, 'alignDataLabel', function (
             z: series.z + (seriesOptions as any).depth / 2
         };
 
-        if (chart.inverted && inside) {
+        if (chart.inverted) {
+            // dLPosition.y += (point.shapeArgs as any).width / 2;
             // Inside dataLabels are positioned according to above
             // logic and there is no need to position them using
             // non-3D algorighm (that use alignTo.width)
-            alignTo.width = 0;
-            dLPosition.x += (point.shapeArgs as any).height / 2;
+            if (inside) {
+                alignTo.width = 0;
+                dLPosition.x += (point.shapeArgs as any).height / 2;
+            }
+            // When chart is upside down
+            // (alpha angle between 180 and 360 degrees)
+            // it is needed to add column width to calculated value.
+            if (options3d.alpha >= 90 && options3d.alpha <= 270) {
+                dLPosition.y += (point.shapeArgs as any).width;
+            }
         }
         // dLPosition is recalculated for 3D graphs
         dLPosition = perspective([dLPosition], chart, true, false)[0];
@@ -557,6 +586,8 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
         // First element of stackItem.base is an index of base series.
         const baseSeriesInd = +(stackItem.base).split(',')[0];
         const columnSeries = chart.series[baseSeriesInd];
+        const options3d = (chart.options.chart as any).options3d;
+
 
         // If any series is a column series, use its barW, z and depth
         // parameters for correct stackLabels position calculation
@@ -571,9 +602,15 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
             };
 
             if (chart.inverted) {
-                // Do not use default offset calculation logic for 3D
-                // inverted stackLabels.
+                // Do not use default offset calculation logic
+                // for 3D inverted stackLabels.
                 stackBox.width = 0;
+                // When chart is upside down
+                // (alpha angle between 180 and 360 degrees)
+                // it is needed to add column width to calculated value.
+                if (options3d.alpha >= 90 && options3d.alpha <= 270) {
+                    dLPosition.y += xWidth;
+                }
             }
 
             dLPosition = perspective([dLPosition], chart, true, false)[0];
