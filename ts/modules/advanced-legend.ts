@@ -375,9 +375,13 @@ H.extend(H.AdvancedLegend.prototype, {
             allItems = this.allItems,
             pages = this.pages;
 
+        if (clipHeight < 1) {
+            return;
+        }
+
         allItems.forEach(function (
             item: (
-                Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                Highcharts.AdvancedLegendItem
             ),
             i: number
         ): void {
@@ -385,7 +389,9 @@ H.extend(H.AdvancedLegend.prototype, {
             var y = (item._legendItemPos as any)[1] - 1,
                 h = item.legendItem ?
                     Math.round((item.legendItem as any).getBBox().height) :
-                    0;
+                    0,
+                hRemained = h,
+                lastPageY;
 
             // At least one page is required.
             if (!pages.length) {
@@ -404,16 +410,21 @@ H.extend(H.AdvancedLegend.prototype, {
                 pageH = 0;
             }
 
-            while (h > 0) {
+            while (hRemained > 0) {
                 // Should the item (or its part - in case of items higher than
                 // clipHeight) start a new page?
-                if (h > clipHeight) {
-                    pages.push(pages[pages.length - 1] + clipHeight);
-                    h -= clipHeight; // h is being constantly decreased
-                    // in order to to determine the amount of pages needed
-                    // for a single item.
+                if (hRemained > clipHeight) {
+                    pageH = clipHeight;
+                    lastPageY = pages[pages.length - 1];
+                    if (y + h - pageH > lastPageY) {
+                        pages.push(lastPageY + pageH);
+                    }
+                    hRemained -= clipHeight; // hRemained is being constantly
+                    // decreased in order to to determine the amount of
+                    // pages needed for a single item.
                 } else {
                     h = 0;
+                    pageH = 0;
                 }
             }
         });
