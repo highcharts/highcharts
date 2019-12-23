@@ -542,7 +542,6 @@ wrap(Series.prototype, 'alignDataLabel', function (
         };
 
         if (chart.inverted) {
-            // dLPosition.y += (point.shapeArgs as any).width / 2;
             // Inside dataLabels are positioned according to above
             // logic and there is no need to position them using
             // non-3D algorighm (that use alignTo.width)
@@ -581,7 +580,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
     axis: Highcharts.Axis
 ): void { // #3946
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
-    // Only do this for 3D column and iherited series.
+    // Only do this for 3D graph
     if (chart.is3d() && stackItem.base) {
         // First element of stackItem.base is an index of base series.
         const baseSeriesInd = +(stackItem.base).split(',')[0];
@@ -589,8 +588,9 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
         const options3d = (chart.options.chart as any).options3d;
 
 
-        // If any series is a column series, use its barW, z and depth
-        // parameters for correct stackLabels position calculation
+        // Only do this if base series is a column or inherited type,
+        // use its barW, z and depth parameters
+        // for correct stackLabels position calculation
         if (
             columnSeries &&
             columnSeries instanceof seriesTypes.column

@@ -348,7 +348,6 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, op
             z: series.z + seriesOptions.depth / 2
         };
         if (chart.inverted) {
-            // dLPosition.y += (point.shapeArgs as any).width / 2;
             // Inside dataLabels are positioned according to above
             // logic and there is no need to position them using
             // non-3D algorighm (that use alignTo.width)
@@ -374,14 +373,15 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, op
 // Added stackLabels position calculation for 3D charts.
 wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x, y, xWidth, h, axis) {
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
-    // Only do this for 3D column and iherited series.
+    // Only do this for 3D graph
     if (chart.is3d() && stackItem.base) {
         // First element of stackItem.base is an index of base series.
         var baseSeriesInd = +(stackItem.base).split(',')[0];
         var columnSeries = chart.series[baseSeriesInd];
         var options3d = chart.options.chart.options3d;
-        // If any series is a column series, use its barW, z and depth
-        // parameters for correct stackLabels position calculation
+        // Only do this if base series is a column or inherited type,
+        // use its barW, z and depth parameters
+        // for correct stackLabels position calculation
         if (columnSeries &&
             columnSeries instanceof seriesTypes.column) {
             var dLPosition = {
