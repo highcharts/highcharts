@@ -164,9 +164,9 @@ seriesType<Highcharts.HeatmapSeries>(
      * @extends      plotOptions.scatter
      * @excluding    animationLimit, connectEnds, connectNulls, dashStyle,
      *               findNearestPointBy, getExtremesFromAll, jitter, linecap,
-     *               lineWidth, marker, pointInterval, pointIntervalUnit,
-     *               pointRange, pointStart, shadow, softThreshold, stacking,
-     *               step, threshold, cluster
+     *               lineWidth, pointInterval, pointIntervalUnit, pointRange,
+     *               pointStart, shadow, softThreshold, stacking, step,
+     *               threshold, cluster
      * @product      highcharts highmaps
      * @optionparent plotOptions.heatmap
      */
@@ -257,15 +257,152 @@ seriesType<Highcharts.HeatmapSeries>(
             overflow: false as any,
             padding: 0 // #3837
         },
-
+        /**
+         * @excluding radius, enabledThreshold
+         */
         marker: {
+            /**
+             * A predefined shape or symbol for the marker. When undefined, the
+             * symbol is pulled from options.symbols. Other possible values are
+             * `'circle'`, `'square'`,`'diamond'`, `'triangle'`,
+             * `'triangle-down'`, `'rect'`, and `'ellipse'`.
+             *
+             * Additionally, the URL to a graphic can be given on this form:
+             * `'url(graphic.png)'`. Note that for the image to be applied to
+             * exported charts, its URL needs to be accessible by the export
+             * server.
+             *
+             * Custom callbacks for symbol path generation can also be added to
+             * `Highcharts.SVGRenderer.prototype.symbols`. The callback is then
+             * used by its method name, as shown in the demo.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-marker-symbol/
+             *         Predefined, graphic and custom markers
+             * @sample {highstock} highcharts/plotoptions/series-marker-symbol/
+             *         Predefined, graphic and custom markers
+             */
             symbol: 'rect',
             /** @ignore-option */
             radius: 0,
             lineColor: void 0,
             states: {
+                /**
+                 * @excluding radius, radiusPlus
+                 */
                 hover: {
+                    /**
+                     * Set the marker's fixed width on hover state.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+                     *         70px fixed marker's width and height on hover
+                     *
+                     * @type      {number|undefined}
+                     * @default   undefined
+                     * @product   highcharts highmaps
+                     * @apioption plotOptions.heatmap.marker.states.hover.width
+                     */
+
+                    /**
+                     * Set the marker's fixed height on hover state.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+                     *         70px fixed marker's width and height on hover
+                     *
+                     * @type      {number|undefined}
+                     * @default   undefined
+                     * @product   highcharts highmaps
+                     * @apioption plotOptions.heatmap.marker.states.hover.height
+                     */
+
+                    /**
+                     * The number of pixels to increase the width of the
+                     * selected point.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+                     *         20px greater width and height on hover
+                     *
+                     * @type      {number|undefined}
+                     * @default   undefined
+                     * @product   highcharts highmaps
+                     * @apioption plotOptions.heatmap.marker.states.hover.widthPlus
+                     */
+
+                    /**
+                     * The number of pixels to increase the height of the
+                     * selected point.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+                    *          20px greater width and height on hover
+                     *
+                     * @type      {number|undefined}
+                     * @default   undefined
+                     * @product   highcharts highmaps
+                     * @apioption plotOptions.heatmap.marker.states.hover.heightPlus
+                     */
+
+                    /**
+                     * The additional line width for a hovered point.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-linewidthplus
+                     *         5 pixels wider lineWidth on hover
+                     * @sample {highmaps} maps/plotoptions/heatmap-marker-states-hover-linewidthplus
+                     *         5 pixels wider lineWidth on hover
+                     */
                     lineWidthPlus: 0
+                },
+                /**
+                 * @excluding radius
+                 */
+                select: {
+                    /**
+                     * Set the marker's fixed width on select state.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+                     *         70px fixed marker's width and height on hover
+                     *
+                     * @type      {number|undefined}
+                     * @default   undefined
+                     * @product   highcharts highmaps
+                     * @apioption plotOptions.heatmap.marker.states.select.width
+                     */
+
+                    /**
+                     * Set the marker's fixed height on select state.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+                     *         70px fixed marker's width and height on hover
+                     *
+                     * @type      {number|undefined}
+                     * @default   undefined
+                     * @product   highcharts highmaps
+                     * @apioption plotOptions.heatmap.marker.states.select.height
+                     */
+
+                    /**
+                     * The number of pixels to increase the width of the
+                     * selected point.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+                     *         20px greater width and height on hover
+                     *
+                     * @type      {number|undefined}
+                     * @default   undefined
+                     * @product   highcharts highmaps
+                     * @apioption plotOptions.heatmap.marker.states.select.widthPlus
+                     */
+
+                    /**
+                     * The number of pixels to increase the height of the
+                     * selected point.
+                     *
+                     * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+                     *         20px greater width and height on hover
+                     *
+                     * @type      {number|undefined}
+                     * @default   undefined
+                     * @product   highcharts highmaps
+                     * @apioption plotOptions.heatmap.marker.states.select.heightPlus
+                     */
                 }
             }
         },
@@ -845,7 +982,7 @@ seriesType<Highcharts.HeatmapSeries>(
  * Requires `modules/heatmap`.
  *
  * @extends   series,plotOptions.heatmap
- * @excluding dataParser, dataURL, marker, pointRange, stack
+ * @excluding dataParser, dataURL, pointRange, stack,
  * @product   highcharts highmaps
  * @apioption series.heatmap
  */
@@ -904,7 +1041,6 @@ seriesType<Highcharts.HeatmapSeries>(
  *
  * @type      {Array<Array<number>|*>}
  * @extends   series.line.data
- * @excluding marker
  * @product   highcharts highmaps
  * @apioption series.heatmap.data
  */
@@ -954,6 +1090,242 @@ seriesType<Highcharts.HeatmapSeries>(
  * @type      {number}
  * @product   highcharts highmaps
  * @apioption series.heatmap.data.pointPadding
+ */
+
+/**
+ * @excluding radius, enabledThreshold
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.data.marker
+ */
+
+/**
+ * @excluding radius, enabledThreshold
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.marker
+ */
+
+/**
+ * @excluding radius, radiusPlus
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.marker.states.hover
+ */
+
+/**
+ * @excluding radius
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.marker.states.select
+ */
+
+/**
+ * @excluding radius, radiusPlus
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.data.marker.states.hover
+ */
+
+/**
+ * @excluding radius
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.data.marker.states.select
+ */
+
+/**
+* Set the marker's fixed width on hover state.
+*
+* @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-linewidthplus
+*         5 pixels wider lineWidth on hover
+*
+* @type      {number|undefined}
+* @default   0
+* @product   highcharts highmaps
+* @apioption series.heatmap.marker.states.hover.lineWidthPlus
+*/
+
+/**
+* Set the marker's fixed width on hover state.
+*
+* @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+*         70px fixed marker's width and height on hover
+*
+* @type      {number|undefined}
+* @default   undefined
+* @product   highcharts highmaps
+* @apioption series.heatmap.marker.states.hover.width
+*/
+
+/**
+ * Set the marker's fixed height on hover state.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+ *         70px fixed marker's width and height on hover
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.marker.states.hover.height
+ */
+
+/**
+* The number of pixels to increase the width of the
+* hovered point.
+*
+* @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+*         One day
+*
+* @type      {number|undefined}
+* @default   undefined
+* @product   highcharts highmaps
+* @apioption series.heatmap.marker.states.hover.widthPlus
+*/
+
+/**
+ * The number of pixels to increase the height of the
+ * hovered point.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+ *         One day
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.marker.states.hover.heightPlus
+ */
+
+/**
+ * The number of pixels to increase the width of the
+ * hovered point.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+ *         One day
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.marker.states.select.widthPlus
+ */
+
+/**
+ * The number of pixels to increase the height of the
+ * hovered point.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+ *         One day
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.marker.states.select.heightPlus
+ */
+
+/**
+* Set the marker's fixed width on hover state.
+*
+* @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-linewidthplus
+*         5 pixels wider lineWidth on hover
+*
+* @type      {number|undefined}
+* @default   0
+* @product   highcharts highmaps
+* @apioption series.heatmap.data.marker.states.hover.lineWidthPlus
+*/
+
+/**
+ * Set the marker's fixed width on hover state.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+ *         70px fixed marker's width and height on hover
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.data.marker.states.hover.width
+ */
+
+/**
+ * Set the marker's fixed height on hover state.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+ *         70px fixed marker's width and height on hover
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.data.marker.states.hover.height
+ */
+
+/**
+ * The number of pixels to increase the width of the
+ * hovered point.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+ *         One day
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption series.heatmap.data.marker.states.hover.widthPlus
+ */
+
+/**
+ * The number of pixels to increase the height of the
+ * hovered point.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+ *         One day
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption series.heatmap.data.marker.states.hover.heightPlus
+ */
+
+/**
+* Set the marker's fixed width on select state.
+*
+* @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+*         70px fixed marker's width and height on hover
+*
+* @type      {number|undefined}
+* @default   undefined
+* @product   highcharts highmaps
+* @apioption series.heatmap.data.marker.states.select.width
+*/
+
+/**
+ * Set the marker's fixed height on select state.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-width
+ *         70px fixed marker's width and height on hover
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highmaps
+ * @apioption series.heatmap.data.marker.states.select.height
+ */
+
+/**
+ * The number of pixels to increase the width of the
+ * hovered point.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+ *         One day
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption series.heatmap.data.marker.states.select.widthPlus
+ */
+
+/**
+ * The number of pixels to increase the height of the
+ * hovered point.
+ *
+ * @sample {highcharts} maps/plotoptions/heatmap-marker-states-hover-widthplus
+ *         One day
+ *
+ * @type      {number|undefined}
+ * @default   undefined
+ * @product   highcharts highstock
+ * @apioption series.heatmap.data.marker.states.select.heightPlus
  */
 
 ''; // adds doclets above to transpiled file
