@@ -7,11 +7,8 @@ const gulp = require('gulp');
 const log = require('./lib/log');
 const fs = require('fs-extra');
 const { join } = require('path');
+const readline = require('readline');
 const argv = require('yargs').argv;
-const readline = require('readline').createInterface({
-    input: process.stdin,
-    output: process.stdout
-});
 const childProcess = require('child_process');
 const { getFilesInFolder } = require('highcharts-assembler/src/build.js');
 const { removeFile } = require('highcharts-assembler/src/utilities.js');
@@ -27,9 +24,14 @@ const pathToDistRepo = '../' + releaseRepo + '/';
  * @return {Promise<unknown>} answer.
  */
 async function askUser(question) {
-    return new Promise(resolve => {
-        readline.question(question, input => resolve(input));
+    const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout
     });
+
+    return new Promise(resolve => {
+        rl.question(question, input => resolve(input));
+    }).finally(() => rl.close());
 }
 
 /**
@@ -49,12 +51,17 @@ async function runGit(version, push = false) {
     ];
 
     if (push) {
-        const answer = await askUser('\nAbout to run the following commands: \n' + commands.join(' &&\n'));
+        const answer = await askUser('\nAbout to run the following commands in ' + pathToDistRepo + ': \n' +
+            commands.join('\n') + '\n\n Is this ok? [Y/n]');
         if (answer !== 'Y') {
             const message = 'Aborted before running running git commands!';
             throw new Error(message);
         }
-        childProcess.execSync(commands.join(' && '), { cwd: pathToDistRepo });
+
+        commands.forEach(command => {
+            log.message('Running command: ' + command);
+            childProcess.execSync(command, { cwd: pathToDistRepo });
+        });
     } else {
         log.message('\n-----(Dryrun)------\n Would have ran the following commands:\n\n' + commands.join(' &&\n') + '\n');
     }
@@ -67,7 +74,7 @@ async function runGit(version, push = false) {
  */
 async function npmPublish(push = false) {
     if (push) {
-        const answer = await askUser('\nAbout to publish to npm using \'latest\' tag. Is this ok?');
+        const answer = await askUser('\nAbout to publish to npm using \'latest\' tag. Is this ok [Y/n]?');
         if (answer !== 'Y') {
             const message = 'Aborted before invoking \'npm publish\'! Command must be run manually to complete the release.';
             throw new Error(message);
@@ -279,14 +286,15 @@ async function release() {
     await npmPublish(argv.push);
 
     log.success('Release completed successfully!');
-    readline.close();
     return 'Success!';
 }
 
-release.description = 'Copies distribution contents to highcharts-dist repo, tags and publishes on npm (after manual approval).';
+release.description = 'Copies distribution contents to highcharts-dist repo, tags and publishes on npm (after manual approval).' +
+                        'The task assumes that highcharts-dist is already cloned in a sibling folder of this repo.';
 release.flags = {
     '--push': '(USE WITH CARE!) Will git commit, push and tag to the highcharts-dist repo, as well as publish to npm. ' +
-                'Note that credentials for git/npm must be configured.'
+                'Note that credentials for git/npm must be configured. The user will be asked for input both before the ' +
+                'git commands and npm publish is run.'
 };
 
 gulp.task('dist-release', release);
