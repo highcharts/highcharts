@@ -256,7 +256,7 @@ seriesTypes.column.prototype
 addEvent(Series, 'afterInit', function () {
     if (this.chart.is3d() &&
         this.handle3dGrouping) {
-        var seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
+        var series = this, seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
             var stacks = this.chart.retrieveStacks(stacking), stack = seriesOptions.stack || 0, i; // position within the stack
@@ -274,6 +274,7 @@ addEvent(Series, 'afterInit', function () {
             }
         }
         seriesOptions.depth = seriesOptions.depth || 25;
+        series.z = series.z || 0;
         seriesOptions.zIndex = z;
     }
 });
@@ -341,9 +342,9 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, op
     // Only do this for 3D columns and it's derived series
     if (chart.is3d() &&
         this instanceof seriesTypes.column) {
-        var series = this, seriesOptions = series.options, inside = pick(options.inside, !!series.options.stacking), options3d = chart.options.chart.options3d;
+        var series = this, seriesOptions = series.options, inside = pick(options.inside, !!series.options.stacking), options3d = chart.options.chart.options3d, xOffset = point.pointWidth / 2 || 0;
         var dLPosition = {
-            x: alignTo.x + point.pointWidth / 2,
+            x: alignTo.x + xOffset,
             y: alignTo.y,
             z: series.z + seriesOptions.depth / 2
         };
@@ -364,7 +365,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, op
         }
         // dLPosition is recalculated for 3D graphs
         dLPosition = perspective([dLPosition], chart, true, false)[0];
-        alignTo.x = dLPosition.x - point.pointWidth / 2;
+        alignTo.x = dLPosition.x - xOffset;
         // #7103 If point is outside of plotArea, hide data label.
         alignTo.y = point.outside3dPlot ? -9e9 : dLPosition.y;
     }

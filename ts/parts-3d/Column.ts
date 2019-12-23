@@ -398,7 +398,8 @@ addEvent(Series, 'afterInit', function (): void {
         this.chart.is3d() &&
         (this as Highcharts.ColumnSeries).handle3dGrouping
     ) {
-        var seriesOptions: Highcharts.ColumnSeriesOptions = this.options,
+        var series = this as Highcharts.ColumnSeries,
+            seriesOptions: Highcharts.ColumnSeriesOptions = this.options,
             grouping = seriesOptions.grouping,
             stacking = seriesOptions.stacking,
             reversedStacks = pick(this.yAxis.options.reversedStacks, true),
@@ -425,6 +426,7 @@ addEvent(Series, 'afterInit', function (): void {
             }
         }
         seriesOptions.depth = seriesOptions.depth || 25;
+        series.z = series.z || 0;
         seriesOptions.zIndex = z;
     }
 });
@@ -533,14 +535,14 @@ wrap(Series.prototype, 'alignDataLabel', function (
         const series = this as Highcharts.ColumnSeries,
             seriesOptions: Highcharts.ColumnSeriesOptions = series.options,
             inside = pick(options.inside, !!series.options.stacking),
-            options3d = (chart.options.chart as any).options3d;
+            options3d = (chart.options.chart as any).options3d,
+            xOffset = point.pointWidth / 2 || 0;
 
         let dLPosition = {
-            x: alignTo.x + point.pointWidth / 2,
+            x: alignTo.x + xOffset,
             y: alignTo.y,
             z: series.z + (seriesOptions as any).depth / 2
         };
-
         if (chart.inverted) {
             // Inside dataLabels are positioned according to above
             // logic and there is no need to position them using
@@ -559,7 +561,7 @@ wrap(Series.prototype, 'alignDataLabel', function (
         // dLPosition is recalculated for 3D graphs
         dLPosition = perspective([dLPosition], chart, true, false)[0];
 
-        alignTo.x = dLPosition.x - point.pointWidth / 2;
+        alignTo.x = dLPosition.x - xOffset;
         // #7103 If point is outside of plotArea, hide data label.
         alignTo.y = point.outside3dPlot ? -9e9 : dLPosition.y;
     }
