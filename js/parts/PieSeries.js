@@ -794,7 +794,7 @@ seriesType('pie', 'line',
                 fill: options.fillColor || 'none',
                 stroke: options.color ||
                     '${palette.neutralColor20}'
-            });
+            }, this.options.animation);
         }
         else if (this.graph) { // Destroy the graph object.
             this.graph = this.graph.destroy();
