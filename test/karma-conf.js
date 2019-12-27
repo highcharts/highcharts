@@ -601,7 +601,7 @@ module.exports = function (config) {
             video: false,
             retryLimit: 1,
             pollingTimeout: 5000, // to avoid rate limit errors with browserstack.
-            'browserstack.timezone': 'UTC'
+            'browserstack.timezone': argv.timezone || 'UTC'
         };
         options.customLaunchers = argv.oldie ?
             {
