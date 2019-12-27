@@ -142,6 +142,18 @@ jobs:
             - slack/status:
                 fail_only: true
 
+  test_timezones:
+    <<: *defaults
+    description: Run tests with different browser configs at BrowserStack
+    parameters:
+      browsers:
+        description: "Which browser to test?"
+        type: string
+        default: "ChromeHeadless"
+    steps:
+      - <<: *load_workspace
+      - run: ./.circleci/scripts/test_timezones.sh -b <<parameters.browsers>>
+
   check_for_docs_changes_and_deploy:
     <<: *defaults
     description: Checks for changes in docs/ and triggers deploy via doc-builder
@@ -398,6 +410,11 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
+      - test_timezones:
+          requires: [lint]
+          filters:
+            branches:
+              only: [tools/report-slow-tests-and-set-bs-timezone]
       - test_browsers:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
@@ -453,6 +470,24 @@ workflows:
           name: "Test visual differences and distribute diff log to S3."
           requires: [checkout_and_install]
           context: highcharts-staging
+      - test_timezones:
+          name: "timezone-Mac.Safari"
+          requires: [checkout_and_install]
+          browsers: "Mac.Safari"
+          notify_on_failure: true
+      - test_timezones:
+          requires: [checkout_and_install]
+          notify_on_failure: true
+      - test_timezones:
+          name: "timezone-Mac.Firefox"
+          requires: ["timezone-Mac.Safari"]
+          browsers: "Mac.Firefox"
+          notify_on_failure: true
+      - test_timezones:
+          name: "timezone-Win.Chrome"
+          requires: ["timezone-Mac.Firefox"]
+          browsers: "Win.Chrome"
+          notify_on_failure: true
       - test_browsers:
           name: "test-Mac.Safari"
           requires: [checkout_and_install]
