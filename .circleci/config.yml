@@ -318,6 +318,10 @@ jobs:
 
   deploy_changelog:
     <<: *defaults
+    parameters:
+      add_build_metadata:
+        type: boolean
+        default: false
     steps:
       - <<: *load_workspace
       - <<: *add_gh_keys
@@ -327,7 +331,7 @@ jobs:
           command: sudo apt-get install cpio
       - run:
           name: Generate changelog since last tag
-          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
+          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr <<# parameters.add_build_metadata >>--build-metadata<</ parameters.add_build_metadata >> --since {}) && node changelog/generate-html
       - run:
           name: Changelog - Create git-describe named folder and copy changelog
           command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
@@ -484,6 +488,7 @@ workflows:
           requires: [build_dist]
           context: highcharts-staging
       - deploy_changelog:
+          add_build_metadata: true
           requires: [build_dist]
           context: highcharts-staging
       - deploy_to_highcharts_dist:
