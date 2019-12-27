@@ -210,6 +210,13 @@ element3dMethods = {
             optionsToApply[0] = newAttr;
         }
         else {
+            // It is needed to deal with the whole group zIndexing
+            // in case of graph rotation
+            if (hasZIndexes && hasZIndexes.group) {
+                this.attr({
+                    zIndex: hasZIndexes.group
+                });
+            }
             objectEach(values, function (partVal, part) {
                 newAttr[part] = {};
                 newAttr[part][prop] = partVal;
@@ -315,10 +322,14 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 };
 // Generates a cuboid path and zIndexes
 H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
-    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z, h = shapeArgs.height, w = shapeArgs.width, d = shapeArgs.depth, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
+    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z, 
+    // For side calculation (right/left)
+    // there is a need for height (and other shapeArgs arguments)
+    // to be at least 1px
+    h = shapeArgs.height || 1, w = shapeArgs.width || 1, d = shapeArgs.depth || 1, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
     // Priority for x axis is the biggest,
     // because of x direction has biggest influence on zIndex
-    incrementX = 10000, 
+    incrementX = 1000000, 
     // y axis has the smallest priority in case of our charts
     // (needs to be set because of stacking)
     incrementY = 10, incrementZ = 100, zIndex = 0, 
@@ -411,7 +422,9 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
        even for big changes in Y and Z parameters all columns will be drawn
        correctly. */
     if (isRight === 1) {
-        zIndex += incrementX * (1000 - x);
+        // It is needed to connect value with current chart width
+        // for big chart size.
+        zIndex += incrementX * (chart.plotWidth - x);
     }
     else if (!isRight) {
         zIndex += incrementX * x;

@@ -458,6 +458,13 @@ element3dMethods = {
             newAttr[prop] = val;
             optionsToApply[0] = newAttr;
         } else {
+            // It is needed to deal with the whole group zIndexing
+            // in case of graph rotation
+            if (hasZIndexes && hasZIndexes.group) {
+                this.attr({
+                    zIndex: hasZIndexes.group
+                });
+            }
             objectEach(values, function (partVal: any, part: string): void {
                 newAttr[part] = {};
                 newAttr[part][prop] = partVal;
@@ -628,9 +635,12 @@ H.SVGRenderer.prototype.cuboidPath = function (
     var x = shapeArgs.x,
         y = shapeArgs.y,
         z = shapeArgs.z,
-        h = shapeArgs.height,
-        w = shapeArgs.width,
-        d = shapeArgs.depth,
+        // For side calculation (right/left)
+        // there is a need for height (and other shapeArgs arguments)
+        // to be at least 1px
+        h = shapeArgs.height || 1,
+        w = shapeArgs.width || 1,
+        d = shapeArgs.depth || 1,
         chart = charts[this.chartIndex],
         front: Array<number>,
         back: Array<number>,
@@ -649,7 +659,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
         alpha = options3d.alpha,
         // Priority for x axis is the biggest,
         // because of x direction has biggest influence on zIndex
-        incrementX = 10000,
+        incrementX = 1000000,
         // y axis has the smallest priority in case of our charts
         // (needs to be set because of stacking)
         incrementY = 10,
@@ -759,7 +769,9 @@ H.SVGRenderer.prototype.cuboidPath = function (
        correctly. */
 
     if (isRight === 1) {
-        zIndex += incrementX * (1000 - x);
+        // It is needed to connect value with current chart width
+        // for big chart size.
+        zIndex += incrementX * ((chart as any).plotWidth - x);
     } else if (!isRight) {
         zIndex += incrementX * x;
     }
