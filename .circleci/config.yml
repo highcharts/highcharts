@@ -471,23 +471,19 @@ workflows:
           requires: [checkout_and_install]
           context: highcharts-staging
       - test_timezones:
+          requires: [checkout_and_install]
+      - test_timezones:
           name: "timezone-Mac.Safari"
           requires: [checkout_and_install]
           browsers: "Mac.Safari"
-          notify_on_failure: true
-      - test_timezones:
-          requires: [checkout_and_install]
-          notify_on_failure: true
       - test_timezones:
           name: "timezone-Mac.Firefox"
           requires: ["timezone-Mac.Safari"]
           browsers: "Mac.Firefox"
-          notify_on_failure: true
       - test_timezones:
           name: "timezone-Win.Chrome"
           requires: ["timezone-Mac.Firefox"]
           browsers: "Win.Chrome"
-          notify_on_failure: true
       - test_browsers:
           name: "test-Mac.Safari"
           requires: [checkout_and_install]
