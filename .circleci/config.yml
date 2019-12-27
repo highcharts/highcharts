@@ -352,8 +352,8 @@ jobs:
           name: Delete remote nightly branch
           command: cd ../highcharts-dist && git push origin --delete nightly || true
       - run:
-          name: Run copy-release
-          command: cd ../highcharts && node copy-release
+          name: Run dist-release
+          command: cd ../highcharts && gulp dist-release
       - run:
           name: Push to highcharts-dist nightly branch
           command: |
