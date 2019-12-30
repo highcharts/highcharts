@@ -105,6 +105,24 @@ declare global {
         interface FormatterCallbackFunction<T> {
             (this: T): string;
         }
+        interface ModuleLoaderModuleObject {
+            resolved: boolean;
+            dependencies: Function[];
+        }
+        interface ModuleLoaderModulesLookupObject {
+            [key: string]: ModuleLoaderModuleObject;
+        }
+        interface LoadedModuleFunction {
+            (moduleName: string): void;
+        }
+        interface OnLoadModuleFunction {
+            (moduleName: string): Promise<void>;
+        }
+        interface ModuleLoaderObject {
+            modules: ModuleLoaderModulesLookupObject;
+            loadedModule: LoadedModuleFunction;
+            onLoadModule: OnLoadModuleFunction;
+        }
         interface ObjectEachCallbackFunction<T> {
             (this: T, value: any, key: string, obj: any): void;
         }
@@ -758,6 +776,51 @@ H.error = function (
         );
     } else {
         defaultHandler();
+    }
+};
+
+/**
+ * Static module loader.
+ *
+ * @private
+ */
+const moduleLoader: Highcharts.ModuleLoaderObject = {
+    modules: {},
+    onLoadModule: function (name: string): Promise<void> {
+        return new Promise<void>(
+            (resolve: Function, reject: Function): void => {
+                // Module not loaded, promisify
+                if (!this.modules[name]) {
+                    this.modules[name] = {
+                        resolved: false,
+                        dependencies: []
+                    };
+                }
+
+                if (this.modules[name].resolved) {
+                    // Module was already loaded, apply it
+                    resolve();
+                } else {
+                    // Store dependencies
+                    this.modules[name].dependencies.push(resolve);
+                }
+            }
+        );
+    },
+    loadedModule: function (name: string): void {
+        if (this.modules[name] && !this.modules[name].resolved) {
+            // Other modules were loaded first, call dependencies
+            this.modules[name].dependencies.forEach(
+                (resolve: Function): void => resolve()
+            );
+            this.modules[name].resolved = true;
+        } else if (!this.modules[name]) {
+            // No dependency loaded before, just resolve
+            this.modules[name] = {
+                resolved: true,
+                dependencies: []
+            };
+        }
     }
 };
 
@@ -3425,6 +3488,7 @@ const utils = {
     isNumber,
     isObject,
     isString,
+    moduleLoader,
     numberFormat,
     objectEach,
     offset,

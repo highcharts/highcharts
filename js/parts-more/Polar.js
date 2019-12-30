@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var defined = U.defined, moduleLoader = U.moduleLoader, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -664,3 +664,4 @@ wrap(H.Chart.prototype, 'get', function (proceed, id) {
         return pane.options.id === id;
     }) || proceed.call(this, id);
 });
+moduleLoader.loadedModule('highcharts-more');

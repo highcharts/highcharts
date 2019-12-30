@@ -380,6 +380,48 @@ H.error = function (code, stop, chart, params) {
         defaultHandler();
     }
 };
+/**
+ * Static module loader.
+ *
+ * @private
+ */
+var moduleLoader = {
+    modules: {},
+    onLoadModule: function (name) {
+        var _this = this;
+        return new Promise(function (resolve, reject) {
+            // Module not loaded, promisify
+            if (!_this.modules[name]) {
+                _this.modules[name] = {
+                    resolved: false,
+                    dependencies: []
+                };
+            }
+            if (_this.modules[name].resolved) {
+                // Module was already loaded, apply it
+                resolve();
+            }
+            else {
+                // Store dependencies
+                _this.modules[name].dependencies.push(resolve);
+            }
+        });
+    },
+    loadedModule: function (name) {
+        if (this.modules[name] && !this.modules[name].resolved) {
+            // Other modules were loaded first, call dependencies
+            this.modules[name].dependencies.forEach(function (resolve) { return resolve(); });
+            this.modules[name].resolved = true;
+        }
+        else if (!this.modules[name]) {
+            // No dependency loaded before, just resolve
+            this.modules[name] = {
+                resolved: true,
+                dependencies: []
+            };
+        }
+    }
+};
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * An animator object used internally. One instance applies to one property
@@ -2534,6 +2576,7 @@ var utils = {
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,
+    moduleLoader: moduleLoader,
     numberFormat: numberFormat,
     objectEach: objectEach,
     offset: offset,

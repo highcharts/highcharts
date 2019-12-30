@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick, wrap = U.wrap;
+var moduleLoader = U.moduleLoader, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';
 var addEvent = H.addEvent, perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;
 /**
@@ -315,7 +315,7 @@ function hasNewShapeType(proceed) {
 wrap(seriesTypes.column.prototype, 'pointAttribs', pointAttribs);
 wrap(seriesTypes.column.prototype, 'setState', setState);
 wrap(seriesTypes.column.prototype.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
-if (seriesTypes.columnrange) {
+moduleLoader.onLoadModule('highcharts-more').then(function () {
     wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
     wrap(seriesTypes.columnrange.prototype, 'setState', setState);
     wrap(seriesTypes.columnrange.prototype.pointClass.prototype, 'hasNewShapeType', hasNewShapeType);
@@ -323,7 +323,7 @@ if (seriesTypes.columnrange) {
         seriesTypes.column.prototype.plotGroup;
     seriesTypes.columnrange.prototype.setVisible =
         seriesTypes.column.prototype.setVisible;
-}
+});
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
     // Only do this for 3D columns and it's derived series
     if (this.chart.is3d() &&

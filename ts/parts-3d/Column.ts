@@ -49,6 +49,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    moduleLoader,
     pick,
     wrap
 } = U;
@@ -484,7 +485,7 @@ wrap(
     hasNewShapeType
 );
 
-if (seriesTypes.columnrange) {
+moduleLoader.onLoadModule('highcharts-more').then((): void => {
     wrap(seriesTypes.columnrange.prototype, 'pointAttribs', pointAttribs);
     wrap(seriesTypes.columnrange.prototype, 'setState', setState);
     wrap(
@@ -496,7 +497,7 @@ if (seriesTypes.columnrange) {
         seriesTypes.column.prototype.plotGroup;
     seriesTypes.columnrange.prototype.setVisible =
         seriesTypes.column.prototype.setVisible;
-}
+});
 
 wrap(Series.prototype, 'alignDataLabel', function (
     this: Highcharts.Series,

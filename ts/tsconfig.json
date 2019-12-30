@@ -17,7 +17,8 @@
         "target": "es5",
         "lib": [
             "dom",
-            "es5"
+            "es5",
+            "es2015"
         ],
         "types": [
             "jquery"

@@ -99,6 +99,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     defined,
+    moduleLoader,
     pick,
     splat,
     wrap
@@ -1067,3 +1068,5 @@ wrap(H.Chart.prototype, 'get', function (
         return (pane.options as any).id === id;
     }) || proceed.call(this, id);
 });
+
+moduleLoader.loadedModule('highcharts-more');
