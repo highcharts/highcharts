@@ -638,9 +638,9 @@ H.SVGRenderer.prototype.cuboidPath = function (
         // For side calculation (right/left)
         // there is a need for height (and other shapeArgs arguments)
         // to be at least 1px
-        h = shapeArgs.height || 1,
-        w = shapeArgs.width || 1,
-        d = shapeArgs.depth || 1,
+        h = shapeArgs.height,
+        w = shapeArgs.width,
+        d = shapeArgs.depth,
         chart = charts[this.chartIndex],
         front: Array<number>,
         back: Array<number>,
@@ -710,6 +710,23 @@ H.SVGRenderer.prototype.cuboidPath = function (
      * helper method to decide which side is visible
      * @private
      */
+    function mapSidePath(i: number): Highcharts.Position3dObject {
+        // Added support for 0 value in columns, where height is 0
+        //  but the shape is rendered
+        if (h === 0 && i > 1 && i < 6) {
+            return {
+                x: pArr[i].x,
+                y: pArr[i].y + 10,
+                z: pArr[i].z
+            };
+        }
+        return pArr[i];
+    }
+
+    /**
+     * method creating the final side
+     * @private
+     */
     function mapPath(i: number): Highcharts.Position3dObject {
         return pArr[i];
     }
@@ -725,13 +742,15 @@ H.SVGRenderer.prototype.cuboidPath = function (
         path1: Array<number>,
         path2: Array<number>
     ): Array<number|Array<number>> {
-        var ret = [[] as any, -1];
+        var ret = [[] as any, -1],
+            pathSide1: Array<number> = path1.map(mapSidePath) as any,
+            pathSide2: Array<number> = path2.map(mapSidePath) as any;
 
         path1 = path1.map(mapPath) as any;
         path2 = path2.map(mapPath) as any;
-        if (H.shapeArea(path1 as any) < 0) {
+        if (H.shapeArea(pathSide1 as any) < 0) {
             ret = [path1 as any, 0];
-        } else if (H.shapeArea(path2 as any) < 0) {
+        } else if (H.shapeArea(pathSide2 as any) < 0) {
             ret = [path2 as any, 1];
         }
         return ret;
