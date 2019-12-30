@@ -632,8 +632,8 @@ seriesType('networkgraph', 'line',
     // Return the presentational attributes.
     pointAttribs: function (point, state) {
         // By default, only `selected` state is passed on
-        var pointState = state || point.state || 'normal', attribs = Series.prototype.pointAttribs.call(this, point, pointState), stateOptions = this.options.states[pointState];
-        if (!point.isNode) {
+        var pointState = state || point && point.state || 'normal', attribs = Series.prototype.pointAttribs.call(this, point, pointState), stateOptions = this.options.states[pointState];
+        if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
             // For link, get prefixed names:
             if (stateOptions) {

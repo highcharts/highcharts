@@ -290,3 +290,24 @@ QUnit.test('Layout operations', function (assert) {
         'Series is removed from layout.series collection.'
     );
 });
+
+QUnit.test(
+    'Network Graph and legend',
+    assert => {
+        Highcharts.chart('container', {
+            series: [{
+                type: 'networkgraph',
+                showInLegend: true,
+                data: [{
+                    from: 'A',
+                    to: 'B'
+                }]
+            }]
+        });
+
+        assert.ok(
+            true,
+            'No errors when networkgraph rendered in legend (#12424).'
+        );
+    }
+);

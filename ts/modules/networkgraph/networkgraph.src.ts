@@ -941,7 +941,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
             state?: string
         ): Highcharts.SVGAttributes {
             // By default, only `selected` state is passed on
-            var pointState = state || point.state || 'normal',
+            var pointState = state || point && point.state || 'normal',
                 attribs = Series.prototype.pointAttribs.call(
                     this,
                     point,
@@ -949,7 +949,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 ),
                 stateOptions = (this.options.states as any)[pointState];
 
-            if (!point.isNode) {
+            if (point && !point.isNode) {
                 attribs = point.getLinkAttributes();
                 // For link, get prefixed names:
                 if (stateOptions) {
