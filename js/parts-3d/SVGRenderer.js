@@ -326,7 +326,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     // For side calculation (right/left)
     // there is a need for height (and other shapeArgs arguments)
     // to be at least 1px
-    h = shapeArgs.height || 1, w = shapeArgs.width || 1, d = shapeArgs.depth || 1, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
+    h = shapeArgs.height, w = shapeArgs.width, d = shapeArgs.depth, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
     // Priority for x axis is the biggest,
     // because of x direction has biggest influence on zIndex
     incrementX = 1000000, 
@@ -373,6 +373,22 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      * helper method to decide which side is visible
      * @private
      */
+    function mapSidePath(i) {
+        // Added support for 0 value in columns, where height is 0
+        //  but the shape is rendered
+        if (h === 0 && i > 1 && i < 6) {
+            return {
+                x: pArr[i].x,
+                y: pArr[i].y + 10,
+                z: pArr[i].z
+            };
+        }
+        return pArr[i];
+    }
+    /**
+     * method creating the final side
+     * @private
+     */
     function mapPath(i) {
         return pArr[i];
     }
@@ -384,13 +400,13 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      * @private
      */
     pickShape = function (path1, path2) {
-        var ret = [[], -1];
+        var ret = [[], -1], pathSide1 = path1.map(mapSidePath), pathSide2 = path2.map(mapSidePath);
         path1 = path1.map(mapPath);
         path2 = path2.map(mapPath);
-        if (H.shapeArea(path1) < 0) {
+        if (H.shapeArea(pathSide1) < 0) {
             ret = [path1, 0];
         }
-        else if (H.shapeArea(path2) < 0) {
+        else if (H.shapeArea(pathSide2) < 0) {
             ret = [path2, 1];
         }
         return ret;
