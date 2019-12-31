@@ -58,6 +58,7 @@ declare global {
             public setNodeState: NodesMixin['setNodeState'];
             public to: string;
             public toNode: NodesPoint;
+            public weight?: number;
             public y?: (number|null);
             public getSum(): number;
             public hasShape(): boolean;
@@ -226,6 +227,13 @@ H.NodesMixin = {
 
         // Create the node list and set up links
         this.points.forEach(function (point: Highcharts.NodesPoint): void {
+            // Don't render a node properties for points with weight set to 0
+            // #12453
+            if (defined(point.weight)) {
+                if (!point.weight) {
+                    return;
+                }
+            }
             if (defined(point.from)) {
                 if (!nodeLookup[point.from]) {
                     nodeLookup[point.from] = this.createNode(point.from);
@@ -288,7 +296,10 @@ H.NodesMixin = {
         var args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
-
+        // Check if point graphic exist
+        if (!this.graphic) {
+            return;
+        }
         if (state !== 'select') {
             others.forEach(function (linkOrNode: Highcharts.NodesPoint): void {
                 if (linkOrNode.series) {

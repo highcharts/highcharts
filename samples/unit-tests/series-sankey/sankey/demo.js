@@ -608,3 +608,40 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Zero node is shown in sankey/dependency wheel #12453',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+            series: [{
+                keys: ['from', 'to', 'weight'],
+                data: [
+                    ['Spain', 'France', 5],
+                    ['Spain', 'Netherlands', 0],
+                    ['Spain', 'UK', 1],
+                    ['Netherlands', 'UK', 5]
+                ],
+                type: 'sankey'
+            }]
+        });
+
+        assert.strictEqual(
+            Highcharts.defined(chart.series[0].points[1].graphic),
+            false,
+            'Point should not have been rendered (#12453)'
+        );
+
+        assert.strictEqual(
+            Highcharts.defined(chart.series[0].points[1].fromNode),
+            false,
+            'Point should not have node properties (#12453)'
+        );
+
+        assert.strictEqual(
+            Highcharts.defined(chart.series[0].points[1].toNode),
+            false,
+            'Point should not have node properties (#12453)'
+        );
+    }
+);
