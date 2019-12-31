@@ -308,7 +308,26 @@ seriesType<Highcharts.OHLCSeries>(
         drawPoints: function (this: Highcharts.OHLCSeries): void {
             var series = this,
                 points = series.points,
-                chart = series.chart;
+                chart = series.chart,
+                /**
+                 * Extend vertical stem to open and close values.
+                 */
+                extendStem = function (
+                    path: Array<number|string>,
+                    halfStrokeWidth: number,
+                    openOrClose: number
+                ): void {
+                    // We don't need to worry about crisp - openOrClose value
+                    // is already crisped and halfStrokeWidth should remove it.
+                    path[2] = Math.max(
+                        openOrClose + halfStrokeWidth,
+                        path[2] as number
+                    );
+                    path[5] = Math.min(
+                        openOrClose - halfStrokeWidth,
+                        path[5] as number
+                    );
+                };
 
 
             points.forEach(function (point: Highcharts.OHLCPoint): void {
@@ -319,7 +338,8 @@ seriesType<Highcharts.OHLCSeries>(
                     path: Highcharts.SVGPathArray,
                     graphic = point.graphic,
                     crispX,
-                    isNew = !graphic;
+                    isNew = !graphic,
+                    strokeWidth;
 
                 if (typeof point.plotY !== 'undefined') {
 
@@ -339,7 +359,8 @@ seriesType<Highcharts.OHLCSeries>(
                     }
 
                     // crisp vector coordinates
-                    crispCorr = (graphic.strokeWidth() % 2) / 2;
+                    strokeWidth = graphic.strokeWidth();
+                    crispCorr = (strokeWidth % 2) / 2;
                     // #2596:
                     crispX = Math.round(point.plotX as any) - crispCorr;
                     halfWidth = Math.round((point.shapeArgs as any).width / 2);
@@ -363,6 +384,8 @@ seriesType<Highcharts.OHLCSeries>(
                             crispX - halfWidth,
                             plotOpen
                         );
+
+                        extendStem(path, strokeWidth / 2, plotOpen);
                     }
 
                     // close
@@ -376,6 +399,8 @@ seriesType<Highcharts.OHLCSeries>(
                             crispX + halfWidth,
                             plotClose
                         );
+
+                        extendStem(path, strokeWidth / 2, plotClose);
                     }
 
                     graphic[isNew ? 'attr' : 'animate']({ d: path })
