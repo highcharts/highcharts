@@ -422,7 +422,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     redraw: function (animation) {
         fireEvent(this, 'beforeRedraw');
-        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
+        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);
@@ -433,27 +433,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         // Adjust title layout (reflow multiline text)
         chart.layOutTitles();
-        // link stacked series
-        i = series.length;
-        while (i--) {
-            serie = series[i];
-            if (serie.options.stacking) {
-                hasStackedSeries = true;
-                if (serie.isDirty) {
-                    hasDirtyStacks = true;
-                    break;
-                }
-            }
-        }
-        if (hasDirtyStacks) { // mark others as dirty
-            i = series.length;
-            while (i--) {
-                serie = series[i];
-                if (serie.options.stacking) {
-                    serie.isDirty = true;
-                }
-            }
-        }
         // Handle updated data in the series
         series.forEach(function (serie) {
             if (serie.isDirty) {
@@ -480,8 +459,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.isDirtyLegend = false;
         }
         // reset stacks
-        if (hasStackedSeries) {
-            chart.getStacks();
+        i = series.length;
+        while (i--) {
+            serie = series[i];
+            if (serie.options.stacking) {
+                chart.getStacks();
+                break;
+            }
         }
         if (hasCartesianSeries) {
             // set axes scales

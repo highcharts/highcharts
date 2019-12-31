@@ -90,7 +90,7 @@ declare global {
                 h: number
             ): BBoxObject;
             public dirtyTheSeries(
-                series: Highcharts.Series, point: any
+                series: Highcharts.ColumnSeries, point: Highcharts.ColumnPoint
             ): void;
             public getColumnCount(point?: ColumnPoint): number;
             public getColumnMetrics(point?: ColumnPoint): ColumnMetricsObject;
@@ -664,7 +664,7 @@ seriesType<Highcharts.ColumnSeries>(
 
             if (ignoreNulls) {
                 H.seriesTypes.column.prototype.dirtyTheSeries.call(
-                    series, series, point
+                    series, series, point as Highcharts.ColumnPoint
                 );
             }
 
@@ -774,11 +774,20 @@ seriesType<Highcharts.ColumnSeries>(
          * @return {void}
          */
         dirtyTheSeries: function (series, point): void {
+            // No need to dirty the series when stacking and ignoreNulls
+            // are disabled.
+            if (
+                !series.options.stacking &&
+                !series.options.ignoreNulls
+            ) {
+                return;
+            }
             series.xAxis.series.forEach(function (
                 otherSeries: Highcharts.Series
             ): void {
                 if (
                     otherSeries.type === series.type &&
+                    !otherSeries.isDirty &&
                     (otherSeries as any).hasValueInX(point, otherSeries)
                 ) {
                     otherSeries.isDirty = true;

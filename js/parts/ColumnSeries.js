@@ -574,8 +574,15 @@ seriesType('column', 'line',
      * @return {void}
      */
     dirtyTheSeries: function (series, point) {
+        // No need to dirty the series when stacking and ignoreNulls
+        // are disabled.
+        if (!series.options.stacking &&
+            !series.options.ignoreNulls) {
+            return;
+        }
         series.xAxis.series.forEach(function (otherSeries) {
             if (otherSeries.type === series.type &&
+                !otherSeries.isDirty &&
                 otherSeries.hasValueInX(point, otherSeries)) {
                 otherSeries.isDirty = true;
             }

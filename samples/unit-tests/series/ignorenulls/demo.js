@@ -229,14 +229,16 @@ QUnit.test('ignoreNulls', function (assert) {
         }
     }, false);
 
-    chart.series[2].update({
+    const thirdSeries = chart.series[2];
+
+    thirdSeries.update({
         stack: 1
     }, false);
 
     chart.redraw();
 
     assert.strictEqual(
-        chart.yAxis[0].stacks['column,1,,50%'][1].label.absoluteBox.x <
+        chart.yAxis[0].stacks[thirdSeries.stackKey][1].label.absoluteBox.x <
             chart.xAxis[0].ticks[1].mark.element.getBBox().x,
         true,
         'stackLabels should be in a correct place.'

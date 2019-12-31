@@ -737,7 +737,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             legendUserOptions = chart.userOptions.legend,
             redrawLegend = chart.isDirtyLegend,
             hasStackedSeries: (boolean|undefined),
-            hasDirtyStacks,
             hasCartesianSeries = chart.hasCartesianSeries,
             isDirtyBox = chart.isDirtyBox,
             i,
@@ -759,30 +758,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Adjust title layout (reflow multiline text)
         chart.layOutTitles();
-
-        // link stacked series
-        i = series.length;
-        while (i--) {
-            serie = series[i];
-
-            if (serie.options.stacking) {
-                hasStackedSeries = true;
-
-                if (serie.isDirty) {
-                    hasDirtyStacks = true;
-                    break;
-                }
-            }
-        }
-        if (hasDirtyStacks) { // mark others as dirty
-            i = series.length;
-            while (i--) {
-                serie = series[i];
-                if (serie.options.stacking) {
-                    serie.isDirty = true;
-                }
-            }
-        }
 
         // Handle updated data in the series
         series.forEach(function (serie: Highcharts.Series): void {
@@ -816,10 +791,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // reset stacks
-        if (hasStackedSeries) {
-            chart.getStacks();
+        i = series.length;
+        while (i--) {
+            serie = series[i];
+            if (serie.options.stacking) {
+                chart.getStacks();
+                break;
+            }
         }
-
 
         if (hasCartesianSeries) {
             // set axes scales
