@@ -106,7 +106,6 @@ jobs:
       - run:
           name: Generate highcharts ts declarations
           command: npx gulp jsdoc-dts && npx gulp lint-dts
-      - <<: *persist_workspace
 
   lint:
     <<: *defaults
