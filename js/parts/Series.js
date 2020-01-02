@@ -3061,8 +3061,7 @@ null,
         }
     },
     /**
-     * Get the series' color based on either the options or pulled from
-     * global options.
+     * Get all points' instances created for this series.
      *
      * @private
      * @function Highcharts.Series#getPointsCollection
