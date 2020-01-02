@@ -502,6 +502,13 @@ seriesType('networkgraph', 'line',
         this.indexateNodes();
     },
     /**
+     * In networkgraph, series.points refers to links,
+     * but series.nodes refers to actual points.
+     */
+    getPointsCollection: function () {
+        return this.nodes || [];
+    },
+    /**
      * Set index for each node. Required for proper `node.update()`.
      * Note that links are indexated out of the box in `generatePoints()`.
      *

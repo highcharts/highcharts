@@ -135,6 +135,7 @@ declare global {
                 finalBox?: boolean
             ): Dictionary<number>;
             public getColor(): void;
+            public getPointsCollection(): Array<Point>;
             public getCyclic(
                 prop: string,
                 value?: any,
@@ -3901,6 +3902,20 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     this.chart.options.colors
                 );
             }
+        },
+
+        /**
+         * Get the series' color based on either the options or pulled from
+         * global options.
+         *
+         * @private
+         * @function Highcharts.Series#getPointsCollection
+         * @return {Array<Highcharts.Point>}
+         */
+        getPointsCollection: function (
+            this: Highcharts.Series
+        ): Array<Highcharts.Point> {
+            return (this.hasGroupedData ? this.points : this.data) || [];
         },
 
         /**
