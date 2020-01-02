@@ -3055,6 +3055,17 @@ null,
         }
     },
     /**
+     * Get the series' color based on either the options or pulled from
+     * global options.
+     *
+     * @private
+     * @function Highcharts.Series#getPointsCollection
+     * @return {Array<Highcharts.Point>}
+     */
+    getPointsCollection: function () {
+        return (this.hasGroupedData ? this.points : this.data) || [];
+    },
+    /**
      * Get the series' symbol based on either the options or pulled from
      * global options.
      *

@@ -210,7 +210,8 @@ QUnit.test('Markers', function (assert) {
                 },
                 marker: {
                     radius: 50
-                }
+                },
+                allowPointSelect: true
             }
         },
         title: {
@@ -250,6 +251,15 @@ QUnit.test('Markers', function (assert) {
             `Node: ${node.id} should be within the plotting area - left edge (#11632).`
         );
     });
+
+    chart.series[0].nodes[0].select();
+    chart.series[0].nodes[1].select();
+
+    assert.strictEqual(
+        chart.series[0].nodes[0].selected,
+        false,
+        'First node should be deselected after selecting another node (#12513).'
+    );
 });
 
 QUnit.test('Layout operations', function (assert) {
