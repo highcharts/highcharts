@@ -158,7 +158,7 @@ declare global {
             public layOutTitles(redraw?: boolean): void;
             public onload(): void;
             public orderSeries(fromIndex?: number): void;
-            public propFromSeries(): void;
+            public propFromSeries(seriesOptions?: Array<SeriesOptions>): void;
             public redraw(animation?: (boolean|AnimationOptionsObject)): void;
             public reflow(e?: Event): void;
             public render(): void;
@@ -2318,11 +2318,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#propFromSeries
      * @return {void}
      */
-    propFromSeries: function (this: Highcharts.Chart): void {
+    propFromSeries: function (
+        this: Highcharts.Chart,
+        seriesOptions: Array<Highcharts.SeriesOptions>
+    ): void {
         var chart = this,
             optionsChart = chart.options.chart as Highcharts.ChartOptions,
             klass,
-            seriesOptions =
+            seriesOptions = seriesOptions ||
                 chart.options.series as Array<Highcharts.SeriesOptions>,
             i,
             value;

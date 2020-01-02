@@ -39,6 +39,9 @@ declare global {
                 point: Point,
                 ddOptions: DrilldownOptions
             ): void;
+            handleChartInvert(
+                update: boolean
+            ): void;
             applyDrilldown(): void;
             drillUp(): void;
             getDrilldownBackText(): (string|undefined);
@@ -318,7 +321,9 @@ var addEvent = H.addEvent,
     ColumnSeries = seriesTypes.column,
     Tick = H.Tick,
     fireEvent = H.fireEvent,
-    ddSeriesId = 1;
+    ddSeriesId = 1,
+    invertedOnInit = false,
+    autoInverted = false;
 
 // Add language
 extend(
@@ -784,6 +789,53 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
     }
 };
 
+Chart.prototype.handleChartInvert = function (
+    this: Highcharts.Chart,
+    update: boolean
+): void {
+    if (!invertedOnInit) {
+        var chart = this,
+            seriesOptions: Array<Highcharts.SeriesOptions> = [],
+            isInvertedBeforeCheck;
+
+        if (chart.series.length) {
+            chart.series.forEach(function (series): void {
+                seriesOptions.push(series.userOptions);
+            });
+        } else if (
+            chart.userOptions.series &&
+            H.isArray(chart.userOptions.series)
+        ) {
+            chart.userOptions.series.forEach(function (series): void {
+                seriesOptions.push(series);
+            });
+        }
+
+        isInvertedBeforeCheck = chart.inverted;
+
+        // Reset auto inverted chart option.
+        if (
+            autoInverted &&
+            chart.options.chart &&
+            chart.options.chart.inverted
+        ) {
+            chart.options.chart.inverted = false;
+        }
+
+        chart.propFromSeries(seriesOptions);
+
+        if (update && chart.inverted !== isInvertedBeforeCheck) {
+            chart.update({
+                chart: {
+                    inverted: chart.inverted
+                }
+            }, false, false);
+
+            autoInverted = true;
+        }
+    }
+};
+
 Chart.prototype.applyDrilldown = function (): void {
     var drilldownLevels = this.drilldownLevels,
         levelToRemove: (number|undefined);
@@ -818,6 +870,7 @@ Chart.prototype.applyDrilldown = function (): void {
     }
 
     this.pointer.reset();
+    this.handleChartInvert(true);
     this.redraw();
     this.showDrillUpButton();
     fireEvent(this, 'afterDrilldown');
@@ -948,7 +1001,10 @@ Chart.prototype.drillUp = function (): void {
 
             level.levelSeriesOptions.forEach(addSeries);
 
-            fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+            fireEvent(chart, 'drillup', {
+                seriesOptions: level.seriesPurgedOptions ||
+                    level.seriesOptions
+            });
 
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
@@ -987,6 +1043,7 @@ Chart.prototype.drillUp = function (): void {
         }
     }
 
+    this.handleChartInvert(true);
     this.redraw();
 
     if (this.drilldownLevels.length === 0) {
@@ -1560,5 +1617,17 @@ addEvent(H.Point, 'afterSetState', function (): void {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);
     } else if (this.series.halo) {
         applyCursorCSS(this.series.halo, 'auto', false, styledMode);
+    }
+});
+
+addEvent(H.Chart, 'afterInit', function (): void {
+    invertedOnInit = !!(this.userOptions.chart || {}).inverted;
+
+    if (!invertedOnInit) {
+        this.handleChartInvert(false);
+
+        if (this.inverted) {
+            invertedOnInit = true;
+        }
     }
 });

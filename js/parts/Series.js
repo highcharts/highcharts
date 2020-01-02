@@ -2805,6 +2805,7 @@ null,
                 }
             });
         });
+        fireEvent(this, 'afterBindAxes');
     },
     /**
      * For simple series types like line and column, the data values are

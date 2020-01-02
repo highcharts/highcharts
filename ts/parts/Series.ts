@@ -3534,6 +3534,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
                 });
             });
+
+            fireEvent(this, 'afterBindAxes');
         },
 
         /**

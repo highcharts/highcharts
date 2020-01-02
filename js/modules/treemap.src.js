@@ -41,7 +41,7 @@ recursive = function (item, func, context) {
     if (next !== false) {
         recursive(next, func, context);
     }
-}, updateRootId = mixinTreeSeries.updateRootId;
+}, updateRootId = mixinTreeSeries.updateRootId, treemapAxisDefaultValues = false;
 /* eslint-enable no-invalid-this */
 /**
  * @private
@@ -1361,25 +1361,6 @@ seriesType('treemap', 'scatter'
         Series.prototype.getExtremes.call(this);
     },
     getExtremesFromAll: true,
-    bindAxes: function () {
-        var treeAxis = {
-            endOnTick: false,
-            gridLineWidth: 0,
-            lineWidth: 0,
-            min: 0,
-            dataMin: 0,
-            minPadding: 0,
-            max: AXIS_MAX,
-            dataMax: AXIS_MAX,
-            maxPadding: 0,
-            startOnTick: false,
-            title: null,
-            tickPositions: []
-        };
-        Series.prototype.bindAxes.call(this);
-        extend(this.yAxis.options, treeAxis);
-        extend(this.xAxis.options, treeAxis);
-    },
     /**
      * Workaround for `inactive` state. Since `series.opacity` option is
      * already reserved, don't use that state at all by disabling
@@ -1438,8 +1419,37 @@ seriesType('treemap', 'scatter'
         var point = this;
         return isNumber(point.plotY) && point.y !== null;
     }
-    /* eslint-enable no-invalid-this, valid-jsdoc */
 });
+H.addEvent(H.Series, 'afterBindAxes', function () {
+    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, treeAxis;
+    if (xAxis && yAxis) {
+        if (series.options.type === 'treemap') {
+            treeAxis = {
+                endOnTick: false,
+                gridLineWidth: 0,
+                lineWidth: 0,
+                min: 0,
+                dataMin: 0,
+                minPadding: 0,
+                max: AXIS_MAX,
+                dataMax: AXIS_MAX,
+                maxPadding: 0,
+                startOnTick: false,
+                title: null,
+                tickPositions: []
+            };
+            extend(yAxis.options, treeAxis);
+            extend(xAxis.options, treeAxis);
+            treemapAxisDefaultValues = true;
+        }
+        else if (treemapAxisDefaultValues) {
+            yAxis.setOptions(yAxis.userOptions);
+            xAxis.setOptions(xAxis.userOptions);
+            treemapAxisDefaultValues = false;
+        }
+    }
+});
+/* eslint-enable no-invalid-this, valid-jsdoc */
 /**
  * A `treemap` series. If the [type](#series.treemap.type) option is
  * not specified, it is inherited from [chart.type](#chart.type).

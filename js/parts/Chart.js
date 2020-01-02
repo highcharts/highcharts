@@ -1593,8 +1593,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#propFromSeries
      * @return {void}
      */
-    propFromSeries: function () {
-        var chart = this, optionsChart = chart.options.chart, klass, seriesOptions = chart.options.series, i, value;
+    propFromSeries: function (seriesOptions) {
+        var chart = this, optionsChart = chart.options.chart, klass, seriesOptions = seriesOptions ||
+            chart.options.series, i, value;
         /**
          * The flag is set to `true` if a series of the chart is inverted.
          *

@@ -131,7 +131,7 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
-var addEvent = H.addEvent, noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1;
+var addEvent = H.addEvent, noop = H.noop, color = H.color, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, fireEvent = H.fireEvent, ddSeriesId = 1, invertedOnInit = false, autoInverted = false;
 // Add language
 extend(defaultOptions.lang, 
 /**
@@ -541,6 +541,38 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
         newSeries.options.animation = true;
     }
 };
+Chart.prototype.handleChartInvert = function (update) {
+    if (!invertedOnInit) {
+        var chart = this, seriesOptions = [], isInvertedBeforeCheck;
+        if (chart.series.length) {
+            chart.series.forEach(function (series) {
+                seriesOptions.push(series.userOptions);
+            });
+        }
+        else if (chart.userOptions.series &&
+            H.isArray(chart.userOptions.series)) {
+            chart.userOptions.series.forEach(function (series) {
+                seriesOptions.push(series);
+            });
+        }
+        isInvertedBeforeCheck = chart.inverted;
+        // Reset auto inverted chart option.
+        if (autoInverted &&
+            chart.options.chart &&
+            chart.options.chart.inverted) {
+            chart.options.chart.inverted = false;
+        }
+        chart.propFromSeries(seriesOptions);
+        if (update && chart.inverted !== isInvertedBeforeCheck) {
+            chart.update({
+                chart: {
+                    inverted: chart.inverted
+                }
+            }, false, false);
+            autoInverted = true;
+        }
+    }
+};
 Chart.prototype.applyDrilldown = function () {
     var drilldownLevels = this.drilldownLevels, levelToRemove;
     if (drilldownLevels && drilldownLevels.length > 0) { // #3352, async loading
@@ -565,6 +597,7 @@ Chart.prototype.applyDrilldown = function () {
         delete this.resetZoomButton;
     }
     this.pointer.reset();
+    this.handleChartInvert(true);
     this.redraw();
     this.showDrillUpButton();
     fireEvent(this, 'afterDrilldown');
@@ -650,7 +683,10 @@ Chart.prototype.drillUp = function () {
             }
             oldSeries.xData = []; // Overcome problems with minRange (#2898)
             level.levelSeriesOptions.forEach(addSeries);
-            fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+            fireEvent(chart, 'drillup', {
+                seriesOptions: level.seriesPurgedOptions ||
+                    level.seriesOptions
+            });
             if (newSeries.type === oldSeries.type) {
                 newSeries.drilldownLevel = level;
                 newSeries.options.animation =
@@ -675,6 +711,7 @@ Chart.prototype.drillUp = function () {
             }
         }
     }
+    this.handleChartInvert(true);
     this.redraw();
     if (this.drilldownLevels.length === 0) {
         this.drillUpButton = this.drillUpButton.destroy();
@@ -1057,5 +1094,14 @@ addEvent(H.Point, 'afterSetState', function () {
     }
     else if (this.series.halo) {
         applyCursorCSS(this.series.halo, 'auto', false, styledMode);
+    }
+});
+addEvent(H.Chart, 'afterInit', function () {
+    invertedOnInit = !!(this.userOptions.chart || {}).inverted;
+    if (!invertedOnInit) {
+        this.handleChartInvert(false);
+        if (this.inverted) {
+            invertedOnInit = true;
+        }
     }
 });

@@ -124,4 +124,177 @@ QUnit.test('Drilldown across types', function (assert) {
         'First level type'
     );
 
+    chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category',
+            title: ''
+        },
+        yAxis: {
+            title: ''
+        },
+        legend: {
+            enabled: false
+        },
+        series: [{
+            type: 'column',
+            data: [{
+                name: "Drilldown",
+                y: 62.74,
+                drilldown: "tree"
+            }, {
+                name: "A",
+                y: 10.57
+            }]
+        }],
+        drilldown: {
+            series: [{
+                type: "treemap",
+                id: 'tree',
+                layoutAlgorithm: 'stripes',
+                levels: [{
+                    level: 1,
+                    layoutAlgorithm: 'sliceAndDice'
+                }],
+                data: [{
+                    id: 'A',
+                    name: 'Apples',
+                    color: "#EC2500"
+                }, {
+                    id: 'B',
+                    name: 'Bananas',
+                    color: "#ECE100"
+                }, {
+                    name: 'Anne',
+                    parent: 'A',
+                    value: 5
+                }, {
+                    name: 'Rick',
+                    parent: 'A',
+                    value: 3
+                }, {
+                    name: 'Peter',
+                    parent: 'A',
+                    value: 4
+                }, {
+                    name: 'Anne',
+                    parent: 'B',
+                    value: 4
+                }]
+            }]
+        }
+    });
+
+    chart.series[0].points[0].doDrilldown();
+    chart.drillUp();
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        1,
+        'After drillup treemap axes options should be reset (#12326).'
+    );
+
+    chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category',
+            title: ''
+        },
+        yAxis: {
+            title: ''
+        },
+        legend: {
+            enabled: false
+        },
+        series: [{
+            type: "treemap",
+            id: 'tree',
+            layoutAlgorithm: 'stripes',
+            levels: [{
+                level: 1,
+                layoutAlgorithm: 'sliceAndDice'
+            }],
+            data: [{
+                id: 'A',
+                name: 'Apples',
+                color: "#EC2500"
+            }, {
+                id: 'B',
+                name: 'Bananas',
+                color: "#ECE100"
+            }, {
+                name: 'Anne',
+                parent: 'A',
+                value: 5,
+                drilldown: "column"
+            }, {
+                name: 'Rick',
+                parent: 'A',
+                value: 3
+            }, {
+                name: 'Peter',
+                parent: 'A',
+                value: 4
+            }, {
+                name: 'Anne',
+                parent: 'B',
+                value: 4
+            }]
+        }],
+        drilldown: {
+            series: [{
+                type: 'column',
+                id: 'column',
+                data: [{
+                    name: "Drilldown",
+                    y: 62.74
+                }, {
+                    name: "A",
+                    y: 10.57
+                }]
+            }]
+        }
+    });
+
+    chart.series[0].points[2].doDrilldown();
+
+    assert.strictEqual(
+        chart.xAxis[0].max,
+        1,
+        'After drilldown treemap axes options should be reset (#12326).'
+    );
+
+    chart = Highcharts.chart('container', {
+        xAxis: {
+            type: 'category'
+        },
+        series: [{
+            type: 'column',
+            data: [{
+                name: "Chrome",
+                y: 62.74,
+                drilldown: "Chrome"
+            }, {
+                name: "Firefox",
+                y: 10.57
+            }]
+        }],
+        drilldown: {
+            series: [{
+                type: 'bar',
+                name: "Chrome",
+                id: "Chrome",
+                data: [
+                    ["v65.0", 0.1],
+                    ["v64.0", 1.3],
+                    ["v63.0", 53.02]
+                ]
+            }]
+        }
+    });
+
+    chart.series[0].points[0].doDrilldown();
+
+    assert.ok(
+        chart.inverted,
+        'After drilldown chart should be inverted.'
+    );
 });
