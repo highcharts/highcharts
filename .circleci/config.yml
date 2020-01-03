@@ -395,7 +395,7 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
       - generate_ts_declarations:
-          requires: [lint]
+          requires: [checkout_and_install]
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
@@ -429,7 +429,7 @@ workflows:
           browsers: "Win.IE8 --oldie"
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["test-Win.IE8"]
+          requires: ["test-Win.IE8", "generate_ts_declarations"]
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
