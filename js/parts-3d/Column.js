@@ -142,7 +142,7 @@ seriesTypes.column.prototype.translate3dShapes = function () {
             }
             // Calculate and store point's position in 3D,
             // using perspective method.
-            point.pos3d = perspective([point2dPos], chart, true, false)[0];
+            point.plot3d = perspective([point2dPos], chart, true, false)[0];
             // Translate the tooltip position in 3d space
             tooltipPos = perspective([{
                     x: tooltipPos[0],

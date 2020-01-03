@@ -25,7 +25,7 @@ declare global {
             height?: number;
             outside3dPlot?: (boolean|null);
             shapey?: number;
-            pos3d?: Position3dObject;
+            plot3d?: Position3dObject;
         }
         interface ColumnPointOptions {
             visible?: boolean;
@@ -233,7 +233,7 @@ seriesTypes.column.prototype.translate3dShapes = function (): void {
 
             // Calculate and store point's position in 3D,
             // using perspective method.
-            point.pos3d = perspective([point2dPos], chart, true, false)[0];
+            point.plot3d = perspective([point2dPos], chart, true, false)[0];
 
             // Translate the tooltip position in 3d space
             tooltipPos = perspective(
