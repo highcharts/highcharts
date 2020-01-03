@@ -221,8 +221,7 @@ H.extend(H.AdvancedLegend.prototype, {
             return;
         }
         allItems.forEach(function (item, i) {
-            // -1 prevents clipping default legend symbol
-            var y = item._legendItemPos[1] - 1, h = item.legendItem ?
+            var y = item._legendItemPos[1], h = item.legendItem ?
                 Math.round(item.legendItem.getBBox().height) :
                 0, hRemained = h, lastPageY;
             // At least one page is required.
@@ -233,11 +232,6 @@ H.extend(H.AdvancedLegend.prototype, {
                 // Item placed within page without overflowing.
                 pageH += h;
                 return; // Finish this iteration.
-            }
-            if (y !== pages[pages.length - 1]) {
-                // Create a new page.
-                pages.push(y);
-                pageH = 0;
             }
             while (hRemained > 0) {
                 // Should the item (or its part - in case of items higher than
@@ -253,8 +247,12 @@ H.extend(H.AdvancedLegend.prototype, {
                     // pages needed for a single item.
                 }
                 else {
-                    h = 0;
-                    pageH = 0;
+                    // last page for the item
+                    if (y > pages[pages.length - 1]) {
+                        pages.push(y);
+                    }
+                    hRemained = 0;
+                    pageH = Math.min(h, clipHeight);
                 }
             }
         });

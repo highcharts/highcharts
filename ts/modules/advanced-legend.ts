@@ -385,8 +385,7 @@ H.extend(H.AdvancedLegend.prototype, {
             ),
             i: number
         ): void {
-            // -1 prevents clipping default legend symbol
-            var y = (item._legendItemPos as any)[1] - 1,
+            var y = (item._legendItemPos as any)[1],
                 h = item.legendItem ?
                     Math.round((item.legendItem as any).getBBox().height) :
                     0,
@@ -404,12 +403,6 @@ H.extend(H.AdvancedLegend.prototype, {
                 return; // Finish this iteration.
             }
 
-            if (y !== pages[pages.length - 1]) {
-                // Create a new page.
-                pages.push(y);
-                pageH = 0;
-            }
-
             while (hRemained > 0) {
                 // Should the item (or its part - in case of items higher than
                 // clipHeight) start a new page?
@@ -423,8 +416,12 @@ H.extend(H.AdvancedLegend.prototype, {
                     // decreased in order to to determine the amount of
                     // pages needed for a single item.
                 } else {
-                    h = 0;
-                    pageH = 0;
+                    // last page for the item
+                    if (y > pages[pages.length - 1]) {
+                        pages.push(y);
+                    }
+                    hRemained = 0;
+                    pageH = Math.min(h, clipHeight);
                 }
             }
         });
@@ -859,7 +856,6 @@ if (H.BubbleLegend) {
         function (this: Highcharts.AdvancedLegendItem): void {
             H.LegendItemMixin.prototype.setTargetLegendOptions(this);
         });
-
 
     wrap(H.Chart.prototype, 'getLegendForBubbleLegend', function (
         this: Highcharts.AdvancedLegendChart,
