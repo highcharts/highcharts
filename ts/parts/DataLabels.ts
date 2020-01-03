@@ -1855,6 +1855,9 @@ if (seriesTypes.column) {
             ),
             // draw it inside the box?
             inside = pick(options.inside, !!this.options.stacking),
+            tooltipPos = point.tooltipPos || [],
+            isTooltipOutside = series.chart.inverted ? !(tooltipPos[0] >= 0) :
+                !(tooltipPos[1] <= this.chart.plotHeight),
             overshoot;
 
         // Align to the column itself, or the top of it
@@ -1913,8 +1916,9 @@ if (seriesTypes.column) {
             isNew
         );
 
-        // Hide dataLabel when column is outside plotArea (#12370).
+        // Hide dataLabel when column is outside plotArea (#12370), (#12688).
         if (
+            isTooltipOutside &&
             alignTo &&
             (
                 (alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
