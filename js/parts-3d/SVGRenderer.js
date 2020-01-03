@@ -375,10 +375,14 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      */
     function mapSidePath(i) {
         // Added support for 0 value in columns, where height is 0
-        //  but the shape is rendered
+        // but the shape is rendered.
+        // Height is used from 1st to 6th element of pArr
         if (h === 0 && i > 1 && i < 6) {
             return {
                 x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
                 y: pArr[i].y + 10,
                 z: pArr[i].z
             };
@@ -393,21 +397,25 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         return pArr[i];
     }
     /**
-     * First value - path with specific side
+     * First value - path with specific face
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
      * @private
      */
-    pickShape = function (path1, path2) {
-        var ret = [[], -1], pathSide1 = path1.map(mapSidePath), pathSide2 = path2.map(mapSidePath);
-        path1 = path1.map(mapPath);
-        path2 = path2.map(mapPath);
-        if (H.shapeArea(pathSide1) < 0) {
-            ret = [path1, 0];
+    pickShape = function (verticesIndex1, verticesIndex2) {
+        var ret = [[], -1], 
+        // An array of vertices for cuboid face
+        face1 = verticesIndex1.map(mapPath), face2 = verticesIndex2.map(mapPath), 
+        // dummy face is calculated the same way as standard face,
+        // but if cuboid height is 0 additional height is added so it is
+        // possible to use this vertices array for visible face calculation
+        dummyFace1 = verticesIndex1.map(mapSidePath), dummyFace2 = verticesIndex2.map(mapSidePath);
+        if (H.shapeArea(dummyFace1) < 0) {
+            ret = [face1, 0];
         }
-        else if (H.shapeArea(pathSide2) < 0) {
-            ret = [path2, 1];
+        else if (H.shapeArea(dummyFace2) < 0) {
+            ret = [face2, 1];
         }
         return ret;
     };
