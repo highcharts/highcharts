@@ -34,20 +34,20 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
     assert.strictEqual(
         chart.series[0].dataLabelsGroup.element.children.length > 0,
         true,
-        'Series dataLabels are visible'
+        'Series dataLabels should be visible'
     );
 
     assert.close(
         dataLabel.x + dataLabel.width / 2,
         points[0].plot3d.x,
         4,
-        'dataLabel is in proper x position'
+        'dataLabel should be in proper x position'
     );
     assert.close(
         dataLabel.y + dataLabel.height,
         points[0].plot3d.y,
         4,
-        'dataLabel is in proper y position'
+        'dataLabel should be in proper y position'
     );
 
     dataLabel = points[1].dataLabel;
@@ -55,13 +55,13 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
         dataLabel.x + dataLabel.width / 2,
         points[1].plot3d.x,
         4,
-        'dataLabel is in proper x position'
+        'dataLabel should be in proper x position'
     );
     assert.close(
         dataLabel.y + dataLabel.height,
         points[1].plot3d.y,
         4,
-        'dataLabel is in proper y position'
+        'dataLabel should be in proper y position'
     );
 
 
