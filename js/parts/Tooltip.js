@@ -929,7 +929,7 @@ H.Tooltip.prototype = {
                 tt = ren
                     .label(null, null, null, (options[isHeader ? 'headerShape' : 'shape']) ||
                     'callout', null, null, options.useHTML)
-                    .addClass(isHeader ? 'highcharts-tooltip-header ' : '' +
+                    .addClass((isHeader ? 'highcharts-tooltip-header ' : '') +
                     'highcharts-tooltip-box ' +
                     colorClass)
                     .attr(attribs)
