@@ -92,11 +92,14 @@ jobs:
            - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
      - run: npm install --quiet
      - save_cache:
-           paths:
+         paths:
            - /home/circleci/repo/highcharts/node_modules
          key: npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
      - run: npm run gulp scripts
      - run: git diff --name-only --exit-code || (echo "Untracked files found. Did you forget to commit any transpiled files? Failing build now as this likely will trigger errors later in the build.." && exit 1)
+     - run:
+         name: Prune stuff that is node needed to improve build time
+         command: curl -sfL https://install.goreleaser.com/github.com/tj/node-prune.sh | sh && ./bin/node-prune
      - <<: *persist_workspace
 
   generate_ts_declarations:
