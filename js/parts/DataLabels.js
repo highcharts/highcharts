@@ -1135,7 +1135,8 @@ if (seriesTypes.column) {
         point.plotY >
             pick(this.translatedThreshold, series.yAxis.len)), 
         // draw it inside the box?
-        inside = pick(options.inside, !!this.options.stacking), overshoot;
+        inside = pick(options.inside, !!this.options.stacking), tooltipPos = point.tooltipPos || [], isTooltipOutside = series.chart.inverted ? !(tooltipPos[0] >= 0) :
+            !(tooltipPos[1] <= this.chart.plotHeight), overshoot;
         // Align to the column itself, or the top of it
         if (dlBox) { // Area range uses this method but not alignTo
             alignTo = merge(dlBox);
@@ -1173,8 +1174,9 @@ if (seriesTypes.column) {
         options.verticalAlign = pick(options.verticalAlign, inverted || inside ? 'middle' : below ? 'top' : 'bottom');
         // Call the parent method
         Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
-        // Hide dataLabel when column is outside plotArea (#12370).
-        if (alignTo &&
+        // Hide dataLabel when column is outside plotArea (#12370), (#12688).
+        if (isTooltipOutside &&
+            alignTo &&
             ((alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
                 (alignTo.width <= 0 && alignTo.x === 0))) {
             dataLabel.hide(true);
