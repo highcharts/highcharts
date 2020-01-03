@@ -91,6 +91,9 @@ jobs:
            - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}-{{ checksum "package.json" }}
            - npm-deps-{{ .Environment.HIGHCHARTS_CACHE_VERSION }}-{{ .Branch }}
      - run: npm install --quiet
+     - run:
+        name: Prune stuff that is node needed to improve build time
+        command: curl -sfL https://install.goreleaser.com/github.com/tj/node-prune.sh | sh
      - save_cache:
          paths:
            - /home/circleci/repo/highcharts/node_modules
