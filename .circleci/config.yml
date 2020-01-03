@@ -93,7 +93,7 @@ jobs:
      - run: npm install --quiet
      - run:
         name: Prune stuff that is node needed to improve build time
-        command: curl -sfL https://install.goreleaser.com/github.com/tj/node-prune.sh | sh
+        command: curl -sfL https://install.goreleaser.com/github.com/tj/node-prune.sh | sh && ./bin/node-prune
      - save_cache:
          paths:
            - /home/circleci/repo/highcharts/node_modules
