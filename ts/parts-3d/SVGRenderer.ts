@@ -712,10 +712,14 @@ H.SVGRenderer.prototype.cuboidPath = function (
      */
     function mapSidePath(i: number): Highcharts.Position3dObject {
         // Added support for 0 value in columns, where height is 0
-        //  but the shape is rendered
+        // but the shape is rendered.
+        // Height is used from 1st to 6th element of pArr
         if (h === 0 && i > 1 && i < 6) {
             return {
                 x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
                 y: pArr[i].y + 10,
                 z: pArr[i].z
             };
@@ -732,26 +736,33 @@ H.SVGRenderer.prototype.cuboidPath = function (
     }
 
     /**
-     * First value - path with specific side
+     * First value - path with specific face
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
      * @private
      */
     pickShape = function (
-        path1: Array<number>,
-        path2: Array<number>
+        verticesIndex1: Array<number>,
+        verticesIndex2: Array<number>
     ): Array<number|Array<number>> {
         var ret = [[] as any, -1],
-            pathSide1: Array<number> = path1.map(mapSidePath) as any,
-            pathSide2: Array<number> = path2.map(mapSidePath) as any;
-
-        path1 = path1.map(mapPath) as any;
-        path2 = path2.map(mapPath) as any;
-        if (H.shapeArea(pathSide1 as any) < 0) {
-            ret = [path1 as any, 0];
-        } else if (H.shapeArea(pathSide2 as any) < 0) {
-            ret = [path2 as any, 1];
+            // An array of vertices for cuboid face
+            face1: Array<Highcharts.Position3dObject> =
+                verticesIndex1.map(mapPath),
+            face2: Array<Highcharts.Position3dObject> =
+                verticesIndex2.map(mapPath),
+            // dummy face is calculated the same way as standard face,
+            // but if cuboid height is 0 additional height is added so it is
+            // possible to use this vertices array for visible face calculation
+            dummyFace1: Array<Highcharts.Position3dObject> =
+                verticesIndex1.map(mapSidePath),
+            dummyFace2: Array<Highcharts.Position3dObject> =
+                verticesIndex2.map(mapSidePath);
+        if (H.shapeArea(dummyFace1) < 0) {
+            ret = [face1, 0];
+        } else if (H.shapeArea(dummyFace2) < 0) {
+            ret = [face2, 1];
         }
         return ret;
     };
