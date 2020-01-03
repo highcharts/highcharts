@@ -1677,7 +1677,7 @@ H.addEvent(H.Chart, 'getColumnProps', function (this: Highcharts.Chart): void {
             // TO DO: add more series like boxplot etc.
             if (
                 ignoreNulls && ignoreNulls !== 'fillSpace' &&
-                (series.type.match(/column|columnrange|bar/g))
+                series.type.match(/column|columnrange|bar/g)
             ) {
                 yAxis.minColumnWidth = (series as Highcharts.ColumnSeries)
                     .getMinColumnWidth();

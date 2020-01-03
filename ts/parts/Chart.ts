@@ -741,6 +741,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             isDirtyBox = chart.isDirtyBox,
             i,
             serie,
+            hasDirtyStacks,
             renderer = chart.renderer,
             isHiddenChart = renderer.isHidden(),
             afterRedraw = [] as Array<Function>;
@@ -758,6 +759,34 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Adjust title layout (reflow multiline text)
         chart.layOutTitles();
+
+        // link stacked series
+        i = series.length;
+        while (i--) {
+            serie = series[i];
+
+            if (serie.options.stacking) {
+                hasStackedSeries = true;
+
+                if (serie.isDirty) {
+                    hasDirtyStacks = true;
+                    break;
+                }
+            }
+        }
+        if (hasDirtyStacks) { // mark others as dirty
+            i = series.length;
+            while (i--) {
+                serie = series[i];
+                if (
+                    serie.options.stacking &&
+                    // These series have their own dirting logic
+                    !serie.type.match(/column|columnrange|bar/g)
+                ) {
+                    serie.isDirty = true;
+                }
+            }
+        }
 
         // Handle updated data in the series
         series.forEach(function (serie: Highcharts.Series): void {
@@ -791,13 +820,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // reset stacks
-        i = series.length;
-        while (i--) {
-            serie = series[i];
-            if (serie.options.stacking) {
-                chart.getStacks();
-                break;
-            }
+        if (hasStackedSeries) {
+            chart.getStacks();
         }
 
         if (hasCartesianSeries) {
