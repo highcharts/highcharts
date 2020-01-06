@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-var merge = H.merge, win = H.win, doc = win.document;
+var win = H.win, doc = win.document;
 import HTMLUtilities from './utils/htmlUtilities.js';
 var getElement = HTMLUtilities.getElement;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
@@ -247,15 +247,6 @@ KeyboardNavigation.prototype = {
      */
     createExitAnchor: function () {
         var chart = this.chart, exitAnchor = this.exitAnchor = doc.createElement('div');
-        // Hide exit anchor
-        merge(true, exitAnchor.style, {
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            zIndex: 0,
-            overflow: 'hidden',
-            outline: 'none'
-        });
         chart.renderTo.appendChild(exitAnchor);
         this.makeElementAnExitAnchor(exitAnchor);
     },
