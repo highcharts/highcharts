@@ -5,6 +5,18 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts X-range'
     },
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var ix = point.index + 1,
+                    category = point.yCategory,
+                    from = new Date(point.x),
+                    to = new Date(point.x2);
+                return ix + '. ' + category + ', ' + from.toDateString() +
+                    ' to ' + to.toDateString() + '.';
+            }
+        }
+    },
     xAxis: {
         type: 'datetime'
     },

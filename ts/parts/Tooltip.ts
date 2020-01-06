@@ -22,7 +22,8 @@ const {
     isString,
     pick,
     splat,
-    syncTimeout
+    syncTimeout,
+    timeUnits
 } = U;
 
 /**
@@ -256,8 +257,7 @@ declare global {
 
 var doc = H.doc,
     format = H.format,
-    merge = H.merge,
-    timeUnits = H.timeUnits;
+    merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -346,14 +346,14 @@ H.Tooltip.prototype = {
         this.isHidden = true;
 
         /**
-         * True, if the tooltip is splitted into one label per series, with the
+         * True, if the tooltip is split into one label per series, with the
          * header close to the axis.
          *
          * @readonly
          * @name Highcharts.Tooltip#split
          * @type {boolean|undefined}
          */
-        this.split = options.split && !chart.inverted;
+        this.split = options.split && !chart.inverted && !chart.polar;
 
         /**
          * When the tooltip is shared, the entire plot area will capture mouse
@@ -1477,7 +1477,7 @@ H.Tooltip.prototype = {
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        H.distribute(boxes as any, maxLength, void 0 as any);
+        H.distribute(boxes as any, maxLength);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
             const { anchorX, anchorY, pos, x } = box;
             // Put the label in place

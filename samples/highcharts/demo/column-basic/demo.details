@@ -6,7 +6,8 @@ js_wrap: b
 alt_text: >-
   Highcharts vertical basic column chart JavaScript example graph compares
   monthly average rainfall in major cities clusters.
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Column and bar charts
 ...

@@ -788,7 +788,11 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                 ) {
                     xAxis.min = Math.min(groupedXData[0], (xAxis.min as any));
                 }
-                xAxis.dataMin = groupedXData[0];
+
+                xAxis.dataMin = Math.min(
+                    groupedXData[0],
+                    (xAxis.dataMin as any)
+                );
             }
 
             // We calculated all group positions but we should render

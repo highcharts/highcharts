@@ -361,15 +361,15 @@ const {
     isNumber,
     isObject,
     syncTimeout,
-    pick
+    pick,
+    removeEvent
 } = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
     fireEvent = H.fireEvent,
     format = H.format,
-    uniqueKey = H.uniqueKey,
-    removeEvent = H.removeEvent;
+    uniqueKey = H.uniqueKey;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -781,8 +781,9 @@ Highcharts.Point.prototype = {
     hasNewShapeType: function (
         this: Highcharts.Point
     ): boolean|undefined {
-        return this.graphic &&
-            this.graphic.element.nodeName !== this.shapeType;
+        const oldShapeType = this.graphic &&
+            (this.graphic.symbolName || this.graphic.element.nodeName);
+        return oldShapeType !== this.shapeType;
     },
 
     /**
@@ -831,6 +832,10 @@ Highcharts.Point.prototype = {
             }
         }
 
+        if (point.legendItem) { // pies have legend items
+            chart.legend.destroyItem(point);
+        }
+
         // Remove properties after animation
         if (!dataSorting || !dataSorting.enabled) {
             destroyPoint();
@@ -841,10 +846,6 @@ Highcharts.Point.prototype = {
         }
 
         chart.pointCount--;
-
-        if (point.legendItem) { // pies have legend items
-            chart.legend.destroyItem(point);
-        }
     },
 
     /**

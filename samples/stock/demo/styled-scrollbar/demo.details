@@ -3,7 +3,8 @@ name: Styled scrollbar
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highstock demo
 categories:
   - Various features
 ...

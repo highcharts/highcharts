@@ -27,8 +27,8 @@ import H from '../parts/Globals.js';
 * @type {number}
 */
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, wrap = U.wrap;
-var Series = H.Series, Legend = H.Legend, Chart = H.Chart, addEvent = H.addEvent, color = H.color, merge = H.merge, noop = H.noop, stableSort = H.stableSort, setOptions = H.setOptions;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort, wrap = U.wrap;
+var Series = H.Series, Legend = H.Legend, Chart = H.Chart, addEvent = H.addEvent, color = H.color, merge = H.merge, noop = H.noop, setOptions = H.setOptions;
 setOptions({
     legend: {
         /**

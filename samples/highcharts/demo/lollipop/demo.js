@@ -4,6 +4,17 @@ Highcharts.chart('container', {
         type: 'lollipop'
     },
 
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var ix = point.index + 1,
+                    x = point.name,
+                    y = point.y;
+                return ix + '. ' + x + ', ' + y + '.';
+            }
+        }
+    },
+
     legend: {
         enabled: false
     },

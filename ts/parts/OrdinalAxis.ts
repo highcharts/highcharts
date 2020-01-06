@@ -62,7 +62,8 @@ import U from './Utilities.js';
 const {
     defined,
     extend,
-    pick
+    pick,
+    timeUnits
 } = U;
 
 import './Chart.js';
@@ -75,8 +76,7 @@ var addEvent = H.addEvent,
     Chart = H.Chart,
     css = H.css,
     noop = H.noop,
-    Series = H.Series,
-    timeUnits = H.timeUnits;
+    Series = H.Series;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

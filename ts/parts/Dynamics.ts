@@ -230,7 +230,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         redraw?: boolean,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): Highcharts.Series {
-        var series: any,
+        var series: (Highcharts.Series|undefined),
             chart = this;
 
         if (options) { // <- not necessary
@@ -260,7 +260,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             );
         }
 
-        return series;
+        return series as any;
     },
 
     /**
@@ -1205,11 +1205,11 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             xAxis = series.xAxis,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
-            point,
+            point: Highcharts.Point,
             xData = series.xData as any,
             isInTheMiddle,
-            i,
-            x;
+            i: number,
+            x: (number|null);
 
         // Optional redraw, defaults to true
         redraw = pick(redraw, true);
@@ -1217,15 +1217,15 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // Get options and push the point to xData, yData and series.options. In
         // series.generatePoints the Point instance will be created on demand
         // and pushed to the series.data array.
-        point = { series: series } as Highcharts.Dictionary<any>;
+        point = { series: series } as any;
         series.pointClass.prototype.applyOptions.apply(point, [options]);
         x = point.x;
 
         // Get the insertion point
         i = xData.length;
-        if (series.requireSorting && x < xData[i - 1]) {
+        if (series.requireSorting && (x as any) < xData[i - 1]) {
             isInTheMiddle = true;
-            while (i && xData[i - 1] > x) {
+            while (i && xData[i - 1] > (x as any)) {
                 i--;
             }
         }
@@ -1236,7 +1236,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         series.updateParallelArrays(point as any, i);
 
         if (names && point.name) {
-            names[x] = point.name;
+            names[x as any] = point.name;
         }
         (dataOptions as any).splice(i, 0, options);
 

@@ -52,7 +52,7 @@ var data = [
     ['South Dakota', 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Flag_of_South_Dakota.svg/640px-Flag_of_South_Dakota.svg.png'],
     ['Tennessee', 'https://upload.wikimedia.org/wikipedia/commons/9/9e/Flag_of_Tennessee.svg'],
     ['Texas', 'https://upload.wikimedia.org/wikipedia/commons/f/f7/Flag_of_Texas.svg'],
-    ['Utah', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f3/Flag_of_Utah_%282011-present%29.svg/800px-Flag_of_Utah_%282011-present%29.svg.png'],
+    ['Utah', 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Flag_of_Utah.svg/320px-Flag_of_Utah.svg.png'],
     ['Vermont', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Flag_of_Vermont.svg/640px-Flag_of_Vermont.svg.png', 2],
     ['Virginia', 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Flag_of_Virginia.svg/640px-Flag_of_Virginia.svg.png', 2],
     ['Washington', 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/54/Flag_of_Washington.svg/640px-Flag_of_Washington.svg.png'],

@@ -3,7 +3,8 @@ name: Map with overlaid pie charts
 authors:
   - Øystein Moseng
 js_wrap: b
-tags: []
+tags:
+  - Highmaps demo
 categories:
   - General
 ...

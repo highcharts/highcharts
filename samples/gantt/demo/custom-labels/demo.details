@@ -5,7 +5,8 @@ authors:
   - Torstein Hønsi
 resources:
   - 'https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css'
-tags: []
+tags:
+  - Gantt demo
 categories:
   - Highcharts Gantt
 ...

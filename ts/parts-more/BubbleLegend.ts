@@ -151,6 +151,7 @@ const {
     isNumber,
     objectEach,
     pick,
+    stableSort,
     wrap
 } = U;
 
@@ -161,7 +162,6 @@ var Series = H.Series,
     color = H.color,
     merge = H.merge,
     noop = H.noop,
-    stableSort = H.stableSort,
     setOptions = H.setOptions;
 
 setOptions({ // Set default bubble legend options

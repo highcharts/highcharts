@@ -150,6 +150,52 @@ function checkSamplesConsistency() {
 }
 
 /**
+ * @async
+ * @return {void}
+ */
+function checkDocsConsistency() {
+    const FS = require('fs');
+    const LogLib = require('./lib/log');
+
+    const sidebar = require('../../docs/sidebars.js');
+    const { unlisted } = require('../../docs/doc-config.js');
+    const sidebarDocs = [];
+
+    Object
+        .keys(sidebar.docs)
+        .forEach(key => sidebarDocs.push(...Object.values(sidebar.docs[key])));
+
+    const dirs = FS.readdirSync('docs/');
+    const foundDocs = [];
+
+    try {
+        dirs.forEach(dir => {
+            if (FS.statSync('docs/' + dir).isDirectory()) {
+                FS.readdirSync(path.join('docs/', dir))
+                    .filter(file => FS.statSync(path.join('docs/', dir, file)).isFile() && path.extname(file) === '.md')
+                    .forEach(file => {
+                        foundDocs.push(dir + '/' + file.replace('.md', ''));
+                    });
+            }
+        });
+    } catch (error) {
+        throw new Error(error);
+    }
+    const docsNotAdded = foundDocs.filter(file => {
+        if (unlisted.includes(file)) {
+            return false;
+        }
+        return !sidebarDocs.includes(file);
+    });
+
+    if (docsNotAdded.length > 0) {
+        LogLib.failure(`❌  Found ${docsNotAdded.length} docs not added to '/docs/sidebars.js' or '/docs/doc-config.js':`);
+        docsNotAdded.forEach(file => LogLib.warn(`   '${file}'`));
+        throw new Error('Docs not added to sidebar');
+    }
+}
+
+/**
  * @return {void}
  */
 function saveRun() {
@@ -277,10 +323,10 @@ Available arguments for 'gulp test':
     Win.IE'.
 
     A shorthand option, '--browsers all', runs all BrowserStack machines.
-    
+
 --browsercount
     Number of browserinstances to spread/shard the tests across. Default value is 2.
-    Will default use ChromeHeadless browser. For other browsers specify 
+    Will default use ChromeHeadless browser. For other browsers specify
     argument --splitbrowsers (same usage as above --browsers argument).
 
 --debug
@@ -301,7 +347,7 @@ Available arguments for 'gulp test':
 --visualcompare
     Performs a visual comparison of the output and creates a reference.svg and candidate.svg
     when doing so. A JSON file with the results is produced in the location
-    specified by config.imageCapture.resultsOutputPath. 
+    specified by config.imageCapture.resultsOutputPath.
 
 --ts
     Compile TypeScript-based tests.
@@ -309,7 +355,7 @@ Available arguments for 'gulp test':
 `);
             return;
         }
-
+        checkDocsConsistency();
         checkSamplesConsistency();
         checkJSWrap();
 

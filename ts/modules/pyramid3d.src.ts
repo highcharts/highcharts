@@ -67,7 +67,7 @@ seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
      *         Pyramid3d
      *
      * @extends      plotOptions.funnel3d
-     * @excluding    neckHeight, neckWidth
+     * @excluding    neckHeight, neckWidth, dataSorting
      * @product      highcharts
      * @since        7.1.0
      * @requires     highcharts-3d
@@ -99,7 +99,7 @@ seriesType<Highcharts.Pyramid3dSeries>('pyramid3d', 'funnel3d',
  *
  * @since     7.1.0
  * @extends   series,plotOptions.pyramid3d
- * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase
+ * @excluding allAreas,boostThreshold,colorAxis,compare,compareBase,dataSorting
  * @product   highcharts
  * @sample    {highcharts} highcharts/demo/pyramid3d/ Pyramid3d
  * @requires  modules/pyramid3d

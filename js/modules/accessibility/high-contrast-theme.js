@@ -6,10 +6,10 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 var theme = {
     chart: {
         backgroundColor: 'window'
@@ -27,7 +27,7 @@ var theme = {
     colorAxis: {
         minColor: 'windowText',
         maxColor: 'windowText',
-        stops: null
+        stops: []
     },
     colors: ['windowText'],
     xAxis: {
@@ -208,5 +208,4 @@ var theme = {
         trackBorderColor: 'windowText'
     }
 };
-
 export default theme;

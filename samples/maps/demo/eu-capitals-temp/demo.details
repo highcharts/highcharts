@@ -4,7 +4,8 @@ authors:
   - Daniel Studencki
 js_wrap: b
 requiresManualTesting: true
-tags: []
+tags:
+  - Highmaps demo
 categories:
   - Dynamic
 ...

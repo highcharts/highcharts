@@ -3,7 +3,8 @@ name: Time data with irregular intervals
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Line charts
 ...

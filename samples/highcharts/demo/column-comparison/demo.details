@@ -1,0 +1,15 @@
+---
+name: Column comparison
+authors:
+  - Sebastian Wedzel
+js_wrap: b
+alt_text: >-
+  Chart showing the top 5 countries by the amount of
+  the winning gold medals from the last five editions of
+  the Summer Olympics. The columns behind the main column show
+  the results from the previous edition for a particular country.
+  Each columns group has a xAxis label rendered as a country flag.
+tags: []
+categories:
+  - Column and bar charts
+...

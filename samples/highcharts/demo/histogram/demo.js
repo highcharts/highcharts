@@ -4,6 +4,7 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts Histogram'
     },
+
     xAxis: [{
         title: { text: 'Data' },
         alignTicks: false
@@ -19,6 +20,20 @@ Highcharts.chart('container', {
         title: { text: 'Histogram' },
         opposite: true
     }],
+
+    plotOptions: {
+        histogram: {
+            accessibility: {
+                pointDescriptionFormatter: function (point) {
+                    var ix = point.index + 1,
+                        x1 = point.x.toFixed(3),
+                        x2 = point.x2.toFixed(3),
+                        val = point.y;
+                    return ix + '. ' + x1 + ' to ' + x2 + ', ' + val + '.';
+                }
+            }
+        }
+    },
 
     series: [{
         name: 'Histogram',

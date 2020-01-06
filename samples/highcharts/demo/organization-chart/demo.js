@@ -1,5 +1,4 @@
 Highcharts.chart('container', {
-
     chart: {
         height: 600,
         inverted: true
@@ -7,6 +6,18 @@ Highcharts.chart('container', {
 
     title: {
         text: 'Highcharts Org Chart'
+    },
+
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var nodeName = point.toNode.name,
+                    nodeId = point.toNode.id,
+                    nodeDesc = nodeName === nodeId ? nodeName : nodeName + ', ' + nodeId,
+                    parentDesc = point.fromNode.id;
+                return point.index + '. ' + nodeDesc + ', reports to ' + parentDesc + '.';
+            }
+        }
     },
 
     series: [{
@@ -96,8 +107,7 @@ Highcharts.chart('container', {
             name: 'Product developers'
         }, {
             id: 'Web',
-            name: 'General tech',
-            description: 'Web developers, sys admin'
+            name: 'Web devs, sys admin'
         }, {
             id: 'Sales',
             name: 'Sales team'

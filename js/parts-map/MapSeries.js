@@ -619,7 +619,7 @@ seriesType('map', 'scatter',
                     }
                     // In styled mode, apply point colors by CSS
                     if (chart.styledMode) {
-                        point.graphic.css(series.pointAttribs(point, (point.selected && 'select')));
+                        point.graphic.css(series.pointAttribs(point, point.selected && 'select' || void 0));
                     }
                 }
             });

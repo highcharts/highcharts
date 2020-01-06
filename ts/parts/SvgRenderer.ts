@@ -821,6 +821,7 @@ const {
     objectEach,
     pick,
     pInt,
+    removeEvent,
     splat
 } = U;
 
@@ -843,7 +844,6 @@ var SVGElement: Highcharts.SVGElement,
     isWebKit = H.isWebKit,
     merge = H.merge,
     noop = H.noop,
-    removeEvent = H.removeEvent,
     stop = H.stop,
     svg = H.svg,
     SVG_NS = H.SVG_NS,
@@ -3043,9 +3043,28 @@ extend((
                 textAnchor: 'middle'
             }
         }, textPathOptions);
+
         attrs = textPathOptions.attributes;
 
         if (path && textPathOptions && textPathOptions.enabled) {
+            // In case of fixed width for a text, string is rebuilt
+            // (e.g. ellipsis is applied), so we need to rebuild textPath too
+            if (
+                textPathWrapper &&
+                textPathWrapper.element.parentNode === null
+            ) {
+                // When buildText functionality was triggered again
+                // and deletes textPathWrapper parentNode
+                firstTime = true;
+                textPathWrapper = textPathWrapper.destroy();
+            } else if (textPathWrapper) {
+                // Case after drillup when spans were added into
+                // the DOM outside the textPathWrapper parentGroup
+                this.removeTextOutline.call(
+                    textPathWrapper.parentGroup,
+                    [].slice.call(elem.getElementsByTagName('tspan'))
+                );
+            }
             // label() has padding, text() doesn't
             if (this.options && this.options.padding) {
                 attrs.dx = -this.options.padding;
@@ -3073,7 +3092,11 @@ extend((
                 // Now move all <tspan>'s to the <textPath> node
                 while (tspans.length) {
                     // Remove "y" from tspans, as Firefox translates them
-                    tspans[0].setAttribute('y', 0 as any);
+                    tspans[0].setAttribute('y', 0);
+                    // Remove "x" from tspans
+                    if (isNumber(attrs.dx)) {
+                        tspans[0].setAttribute('x', -attrs.dx);
+                    }
                     textPathElement.appendChild(tspans[0]);
                 }
             }
@@ -3147,6 +3170,14 @@ extend((
 
             // Restore DOM structure:
             this.destroyTextPath(elem as any, path);
+
+            // Bring attributes back
+            this.updateTransform();
+
+            // Set textOutline back for text()
+            if (this.options.rotation) {
+                this.applyTextOutline(this.options.style.textOutline);
+            }
         }
 
         return this;
@@ -3157,22 +3188,35 @@ extend((
         elem: Highcharts.SVGDOMElement,
         path: Highcharts.SVGElement
     ): void {
-        var tspans;
+        var tspans,
+            textElement = elem.getElementsByTagName('text')[0];
 
-        // Remove ID's:
-        path.element.setAttribute('id', '');
+        if (textElement) {
+            // Remove textPath attributes
+            textElement.removeAttribute('dx');
+            textElement.removeAttribute('dy');
 
-        // Move nodes to <text>
-        tspans = this.textPathWrapper.element.childNodes;
-
-        // Now move all <tspan>'s to the <textPath> node
-        while (tspans.length) {
-            (elem.firstChild as any).appendChild(tspans[0]);
+            // Remove ID's:
+            path.element.setAttribute('id', '');
+            // Check if textElement includes textPath,
+            if (textElement.getElementsByTagName('textPath').length) {
+                // Move nodes to <text>
+                tspans = this.textPathWrapper.element.childNodes;
+                // Now move all <tspan>'s to the <textPath> node
+                while (tspans.length) {
+                    textElement.appendChild(tspans[0]);
+                }
+                // Remove <textPath> from the DOM
+                textElement.removeChild(this.textPathWrapper.element);
+            }
+        } else if (elem.getAttribute('dx') || elem.getAttribute('dy')) {
+            // Remove textPath attributes from elem
+            // to get correct text-outline position
+            elem.removeAttribute('dx');
+            elem.removeAttribute('dy');
         }
-        // Remove <textPath>
-        (elem.firstChild as any).removeChild(this.textPathWrapper.element);
-        delete path.textPathWrapper;
-
+        // Set textPathWrapper to undefined and destroy it
+        this.textPathWrapper = this.textPathWrapper.destroy();
     },
     /**
      * @private
@@ -5471,7 +5515,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 cosEnd = Math.cos(end),
                 sinEnd = Math.sin(end),
                 // Proximity takes care of rounding errors around PI (#6971)
-                longArc = options.end - start - Math.PI < proximity ? 0 : 1,
+                longArc = pick(options.longArc,
+                    options.end - start - Math.PI < proximity ? 0 : 1),
                 arc;
 
             arc = [
@@ -5498,7 +5543,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     innerRadius, // y radius
                     0, // slanting
                     longArc, // long or short arc
-                    0, // clockwise
+                    // Clockwise - opposite to the outer arc clockwise
+                    defined(options.clockwise) ? 1 - options.clockwise : 0,
                     x + innerRadius * cosStart,
                     y + innerRadius * sinStart
                 );
