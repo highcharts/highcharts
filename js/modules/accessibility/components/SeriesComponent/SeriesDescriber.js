@@ -52,8 +52,6 @@ function makeDummyElement(point, pos) {
     dummy.attr({
         'class': 'highcharts-a11y-dummy-point',
         fill: 'none',
-        'fill-opacity': 0,
-        'stroke-opacity': 0,
         opacity: 0
     });
     return dummy;
