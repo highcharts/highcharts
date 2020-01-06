@@ -4206,6 +4206,27 @@ H.time = new H.Time(
  * The `Highcharts.dateFormat` function only reflects global time settings set
  * with `setOptions`.
  *
+ * Supported format keys:
+ * - `%a`: Short weekday, like 'Mon'
+ * - `%A`: Long weekday, like 'Monday'
+ * - `%d`: Two digit day of the month, 01 to 31
+ * - `%e`: Day of the month, 1 through 31
+ * - `%w`: Day of the week, 0 through 6
+ * - `%b`: Short month, like 'Jan'
+ * - `%B`: Long month, like 'January'
+ * - `%m`: Two digit month number, 01 through 12
+ * - `%y`: Two digits year, like 09 for 2009
+ * - `%Y`: Four digits year, like 2009
+ * - `%H`: Two digits hours in 24h format, 00 through 23
+ * - `%k`: Hours in 24h format, 0 through 23
+ * - `%I`: Two digits hours in 12h format, 00 through 11
+ * - `%l`: Hours in 12h format, 1 through 12
+ * - `%M`: Two digits minutes, 00 through 59
+ * - `%p`: Upper case AM or PM
+ * - `%P`: Lower case AM or PM
+ * - `%S`: Two digits seconds, 00 through 59
+ * - `%L`: Milliseconds (naming from Ruby)
+ *
  * @function Highcharts.dateFormat
  *
  * @param {string} format
