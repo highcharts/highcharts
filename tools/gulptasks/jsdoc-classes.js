@@ -62,7 +62,8 @@ const SOURCE_GLOBS = [
     'js/modules/sonification/*.js',
     'js/annotations/annotations.src.js',
     'js/annotations/controllable/controllableMixin.js',
-    'js/annotations/ControlPoint.js'
+    'js/annotations/ControlPoint.js',
+    'js/annotations/navigationBindings.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');
