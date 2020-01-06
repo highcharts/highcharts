@@ -168,10 +168,10 @@ H.perspective3D = function (
  * The chart
  *
  * @param {boolean} [insidePlotArea]
- * Wether to verifiy the points are inside the plotArea
+ * Whether to verifiy that the points are inside the plotArea
  *
  * @param {boolean} [useInvertedPersp]
- * Wether to use inverted perspective in calculations
+ * Whether to use inverted perspective in calculations
  *
  * @return {Array<Highcharts.Position3dObject>}
  * An array of transformed points
@@ -269,9 +269,9 @@ H.pointCameraDistance = function (
         },
         // Added support for objects with plotX or x coordinates.
         distance = Math.sqrt(
-            Math.pow(cameraPosition.x - (coordinates.plotX || coordinates.x), 2) +
-            Math.pow(cameraPosition.y - (coordinates.plotY || coordinates.y), 2) +
-            Math.pow(cameraPosition.z - (coordinates.plotZ || coordinates.z), 2)
+            Math.pow(cameraPosition.x - pick(coordinates.plotX, coordinates.x), 2) +
+            Math.pow(cameraPosition.y - pick(coordinates.plotY, coordinates.y), 2) +
+            Math.pow(cameraPosition.z - pick(coordinates.plotZ, coordinates.z), 2)
         );
 
     return distance;
@@ -317,7 +317,7 @@ H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
  * Related chart
  *
  * @param {boolean} [insidePlotArea]
- * Wether to verifiy the points are inside the plotArea
+ * Whether to verifiy that the points are inside the plotArea
  *
  * @return {number}
  * Calculated area
