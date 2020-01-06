@@ -328,12 +328,14 @@ function describeSeriesElement(series, seriesElement) {
  * @param {Highcharts.Series} series The series to add info on.
  */
 function describeSeries(series) {
-    var chart = series.chart, firstPointEl = getSeriesFirstPointElement(series), seriesEl = getSeriesA11yElement(series);
+    var _a, _b;
+    var chart = series.chart, firstPointEl = getSeriesFirstPointElement(series), seriesEl = getSeriesA11yElement(series), is3d = (_b = (_a = chart.options.chart) === null || _a === void 0 ? void 0 : _a.options3d) === null || _b === void 0 ? void 0 : _b.enabled;
     if (seriesEl) {
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
-        // in order for AT to read them out in an understandable order
-        if (seriesEl.lastChild === firstPointEl) {
+        // in order for AT to read them out in an understandable order.
+        // Due to z-index issues we can not do this for 3D charts.
+        if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }
         describePointsInSeries(series);

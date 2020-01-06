@@ -579,15 +579,17 @@ function describeSeriesElement(
  * @param {Highcharts.Series} series The series to add info on.
  */
 function describeSeries(series: Highcharts.AccessibilitySeries): void {
-    var chart = series.chart,
+    const chart = series.chart,
         firstPointEl = getSeriesFirstPointElement(series),
-        seriesEl = getSeriesA11yElement(series);
+        seriesEl = getSeriesA11yElement(series),
+        is3d = chart.options.chart?.options3d?.enabled;
 
     if (seriesEl) {
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
-        // in order for AT to read them out in an understandable order
-        if (seriesEl.lastChild === firstPointEl) {
+        // in order for AT to read them out in an understandable order.
+        // Due to z-index issues we can not do this for 3D charts.
+        if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }
 
