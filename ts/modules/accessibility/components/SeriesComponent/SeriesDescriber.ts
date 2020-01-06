@@ -582,7 +582,7 @@ function describeSeries(series: Highcharts.AccessibilitySeries): void {
     const chart = series.chart,
         firstPointEl = getSeriesFirstPointElement(series),
         seriesEl = getSeriesA11yElement(series),
-        is3d = chart.options.chart?.options3d?.enabled;
+        is3d = chart.is3d && chart.is3d();
 
     if (seriesEl) {
         // For some series types the order of elements do not match the
