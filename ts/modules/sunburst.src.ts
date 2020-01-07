@@ -844,7 +844,7 @@ var sunburstOptions: Highcharts.SunburstSeriesOptions = {
          * `perpendicular`. When `auto`, the best fit will be
          * computed for the point. The `circular` option works similiar
          * to `auto`, but uses the `textPath` feature - labels are curved,
-         * resulting in a better layout, however multiple lines and 
+         * resulting in a better layout, however multiple lines and
          * `textOutline` are not supported.
          *
          * The `series.rotation` option takes precedence over `rotationMode`.
