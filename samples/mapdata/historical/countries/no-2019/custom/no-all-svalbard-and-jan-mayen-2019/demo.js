@@ -22,8 +22,7 @@ var data = [
     ['no-te', 17],
     ['no-aa', 18],
     ['no-sv', 19],
-    ['no-sj', 20],
-    ['undefined', 21]
+    ['no-sj', 20]
 ];
 
 // Create the chart

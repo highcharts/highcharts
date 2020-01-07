@@ -98,13 +98,11 @@ var data = [
     ['fr-s-oi', 93],
     ['fr-v-rh', 94],
     ['fr-n-ta', 95],
-    ['undefined', 96],
     ['fr-re-re', 97],
     ['fr-yt-yt', 98],
     ['fr-gf-gf', 99],
     ['fr-mq-mq', 100],
-    ['fr-gp-gp', 101],
-    ['undefined', 102]
+    ['fr-gp-gp', 101]
 ];
 
 // Create the chart

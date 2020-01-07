@@ -4,8 +4,7 @@
 var data = [
     ['fr-3642', 0],
     ['fr-7327', 1],
-    ['fr-7328', 2],
-    ['undefined', 3]
+    ['fr-7328', 2]
 ];
 
 // Create the chart

@@ -21,8 +21,7 @@ var data = [
     ['pt-vi', 16],
     ['pt-vr', 17],
     ['pt-ma', 18],
-    ['pt-ac', 19],
-    ['undefined', 20]
+    ['pt-ac', 19]
 ];
 
 // Create the chart

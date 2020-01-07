@@ -25,8 +25,7 @@ var data = [
     ['ec-1076', 20],
     ['ec-na', 21],
     ['ec-tu', 22],
-    ['ec-ga', 23],
-    ['undefined', 24]
+    ['ec-ga', 23]
 ];
 
 // Create the chart

@@ -233,8 +233,7 @@ var data = [
     ['gb-mw', 228],
     ['gb-lu', 229],
     ['gb-wl', 230],
-    ['gb-3271', 231],
-    ['undefined', 232]
+    ['gb-3271', 231]
 ];
 
 // Create the chart
