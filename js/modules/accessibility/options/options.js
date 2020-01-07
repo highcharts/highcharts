@@ -135,7 +135,8 @@ var options = {
                 '<div>{chartLongdesc}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
-                '<div>{viewTableButton}</div>',
+                '<div>{viewTableButton}</div>' +
+                '<div>{annotationsInfo}</div>',
             /**
              * A formatter function to create the HTML contents of the hidden
              * screen reader information region after the chart. Analogous to

@@ -280,7 +280,8 @@ var options: DeepPartial<Highcharts.Options> = {
                 '<div>{chartLongdesc}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
-                '<div>{viewTableButton}</div>',
+                '<div>{viewTableButton}</div>' +
+                '<div>{annotationsInfo}</div>',
 
             /**
              * A formatter function to create the HTML contents of the hidden

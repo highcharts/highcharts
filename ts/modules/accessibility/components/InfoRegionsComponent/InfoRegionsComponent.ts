@@ -12,22 +12,24 @@
 
 'use strict';
 
-import H from '../../../parts/Globals.js';
+import H from '../../../../parts/Globals.js';
 var doc = H.win.document,
     format = H.format;
 
-import U from '../../../parts/Utilities.js';
+import U from '../../../../parts/Utilities.js';
 var extend = U.extend,
     pick = U.pick;
 
-import AccessibilityComponent from '../AccessibilityComponent.js';
+import AccessibilityComponent from '../../AccessibilityComponent.js';
+import AnnotationsA11y from './AnnotationsA11y.js';
+const getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 
-import ChartUtilities from '../utils/chartUtilities.js';
+import ChartUtilities from '../../utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
     getChartTitle = ChartUtilities.getChartTitle,
     getAxisDescription = ChartUtilities.getAxisDescription;
 
-import HTMLUtilities from '../utils/htmlUtilities.js';
+import HTMLUtilities from '../../utils/htmlUtilities.js';
 var addClass = HTMLUtilities.addClass,
     setElAttrs = HTMLUtilities.setElAttrs,
     escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
@@ -487,7 +489,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 xAxisDescription: axesDesc.xAxis,
                 yAxisDescription: axesDesc.yAxis,
                 viewTableButton: chart.getCSV ?
-                    this.getDataTableButtonText(dataTableButtonId) : ''
+                    this.getDataTableButtonText(dataTableButtonId) : '',
+                annotationsInfo: getAnnotationsInfoHTML(chart)
             },
             formattedString = H.i18nFormat(format, context, chart);
 
