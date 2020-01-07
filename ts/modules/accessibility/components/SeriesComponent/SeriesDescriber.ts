@@ -64,7 +64,7 @@ function findFirstPointWithGraphic(
 function shouldAddDummyPoint(point: Highcharts.Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
-    const isSunburst = point.series && point.series.type === 'sunburst',
+    const isSunburst = point.series && point.series.is('sunburst'),
         isNull = point.isNull;
 
     return isNull && !isSunburst;

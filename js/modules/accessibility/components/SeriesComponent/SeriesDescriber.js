@@ -41,7 +41,7 @@ function findFirstPointWithGraphic(point) {
 function shouldAddDummyPoint(point) {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
-    var isSunburst = point.series && point.series.type === 'sunburst', isNull = point.isNull;
+    var isSunburst = point.series && point.series.is('sunburst'), isNull = point.isNull;
     return isNull && !isSunburst;
 }
 /**

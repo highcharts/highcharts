@@ -233,7 +233,7 @@ import './Point.js';
 import './SvgRenderer.js';
 var addEvent = H.addEvent, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, Point = H.Point, // @todo  add as a requirement
-SVGElement = H.SVGElement, win = H.win;
+seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -2711,6 +2711,21 @@ null,
             series.setData(options.data, false);
         }
         fireEvent(this, 'afterInit');
+    },
+    /**
+     * Chech whether the series item is itself or inherits from a certain
+     * series type.
+     *
+     * @function Highcharts.Series#is
+     * @param {string} type The type of series to check for, can be either
+     *        featured or custom series types. For example `column`, `pie`,
+     *        `ohlc` etc.
+     *
+     * @return {boolean}
+     *        True if this item is or inherits from the given type.
+     */
+    is: function (type) {
+        return seriesTypes[type] && this instanceof seriesTypes[type];
     },
     /**
      * Insert the series in a collection with other series, either the chart

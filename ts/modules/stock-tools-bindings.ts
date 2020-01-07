@@ -2227,7 +2227,7 @@ var stockToolsBindings = {
             });
 
             chart.series.forEach(function (series: Highcharts.Series): void {
-                if (series instanceof H.seriesTypes.sma) {
+                if (series.is('sma')) {
                     indicators.push(series.userOptions);
                 } else if (series.type === 'flags') {
                     flags.push(series.userOptions);
