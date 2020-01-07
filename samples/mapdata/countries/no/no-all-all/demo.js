@@ -357,8 +357,7 @@ var data = [
     ['no-mr-1560', 352],
     ['no-tf-5422', 353],
     ['no-tf-5405', 354],
-    ['no-in-3428', 355],
-    ['undefined', 356]
+    ['no-in-3428', 355]
 ];
 
 // Create the chart

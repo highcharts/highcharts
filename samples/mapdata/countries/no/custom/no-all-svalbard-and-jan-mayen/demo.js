@@ -14,8 +14,7 @@ var data = [
     ['no-vt-38', 9],
     ['no-in-34', 10],
     ['no-sv', 11],
-    ['no-sj', 12],
-    ['undefined', 13]
+    ['no-sj', 12]
 ];
 
 // Create the chart

@@ -268,9 +268,7 @@ var data = [
     ['ie-cw', 263],
     ['gb-cw', 264],
     ['gb-lu', 265],
-    ['undefined', 266],
-    ['gb-3271', 267],
-    ['undefined', 268]
+    ['gb-3271', 267]
 ];
 
 // Create the chart

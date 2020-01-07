@@ -28,8 +28,7 @@ var data = [
     ['fr-yt', 23],
     ['fr-gf', 24],
     ['fr-mq', 25],
-    ['fr-gp', 26],
-    ['undefined', 27]
+    ['fr-gp', 26]
 ];
 
 // Create the chart

@@ -19,8 +19,7 @@ var data = [
     ['fr-may', 14],
     ['fr-gf', 15],
     ['fr-mq', 16],
-    ['fr-gua', 17],
-    ['undefined', 18]
+    ['fr-gua', 17]
 ];
 
 // Create the chart

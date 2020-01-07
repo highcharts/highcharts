@@ -53,8 +53,7 @@ var data = [
     ['es-j', 48],
     ['es-lu', 49],
     ['es-tf', 50],
-    ['es-gc', 51],
-    ['undefined', 52]
+    ['es-gc', 51]
 ];
 
 // Create the chart

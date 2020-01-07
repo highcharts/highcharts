@@ -428,8 +428,7 @@ var data = [
     ['no-fi-2023', 423],
     ['no-fi-2028', 424],
     ['no-fi-2003', 425],
-    ['no-he-438', 426],
-    ['undefined', 427]
+    ['no-he-438', 426]
 ];
 
 // Create the chart

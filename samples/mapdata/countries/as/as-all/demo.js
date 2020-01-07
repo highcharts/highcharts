@@ -6,8 +6,7 @@ var data = [
     ['as-6515', 1],
     ['as-6514', 2],
     ['as-6513', 3],
-    ['as-3585', 4],
-    ['undefined', 5]
+    ['as-3585', 4]
 ];
 
 // Create the chart

@@ -95,8 +95,7 @@ var data = [
     ['fr-hdf-oi', 90],
     ['fr-ara-rh', 91],
     ['fr-occ-ta', 92],
-    ['fr-bfc-yo', 93],
-    ['undefined', 94]
+    ['fr-bfc-yo', 93]
 ];
 
 // Create the chart
