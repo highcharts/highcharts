@@ -143,7 +143,7 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
 
     controller = new TestController(chart);
     series = chart.series[0];
-    offsetTop = chart.plotHeight * Highcharts.relativeLength(chart.xAxis[0].options.top, 1);
+    offsetTop = Highcharts.relativeLength(chart.xAxis[0].options.top, chart.plotHeight);
     point0 = chart.series[0].points[0];
     point1 = chart.series[0].points[1];
     barSpace = Math.abs(series.points[1].plotX - series.points[0].plotX) - point0.shapeArgs.width;
@@ -151,9 +151,26 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         (barSpace * 3) / 2 + point1.shapeArgs.width / 2;
 
     controller.moveTo(chart.plotLeft + 1, tooltipYPos);
-    assert.strictEqual(
-        chart.tooltip.now.anchorY,
-        Math.round(tooltipYPos),
-        'Tooltip position should be correct when bar chart xAxis has top and height set (#12589).'
+    assert.ok(
+        Math.abs(chart.tooltip.now.anchorY - Math.round(tooltipYPos)) <= 1,
+        'Tooltip position should be correct when bar chart xAxis has top and height set with percent values (#12589).'
+    );
+
+    chart.update({
+        xAxis: {
+            height: 128,
+            top: 73
+        }
+    });
+
+    offsetTop = chart.xAxis[0].options.top - chart.plotTop;
+    barSpace = Math.abs(series.points[1].plotX - series.points[0].plotX) - point0.shapeArgs.width;
+    tooltipYPos = offsetTop + chart.plotTop + point0.shapeArgs.width +
+        (barSpace * 3) / 2 + point1.shapeArgs.width / 2;
+
+    controller.moveTo(chart.plotLeft + 1, tooltipYPos);
+    assert.ok(
+        Math.abs(chart.tooltip.now.anchorY - Math.round(tooltipYPos)) <= 1,
+        'Tooltip position should be correct when bar chart xAxis has top and height set with numeric values (#12589).'
     );
 });

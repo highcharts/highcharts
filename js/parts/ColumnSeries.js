@@ -563,7 +563,8 @@ seriesType('column', 'line',
             yAxis.getThreshold(threshold), minPointLength = pick(options.minPointLength, 5), metrics = series.getColumnMetrics(), seriesPointWidth = metrics.width, 
         // postprocessed for border width
         seriesBarW = series.barW =
-            Math.max(seriesPointWidth, 1 + 2 * borderWidth), seriesXOffset = series.pointXOffset = metrics.offset, dataMin = series.dataMin, dataMax = series.dataMax, topFactor = H.relativeLength((series.xAxis.options || {}).top || 0, 1), heightFactor = H.relativeLength((series.xAxis.options || {}).height || 1, 1), offsetX = (series.xAxis.len / heightFactor) * topFactor;
+            Math.max(seriesPointWidth, 1 + 2 * borderWidth), seriesXOffset = series.pointXOffset = metrics.offset, dataMin = series.dataMin, dataMax = series.dataMax, top = (series.xAxis.options || {}).top, offsetX = isNumber(top) ? top - chart.plotTop :
+            H.relativeLength(top || 0, chart.plotHeight);
         if (chart.inverted) {
             translatedThreshold -= 0.5; // #3355
         }
