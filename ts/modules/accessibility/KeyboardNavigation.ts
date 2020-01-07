@@ -13,6 +13,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 var addEvent = H.addEvent,
+    fireEvent = H.fireEvent,
     merge = H.merge,
     win = H.win,
     doc = win.document;
@@ -92,10 +93,14 @@ addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
  * Dismiss popup content in chart, including export menu and tooltip.
  */
 H.Chart.prototype.dismissPopupContent = function (): void {
-    if (this.tooltip) {
-        this.tooltip.hide(0);
-    }
-    this.hideExportMenu();
+    const chart = this;
+
+    fireEvent(this, 'dismissPopupContent', {}, function (): void {
+        if (chart.tooltip) {
+            chart.tooltip.hide(0);
+        }
+        chart.hideExportMenu();
+    });
 };
 
 

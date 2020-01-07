@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-var addEvent = H.addEvent, merge = H.merge, win = H.win, doc = win.document;
+var addEvent = H.addEvent, fireEvent = H.fireEvent, merge = H.merge, win = H.win, doc = win.document;
 import HTMLUtilities from './utils/htmlUtilities.js';
 var getElement = HTMLUtilities.getElement;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
@@ -34,10 +34,13 @@ addEvent(doc, 'keydown', function (e) {
  * Dismiss popup content in chart, including export menu and tooltip.
  */
 H.Chart.prototype.dismissPopupContent = function () {
-    if (this.tooltip) {
-        this.tooltip.hide(0);
-    }
-    this.hideExportMenu();
+    var chart = this;
+    fireEvent(this, 'dismissPopupContent', {}, function () {
+        if (chart.tooltip) {
+            chart.tooltip.hide(0);
+        }
+        chart.hideExportMenu();
+    });
 };
 /**
  * The KeyboardNavigation class, containing the overall keyboard navigation
