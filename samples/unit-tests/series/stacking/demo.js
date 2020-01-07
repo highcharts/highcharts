@@ -630,3 +630,69 @@ QUnit.test('Date objects as X values, column', function (assert) {
         );
     });
 }());
+
+// This test checks whether series dirting works for series in the same stack.
+QUnit.test("Redrawing dirty stacked series.", function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'area'
+            },
+            plotOptions: {
+                series: {
+                    stacking: 'normal'
+                }
+            },
+            series: [{
+                data: [106, 107, 111, 133]
+            }, {
+                data: [163, 203, 276, 208]
+            }]
+        }),
+        oldExtremes = chart.yAxis[0].getExtremes(),
+        otherPointPlotY = chart.series[0].points[2].plotY;
+
+    chart.series[1].points[2].update({
+        y: 300
+    });
+
+    // Extremes should not change in this test because when they do,
+    // all series are being redrawn immidiately - we don't want that
+    assert.strictEqual(
+        chart.yAxis[0].getExtremes().max,
+        oldExtremes.max,
+        'Extremes shold stay the same.'
+    );
+
+    // Series in dirty stack should be redrawn
+    assert.notEqual(
+        chart.series[0].points[2].plotY, // Other series' point
+        otherPointPlotY,
+        'Point should be moved up.'
+    );
+
+    chart.update({
+        chart: {
+            type: 'column'
+        }
+    });
+
+    oldExtremes = chart.yAxis[0].getExtremes();
+    otherPointPlotY = chart.series[0].points[2].plotY;
+
+    chart.series[1].points[2].update({
+        y: 276
+    });
+
+    assert.strictEqual(
+        chart.yAxis[0].getExtremes().max,
+        oldExtremes.max,
+        'Extremes should stay the same.'
+    );
+
+    assert.notEqual(
+        chart.series[0].points[2].plotY, // Other series' point
+        otherPointPlotY,
+        'Point should be moved down.'
+    );
+
+});
