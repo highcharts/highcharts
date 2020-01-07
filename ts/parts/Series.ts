@@ -135,6 +135,7 @@ declare global {
                 finalBox?: boolean
             ): Dictionary<number>;
             public getColor(): void;
+            public getPointsCollection(): Array<Point>;
             public getCyclic(
                 prop: string,
                 value?: any,
@@ -3008,12 +3009,23 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             /**
              * The opposite state of a hover for series.
              *
-             * @sample highcharts/plotoptions/series-states-inactive-opacity
-             *         Disabled inactive state by setting opacity
+             * @sample highcharts/plotoptions/series-states-inactive-disabled
+             *         Disabled inactive state
              *
              * @declare Highcharts.SeriesStatesInactiveOptionsObject
              */
             inactive: {
+                /**
+                 * Enable or disable the inactive state for a series
+                 *
+                 * @sample highcharts/plotoptions/series-states-inactive-disabled
+                 *         Disabled inactive state
+                 *
+                 * @type {boolean}
+                 * @default true
+                 * @apioption plotOptions.series.states.inactive.enabled
+                 */
+
                 /**
                  * The animation for entering the inactive state.
                  *
@@ -3024,13 +3036,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     duration: 50
                 },
                 /**
-                 * Opacity of series elements (dataLabels, line, area). Set to 1
-                 * to disable inactive state.
+                 * Opacity of series elements (dataLabels, line, area).
                  *
-                 * @apioption plotOptions.series.states.inactive.opacity
                  * @type {number}
-                 * @sample highcharts/plotoptions/series-states-inactive-opacity
-                 *         Disabled inactive state
                  */
                 opacity: 0.2
             }
@@ -3894,6 +3902,19 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     this.chart.options.colors
                 );
             }
+        },
+
+        /**
+         * Get all points' instances created for this series.
+         *
+         * @private
+         * @function Highcharts.Series#getPointsCollection
+         * @return {Array<Highcharts.Point>}
+         */
+        getPointsCollection: function (
+            this: Highcharts.Series
+        ): Array<Highcharts.Point> {
+            return (this.hasGroupedData ? this.points : this.data) || [];
         },
 
         /**
