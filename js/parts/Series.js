@@ -477,8 +477,8 @@ null,
      * (columns, point markers, pie slices, map areas etc).
      *
      * The selected points can be handled by point select and unselect
-     * events, or collectively by the [getSelectedPoints](
-     * Highcharts.Chart#getSelectedPoints) function.
+     * events, or collectively by the [getSelectedPoints
+     * ](/class-reference/Highcharts.Chart#getSelectedPoints) function.
      *
      * And alternative way of selecting points is through dragging.
      *
