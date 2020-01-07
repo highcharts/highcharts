@@ -11,6 +11,18 @@ function createChart() {
         title: {
             text: 'Live Data'
         },
+        accessibility: {
+            announceNewData: {
+                enabled: true,
+                minAnnounceInterval: 15000,
+                announcementFormatter: function (allSeries, newSeries, newPoint) {
+                    if (newPoint) {
+                        return 'New point added. Value: ' + newPoint.y;
+                    }
+                    return false;
+                }
+            }
+        },
         data: {
             csvURL: urlInput.value,
             enablePolling: pollingCheckbox.checked === true,

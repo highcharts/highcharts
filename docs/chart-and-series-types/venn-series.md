@@ -14,7 +14,7 @@ Getting started
 
 Loading the module `modules/venn.js` will enable the use of venn series type. As a module it will require that Highcharts is loaded in advance. The following is an example of how the Venn series can be loaded using the Highcharts CDN. Please see the [Installation article](https://www.highcharts.com/docs/getting-started/installation) for more information on how Highcharts and its modules can be loaded.
 
-```html    
+```html
 <script href="https://code.highcharts.com/highcharts.js"></script>
 <script href="https://code.highcharts.com/modules/venn.js"></script>
 ```
@@ -23,14 +23,14 @@ Loading the module `modules/venn.js` will enable the use of venn series type. As
 
 Since the venn series is an extension to the Highcharts library, it is the chart constructor that should be used when creating the chart.
 
-    
+
     Highcharts.chart('container', {
         // Chart options
     });
 
 Next up is adding the a series with type venn where the configurations and data for the venn diagram can be set.
 
-    
+
     Highcharts.chart('container', {
         series: [{
             type: 'venn',
@@ -40,7 +40,7 @@ Next up is adding the a series with type venn where the configurations and data 
 
 The following data will create two sets A and B, where both sets will have a proportional area of size 2.
 
-    
+
     // Series data
         data: [{
             sets: ['A'],
@@ -52,7 +52,7 @@ The following data will create two sets A and B, where both sets will have a pro
 
 So far there is no relationship between the two sets, and the current data will create two seperated circles for A and B. Another data point can be added to define the relationship between A and B. The following point will define an intersection between A and B, where the area of overlap will have a size of 1.
 
-    
+
     {
         sets: ['A', 'B'],
         value: 1
@@ -62,7 +62,7 @@ The visualization should now look like a proper venn diagram, but there is littl
 
 In the following example A and B will be named as Apples and Bananas, while the relationship between them will be named Fruits.
 
-    
+
     // Series data
             data: [{
                 name: 'Apples',
@@ -84,7 +84,7 @@ The final visualization should now display a venn diagram of the relation betwee
 
 Its configuration should in full look as the following.
 
-    
+
     Highcharts.chart('container', {
         series: [{
             type: 'venn',

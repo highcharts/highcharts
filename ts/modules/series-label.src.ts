@@ -123,6 +123,8 @@ H.setOptions({
 
     /**
      * @optionparent plotOptions
+     *
+     * @private
      */
     plotOptions: {
 

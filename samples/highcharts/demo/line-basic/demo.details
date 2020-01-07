@@ -6,7 +6,9 @@ js_wrap: b
 alt_text: >-
   Highcharts basic line chart JavaScript example displays graph plot of solar
   employment growth areas over time.
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Line charts
+priority: 1
 ...

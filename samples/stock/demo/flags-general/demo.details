@@ -3,7 +3,8 @@ name: Flags marking events
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highstock demo
 categories:
   - General
 ...

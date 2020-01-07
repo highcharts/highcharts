@@ -3,8 +3,8 @@ name: Packed bubble chart
 authors:
   - Sebastian Bochan
 js_wrap: b
-isNew: true
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Scatter and bubble charts
 ...

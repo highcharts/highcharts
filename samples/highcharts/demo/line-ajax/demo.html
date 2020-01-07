@@ -4,10 +4,17 @@
 <script src="https://code.highcharts.com/modules/series-label.js"></script>
 <script src="https://code.highcharts.com/modules/exporting.js"></script>
 <script src="https://code.highcharts.com/modules/export-data.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
 <!-- Additional files for the Highslide popup effect -->
 <script src="https://www.highcharts.com/media/com_demo/js/highslide-full.min.js"></script>
 <script src="https://www.highcharts.com/media/com_demo/js/highslide.config.js" charset="utf-8"></script>
 <link rel="stylesheet" type="text/css" href="https://www.highcharts.com/media/com_demo/css/highslide.css" />
 
-<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        Chart showing data loaded dynamically. The individual data points can
+        be clicked to display more information.
+    </p>
+</figure>

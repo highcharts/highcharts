@@ -11,7 +11,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
+var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
 var addEvent = H.addEvent, argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
 }, dateFormat = H.dateFormat, isObject = function (x) {
@@ -433,7 +433,7 @@ function (e) {
                             unitName = 'year';
                             count = parentInfo.count * 10;
                         }
-                        unitRange = H.timeUnits[unitName];
+                        unitRange = timeUnits[unitName];
                         this.tickInterval = unitRange * count;
                         return this.getTimeTicks({
                             unitRange: unitRange,

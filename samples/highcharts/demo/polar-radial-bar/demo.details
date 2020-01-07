@@ -3,7 +3,9 @@ name: Radial bar chart
 authors:
   - Pawel Dalek
 js_wrap: b
-tags: []
+new_until: 2020-03-11
+tags:
+  - Highcharts demo
 categories:
   - More chart types
 ...

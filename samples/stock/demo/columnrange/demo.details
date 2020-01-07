@@ -3,7 +3,8 @@ name: Column range
 authors:
   - Torstein Hønsi
 js_wrap: b
-tags: []
+tags:
+  - Highstock demo
 categories:
   - Chart types
 ...

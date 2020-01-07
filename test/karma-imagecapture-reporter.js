@@ -93,12 +93,14 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     this.onBrowserStart = function (browser) {
         const filename = imageCapture.resultsOutputPath;
         LOG.info('Starting visual tests. Results stored in ' + filename);
-        const today = new Date().toISOString().slice(0, 10);
+        const now = new Date();
+        const today = now.toISOString().slice(0, 10);
         const testResults = readExistingResult(filename);
         testResults.meta = Object.assign(testResults.meta || {}, {
             browser: browser.name,
-            runId: browser.id,
+            runId: process.env.CIRCLE_BUILD_NUM || browser.id,
             runDate: today,
+            runDateTs: now.getTime(),
             gitSha: gitSha || 'unknown',
             version: version
         });

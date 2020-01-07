@@ -701,6 +701,7 @@ const {
     isString,
     objectEach,
     pick,
+    removeEvent,
     splat,
     syncTimeout
 } = U;
@@ -717,7 +718,6 @@ var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     Point = H.Point, // @todo  add as a requirement
-    removeEvent = H.removeEvent,
     SVGElement = H.SVGElement,
     win = H.win;
 
@@ -2816,6 +2816,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
         /**
          * @declare Highcharts.SeriesStatesOptionsObject
+         *
+         * @private
          */
         states: {
 

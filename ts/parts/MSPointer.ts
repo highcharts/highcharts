@@ -37,6 +37,7 @@ import U from './Utilities.js';
 const {
     extend,
     objectEach,
+    removeEvent,
     wrap
 } = U;
 
@@ -49,7 +50,6 @@ var addEvent = H.addEvent,
     hasTouch = H.hasTouch,
     noop = H.noop,
     Pointer = H.Pointer,
-    removeEvent = H.removeEvent,
     win = H.win;
 
 if (!hasTouch && (win.PointerEvent || win.MSPointerEvent)) {

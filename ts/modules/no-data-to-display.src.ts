@@ -106,6 +106,9 @@ defaultOptions.noData = {
      * @product   highcharts highstock gantt
      * @apioption noData.attr
      */
+    attr: {
+        zIndex: 1
+    },
 
     /**
      * Whether to insert the label as HTML, or as pseudo-HTML rendered with
@@ -185,7 +188,6 @@ chartPrototype.showNoData = function (str?: string): void {
         text = str || (options && (options.lang as any).noData),
         noDataOptions: Highcharts.NoDataOptions =
             options && (options.noData as any);
-
     if (!chart.noDataLabel && chart.renderer) {
         chart.noDataLabel = chart.renderer
             .label(

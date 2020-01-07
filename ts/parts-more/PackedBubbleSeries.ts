@@ -535,7 +535,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
      * @extends      plotOptions.bubble
      * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
      *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
-     *               zMax, zMin
+     *               zMax, zMin, dataSorting
      * @product      highcharts
      * @since        7.0.0
      * @requires     highcharts-more
@@ -618,7 +618,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              *
              * @type      {string}
              * @since     7.0.0
-             * @apioption plotOptions.packedBubble.dataLabels.format
+             * @apioption plotOptions.packedbubble.dataLabels.format
              */
 
             // eslint-disable-next-line valid-jsdoc
@@ -642,7 +642,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             /**
              * @type      {string}
              * @since     7.1.0
-             * @apioption plotOptions.packedBubble.dataLabels.parentNodeFormat
+             * @apioption plotOptions.packedbubble.dataLabels.parentNodeFormat
              */
 
             // eslint-disable-next-line valid-jsdoc
@@ -681,7 +681,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                  *
                  * @type      {Highcharts.SVGAttributes}
                  * @since     7.1.0
-                 * @apioption plotOptions.packedBubble.dataLabels.attributes
+                 * @apioption plotOptions.packedbubble.dataLabels.attributes
                  */
 
                 /**
@@ -701,7 +701,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              * **Note:** Only SVG-based renderer supports this option.
              *
              * @extends   plotOptions.series.dataLabels.textPath
-             * @apioption plotOptions.packedBubble.dataLabels.textPath
+             * @apioption plotOptions.packedbubble.dataLabels.textPath
              */
 
             padding: 0
@@ -1895,7 +1895,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser,dataURL,stack,dataSorting
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.packedbubble

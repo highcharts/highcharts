@@ -169,7 +169,7 @@ declare global {
             zIndex?: number;
         }
         interface XAxisOptions {
-            accessibility?: (object|XAxisAccessibilityOptions);
+            accessibility?: XAxisAccessibilityOptions;
             alignTicks?: boolean;
             allowDecimals?: boolean;
             alternateGridColor?: (
@@ -701,6 +701,7 @@ const {
     objectEach,
     pick,
     relativeLength,
+    removeEvent,
     splat,
     syncTimeout
 } = U;
@@ -718,7 +719,6 @@ var addEvent = H.addEvent,
     getMagnitude = H.getMagnitude,
     merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
-    removeEvent = H.removeEvent,
     seriesTypes = H.seriesTypes,
     Tick = H.Tick;
 

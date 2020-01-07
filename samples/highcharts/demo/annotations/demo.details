@@ -6,7 +6,8 @@ js_wrap: b
 alt_text: >-
   Highcharts basic line chart with annotations JavaScript example displays
   annotated shaded graph plot of Tour France.
-tags: []
+tags:
+  - Highcharts demo
 categories:
   - Line charts
 ...

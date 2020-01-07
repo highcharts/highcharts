@@ -1,6 +1,10 @@
 ---
- name: Highcharts Demo
- authors:
-   - Wojciech Chmiel
- js_wrap: b
+name: Highcharts Demo
+authors:
+  - Wojciech Chmiel
+js_wrap: b
+new_until: 2020-03-11
+tags:
+  - Highmaps demo
+categories: []
 ...

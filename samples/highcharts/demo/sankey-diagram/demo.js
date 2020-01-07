@@ -3,6 +3,17 @@ Highcharts.chart('container', {
     title: {
         text: 'Highcharts Sankey Diagram'
     },
+    accessibility: {
+        point: {
+            descriptionFormatter: function (point) {
+                var index = point.index + 1,
+                    from = point.from,
+                    to = point.to,
+                    weight = point.weight;
+                return index + '. ' + from + ' to ' + to + ', ' + weight + '.';
+            }
+        }
+    },
     series: [{
         keys: ['from', 'to', 'weight'],
         data: [

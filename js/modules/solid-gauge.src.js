@@ -302,18 +302,18 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
                         'sweep-flag': 0
                     })
                         .add(series.group);
-                    if (!series.chart.styledMode) {
-                        if (options.linecap !== 'square') {
-                            graphic.attr({
-                                'stroke-linecap': 'round',
-                                'stroke-linejoin': 'round'
-                            });
-                        }
+                }
+                if (!series.chart.styledMode) {
+                    if (options.linecap !== 'square') {
                         graphic.attr({
-                            stroke: options.borderColor || 'none',
-                            'stroke-width': options.borderWidth || 0
+                            'stroke-linecap': 'round',
+                            'stroke-linejoin': 'round'
                         });
                     }
+                    graphic.attr({
+                        stroke: options.borderColor || 'none',
+                        'stroke-width': options.borderWidth || 0
+                    });
                 }
                 if (graphic) {
                     graphic.addClass(point.getClassName(), true);
@@ -339,7 +339,8 @@ H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  *            cropThreshold, dashStyle, dataParser, dataURL, dial,
  *            findNearestPointBy, getExtremesFromAll, marker, negativeColor,
  *            pointPlacement, pivot, shadow, softThreshold, stack, stacking,
- *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones
+ *            states, step, threshold, turboThreshold, wrap, zoneAxis, zones,
+ *            dataSorting
  * @product   highcharts
  * @requires  modules/solid-gauge
  * @apioption series.solidgauge

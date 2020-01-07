@@ -6,8 +6,9 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 /* eslint-disable max-len */
 /*
  *  List of deprecated options:
@@ -56,73 +57,70 @@
  *
  */
 /* eslint-enable max-len */
-
 'use strict';
-
 import H from '../../../parts/Globals.js';
+var error = H.error;
 import U from '../../../parts/Utilities.js';
 var pick = U.pick;
-
-var error = H.error;
-
-// Warn user that a deprecated option was used
+/* eslint-disable valid-jsdoc */
+/**
+ * Warn user that a deprecated option was used.
+ * @private
+ * @param {Highcharts.Chart} chart
+ * @param {string} oldOption
+ * @param {string} newOption
+ * @return {void}
+ */
 function warn(chart, oldOption, newOption) {
-    error(
-        'Highcharts: Deprecated option ' + oldOption +
+    error('Highcharts: Deprecated option ' + oldOption +
         ' used. This will be removed from future versions of Highcharts. Use ' +
-        newOption + ' instead.', false, chart
-    );
+        newOption + ' instead.', false, chart);
 }
-
-// Set a new option on a root prop, where the option is defined as
-// an array of suboptions.
+/**
+ * Set a new option on a root prop, where the option is defined as an array of
+ * suboptions.
+ * @private
+ * @param root
+ * @param {Array<string>} optionAsArray
+ * @param {*} val
+ * @return {void}
+ */
 function traverseSetOption(root, optionAsArray, val) {
-    var opt = root,
-        prop,
-        i = 0;
-    for (;i < optionAsArray.length - 1; ++i) {
+    var opt = root, prop, i = 0;
+    for (; i < optionAsArray.length - 1; ++i) {
         prop = optionAsArray[i];
         opt = opt[prop] = pick(opt[prop], {});
     }
     opt[optionAsArray[optionAsArray.length - 1]] = val;
 }
-
-// If we have a clear root option node for old and new options and a mapping
-// between, we can use this generic function for the copy and warn logic.
-function deprecateFromOptionsMap(
-    chart, rootOldAsArray, rootNewAsArray, mapToNewOptions
-) {
+/**
+ * If we have a clear root option node for old and new options and a mapping
+ * between, we can use this generic function for the copy and warn logic.
+ */
+function deprecateFromOptionsMap(chart, rootOldAsArray, rootNewAsArray, mapToNewOptions) {
+    /**
+     * @private
+     */
     function getChildProp(root, propAsArray) {
         return propAsArray.reduce(function (acc, cur) {
             return acc[cur];
         }, root);
     }
-
-    var rootOld = getChildProp(chart.options, rootOldAsArray),
-        rootNew = getChildProp(chart.options, rootNewAsArray);
-
+    var rootOld = getChildProp(chart.options, rootOldAsArray), rootNew = getChildProp(chart.options, rootNewAsArray);
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey) {
         var val = rootOld[oldOptionKey];
         if (typeof val !== 'undefined') {
-            traverseSetOption(
-                rootNew,
-                mapToNewOptions[oldOptionKey],
-                val
-            );
-            warn(
-                chart,
-                rootOldAsArray.join('.') + '.' + oldOptionKey,
-                rootNewAsArray.join('.') + '.' +
-                mapToNewOptions[oldOptionKey].join('.')
-            );
+            traverseSetOption(rootNew, mapToNewOptions[oldOptionKey], val);
+            warn(chart, rootOldAsArray.join('.') + '.' + oldOptionKey, rootNewAsArray.join('.') + '.' +
+                mapToNewOptions[oldOptionKey].join('.'));
         }
     });
 }
-
-
+/**
+ * @private
+ */
 function copyDeprecatedChartOptions(chart) {
-    var chartOptions = chart.options.chart || {},
-        a11yOptions = chart.options.accessibility || {};
+    var chartOptions = chart.options.chart || {}, a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (prop) {
         if (chartOptions[prop]) {
             a11yOptions[prop] = chartOptions[prop];
@@ -130,7 +128,9 @@ function copyDeprecatedChartOptions(chart) {
         }
     });
 }
-
+/**
+ * @private
+ */
 function copyDeprecatedAxisOptions(chart) {
     chart.axes.forEach(function (axis) {
         var opts = axis.options;
@@ -141,7 +141,9 @@ function copyDeprecatedAxisOptions(chart) {
         }
     });
 }
-
+/**
+ * @private
+ */
 function copyDeprecatedSeriesOptions(chart) {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
@@ -161,86 +163,69 @@ function copyDeprecatedSeriesOptions(chart) {
             var optionVal = series.options[oldOption];
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
-                traverseSetOption(
-                    series.options,
-                    oldToNewSeriesOptions[oldOption],
-                    // Note that skipKeyboardNavigation has inverted option
-                    // value, since we set enabled rather than disabled
-                    oldOption === 'skipKeyboardNavigation' ?
-                        !optionVal : optionVal
-                );
-                warn(
-                    chart,
-                    'series.' + oldOption, 'series.' +
-                    oldToNewSeriesOptions[oldOption].join('.')
-                );
+                traverseSetOption(series.options, oldToNewSeriesOptions[oldOption], 
+                // Note that skipKeyboardNavigation has inverted option
+                // value, since we set enabled rather than disabled
+                oldOption === 'skipKeyboardNavigation' ?
+                    !optionVal : optionVal);
+                warn(chart, 'series.' + oldOption, 'series.' +
+                    oldToNewSeriesOptions[oldOption].join('.'));
             }
         });
     });
 }
-
+/**
+ * @private
+ */
 function copyDeprecatedTopLevelAccessibilityOptions(chart) {
-    deprecateFromOptionsMap(
-        chart,
-        ['accessibility'],
-        ['accessibility'],
-        {
-            pointDateFormat: ['point', 'dateFormat'],
-            pointDateFormatter: ['point', 'dateFormatter'],
-            pointDescriptionFormatter: ['point', 'descriptionFormatter'],
-            pointDescriptionThreshold: ['series',
-                'pointDescriptionEnabledThreshold'],
-            pointNavigationThreshold: ['keyboardNavigation', 'seriesNavigation',
-                'pointNavigationEnabledThreshold'],
-            pointValueDecimals: ['point', 'valueDecimals'],
-            pointValuePrefix: ['point', 'valuePrefix'],
-            pointValueSuffix: ['point', 'valueSuffix'],
-            screenReaderSectionFormatter: ['screenReaderSection',
-                'beforeChartFormatter'],
-            describeSingleSeries: ['series', 'describeSingleSeries'],
-            seriesDescriptionFormatter: ['series', 'descriptionFormatter'],
-            onTableAnchorClick: ['screenReaderSection', 'onViewDataTableClick'],
-            axisRangeDateFormat: ['screenReaderSection', 'axisRangeDateFormat']
-        }
-    );
+    deprecateFromOptionsMap(chart, ['accessibility'], ['accessibility'], {
+        pointDateFormat: ['point', 'dateFormat'],
+        pointDateFormatter: ['point', 'dateFormatter'],
+        pointDescriptionFormatter: ['point', 'descriptionFormatter'],
+        pointDescriptionThreshold: ['series',
+            'pointDescriptionEnabledThreshold'],
+        pointNavigationThreshold: ['keyboardNavigation', 'seriesNavigation',
+            'pointNavigationEnabledThreshold'],
+        pointValueDecimals: ['point', 'valueDecimals'],
+        pointValuePrefix: ['point', 'valuePrefix'],
+        pointValueSuffix: ['point', 'valueSuffix'],
+        screenReaderSectionFormatter: ['screenReaderSection',
+            'beforeChartFormatter'],
+        describeSingleSeries: ['series', 'describeSingleSeries'],
+        seriesDescriptionFormatter: ['series', 'descriptionFormatter'],
+        onTableAnchorClick: ['screenReaderSection', 'onViewDataTableClick'],
+        axisRangeDateFormat: ['screenReaderSection', 'axisRangeDateFormat']
+    });
 }
-
+/**
+ * @private
+ */
 function copyDeprecatedKeyboardNavigationOptions(chart) {
-    deprecateFromOptionsMap(
-        chart,
-        ['accessibility', 'keyboardNavigation'],
-        ['accessibility', 'keyboardNavigation', 'seriesNavigation'],
-        {
-            skipNullPoints: ['skipNullPoints'],
-            mode: ['mode']
-        }
-    );
+    deprecateFromOptionsMap(chart, ['accessibility', 'keyboardNavigation'], ['accessibility', 'keyboardNavigation', 'seriesNavigation'], {
+        skipNullPoints: ['skipNullPoints'],
+        mode: ['mode']
+    });
 }
-
+/**
+ * @private
+ */
 function copyDeprecatedLangOptions(chart) {
-    deprecateFromOptionsMap(
-        chart,
-        ['lang', 'accessibility'],
-        ['lang', 'accessibility'],
-        {
-            legendItem: ['legend', 'legendItem'],
-            legendLabel: ['legend', 'legendLabel'],
-            mapZoomIn: ['zoom', 'mapZoomIn'],
-            mapZoomOut: ['zoom', 'mapZoomOut'],
-            resetZoomButton: ['zoom', 'resetZoomButton'],
-            screenReaderRegionLabel: ['screenReaderSection',
-                'beforeRegionLabel'],
-            rangeSelectorButton: ['rangeSelector', 'buttonText'],
-            rangeSelectorMaxInput: ['rangeSelector', 'maxInputLabel'],
-            rangeSelectorMinInput: ['rangeSelector', 'minInputLabel'],
-            svgContainerEnd: ['screenReaderSection', 'endOfChartMarker'],
-            viewAsDataTable: ['table', 'viewAsDataTableButtonText'],
-            tableSummary: ['table', 'tableSummary']
-        }
-    );
+    deprecateFromOptionsMap(chart, ['lang', 'accessibility'], ['lang', 'accessibility'], {
+        legendItem: ['legend', 'legendItem'],
+        legendLabel: ['legend', 'legendLabel'],
+        mapZoomIn: ['zoom', 'mapZoomIn'],
+        mapZoomOut: ['zoom', 'mapZoomOut'],
+        resetZoomButton: ['zoom', 'resetZoomButton'],
+        screenReaderRegionLabel: ['screenReaderSection',
+            'beforeRegionLabel'],
+        rangeSelectorButton: ['rangeSelector', 'buttonText'],
+        rangeSelectorMaxInput: ['rangeSelector', 'maxInputLabel'],
+        rangeSelectorMinInput: ['rangeSelector', 'minInputLabel'],
+        svgContainerEnd: ['screenReaderSection', 'endOfChartMarker'],
+        viewAsDataTable: ['table', 'viewAsDataTableButtonText'],
+        tableSummary: ['table', 'tableSummary']
+    });
 }
-
-
 /**
  * Copy options that are deprecated over to new options. Logs warnings to
  * console if deprecated options are used.
@@ -257,5 +242,4 @@ function copyDeprecatedOptions(chart) {
     copyDeprecatedKeyboardNavigationOptions(chart);
     copyDeprecatedLangOptions(chart);
 }
-
 export default copyDeprecatedOptions;

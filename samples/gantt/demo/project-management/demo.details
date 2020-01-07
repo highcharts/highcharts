@@ -3,7 +3,8 @@ name: Project Management
 js_wrap: b
 authors:
   - Jon Arild Nygård
-tags: []
+tags:
+  - Gantt demo
 categories:
   - Highcharts Gantt
 ...

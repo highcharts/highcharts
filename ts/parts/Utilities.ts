@@ -34,6 +34,9 @@ type Nullable = null|undefined;
  * @private
  */
 declare global {
+    type DeepPartial<T> = {
+        [P in keyof T]?: (T[P]|DeepPartial<T[P]>);
+    }
     interface Math {
         easeInOutSine(pos: number): number;
     }
@@ -73,9 +76,13 @@ declare global {
         interface CSSObject {
             [key: string]: (boolean|number|string|undefined);
             backgroundColor?: ColorString;
+            borderRadius?: (number|string);
             color?: ('contrast'|ColorString);
             cursor?: CursorValue;
             fontSize?: (number|string);
+            lineWidth?: (number|string);
+            stroke?: ColorString;
+            strokeWidth?: (number|string);
         }
         interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;
@@ -141,7 +148,6 @@ declare global {
             private update(): void;
         }
         let timers: Array<any>;
-        let timeUnits: Dictionary<number>;
         function addEvent<T>(
             el: (Class<T>|T),
             type: string,
@@ -2174,7 +2180,7 @@ H.normalizeTickInterval = function (
  *
  * @return {void}
  */
-H.stableSort = function (arr: Array<any>, sortFunction: Function): void {
+function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
@@ -2197,7 +2203,7 @@ H.stableSort = function (arr: Array<any>, sortFunction: Function): void {
     for (i = 0; i < length; i++) {
         delete arr[i].safeI; // stable sort index
     }
-};
+}
 
 /**
  * Non-recursive method to find the lowest member of an array. `Math.min` raises
@@ -2378,7 +2384,7 @@ function animObject(
  *
  * @ignore
  */
-H.timeUnits = {
+const timeUnits: Highcharts.Dictionary<number> = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -2951,7 +2957,7 @@ H.addEvent = function<T> (
 
     // Return a function that can be called to remove this event.
     return function (): void {
-        H.removeEvent(el, type, fn);
+        removeEvent(el, type, fn);
     };
 };
 
@@ -2974,7 +2980,7 @@ H.addEvent = function<T> (
  *
  * @return {void}
  */
-H.removeEvent = function<T> (
+function removeEvent<T>(
     el: (Highcharts.Class<T>|T),
     type?: string,
     fn?: (Highcharts.EventCallbackFunction<T>|Function)
@@ -3060,7 +3066,7 @@ H.removeEvent = function<T> (
             }
         }
     });
-};
+}
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -3426,9 +3432,12 @@ const utils = {
     pick,
     pInt,
     relativeLength,
+    removeEvent,
     setAnimation,
     splat,
+    stableSort,
     syncTimeout,
+    timeUnits,
     wrap
 };
 

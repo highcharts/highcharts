@@ -89,6 +89,7 @@ declare global {
             connectors?: Array<SVGElement>;
             contrastColor?: ColorString;
             dataLabel?: SVGElement;
+            dataLabelPath?: SVGElement;
             dataLabels?: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
             dlBox?: BBoxObject;
@@ -165,7 +166,7 @@ declare global {
         function distribute(
             boxes: DataLabelsBoxArray,
             len: number,
-            maxDistance: number
+            maxDistance?: number
         ): void;
     }
 }
@@ -251,7 +252,8 @@ const {
     objectEach,
     pick,
     relativeLength,
-    splat
+    splat,
+    stableSort
 } = U;
 
 import './Series.js';
@@ -260,8 +262,7 @@ var format = H.format,
     merge = H.merge,
     noop = H.noop,
     Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    stableSort = H.stableSort;
+    seriesTypes = H.seriesTypes;
 
 /* eslint-disable valid-jsdoc */
 
@@ -276,20 +277,19 @@ var format = H.format,
  * @function Highcharts.distribute
  * @param {Highcharts.DataLabelsBoxArray} boxes
  * @param {number} len
- * @param {number} maxDistance
+ * @param {number} [maxDistance]
  * @return {void}
  */
 H.distribute = function (
     boxes: Highcharts.DataLabelsBoxArray,
     len: number,
-    maxDistance: number
+    maxDistance?: number
 ): void {
 
     var i: number,
         overlapping = true,
         origBoxes = boxes, // Original array will be altered with added .pos
-        restBoxes =
-            [] as Highcharts.DataLabelsBoxArray, // The outranked overshoot
+        restBoxes: Highcharts.DataLabelsBoxArray = [], // The outranked overshoot
         box,
         target,
         total = 0,
@@ -406,8 +406,8 @@ H.distribute = function (
             // of 10% to recursively reduce the  number of visible boxes by
             // rank. Once all boxes are within the maxDistance, we're good.
             if (
-                Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) >
-                maxDistance
+                typeof maxDistance !== 'undefined' &&
+                Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) > maxDistance
             ) {
                 // Reset the positions that are already set
                 origBoxes.slice(0, i + 1).forEach(
@@ -811,6 +811,14 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                             ) || point.graphic,
                             labelOptions.textPath
                         );
+
+                        if (
+                            point.dataLabelPath &&
+                            !labelOptions.textPath.enabled
+                        ) {
+                            // clean the DOM
+                            point.dataLabelPath = point.dataLabelPath.destroy();
+                        }
                     }
 
                     // Now the data label is created and placed at 0,0, so we
@@ -1904,6 +1912,18 @@ if (seriesTypes.column) {
             alignTo,
             isNew
         );
+
+        // Hide dataLabel when column is outside plotArea (#12370).
+        if (
+            alignTo &&
+            (
+                (alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
+                (alignTo.width <= 0 && alignTo.x === 0)
+            )
+        ) {
+            dataLabel.hide(true);
+            dataLabel.placed = false; // don't animate back in
+        }
 
         // If label was justified and we have contrast, set it:
         if (options.inside && point.contrastColor) {

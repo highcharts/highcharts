@@ -3,7 +3,8 @@ name: Depth chart
 authors:
   - Daniel Studencki
 js_wrap: b
-tags: []
+tags:
+  - Highstock demo
 categories:
   - Chart types
 ...

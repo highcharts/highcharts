@@ -7,20 +7,17 @@
  *
  *  License: www.highcharts.com/license
  *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
  * */
-
 'use strict';
-
 import H from '../../../parts/Globals.js';
 var doc = H.win.document;
-
 import U from '../../../parts/Utilities.js';
 var extend = U.extend;
-
 import HTMLUtilities from './htmlUtilities.js';
 var removeElement = HTMLUtilities.removeElement;
-
-
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
  * @class
@@ -29,7 +26,6 @@ var DOMElementProvider = function () {
     this.elements = [];
 };
 extend(DOMElementProvider.prototype, {
-
     /**
      * Create an element and keep track of it for later removal.
      * Same args as document.createElement
@@ -40,8 +36,6 @@ extend(DOMElementProvider.prototype, {
         this.elements.push(el);
         return el;
     },
-
-
     /**
      * Destroy all created elements, removing them from the DOM.
      * @private
@@ -52,7 +46,5 @@ extend(DOMElementProvider.prototype, {
         });
         this.elements = [];
     }
-
 });
-
 export default DOMElementProvider;

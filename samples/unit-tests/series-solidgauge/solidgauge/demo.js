@@ -195,3 +195,39 @@ QUnit.test('Solid gauge null point (#10630)', function (assert) {
         'Series legend item: color taken from series'
     );
 });
+
+QUnit.test('Solid gauge updates', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'solidgauge'
+            },
+
+            series: [{
+                name: 'Speed',
+                data: [10]
+            }]
+        }),
+        point = chart.series[0].points[0];
+
+    chart.series[0].update({
+        linecap: 'round',
+        borderWidth: 3,
+        borderColor: 'red'
+    });
+
+    assert.strictEqual(
+        point.graphic.element.getAttribute('stroke'),
+        'red',
+        'borderColor should be updated (#12445)'
+    );
+    assert.strictEqual(
+        point.graphic.element.getAttribute('stroke-width'),
+        '3',
+        'borderWidth should be updated (#12445)'
+    );
+    assert.strictEqual(
+        point.graphic.element.getAttribute('stroke-linecap'),
+        'round',
+        'linecap should be updated (#12445)'
+    );
+});

@@ -96,6 +96,7 @@ H.seriesType<Highcharts.DependencyWheelSeries>(
      *         Dependency wheel
      *
      * @extends      plotOptions.sankey
+     * @exclude      dataSorting
      * @since        7.1.0
      * @product      highcharts
      * @requires     modules/dependencywheel
@@ -452,6 +453,7 @@ H.seriesType<Highcharts.DependencyWheelSeries>(
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.dependencywheel
+ * @exclude   dataSorting
  * @product   highcharts
  * @requires  modules/dependencywheel
  * @apioption series.dependencywheel

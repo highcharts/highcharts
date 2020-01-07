@@ -3,7 +3,8 @@ name: Map with pattern fills
 authors:
   - Øystein Moseng
 js_wrap: b
-tags: []
+tags:
+  - Highmaps demo
 categories:
   - General
 ...
