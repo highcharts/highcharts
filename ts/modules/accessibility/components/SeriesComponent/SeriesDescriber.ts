@@ -13,6 +13,20 @@
 'use strict';
 
 import H from '../../../../parts/Globals.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface Point {
+            /** @requires modules/accessibility */
+            hasDummyGraphic?: boolean;
+        }
+    }
+}
+
 var numberFormat = H.numberFormat,
     find = H.find;
 
@@ -84,7 +98,9 @@ function makeDummyElement(
     dummy.attr({
         'class': 'highcharts-a11y-dummy-point',
         fill: 'none',
-        opacity: 0
+        opacity: 0,
+        'fill-opacity': 0,
+        'stroke-opacity': 0
     });
 
     return dummy;
@@ -116,6 +132,7 @@ function addDummyPointElement(
 
     if (parentGroup && parentGroup.element) {
         point.graphic = dummyElement;
+        point.hasDummyGraphic = true;
 
         dummyElement.add(parentGroup);
 
