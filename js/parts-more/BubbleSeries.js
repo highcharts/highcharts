@@ -31,7 +31,7 @@ var Axis = H.Axis, color = H.color, noop = H.noop, Point = H.Point, Series = H.S
  *         Bubble chart
  *
  * @extends      plotOptions.scatter
- * @excluding    cluster
+ * @excluding    cluster, dragDrop
  * @product      highcharts highstock
  * @requires     highcharts-more
  * @optionparent plotOptions.bubble
@@ -487,7 +487,7 @@ Axis.prototype.beforePadding = function () {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.bubble
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, dragDrop, stack
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.bubble
