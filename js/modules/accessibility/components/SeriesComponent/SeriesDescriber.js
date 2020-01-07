@@ -52,7 +52,9 @@ function makeDummyElement(point, pos) {
     dummy.attr({
         'class': 'highcharts-a11y-dummy-point',
         fill: 'none',
-        opacity: 0
+        opacity: 0,
+        'fill-opacity': 0,
+        'stroke-opacity': 0
     });
     return dummy;
 }
@@ -73,6 +75,7 @@ function addDummyPointElement(point) {
     }, dummyElement = makeDummyElement(point, dummyPos);
     if (parentGroup && parentGroup.element) {
         point.graphic = dummyElement;
+        point.hasDummyGraphic = true;
         dummyElement.add(parentGroup);
         // Move to correct pos in DOM
         parentGroup.element.insertBefore(dummyElement.element, firstGraphic ? firstGraphic.element : null);

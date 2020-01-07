@@ -1040,10 +1040,15 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             point.applyOptions(options);
 
-            // Update visuals
-            if (point.y === null && graphic) { // #4146
+            // Update visuals, #4146
+            // Handle dummy graphic elements for a11y, #12718
+            const hasDummyGraphic = graphic && point.hasDummyGraphic;
+            const shouldDestroyGraphic = point.y === null ? !hasDummyGraphic : hasDummyGraphic;
+            if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
+                delete point.hasDummyGraphic;
             }
+
             if (isObject(options, true)) {
                 // Destroy so we can get new elements
                 if (graphic && graphic.element) {
