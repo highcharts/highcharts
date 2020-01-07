@@ -167,6 +167,7 @@ declare global {
             public init(chart: Chart, options: SeriesOptionsType): void;
             public insert(collection: Array<Series>): number;
             public invertGroups(inverted?: boolean): void;
+            public is (type: string): boolean;
             public markerAttribs(point: Point, state?: string): SVGAttributes;
             public plotGroup(
                 prop: string,
@@ -719,6 +720,7 @@ var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     Point = H.Point, // @todo  add as a requirement
+    seriesTypes = H.seriesTypes,
     SVGElement = H.SVGElement,
     win = H.win;
 
@@ -3416,6 +3418,25 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             }
 
             fireEvent(this, 'afterInit');
+        },
+
+        /**
+         * Chech whether the series item is itself or inherits from a certain
+         * series type.
+         *
+         * @function Highcharts.Series#is
+         * @param {string} type The type of series to check for, can be either
+         *        featured or custom series types. For example `column`, `pie`,
+         *        `ohlc` etc.
+         *
+         * @return {boolean}
+         *        True if this item is or inherits from the given type.
+         */
+        is: function (
+            this: Highcharts.Series,
+            type: string
+        ): boolean {
+            return seriesTypes[type] && this instanceof seriesTypes[type];
         },
 
         /**

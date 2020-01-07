@@ -1690,7 +1690,7 @@ var stockToolsBindings = {
                 annotations[index] = annotation.userOptions;
             });
             chart.series.forEach(function (series) {
-                if (series instanceof H.seriesTypes.sma) {
+                if (series.is('sma')) {
                     indicators.push(series.userOptions);
                 }
                 else if (series.type === 'flags') {

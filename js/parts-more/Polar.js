@@ -649,7 +649,7 @@ H.addEvent(H.Series, 'afterInit', function () {
     // Add flags that identifies radial inverted series
     if (chart.inverted && chart.polar) {
         this.isRadialSeries = true;
-        if (this instanceof seriesTypes.column) {
+        if (this.is('column')) {
             this.isRadialBar = true;
         }
     }
