@@ -98,9 +98,15 @@ declare global {
             maxInputLabel: string;
             minInputLabel: string;
         }
+        interface LangAccessibilityAnnotationOptions {
+            heading: string;
+            descriptionSinglePoint: string;
+            descriptionMultiplePoints: string;
+            descriptionNoPoints: string;
+        }
         interface LangAccessibilityScreenReaderSectionOptions {
             afterRegionLabel: string;
-            annotationsHeading: string;
+            annotations: LangAccessibilityAnnotationOptions;
             beforeRegionLabel: string;
             endOfChartMarker: string;
         }
@@ -227,8 +233,19 @@ var langOptions: Highcharts.LangOptions = {
          */
         screenReaderSection: {
             beforeRegionLabel: 'Chart screen reader information.',
-            annotationsHeading: 'Chart annotations',
             afterRegionLabel: '',
+
+            /**
+             * Language options for annotation descriptions.
+             *
+             * @since next
+             */
+            annotations: {
+                heading: 'Chart annotations',
+                descriptionSinglePoint: '{annotationText}: {annotationPoint}',
+                descriptionMultiplePoints: '{annotationText}. Points: {"#each(annotationPoints)" }',
+                descriptionNoPoints: '{annotationText}'
+            },
 
             /**
              * Label for the end of the chart. Announced by screen readers.

@@ -344,9 +344,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
 
     /**
-     * Called on first render/updates to the chart, including options changes.
+     * Called on chart render. Have to update the sections on render, in order
+     * to get a11y info from series.
      */
-    onChartUpdate: function (this: Highcharts.InfoRegionsComponent): void {
+    onChartRender: function (this: Highcharts.InfoRegionsComponent): void {
         var component = this;
 
         this.linkedDescriptionElement = this.getLinkedDescriptionElement();
@@ -482,7 +483,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
             annotationsTitleStr = chart.langFormat(
-                'accessibility.screenReaderSection.annotationsHeading',
+                'accessibility.screenReaderSection.annotations.heading',
                 { chart: chart }
             ),
             context = {

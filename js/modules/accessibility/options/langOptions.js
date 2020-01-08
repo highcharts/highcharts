@@ -69,8 +69,18 @@ var langOptions = {
          */
         screenReaderSection: {
             beforeRegionLabel: 'Chart screen reader information.',
-            annotationsHeading: 'Chart annotations',
             afterRegionLabel: '',
+            /**
+             * Language options for annotation descriptions.
+             *
+             * @since next
+             */
+            annotations: {
+                heading: 'Chart annotations',
+                descriptionSinglePoint: '{annotationText}: {annotationPoint}',
+                descriptionMultiplePoints: '{annotationText}. Points: {"#each(annotationPoints)" }',
+                descriptionNoPoints: '{annotationText}'
+            },
             /**
              * Label for the end of the chart. Announced by screen readers.
              *

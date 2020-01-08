@@ -20,9 +20,24 @@
  * @return {string} The description for the label.
  */
 function getAnnotationLabelDescription(label: any): string {
+    const chart = label.chart;
     const labelText = label.graphic?.text?.textStr || '';
+    const points = label.points;
+    const getAriaLabel = (point: Highcharts.Point): string =>
+        point?.graphic?.element?.getAttribute('aria-label') || '';
+    const ariaLabels = points.map(getAriaLabel)
+        .filter((label: string): boolean => !!label);
+    const numPoints = ariaLabels.length;
+    const pointsSelector = numPoints > 1 ? 'MultiplePoints' : numPoints ? 'SinglePoint' : 'NoPoints';
+    const langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;
+    const context = {
+        annotationText: labelText,
+        numPoints: numPoints,
+        annotationPoints: ariaLabels,
+        annotationPoint: ariaLabels[0]
+    };
 
-    return labelText;
+    return chart.langFormat(langFormatStr, context);
 }
 
 
@@ -42,8 +57,10 @@ function getAnnotationItems(chart: Highcharts.Chart): string[] {
         return acc;
     }, []);
 
-    return labels.map((label: any): string =>
-        `<li>${getAnnotationLabelDescription(label)}</li>`);
+    return labels.map((label: any): string => {
+        const desc = getAnnotationLabelDescription(label);
+        return desc ? `<li>${desc}</li>` : '';
+    });
 }
 
 

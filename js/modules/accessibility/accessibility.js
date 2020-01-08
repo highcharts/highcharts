@@ -98,11 +98,24 @@ Accessibility.prototype = {
             extend(this.components, a11yOptions.customComponents);
         }
         var components = this.components;
-        // Refactor to use Object.values if we polyfill
-        Object.keys(components).forEach(function (componentName) {
+        this.getComponentOrder().forEach(function (componentName) {
             components[componentName].initBase(chart);
             components[componentName].init();
         });
+    },
+    /**
+     * Get order to update components in.
+     * @private
+     */
+    getComponentOrder: function () {
+        if (!this.components.series) {
+            return Object.keys(this.components);
+        }
+        var componentsExceptSeries = Object.keys(this.components)
+            .filter(function (c) { return c !== 'series'; });
+        // Update series first, so that other components can read accessibility
+        // info on points.
+        return ['series'].concat(componentsExceptSeries);
     },
     /**
      * Update all components.
@@ -113,7 +126,7 @@ Accessibility.prototype = {
         // Update the chart type list as this is used by multiple modules
         chart.types = this.getChartTypes();
         // Update markup
-        Object.keys(components).forEach(function (componentName) {
+        this.getComponentOrder().forEach(function (componentName) {
             components[componentName].onChartUpdate();
             fireEvent(chart, 'afterA11yComponentUpdate', {
                 name: componentName,
@@ -199,7 +212,7 @@ addEvent(H.Chart, 'render', function (e) {
     }
     var a11y = this.accessibility;
     if (a11y) {
-        Object.keys(a11y.components).forEach(function (componentName) {
+        a11y.getComponentOrder().forEach(function (componentName) {
             a11y.components[componentName].onChartRender();
         });
     }
