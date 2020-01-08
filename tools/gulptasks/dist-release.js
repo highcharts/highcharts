@@ -24,6 +24,10 @@ const pathToDistRepo = '../' + releaseRepo + '/';
  * @return {Promise<unknown>} answer.
  */
 async function askUser(question) {
+    if (argv.forceYes) {
+        return 'Y';
+    }
+
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
@@ -294,7 +298,8 @@ release.description = 'Copies distribution contents to highcharts-dist repo, tag
 release.flags = {
     '--push': '(USE WITH CARE!) Will git commit, push and tag to the highcharts-dist repo, as well as publish to npm. ' +
                 'Note that credentials for git/npm must be configured. The user will be asked for input both before the ' +
-                'git commands and npm publish is run.'
+                'git commands and npm publish is run.',
+    '--force-yes': 'Automatically answers yes to all questions.'
 };
 
 gulp.task('dist-release', release);

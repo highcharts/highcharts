@@ -368,7 +368,7 @@ jobs:
           command: cd ../highcharts-dist && git push origin --delete nightly || true
       - run:
           name: Run dist-release
-          command: cd ../highcharts && gulp dist-release
+          command: cd ../highcharts && npx gulp dist-release --force-yes
       - run:
           name: Push to highcharts-dist nightly branch
           command: |
