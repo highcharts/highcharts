@@ -143,10 +143,16 @@ function task() {
         }
     }
 
+    if (argv.debug) {
+        logLib.warn('Skipping task in debug mode...');
+        return Promise.resolve();
+    }
+
     return new Promise((resolve, reject) => {
 
-        if (shouldRun() ||
+        if (
             argv.force ||
+            shouldRun() ||
             processLib.isRunning('scripts_incomplete')
         ) {
 

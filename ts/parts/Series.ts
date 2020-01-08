@@ -394,10 +394,10 @@ declare global {
             zones?: Array<SeriesZonesOptions>;
         }
         interface SeriesPlotBoxObject {
-            scaleX?: number;
-            scaleY?: number;
-            translateX?: number;
-            translateY?: number;
+            scaleX: number;
+            scaleY: number;
+            translateX: number;
+            translateY: number;
         }
         interface SeriesShowCallbackFunction {
             (this: Series, event: Event): void;

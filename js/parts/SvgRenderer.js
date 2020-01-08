@@ -262,7 +262,7 @@ import H from './Globals.js';
  * @interface Highcharts.SVGDefinitionObject
  */ /**
 * @name Highcharts.SVGDefinitionObject#[key:string]
-* @type {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+* @type {boolean|number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
 */ /**
 * @name Highcharts.SVGDefinitionObject#children
 * @type {Array<Highcharts.SVGDefinitionObject>|undefined}
