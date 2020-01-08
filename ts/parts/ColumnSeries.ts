@@ -772,6 +772,7 @@ seriesType<Highcharts.ColumnSeries>(
                     options.borderWidth,
                     dense ? 0 : 1 // #3635
                 ),
+                xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 threshold = options.threshold,
                 translatedThreshold = series.translatedThreshold =
@@ -784,10 +785,7 @@ seriesType<Highcharts.ColumnSeries>(
                     Math.max(seriesPointWidth, 1 + 2 * borderWidth),
                 seriesXOffset = series.pointXOffset = metrics.offset,
                 dataMin = series.dataMin,
-                dataMax = series.dataMax,
-                top = (series.xAxis.options || {}).top,
-                offsetX = isNumber(top) ? top - chart.plotTop :
-                    H.relativeLength(top || 0, chart.plotHeight);
+                dataMax = series.dataMax;
 
             if (chart.inverted) {
                 (translatedThreshold as any) -= 0.5; // #3355
@@ -810,6 +808,7 @@ seriesType<Highcharts.ColumnSeries>(
                 var yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
+                    plotX = point.plotX,
                     // Don't draw too far outside plot area (#1303, #2241,
                     // #4264)
                     plotY = clamp(
@@ -872,10 +871,9 @@ seriesType<Highcharts.ColumnSeries>(
                 // #3648)
                 point.tooltipPos = chart.inverted ?
                     [
-                        yAxis.len + (yAxis.pos as any) - chart.plotLeft - plotY,
-                        // Additional offset when xAxis top or height set
-                        // (#12589).
-                        series.xAxis.len + offsetX - barX - barW / 2, barH
+                        yAxis.len + yAxis.pos - chart.plotLeft - plotY,
+                        xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0),
+                        barH
                     ] :
                     [barX + barW / 2, plotY + (yAxis.pos as any) -
                     chart.plotTop, barH];

@@ -151,8 +151,10 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         (barSpace * 3) / 2 + point1.shapeArgs.width / 2;
 
     controller.moveTo(chart.plotLeft + 1, tooltipYPos);
-    assert.ok(
-        Math.abs(chart.tooltip.now.anchorY - Math.round(tooltipYPos)) <= 1,
+    assert.close(
+        chart.tooltip.now.anchorY,
+        Math.round(tooltipYPos),
+        1.1,
         'Tooltip position should be correct when bar chart xAxis has top and height set with percent values (#12589).'
     );
 
@@ -169,8 +171,10 @@ QUnit.test('Wrong tooltip pos for column (#424)', function (assert) {
         (barSpace * 3) / 2 + point1.shapeArgs.width / 2;
 
     controller.moveTo(chart.plotLeft + 1, tooltipYPos);
-    assert.ok(
-        Math.abs(chart.tooltip.now.anchorY - Math.round(tooltipYPos)) <= 1,
+    assert.close(
+        chart.tooltip.now.anchorY,
+        Math.round(tooltipYPos),
+        1.1,
         'Tooltip position should be correct when bar chart xAxis has top and height set with numeric values (#12589).'
     );
 });
