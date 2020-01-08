@@ -152,7 +152,7 @@ jobs:
         default: "ChromeHeadless"
     steps:
       - <<: *load_workspace
-      - run: ./.circleci/scripts/test_timezones.sh -b <<parameters.browsers>>
+      - run: ./.circleci/scripts/test_timezones.sh -b=<<parameters.browsers>>
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
@@ -418,7 +418,8 @@ workflows:
           requires: [lint]
           filters:
             branches:
-              only: [tools/report-slow-tests-and-set-bs-timezone]
+              only: [tools/ci-dist-release-yes]
+          browsers: "Mac.Safari"
       - test_browsers:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
