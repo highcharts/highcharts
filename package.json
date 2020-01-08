@@ -30,7 +30,7 @@
     "testall": "npx gulp test --browsers all --force --speak",
     "prebuild": "rimraf build/*.zip build/dist/ code/",
     "build": "npx gulp dist",
-    "jsdoc": "npx gulp jsdoc --skip-websearch --watch",
+    "jsdoc": "npx gulp jsdoc-watch --skip-websearch",
     "dts": "npx gulp dts && npx gulp dtslint",
     "ts-compile:test": "npx tsc -p test && npx tsc -p samples",
     "gulp": "npx gulp",
