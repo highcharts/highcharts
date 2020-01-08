@@ -394,9 +394,9 @@ wrap(H.Chart.prototype, 'renderLegend', function (originalFunc) {
     var index = this.collectionsWithUpdate.indexOf('legend');
     if (!this.isAdvancedLegendEnabled()) {
         // legend could be marked as an updatable collection while
-        // creating some previous chart. This paricular chart instance
+        // creating a previous chart. This paricular chart instance
         // doesn't need advanced legend logic - make sure that it
-        // wouldn't be used.
+        // won't be used.
         if (index > -1) {
             this.collectionsWithUpdate.splice(index, 1);
         }
