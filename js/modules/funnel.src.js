@@ -35,7 +35,7 @@ seriesType('funnel', 'pie',
  *         Funnel demo
  *
  * @extends      plotOptions.pie
- * @excluding    innerSize,size
+ * @excluding    innerSize,size,dataSorting
  * @product      highcharts
  * @requires     modules/funnel
  * @optionparent plotOptions.funnel
@@ -396,7 +396,7 @@ addEvent(Highcharts.Chart, 'afterHideAllOverlappingLabels', function () {
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.funnel
- * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
  * @product   highcharts
  * @requires  modules/funnel
  * @apioption series.funnel
@@ -496,7 +496,7 @@ seriesType('pyramid', 'funnel',
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pyramid
- * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
  * @product   highcharts
  * @requires  modules/funnel
  * @apioption series.pyramid

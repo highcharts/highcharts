@@ -280,16 +280,12 @@ Highcharts.Time.prototype = {
             };
             this.set = function (unit, date, value) {
                 var ms, offset, newOffset;
-                // For lower order time units, just set it directly using local
+                // For lower order time units, just set it directly using UTC
                 // time
                 if (unit === 'Milliseconds' ||
                     unit === 'Seconds' ||
-                    // If we're dealting with minutes, we only need to
-                    // consider timezone if we're in Indian time zones with
-                    // half-hour offsets (#8768).
-                    (unit === 'Minutes' &&
-                        date.getTimezoneOffset() % 60 === 0)) {
-                    date['set' + unit](value);
+                    unit === 'Minutes') {
+                    date['setUTC' + unit](value);
                     // Higher order time units need to take the time zone into
                     // account
                 }

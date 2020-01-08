@@ -41,7 +41,7 @@ seriesType('pie', 'line',
  *               findNearestPointBy, getExtremesFromAll, label, lineWidth,
  *               marker, negativeColor, pointInterval, pointIntervalUnit,
  *               pointPlacement, pointStart, softThreshold, stacking, step,
- *               threshold, turboThreshold, zoneAxis, zones
+ *               threshold, turboThreshold, zoneAxis, zones, dataSorting
  * @product      highcharts
  * @optionparent plotOptions.pie
  */
@@ -794,7 +794,7 @@ seriesType('pie', 'line',
                 fill: options.fillColor || 'none',
                 stroke: options.color ||
                     '${palette.neutralColor20}'
-            });
+            }, this.options.animation);
         }
         else if (this.graph) { // Destroy the graph object.
             this.graph = this.graph.destroy();
@@ -1176,7 +1176,7 @@ seriesType('pie', 'line',
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
  * @product   highcharts
  * @apioption series.pie
  */

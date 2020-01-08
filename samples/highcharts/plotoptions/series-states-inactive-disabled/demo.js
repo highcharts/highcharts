@@ -5,7 +5,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Inactive state disabled by setting opacity'
+        text: 'Disabled inactive state'
     },
 
     xAxis: {
@@ -16,7 +16,7 @@ Highcharts.chart('container', {
         series: {
             states: {
                 inactive: {
-                    opacity: 1
+                    enabled: false
                 }
             }
         }

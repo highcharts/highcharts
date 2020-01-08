@@ -1,5 +1,6 @@
 const log = require('./log');
 const AWSS3 = require('aws-sdk').S3;
+const fs = require('fs-extra');
 const S3 = new AWSS3({
     region: process.env.AWS_REGION || 'eu-west-1'
 });
@@ -91,19 +92,10 @@ async function putS3Object(key, body, config = {}) {
 }
 
 /**
- * Returns the s3 bucket to use. Either defined
- * in HIGHCHARTS_S3_BUCKET env var or in git-ignore-me.properties file.
- * in HIGHCHARTS_S3_BUCKET env var or in git-ignore-me.properties file.
- * @return {string} the s3bucket to upload to.
+ * Utility function for gettin properties defined in git-ignore-me.properties
+ * @return {Object} properties in file, or empty object.
  */
-function getS3BucketConfig() {
-    const fs = require('fs-extra');
-
-    if (process.env.HIGHCHARTS_S3_BUCKET) {
-        return process.env.HIGHCHARTS_S3_BUCKET.replace('s3://', '');
-    }
-    log.message('No HIGHCHARTS_S3_BUCKET env var found. Checking git-ignore-me.properties file.');
-
+function getGitIgnoreMeProperties() {
     const properties = {};
     const lines = fs.readFileSync(
         './git-ignore-me.properties', 'utf8'
@@ -114,13 +106,7 @@ function getS3BucketConfig() {
             properties[line[0]] = line[1];
         }
     });
-
-    const s3Bucket = properties['amazon.s3.bucketname'];
-    if (!s3Bucket) {
-        throw new Error('No env var HIGHCHARTS_S3_BUCKET defined and no amazon.s3.bucketname property in git-ignore-me.properties.');
-    }
-    return s3Bucket.replace('s3://', '');
-
+    return properties;
 }
 
 /**
@@ -130,8 +116,6 @@ function getS3BucketConfig() {
  * @return {boolean} true, if directory or system file.
  */
 function isDirectoryOrSystemFile(source) {
-    const fs = require('fs-extra');
-
     return fs.lstatSync(source).isDirectory() || source.indexOf('.') === 0;
 }
 
@@ -186,9 +170,8 @@ function getVersionPaths(version) {
 function uploadFiles(params) {
     const upload = require('../../upload');
     const { files, name, bucket } = params;
-    const s3Bucket = bucket || getS3BucketConfig();
 
-    log.starting(`Uploading ${files.length} files for ${name} to bucket ${s3Bucket}:\n`);
+    log.starting(`Uploading ${files.length} files for ${name} to bucket ${bucket}:\n`);
 
     if (files.length === 0) {
         log.message('Upload initiated, but no files specified.');
@@ -197,7 +180,7 @@ function uploadFiles(params) {
 
     const defaultParams = {
         batchSize: 400,
-        bucket: s3Bucket,
+        bucket,
         onError: err => {
             log.failure(`File(s) errored:\n${err && err.message} ${err.from ? ' - ' + err.from : ''}`);
         },
@@ -222,14 +205,12 @@ function uploadFiles(params) {
 /**
  * Uploads files for a specific product to S3.
  *
- * @param {string} localPath where the files should be uploaded. E.g 'highstock'.
- * @param {string} cdnPath where the files should be uploaded. E.g 'stock'.
- * @param {string} prettyName of the product, e.g "Highcharts Gantt"
- * @param {string} version for the distribution/release
+ * @param {object} productProps containing name, prettyName, cdnPath and version
+ * @param {object} options that includes s3 options that will be passed to the sdk.
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
-function uploadProductPackage(localPath, cdnPath, prettyName, version) {
-    const fs = require('fs-extra');
+function uploadProductPackage(productProps, options = {}) {
+    const { productName: localPath, name: prettyName, version, cdnpath } = productProps;
     const glob = require('glob');
     const promises = [];
     const fromDir = `${DIST_DIR}/${localPath}`;
@@ -246,7 +227,7 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
 
     const gfxFromDir = `${fromDir}/gfx`;
     const gfxFiles = glob.sync(`${gfxFromDir}/**/*.*`);
-    const gfxFilesToRootDir = gfxFiles.map(file => toS3FilePath(file, localPath, cdnPath));
+    const gfxFilesToRootDir = gfxFiles.map(file => toS3FilePath(file, localPath, cdnpath));
 
     const gzippedFileDir = `${fromDir}/js-gzip`;
     if (!fs.existsSync(gzippedFileDir)) {
@@ -254,26 +235,29 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
     }
 
     const gzippedFiles = glob.sync(`${gzippedFileDir}/**/*`);
-    const gzippedFilesToRootDir = gzippedFiles.map(file => toS3FilePath(file, localPath, cdnPath));
+    const gzippedFilesToRootDir = gzippedFiles.map(file => toS3FilePath(file, localPath, cdnpath));
 
     const versionPaths = getVersionPaths(version);
     let gzippedFilesToVersionDir = [];
     let gfxFilesToVersionedDir = [];
 
     versionPaths.forEach(versionPath => {
-        gzippedFilesToVersionDir = [...gzippedFilesToVersionDir, ...gzippedFiles.map(file => toS3FilePath(file, localPath, cdnPath, versionPath))];
-        gfxFilesToVersionedDir = [...gfxFilesToVersionedDir, ...gfxFiles.map(file => toS3FilePath(file, localPath, cdnPath, versionPath))];
+        gzippedFilesToVersionDir = [...gzippedFilesToVersionDir, ...gzippedFiles.map(file => toS3FilePath(file, localPath, cdnpath, versionPath))];
+        gfxFilesToVersionedDir = [...gfxFilesToVersionedDir, ...gfxFiles.map(file => toS3FilePath(file, localPath, cdnpath, versionPath))];
     });
 
     promises.push(uploadFiles({
+        bucket: options.bucket,
         files: [zipFile],
         name: prettyName
     }));
 
     promises.push(uploadFiles({
+        bucket: options.bucket,
         files: gzippedFilesToRootDir.filter(path => !isDirectoryOrSystemFile(path.from)),
         name: prettyName,
         s3Params: {
+            ...options.s3Params,
             CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
             Expires: HTTP_EXPIRES.oneDay,
             ContentEncoding: 'gzip'
@@ -281,18 +265,22 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
     }));
 
     promises.push(uploadFiles({
+        bucket: options.bucket,
         files: gfxFilesToRootDir.filter(path => !isDirectoryOrSystemFile(path.from)),
         name: prettyName,
         s3Params: {
+            ...options.s3Params,
             CacheControl: `public, max-age=${HTTP_MAX_AGE.oneDay}`,
             Expires: HTTP_EXPIRES.oneDay
         }
     }));
 
     promises.push(uploadFiles({
+        bucket: options.bucket,
         files: gzippedFilesToVersionDir.filter(path => !isDirectoryOrSystemFile(path.from)),
         name: prettyName,
         s3Params: {
+            ...options.s3Params,
             CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
             Expires: HTTP_EXPIRES.fiveYears,
             ContentEncoding: 'gzip'
@@ -300,9 +288,11 @@ function uploadProductPackage(localPath, cdnPath, prettyName, version) {
     }));
 
     promises.push(uploadFiles({
+        bucket: options.bucket,
         files: gfxFilesToVersionedDir.filter(path => !isDirectoryOrSystemFile(path.from)),
         name: prettyName,
         s3Params: {
+            ...options.s3Params,
             CacheControl: `public, max-age=${HTTP_MAX_AGE.fiveYears}`,
             Expires: HTTP_EXPIRES.fiveYears
         }
@@ -316,5 +306,6 @@ module.exports = {
     uploadFiles,
     uploadProductPackage,
     getS3Object,
-    putS3Object
+    putS3Object,
+    getGitIgnoreMeProperties
 };

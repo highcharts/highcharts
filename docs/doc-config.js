@@ -10,6 +10,7 @@ module.exports = {
     ],
     /* List of old paths that should be redirected */
     redirects: [
-        { 'chart-and-series-types/networkgraph': 'chart-and-series-types/network-graph' }
+        { from: 'chart-and-series-types/networkgraph', to: 'chart-and-series-types/network-graph' },
+        { from: 'chart-and-series-types/technical-indicator-series', to: 'stock/technical-indicator-series' }
     ]
 };
