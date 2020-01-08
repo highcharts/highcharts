@@ -1,5 +1,6 @@
 /* eslint func-style: 0, no-console: 0, max-len: 0 */
 const gulp = require('gulp');
+
 const uploadAPIDocs = () => {
     const {
         getFilesInFolder
@@ -46,9 +47,11 @@ const uploadAPIDocs = () => {
                 error: `\n${errors.length} file(s) errored:\n${errors.join('\n')}`
             });
         };
+
         const params = {
             batchSize,
             bucket,
+            profile: argv.profile,
             callback: argv.silent ? false : doTick,
             onError
         };
@@ -93,4 +96,16 @@ const uploadAPIDocs = () => {
             }
         });
 };
+
+uploadAPIDocs.description = 'Uploads API docs to the designated bucket';
+uploadAPIDocs.flags = {
+    '--bucket': 'The S3 bucket to upload to.',
+    '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
+                    'standard AWS environment variables for credentials will be used. (optional)',
+    '--tags': 'Tags to upload under (optional)',
+    '--noextensions': 'Remove file extensions for uploaded files (destination). Useful for testing/serving directly from S3 bucket (optional)',
+    '--silent': 'Don\'t produce progress output. (optional)'
+};
+
+
 gulp.task('upload-api', uploadAPIDocs);

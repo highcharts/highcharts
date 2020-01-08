@@ -44,7 +44,11 @@ Highcharts.chart('container', {
         name: 'Pareto',
         yAxis: 1,
         zIndex: 10,
-        baseSeries: 1
+        baseSeries: 1,
+        tooltip: {
+            valueDecimals: 2,
+            valueSuffix: '%'
+        }
     }, {
         name: 'Complaints',
         type: 'column',

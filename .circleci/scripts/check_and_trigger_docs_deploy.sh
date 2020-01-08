@@ -5,6 +5,7 @@ set -e
 LATEST_COMMIT=$(git rev-parse HEAD)
 BUCKET=""
 TOKEN=""
+FORCE_DEPLOY=false
 
 for i in "$@"
 do
@@ -14,6 +15,9 @@ case $i in
     ;;
       -t=*|--token=*)
     TOKEN="${i#*=}"
+    ;;
+      -f|--force-deploy)
+    FORCE_DEPLOY=true
     ;;
     *)
      # unknown option
@@ -34,8 +38,9 @@ fi
 # latest commit where docs/ was changed
 DOCS_COMMIT=$(git log -1 --format=format:%H --full-diff docs/)
 
-if [ $DOCS_COMMIT = $LATEST_COMMIT ]; then
-    echo "Files in docs/ has changed, triggering deploy of docs via doc-builder to bucket ${BUCKET}"
+if [ $DOCS_COMMIT = $LATEST_COMMIT ] || [ "$FORCE_DEPLOY" = true  ]; then
+    echo "Force deployed: ${FORCE_DEPLOY}"
+    echo "Files in docs/ has changed or forcing deploy. Triggering deploy of docs via doc-builder to bucket ${BUCKET}"
     payload="{ \"branch\":\"master\", \"parameters\": { \"run_deploy\": true, \"target_bucket\": \"${BUCKET}\" }}"
     echo "$payload"
 

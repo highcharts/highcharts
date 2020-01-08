@@ -3,7 +3,6 @@ name: Packed bubble chart
 authors:
   - Sebastian Bochan
 js_wrap: b
-isNew: true
 tags:
   - Highcharts demo
 categories:

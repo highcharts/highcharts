@@ -457,7 +457,7 @@ Axis.prototype.beforePadding = function () {
             while (i--) {
                 if (isNumber(data[i]) &&
                     axis.dataMin <= data[i] &&
-                    data[i] <= axis.dataMax) {
+                    data[i] <= axis.max) {
                     radius = series.radii ? series.radii[i] : 0;
                     pxMin = Math.min(((data[i] - min) * transA) - radius, pxMin);
                     pxMax = Math.max(((data[i] - min) * transA) + radius, pxMax);

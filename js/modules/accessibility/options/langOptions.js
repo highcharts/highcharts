@@ -58,14 +58,14 @@ var langOptions = {
          *
          * @see [chartContainerLabel](#lang.accessibility.chartContainerLabel)
          *
-         * @since next
+         * @since 8.0.0
          */
         graphicContainerLabel: '',
         /**
          * Language options for the screen reader information sections added
          * before and after the charts.
          *
-         * @since next
+         * @since 8.0.0
          */
         screenReaderSection: {
             beforeRegionLabel: 'Chart screen reader information.',
@@ -73,14 +73,14 @@ var langOptions = {
             /**
              * Label for the end of the chart. Announced by screen readers.
              *
-             * @since next
+             * @since 8.0.0
              */
             endOfChartMarker: 'End of interactive chart.'
         },
         /**
          * Language options for accessibility of the legend.
          *
-         * @since next
+         * @since 8.0.0
          */
         legend: {
             legendLabel: 'Toggle series visibility',
@@ -89,7 +89,7 @@ var langOptions = {
         /**
          * Chart and map zoom accessibility language options.
          *
-         * @since next
+         * @since 8.0.0
          */
         zoom: {
             mapZoomIn: 'Zoom chart',
@@ -99,7 +99,7 @@ var langOptions = {
         /**
          * Range selector language options for accessibility.
          *
-         * @since next
+         * @since 8.0.0
          */
         rangeSelector: {
             minInputLabel: 'Select start date.',
@@ -109,7 +109,7 @@ var langOptions = {
         /**
          * Accessibility language options for the data table.
          *
-         * @since next
+         * @since 8.0.0
          */
         table: {
             viewAsDataTableButtonText: 'View as data table. {chartTitle}',
@@ -301,7 +301,7 @@ var langOptions = {
             /**
              * Description for the value of null points.
              *
-             * @since next
+             * @since 8.0.0
              */
             nullPointValue: 'No value'
         }

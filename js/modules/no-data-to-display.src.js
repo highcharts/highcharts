@@ -62,6 +62,9 @@ defaultOptions.noData = {
      * @product   highcharts highstock gantt
      * @apioption noData.attr
      */
+    attr: {
+        zIndex: 1
+    },
     /**
      * Whether to insert the label as HTML, or as pseudo-HTML rendered with
      * SVG.

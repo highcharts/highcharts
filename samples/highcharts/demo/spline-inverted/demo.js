@@ -18,6 +18,9 @@ Highcharts.chart('container', {
         labels: {
             format: '{value} km'
         },
+        accessibility: {
+            rangeDescription: 'Range: 0 to 80 km.'
+        },
         maxPadding: 0.05,
         showLastLabel: true
     },
@@ -27,6 +30,9 @@ Highcharts.chart('container', {
         },
         labels: {
             format: '{value}°'
+        },
+        accessibility: {
+            rangeDescription: 'Range: -90°C to 20°C.'
         },
         lineWidth: 2
     },

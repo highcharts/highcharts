@@ -44,7 +44,7 @@ H.seriesType('organization', 'sankey',
  *               Centered layout
  *
  * @extends      plotOptions.sankey
- * @excluding    allowPointSelect, curveFactor
+ * @excluding    allowPointSelect, curveFactor, dataSorting
  * @since        7.1.0
  * @product      highcharts
  * @requires     modules/organization
@@ -389,6 +389,7 @@ H.seriesType('organization', 'sankey',
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.organization
+ * @exclude   dataSorting
  * @product   highcharts
  * @requires  modules/organization
  * @apioption series.organization

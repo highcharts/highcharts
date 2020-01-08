@@ -4,9 +4,18 @@
 <script src="https://code.highcharts.com/modules/data.js"></script>
 <script src="https://code.highcharts.com/modules/boost-canvas.js"></script>
 <script src="https://code.highcharts.com/modules/boost.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
-
-<div id="container" style="height: 300px; min-width: 310px; max-width: 1000px; margin: 0 auto"></div>
+<figure class="highcharts-figure">
+    <div id="container"></div>
+    <p class="highcharts-description">
+        Heatmap with over 8,500 points, visualizing hourly temperature in 2017. The
+        blue colors indicate colder days, and the red colors indicate warmer
+        days. Notice how we are able to find patterns in a large dataset using a
+        compact heatmap. This chart uses the Highcharts Boost module for
+        enhanced performance.
+    </p>
+</figure>
 
 <!-- Source: http://vikjavev.no/ver/highcharts-demos/heatmap.csv.php?year=2013 -->
 <pre id="csv" style="display: none">Date,Time,Temperature

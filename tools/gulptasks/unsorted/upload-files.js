@@ -44,6 +44,7 @@ const fileUpload = () => {
         const params = {
             batchSize,
             bucket,
+            profile: argv.profile,
             callback: doTick,
             onError
         };

@@ -38,6 +38,15 @@ function findFirstPointWithGraphic(point) {
 /**
  * @private
  */
+function shouldAddDummyPoint(point) {
+    // Note: Sunburst series use isNull for hidden points on drilldown.
+    // Ignore these.
+    var isSunburst = point.series && point.series.type === 'sunburst', isNull = point.isNull;
+    return isNull && !isSunburst;
+}
+/**
+ * @private
+ */
 function makeDummyElement(point, pos) {
     var renderer = point.series.chart.renderer, dummy = renderer.rect(pos.x, pos.y, 1, 1);
     dummy.attr({
@@ -261,8 +270,8 @@ function describePointsInSeries(series) {
     var setScreenReaderProps = shouldSetScreenReaderPropsOnPoints(series), setKeyboardProps = shouldSetKeyboardNavPropsOnPoints(series);
     if (setScreenReaderProps || setKeyboardProps) {
         series.points.forEach(function (point) {
-            var shouldAddDummyPoint = point.isNull, pointEl = point.graphic && point.graphic.element ||
-                shouldAddDummyPoint && addDummyPointElement(point);
+            var pointEl = point.graphic && point.graphic.element ||
+                shouldAddDummyPoint(point) && addDummyPointElement(point);
             if (pointEl) {
                 // We always set tabindex, as long as we are setting
                 // props.

@@ -286,7 +286,7 @@ var Series = H.Series,
  *         Marker clusters with colorAxis
  *
  * @product      highcharts highmaps
- * @since        next
+ * @since 8.0.0
  * @optionparent plotOptions.scatter.cluster
  *
  * @private

@@ -1261,7 +1261,7 @@ H.defaultOptions = {
          * @sample highcharts/members/highcharts-numberformat
          *      Arabic digits in Highcharts
          * @type {Highcharts.NumberFormatterCallbackFunction}
-         * @since next
+         * @since 8.0.0
          * @apioption chart.numberFormatter
          */
 

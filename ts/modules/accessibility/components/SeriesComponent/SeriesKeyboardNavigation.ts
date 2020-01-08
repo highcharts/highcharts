@@ -501,7 +501,7 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (
                     width * width * 4; // Weigh horizontal distance highly
 
             // Reverse distance number if axis is reversed
-            if (series.yAxis.reversed) {
+            if (series.yAxis && series.yAxis.reversed) {
                 yDistance *= -1;
             }
 

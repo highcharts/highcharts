@@ -8,7 +8,7 @@ const fs = require('fs');
 const logLib = require('./lib/log');
 const argv = require('yargs').argv;
 const highchartsVersion = require('../../package').version;
-const { getFilesChanged } = require('./lib/git');
+const { getFilesChanged, getLatestCommitShaSync } = require('./lib/git');
 const { uploadFiles, getS3Object, putS3Object } = require('./lib/uploadS3');
 
 const S3_PULLREQUEST_PATH = 'visualtests/diffs/pullrequests';
@@ -32,7 +32,7 @@ const VISUAL_TESTS_BUCKET = process.env.HIGHCHARTS_VISUAL_TESTS_BUCKET || 'stagi
  * @param {any} options to add (see node request module)
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
-function doRequest(options = {}) {
+async function doRequest(options = {}) {
     logLib.message(options.method + ' request to ' + options.url);
     return new Promise((resolve, reject) => {
         request(options, (error, response, data) => {
@@ -75,6 +75,61 @@ async function fetchPRComments(pr, user, filterText) {
                 reject(new Error(`Failed to fetch comments for PR #${pr}.: ` + err));
             });
     });
+}
+
+/**
+ * Updates the status of the commit on github with the provided status in order to display it in pr.
+ *
+ * @param {string|number} pr that the commit is for
+ * @param {object} newReview containing diffing samples and already approved samples.
+ * @return {object} response from github or undefined;
+ */
+async function postGitCommitStatusUpdate(pr, newReview) {
+    let response;
+    if (argv.dryrun) {
+        logLib.message('Dryrun (skipping github status update)..');
+        return response;
+    }
+
+    const commitSha = getLatestCommitShaSync();
+    let commitState = 'pending';
+    let description = 'Review of changed samples needed. Click on details.';
+
+    if (newReview.samples.length === 0) {
+        description = 'No diffing samples found.';
+        commitState = 'success';
+        logLib.message('No diffing samples found.');
+    } else {
+        if (newReview.samples.every(sample => sample.approved)) {
+            // on every subsequent run we don't need to re-approve same samples.
+            description = 'Diffing samples are approved';
+            commitState = 'success';
+        }
+        logLib.message('All samples are already approved.');
+    }
+
+    try {
+        response = await doRequest({
+            ...DEFAULT_OPTIONS,
+            url: `https://api.github.com/repos/highcharts/highcharts/statuses/${commitSha}`,
+            method: 'POST',
+            body: {
+                owner: 'highcharts',
+                repo: 'highcharts',
+                sha: commitSha,
+                state: commitState,
+                // eslint-disable-next-line camelcase
+                target_url: `https://vrevs.highsoft.com/pr/${pr}/review`,
+                description,
+                context: 'Highcharts review tool'
+            }
+        });
+        logLib.message(`Github status for ${commitSha} created with ${commitState}`);
+    } catch (error) {
+        // catch error as we dont wan't to terminate the gulp task if given failure of status update.
+        logLib.warn(`Failed to create github status for sha ${commitSha}: ${error.message}`);
+    }
+    return response;
 }
 
 /**
@@ -192,6 +247,15 @@ function resolveGitFileStatus(changeCharacter) {
     }
 }
 
+/* eslint-disable require-jsdoc,valid-jsdoc */
+function buildImgS3Path(filename, sample, pr) {
+    return `${S3_PULLREQUEST_PATH}/${pr}/${sample}/${filename}`;
+}
+
+function createMarkdownLink(link, message = 'link') {
+    return `[${message}](${link})`;
+}
+
 /**
  * Retrieves changes from samples/ folder and returns a markdown
  * template that lists the changed files (compared with master).
@@ -213,14 +277,23 @@ function createTemplateForChangedSamples() {
     return samplesChangedTemplate;
 }
 
+function createPRCommentBody(newReview, prNumber) {
+    let commentTemplate = `${DEFAULT_COMMENT_TITLE} - No difference found`;
+    if (newReview.samples.length > 0) {
+        if (newReview.samples.every(sample => sample.approved)) {
+            commentTemplate = `${DEFAULT_COMMENT_TITLE} - All diffing samples already approved`;
+        } else {
+            commentTemplate = `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
+                `Found **${newReview.samples.length}** diffing sample(s). ${createMarkdownLink(
+                    'https://vrevs.highsoft.com/pr/' + prNumber + '/review',
+                    'Please review the differences.'
+                )}\n`;
+        }
+    }
+    const changedSamplesTemplate = createTemplateForChangedSamples();
+    commentTemplate += `\n\n${changedSamplesTemplate}`;
 
-/* eslint-disable require-jsdoc,valid-jsdoc */
-function buildImgS3Path(filename, sample, pr) {
-    return `${S3_PULLREQUEST_PATH}/${pr}/${sample}/${filename}`;
-}
-
-function createMarkdownLink(link, message = 'link') {
-    return `[${message}](${link})`;
+    return commentTemplate;
 }
 
 /**
@@ -279,12 +352,14 @@ async function checkAndUpdateApprovedReviews(diffingSampleEntries, pr) {
             return putS3Object(key, allReviews, { Bucket: VISUAL_TESTS_BUCKET });
         }
     }
-    return Promise.resolve();
+    return Promise.resolve(allReviews);
 }
 
 /**
  * Creates and saves a review file for a PR in order to be used by
- * the visual review tool application.
+ * the visual review tool application. It will check for an existing
+ * review for the given pr an merge any already approved samples given
+ * that the diffing value is the same.
  */
 async function createPRReviewFile(testResults, pr) {
     const samplesWithDiffs = Object.entries(testResults).filter(
@@ -300,6 +375,10 @@ async function createPRReviewFile(testResults, pr) {
 
     const samples = samplesWithDiffs.map(([key, value]) => {
         const alreadyApprovedSample = existingApprovedSamples.find(s => s.name === key && s.diff === value);
+        if (alreadyApprovedSample) {
+            logLib.message(`${alreadyApprovedSample.name} has already been approved for the diffing value` +
+                alreadyApprovedSample.diff);
+        }
         return alreadyApprovedSample || {
             name: key,
             comment: '',
@@ -326,11 +405,12 @@ async function createPRReviewFile(testResults, pr) {
  * this function uploads the reference/candidate/diff images + JSON report + review file that are produced
  * from a visual test run to S3 in order to make them easily available.
  * @param {Array} diffingSamples list
- * @param {string} pr number to upload for
+ * @param {number} pr number to upload for
  * @param {boolean} includeReview file
- * @return {undefined} void
+ * @return {object|undefined} result of upload or undefined
  */
-function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = true) {
+async function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = true) {
+    let result;
     if (diffingSamples.length > 0) {
         const files = diffingSamples.reduce((resultingFiles, sample) => {
             resultingFiles.push({
@@ -362,14 +442,22 @@ function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = true) {
         }
 
         if (!argv.dryrun) {
-            uploadFiles({ files, bucket: VISUAL_TESTS_BUCKET, name: `image diff on PR #${pr}` })
-                .catch(err => logLib.warn('Failed to upload PR diff images. Reason ' + err));
+            result = await uploadFiles({
+                files,
+                bucket: VISUAL_TESTS_BUCKET,
+                profile: argv.profile,
+                name: `image diff on PR #${pr}`
+            });
+        } else {
+            logLib.message('Dry run - Skipping upload of files.');
         }
     }
+    return result;
 }
 
 /**
  * Task for adding a visual test result as a comment to a PR.
+ * It also updates the status for the commit with github.
  *
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
@@ -403,20 +491,11 @@ async function commentOnPR() {
     });
 
     const newReview = await createPRReviewFile(testResults, prNumber);
-    uploadVisualTestFiles(diffingSamples, prNumber, newReview.samples.length > 0);
-    checkAndUpdateApprovedReviews(diffingSamples, prNumber);
+    await uploadVisualTestFiles(diffingSamples, prNumber, newReview.samples.length > 0);
+    await checkAndUpdateApprovedReviews(diffingSamples, prNumber);
+    await postGitCommitStatusUpdate(pr, newReview);
 
-    let commentTemplate = diffingSamples.length === 0 ?
-        `${DEFAULT_COMMENT_TITLE} - No difference found` :
-        `${DEFAULT_COMMENT_TITLE} - Differences found\n` +
-            `Found **${newReview.samples.length}** diffing sample(s). ${createMarkdownLink(
-                'https://vrevs.highsoft.com/pr/' + prNumber + '/review',
-                'Please review the differences.'
-            )}\n`;
-
-    const changedSamplesTemplate = createTemplateForChangedSamples();
-    commentTemplate += `\n\n${changedSamplesTemplate}`;
-
+    const commentTemplate = createPRCommentBody(newReview, prNumber);
     const { containsText = DEFAULT_COMMENT_TITLE } = argv;
     const existingComments = await fetchPRComments(pr, user, containsText);
 
@@ -440,7 +519,9 @@ commentOnPR.flags = {
     '--contains-text': 'Filter text used to find PR comment to overwrite',
     '--always-add': 'If present any old test results comment won\'t be overwritten',
     '--fail-silently': 'Will always return exitCode 0 (success)',
-    '--dryrun': 'Just runs through the task for testing purposes without doing external requests. '
+    '--dryrun': 'Just runs through the task for testing purposes without doing external requests. ',
+    '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
+        'standard AWS environment variables for credentials will be used. (optional)'
 };
 
 gulp.task('update-pr-testresults', commentOnPR);

@@ -37,10 +37,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    stableSort
+} = U;
 
-var seriesTypes = H.seriesTypes,
-    stableSort = H.stableSort;
+var seriesTypes = H.seriesTypes;
 
 /**
  * @private

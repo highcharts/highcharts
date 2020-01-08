@@ -76,22 +76,29 @@ QUnit.test(
     'General Navigator tests',
     function (assert) {
         var chart = Highcharts.stockChart('container', {
-            legend: {
-                enabled: true
-            },
-            yAxis: {
-                labels: {
-                    align: 'left'
-                }
-            },
-            navigator: {
-                height: 100
-            },
-            series: [{
-                data: [1, 2, 3],
-                id: '1'
-            }]
-        });
+                legend: {
+                    enabled: true
+                },
+                yAxis: {
+                    labels: {
+                        align: 'left'
+                    }
+                },
+                navigator: {
+                    height: 100
+                },
+                series: [{
+                    data: [1, 2, 3],
+                    id: '1'
+                }]
+            }),
+            controller,
+            navBBox,
+            firstShadeBBox,
+            secondShadeBBox,
+            secondShadeXBeforeTranslate,
+            x,
+            y;
 
         chart.series[0].hide();
 
@@ -114,6 +121,99 @@ QUnit.test(
             chart.series.length,
             0,
             'All series, including navSeries, removed without errors (#5581)'
+        );
+
+        chart = Highcharts.stockChart('container', {
+            chart: {
+                animation: false,
+                width: 700,
+                plotBorderColor: "#cccccc",
+                plotBorderWidth: 1,
+                borderColor: "red",
+                borderWidth: 1
+            },
+            scrollbar: {
+                enabled: false
+            },
+            rangeSelector: {
+                enabled: false
+            },
+            yAxis: {
+                opposite: false,
+                labels: {
+                    align: 'right',
+                    formatter: function () {
+                        if (
+                            this.axis.min === 4999999999999.5 &&
+                            this.axis.max === 5000000000000.5
+                        ) {
+                            return '5000000000000';
+                        }
+
+                        return 'a';
+                    }
+                }
+            },
+            xAxis: {
+                min: 1512743400000,
+                max: 1513089000000
+            },
+            series: [{
+                data: [
+                    [1512657000000, 5],
+                    [1512743400000, 5],
+                    [1513002600000, 5],
+                    [1513089000000, 5],
+                    [1513175400000, 5],
+                    [1513261800000, 5],
+                    [1513348200000, 5],
+                    [1513607400000, 5],
+                    [1513693800000, 5000000000000],
+                    [1513780200000, 5000000000000],
+                    [1513866600000, 5000000000000],
+                    [1513953000000, 5000000000000],
+                    [1514298600000, 5000000000000],
+                    [1514385000000, 5000000000000],
+                    [1514471400000, 5000000000000],
+                    [1514557800000, 5000000000000]
+                ]
+            }]
+        });
+
+        navBBox = chart.navigator.shades[1].getBBox();
+        x = navBBox.x + navBBox.width / 2;
+        y = navBBox.y + navBBox.height / 2;
+        controller = new TestController(chart);
+
+        controller.triggerEvent('mousedown', x, y);
+        controller.triggerEvent('mousemove', x + 380, y);
+        controller.triggerEvent('mouseup', x + 380, y);
+
+        secondShadeXBeforeTranslate = x + 380 - navBBox.width / 2;
+        firstShadeBBox = chart.navigator.shades[0].getBBox();
+        secondShadeBBox = chart.navigator.shades[1].getBBox();
+
+        assert.notEqual(
+            secondShadeXBeforeTranslate,
+            secondShadeBBox.x,
+            'Second shade should not be in the same position as after mousemove (#12573).'
+        );
+
+        assert.deepEqual(
+            [
+                chart.navigator.shades[1].getBBox().x,
+                chart.navigator.outline.getBBox().x,
+                chart.navigator.handles[0].translateX,
+                chart.navigator.handles[1].translateX
+            ],
+            [
+                chart.plotLeft + firstShadeBBox.width,
+                chart.plotLeft,
+                chart.plotLeft + firstShadeBBox.width,
+                chart.plotLeft + firstShadeBBox.width + secondShadeBBox.width
+            ],
+            'Navigator shades, outline and handles should be properly translated after ' +
+            'yAxis label reserve more space (#12573).'
         );
     }
 );

@@ -246,6 +246,9 @@ Highcharts.chart('container', {
         style: {
             color: 'black'
         }
+    },
+    accessibility: {
+        typeDescription: 'Flowchart'
     }
 
 });

@@ -1,1 +1,0 @@
-Chart design and style - Home

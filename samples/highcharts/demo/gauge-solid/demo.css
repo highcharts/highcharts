@@ -4,18 +4,6 @@
 	float: left;
 }
 
-@media (max-width: 600px) {
-	.highcharts-figure {
-		width: 100%;
-	}
-	.highcharts-figure .chart-container {
-		width: 300px;
-		float: none;
-		margin: 0 auto;
-	}
-
-}
-
 .highcharts-figure, .highcharts-data-table table {
 	width: 600px;
 	margin: 0 auto;
@@ -47,4 +35,16 @@
 }
 .highcharts-data-table tr:hover {
     background: #f1f7ff;
+}
+
+@media (max-width: 600px) {
+	.highcharts-figure, .highcharts-data-table table {
+		width: 100%;
+	}
+	.highcharts-figure .chart-container {
+		width: 300px;
+		float: none;
+		margin: 0 auto;
+	}
+
 }

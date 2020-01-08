@@ -710,7 +710,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
                 if (
                     isNumber(data[i]) &&
                     (axis.dataMin as any) <= data[i] &&
-                    data[i] <= (axis.dataMax as any)
+                    data[i] <= (axis.max as any)
                 ) {
                     radius = series.radii ? series.radii[i] : 0;
                     pxMin = Math.min(

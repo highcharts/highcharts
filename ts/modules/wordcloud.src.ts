@@ -788,7 +788,8 @@ function updateFieldBoundaries(
  *               negativeColor, pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth, pointStart,
  *               pointWidth, shadow, showCheckbox, showInNavigator,
- *               softThreshold, stacking, threshold, zoneAxis, zones
+ *               softThreshold, stacking, threshold, zoneAxis, zones,
+ *               dataSorting
  * @product      highcharts
  * @since        6.0.0
  * @requires     modules/wordcloud
@@ -1228,6 +1229,7 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.wordcloud
+ * @exclude   dataSorting
  * @product   highcharts
  * @requires  modules/wordcloud
  * @apioption series.wordcloud
