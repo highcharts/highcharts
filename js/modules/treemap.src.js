@@ -1423,7 +1423,7 @@ seriesType('treemap', 'scatter'
 H.addEvent(H.Series, 'afterBindAxes', function () {
     var series = this, xAxis = series.xAxis, yAxis = series.yAxis, treeAxis;
     if (xAxis && yAxis) {
-        if (series.options.type === 'treemap') {
+        if (series instanceof seriesTypes.treemap) {
             treeAxis = {
                 endOnTick: false,
                 gridLineWidth: 0,
