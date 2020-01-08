@@ -190,8 +190,8 @@ function stripEmptyHTMLTags(str: string): string {
  */
 function enableSimpleHTML(str: string): string {
     return str
-        .replace(/&lt;(h[1-7]|p|div)&gt;/g, '<$1>')
-        .replace(/&lt;&#x2F;(h[1-7]|p|div|a|button)&gt;/g, '</$1>')
+        .replace(/&lt;(h[1-7]|p|div|ul|ol|li)&gt;/g, '<$1>')
+        .replace(/&lt;&#x2F;(h[1-7]|p|div|ul|ol|li|a|button)&gt;/g, '</$1>')
         .replace(
             /&lt;(div|a|button) id=&quot;([a-zA-Z\-0-9#]*?)&quot;&gt;/g,
             '<$1 id="$2">'
@@ -475,12 +475,16 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultBeforeChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        var chart = this.chart,
+        const chart = this.chart,
             format = chart.options.accessibility
                 .screenReaderSection.beforeChartFormat,
             axesDesc = this.getAxesDescription(),
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
+            annotationsTitleStr = chart.langFormat(
+                'accessibility.screenReaderSection.annotationsHeading',
+                { chart: chart }
+            ),
             context = {
                 chartTitle: getChartTitle(chart),
                 typeDescription: this.getTypeDescriptionText(),
@@ -490,7 +494,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 yAxisDescription: axesDesc.yAxis,
                 viewTableButton: chart.getCSV ?
                     this.getDataTableButtonText(dataTableButtonId) : '',
-                annotationsInfo: getAnnotationsInfoHTML(chart)
+                annotationsTitle: annotationsTitleStr,
+                annotationsList: getAnnotationsInfoHTML(chart)
             },
             formattedString = H.i18nFormat(format, context, chart);
 

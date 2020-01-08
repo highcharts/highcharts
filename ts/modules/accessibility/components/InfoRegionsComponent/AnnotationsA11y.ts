@@ -62,12 +62,7 @@ function getAnnotationsInfoHTML(chart: Highcharts.Chart): string {
     }
 
     const annotationItems = getAnnotationItems(chart);
-    return `
-        Chart annotations:
-        <ul>
-            ${annotationItems.join(' ')}
-        </ul>
-    `;
+    return `<ul>${annotationItems.join(' ')}</ul>`;
 }
 
 const AnnotationsA11y = {

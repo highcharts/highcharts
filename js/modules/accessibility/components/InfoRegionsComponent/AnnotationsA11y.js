@@ -55,7 +55,7 @@ function getAnnotationsInfoHTML(chart) {
         return '';
     }
     var annotationItems = getAnnotationItems(chart);
-    return "\n        Chart annotations:\n        <ul>\n            " + annotationItems.join(' ') + "\n        </ul>\n    ";
+    return "<ul>" + annotationItems.join(' ') + "</ul>";
 }
 var AnnotationsA11y = {
     getAnnotationsInfoHTML: getAnnotationsInfoHTML,

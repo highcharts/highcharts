@@ -100,6 +100,7 @@ declare global {
         }
         interface LangAccessibilityScreenReaderSectionOptions {
             afterRegionLabel: string;
+            annotationsHeading: string;
             beforeRegionLabel: string;
             endOfChartMarker: string;
         }
@@ -226,6 +227,7 @@ var langOptions: Highcharts.LangOptions = {
          */
         screenReaderSection: {
             beforeRegionLabel: 'Chart screen reader information.',
+            annotationsHeading: 'Chart annotations',
             afterRegionLabel: '',
 
             /**

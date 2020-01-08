@@ -265,11 +265,12 @@ var options: DeepPartial<Highcharts.Options> = {
 
             /**
              * Format for the screen reader information region before the chart.
-             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, and
-             * `<button>`. Attributes are not supported, except for id on
-             * `<div>`, `<a>`, and `<button>`. Id is required on `<a>` and
-             * `<button>` in the format `<tag id="abcd">`. Numbers, lower- and
-             * uppercase letters, "-" and "#" are valid characters in IDs.
+             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, `<ul>`,
+             * `<ol>`, `<li>`, and `<button>`. Attributes are not supported,
+             * except for id on `<div>`, `<a>`, and `<button>`. Id is required
+             * on `<a>` and `<button>` in the format `<tag id="abcd">`. Numbers,
+             * lower- and uppercase letters, "-" and "#" are valid characters in
+             * IDs.
              *
              * @since 8.0.0
              */
@@ -281,7 +282,7 @@ var options: DeepPartial<Highcharts.Options> = {
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
                 '<div>{viewTableButton}</div>' +
-                '<div>{annotationsInfo}</div>',
+                '<div>{annotationsTitle}{annotationsList}</div>',
 
             /**
              * A formatter function to create the HTML contents of the hidden

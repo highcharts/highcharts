@@ -69,6 +69,7 @@ var langOptions = {
          */
         screenReaderSection: {
             beforeRegionLabel: 'Chart screen reader information.',
+            annotationsHeading: 'Chart annotations',
             afterRegionLabel: '',
             /**
              * Label for the end of the chart. Announced by screen readers.
