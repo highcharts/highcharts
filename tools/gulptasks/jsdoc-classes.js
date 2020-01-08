@@ -61,7 +61,7 @@ const SOURCE_GLOBS = [
     'js/modules/sonification/*.js',
     'js/modules/sunburst.src.js',
     'js/modules/timeline.src.js',
-    'js/annotations/annotations.src.js'
+    'js/annotations/annotations.src.js',
     'js/annotations/controllable/controllableMixin.js',
     'js/annotations/ControlPoint.js',
     'js/annotations/navigationBindings.js'

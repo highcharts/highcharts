@@ -53,7 +53,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 var objectEach = U.objectEach,
-    pick = U.pick;
+    pick = U.pick,
+    removeEvent = U.removeEvent;
 
 var fireEvent = H.fireEvent;
 
@@ -340,7 +341,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     destroy: function (this: Highcharts.AnnotationEventEmitter): void {
         this.removeDocEvents();
 
-        H.removeEvent(this);
+        removeEvent(this);
 
         this.hcEvents = null;
     }
