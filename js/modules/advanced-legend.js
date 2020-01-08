@@ -391,7 +391,15 @@ extend(H.LegendAdapter.prototype, {
     }
 });
 wrap(H.Chart.prototype, 'renderLegend', function (originalFunc) {
+    var index = this.collectionsWithUpdate.indexOf('legend');
     if (!this.isAdvancedLegendEnabled()) {
+        // legend could be marked as an updatable collection while
+        // creating some previous chart. This paricular chart instance
+        // doesn't need advanced legend logic - make sure that it
+        // wouldn't be used.
+        if (index > -1) {
+            this.collectionsWithUpdate.splice(index, 1);
+        }
         originalFunc.call(this);
         return;
     }
@@ -406,8 +414,10 @@ wrap(H.Chart.prototype, 'renderLegend', function (originalFunc) {
         new H.LegendAdapter(this, merge(H.defaultOptions.legend));
     // Legend array works as a legend adapter
     extend(this.legend, this.legendAdapter);
-    // Add legends array to updatable collections.
-    this.collectionsWithUpdate.push('legend');
+    if (index === -1) {
+        // Add legends array to updatable collections.
+        this.collectionsWithUpdate.push('legend');
+    }
 });
 /**
  * Add a new legend to chart.

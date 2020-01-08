@@ -616,8 +616,18 @@ wrap(H.Chart.prototype, 'renderLegend', function (
     this: Highcharts.AdvancedLegendChart,
     originalFunc
 ): void {
+    var index = this.collectionsWithUpdate.indexOf('legend');
 
     if (!this.isAdvancedLegendEnabled()) {
+
+        // legend could be marked as an updatable collection while
+        // creating a previous chart. This paricular chart instance
+        // doesn't need advanced legend logic - make sure that it
+        // won't be used.
+        if (index > -1) {
+            this.collectionsWithUpdate.splice(index, 1);
+        }
+
         originalFunc.call(this);
         return;
     }
@@ -636,8 +646,10 @@ wrap(H.Chart.prototype, 'renderLegend', function (
     // Legend array works as a legend adapter
     extend(this.legend, this.legendAdapter);
 
-    // Add legends array to updatable collections.
-    this.collectionsWithUpdate.push('legend');
+    if (index === -1) {
+        // Add legends array to updatable collections.
+        this.collectionsWithUpdate.push('legend');
+    }
 });
 
 /**
