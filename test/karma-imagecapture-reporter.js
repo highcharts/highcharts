@@ -146,7 +146,11 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         const filename = info.filename;
         try {
             if (/\.svg$/.test(filename)) {
-                fs.writeFileSync(filename, prettyXML(data));
+                fs.writeFile(filename, prettyXML(data), err => {
+                    if (err) {
+                        throw err;
+                    }
+                });
 
             } else if (/\.png$/.test(filename)) {
                 data = data.replace(/^data:image\/\w+;base64,/, '');

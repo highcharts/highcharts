@@ -1114,7 +1114,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // points outside the visible range (#6445). For grouped data,
             // inspect the generated series.points.
             points = points.concat(
-                (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
+                serie.getPointsCollection().filter(
                     function (point: Highcharts.Point): boolean {
                         return pick(
                             point.selectedStaging, point.selected as any
@@ -1686,7 +1686,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else {
             // Initialize definitions
             for (key in options.defs) { // eslint-disable-line guard-for-in
-                this.renderer.definition(options.defs[key]);
+                this.renderer.definition((options.defs as any)[key]);
             }
         }
 

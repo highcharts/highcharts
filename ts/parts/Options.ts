@@ -272,7 +272,6 @@ declare global {
             chart?: ChartOptions;
             credits?: CreditsOptions;
             colors?: Array<ColorString>;
-            defs?: any;
             caption?: CaptionOptions;
             global?: GlobalOptions;
             /** @deprecated */

@@ -313,3 +313,40 @@ QUnit.test('3d pie drilldown and drill up', function (assert) {
     TestUtilities.lolexRunAndUninstall(clock);
 
 });
+
+QUnit.test(
+    '3D pie updates',
+    assert => {
+        // Create the chart
+        const chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'pie',
+                    options3d: {
+                        enabled: true,
+                        alpha: 45,
+                        beta: 0
+                    }
+                },
+                plotOptions: {
+                    pie: {
+                        depth: 35
+                    }
+                },
+                series: [{
+                    data: [5]
+                }]
+            }),
+            point = chart.series[0].points[0],
+            // use point.graphic.out to get outer part of the 3D arc
+            height = point.graphic.out.getBBox(true).height;
+
+        chart.series[0].update({
+            depth: 50
+        });
+
+        assert.ok(
+            height < point.graphic.out.getBBox(true).height,
+            'Updating series.depth should change slice\'s depth (#12515).'
+        );
+    }
+);

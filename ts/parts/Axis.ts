@@ -6263,7 +6263,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         return (
             tick &&
-            tick.slotWidth // Used by grid axis
+            tick.slotWidth as any // Used by grid axis
         ) || (
             horiz &&
             ((labelOptions as any).step || 0) < 2 &&

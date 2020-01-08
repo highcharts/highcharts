@@ -496,7 +496,7 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#getAnchor
      *
-     * @param {Array<Highcharts.Point>} points
+     * @param {Highcharts.Point|Array<Highcharts.Point>} points
      *
      * @param {Highcharts.PointerEventObject} [mouseEvent]
      *
@@ -555,7 +555,7 @@ H.Tooltip.prototype = {
      *
      * @param {Highcharts.Point} point
      *
-     * @return {Highcharts.Dictionary<number>}
+     * @return {Highcharts.PositionObject}
      */
     getPosition: function (boxWidth, boxHeight, point) {
         var chart = this.chart, distance = this.distance, ret = {}, 
@@ -929,7 +929,7 @@ H.Tooltip.prototype = {
                 tt = ren
                     .label(null, null, null, (options[isHeader ? 'headerShape' : 'shape']) ||
                     'callout', null, null, options.useHTML)
-                    .addClass(isHeader ? 'highcharts-tooltip-header ' : '' +
+                    .addClass((isHeader ? 'highcharts-tooltip-header ' : '') +
                     'highcharts-tooltip-box ' +
                     colorClass)
                     .attr(attribs)

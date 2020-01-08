@@ -101,7 +101,9 @@ async function postGitCommitStatusUpdate(pr, newReview) {
         logLib.message('No diffing samples found.');
     } else {
         if (newReview.samples.every(sample => sample.approved)) {
+            // on every subsequent run we don't need to re-approve same samples.
             description = 'Diffing samples are approved';
+            commitState = 'success';
         }
         logLib.message('All samples are already approved.');
     }

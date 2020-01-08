@@ -330,7 +330,7 @@ Available arguments for 'gulp test':
     argument --splitbrowsers (same usage as above --browsers argument).
 
 --debug
-    Print some debugging info.
+    Skips rebuilding and prints some debugging info.
 
 --force
     Forces all tests without cached results.
