@@ -76,7 +76,7 @@ var options = {
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
      * to be loaded. For a description of the module and information
      * on its features, see
-     * [Highcharts Accessibility](http://www.highcharts.com/docs/chart-concepts/accessibility).
+     * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * @since        5.0.0
      * @requires     modules/accessibility

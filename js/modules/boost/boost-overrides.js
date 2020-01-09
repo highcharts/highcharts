@@ -77,7 +77,7 @@ Chart.prototype.getBoostClipRect = function (target) {
  *        A stripped-down point object
  *
  * @return {Highcharts.Point}
- *         A Point object as per http://api.highcharts.com/highcharts#Point
+ *         A Point object as per https://api.highcharts.com/highcharts#Point
  */
 Series.prototype.getPoint = function (boostPoint) {
     var point = boostPoint, xData = (this.xData || this.options.xData || this.processedXData ||

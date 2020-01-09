@@ -3076,7 +3076,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * the gradient, and the second item is the color.
          *
          * For solid gauges, the Y axis also inherits the concept of
-         * [data classes](http://api.highcharts.com/highmaps#colorAxis.dataClasses)
+         * [data classes](https://api.highcharts.com/highmaps#colorAxis.dataClasses)
          * from the Highmaps color axis.
          *
          * @see [minColor](#yAxis.minColor)
@@ -3411,8 +3411,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * A [format string](http://docs.highcharts.com/#formatting) for the
-         * data label. Available variables are the same as for `formatter`.
+         * A format string for the data label. Available variables are the same
+         * as for `formatter`.
          *
          * @type      {string}
          * @default   {total}

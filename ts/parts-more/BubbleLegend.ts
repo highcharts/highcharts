@@ -275,9 +275,8 @@ setOptions({ // Set default bubble legend options
                  */
                 allowOverlap: false,
                 /**
-                 * A [format string](http://docs.highcharts.com/#formatting)
-                 * for the bubble legend labels. Available variables are the
-                 * same as for `formatter`.
+                 * A format string for the bubble legend labels. Available
+                 * variables are the same as for `formatter`.
                  *
                  * @sample highcharts/bubble-legend/format/
                  *         Add a unit
