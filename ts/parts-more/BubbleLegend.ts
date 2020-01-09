@@ -1140,7 +1140,7 @@ H.BubbleLegend.prototype = {
         // Baseline has to be set if the bubble legend
         // is the first legend item.
         if (!this.legend.baseline) {
-            this.legend.baseline = 15;
+            this.legend.baseline = 0;
         }
 
         this.drawLegendSymbol(this.legend);
