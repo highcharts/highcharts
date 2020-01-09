@@ -608,7 +608,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                 ),
                 fill;
 
-            if (!point.isNull) {
+            if (!point.isNull && point.visible !== false) {
 
                 // Original graphic
                 if (graphic) { // update
