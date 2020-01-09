@@ -749,7 +749,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     * @param {string|Highcharts.SVGAttributes} [hash]
     *        The native and custom SVG attributes.
     *
-    * @param {string} [val]
+    * @param {number|string|Highcharts.SVGPathArray} [val]
     *        If the type of the first argument is `string`, the second can be a
     *        value, which will serve as a single attribute setter. If the first
     *        argument is a string and the second is undefined, the function

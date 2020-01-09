@@ -157,7 +157,7 @@ declare global {
             ): (number|string)
             public attr(
                 hash?: (string|SVGAttributes),
-                val?: string,
+                val?: (number|string|SVGPathArray),
                 complete?: Function,
                 continueAnimation?: boolean
             ): SVGElement;
@@ -1322,7 +1322,7 @@ extend((
      * @param {string|Highcharts.SVGAttributes} [hash]
      *        The native and custom SVG attributes.
      *
-     * @param {string} [val]
+     * @param {number|string|Highcharts.SVGPathArray} [val]
      *        If the type of the first argument is `string`, the second can be a
      *        value, which will serve as a single attribute setter. If the first
      *        argument is a string and the second is undefined, the function
@@ -1347,7 +1347,7 @@ extend((
     attr: function (
         this: Highcharts.SVGElement,
         hash?: (string|Highcharts.SVGAttributes),
-        val?: string,
+        val?: (number|string|Highcharts.SVGPathArray),
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|Highcharts.SVGElement) {
