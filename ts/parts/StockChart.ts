@@ -359,7 +359,7 @@ addEvent(Series, 'setOptions', function (
                 shadow: false
             };
 
-        } else if (this.is('line') && !this.is('scatter') && !this.is('sma')) {
+        } else if (!this.is('scatter') && !this.is('sma')) {
             overrides = {
                 marker: {
                     enabled: false,
