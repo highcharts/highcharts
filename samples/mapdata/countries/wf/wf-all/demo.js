@@ -4,8 +4,7 @@
 var data = [
     ['fr-6510', 0],
     ['fr-6512', 1],
-    ['fr-3648', 2],
-    ['undefined', 3]
+    ['fr-3648', 2]
 ];
 
 // Create the chart
@@ -50,6 +49,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/wf/wf-all'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

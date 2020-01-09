@@ -139,12 +139,6 @@ KeyboardNavigationHandler.prototype = {
         } else if (keyCode === 9) {
             // Default tab handler, move to next/prev module
             response = this.response[e.shiftKey ? 'prev' : 'next'];
-        } else if (keyCode === 27) {
-            // Default esc handler, hide tooltip
-            if (this.chart && this.chart.tooltip) {
-                this.chart.tooltip.hide(0);
-            }
-            response = this.response.success;
         }
 
         return response;

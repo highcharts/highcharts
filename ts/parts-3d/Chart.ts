@@ -70,7 +70,7 @@ declare global {
             xDir?: Position3dObject;
         }
         interface Fx {
-            matrixSetter(): void;
+            matrixSetter?(): void;
         }
         interface Stack3dDictionary {
             [index: number]: Stack3dDictionaryObject;

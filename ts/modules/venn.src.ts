@@ -1501,7 +1501,7 @@ addEvent(seriesTypes.venn, 'afterSetOptions', function (
         states: Highcharts.SeriesStatesOptionsObject<Highcharts.VennSeries> =
             options.states as any;
 
-    if (this instanceof seriesTypes.venn) {
+    if (this.is('venn')) {
         // Explicitly disable all halo options.
         Object.keys(states).forEach(function (state: string): void {
             (states as any)[state].halo = false;

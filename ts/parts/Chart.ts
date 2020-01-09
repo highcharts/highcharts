@@ -1686,7 +1686,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else {
             // Initialize definitions
             for (key in options.defs) { // eslint-disable-line guard-for-in
-                this.renderer.definition(options.defs[key]);
+                this.renderer.definition((options.defs as any)[key]);
             }
         }
 

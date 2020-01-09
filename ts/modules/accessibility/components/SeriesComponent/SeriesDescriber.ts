@@ -64,7 +64,7 @@ function findFirstPointWithGraphic(
 function shouldAddDummyPoint(point: Highcharts.Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
-    const isSunburst = point.series && point.series.type === 'sunburst',
+    const isSunburst = point.series && point.series.is('sunburst'),
         isNull = point.isNull;
 
     return isNull && !isSunburst;
@@ -579,15 +579,17 @@ function describeSeriesElement(
  * @param {Highcharts.Series} series The series to add info on.
  */
 function describeSeries(series: Highcharts.AccessibilitySeries): void {
-    var chart = series.chart,
+    const chart = series.chart,
         firstPointEl = getSeriesFirstPointElement(series),
-        seriesEl = getSeriesA11yElement(series);
+        seriesEl = getSeriesA11yElement(series),
+        is3d = chart.is3d && chart.is3d();
 
     if (seriesEl) {
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
-        // in order for AT to read them out in an understandable order
-        if (seriesEl.lastChild === firstPointEl) {
+        // in order for AT to read them out in an understandable order.
+        // Due to z-index issues we can not do this for 3D charts.
+        if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }
 

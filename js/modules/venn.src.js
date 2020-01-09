@@ -1014,7 +1014,7 @@ seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
 // Modify final series options.
 addEvent(seriesTypes.venn, 'afterSetOptions', function (e) {
     var options = e.options, states = options.states;
-    if (this instanceof seriesTypes.venn) {
+    if (this.is('venn')) {
         // Explicitly disable all halo options.
         Object.keys(states).forEach(function (state) {
             states[state].halo = false;

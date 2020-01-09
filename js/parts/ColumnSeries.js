@@ -559,7 +559,7 @@ seriesType('column', 'line',
     translate: function () {
         var series = this, chart = series.chart, options = series.options, dense = series.dense =
             series.closestPointRange * series.xAxis.transA < 2, borderWidth = series.borderWidth = pick(options.borderWidth, dense ? 0 : 1 // #3635
-        ), yAxis = series.yAxis, threshold = options.threshold, translatedThreshold = series.translatedThreshold =
+        ), xAxis = series.xAxis, yAxis = series.yAxis, threshold = options.threshold, translatedThreshold = series.translatedThreshold =
             yAxis.getThreshold(threshold), minPointLength = pick(options.minPointLength, 5), metrics = series.getColumnMetrics(), seriesPointWidth = metrics.width, 
         // postprocessed for border width
         seriesBarW = series.barW =
@@ -577,7 +577,7 @@ seriesType('column', 'line',
         Series.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
-            var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, 
+            var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
             plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
@@ -620,7 +620,8 @@ seriesType('column', 'line',
             point.tooltipPos = chart.inverted ?
                 [
                     yAxis.len + yAxis.pos - chart.plotLeft - plotY,
-                    series.xAxis.len - barX - barW / 2, barH
+                    xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
+                    barH
                 ] :
                 [barX + barW / 2, plotY + yAxis.pos -
                         chart.plotTop, barH];

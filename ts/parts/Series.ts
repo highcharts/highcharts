@@ -167,6 +167,7 @@ declare global {
             public init(chart: Chart, options: SeriesOptionsType): void;
             public insert(collection: Array<Series>): number;
             public invertGroups(inverted?: boolean): void;
+            public is (type: string): boolean;
             public markerAttribs(point: Point, state?: string): SVGAttributes;
             public plotGroup(
                 prop: string,
@@ -394,10 +395,10 @@ declare global {
             zones?: Array<SeriesZonesOptions>;
         }
         interface SeriesPlotBoxObject {
-            scaleX?: number;
-            scaleY?: number;
-            translateX?: number;
-            translateY?: number;
+            scaleX: number;
+            scaleY: number;
+            translateX: number;
+            translateY: number;
         }
         interface SeriesShowCallbackFunction {
             (this: Series, event: Event): void;
@@ -719,6 +720,7 @@ var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     Point = H.Point, // @todo  add as a requirement
+    seriesTypes = H.seriesTypes,
     SVGElement = H.SVGElement,
     win = H.win;
 
@@ -981,8 +983,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * (columns, point markers, pie slices, map areas etc).
          *
          * The selected points can be handled by point select and unselect
-         * events, or collectively by the [getSelectedPoints](
-         * Highcharts.Chart#getSelectedPoints) function.
+         * events, or collectively by the [getSelectedPoints
+         * ](/class-reference/Highcharts.Chart#getSelectedPoints) function.
          *
          * And alternative way of selecting points is through dragging.
          *
@@ -3419,6 +3421,25 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         },
 
         /**
+         * Chech whether the series item is itself or inherits from a certain
+         * series type.
+         *
+         * @function Highcharts.Series#is
+         * @param {string} type The type of series to check for, can be either
+         *        featured or custom series types. For example `column`, `pie`,
+         *        `ohlc` etc.
+         *
+         * @return {boolean}
+         *        True if this item is or inherits from the given type.
+         */
+        is: function (
+            this: Highcharts.Series,
+            type: string
+        ): boolean {
+            return seriesTypes[type] && this instanceof seriesTypes[type];
+        },
+
+        /**
          * Insert the series in a collection with other series, either the chart
          * series or yAxis series, in the correct order according to the index
          * option. Used internally when adding series.
@@ -5022,7 +5043,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 hasModifyValue = !!series.modifyValue,
                 i,
                 pointPlacement = series.pointPlacementToXValue(), // #7860
-                dynamicallyPlaced = isNumber(pointPlacement),
+                dynamicallyPlaced = Boolean(pointPlacement),
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
@@ -6963,21 +6984,23 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @return {number}
          */
         pointPlacementToXValue: function (this: Highcharts.Series): number {
+            const {
+                options: {
+                    pointPlacement,
+                    pointRange
+                },
+                xAxis: axis
+            } = this;
 
-            var series = this,
-                axis = series.xAxis,
-                pointPlacement = series.options.pointPlacement;
-
+            let factor = pointPlacement;
             // Point placement is relative to each series pointRange (#5889)
-            if (pointPlacement === 'between') {
-                pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
-            }
-            if (isNumber(pointPlacement)) {
-                (pointPlacement as any) *=
-                    pick(series.options.pointRange || axis.pointRange);
+            if (factor === 'between') {
+                factor = axis.reversed ? -0.5 : 0.5; // #11955
             }
 
-            return pointPlacement as any;
+            return isNumber(factor) ?
+                factor * pick(pointRange, axis.pointRange) :
+                0;
         }
     }
 ) as any; // end Series prototype

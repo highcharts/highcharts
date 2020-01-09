@@ -233,7 +233,7 @@ import './Point.js';
 import './SvgRenderer.js';
 var addEvent = H.addEvent, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, Point = H.Point, // @todo  add as a requirement
-SVGElement = H.SVGElement, win = H.win;
+seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -477,8 +477,8 @@ null,
      * (columns, point markers, pie slices, map areas etc).
      *
      * The selected points can be handled by point select and unselect
-     * events, or collectively by the [getSelectedPoints](
-     * Highcharts.Chart#getSelectedPoints) function.
+     * events, or collectively by the [getSelectedPoints
+     * ](/class-reference/Highcharts.Chart#getSelectedPoints) function.
      *
      * And alternative way of selecting points is through dragging.
      *
@@ -2719,6 +2719,21 @@ null,
         fireEvent(this, 'afterInit');
     },
     /**
+     * Chech whether the series item is itself or inherits from a certain
+     * series type.
+     *
+     * @function Highcharts.Series#is
+     * @param {string} type The type of series to check for, can be either
+     *        featured or custom series types. For example `column`, `pie`,
+     *        `ohlc` etc.
+     *
+     * @return {boolean}
+     *        True if this item is or inherits from the given type.
+     */
+    is: function (type) {
+        return seriesTypes[type] && this instanceof seriesTypes[type];
+    },
+    /**
      * Insert the series in a collection with other series, either the chart
      * series or yAxis series, in the correct order according to the index
      * option. Used internally when adding series.
@@ -3834,7 +3849,7 @@ null,
         }
         this.generatePoints();
         var series = this, options = series.options, stacking = options.stacking, xAxis = series.xAxis, categories = xAxis.categories, enabledDataSorting = series.enabledDataSorting, yAxis = series.yAxis, points = series.points, dataLength = points.length, hasModifyValue = !!series.modifyValue, i, pointPlacement = series.pointPlacementToXValue(), // #7860
-        dynamicallyPlaced = isNumber(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, plotY, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
+        dynamicallyPlaced = Boolean(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, plotY, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
         /**
          * Plotted coordinates need to be within a limited range. Drawing
          * too far outside the viewport causes various rendering issues
@@ -5129,16 +5144,15 @@ null,
      * @return {number}
      */
     pointPlacementToXValue: function () {
-        var series = this, axis = series.xAxis, pointPlacement = series.options.pointPlacement;
+        var _a = this, _b = _a.options, pointPlacement = _b.pointPlacement, pointRange = _b.pointRange, axis = _a.xAxis;
+        var factor = pointPlacement;
         // Point placement is relative to each series pointRange (#5889)
-        if (pointPlacement === 'between') {
-            pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
+        if (factor === 'between') {
+            factor = axis.reversed ? -0.5 : 0.5; // #11955
         }
-        if (isNumber(pointPlacement)) {
-            pointPlacement *=
-                pick(series.options.pointRange || axis.pointRange);
-        }
-        return pointPlacement;
+        return isNumber(factor) ?
+            factor * pick(pointRange, axis.pointRange) :
+            0;
     }
 }); // end Series prototype
 /**

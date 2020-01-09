@@ -440,7 +440,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 };
 // SECTORS //
 H.SVGRenderer.prototype.arc3d = function (attribs) {
-    var wrapper = this.g(), renderer = wrapper.renderer, customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end'];
+    var wrapper = this.g(), renderer = wrapper.renderer, customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
     /**
      * Get custom attributes. Don't mutate the original object and return an
      * object with only custom attr.
@@ -556,7 +556,6 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         // in the attribs collection in the first place.
         delete params.center;
         delete params.z;
-        delete params.depth;
         delete params.alpha;
         delete params.beta;
         anim = animObject(pick(animation, this.renderer.globalAnimation));
@@ -584,7 +583,8 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                             r: interpolate('r'),
                             innerR: interpolate('innerR'),
                             start: interpolate('start'),
-                            end: interpolate('end')
+                            end: interpolate('end'),
+                            depth: interpolate('depth')
                         }));
                     }
                 };

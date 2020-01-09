@@ -262,7 +262,7 @@ import H from './Globals.js';
  * @interface Highcharts.SVGDefinitionObject
  */ /**
 * @name Highcharts.SVGDefinitionObject#[key:string]
-* @type {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+* @type {boolean|number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
 */ /**
 * @name Highcharts.SVGDefinitionObject#children
 * @type {Array<Highcharts.SVGDefinitionObject>|undefined}
@@ -749,7 +749,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     * @param {string|Highcharts.SVGAttributes} [hash]
     *        The native and custom SVG attributes.
     *
-    * @param {string} [val]
+    * @param {number|string|Highcharts.SVGPathArray} [val]
     *        If the type of the first argument is `string`, the second can be a
     *        value, which will serve as a single attribute setter. If the first
     *        argument is a string and the second is undefined, the function

@@ -209,7 +209,7 @@ var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, cla
 import './Color.js';
 import './Options.js';
 import './Tick.js';
-var addEvent = H.addEvent, color = H.color, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, seriesTypes = H.seriesTypes, Tick = H.Tick;
+var addEvent = H.addEvent, color = H.color, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, Tick = H.Tick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -3908,8 +3908,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                     if (!axis.single || hasCategories) {
                         // TODO: series should internally set x- and y-
                         // pointPlacement to simplify this logic.
-                        var isPointPlacementAxis = (seriesTypes.xrange &&
-                            series instanceof seriesTypes.xrange) ? !isXAxis : isXAxis;
+                        var isPointPlacementAxis = series.is('xrange') ? !isXAxis : isXAxis;
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
                         // pointRange, typically columns. When the
@@ -4261,7 +4260,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         if (!this.isLinked) {
             // Substract half a unit (#2619, #2846, #2515, #3390),
             // but not in case of multiple ticks (#6897)
-            if (this.single && tickPositions.length < 2 && !this.categories) {
+            if (this.single &&
+                tickPositions.length < 2 &&
+                !this.categories &&
+                !this.series.some(function (s) {
+                    return (s.is('heatmap') && s.options.pointPlacement === 'between');
+                })) {
                 this.min -= 0.5;
                 this.max += 0.5;
             }

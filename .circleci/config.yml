@@ -106,7 +106,6 @@ jobs:
       - run:
           name: Generate highcharts ts declarations
           command: npx gulp jsdoc-dts && npx gulp lint-dts
-      - <<: *persist_workspace
 
   lint:
     <<: *defaults
@@ -152,7 +151,7 @@ jobs:
         default: "ChromeHeadless"
     steps:
       - <<: *load_workspace
-      - run: ./.circleci/scripts/test_timezones.sh -b <<parameters.browsers>>
+      - run: ./.circleci/scripts/test_timezones.sh -b=<<parameters.browsers>>
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
@@ -369,7 +368,7 @@ jobs:
           command: cd ../highcharts-dist && git push origin --delete nightly || true
       - run:
           name: Run dist-release
-          command: cd ../highcharts && gulp dist-release
+          command: cd ../highcharts && npx gulp dist-release --force-yes
       - run:
           name: Push to highcharts-dist nightly branch
           command: |
@@ -396,7 +395,7 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
       - generate_ts_declarations:
-          requires: [lint]
+          requires: [checkout_and_install]
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
@@ -418,7 +417,8 @@ workflows:
           requires: [lint]
           filters:
             branches:
-              only: [tools/report-slow-tests-and-set-bs-timezone]
+              only: [tools/ci-dist-release-yes]
+          browsers: "Mac.Safari"
       - test_browsers:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
@@ -430,7 +430,7 @@ workflows:
           browsers: "Win.IE8 --oldie"
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["test-Win.IE8"]
+          requires: ["test-Win.IE8", "generate_ts_declarations"]
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"

@@ -132,10 +132,11 @@ declare global {
                 prop: string
             );
             [key: string]: any;
-            public elem: (HTMLDOMElement|SVGElement);
+            public elem: (HTMLElement|SVGElement);
             public options: AnimationOptionsObject;
-            public paths: [SVGPathArray, SVGPathArray];
-            private dSetter(): void;
+            public paths?: [SVGPathArray, SVGPathArray];
+            public prop: string;
+            public dSetter(): void;
             public fillSetter(): void;
             public initPath(
                 elem: SVGElement,
@@ -143,9 +144,9 @@ declare global {
                 toD: SVGPathArray
             ): [SVGPathArray, SVGPathArray];
             public run(from: number, to: number, unit: string): void;
-            private step(gotoEnd?: boolean): boolean;
+            public step(gotoEnd?: boolean): boolean;
             public strokeSetter(): void;
-            private update(): void;
+            public update(): void;
         }
         let timers: Array<any>;
         function addEvent<T>(
@@ -774,28 +775,60 @@ H.error = function (
  * @private
  * @class
  * @name Highcharts.Fx
- *
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
- *        The element to animate.
- *
- * @param {Highcharts.AnimationOptionsObject} options
- *        Animation options.
- *
- * @param {string} prop
- *        The single attribute or CSS property to animate.
  */
-H.Fx = function (
-    this: Highcharts.Fx,
-    elem: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
-    options: Highcharts.AnimationOptionsObject,
-    prop: string
-): any {
-    this.options = options;
-    this.elem = elem;
-    this.prop = prop;
-    /* eslint-enable no-invalid-this, valid-jsdoc */
-} as any;
-H.Fx.prototype = {
+class Fx {
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
+    /**
+     *
+     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
+     *        The element to animate.
+     *
+     * @param {Highcharts.AnimationOptionsObject} options
+     *        Animation options.
+     *
+     * @param {string} prop
+     *        The single attribute or CSS property to animate.
+     */
+    public constructor(
+        elem: (Highcharts.HTMLElement|Highcharts.SVGElement),
+        options: Highcharts.AnimationOptionsObject,
+        prop: string
+    ) {
+        this.options = options;
+        this.elem = elem;
+        this.prop = prop;
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public elem: (Highcharts.HTMLElement|Highcharts.SVGElement);
+    public end?: number;
+    public from?: number;
+    public now?: number;
+    public options: Highcharts.AnimationOptionsObject;
+    public paths?: [Highcharts.SVGPathArray, Highcharts.SVGPathArray];
+    public pos?: number;
+    public prop: string;
+    public start?: number;
+    public startTime?: number;
+    public toD?: Highcharts.SVGPathArray;
+    public unit?: string;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Set the current step of a path definition on SVGElement.
@@ -804,21 +837,21 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    dSetter: function (): void {
-        var start = this.paths[0],
-            end = this.paths[1],
-            ret = [] as Highcharts.SVGPathArray,
-            now = this.now,
+    public dSetter(): void {
+        var start: Highcharts.SVGPathArray = (this.paths as any)[0],
+            end: Highcharts.SVGPathArray = (this.paths as any)[1],
+            ret: Highcharts.SVGPathArray = [],
+            now: number = this.now as any,
             i = start.length,
-            startVal;
+            startVal: number;
 
         // Land on the final path without adjustment points appended in the ends
         if (now === 1) {
-            ret = this.toD;
+            ret = this.toD as any;
 
         } else if (i === end.length && now < 1) {
             while (i--) {
-                startVal = parseFloat(start[i]);
+                startVal = parseFloat(start[i] as any);
                 ret[i] = (
                     // A letter instruction like M or L
                     isNaN(startVal) ||
@@ -829,7 +862,7 @@ H.Fx.prototype = {
                     end[i] :
                     (
                         now *
-                        parseFloat('' + (end[i] - startVal)) +
+                        parseFloat('' + ((end[i] as any) - startVal)) +
                         startVal
                     );
 
@@ -838,8 +871,8 @@ H.Fx.prototype = {
         } else {
             ret = end;
         }
-        this.elem.attr('d', ret, null, true);
-    },
+        this.elem.attr('d', ret, null as any, true);
+    }
 
     /**
      * Update the element with the current animation step.
@@ -848,10 +881,10 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    update: function (): void {
+    public update(): void {
         var elem = this.elem,
             prop = this.prop, // if destroyed, it is null
-            now = this.now,
+            now: number = this.now as any,
             step = this.options.step;
 
         // Animation setter defined from outside
@@ -861,19 +894,19 @@ H.Fx.prototype = {
         // Other animations on SVGElement
         } else if (elem.attr) {
             if (elem.element) {
-                elem.attr(prop, now, null, true);
+                elem.attr(prop, now, null as any, true);
             }
 
         // HTML styles, raw HTML content like container size
         } else {
-            elem.style[prop] = now + this.unit;
+            elem.style[prop] = now + (this.unit as any);
         }
 
         if (step) {
             step.call(elem, now, this);
         }
 
-    },
+    }
 
     /**
      * Run an animation.
@@ -891,7 +924,7 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    run: function (from: number, to: number, unit: string): void {
+    public run(from: number, to: number, unit: string): void {
         var self = this,
             options = self.options,
             timer: Highcharts.Timer = function (gotoEnd?: boolean): boolean {
@@ -915,8 +948,8 @@ H.Fx.prototype = {
             };
 
         if (from === to && !this.elem['forceAnimate:' + this.prop]) {
-            delete options.curAnim[this.prop];
-            if (options.complete && Object.keys(options.curAnim).length === 0) {
+            delete (options.curAnim as any)[this.prop];
+            if (options.complete && Object.keys(options.curAnim as any).length === 0) {
                 options.complete.call(this.elem);
             }
         } else { // #7166
@@ -934,7 +967,7 @@ H.Fx.prototype = {
                 requestAnimationFrame(step);
             }
         }
-    },
+    }
 
     /**
      * Run a single step in the animation.
@@ -947,20 +980,20 @@ H.Fx.prototype = {
      * @return {boolean}
      *         Returns `true` if animation continues.
      */
-    step: function (gotoEnd?: boolean): boolean {
+    public step(gotoEnd?: boolean): boolean {
         var t = +new Date(),
             ret,
             done,
             options = this.options,
             elem = this.elem,
             complete = options.complete,
-            duration = options.duration,
-            curAnim = options.curAnim;
+            duration: number = options.duration as any,
+            curAnim: Highcharts.Dictionary<boolean> = options.curAnim as any;
 
         if (elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;
 
-        } else if (gotoEnd || t >= duration + this.startTime) {
+        } else if (gotoEnd || t >= duration + (this.startTime as any)) {
             this.now = this.end;
             this.pos = 1;
             this.update();
@@ -982,14 +1015,14 @@ H.Fx.prototype = {
 
         } else {
             this.pos = (options.easing as Function)(
-                (t - this.startTime) / duration
+                (t - (this.startTime as any)) / duration
             );
-            this.now = this.start + ((this.end - this.start) * this.pos);
+            this.now = (this.start as any) + (((this.end as any) - (this.start as any)) * (this.pos as any));
             this.update();
             ret = true;
         }
         return ret;
-    },
+    }
 
     /**
      * Prepare start and end values so that the path can be animated one to one.
@@ -1009,7 +1042,7 @@ H.Fx.prototype = {
      *         An array containing start and end paths in array form so that
      *         they can be animated in parallel.
      */
-    initPath: function (
+    public initPath(
         elem: Highcharts.SVGElement,
         fromD: string,
         toD: Highcharts.SVGPathArray
@@ -1023,8 +1056,8 @@ H.Fx.prototype = {
             fullLength: number,
             slice,
             i: number,
-            start = fromD.split(' '),
-            end = toD.slice(), // copy
+            start: Highcharts.SVGPathArray = fromD.split(' ') as any,
+            end: Highcharts.SVGPathArray = toD.slice(), // copy
             isArea = elem.isArea,
             positionFactor = isArea ? 2 : 1,
             reverse;
@@ -1203,8 +1236,8 @@ H.Fx.prototype = {
             }
         }
 
-        return [start as any, end];
-    },
+        return [start, end];
+    }
 
     /**
      * Handle animation of the color attributes directly.
@@ -1213,9 +1246,9 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    fillSetter: function (): void {
+    public fillSetter(): void {
         H.Fx.prototype.strokeSetter.apply(this, arguments as any);
-    },
+    }
 
     /**
      * Handle animation of the color attributes directly.
@@ -1224,16 +1257,17 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    strokeSetter: function (): void {
+    public strokeSetter(): void {
         this.elem.attr(
             this.prop,
-            H.color(this.start).tweenTo(H.color(this.end), this.pos),
-            null,
+            H.color(this.start as any).tweenTo(H.color(this.end as any), this.pos as any),
+            null as any,
             true
         );
     }
+}
 
-} as any; // End of Fx prototype
+H.Fx = Fx;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -3227,7 +3261,7 @@ H.animate = function (
         // Stop current running animation of this property
         H.stop(el as any, prop);
 
-        fx = new H.Fx(el, opt as any, prop);
+        fx = new Fx(el as any, opt as any, prop);
         end = null;
 
         if (prop === 'd') {
@@ -3236,7 +3270,7 @@ H.animate = function (
                 (el as any).d,
                 params.d as any
             );
-            fx.toD = params.d;
+            fx.toD = params.d as any;
             start = 0;
             end = 1;
         } else if ((el as any).attr) {
@@ -3407,6 +3441,7 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utils = {
+    Fx,
     animObject,
     arrayMax,
     arrayMin,
