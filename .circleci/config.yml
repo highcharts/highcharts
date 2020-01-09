@@ -300,7 +300,7 @@ jobs:
       - <<: *load_workspace
       - run:
           name: Compile build
-          command: npm run build
+          command: npm run build -- --num-threads 2
       - <<: *persist_workspace
 
   deploy_code:

@@ -8,6 +8,7 @@ const {
 // eslint-disable-next-line node/no-unsupported-features/node-builtins
 } = require('worker_threads');
 const os = require('os');
+const argv = require('yargs').argv;
 
 const SOURCE_DIRECTORY = 'code';
 
@@ -39,11 +40,8 @@ function chunk(arr, numParts) {
  *         Promise to keep
  */
 async function task() {
-
-    const compileTool = require('../compile');
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
-    const argv = process.argv;
 
     const fileBatches = [];
 
@@ -62,7 +60,8 @@ async function task() {
                     .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
         );
 
-        const batches = chunk(files, Math.max(2, os.cpus().length - 2));
+        const numThreads = argv.numThreads ? argv.numThreads : Math.max(2, os.cpus().length - 2);
+        const batches = chunk(files, numThreads);
 
         logLib.message(`Splitting files to compile in ${batches.length} batches/threads..`);
         logLib.message('Compiling', SOURCE_DIRECTORY + '...');
@@ -81,6 +80,7 @@ async function task() {
             }));
         });
     } else {
+        const compileTool = require('../compile');
         await compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'));
         parentPort.postMessage({ done: true });
 
