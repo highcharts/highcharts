@@ -12,7 +12,9 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-var win = H.win,
+var addEvent = H.addEvent,
+    fireEvent = H.fireEvent,
+    win = H.win,
     doc = win.document;
 
 import HTMLUtilities from './utils/htmlUtilities.js';
@@ -62,10 +64,44 @@ declare global {
             public updateExitAnchor(): void;
             public updateContainerTabindex(): void;
         }
+        interface Chart {
+            /** @requires modules/accessibility */
+            dismissPopupContent(): void;
+        }
     }
 }
 
 /* eslint-disable valid-jsdoc */
+
+// Add event listener to document to detect ESC key press and dismiss
+// hover/popup content.
+addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
+    const keycode = e.which || e.keyCode;
+    const esc = 27;
+    if (keycode === esc && H.charts) {
+        H.charts.forEach((chart): void => {
+            if (chart && chart.dismissPopupContent) {
+                chart.dismissPopupContent();
+            }
+        });
+    }
+});
+
+
+/**
+ * Dismiss popup content in chart, including export menu and tooltip.
+ */
+H.Chart.prototype.dismissPopupContent = function (): void {
+    const chart = this;
+
+    fireEvent(this, 'dismissPopupContent', {}, function (): void {
+        if (chart.tooltip) {
+            chart.tooltip.hide(0);
+        }
+        chart.hideExportMenu();
+    });
+};
+
 
 /**
  * The KeyboardNavigation class, containing the overall keyboard navigation
