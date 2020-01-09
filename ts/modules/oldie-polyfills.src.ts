@@ -198,7 +198,7 @@ if (!Object.keys) {
 
 // Add a getElementsByClassName function if the browser doesn't have one
 // Limitation: only works with one class name
-// Copyright: Eike Send http://eike.se/nd
+// Copyright: Eike Send https://eike.se/nd
 // License: MIT License
 if (!document.getElementsByClassName) {
     document.getElementsByClassName = function (

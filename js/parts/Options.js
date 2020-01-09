@@ -359,7 +359,7 @@ H.defaultOptions = {
          */
         decimalPoint: '.',
         /**
-         * [Metric prefixes](http://en.wikipedia.org/wiki/Metric_prefix) used
+         * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
          * to shorten high numbers in axis labels. Replacing any of the
          * positions with `null` causes the full number to be written. Setting
          * `numericSymbols` to `null` disables shortening altogether.
@@ -430,7 +430,7 @@ H.defaultOptions = {
      *
      * The URL to the additional file to lazy load for Android 2.x devices.
      * These devices don't support SVG, so we download a helper file that
-     * contains [canvg](http://code.google.com/p/canvg/), its dependency
+     * contains [canvg](https://github.com/canvg/canvg), its dependency
      * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
      * our site, you can install canvas-tools.js on your own server and
      * change this option accordingly.
@@ -438,7 +438,7 @@ H.defaultOptions = {
      * @deprecated
      *
      * @type      {string}
-     * @default   http://code.highcharts.com/{version}/modules/canvas-tools.js
+     * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
      * @product   highcharts highmaps
      * @apioption global.canvasToolsURL
      */
@@ -3563,7 +3563,7 @@ H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
  * human readable date string. The format is a subset of the formats for PHP's
- * [strftime](http://www.php.net/manual/en/function.strftime.php) function.
+ * [strftime](https://www.php.net/manual/en/function.strftime.php) function.
  * Additional formats can be given in the {@link Highcharts.dateFormats} hook.
  *
  * Since v6.0.5, all internal dates are formatted through the

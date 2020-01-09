@@ -145,7 +145,7 @@ Chart.prototype.getBoostClipRect = function (
  *        A stripped-down point object
  *
  * @return {Highcharts.Point}
- *         A Point object as per http://api.highcharts.com/highcharts#Point
+ *         A Point object as per https://api.highcharts.com/highcharts#Point
  */
 Series.prototype.getPoint = function (
     boostPoint: (Highcharts.Dictionary<number>|Highcharts.Point)

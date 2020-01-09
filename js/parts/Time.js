@@ -199,7 +199,7 @@ Highcharts.Time.prototype = {
          */
         getTimezoneOffset: void 0,
         /**
-         * Requires [moment.js](http://momentjs.com/). If the timezone option
+         * Requires [moment.js](https://momentjs.com/). If the timezone option
          * is specified, it creates a default
          * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
          * up the specified timezone in moment.js. If moment.js is not included,
