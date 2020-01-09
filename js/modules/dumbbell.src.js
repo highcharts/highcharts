@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2020 Sebastian Bochan, Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *

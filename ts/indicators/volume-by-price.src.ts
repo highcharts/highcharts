@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Paweł Dalek
+ *  (c) 2010-2020 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highstock
  *
