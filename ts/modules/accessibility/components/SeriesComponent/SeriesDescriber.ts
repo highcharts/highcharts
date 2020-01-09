@@ -21,6 +21,9 @@ var isNumber = U.isNumber,
     pick = U.pick,
     defined = U.defined;
 
+import AnnotationsA11y from '../AnnotationsA11y.js';
+const getPointAnnotationText = AnnotationsA11y.getPointAnnotationText;
+
 import HTMLUtilities from '../../utils/htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
     reverseChildNodes = HTMLUtilities.reverseChildNodes;
@@ -411,6 +414,24 @@ function getPointValueDescription(
 
 
 /**
+ * Return the description for the annotation(s) connected to a point, or empty
+ * string if none.
+ *
+ * @private
+ * @param {Highcharts.Point} point The data point to get the annotation info from.
+ * @return {string} Annotation description
+ */
+function getPointAnnotationDescription(point: Highcharts.Point): string {
+    const chart = point.series.chart;
+    const langKey = 'accessibility.series.pointAnnotationsDescription';
+    const annotationsText = getPointAnnotationText(point as Highcharts.AnnotationPoint);
+    const context = { point, annotationsText };
+
+    return annotationsText ? chart.langFormat(langKey, context) : '';
+}
+
+
+/**
  * Return string with information about point.
  * @private
  * @return {string}
@@ -430,14 +451,17 @@ function defaultPointDescriptionFormatter(
         ),
         xDesc = getPointXDescription(point),
         valueDesc = getPointValueDescription(point),
+        annotationsDesc = getPointAnnotationDescription(point),
         indexText = defined(point.index) ? (point.index + 1) + '. ' : '',
         xDescText = showXDescription ? xDesc + ', ' : '',
         valText = valueDesc + '.',
         userDescText = description ? ' ' + description : '',
         seriesNameText = chart.series.length > 1 && series.name ?
-            ' ' + series.name + '.' : '';
+            ' ' + series.name + '.' : '',
+        pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '';
 
-    return indexText + xDescText + valText + userDescText + seriesNameText;
+    return indexText + xDescText + valText + userDescText +
+        seriesNameText + pointAnnotationsText;
 }
 
 

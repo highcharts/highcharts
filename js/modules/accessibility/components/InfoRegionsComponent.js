@@ -15,6 +15,8 @@ var doc = H.win.document, format = H.format;
 import U from '../../../parts/Utilities.js';
 var extend = U.extend, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import AnnotationsA11y from './AnnotationsA11y.js';
+var getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 import ChartUtilities from '../utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle, getAxisDescription = ChartUtilities.getAxisDescription;
 import HTMLUtilities from '../utils/htmlUtilities.js';
@@ -65,8 +67,8 @@ function stripEmptyHTMLTags(str) {
  */
 function enableSimpleHTML(str) {
     return str
-        .replace(/&lt;(h[1-7]|p|div)&gt;/g, '<$1>')
-        .replace(/&lt;&#x2F;(h[1-7]|p|div|a|button)&gt;/g, '</$1>')
+        .replace(/&lt;(h[1-7]|p|div|ul|ol|li)&gt;/g, '<$1>')
+        .replace(/&lt;&#x2F;(h[1-7]|p|div|ul|ol|li|a|button)&gt;/g, '</$1>')
         .replace(/&lt;(div|a|button) id=&quot;([a-zA-Z\-0-9#]*?)&quot;&gt;/g, '<$1 id="$2">');
 }
 /**
@@ -168,9 +170,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         };
     },
     /**
-     * Called on first render/updates to the chart, including options changes.
+     * Called on chart render. Have to update the sections on render, in order
+     * to get a11y info from series.
      */
-    onChartUpdate: function () {
+    onChartRender: function () {
         var component = this;
         this.linkedDescriptionElement = this.getLinkedDescriptionElement();
         this.setLinkedDescriptionAttrs();
@@ -247,7 +250,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultBeforeChartFormatter: function () {
         var chart = this.chart, format = chart.options.accessibility
             .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
-            chart.index, context = {
+            chart.index, annotationsTitleStr = chart.langFormat('accessibility.screenReaderSection.annotations.heading', { chart: chart }), context = {
             chartTitle: getChartTitle(chart),
             typeDescription: this.getTypeDescriptionText(),
             chartSubtitle: this.getSubtitleText(),
@@ -255,7 +258,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             xAxisDescription: axesDesc.xAxis,
             yAxisDescription: axesDesc.yAxis,
             viewTableButton: chart.getCSV ?
-                this.getDataTableButtonText(dataTableButtonId) : ''
+                this.getDataTableButtonText(dataTableButtonId) : '',
+            annotationsTitle: annotationsTitleStr,
+            annotationsList: getAnnotationsInfoHTML(chart)
         }, formattedString = H.i18nFormat(format, context, chart);
         this.dataTableButtonId = dataTableButtonId;
         return stringToSimpleHTML(formattedString);

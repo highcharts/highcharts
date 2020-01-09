@@ -58,6 +58,11 @@ Highcharts.chart('container', {
         }, {
             points: ['peak1', 'peak2'],
             text: 'The second peak is higher than the first'
+        }, {
+            point: 'peak2',
+            text: 'This is the max peak.',
+            align: 'left',
+            x: 20
         }]
     }]
 });

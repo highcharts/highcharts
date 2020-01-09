@@ -15,7 +15,7 @@ var doc = H.win.document, format = H.format;
 import U from '../../../../parts/Utilities.js';
 var extend = U.extend, pick = U.pick;
 import AccessibilityComponent from '../../AccessibilityComponent.js';
-import AnnotationsA11y from './AnnotationsA11y.js';
+import AnnotationsA11y from '../AnnotationsA11y.js';
 var getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 import ChartUtilities from '../../utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle, getAxisDescription = ChartUtilities.getAxisDescription;

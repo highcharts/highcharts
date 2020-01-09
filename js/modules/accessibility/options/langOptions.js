@@ -314,7 +314,13 @@ var langOptions = {
              *
              * @since 8.0.0
              */
-            nullPointValue: 'No value'
+            nullPointValue: 'No value',
+            /**
+             * Description for the value of null points.
+             *
+             * @since next
+             */
+            pointAnnotationsDescription: 'Annotations: {annotationsText}'
         }
     }
 };

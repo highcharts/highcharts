@@ -23,7 +23,7 @@ import MenuComponent from './components/MenuComponent.js';
 import SeriesComponent from './components/SeriesComponent/SeriesComponent.js';
 import ZoomComponent from './components/ZoomComponent.js';
 import RangeSelectorComponent from './components/RangeSelectorComponent.js';
-import InfoRegionsComponent from './components/InfoRegionsComponent/InfoRegionsComponent.js';
+import InfoRegionsComponent from './components/InfoRegionsComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
