@@ -152,8 +152,7 @@ function visuallyHideElement(element) {
         marginTop: '-3px',
         '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
         filter: 'alpha(opacity=1)',
-        opacity: '0.01',
-        clip: 'rect(1px, 1px, 1px, 1px)'
+        opacity: '0.01'
     };
     merge(true, element.style, hiddenStyle);
 }
