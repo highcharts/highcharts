@@ -52,6 +52,7 @@ declare global {
             public onMenuHidden(): void;
             public onMenuShown(): void;
             public setExportButtonExpandedState(stateStr: string): void;
+            isExportMenuShown: boolean;
         }
         interface Chart {
             highlightedExportItemIx?: number;
@@ -70,6 +71,19 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
+
+/**
+ * Get the wrapped export button element of a chart.
+ *
+ * @private
+ * @param {Highcharts.Chart} chart
+ * @returns {Highcharts.SVGElement}
+ */
+function getExportMenuButtonElement(chart: Highcharts.Chart): Highcharts.SVGElement|undefined {
+    return chart.exportSVGElements && chart.exportSVGElements[0];
+}
+
+
 /**
  * Show the export menu and focus the first item (if exists).
  *
@@ -77,8 +91,10 @@ declare global {
  * @function Highcharts.Chart#showExportMenu
  */
 H.Chart.prototype.showExportMenu = function (): void {
-    if (this.exportSVGElements && this.exportSVGElements[0]) {
-        const el = this.exportSVGElements[0].element;
+    const exportButton = getExportMenuButtonElement(this);
+
+    if (exportButton) {
+        const el = exportButton.element;
         if (el.onclick) {
             el.onclick(getFakeMouseEvent('click'));
         }
@@ -188,15 +204,16 @@ H.Chart.prototype.highlightLastExportItem = function (): boolean {
 function exportingShouldHaveA11y(
     chart: Highcharts.Chart
 ): boolean {
-    var exportingOpts = chart.options.exporting;
+    const exportingOpts = chart.options.exporting,
+        exportButton = getExportMenuButtonElement(chart);
+
     return !!(
         exportingOpts &&
         exportingOpts.enabled !== false &&
         exportingOpts.accessibility &&
         exportingOpts.accessibility.enabled &&
-        chart.exportSVGElements &&
-        chart.exportSVGElements[0] &&
-        chart.exportSVGElements[0].element
+        exportButton &&
+        exportButton.element
     );
 }
 
@@ -239,6 +256,8 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         if (menu) {
             menu.setAttribute('aria-hidden', 'true');
         }
+
+        this.isExportMenuShown = false;
         this.setExportButtonExpandedState('false');
     },
 
@@ -255,6 +274,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             unhideChartElementFromAT(chart, menu);
         }
 
+        this.isExportMenuShown = true;
         this.setExportButtonExpandedState('true');
     },
 
@@ -299,9 +319,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 } : {}
             );
 
-            var button: Highcharts.SVGElement = (
-                (this.chart as any).exportSVGElements[0]
-            );
+            const button: Highcharts.SVGElement = getExportMenuButtonElement(this.chart) as any;
             this.exportButtonProxy = this.createProxyButton(
                 button,
                 this.exportProxyGroup,
@@ -418,15 +436,12 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                     false;
             },
 
-            // Show export menu
-            init: function (direction: number): void {
-                chart.showExportMenu();
+            // Focus export menu button
+            init: function (): void {
+                const exportBtn = this.exportButtonProxy,
+                    exportGroup = chart.exportingGroup as Highcharts.SVGElement;
 
-                if (direction < 0) {
-                    chart.highlightLastExportItem();
-                } else {
-                    chart.highlightExportItem(0);
-                }
+                chart.setFocusToElement(exportGroup, exportBtn.element);
             },
 
             // Hide the menu
@@ -511,12 +526,19 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         this: Highcharts.MenuComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var chart = this.chart;
-        this.fakeClickEvent(
-            (chart.exportDivElements as any)[
+        const chart = this.chart,
+            curHighlightedItem = (chart.exportDivElements as any)[
                 chart.highlightedExportItemIx as any
-            ]
-        );
+            ],
+            exportButtonElement = (getExportMenuButtonElement(chart) as Highcharts.SVGElement).element;
+
+        if (this.isExportMenuShown) {
+            this.fakeClickEvent(curHighlightedItem);
+        } else {
+            this.fakeClickEvent(exportButtonElement);
+            chart.highlightExportItem(0);
+        }
+
         return keyboardNavigationHandler.response.success;
     }
 

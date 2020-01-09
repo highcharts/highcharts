@@ -20,7 +20,7 @@ declare global {
             navigation?: ChartNavigationObject;
         }
         interface ChartNavigationMixin {
-            addUpdate(update: Function, chart: Chart): void;
+            addUpdate(update: ChartNavigationUpdateFunction, chart: Chart): void;
             initUpdate(chart: Chart): void;
         }
         interface ChartNavigationObject {
@@ -28,20 +28,16 @@ declare global {
             update(options: NavigationOptions, redraw?: boolean): void;
         }
         interface ChartNavigationUpdateFunction {
-            (
-                this: NavigationChart,
-                options: NavigationOptions,
-                redraw?: boolean
-            ): void;
+            (this: NavigationChart, options: NavigationOptions, redraw?: boolean): void;
         }
         interface ChartNavigationUpdateObject {
             context: NavigationChart;
             update: ChartNavigationUpdateFunction;
         }
-        class NavigationChart extends Chart {
-            public addUpdate: ChartNavigationMixin['addUpdate'];
-            public initUpdate: ChartNavigationMixin['initUpdate'];
-            public navigation: ChartNavigationObject;
+        interface NavigationChart extends Chart {
+            addUpdate: ChartNavigationMixin['addUpdate'];
+            initUpdate: ChartNavigationMixin['initUpdate'];
+            navigation: ChartNavigationObject;
         }
     }
 }

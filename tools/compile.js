@@ -83,7 +83,6 @@ const compileSingleFile = (path, sourceFolder, createSourceMap) => {
 };
 
 const compile = (files, sourceFolder) => {
-    console.log(colors.yellow('Warning: This task may take a few minutes.'));
     const createSourceMap = true;
     const promises = files
         .map(path => compileSingleFile(path, sourceFolder, createSourceMap));
