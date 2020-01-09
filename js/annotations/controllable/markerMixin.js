@@ -6,7 +6,7 @@
 'use strict';
 import H from './../../parts/Globals.js';
 import U from './../../parts/Utilities.js';
-var defined = U.defined, objectEach = U.objectEach;
+var addEvent = U.addEvent, defined = U.defined, objectEach = U.objectEach;
 import './../../parts/Chart.js';
 import './../../parts/SvgRenderer.js';
 /**
@@ -146,7 +146,7 @@ var markerMixin = {
         ['markerStart', 'markerEnd'].forEach(setMarker);
     }
 };
-H.addEvent(H.Chart, 'afterGetContainer', function () {
+addEvent(H.Chart, 'afterGetContainer', function () {
     this.options.defs = H.merge(defaultMarkers, this.options.defs || {});
     objectEach(this.options.defs, function (def) {
         if (def.tagName === 'marker' && def.render !== false) {

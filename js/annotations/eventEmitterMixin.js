@@ -5,7 +5,7 @@
  * */
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
+var addEvent = U.addEvent, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
 var fireEvent = H.fireEvent;
 /* eslint-disable valid-jsdoc */
 /**
@@ -25,7 +25,7 @@ var eventEmitterMixin = {
      */
     addEvents: function () {
         var emitter = this;
-        H.addEvent(emitter.graphic.element, 'mousedown', function (e) {
+        addEvent(emitter.graphic.element, 'mousedown', function (e) {
             emitter.onMouseDown(e);
         });
         objectEach(emitter.options.events, function (event, type) {
@@ -38,11 +38,11 @@ var eventEmitterMixin = {
                 emitter.graphic.on(type, eventHandler);
             }
             else {
-                H.addEvent(emitter, type, eventHandler);
+                addEvent(emitter, type, eventHandler);
             }
         });
         if (emitter.options.draggable) {
-            H.addEvent(emitter, 'drag', emitter.onDrag);
+            addEvent(emitter, 'drag', emitter.onDrag);
             if (!emitter.graphic.renderer.styledMode) {
                 emitter.graphic.css({
                     cursor: {
@@ -85,7 +85,7 @@ var eventEmitterMixin = {
         prevChartY = e.chartY;
         emitter.cancelClick = false;
         emitter.chart.hasDraggedAnnotation = true;
-        emitter.removeDrag = H.addEvent(H.doc, 'mousemove', function (e) {
+        emitter.removeDrag = addEvent(H.doc, 'mousemove', function (e) {
             emitter.hasDragged = true;
             e = pointer.normalize(e);
             e.prevChartX = prevChartX;
@@ -94,7 +94,7 @@ var eventEmitterMixin = {
             prevChartX = e.chartX;
             prevChartY = e.chartY;
         });
-        emitter.removeMouseUp = H.addEvent(H.doc, 'mouseup', function (e) {
+        emitter.removeMouseUp = addEvent(H.doc, 'mouseup', function (e) {
             emitter.cancelClick = emitter.hasDragged;
             emitter.hasDragged = false;
             emitter.chart.hasDraggedAnnotation = false;

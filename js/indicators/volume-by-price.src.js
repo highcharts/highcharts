@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils
 function arrayExtremesOHLC(data) {
@@ -32,7 +32,7 @@ function arrayExtremesOHLC(data) {
     };
 }
 /* eslint-enable require-jsdoc */
-var abs = Math.abs, noop = H.noop, addEvent = H.addEvent, seriesType = H.seriesType, columnPrototype = H.seriesTypes.column.prototype;
+var abs = Math.abs, noop = H.noop, seriesType = H.seriesType, columnPrototype = H.seriesTypes.column.prototype;
 /**
  * The Volume By Price (VBP) series type.
  *

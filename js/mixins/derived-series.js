@@ -6,9 +6,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+var addEvent = U.addEvent, defined = U.defined;
 import '../parts/Series.js';
-var Series = H.Series, addEvent = H.addEvent, noop = H.noop;
+var Series = H.Series, noop = H.noop;
 /* ************************************************************************** *
  *
  * DERIVED SERIES MIXIN
