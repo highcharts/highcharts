@@ -113,14 +113,24 @@ function getGitIgnoreMeProperties() {
  * Checks if source is a directory or system file.
  *
  * @param {string} source path to check
- * @return {boolean} true, if directory or system file.
+ * @return {boolean} true, if directory.
  */
-function isDirectoryOrSystemFile(source) {
-    return fs.lstatSync(source).isDirectory() || source.indexOf('.') === 0;
+function isDirectory(source) {
+    return fs.lstatSync(source).isDirectory();
 }
 
 /**
- * Transforms a filepath to a similar named S3 destination path.
+ * Checks if source is a directory or system file.
+ *
+ * @param {string} source path to check
+ * @return {boolean} true, if directory or system file.
+ */
+function isDirectoryOrSystemFile(source) {
+    return isDirectory(source) || (source.startsWith('../') ? source.substring(3, source.length - 1).indexOf('.') === 0 : source.indexOf('.') === 0);
+}
+
+/**
+ * Transforms a filepath to a similar named S3 destination path. Specific for highcharts js upload.
  * @param {string} filePath to create a S3 destination path for.
  * @param {string} localPath where the file resides. E.g 'highstock'. Will be substituted with cdnPath.
  * @param {string} cdnPath where the files should be uploaded. E.g 'stock'.
@@ -179,7 +189,7 @@ function uploadFiles(params) {
     }
 
     const defaultParams = {
-        batchSize: 400,
+        batchSize: 1500,
         bucket,
         onError: err => {
             log.failure(`File(s) errored:\n${err && err.message} ${err.from ? ' - ' + err.from : ''}`);
@@ -203,7 +213,7 @@ function uploadFiles(params) {
 
 
 /**
- * Uploads files for a specific product to S3.
+ * Uploads files for a specific highcharts product to S3.
  *
  * @param {object} productProps containing name, prettyName, cdnPath and version
  * @param {object} options that includes s3 options that will be passed to the sdk.
@@ -305,6 +315,9 @@ function uploadProductPackage(productProps, options = {}) {
 module.exports = {
     uploadFiles,
     uploadProductPackage,
+    getVersionPaths,
+    isDirectory,
+    isDirectoryOrSystemFile,
     getS3Object,
     putS3Object,
     getGitIgnoreMeProperties
