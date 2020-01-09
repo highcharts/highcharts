@@ -2935,7 +2935,7 @@ objectEach({
  * @return {Function}
  *         A callback function to remove the added event.
  */
-H.addEvent = function<T> (
+const addEvent = H.addEvent = function<T> (
     el: (Highcharts.Class<T>|T),
     type: string,
     fn: (Highcharts.EventCallbackFunction<T>|Function),
@@ -3442,6 +3442,7 @@ if ((win as any).jQuery) {
 // TODO use named exports when supported.
 const utils = {
     Fx,
+    addEvent,
     animObject,
     arrayMax,
     arrayMin,

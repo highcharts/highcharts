@@ -127,16 +127,18 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray,
-    isObject = U.isObject,
-    isString = U.isString,
-    objectEach = U.objectEach,
-    pick = U.pick,
-    wrap = U.wrap;
+const {
+    addEvent,
+    defined,
+    isArray,
+    isObject,
+    isString,
+    objectEach,
+    pick,
+    wrap
+} = U;
 
-var addEvent = H.addEvent,
-    createElement = H.createElement,
+var createElement = H.createElement,
     indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',

@@ -2134,7 +2134,7 @@ objectEach({
  * @return {Function}
  *         A callback function to remove the added event.
  */
-H.addEvent = function (el, type, fn, options) {
+var addEvent = H.addEvent = function (el, type, fn, options) {
     if (options === void 0) { options = {}; }
     /* eslint-enable valid-jsdoc */
     var events, addEventListener = (el.addEventListener || H.addEventListenerPolyfill);
@@ -2530,6 +2530,7 @@ if (win.jQuery) {
 // TODO use named exports when supported.
 var utils = {
     Fx: Fx,
+    addEvent: addEvent,
     animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,

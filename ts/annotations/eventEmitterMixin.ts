@@ -52,9 +52,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach,
-    pick = U.pick,
-    removeEvent = U.removeEvent;
+const {
+    addEvent,
+    objectEach,
+    pick,
+    removeEvent
+} = U;
 
 var fireEvent = H.fireEvent;
 
@@ -78,7 +81,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     addEvents: function (this: Highcharts.AnnotationEventEmitter): void {
         var emitter = this;
 
-        H.addEvent(
+        addEvent(
             emitter.graphic.element,
             'mousedown',
             function (e: Highcharts.AnnotationEventObject): void {
@@ -103,13 +106,13 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             if (H.inArray(type, emitter.nonDOMEvents || []) === -1) {
                 emitter.graphic.on(type, eventHandler);
             } else {
-                H.addEvent(emitter, type, eventHandler);
+                addEvent(emitter, type, eventHandler);
             }
         });
 
         if (emitter.options.draggable) {
 
-            H.addEvent(emitter, 'drag', emitter.onDrag);
+            addEvent(emitter, 'drag', emitter.onDrag);
 
             if (!emitter.graphic.renderer.styledMode) {
                 emitter.graphic.css({
@@ -167,7 +170,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         emitter.cancelClick = false;
         emitter.chart.hasDraggedAnnotation = true;
 
-        emitter.removeDrag = H.addEvent(
+        emitter.removeDrag = addEvent(
             H.doc,
             'mousemove',
             function (e: Highcharts.AnnotationEventObject): void {
@@ -184,7 +187,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             }
         );
 
-        emitter.removeMouseUp = H.addEvent(
+        emitter.removeMouseUp = addEvent(
             H.doc,
             'mouseup',
             function (e: Highcharts.AnnotationEventObject): void {

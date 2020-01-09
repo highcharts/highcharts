@@ -32,8 +32,11 @@ declare global {
 
 
 import U from './../../parts/Utilities.js';
-var defined = U.defined,
-    objectEach = U.objectEach;
+const {
+    addEvent,
+    defined,
+    objectEach
+} = U;
 
 import './../../parts/Chart.js';
 import './../../parts/SvgRenderer.js';
@@ -214,7 +217,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
     }
 };
 
-H.addEvent(H.Chart as any, 'afterGetContainer', function (this: Highcharts.AnnotationChart): void {
+addEvent(H.Chart as any, 'afterGetContainer', function (this: Highcharts.AnnotationChart): void {
     this.options.defs = H.merge(defaultMarkers, this.options.defs || {});
 
     objectEach(this.options.defs, function (def: Highcharts.SVGDefinitionObject): void {

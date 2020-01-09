@@ -36,9 +36,9 @@ import H from '../parts/Globals.js';
 * @type {Array<Function>|undefined}
 */
 import U from '../parts/Utilities.js';
-var attr = U.attr, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, attr = U.attr, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick;
 import chartNavigationMixin from '../mixins/navigation.js';
-var doc = H.doc, win = H.win, addEvent = H.addEvent, merge = H.merge, fireEvent = H.fireEvent, PREFIX = 'highcharts-';
+var doc = H.doc, win = H.win, merge = H.merge, fireEvent = H.fireEvent, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * IE 9-11 polyfill for Element.closest():

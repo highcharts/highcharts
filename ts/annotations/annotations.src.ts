@@ -248,13 +248,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    destroyObjectProperties = U.destroyObjectProperties,
-    erase = U.erase,
-    extend = U.extend,
-    pick = U.pick,
-    splat = U.splat,
-    wrap = U.wrap;
+const {
+    addEvent,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    pick,
+    splat,
+    wrap
+} = U;
 
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
@@ -268,7 +271,6 @@ import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
 
 var merge = H.merge,
-    addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     find = H.find,
     reduce = H.reduce,

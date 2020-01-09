@@ -147,19 +147,21 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var attr = U.attr,
-    extend = U.extend,
-    isArray = U.isArray,
-    isNumber = U.isNumber,
-    isObject = U.isObject,
-    objectEach = U.objectEach,
-    pick = U.pick;
+const {
+    addEvent,
+    attr,
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    objectEach,
+    pick
+} = U;
 
 import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
     win = H.win,
-    addEvent = H.addEvent,
     merge = H.merge,
     fireEvent = H.fireEvent,
     PREFIX = 'highcharts-';

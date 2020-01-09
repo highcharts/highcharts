@@ -12,8 +12,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, wrap = U.wrap;
-var addEvent = H.addEvent, createElement = H.createElement, indexFilter = /\d/g, PREFIX = 'highcharts-', DIV = 'div', INPUT = 'input', LABEL = 'label', BUTTON = 'button', SELECT = 'select', OPTION = 'option', SPAN = 'span', UL = 'ul', LI = 'li', H3 = 'h3';
+var addEvent = U.addEvent, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, wrap = U.wrap;
+var createElement = H.createElement, indexFilter = /\d/g, PREFIX = 'highcharts-', DIV = 'div', INPUT = 'input', LABEL = 'label', BUTTON = 'button', SELECT = 'select', OPTION = 'option', SPAN = 'span', UL = 'ul', LI = 'li', H3 = 'h3';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
 // Related issue #4606
