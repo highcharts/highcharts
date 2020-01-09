@@ -620,7 +620,7 @@ seriesType('column', 'line',
             point.tooltipPos = chart.inverted ?
                 [
                     yAxis.len + yAxis.pos - chart.plotLeft - plotY,
-                    xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0),
+                    xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
                     barH
                 ] :
                 [barX + barW / 2, plotY + yAxis.pos -
