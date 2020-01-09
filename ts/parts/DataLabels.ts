@@ -881,6 +881,7 @@ Series.prototype.alignDataLabel = function (
         ) === 'justify',
         visible =
             this.visible &&
+            point.visible !== false &&
             (
                 point.series.forceDL ||
                 (enabledDataSorting && !justify) ||

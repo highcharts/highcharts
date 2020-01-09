@@ -463,6 +463,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
     // labels (#2700)
     alignAttr, // the final position;
     justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify', visible = this.visible &&
+        point.visible !== false &&
         (point.series.forceDL ||
             (enabledDataSorting && !justify) ||
             isInsidePlot ||

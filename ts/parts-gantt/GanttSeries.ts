@@ -263,7 +263,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                 diamondShape: Highcharts.SVGPathArray;
 
             if (point.options.milestone) {
-                if (isNumber(plotY) && point.y !== null) {
+                if (isNumber(plotY) && point.y !== null && point.visible !== false) {
                     diamondShape = renderer.symbols.diamond(
                         shapeArgs.x,
                         shapeArgs.y,
