@@ -19,6 +19,7 @@
                 "properties": "always"
             }
         ],
+        "class-methods-use-this": 0, // @todo
         "comma-dangle": [
             2,
             "never"
