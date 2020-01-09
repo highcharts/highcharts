@@ -68,6 +68,7 @@ Gulp.registry(new GulpForwardReference());
     'tsdoc-next',
     'tsdoc-watch',
     'update',
+    'upload-wrapper-apidocs',
     'unsorted/build-modules',
     'unsorted/compare-filesize',
     'unsorted/default',
