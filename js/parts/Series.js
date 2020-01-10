@@ -5154,7 +5154,6 @@ null,
             factor * pick(pointRange, axis.pointRange) :
             0;
     },
-
     // Rendering of series' and point's as legend items is very similar.
     renderAsLegendItem: H.Point.prototype.renderAsLegendItem
 }); // end Series prototype

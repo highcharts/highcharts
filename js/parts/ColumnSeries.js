@@ -577,7 +577,7 @@ seriesType('column', 'line',
         Series.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
-            var  = pick(point.yBottom, translatedThreshold, 0 // Handle the situation when the plot area is not
+            var yBottom = pick(point.yBottom, translatedThreshold, 0 // Handle the situation when the plot area is not
             // visible because of multiple legends.
             ), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX, 
             // Don't draw too far outside plot area (#1303, #2241,
