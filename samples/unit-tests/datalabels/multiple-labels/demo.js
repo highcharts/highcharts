@@ -165,9 +165,7 @@ QUnit.test(
         result = checkLabelsVisibility(chart, 'hide');
         assert.ok(result, 'All data labels should be hidden when chart is inverted (#12370).');
 
-        /*
         result = checkLabelsVisibility(chart, 'show');
         assert.ok(result, 'All data labels should be visible when chart is inverted (#12370).');
-        */
     }
 );
