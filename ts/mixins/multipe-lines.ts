@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2019 Wojciech Chmiel
+ *  (c) 2010-2020 Wojciech Chmiel
  *
  *  License: www.highcharts.com/license
  *

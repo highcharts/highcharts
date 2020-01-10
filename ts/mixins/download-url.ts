@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2015-2019 Oystein Moseng
+ *  (c) 2015-2020 Oystein Moseng
  *
  *  License: www.highcharts.com/license
  *

@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2019 Paweł Fus
+ *  (c) 2010-2020 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -502,6 +502,13 @@ seriesType('networkgraph', 'line',
         this.indexateNodes();
     },
     /**
+     * In networkgraph, series.points refers to links,
+     * but series.nodes refers to actual points.
+     */
+    getPointsCollection: function () {
+        return this.nodes || [];
+    },
+    /**
      * Set index for each node. Required for proper `node.update()`.
      * Note that links are indexated out of the box in `generatePoints()`.
      *
@@ -632,8 +639,8 @@ seriesType('networkgraph', 'line',
     // Return the presentational attributes.
     pointAttribs: function (point, state) {
         // By default, only `selected` state is passed on
-        var pointState = state || point.state || 'normal', attribs = Series.prototype.pointAttribs.call(this, point, pointState), stateOptions = this.options.states[pointState];
-        if (!point.isNode) {
+        var pointState = state || point && point.state || 'normal', attribs = Series.prototype.pointAttribs.call(this, point, pointState), stateOptions = this.options.states[pointState];
+        if (point && !point.isNode) {
             attribs = point.getLinkAttributes();
             // For link, get prefixed names:
             if (stateOptions) {

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -176,7 +176,7 @@ H.pointCameraDistance = function (coordinates, chart) {
 };
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
- * http://en.wikipedia.org/wiki/Shoelace_formula
+ * https://en.wikipedia.org/wiki/Shoelace_formula
  *
  * @private
  * @function Highcharts.shapeArea

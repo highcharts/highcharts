@@ -338,6 +338,11 @@
                     parent: 'moving',
                     start: today + 4 * day,
                     end: today + 5 * day
+                }, {
+                    name: 'Bye',
+                    parent: 'moving',
+                    start: today + 5 * day,
+                    milestone: true
                 }]
             }]
         });
@@ -364,8 +369,15 @@
         // Test that number of points has not changed
         assert.strictEqual(
             points.length,
-            4,
+            5,
             'Should not change the number of points after update. #11231, #11486'
+        );
+
+        // Test that collapsed graphics are removed
+        assert.strictEqual(
+            points.filter(p => Boolean(p.graphic)).length,
+            2,
+            'Collapsed graphics should not be rendered (#12617)'
         );
     });
 }());

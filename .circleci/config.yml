@@ -106,7 +106,6 @@ jobs:
       - run:
           name: Generate highcharts ts declarations
           command: npx gulp jsdoc-dts && npx gulp lint-dts
-      - <<: *persist_workspace
 
   lint:
     <<: *defaults
@@ -141,6 +140,18 @@ jobs:
           steps:
             - slack/status:
                 fail_only: true
+
+  test_timezones:
+    <<: *defaults
+    description: Run tests with different browser configs at BrowserStack
+    parameters:
+      browsers:
+        description: "Which browser to test?"
+        type: string
+        default: "ChromeHeadless"
+    steps:
+      - <<: *load_workspace
+      - run: ./.circleci/scripts/test_timezones.sh -b=<<parameters.browsers>>
 
   check_for_docs_changes_and_deploy:
     <<: *defaults
@@ -289,7 +300,7 @@ jobs:
       - <<: *load_workspace
       - run:
           name: Compile build
-          command: npm run build
+          command: npm run build -- --num-threads 2
       - <<: *persist_workspace
 
   deploy_code:
@@ -318,6 +329,10 @@ jobs:
 
   deploy_changelog:
     <<: *defaults
+    parameters:
+      add_build_metadata:
+        type: boolean
+        default: false
     steps:
       - <<: *load_workspace
       - <<: *add_gh_keys
@@ -327,7 +342,7 @@ jobs:
           command: sudo apt-get install cpio
       - run:
           name: Generate changelog since last tag
-          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr --since {}) && node changelog/generate-html
+          command: (git describe --abbrev=0 --tags | xargs -I{} node changelog/generate --pr <<# parameters.add_build_metadata >>--build-metadata<</ parameters.add_build_metadata >> --since {}) && node changelog/generate-html
       - run:
           name: Changelog - Create git-describe named folder and copy changelog
           command: git ls-files -m --others --exclude-standard | grep -i changelog | cpio -pdm "$(git describe)/"
@@ -352,8 +367,8 @@ jobs:
           name: Delete remote nightly branch
           command: cd ../highcharts-dist && git push origin --delete nightly || true
       - run:
-          name: Run copy-release
-          command: cd ../highcharts && node copy-release
+          name: Run dist-release
+          command: cd ../highcharts && npx gulp dist-release --force-yes
       - run:
           name: Push to highcharts-dist nightly branch
           command: |
@@ -380,7 +395,7 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
       - generate_ts_declarations:
-          requires: [lint]
+          requires: [checkout_and_install]
           filters:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
@@ -398,6 +413,12 @@ workflows:
             tags:
               only: /^v\d+(?:\.\d+)+?$/
           context: highcharts-staging
+      - test_timezones:
+          requires: [lint]
+          filters:
+            branches:
+              only: [tools/ci-dist-release-yes]
+          browsers: "Mac.Safari"
       - test_browsers:
           name: "verify-samples-Chrome"
           browsers: "ChromeHeadless --tests highcharts/*/*,maps/*/*,stock/*/*,gantt/*/*"
@@ -409,7 +430,7 @@ workflows:
           browsers: "Win.IE8 --oldie"
       - test_browsers:
           name: "test-Mac.Safari"
-          requires: ["test-Win.IE8"]
+          requires: ["test-Win.IE8", "generate_ts_declarations"]
           browsers: "Mac.Safari"
       - test_browsers:
           name: "test-Mac.Firefox"
@@ -453,6 +474,20 @@ workflows:
           name: "Test visual differences and distribute diff log to S3."
           requires: [checkout_and_install]
           context: highcharts-staging
+      - test_timezones:
+          requires: [checkout_and_install]
+      - test_timezones:
+          name: "timezone-Mac.Safari"
+          requires: [checkout_and_install]
+          browsers: "Mac.Safari"
+      - test_timezones:
+          name: "timezone-Mac.Firefox"
+          requires: ["timezone-Mac.Safari"]
+          browsers: "Mac.Firefox"
+      - test_timezones:
+          name: "timezone-Win.Chrome"
+          requires: ["timezone-Mac.Firefox"]
+          browsers: "Win.Chrome"
       - test_browsers:
           name: "test-Mac.Safari"
           requires: [checkout_and_install]
@@ -484,6 +519,7 @@ workflows:
           requires: [build_dist]
           context: highcharts-staging
       - deploy_changelog:
+          add_build_metadata: true
           requires: [build_dist]
           context: highcharts-staging
       - deploy_to_highcharts_dist:

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -349,24 +349,17 @@ addEvent(Series, 'setOptions', function (
     this: Highcharts.Series,
     e: { plotOptions: Highcharts.PlotOptions }
 ): void {
-    var series = this,
-        overrides;
+    var overrides;
 
-    /**
-     * @private
-     */
-    function is(type: string): boolean {
-        return H.seriesTypes[type] && series instanceof H.seriesTypes[type];
-    }
     if (this.chart.options.isStock) {
 
-        if (is('column') || is('columnrange')) {
+        if (this.is('column') || this.is('columnrange')) {
             overrides = {
                 borderWidth: 0,
                 shadow: false
             };
 
-        } else if (is('line') && !is('scatter') && !is('sma')) {
+        } else if (!this.is('scatter') && !this.is('sma')) {
             overrides = {
                 marker: {
                     enabled: false,

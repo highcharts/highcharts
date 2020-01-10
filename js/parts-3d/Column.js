@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -327,7 +327,7 @@ if (seriesTypes.columnrange) {
 wrap(Series.prototype, 'alignDataLabel', function (proceed) {
     // Only do this for 3D columns and it's derived series
     if (this.chart.is3d() &&
-        this instanceof seriesTypes.column) {
+        this.is('column')) {
         var series = this, chart = series.chart;
         var args = arguments, alignTo = args[4], point = args[1];
         var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });

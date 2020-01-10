@@ -435,11 +435,9 @@ var data = [
     ['us-ca-21', 430],
     ['us-ky-06', 431],
     ['us-ut-04', 432],
-    ['undefined', 433],
     ['us-hi-02', 434],
     ['us-hi-01', 435],
-    ['us-ak-00', 436],
-    ['undefined', 437]
+    ['us-ak-00', 436]
 ];
 
 // Create the chart
@@ -484,6 +482,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/us/custom/us-113-congress'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

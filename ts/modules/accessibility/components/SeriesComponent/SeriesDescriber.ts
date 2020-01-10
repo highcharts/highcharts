@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Place desriptions on a series and its points.
  *
@@ -13,6 +13,20 @@
 'use strict';
 
 import H from '../../../../parts/Globals.js';
+
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface Point {
+            /** @requires modules/accessibility */
+            hasDummyGraphic?: boolean;
+        }
+    }
+}
+
 var numberFormat = H.numberFormat,
     find = H.find;
 
@@ -64,7 +78,7 @@ function findFirstPointWithGraphic(
 function shouldAddDummyPoint(point: Highcharts.Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
-    const isSunburst = point.series && point.series.type === 'sunburst',
+    const isSunburst = point.series && point.series.is('sunburst'),
         isNull = point.isNull;
 
     return isNull && !isSunburst;
@@ -84,9 +98,9 @@ function makeDummyElement(
     dummy.attr({
         'class': 'highcharts-a11y-dummy-point',
         fill: 'none',
+        opacity: 0,
         'fill-opacity': 0,
-        'stroke-opacity': 0,
-        opacity: 0
+        'stroke-opacity': 0
     });
 
     return dummy;
@@ -118,6 +132,7 @@ function addDummyPointElement(
 
     if (parentGroup && parentGroup.element) {
         point.graphic = dummyElement;
+        point.hasDummyGraphic = true;
 
         dummyElement.add(parentGroup);
 
@@ -579,15 +594,17 @@ function describeSeriesElement(
  * @param {Highcharts.Series} series The series to add info on.
  */
 function describeSeries(series: Highcharts.AccessibilitySeries): void {
-    var chart = series.chart,
+    const chart = series.chart,
         firstPointEl = getSeriesFirstPointElement(series),
-        seriesEl = getSeriesA11yElement(series);
+        seriesEl = getSeriesA11yElement(series),
+        is3d = chart.is3d && chart.is3d();
 
     if (seriesEl) {
         // For some series types the order of elements do not match the
         // order of points in series. In that case we have to reverse them
-        // in order for AT to read them out in an understandable order
-        if (seriesEl.lastChild === firstPointEl) {
+        // in order for AT to read them out in an understandable order.
+        // Due to z-index issues we can not do this for 3D charts.
+        if (seriesEl.lastChild === firstPointEl && !is3d) {
             reverseChildNodes(seriesEl);
         }
 

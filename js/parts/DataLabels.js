@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -463,6 +463,7 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
     // labels (#2700)
     alignAttr, // the final position;
     justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify', visible = this.visible &&
+        point.visible !== false &&
         (point.series.forceDL ||
             (enabledDataSorting && !justify) ||
             isInsidePlot ||

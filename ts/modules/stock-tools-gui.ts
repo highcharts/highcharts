@@ -24,11 +24,7 @@ declare global {
             /** @requires modules/stock-tools */
             setStockTools(options?: StockToolsOptions): void;
         }
-        interface LangNavigationOptions {
-            popup?: Dictionary<string>;
-        }
         interface LangOptions {
-            navigation?: LangNavigationOptions;
             stockTools?: LangStockToolsOptions;
         }
         interface LangStockToolsOptions {

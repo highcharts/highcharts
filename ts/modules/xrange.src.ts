@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2019 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2020 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -608,7 +608,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                 ),
                 fill;
 
-            if (!point.isNull) {
+            if (!point.isNull && point.visible !== false) {
 
                 // Original graphic
                 if (graphic) { // update

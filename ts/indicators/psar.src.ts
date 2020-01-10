@@ -2,7 +2,7 @@
  *
  *  Parabolic SAR indicator for Highstock
  *
- *  (c) 2010-2019 Grzegorz Blachliński
+ *  (c) 2010-2020 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
