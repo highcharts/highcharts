@@ -53,7 +53,7 @@ function uploadWrapperAPIDocs() {
         throw new Error('No --bucket specified.');
     }
 
-    const wrappersToUpload = argv.onlyUploadWrappers ? argv.onlyUploadWrappers.split(',') : WRAPPERS;
+    const wrappersToUpload = argv.onlyUpload ? argv.onlyUpload.split(',') : WRAPPERS;
     log.starting(`Starting upload of wrapper API ${wrappersToUpload.join(' and ')} version ${version}...`);
 
     const globPattern = wrappersToUpload.length > 1 ? `build/api/{${wrappersToUpload.join(',')}}/**/*` : `build/api/${wrappersToUpload[0]}/**/*`;
@@ -73,7 +73,7 @@ uploadWrapperAPIDocs.description = 'Uploads Wrapper API docs (ios, android) to S
 uploadWrapperAPIDocs.flags = {
     '--bucket': 'S3 bucket to upload to. Normally this is api-docs-bucket.highcharts.com',
     '--release-version': 'Version to upload.', // --version seems to be reserved by gulp
-    '--only-upload-wrappers': 'Comma separated list of wrappers to upload. I.e ios,android (optional)',
+    '--only-upload': 'Comma separated list of wrappers to upload. I.e ios,android (optional)',
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)'
 };
