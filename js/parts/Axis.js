@@ -4176,7 +4176,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @fires Highcharts.Axis#event:afterSetTickPositions
      */
     setTickPositions: function () {
-        var options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, startOnTick = options.startOnTick, endOnTick = options.endOnTick;
+        var options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, startOnTick = options.startOnTick, endOnTick = options.endOnTick, min, max;
         // Set the tickmarkOffset
         this.tickmarkOffset = (this.categories &&
             options.tickmarkPlacement === 'between' &&
@@ -4267,6 +4267,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             if (!tickPositionsOption && !tickPositioner) {
                 this.adjustTickAmount();
+                // Make sure ticks are within axis min and max range (#12716).
+                if (this.isOrdinal) {
+                    min = this.min;
+                    max = this.max;
+                    tickPositions = tickPositions.filter(function (pos) {
+                        return defined(min) && pos >= min &&
+                            defined(max) && pos <= max;
+                    });
+                    tickPositions.info = this.tickPositions.info;
+                    this.tickPositions = tickPositions;
+                }
             }
         }
         fireEvent(this, 'afterSetTickPositions');
