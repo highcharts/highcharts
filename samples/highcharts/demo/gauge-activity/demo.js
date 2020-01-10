@@ -124,21 +124,21 @@ Highcharts.chart('container', {
         background: [{ // Track for Move
             outerRadius: '112%',
             innerRadius: '88%',
-            backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[0])
+            backgroundColor: Highcharts.color(Highcharts.getOptions().colors[0])
                 .setOpacity(0.3)
                 .get(),
             borderWidth: 0
         }, { // Track for Exercise
             outerRadius: '87%',
             innerRadius: '63%',
-            backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[1])
+            backgroundColor: Highcharts.color(Highcharts.getOptions().colors[1])
                 .setOpacity(0.3)
                 .get(),
             borderWidth: 0
         }, { // Track for Stand
             outerRadius: '62%',
             innerRadius: '38%',
-            backgroundColor: Highcharts.Color(Highcharts.getOptions().colors[2])
+            backgroundColor: Highcharts.color(Highcharts.getOptions().colors[2])
                 .setOpacity(0.3)
                 .get(),
             borderWidth: 0

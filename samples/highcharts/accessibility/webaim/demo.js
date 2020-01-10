@@ -91,7 +91,7 @@ Highcharts.getOptions().plotOptions.pie.colors = (function () {
     for (i = 0; i < 10; i += 1) {
         // Start out with a darkened base color (negative brighten), and end
         // up with a much brighter color
-        colors.push(Highcharts.Color(base).brighten((i - 3) / 10).get());
+        colors.push(Highcharts.color(base).brighten((i - 3) / 10).get());
     }
     return colors;
 }());
