@@ -1213,7 +1213,7 @@ addEvent(Chart, 'beforeRedraw', function () {
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding dataParser,dataURL,stack,dataSorting
+ * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.packedbubble

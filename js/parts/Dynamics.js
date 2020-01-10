@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -214,7 +214,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {string} [str]
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
-     *        [lang.loading](http://api.highcharts.com/highcharts/lang.loading).
+     *        [lang.loading](https://api.highcharts.com/highcharts/lang.loading).
      *
      * @return {void}
      */
@@ -699,9 +699,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
          */
         function update() {
             point.applyOptions(options);
-            // Update visuals
-            if (point.y === null && graphic) { // #4146
+            // Update visuals, #4146
+            // Handle dummy graphic elements for a11y, #12718
+            var hasDummyGraphic = graphic && point.hasDummyGraphic;
+            var shouldDestroyGraphic = point.y === null ? !hasDummyGraphic : hasDummyGraphic;
+            if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
+                delete point.hasDummyGraphic;
             }
             if (isObject(options, true)) {
                 // Destroy so we can get new elements

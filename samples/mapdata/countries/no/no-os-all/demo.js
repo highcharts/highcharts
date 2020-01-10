@@ -2,7 +2,7 @@
 // Data is joined to map using value of 'hc-key' property by default.
 // See API docs for 'joinBy' for more info on linking data and map.
 var data = [
-    ['no-os-301', 0]
+    ['no-os-0301', 0]
 ];
 
 // Create the chart

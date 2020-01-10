@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -1078,7 +1078,7 @@ seriesType<Highcharts.PieSeries>(
                     fill: (options.fillColor as any) || 'none',
                     stroke: (options.color as any) ||
                         '${palette.neutralColor20}'
-                });
+                }, this.options.animation);
 
             } else if (this.graph) { // Destroy the graph object.
                 this.graph = this.graph.destroy();

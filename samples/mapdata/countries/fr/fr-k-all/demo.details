@@ -1,5 +1,0 @@
----
- name: Languedoc-Roussillon - Highmaps
- description: Highmaps demo
- js_wrap: b
-...

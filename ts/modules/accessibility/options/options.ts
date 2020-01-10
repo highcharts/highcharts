@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -217,7 +217,7 @@ var options: DeepPartial<Highcharts.Options> = {
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
      * to be loaded. For a description of the module and information
      * on its features, see
-     * [Highcharts Accessibility](http://www.highcharts.com/docs/chart-concepts/accessibility).
+     * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * @since        5.0.0
      * @requires     modules/accessibility
@@ -874,7 +874,9 @@ var options: DeepPartial<Highcharts.Options> = {
      * @apioption  xAxis.accessibility.rangeDescription
      */
 
-
+    /**
+     * @optionparent legend
+     */
     legend: {
         /**
          * Accessibility options for the legend. Requires the Accessibility
@@ -882,15 +884,13 @@ var options: DeepPartial<Highcharts.Options> = {
          *
          * @since     7.1.0
          * @requires  modules/accessibility
-         * @apioption legend.accessibility
          */
         accessibility: {
 
             /**
              * Enable accessibility support for the legend.
              *
-             * @since     7.1.0
-             * @apioption legend.accessibility.enabled
+             * @since  7.1.0
              */
             enabled: true,
 
@@ -899,7 +899,6 @@ var options: DeepPartial<Highcharts.Options> = {
              *
              * @since     7.1.0
              * @requires  modules/accessibility
-             * @apioption legend.accessibility.keyboardNavigation
              */
             keyboardNavigation: {
                 /**
@@ -907,29 +906,29 @@ var options: DeepPartial<Highcharts.Options> = {
                  *
                  * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.enabled)
                  *
-                 * @since     7.1.0
-                 * @apioption legend.accessibility.keyboardNavigation.enabled
+                 * @since  7.1.0
                  */
                 enabled: true
             }
         }
     },
 
+    /**
+     * @optionparent exporting
+     */
     exporting: {
         /**
          * Accessibility options for the exporting menu. Requires the
          * Accessibility module.
          *
-         * @since     7.1.0
-         * @requires  modules/accessibility
-         * @apioption exporting.accessibility
+         * @since    7.1.0
+         * @requires modules/accessibility
          */
         accessibility: {
             /**
              * Enable accessibility support for the export menu.
              *
-             * @since     7.1.0
-             * @apioption exporting.accessibility.enabled
+             * @since 7.1.0
              */
             enabled: true
         }

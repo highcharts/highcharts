@@ -64,8 +64,7 @@ var data = [
     ['ca-mb', 59],
     ['us-sc', 60],
     ['ca-yt', 61],
-    ['ca-pe', 62],
-    ['undefined', 63]
+    ['ca-pe', 62]
 ];
 
 // Create the chart

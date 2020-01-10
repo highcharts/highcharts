@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Extension for 3D charts
  *
@@ -70,7 +70,7 @@ declare global {
             xDir?: Position3dObject;
         }
         interface Fx {
-            matrixSetter(): void;
+            matrixSetter?(): void;
         }
         interface Stack3dDictionary {
             [index: number]: Stack3dDictionaryObject;
@@ -287,7 +287,7 @@ var extendedOptions: Highcharts.Options = {
         /**
          * Options to render charts in 3 dimensions. This feature requires
          * `highcharts-3d.js`, found in the download package or online at
-         * [code.highcharts.com/highcharts-3d.js](http://code.highcharts.com/highcharts-3d.js).
+         * [code.highcharts.com/highcharts-3d.js](https://code.highcharts.com/highcharts-3d.js).
          *
          * @since    4.0
          * @product  highcharts

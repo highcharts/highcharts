@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -1014,7 +1014,7 @@ seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
 // Modify final series options.
 addEvent(seriesTypes.venn, 'afterSetOptions', function (e) {
     var options = e.options, states = options.states;
-    if (this instanceof seriesTypes.venn) {
+    if (this.is('venn')) {
         // Explicitly disable all halo options.
         Object.keys(states).forEach(function (state) {
             states[state].halo = false;

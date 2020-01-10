@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Paweł Dalek
+ *  (c) 2010-2020 Paweł Dalek
  *
  *  Volume By Price (VBP) indicator for Highstock
  *
@@ -123,6 +123,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     animObject,
     arrayMax,
     arrayMin,
@@ -164,7 +165,6 @@ function arrayExtremesOHLC(
 
 var abs = Math.abs,
     noop = H.noop,
-    addEvent = H.addEvent,
     seriesType = H.seriesType,
     columnPrototype = H.seriesTypes.column.prototype;
 

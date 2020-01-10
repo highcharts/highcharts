@@ -48,8 +48,7 @@ var data = [
     ['jp-sh', 43],
     ['jp-tc', 44],
     ['jp-yt', 45],
-    ['jp-3302', 46],
-    ['undefined', 47]
+    ['jp-3302', 46]
 ];
 
 // Create the chart
@@ -94,6 +93,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/jp/jp-all'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

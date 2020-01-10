@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -772,6 +772,7 @@ seriesType<Highcharts.ColumnSeries>(
                     options.borderWidth,
                     dense ? 0 : 1 // #3635
                 ),
+                xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 threshold = options.threshold,
                 translatedThreshold = series.translatedThreshold =
@@ -812,6 +813,7 @@ seriesType<Highcharts.ColumnSeries>(
                     ),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
+                    plotX = point.plotX,
                     // Don't draw too far outside plot area (#1303, #2241,
                     // #4264)
                     plotY = clamp(
@@ -874,8 +876,9 @@ seriesType<Highcharts.ColumnSeries>(
                 // #3648)
                 point.tooltipPos = chart.inverted ?
                     [
-                        yAxis.len + (yAxis.pos as any) - chart.plotLeft - plotY,
-                        series.xAxis.len - barX - barW / 2, barH
+                        yAxis.len + yAxis.pos - chart.plotLeft - plotY,
+                        xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
+                        barH
                     ] :
                     [barX + barW / 2, plotY + (yAxis.pos as any) -
                     chart.plotTop, barH];

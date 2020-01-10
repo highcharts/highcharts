@@ -51,12 +51,14 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    addEvent,
+    defined
+} = U;
 
 import '../parts/Series.js';
 
 var Series = H.Series,
-    addEvent = H.addEvent,
     noop = H.noop;
 
 

@@ -3,20 +3,35 @@
  */
 
 const gulp = require('gulp');
-
-/* *
- *
- *  Constants
- *
- * */
+const {
+    Worker, isMainThread, parentPort, workerData
+// eslint-disable-next-line node/no-unsupported-features/node-builtins
+} = require('worker_threads');
+const os = require('os');
+const argv = require('yargs').argv;
 
 const SOURCE_DIRECTORY = 'code';
 
-/* *
+
+/**
+ * Split an array into multiple new arrays/chuncks
  *
- *  Tasks
- *
- * */
+ * @param {Array} arr to split
+ * @param {Number} numParts to split array in
+ * @return {Array} Array of arrays/chunks
+ */
+function chunk(arr, numParts) {
+    const result = [];
+    for (let p = 0; p < numParts; p++) {
+        result[p] = [];
+    }
+
+    for (let i = arr.length - 1; i > 0; i--) {
+        const arrIndex = Math.floor(i % numParts);
+        result[arrIndex].push(arr[i]);
+    }
+    return result;
+}
 
 /**
  * Compile the JS files in the /code folder
@@ -24,15 +39,15 @@ const SOURCE_DIRECTORY = 'code';
  * @return {Promise<void>}
  *         Promise to keep
  */
-function task() {
-
-    const compileTool = require('../compile');
+async function task() {
     const fsLib = require('./lib/fs');
     const logLib = require('./lib/log');
 
-    return new Promise((resolve, reject) => {
+    const fileBatches = [];
 
-        const argv = process.argv;
+    if (isMainThread) {
+        logLib.warn('Warning: This task may take a few minutes.');
+
         const files = (
             (argv.files) ?
                 argv.files.split(',') :
@@ -45,14 +60,38 @@ function task() {
                     .map(path => path.substr(SOURCE_DIRECTORY.length + 1))
         );
 
-        logLib.message('Compiling', SOURCE_DIRECTORY + '...');
+        const numThreads = argv.numThreads ? argv.numThreads : Math.max(2, os.cpus().length - 2);
+        const batches = chunk(files, numThreads);
 
-        compileTool
-            .compile(files, (SOURCE_DIRECTORY + '/'))
-            .then(() => logLib.success('Compiled', SOURCE_DIRECTORY))
-            .then(resolve)
-            .catch(reject);
-    });
+        logLib.message(`Splitting files to compile in ${batches.length} batches/threads..`);
+        logLib.message('Compiling', SOURCE_DIRECTORY + '...');
+        batches.forEach((batch, index) => {
+            fileBatches.push(new Promise((resolve, reject) => {
+
+                const worker = new Worker(__filename, { workerData: { files: batch, batchNum: (index + 1) } });
+                worker.on('message', resolve);
+                worker.on('error', reject);
+                worker.on('exit', code => {
+                    if (code !== 0) {
+                        reject(new Error(`Worker stopped with exit code ${code}`));
+                    }
+                });
+
+            }));
+        });
+    } else {
+        const compileTool = require('../compile');
+        await compileTool.compile(workerData.files, (SOURCE_DIRECTORY + '/'));
+        parentPort.postMessage({ done: true });
+
+        logLib.success(`Compilation of batch #${workerData.batchNum} complete`);
+    }
+    return Promise.all(fileBatches);
 }
 
-gulp.task('scripts-compile', task);
+if (isMainThread) {
+    // only trigger gulp task from main thread
+    gulp.task('scripts-compile', task);
+} else {
+    task();
+}
