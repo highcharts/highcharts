@@ -1,0 +1,28 @@
+'use strict';
+(function (root, factory) {
+    if (typeof module === 'object' && module.exports) {
+        factory['default'] = factory;
+        module.exports = root.document ?
+            factory(root) :
+            factory;
+    } else if (typeof define === 'function' && define.amd) {
+        define(@moduleNamefunction () {
+            return factory(root);
+        });
+    } else {
+        if (root.@name) {
+            root.@name.error(16, true);
+        }
+        root.@name = factory(root);
+    }
+}(typeof window !== 'undefined' ? window : this, function (win) {
+    var _modules = {};
+    function _registerModule(obj, path, args, fn) {
+        if (!obj.hasOwnProperty(path)) {
+            obj[path] = fn.apply(null, args);
+        }
+    }
+@content
+    _modules['@path']._modules = _modules;
+    return _modules['@path'];
+}));

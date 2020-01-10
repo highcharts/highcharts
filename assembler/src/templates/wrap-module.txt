@@ -1,0 +1,3 @@
+_registerModule(_modules, '@path', [@mParams], function (@params) {
+@content
+});
