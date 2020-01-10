@@ -12,19 +12,16 @@ const {
     buildModules,
     buildDistFromModules,
     getFilesInFolder
-} = require('highcharts-assembler/src/build.js');
+} = require('../assembler/src/build.js');
 const {
     getOrderedDependencies,
     getRequires
-} = require('highcharts-assembler/src/dependencies.js');
+} = require('../assembler/src/dependencies.js');
 const {
     exists,
     getFile
-} = require('highcharts-assembler/src/utilities.js');
-const {
-    checkDependency
-} = require('./filesystem.js');
-const build = require('highcharts-assembler/index.js');
+} = require('../assembler/src/utilities.js');
+const build = require('../assembler/index.js');
 
 // TODO move to a utils file
 const isArray = x => Array.isArray(x);
@@ -65,7 +62,6 @@ const getBuildOptions = input => {
 };
 
 const scripts = params => {
-    checkDependency('highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     return build(options);
 };
@@ -203,7 +199,6 @@ const fnFirstBuild = options => {
 };
 
 const getBuildScripts = params => {
-    checkDependency('highcharts-assembler', 'warn', 'devDependencies');
     const options = getBuildOptions(params);
     const {
         files,
