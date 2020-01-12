@@ -21,7 +21,6 @@ declare global {
         interface Axis {
             crossLabel?: SVGElement;
             setCompare(compare?: string, redraw?: boolean): void;
-            panningState?: AxisPanningState;
         }
         interface Chart {
             _labelPanes?: Dictionary<Axis>;
@@ -48,10 +47,6 @@ declare global {
         }
         interface VMLRenderer {
             crispPolyLine(points: VMLPathArray, width: number): VMLPathArray;
-        }
-        interface AxisPanningState {
-            startMin: number;
-            startMax: number;
         }
         class StockChart extends Chart {
         }
@@ -1108,40 +1103,5 @@ addEvent(Chart, 'update', function (
         merge(true, this.options.scrollbar, options.scrollbar);
         (this.navigator.update as any)({}, false);
         delete options.scrollbar;
-    }
-});
-
-// Extend the Axis prototype to calculate start min/max values
-// (including min/maxPadding). This is related to using vertical panning
-// (#11315).
-addEvent(Axis, 'afterSetScale', function (
-    this: Highcharts.Axis
-): void {
-    var axis = this,
-        panning = axis.chart.options.chart &&
-            axis.chart.options.chart.panning;
-
-    if (
-        panning &&
-        (panning.type === 'y' ||
-        panning.type === 'xy') &&
-        !axis.isXAxis &&
-        !defined(axis.panningState)
-    ) {
-
-        var min = Number.MAX_VALUE,
-            max = Number.MIN_VALUE;
-
-        axis.series.forEach(function (series): void {
-            min = Math.min(H.arrayMin(series.yData as any), min) -
-                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(H.arrayMax(series.yData as any), max) +
-                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
-        });
-
-        axis.panningState = {
-            startMin: min,
-            startMax: max
-        };
     }
 });

@@ -541,12 +541,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         newMin !== extremes.min &&
                         newMax !== extremes.max &&
                         isX ? true : (axis.panningState &&
-                        newMin >= axis.panningState
-                            .startMin &&
-                        newMax <= axis.panningState
-                            .startMax //
-                    )) {
+                        axis.panningState.startMin &&
+                        axis.panningState.startMax &&
+                        newMin >= axis.panningState.startMin &&
+                        newMax <= axis.panningState.startMax)) {
                         axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+                        if (!chart.resetZoomButton &&
+                            type === 'xy' || type === 'y') {
+                            chart.showResetZoom();
+                            axis.displayBtn = false;
+                        }
                         doRedraw = true;
                     }
                     // set new reference for next run:

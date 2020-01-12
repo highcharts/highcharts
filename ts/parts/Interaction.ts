@@ -18,6 +18,9 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Axis {
+            panningState?: AxisPanningState;
+        }
         interface Chart {
             resetZoomButton?: SVGElement;
             pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
@@ -32,6 +35,10 @@ declare global {
                 legendItem: SVGElement,
                 useHTML?: boolean
             ): void;
+        }
+        interface AxisPanningState {
+            startMin: (number|null);
+            startMax: (number|null);
         }
         interface Point {
             className?: string;
@@ -886,10 +893,10 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             newMax !== extremes.max &&
                             isX ? true : (
                                 axis.panningState &&
-                                newMin >= axis.panningState
-                                    .startMin &&
-                                newMax <= axis.panningState
-                                    .startMax //
+                                axis.panningState.startMin &&
+                                axis.panningState.startMax &&
+                                newMin >= axis.panningState.startMin &&
+                                newMax <= axis.panningState.startMax
                             )
                     ) {
                         axis.setExtremes(
@@ -899,6 +906,15 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             false,
                             { trigger: 'pan' }
                         );
+
+                        if (
+                            !chart.resetZoomButton &&
+                            type === 'xy' || type === 'y'
+                        ) {
+                            chart.showResetZoom();
+                            axis.displayBtn = false;
+                        }
+
                         doRedraw = true;
                     }
 

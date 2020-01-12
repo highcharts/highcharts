@@ -768,27 +768,3 @@ addEvent(Chart, 'update', function (e) {
         delete options.scrollbar;
     }
 });
-// Extend the Axis prototype to calculate start min/max values
-// (including min/maxPadding). This is related to using vertical panning
-// (#11315).
-addEvent(Axis, 'afterSetScale', function () {
-    var axis = this, panning = axis.chart.options.chart &&
-        axis.chart.options.chart.panning;
-    if (panning &&
-        (panning.type === 'y' ||
-            panning.type === 'xy') &&
-        !axis.isXAxis &&
-        !defined(axis.panningState)) {
-        var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
-        axis.series.forEach(function (series) {
-            min = Math.min(H.arrayMin(series.yData), min) -
-                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(H.arrayMax(series.yData), max) +
-                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
-        });
-        axis.panningState = {
-            startMin: min,
-            startMax: max
-        };
-    }
-});
