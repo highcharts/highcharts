@@ -135,12 +135,6 @@ var Color = /** @class */ (function () {
      *        The input color in either rbga or hex format
      */
     function Color(input) {
-        // Collection of named colors. Can be extended from the outside by adding
-        // colors to Highcharts.Color.prototype.names.
-        this.names = {
-            white: '#ffffff',
-            black: '#000000'
-        };
         // Collection of parsers. This can be extended from the outside by pushing
         // parsers to Highcharts.Color.prototype.parsers.
         this.parsers = [{
@@ -202,7 +196,7 @@ var Color = /** @class */ (function () {
      */
     Color.prototype.init = function (input) {
         var result, rgba, i, parser, len;
-        this.input = input = this.names[input && input.toLowerCase ?
+        this.input = input = Color.names[input && input.toLowerCase ?
             input.toLowerCase() :
             ''] || input;
         // Gradients
@@ -381,6 +375,17 @@ var Color = /** @class */ (function () {
                 ')';
         }
         return ret;
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    // Collection of named colors. Can be extended from the outside by adding
+    // colors to Highcharts.Color.names.
+    Color.names = {
+        white: '#ffffff',
+        black: '#000000'
     };
     return Color;
 }());
