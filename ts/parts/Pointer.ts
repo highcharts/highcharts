@@ -644,21 +644,38 @@ Highcharts.Pointer.prototype = {
             hoverSeries = existingHoverSeries,
             useExisting = !!(isDirectTouch && existingHoverPoint),
             notSticky = hoverSeries && !hoverSeries.stickyTracking,
+            // Which series to look in for the hover point
+            searchSeries,
+            // Parameters needed for beforeGetHoverData event.
+            eventArgs: {
+                chartX: number|undefined;
+                chartY: number|undefined;
+                shared: boolean|undefined;
+                filter?: Function;
+            } = {
+                chartX: e ? e.chartX : void 0,
+                chartY: e ? e.chartY : void 0,
+                shared: shared
+            },
             filter = function (s: Highcharts.Series): boolean {
                 return (
                     s.visible &&
                     !(!shared && s.directTouch) && // #3821
                     pick(s.options.enableMouseTracking, true)
                 );
-            },
-            // Which series to look in for the hover point
-            searchSeries = notSticky ?
-                // Only search on hovered series if it has stickyTracking false
-                [hoverSeries as any] :
-                // Filter what series to look in.
-                series.filter(function (s: Highcharts.Series): boolean {
-                    return filter(s) && s.stickyTracking;
-                });
+            };
+
+        // Find chart.hoverPane and update filter method in polar.
+        fireEvent(this, 'beforeGetHoverData', eventArgs);
+
+        searchSeries = notSticky ?
+            // Only search on hovered series if it has stickyTracking false
+            [hoverSeries as any] :
+            // Filter what series to look in.
+            series.filter(function (s: Highcharts.Series): boolean {
+                return eventArgs.filter ? eventArgs.filter(s) : filter(s) &&
+                    s.stickyTracking;
+            });
 
         // Use existing hovered point or find the one closest to coordinates.
         hoverPoint = useExisting || !e ?
@@ -675,7 +692,8 @@ Highcharts.Pointer.prototype = {
                 searchSeries = series.filter(function (
                     s: Highcharts.Series
                 ): boolean {
-                    return filter(s) && !s.noSharedTooltip;
+                    return eventArgs.filter ?
+                        eventArgs.filter(s) : filter(s) && !s.noSharedTooltip;
                 });
 
                 // Get all points with the same x value as the hoverPoint
@@ -703,6 +721,10 @@ Highcharts.Pointer.prototype = {
                 hoverPoints.push(hoverPoint);
             }
         }
+
+        // Check whether the hoverPoint is inside pane we are hovering over.
+        fireEvent(this, 'afterGetHoverData', hoverPoint);
+
         return {
             hoverPoint: hoverPoint,
             hoverSeries: hoverSeries,
@@ -834,7 +856,7 @@ Highcharts.Pointer.prototype = {
             chart.hoverPoint = hoverPoint;
 
             // Draw tooltip if necessary
-            if (tooltip) {
+            if (tooltip && (!chart.polar || hoverPoint.isInsidePane)) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
         // Update positions (regardless of kdpoint or hoverPoint)

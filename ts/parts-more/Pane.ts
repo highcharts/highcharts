@@ -24,6 +24,8 @@ declare global {
         }
         interface Chart {
             pane?: Array<Pane>;
+            hoverPane?: Highcharts.Pane;
+            getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
         }
         interface Options {
             pane?: PaneOptions;
@@ -41,6 +43,7 @@ declare global {
         }
         interface PaneChart extends Chart {
             pane: Array<Pane>;
+            getHoverPane(eventArgs: any): Highcharts.Pane|undefined;
         }
         interface PaneOptions {
             background?: Array<PaneBackgroundOptions>;
@@ -492,3 +495,28 @@ extend(Pane.prototype, {
 });
 
 H.Pane = Pane as any;
+
+H.Chart.prototype.getHoverPane = function (
+    this: Highcharts.PaneChart,
+    eventArgs: {
+        chartX: number;
+        chartY: number;
+        shared: boolean|undefined;
+        filter?: Function;
+    }
+): Highcharts.Pane|undefined {
+    const chart = this;
+    let hoverPane;
+    if (eventArgs) {
+        chart.pane.forEach((pane): void => {
+            const plotX = eventArgs.chartX - chart.plotLeft,
+                plotY = eventArgs.chartY - chart.plotTop,
+                x = chart.inverted ? plotY : plotX,
+                y = chart.inverted ? plotX : plotY;
+            if (H.isInsidePane(x, y, pane.center)) {
+                hoverPane = pane;
+            }
+        });
+    }
+    return hoverPane;
+};
