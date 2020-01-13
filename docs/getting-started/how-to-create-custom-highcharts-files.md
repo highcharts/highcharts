@@ -8,62 +8,15 @@ load speed due to lower filesize and less files to request.
 Follow the steps below to get started.
 
 
-
-Install the Highcharts assembler
---------------------------------
-
-### Download with NPM
-
-This project is not published as a package in the NPM register, but NPM has
-support for installing packages by cloning them from GitHub which is something
-we can utilize.
-
-The command we will use is
-`npm install <githubname>/<githubrepo>[#<commit-ish>]`.
-
-The command has support for providing a `#<commit-ish>` which can be a tag or
-reference to a specific commit. Using the `#<commit-ish>` is useful to ensure
-that everyone working on your project is using the same version of the
-assembler. This is the recommended approach. The following example installs a
-version of the assembler tagged as `v1.0.10`:
-
-```shell
-npm install --save-dev highcharts/highcharts-assembler#v1.0.10 
-```
-
-If versioning is not a concern, then it is possible to install the latest commit
-from master branch by omitting the `#<commit-ish>`:
-
-```shell
-npm install --save-dev highcharts/highcharts-assembler 
-```
-
-[Read more about `npm install` on npmjs.com](https://docs.npmjs.com/cli/install).
-
-After installing the package by using NPM it can be loaded as a regular package
-in NodeJS.
-```js
-const build = require('highcharts-assembler'); 
-```
-
-### Download ZIP archive from GitHub
-
-Go to the
-[`highcharts/highcharts-assembler`](https://github.com/highcharts/highcharts-assembler)
-repository and click on “Clone or download” and select “Download ZIP”. Once the
-zip file is downloaded unpack it to a desired location.
-
-Open the extracted folder in a CLI and run `npm install` to install any required
-dependencies.
-
-After downloading and extracting the archive, it can be loaded in NodeJS by
-referring to its location. The example below has installed the assembler in a
-subfolder named `highcharts-assembler`:
+Getting started with Highcharts assembler
+-----------------------------------------
+The assembler code is located in the `assembler/` folder in the root directory of the highcharts repository.
 
 ```js
-const build = require('./highcharts-assembler/index.js');
+const build = require('assembler/index.js');
 ```
 
+For older versions of the highcharts-assembler, please refer to the [highcharts-assembler repo](https://github.com/highcharts/highcharts-assembler).
 
 
 Download the Highcharts parts files
@@ -114,7 +67,7 @@ file:
  * Assembler is installed as an NPM package.
  * See "Install the Highcharts assembler" for more information.
  */
-const build = require('highcharts-assembler');
+const build = require('assembler');
 build({
     base: './highcharts/js/masters/',
     files: ['custom.src.js'],
