@@ -236,6 +236,11 @@ declare global {
         function isClass(obj: (object|undefined)): obj is Class;
         function isDOMElement(obj: unknown): obj is HTMLElement;
         function isFunction(obj: unknown): obj is Function;
+        function isInsidePane(
+            x: number,
+            y: number,
+            center: Array<number>
+        ): boolean;
         function isNumber(n: unknown): n is number;
         function isObject<T1, T2 extends boolean = false>(
             obj: T1,
@@ -3378,6 +3383,16 @@ H.uniqueKey = (function (): any {
 
 H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
+};
+
+H.isInsidePane = function (
+    x: number,
+    y: number,
+    center: Array<number>
+): boolean {
+    return Math.sqrt(
+        Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)
+    ) < center[2] / 2;
 };
 
 // Register Highcharts as a plugin in jQuery

@@ -328,3 +328,16 @@ extend(Pane.prototype, {
     }
 });
 H.Pane = Pane;
+H.Chart.prototype.getHoverPane = function (eventArgs) {
+    var chart = this;
+    var hoverPane;
+    if (eventArgs) {
+        chart.pane.forEach(function (pane) {
+            var plotX = eventArgs.chartX - chart.plotLeft, plotY = eventArgs.chartY - chart.plotTop, x = chart.inverted ? plotY : plotX, y = chart.inverted ? plotX : plotY;
+            if (H.isInsidePane(x, y, pane.center)) {
+                hoverPane = pane;
+            }
+        });
+    }
+    return hoverPane;
+};

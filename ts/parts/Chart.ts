@@ -782,12 +782,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         inverted?: boolean
     ): boolean {
         var x = inverted ? plotY : plotX,
-            y = inverted ? plotX : plotY;
+            y = inverted ? plotX : plotY,
+            e = {
+                x,
+                y,
+                isInsidePlot: x >= 0 &&
+                    x <= this.plotWidth &&
+                    y >= 0 &&
+                    y <= this.plotHeight
+            };
 
-        return x >= 0 &&
-            x <= this.plotWidth &&
-            y >= 0 &&
-            y <= this.plotHeight;
+        fireEvent(this, 'afterIsInsidePlot', e);
+
+        return e.isInsidePlot;
     },
 
     /**

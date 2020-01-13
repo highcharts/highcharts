@@ -465,11 +465,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         Returns true if the given point is inside the plot area.
      */
     isInsidePlot: function (plotX, plotY, inverted) {
-        var x = inverted ? plotY : plotX, y = inverted ? plotX : plotY;
-        return x >= 0 &&
-            x <= this.plotWidth &&
-            y >= 0 &&
-            y <= this.plotHeight;
+        var x = inverted ? plotY : plotX, y = inverted ? plotX : plotY, e = {
+            x: x,
+            y: y,
+            isInsidePlot: x >= 0 &&
+                x <= this.plotWidth &&
+                y >= 0 &&
+                y <= this.plotHeight
+        };
+        fireEvent(this, 'afterIsInsidePlot', e);
+        return e.isInsidePlot;
     },
     /**
      * Redraw the chart after changes have been done to the data, axis extremes
