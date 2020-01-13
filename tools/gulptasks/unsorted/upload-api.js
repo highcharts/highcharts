@@ -4,7 +4,7 @@ const gulp = require('gulp');
 const uploadAPIDocs = () => {
     const {
         getFilesInFolder
-    } = require('../../../assembler/src/build.js');
+    } = require('../../assembler/src/build.js');
     const colors = require('colors');
     const isString = x => typeof x === 'string';
     const ProgressBar = require('../../progress-bar.js');

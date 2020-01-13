@@ -7,7 +7,7 @@ const gulp = require('gulp');
 const buildESModules = () => {
     const {
         buildModules
-    } = require('../../../assembler/src/build.js');
+    } = require('../../assembler/src/build.js');
     buildModules({
         base: './js/',
         output: './code/',

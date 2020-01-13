@@ -15,10 +15,10 @@
     // TODO avoid dependency on highcharts-assembler
     const {
         getFilesInFolder
-    } = require('assembler/src/build.js');
+    } = require('tools/assembler/src/build.js');
     const {
         removeFile
-    } = require('assembler/src/utilities.js');
+    } = require('tools/assembler/src/utilities.js');
     const {
         join
     } = require('path');

@@ -11,7 +11,7 @@ const gulp = require('gulp');
 gulp.task('get-filesizes', () => {
     const {
         getFilesInFolder
-    } = require('../../../assembler/src/build.js');
+    } = require('../../assembler/src/build.js');
     const {
         getFileSizes
     } = require('../../compareFilesize.js');

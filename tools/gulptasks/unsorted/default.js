@@ -7,7 +7,7 @@ const {
 const compileSingleStyle = fileName => {
     const {
         writeFilePromise
-    } = require('../../../assembler/src/utilities.js');
+    } = require('../../assembler/src/utilities.js');
     const {
         promisify
     } = require('../../filesystem.js');
@@ -124,7 +124,7 @@ function shouldBuild() {
 function styles() {
     const {
         getFilesInFolder
-    } = require('assembler/src/build.js');
+    } = require('tools/assembler/src/build.js');
     const {
         copyFile,
     } = require('../../filesystem.js');

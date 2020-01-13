@@ -12,16 +12,16 @@ const {
     buildModules,
     buildDistFromModules,
     getFilesInFolder
-} = require('../assembler/src/build.js');
+} = require('./assembler/src/build.js');
 const {
     getOrderedDependencies,
     getRequires
-} = require('../assembler/src/dependencies.js');
+} = require('./assembler/src/dependencies.js');
 const {
     exists,
     getFile
-} = require('../assembler/src/utilities.js');
-const build = require('../assembler/index.js');
+} = require('./assembler/src/utilities.js');
+const build = require('./assembler/index.js');
 
 // TODO move to a utils file
 const isArray = x => Array.isArray(x);

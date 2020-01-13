@@ -28,7 +28,7 @@
   "scripts": {
     "test": "npx gulp test --force --speak",
     "testall": "npm run test:assembler && npx gulp test --browsers all --force --speak",
-    "test:assembler": "npx mocha assembler/test/test-main.js",
+    "test:assembler": "npx mocha tools/assembler/test/test-main.js",
     "prebuild": "rimraf build/*.zip build/dist/ code/",
     "build": "npx gulp dist",
     "jsdoc": "npx gulp jsdoc-watch --skip-websearch",

@@ -31,7 +31,7 @@ const filesize = () => {
     } = require('../../compile.js');
     const {
         getFile
-    } = require('../../../assembler/src/utilities.js');
+    } = require('../../assembler/src/utilities.js');
     const {
         argv
     } = require('yargs');
