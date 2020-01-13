@@ -1,4 +1,4 @@
-QUnit.test('Zoom in - zoomout with padding', function (assert) {
+QUnit.test('Zoom in - zoomout with padding, panning in both directions.', function (assert) {
 
     var chart = Highcharts.mapChart('container', {
 
@@ -37,11 +37,17 @@ QUnit.test('Zoom in - zoomout with padding', function (assert) {
             data: [{
                 value: 1,
                 path: 'M,0,0,L,100,0,L,100,100,L,0,100,z'
+            }, {
+                value: 2,
+                path: 'M,200,200,L,300,200,L,300,300,L,200,300,z'
             }]
         }]
     });
 
-    var xExtremes = chart.xAxis[0].getExtremes();
+    var xExtremes = chart.xAxis[0].getExtremes(),
+        yExtremes,
+        controller = new TestController(chart);
+
 
     chart.mapZoom(0.5);
 
@@ -57,4 +63,27 @@ QUnit.test('Zoom in - zoomout with padding', function (assert) {
         xExtremes.min,
         'Zoomed out including padding'
     );
+
+    chart.mapZoom(0.2);
+
+    xExtremes = chart.xAxis[0].getExtremes();
+    yExtremes = chart.yAxis[0].getExtremes();
+
+    controller.pan(
+        [chart.plotLeft + 50, chart.plotTop + 50],
+        [chart.plotLeft + 100, chart.plotTop + 100]
+    );
+
+    assert.notEqual(
+        chart.xAxis[0].getExtremes().min,
+        xExtremes.min,
+        'Correctly panned in horizontal direction'
+    );
+
+    assert.notEqual(
+        chart.yAxis[0].getExtremes().min,
+        yExtremes.min,
+        'Correctly panned in vertical direction'
+    );
+
 });
