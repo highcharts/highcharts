@@ -5361,9 +5361,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             minorTickIntervalOption = this.getMinorTickInterval(),
             tickPositioner = options.tickPositioner,
             startOnTick = options.startOnTick,
-            endOnTick = options.endOnTick,
-            min: (number|null),
-            max: (number|null);
+            endOnTick = options.endOnTick;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
@@ -5501,20 +5499,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
             if (!tickPositionsOption && !tickPositioner) {
                 this.adjustTickAmount();
-
-                // Make sure ticks are within axis min and max range (#12716).
-                if (this.isOrdinal) {
-                    min = this.min;
-                    max = this.max;
-
-                    tickPositions = tickPositions.filter(
-                        (pos: number): boolean =>
-                            defined(min) && pos >= min &&
-                            defined(max) && pos <= max
-                    );
-                    tickPositions.info = this.tickPositions.info;
-                    this.tickPositions = tickPositions;
-                }
             }
         }
 
@@ -5565,6 +5549,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 tickPositions.push((roundedMax + roundedMin) / 2);
             }
         }
+
+        fireEvent(this, 'afterTrimTicks', { tickPositions });
     },
 
     /**
