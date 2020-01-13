@@ -1,8 +1,8 @@
 QUnit.test('Interpolate colors', function (assert) {
 
     // Cache names from Boost module
-    var colorNames = Highcharts.Color.prototype.names;
-    Highcharts.Color.prototype.names = {};
+    var colorNames = Highcharts.Color.names;
+    Highcharts.Color.names = {};
 
 
     var color = Highcharts.color;
@@ -66,7 +66,7 @@ QUnit.test('Interpolate colors', function (assert) {
         'Undefined colors'
     );
 
-    Highcharts.Color.prototype.names = colorNames;
+    Highcharts.Color.names = colorNames;
 
 
 });

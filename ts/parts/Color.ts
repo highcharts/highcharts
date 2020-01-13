@@ -197,6 +197,19 @@ class Color {
 
     /* *
      *
+     *  Static Properties
+     *
+     * */
+
+    // Collection of named colors. Can be extended from the outside by adding
+    // colors to Highcharts.Color.names.
+    public static names: Record<string, Highcharts.ColorString> = {
+        white: '#ffffff',
+        black: '#000000'
+    };
+
+    /* *
+     *
      *  Static Functions
      *
      * */
@@ -246,13 +259,6 @@ class Color {
      * */
 
     public input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
-
-    // Collection of named colors. Can be extended from the outside by adding
-    // colors to Highcharts.Color.prototype.names.
-    public names: Record<string, Highcharts.ColorString> = {
-        white: '#ffffff',
-        black: '#000000'
-    };
 
     // Collection of parsers. This can be extended from the outside by pushing
     // parsers to Highcharts.Color.prototype.parsers.
@@ -306,7 +312,7 @@ class Color {
             parser: Highcharts.ColorParser,
             len: number;
 
-        this.input = input = this.names[
+        this.input = input = Color.names[
             input && (input as any).toLowerCase ?
                 (input as any).toLowerCase() :
                 ''

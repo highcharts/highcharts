@@ -511,8 +511,8 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
         color: point.isNull ?
-            new Color(colorProp).setOpacity(0).get() :
-            colorProp,
+            new Color(colorProp.color).setOpacity(0).get() :
+            colorProp.color,
         lowerSeriesOptions: ddOptions,
         pointOptions: oldSeries.options.data[pointIndex],
         pointIndex: pointIndex,
