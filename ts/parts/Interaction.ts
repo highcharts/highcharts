@@ -784,6 +784,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             hoverPoints = chart.hoverPoints,
             panningOptions: Highcharts.PanningOptions,
             chartOptions = chart.options.chart,
+            hasMapNavigation = chart.options.mapNavigation &&
+                chart.options.mapNavigation.enabled,
             doRedraw: boolean,
             type: string;
 
@@ -893,8 +895,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             newMax !== extremes.max &&
                             isX ? true : (
                                 axis.panningState &&
-                                axis.panningState.startMin &&
-                                axis.panningState.startMax &&
+                                H.isNumber(axis.panningState.startMin) &&
+                                H.isNumber(axis.panningState.startMax) &&
                                 newMin >= axis.panningState.startMin &&
                                 newMax <= axis.panningState.startMax
                             )
@@ -909,6 +911,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
                         if (
                             !chart.resetZoomButton &&
+                            !hasMapNavigation &&
                             type === 'xy' || type === 'y'
                         ) {
                             chart.showResetZoom();

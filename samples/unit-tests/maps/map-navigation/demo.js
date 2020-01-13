@@ -57,5 +57,4 @@ QUnit.test('Zoom in - zoomout with padding', function (assert) {
         xExtremes.min,
         'Zoomed out including padding'
     );
-
 });

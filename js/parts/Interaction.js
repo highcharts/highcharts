@@ -476,7 +476,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @return {void}
      */
     pan: function (e, panning) {
-        var chart = this, hoverPoints = chart.hoverPoints, panningOptions, chartOptions = chart.options.chart, doRedraw, type;
+        var chart = this, hoverPoints = chart.hoverPoints, panningOptions, chartOptions = chart.options.chart, hasMapNavigation = chart.options.mapNavigation &&
+            chart.options.mapNavigation.enabled, doRedraw, type;
         if (typeof panning === 'object') {
             panningOptions = panning;
         }
@@ -541,12 +542,13 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         newMin !== extremes.min &&
                         newMax !== extremes.max &&
                         isX ? true : (axis.panningState &&
-                        axis.panningState.startMin &&
-                        axis.panningState.startMax &&
+                        H.isNumber(axis.panningState.startMin) &&
+                        H.isNumber(axis.panningState.startMax) &&
                         newMin >= axis.panningState.startMin &&
                         newMax <= axis.panningState.startMax)) {
                         axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
                         if (!chart.resetZoomButton &&
+                            !hasMapNavigation &&
                             type === 'xy' || type === 'y') {
                             chart.showResetZoom();
                             axis.displayBtn = false;
