@@ -1074,6 +1074,25 @@ addEvent(Axis, 'afterSetScale', function (this: Highcharts.Axis): void {
             !(axis.chart.navigator as any).adaptToUpdatedData;
     }
 });
+
+// Make sure ticks are within axis min and max range (#12716).
+addEvent(Axis, 'afterTrimTicks', function (
+    this: Highcharts.Axis,
+    e: { tickPositions: Array<number> }
+): void {
+    var axis = this,
+        tickPositions = e.tickPositions;
+
+    if (axis.isOrdinal && axis.min && axis.max && tickPositions) {
+        while (axis.min > tickPositions[0]) {
+            tickPositions.shift();
+        }
+
+        while (axis.max < tickPositions[tickPositions.length - 1]) {
+            tickPositions.pop();
+        }
+    }
+});
 /* ************************************************************************** *
  * End ordinal axis logic                                                     *
  * ************************************************************************** */
