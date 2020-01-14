@@ -1,3 +1,43 @@
+QUnit.test('Column series datal abels general tests.', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                height: 240,
+                width: 160,
+                type: 'column'
+            },
+            plotOptions: {
+                column: {
+                    dataLabels: {
+                        enabled: true
+                    },
+                    borderWidth: 0,
+                    animation: false
+                }
+            },
+            series: [{
+                data: [0.6, 46.6, 35.5, 59]
+            }]
+        }),
+        dl = chart.series[0].points[0].dataLabel;
+
+    assert.ok(
+        dl.y !== -9999,
+        'Data label should be visible (#12688).'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true
+        }
+    });
+
+    dl = chart.series[0].points[0].dataLabel;
+    assert.ok(
+        dl.y !== -9999,
+        'Data label should be visible when chart inverted (#12688).'
+    );
+});
+
 QUnit.test('Cropping of rotated data labels (#4779)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

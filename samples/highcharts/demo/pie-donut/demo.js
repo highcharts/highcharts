@@ -205,7 +205,7 @@ for (i = 0; i < dataLen; i += 1) {
         versionsData.push({
             name: data[i].drilldown.categories[j],
             y: data[i].drilldown.data[j],
-            color: Highcharts.Color(data[i].color).brighten(brightness).get()
+            color: Highcharts.color(data[i].color).brighten(brightness).get()
         });
     }
 }

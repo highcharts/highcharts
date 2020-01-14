@@ -442,12 +442,18 @@ async function uploadVisualTestFiles(diffingSamples = [], pr, includeReview = tr
         }
 
         if (!argv.dryrun) {
-            result = await uploadFiles({
-                files,
-                bucket: VISUAL_TESTS_BUCKET,
-                profile: argv.profile,
-                name: `image diff on PR #${pr}`
-            });
+            try {
+                result = await uploadFiles({
+                    files,
+                    bucket: VISUAL_TESTS_BUCKET,
+                    profile: argv.profile,
+                    name: `image diff on PR #${pr}`
+                });
+            } catch (err) {
+                logLib.failure('One or more files were not uploaded. Continuing to let task finish gracefully. ' +
+                    'Original error: ' + err.message);
+            }
+
         } else {
             logLib.message('Dry run - Skipping upload of files.');
         }
