@@ -134,9 +134,9 @@ var options = {
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +
+                '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
-                '<div>{viewTableButton}</div>' +
                 '<div>{annotationsTitle}{annotationsList}</div>',
             /**
              * A formatter function to create the HTML contents of the hidden

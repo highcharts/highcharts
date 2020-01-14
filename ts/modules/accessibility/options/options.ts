@@ -279,9 +279,9 @@ var options: DeepPartial<Highcharts.Options> = {
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +
+                '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
-                '<div>{viewTableButton}</div>' +
                 '<div>{annotationsTitle}{annotationsList}</div>',
 
             /**
