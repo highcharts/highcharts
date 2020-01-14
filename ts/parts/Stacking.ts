@@ -259,6 +259,8 @@ H.StackItem = function (
         y: options.y,
         x: options.x
     };
+    this.textAlign = options.textAlign ||
+    (inverted ? (isNegative ? 'right' : 'left') : 'center');
 } as any;
 
 H.StackItem.prototype = {
@@ -385,15 +387,30 @@ H.StackItem.prototype = {
             isNegative = stackItem.isNegative,
             isJustify = pick(stackItem.options.overflow,
                 'justify') === 'justify',
+            textAlign = stackItem.textAlign,
             visible;
 
         if (label && stackBox) {
             var bBox = label.getBBox(),
                 padding = label.padding,
-                boxOffsetX = chart.inverted ?
-                    (isNegative ? bBox.width + padding : -padding) : bBox.width / 2,
-                boxOffsetY = chart.inverted ?
-                    bBox.height / 2 : (isNegative ? -padding : bBox.height);
+                boxOffsetX,
+                boxOffsetY;
+
+            if (textAlign === 'left') {
+                boxOffsetX = chart.inverted ? -padding : padding;
+            } else if (textAlign === 'right') {
+                boxOffsetX = bBox.width;
+            } else {
+                if (chart.inverted && textAlign === 'center') {
+                    boxOffsetX = bBox.width / 2;
+                } else {
+                    boxOffsetX = chart.inverted ?
+                        (isNegative ? bBox.width + padding : -padding) : bBox.width / 2;
+                }
+            }
+
+            boxOffsetY = chart.inverted ?
+                bBox.height / 2 : (isNegative ? -padding : bBox.height);
             // Reset alignOptions property after justify #12337
             stackItem.alignOptions.x = pick(stackItem.options.x, 0);
             stackItem.alignOptions.y = pick(stackItem.options.y, 0);
