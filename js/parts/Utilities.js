@@ -2475,9 +2475,6 @@ H.uniqueKey = (function () {
 H.isFunction = function (obj) {
     return typeof obj === 'function';
 };
-H.isInsidePane = function (x, y, center) {
-    return Math.sqrt(Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)) < center[2] / 2;
-};
 // Register Highcharts as a plugin in jQuery
 if (win.jQuery) {
     /**

@@ -40,12 +40,19 @@ declare global {
             chartX: number;
             chartY: number;
         }
+        interface PointerEventArgsObject {
+            chartX?: number;
+            chartY?: number;
+            filter?: Function;
+            hoverPoint?: Point;
+            shared?: boolean;
+        }
         interface PointerEventObject extends PointerEvent {
             chartX: number;
             chartY: number;
         }
         interface PointerHoverDataObject {
-            hoverPoint: Point;
+            hoverPoint?: Point;
             hoverPoints: Array<Point>;
             hoverSeries: Series;
         }
@@ -647,12 +654,7 @@ Highcharts.Pointer.prototype = {
             // Which series to look in for the hover point
             searchSeries,
             // Parameters needed for beforeGetHoverData event.
-            eventArgs: {
-                chartX: number|undefined;
-                chartY: number|undefined;
-                shared: boolean|undefined;
-                filter?: Function;
-            } = {
+            eventArgs: Highcharts.PointerEventArgsObject = {
                 chartX: e ? e.chartX : void 0,
                 chartY: e ? e.chartY : void 0,
                 shared: shared
@@ -723,10 +725,11 @@ Highcharts.Pointer.prototype = {
         }
 
         // Check whether the hoverPoint is inside pane we are hovering over.
-        fireEvent(this, 'afterGetHoverData', hoverPoint);
+        eventArgs = { hoverPoint: hoverPoint };
+        fireEvent(this, 'afterGetHoverData', eventArgs);
 
         return {
-            hoverPoint: hoverPoint,
+            hoverPoint: eventArgs.hoverPoint,
             hoverSeries: hoverSeries,
             hoverPoints: hoverPoints
         };
@@ -856,7 +859,7 @@ Highcharts.Pointer.prototype = {
             chart.hoverPoint = hoverPoint;
 
             // Draw tooltip if necessary
-            if (tooltip && (!chart.polar || hoverPoint.isInsidePane)) {
+            if (tooltip) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
         // Update positions (regardless of kdpoint or hoverPoint)

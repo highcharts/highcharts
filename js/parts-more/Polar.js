@@ -664,27 +664,3 @@ wrap(H.Chart.prototype, 'get', function (proceed, id) {
         return pane.options.id === id;
     }) || proceed.call(this, id);
 });
-H.addEvent(H.Chart, 'afterIsInsidePlot', function (e) {
-    if (this.polar) {
-        e.isInsidePlot = this.pane.some(function (pane) { return H.isInsidePane(e.x, e.y, pane.center); });
-    }
-});
-H.addEvent(H.Pointer, 'beforeGetHoverData', function (eventArgs) {
-    if (this.chart.polar) {
-        var chart_1 = this.chart;
-        // Find pane we are currently hovering over.
-        chart_1.hoverPane = chart_1.getHoverPane(eventArgs);
-        // Edit filter method to handle polar
-        eventArgs.filter = function (s) {
-            return (s.visible &&
-                !(!eventArgs.shared && s.directTouch) && // #3821
-                pick(s.options.enableMouseTracking, true) &&
-                (!chart_1.polar || s.xAxis.pane === chart_1.hoverPane));
-        };
-    }
-});
-H.addEvent(H.Pointer, 'afterGetHoverData', function (hoverPoint) {
-    if (hoverPoint.plotX && hoverPoint.plotY && this.chart.hoverPane) {
-        hoverPoint.isInsidePane = H.isInsidePane(hoverPoint.plotX, hoverPoint.plotY, this.chart.hoverPane.center);
-    }
-});
