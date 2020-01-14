@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -168,10 +168,10 @@ H.perspective3D = function (
  * The chart
  *
  * @param {boolean} [insidePlotArea]
- * Wether to verifiy the points are inside the plotArea
+ * Whether to verifiy that the points are inside the plotArea
  *
  * @param {boolean} [useInvertedPersp]
- * Wether to use inverted perspective in calculations
+ * Whether to use inverted perspective in calculations
  *
  * @return {Array<Highcharts.Position3dObject>}
  * An array of transformed points
@@ -267,10 +267,11 @@ H.pointCameraDistance = function (
             z: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) +
                 options3d.depth
         },
+        // Added support for objects with plotX or x coordinates.
         distance = Math.sqrt(
-            Math.pow(cameraPosition.x - coordinates.plotX, 2) +
-            Math.pow(cameraPosition.y - coordinates.plotY, 2) +
-            Math.pow(cameraPosition.z - coordinates.plotZ, 2)
+            Math.pow(cameraPosition.x - pick(coordinates.plotX, coordinates.x), 2) +
+            Math.pow(cameraPosition.y - pick(coordinates.plotY, coordinates.y), 2) +
+            Math.pow(cameraPosition.z - pick(coordinates.plotZ, coordinates.z), 2)
         );
 
     return distance;
@@ -278,7 +279,7 @@ H.pointCameraDistance = function (
 
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
- * http://en.wikipedia.org/wiki/Shoelace_formula
+ * https://en.wikipedia.org/wiki/Shoelace_formula
  *
  * @private
  * @function Highcharts.shapeArea
@@ -316,7 +317,7 @@ H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
  * Related chart
  *
  * @param {boolean} [insidePlotArea]
- * Wether to verifiy the points are inside the plotArea
+ * Whether to verifiy that the points are inside the plotArea
  *
  * @return {number}
  * Calculated area

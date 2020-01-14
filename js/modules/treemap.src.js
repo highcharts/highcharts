@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2019 Highsoft AS
+ *  (c) 2014-2020 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -13,18 +13,19 @@
 import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick;
+import colorModule from '../parts/Color.js';
+var color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
+var correctFloat = utilitiesModule.correctFloat, defined = utilitiesModule.defined, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, stableSort = utilitiesModule.stableSort;
 import '../parts/Options.js';
 import '../parts/Series.js';
-import '../parts/Color.js';
 /* eslint-disable no-invalid-this */
 var AXIS_MAX = 100;
 var seriesType = H.seriesType, seriesTypes = H.seriesTypes, addEvent = H.addEvent, merge = H.merge, error = H.error, noop = H.noop, fireEvent = H.fireEvent, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
 // @todo Similar to eachObject, this function is likely redundant
 isBoolean = function (x) {
     return typeof x === 'boolean';
-}, Series = H.Series, stableSort = H.stableSort, color = H.Color, 
+}, Series = H.Series, 
 // @todo Similar to recursive, this function is likely redundant
 eachObject = function (list, func, context) {
     context = context || this;
@@ -59,7 +60,7 @@ seriesType('treemap', 'scatter'
  *         Treemap
  *
  * @extends      plotOptions.scatter
- * @excluding    dragDrop, marker, jitter
+ * @excluding    dragDrop, marker, jitter, dataSorting
  * @product      highcharts
  * @requires     modules/treemap
  * @optionparent plotOptions.treemap
@@ -1445,7 +1446,7 @@ seriesType('treemap', 'scatter'
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.treemap
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, stack, dataSorting
  * @product   highcharts
  * @requires  modules/treemap
  * @apioption series.treemap

@@ -8,7 +8,7 @@ function getGradientColors() {
             },
             stops: [
                 [0, color],
-                [1, Highcharts.Color(color).brighten(-0.2).get('rgb')]
+                [1, Highcharts.color(color).brighten(-0.2).get('rgb')]
             ]
         };
     });

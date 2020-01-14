@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Handle keyboard navigation for series.
  *
@@ -322,7 +322,7 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
             var yDistance = point.plotY - curPoint.plotY, width = Math.abs(point.plotX - curPoint.plotX), distance = Math.abs(yDistance) * Math.abs(yDistance) +
                 width * width * 4; // Weigh horizontal distance highly
             // Reverse distance number if axis is reversed
-            if (series.yAxis.reversed) {
+            if (series.yAxis && series.yAxis.reversed) {
                 yDistance *= -1;
             }
             if (yDistance <= 0 && down || yDistance >= 0 && !down || // Chk dir

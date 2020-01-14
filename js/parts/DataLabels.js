@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -76,9 +76,9 @@ import H from './Globals.js';
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat;
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
-var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, stableSort = H.stableSort;
+var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -91,7 +91,7 @@ var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, series
  * @function Highcharts.distribute
  * @param {Highcharts.DataLabelsBoxArray} boxes
  * @param {number} len
- * @param {number} maxDistance
+ * @param {number} [maxDistance]
  * @return {void}
  */
 H.distribute = function (boxes, len, maxDistance) {
@@ -180,8 +180,8 @@ H.distribute = function (boxes, len, maxDistance) {
             // maxDistance, abort the loop and decrease the length in increments
             // of 10% to recursively reduce the  number of visible boxes by
             // rank. Once all boxes are within the maxDistance, we're good.
-            if (Math.abs(origBoxes[i].pos - origBoxes[i].target) >
-                maxDistance) {
+            if (typeof maxDistance !== 'undefined' &&
+                Math.abs(origBoxes[i].pos - origBoxes[i].target) > maxDistance) {
                 // Reset the positions that are already set
                 origBoxes.slice(0, i + 1).forEach(function (box) {
                     delete box.pos;
@@ -463,10 +463,15 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
     // labels (#2700)
     alignAttr, // the final position;
     justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify', visible = this.visible &&
+        point.visible !== false &&
         (point.series.forceDL ||
             (enabledDataSorting && !justify) ||
             isInsidePlot ||
-            (alignTo && chart.isInsidePlot(plotX, inverted ?
+            (
+            // If the data label is inside the align box, it is enough
+            // that parts of the align box is inside the plot area
+            // (#12370)
+            options.inside && alignTo && chart.isInsidePlot(plotX, inverted ?
                 alignTo.x + 1 :
                 alignTo.y + alignTo.height - 1, inverted))), setStartPos = function (alignOptions) {
         if (enabledDataSorting && series.xAxis && !justify) {
@@ -1142,8 +1147,10 @@ if (seriesTypes.column) {
                 alignTo.height += alignTo.y;
                 alignTo.y = 0;
             }
+            // If parts of the box overshoots outside the plot area, modify the
+            // box to center the label inside
             overshoot = alignTo.y + alignTo.height - series.yAxis.len;
-            if (overshoot > 0) {
+            if (overshoot > 0 && overshoot < alignTo.height) {
                 alignTo.height -= overshoot;
             }
             if (inverted) {
@@ -1172,13 +1179,6 @@ if (seriesTypes.column) {
         options.verticalAlign = pick(options.verticalAlign, inverted || inside ? 'middle' : below ? 'top' : 'bottom');
         // Call the parent method
         Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
-        // Hide dataLabel when column is outside plotArea (#12370).
-        if (alignTo &&
-            ((alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
-                (alignTo.width <= 0 && alignTo.x === 0))) {
-            dataLabel.hide(true);
-            dataLabel.placed = false; // don't animate back in
-        }
         // If label was justified and we have contrast, set it:
         if (options.inside && point.contrastColor) {
             dataLabel.css({

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -205,11 +205,11 @@ import H from './Globals.js';
  * @return {string}
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Color.js';
 import './Options.js';
 import './Tick.js';
-var addEvent = H.addEvent, color = H.color, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, removeEvent = H.removeEvent, seriesTypes = H.seriesTypes, Tick = H.Tick;
+var addEvent = H.addEvent, color = H.color, defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, fireEvent = H.fireEvent, format = H.format, getMagnitude = H.getMagnitude, merge = H.merge, normalizeTickInterval = H.normalizeTickInterval, Tick = H.Tick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -2416,7 +2416,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * the gradient, and the second item is the color.
          *
          * For solid gauges, the Y axis also inherits the concept of
-         * [data classes](http://api.highcharts.com/highmaps#colorAxis.dataClasses)
+         * [data classes](https://api.highcharts.com/highmaps#colorAxis.dataClasses)
          * from the Highmaps color axis.
          *
          * @see [minColor](#yAxis.minColor)
@@ -2727,8 +2727,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @apioption yAxis.stackLabels.align
          */
         /**
-         * A [format string](http://docs.highcharts.com/#formatting) for the
-         * data label. Available variables are the same as for `formatter`.
+         * A format string for the data label. Available variables are the same
+         * as for `formatter`.
          *
          * @type      {string}
          * @default   {total}
@@ -3908,8 +3908,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                     if (!axis.single || hasCategories) {
                         // TODO: series should internally set x- and y-
                         // pointPlacement to simplify this logic.
-                        var isPointPlacementAxis = (seriesTypes.xrange &&
-                            series instanceof seriesTypes.xrange) ? !isXAxis : isXAxis;
+                        var isPointPlacementAxis = series.is('xrange') ? !isXAxis : isXAxis;
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
                         // pointRange, typically columns. When the
@@ -4261,7 +4260,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         if (!this.isLinked) {
             // Substract half a unit (#2619, #2846, #2515, #3390),
             // but not in case of multiple ticks (#6897)
-            if (this.single && tickPositions.length < 2 && !this.categories) {
+            if (this.single &&
+                tickPositions.length < 2 &&
+                !this.categories &&
+                !this.series.some(function (s) {
+                    return (s.is('heatmap') && s.options.pointPlacement === 'between');
+                })) {
                 this.min -= 0.5;
                 this.max += 0.5;
             }

@@ -239,7 +239,11 @@ declare global {
  * @since 7.0.0
  */
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const {
+    color
+} = colorModule;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     clamp,
     defined,
@@ -248,7 +252,7 @@ const {
     isArray,
     isNumber,
     pick
-} = U;
+} = utilitiesModule;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -264,7 +268,6 @@ var seriesType = H.seriesType,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     Chart = H.Chart,
-    color = H.Color,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
     dragNodesMixin = H.dragNodesMixin;
@@ -535,7 +538,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
      * @extends      plotOptions.bubble
      * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
      *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
-     *               zMax, zMin
+     *               zMax, zMin, dataSorting
      * @product      highcharts
      * @since        7.0.0
      * @requires     highcharts-more
@@ -618,7 +621,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              *
              * @type      {string}
              * @since     7.0.0
-             * @apioption plotOptions.packedBubble.dataLabels.format
+             * @apioption plotOptions.packedbubble.dataLabels.format
              */
 
             // eslint-disable-next-line valid-jsdoc
@@ -642,7 +645,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             /**
              * @type      {string}
              * @since     7.1.0
-             * @apioption plotOptions.packedBubble.dataLabels.parentNodeFormat
+             * @apioption plotOptions.packedbubble.dataLabels.parentNodeFormat
              */
 
             // eslint-disable-next-line valid-jsdoc
@@ -681,7 +684,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                  *
                  * @type      {Highcharts.SVGAttributes}
                  * @since     7.1.0
-                 * @apioption plotOptions.packedBubble.dataLabels.attributes
+                 * @apioption plotOptions.packedbubble.dataLabels.attributes
                  */
 
                 /**
@@ -701,7 +704,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              * **Note:** Only SVG-based renderer supports this option.
              *
              * @extends   plotOptions.series.dataLabels.textPath
-             * @apioption plotOptions.packedBubble.dataLabels.textPath
+             * @apioption plotOptions.packedbubble.dataLabels.textPath
              */
 
             padding: 0
@@ -1096,8 +1099,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 nodeMarker: Highcharts.BubblePointMarkerOptions =
                     (this.layout.options.parentNodeOptions as any).marker,
                 parentOptions: Highcharts.SVGAttributes = {
-                    fill: nodeMarker.fillColor ||
-                        (color as any)(series.color).brighten(0.4).get(),
+                    fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                     opacity: nodeMarker.fillOpacity,
                     stroke: nodeMarker.lineColor || series.color,
                     'stroke-width': nodeMarker.lineWidth
@@ -1895,7 +1897,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.packedbubble

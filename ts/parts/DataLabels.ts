@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -166,7 +166,7 @@ declare global {
         function distribute(
             boxes: DataLabelsBoxArray,
             len: number,
-            maxDistance: number
+            maxDistance?: number
         ): void;
     }
 }
@@ -252,7 +252,8 @@ const {
     objectEach,
     pick,
     relativeLength,
-    splat
+    splat,
+    stableSort
 } = U;
 
 import './Series.js';
@@ -261,8 +262,7 @@ var format = H.format,
     merge = H.merge,
     noop = H.noop,
     Series = H.Series,
-    seriesTypes = H.seriesTypes,
-    stableSort = H.stableSort;
+    seriesTypes = H.seriesTypes;
 
 /* eslint-disable valid-jsdoc */
 
@@ -277,20 +277,19 @@ var format = H.format,
  * @function Highcharts.distribute
  * @param {Highcharts.DataLabelsBoxArray} boxes
  * @param {number} len
- * @param {number} maxDistance
+ * @param {number} [maxDistance]
  * @return {void}
  */
 H.distribute = function (
     boxes: Highcharts.DataLabelsBoxArray,
     len: number,
-    maxDistance: number
+    maxDistance?: number
 ): void {
 
     var i: number,
         overlapping = true,
         origBoxes = boxes, // Original array will be altered with added .pos
-        restBoxes =
-            [] as Highcharts.DataLabelsBoxArray, // The outranked overshoot
+        restBoxes: Highcharts.DataLabelsBoxArray = [], // The outranked overshoot
         box,
         target,
         total = 0,
@@ -407,8 +406,8 @@ H.distribute = function (
             // of 10% to recursively reduce the  number of visible boxes by
             // rank. Once all boxes are within the maxDistance, we're good.
             if (
-                Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) >
-                maxDistance
+                typeof maxDistance !== 'undefined' &&
+                Math.abs((origBoxes[i].pos as any) - origBoxes[i].target) > maxDistance
             ) {
                 // Reset the positions that are already set
                 origBoxes.slice(0, i + 1).forEach(
@@ -882,12 +881,16 @@ Series.prototype.alignDataLabel = function (
         ) === 'justify',
         visible =
             this.visible &&
+            point.visible !== false &&
             (
                 point.series.forceDL ||
                 (enabledDataSorting && !justify) ||
                 isInsidePlot ||
                 (
-                    alignTo && chart.isInsidePlot(
+                    // If the data label is inside the align box, it is enough
+                    // that parts of the align box is inside the plot area
+                    // (#12370)
+                    options.inside && alignTo && chart.isInsidePlot(
                         plotX,
                         inverted ?
                             alignTo.x + 1 :
@@ -1861,13 +1864,15 @@ if (seriesTypes.column) {
         // Align to the column itself, or the top of it
         if (dlBox) { // Area range uses this method but not alignTo
             alignTo = merge(dlBox) as any;
-
             if (alignTo.y < 0) {
                 alignTo.height += alignTo.y;
                 alignTo.y = 0;
             }
+
+            // If parts of the box overshoots outside the plot area, modify the
+            // box to center the label inside
             overshoot = alignTo.y + alignTo.height - series.yAxis.len;
-            if (overshoot > 0) {
+            if (overshoot > 0 && overshoot < alignTo.height) {
                 alignTo.height -= overshoot;
             }
 
@@ -1913,18 +1918,6 @@ if (seriesTypes.column) {
             alignTo,
             isNew
         );
-
-        // Hide dataLabel when column is outside plotArea (#12370).
-        if (
-            alignTo &&
-            (
-                (alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
-                (alignTo.width <= 0 && alignTo.x === 0)
-            )
-        ) {
-            dataLabel.hide(true);
-            dataLabel.placed = false; // don't animate back in
-        }
 
         // If label was justified and we have contrast, set it:
         if (options.inside && point.contrastColor) {

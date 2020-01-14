@@ -17,6 +17,14 @@ var lines = text.split(/[,\. ]+/g),
     }, []);
 
 Highcharts.chart('container', {
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<h5>{chartTitle}</h5>' +
+                '<div>{chartSubtitle}</div>' +
+                '<div>{chartLongdesc}</div>' +
+                '<div>{viewTableButton}</div>'
+        }
+    },
     series: [{
         type: 'wordcloud',
         data: data,

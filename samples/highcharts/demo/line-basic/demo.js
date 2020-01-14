@@ -13,6 +13,13 @@ Highcharts.chart('container', {
             text: 'Number of Employees'
         }
     },
+
+    xAxis: {
+        accessibility: {
+            rangeDescription: 'Range: 2010 to 2017'
+        }
+    },
+
     legend: {
         layout: 'vertical',
         align: 'right',

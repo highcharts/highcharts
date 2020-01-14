@@ -9,7 +9,7 @@ A bubble legend is an additional element, which can be added in any position in 
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/bubble-legend/autoranges allow="fullscreen"></iframe>
 
-**Demo with similarto series**
+**Demo with the bubble legend styled in a similar way to the series**
 
 <iframe style="width: 100%; height: 450px; border: none;" src=https://www.highcharts.com/samples/embed/highcharts/bubble-legend/similartoseries allow="fullscreen"></iframe>
 
@@ -20,7 +20,7 @@ A bubble legend is an additional element, which can be added in any position in 
 Installation
 ------------
 
-Requires `highcharts-more.js`. To display bubble legend, set `legend.bubbleLegend.enabled` to `true`.
+Requires `highcharts-more.js`. To display a bubble legend, set `legend.bubbleLegend.enabled` to `true`.
 
 Configuration
 -------------
@@ -92,4 +92,4 @@ There are two ways to add the bubble legend to the chart:
 API document
 ------------
 
-For more details check the [API document link.](https://api.highcharts.com/highcharts/legend.bubbleLegend)
+For more details check the [API documentation](https://api.highcharts.com/highcharts/legend.bubbleLegend).

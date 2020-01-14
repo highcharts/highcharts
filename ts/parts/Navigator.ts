@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -197,6 +197,7 @@ const {
     isArray,
     isNumber,
     pick,
+    removeEvent,
     splat
 } = U;
 
@@ -215,7 +216,6 @@ var addEvent = H.addEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
-    removeEvent = H.removeEvent,
     Scrollbar = H.Scrollbar,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -1756,11 +1756,16 @@ Navigator.prototype = {
             chart = navigator.chart,
             xAxis = navigator.xAxis,
             scrollbar = navigator.scrollbar,
+            DOMEvent = (e as any).DOMEvent || e,
+            inverted = chart.inverted,
+            verb = navigator.rendered && !navigator.hasDragged ?
+                'animate' : 'attr',
+            zoomedMax = Math.round(navigator.zoomedMax),
+            zoomedMin = Math.round(navigator.zoomedMin),
             unionExtremes,
             fixedMin,
             fixedMax,
-            ext,
-            DOMEvent = (e as any).DOMEvent || e;
+            ext;
 
         if (
             // MouseUp is called for both, navigator and scrollbar (that order),
@@ -1823,6 +1828,26 @@ Navigator.prototype = {
                 navigator.grabbedCenter = navigator.fixedWidth =
                 navigator.fixedExtreme = navigator.otherHandlePos =
                 navigator.hasDragged = navigator.dragOffset = null as any;
+        }
+
+        // Update position of navigator shades, outline and handles (#12573)
+        if (navigator.navigatorEnabled) {
+            if (navigator.shades) {
+                navigator.drawMasks(zoomedMin, zoomedMax, inverted, verb);
+            }
+
+            if (navigator.outline) {
+                navigator.drawOutline(zoomedMin, zoomedMax, inverted, verb);
+            }
+
+            if (
+                (navigator.navigatorOptions.handles as any).enabled &&
+                    Object.keys(navigator.handles).length ===
+                    navigator.handles.length
+            ) {
+                navigator.drawHandle(zoomedMin, 0, inverted, verb);
+                navigator.drawHandle(zoomedMax, 1, inverted, verb);
+            }
         }
     },
 

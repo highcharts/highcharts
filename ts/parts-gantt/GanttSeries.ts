@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -263,7 +263,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                 diamondShape: Highcharts.SVGPathArray;
 
             if (point.options.milestone) {
-                if (isNumber(plotY) && point.y !== null) {
+                if (isNumber(plotY) && point.y !== null && point.visible !== false) {
                     diamondShape = renderer.symbols.diamond(
                         shapeArgs.x,
                         shapeArgs.y,

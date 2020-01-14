@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -315,7 +315,11 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const {
+    color
+} = colorModule;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     defined,
     discardElement,
@@ -328,7 +332,7 @@ const {
     offset,
     pick,
     pInt
-} = U;
+} = utilitiesModule;
 
 import '../parts/SvgRenderer.js';
 
@@ -1509,7 +1513,7 @@ if (!svg) {
             Highcharts.PatternObject
         )> (
             this: Highcharts.VMLRenderer,
-            color: T,
+            colorOption: T,
             elem: Highcharts.VMLDOMElement,
             prop: string,
             wrapper: Highcharts.VMLElement
@@ -1523,13 +1527,13 @@ if (!svg) {
 
             // Check for linear or radial gradient
             if (
-                color &&
-                (color as Highcharts.GradientColorObject).linearGradient
+                colorOption &&
+                (colorOption as Highcharts.GradientColorObject).linearGradient
             ) {
                 fillType = 'gradient';
             } else if (
-                color &&
-                (color as Highcharts.GradientColorObject).radialGradient
+                colorOption &&
+                (colorOption as Highcharts.GradientColorObject).radialGradient
             ) {
                 fillType = 'pattern';
             }
@@ -1544,10 +1548,10 @@ if (!svg) {
                         Highcharts.RadialGradientColorObject
                     ) = (
                         (
-                            color as Highcharts.GradientColorObject
+                            colorOption as Highcharts.GradientColorObject
                         ).linearGradient ||
                         (
-                            color as Highcharts.GradientColorObject
+                            colorOption as Highcharts.GradientColorObject
                         ).radialGradient
                     ) as any,
                     x1,
@@ -1559,7 +1563,7 @@ if (!svg) {
                     color1: (Highcharts.ColorString|undefined),
                     color2: (Highcharts.ColorString|undefined),
                     fillAttr = '',
-                    stops = (color as Highcharts.GradientColorObject).stops,
+                    stops = (colorOption as Highcharts.GradientColorObject).stops,
                     firstStop,
                     lastStop,
                     colors = [] as Array<Highcharts.ColorString>,
@@ -1600,7 +1604,7 @@ if (!svg) {
                     i: number
                 ): void {
                     if (regexRgba.test(stop[1])) {
-                        colorObject = H.color(stop[1]);
+                        colorObject = color(stop[1]);
                         stopColor = colorObject.get('rgb') as any;
                         stopOpacity = colorObject.get('a') as any;
                     } else {
@@ -1694,9 +1698,9 @@ if (!svg) {
 
             // If the color is an rgba color, split it and add a fill node
             // to hold the opacity component
-            } else if (regexRgba.test(color as any) && elem.tagName !== 'IMG') {
+            } else if (regexRgba.test(colorOption as any) && elem.tagName !== 'IMG') {
 
-                colorObject = H.color(color);
+                colorObject = color(colorOption);
 
                 (wrapper as any)[prop + '-opacitySetter'](
                     colorObject.get('a'),
@@ -1715,7 +1719,7 @@ if (!svg) {
                     propNodes[0].opacity = 1;
                     propNodes[0].type = 'solid';
                 }
-                ret = color;
+                ret = colorOption;
             }
 
             return ret;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -148,7 +148,8 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
-    pick
+    pick,
+    removeEvent
 } = U;
 
 import './Axis.js';
@@ -161,7 +162,6 @@ var addEvent = H.addEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,
-    removeEvent = H.removeEvent,
     swapXY: (
         path: Highcharts.SVGPathArray,
         vertical?: boolean

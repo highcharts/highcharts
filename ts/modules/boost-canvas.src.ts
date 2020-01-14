@@ -73,21 +73,24 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const {
+    Color,
+    color
+} = colorModule;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     extend,
     isNumber,
     wrap
-} = U;
+} = utilitiesModule;
 
-import '../parts/Color.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
 
 var win = H.win,
     doc = win.document,
     noop = function (): void {},
-    Color = H.Color,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     addEvent = H.addEvent,
@@ -552,8 +555,7 @@ H.initCanvasBoost = function (): void {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: H.color('${palette.backgroundColor}')
-                            .setOpacity(0.75).get(),
+                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },

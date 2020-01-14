@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var clamp = U.clamp, defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var clamp = U.clamp, defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -108,7 +108,7 @@ var clamp = U.clamp, defined = U.defined, discardElement = U.discardElement, ext
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 ''; // separates doclets above from variables below
-var doc = H.doc, format = H.format, merge = H.merge, timeUnits = H.timeUnits;
+var doc = H.doc, format = H.format, merge = H.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Tooltip of a chart.
@@ -496,7 +496,7 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#getAnchor
      *
-     * @param {Array<Highcharts.Point>} points
+     * @param {Highcharts.Point|Array<Highcharts.Point>} points
      *
      * @param {Highcharts.PointerEventObject} [mouseEvent]
      *
@@ -555,7 +555,7 @@ H.Tooltip.prototype = {
      *
      * @param {Highcharts.Point} point
      *
-     * @return {Highcharts.Dictionary<number>}
+     * @return {Highcharts.PositionObject}
      */
     getPosition: function (boxWidth, boxHeight, point) {
         var chart = this.chart, distance = this.distance, ret = {}, 
@@ -929,7 +929,7 @@ H.Tooltip.prototype = {
                 tt = ren
                     .label(null, null, null, (options[isHeader ? 'headerShape' : 'shape']) ||
                     'callout', null, null, options.useHTML)
-                    .addClass(isHeader ? 'highcharts-tooltip-header ' : '' +
+                    .addClass((isHeader ? 'highcharts-tooltip-header ' : '') +
                     'highcharts-tooltip-box ' +
                     colorClass)
                     .attr(attribs)
@@ -1013,7 +1013,7 @@ H.Tooltip.prototype = {
         // Clean previous run (for missing points)
         tooltip.cleanSplit();
         // Distribute and put in place
-        H.distribute(boxes, maxLength, void 0);
+        H.distribute(boxes, maxLength);
         boxes.forEach(function (box) {
             var anchorX = box.anchorX, anchorY = box.anchorY, pos = box.pos, x = box.x;
             // Put the label in place

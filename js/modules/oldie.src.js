@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,8 +11,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, offset = U.offset, pick = U.pick, pInt = U.pInt;
+import colorModule from '../parts/Color.js';
+var color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
+var defined = utilitiesModule.defined, discardElement = utilitiesModule.discardElement, erase = utilitiesModule.erase, extend = utilitiesModule.extend, extendClass = utilitiesModule.extendClass, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, offset = utilitiesModule.offset, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt;
 import '../parts/SvgRenderer.js';
 var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, doc = H.doc, merge = H.merge, noop = H.noop, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /**
@@ -817,20 +819,20 @@ if (!svg) {
          *
          * @return {T}
          */
-        color: function (color, elem, prop, wrapper) {
+        color: function (colorOption, elem, prop, wrapper) {
             var renderer = this, colorObject, regexRgba = /^rgba/, markup, fillType, ret = 'none';
             // Check for linear or radial gradient
-            if (color &&
-                color.linearGradient) {
+            if (colorOption &&
+                colorOption.linearGradient) {
                 fillType = 'gradient';
             }
-            else if (color &&
-                color.radialGradient) {
+            else if (colorOption &&
+                colorOption.radialGradient) {
                 fillType = 'pattern';
             }
             if (fillType) {
-                var stopColor, stopOpacity, gradient = (color.linearGradient ||
-                    color.radialGradient), x1, y1, x2, y2, opacity1, opacity2, color1, color2, fillAttr = '', stops = color.stops, firstStop, lastStop, colors = [], addFillNode = function () {
+                var stopColor, stopOpacity, gradient = (colorOption.linearGradient ||
+                    colorOption.radialGradient), x1, y1, x2, y2, opacity1, opacity2, color1, color2, fillAttr = '', stops = colorOption.stops, firstStop, lastStop, colors = [], addFillNode = function () {
                     // Add the fill subnode. When colors attribute is used,
                     // the meanings of opacity and o:opacity2 are reversed.
                     markup = ['<fill colors="' + colors.join(',') +
@@ -857,7 +859,7 @@ if (!svg) {
                 // Compute the stops
                 stops.forEach(function (stop, i) {
                     if (regexRgba.test(stop[1])) {
-                        colorObject = H.color(stop[1]);
+                        colorObject = color(stop[1]);
                         stopColor = colorObject.get('rgb');
                         stopOpacity = colorObject.get('a');
                     }
@@ -935,8 +937,8 @@ if (!svg) {
                 // If the color is an rgba color, split it and add a fill node
                 // to hold the opacity component
             }
-            else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
-                colorObject = H.color(color);
+            else if (regexRgba.test(colorOption) && elem.tagName !== 'IMG') {
+                colorObject = color(colorOption);
                 wrapper[prop + '-opacitySetter'](colorObject.get('a'), prop, elem);
                 ret = colorObject.get('rgb');
             }
@@ -947,7 +949,7 @@ if (!svg) {
                     propNodes[0].opacity = 1;
                     propNodes[0].type = 'solid';
                 }
-                ret = color;
+                ret = colorOption;
             }
             return ret;
         },

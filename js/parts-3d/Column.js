@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -341,7 +341,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, op
     options.outside3dPlot = point.outside3dPlot;
     // Only do this for 3D columns and it's derived series
     if (chart.is3d() &&
-        this instanceof seriesTypes.column) {
+        this.is('column')) {
         var series = this, seriesOptions = series.options, inside = pick(options.inside, !!series.options.stacking), options3d = chart.options.chart.options3d, xOffset = point.pointWidth / 2 || 0;
         var dLPosition = {
             x: alignTo.x + xOffset,

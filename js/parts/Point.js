@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -155,8 +155,8 @@ import Highcharts from './Globals.js';
 * @type {Highcharts.PointOptionsType}
 */
 import U from './Utilities.js';
-var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick;
-var Point, H = Highcharts, fireEvent = H.fireEvent, format = H.format, uniqueKey = H.uniqueKey, removeEvent = H.removeEvent;
+var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent;
+var Point, H = Highcharts, fireEvent = H.fireEvent, format = H.format, uniqueKey = H.uniqueKey;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Point object. The point objects are generated from the `series.data`
@@ -520,6 +520,9 @@ Highcharts.Point.prototype = {
                 point[prop] = null;
             }
         }
+        if (point.legendItem) { // pies have legend items
+            chart.legend.destroyItem(point);
+        }
         // Remove properties after animation
         if (!dataSorting || !dataSorting.enabled) {
             destroyPoint();
@@ -529,9 +532,6 @@ Highcharts.Point.prototype = {
             syncTimeout(destroyPoint, animation.duration);
         }
         chart.pointCount--;
-        if (point.legendItem) { // pies have legend items
-            chart.legend.destroyItem(point);
-        }
     },
     /**
      * Animate SVG elements associated with the point.

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -11,12 +11,12 @@
 import H from './Globals.js';
 import './Axis.js';
 import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, pick = U.pick;
+var defined = U.defined, extend = U.extend, pick = U.pick, timeUnits = U.timeUnits;
 import './Chart.js';
 import './Series.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import './Navigator.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, noop = H.noop, Series = H.Series, timeUnits = H.timeUnits;
+var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, css = H.css, noop = H.noop, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /* ************************************************************************** *
  * Start ordinal axis logic                                                   *

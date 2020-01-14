@@ -1,1 +1,0 @@
-Chart and series types - Home

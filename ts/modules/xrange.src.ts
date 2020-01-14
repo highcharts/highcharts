@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2019 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2020 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -182,7 +182,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
      *               edgeWidth, findNearestPointBy, getExtremesFromAll,
      *               negativeColor, pointInterval, pointIntervalUnit,
      *               pointPlacement, pointRange, pointStart, softThreshold,
-     *               stacking, threshold, data
+     *               stacking, threshold, data, dataSorting
      * @requires     modules/xrange
      * @optionparent plotOptions.xrange
      */
@@ -608,7 +608,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                 ),
                 fill;
 
-            if (!point.isNull) {
+            if (!point.isNull && point.visible !== false) {
 
                 // Original graphic
                 if (graphic) { // update
@@ -887,7 +887,7 @@ addEvent(Axis, 'afterGetSeriesExtremes', function (): void {
  * @excluding boostThreshold, crisp, cropThreshold, depth, edgeColor, edgeWidth,
  *            findNearestPointBy, getExtremesFromAll, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointRange,
- *            pointStart, softThreshold, stacking, threshold
+ *            pointStart, softThreshold, stacking, threshold, dataSorting
  * @product   highcharts highstock gantt
  * @requires  modules/xrange
  * @apioption series.xrange

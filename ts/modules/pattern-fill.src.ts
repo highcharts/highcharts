@@ -2,7 +2,7 @@
  *
  *  Module for using patterns or images as point fills.
  *
- *  (c) 2010-2019 Highsoft AS
+ *  (c) 2010-2020 Highsoft AS
  *  Author: Torstein Hønsi, Øystein Moseng
  *
  *  License: www.highcharts.com/license
@@ -174,6 +174,7 @@ const {
     animObject,
     erase,
     pick,
+    removeEvent,
     wrap
 } = U;
 
@@ -451,7 +452,7 @@ H.SVGRenderer.prototype.addPattern = function (
                     this.animate({
                         opacity: pick(options.opacity, 1)
                     }, animationOptions);
-                    H.removeEvent(this.element, 'load');
+                    removeEvent(this.element, 'load');
                 }
             ).attr({ opacity: 0 }).add(pattern);
         } else {

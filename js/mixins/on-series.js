@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
-var seriesTypes = H.seriesTypes, stableSort = H.stableSort;
+var defined = U.defined, stableSort = U.stableSort;
+var seriesTypes = H.seriesTypes;
 /**
  * @private
  * @mixin onSeriesMixin

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -226,14 +226,14 @@ import H from './Globals.js';
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout;
+var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
 var addEvent = H.addEvent, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 merge = H.merge, Point = H.Point, // @todo  add as a requirement
-removeEvent = H.removeEvent, SVGElement = H.SVGElement, win = H.win;
+seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -477,8 +477,8 @@ null,
      * (columns, point markers, pie slices, map areas etc).
      *
      * The selected points can be handled by point select and unselect
-     * events, or collectively by the [getSelectedPoints](
-     * Highcharts.Chart#getSelectedPoints) function.
+     * events, or collectively by the [getSelectedPoints
+     * ](/class-reference/Highcharts.Chart#getSelectedPoints) function.
      *
      * And alternative way of selecting points is through dragging.
      *
@@ -2185,6 +2185,8 @@ null,
     softThreshold: true,
     /**
      * @declare Highcharts.SeriesStatesOptionsObject
+     *
+     * @private
      */
     states: {
         /**
@@ -2358,12 +2360,22 @@ null,
         /**
          * The opposite state of a hover for series.
          *
-         * @sample highcharts/plotoptions/series-states-inactive-opacity
-         *         Disabled inactive state by setting opacity
+         * @sample highcharts/plotoptions/series-states-inactive-disabled
+         *         Disabled inactive state
          *
          * @declare Highcharts.SeriesStatesInactiveOptionsObject
          */
         inactive: {
+            /**
+             * Enable or disable the inactive state for a series
+             *
+             * @sample highcharts/plotoptions/series-states-inactive-disabled
+             *         Disabled inactive state
+             *
+             * @type {boolean}
+             * @default true
+             * @apioption plotOptions.series.states.inactive.enabled
+             */
             /**
              * The animation for entering the inactive state.
              *
@@ -2374,13 +2386,9 @@ null,
                 duration: 50
             },
             /**
-             * Opacity of series elements (dataLabels, line, area). Set to 1
-             * to disable inactive state.
+             * Opacity of series elements (dataLabels, line, area).
              *
-             * @apioption plotOptions.series.states.inactive.opacity
              * @type {number}
-             * @sample highcharts/plotoptions/series-states-inactive-opacity
-             *         Disabled inactive state
              */
             opacity: 0.2
         }
@@ -2709,6 +2717,21 @@ null,
             series.setData(options.data, false);
         }
         fireEvent(this, 'afterInit');
+    },
+    /**
+     * Chech whether the series item is itself or inherits from a certain
+     * series type.
+     *
+     * @function Highcharts.Series#is
+     * @param {string} type The type of series to check for, can be either
+     *        featured or custom series types. For example `column`, `pie`,
+     *        `ohlc` etc.
+     *
+     * @return {boolean}
+     *        True if this item is or inherits from the given type.
+     */
+    is: function (type) {
+        return seriesTypes[type] && this instanceof seriesTypes[type];
     },
     /**
      * Insert the series in a collection with other series, either the chart
@@ -3051,6 +3074,16 @@ null,
             this.getCyclic('color', this.options.color ||
                 defaultPlotOptions[this.type].color, this.chart.options.colors);
         }
+    },
+    /**
+     * Get all points' instances created for this series.
+     *
+     * @private
+     * @function Highcharts.Series#getPointsCollection
+     * @return {Array<Highcharts.Point>}
+     */
+    getPointsCollection: function () {
+        return (this.hasGroupedData ? this.points : this.data) || [];
     },
     /**
      * Get the series' symbol based on either the options or pulled from
@@ -3816,7 +3849,7 @@ null,
         }
         this.generatePoints();
         var series = this, options = series.options, stacking = options.stacking, xAxis = series.xAxis, categories = xAxis.categories, enabledDataSorting = series.enabledDataSorting, yAxis = series.yAxis, points = series.points, dataLength = points.length, hasModifyValue = !!series.modifyValue, i, pointPlacement = series.pointPlacementToXValue(), // #7860
-        dynamicallyPlaced = isNumber(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, plotY, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
+        dynamicallyPlaced = Boolean(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, plotY, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
         /**
          * Plotted coordinates need to be within a limited range. Drawing
          * too far outside the viewport causes various rendering issues
@@ -5111,16 +5144,15 @@ null,
      * @return {number}
      */
     pointPlacementToXValue: function () {
-        var series = this, axis = series.xAxis, pointPlacement = series.options.pointPlacement;
+        var _a = this, _b = _a.options, pointPlacement = _b.pointPlacement, pointRange = _b.pointRange, axis = _a.xAxis;
+        var factor = pointPlacement;
         // Point placement is relative to each series pointRange (#5889)
-        if (pointPlacement === 'between') {
-            pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
+        if (factor === 'between') {
+            factor = axis.reversed ? -0.5 : 0.5; // #11955
         }
-        if (isNumber(pointPlacement)) {
-            pointPlacement *=
-                pick(series.options.pointRange || axis.pointRange);
-        }
-        return pointPlacement;
+        return isNumber(factor) ?
+            factor * pick(pointRange, axis.pointRange) :
+            0;
     }
 }); // end Series prototype
 /**

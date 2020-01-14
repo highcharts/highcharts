@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -37,10 +37,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    stableSort
+} = U;
 
-var seriesTypes = H.seriesTypes,
-    stableSort = H.stableSort;
+var seriesTypes = H.seriesTypes;
 
 /**
  * @private

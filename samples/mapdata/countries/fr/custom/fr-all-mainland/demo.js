@@ -2,27 +2,18 @@
 // Data is joined to map using value of 'hc-key' property by default.
 // See API docs for 'joinBy' for more info on linking data and map.
 var data = [
-    ['fr-t', 0],
-    ['fr-e', 1],
-    ['fr-r', 2],
-    ['fr-u', 3],
-    ['fr-n', 4],
-    ['fr-p', 5],
-    ['fr-o', 6],
-    ['fr-v', 7],
-    ['fr-s', 8],
-    ['fr-g', 9],
-    ['fr-k', 10],
-    ['fr-a', 11],
-    ['fr-c', 12],
-    ['fr-f', 13],
-    ['fr-l', 14],
-    ['fr-d', 15],
-    ['fr-b', 16],
-    ['fr-i', 17],
-    ['fr-q', 18],
-    ['fr-j', 19],
-    ['fr-m', 20]
+    ['fr-bre', 0],
+    ['fr-pdl', 1],
+    ['fr-pac', 2],
+    ['fr-occ', 3],
+    ['fr-naq', 4],
+    ['fr-bfc', 5],
+    ['fr-cvl', 6],
+    ['fr-idf', 7],
+    ['fr-hdf', 8],
+    ['fr-ara', 9],
+    ['fr-ges', 10],
+    ['fr-nor', 11]
 ];
 
 // Create the chart

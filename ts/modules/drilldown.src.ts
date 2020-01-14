@@ -292,14 +292,18 @@ declare global {
  * @type {"drillup"}
  */
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const {
+    Color
+} = colorModule;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     animObject,
     extend,
     objectEach,
     pick,
     syncTimeout
-} = U;
+} = utilitiesModule;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -309,7 +313,6 @@ import '../parts/Tick.js';
 
 var addEvent = H.addEvent,
     noop = H.noop,
-    color = H.color,
     defaultOptions = H.defaultOptions,
     format = H.format,
     Chart = H.Chart,
@@ -747,8 +750,8 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
         color: point.isNull ?
-            new H.Color(color as any).setOpacity(0).get() :
-            color,
+            new Color(colorProp.color).setOpacity(0).get() :
+            colorProp.color,
         lowerSeriesOptions: ddOptions,
         pointOptions: (oldSeries.options.data as any)[pointIndex],
         pointIndex: pointIndex,

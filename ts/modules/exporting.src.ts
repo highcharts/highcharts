@@ -2,7 +2,7 @@
  *
  *  Exporting module
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -287,7 +287,8 @@ const {
     extend,
     isObject,
     objectEach,
-    pick
+    pick,
+    removeEvent
 } = U;
 
 import '../parts/Options.js';
@@ -299,7 +300,6 @@ var defaultOptions = H.defaultOptions,
     doc = H.doc,
     Chart = H.Chart,
     addEvent = H.addEvent,
-    removeEvent = H.removeEvent,
     fireEvent = H.fireEvent,
     createElement = H.createElement,
     css = H.css,

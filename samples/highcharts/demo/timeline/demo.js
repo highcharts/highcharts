@@ -2,6 +2,20 @@ Highcharts.chart('container', {
     chart: {
         type: 'timeline'
     },
+    accessibility: {
+        screenReaderSection: {
+            beforeChartFormat: '<h5>{chartTitle}</h5>' +
+                '<div>{typeDescription}</div>' +
+                '<div>{chartSubtitle}</div>' +
+                '<div>{chartLongdesc}</div>' +
+                '<div>{viewTableButton}</div>'
+        },
+        point: {
+            descriptionFormatter: function (point) {
+                return point.label + '. ' + point.description + '.';
+            }
+        }
+    },
     xAxis: {
         visible: false
     },

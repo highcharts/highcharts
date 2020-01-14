@@ -9,7 +9,7 @@ Highcharts.setOptions({
             },
             stops: [
                 [0, color],
-                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+                [1, Highcharts.color(color).brighten(-0.3).get('rgb')] // darken
             ]
         };
     })
@@ -28,6 +28,11 @@ Highcharts.chart('container', {
     },
     tooltip: {
         pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    accessibility: {
+        point: {
+            valueSuffix: '%'
+        }
     },
     plotOptions: {
         pie: {

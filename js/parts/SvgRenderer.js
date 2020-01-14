@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -262,7 +262,7 @@ import H from './Globals.js';
  * @interface Highcharts.SVGDefinitionObject
  */ /**
 * @name Highcharts.SVGDefinitionObject#[key:string]
-* @type {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+* @type {boolean|number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
 */ /**
 * @name Highcharts.SVGDefinitionObject#children
 * @type {Array<Highcharts.SVGDefinitionObject>|undefined}
@@ -372,10 +372,11 @@ import H from './Globals.js';
  * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 /* eslint-disable no-invalid-this, valid-jsdoc */
-import U from './Utilities.js';
-var animObject = U.animObject, attr = U.attr, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
-import './Color.js';
-var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, charts = H.charts, color = H.color, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, removeEvent = H.removeEvent, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+import colorModule from './Color.js';
+var color = colorModule.color;
+import utilitiesModule from './Utilities.js';
+var animObject = utilitiesModule.animObject, attr = utilitiesModule.attr, defined = utilitiesModule.defined, destroyObjectProperties = utilitiesModule.destroyObjectProperties, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt, removeEvent = utilitiesModule.removeEvent, splat = utilitiesModule.splat;
+var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, charts = H.charts, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link
@@ -498,7 +499,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @private
      * @function Highcharts.SVGElement#complexColor
      *
-     * @param {Highcharts.GradientColorObject} color
+     * @param {Highcharts.GradientColorObject} colorOptions
      *        The gradient options structure.
      *
      * @param {string} prop
@@ -509,26 +510,26 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *
      * @return {void}
      */
-    complexColor: function (color, prop, elem) {
+    complexColor: function (colorOptions, prop, elem) {
         var renderer = this.renderer, colorObject, gradName, gradAttr, radAttr, gradients, gradientObject, stops, stopColor, stopOpacity, radialReference, id, key = [], value;
         H.fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function () {
             // Apply linear or radial gradients
-            if (color.radialGradient) {
+            if (colorOptions.radialGradient) {
                 gradName = 'radialGradient';
             }
-            else if (color.linearGradient) {
+            else if (colorOptions.linearGradient) {
                 gradName = 'linearGradient';
             }
             if (gradName) {
-                gradAttr = color[gradName];
+                gradAttr = colorOptions[gradName];
                 gradients = renderer.gradients;
-                stops = color.stops;
+                stops = colorOptions.stops;
                 radialReference = elem.radialReference;
                 // Keep < 2.2 kompatibility
                 if (isArray(gradAttr)) {
-                    color[gradName] = gradAttr = {
+                    colorOptions[gradName] = gradAttr = {
                         x1: gradAttr[0],
                         y1: gradAttr[1],
                         x2: gradAttr[2],
@@ -574,7 +575,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     stops.forEach(function (stop) {
                         var stopObject;
                         if (stop[1].indexOf('rgba') === 0) {
-                            colorObject = H.color(stop[1]);
+                            colorObject = color(stop[1]);
                             stopColor = colorObject.get('rgb');
                             stopOpacity = colorObject.get('a');
                         }
@@ -597,7 +598,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 elem.gradient = key;
                 // Allow the color to be concatenated into tooltips formatters
                 // etc. (#2995)
-                color.toString = function () {
+                colorOptions.toString = function () {
                     return value;
                 };
             }
@@ -749,7 +750,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
     * @param {string|Highcharts.SVGAttributes} [hash]
     *        The native and custom SVG attributes.
     *
-    * @param {string} [val]
+    * @param {number|string|Highcharts.SVGPathArray} [val]
     *        If the type of the first argument is `string`, the second can be a
     *        value, which will serve as a single attribute setter. If the first
     *        argument is a string and the second is undefined, the function

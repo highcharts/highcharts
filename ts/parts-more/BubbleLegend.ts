@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Highsoft AS
+ *  (c) 2010-2020 Highsoft AS
  *
  *  Author: Paweł Potaczek
  *
@@ -150,6 +150,7 @@ const {
     isNumber,
     objectEach,
     pick,
+    stableSort,
     wrap
 } = U;
 
@@ -160,7 +161,6 @@ var Series = H.Series,
     color = H.color,
     merge = H.merge,
     noop = H.noop,
-    stableSort = H.stableSort,
     setOptions = H.setOptions;
 
 setOptions({ // Set default bubble legend options
@@ -275,9 +275,8 @@ setOptions({ // Set default bubble legend options
                  */
                 allowOverlap: false,
                 /**
-                 * A [format string](http://docs.highcharts.com/#formatting)
-                 * for the bubble legend labels. Available variables are the
-                 * same as for `formatter`.
+                 * A format string for the bubble legend labels. Available
+                 * variables are the same as for `formatter`.
                  *
                  * @sample highcharts/bubble-legend/format/
                  *         Add a unit

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2019 Highsoft AS
+ *  (c) 2014-2020 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -287,7 +287,11 @@ declare global {
 
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const {
+    color
+} = colorModule;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     correctFloat,
     defined,
@@ -297,12 +301,12 @@ const {
     isObject,
     isString,
     objectEach,
-    pick
-} = U;
+    pick,
+    stableSort
+} = utilitiesModule;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
-import '../parts/Color.js';
 
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;
@@ -321,8 +325,6 @@ var seriesType = H.seriesType,
         return typeof x === 'boolean';
     },
     Series = H.Series,
-    stableSort = H.stableSort,
-    color = H.Color,
     // @todo Similar to recursive, this function is likely redundant
     eachObject = function (
         this: unknown,
@@ -374,7 +376,7 @@ seriesType<Highcharts.TreemapSeries>(
      *         Treemap
      *
      * @extends      plotOptions.scatter
-     * @excluding    dragDrop, marker, jitter
+     * @excluding    dragDrop, marker, jitter, dataSorting
      * @product      highcharts
      * @requires     modules/treemap
      * @optionparent plotOptions.treemap
@@ -1793,7 +1795,7 @@ seriesType<Highcharts.TreemapSeries>(
                 className.indexOf('highcharts-internal-node-interactive') !== -1
             ) {
                 opacity = pick(stateOptions.opacity, options.opacity as any);
-                attr.fill = (color as any)(attr.fill).setOpacity(opacity).get();
+                attr.fill = color(attr.fill).setOpacity(opacity).get();
                 attr.cursor = 'pointer';
                 // Hide nodes that have children
             } else if (className.indexOf('highcharts-internal-node') !== -1) {
@@ -1801,8 +1803,8 @@ seriesType<Highcharts.TreemapSeries>(
 
             } else if (state) {
             // Brighten and hoist the hover nodes
-                attr.fill = (color as any)(attr.fill)
-                    .brighten(stateOptions.brightness)
+                attr.fill = color(attr.fill)
+                    .brighten(stateOptions.brightness as any)
                     .get();
             }
             return attr;
@@ -2239,7 +2241,7 @@ seriesType<Highcharts.TreemapSeries>(
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.treemap
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, stack, dataSorting
  * @product   highcharts
  * @requires  modules/treemap
  * @apioption series.treemap

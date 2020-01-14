@@ -2,7 +2,7 @@
  *
  *  Timeline Series.
  *
- *  (c) 2010-2019 Highsoft AS
+ *  (c) 2010-2020 Highsoft AS
  *
  *  Author: Daniel Studencki
  *
@@ -70,7 +70,7 @@ seriesType('timeline', 'line',
  *               getExtremesFromAll, lineWidth, negativeColor,
  *               pointInterval, pointIntervalUnit, pointPlacement,
  *               pointStart, softThreshold, stacking, step, threshold,
- *               turboThreshold, zoneAxis, zones
+ *               turboThreshold, zoneAxis, zones, dataSorting
  * @requires     modules/timeline
  * @optionparent plotOptions.timeline
  */
@@ -92,6 +92,8 @@ seriesType('timeline', 'line',
     },
     /**
      * @declare Highcharts.TimelineDataLabelsOptionsObject
+     *
+     * @private
      */
     dataLabels: {
         enabled: true,
@@ -530,7 +532,7 @@ seriesType('timeline', 'line',
  *            getExtremesFromAll, lineWidth, negativeColor,
  *            pointInterval, pointIntervalUnit, pointPlacement, pointStart,
  *            softThreshold, stacking, stack, step, threshold, turboThreshold,
- *            zoneAxis, zones
+ *            zoneAxis, zones, dataSorting
  * @product   highcharts
  * @requires  modules/timeline
  * @apioption series.timeline

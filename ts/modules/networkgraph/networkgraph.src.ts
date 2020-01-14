@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2019 Paweł Fus
+ *  (c) 2010-2020 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -121,7 +121,8 @@ declare global {
             public getDegree(): number;
             public getLinkAttributes(): SVGAttributes;
             public getLinkPath(): SVGPathArray;
-            public getMass(): Dictionary<number>
+            public getMass(): Dictionary<number>;
+            public getPointsCollection(): Array<NetworkgraphPoint>;
             public init(
                 series: NetworkgraphSeries,
                 options: NetworkgraphPointOptions,
@@ -262,7 +263,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
      *               getExtremesFromAll, label, linecap, negativeColor,
      *               pointInterval, pointIntervalUnit, pointPlacement,
      *               pointStart, softThreshold, stack, stacking, step,
-     *               threshold, xAxis, yAxis, zoneAxis
+     *               threshold, xAxis, yAxis, zoneAxis, dataSorting
      * @requires     modules/networkgraph
      * @optionparent plotOptions.networkgraph
      */
@@ -751,6 +752,16 @@ seriesType<Highcharts.NetworkgraphSeries>(
         },
 
         /**
+         * In networkgraph, series.points refers to links,
+         * but series.nodes refers to actual points.
+         */
+        getPointsCollection: function (
+            this: Highcharts.NetworkgraphSeries
+        ): Array<Highcharts.NetworkgraphPoint> {
+            return this.nodes || [];
+        },
+
+        /**
          * Set index for each node. Required for proper `node.update()`.
          * Note that links are indexated out of the box in `generatePoints()`.
          *
@@ -941,7 +952,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
             state?: string
         ): Highcharts.SVGAttributes {
             // By default, only `selected` state is passed on
-            var pointState = state || point.state || 'normal',
+            var pointState = state || point && point.state || 'normal',
                 attribs = Series.prototype.pointAttribs.call(
                     this,
                     point,
@@ -949,7 +960,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 ),
                 stateOptions = (this.options.states as any)[pointState];
 
-            if (!point.isNode) {
+            if (point && !point.isNode) {
                 attribs = point.getLinkAttributes();
                 // For link, get prefixed names:
                 if (stateOptions) {
@@ -1367,7 +1378,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
  *            connectNulls, dragDrop, getExtremesFromAll, label, linecap,
  *            negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking,
- *            step, threshold, xAxis, yAxis, zoneAxis
+ *            step, threshold, xAxis, yAxis, zoneAxis, dataSorting
  * @product   highcharts
  * @requires  modules/networkgraph
  * @apioption series.networkgraph

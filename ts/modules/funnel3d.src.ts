@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2019 Highsoft AS
+ *  (c) 2010-2020 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -135,7 +135,8 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
      *         Funnel3d
      *
      * @extends      plotOptions.column
-     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+     * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
+     *               dataSorting
      * @product      highcharts
      * @since        7.1.0
      * @requires     highcharts-3d

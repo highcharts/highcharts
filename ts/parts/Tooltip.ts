@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -22,7 +22,8 @@ const {
     isString,
     pick,
     splat,
-    syncTimeout
+    syncTimeout,
+    timeUnits
 } = U;
 
 /**
@@ -59,7 +60,7 @@ declare global {
             ): (string|Array<string>);
             public destroy(): void;
             public getAnchor(
-                points: Array<Point>,
+                points: (Point|Array<Point>),
                 mouseEvent?: PointerEventObject
             ): Array<number>;
             public getDateFormat(
@@ -73,7 +74,7 @@ declare global {
                 boxWidth: number,
                 boxHeight: number,
                 point: Point
-            ): Dictionary<number>;
+            ): PositionObject;
             public getXDateFormat(
                 point: Point,
                 options: TooltipOptions,
@@ -256,8 +257,7 @@ declare global {
 
 var doc = H.doc,
     format = H.format,
-    merge = H.merge,
-    timeUnits = H.timeUnits;
+    merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -735,7 +735,7 @@ H.Tooltip.prototype = {
      * @private
      * @function Highcharts.Tooltip#getAnchor
      *
-     * @param {Array<Highcharts.Point>} points
+     * @param {Highcharts.Point|Array<Highcharts.Point>} points
      *
      * @param {Highcharts.PointerEventObject} [mouseEvent]
      *
@@ -743,7 +743,7 @@ H.Tooltip.prototype = {
      */
     getAnchor: function (
         this: Highcharts.Tooltip,
-        points: Array<Highcharts.Point>,
+        points: (Highcharts.Point|Array<Highcharts.Point>),
         mouseEvent?: Highcharts.PointerEventObject
     ): Array<number> {
         var ret,
@@ -813,18 +813,18 @@ H.Tooltip.prototype = {
      *
      * @param {Highcharts.Point} point
      *
-     * @return {Highcharts.Dictionary<number>}
+     * @return {Highcharts.PositionObject}
      */
     getPosition: function (
         this: Highcharts.Tooltip,
         boxWidth: number,
         boxHeight: number,
         point: Highcharts.Point
-    ): Highcharts.Dictionary<number> {
+    ): Highcharts.PositionObject {
 
         var chart = this.chart,
             distance = this.distance,
-            ret = {} as Highcharts.Dictionary<number>,
+            ret = {} as Highcharts.PositionObject,
             // Don't use h if chart isn't inverted (#7242) ???
             h = (chart.inverted && (point as any).h) || 0, // #4117 ???
             swapped: (boolean|undefined),
@@ -894,7 +894,7 @@ H.Tooltip.prototype = {
              * @private
              */
             firstDimension = function (
-                dim: string,
+                dim: ('x'|'y'),
                 outerSize: number,
                 innerSize: number,
                 scaledInnerSize: number, // #11329
@@ -940,7 +940,7 @@ H.Tooltip.prototype = {
              * @private
              */
             secondDimension = function (
-                dim: number,
+                dim: ('x'|'y'),
                 outerSize: number,
                 innerSize: number,
                 scaledInnerSize: number, // #11329
@@ -1359,7 +1359,7 @@ H.Tooltip.prototype = {
                         options.useHTML
                     )
                     .addClass(
-                        isHeader ? 'highcharts-tooltip-header ' : '' +
+                        (isHeader ? 'highcharts-tooltip-header ' : '') +
                         'highcharts-tooltip-box ' +
                         colorClass
                     )
@@ -1477,7 +1477,7 @@ H.Tooltip.prototype = {
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        H.distribute(boxes as any, maxLength, void 0 as any);
+        H.distribute(boxes as any, maxLength);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
             const { anchorX, anchorY, pos, x } = box;
             // Put the label in place

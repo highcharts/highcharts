@@ -33,6 +33,9 @@ declare global {
         interface AxisLabelsFormatterContextObject {
             point?: Point;
         }
+        interface Tick {
+            slotWidth?: number;
+        }
         interface XAxisOptions {
             isInternal?: boolean;
         }
@@ -46,6 +49,7 @@ const {
     isArray,
     isNumber,
     pick,
+    timeUnits,
     wrap
 } = U;
 
@@ -681,7 +685,7 @@ addEvent(
                                 count = parentInfo.count * 10;
                             }
 
-                            unitRange = H.timeUnits[unitName];
+                            unitRange = timeUnits[unitName];
                             this.tickInterval = unitRange * count;
                             return this.getTimeTicks(
                                 {

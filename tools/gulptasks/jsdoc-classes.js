@@ -46,40 +46,25 @@ const SOURCE_GLOBS = [
     'js/parts-more/PackedBubbleSeries.js',
     'js/mixins/ajax.js',
     'js/modules/accessibility/*.js',
+    'js/modules/data.src.js',
     'js/modules/draggable-points.src.js',
     'js/modules/drilldown.src.js',
     'js/modules/exporting.src.js',
     'js/modules/export-data.src.js',
-    'js/modules/data.src.js',
     'js/modules/marker-clusters.src.js',
+    'js/modules/networkgraph/*.js',
     'js/modules/offline-exporting.src.js',
     'js/modules/organization.src.js',
     'js/modules/pattern-fill.src.js',
     'js/modules/sankey.src.js',
+    'js/modules/series-label.src.js',
+    'js/modules/sonification/*.js',
     'js/modules/sunburst.src.js',
     'js/modules/timeline.src.js',
-    'js/modules/networkgraph/*.js',
-    'js/modules/sonification/*.js',
-    'js/annotations/annotations.src.js'
-    /*
-    'js/annotations/eventEmitterMixin.js',
-    'js/annotations/MockPoint.js',
-    'js/annotations/ControlPoint.js',
+    'js/annotations/annotations.src.js',
     'js/annotations/controllable/controllableMixin.js',
-    'js/annotations/controllable/ControllableCircle.js',
-    'js/annotations/controllable/ControllableImage.js',
-    'js/annotations/controllable/ControllableLabel.js',
-    'js/annotations/controllable/ControllablePath.js',
-    'js/annotations/controllable/ControllableRect.js',
-    'js/annotations/types/CrookedLine.js',
-    'js/annotations/types/ElliottWave.js',
-    'js/annotations/types/Tunnel.js',
-    'js/annotations/types/Fibonacci.js',
-    'js/annotations/types/InfinityLine.js',
-    'js/annotations/types/Measure.js',
-    'js/annotations/types/Pitchfork.js',
-    'js/annotations/types/VerticalLine.js'
-    */
+    'js/annotations/ControlPoint.js',
+    'js/annotations/navigationBindings.js'
 ];
 
 const TARGET_DIRECTORY = Path.join('build', 'api', 'class-reference');

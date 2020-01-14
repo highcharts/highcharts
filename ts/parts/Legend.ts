@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -215,6 +215,7 @@ const {
     pick,
     relativeLength,
     setAnimation,
+    stableSort,
     syncTimeout,
     wrap
 } = U;
@@ -226,7 +227,6 @@ var H = Highcharts,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
     merge = H.merge,
-    stableSort = H.stableSort,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

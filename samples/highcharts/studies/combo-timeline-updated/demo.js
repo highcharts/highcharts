@@ -14,7 +14,7 @@ function onChartLoad() {
         path = [],
         angle,
         radius,
-        badgeColor = Highcharts.Color(Highcharts.getOptions().colors[0]).brighten(-0.2).get(),
+        badgeColor = Highcharts.color(Highcharts.getOptions().colors[0]).brighten(-0.2).get(),
         spike,
         empImage,
         big5,

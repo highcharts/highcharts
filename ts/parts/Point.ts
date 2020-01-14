@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -361,15 +361,15 @@ const {
     isNumber,
     isObject,
     syncTimeout,
-    pick
+    pick,
+    removeEvent
 } = U;
 
 var Point: typeof Highcharts.Point,
     H = Highcharts,
     fireEvent = H.fireEvent,
     format = H.format,
-    uniqueKey = H.uniqueKey,
-    removeEvent = H.removeEvent;
+    uniqueKey = H.uniqueKey;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -832,6 +832,10 @@ Highcharts.Point.prototype = {
             }
         }
 
+        if (point.legendItem) { // pies have legend items
+            chart.legend.destroyItem(point);
+        }
+
         // Remove properties after animation
         if (!dataSorting || !dataSorting.enabled) {
             destroyPoint();
@@ -842,10 +846,6 @@ Highcharts.Point.prototype = {
         }
 
         chart.pointCount--;
-
-        if (point.legendItem) { // pies have legend items
-            chart.legend.destroyItem(point);
-        }
     },
 
     /**
