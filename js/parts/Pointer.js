@@ -447,9 +447,10 @@ Highcharts.Pointer.prototype = {
             }
         }
         // Check whether the hoverPoint is inside pane we are hovering over.
-        fireEvent(this, 'afterGetHoverData', hoverPoint);
+        eventArgs = { hoverPoint: hoverPoint };
+        fireEvent(this, 'afterGetHoverData', eventArgs);
         return {
-            hoverPoint: hoverPoint,
+            hoverPoint: eventArgs.hoverPoint,
             hoverSeries: hoverSeries,
             hoverPoints: hoverPoints
         };
@@ -531,7 +532,7 @@ Highcharts.Pointer.prototype = {
              */
             chart.hoverPoint = hoverPoint;
             // Draw tooltip if necessary
-            if (tooltip && (!chart.polar || hoverPoint.isInsidePane)) {
+            if (tooltip) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
             // Update positions (regardless of kdpoint or hoverPoint)
