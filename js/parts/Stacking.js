@@ -202,7 +202,7 @@ H.StackItem.prototype = {
             // Align the label to the box
             label.align(stackItem.alignOptions, null, stackBox);
             // Check if label is inside the plotArea #12294
-            if (chart.isInsidePlot(label.alignAttr.x + boxOffsetX, label.alignAttr.y + boxOffsetY)) {
+            if (chart.isInsidePlot(label.alignAttr.x + boxOffsetX - stackItem.alignOptions.x, label.alignAttr.y + boxOffsetY - stackItem.alignOptions.y)) {
                 label.show();
             }
             else {
