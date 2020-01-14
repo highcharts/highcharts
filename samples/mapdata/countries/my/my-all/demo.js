@@ -17,8 +17,7 @@ var data = [
     ['my-kn', 12],
     ['my-me', 13],
     ['my-ns', 14],
-    ['my-te', 15],
-    ['undefined', 16]
+    ['my-te', 15]
 ];
 
 // Create the chart
@@ -63,6 +62,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/my/my-all'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

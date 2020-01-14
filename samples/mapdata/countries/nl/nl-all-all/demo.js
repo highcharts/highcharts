@@ -409,8 +409,7 @@ var data = [
     ['nl-li-gm0981', 404],
     ['nl-fr-gm0074', 405],
     ['nl-ge-gm0274', 406],
-    ['nl-3558-gm0844', 407],
-    ['undefined', 408]
+    ['nl-3558-gm0844', 407]
 ];
 
 // Create the chart

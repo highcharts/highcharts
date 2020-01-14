@@ -397,6 +397,7 @@ module.exports = function (config) {
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
+        reportSlowerThan: 3000,
         plugins: [
             'karma-*',
             require('./karma-imagecapture-reporter.js')
@@ -522,13 +523,8 @@ module.exports = function (config) {
                     if (argv.reference) {
                         assertion = `
                             let svg = getSVG(chart);
-
-                            if (svg) {
-                                __karma__.info({
-                                    filename: './samples/${path}/reference.svg',
-                                    data: svg
-                                });
-                            }
+                            saveSVGSnapshot(svg, '${path}/reference.svg');
+                            
                             assert.ok(
                                 svg,
                                 '${path}: SVG and reference.svg file should be generated'
@@ -604,7 +600,8 @@ module.exports = function (config) {
             localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
             retryLimit: 1,
-            pollingTimeout: 5000 // to avoid rate limit errors with browserstack.
+            pollingTimeout: 5000, // to avoid rate limit errors with browserstack.
+            'browserstack.timezone': argv.timezone || 'UTC'
         };
         options.customLaunchers = argv.oldie ?
             {
@@ -647,7 +644,6 @@ module.exports = function (config) {
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
             `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}.`
         );
-
     }
 
     config.set(options);

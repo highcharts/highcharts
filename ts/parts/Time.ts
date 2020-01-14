@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -149,6 +149,22 @@ declare global {
  * @type {Highcharts.TimeTicksInfoObject}
  */
 
+/**
+ * A callback to return the time zone offset for a given datetime. It
+ * takes the timestamp in terms of milliseconds since January 1 1970,
+ * and returns the timezone offset in minutes. This provides a hook
+ * for drawing time based charts in specific time zones using their
+ * local DST crossover dates, with the help of external libraries.
+ *
+ * @callback Highcharts.TimezoneOffsetCallbackFunction
+ *
+ * @param {number} timestamp
+ * Timestamp in terms of milliseconds since January 1 1970.
+ *
+ * @return {number}
+ * Timezone offset in minutes.
+ */
+
 var H = Highcharts,
     merge = H.merge,
     win = H.win;
@@ -279,13 +295,14 @@ Highcharts.Time.prototype = {
          * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
          *         Use moment.js to draw Oslo time regardless of browser locale
          *
+         * @type      {Highcharts.TimezoneOffsetCallbackFunction}
          * @since     4.1.0
          * @product   highcharts highstock gantt
          */
         getTimezoneOffset: void 0,
 
         /**
-         * Requires [moment.js](http://momentjs.com/). If the timezone option
+         * Requires [moment.js](https://momentjs.com/). If the timezone option
          * is specified, it creates a default
          * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
          * up the specified timezone in moment.js. If moment.js is not included,
@@ -395,7 +412,6 @@ Highcharts.Time.prototype = {
                 date.setTime(ms); // Temporary adjust to timezone
                 ret = (date as any)['getUTC' + unit]();
                 date.setTime(realMs); // Reset
-
                 return ret;
             };
             this.set = function (
@@ -405,21 +421,14 @@ Highcharts.Time.prototype = {
             ): any {
                 var ms, offset, newOffset;
 
-                // For lower order time units, just set it directly using local
+                // For lower order time units, just set it directly using UTC
                 // time
                 if (
                     unit === 'Milliseconds' ||
                     unit === 'Seconds' ||
-
-                    // If we're dealting with minutes, we only need to
-                    // consider timezone if we're in Indian time zones with
-                    // half-hour offsets (#8768).
-                    (
-                        unit === 'Minutes' &&
-                        date.getTimezoneOffset() % 60 === 0
-                    )
+                    unit === 'Minutes'
                 ) {
-                    (date as any)['set' + unit](value);
+                    (date as any)['setUTC' + unit](value);
 
                 // Higher order time units need to take the time zone into
                 // account

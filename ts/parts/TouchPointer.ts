@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -261,7 +261,7 @@ extend(Pointer.prototype, /** @lends Pointer.prototype */ {
             lastValidTouch = self.lastValidTouch as any,
             hasZoom = self.hasZoom,
             selectionMarker = self.selectionMarker,
-            transform = {},
+            transform: Highcharts.SeriesPlotBoxObject = {} as any,
             fireClickEvent = touchesLength === 1 && (
                 (
                     self.inClass(e.target as any, 'highcharts-tracker') &&

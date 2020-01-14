@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Kacper Madej
+ *  (c) 2010-2020 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -34,7 +34,8 @@ seriesType('bullet', 'column'
  * @extends      plotOptions.column
  * @since        6.0.0
  * @product      highcharts
- * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase
+ * @excluding    allAreas, boostThreshold, colorAxis, compare, compareBase,
+ *               dataSorting
  * @requires     modules/bullet
  * @optionparent plotOptions.bullet
  */
@@ -225,7 +226,7 @@ seriesType('bullet', 'column'
  * @extends   series,plotOptions.bullet
  * @since     6.0.0
  * @product   highcharts
- * @excluding dataParser, dataURL, marker
+ * @excluding dataParser, dataURL, marker, dataSorting
  * @requires  modules/bullet
  * @apioption series.bullet
  */

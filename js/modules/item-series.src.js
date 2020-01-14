@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2019 Torstein Honsi
+ *  (c) 2020 Torstein Honsi
  *
  *  Item series type for Highcharts
  *
@@ -388,7 +388,7 @@ H.seriesType('item',
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.item
- * @excluding dataParser, dataURL, stack, xAxis, yAxis
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
  * @product   highcharts
  * @requires  modules/item-series
  * @apioption series.item

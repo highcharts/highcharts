@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2014-2019 Highsoft AS
+ *  (c) 2014-2020 Highsoft AS
  *
  *  Authors: Jon Arild Nygard / Oystein Moseng
  *
@@ -374,7 +374,7 @@ seriesType<Highcharts.TreemapSeries>(
      *         Treemap
      *
      * @extends      plotOptions.scatter
-     * @excluding    dragDrop, marker, jitter
+     * @excluding    dragDrop, marker, jitter, dataSorting
      * @product      highcharts
      * @requires     modules/treemap
      * @optionparent plotOptions.treemap
@@ -2239,7 +2239,7 @@ seriesType<Highcharts.TreemapSeries>(
  * not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.treemap
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, stack, dataSorting
  * @product   highcharts
  * @requires  modules/treemap
  * @apioption series.treemap

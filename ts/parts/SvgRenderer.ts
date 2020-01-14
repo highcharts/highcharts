@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -86,7 +86,7 @@ declare global {
             zIndex?: number;
         }
         interface SVGDefinitionObject {
-            [key: string]: (number|string|Array<SVGDefinitionObject>|undefined);
+            [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
             children?: Array<SVGDefinitionObject>;
             tagName?: string;
             textContent?: string;
@@ -157,7 +157,7 @@ declare global {
             ): (number|string)
             public attr(
                 hash?: (string|SVGAttributes),
-                val?: string,
+                val?: (number|string|SVGPathArray),
                 complete?: Function,
                 continueAnimation?: boolean
             ): SVGElement;
@@ -322,6 +322,7 @@ declare global {
             ): SVGElement;
             public circle(attribs: SVGAttributes): SVGElement;
             public circle(x?: number, y?: number, r?: number): SVGElement;
+            public clipRect(attribs: SVGAttributes): ClipRectElement;
             public clipRect(
                 x?: number,
                 y?: number,
@@ -687,7 +688,7 @@ declare global {
  * @interface Highcharts.SVGDefinitionObject
  *//**
  * @name Highcharts.SVGDefinitionObject#[key:string]
- * @type {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+ * @type {boolean|number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
  *//**
  * @name Highcharts.SVGDefinitionObject#children
  * @type {Array<Highcharts.SVGDefinitionObject>|undefined}
@@ -1321,7 +1322,7 @@ extend((
      * @param {string|Highcharts.SVGAttributes} [hash]
      *        The native and custom SVG attributes.
      *
-     * @param {string} [val]
+     * @param {number|string|Highcharts.SVGPathArray} [val]
      *        If the type of the first argument is `string`, the second can be a
      *        value, which will serve as a single attribute setter. If the first
      *        argument is a string and the second is undefined, the function
@@ -1346,7 +1347,7 @@ extend((
     attr: function (
         this: Highcharts.SVGElement,
         hash?: (string|Highcharts.SVGAttributes),
-        val?: string,
+        val?: (number|string|Highcharts.SVGPathArray),
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|Highcharts.SVGElement) {
@@ -3718,7 +3719,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 item: Highcharts.SVGDefinitionObject
             ): void {
                 var node = ren.createElement(item.tagName as any),
-                    attr = {} as Highcharts.SVGAttributes;
+                    attr: Highcharts.SVGAttributes = {};
 
                 // Set attributes
                 objectEach(item, function (val: string, key: string): void {

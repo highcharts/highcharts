@@ -27,8 +27,7 @@ var data = [
     ['be-3527', 22],
     ['be-3535', 23],
     ['be-ov', 24],
-    ['be-3534', 25],
-    ['undefined', 26]
+    ['be-3534', 25]
 ];
 
 // Create the chart

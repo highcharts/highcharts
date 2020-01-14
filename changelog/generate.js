@@ -17,6 +17,7 @@
 const marked = require('marked');
 const prLog = require('./pr-log');
 const params = require('yargs').argv;
+const childProcess = require('child_process');
 
 (function () {
     'use strict';
@@ -258,6 +259,10 @@ const params = require('yargs').argv;
         console.log(`Review: ${filename}`);
     }
 
+    function getLatestGitSha() {
+        return childProcess.execSync('git log --pretty=format:\'%h\' -n 1').toString();
+    }
+
     // Get the Git log
     getLog(function (log) {
 
@@ -291,8 +296,9 @@ const params = require('yargs').argv;
                 for (name in products) {
 
                     if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
+                        const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
                         if (params.pr) {
-                            products[name].nr = pack.version;
+                            products[name].nr = version;
                             products[name].date =
                                 d.getFullYear() + '-' +
                                 pad(d.getMonth() + 1, 2) + '-' +
@@ -301,7 +307,7 @@ const params = require('yargs').argv;
 
                         review.push(buildMarkdown(
                             name,
-                            products[name].nr,
+                            version,
                             products[name].date,
                             log,
                             products,

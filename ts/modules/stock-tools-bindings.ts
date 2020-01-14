@@ -2,7 +2,7 @@
  *
  *  Events generator for Stock tools
  *
- *  (c) 2009-2019 Paweł Fus
+ *  (c) 2009-2020 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -19,14 +19,8 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface StockToolsBindingsObject {
-            className?: string;
-            end?: Function;
-            init?: Function;
-            start?: Function;
-            steps?: Array<Function>;
-        }
         interface NavigationBindings {
+            toggledAnnotations?: boolean;
             /** @requires modules/stock-tools */
             getYAxisPositions(
                 yAxes: Array<Axis>,
@@ -45,7 +39,7 @@ declare global {
                 adder?: number
             ): Array<Dictionary<number>>;
             /** @requires modules/stock-tools */
-            resizeYAxes (defaultHeight: number): void;
+            resizeYAxes (defaultHeight?: number): void;
         }
         interface NavigationBindingsAttractionObject {
             x: number;
@@ -60,50 +54,21 @@ declare global {
             enabled: boolean;
         }
         interface NavigationBindingsUtilsObject {
-            addFlagFromForm(type: string): Function;
-            attractToPoint(
-                e: Event,
-                chart: Chart
-            ): NavigationBindingsAttractionObject;
+            addFlagFromForm(this: NavigationBindings, type: string): Function;
+            attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject;
             isNotNavigatorYAxis(axis: Axis): boolean;
-            manageIndicators(data: StockToolsFieldsObject): void;
-            updateHeight(e: Event, annotation: Annotation): void;
-            updateNthPoint(
-                startIndex: number
-            ): NavigationBindingsUtilsObject['updateHeight'];
+            manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
+            updateHeight(this: NavigationBindings, e: PointerEventObject, annotation: Annotation): void;
+            updateNthPoint(startIndex: number): NavigationBindingsUtilsObject['updateHeight'];
         }
         interface NavigationOptions {
-            bindings?: Dictionary<StockToolsBindingsObject>;
+            bindings?: Dictionary<NavigationBindingsOptionsObject>;
+        }
+        interface StockToolsFieldsObject {
+            [key: string]: any;
         }
     }
 }
-
-/**
- * A config object for bindings in Stock Tools module.
- *
- * @interface Highcharts.StockToolsBindingsObject
- *//**
- * ClassName of the element for a binding.
- * @name Highcharts.StockToolsBindingsObject#className
- * @type {string|undefined}
- *//**
- * Last event to be fired after last step event.
- * @name Highcharts.StockToolsBindingsObject#end
- * @type {Function|undefined}
- *//**
- * Initial event, fired on a button click.
- * @name Highcharts.StockToolsBindingsObject#init
- * @type {Function|undefined}
- *//**
- * Event fired on first click on a chart.
- * @name Highcharts.StockToolsBindingsObject#start
- * @type {Function|undefined}
- *//**
- * Last event to be fired after last step event. Array of step events to be
- * called sequentially after each user click.
- * @name Highcharts.StockToolsBindingsObject#steps
- * @type {Array<Function>|undefined}
- */
 
 import U from '../parts/Utilities.js';
 const {
@@ -119,7 +84,7 @@ var fireEvent = H.fireEvent,
     bindingsUtils = H.NavigationBindings.prototype.utils,
     PREFIX = 'highcharts-';
 
-/* eslint-disable no-invalid-this */
+/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * Generates function which will add a flag series using modal in GUI.
@@ -132,13 +97,16 @@ var fireEvent = H.fireEvent,
  * @private
  * @function bindingsUtils.addFlagFromForm
  *
- * @param {string} type
+ * @param {Highcharts.FlagsShapeValue} type
  *        Type of flag series, e.g. "squarepin"
  *
  * @return {Function}
  *         Callback to be used in `start` callback
  */
-bindingsUtils.addFlagFromForm = function (type: string): Function {
+bindingsUtils.addFlagFromForm = function (
+    this: Highcharts.NavigationBindings,
+    type: Highcharts.FlagsShapeValue
+): Function {
     return function (this: Highcharts.NavigationBindings, e: Event): void {
         var navigation = this,
             chart = navigation.chart,
@@ -149,7 +117,7 @@ bindingsUtils.addFlagFromForm = function (type: string): Function {
                 x: point.x,
                 y: point.y
             },
-            seriesOptions = {
+            seriesOptions: Highcharts.FlagsSeriesOptions = {
                 type: 'flags',
                 onSeries: point.series.id,
                 shape: type,
@@ -172,20 +140,18 @@ bindingsUtils.addFlagFromForm = function (type: string): Function {
                                         title: [
                                             options.title,
                                             getFieldType(
-                                                options.title
+                                                options.title as any
                                             )
                                         ],
                                         name: [
                                             options.name,
                                             getFieldType(
-                                                options.name
+                                                options.name as any
                                             )
                                         ]
                                     },
                                     onSubmit: function (
-                                        updated: (
-                                            Highcharts.StockToolsFieldsObject
-                                        )
+                                        updated: Highcharts.StockToolsFieldsObject
                                     ): void {
                                         if (updated.actionType === 'remove') {
                                             point.remove();
@@ -200,7 +166,7 @@ bindingsUtils.addFlagFromForm = function (type: string): Function {
                                     }
                                 }
                             );
-                        }
+                        } as any
                     }
                 }
             };
@@ -218,8 +184,8 @@ bindingsUtils.addFlagFromForm = function (type: string): Function {
                 options: {
                     langKey: 'flags',
                     type: 'flags',
-                    title: ['A', getFieldType('A')],
-                    name: ['Flag A', getFieldType('Flag A')]
+                    title: ['A', getFieldType('A' as any)],
+                    name: ['Flag A', getFieldType('Flag A' as any)]
                 },
                 // Callback on submit:
                 onSubmit: function (
@@ -227,7 +193,7 @@ bindingsUtils.addFlagFromForm = function (type: string): Function {
                 ): void {
                     navigation.fieldsToOptions(
                         data.fields,
-                        seriesOptions.data[0]
+                        (seriesOptions.data as any)[0]
                     );
                     chart.addSeries(seriesOptions);
                 }
@@ -237,6 +203,7 @@ bindingsUtils.addFlagFromForm = function (type: string): Function {
 };
 
 bindingsUtils.manageIndicators = function (
+    this: Highcharts.NavigationBindings,
     data: Highcharts.StockToolsFieldsObject
 ): void {
     var navigation = this,
@@ -278,17 +245,17 @@ bindingsUtils.manageIndicators = function (
             'linearRegressionAngle'
         ],
         yAxis,
-        series;
+        series: Highcharts.Series;
 
     if (data.actionType === 'edit') {
         navigation.fieldsToOptions(data.fields, seriesConfig);
-        series = chart.get(data.seriesId);
+        series = chart.get(data.seriesId) as any;
 
         if (series) {
             series.update(seriesConfig, false);
         }
     } else if (data.actionType === 'remove') {
-        series = chart.get(data.seriesId);
+        series = chart.get(data.seriesId) as any;
         if (series) {
             yAxis = series.yAxis;
 
@@ -329,7 +296,7 @@ bindingsUtils.manageIndicators = function (
             seriesConfig.yAxis = yAxis.options.id;
             navigation.resizeYAxes();
         } else {
-            seriesConfig.yAxis = chart.get(data.linkedTo).options.yAxis;
+            seriesConfig.yAxis = (chart.get(data.linkedTo) as any).options.yAxis;
         }
 
         if (indicatorsWithVolume.indexOf(data.type) >= 0) {
@@ -362,7 +329,7 @@ bindingsUtils.manageIndicators = function (
  * @private
  * @function bindingsUtils.updateHeight
  *
- * @param {global.Event} e
+ * @param {Highcharts.PointerEventObject} e
  *        normalized browser event
  *
  * @param {Highcharts.Annotation} annotation
@@ -371,13 +338,14 @@ bindingsUtils.manageIndicators = function (
  * @return {void}
  */
 bindingsUtils.updateHeight = function (
-    e: Event,
+    this: Highcharts.NavigationBindings,
+    e: Highcharts.PointerEventObject,
     annotation: Highcharts.Annotation
 ): void {
     annotation.update({
         typeOptions: {
             height: this.chart.pointer.getCoordinates(e).yAxis[0].value -
-                annotation.options.typeOptions.points[1].y
+                (annotation.options.typeOptions.points as any)[1].y
         }
     });
 };
@@ -450,7 +418,7 @@ bindingsUtils.updateNthPoint = function (
 ): Highcharts.NavigationBindingsUtilsObject['updateHeight'] {
     return function (
         this: Highcharts.NavigationBindings,
-        e: Event,
+        e: Highcharts.PointerEventObject,
         annotation: Highcharts.Annotation
     ): void {
         var options = annotation.options.typeOptions,
@@ -458,7 +426,7 @@ bindingsUtils.updateNthPoint = function (
             x = coords.xAxis[0].value,
             y = coords.yAxis[0].value;
 
-        options.points.forEach(function (
+        (options.points as any).forEach(function (
             point: Highcharts.Point,
             index: number
         ): void {
@@ -563,7 +531,7 @@ extend(H.NavigationBindings.prototype, {
     ): Array<Highcharts.NavigationBindingsResizerObject> {
         var resizers: Array<Highcharts.NavigationBindingsResizerObject> = [];
 
-        yAxes.forEach(function (yAxis: Highcharts.Axis, index: number): void {
+        yAxes.forEach(function (_yAxis: Highcharts.Axis, index: number): void {
             var nextYAxis = yAxes[index + 1];
 
             // We have next axis, bind them:
@@ -601,13 +569,13 @@ extend(H.NavigationBindings.prototype, {
      *
      * @private
      * @function Highcharts.NavigationBindings#resizeYAxes
-     * @param {number} defaultHeight
+     * @param {number} [defaultHeight]
      * Default height for yAxis
      * @return {void}
      */
     resizeYAxes: function (
         this: Highcharts.NavigationBindings,
-        defaultHeight: number
+        defaultHeight?: number
     ): void {
         defaultHeight = defaultHeight || 20; // in %, but as a number
         var chart = this.chart,
@@ -744,26 +712,26 @@ extend(H.NavigationBindings.prototype, {
 });
 
 /**
- * @type         {Highcharts.Dictionary<Highcharts.StockToolsBindingsObject>|*}
+ * @type         {Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject>}
  * @since        7.0.0
  * @optionparent navigation.bindings
  */
-var stockToolsBindings = {
+var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptionsObject> = {
     // Line type annotations:
     /**
      * A segment annotation bindings. Includes `start` and one event in `steps`
      * array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-segment", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     segment: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-segment',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -781,12 +749,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.segment.annotationsOptions
+                    (navigation.bindings as any).segment.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -795,16 +763,16 @@ var stockToolsBindings = {
      * A segment with an arrow annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-arrow-segment", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     arrowSegment: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-arrow-segment',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -825,12 +793,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.arrowSegment.annotationsOptions
+                    (navigation.bindings as any).arrowSegment.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -839,16 +807,16 @@ var stockToolsBindings = {
      * A ray annotation bindings. Includes `start` and one event in `steps`
      * array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-ray", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     ray: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-ray',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -867,12 +835,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.ray.annotationsOptions
+                    (navigation.bindings as any).ray.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -881,16 +849,16 @@ var stockToolsBindings = {
      * A ray with an arrow annotation bindings. Includes `start` and one event
      * in `steps` array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-arrow-ray", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     arrowRay: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-arrow-ray',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -912,12 +880,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.arrowRay.annotationsOptions
+                    (navigation.bindings as any).arrowRay.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -925,16 +893,16 @@ var stockToolsBindings = {
     /**
      * A line annotation. Includes `start` and one event in `steps` array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-infinity-line", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     infinityLine: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-infinity-line',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -953,12 +921,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.infinityLine.annotationsOptions
+                    (navigation.bindings as any).infinityLine.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -967,16 +935,16 @@ var stockToolsBindings = {
      * A line with arrow annotation. Includes `start` and one event in `steps`
      * array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-arrow-infinity-line", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     arrowInfinityLine: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-arrow-infinity-line',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -998,12 +966,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.arrowInfinityLine.annotationsOptions
+                    (navigation.bindings as any).arrowInfinityLine.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1)
         ]
@@ -1011,16 +979,16 @@ var stockToolsBindings = {
     /**
      * A horizontal line annotation. Includes `start` event.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-horizontal-line", "start": function() {}, "annotationsOptions": {}}
      */
     horizontalLine: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-horizontal-line',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): void {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1037,7 +1005,7 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.horizontalLine.annotationsOptions
+                    (navigation.bindings as any).horizontalLine.annotationsOptions
                 );
 
             this.chart.addAnnotation(options);
@@ -1046,16 +1014,16 @@ var stockToolsBindings = {
     /**
      * A vertical line annotation. Includes `start` event.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-vertical-line", "start": function() {}, "annotationsOptions": {}}
      */
     verticalLine: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-vertical-line',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): void {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1072,7 +1040,7 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.verticalLine.annotationsOptions
+                    (navigation.bindings as any).verticalLine.annotationsOptions
                 );
 
             this.chart.addAnnotation(options);
@@ -1082,17 +1050,17 @@ var stockToolsBindings = {
      * Crooked line (three points) annotation bindings. Includes `start` and two
      * events in `steps` (for second and third points in crooked line) array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": {}}
      */
     // Crooked Line type annotations:
     crooked3: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-crooked3',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1113,12 +1081,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.crooked3.annotationsOptions
+                    (navigation.bindings as any).crooked3.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2)
@@ -1128,16 +1096,16 @@ var stockToolsBindings = {
      * Crooked line (five points) annotation bindings. Includes `start` and four
      * events in `steps` (for all consequent points in crooked line) array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-crooked3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}], "annotationsOptions": {}}
      */
     crooked5: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-crooked5',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1164,12 +1132,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.crooked5.annotationsOptions
+                    (navigation.bindings as any).crooked5.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2),
@@ -1181,16 +1149,16 @@ var stockToolsBindings = {
      * Elliott wave (three points) annotation bindings. Includes `start` and two
      * events in `steps` (for second and third points) array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-elliott3", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": {}}
      */
     elliott3: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-elliott3',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1219,12 +1187,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.elliott3.annotationsOptions
+                    (navigation.bindings as any).elliott3.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2),
@@ -1235,16 +1203,16 @@ var stockToolsBindings = {
      * Elliott wave (five points) annotation bindings. Includes `start` and four
      * event in `steps` (for all consequent points in Elliott wave) array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-elliott3", "start": function() {}, "steps": [function() {}, function() {}, function() {}, function() {}], "annotationsOptions": {}}
      */
     elliott5: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-elliott5',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1279,12 +1247,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.elliott5.annotationsOptions
+                    (navigation.bindings as any).elliott5.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2),
@@ -1297,16 +1265,16 @@ var stockToolsBindings = {
      * A measure (x-dimension) annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-measure-x", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     measureX: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-measure-x',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1344,12 +1312,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.measureX.annotationsOptions
+                    (navigation.bindings as any).measureX.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateRectSize
         ]
@@ -1358,16 +1326,16 @@ var stockToolsBindings = {
      * A measure (y-dimension) annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-measure-y", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     measureY: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-measure-y',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1405,12 +1373,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.measureY.annotationsOptions
+                    (navigation.bindings as any).measureY.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateRectSize
         ]
@@ -1419,16 +1387,16 @@ var stockToolsBindings = {
      * A measure (xy-dimension) annotation bindings. Includes `start` and one
      * event in `steps` array.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-measure-xy", "start": function() {}, "steps": [function() {}], "annotationsOptions": {}}
      */
     measureXY: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-measure-xy',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1464,12 +1432,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.measureXY.annotationsOptions
+                    (navigation.bindings as any).measureXY.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateRectSize
         ]
@@ -1479,16 +1447,16 @@ var stockToolsBindings = {
      * A fibonacci annotation bindings. Includes `start` and two events in
      * `steps` array (updates second point, then height).
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-fibonacci", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": {}}
      */
     fibonacci: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-fibonacci',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1511,12 +1479,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.fibonacci.annotationsOptions
+                    (navigation.bindings as any).fibonacci.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateHeight
@@ -1526,16 +1494,16 @@ var stockToolsBindings = {
      * A parallel channel (tunnel) annotation bindings. Includes `start` and
      * two events in `steps` array (updates second point, then height).
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-parallel-channel", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": {}}
      */
     parallelChannel: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-parallel-channel',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1553,12 +1521,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.parallelChannel.annotationsOptions
+                    (navigation.bindings as any).parallelChannel.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateHeight
@@ -1568,16 +1536,16 @@ var stockToolsBindings = {
      * An Andrew's pitchfork annotation bindings. Includes `start` and two
      * events in `steps` array (sets second and third control points).
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-pitchfork", "start": function() {}, "steps": [function() {}, function() {}], "annotationsOptions": {}}
      */
     pitchfork: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-pitchfork',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): Highcharts.Annotation {
             var coords = this.chart.pointer.getCoordinates(e),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1609,12 +1577,12 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.pitchfork.annotationsOptions
+                    (navigation.bindings as any).pitchfork.annotationsOptions
                 );
 
             return this.chart.addAnnotation(options);
         },
-        /** @ignore*/
+        /** @ignore-option */
         steps: [
             bindingsUtils.updateNthPoint(1),
             bindingsUtils.updateNthPoint(2)
@@ -1626,20 +1594,20 @@ var stockToolsBindings = {
      * finds the closest point and marks it with a numeric annotation -
      * incrementing counter on each add.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-vertical-counter", "start": function() {}, "annotationsOptions": {}}
      */
     verticalCounter: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-vertical-counter',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
-                verticalCounter = !defined(this.verticalCounter) ? 0 :
-                    this.verticalCounter,
+                verticalCounter = !defined((this as any).verticalCounter) ? 0 :
+                    (this as any).verticalCounter,
                 options = merge(
                     {
                         langKey: 'verticalCounter',
@@ -1668,7 +1636,7 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.verticalCounter.annotationsOptions
+                    (navigation.bindings as any).verticalCounter.annotationsOptions
                 ),
                 annotation;
 
@@ -1676,7 +1644,7 @@ var stockToolsBindings = {
 
             verticalCounter++;
 
-            annotation.options.events.click.call(annotation, {});
+            (annotation.options.events.click as any).call(annotation, {});
         }
     },
     /**
@@ -1684,16 +1652,16 @@ var stockToolsBindings = {
      * finds the closest point and marks it with an arrow and a label with
      * value.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-vertical-label", "start": function() {}, "annotationsOptions": {}}
      */
     verticalLabel: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-vertical-label',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1723,13 +1691,13 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.verticalLabel.annotationsOptions
+                    (navigation.bindings as any).verticalLabel.annotationsOptions
                 ),
                 annotation;
 
             annotation = this.chart.addAnnotation(options);
 
-            annotation.options.events.click.call(annotation, {});
+            (annotation.options.events.click as any).call(annotation, {});
         }
     },
     /**
@@ -1737,16 +1705,16 @@ var stockToolsBindings = {
      * finds the closest point and marks it with an arrow. Green arrow when
      * pointing from above, red when pointing from below the point.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-vertical-arrow", "start": function() {}, "annotationsOptions": {}}
      */
     verticalArrow: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-vertical-arrow',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
-        start: function (this: Highcharts.NavigationBindings, e: Event): void {
+        /** @ignore-option */
+        start: function (this: Highcharts.NavigationBindings, e: Highcharts.PointerEventObject): void {
             var closestPoint = bindingsUtils.attractToPoint(e, this.chart),
                 navigation = this.chart.options.navigation,
                 options = merge(
@@ -1775,13 +1743,13 @@ var stockToolsBindings = {
                         }
                     },
                     navigation.annotationsOptions,
-                    navigation.bindings.verticalArrow.annotationsOptions
+                    (navigation.bindings as any).verticalArrow.annotationsOptions
                 ),
                 annotation;
 
             annotation = this.chart.addAnnotation(options);
 
-            annotation.options.events.click.call(annotation, {});
+            (annotation.options.events.click as any).call(annotation, {});
         }
     },
     // Flag types:
@@ -1789,78 +1757,74 @@ var stockToolsBindings = {
      * A flag series bindings. Includes `start` event. On click, finds the
      * closest point and marks it with a flag with `'circlepin'` shape.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-flag-circlepin", "start": function() {}}
      */
     flagCirclepin: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-flag-circlepin',
-        /** @ignore*/
-        start: bindingsUtils
-            .addFlagFromForm('circlepin')
+        /** @ignore-option */
+        start: (bindingsUtils.addFlagFromForm as any)('circlepin')
     },
     /**
      * A flag series bindings. Includes `start` event. On click, finds the
      * closest point and marks it with a flag with `'diamondpin'` shape.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-flag-diamondpin", "start": function() {}}
      */
     flagDiamondpin: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-flag-diamondpin',
-        /** @ignore*/
-        start: bindingsUtils
-            .addFlagFromForm('flag')
+        /** @ignore-option */
+        start: (bindingsUtils.addFlagFromForm as any)('flag')
     },
     /**
      * A flag series bindings. Includes `start` event.
      * On click, finds the closest point and marks it with a flag with
      * `'squarepin'` shape.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-flag-squarepin", "start": function() {}}
      */
     flagSquarepin: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-flag-squarepin',
-        /** @ignore*/
-        start: bindingsUtils
-            .addFlagFromForm('squarepin')
+        /** @ignore-option */
+        start: (bindingsUtils.addFlagFromForm as any)('squarepin')
     },
     /**
      * A flag series bindings. Includes `start` event.
      * On click, finds the closest point and marks it with a flag without pin
      * shape.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-flag-simplepin", "start": function() {}}
      */
     flagSimplepin: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-flag-simplepin',
-        /** @ignore*/
-        start: bindingsUtils
-            .addFlagFromForm('nopin')
+        /** @ignore-option */
+        start: (bindingsUtils.addFlagFromForm as any)('nopin')
     },
     // Other tools:
     /**
      * Enables zooming in xAxis on a chart. Includes `start` event which
      * changes [chart.zoomType](#chart.zoomType).
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-zoom-x", "init": function() {}}
      */
     zoomX: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-zoom-x',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
@@ -1882,15 +1846,15 @@ var stockToolsBindings = {
      * Enables zooming in yAxis on a chart. Includes `start` event which
      * changes [chart.zoomType](#chart.zoomType).
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-zoom-y", "init": function() {}}
      */
     zoomY: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-zoom-y',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
@@ -1911,15 +1875,15 @@ var stockToolsBindings = {
      * Enables zooming in xAxis and yAxis on a chart. Includes `start` event
      * which changes [chart.zoomType](#chart.zoomType).
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-zoom-xy", "init": function() {}}
      */
     zoomXY: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-zoom-xy',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
@@ -1940,15 +1904,15 @@ var stockToolsBindings = {
     /**
      * Changes main series to `'line'` type.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-series-type-line", "init": function() {}}
      */
     seriesTypeLine: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-series-type-line',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
@@ -1956,7 +1920,7 @@ var stockToolsBindings = {
             this.chart.series[0].update({
                 type: 'line',
                 useOhlcData: true
-            });
+            } as any);
 
             fireEvent(
                 this,
@@ -1968,15 +1932,15 @@ var stockToolsBindings = {
     /**
      * Changes main series to `'ohlc'` type.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-series-type-ohlc", "init": function() {}}
      */
     seriesTypeOhlc: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-series-type-ohlc',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
@@ -1995,15 +1959,15 @@ var stockToolsBindings = {
     /**
      * Changes main series to `'candlestick'` type.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-series-type-candlestick", "init": function() {}}
      */
     seriesTypeCandlestick: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-series-type-candlestick',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
@@ -2022,22 +1986,22 @@ var stockToolsBindings = {
     /**
      * Displays chart in fullscreen.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-full-screen", "init": function() {}}
      */
     fullScreen: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-full-screen',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
         ): void {
             var chart = this.chart;
 
-            chart.fullScreen = new H.FullScreen(chart.container);
+            (chart as any).fullScreen = new H.FullScreen(chart.container);
 
             fireEvent(
                 this,
@@ -2051,15 +2015,15 @@ var stockToolsBindings = {
      * - last price in the dataset
      * - last price in the selected range
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-current-price-indicator", "init": function() {}}
      */
     currentPriceIndicator: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-current-price-indicator',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
@@ -2067,10 +2031,12 @@ var stockToolsBindings = {
             var chart = this.chart,
                 series = chart.series[0],
                 options = series.options,
-                lastVisiblePrice = options.lastVisiblePrice &&
-                                options.lastVisiblePrice.enabled,
+                lastVisiblePrice = (
+                    options.lastVisiblePrice &&
+                    options.lastVisiblePrice.enabled
+                ),
                 lastPrice = options.lastPrice && options.lastPrice.enabled,
-                gui = chart.stockTools,
+                gui: Highcharts.Toolbar = chart.stockTools as any,
                 iconsURL = gui.getIconsURL();
 
             if (gui && gui.guiEnabled) {
@@ -2115,15 +2081,15 @@ var stockToolsBindings = {
      * [series.id](https://api.highcharts.com/highstock/series.line.id) to be
      * defined.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-indicators", "init": function() {}}
      */
     indicators: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-indicators',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (this: Highcharts.NavigationBindings): void {
             var navigation = this;
 
@@ -2147,21 +2113,21 @@ var stockToolsBindings = {
     /**
      * Hides/shows all annotations on a chart.
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-toggle-annotations", "init": function() {}}
      */
     toggleAnnotations: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-toggle-annotations',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
         ): void {
             var chart = this.chart,
-                gui = chart.stockTools,
+                gui: Highcharts.Toolbar = chart.stockTools as any,
                 iconsURL = gui.getIconsURL();
 
             this.toggledAnnotations = !this.toggledAnnotations;
@@ -2199,22 +2165,22 @@ var stockToolsBindings = {
      * - indicators (with yAxes)
      * - flags
      *
-     * @type    {Highcharts.StockToolsBindingsObject}
+     * @type    {Highcharts.NavigationBindingsOptionsObject}
      * @product highstock
      * @default {"className": "highcharts-save-chart", "init": function() {}}
      */
     saveChart: {
-        /** @ignore*/
+        /** @ignore-option */
         className: 'highcharts-save-chart',
         // eslint-disable-next-line valid-jsdoc
-        /** @ignore*/
+        /** @ignore-option */
         init: function (
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
         ): void {
             var navigation = this,
                 chart = navigation.chart,
-                annotations: Array<Highcharts.AnnotationOptions> = [],
+                annotations: Array<Highcharts.AnnotationsOptions> = [],
                 indicators: Array<Highcharts.SeriesOptions> = [],
                 flags: Array<Highcharts.SeriesOptions> = [],
                 yAxes: Array<Highcharts.YAxisOptions> = [];
@@ -2227,7 +2193,7 @@ var stockToolsBindings = {
             });
 
             chart.series.forEach(function (series: Highcharts.Series): void {
-                if (series instanceof H.seriesTypes.sma) {
+                if (series.is('sma')) {
                     indicators.push(series.userOptions);
                 } else if (series.type === 'flags') {
                     flags.push(series.userOptions);

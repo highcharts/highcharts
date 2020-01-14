@@ -2,7 +2,7 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  License: www.highcharts.com/license
@@ -515,7 +515,8 @@ function updateFieldBoundaries(field, rectangle) {
  *               negativeColor, pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth, pointStart,
  *               pointWidth, shadow, showCheckbox, showInNavigator,
- *               softThreshold, stacking, threshold, zoneAxis, zones
+ *               softThreshold, stacking, threshold, zoneAxis, zones,
+ *               dataSorting
  * @product      highcharts
  * @since        6.0.0
  * @requires     modules/wordcloud
@@ -854,6 +855,7 @@ var wordCloudPoint = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.wordcloud
+ * @exclude   dataSorting
  * @product   highcharts
  * @requires  modules/wordcloud
  * @apioption series.wordcloud

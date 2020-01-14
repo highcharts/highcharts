@@ -2,7 +2,7 @@
  *
  *  Sankey diagram module
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -139,7 +139,7 @@ seriesType('sankey', 'column',
  *               pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth,
  *               shadow, softThreshold, stacking, threshold, zoneAxis,
- *               zones, minPointLength
+ *               zones, minPointLength, dataSorting
  * @requires     modules/sankey
  * @optionparent plotOptions.sankey
  */
@@ -785,7 +785,7 @@ seriesType('sankey', 'column',
  *            groupZPadding, label, maxPointWidth, negativeColor, pointInterval,
  *            pointIntervalUnit, pointPadding, pointPlacement, pointRange,
  *            pointStart, pointWidth, shadow, softThreshold, stacking,
- *            threshold, zoneAxis, zones
+ *            threshold, zoneAxis, zones, dataSorting
  * @product   highcharts
  * @requires  modules/sankey
  * @apioption series.sankey

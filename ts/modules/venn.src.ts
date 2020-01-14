@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -1085,7 +1085,8 @@ var updateFieldBoundaries = function updateFieldBoundaries(
  *               findNearestPointBy, getExtremesFromAll, jitter, label, linecap,
  *               lineWidth, linkedTo, marker, negativeColor, pointInterval,
  *               pointIntervalUnit, pointPlacement, pointStart, softThreshold,
- *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones
+ *               stacking, steps, threshold, xAxis, yAxis, zoneAxis, zones,
+ *               dataSorting
  * @product      highcharts
  * @requires     modules/venn
  * @optionparent plotOptions.venn
@@ -1408,7 +1409,7 @@ var vennPoint = {
  *            findNearestPointBy, getExtremesFromAll, label, linecap, lineWidth,
  *            linkedTo, marker, negativeColor, pointInterval, pointIntervalUnit,
  *            pointPlacement, pointStart, softThreshold, stack, stacking, steps,
- *            threshold, xAxis, yAxis, zoneAxis, zones
+ *            threshold, xAxis, yAxis, zoneAxis, zones, dataSorting
  * @product   highcharts
  * @requires  modules/venn
  * @apioption series.venn
@@ -1500,7 +1501,7 @@ addEvent(seriesTypes.venn, 'afterSetOptions', function (
         states: Highcharts.SeriesStatesOptionsObject<Highcharts.VennSeries> =
             options.states as any;
 
-    if (this instanceof seriesTypes.venn) {
+    if (this.is('venn')) {
         // Explicitly disable all halo options.
         Object.keys(states).forEach(function (state: string): void {
             (states as any)[state].halo = false;

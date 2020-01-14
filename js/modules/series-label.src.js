@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Torstein Honsi
+ *  (c) 2009-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -47,6 +47,8 @@ var labelDistance = 3, addEvent = H.addEvent, Series = H.Series, SVGRenderer = H
 H.setOptions({
     /**
      * @optionparent plotOptions
+     *
+     * @private
      */
     plotOptions: {
         series: {

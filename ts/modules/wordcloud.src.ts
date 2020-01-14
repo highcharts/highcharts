@@ -2,7 +2,7 @@
  *
  *  Experimental Highcharts module which enables visualization of a word cloud.
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  License: www.highcharts.com/license
@@ -49,7 +49,7 @@ declare global {
                 minFontSize?: number
             ): number;
             public drawPoints(): void;
-            public getPlotBox(): Dictionary<number>;
+            public getPlotBox(): SeriesPlotBoxObject;
             public hasData(): boolean;
             public pointAttribs(
                 point: WordcloudPoint,
@@ -788,7 +788,8 @@ function updateFieldBoundaries(
  *               negativeColor, pointInterval, pointIntervalUnit, pointPadding,
  *               pointPlacement, pointRange, pointStart, pointWidth, pointStart,
  *               pointWidth, shadow, showCheckbox, showInNavigator,
- *               softThreshold, stacking, threshold, zoneAxis, zones
+ *               softThreshold, stacking, threshold, zoneAxis, zones,
+ *               dataSorting
  * @product      highcharts
  * @since        6.0.0
  * @requires     modules/wordcloud
@@ -1188,7 +1189,7 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
     },
     getPlotBox: function (
         this: Highcharts.WordcloudSeries
-    ): Highcharts.Dictionary<number> {
+    ): Highcharts.SeriesPlotBoxObject {
         var series = this,
             chart = series.chart,
             inverted = chart.inverted,
@@ -1228,6 +1229,7 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.wordcloud
+ * @exclude   dataSorting
  * @product   highcharts
  * @requires  modules/wordcloud
  * @apioption series.wordcloud

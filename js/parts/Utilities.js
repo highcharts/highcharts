@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -393,23 +393,34 @@ H.error = function (code, stop, chart, params) {
  * @private
  * @class
  * @name Highcharts.Fx
- *
- * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
- *        The element to animate.
- *
- * @param {Highcharts.AnimationOptionsObject} options
- *        Animation options.
- *
- * @param {string} prop
- *        The single attribute or CSS property to animate.
  */
-H.Fx = function (elem, options, prop) {
-    this.options = options;
-    this.elem = elem;
-    this.prop = prop;
-    /* eslint-enable no-invalid-this, valid-jsdoc */
-};
-H.Fx.prototype = {
+var Fx = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+    /**
+     *
+     * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
+     *        The element to animate.
+     *
+     * @param {Highcharts.AnimationOptionsObject} options
+     *        Animation options.
+     *
+     * @param {string} prop
+     *        The single attribute or CSS property to animate.
+     */
+    function Fx(elem, options, prop) {
+        this.options = options;
+        this.elem = elem;
+        this.prop = prop;
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Set the current step of a path definition on SVGElement.
      *
@@ -417,7 +428,7 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    dSetter: function () {
+    Fx.prototype.dSetter = function () {
         var start = this.paths[0], end = this.paths[1], ret = [], now = this.now, i = start.length, startVal;
         // Land on the final path without adjustment points appended in the ends
         if (now === 1) {
@@ -444,7 +455,7 @@ H.Fx.prototype = {
             ret = end;
         }
         this.elem.attr('d', ret, null, true);
-    },
+    };
     /**
      * Update the element with the current animation step.
      *
@@ -452,7 +463,7 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    update: function () {
+    Fx.prototype.update = function () {
         var elem = this.elem, prop = this.prop, // if destroyed, it is null
         now = this.now, step = this.options.step;
         // Animation setter defined from outside
@@ -472,7 +483,7 @@ H.Fx.prototype = {
         if (step) {
             step.call(elem, now, this);
         }
-    },
+    };
     /**
      * Run an animation.
      *
@@ -489,7 +500,7 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    run: function (from, to, unit) {
+    Fx.prototype.run = function (from, to, unit) {
         var self = this, options = self.options, timer = function (gotoEnd) {
             return timer.stopped ? false : self.step(gotoEnd);
         }, requestAnimationFrame = win.requestAnimationFrame ||
@@ -524,7 +535,7 @@ H.Fx.prototype = {
                 requestAnimationFrame(step);
             }
         }
-    },
+    };
     /**
      * Run a single step in the animation.
      *
@@ -536,7 +547,7 @@ H.Fx.prototype = {
      * @return {boolean}
      *         Returns `true` if animation continues.
      */
-    step: function (gotoEnd) {
+    Fx.prototype.step = function (gotoEnd) {
         var t = +new Date(), ret, done, options = this.options, elem = this.elem, complete = options.complete, duration = options.duration, curAnim = options.curAnim;
         if (elem.attr && !elem.element) { // #2616, element is destroyed
             ret = false;
@@ -564,7 +575,7 @@ H.Fx.prototype = {
             ret = true;
         }
         return ret;
-    },
+    };
     /**
      * Prepare start and end values so that the path can be animated one to one.
      *
@@ -583,7 +594,7 @@ H.Fx.prototype = {
      *         An array containing start and end paths in array form so that
      *         they can be animated in parallel.
      */
-    initPath: function (elem, fromD, toD) {
+    Fx.prototype.initPath = function (elem, fromD, toD) {
         fromD = fromD || '';
         var shift, startX = elem.startX, endX = elem.endX, bezier = fromD.indexOf('C') > -1, numParams = bezier ? 7 : 3, fullLength, slice, i, start = fromD.split(' '), end = toD.slice(), // copy
         isArea = elem.isArea, positionFactor = isArea ? 2 : 1, reverse;
@@ -717,7 +728,7 @@ H.Fx.prototype = {
             }
         }
         return [start, end];
-    },
+    };
     /**
      * Handle animation of the color attributes directly.
      *
@@ -725,9 +736,9 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    fillSetter: function () {
+    Fx.prototype.fillSetter = function () {
         H.Fx.prototype.strokeSetter.apply(this, arguments);
-    },
+    };
     /**
      * Handle animation of the color attributes directly.
      *
@@ -735,10 +746,12 @@ H.Fx.prototype = {
      *
      * @return {void}
      */
-    strokeSetter: function () {
+    Fx.prototype.strokeSetter = function () {
         this.elem.attr(this.prop, H.color(this.start).tweenTo(H.color(this.end), this.pos), null, true);
-    }
-}; // End of Fx prototype
+    };
+    return Fx;
+}());
+H.Fx = Fx;
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
@@ -2121,7 +2134,7 @@ objectEach({
  * @return {Function}
  *         A callback function to remove the added event.
  */
-H.addEvent = function (el, type, fn, options) {
+var addEvent = H.addEvent = function (el, type, fn, options) {
     if (options === void 0) { options = {}; }
     /* eslint-enable valid-jsdoc */
     var events, addEventListener = (el.addEventListener || H.addEventListenerPolyfill);
@@ -2371,7 +2384,7 @@ H.animate = function (el, params, opt) {
     objectEach(params, function (val, prop) {
         // Stop current running animation of this property
         H.stop(el, prop);
-        fx = new H.Fx(el, opt, prop);
+        fx = new Fx(el, opt, prop);
         end = null;
         if (prop === 'd') {
             fx.paths = fx.initPath(el, el.d, params.d);
@@ -2516,6 +2529,8 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utils = {
+    Fx: Fx,
+    addEvent: addEvent,
     animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,

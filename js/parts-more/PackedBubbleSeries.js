@@ -210,7 +210,7 @@ seriesType('packedbubble', 'bubble',
  * @extends      plotOptions.bubble
  * @excluding    connectEnds, connectNulls, dragDrop, jitter, keys,
  *               pointPlacement, sizeByAbsoluteValue, step, xAxis, yAxis,
- *               zMax, zMin
+ *               zMax, zMin, dataSorting
  * @product      highcharts
  * @since        7.0.0
  * @requires     highcharts-more
@@ -292,7 +292,7 @@ seriesType('packedbubble', 'bubble',
          *
          * @type      {string}
          * @since     7.0.0
-         * @apioption plotOptions.packedBubble.dataLabels.format
+         * @apioption plotOptions.packedbubble.dataLabels.format
          */
         // eslint-disable-next-line valid-jsdoc
         /**
@@ -309,7 +309,7 @@ seriesType('packedbubble', 'bubble',
         /**
          * @type      {string}
          * @since     7.1.0
-         * @apioption plotOptions.packedBubble.dataLabels.parentNodeFormat
+         * @apioption plotOptions.packedbubble.dataLabels.parentNodeFormat
          */
         // eslint-disable-next-line valid-jsdoc
         /**
@@ -340,7 +340,7 @@ seriesType('packedbubble', 'bubble',
              *
              * @type      {Highcharts.SVGAttributes}
              * @since     7.1.0
-             * @apioption plotOptions.packedBubble.dataLabels.attributes
+             * @apioption plotOptions.packedbubble.dataLabels.attributes
              */
             /**
              * Enable or disable `textPath` option for link's or marker's
@@ -357,7 +357,7 @@ seriesType('packedbubble', 'bubble',
          * **Note:** Only SVG-based renderer supports this option.
          *
          * @extends   plotOptions.series.dataLabels.textPath
-         * @apioption plotOptions.packedBubble.dataLabels.textPath
+         * @apioption plotOptions.packedbubble.dataLabels.textPath
          */
         padding: 0
     },
@@ -1213,7 +1213,7 @@ addEvent(Chart, 'beforeRedraw', function () {
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding dataParser,dataURL,stack
+ * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.packedbubble

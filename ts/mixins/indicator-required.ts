@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2019 Daniel Studencki
+ *  (c) 2010-2020 Daniel Studencki
  *
  *  License: www.highcharts.com/license
  *

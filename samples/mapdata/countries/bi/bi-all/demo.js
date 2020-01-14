@@ -2,23 +2,24 @@
 // Data is joined to map using value of 'hc-key' property by default.
 // See API docs for 'joinBy' for more info on linking data and map.
 var data = [
-    ['bi-br', 0],
-    ['bi-bb', 1],
-    ['bi-ci', 2],
-    ['bi-gi', 3],
-    ['bi-ky', 4],
-    ['bi-ma', 5],
-    ['bi-ng', 6],
-    ['bi-ki', 7],
-    ['bi-my', 8],
-    ['bi-bm', 9],
-    ['bi-mv', 10],
-    ['bi-bu', 11],
-    ['bi-mw', 12],
-    ['bi-ca', 13],
-    ['bi-kr', 14],
-    ['bi-rt', 15],
-    ['bi-ry', 16]
+    ['bubanza', 0],
+    ['bujumbura mairie', 1],
+    ['bujumbura rural', 2],
+    ['bururi', 3],
+    ['cankuzo', 4],
+    ['cibitoke', 5],
+    ['gitega', 6],
+    ['karuzi', 7],
+    ['kayanza', 8],
+    ['kirundo', 9],
+    ['makamba', 10],
+    ['muramvya', 11],
+    ['muyinga', 12],
+    ['mwaro', 13],
+    ['ngozi', 14],
+    ['rumonge', 15],
+    ['rutana', 16],
+    ['ruyigi', 17]
 ];
 
 // Create the chart

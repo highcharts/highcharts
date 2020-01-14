@@ -294,8 +294,7 @@ var data = [
     ['ca-sk-4704', 289],
     ['ca-mb-4622', 290],
     ['ca-nt-6103', 291],
-    ['ca-on-3553', 292],
-    ['undefined', 293]
+    ['ca-on-3553', 292]
 ];
 
 // Create the chart

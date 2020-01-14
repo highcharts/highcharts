@@ -26,6 +26,7 @@ QUnit.test('Pie color and data labels', function (assert) {
             pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
         },
         series: [{
+            showInLegend: true,
             name: 'Brands',
             colorByPoint: true,
             id: 'brands',
@@ -100,6 +101,7 @@ QUnit.test('Pie color and data labels', function (assert) {
                 duration: 1
             },
             series: [{
+                showInLegend: true,
                 name: 'Microsoft Internet Explorer',
                 id: 'Microsoft Internet Explorer',
                 data: [
@@ -194,6 +196,12 @@ QUnit.test('Pie color and data labels', function (assert) {
                 chart.series[0].name,
                 'Microsoft Internet Explorer',
                 'Second level name'
+            );
+
+            assert.strictEqual(
+                chart.legend.contentGroup.element.children[0].children.length,
+                6,
+                'The number of the legend items should be adapted to the current drilldown level.'
             );
 
             assert.strictEqual(

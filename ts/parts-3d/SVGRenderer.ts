@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *
@@ -798,7 +798,7 @@ H.SVGRenderer.prototype.arc3d = function (
 
     var wrapper = this.g(),
         renderer = wrapper.renderer,
-        customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end'];
+        customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
 
     /**
      * Get custom attributes. Don't mutate the original object and return an
@@ -971,7 +971,6 @@ H.SVGRenderer.prototype.arc3d = function (
         // in the attribs collection in the first place.
         delete params.center;
         delete params.z;
-        delete params.depth;
         delete params.alpha;
         delete params.beta;
 
@@ -1006,7 +1005,8 @@ H.SVGRenderer.prototype.arc3d = function (
                             r: interpolate('r'),
                             innerR: interpolate('innerR'),
                             start: interpolate('start'),
-                            end: interpolate('end')
+                            end: interpolate('end'),
+                            depth: interpolate('depth')
                         }));
                     }
                 };
