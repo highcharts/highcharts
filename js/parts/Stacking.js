@@ -98,6 +98,8 @@ H.StackItem = function (axis, options, isNegative, x, stackOption) {
         y: options.y,
         x: options.x
     };
+    this.textAlign = options.textAlign ||
+        (inverted ? (isNegative ? 'right' : 'left') : 'center');
 };
 H.StackItem.prototype = {
     /**
@@ -171,10 +173,25 @@ H.StackItem.prototype = {
         h = defined(y) && Math.abs(y - yZero), 
         // x position:
         x = pick(defaultX, chart.xAxis[0].translate(stackItem.x)) +
-            xOffset, stackBox = defined(y) && stackItem.getStackBox(chart, stackItem, x, y, xWidth, h, axis), label = stackItem.label, isNegative = stackItem.isNegative, isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', visible;
+            xOffset, stackBox = defined(y) && stackItem.getStackBox(chart, stackItem, x, y, xWidth, h, axis), label = stackItem.label, isNegative = stackItem.isNegative, isJustify = pick(stackItem.options.overflow, 'justify') === 'justify', textAlign = stackItem.textAlign, visible;
         if (label && stackBox) {
-            var bBox = label.getBBox(), padding = label.padding, boxOffsetX = chart.inverted ?
-                (isNegative ? bBox.width + padding : -padding) : bBox.width / 2, boxOffsetY = chart.inverted ?
+            var bBox = label.getBBox(), padding = label.padding, boxOffsetX, boxOffsetY;
+            if (textAlign === 'left') {
+                boxOffsetX = chart.inverted ? -padding : padding;
+            }
+            else if (textAlign === 'right') {
+                boxOffsetX = bBox.width;
+            }
+            else {
+                if (chart.inverted && textAlign === 'center') {
+                    boxOffsetX = bBox.width / 2;
+                }
+                else {
+                    boxOffsetX = chart.inverted ?
+                        (isNegative ? bBox.width + padding : -padding) : bBox.width / 2;
+                }
+            }
+            boxOffsetY = chart.inverted ?
                 bBox.height / 2 : (isNegative ? -padding : bBox.height);
             // Reset alignOptions property after justify #12337
             stackItem.alignOptions.x = pick(stackItem.options.x, 0);
