@@ -52,17 +52,7 @@ var data = [
     ['us-az', 47],
     ['us-ut', 48],
     ['us-hi', 49],
-    ['us-ak', 50],
-    ['undefined', 51],
-    ['undefined', 52],
-    ['undefined', 53],
-    ['undefined', 54],
-    ['undefined', 55],
-    ['undefined', 56],
-    ['undefined', 57],
-    ['undefined', 58],
-    ['undefined', 59],
-    ['undefined', 60]
+    ['us-ak', 50]
 ];
 
 // Create the chart
@@ -107,6 +97,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/us/custom/us-small'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

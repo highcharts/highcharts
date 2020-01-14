@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2020 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -11,23 +11,10 @@
  * */
 
 'use strict';
-import H from '../../parts/Globals.js';
-
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Color {
-            names: Dictionary<ColorString>;
-        }
-    }
-}
-
-import '../../parts/Color.js';
-
-var Color = H.Color;
+import colorModule from '../../parts/Color.js';
+const {
+    Color
+} = colorModule;
 
 // Register color names since GL can't render those directly.
 // TODO: When supporting modern syntax, make this a const and a named export
@@ -177,6 +164,6 @@ var defaultHTMLColorMap: Highcharts.Dictionary<Highcharts.ColorString> = {
     yellowgreen: '#9acd32'
 };
 
-Color.prototype.names = defaultHTMLColorMap;
+Color.names = defaultHTMLColorMap;
 
 export default defaultHTMLColorMap;

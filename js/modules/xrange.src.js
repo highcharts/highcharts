@@ -2,7 +2,7 @@
  *
  *  X-range series module
  *
- *  (c) 2010-2019 Torstein Honsi, Lars A. V. Cabrera
+ *  (c) 2010-2020 Torstein Honsi, Lars A. V. Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -349,7 +349,7 @@ seriesType('xrange', 'column'
         var series = this, seriesOpts = series.options, renderer = series.chart.renderer, graphic = point.graphic, type = point.shapeType, shapeArgs = point.shapeArgs, partShapeArgs = point.partShapeArgs, clipRectArgs = point.clipRectArgs, pfOptions = point.partialFill, cutOff = seriesOpts.stacking && !seriesOpts.borderRadius, pointState = point.state, stateOpts = (seriesOpts.states[pointState || 'normal'] ||
             {}), pointStateVerb = typeof pointState === 'undefined' ?
             'attr' : verb, pointAttr = series.pointAttribs(point, pointState), animation = pick(series.chart.options.chart.animation, stateOpts.animation), fill;
-        if (!point.isNull) {
+        if (!point.isNull && point.visible !== false) {
             // Original graphic
             if (graphic) { // update
                 graphic.rect[verb](shapeArgs);

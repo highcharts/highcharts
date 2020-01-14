@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Main keyboard navigation handling.
  *
@@ -12,7 +12,8 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-var merge = H.merge,
+var addEvent = H.addEvent,
+    fireEvent = H.fireEvent,
     win = H.win,
     doc = win.document;
 
@@ -63,10 +64,44 @@ declare global {
             public updateExitAnchor(): void;
             public updateContainerTabindex(): void;
         }
+        interface Chart {
+            /** @requires modules/accessibility */
+            dismissPopupContent(): void;
+        }
     }
 }
 
 /* eslint-disable valid-jsdoc */
+
+// Add event listener to document to detect ESC key press and dismiss
+// hover/popup content.
+addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
+    const keycode = e.which || e.keyCode;
+    const esc = 27;
+    if (keycode === esc && H.charts) {
+        H.charts.forEach((chart): void => {
+            if (chart && chart.dismissPopupContent) {
+                chart.dismissPopupContent();
+            }
+        });
+    }
+});
+
+
+/**
+ * Dismiss popup content in chart, including export menu and tooltip.
+ */
+H.Chart.prototype.dismissPopupContent = function (): void {
+    const chart = this;
+
+    fireEvent(this, 'dismissPopupContent', {}, function (): void {
+        if (chart.tooltip) {
+            chart.tooltip.hide(0);
+        }
+        chart.hideExportMenu();
+    });
+};
+
 
 /**
  * The KeyboardNavigation class, containing the overall keyboard navigation
@@ -375,16 +410,6 @@ KeyboardNavigation.prototype = {
     createExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
         var chart = this.chart,
             exitAnchor = this.exitAnchor = doc.createElement('div');
-
-        // Hide exit anchor
-        merge(true, exitAnchor.style, {
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            zIndex: 0,
-            overflow: 'hidden',
-            outline: 'none'
-        });
 
         chart.renderTo.appendChild(exitAnchor);
         this.makeElementAnExitAnchor(exitAnchor);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -106,15 +106,23 @@ H.perspective3D = function (coordinate, origin, distance) {
  * The chart
  *
  * @param {boolean} [insidePlotArea]
- * Wether to verifiy the points are inside the plotArea
+ * Whether to verifiy that the points are inside the plotArea
+ *
+ * @param {boolean} [useInvertedPersp]
+ * Whether to use inverted perspective in calculations
  *
  * @return {Array<Highcharts.Position3dObject>}
  * An array of transformed points
  *
  * @requires highcharts-3d
  */
-H.perspective = function (points, chart, insidePlotArea) {
-    var options3d = chart.options.chart.options3d, inverted = insidePlotArea ? chart.inverted : false, origin = {
+H.perspective = function (points, chart, insidePlotArea, useInvertedPersp) {
+    var options3d = chart.options.chart.options3d, 
+    /* The useInvertedPersp argument is used for
+     * inverted charts with already inverted elements,
+     * such as dataLabels or tooltip positions.
+     */
+    inverted = pick(useInvertedPersp, insidePlotArea ? chart.inverted : false), origin = {
         x: chart.plotWidth / 2,
         y: chart.plotHeight / 2,
         z: options3d.depth / 2,
@@ -169,14 +177,16 @@ H.pointCameraDistance = function (coordinates, chart) {
         y: chart.plotHeight / 2,
         z: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) +
             options3d.depth
-    }, distance = Math.sqrt(Math.pow(cameraPosition.x - coordinates.plotX, 2) +
-        Math.pow(cameraPosition.y - coordinates.plotY, 2) +
-        Math.pow(cameraPosition.z - coordinates.plotZ, 2));
+    }, 
+    // Added support for objects with plotX or x coordinates.
+    distance = Math.sqrt(Math.pow(cameraPosition.x - pick(coordinates.plotX, coordinates.x), 2) +
+        Math.pow(cameraPosition.y - pick(coordinates.plotY, coordinates.y), 2) +
+        Math.pow(cameraPosition.z - pick(coordinates.plotZ, coordinates.z), 2));
     return distance;
 };
 /**
  * Calculate area of a 2D polygon using Shoelace algorithm
- * http://en.wikipedia.org/wiki/Shoelace_formula
+ * https://en.wikipedia.org/wiki/Shoelace_formula
  *
  * @private
  * @function Highcharts.shapeArea
@@ -210,7 +220,7 @@ H.shapeArea = function (vertexes) {
  * Related chart
  *
  * @param {boolean} [insidePlotArea]
- * Wether to verifiy the points are inside the plotArea
+ * Whether to verifiy that the points are inside the plotArea
  *
  * @return {number}
  * Calculated area

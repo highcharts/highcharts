@@ -15,6 +15,11 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     baseReporterDecorator(this);
     const LOG = logger.create('reporter.imagecapture');
     const gitSha = getLatestCommitShaSync();
+
+    // eslint-disable-next-line func-style
+    let fileWritingFinished = function () {};
+    let pendingFileWritings = 0;
+
     const {
         imageCapture = {
             resultsOutputPath: 'test/visual-test-results.json'
@@ -70,9 +75,13 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         encoder.finish();
 
         var buf = encoder.out.getData();
+        pendingFileWritings++;
         fs.writeFile(filename, buf, function (err) {
             if (err) {
                 throw err;
+            }
+            if (!--pendingFileWritings) {
+                fileWritingFinished();
             }
         });
     }
@@ -146,7 +155,15 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         const filename = info.filename;
         try {
             if (/\.svg$/.test(filename)) {
-                fs.writeFileSync(filename, prettyXML(data));
+                pendingFileWritings++;
+                fs.writeFile(filename, prettyXML(data), err => {
+                    if (err) {
+                        throw err;
+                    }
+                    if (!--pendingFileWritings) {
+                        fileWritingFinished();
+                    }
+                });
 
             } else if (/\.png$/.test(filename)) {
                 data = data.replace(/^data:image\/\w+;base64,/, '');
@@ -162,6 +179,15 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         }
 
     });
+
+    // wait for async file writes before exiting
+    this.onExit = function (done) {
+        if (pendingFileWritings) {
+            fileWritingFinished = done;
+        } else {
+            done();
+        }
+    };
 
 }
 /* eslint-enable require-jsdoc */

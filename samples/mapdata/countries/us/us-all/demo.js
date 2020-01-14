@@ -52,8 +52,7 @@ var data = [
     ['us-az', 47],
     ['us-ut', 48],
     ['us-hi', 49],
-    ['us-ak', 50],
-    ['undefined', 51]
+    ['us-ak', 50]
 ];
 
 // Create the chart
@@ -98,6 +97,7 @@ Highcharts.mapChart('container', {
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
         color: 'silver',
+        nullColor: 'silver',
         showInLegend: false,
         enableMouseTracking: false
     }]

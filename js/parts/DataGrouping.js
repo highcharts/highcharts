@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -358,13 +358,13 @@ defaultDataGroupingUnits = H.defaultDataGroupingUnits = [
 // Set default approximations to the prototypes if present. Properties are
 // inherited down. Can be overridden for individual series types.
 seriesProto.getDGApproximation = function () {
-    if (H.seriesTypes.arearange && this instanceof H.seriesTypes.arearange) {
+    if (this.is('arearange')) {
         return 'range';
     }
-    if (H.seriesTypes.ohlc && this instanceof H.seriesTypes.ohlc) {
+    if (this.is('ohlc')) {
         return 'ohlc';
     }
-    if (H.seriesTypes.column && this instanceof H.seriesTypes.column) {
+    if (this.is('column')) {
         return 'sum';
     }
     return 'average';

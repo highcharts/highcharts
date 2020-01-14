@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -881,12 +881,16 @@ Series.prototype.alignDataLabel = function (
         ) === 'justify',
         visible =
             this.visible &&
+            point.visible !== false &&
             (
                 point.series.forceDL ||
                 (enabledDataSorting && !justify) ||
                 isInsidePlot ||
                 (
-                    alignTo && chart.isInsidePlot(
+                    // If the data label is inside the align box, it is enough
+                    // that parts of the align box is inside the plot area
+                    // (#12370)
+                    options.inside && alignTo && chart.isInsidePlot(
                         plotX,
                         inverted ?
                             alignTo.x + 1 :
@@ -1860,13 +1864,15 @@ if (seriesTypes.column) {
         // Align to the column itself, or the top of it
         if (dlBox) { // Area range uses this method but not alignTo
             alignTo = merge(dlBox) as any;
-
             if (alignTo.y < 0) {
                 alignTo.height += alignTo.y;
                 alignTo.y = 0;
             }
+
+            // If parts of the box overshoots outside the plot area, modify the
+            // box to center the label inside
             overshoot = alignTo.y + alignTo.height - series.yAxis.len;
-            if (overshoot > 0) {
+            if (overshoot > 0 && overshoot < alignTo.height) {
                 alignTo.height -= overshoot;
             }
 
@@ -1912,18 +1918,6 @@ if (seriesTypes.column) {
             alignTo,
             isNew
         );
-
-        // Hide dataLabel when column is outside plotArea (#12370).
-        if (
-            alignTo &&
-            (
-                (alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
-                (alignTo.width <= 0 && alignTo.x === 0)
-            )
-        ) {
-            dataLabel.hide(true);
-            dataLabel.placed = false; // don't animate back in
-        }
 
         // If label was justified and we have contrast, set it:
         if (options.inside && point.contrastColor) {

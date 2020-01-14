@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -135,6 +135,7 @@ declare global {
                 finalBox?: boolean
             ): Dictionary<number>;
             public getColor(): void;
+            public getPointsCollection(): Array<Point>;
             public getCyclic(
                 prop: string,
                 value?: any,
@@ -166,6 +167,7 @@ declare global {
             public init(chart: Chart, options: SeriesOptionsType): void;
             public insert(collection: Array<Series>): number;
             public invertGroups(inverted?: boolean): void;
+            public is (type: string): boolean;
             public markerAttribs(point: Point, state?: string): SVGAttributes;
             public plotGroup(
                 prop: string,
@@ -393,10 +395,10 @@ declare global {
             zones?: Array<SeriesZonesOptions>;
         }
         interface SeriesPlotBoxObject {
-            scaleX?: number;
-            scaleY?: number;
-            translateX?: number;
-            translateY?: number;
+            scaleX: number;
+            scaleY: number;
+            translateX: number;
+            translateY: number;
         }
         interface SeriesShowCallbackFunction {
             (this: Series, event: Event): void;
@@ -718,6 +720,7 @@ var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     Point = H.Point, // @todo  add as a requirement
+    seriesTypes = H.seriesTypes,
     SVGElement = H.SVGElement,
     win = H.win;
 
@@ -980,8 +983,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * (columns, point markers, pie slices, map areas etc).
          *
          * The selected points can be handled by point select and unselect
-         * events, or collectively by the [getSelectedPoints](
-         * Highcharts.Chart#getSelectedPoints) function.
+         * events, or collectively by the [getSelectedPoints
+         * ](/class-reference/Highcharts.Chart#getSelectedPoints) function.
          *
          * And alternative way of selecting points is through dragging.
          *
@@ -3008,12 +3011,23 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             /**
              * The opposite state of a hover for series.
              *
-             * @sample highcharts/plotoptions/series-states-inactive-opacity
-             *         Disabled inactive state by setting opacity
+             * @sample highcharts/plotoptions/series-states-inactive-disabled
+             *         Disabled inactive state
              *
              * @declare Highcharts.SeriesStatesInactiveOptionsObject
              */
             inactive: {
+                /**
+                 * Enable or disable the inactive state for a series
+                 *
+                 * @sample highcharts/plotoptions/series-states-inactive-disabled
+                 *         Disabled inactive state
+                 *
+                 * @type {boolean}
+                 * @default true
+                 * @apioption plotOptions.series.states.inactive.enabled
+                 */
+
                 /**
                  * The animation for entering the inactive state.
                  *
@@ -3024,13 +3038,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     duration: 50
                 },
                 /**
-                 * Opacity of series elements (dataLabels, line, area). Set to 1
-                 * to disable inactive state.
+                 * Opacity of series elements (dataLabels, line, area).
                  *
-                 * @apioption plotOptions.series.states.inactive.opacity
                  * @type {number}
-                 * @sample highcharts/plotoptions/series-states-inactive-opacity
-                 *         Disabled inactive state
                  */
                 opacity: 0.2
             }
@@ -3408,6 +3418,25 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             }
 
             fireEvent(this, 'afterInit');
+        },
+
+        /**
+         * Chech whether the series item is itself or inherits from a certain
+         * series type.
+         *
+         * @function Highcharts.Series#is
+         * @param {string} type The type of series to check for, can be either
+         *        featured or custom series types. For example `column`, `pie`,
+         *        `ohlc` etc.
+         *
+         * @return {boolean}
+         *        True if this item is or inherits from the given type.
+         */
+        is: function (
+            this: Highcharts.Series,
+            type: string
+        ): boolean {
+            return seriesTypes[type] && this instanceof seriesTypes[type];
         },
 
         /**
@@ -3894,6 +3923,19 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     this.chart.options.colors
                 );
             }
+        },
+
+        /**
+         * Get all points' instances created for this series.
+         *
+         * @private
+         * @function Highcharts.Series#getPointsCollection
+         * @return {Array<Highcharts.Point>}
+         */
+        getPointsCollection: function (
+            this: Highcharts.Series
+        ): Array<Highcharts.Point> {
+            return (this.hasGroupedData ? this.points : this.data) || [];
         },
 
         /**
@@ -5001,7 +5043,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 hasModifyValue = !!series.modifyValue,
                 i,
                 pointPlacement = series.pointPlacementToXValue(), // #7860
-                dynamicallyPlaced = isNumber(pointPlacement),
+                dynamicallyPlaced = Boolean(pointPlacement),
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
@@ -6942,21 +6984,23 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @return {number}
          */
         pointPlacementToXValue: function (this: Highcharts.Series): number {
+            const {
+                options: {
+                    pointPlacement,
+                    pointRange
+                },
+                xAxis: axis
+            } = this;
 
-            var series = this,
-                axis = series.xAxis,
-                pointPlacement = series.options.pointPlacement;
-
+            let factor = pointPlacement;
             // Point placement is relative to each series pointRange (#5889)
-            if (pointPlacement === 'between') {
-                pointPlacement = axis.reversed ? -0.5 : 0.5; // #11955
-            }
-            if (isNumber(pointPlacement)) {
-                (pointPlacement as any) *=
-                    pick(series.options.pointRange || axis.pointRange);
+            if (factor === 'between') {
+                factor = axis.reversed ? -0.5 : 0.5; // #11955
             }
 
-            return pointPlacement as any;
+            return isNumber(factor) ?
+                factor * pick(pointRange, axis.pointRange) :
+                0;
         }
     }
 ) as any; // end Series prototype
