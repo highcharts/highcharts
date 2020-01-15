@@ -620,28 +620,53 @@ QUnit.test(
                     ['Spain', 'France', 5],
                     ['Spain', 'Netherlands', 0],
                     ['Spain', 'UK', 1],
-                    ['Netherlands', 'UK', 5]
+                    ['Poland', 'France', 0],
+                    ['Germany', 'France', 5],
+                    ['Poland', 'UK', 2]
                 ],
                 type: 'sankey'
             }]
         });
 
         assert.strictEqual(
-            Highcharts.defined(chart.series[0].points[1].graphic),
+            Highcharts.defined(chart.series[0].nodes[4].graphic),
             false,
-            'Point should not have been rendered (#12453)'
+            'This node should not have the graphic (#12453)'
         );
 
         assert.strictEqual(
-            Highcharts.defined(chart.series[0].points[1].fromNode),
+            Highcharts.defined(chart.series[0].nodes[4].dataLabel),
             false,
-            'Point should not have node properties (#12453)'
+            'This node should not have the dataLabel (#12453)'
+        );
+
+        chart.series[0].update({
+            data: [
+                ['Spain', 'France', 5],
+                ['Spain', 'Netherlands', 2],
+                ['Spain', 'UK', 1],
+                ['Poland', 'France', 0],
+                ['Germany', 'France', 5],
+                ['Poland', 'UK', 2]
+            ]
+        });
+
+        assert.strictEqual(
+            Highcharts.defined(chart.series[0].nodes[4].graphic),
+            true,
+            'This node should have the graphic after the update (#12453)'
         );
 
         assert.strictEqual(
-            Highcharts.defined(chart.series[0].points[1].toNode),
-            false,
-            'Point should not have node properties (#12453)'
+            Highcharts.defined(chart.series[0].nodes[4].dataLabel),
+            true,
+            'This node should have the dataLabel after the update (#12453)'
+        );
+
+        assert.strictEqual(
+            chart.series[0].nodes[4].id,
+            'Netherlands',
+            'This node id(position) should not been have changed after the update (#12453)'
         );
     }
 );

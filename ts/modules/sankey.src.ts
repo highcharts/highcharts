@@ -650,6 +650,12 @@ seriesType<Highcharts.SankeySeries>(
 
                 for (var i = 0; i < column.length; i++) {
                     totalNodeOffset = column[i].getSum() * factor + nodePadding;
+                    if (column[i].getSum()) {
+                        totalNodeOffset = column[i].getSum() * factor + nodePadding;
+                    } else {
+                        // If node sum equals 0 nodePadding is missed #12453
+                        totalNodeOffset = 0;
+                    }
                     if (column[i] === node) {
                         return {
                             relativeTop: offset + relativeLength(
@@ -899,38 +905,44 @@ seriesType<Highcharts.SankeySeries>(
                 nodeWidth = Math.round(this.nodeWidth);
 
             node.sum = sum;
-
+            // If node sum is 0, don't render the rect #12453
+            if (sum) {
             // Draw the node
-            node.shapeType = 'rect';
+                node.shapeType = 'rect';
 
-            node.nodeX = nodeLeft;
-            node.nodeY = fromNodeTop;
-            if (!chart.inverted) {
-                node.shapeArgs = {
-                    x: nodeLeft,
-                    y: fromNodeTop,
-                    width: node.options.width || options.width || nodeWidth,
-                    height: node.options.height || options.height || height
-                };
+                node.nodeX = nodeLeft;
+                node.nodeY = fromNodeTop;
+                if (!chart.inverted) {
+                    node.shapeArgs = {
+                        x: nodeLeft,
+                        y: fromNodeTop,
+                        width: node.options.width || options.width || nodeWidth,
+                        height: node.options.height || options.height || height
+                    };
+                } else {
+                    node.shapeArgs = {
+                        x: nodeLeft - nodeWidth,
+                        y: (chart.plotSizeY as any) - fromNodeTop - height,
+                        width: node.options.height || options.height || nodeWidth,
+                        height: node.options.width || options.width || height
+                    };
+                }
+
+                node.shapeArgs.display = node.hasShape() ? '' : 'none';
+
+                // Calculate data label options for the point
+                node.dlOptions = getDLOptions({
+                    level: (this.mapOptionsToLevel as any)[node.level],
+                    optionsPoint: node.options
+                });
+
+                // Pass test in drawPoints
+                node.plotY = 1;
             } else {
-                node.shapeArgs = {
-                    x: nodeLeft - nodeWidth,
-                    y: (chart.plotSizeY as any) - fromNodeTop - height,
-                    width: node.options.height || options.height || nodeWidth,
-                    height: node.options.width || options.width || height
+                node.dlOptions = {
+                    enabled: false
                 };
             }
-
-            node.shapeArgs.display = node.hasShape() ? '' : 'none';
-
-            // Calculate data label options for the point
-            node.dlOptions = getDLOptions({
-                level: (this.mapOptionsToLevel as any)[node.level],
-                optionsPoint: node.options
-            });
-
-            // Pass test in drawPoints
-            node.plotY = 1;
         },
 
         /**
@@ -1177,8 +1189,11 @@ seriesType<Highcharts.SankeySeries>(
                 node.linksFrom.forEach(function (
                     linkPoint: Highcharts.SankeyPoint
                 ): void {
-                    series.translateLink(linkPoint);
-                    linkPoint.allowShadow = false;
+                    // If weight is 0 - don't render the link path #12453
+                    if (linkPoint.weight) {
+                        series.translateLink(linkPoint);
+                        linkPoint.allowShadow = false;
+                    }
                 });
             });
         },
