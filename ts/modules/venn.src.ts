@@ -126,7 +126,8 @@ declare global {
 
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
-import GeometryCircleMixin from '../mixins/geometry-circles.js';
+
+import geometryCirclesModule from '../mixins/geometry-circles.js';
 const {
     getAreaOfCircle,
     getAreaOfIntersectionBetweenCircles,
@@ -137,25 +138,29 @@ const {
     isPointInsideAllCircles,
     isPointInsideCircle,
     isPointOutsideAllCircles
-} = GeometryCircleMixin;
+} = geometryCirclesModule;
 
-import NelderMeadModule from '../mixins/nelder-mead.js';
+import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
-var nelderMead = NelderMeadModule.nelderMead;
+var nelderMead = nelderMeadModule.nelderMead;
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const {
+    color
+} = colorModule;
+
+import utilitiesModule from '../parts/Utilities.js';
 const {
     animObject,
     isArray,
     isNumber,
     isObject,
     isString
-} = U;
+} = utilitiesModule;
 
 import '../parts/Series.js';
 
 var addEvent = H.addEvent,
-    color = H.Color,
     extend = H.extend,
     getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
@@ -1321,9 +1326,9 @@ var vennSeries = {
 
         // Return resulting values for the attributes.
         return {
-            'fill': (color as any)(options.color)
-                .setOpacity(options.opacity)
-                .brighten(options.brightness)
+            'fill': color(options.color)
+                .setOpacity(options.opacity as any)
+                .brighten(options.brightness as any)
                 .get(),
             'stroke': options.borderColor,
             'stroke-width': options.borderWidth,
@@ -1375,13 +1380,13 @@ var vennSeries = {
     utils: {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
-        geometryCircles: GeometryCircleMixin,
+        geometryCircles: geometryCirclesModule,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
-        nelderMead: NelderMeadModule,
+        nelderMead: nelderMeadModule,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }

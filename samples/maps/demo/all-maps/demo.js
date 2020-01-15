@@ -131,7 +131,7 @@ $("#mapDropdown").change(function () {
                 stops: [
                     [0, '#EFEFFF'],
                     [0.5, Highcharts.getOptions().colors[0]],
-                    [1, Highcharts.Color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
+                    [1, Highcharts.color(Highcharts.getOptions().colors[0]).brighten(-0.5).get()]
                 ]
             },
 

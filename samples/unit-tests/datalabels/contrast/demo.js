@@ -28,10 +28,10 @@ QUnit.test('#6487: Column\'s data label with contrast after justification.', fun
         point = chart.series[0].points[1];
 
     assert.strictEqual(
-        Highcharts.Color(
+        Highcharts.color(
             point.dataLabel.element.childNodes[0].style.color
         ).get(),
-        Highcharts.Color(
+        Highcharts.color(
             chart.renderer.getContrast(point.color)
         ).get(),
         'Contrast color should be used for a justified label on a column.'
@@ -43,7 +43,7 @@ QUnit.test('#6487: Column\'s data label with contrast after justification.', fun
     });
 
     assert.strictEqual(
-        Highcharts.Color(
+        Highcharts.color(
             point.dataLabel.element.childNodes[0].style.color
         ).get(),
         'rgb(0,0,0)',
@@ -83,10 +83,10 @@ QUnit.test('Pie dataLabels and contrast', function (assert) {
         points = chart.series[0].points;
 
     assert.strictEqual(
-        Highcharts.Color(
+        Highcharts.color(
             points[1].dataLabel.element.childNodes[0].style.color
         ).get(),
-        Highcharts.Color(
+        Highcharts.color(
             points[0].dataLabel.element.childNodes[0].style.color
         ).get(),
         'DataLabels outside the pie chart should not get contrast color (#11140).'

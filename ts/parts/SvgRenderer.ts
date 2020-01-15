@@ -807,7 +807,11 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-import U from './Utilities.js';
+import colorModule from './Color.js';
+const {
+    color
+} = colorModule;
+import utilitiesModule from './Utilities.js';
 const {
     animObject,
     attr,
@@ -824,9 +828,7 @@ const {
     pInt,
     removeEvent,
     splat
-} = U;
-
-import './Color.js';
+} = utilitiesModule;
 
 var SVGElement: Highcharts.SVGElement,
     SVGRenderer,
@@ -834,7 +836,6 @@ var SVGElement: Highcharts.SVGElement,
     addEvent = H.addEvent,
     animate = H.animate,
     charts = H.charts,
-    color = H.color,
     css = H.css,
     createElement = H.createElement,
     deg2rad = H.deg2rad,
@@ -997,7 +998,7 @@ extend((
      * @private
      * @function Highcharts.SVGElement#complexColor
      *
-     * @param {Highcharts.GradientColorObject} color
+     * @param {Highcharts.GradientColorObject} colorOptions
      *        The gradient options structure.
      *
      * @param {string} prop
@@ -1010,7 +1011,7 @@ extend((
      */
     complexColor: function (
         this: Highcharts.SVGElement,
-        color: Highcharts.GradientColorObject,
+        colorOptions: Highcharts.GradientColorObject,
         prop: string,
         elem: Highcharts.SVGDOMElement
     ): void {
@@ -1033,21 +1034,21 @@ extend((
             args: arguments
         }, function (): void {
             // Apply linear or radial gradients
-            if (color.radialGradient) {
+            if (colorOptions.radialGradient) {
                 gradName = 'radialGradient';
-            } else if (color.linearGradient) {
+            } else if (colorOptions.linearGradient) {
                 gradName = 'linearGradient';
             }
 
             if (gradName) {
-                gradAttr = color[gradName] as any;
+                gradAttr = colorOptions[gradName] as any;
                 gradients = renderer.gradients;
-                stops = color.stops;
+                stops = colorOptions.stops;
                 radialReference = (elem as any).radialReference;
 
                 // Keep < 2.2 kompatibility
                 if (isArray(gradAttr)) {
-                    (color as any)[gradName] = gradAttr = {
+                    (colorOptions as any)[gradName] = gradAttr = {
                         x1: gradAttr[0],
                         y1: gradAttr[1],
                         x2: gradAttr[2],
@@ -1108,7 +1109,7 @@ extend((
                         var stopObject;
 
                         if (stop[1].indexOf('rgba') === 0) {
-                            colorObject = H.color(stop[1]);
+                            colorObject = color(stop[1]);
                             stopColor = colorObject.get('rgb') as any;
                             stopOpacity = colorObject.get('a');
                         } else {
@@ -1133,7 +1134,7 @@ extend((
 
                 // Allow the color to be concatenated into tooltips formatters
                 // etc. (#2995)
-                color.toString = function (): string {
+                colorOptions.toString = function (): string {
                     return value;
                 };
             }

@@ -9,31 +9,30 @@ QUnit.test('Animation', function (assert) {
         clock = TestUtilities.lolexInstall();
 
         var maxColor = 'rgb(255,255,255)',
-            chart = Highcharts
-                .chart('container', {
+            chart = Highcharts.chart('container', {
 
-                    chart: {
-                        animation: {
-                            duration: 1000
-                        }
-                    },
+                chart: {
+                    animation: {
+                        duration: 1000
+                    }
+                },
 
-                    colorAxis: {
-                        minColor: 'rgb(0,0,0)',
-                        maxColor: maxColor
-                    },
+                colorAxis: {
+                    minColor: 'rgb(0,0,0)',
+                    maxColor: maxColor
+                },
 
-                    series: [{
-                        type: 'heatmap',
-                        data: [
-                            [0, 0, 1],
-                            [0, 1, 10]
-                        ]
-                    }]
+                series: [{
+                    type: 'heatmap',
+                    data: [
+                        [0, 0, 1],
+                        [0, 1, 10]
+                    ]
+                }]
 
-                }),
+            }),
             point = chart.series[0].points[0],
-            initialColor = Highcharts.Color(
+            initialColor = Highcharts.color(
                 point.graphic.attr('fill')
             ).get(),
             currentColor,
@@ -45,7 +44,7 @@ QUnit.test('Animation', function (assert) {
         ]);
 
         setTimeout(function () {
-            currentColor = Highcharts.Color(
+            currentColor = Highcharts.color(
                 point.graphic.attr('fill')
             ).get();
 
@@ -63,7 +62,7 @@ QUnit.test('Animation', function (assert) {
         }, 500);
 
         setTimeout(function () {
-            currentColor = Highcharts.Color(
+            currentColor = Highcharts.color(
                 point.graphic.attr('fill')
             ).get();
 
