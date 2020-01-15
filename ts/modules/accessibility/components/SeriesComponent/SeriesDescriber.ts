@@ -14,6 +14,7 @@
 
 import H from '../../../../parts/Globals.js';
 var numberFormat = H.numberFormat,
+    format = H.format,
     find = H.find;
 
 import U from '../../../../parts/Utilities.js';
@@ -34,6 +35,20 @@ var getAxisDescription = ChartUtilities.getAxisDescription,
     getSeriesA11yElement = ChartUtilities.getSeriesA11yElement,
     unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface AccessibilityPoint {
+            accessibility?: AccessibilityPointStateObject;
+        }
+        interface AccessibilityPointStateObject {
+            valueDescription?: string;
+        }
+    }
+}
 
 /* eslint-disable valid-jsdoc */
 
@@ -380,7 +395,7 @@ function getPointArrayMapValueDescription(
  * @param {Highcharts.Point} point
  * @return {string}
  */
-function getPointValueDescription(
+function getPointValue(
     point: Highcharts.AccessibilityPoint
 ): string {
     var series = point.series,
@@ -436,32 +451,53 @@ function getPointAnnotationDescription(point: Highcharts.Point): string {
  * @private
  * @return {string}
  */
-function defaultPointDescriptionFormatter(
-    point: Highcharts.AccessibilityPoint
-): string {
-    var series = point.series,
+function getPointValueDescription(point: Highcharts.AccessibilityPoint): string {
+    const series = point.series,
         chart = series.chart,
-        description = point.options && point.options.accessibility &&
-            point.options.accessibility.description,
+        pointValueDescriptionFormat = chart.options.accessibility
+            .point.valueDescriptionFormat,
         showXDescription = pick(
             series.xAxis &&
             series.xAxis.options.accessibility &&
             series.xAxis.options.accessibility.enabled,
             !chart.angular
         ),
-        xDesc = getPointXDescription(point),
-        valueDesc = getPointValueDescription(point),
-        annotationsDesc = getPointAnnotationDescription(point),
-        indexText = defined(point.index) ? (point.index + 1) + '. ' : '',
-        xDescText = showXDescription ? xDesc + ', ' : '',
-        valText = valueDesc + '.',
+        xDesc = showXDescription ? getPointXDescription(point) : '',
+        context = {
+            point: point,
+            index: defined(point.index) ? (point.index + 1) : '',
+            xDescription: xDesc,
+            value: getPointValue(point),
+            separator: showXDescription ? ', ' : ''
+        };
+
+    return format(pointValueDescriptionFormat, context, chart);
+}
+
+
+/**
+ * Return string with information about point.
+ * @private
+ * @return {string}
+ */
+function defaultPointDescriptionFormatter(
+    point: Highcharts.AccessibilityPoint
+): string {
+    var series = point.series,
+        chart = series.chart,
+        valText = getPointValueDescription(point),
+        description = point.options && point.options.accessibility &&
+        point.options.accessibility.description,
         userDescText = description ? ' ' + description : '',
         seriesNameText = chart.series.length > 1 && series.name ?
             ' ' + series.name + '.' : '',
+        annotationsDesc = getPointAnnotationDescription(point),
         pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '';
 
-    return indexText + xDescText + valText + userDescText +
-        seriesNameText + pointAnnotationsText;
+    point.accessibility = point.accessibility || {};
+    point.accessibility.valueDescription = valText;
+
+    return valText + userDescText + seriesNameText + pointAnnotationsText;
 }
 
 
@@ -629,13 +665,15 @@ function describeSeries(series: Highcharts.AccessibilitySeries): void {
     }
 }
 
-var SeriesDescriber = {
-    describeSeries: describeSeries,
-    defaultPointDescriptionFormatter: defaultPointDescriptionFormatter,
-    defaultSeriesDescriptionFormatter: defaultSeriesDescriptionFormatter,
-    getPointA11yTimeDescription: getPointA11yTimeDescription,
-    getPointXDescription: getPointXDescription,
-    getPointValueDescription: getPointValueDescription
+
+const SeriesDescriber = {
+    describeSeries,
+    defaultPointDescriptionFormatter,
+    defaultSeriesDescriptionFormatter,
+    getPointA11yTimeDescription,
+    getPointXDescription,
+    getPointValue,
+    getPointValueDescription
 };
 
 export default SeriesDescriber;

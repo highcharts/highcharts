@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../../../parts/Globals.js';
-var numberFormat = H.numberFormat, find = H.find;
+var numberFormat = H.numberFormat, format = H.format, find = H.find;
 import U from '../../../../parts/Utilities.js';
 var isNumber = U.isNumber, pick = U.pick, defined = U.defined;
 import AnnotationsA11y from '../AnnotationsA11y.js';
@@ -219,7 +219,7 @@ function getPointArrayMapValueDescription(point, prefix, suffix) {
  * @param {Highcharts.Point} point
  * @return {string}
  */
-function getPointValueDescription(point) {
+function getPointValue(point) {
     var series = point.series, a11yPointOpts = series.chart.options.accessibility.point || {}, tooltipOptions = series.tooltipOptions || {}, valuePrefix = a11yPointOpts.valuePrefix ||
         tooltipOptions.valuePrefix || '', valueSuffix = a11yPointOpts.valueSuffix ||
         tooltipOptions.valueSuffix || '', fallbackKey = (typeof point.value !==
@@ -255,14 +255,31 @@ function getPointAnnotationDescription(point) {
  * @private
  * @return {string}
  */
-function defaultPointDescriptionFormatter(point) {
-    var series = point.series, chart = series.chart, description = point.options && point.options.accessibility &&
-        point.options.accessibility.description, showXDescription = pick(series.xAxis &&
+function getPointValueDescription(point) {
+    var series = point.series, chart = series.chart, pointValueDescriptionFormat = chart.options.accessibility
+        .point.valueDescriptionFormat, showXDescription = pick(series.xAxis &&
         series.xAxis.options.accessibility &&
-        series.xAxis.options.accessibility.enabled, !chart.angular), xDesc = getPointXDescription(point), valueDesc = getPointValueDescription(point), annotationsDesc = getPointAnnotationDescription(point), indexText = defined(point.index) ? (point.index + 1) + '. ' : '', xDescText = showXDescription ? xDesc + ', ' : '', valText = valueDesc + '.', userDescText = description ? ' ' + description : '', seriesNameText = chart.series.length > 1 && series.name ?
-        ' ' + series.name + '.' : '', pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '';
-    return indexText + xDescText + valText + userDescText +
-        seriesNameText + pointAnnotationsText;
+        series.xAxis.options.accessibility.enabled, !chart.angular), xDesc = showXDescription ? getPointXDescription(point) : '', context = {
+        point: point,
+        index: defined(point.index) ? (point.index + 1) : '',
+        xDescription: xDesc,
+        value: getPointValue(point),
+        separator: showXDescription ? ', ' : ''
+    };
+    return format(pointValueDescriptionFormat, context, chart);
+}
+/**
+ * Return string with information about point.
+ * @private
+ * @return {string}
+ */
+function defaultPointDescriptionFormatter(point) {
+    var series = point.series, chart = series.chart, valText = getPointValueDescription(point), description = point.options && point.options.accessibility &&
+        point.options.accessibility.description, userDescText = description ? ' ' + description : '', seriesNameText = chart.series.length > 1 && series.name ?
+        ' ' + series.name + '.' : '', annotationsDesc = getPointAnnotationDescription(point), pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '';
+    point.accessibility = point.accessibility || {};
+    point.accessibility.valueDescription = valText;
+    return valText + userDescText + seriesNameText + pointAnnotationsText;
 }
 /**
  * Set a11y props on a point element
@@ -371,6 +388,7 @@ var SeriesDescriber = {
     defaultSeriesDescriptionFormatter: defaultSeriesDescriptionFormatter,
     getPointA11yTimeDescription: getPointA11yTimeDescription,
     getPointXDescription: getPointXDescription,
+    getPointValue: getPointValue,
     getPointValueDescription: getPointValueDescription
 };
 export default SeriesDescriber;
