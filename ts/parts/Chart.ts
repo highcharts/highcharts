@@ -288,7 +288,7 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import timeModule from './time.js';
+import timeModule from './Time.js';
 const Time: typeof Highcharts.Time = timeModule.Time as any;
 import utilitiesModule from './Utilities.js';
 const {
