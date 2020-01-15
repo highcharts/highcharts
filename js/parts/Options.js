@@ -185,6 +185,8 @@ import H from './Globals.js';
 * @name Highcharts.ChartSelectionAxisContextObject#min
 * @type {number}
 */
+import timeModule from './time.js';
+var Time = timeModule.Time;
 import './Color.js';
 import './Utilities.js';
 import './Time.js';
@@ -497,7 +499,7 @@ H.defaultOptions = {
      * @apioption global.timezoneOffset
      */
     global: {},
-    time: H.Time.prototype.defaultOptions,
+    time: Time.prototype.defaultOptions,
     /**
      * General options for the chart.
      */
@@ -3559,7 +3561,7 @@ H.defaultPlotOptions = H.defaultOptions.plotOptions;
  * @name Highcharts.time
  * @type {Highcharts.Time}
  */
-H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
+H.time = new Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
  * human readable date string. The format is a subset of the formats for PHP's

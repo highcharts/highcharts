@@ -3656,22 +3656,22 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 date = new time.Date(xIncrement);
 
                 if (pointIntervalUnit === 'day') {
-                    time.set(
+                    (time.set as any)(
                         'Date',
                         date,
-                        time.get('Date', date) + pointInterval
+                        (time.get as any)('Date', date) + pointInterval
                     );
                 } else if (pointIntervalUnit === 'month') {
-                    time.set(
+                    (time.set as any)(
                         'Month',
                         date,
-                        time.get('Month', date) + pointInterval
+                        (time.get as any)('Month', date) + pointInterval
                     );
                 } else if (pointIntervalUnit === 'year') {
-                    time.set(
+                    (time.set as any)(
                         'FullYear',
                         date,
-                        time.get('FullYear', date) + pointInterval
+                        (time.get as any)('FullYear', date) + pointInterval
                     );
                 }
 
