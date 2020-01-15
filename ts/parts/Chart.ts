@@ -288,7 +288,9 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import U from './Utilities.js';
+import timeModule from './time.js';
+const Time: typeof Highcharts.Time = timeModule.Time as any;
+import utilitiesModule from './Utilities.js';
 const {
     animObject,
     attr,
@@ -309,7 +311,7 @@ const {
     setAnimation,
     splat,
     syncTimeout
-} = U;
+} = utilitiesModule;
 
 import './Axis.js';
 import './Legend.js';
@@ -569,7 +571,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              */
             this.time =
                 userOptions.time && Object.keys(userOptions.time).length ?
-                    new H.Time(userOptions.time) :
+                    new Time(userOptions.time) :
                     H.time;
 
             /**
