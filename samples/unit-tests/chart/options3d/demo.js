@@ -8,9 +8,9 @@ QUnit.test('options3d update', function (assert) {
             data: [1, 2, 3]
         }]
     });
-
     const series = chart.series[0];
-    series.points[0].graphic.isFlagged = true;
+    const elements3d = ['top', 'side1', 'side2', 'out'];
+    let result = true;
 
     chart.update({
         chart: {
@@ -22,8 +22,16 @@ QUnit.test('options3d update', function (assert) {
         }
     });
 
+    const graphicKeys = Object.keys(series.points[0].graphic);
+
+    elements3d.forEach(function (elem) {
+        if (graphicKeys.indexOf(elem) === -1) {
+            result = false;
+        }
+    });
+
     assert.ok(
-        !series.points[0].graphic.isFlagged,
+        result,
         'After updating chart options3d pie series points should be redrawn (#12714).'
     );
 });
