@@ -63,19 +63,24 @@ function getLabelText(label: Highcharts.AnnotationLabelType): string {
 function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): string {
     const chart = label.chart;
     const labelText = getLabelText(label);
-    const points = label.points as Array<Highcharts.Point>;
+    const points = label.points as Array<Highcharts.AccessibilityPoint>;
     const getAriaLabel = (point: Highcharts.Point): string =>
         point?.graphic?.element?.getAttribute('aria-label') || '';
-    const ariaLabels = points.map(getAriaLabel)
-        .filter((label: string): boolean => !!label);
-    const numPoints = ariaLabels.length;
+    const getValueDesc = (point: Highcharts.AccessibilityPoint): string => {
+        const valDesc = point?.accessibility?.valueDescription || getAriaLabel(point);
+        const seriesName = point?.series.name || '';
+        return (seriesName ? seriesName + ', ' : '') + valDesc;
+    };
+    const pointValueDescriptions = points.map(getValueDesc)
+        .filter((desc: string): boolean => !!desc);
+    const numPoints = pointValueDescriptions.length;
     const pointsSelector = numPoints > 1 ? 'MultiplePoints' : numPoints ? 'SinglePoint' : 'NoPoints';
     const langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;
     const context = {
         annotationText: labelText,
         numPoints: numPoints,
-        annotationPoints: ariaLabels,
-        annotationPoint: ariaLabels[0]
+        annotationPoint: pointValueDescriptions[0],
+        additionalAnnotationPoints: pointValueDescriptions.slice(1)
     };
 
     return chart.langFormat(langFormatStr, context);

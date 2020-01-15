@@ -77,8 +77,9 @@ var langOptions = {
              */
             annotations: {
                 heading: 'Chart annotations',
-                descriptionSinglePoint: '{annotationText}: {annotationPoint}',
-                descriptionMultiplePoints: '{annotationText}. Points: {"#each(annotationPoints)" }',
+                descriptionSinglePoint: '{annotationText}. Related to {annotationPoint}',
+                descriptionMultiplePoints: '{annotationText}. Related to {annotationPoint}' +
+                    '{ Also related to, #each(additionalAnnotationPoints)}',
                 descriptionNoPoints: '{annotationText}'
             },
             /**
@@ -289,8 +290,8 @@ var langOptions = {
                 mapbubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.'
             },
             /**
-             * User supplied description text. This is added after the main
-             * summary if present.
+             * User supplied description text. This is added in the point
+             * comment description by default if present.
              *
              * @since 6.0.6
              */
@@ -316,7 +317,8 @@ var langOptions = {
              */
             nullPointValue: 'No value',
             /**
-             * Description for the value of null points.
+             * Description for annotations on a point, as it is made available
+             * to assistive technology.
              *
              * @since next
              */

@@ -53,16 +53,22 @@ function getAnnotationLabelDescription(label) {
     var labelText = getLabelText(label);
     var points = label.points;
     var getAriaLabel = function (point) { var _a, _b, _c; return ((_c = (_b = (_a = point) === null || _a === void 0 ? void 0 : _a.graphic) === null || _b === void 0 ? void 0 : _b.element) === null || _c === void 0 ? void 0 : _c.getAttribute('aria-label')) || ''; };
-    var ariaLabels = points.map(getAriaLabel)
-        .filter(function (label) { return !!label; });
-    var numPoints = ariaLabels.length;
+    var getValueDesc = function (point) {
+        var _a, _b, _c;
+        var valDesc = ((_b = (_a = point) === null || _a === void 0 ? void 0 : _a.accessibility) === null || _b === void 0 ? void 0 : _b.valueDescription) || getAriaLabel(point);
+        var seriesName = ((_c = point) === null || _c === void 0 ? void 0 : _c.series.name) || '';
+        return (seriesName ? seriesName + ', ' : '') + valDesc;
+    };
+    var pointValueDescriptions = points.map(getValueDesc)
+        .filter(function (desc) { return !!desc; });
+    var numPoints = pointValueDescriptions.length;
     var pointsSelector = numPoints > 1 ? 'MultiplePoints' : numPoints ? 'SinglePoint' : 'NoPoints';
     var langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;
     var context = {
         annotationText: labelText,
         numPoints: numPoints,
-        annotationPoints: ariaLabels,
-        annotationPoint: ariaLabels[0]
+        annotationPoint: pointValueDescriptions[0],
+        additionalAnnotationPoints: pointValueDescriptions.slice(1)
     };
     return chart.langFormat(langFormatStr, context);
 }

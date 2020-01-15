@@ -60,7 +60,7 @@ Highcharts.chart('container', {
             text: 'The second peak is higher than the first'
         }, {
             point: 'peak2',
-            text: 'This is the max peak.',
+            text: 'This is the max peak',
             align: 'left',
             x: 20
         }]
