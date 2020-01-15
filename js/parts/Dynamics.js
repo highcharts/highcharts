@@ -9,7 +9,7 @@
  * */
 'use strict';
 import H from './Globals.js';
-import timeModule from './time.js';
+import timeModule from './Time.js';
 var Time = timeModule.Time;
 import utilitiesModule from './Utilities.js';
 var defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, relativeLength = utilitiesModule.relativeLength, setAnimation = utilitiesModule.setAnimation, splat = utilitiesModule.splat;

@@ -98,7 +98,7 @@ import H from './Globals.js';
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-import timeModule from './time.js';
+import timeModule from './Time.js';
 var Time = timeModule.Time;
 import utilitiesModule from './Utilities.js';
 var animObject = utilitiesModule.animObject, attr = utilitiesModule.attr, defined = utilitiesModule.defined, discardElement = utilitiesModule.discardElement, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, numberFormat = utilitiesModule.numberFormat, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt, relativeLength = utilitiesModule.relativeLength, removeEvent = utilitiesModule.removeEvent, setAnimation = utilitiesModule.setAnimation, splat = utilitiesModule.splat, syncTimeout = utilitiesModule.syncTimeout;
