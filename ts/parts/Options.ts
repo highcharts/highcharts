@@ -3680,6 +3680,9 @@ H.defaultOptions = {
          * Prevents the tooltip from switching or closing, when touched or
          * pointed.
          *
+         * @sample highcharts/tooltip/stickonhover/
+         *         Tooltip sticks on hover event
+         *
          * @type      {boolean}
          * @since     8.0.1
          * @product   highcharts highstock
