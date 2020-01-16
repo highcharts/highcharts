@@ -71,7 +71,7 @@ QUnit.test('JS error on hovering after destroy chart (#4998)', function (assert)
     );
 });
 
-QUnit.test('Hovering over panes (#11148)', function (assert) {
+QUnit.test('Testing hovering over panes.', function (assert) {
     var chart = Highcharts.chart('container', {
 
             chart: {
@@ -80,11 +80,9 @@ QUnit.test('Hovering over panes (#11148)', function (assert) {
             },
 
             pane: [{
-                center: ['25%', '50%'],
-                aaa: '111'
+                center: ['25%', '50%']
             }, {
-                center: ['75%', '50%'],
-                aaa: '222'
+                center: ['75%', '50%']
             }],
 
             series: [{
@@ -117,9 +115,9 @@ QUnit.test('Hovering over panes (#11148)', function (assert) {
     controller.moveTo(x, y);
 
     assert.strictEqual(
-        chart.hoverPoint.y,
-        53,
-        'The other pane\'s point should be ignored'
+        chart.hoverPoint,
+        chart.series[0].points[2],
+        'The other pane\'s point should be ignored' // #11148
     );
 
     chart.tooltip.hide(0);
@@ -131,7 +129,7 @@ QUnit.test('Hovering over panes (#11148)', function (assert) {
 
     assert.ok(
         chart.tooltip.isHidden,
-        'Tooltip should not be displayed'
+        'Tooltip should not be displayed' // #11148
     );
 
     x = 340;
@@ -141,6 +139,6 @@ QUnit.test('Hovering over panes (#11148)', function (assert) {
 
     assert.ok(
         chart.tooltip.isHidden,
-        'Tooltip should not be displayed (point is out of pane)'
+        'Tooltip should not be displayed (point is out of pane)' // #11148
     );
 });
