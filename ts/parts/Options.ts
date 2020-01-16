@@ -902,7 +902,7 @@ H.defaultOptions = {
 
     global: {},
 
-    time: Time.prototype.defaultOptions,
+    time: Time.defaultOptions,
 
     /**
      * General options for the chart.
