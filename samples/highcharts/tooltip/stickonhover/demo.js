@@ -2,7 +2,7 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Solar Employment Growth by Sector, 2010-2016'
+        text: 'Solar Employment Growth by Sector, 2010-2017'
     },
 
     subtitle: {
@@ -10,32 +10,12 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        stickOnHover: true // Enables a more stable tooltip behavior.
-    },
-
-    yAxis: {
-        title: {
-            text: 'Number of Employees'
-        }
-    },
-
-    xAxis: {
-        accessibility: {
-            rangeDescription: 'Range: 2010 to 2017'
-        }
-    },
-
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
+        // Enables a more stable tooltip behavior during hover:
+        stickOnHover: true
     },
 
     plotOptions: {
         series: {
-            label: {
-                connectorAllowed: false
-            },
             pointStart: 2010
         }
     },
@@ -55,21 +35,5 @@ Highcharts.chart('container', {
     }, {
         name: 'Other',
         data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
-    }],
-
-    responsive: {
-        rules: [{
-            condition: {
-                maxWidth: 500
-            },
-            chartOptions: {
-                legend: {
-                    layout: 'horizontal',
-                    align: 'center',
-                    verticalAlign: 'bottom'
-                }
-            }
-        }]
-    }
-
+    }]
 });
