@@ -2036,9 +2036,9 @@ null,
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-style/
          *         Bold labels
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow/
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow/
          *         Long labels truncated with an ellipsis in a pie
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap/
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
          *         Long labels are wrapped in a pie
          * @sample {highmaps} maps/demo/color-axis/
          *         Bold labels

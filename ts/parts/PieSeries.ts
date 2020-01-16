@@ -455,9 +455,9 @@ seriesType<Highcharts.PieSeries>(
             softConnector: true,
 
             /**
-             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow
              *         Long labels truncated with an ellipsis
-             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap
              *         Long labels are wrapped
              *
              * @type      {Highcharts.CSSObject}
