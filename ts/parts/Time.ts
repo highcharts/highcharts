@@ -56,9 +56,9 @@ declare global {
             totalRange: number;
         }
         class Time {
+            public static defaultOptions: TimeOptions;
             public constructor(options: TimeOptions);
             public Date: DateConstructor;
-            public defaultOptions: TimeOptions;
             public options: TimeOptions;
             public timezoneOffset?: number;
             public useUTC: boolean;
@@ -209,41 +209,7 @@ class Time {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    /**
-     * Time settings are applied in general for each page using
-     * `Highcharts.setOptions`, or individually for each Chart item through the
-     * [time](https://api.highcharts.com/highcharts/time) options set.
-     *
-     * @param {Highcharts.TimeOptions} options
-     * Time options as defined in [chart.options.time](/highcharts/time).
-     */
-    public constructor(
-        options: Highcharts.TimeOptions
-    ) {
-        /**
-         * Get the time zone offset based on the current timezone information as
-         * set in the global options.
-         *
-         * @function Highcharts.Time#getTimezoneOffset
-         *
-         * @param {number} timestamp
-         *        The JavaScript timestamp to inspect.
-         *
-         * @return {number}
-         *         The timezone offset in minutes compared to UTC.
-         */
-        this.getTimezoneOffset = this.timezoneOffsetFunction();
-
-        this.update(options);
-    }
-
-    /* *
-     *
-     *  Properties
+     *  Static Properties
      *
      * */
 
@@ -298,7 +264,7 @@ class Time {
      * @since     6.0.5
      * @optionparent time
      */
-    public defaultOptions: Highcharts.TimeOptions = {
+    public static defaultOptions: Highcharts.TimeOptions = {
         /**
          * A custom `Date` class for advanced date handling. For example,
          * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
@@ -377,6 +343,45 @@ class Time {
         useUTC: true
     };
 
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
+    /**
+     * Time settings are applied in general for each page using
+     * `Highcharts.setOptions`, or individually for each Chart item through the
+     * [time](https://api.highcharts.com/highcharts/time) options set.
+     *
+     * @param {Highcharts.TimeOptions} options
+     * Time options as defined in [chart.options.time](/highcharts/time).
+     */
+    public constructor(
+        options: Highcharts.TimeOptions
+    ) {
+        /**
+         * Get the time zone offset based on the current timezone information as
+         * set in the global options.
+         *
+         * @function Highcharts.Time#getTimezoneOffset
+         *
+         * @param {number} timestamp
+         *        The JavaScript timestamp to inspect.
+         *
+         * @return {number}
+         *         The timezone offset in minutes compared to UTC.
+         */
+        this.getTimezoneOffset = this.timezoneOffsetFunction();
+
+        this.update(options);
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
 
     public options: Highcharts.TimeOptions = {};
 
@@ -386,7 +391,7 @@ class Time {
 
     public variableTimezone: boolean = false;
 
-    private Date: typeof Date = win.Date;
+    private Date: typeof Date = void 0 as any;
 
     private getTimezoneOffset: ReturnType<Time['timezoneOffsetFunction']>;
 
