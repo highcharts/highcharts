@@ -411,27 +411,40 @@ H.StackItem.prototype = {
 
             boxOffsetY = chart.inverted ?
                 bBox.height / 2 : (isNegative ? -padding : bBox.height);
+
             // Reset alignOptions property after justify #12337
             stackItem.alignOptions.x = pick(stackItem.options.x, 0);
             stackItem.alignOptions.y = pick(stackItem.options.y, 0);
+
             // Set the stackBox position
             stackBox.x -= boxOffsetX;
             stackBox.y -= boxOffsetY;
+
             // Align the label to the box
             label.align(stackItem.alignOptions, null as any, stackBox);
+
             // Check if label is inside the plotArea #12294
-            if (chart.isInsidePlot(label.alignAttr.x + boxOffsetX - stackItem.alignOptions.x,
-                label.alignAttr.y + boxOffsetY - stackItem.alignOptions.y)) {
+            if (chart.isInsidePlot(
+                label.alignAttr.x + boxOffsetX - stackItem.alignOptions.x,
+                label.alignAttr.y + boxOffsetY - stackItem.alignOptions.y
+            )) {
                 label.show();
             } else {
                 // Move label away to avoid the overlapping issues
                 label.alignAttr.y = -9999;
                 isJustify = false;
             }
+
             if (isJustify) {
                 // Justify stackLabel into the stackBox
                 Series.prototype.justifyDataLabel.call(
-                    this.axis, label, stackItem.alignOptions, label.alignAttr, bBox, stackBox);
+                    this.axis,
+                    label,
+                    stackItem.alignOptions,
+                    label.alignAttr,
+                    bBox,
+                    stackBox
+                );
             }
             label.attr({
                 x: label.alignAttr.x,
@@ -440,7 +453,7 @@ H.StackItem.prototype = {
 
             if (pick(!isJustify && stackItem.options.crop, true)) {
                 visible = chart.isInsidePlot(label.x - padding + label.width, label.y) &&
-                 chart.isInsidePlot(label.x + padding, label.y);
+                    chart.isInsidePlot(label.x + padding, label.y);
 
                 if (!visible) {
                     label.hide();
