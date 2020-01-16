@@ -143,6 +143,6 @@ QUnit.test('Legend item alignment after the font size update (#12705)', function
 
     assert.ok(
         itemOriginalYPos < +chart.legend.allItems[0].legendItem.element.attributes.y.value,
-        'Item positioned correctly'
+        'The item should be moved down.'
     );
 });
