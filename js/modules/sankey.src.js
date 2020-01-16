@@ -404,7 +404,6 @@ seriesType('sankey', 'column',
         column.offset = function (node, factor) {
             var offset = 0, totalNodeOffset;
             for (var i = 0; i < column.length; i++) {
-                totalNodeOffset = column[i].getSum() * factor + nodePadding;
                 if (column[i].getSum()) {
                     totalNodeOffset = column[i].getSum() * factor + nodePadding;
                 }
@@ -752,8 +751,9 @@ seriesType('sankey', 'column',
         this.nodes.forEach(function (node) {
             // Translate the links from this node
             node.linksFrom.forEach(function (linkPoint) {
-                // If weight is 0 - don't render the link path #12453
-                if (linkPoint.weight) {
+                // If weight is 0 - don't render the link path #12453,
+                // render null points (for organization chart)
+                if (linkPoint.weight || linkPoint.isNull) {
                     series.translateLink(linkPoint);
                     linkPoint.allowShadow = false;
                 }
