@@ -442,14 +442,14 @@ var horizHandleFormatter = function (
 
     return [
         // Top wick
-        'M', 0, top,
-        'L', 0, centerY - 5,
+        ['M', 0, top],
+        ['L', 0, centerY - 5],
         // Circle
-        'A', 1, 1, 0, 0, 0, 0, centerY + 5,
-        'A', 1, 1, 0, 0, 0, 0, centerY - 5,
+        ['A', 1, 1, 0, 0, 0, 0, centerY + 5],
+        ['A', 1, 1, 0, 0, 0, 0, centerY - 5],
         // Bottom wick
-        'M', 0, centerY + 5,
-        'L', 0, bottom
+        ['M', 0, centerY + 5],
+        ['L', 0, bottom]
     ];
 };
 

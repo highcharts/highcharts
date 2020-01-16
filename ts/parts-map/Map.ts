@@ -319,7 +319,9 @@ defaultOptions.mapNavigation = {
  * @return {Highcharts.SVGPathArray}
  */
 H.splitPath = function (path: string): Highcharts.SVGPathArray {
-    var i: number;
+    var i: number,
+        seg = [],
+        ret = [];
 
     // Move letters apart
     path = path.replace(/([A-Za-z])/g, ' $1 ');
@@ -332,12 +334,17 @@ H.splitPath = function (path: string): Highcharts.SVGPathArray {
 
     // Parse numbers
     for (i = 0; i < path.length; i++) {
-        if (!/[a-zA-Z]/.test(path[i])) {
-            (path as any)[i] = parseFloat(path[i]);
+        if (/[a-zA-Z]/.test(path[i])) {
+            if (seg.length) {
+                ret.push(seg);
+            }
+            seg = [path[i]] as any;
+        } else {
+            seg.push(parseFloat(path[i]));
         }
     }
 
-    return path as any;
+    return ret;
 };
 
 /**

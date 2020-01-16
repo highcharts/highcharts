@@ -766,25 +766,20 @@ var vennSeries = {
                     };
                 }
                 else if (shape.d) {
-                    // TODO: find a better way to handle scaling of a path.
-                    var d = shape.d.reduce(function (path, arr) {
-                        var firstSeg = arr[0];
-                        if (firstSeg[0] === 'M') {
-                            firstSeg[1] = centerX + firstSeg[1] * scale;
-                            firstSeg[2] = centerY + firstSeg[2] * scale;
+                    var d = shape.d;
+                    d.forEach(function (seg) {
+                        if (seg[0] === 'M') {
+                            seg[1] = centerX + seg[1] * scale;
+                            seg[2] = centerY + seg[2] * scale;
                         }
-                        else if (firstSeg[0] === 'A') {
-                            firstSeg[1] = firstSeg[1] * scale;
-                            firstSeg[2] = firstSeg[2] * scale;
-                            firstSeg[6] = centerX + firstSeg[6] * scale;
-                            firstSeg[7] = centerY + firstSeg[7] * scale;
+                        else if (seg[0] === 'A') {
+                            seg[1] = seg[1] * scale;
+                            seg[2] = seg[2] * scale;
+                            seg[6] = centerX + seg[6] * scale;
+                            seg[7] = centerY + seg[7] * scale;
                         }
-                        return path.concat(arr);
-                    }, [])
-                        .join(' ');
-                    shapeArgs = {
-                        d: d
-                    };
+                    });
+                    shapeArgs = { d: d };
                 }
                 // Scale the position for the data label.
                 if (dataLabelPosition) {

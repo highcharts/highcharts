@@ -2866,12 +2866,12 @@ extend((
             let invalidPath = false;
             this.pathArray = value;
             value = value.reduce(
-                (acc, seg): string => {
+                (acc, seg, i): string => {
                     if (!seg || !seg.join) {
                         invalidPath = true;
                         return (seg || '').toString();
                     }
-                    return acc + ' ' + seg.join(' ');
+                    return (i ? acc + ' ' : '') + seg.join(' ');
                 },
                 ''
             );

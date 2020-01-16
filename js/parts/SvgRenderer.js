@@ -1888,12 +1888,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         if (isArray(value)) {
             var invalidPath_1 = false;
             this.pathArray = value;
-            value = value.reduce(function (acc, seg) {
+            value = value.reduce(function (acc, seg, i) {
                 if (!seg || !seg.join) {
                     invalidPath_1 = true;
                     return (seg || '').toString();
                 }
-                return acc + ' ' + seg.join(' ');
+                return (i ? acc + ' ' : '') + seg.join(' ');
             }, '');
             if (invalidPath_1) {
                 H.error(32, false);

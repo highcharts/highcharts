@@ -408,7 +408,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
                     ]
                 }]
             }),
-            path = chart.series[0].graphPath;
+            path = chart.series[0].graphPath.flat();
 
         path.splice(0, 1);
 

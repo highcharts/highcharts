@@ -131,12 +131,12 @@ H.merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationCont
          * A path's d attribute.
          */
         toD: function (this: Highcharts.AnnotationControllablePath): (Highcharts.SVGPathArray|null) {
-            var d = this.options.d;
+            var dOption = this.options.d;
 
-            if (d) {
-                return typeof d === 'function' ?
-                    d.call(this) :
-                    d;
+            if (dOption) {
+                return typeof dOption === 'function' ?
+                    dOption.call(this) :
+                    dOption;
             }
 
             var points = this.points,
@@ -145,32 +145,31 @@ H.merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationCont
                 point = points[0],
                 position = showPath && this.anchor(point).absolutePosition,
                 pointIndex = 0,
-                dIndex = 2,
-                command;
+                command,
+                d: Highcharts.SVGPathArray = [];
 
-            d = (position && ['M', position.x, position.y]) as any;
+            if (position) {
+                d.push(['M', position.x, position.y]);
 
-            while (++pointIndex < len && showPath) {
-                point = points[pointIndex];
-                command = point.command || 'L';
-                position = this.anchor(point).absolutePosition;
+                while (++pointIndex < len && showPath) {
+                    point = points[pointIndex];
+                    command = point.command || 'L';
+                    position = this.anchor(point).absolutePosition;
 
-                if (command === 'Z') {
-                    (d as any)[++dIndex] = command;
-                } else {
-                    if (command !== points[pointIndex - 1].command) {
-                        (d as any)[++dIndex] = command;
+                    if (command === 'M') {
+                        d.push([command, position.x, position.y]);
+                    } else if (command === 'L') {
+                        d.push([command, position.x, position.y]);
+                    } else if (command === 'Z') {
+                        d.push([command]);
                     }
 
-                    (d as any)[++dIndex] = position.x;
-                    (d as any)[++dIndex] = position.y;
+                    showPath = point.series.visible;
                 }
-
-                showPath = point.series.visible;
             }
 
             return showPath ?
-                this.chart.renderer.crispLine(d as any, this.graphic.strokeWidth()) :
+                this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
                 null;
         },
 

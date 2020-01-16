@@ -259,7 +259,7 @@ defaultOptions.mapNavigation = {
  * @return {Highcharts.SVGPathArray}
  */
 H.splitPath = function (path) {
-    var i;
+    var i, seg = [], ret = [];
     // Move letters apart
     path = path.replace(/([A-Za-z])/g, ' $1 ');
     // Trim
@@ -269,11 +269,17 @@ H.splitPath = function (path) {
     path = path.split(/[ ,,]+/);
     // Parse numbers
     for (i = 0; i < path.length; i++) {
-        if (!/[a-zA-Z]/.test(path[i])) {
-            path[i] = parseFloat(path[i]);
+        if (/[a-zA-Z]/.test(path[i])) {
+            if (seg.length) {
+                ret.push(seg);
+            }
+            seg = [path[i]];
+        }
+        else {
+            seg.push(parseFloat(path[i]));
         }
     }
-    return path;
+    return ret;
 };
 /**
  * Contains all loaded map data for Highmaps.

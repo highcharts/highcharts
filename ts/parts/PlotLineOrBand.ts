@@ -431,9 +431,9 @@ H.PlotLineOrBand.prototype = {
         // get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
         xBounds = (path as any).xBounds ||
-            [path[1], path[4], (isBand ? path[6] : path[1])];
+            [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])];
         yBounds = (path as any).yBounds ||
-            [path[2], path[5], (isBand ? path[7] : path[2])];
+            [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])];
 
         x = arrayMin(xBounds);
         y = arrayMin(yBounds);
