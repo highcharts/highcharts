@@ -688,7 +688,9 @@ declare global {
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 
-import U from './Utilities.js';
+import pointModule from './Point.js';
+const Point = pointModule.Point;
+import utilitiesModule from './Utilities.js';
 const {
     animObject,
     arrayMax,
@@ -706,7 +708,7 @@ const {
     removeEvent,
     splat,
     syncTimeout
-} = U;
+} = utilitiesModule;
 
 import './Options.js';
 import './Legend.js';
@@ -719,7 +721,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
-    Point = H.Point, // @todo  add as a requirement
     seriesTypes = H.seriesTypes,
     SVGElement = H.SVGElement,
     win = H.win;
@@ -3268,7 +3269,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         isCartesian: true,
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
-        pointClass: Point,
+        pointClass: Point as any,
         requireSorting: true,
         sorted: true, // requires the data to be sorted
         init: function (
