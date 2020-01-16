@@ -1143,32 +1143,29 @@ Highcharts.Pointer.prototype = {
      */
     isStickyTooltip: function (e) {
         var chart = this.chart;
+        var chartPosition = this.chartPosition;
         var point = chart.hoverPoint;
         var tooltip = chart.tooltip;
         var eventPosition = {
             x: e.chartX,
             y: e.chartY
         };
-        var absoluteBounding = function (element) {
-            var bBox = element.getBBox();
-            bBox.x = (element.translateX || element.x || 0);
-            bBox.y = (element.translateY || element.y || 0);
-            if (typeof element.parentGroup !== 'undefined') {
-                var parentBBox = absoluteBounding(element.parentGroup);
-                bBox.x += parentBBox.x;
-                bBox.y += parentBBox.y;
-            }
-            return bBox;
-        };
         var isSticky = false;
-        if (point &&
+        if (chartPosition &&
+            point &&
             point.graphic &&
             tooltip &&
             !tooltip.isHidden &&
-            tooltip.isSticky &&
+            tooltip.options.stickOnHover &&
             tooltip.label) {
-            var labelBBox = absoluteBounding(tooltip.label);
-            var pointBBox = absoluteBounding(point.graphic);
+            var labelBBox = tooltip.label.getBBox();
+            var labelOffset = Highcharts.offset(tooltip.label.element);
+            var pointBBox = point.graphic.getBBox();
+            var pointOffset = Highcharts.offset(point.graphic.element);
+            labelBBox.x = labelOffset.left - chartPosition.left;
+            labelBBox.y = labelOffset.top - chartPosition.top;
+            pointBBox.x = pointOffset.left - chartPosition.left;
+            pointBBox.y = pointOffset.top - chartPosition.top;
             var x1 = Math.min(pointBBox.x, labelBBox.x);
             var y1 = Math.min(pointBBox.y, labelBBox.y);
             var x2 = Math.max((pointBBox.x + pointBBox.width), (labelBBox.x + labelBBox.width));

@@ -1732,6 +1732,7 @@ Highcharts.Pointer.prototype = {
      */
     isStickyTooltip: function (this: Highcharts.Pointer, e: Highcharts.PointerEventObject): boolean {
         const chart = this.chart;
+        const chartPosition = this.chartPosition;
         const point = chart.hoverPoint;
         const tooltip = chart.tooltip;
         const eventPosition: Highcharts.PositionObject = {
@@ -1739,34 +1740,26 @@ Highcharts.Pointer.prototype = {
             y: e.chartY
         };
 
-        const absoluteBounding = function (element: Highcharts.SVGElement): Highcharts.BBoxObject {
-            const bBox = element.getBBox();
-
-            bBox.x = (element.translateX || element.x || 0);
-            bBox.y = (element.translateY || element.y || 0);
-
-            if (typeof element.parentGroup !== 'undefined') {
-                const parentBBox = absoluteBounding(element.parentGroup);
-
-                bBox.x += parentBBox.x;
-                bBox.y += parentBBox.y;
-            }
-
-            return bBox;
-        };
-
         let isSticky = false;
 
         if (
+            chartPosition &&
             point &&
             point.graphic &&
             tooltip &&
             !tooltip.isHidden &&
-            tooltip.isSticky &&
+            tooltip.options.stickOnHover &&
             tooltip.label
         ) {
-            const labelBBox = absoluteBounding(tooltip.label);
-            const pointBBox = absoluteBounding(point.graphic);
+            const labelBBox = tooltip.label.getBBox();
+            const labelOffset = Highcharts.offset(tooltip.label.element);
+            const pointBBox = point.graphic.getBBox();
+            const pointOffset = Highcharts.offset(point.graphic.element);
+
+            labelBBox.x = labelOffset.left - chartPosition.left;
+            labelBBox.y = labelOffset.top - chartPosition.top;
+            pointBBox.x = pointOffset.left - chartPosition.left;
+            pointBBox.y = pointOffset.top - chartPosition.top;
 
             const x1 = Math.min(
                 pointBBox.x,

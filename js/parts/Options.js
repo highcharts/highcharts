@@ -3097,7 +3097,7 @@ H.defaultOptions = {
          * @type      {boolean}
          * @since     8.0.1
          * @product   highcharts highstock
-         * @apioption tooltip.sticky
+         * @apioption tooltip.stickOnHover
          */
         /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using

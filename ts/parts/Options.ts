@@ -340,7 +340,7 @@ declare global {
             shared?: boolean;
             snap?: number;
             split?: boolean;
-            sticky?: boolean;
+            stickOnHover?: boolean;
             style?: CSSObject;
             useHTML?: boolean;
             valueDecimals?: number;
@@ -3683,7 +3683,7 @@ H.defaultOptions = {
          * @type      {boolean}
          * @since     8.0.1
          * @product   highcharts highstock
-         * @apioption tooltip.sticky
+         * @apioption tooltip.stickOnHover
          */
 
         /**
