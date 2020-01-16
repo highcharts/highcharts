@@ -360,6 +360,11 @@ wrap(Chart.prototype, 'setClassName', function (proceed) {
 addEvent(H.Chart, 'afterSetChartSize', function () {
     var chart = this, options3d = chart.options.chart.options3d;
     if (chart.is3d()) {
+        // Add a 0-360 normalisation for alfa and beta angles in 3d graph
+        if (options3d) {
+            options3d.alpha = options3d.alpha % 360 + (options3d.alpha >= 0 ? 0 : 360);
+            options3d.beta = options3d.beta % 360 + (options3d.beta >= 0 ? 0 : 360);
+        }
         var inverted = chart.inverted, clipBox = chart.clipBox, margin = chart.margin, x = inverted ? 'y' : 'x', y = inverted ? 'x' : 'y', w = inverted ? 'height' : 'width', h = inverted ? 'width' : 'height';
         clipBox[x] = -(margin[3] || 0);
         clipBox[y] = -(margin[0] || 0);
