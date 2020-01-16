@@ -649,7 +649,6 @@ seriesType<Highcharts.SankeySeries>(
                     totalNodeOffset;
 
                 for (var i = 0; i < column.length; i++) {
-                    totalNodeOffset = column[i].getSum() * factor + nodePadding;
                     if (column[i].getSum()) {
                         totalNodeOffset = column[i].getSum() * factor + nodePadding;
                     } else {
@@ -1189,8 +1188,9 @@ seriesType<Highcharts.SankeySeries>(
                 node.linksFrom.forEach(function (
                     linkPoint: Highcharts.SankeyPoint
                 ): void {
-                    // If weight is 0 - don't render the link path #12453
-                    if (linkPoint.weight) {
+                    // If weight is 0 - don't render the link path #12453,
+                    // render null points (for organization chart)
+                    if (linkPoint.weight || linkPoint.isNull) {
                         series.translateLink(linkPoint);
                         linkPoint.allowShadow = false;
                     }
