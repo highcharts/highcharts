@@ -2722,7 +2722,7 @@ H.keys = Object.keys;
  *
  * @function Highcharts.offset
  *
- * @param {globals.Element} el
+ * @param {global.Element} el
  *        The DOM element.
  *
  * @return {Highcharts.OffsetObject}
