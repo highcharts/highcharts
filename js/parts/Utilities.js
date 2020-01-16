@@ -1938,8 +1938,8 @@ H.keys = Object.keys;
  *
  * @function Highcharts.offset
  *
- * @param {Highcharts.HTMLDOMElement} el
- *        The HTML element.
+ * @param {globals.Element} el
+ *        The DOM element.
  *
  * @return {Highcharts.OffsetObject}
  *         An object containing `left` and `top` properties for the position in
