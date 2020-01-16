@@ -135,7 +135,7 @@ var Time = /** @class */ (function () {
         this.options = {};
         this.useUTC = false;
         this.variableTimezone = false;
-        this.Date = void 0;
+        this.Date = win.Date;
         /**
          * Get the time zone offset based on the current timezone information as
          * set in the global options.
