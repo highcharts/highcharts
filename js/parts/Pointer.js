@@ -304,6 +304,9 @@ Highcharts.Pointer.prototype = {
             }
             return result;
         };
+        if (this.isStickyTooltip(e)) {
+            return this.chart.hoverPoint;
+        }
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared, compareX = (!noSharedTooltip &&
                 s.options.findNearestPointBy.indexOf('y') < 0), point = s.searchPoint(e, compareX);
@@ -946,6 +949,7 @@ Highcharts.Pointer.prototype = {
         e = this.normalize(e, chartPosition);
         // If we're outside, hide the tooltip
         if (chartPosition &&
+            !this.isStickyTooltip(e) &&
             !this.inClass(e.target, 'highcharts-tracker') &&
             !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
             this.reset();
@@ -1000,15 +1004,16 @@ Highcharts.Pointer.prototype = {
             this.drag(e);
         }
         // Show the tooltip and run mouse over events (#977)
-        if ((this.inClass(e.target, 'highcharts-tracker') ||
-            chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) &&
-            !chart.openMenu) {
+        if (!chart.openMenu &&
+            !this.isStickyTooltip(e) &&
+            (this.inClass(e.target, 'highcharts-tracker') ||
+                chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop))) {
             this.runPointActions(e);
         }
     },
     /**
      * Utility to detect whether an element has, or has a parent with, a
-     * specificclass name. Used on detection of tracker objects and on deciding
+     * specific class name. Used on detection of tracker objects and on deciding
      * whether hovering the tooltip should cause the active series to mouse out.
      *
      * @function Highcharts.Pointer#inClass
@@ -1052,6 +1057,7 @@ Highcharts.Pointer.prototype = {
         if (series &&
             relatedTarget &&
             !series.stickyTracking &&
+            !this.isStickyTooltip(e) &&
             !this.inClass(relatedTarget, 'highcharts-tooltip') &&
             (!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465, #5553
                 !this.inClass(relatedTarget, 'highcharts-tracker'))) {
@@ -1129,6 +1135,48 @@ Highcharts.Pointer.prototype = {
                 H.unbindDocumentTouchEnd = addEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
             }
         }
+    },
+    /**
+     * @private
+     * @param {Highcharts.PointerEventObject} e
+     * @return {boolean}
+     */
+    isStickyTooltip: function (e) {
+        var chart = this.chart;
+        var point = chart.hoverPoint;
+        var tooltip = chart.tooltip;
+        var eventPosition = {
+            x: e.chartX,
+            y: e.chartY
+        };
+        var absoluteBounding = function (element) {
+            var bBox = element.getBBox();
+            bBox.x = (element.translateX || element.x || 0);
+            bBox.y = (element.translateY || element.y || 0);
+            if (typeof element.parentGroup !== 'undefined') {
+                var parentBBox = absoluteBounding(element.parentGroup);
+                bBox.x += parentBBox.x;
+                bBox.y += parentBBox.y;
+            }
+            return bBox;
+        };
+        var isSticky = false;
+        if (point &&
+            point.graphic &&
+            tooltip &&
+            !tooltip.isHidden &&
+            tooltip.isSticky &&
+            tooltip.label) {
+            var labelBBox = absoluteBounding(tooltip.label);
+            var pointBBox = absoluteBounding(point.graphic);
+            var x1 = Math.min(pointBBox.x, labelBBox.x);
+            var y1 = Math.min(pointBBox.y, labelBBox.y);
+            var x2 = Math.max((pointBBox.x + pointBBox.width), (labelBBox.x + labelBBox.width));
+            var y2 = Math.max((pointBBox.y + pointBBox.height), (labelBBox.y + labelBBox.height));
+            isSticky = ((eventPosition.x >= x1 && eventPosition.x <= x2) &&
+                (eventPosition.y >= y1 && eventPosition.y <= y2));
+        }
+        return isSticky;
     },
     /**
      * Destroys the Pointer object and disconnects DOM events.

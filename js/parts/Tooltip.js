@@ -183,6 +183,12 @@ H.Tooltip.prototype = {
          */
         this.isHidden = true;
         /**
+         * @readonly
+         * @name Highcharts.Tooltip#isSticky
+         * @type {boolean}
+         */
+        this.isSticky = (options.sticky || false);
+        /**
          * True, if the tooltip is split into one label per series, with the
          * header close to the axis.
          *

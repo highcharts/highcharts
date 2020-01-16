@@ -41,6 +41,7 @@ declare global {
             public followPointer?: boolean;
             public hideTimer?: number;
             public isHidden: boolean;
+            public isSticky: boolean;
             public label?: SVGElement;
             public len?: number;
             public now: Dictionary<number>;
@@ -344,6 +345,13 @@ H.Tooltip.prototype = {
          * @type {boolean}
          */
         this.isHidden = true;
+
+        /**
+         * @readonly
+         * @name Highcharts.Tooltip#isSticky
+         * @type {boolean}
+         */
+        this.isSticky = (options.sticky || false);
 
         /**
          * True, if the tooltip is split into one label per series, with the

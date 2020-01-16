@@ -3091,6 +3091,12 @@ H.defaultOptions = {
          * @apioption tooltip.split
          */
         /**
+         * @type      {boolean}
+         * @since     8.0.1
+         * @product   highcharts highstock
+         * @apioption tooltip.sticky
+         */
+        /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using
          * HTML allows advanced formatting like tables and images in the
          * tooltip. It is also recommended for rtl languages as it works around

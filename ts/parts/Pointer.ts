@@ -74,6 +74,7 @@ declare global {
             public options: Options;
             public pinchDown: Array<any>;
             public runChartClick: boolean;
+            public unDocMouseMove: Function;
             public applyInactiveState(points: Array<Point>): void;
             public destroy(): void;
             public drag(e: PointerEventObject): void;
@@ -101,6 +102,7 @@ declare global {
                 e?: PointerEventObject
             ): PointerHoverDataObject;
             public getPointFromEvent(e: Event): (Point|undefined)
+            public isStickyTooltip(e: PointerEventObject): boolean;
             public inClass(
                 element: (SVGDOMElement|HTMLDOMElement),
                 className: string
@@ -517,6 +519,10 @@ Highcharts.Pointer.prototype = {
                 }
                 return result;
             };
+
+        if (this.isStickyTooltip(e)) {
+            return this.chart.hoverPoint;
+        }
 
         series.forEach(function (s: Highcharts.Series): void {
             var noSharedTooltip = s.noSharedTooltip && shared,
@@ -1437,6 +1443,7 @@ Highcharts.Pointer.prototype = {
         // If we're outside, hide the tooltip
         if (
             chartPosition &&
+            !this.isStickyTooltip(e) &&
             !this.inClass(e.target as any, 'highcharts-tracker') &&
             !chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
@@ -1513,14 +1520,15 @@ Highcharts.Pointer.prototype = {
 
         // Show the tooltip and run mouse over events (#977)
         if (
+            !chart.openMenu &&
+            !this.isStickyTooltip(e) &&
             (
                 this.inClass(e.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
                     e.chartX - chart.plotLeft,
                     e.chartY - chart.plotTop
                 )
-            ) &&
-            !chart.openMenu
+            )
         ) {
             this.runPointActions(e);
         }
@@ -1528,7 +1536,7 @@ Highcharts.Pointer.prototype = {
 
     /**
      * Utility to detect whether an element has, or has a parent with, a
-     * specificclass name. Used on detection of tracker objects and on deciding
+     * specific class name. Used on detection of tracker objects and on deciding
      * whether hovering the tooltip should cause the active series to mouse out.
      *
      * @function Highcharts.Pointer#inClass
@@ -1585,6 +1593,7 @@ Highcharts.Pointer.prototype = {
             series &&
             relatedTarget &&
             !series.stickyTracking &&
+            !this.isStickyTooltip(e) &&
             !this.inClass(relatedTarget as any, 'highcharts-tooltip') &&
             (
                 !this.inClass(
@@ -1714,6 +1723,75 @@ Highcharts.Pointer.prototype = {
             }
         }
 
+    },
+
+    /**
+     * @private
+     * @param {Highcharts.PointerEventObject} e
+     * @return {boolean}
+     */
+    isStickyTooltip: function (this: Highcharts.Pointer, e: Highcharts.PointerEventObject): boolean {
+        const chart = this.chart;
+        const point = chart.hoverPoint;
+        const tooltip = chart.tooltip;
+        const eventPosition: Highcharts.PositionObject = {
+            x: e.chartX,
+            y: e.chartY
+        };
+
+        const absoluteBounding = function (element: Highcharts.SVGElement): Highcharts.BBoxObject {
+            const bBox = element.getBBox();
+
+            bBox.x = (element.translateX || element.x || 0);
+            bBox.y = (element.translateY || element.y || 0);
+
+            if (typeof element.parentGroup !== 'undefined') {
+                const parentBBox = absoluteBounding(element.parentGroup);
+
+                bBox.x += parentBBox.x;
+                bBox.y += parentBBox.y;
+            }
+
+            return bBox;
+        };
+
+        let isSticky = false;
+
+        if (
+            point &&
+            point.graphic &&
+            tooltip &&
+            !tooltip.isHidden &&
+            tooltip.isSticky &&
+            tooltip.label
+        ) {
+            const labelBBox = absoluteBounding(tooltip.label);
+            const pointBBox = absoluteBounding(point.graphic);
+
+            const x1 = Math.min(
+                pointBBox.x,
+                labelBBox.x
+            );
+            const y1 = Math.min(
+                pointBBox.y,
+                labelBBox.y
+            );
+            const x2 = Math.max(
+                (pointBBox.x + pointBBox.width),
+                (labelBBox.x + labelBBox.width)
+            );
+            const y2 = Math.max(
+                (pointBBox.y + pointBBox.height),
+                (labelBBox.y + labelBBox.height)
+            );
+
+            isSticky = (
+                (eventPosition.x >= x1 && eventPosition.x <= x2) &&
+                (eventPosition.y >= y1 && eventPosition.y <= y2)
+            );
+        }
+
+        return isSticky;
     },
 
     /**
