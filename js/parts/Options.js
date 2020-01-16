@@ -3091,6 +3091,9 @@ H.defaultOptions = {
          * @apioption tooltip.split
          */
         /**
+         * Prevents the tooltip from switching or closing, when touched or
+         * pointed.
+         *
          * @type      {boolean}
          * @since     8.0.1
          * @product   highcharts highstock
