@@ -391,7 +391,7 @@ class Time {
 
     public variableTimezone: boolean = false;
 
-    private Date: typeof Date = void 0 as any;
+    private Date: typeof Date = win.Date;
 
     private getTimezoneOffset: ReturnType<Time['timezoneOffsetFunction']>;
 
