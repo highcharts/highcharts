@@ -5997,64 +5997,65 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 } else {
 
                     if (i === 0 || gap) {
-                        pathToPoint = [
+                        pathToPoint = [[
                             'M',
                             point.plotX as any,
                             point.plotY as any
-                        ];
+                        ]];
 
                     // Generate the spline as defined in the SplineSeries object
                     } else if (
                         (series as Highcharts.SplineSeries).getPointSpline
                     ) {
 
-                        pathToPoint = (
+                        pathToPoint = [(
                             series as Highcharts.SplineSeries
                         ).getPointSpline(
                             points as Array<Highcharts.SplinePoint>,
                             point as Highcharts.SplinePoint,
                             i
-                        );
+                        )];
 
                     } else if (step) {
 
                         if (step === 1) { // right
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 lastPoint.plotX as any,
                                 plotY as any
-                            ];
+                            ]];
 
                         } else if (step === 2) { // center
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                lastPoint.plotY as any,
+                                lastPoint.plotY as any
+                            ], [
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
                                 plotY as any
-                            ];
+                            ]];
 
                         } else {
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 plotX as any,
                                 lastPoint.plotY as any
-                            ];
+                            ]];
                         }
-                        pathToPoint.push(
+                        pathToPoint.push([
                             'L',
                             plotX as any,
                             plotY as any
-                        );
+                        ]);
 
                     } else {
                         // normal line to next point
-                        pathToPoint = [
+                        pathToPoint = [[
                             'L',
                             plotX as any,
                             plotY as any
-                        ];
+                        ]];
                     }
 
                     // Prepare for animation. When step is enabled, there are

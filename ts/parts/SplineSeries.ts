@@ -42,7 +42,7 @@ declare global {
                 points: Array<SplinePoint>,
                 point: SplinePoint,
                 i: number
-            ): SVGPathArray;
+            ): SVGPathCurveTo;
         }
     }
 }
@@ -113,7 +113,7 @@ seriesType<Highcharts.SplineSeries>(
             points: Array<Highcharts.SplinePoint>,
             point: Highcharts.SplinePoint,
             i: number
-        ): Highcharts.SVGPathArray {
+        ): Highcharts.SVGPathCurveTo {
             var
                 // 1 means control points midway between points, 2 means 1/3
                 // from the point, 3 is 1/4 etc
@@ -127,7 +127,7 @@ seriesType<Highcharts.SplineSeries>(
                 leftContY,
                 rightContX,
                 rightContY,
-                ret: Highcharts.SVGPathArray;
+                ret: Highcharts.SVGPathCurveTo;
 
             /**
              * @private
@@ -254,10 +254,10 @@ seriesType<Highcharts.SplineSeries>(
             // */
             ret = [
                 'C',
-                pick(lastPoint.rightContX, lastPoint.plotX),
-                pick(lastPoint.rightContY, lastPoint.plotY),
-                pick(leftContX, plotX),
-                pick(leftContY, plotY),
+                pick(lastPoint.rightContX, lastPoint.plotX) as any,
+                pick(lastPoint.rightContY, lastPoint.plotY) as any,
+                pick(leftContX, plotX) as any,
+                pick(leftContY, plotY) as any,
                 plotX as any,
                 plotY as any
             ];

@@ -1471,7 +1471,7 @@ seriesType<Highcharts.PieSeries>(
             ): Highcharts.SVGPathArray {
                 var breakAt = connectorPosition.breakAt,
                     touchingSliceAt = connectorPosition.touchingSliceAt,
-                    linePath = options.softConnector ? ([
+                    lineSegment = options.softConnector ? [
                         'C', // soft break
                         // 1st control point (of the curve)
                         labelPosition.x +
@@ -1482,24 +1482,18 @@ seriesType<Highcharts.PieSeries>(
                         2 * breakAt.y - touchingSliceAt.y, //
                         breakAt.x, // end of the curve
                         breakAt.y //
-                    ] as Highcharts.SVGPathArray) : ([
+                    ] as Highcharts.SVGPathCurveTo : [
                         'L', // pointy break
                         breakAt.x,
                         breakAt.y
-                    ] as Highcharts.SVGPathArray);
+                    ] as Highcharts.SVGPathLineTo;
 
                 // assemble the path
                 return ([
-                    'M',
-                    labelPosition.x,
-                    labelPosition.y
-                ] as Highcharts.SVGPathArray)
-                    .concat(linePath)
-                    .concat([
-                        'L',
-                        touchingSliceAt.x,
-                        touchingSliceAt.y
-                    ]);
+                    ['M', labelPosition.x, labelPosition.y],
+                    lineSegment,
+                    ['L', touchingSliceAt.x, touchingSliceAt.y]
+                ]);
             },
 
             straight: function (
@@ -1512,12 +1506,8 @@ seriesType<Highcharts.PieSeries>(
 
                 // direct line to the slice
                 return [
-                    'M',
-                    labelPosition.x,
-                    labelPosition.y,
-                    'L',
-                    touchingSliceAt.x,
-                    touchingSliceAt.y
+                    ['M', labelPosition.x, labelPosition.y],
+                    ['L', touchingSliceAt.x, touchingSliceAt.y]
                 ];
             },
 
@@ -1544,32 +1534,30 @@ seriesType<Highcharts.PieSeries>(
                         pieCenterX + radius + (plotWidth + plotLeft -
                         pieCenterX - radius) * (1 - crookDistance) :
                         plotLeft + (pieCenterX - radius) * crookDistance,
-                    segmentWithCrook = ([
+                    segmentWithCrook = [
                         'L',
                         crookX,
                         labelPosition.y
-                    ] as Highcharts.SVGPathArray);
+                    ] as Highcharts.SVGPathLineTo,
+                    useCrook = true;
 
                 // crookedLine formula doesn't make sense if the path overlaps
                 // the label - use straight line instead in that case
                 if (alignment === 'left' ?
                     (crookX > labelPosition.x || crookX < touchingSliceAt.x) :
                     (crookX < labelPosition.x || crookX > touchingSliceAt.x)) {
-                    segmentWithCrook = []; // remove the crook
+                    useCrook = false;
                 }
 
                 // assemble the path
-                return ([
-                    'M',
-                    labelPosition.x,
-                    labelPosition.y
-                ] as Highcharts.SVGPathArray)
-                    .concat(segmentWithCrook)
-                    .concat([
-                        'L',
-                        touchingSliceAt.x,
-                        touchingSliceAt.y
-                    ]);
+                const path = [
+                    ['M', labelPosition.x, labelPosition.y]
+                ] as Highcharts.SVGPathArray;
+                if (useCrook) {
+                    path.push(segmentWithCrook);
+                }
+                path.push(['L', touchingSliceAt.x, touchingSliceAt.y]);
+                return path;
             }
         },
 

@@ -472,12 +472,8 @@ seriesType('timeline', 'line',
             coords[i] -= (dl.alignAttr || dl)[i[0]];
         });
         path = chart.renderer.crispLine([
-            'M',
-            coords.x1,
-            coords.y1,
-            'L',
-            coords.x2,
-            coords.y2
+            ['M', coords.x1, coords.y1],
+            ['L', coords.x2, coords.y2]
         ], dl.options.connectorWidth);
         return path;
     },

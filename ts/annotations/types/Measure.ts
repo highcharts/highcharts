@@ -329,26 +329,28 @@ H.extendAnnotation(Measure, null,
             }
             // horizontal line
             if (options.crosshairX.enabled) {
-                pathH = [
+                pathH = [[
                     'M',
                     xAxisMin,
-                    yAxisMin + ((yAxisMax - yAxisMin) / 2),
+                    yAxisMin + ((yAxisMax - yAxisMin) / 2)
+                ], [
                     'L',
                     xAxisMax,
                     yAxisMin + ((yAxisMax - yAxisMin) / 2)
-                ];
+                ]];
             }
 
             // vertical line
             if (options.crosshairY.enabled) {
-                pathV = [
+                pathV = [[
                     'M',
                     xAxisMin + ((xAxisMax - xAxisMin) / 2),
-                    yAxisMin,
+                    yAxisMin
+                ], [
                     'L',
                     xAxisMin + ((xAxisMax - xAxisMin) / 2),
                     yAxisMax
-                ];
+                ]];
             }
 
             // Update existed crosshair

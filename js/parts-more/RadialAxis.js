@@ -175,12 +175,8 @@ radialAxisMixin = {
         else {
             end = this.postTranslate(this.angleRad, r);
             path = [
-                'M',
-                center[0] + chart.plotLeft,
-                center[1] + chart.plotTop,
-                'L',
-                end.x,
-                end.y
+                ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop],
+                ['L', end.x, end.y]
             ];
         }
         return path;
@@ -424,12 +420,8 @@ radialAxisMixin = {
                 relativeLength(outerRadius, 1) : (outerRadius /
                 Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
             ret = [
-                'M',
-                x1 + a * (x2 - x1),
-                y1 - a * (y1 - y2),
-                'L',
-                x2 - (1 - b) * (x2 - x1),
-                y2 + (1 - b) * (y1 - y2)
+                ['M', x1 + a * (x2 - x1), y1 - a * (y1 - y2)],
+                ['L', x2 - (1 - b) * (x2 - x1), y2 + (1 - b) * (y1 - y2)]
             ];
             // Concentric circles
         }
@@ -472,7 +464,7 @@ radialAxisMixin = {
                 }
                 tickPositions.forEach(function (pos, i) {
                     xy = otherAxis.getPosition(pos, value);
-                    ret.push(i ? 'L' : 'M', xy.x, xy.y);
+                    ret.push([i ? 'L' : 'M', xy.x, xy.y]);
                 });
             }
         }
@@ -732,12 +724,8 @@ wrap(tickProto, 'getMarkPath', function (proceed, x, y, tickLength, tickWidth, h
     if (axis.isRadial) {
         endPoint = axis.getPosition(this.pos, axis.center[2] / 2 + tickLength);
         ret = [
-            'M',
-            x,
-            y,
-            'L',
-            endPoint.x,
-            endPoint.y
+            ['M', x, y],
+            ['L', endPoint.x, endPoint.y]
         ];
     }
     else {

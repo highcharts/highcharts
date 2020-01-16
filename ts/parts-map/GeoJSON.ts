@@ -405,16 +405,13 @@ H.geojson = function (
     var mapData = [] as Array<any>,
         path = [] as Highcharts.SVGPathArray,
         polygonToPath = function (polygon: Array<Array<number>>): void {
-            var i: number,
-                len = polygon.length;
-
-            path.push('M');
-            for (i = 0; i < len; i++) {
-                if (i === 1) {
-                    path.push('L');
+            polygon.forEach((point, i): void => {
+                if (i === 0) {
+                    path.push(['M', point[0], -point[1]]);
+                } else {
+                    path.push(['L', point[0], -point[1]]);
                 }
-                path.push(polygon[i][0], -polygon[i][1]);
-            }
+            });
         };
 
     hType = hType || 'map';
@@ -436,7 +433,7 @@ H.geojson = function (
         if (hType === 'map' || hType === 'mapbubble') {
             if (type === 'Polygon') {
                 coordinates.forEach(polygonToPath);
-                path.push('Z');
+                path.push(['Z']);
 
             } else if (type === 'MultiPolygon') {
                 coordinates.forEach(function (
@@ -444,7 +441,7 @@ H.geojson = function (
                 ): void {
                     items.forEach(polygonToPath);
                 });
-                path.push('Z');
+                path.push(['Z']);
             }
 
             if (path.length) {

@@ -3589,7 +3589,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             e.path = skip && !force ?
                 null :
-                chart.renderer.crispLine(['M', x1, y1, 'L', x2, y2], lineWidth || 1);
+                chart.renderer.crispLine([['M', x1, y1], ['L', x2, y2]], lineWidth || 1);
         });
         return evt.path;
     },
@@ -5165,20 +5165,24 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         }
         return chart.renderer
             .crispLine([
-            'M',
-            horiz ?
-                this.left :
-                lineLeft,
-            horiz ?
-                lineTop :
-                this.top,
-            'L',
-            horiz ?
-                chart.chartWidth - this.right :
-                lineLeft,
-            horiz ?
-                lineTop :
-                chart.chartHeight - this.bottom
+            [
+                'M',
+                horiz ?
+                    this.left :
+                    lineLeft,
+                horiz ?
+                    lineTop :
+                    this.top
+            ],
+            [
+                'L',
+                horiz ?
+                    chart.chartWidth - this.right :
+                    lineLeft,
+                horiz ?
+                    lineTop :
+                    chart.chartHeight - this.bottom
+            ]
         ], lineWidth);
     },
     /**

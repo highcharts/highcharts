@@ -872,19 +872,15 @@ extend(ColorAxis.prototype, {
         // crosshairs only
         return isNumber(pos) ? // pos can be 0 (#3969)
             (this.horiz ? [
-                'M',
-                pos - 4, this.top - 6,
-                'L',
-                pos + 4, this.top - 6,
-                pos, this.top,
-                'Z'
+                ['M', pos - 4, this.top - 6],
+                ['L', pos + 4, this.top - 6],
+                ['L', pos, this.top],
+                ['Z']
             ] : [
-                'M',
-                this.left, pos,
-                'L',
-                this.left - 6, pos + 6,
-                this.left - 6, pos - 6,
-                'Z'
+                ['M', this.left, pos],
+                ['L', this.left - 6, pos + 6],
+                ['L', this.left - 6, pos - 6],
+                ['Z']
             ]) :
             Axis.prototype.getPlotLinePath.apply(this, arguments);
     },

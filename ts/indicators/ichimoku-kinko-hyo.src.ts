@@ -848,7 +848,6 @@ seriesType<Highcharts.IKHIndicator>(
             var indicator = this,
                 path: Highcharts.SVGPathArray = [],
                 spanA: Highcharts.SVGPathArray,
-                fillArray: Highcharts.SVGPathArray = [],
                 spanAarr: Highcharts.SVGPathArray = [];
 
             points = points || this.points;
@@ -863,7 +862,7 @@ seriesType<Highcharts.IKHIndicator>(
                     indicator.nextPoints
                 );
 
-                spanA[0] = 'L';
+                spanA[0][0] = 'L';
 
                 path = SMA.prototype.getGraphPath.call(
                     indicator,
@@ -873,13 +872,14 @@ seriesType<Highcharts.IKHIndicator>(
                 spanAarr = spanA.slice(0, path.length);
 
                 for (var i = (spanAarr.length - 1); i > 0; i -= 3) {
-                    fillArray.push(
-                        spanAarr[i - 2],
-                        spanAarr[i - 1],
-                        spanAarr[i]
-                    );
+                    if (spanAarr[i - 2]) {
+                        path.push(spanAarr[i - 2]);
+                    }
+                    if (spanAarr[i - 1]) {
+                        path.push(spanAarr[i - 1]);
+                    }
+                    path.push(spanAarr[i]);
                 }
-                path = path.concat(fillArray);
 
             } else {
                 path = SMA.prototype.getGraphPath.apply(indicator, arguments);

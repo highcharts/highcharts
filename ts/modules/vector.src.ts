@@ -228,12 +228,12 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
             // The stem and the arrow head. Draw the arrow first with rotation
             // 0, which is the arrow pointing down (vector from north to south).
             path = [
-                'M', 0, 7 * u + o, // base of arrow
-                'L', -1.5 * u, 7 * u + o,
-                0, 10 * u + o,
-                1.5 * u, 7 * u + o,
-                0, 7 * u + o,
-                0, -10 * u + o// top
+                ['M', 0, 7 * u + o], // base of arrow
+                ['L', -1.5 * u, 7 * u + o],
+                ['L', 0, 10 * u + o],
+                ['L', 1.5 * u, 7 * u + o],
+                ['L', 0, 7 * u + o],
+                ['L', 0, -10 * u + o] // top
             ];
 
             return path;

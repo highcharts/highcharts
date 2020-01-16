@@ -1203,14 +1203,15 @@ var vennSeries = {
                         path: Highcharts.SVGPathArray,
                         arr: Highcharts.SVGPathArray
                     ): Highcharts.SVGPathArray {
-                        if (arr[0] === 'M') {
-                            arr[1] = centerX + (arr as any)[1] * scale;
-                            arr[2] = centerY + (arr as any)[2] * scale;
-                        } else if (arr[0] === 'A') {
-                            arr[1] = (arr as any)[1] * scale;
-                            arr[2] = (arr as any)[2] * scale;
-                            arr[6] = centerX + (arr as any)[6] * scale;
-                            arr[7] = centerY + (arr as any)[7] * scale;
+                        const firstSeg = arr[0];
+                        if (firstSeg[0] === 'M') {
+                            firstSeg[1] = centerX + firstSeg[1] * scale;
+                            firstSeg[2] = centerY + firstSeg[2] * scale;
+                        } else if (firstSeg[0] === 'A') {
+                            firstSeg[1] = firstSeg[1] * scale;
+                            firstSeg[2] = firstSeg[2] * scale;
+                            firstSeg[6] = centerX + firstSeg[6] * scale;
+                            firstSeg[7] = centerY + firstSeg[7] * scale;
                         }
                         return path.concat(arr);
                     }, [])

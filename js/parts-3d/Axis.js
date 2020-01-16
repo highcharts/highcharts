@@ -202,19 +202,39 @@ wrap(Axis.prototype, 'getLinePath', function (proceed) {
     }
     return [];
 });
-wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
+/*
+To do: segmented path
+wrap(Axis.prototype, 'getPlotBandPath', function (
+    this: Highcharts.Axis,
+    proceed: Function
+): Highcharts.SVGPathArray {
     // Do not do this if the chart is not 3D
     if (!this.chart.is3d() || this.coll === 'colorAxis') {
         return proceed.apply(this, [].slice.call(arguments, 1));
     }
-    var args = arguments, from = args[1], to = args[2], path = [], fromPath = this.getPlotLinePath({ value: from }), toPath = this.getPlotLinePath({ value: to });
+
+    var args = arguments,
+        from = args[1],
+        to = args[2],
+        path = [] as Highcharts.SVGPathArray,
+        fromPath = this.getPlotLinePath({ value: from }),
+        toPath = this.getPlotLinePath({ value: to });
+
     if (fromPath && toPath) {
         for (var i = 0; i < fromPath.length; i += 6) {
-            path.push('M', fromPath[i + 1], fromPath[i + 2], 'L', fromPath[i + 4], fromPath[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2], 'Z');
+            path.push(
+                'M', fromPath[i + 1], fromPath[i + 2],
+                'L', fromPath[i + 4], fromPath[i + 5],
+                'L', toPath[i + 4], toPath[i + 5],
+                'L', toPath[i + 1], toPath[i + 2],
+                'Z'
+            );
         }
     }
+
     return path;
 });
+*/
 /**
  * @private
  * @param {Highcharts.Axis} axis

@@ -48,7 +48,7 @@ declare global {
             public createNode: (id: string) => NodesPoint;
             public createNodeColumn(): OrganizationColumnArray;
             public curvedPath(
-                path: Array<SVGPathArray>,
+                path: SVGPathArray,
                 r: number
             ): SVGPathArray;
             public pointAttribs(
@@ -463,7 +463,7 @@ H.seriesType<Highcharts.OrganizationSeries>(
         // General function to apply corner radius to a path - can be lifted to
         // renderer or utilities if we need it elsewhere.
         curvedPath: function (
-            path: Array<Highcharts.SVGPathArray>,
+            path: Highcharts.SVGPathArray,
             r: number
         ): Highcharts.SVGPathArray {
             var d: Highcharts.SVGPathArray = [],
@@ -483,10 +483,10 @@ H.seriesType<Highcharts.OrganizationSeries>(
 
                 // moveTo
                 if (i === 0) {
-                    d.push('M', x, y);
+                    d.push(['M', x, y]);
 
                 } else if (i === path.length - 1) {
-                    d.push('L', x, y);
+                    d.push(['L', x, y]);
 
                 // curveTo
                 } else if (r) {
@@ -499,10 +499,11 @@ H.seriesType<Highcharts.OrganizationSeries>(
                     if (x1 !== x2 && y1 !== y2) {
                         directionX = x1 < x2 ? 1 : -1;
                         directionY = y1 < y2 ? 1 : -1;
-                        d.push(
+                        d.push([
                             'L',
                             x - directionX * Math.min(Math.abs(x - x1), r),
-                            y - directionY * Math.min(Math.abs(y - y1), r),
+                            y - directionY * Math.min(Math.abs(y - y1), r)
+                        ], [
                             'C',
                             x,
                             y,
@@ -510,12 +511,12 @@ H.seriesType<Highcharts.OrganizationSeries>(
                             y,
                             x + directionX * Math.min(Math.abs(x - x2), r),
                             y + directionY * Math.min(Math.abs(y - y2), r)
-                        );
+                        ]);
                     }
 
                 // lineTo
                 } else {
-                    d.push('L', x, y);
+                    d.push(['L', x, y]);
                 }
             }
             return d;
@@ -603,10 +604,10 @@ H.seriesType<Highcharts.OrganizationSeries>(
             point.shapeType = 'path';
             point.shapeArgs = {
                 d: this.curvedPath([
-                    [x1, y1],
-                    [xMiddle, y1],
-                    [xMiddle, y2],
-                    [x2, y2]
+                    ['M', x1, y1],
+                    ['L', xMiddle, y1],
+                    ['L', xMiddle, y2],
+                    ['L', x2, y2]
                 ], this.options.linkRadius as any)
             };
         },

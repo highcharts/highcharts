@@ -22,11 +22,13 @@ declare global {
         type ClipRectElement = SVGElement;
         type Renderer = SVGRenderer;
         type SVGDOMElement = GlobalSVGElement;
-        type SVGPathArray = (Array<number|SVGPathCommand>);
-        type SVGPathCommand = (
-            'a'|'c'|'h'|'l'|'m'|'q'|'s'|'t'|'v'|'z'|'A'|'C'|'H'|'L'|'M'|'Q'|'S'|
-            'T'|'V'|'Z'
-        );
+        type SVGPathArc = ['A'|'a', number, number, number, number, number, number, number];
+        type SVGPathClose = ['Z'];
+        type SVGPathCurveTo = ['C', number, number, number, number, number, number];
+        type SVGPathLineTo = ['L', number, number];
+        type SVGPathMoveTo = ['M', number, number];
+        type SVGPathSegment = (SVGPathArc|SVGPathClose|SVGPathCurveTo|SVGPathLineTo|SVGPathMoveTo);
+        type SVGPathArray = Array<SVGPathSegment>;
         type SymbolKeyValue = (
             'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
             'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
@@ -70,9 +72,12 @@ declare global {
         }
         interface SVGAttributes {
             [key: string]: any;
+            clockwise?: number;
             d?: (string|SVGPathArray);
             fill?: ColorType;
+            // height?: number;
             inverted?: boolean;
+            longArc?: number;
             matrix?: Array<number>;
             rotation?: number;
             rotationOriginX?: number;
@@ -83,6 +88,9 @@ declare global {
             style?: (string|CSSObject);
             translateX?: number;
             translateY?: number;
+            // width?: number;
+            // x?: number;
+            // y?: number;
             zIndex?: number;
         }
         interface SVGDefinitionObject {
@@ -126,6 +134,7 @@ declare global {
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
             public parentGroup?: SVGElement;
+            public pathArray?: SVGPathArray;
             public r?: number;
             public renderer: SVGRenderer;
             public rotation?: number;
@@ -330,7 +339,11 @@ declare global {
                 height?: number
             ): ClipRectElement;
             public createElement(nodeName: string): SVGElement;
-            public crispLine(points: SVGPathArray, width: number): SVGPathArray;
+            public crispLine(
+                points: SVGPathArray,
+                width: number,
+                roundingFunction?: ('round'|'floor'|'ceil')
+            ): SVGPathArray;
             public definition(def: SVGDefinitionObject): SVGElement;
             public destroy(): null;
             /** @deprecated */
@@ -2845,14 +2858,28 @@ extend((
      */
     dSetter: function (
         this: Highcharts.SVGElement,
-        value: (number|string|Highcharts.SVGPathArray),
+        value: (string|Highcharts.SVGPathArray),
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {
-        if (value && (value as any).join) { // join path
-            value = (value as any).join(' ');
+        if (isArray(value)) {
+            let invalidPath = false;
+            this.pathArray = value;
+            value = value.reduce(
+                (acc, seg): string => {
+                    if (!seg || !seg.join) {
+                        invalidPath = true;
+                        return (seg || '').toString();
+                    }
+                    return acc + ' ' + seg.join(' ');
+                },
+                ''
+            );
+            if (invalidPath) {
+                H.error(32, false);
+            }
         }
-        if (/(NaN| {2}|^$)/.test(value as any)) {
+        if (/(NaN| {2}|^$)/.test(value)) {
             value = 'M 0 0';
         }
 
@@ -2860,7 +2887,7 @@ extend((
         // DOM, causing flickering in some cases in Edge/IE (#6747). Also
         // possible performance gain.
         if (this[key] !== value) {
-            element.setAttribute(key, value as any);
+            element.setAttribute(key, value);
             this[key] = value;
         }
 
@@ -4718,24 +4745,32 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} width
      *        The width of the line.
      *
+     * @param {string} roundingFunction
+     *        The rounding function name on the `Math` object, can be one of
+     *        `round`, `floor` or `ceil`.
+     *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
      */
     crispLine: function (
         this: Highcharts.SVGRenderer,
-        points: Highcharts.SVGPathArray,
-        width: number
+        points: Array<Highcharts.SVGPathMoveTo|Highcharts.SVGPathLineTo>,
+        width: number,
+        roundingFunction: ('round'|'floor'|'ceil') = 'round'
     ): Highcharts.SVGPathArray {
-        // normalize to a crisp line
-        if (points[1] === points[4]) {
+        const start = points[0];
+        const end = points[1];
+
+        // Normalize to a crisp line
+        if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[1] = points[4] =
-                Math.round(points[1] as any) - (width % 2 / 2);
+            start[1] = end[1] =
+                Math[roundingFunction](start[1]) - (width % 2 / 2);
         }
-        if (points[2] === points[5]) {
-            points[2] = points[5] =
-                Math.round(points[2] as any) + (width % 2 / 2);
+        if (start[2] === end[2]) {
+            start[2] = end[2] =
+                Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
         return points;
     },
@@ -4782,7 +4817,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         }) as Highcharts.SVGAttributes;
 
         if (isArray(path)) {
-            attribs.d = path as any;
+            attribs.d = path;
         } else if (isObject(path)) { // attributes
             extend(attribs, path as any);
         }
@@ -5243,20 +5278,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')),
             // get the symbol definition function
             symbolFn = (sym && this.symbols[sym]),
-            // check if there's a path defined for this symbol
-            path = (defined(x) && symbolFn && symbolFn.call(
-                this.symbols,
-                Math.round(x as any),
-                Math.round(y as any),
-                width,
-                height,
-                options
-            )),
+            path,
             imageSrc: string,
             centerImage: Function;
 
         if (symbolFn) {
-            obj = this.path(path as any);
+            // Check if there's a path defined for this symbol
+            if (typeof x === 'number') {
+                path = symbolFn.call(
+                    this.symbols,
+                    Math.round(x || 0),
+                    Math.round(y || 0),
+                    width,
+                    height,
+                    options
+                );
+            }
+            obj = this.path(path);
 
             if (!ren.styledMode) {
                 obj.attr('fill', 'none');
@@ -5444,11 +5482,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             h: number
         ): Highcharts.SVGPathArray {
             return [
-                'M', x, y,
-                'L', x + w, y,
-                x + w, y + h,
-                x, y + h,
-                'Z'
+                ['M', x, y],
+                ['L', x + w, y],
+                ['L', x + w, y + h],
+                ['L', x, y + h],
+                ['Z']
             ];
         },
 
@@ -5459,10 +5497,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             h: number
         ): Highcharts.SVGPathArray {
             return [
-                'M', x + w / 2, y,
-                'L', x + w, y + h,
-                x, y + h,
-                'Z'
+                ['M', x + w / 2, y],
+                ['L', x + w, y + h],
+                ['L', x, y + h],
+                ['Z']
             ];
         },
 
@@ -5473,10 +5511,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             h: number
         ): Highcharts.SVGPathArray {
             return [
-                'M', x, y,
-                'L', x + w, y,
-                x + w / 2, y + h,
-                'Z'
+                ['M', x, y],
+                ['L', x + w, y],
+                ['L', x + w / 2, y + h],
+                ['Z']
             ];
         },
         diamond: function (
@@ -5486,11 +5524,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             h: number
         ): Highcharts.SVGPathArray {
             return [
-                'M', x + w / 2, y,
-                'L', x + w, y + h / 2,
-                x + w / 2, y + h,
-                x, y + h / 2,
-                'Z'
+                ['M', x + w / 2, y],
+                ['L', x + w, y + h / 2],
+                ['L', x + w / 2, y + h],
+                ['L', x, y + h / 2],
+                ['Z']
             ];
         },
         arc: function (
@@ -5510,7 +5548,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Substract a small number to prevent cos and sin of start and
                 // end from becoming equal on 360 arcs (related: #1561)
                 end = options.end - proximity,
-                innerRadius = options.innerR,
+                innerRadius: number = options.innerR,
                 open = pick(options.open, fullCircle),
                 cosStart = Math.cos(start),
                 sinStart = Math.sin(start),
@@ -5519,40 +5557,55 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Proximity takes care of rounding errors around PI (#6971)
                 longArc = pick(options.longArc,
                     options.end - start - Math.PI < proximity ? 0 : 1),
-                arc;
+                arc: Highcharts.SVGPathArray;
 
             arc = [
-                'M',
-                x + rx * cosStart,
-                y + ry * sinStart,
-                'A', // arcTo
-                rx, // x radius
-                ry, // y radius
-                0, // slanting
-                longArc, // long or short arc
-                pick(options.clockwise, 1), // clockwise
-                x + rx * cosEnd,
-                y + ry * sinEnd
+                [
+                    'M',
+                    x + rx * cosStart,
+                    y + ry * sinStart
+                ],
+                [
+                    'A', // arcTo
+                    rx, // x radius
+                    ry, // y radius
+                    0, // slanting
+                    longArc, // long or short arc
+                    pick(options.clockwise, 1), // clockwise
+                    x + rx * cosEnd,
+                    y + ry * sinEnd
+                ]
             ];
 
             if (defined(innerRadius)) {
                 arc.push(
-                    open ? 'M' : 'L',
-                    x + innerRadius * cosEnd,
-                    y + innerRadius * sinEnd,
-                    'A', // arcTo
-                    innerRadius, // x radius
-                    innerRadius, // y radius
-                    0, // slanting
-                    longArc, // long or short arc
-                    // Clockwise - opposite to the outer arc clockwise
-                    defined(options.clockwise) ? 1 - options.clockwise : 0,
-                    x + innerRadius * cosStart,
-                    y + innerRadius * sinStart
+                    open ?
+                        [
+                            'M',
+                            x + innerRadius * cosEnd,
+                            y + innerRadius * sinEnd
+                        ] : [
+                            'L',
+                            x + innerRadius * cosEnd,
+                            y + innerRadius * sinEnd
+                        ],
+                    [
+                        'A', // arcTo
+                        innerRadius, // x radius
+                        innerRadius, // y radius
+                        0, // slanting
+                        longArc, // long or short arc
+                        // Clockwise - opposite to the outer arc clockwise
+                        defined(options.clockwise) ? 1 - options.clockwise : 0,
+                        x + innerRadius * cosStart,
+                        y + innerRadius * sinStart
+                    ]
                 );
             }
+            if (!open) {
+                arc.push(['Z']);
+            }
 
-            arc.push(open ? '' : 'Z'); // close
             return arc;
         },
 
@@ -5576,15 +5629,15 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 path: Highcharts.SVGPathArray;
 
             path = [
-                'M', x + r, y,
-                'L', x + w - r, y, // top side
-                'C', x + w, y, x + w, y, x + w, y + r, // top-right corner
-                'L', x + w, y + h - r, // right side
-                'C', x + w, y + h, x + w, y + h, x + w - r, y + h, // bottom-rgt
-                'L', x + r, y + h, // bottom side
-                'C', x, y + h, x, y + h, x, y + h - r, // bottom-left corner
-                'L', x, y + r, // left side
-                'C', x, y, x, y, x + r, y // top-left corner
+                ['M', x + r, y],
+                ['L', x + w - r, y], // top side
+                ['C', x + w, y, x + w, y, x + w, y + r], // top-right corner
+                ['L', x + w, y + h - r], // right side
+                ['C', x + w, y + h, x + w, y + h, x + w - r, y + h], // bottom-rgt
+                ['L', x + r, y + h], // bottom side
+                ['C', x, y + h, x, y + h, x, y + h - r], // bottom-left corner
+                ['L', x, y + r], // left side
+                ['C', x, y, x, y, x + r, y] // top-left corner
             ];
 
             // Anchor on right side
@@ -5596,23 +5649,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     anchorY < y + h - safeDistance
                 ) {
                     path.splice(
-                        13,
                         3,
-                        'L', x + w, anchorY - halfDistance,
-                        x + w + arrowLength, anchorY,
-                        x + w, anchorY + halfDistance,
-                        x + w, y + h - r
+                        1,
+                        ['L', x + w, anchorY - halfDistance],
+                        ['L', x + w + arrowLength, anchorY],
+                        ['L', x + w, anchorY + halfDistance],
+                        ['L', x + w, y + h - r]
                     );
 
                 // Simple connector
                 } else {
                     path.splice(
-                        13,
                         3,
-                        'L', x + w, h / 2,
-                        anchorX, anchorY,
-                        x + w, h / 2,
-                        x + w, y + h - r
+                        1,
+                        ['L', x + w, h / 2],
+                        ['L', anchorX, anchorY],
+                        ['L', x + w, h / 2],
+                        ['L', x + w, y + h - r]
                     );
                 }
 
@@ -5625,23 +5678,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     anchorY < y + h - safeDistance
                 ) {
                     path.splice(
-                        33,
-                        3,
-                        'L', x, anchorY + halfDistance,
-                        x - arrowLength, anchorY,
-                        x, anchorY - halfDistance,
-                        x, y + r
+                        7,
+                        1,
+                        ['L', x, anchorY + halfDistance],
+                        ['L', x - arrowLength, anchorY],
+                        ['L', x, anchorY - halfDistance],
+                        ['L', x, y + r]
                     );
 
                 // Simple connector
                 } else {
                     path.splice(
-                        33,
-                        3,
-                        'L', x, h / 2,
-                        anchorX, anchorY,
-                        x, h / 2,
-                        x, y + r
+                        7,
+                        1,
+                        ['L', x, h / 2],
+                        ['L', anchorX, anchorY],
+                        ['L', x, h / 2],
+                        ['L', x, y + r]
                     );
                 }
 
@@ -5652,12 +5705,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 anchorX < x + w - safeDistance
             ) {
                 path.splice(
-                    23,
-                    3,
-                    'L', anchorX + halfDistance, y + h,
-                    anchorX, y + h + arrowLength,
-                    anchorX - halfDistance, y + h,
-                    x + r, y + h
+                    5,
+                    1,
+                    ['L', anchorX + halfDistance, y + h],
+                    ['L', anchorX, y + h + arrowLength],
+                    ['L', anchorX - halfDistance, y + h],
+                    ['L', x + r, y + h]
                 );
 
             } else if ( // replace top
@@ -5667,12 +5720,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 anchorX < x + w - safeDistance
             ) {
                 path.splice(
-                    3,
-                    3,
-                    'L', anchorX - halfDistance, y,
-                    anchorX, y - arrowLength,
-                    anchorX + halfDistance, y,
-                    w - r, y
+                    1,
+                    1,
+                    ['L', anchorX - halfDistance, y],
+                    ['L', anchorX, y - arrowLength],
+                    ['L', anchorX + halfDistance, y],
+                    ['L', w - r, y]
                 );
             }
 

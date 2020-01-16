@@ -519,15 +519,11 @@ seriesType('flags', 'column'
 // create the flag icon with anchor
 symbols.flag = function (x, y, w, h, options) {
     var anchorX = (options && options.anchorX) || x, anchorY = (options && options.anchorY) || y;
-    return symbols.circle(anchorX - 1, anchorY - 1, 2, 2).concat([
-        'M', anchorX, anchorY,
-        'L', x, y + h,
-        x, y,
-        x + w, y,
-        x + w, y + h,
-        x, y + h,
-        'Z'
-    ]);
+    // To do: unwanted any cast because symbols.circle has wrong type, it
+    // actually returns an SVGPathArray
+    var path = symbols.circle(anchorX - 1, anchorY - 1, 2, 2);
+    path.push(['M', anchorX, anchorY], ['L', x, y + h], ['L', x, y], ['L', x + w, y], ['L', x + w, y + h], ['L', x, y + h], ['Z']);
+    return path;
 };
 /**
  * Create the circlepin and squarepin icons with anchor.
@@ -552,9 +548,17 @@ function createPinSymbol(shape) {
              * otherwise start drawing from the bottom edge
              */
             labelTopOrBottomY = (y > anchorY) ? y : y + h;
-            path.push('M', shape === 'circle' ?
-                x + w / 2 :
-                path[1] + path[4] / 2, labelTopOrBottomY, 'L', anchorX, anchorY);
+            path.push([
+                'M',
+                shape === 'circle' ?
+                    x + w / 2 :
+                    path[1] + path[4] / 2,
+                labelTopOrBottomY
+            ], [
+                'L',
+                anchorX,
+                anchorY
+            ]);
             path = path.concat(symbols.circle(anchorX - 1, anchorY - 1, 2, 2));
         }
         return path;

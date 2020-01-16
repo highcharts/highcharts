@@ -1079,7 +1079,7 @@ seriesType('pie', 'line',
     connectorShapes: {
         // only one available before v7.0.0
         fixedOffset: function (labelPosition, connectorPosition, options) {
-            var breakAt = connectorPosition.breakAt, touchingSliceAt = connectorPosition.touchingSliceAt, linePath = options.softConnector ? [
+            var breakAt = connectorPosition.breakAt, touchingSliceAt = connectorPosition.touchingSliceAt, lineSegment = options.softConnector ? [
                 'C',
                 // 1st control point (of the curve)
                 labelPosition.x +
@@ -1096,28 +1096,18 @@ seriesType('pie', 'line',
                 breakAt.y
             ];
             // assemble the path
-            return [
-                'M',
-                labelPosition.x,
-                labelPosition.y
-            ]
-                .concat(linePath)
-                .concat([
-                'L',
-                touchingSliceAt.x,
-                touchingSliceAt.y
+            return ([
+                ['M', labelPosition.x, labelPosition.y],
+                lineSegment,
+                ['L', touchingSliceAt.x, touchingSliceAt.y]
             ]);
         },
         straight: function (labelPosition, connectorPosition) {
             var touchingSliceAt = connectorPosition.touchingSliceAt;
             // direct line to the slice
             return [
-                'M',
-                labelPosition.x,
-                labelPosition.y,
-                'L',
-                touchingSliceAt.x,
-                touchingSliceAt.y
+                ['M', labelPosition.x, labelPosition.y],
+                ['L', touchingSliceAt.x, touchingSliceAt.y]
             ];
         },
         crookedLine: function (labelPosition, connectorPosition, options) {
@@ -1129,26 +1119,23 @@ seriesType('pie', 'line',
                 'L',
                 crookX,
                 labelPosition.y
-            ];
+            ], useCrook = true;
             // crookedLine formula doesn't make sense if the path overlaps
             // the label - use straight line instead in that case
             if (alignment === 'left' ?
                 (crookX > labelPosition.x || crookX < touchingSliceAt.x) :
                 (crookX < labelPosition.x || crookX > touchingSliceAt.x)) {
-                segmentWithCrook = []; // remove the crook
+                useCrook = false;
             }
             // assemble the path
-            return [
-                'M',
-                labelPosition.x,
-                labelPosition.y
-            ]
-                .concat(segmentWithCrook)
-                .concat([
-                'L',
-                touchingSliceAt.x,
-                touchingSliceAt.y
-            ]);
+            var path = [
+                ['M', labelPosition.x, labelPosition.y]
+            ];
+            if (useCrook) {
+                path.push(segmentWithCrook);
+            }
+            path.push(['L', touchingSliceAt.x, touchingSliceAt.y]);
+            return path;
         }
     },
     /**

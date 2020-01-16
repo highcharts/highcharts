@@ -171,25 +171,27 @@ H.extendAnnotation(Measure, null, {
         }
         // horizontal line
         if (options.crosshairX.enabled) {
-            pathH = [
-                'M',
-                xAxisMin,
-                yAxisMin + ((yAxisMax - yAxisMin) / 2),
-                'L',
-                xAxisMax,
-                yAxisMin + ((yAxisMax - yAxisMin) / 2)
-            ];
+            pathH = [[
+                    'M',
+                    xAxisMin,
+                    yAxisMin + ((yAxisMax - yAxisMin) / 2)
+                ], [
+                    'L',
+                    xAxisMax,
+                    yAxisMin + ((yAxisMax - yAxisMin) / 2)
+                ]];
         }
         // vertical line
         if (options.crosshairY.enabled) {
-            pathV = [
-                'M',
-                xAxisMin + ((xAxisMax - xAxisMin) / 2),
-                yAxisMin,
-                'L',
-                xAxisMin + ((xAxisMax - xAxisMin) / 2),
-                yAxisMax
-            ];
+            pathV = [[
+                    'M',
+                    xAxisMin + ((xAxisMax - xAxisMin) / 2),
+                    yAxisMin
+                ], [
+                    'L',
+                    xAxisMin + ((xAxisMax - xAxisMin) / 2),
+                    yAxisMax
+                ]];
         }
         // Update existed crosshair
         if (this.shapes.length > 0) {

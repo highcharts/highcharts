@@ -4460,50 +4460,55 @@ null,
             }
             else {
                 if (i === 0 || gap) {
-                    pathToPoint = [
-                        'M',
-                        point.plotX,
-                        point.plotY
-                    ];
+                    pathToPoint = [[
+                            'M',
+                            point.plotX,
+                            point.plotY
+                        ]];
                     // Generate the spline as defined in the SplineSeries object
                 }
                 else if (series.getPointSpline) {
-                    pathToPoint = series.getPointSpline(points, point, i);
+                    pathToPoint = [series.getPointSpline(points, point, i)];
                 }
                 else if (step) {
                     if (step === 1) { // right
-                        pathToPoint = [
-                            'L',
-                            lastPoint.plotX,
-                            plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                lastPoint.plotX,
+                                plotY
+                            ]];
                     }
                     else if (step === 2) { // center
-                        pathToPoint = [
-                            'L',
-                            (lastPoint.plotX + plotX) / 2,
-                            lastPoint.plotY,
-                            'L',
-                            (lastPoint.plotX + plotX) / 2,
-                            plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                (lastPoint.plotX + plotX) / 2,
+                                lastPoint.plotY
+                            ], [
+                                'L',
+                                (lastPoint.plotX + plotX) / 2,
+                                plotY
+                            ]];
                     }
                     else {
-                        pathToPoint = [
-                            'L',
-                            plotX,
-                            lastPoint.plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                plotX,
+                                lastPoint.plotY
+                            ]];
                     }
-                    pathToPoint.push('L', plotX, plotY);
-                }
-                else {
-                    // normal line to next point
-                    pathToPoint = [
+                    pathToPoint.push([
                         'L',
                         plotX,
                         plotY
-                    ];
+                    ]);
+                }
+                else {
+                    // normal line to next point
+                    pathToPoint = [[
+                            'L',
+                            plotX,
+                            plotY
+                        ]];
                 }
                 // Prepare for animation. When step is enabled, there are
                 // two path nodes for each x value.

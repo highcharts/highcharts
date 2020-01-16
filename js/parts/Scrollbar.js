@@ -222,13 +222,18 @@ defaultOptions.scrollbar = merge(true, defaultScrollbarOptions, defaultOptions.s
  *         Rotated path.
  */
 H.swapXY = swapXY = function (path, vertical) {
-    var i, len = path.length, temp;
     if (vertical) {
-        for (i = 0; i < len; i += 3) {
-            temp = path[i + 1];
-            path[i + 1] = path[i + 2];
-            path[i + 2] = temp;
-        }
+        path.forEach(function (seg) {
+            var len = seg.length;
+            var temp;
+            for (var i = 0; i < len; i += 2) {
+                temp = seg[i + 1];
+                if (typeof temp === 'number') {
+                    seg[i + 1] = seg[i + 2];
+                    seg[i + 2] = temp;
+                }
+            }
+        });
     }
     return path;
 };
@@ -315,18 +320,12 @@ Scrollbar.prototype = {
         }).add(scroller.scrollbarGroup);
         scroller.scrollbarRifles = renderer
             .path(swapXY([
-            'M',
-            -3, size / 4,
-            'L',
-            -3, 2 * size / 3,
-            'M',
-            0, size / 4,
-            'L',
-            0, 2 * size / 3,
-            'M',
-            3, size / 4,
-            'L',
-            3, 2 * size / 3
+            ['M', -3, size / 4],
+            ['L', -3, 2 * size / 3],
+            ['M', 0, size / 4],
+            ['L', 0, 2 * size / 3],
+            ['M', 3, size / 4],
+            ['L', 3, 2 * size / 3]
         ], options.vertical))
             .addClass('highcharts-scrollbar-rifles')
             .add(scroller.scrollbarGroup);
@@ -435,17 +434,19 @@ Scrollbar.prototype = {
         }, tempElem.strokeWidth()));
         // Button arrow
         tempElem = renderer
-            .path(swapXY([
-            'M',
-            size / 2 + (index ? -1 : 1),
-            size / 2 - 3,
-            'L',
-            size / 2 + (index ? -1 : 1),
-            size / 2 + 3,
-            'L',
-            size / 2 + (index ? 2 : -2),
-            size / 2
-        ], options.vertical))
+            .path(swapXY([[
+                'M',
+                size / 2 + (index ? -1 : 1),
+                size / 2 - 3
+            ], [
+                'L',
+                size / 2 + (index ? -1 : 1),
+                size / 2 + 3
+            ], [
+                'L',
+                size / 2 + (index ? 2 : -2),
+                size / 2
+            ]], options.vertical))
             .addClass('highcharts-scrollbar-arrow')
             .add(scrollbarButtons[index]);
         if (!this.chart.styledMode) {

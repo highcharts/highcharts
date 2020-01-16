@@ -872,16 +872,24 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
             // Go over each subpath - for panes in Highstock
             for (i = 0; i < path.length; i += 6) {
-                // Add 1 pixel when coordinates are the same
-                if (horiz && toPath[i + 1] === path[i + 1]) {
-                    toPath[i + 1] += plus;
-                    toPath[i + 4] += plus;
+                var pathStart = path[0], pathEnd = path[1], toPathStart = toPath[0], toPathEnd = toPath[1];
+                // Type checking all affected path segments. Consider something
+                // smarter.
+                if ((pathStart[0] === 'M' || pathStart[0] === 'L') &&
+                    (pathEnd[0] === 'M' || pathEnd[0] === 'L') &&
+                    (toPathStart[0] === 'M' || toPathStart[0] === 'L') &&
+                    (toPathEnd[0] === 'M' || toPathEnd[0] === 'L')) {
+                    // Add 1 pixel when coordinates are the same
+                    if (horiz && toPathStart[1] === pathStart[1]) {
+                        toPathStart[1] += plus;
+                        toPathEnd[1] += plus;
+                    }
+                    else if (!horiz && toPathStart[2] === pathStart[2]) {
+                        toPathStart[2] += plus;
+                        toPathEnd[2] += plus;
+                    }
+                    result.push(['M', pathStart[1], pathStart[2]], ['L', pathEnd[1], pathEnd[2]], ['L', toPathEnd[1], toPathEnd[2]], ['L', toPathStart[1], toPathStart[2]], ['Z']);
                 }
-                else if (!horiz && toPath[i + 2] === path[i + 2]) {
-                    toPath[i + 2] += plus;
-                    toPath[i + 5] += plus;
-                }
-                result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2], 'z');
                 result.isFlat = isFlat;
             }
         }

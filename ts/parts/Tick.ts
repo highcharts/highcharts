@@ -833,14 +833,15 @@ H.Tick.prototype = {
         horiz: boolean,
         renderer: Highcharts.Renderer
     ): Highcharts.SVGPathArray {
-        return renderer.crispLine([
+        return renderer.crispLine([[
             'M',
             x,
-            y,
+            y
+        ], [
             'L',
             x + (horiz ? 0 : -tickLength),
             y + (horiz ? tickLength : 0)
-        ], tickWidth);
+        ]], tickWidth);
     },
 
     /**

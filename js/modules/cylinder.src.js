@@ -169,45 +169,80 @@ RendererProto.cylinderPath = function (shapeArgs) {
 };
 // Returns cylinder Front path
 RendererProto.getCylinderFront = function (topPath, bottomPath) {
-    var path = topPath.slice(0, topPath.simplified ? 9 : 17);
+    return topPath.concat(bottomPath);
+    /*
+    To do: segments
+    var path = topPath.slice(0, (topPath as any).simplified ? 9 : 17);
+
     path.push('L');
-    if (bottomPath.simplified) {
+    if ((bottomPath as any).simplified) {
         path = path
             .concat(bottomPath.slice(7, 9))
             .concat(bottomPath.slice(3, 6))
             .concat(bottomPath.slice(0, 3));
+
         // change 'M' into 'L'
         path[path.length - 3] = 'L';
-    }
-    else {
-        path.push(bottomPath[15], bottomPath[16], 'C', bottomPath[13], bottomPath[14], bottomPath[11], bottomPath[12], bottomPath[8], bottomPath[9], 'C', bottomPath[6], bottomPath[7], bottomPath[4], bottomPath[5], bottomPath[1], bottomPath[2]);
+    } else {
+        path.push(
+            bottomPath[15], bottomPath[16],
+            'C',
+            bottomPath[13], bottomPath[14],
+            bottomPath[11], bottomPath[12],
+            bottomPath[8], bottomPath[9],
+            'C',
+            bottomPath[6], bottomPath[7],
+            bottomPath[4], bottomPath[5],
+            bottomPath[1], bottomPath[2]
+        );
     }
     path.push('Z');
+
     return path;
+    */
 };
 // Returns cylinder Back path
 RendererProto.getCylinderBack = function (topPath, bottomPath) {
-    var path = ['M'];
-    if (topPath.simplified) {
+    return topPath.concat(bottomPath);
+    /*
+    To do: segments
+    var path: Highcharts.SVGPathArray = ['M'];
+
+    if ((topPath as any).simplified) {
         path = path.concat(topPath.slice(7, 12));
+
         // end at start
-        path.push('L', topPath[1], topPath[2]);
-    }
-    else {
+        path.push(
+            'L',
+            topPath[1], topPath[2]
+        );
+    } else {
         path = path.concat(topPath.slice(15));
     }
+
     path.push('L');
-    if (bottomPath.simplified) {
+    if ((bottomPath as any).simplified) {
         path = path
             .concat(bottomPath.slice(1, 3))
             .concat(bottomPath.slice(9, 12))
             .concat(bottomPath.slice(6, 9));
-    }
-    else {
-        path.push(bottomPath[29], bottomPath[30], 'C', bottomPath[27], bottomPath[28], bottomPath[25], bottomPath[26], bottomPath[22], bottomPath[23], 'C', bottomPath[20], bottomPath[21], bottomPath[18], bottomPath[19], bottomPath[15], bottomPath[16]);
+    } else {
+        path.push(
+            bottomPath[29], bottomPath[30],
+            'C',
+            bottomPath[27], bottomPath[28],
+            bottomPath[25], bottomPath[26],
+            bottomPath[22], bottomPath[23],
+            'C',
+            bottomPath[20], bottomPath[21],
+            bottomPath[18], bottomPath[19],
+            bottomPath[15], bottomPath[16]
+        );
     }
     path.push('Z');
+
     return path;
+    */
 };
 // Retruns cylinder path for top or bottom
 RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
@@ -308,12 +343,17 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
 // [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
 // (cp - control point, ep - end point)
 RendererProto.getCurvedPath = function (points) {
-    var path = [
-        'M',
-        points[0].x, points[0].y
-    ], limit = points.length - 2, i;
+    var path = [[
+            'M',
+            points[0].x, points[0].y
+        ]], limit = points.length - 2, i;
     for (i = 1; i < limit; i += 3) {
-        path.push('C', points[i].x, points[i].y, points[i + 1].x, points[i + 1].y, points[i + 2].x, points[i + 2].y);
+        path.push([
+            'C',
+            points[i].x, points[i].y,
+            points[i + 1].x, points[i + 1].y,
+            points[i + 2].x, points[i + 2].y
+        ]);
     }
     return path;
 };

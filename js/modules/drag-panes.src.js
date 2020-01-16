@@ -208,7 +208,7 @@ H.AxisResizer.prototype = {
      * @function Highcharts.AxisResizer#render
      */
     render: function () {
-        var resizer = this, axis = resizer.axis, chart = axis.chart, options = resizer.options, x = options.x, y = options.y, 
+        var resizer = this, axis = resizer.axis, chart = axis.chart, options = resizer.options, x = options.x || 0, y = options.y, 
         // Normalize control line position according to the plot area
         pos = clamp(axis.top + axis.height + y, chart.plotTop, chart.plotTop + chart.plotHeight), attr = {}, lineWidth;
         if (!chart.styledMode) {
@@ -232,8 +232,8 @@ H.AxisResizer.prototype = {
             resizer.controlLine.strokeWidth() :
             options.lineWidth;
         attr.d = chart.renderer.crispLine([
-            'M', axis.left + x, pos,
-            'L', axis.left + axis.width + x, pos
+            ['M', axis.left + x, pos],
+            ['L', axis.left + axis.width + x, pos]
         ], lineWidth);
         resizer.controlLine.attr(attr);
     },

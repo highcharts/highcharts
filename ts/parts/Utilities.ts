@@ -140,7 +140,7 @@ declare global {
             public fillSetter(): void;
             public initPath(
                 elem: SVGElement,
-                fromD: string,
+                fromD: SVGPathArray,
                 toD: SVGPathArray
             ): [SVGPathArray, SVGPathArray];
             public run(from: number, to: number, unit: string): void;
@@ -841,38 +841,51 @@ class Fx {
     public dSetter(): void {
         var start: Highcharts.SVGPathArray = (this.paths as any)[0],
             end: Highcharts.SVGPathArray = (this.paths as any)[1],
-            ret: Highcharts.SVGPathArray = [],
-            now: number = this.now as any,
-            i = start.length,
-            startVal: number;
+            path: Highcharts.SVGPathArray = [],
+            now = this.now || 1;
 
         // Land on the final path without adjustment points appended in the ends
         if (now === 1) {
-            ret = this.toD as any;
+            path = this.toD || [];
 
-        } else if (i === end.length && now < 1) {
-            while (i--) {
-                startVal = parseFloat(start[i] as any);
-                ret[i] = (
-                    // A letter instruction like M or L
-                    isNaN(startVal) ||
-                    // Arc boolean flags:
-                    end[i - 4] === 'A' || // large-arc-flag
-                    end[i - 5] === 'A' // sweep-flag
-                ) ?
-                    end[i] :
-                    (
-                        now *
-                        parseFloat('' + ((end[i] as any) - startVal)) +
-                        startVal
-                    );
+        } else if (start.length === end.length && now < 1) {
+            for (let i = 0; i < end.length; i++) {
+
+                // Tween between the start segment and the end segment. Start
+                // with a copy of the end segment and tween the appropriate
+                // numerics
+                const startSeg = start[i];
+                const endSeg = end[i];
+                const tweenSeg = [];
+
+                for (let j = 0; j < endSeg.length; j++) {
+                    const startItem = startSeg[j];
+                    const endItem = endSeg[j];
+
+                    // Tween numbers
+                    if (
+                        typeof startItem === 'number' &&
+                        typeof endItem === 'number' &&
+                        // Arc boolean flags
+                        !(endSeg[0] === 'A' && (j === 4 || j === 5))
+                    ) {
+                        tweenSeg[j] = startItem + now * (endItem - startItem);
+
+                    // Strings, take directly from the end segment
+                    } else {
+                        tweenSeg[j] = endItem;
+                    }
+                }
+
+                path.push(tweenSeg as Highcharts.SVGPathSegment);
 
             }
         // If animation is finished or length not matching, land on right value
         } else {
-            ret = end;
+            path = end;
         }
-        this.elem.attr('d', ret, null as any, true);
+
+        this.elem.attr('d', path, void 0, true);
     }
 
     /**
@@ -1045,70 +1058,19 @@ class Fx {
      */
     public initPath(
         elem: Highcharts.SVGElement,
-        fromD: string,
+        fromD: Highcharts.SVGPathArray,
         toD: Highcharts.SVGPathArray
     ): [Highcharts.SVGPathArray, Highcharts.SVGPathArray] {
-        fromD = fromD || '';
         var shift,
             startX = elem.startX,
             endX = elem.endX,
-            bezier = fromD.indexOf('C') > -1,
-            numParams = bezier ? 7 : 3,
             fullLength: number,
-            slice,
             i: number,
-            start: Highcharts.SVGPathArray = fromD.split(' ') as any,
+            start: Highcharts.SVGPathArray = fromD.slice(), // copy
             end: Highcharts.SVGPathArray = toD.slice(), // copy
             isArea = elem.isArea,
             positionFactor = isArea ? 2 : 1,
             reverse;
-
-        /**
-         * In splines make moveTo and lineTo points have six parameters like
-         * bezier curves, to allow animation one-to-one.
-         * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @return {void}
-         */
-        function sixify(arr: Highcharts.SVGPathArray): void {
-            var isOperator,
-                nextIsOperator;
-
-            i = arr.length;
-            while (i--) {
-
-                // Fill in dummy coordinates only if the next operator comes
-                // three places behind (#5788)
-                isOperator = arr[i] === 'M' || arr[i] === 'L';
-                nextIsOperator = /[a-zA-Z]/.test(arr[i + 3] as string);
-                if (isOperator && nextIsOperator) {
-                    arr.splice(
-                        i + 1, 0,
-                        arr[i + 1], arr[i + 2],
-                        arr[i + 1], arr[i + 2]
-                    );
-                }
-            }
-        }
-
-        /**
-         * Insert an array at the given position of another array
-         * @private
-         * @param {Array<*>} arr - array
-         * @param {Array<*>} subArr - array
-         * @param {number} index - number
-         * @return {void}
-         */
-        function insertSlice(
-            arr: Array<any>,
-            subArr: Array<any>,
-            index: number
-        ): void {
-            [].splice.apply(
-                arr,
-                [index, 0].concat(subArr) as any
-            );
-        }
 
         /**
          * If shifting points, prepend a dummy point to the end path.
@@ -1124,22 +1086,33 @@ class Fx {
             while (arr.length < fullLength) {
 
                 // Move to, line to or curve to?
-                arr[0] = other[fullLength - arr.length];
+                const moveSegment = arr[0],
+                    otherSegment = other[fullLength - arr.length];
+                if (otherSegment && moveSegment[0] === 'M') {
+                    if (otherSegment[0] === 'C') {
+                        arr[0] = [
+                            'C',
+                            moveSegment[1],
+                            moveSegment[2],
+                            moveSegment[1],
+                            moveSegment[2],
+                            moveSegment[1],
+                            moveSegment[2]
+                        ];
+                    } else {
+                        arr[0] = ['L', moveSegment[1], moveSegment[2]];
+                    }
+                }
 
                 // Prepend a copy of the first point
-                insertSlice(arr, arr.slice(0, numParams), 0);
+                arr.unshift(moveSegment);
 
                 // For areas, the bottom path goes back again to the left, so we
                 // need to append a copy of the last point.
                 if (isArea) {
-                    insertSlice(
-                        arr,
-                        arr.slice(arr.length - numParams), arr.length
-                    );
-                    i--;
+                    arr.push(arr[arr.length - 1]);
                 }
             }
-            arr[0] = 'M';
         }
 
         /**
@@ -1153,9 +1126,7 @@ class Fx {
             arr: Highcharts.SVGPathArray,
             other: Highcharts.SVGPathArray
         ): void {
-            var i = (fullLength - arr.length) / numParams;
-
-            while (i > 0 && i--) {
+            while (arr.length < fullLength) {
 
                 // Pull out the slice that is going to be appended or inserted.
                 // In a line graph, the positionFactor is 1, and the last point
@@ -1163,33 +1134,28 @@ class Fx {
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                slice = arr.slice().splice(
-                    (arr.length / positionFactor) - numParams,
-                    numParams * positionFactor
-                );
+                const segmentToAdd = arr[arr.length / positionFactor - 1].slice();
 
-                // Move to, line to or curve to?
-                slice[0] = other[fullLength - numParams - (i * numParams)];
-
-                // Disable first control point
-                if (bezier) {
-                    slice[numParams - 6] = slice[numParams - 2];
-                    slice[numParams - 5] = slice[numParams - 1];
+                // Disable the first control point of curve segments
+                if (segmentToAdd[0] === 'C') {
+                    segmentToAdd[1] = segmentToAdd[5];
+                    segmentToAdd[2] = segmentToAdd[6];
                 }
 
-                // Now insert the slice, either in the middle (for areas) or at
-                // the end (for lines)
-                insertSlice(arr, slice, arr.length / positionFactor);
+                if (!isArea) {
+                    arr.push(segmentToAdd as Highcharts.SVGPathSegment);
 
-                if (isArea) {
-                    i--;
+                } else {
+
+                    const lowerSegmentToAdd = arr[arr.length / positionFactor].slice();
+                    arr.splice(
+                        arr.length / 2,
+                        0,
+                        segmentToAdd as Highcharts.SVGPathSegment,
+                        lowerSegmentToAdd as Highcharts.SVGPathSegment
+                    );
                 }
             }
-        }
-
-        if (bezier) {
-            sixify(start as any);
-            sixify(end);
         }
 
         // For sideways animation, find out how much we need to shift to get the
@@ -1224,16 +1190,14 @@ class Fx {
 
             // The common target length for the start and end array, where both
             // arrays are padded in opposite ends
-            fullLength = (
-                end.length + (shift as number) * positionFactor * numParams
-            );
+            fullLength = end.length + shift * positionFactor;
 
             if (!reverse) {
-                prepend(end, start as any);
-                append(start as any, end);
+                prepend(end, start);
+                append(start, end);
             } else {
-                prepend(start as any, end);
-                append(end, start as any);
+                prepend(start, end);
+                append(end, start);
             }
         }
 
@@ -3269,11 +3233,11 @@ H.animate = function (
         fx = new Fx(el as any, opt as any, prop);
         end = null;
 
-        if (prop === 'd') {
+        if (prop === 'd' && isArray(params.d)) {
             fx.paths = fx.initPath(
                 el as any,
-                (el as any).d,
-                params.d as any
+                (el as any).pathArray,
+                params.d
             );
             fx.toD = params.d as any;
             start = 0;

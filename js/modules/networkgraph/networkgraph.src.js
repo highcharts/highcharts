@@ -829,12 +829,8 @@ seriesType('networkgraph', 'line',
             right = this.fromNode;
         }
         return [
-            'M',
-            left.plotX,
-            left.plotY,
-            'L',
-            right.plotX,
-            right.plotY
+            ['M', left.plotX || 0, left.plotY || 0],
+            ['L', right.plotX || 0, right.plotY || 0]
         ];
         /*
         IDEA: different link shapes?

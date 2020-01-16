@@ -410,7 +410,7 @@ function getAreaOfIntersectionBetweenCircles(
         } else if (arcs.length === 1) {
             // empty
         } else {
-            arcs.unshift(['M', startPoint.x, startPoint.y]);
+            arcs.unshift([['M', startPoint.x, startPoint.y]]);
             result = {
                 center,
                 d: arcs

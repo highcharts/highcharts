@@ -94,14 +94,14 @@ H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highchar
     render: function (parent) {
         var options = this.options, attrs = this.attrsFromOptions(options);
         this.graphic = this.annotation.chart.renderer
-            .path(['M', 0, 0])
+            .path([['M', 0, 0]])
             .attr(attrs)
             .add(parent);
         if (options.className) {
             this.graphic.addClass(options.className);
         }
         this.tracker = this.annotation.chart.renderer
-            .path(['M', 0, 0])
+            .path([['M', 0, 0]])
             .addClass('highcharts-tracker-line')
             .attr({
             zIndex: 2

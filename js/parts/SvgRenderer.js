@@ -1885,8 +1885,19 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @return {void}
      */
     dSetter: function (value, key, element) {
-        if (value && value.join) { // join path
-            value = value.join(' ');
+        if (isArray(value)) {
+            var invalidPath_1 = false;
+            this.pathArray = value;
+            value = value.reduce(function (acc, seg) {
+                if (!seg || !seg.join) {
+                    invalidPath_1 = true;
+                    return (seg || '').toString();
+                }
+                return acc + ' ' + seg.join(' ');
+            }, '');
+            if (invalidPath_1) {
+                H.error(32, false);
+            }
         }
         if (/(NaN| {2}|^$)/.test(value)) {
             value = 'M 0 0';
@@ -3254,20 +3265,27 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} width
      *        The width of the line.
      *
+     * @param {string} roundingFunction
+     *        The rounding function name on the `Math` object, can be one of
+     *        `round`, `floor` or `ceil`.
+     *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
      */
-    crispLine: function (points, width) {
-        // normalize to a crisp line
-        if (points[1] === points[4]) {
+    crispLine: function (points, width, roundingFunction) {
+        if (roundingFunction === void 0) { roundingFunction = 'round'; }
+        var start = points[0];
+        var end = points[1];
+        // Normalize to a crisp line
+        if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[1] = points[4] =
-                Math.round(points[1]) - (width % 2 / 2);
+            start[1] = end[1] =
+                Math[roundingFunction](start[1]) - (width % 2 / 2);
         }
-        if (points[2] === points[5]) {
-            points[2] = points[5] =
-                Math.round(points[2]) + (width % 2 / 2);
+        if (start[2] === end[2]) {
+            start[2] = end[2] =
+                Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
         return points;
     },
@@ -3662,10 +3680,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     symbol: function (symbol, x, y, width, height, options) {
         var ren = this, obj, imageRegex = /^url\((.*?)\)$/, isImage = imageRegex.test(symbol), sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')), 
         // get the symbol definition function
-        symbolFn = (sym && this.symbols[sym]), 
-        // check if there's a path defined for this symbol
-        path = (defined(x) && symbolFn && symbolFn.call(this.symbols, Math.round(x), Math.round(y), width, height, options)), imageSrc, centerImage;
+        symbolFn = (sym && this.symbols[sym]), path, imageSrc, centerImage;
         if (symbolFn) {
+            // Check if there's a path defined for this symbol
+            if (typeof x === 'number') {
+                path = symbolFn.call(this.symbols, Math.round(x || 0), Math.round(y || 0), width, height, options);
+            }
             obj = this.path(path);
             if (!ren.styledMode) {
                 obj.attr('fill', 'none');
@@ -3805,36 +3825,36 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         },
         square: function (x, y, w, h) {
             return [
-                'M', x, y,
-                'L', x + w, y,
-                x + w, y + h,
-                x, y + h,
-                'Z'
+                ['M', x, y],
+                ['L', x + w, y],
+                ['L', x + w, y + h],
+                ['L', x, y + h],
+                ['Z']
             ];
         },
         triangle: function (x, y, w, h) {
             return [
-                'M', x + w / 2, y,
-                'L', x + w, y + h,
-                x, y + h,
-                'Z'
+                ['M', x + w / 2, y],
+                ['L', x + w, y + h],
+                ['L', x, y + h],
+                ['Z']
             ];
         },
         'triangle-down': function (x, y, w, h) {
             return [
-                'M', x, y,
-                'L', x + w, y,
-                x + w / 2, y + h,
-                'Z'
+                ['M', x, y],
+                ['L', x + w, y],
+                ['L', x + w / 2, y + h],
+                ['Z']
             ];
         },
         diamond: function (x, y, w, h) {
             return [
-                'M', x + w / 2, y,
-                'L', x + w, y + h / 2,
-                x + w / 2, y + h,
-                x, y + h / 2,
-                'Z'
+                ['M', x + w / 2, y],
+                ['L', x + w, y + h / 2],
+                ['L', x + w / 2, y + h],
+                ['L', x, y + h / 2],
+                ['Z']
             ];
         },
         arc: function (x, y, w, h, options) {
@@ -3846,28 +3866,47 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // Proximity takes care of rounding errors around PI (#6971)
             longArc = pick(options.longArc, options.end - start - Math.PI < proximity ? 0 : 1), arc;
             arc = [
-                'M',
-                x + rx * cosStart,
-                y + ry * sinStart,
-                'A',
-                rx,
-                ry,
-                0,
-                longArc,
-                pick(options.clockwise, 1),
-                x + rx * cosEnd,
-                y + ry * sinEnd
+                [
+                    'M',
+                    x + rx * cosStart,
+                    y + ry * sinStart
+                ],
+                [
+                    'A',
+                    rx,
+                    ry,
+                    0,
+                    longArc,
+                    pick(options.clockwise, 1),
+                    x + rx * cosEnd,
+                    y + ry * sinEnd
+                ]
             ];
             if (defined(innerRadius)) {
-                arc.push(open ? 'M' : 'L', x + innerRadius * cosEnd, y + innerRadius * sinEnd, 'A', // arcTo
-                innerRadius, // x radius
-                innerRadius, // y radius
-                0, // slanting
-                longArc, // long or short arc
-                // Clockwise - opposite to the outer arc clockwise
-                defined(options.clockwise) ? 1 - options.clockwise : 0, x + innerRadius * cosStart, y + innerRadius * sinStart);
+                arc.push(open ?
+                    [
+                        'M',
+                        x + innerRadius * cosEnd,
+                        y + innerRadius * sinEnd
+                    ] : [
+                    'L',
+                    x + innerRadius * cosEnd,
+                    y + innerRadius * sinEnd
+                ], [
+                    'A',
+                    innerRadius,
+                    innerRadius,
+                    0,
+                    longArc,
+                    // Clockwise - opposite to the outer arc clockwise
+                    defined(options.clockwise) ? 1 - options.clockwise : 0,
+                    x + innerRadius * cosStart,
+                    y + innerRadius * sinStart
+                ]);
             }
-            arc.push(open ? '' : 'Z'); // close
+            if (!open) {
+                arc.push(['Z']);
+            }
             return arc;
         },
         /**
@@ -3877,26 +3916,26 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         callout: function (x, y, w, h, options) {
             var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY, path;
             path = [
-                'M', x + r, y,
-                'L', x + w - r, y,
-                'C', x + w, y, x + w, y, x + w, y + r,
-                'L', x + w, y + h - r,
-                'C', x + w, y + h, x + w, y + h, x + w - r, y + h,
-                'L', x + r, y + h,
-                'C', x, y + h, x, y + h, x, y + h - r,
-                'L', x, y + r,
-                'C', x, y, x, y, x + r, y // top-left corner
+                ['M', x + r, y],
+                ['L', x + w - r, y],
+                ['C', x + w, y, x + w, y, x + w, y + r],
+                ['L', x + w, y + h - r],
+                ['C', x + w, y + h, x + w, y + h, x + w - r, y + h],
+                ['L', x + r, y + h],
+                ['C', x, y + h, x, y + h, x, y + h - r],
+                ['L', x, y + r],
+                ['C', x, y, x, y, x + r, y] // top-left corner
             ];
             // Anchor on right side
             if (anchorX && anchorX > w) {
                 // Chevron
                 if (anchorY > y + safeDistance &&
                     anchorY < y + h - safeDistance) {
-                    path.splice(13, 3, 'L', x + w, anchorY - halfDistance, x + w + arrowLength, anchorY, x + w, anchorY + halfDistance, x + w, y + h - r);
+                    path.splice(3, 1, ['L', x + w, anchorY - halfDistance], ['L', x + w + arrowLength, anchorY], ['L', x + w, anchorY + halfDistance], ['L', x + w, y + h - r]);
                     // Simple connector
                 }
                 else {
-                    path.splice(13, 3, 'L', x + w, h / 2, anchorX, anchorY, x + w, h / 2, x + w, y + h - r);
+                    path.splice(3, 1, ['L', x + w, h / 2], ['L', anchorX, anchorY], ['L', x + w, h / 2], ['L', x + w, y + h - r]);
                 }
                 // Anchor on left side
             }
@@ -3904,11 +3943,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Chevron
                 if (anchorY > y + safeDistance &&
                     anchorY < y + h - safeDistance) {
-                    path.splice(33, 3, 'L', x, anchorY + halfDistance, x - arrowLength, anchorY, x, anchorY - halfDistance, x, y + r);
+                    path.splice(7, 1, ['L', x, anchorY + halfDistance], ['L', x - arrowLength, anchorY], ['L', x, anchorY - halfDistance], ['L', x, y + r]);
                     // Simple connector
                 }
                 else {
-                    path.splice(33, 3, 'L', x, h / 2, anchorX, anchorY, x, h / 2, x, y + r);
+                    path.splice(7, 1, ['L', x, h / 2], ['L', anchorX, anchorY], ['L', x, h / 2], ['L', x, y + r]);
                 }
             }
             else if ( // replace bottom
@@ -3916,14 +3955,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 anchorY > h &&
                 anchorX > x + safeDistance &&
                 anchorX < x + w - safeDistance) {
-                path.splice(23, 3, 'L', anchorX + halfDistance, y + h, anchorX, y + h + arrowLength, anchorX - halfDistance, y + h, x + r, y + h);
+                path.splice(5, 1, ['L', anchorX + halfDistance, y + h], ['L', anchorX, y + h + arrowLength], ['L', anchorX - halfDistance, y + h], ['L', x + r, y + h]);
             }
             else if ( // replace top
             anchorY &&
                 anchorY < 0 &&
                 anchorX > x + safeDistance &&
                 anchorX < x + w - safeDistance) {
-                path.splice(3, 3, 'L', anchorX - halfDistance, y, anchorX, y - arrowLength, anchorX + halfDistance, y, w - r, y);
+                path.splice(1, 1, ['L', anchorX - halfDistance, y], ['L', anchorX, y - arrowLength], ['L', anchorX + halfDistance, y], ['L', w - r, y]);
             }
             return path;
         }

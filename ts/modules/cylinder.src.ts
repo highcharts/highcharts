@@ -278,6 +278,9 @@ RendererProto.getCylinderFront = function (
     topPath: Highcharts.SVGPathArray,
     bottomPath: Highcharts.SVGPathArray
 ): Highcharts.SVGPathArray {
+    return topPath.concat(bottomPath);
+    /*
+    To do: segments
     var path = topPath.slice(0, (topPath as any).simplified ? 9 : 17);
 
     path.push('L');
@@ -305,6 +308,7 @@ RendererProto.getCylinderFront = function (
     path.push('Z');
 
     return path;
+    */
 };
 
 // Returns cylinder Back path
@@ -312,6 +316,9 @@ RendererProto.getCylinderBack = function (
     topPath: Highcharts.SVGPathArray,
     bottomPath: Highcharts.SVGPathArray
 ): Highcharts.SVGPathArray {
+    return topPath.concat(bottomPath);
+    /*
+    To do: segments
     var path: Highcharts.SVGPathArray = ['M'];
 
     if ((topPath as any).simplified) {
@@ -348,6 +355,7 @@ RendererProto.getCylinderBack = function (
     path.push('Z');
 
     return path;
+    */
 };
 
 // Retruns cylinder path for top or bottom
@@ -482,20 +490,20 @@ RendererProto.getCylinderEnd = function (
 RendererProto.getCurvedPath = function (
     points: Array<Highcharts.PositionObject>
 ): Highcharts.SVGPathArray {
-    var path: Highcharts.SVGPathArray = [
+    var path: Highcharts.SVGPathArray = [[
             'M',
             points[0].x as any, points[0].y as any
-        ],
+        ]],
         limit = points.length - 2,
         i;
 
     for (i = 1; i < limit; i += 3) {
-        path.push(
+        path.push([
             'C',
             points[i].x as any, points[i].y as any,
             points[i + 1].x as any, points[i + 1].y as any,
             points[i + 2].x as any, points[i + 2].y as any
-        );
+        ]);
     }
     return path;
 };

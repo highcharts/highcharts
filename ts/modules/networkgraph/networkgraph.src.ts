@@ -1208,12 +1208,8 @@ seriesType<Highcharts.NetworkgraphSeries>(
             }
 
             return [
-                'M',
-                left.plotX as any,
-                left.plotY as any,
-                'L',
-                right.plotX as any,
-                right.plotY as any
+                ['M', left.plotX || 0, left.plotY || 0],
+                ['L', right.plotX || 0, right.plotY || 0]
             ];
             /*
             IDEA: different link shapes?

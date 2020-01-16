@@ -295,7 +295,8 @@ wrap(Axis.prototype, 'getLinePath', function (
 
     return [];
 });
-
+/*
+To do: segmented path
 wrap(Axis.prototype, 'getPlotBandPath', function (
     this: Highcharts.Axis,
     proceed: Function
@@ -326,6 +327,7 @@ wrap(Axis.prototype, 'getPlotBandPath', function (
 
     return path;
 });
+*/
 
 /**
  * @private

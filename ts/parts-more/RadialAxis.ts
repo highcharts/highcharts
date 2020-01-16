@@ -372,12 +372,8 @@ radialAxisMixin = {
         } else {
             end = this.postTranslate(this.angleRad, r);
             path = [
-                'M',
-                center[0] + chart.plotLeft,
-                center[1] + chart.plotTop,
-                'L',
-                end.x,
-                end.y
+                ['M', center[0] + chart.plotLeft, center[1] + chart.plotTop],
+                ['L', end.x, end.y]
             ];
         }
         return path;
@@ -759,12 +755,8 @@ radialAxisMixin = {
                 );
 
             ret = [
-                'M',
-                x1 + a * (x2 - x1),
-                y1 - a * (y1 - y2),
-                'L',
-                x2 - (1 - b) * (x2 - x1),
-                y2 + (1 - b) * (y1 - y2)
+                ['M', x1 + a * (x2 - x1), y1 - a * (y1 - y2)],
+                ['L', x2 - (1 - b) * (x2 - x1), y2 + (1 - b) * (y1 - y2)]
             ];
             // Concentric circles
         } else {
@@ -812,7 +804,7 @@ radialAxisMixin = {
 
                 tickPositions.forEach(function (pos: number, i: number): void {
                     xy = (otherAxis as any).getPosition(pos, value);
-                    ret.push(i ? 'L' : 'M', xy.x, xy.y);
+                    ret.push([i ? 'L' : 'M', xy.x, xy.y]);
                 });
             }
         }
@@ -1211,7 +1203,7 @@ wrap(tickProto, 'getMarkPath', function (
 ): Highcharts.SVGPathArray {
     var axis = this.axis,
         endPoint,
-        ret;
+        ret: Highcharts.SVGPathArray;
 
     if (axis.isRadial) {
         endPoint = axis.getPosition(
@@ -1219,12 +1211,8 @@ wrap(tickProto, 'getMarkPath', function (
             axis.center[2] / 2 + tickLength
         );
         ret = [
-            'M',
-            x,
-            y,
-            'L',
-            endPoint.x,
-            endPoint.y
+            ['M', x, y],
+            ['L', endPoint.x, endPoint.y]
         ];
     } else {
         ret = proceed.call(

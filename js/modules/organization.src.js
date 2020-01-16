@@ -274,10 +274,10 @@ H.seriesType('organization', 'sankey',
             y = path[i][1];
             // moveTo
             if (i === 0) {
-                d.push('M', x, y);
+                d.push(['M', x, y]);
             }
             else if (i === path.length - 1) {
-                d.push('L', x, y);
+                d.push(['L', x, y]);
                 // curveTo
             }
             else if (r) {
@@ -289,12 +289,24 @@ H.seriesType('organization', 'sankey',
                 if (x1 !== x2 && y1 !== y2) {
                     directionX = x1 < x2 ? 1 : -1;
                     directionY = y1 < y2 ? 1 : -1;
-                    d.push('L', x - directionX * Math.min(Math.abs(x - x1), r), y - directionY * Math.min(Math.abs(y - y1), r), 'C', x, y, x, y, x + directionX * Math.min(Math.abs(x - x2), r), y + directionY * Math.min(Math.abs(y - y2), r));
+                    d.push([
+                        'L',
+                        x - directionX * Math.min(Math.abs(x - x1), r),
+                        y - directionY * Math.min(Math.abs(y - y1), r)
+                    ], [
+                        'C',
+                        x,
+                        y,
+                        x,
+                        y,
+                        x + directionX * Math.min(Math.abs(x - x2), r),
+                        y + directionY * Math.min(Math.abs(y - y2), r)
+                    ]);
                 }
                 // lineTo
             }
             else {
-                d.push('L', x, y);
+                d.push(['L', x, y]);
             }
         }
         return d;
@@ -341,10 +353,10 @@ H.seriesType('organization', 'sankey',
         point.shapeType = 'path';
         point.shapeArgs = {
             d: this.curvedPath([
-                [x1, y1],
-                [xMiddle, y1],
-                [xMiddle, y2],
-                [x2, y2]
+                ['M', x1, y1],
+                ['L', xMiddle, y1],
+                ['L', xMiddle, y2],
+                ['L', x2, y2]
             ], this.options.linkRadius)
         };
     },

@@ -306,7 +306,7 @@ H.merge(true, ControllableLabel.prototype, controllableMixin,
 H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
     var anchorX = options && options.anchorX, anchorY = options && options.anchorY, path, yOffset, lateral = w / 2;
     if (isNumber(anchorX) && isNumber(anchorY)) {
-        path = ['M', anchorX, anchorY];
+        path = [['M', anchorX, anchorY]];
         // Prefer 45 deg connectors
         yOffset = y - anchorY;
         if (yOffset < 0) {
@@ -317,19 +317,19 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
         }
         // Anchor below label
         if (anchorY > y + h) {
-            path.push('L', x + lateral, y + h);
+            path.push(['L', x + lateral, y + h]);
             // Anchor above label
         }
         else if (anchorY < y) {
-            path.push('L', x + lateral, y);
+            path.push(['L', x + lateral, y]);
             // Anchor left of label
         }
         else if (anchorX < x) {
-            path.push('L', x, y + h / 2);
+            path.push(['L', x, y + h / 2]);
             // Anchor right of label
         }
         else if (anchorX > x + w) {
-            path.push('L', x + w, y + h / 2);
+            path.push(['L', x + w, y + h / 2]);
         }
     }
     return path || [];

@@ -539,20 +539,25 @@ seriesType('ikh', 'sma',
         indicator.graph = mainLinePath;
     },
     getGraphPath: function (points) {
-        var indicator = this, path = [], spanA, fillArray = [], spanAarr = [];
+        var indicator = this, path = [], spanA, spanAarr = [];
         points = points || this.points;
         // Render Senkou Span
         if (indicator.fillGraph && indicator.nextPoints) {
             spanA = SMA.prototype.getGraphPath.call(indicator, 
             // Reverse points, so Senkou Span A will start from the end:
             indicator.nextPoints);
-            spanA[0] = 'L';
+            spanA[0][0] = 'L';
             path = SMA.prototype.getGraphPath.call(indicator, points);
             spanAarr = spanA.slice(0, path.length);
             for (var i = (spanAarr.length - 1); i > 0; i -= 3) {
-                fillArray.push(spanAarr[i - 2], spanAarr[i - 1], spanAarr[i]);
+                if (spanAarr[i - 2]) {
+                    path.push(spanAarr[i - 2]);
+                }
+                if (spanAarr[i - 1]) {
+                    path.push(spanAarr[i - 1]);
+                }
+                path.push(spanAarr[i]);
             }
-            path = path.concat(fillArray);
         }
         else {
             path = SMA.prototype.getGraphPath.apply(indicator, arguments);

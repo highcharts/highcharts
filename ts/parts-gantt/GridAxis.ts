@@ -858,10 +858,6 @@ addEvent(
             gridOptions: Highcharts.XAxisGridOptions = ((
                 options && isObject(options.grid)) ? (options.grid as any) : {}
             ),
-            yStartIndex,
-            yEndIndex,
-            xStartIndex,
-            xEndIndex,
             renderer = axis.chart.renderer;
 
         if (gridOptions.enabled === true) {
@@ -890,10 +886,8 @@ addEvent(
                 const lineWidth = options.lineWidth;
                 if (lineWidth) {
                     const linePath = axis.getLinePath(lineWidth);
-                    xStartIndex = linePath.indexOf('M') + 1;
-                    xEndIndex = linePath.indexOf('L') + 1;
-                    yStartIndex = linePath.indexOf('M') + 2;
-                    yEndIndex = linePath.indexOf('L') + 2;
+                    const startPoint = linePath[0];
+                    const endPoint = linePath[1];
 
                     // Negate distance if top or left axis
                     // Subtract 1px to draw the line at the end of the tick
@@ -903,18 +897,16 @@ addEvent(
                     ) ? -1 : 1);
 
                     // If axis is horizontal, reposition line path vertically
-                    if (axis.horiz) {
-                        linePath[yStartIndex] =
-                            (linePath[yStartIndex] as any) + distance;
-                        linePath[yEndIndex] =
-                            (linePath[yEndIndex] as any) + distance;
-                    } else {
-                        // If axis is vertical, reposition line path
-                        // horizontally
-                        linePath[xStartIndex] =
-                            (linePath[xStartIndex] as any) + distance;
-                        linePath[xEndIndex] =
-                            (linePath[xEndIndex] as any) + distance;
+                    if (startPoint[0] === 'M' && endPoint[0] === 'L') {
+                        if (axis.horiz) {
+                            startPoint[2] += distance;
+                            endPoint[2] += distance;
+                        } else {
+                            // If axis is vertical, reposition line path
+                            // horizontally
+                            startPoint[1] += distance;
+                            endPoint[1] += distance;
+                        }
                     }
 
                     if (!axis.axisLineExtra) {

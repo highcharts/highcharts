@@ -502,9 +502,7 @@ seriesType<Highcharts.MapSeries>(
                         point.path = H.splitPath(point.path);
                     }
 
-                    var path: Highcharts.SVGPathArray = point.path as any || [],
-                        i = path.length,
-                        even = false, // while loop reads from the end
+                    var path: Highcharts.SVGPathArray = point.path || [],
                         pointMaxX = -MAX_VALUE,
                         pointMinX = MAX_VALUE,
                         pointMaxY = -MAX_VALUE,
@@ -513,22 +511,16 @@ seriesType<Highcharts.MapSeries>(
 
                     // The first time a map point is used, analyze its box
                     if (!point._foundBox) {
-                        while (i--) {
-                            if (isNumber(path[i])) {
-                                if (even) { // even = x
-                                    pointMaxX =
-                                        Math.max(pointMaxX, path[i] as any);
-                                    pointMinX =
-                                        Math.min(pointMinX, path[i] as any);
-                                } else { // odd = Y
-                                    pointMaxY =
-                                        Math.max(pointMaxY, path[i] as any);
-                                    pointMinY =
-                                        Math.min(pointMinY, path[i] as any);
-                                }
-                                even = !even;
+                        path.forEach((seg): void => {
+                            const x = seg[seg.length - 2];
+                            const y = seg[seg.length - 1];
+                            if (typeof x === 'number' && typeof y === 'number') {
+                                pointMinX = Math.min(pointMinX, x);
+                                pointMaxX = Math.max(pointMaxX, x);
+                                pointMinY = Math.min(pointMinY, y);
+                                pointMaxY = Math.max(pointMaxY, y);
                             }
-                        }
+                        });
                         // Cache point bounding box for use to position data
                         // labels, bubbles etc
                         point._midX = (
@@ -626,7 +618,6 @@ seriesType<Highcharts.MapSeries>(
         ): Highcharts.SVGPathArray {
 
             var series = this,
-                even = false, // while loop reads from the end
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 xMin = xAxis.min,
@@ -635,24 +626,35 @@ seriesType<Highcharts.MapSeries>(
                 yMin = yAxis.min,
                 yTransA = yAxis.transA,
                 yMinPixelPadding = yAxis.minPixelPadding,
-                i: number,
                 ret: Highcharts.SVGPathArray = []; // Preserve the original
 
             // Do the translation
             if (path) {
-                i = path.length;
-                while (i--) {
-                    if (isNumber(path[i])) {
-                        ret[i] = even ?
-                            ((path as any)[i] - (xMin as any)) *
-                            xTransA + xMinPixelPadding :
-                            ((path as any)[i] - (yMin as any)) *
-                            yTransA + yMinPixelPadding;
-                        even = !even;
-                    } else {
-                        ret[i] = path[i];
+                path.forEach((seg): void => {
+                    if (seg[0] === 'M') {
+                        ret.push([
+                            'M',
+                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        ]);
+                    } else if (seg[0] === 'L') {
+                        ret.push([
+                            'L',
+                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        ]);
+                    } else if (seg[0] === 'C') {
+                        ret.push([
+                            'C',
+                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                            (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                            (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        ]);
                     }
-                }
+                });
             }
 
             return ret;
