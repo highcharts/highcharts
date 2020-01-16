@@ -878,6 +878,11 @@ seriesType('pie', 'line',
     drawPoints: function () {
         var renderer = this.chart.renderer;
         this.points.forEach(function (point) {
+            // When updating a series between 2d and 3d or cartesian and
+            // polar, the shape type changes.
+            if (point.graphic && point.hasNewShapeType()) {
+                point.graphic = point.graphic.destroy();
+            }
             if (!point.graphic) {
                 point.graphic = renderer[point.shapeType](point.shapeArgs)
                     .add(point.series.group);

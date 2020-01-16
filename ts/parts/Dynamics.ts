@@ -118,8 +118,9 @@ declare global {
     }
 }
 
-
-import U from './Utilities.js';
+import timeModule from './Time.js';
+const Time: typeof Highcharts.Time = timeModule.Time as any;
+import utilitiesModule from './Utilities.js';
 const {
     defined,
     erase,
@@ -133,7 +134,7 @@ const {
     relativeLength,
     setAnimation,
     splat
-} = U;
+} = utilitiesModule;
 
 import './Axis.js';
 import './Chart.js';
@@ -747,7 +748,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
         if (options.time && this.time === H.time) {
-            this.time = new H.Time(options.time);
+            this.time = new Time(options.time);
         }
 
         // Some option stuctures correspond one-to-one to chart objects that

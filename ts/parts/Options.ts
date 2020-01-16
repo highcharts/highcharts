@@ -555,9 +555,11 @@ declare global {
  * @type {number}
  */
 
+import timeModule from './Time.js';
+const Time: typeof Highcharts.Time = timeModule.Time as any;
+
 import './Color.js';
 import './Utilities.js';
-import './Time.js';
 
 var color = H.color,
     isTouchDevice = H.isTouchDevice,
@@ -900,7 +902,7 @@ H.defaultOptions = {
 
     global: {},
 
-    time: H.Time.prototype.defaultOptions,
+    time: Time.prototype.defaultOptions,
 
     /**
      * General options for the chart.
@@ -4202,7 +4204,7 @@ H.defaultPlotOptions = H.defaultOptions.plotOptions as any;
  * @name Highcharts.time
  * @type {Highcharts.Time}
  */
-H.time = new H.Time(
+H.time = new Time(
     merge<Highcharts.TimeOptions>(
         H.defaultOptions.global as any,
         H.defaultOptions.time as any

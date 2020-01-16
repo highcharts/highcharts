@@ -9,8 +9,10 @@
  * */
 'use strict';
 import H from './Globals.js';
-import U from './Utilities.js';
-var defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
+import timeModule from './Time.js';
+var Time = timeModule.Time;
+import utilitiesModule from './Utilities.js';
+var defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, relativeLength = utilitiesModule.relativeLength, setAnimation = utilitiesModule.setAnimation, splat = utilitiesModule.splat;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
@@ -478,7 +480,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
         if (options.time && this.time === H.time) {
-            this.time = new H.Time(options.time);
+            this.time = new Time(options.time);
         }
         // Some option stuctures correspond one-to-one to chart objects that
         // have update methods, for example
