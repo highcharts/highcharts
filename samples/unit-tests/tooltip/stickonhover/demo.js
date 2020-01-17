@@ -75,7 +75,8 @@ QUnit.test('Stick on hover tooltip', function (assert) {
             'Tooltip should have label text of first series.'
         );
 
-        controller.moveTo(series2PointPosition.x, series2PointPosition.y - 50);
+        controller.moveTo(series2PointPosition.x, chart.plotTop);
+        controller.moveTo(series2PointPosition.x, series2PointPosition.y);
 
         assert.strictEqual(
             tooltip.isHidden,
