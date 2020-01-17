@@ -1949,10 +1949,24 @@ H.defaultOptions = {
      * It is possible to override the symbol creator function and create
      * [custom legend symbols](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/studies/legend-custom-symbol/).
      *
+     * There can be many legends in one chart since v8.0.0 thanks to
+     * Advanced Legend Module. `legend` option can be initialized as
+     * an array if you additionaly import `highcharts-more`, `modules/heatmap`
+     * and `modules/advanced-legend` files.
+     * Two new properties were added: `id` & `sublegends`.
+     *
      * @productdesc {highmaps}
      * A Highmaps legend by default contains one legend item per series, but if
      * a `colorAxis` is defined, the axis will be displayed in the legend.
      * Either as a gradient, or as multiple legend items for `dataClasses`.
+     *
+     * @type         {*|Array<*>}
+     * @optionparent legend
+     *
+     * @sample highcharts/advanced-legend/basic/
+     *         Multiple legends with sublegends
+     * @sample highcharts/advanced-legend/rich/
+     *         Multiple legends with sublegends, color axes and bubble legend
      */
     legend: {
         /**
@@ -2586,6 +2600,22 @@ H.defaultOptions = {
          * @apioption legend.width
          */
         /**
+         * The height of the legend box. If a number is set, it translates to
+         * pixels. Since v8.0.0 it allows setting a percent string of the full
+         * chart height, for example `40%`.
+         *
+         * Defaults to `undefined
+         *
+         * @sample {highcharts} highcharts/legend/width/
+         *         Aligned to the plot area
+         * @sample {highcharts} highcharts/legend/width-percent/
+         *         A percent of the chart width
+         *
+         * @type      {number|string}
+         * @since     8.0
+         * @default   undefined
+         */
+        /**
          * The pixel padding between the legend item symbol and the legend
          * item text.
          *
@@ -2622,6 +2652,9 @@ H.defaultOptions = {
          * `align` within chart.spacingLeft and chart.spacingRight. Negative
          * x moves it to the left, positive x moves it to the right.
          *
+         * Since v8.0.0 it allows setting a percent string of the full
+         * chart width, for example `-20%`.
+         *
          * @sample {highcharts} highcharts/legend/width/
          *         Aligned to the plot area
          *
@@ -2632,6 +2665,9 @@ H.defaultOptions = {
          * The vertical offset of the legend relative to it's vertical alignment
          * `verticalAlign` within chart.spacingTop and chart.spacingBottom.
          *  Negative y moves it up, positive y moves it down.
+         *
+         * Since v8.0.0 it allows setting a percent string of the full
+         * chart height, for example `-20%`
          *
          * @sample {highcharts} highcharts/legend/verticalalign/
          *         Legend 100px from the top of the chart

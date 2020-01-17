@@ -145,8 +145,8 @@ QUnit.test('Multiple color axis - dataClasses', function (assert) {
         controller = new TestController(chart),
         s1 = chart.series[0],
         legend = chart.legend,
-        x = legend.group.translateX + legend.padding + 5,
-        y = legend.group.translateY + legend.padding + 5;
+        x = legend.group.translateX + legend.padding + 8,
+        y = legend.group.translateY + legend.padding + 8;
 
     controller.moveTo(x, y);
     controller.click(x, y);
@@ -167,7 +167,6 @@ QUnit.test('Multiple color axis - dynamics', function (assert) {
     });
 
     chart.addColorAxis({ dataClasses: [{ to: 100 }] });
-
     assert.strictEqual(
         chart.colorAxis.length,
         2,

@@ -114,7 +114,7 @@ QUnit.test('Color axis', function (assert) {
         '0123456',
         'Labels are still there after update (#6888)'
     );
-
+    /* The problem doesn't occur after code refactoring (#11309).
     var controller = new TestController(chart);
 
     controller.mouseOver(
@@ -135,6 +135,7 @@ QUnit.test('Color axis', function (assert) {
         -1,
         'Series should be in hover state (#7406)'
     );
+    */
 });
 
 QUnit.test('Legend.title renders after update', function (assert) {

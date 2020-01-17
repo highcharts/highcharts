@@ -5153,7 +5153,9 @@ null,
         return isNumber(factor) ?
             factor * pick(pointRange, axis.pointRange) :
             0;
-    }
+    },
+    // Rendering of series' and point's as legend items is very similar.
+    renderAsLegendItem: H.Point.prototype.renderAsLegendItem
 }); // end Series prototype
 /**
  * A line series displays information as a series of data points connected by

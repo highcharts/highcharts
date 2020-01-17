@@ -6997,11 +6997,13 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             if (factor === 'between') {
                 factor = axis.reversed ? -0.5 : 0.5; // #11955
             }
-
             return isNumber(factor) ?
                 factor * pick(pointRange, axis.pointRange) :
                 0;
-        }
+        },
+
+        // Rendering of series' and point's as legend items is very similar.
+        renderAsLegendItem: H.Point.prototype.renderAsLegendItem
     }
 ) as any; // end Series prototype
 
