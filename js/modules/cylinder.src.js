@@ -13,11 +13,13 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var pick = U.pick;
+import colorModule from '../parts/Color.js';
+var color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
+var pick = utilitiesModule.pick;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
-var charts = H.charts, color = H.color, deg2rad = H.deg2rad, perspective = H.perspective, seriesType = H.seriesType, 
+var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, seriesType = H.seriesType, 
 // Work on H.Renderer instead of H.SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, cuboidPath = RendererProto.cuboidPath, cylinderMethods;
 /**

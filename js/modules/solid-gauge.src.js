@@ -20,8 +20,10 @@ import H from '../parts/Globals.js';
 * @name Highcharts.SymbolOptionsObject#rounded
 * @type {boolean|undefined}
 */
-import U from '../parts/Utilities.js';
-var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
+import colorModule from '../parts/Color.js';
+var color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
+var clamp = utilitiesModule.clamp, extend = utilitiesModule.extend, isNumber = utilitiesModule.isNumber, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt, wrap = utilitiesModule.wrap;
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 var Renderer = H.Renderer, colorAxisMethods;
@@ -80,7 +82,7 @@ colorAxisMethods = {
                     }
                 }
                 else {
-                    dataClass.color = H.color(options.minColor).tweenTo(H.color(options.maxColor), i / (userOptions.dataClasses.length - 1));
+                    dataClass.color = color(options.minColor).tweenTo(color(options.maxColor), i / (userOptions.dataClasses.length - 1));
                 }
             }
         });
@@ -91,7 +93,7 @@ colorAxisMethods = {
             [1, this.options.maxColor]
         ];
         this.stops.forEach(function (stop) {
-            stop.color = H.color(stop[1]);
+            stop.color = color(stop[1]);
         });
     },
     // Translate from a value to a color

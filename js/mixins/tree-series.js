@@ -4,8 +4,9 @@
  *
  * */
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
+import colorModule from '../parts/Color.js';
+import utilitiesModule from '../parts/Utilities.js';
+var extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, pick = utilitiesModule.pick;
 var isBoolean = function (x) {
     return typeof x === 'boolean';
 }, isFn = function (x) {
@@ -67,7 +68,7 @@ var getColor = function getColor(node, options) {
         var colorVariation = level && level.colorVariation;
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
-                return H.color(color).brighten(colorVariation.to * (index / siblings)).get();
+                return colorModule.color(color).brighten(colorVariation.to * (index / siblings)).get();
             }
         }
         return color;
