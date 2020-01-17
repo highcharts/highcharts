@@ -252,14 +252,15 @@ declare global {
  * @type {Highcharts.SankeyNodeObject}
  */
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+import utilitiesModule from '../parts/Utilities.js';
 const {
     defined,
     isObject,
     pick,
     relativeLength,
     stableSort
-} = U;
+} = utilitiesModule;
 
 import '../parts/Options.js';
 import '../mixins/nodes.js';
@@ -816,7 +817,7 @@ seriesType<Highcharts.SankeySeries>(
 
             // Link attributes
             return {
-                fill: H.color(color).setOpacity(values.linkOpacity).get()
+                fill: colorModule.color(color).setOpacity(values.linkOpacity).get()
             };
 
         },

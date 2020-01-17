@@ -66,14 +66,15 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+import utilitiesModule from '../parts/Utilities.js';
 const {
     extend,
     isArray,
     isNumber,
     isObject,
     pick
-} = U;
+} = utilitiesModule;
 
 var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
@@ -195,7 +196,7 @@ var getColor = function getColor(
 
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
-                return H.color(color).brighten(
+                return colorModule.color(color).brighten(
                     colorVariation.to * (index / siblings)
                 ).get() as any;
             }
