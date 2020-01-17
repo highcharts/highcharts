@@ -725,14 +725,9 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
     },
     haloPath: function (
         this: Highcharts.AreaRangePoint
-    ): (Highcharts.SVGElement|Highcharts.SVGPathArray|
-        Array<Highcharts.SVGElement>) {
+    ): Highcharts.SVGPathArray {
         var isPolar = this.series.chart.polar,
-            path: (
-                Highcharts.SVGElement|
-                Highcharts.SVGPathArray|
-                Array<Highcharts.SVGElement>
-            ) = [];
+            path: Highcharts.SVGPathArray = [];
 
         // Bottom halo
         this.plotY = this.plotLow;

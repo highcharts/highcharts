@@ -137,7 +137,7 @@ seriesType('dumbbell', 'arearange', {
                     'L',
                     point.plotX,
                     pointBottom
-                ]], connectorWidth, 'floor')
+                ]], connectorWidth, 'ceil')
         };
         if (!chart.styledMode) {
             attribs.stroke = connectorColor;

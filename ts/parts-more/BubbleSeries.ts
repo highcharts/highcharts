@@ -23,7 +23,7 @@ declare global {
             public series: BubbleSeries;
             public haloPath(
                 size: number
-            ): (SVGElement|SVGPathArray|Array<SVGElement>);
+            ): SVGPathArray;
         }
         class BubbleSeries extends ScatterSeries {
             public alignDataLabel: ColumnSeries['alignDataLabel'];
@@ -612,9 +612,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
     haloPath: function (
         this: Highcharts.BubblePoint,
         size: number
-    ): (Highcharts.SVGElement|
-        Highcharts.SVGPathArray|
-        Array<Highcharts.SVGElement>) {
+    ): Highcharts.SVGPathArray {
         return Point.prototype.haloPath.call(
             this,
             // #6067

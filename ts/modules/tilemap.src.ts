@@ -34,7 +34,7 @@ declare global {
             public series: TilemapSeries;
             public setVisible: ColorPointMixin['setVisible'];
             public tileEdges: Dictionary<number>;
-            public haloPath(): (SVGElement|SVGPathArray|Array<SVGElement>);
+            public haloPath(): SVGPathArray;
         }
         class TilemapSeries extends HeatmapSeries implements ColorSeries {
             public alignDataLabel: TilemapShapeObject['alignDataLabel'];
@@ -83,7 +83,7 @@ declare global {
             haloPath(
                 this: TilemapPoint,
                 size: number
-            ): (SVGElement|SVGPathArray|Array<SVGElement>);
+            ): SVGPathArray;
             translate(this: TilemapSeries): void;
         }
         let tileShapeTypes: Dictionary<TilemapShapeObject>;
@@ -469,11 +469,7 @@ H.tileShapeTypes = {
         haloPath: function (
             this: Highcharts.TilemapPoint,
             size: number
-        ): (
-            Highcharts.SVGElement|
-            Highcharts.SVGPathArray|
-            Array<Highcharts.SVGElement>
-        ) { // eslint-disable-line @typescript-eslint/indent
+        ): Highcharts.SVGPathArray { // eslint-disable-line @typescript-eslint/indent
             return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
                 .call(
                     this,
@@ -890,11 +886,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
          */
         haloPath: function (
             this: Highcharts.TilemapPoint
-        ): (
-            Highcharts.SVGElement|
-            Highcharts.SVGPathArray|
-            Array<Highcharts.SVGElement>
-        ) { // eslint-disable-line @typescript-eslint/indent
+        ): Highcharts.SVGPathArray { // eslint-disable-line @typescript-eslint/indent
             return this.series.tileShape.haloPath.apply(
                 this,
                 Array.prototype.slice.call(arguments) as any

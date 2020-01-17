@@ -852,7 +852,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @param {number} size
      *        The radius of the circular halo.
      *
-     * @return {Highcharts.SVGElement}
+     * @return {Highcharts.SVGPathArray}
      *         The path definition.
      */
     haloPath: function (size) {

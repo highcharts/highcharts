@@ -40,7 +40,7 @@ declare global {
             selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
-            haloPath(size: number): (SVGElement|SVGPathArray|Array<SVGElement>);
+            haloPath(size: number): SVGPathArray;
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
@@ -1338,13 +1338,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @param {number} size
      *        The radius of the circular halo.
      *
-     * @return {Highcharts.SVGElement}
+     * @return {Highcharts.SVGPathArray}
      *         The path definition.
      */
     haloPath: function (
         this: Highcharts.Point,
         size: number
-    ): Highcharts.SVGElement {
+    ): Highcharts.SVGPathArray {
         var series = this.series,
             chart = series.chart;
 

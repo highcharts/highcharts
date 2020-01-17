@@ -105,7 +105,7 @@ declare global {
             )>;
             arc: SymbolFunction<SVGPathArray>;
             callout: SymbolFunction<SVGPathArray>;
-            circle: SymbolFunction<SVGElement>;
+            circle: SymbolFunction<SVGPathArray>;
             diamond: SymbolFunction<SVGPathArray>;
             square: SymbolFunction<SVGPathArray>;
             triangle: SymbolFunction<SVGPathArray>;
@@ -5467,18 +5467,18 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     symbols: {
         circle: function (
-            this: Highcharts.SVGRenderer,
+            this: Highcharts.SymbolDictionary,
             x: number,
             y: number,
             w: number,
             h: number
-        ): Highcharts.SVGElement {
+        ): Highcharts.SVGPathArray {
             // Return a full arc
             return this.arc(x + w / 2, y + h / 2, w / 2, h / 2, {
                 start: Math.PI * 0.5,
                 end: Math.PI * 2.5,
                 open: false
-            } as any);
+            });
         },
 
         square: function (

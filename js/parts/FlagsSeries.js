@@ -533,27 +533,36 @@ symbols.flag = function (x, y, w, h, options) {
  */
 function createPinSymbol(shape) {
     symbols[shape + 'pin'] = function (x, y, w, h, options) {
-        var anchorX = options && options.anchorX, anchorY = options && options.anchorY, path, labelTopOrBottomY;
+        var anchorX = options && options.anchorX, anchorY = options && options.anchorY, path;
         // For single-letter flags, make sure circular flags are not taller
         // than their width
         if (shape === 'circle' && h > w) {
             x -= Math.round((h - w) / 2);
             w = h;
         }
-        path = symbols[shape](x, y, w, h);
+        path = (symbols[shape])(x, y, w, h);
         if (anchorX && anchorY) {
             /**
-             * If the label is below the anchor, draw the connecting line
-             * from the top edge of the label
-             * otherwise start drawing from the bottom edge
+             * If the label is below the anchor, draw the connecting line from
+             * the top edge of the label, otherwise start drawing from the
+             * bottom edge
              */
-            labelTopOrBottomY = (y > anchorY) ? y : y + h;
+            var labelX = anchorX;
+            if (shape === 'circle') {
+                labelX = x + w / 2;
+            }
+            else {
+                var startSeg = path[0];
+                var endSeg = path[1];
+                if (startSeg[0] === 'M' && endSeg[0] === 'L') {
+                    labelX = (startSeg[1] + endSeg[1]) / 2;
+                }
+            }
+            var labelY = (y > anchorY) ? y : y + h;
             path.push([
                 'M',
-                shape === 'circle' ?
-                    x + w / 2 :
-                    path[1] + path[4] / 2,
-                labelTopOrBottomY
+                labelX,
+                labelY
             ], [
                 'L',
                 anchorX,
