@@ -549,14 +549,26 @@ wrap(Tick.prototype, 'getMarkPath', function (
     this: Highcharts.Tick,
     proceed: Function
 ): Highcharts.SVGPathArray {
-    var path = proceed.apply(this, [].slice.call(arguments, 1));
+    const chart = this.axis.chart;
+    const path: Highcharts.SVGPathArray = proceed.apply(
+        this,
+        [].slice.call(arguments, 1)
+    );
 
-    var pArr: Array<Highcharts.Position3dObject> = [
-        fix3dPosition(this.axis, { x: path[1], y: path[2], z: 0 }),
-        fix3dPosition(this.axis, { x: path[4], y: path[5], z: 0 })
-    ];
+    if (chart.is3d && chart.is3d()) {
 
-    return this.axis.chart.renderer.toLineSegments(pArr);
+        const start = path[0];
+        const end = path[1];
+        if (start[0] === 'M' && end[0] === 'L') {
+            const pArr: Array<Highcharts.Position3dObject> = [
+                fix3dPosition(this.axis, { x: start[1], y: start[2], z: 0 }),
+                fix3dPosition(this.axis, { x: end[1], y: end[2], z: 0 })
+            ];
+
+            return this.axis.chart.renderer.toLineSegments(pArr);
+        }
+    }
+    return path;
 });
 
 addEvent(Tick, 'afterGetLabelPosition', function (

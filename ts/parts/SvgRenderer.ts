@@ -390,6 +390,7 @@ declare global {
             ): SVGElement;
             public path(attribs?: SVGAttributes): SVGElement;
             public path(path?: SVGPathArray): SVGElement;
+            public pathToSegments(path: Array<string|number>): SVGPathArray;
             public rect(attribs: SVGAttributes): SVGElement;
             public rect(
                 x?: number,
@@ -2863,6 +2864,11 @@ extend((
         element: Highcharts.SVGDOMElement
     ): void {
         if (isArray(value)) {
+            // Backwards compatibility, convert one-dimensional array into an
+            // array of segments
+            if (value[0] as any === 'M') {
+                value = this.renderer.pathToSegments(value as any);
+            }
             let invalidPath = false;
             this.pathArray = value;
             value = value.reduce(
@@ -5957,6 +5963,45 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             x: (-baseline / 3) * Math.sin(rotation * deg2rad),
             y: y
         };
+    },
+
+    /**
+     * Compatibility function to convert the legacy one-dimensional path array
+     * into an array of segments.
+     *
+     * @param path @private
+     * @function Highcharts.SVGRenderer#pathToSegments
+     *
+     * @param {Array<string|number>}
+     *
+     * @return {Highcharts.SVGPathArray}
+     */
+    pathToSegments: function (
+        path: Array<string|number>
+    ): Highcharts.SVGPathArray {
+        const ret = [];
+        let seg = [],
+            i;
+
+        for (i = 0; i <= path.length; i++) {
+            const item = path[i];
+            if (
+                (typeof item !== 'number' && /[a-zA-Z]/.test(item)) ||
+                i === path.length // Push the last segment
+            ) {
+                if (seg.length) {
+                    ret.push(seg);
+                }
+                // To avoid an any cast here we would have to type check all
+                // positions of each segment type, which would be safer but
+                // very verbose
+                seg = [item] as any;
+            } else {
+                seg.push(typeof item === 'number' ? item : parseFloat(item));
+            }
+        }
+
+        return ret;
     },
 
     /**

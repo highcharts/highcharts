@@ -298,6 +298,10 @@ seriesType('map', 'scatter',
             if (point.path) {
                 if (typeof point.path === 'string') {
                     point.path = H.splitPath(point.path);
+                    // Legacy one-dimensional array
+                }
+                else if (point.path[0] === 'M') {
+                    point.path = H.SVGRenderer.prototype.pathToSegments(point.path);
                 }
                 var path = point.path || [], pointMaxX = -MAX_VALUE, pointMinX = MAX_VALUE, pointMaxY = -MAX_VALUE, pointMinY = MAX_VALUE, properties = point.properties;
                 // The first time a map point is used, analyze its box

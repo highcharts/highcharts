@@ -839,13 +839,14 @@ class Fx {
      * @return {void}
      */
     public dSetter(): void {
-        var start: Highcharts.SVGPathArray = (this.paths as any)[0],
-            end: Highcharts.SVGPathArray = (this.paths as any)[1],
+        var paths = this.paths,
+            start = paths && paths[0],
+            end = paths && paths[1],
             path: Highcharts.SVGPathArray = [],
             now = this.now || 1;
 
         // Land on the final path without adjustment points appended in the ends
-        if (now === 1) {
+        if (now === 1 || !start || !end) {
             path = this.toD || [];
 
         } else if (start.length === end.length && now < 1) {
@@ -1058,7 +1059,7 @@ class Fx {
      */
     public initPath(
         elem: Highcharts.SVGElement,
-        fromD: Highcharts.SVGPathArray,
+        fromD: Highcharts.SVGPathArray|undefined,
         toD: Highcharts.SVGPathArray
     ): [Highcharts.SVGPathArray, Highcharts.SVGPathArray] {
         var shift,
@@ -1066,11 +1067,15 @@ class Fx {
             endX = elem.endX,
             fullLength: number,
             i: number,
-            start: Highcharts.SVGPathArray = fromD.slice(), // copy
-            end: Highcharts.SVGPathArray = toD.slice(), // copy
+            start = fromD && fromD.slice(), // copy
+            end = toD.slice(), // copy
             isArea = elem.isArea,
             positionFactor = isArea ? 2 : 1,
             reverse;
+
+        if (!start) {
+            return [end, end];
+        }
 
         /**
          * If shifting points, prepend a dummy point to the end path.

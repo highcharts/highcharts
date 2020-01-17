@@ -418,12 +418,20 @@ function fix3dPosition(axis, pos, isTitle) {
 Tick extensions
  */
 wrap(Tick.prototype, 'getMarkPath', function (proceed) {
+    var chart = this.axis.chart;
     var path = proceed.apply(this, [].slice.call(arguments, 1));
-    var pArr = [
-        fix3dPosition(this.axis, { x: path[1], y: path[2], z: 0 }),
-        fix3dPosition(this.axis, { x: path[4], y: path[5], z: 0 })
-    ];
-    return this.axis.chart.renderer.toLineSegments(pArr);
+    if (chart.is3d && chart.is3d()) {
+        var start = path[0];
+        var end = path[1];
+        if (start[0] === 'M' && end[0] === 'L') {
+            var pArr = [
+                fix3dPosition(this.axis, { x: start[1], y: start[2], z: 0 }),
+                fix3dPosition(this.axis, { x: end[1], y: end[2], z: 0 })
+            ];
+            return this.axis.chart.renderer.toLineSegments(pArr);
+        }
+    }
+    return path;
 });
 addEvent(Tick, 'afterGetLabelPosition', function (e) {
     extend(e.pos, fix3dPosition(this.axis, e.pos));

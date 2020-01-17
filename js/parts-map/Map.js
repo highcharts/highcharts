@@ -254,32 +254,26 @@ defaultOptions.mapNavigation = {
  *
  * @function Highcharts.splitPath
  *
- * @param {string} path
+ * @param {string|Array<string|number>} path
  *
  * @return {Highcharts.SVGPathArray}
  */
 H.splitPath = function (path) {
-    var i, seg = [], ret = [];
-    // Move letters apart
-    path = path.replace(/([A-Za-z])/g, ' $1 ');
-    // Trim
-    path = path.replace(/^\s*/, '').replace(/\s*$/, '');
-    // Split on spaces and commas
-    // Extra comma to escape gulp.scripts task
-    path = path.split(/[ ,,]+/);
-    // Parse numbers
-    for (i = 0; i < path.length; i++) {
-        if (/[a-zA-Z]/.test(path[i])) {
-            if (seg.length) {
-                ret.push(seg);
-            }
-            seg = [path[i]];
-        }
-        else {
-            seg.push(parseFloat(path[i]));
-        }
+    var arr;
+    if (typeof path === 'string') {
+        path = path
+            // Move letters apart
+            .replace(/([A-Za-z])/g, ' $1 ')
+            // Trim
+            .replace(/^\s*/, '').replace(/\s*$/, '');
+        // Split on spaces and commas
+        // Extra comma to escape gulp.scripts task
+        arr = path.split(/[ ,,]+/);
     }
-    return ret;
+    else {
+        arr = path;
+    }
+    return SVGRenderer.prototype.pathToSegments(arr);
 };
 /**
  * Contains all loaded map data for Highmaps.

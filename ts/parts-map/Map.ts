@@ -314,37 +314,30 @@ defaultOptions.mapNavigation = {
  *
  * @function Highcharts.splitPath
  *
- * @param {string} path
+ * @param {string|Array<string|number>} path
  *
  * @return {Highcharts.SVGPathArray}
  */
-H.splitPath = function (path: string): Highcharts.SVGPathArray {
-    var i: number,
-        seg = [],
-        ret = [];
+H.splitPath = function (
+    path: string|Array<string|number>
+): Highcharts.SVGPathArray {
+    let arr: Array<string|number>;
 
-    // Move letters apart
-    path = path.replace(/([A-Za-z])/g, ' $1 ');
-    // Trim
-    path = path.replace(/^\s*/, '').replace(/\s*$/, '');
+    if (typeof path === 'string') {
+        path = path
+            // Move letters apart
+            .replace(/([A-Za-z])/g, ' $1 ')
+            // Trim
+            .replace(/^\s*/, '').replace(/\s*$/, '');
 
-    // Split on spaces and commas
-    // Extra comma to escape gulp.scripts task
-    path = path.split(/[ ,,]+/) as any;
-
-    // Parse numbers
-    for (i = 0; i < path.length; i++) {
-        if (/[a-zA-Z]/.test(path[i])) {
-            if (seg.length) {
-                ret.push(seg);
-            }
-            seg = [path[i]] as any;
-        } else {
-            seg.push(parseFloat(path[i]));
-        }
+        // Split on spaces and commas
+        // Extra comma to escape gulp.scripts task
+        arr = path.split(/[ ,,]+/);
+    } else {
+        arr = path;
     }
 
-    return ret;
+    return SVGRenderer.prototype.pathToSegments(arr);
 };
 
 /**

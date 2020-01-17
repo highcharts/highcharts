@@ -500,6 +500,12 @@ seriesType<Highcharts.MapSeries>(
                 if (point.path) {
                     if (typeof point.path === 'string') {
                         point.path = H.splitPath(point.path);
+
+                    // Legacy one-dimensional array
+                    } else if (point.path[0] as any === 'M') {
+                        point.path = H.SVGRenderer.prototype.pathToSegments(
+                            point.path as any
+                        );
                     }
 
                     var path: Highcharts.SVGPathArray = point.path || [],

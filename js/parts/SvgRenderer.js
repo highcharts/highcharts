@@ -1886,6 +1886,11 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     dSetter: function (value, key, element) {
         if (isArray(value)) {
+            // Backwards compatibility, convert one-dimensional array into an
+            // array of segments
+            if (value[0] === 'M') {
+                value = this.renderer.pathToSegments(value);
+            }
             var invalidPath_1 = false;
             this.pathArray = value;
             value = value.reduce(function (acc, seg, i) {
@@ -4139,6 +4144,39 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             x: (-baseline / 3) * Math.sin(rotation * deg2rad),
             y: y
         };
+    },
+    /**
+     * Compatibility function to convert the legacy one-dimensional path array
+     * into an array of segments.
+     *
+     * @param path @private
+     * @function Highcharts.SVGRenderer#pathToSegments
+     *
+     * @param {Array<string|number>}
+     *
+     * @return {Highcharts.SVGPathArray}
+     */
+    pathToSegments: function (path) {
+        var ret = [];
+        var seg = [], i;
+        for (i = 0; i <= path.length; i++) {
+            var item = path[i];
+            if ((typeof item !== 'number' && /[a-zA-Z]/.test(item)) ||
+                i === path.length // Push the last segment
+            ) {
+                if (seg.length) {
+                    ret.push(seg);
+                }
+                // To avoid an any cast here we would have to type check all
+                // positions of each segment type, which would be safer but
+                // very verbose
+                seg = [item];
+            }
+            else {
+                seg.push(typeof item === 'number' ? item : parseFloat(item));
+            }
+        }
+        return ret;
     },
     /**
      * Draw a label, which is an extended text element with support for border

@@ -429,9 +429,9 @@ var Fx = /** @class */ (function () {
      * @return {void}
      */
     Fx.prototype.dSetter = function () {
-        var start = this.paths[0], end = this.paths[1], path = [], now = this.now || 1;
+        var paths = this.paths, start = paths && paths[0], end = paths && paths[1], path = [], now = this.now || 1;
         // Land on the final path without adjustment points appended in the ends
-        if (now === 1) {
+        if (now === 1 || !start || !end) {
             path = this.toD || [];
         }
         else if (start.length === end.length && now < 1) {
@@ -605,9 +605,12 @@ var Fx = /** @class */ (function () {
      *         they can be animated in parallel.
      */
     Fx.prototype.initPath = function (elem, fromD, toD) {
-        var shift, startX = elem.startX, endX = elem.endX, fullLength, i, start = fromD.slice(), // copy
+        var shift, startX = elem.startX, endX = elem.endX, fullLength, i, start = fromD && fromD.slice(), // copy
         end = toD.slice(), // copy
         isArea = elem.isArea, positionFactor = isArea ? 2 : 1, reverse;
+        if (!start) {
+            return [end, end];
+        }
         /**
          * If shifting points, prepend a dummy point to the end path.
          * @private
