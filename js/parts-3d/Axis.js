@@ -203,39 +203,27 @@ wrap(Axis.prototype, 'getLinePath', function (proceed) {
     }
     return [];
 });
-/*
-To do: segmented path
-wrap(Axis.prototype, 'getPlotBandPath', function (
-    this: Highcharts.Axis,
-    proceed: Function
-): Highcharts.SVGPathArray {
+wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
     // Do not do this if the chart is not 3D
     if (!this.chart.is3d() || this.coll === 'colorAxis') {
         return proceed.apply(this, [].slice.call(arguments, 1));
     }
-
-    var args = arguments,
-        from = args[1],
-        to = args[2],
-        path = [] as Highcharts.SVGPathArray,
-        fromPath = this.getPlotLinePath({ value: from }),
-        toPath = this.getPlotLinePath({ value: to });
-
+    var args = arguments, from = args[1], to = args[2], path = [], fromPath = this.getPlotLinePath({ value: from }), toPath = this.getPlotLinePath({ value: to });
     if (fromPath && toPath) {
-        for (var i = 0; i < fromPath.length; i += 6) {
-            path.push(
-                'M', fromPath[i + 1], fromPath[i + 2],
-                'L', fromPath[i + 4], fromPath[i + 5],
-                'L', toPath[i + 4], toPath[i + 5],
-                'L', toPath[i + 1], toPath[i + 2],
-                'Z'
-            );
+        for (var i = 0; i < fromPath.length; i += 2) {
+            var fromStartSeg = fromPath[i], fromEndSeg = fromPath[i + 1], toStartSeg = toPath[i], toEndSeg = toPath[i + 1];
+            if (fromStartSeg[0] === 'M' &&
+                fromEndSeg[0] === 'L' &&
+                toStartSeg[0] === 'M' &&
+                toEndSeg[0] === 'L') {
+                path.push(fromStartSeg, fromEndSeg, toEndSeg, 
+                // lineTo instead of moveTo
+                ['L', toStartSeg[1], toStartSeg[2]], ['Z']);
+            }
         }
     }
-
     return path;
 });
-*/
 /**
  * @private
  * @param {Highcharts.Axis} axis
