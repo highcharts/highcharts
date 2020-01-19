@@ -466,59 +466,65 @@ H.seriesType<Highcharts.OrganizationSeries>(
             path: Highcharts.SVGPathArray,
             r: number
         ): Highcharts.SVGPathArray {
-            var d: Highcharts.SVGPathArray = [],
-                i: number,
-                x: number,
-                y: number,
-                x1: number,
-                x2: number,
-                y1: number,
-                y2: number,
-                directionX: (number|undefined),
-                directionY: (number|undefined);
+            var d: Highcharts.SVGPathArray = [];
 
-            for (i = 0; i < path.length; i++) {
-                x = path[i][0] as any;
-                y = path[i][1] as any;
+            for (let i = 0; i < path.length; i++) {
+                const x = path[i][1];
+                const y = path[i][2];
 
-                // moveTo
-                if (i === 0) {
-                    d.push(['M', x, y]);
+                if (typeof x === 'number' && typeof y === 'number') {
+                    // moveTo
+                    if (i === 0) {
+                        d.push(['M', x, y]);
 
-                } else if (i === path.length - 1) {
-                    d.push(['L', x, y]);
+                    } else if (i === path.length - 1) {
+                        d.push(['L', x, y]);
 
-                // curveTo
-                } else if (r) {
-                    x1 = path[i - 1][0] as any;
-                    y1 = path[i - 1][1] as any;
-                    x2 = path[i + 1][0] as any;
-                    y2 = path[i + 1][1] as any;
+                    // curveTo
+                    } else if (r) {
+                        const prevSeg = path[i - 1];
+                        const nextSeg = path[i + 1];
+                        if (prevSeg && nextSeg) {
+                            const x1 = prevSeg[1],
+                                y1 = prevSeg[2],
+                                x2 = nextSeg[1],
+                                y2 = nextSeg[2];
 
-                    // Only apply to breaks
-                    if (x1 !== x2 && y1 !== y2) {
-                        directionX = x1 < x2 ? 1 : -1;
-                        directionY = y1 < y2 ? 1 : -1;
-                        d.push([
-                            'L',
-                            x - directionX * Math.min(Math.abs(x - x1), r),
-                            y - directionY * Math.min(Math.abs(y - y1), r)
-                        ], [
-                            'C',
-                            x,
-                            y,
-                            x,
-                            y,
-                            x + directionX * Math.min(Math.abs(x - x2), r),
-                            y + directionY * Math.min(Math.abs(y - y2), r)
-                        ]);
+                            // Only apply to breaks
+                            if (
+                                typeof x1 === 'number' &&
+                                typeof x2 === 'number' &&
+                                typeof y1 === 'number' &&
+                                typeof y2 === 'number' &&
+                                x1 !== x2 &&
+                                y1 !== y2
+                            ) {
+                                const directionX = x1 < x2 ? 1 : -1,
+                                    directionY = y1 < y2 ? 1 : -1;
+                                d.push([
+                                    'L',
+                                    x - directionX * Math.min(Math.abs(x - x1), r),
+                                    y - directionY * Math.min(Math.abs(y - y1), r)
+                                ], [
+                                    'C',
+                                    x,
+                                    y,
+                                    x,
+                                    y,
+                                    x + directionX * Math.min(Math.abs(x - x2), r),
+                                    y + directionY * Math.min(Math.abs(y - y2), r)
+                                ]);
+                            }
+
+                        }
+
+                    // lineTo
+                    } else {
+                        d.push(['L', x, y]);
                     }
-
-                // lineTo
-                } else {
-                    d.push(['L', x, y]);
                 }
             }
+
             return d;
 
         },
