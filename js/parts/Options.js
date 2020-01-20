@@ -3100,7 +3100,6 @@ H.defaultOptions = {
          *
          * @type      {boolean}
          * @since     8.0.1
-         * @product   highcharts highstock
          * @apioption tooltip.stickOnHover
          */
         /**

@@ -1137,9 +1137,16 @@ Highcharts.Pointer.prototype = {
         }
     },
     /**
+     * Returns true, if the `stickOnHover` option is active and a given pointer
+     * event occurs inside the combined boundings of the hovered point and
+     * tooltip.
+     *
      * @private
      * @param {Highcharts.PointerEventObject} e
+     * Pointer event to check agains the active tooltip.
+     *
      * @return {boolean}
+     * True, if the pointer event occurs inside of the hovered boundings.
      */
     isStickyTooltip: function (e) {
         var chart = this.chart;
