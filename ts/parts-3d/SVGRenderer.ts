@@ -634,7 +634,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
 ): Highcharts.CuboidPathsObject {
     var x = shapeArgs.x,
         y = shapeArgs.y,
-        z = shapeArgs.z,
+        z = shapeArgs.z || 0,
         // For side calculation (right/left)
         // there is a need for height (and other shapeArgs arguments)
         // to be at least 1px
