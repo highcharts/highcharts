@@ -404,8 +404,9 @@ seriesType('sankey', 'column',
         column.offset = function (node, factor) {
             var offset = 0, totalNodeOffset;
             for (var i = 0; i < column.length; i++) {
-                if (column[i].getSum()) {
-                    totalNodeOffset = column[i].getSum() * factor + nodePadding;
+                var sum = column[i].getSum();
+                if (sum) {
+                    totalNodeOffset = sum * factor + nodePadding;
                 }
                 else {
                     // If node sum equals 0 nodePadding is missed #12453
