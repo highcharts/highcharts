@@ -46,9 +46,6 @@ declare global {
         interface SVGRenderer {
             crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
         }
-        interface VMLRenderer {
-            crispPolyLine(points: VMLPathArray, width: number): VMLPathArray;
-        }
         interface AxisPanningState {
             startMin: number;
             startMax: number;

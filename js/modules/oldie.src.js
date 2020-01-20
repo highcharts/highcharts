@@ -714,6 +714,8 @@ if (!svg) {
          */
         init: function (container, width, height) {
             var renderer = this, boxWrapper, box, css;
+            // Extended SVGRenderer member
+            this.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
             renderer.alignedObjects = [];
             boxWrapper = renderer.createElement('div')
                 .css({ position: 'relative' });

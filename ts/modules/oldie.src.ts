@@ -239,6 +239,7 @@ declare global {
                 wrapper: VMLElement
             ): T;
             public createElement(nodeName: string): VMLElement;
+            public crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
             public g(name: string): VMLElement;
             public image(
                 src: string,
@@ -1361,6 +1362,9 @@ if (!svg) {
                 boxWrapper,
                 box,
                 css;
+
+            // Extended SVGRenderer member
+            this.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
 
             renderer.alignedObjects = [];
 
