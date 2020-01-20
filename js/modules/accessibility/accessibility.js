@@ -140,7 +140,9 @@ Accessibility.prototype = {
             whcm.isHighContrastModeActive()) {
             whcm.setHighContrastTheme(chart);
         }
-        fireEvent(chart, 'afterA11yUpdate');
+        fireEvent(chart, 'afterA11yUpdate', {
+            accessibility: this
+        });
     },
     /**
      * Destroy all elements.

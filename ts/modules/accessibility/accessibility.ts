@@ -249,7 +249,9 @@ Accessibility.prototype = {
             whcm.setHighContrastTheme(chart);
         }
 
-        fireEvent(chart, 'afterA11yUpdate');
+        fireEvent(chart, 'afterA11yUpdate', {
+            accessibility: this
+        });
     },
 
 
