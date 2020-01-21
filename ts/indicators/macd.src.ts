@@ -24,6 +24,7 @@ declare global {
             public destroy(): void;
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];
+            public getColumnCount: ColumnSeries['getColumnCount'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
@@ -112,7 +113,8 @@ var seriesType = H.seriesType,
     noop = H.noop,
     merge = H.merge,
     SMA = H.seriesTypes.sma,
-    EMA = H.seriesTypes.ema;
+    EMA = H.seriesTypes.ema,
+    columnPrototype = H.seriesTypes.column.prototype;
 
 /**
  * The MACD series type.
@@ -239,8 +241,20 @@ seriesType<Highcharts.MACDIndicator>(
         pointValKey: 'y',
         // Columns support:
         markerAttribs: (noop as any),
-        getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-        crispCol: H.seriesTypes.column.prototype.crispCol,
+        // Below methods always fire the currect method from column
+        // prototype even when we change/wrap them in column prototype.
+        crispCol: function (): Highcharts.BBoxObject {
+            return columnPrototype.crispCol.apply(this, arguments);
+        },
+        drawPoints: function (): void {
+            return columnPrototype.drawPoints.apply(this, arguments);
+        },
+        getColumnCount: function (): number {
+            return columnPrototype.getColumnCount.apply(this, arguments);
+        },
+        getColumnMetrics: function (): Highcharts.ColumnMetricsObject {
+            return columnPrototype.getColumnMetrics.apply(this, arguments);
+        },
         // Colors and lines:
         init: function (
             this: Highcharts.MACDIndicator
@@ -314,7 +328,6 @@ seriesType<Highcharts.MACDIndicator>(
 
             SMA.prototype.destroy.apply(this, arguments);
         },
-        drawPoints: H.seriesTypes.column.prototype.drawPoints,
         drawGraph: function (this: Highcharts.MACDIndicator): void {
             var indicator = this,
                 mainLinePoints: Array<(

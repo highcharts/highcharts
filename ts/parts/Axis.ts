@@ -340,9 +340,11 @@ declare global {
             public len: number;
             public linkedParent?: Axis;
             public max: (null|number);
+            public maxColumnCount?: (number|undefined);
             public maxLabelDimensions?: SizeObject;
             public maxLabelLength: number;
             public min: (null|number);
+            public minColumnWidth?: (number|undefined);
             public minorTickInterval: number;
             public minorTicks: Dictionary<Tick>;
             public minPixelPadding: number;

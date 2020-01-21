@@ -126,7 +126,15 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     trackerGroups: ['group', 'dataLabelsGroup'],
     drawGraph: noop,
     getSymbol: noop,
-    // Overrides from modules that may be loaded after this module
+    // Overrides from modules that may be loaded after this module.
+    // All below methods always fire the currect method from colProto
+    // even when we change/wrap them in colProto.
+    addPoint: function () {
+        return colProto.addPoint.apply(this, arguments);
+    },
+    correctStackLabels: function (point) {
+        return colProto.correctStackLabels.apply(this, arguments);
+    },
     crispCol: function () {
         return colProto.crispCol.apply(this, arguments);
     },
@@ -136,8 +144,20 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
     drawTracker: function () {
         return colProto.drawTracker.apply(this, arguments);
     },
+    getMaxColumnCount: function () {
+        return colProto.getMaxColumnCount.apply(this, arguments);
+    },
+    getMinColumnWidth: function () {
+        return colProto.getMinColumnWidth.apply(this, arguments);
+    },
+    getColumnCount: function (point) {
+        return colProto.getColumnCount.apply(this, arguments);
+    },
     getColumnMetrics: function () {
         return colProto.getColumnMetrics.apply(this, arguments);
+    },
+    hasValueInX: function (point, otherSeries) {
+        return colProto.hasValueInX.apply(this, arguments);
     },
     pointAttribs: function () {
         return colProto.pointAttribs.apply(this, arguments);
@@ -155,7 +175,9 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
         return colProto.translate3dShapes.apply(this, arguments);
     }
 }, {
-    setState: colProto.pointClass.prototype.setState
+    setState: colProto.pointClass.prototype.setState,
+    remove: colProto.pointClass.prototype.remove,
+    update: colProto.pointClass.prototype.update
 });
 /**
  * A `columnrange` series. If the [type](#series.columnrange.type)

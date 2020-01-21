@@ -36,6 +36,7 @@ declare global {
                 zonesValues: Array<number>,
                 zonesStyles: CSSObject
             ): void;
+            public getColumnCount: ColumnSeries['getColumnCount'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
@@ -290,8 +291,17 @@ seriesType<Highcharts.VBPIndicator>(
         calculateOn: 'render',
         markerAttribs: (noop as any),
         drawGraph: (noop as any),
-        getColumnMetrics: columnPrototype.getColumnMetrics,
-        crispCol: columnPrototype.crispCol,
+        // Below methods always fire the currect method from column
+        // prototype even when we change/wrap them in column prototype.
+        crispCol: function (): Highcharts.BBoxObject {
+            return columnPrototype.crispCol.apply(this, arguments);
+        },
+        getColumnCount: function (): number {
+            return columnPrototype.getColumnCount.apply(this, arguments);
+        },
+        getColumnMetrics: function (): Highcharts.ColumnMetricsObject {
+            return columnPrototype.getColumnMetrics.apply(this, arguments);
+        },
         init: function (
             this: Highcharts.VBPIndicator,
             chart: Highcharts.Chart

@@ -92,6 +92,8 @@ declare global {
             public legend: Legend;
             public margin: Array<number>;
             public marginBottom?: number;
+            public maxColumnCount?: number;
+            public minColWidth?: number;
             public numberFormatter: NumberFormatterCallbackFunction;
             public oldChartHeight?: number;
             public oldChartWidth?: number;
@@ -878,7 +880,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             i = series.length;
             while (i--) {
                 serie = series[i];
-                if (serie.options.stacking) {
+                if (
+                    serie.options.stacking &&
+                    // These series have their own dirting logic
+                    !serie.type.match(/column|columnrange|bar/g)
+                ) {
                     serie.isDirty = true;
                 }
             }
@@ -973,7 +979,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // clear previous series renderings.
         fireEvent(chart, 'predraw');
 
-        // redraw affected series
+        // Clear previous and calculate new column props before series
+        // renderings.
+        fireEvent(chart, 'getColumnProps');
+
+        // Redraw affected series
         series.forEach(function (serie: Highcharts.Series): void {
             if ((isDirtyBox || serie.isDirty) && serie.visible) {
                 serie.redraw();
@@ -2429,9 +2439,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     renderSeries: function (this: Highcharts.Chart): void {
-        this.series.forEach(function (serie: Highcharts.Series): void {
-            serie.translate();
-            serie.render();
+        const chart = this;
+
+        // Clear previous and calculate new column props before series
+        // renderings.
+        fireEvent(chart, 'getColumnProps');
+
+        chart.series.forEach(function (series: Highcharts.Series): void {
+            series.translate();
+            series.render();
         });
     },
 

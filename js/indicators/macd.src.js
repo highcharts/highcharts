@@ -9,7 +9,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var correctFloat = U.correctFloat, defined = U.defined;
-var seriesType = H.seriesType, noop = H.noop, merge = H.merge, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema;
+var seriesType = H.seriesType, noop = H.noop, merge = H.merge, SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, columnPrototype = H.seriesTypes.column.prototype;
 /**
  * The MACD series type.
  *
@@ -132,8 +132,20 @@ seriesType('macd', 'sma',
     pointValKey: 'y',
     // Columns support:
     markerAttribs: noop,
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
+    // Below methods always fire the currect method from column
+    // prototype even when we change/wrap them in column prototype.
+    crispCol: function () {
+        return columnPrototype.crispCol.apply(this, arguments);
+    },
+    drawPoints: function () {
+        return columnPrototype.drawPoints.apply(this, arguments);
+    },
+    getColumnCount: function () {
+        return columnPrototype.getColumnCount.apply(this, arguments);
+    },
+    getColumnMetrics: function () {
+        return columnPrototype.getColumnMetrics.apply(this, arguments);
+    },
     // Colors and lines:
     init: function () {
         SMA.prototype.init.apply(this, arguments);
@@ -188,7 +200,6 @@ seriesType('macd', 'sma',
         this.graphsignal = this.graphsignal && this.graphsignal.destroy();
         SMA.prototype.destroy.apply(this, arguments);
     },
-    drawPoints: H.seriesTypes.column.prototype.drawPoints,
     drawGraph: function () {
         var indicator = this, mainLinePoints = indicator.points, pointsLength = mainLinePoints.length, mainLineOptions = indicator.options, histogramZones = indicator.zones, gappedExtend = {
             options: {

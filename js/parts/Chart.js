@@ -530,7 +530,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             i = series.length;
             while (i--) {
                 serie = series[i];
-                if (serie.options.stacking) {
+                if (serie.options.stacking &&
+                    // These series have their own dirting logic
+                    !serie.type.match(/column|columnrange|bar/g)) {
                     serie.isDirty = true;
                 }
             }
@@ -603,7 +605,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Fire an event before redrawing series, used by the boost module to
         // clear previous series renderings.
         fireEvent(chart, 'predraw');
-        // redraw affected series
+        // Clear previous and calculate new column props before series
+        // renderings.
+        fireEvent(chart, 'getColumnProps');
+        // Redraw affected series
         series.forEach(function (serie) {
             if ((isDirtyBox || serie.isDirty) && serie.visible) {
                 serie.redraw();
@@ -1678,9 +1683,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {void}
      */
     renderSeries: function () {
-        this.series.forEach(function (serie) {
-            serie.translate();
-            serie.render();
+        var chart = this;
+        // Clear previous and calculate new column props before series
+        // renderings.
+        fireEvent(chart, 'getColumnProps');
+        chart.series.forEach(function (series) {
+            series.translate();
+            series.render();
         });
     },
     /**

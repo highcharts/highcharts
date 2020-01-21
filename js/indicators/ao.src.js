@@ -9,7 +9,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var correctFloat = U.correctFloat, isArray = U.isArray;
-var noop = H.noop;
+var noop = H.noop, columnPrototype = H.seriesTypes.column.prototype;
 /**
  * The AO series type
  *
@@ -81,10 +81,23 @@ H.seriesType('ao', 'sma',
     nameComponents: false,
     // Columns support:
     markerAttribs: noop,
-    getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-    crispCol: H.seriesTypes.column.prototype.crispCol,
-    translate: H.seriesTypes.column.prototype.translate,
-    drawPoints: H.seriesTypes.column.prototype.drawPoints,
+    // Below methods always fire the currect method from column
+    // prototype even when we change/wrap them in column prototype.
+    crispCol: function () {
+        return columnPrototype.crispCol.apply(this, arguments);
+    },
+    drawPoints: function () {
+        return columnPrototype.drawPoints.apply(this, arguments);
+    },
+    getColumnCount: function () {
+        return columnPrototype.getColumnCount.apply(this, arguments);
+    },
+    getColumnMetrics: function () {
+        return columnPrototype.getColumnMetrics.apply(this, arguments);
+    },
+    translate: function () {
+        return columnPrototype.translate.apply(this, arguments);
+    },
     drawGraph: function () {
         var indicator = this, options = indicator.options, points = indicator.points, userColor = indicator.userOptions.color, positiveColor = options.greaterBarColor, negativeColor = options.lowerBarColor, firstPoint = points[0], i;
         if (!userColor && firstPoint) {

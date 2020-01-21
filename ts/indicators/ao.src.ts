@@ -26,6 +26,7 @@ declare global {
             public crispCol: ColumnSeries['crispCol'];
             public drawGraph(): void;
             public drawPoints: ColumnSeries['drawPoints'];
+            public getColumnCount: ColumnSeries['getColumnCount'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public getValues<TLinkedSeries extends Series>(
                 series: TLinkedSeries,
@@ -60,7 +61,8 @@ const {
     isArray
 } = U;
 
-var noop = H.noop;
+var noop = H.noop,
+    columnPrototype = H.seriesTypes.column.prototype;
 
 /**
  * The AO series type
@@ -136,11 +138,23 @@ H.seriesType<Highcharts.AOIndicator>(
 
         // Columns support:
         markerAttribs: (noop as any),
-        getColumnMetrics: H.seriesTypes.column.prototype.getColumnMetrics,
-        crispCol: H.seriesTypes.column.prototype.crispCol,
-        translate: H.seriesTypes.column.prototype.translate,
-        drawPoints: H.seriesTypes.column.prototype.drawPoints,
-
+        // Below methods always fire the currect method from column
+        // prototype even when we change/wrap them in column prototype.
+        crispCol: function (): Highcharts.BBoxObject {
+            return columnPrototype.crispCol.apply(this, arguments);
+        },
+        drawPoints: function (): void {
+            return columnPrototype.drawPoints.apply(this, arguments);
+        },
+        getColumnCount: function (): number {
+            return columnPrototype.getColumnCount.apply(this, arguments);
+        },
+        getColumnMetrics: function (): Highcharts.ColumnMetricsObject {
+            return columnPrototype.getColumnMetrics.apply(this, arguments);
+        },
+        translate: function (): void {
+            return columnPrototype.translate.apply(this, arguments);
+        },
         drawGraph: function (this: Highcharts.AOIndicator): void {
             var indicator = this,
                 options = indicator.options,

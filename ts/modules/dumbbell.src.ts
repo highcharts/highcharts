@@ -64,7 +64,8 @@ declare global {
             ): SVGPathArray;
             public getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
             public drawConnector(point: DumbbellPoint): void;
-            public getColumnMetrics(): ColumnMetricsObject;
+            public getColumnCount: ColumnSeries['getColumnCount'];
+            public getColumnMetrics: ColumnSeries['getColumnMetrics'];
             public translate(): void;
             public drawPoints(): void;
             public markerAttribs(): SVGAttributes;
@@ -193,7 +194,6 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
         }
         return points;
     },
-    crispCol: colProto.crispCol,
     /**
      * Get connector line path and styles that connects dumbbell point's low and
      * high values.
@@ -362,8 +362,6 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
 
         return metrics;
     },
-    translatePoint: areaRangeProto.translate,
-    setShapeArgs: columnRangeProto.translate,
     /**
      * Translate each point to the plot area coordinate system and find
      * shape positions
@@ -395,7 +393,21 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
             (point.tooltipPos as any) = null;
         });
     },
-    seriesDrawPoints: areaRangeProto.drawPoints,
+    crispCol: function (): Highcharts.BBoxObject {
+        return colProto.crispCol.apply(this, arguments);
+    },
+    getColumnCount: function (): number {
+        return colProto.getColumnCount.apply(this, arguments);
+    },
+    setShapeArgs: function (): void {
+        return columnRangeProto.translate.apply(this, arguments);
+    },
+    seriesDrawPoints: function (): void {
+        return areaRangeProto.drawPoints.apply(this, arguments);
+    },
+    translatePoint: function (): void {
+        return areaRangeProto.translate.apply(this, arguments);
+    },
     /**
      * Extend the arearange series' drawPoints method by applying a connector
      * and coloring markers.

@@ -153,8 +153,17 @@ seriesType('vbp', 'sma',
     calculateOn: 'render',
     markerAttribs: noop,
     drawGraph: noop,
-    getColumnMetrics: columnPrototype.getColumnMetrics,
-    crispCol: columnPrototype.crispCol,
+    // Below methods always fire the currect method from column
+    // prototype even when we change/wrap them in column prototype.
+    crispCol: function () {
+        return columnPrototype.crispCol.apply(this, arguments);
+    },
+    getColumnCount: function () {
+        return columnPrototype.getColumnCount.apply(this, arguments);
+    },
+    getColumnMetrics: function () {
+        return columnPrototype.getColumnMetrics.apply(this, arguments);
+    },
     init: function (chart) {
         var indicator = this, params, baseSeries, volumeSeries;
         H.seriesTypes.sma.prototype.init.apply(indicator, arguments);

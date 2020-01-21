@@ -115,7 +115,6 @@ seriesType('dumbbell', 'arearange', {
         }
         return points;
     },
-    crispCol: colProto.crispCol,
     /**
      * Get connector line path and styles that connects dumbbell point's low and
      * high values.
@@ -219,8 +218,6 @@ seriesType('dumbbell', 'arearange', {
         metrics.offset = metrics.offset + metrics.width / 2;
         return metrics;
     },
-    translatePoint: areaRangeProto.translate,
-    setShapeArgs: columnRangeProto.translate,
     /**
      * Translate each point to the plot area coordinate system and find
      * shape positions
@@ -246,7 +243,21 @@ seriesType('dumbbell', 'arearange', {
             point.tooltipPos = null;
         });
     },
-    seriesDrawPoints: areaRangeProto.drawPoints,
+    crispCol: function () {
+        return colProto.crispCol.apply(this, arguments);
+    },
+    getColumnCount: function () {
+        return colProto.getColumnCount.apply(this, arguments);
+    },
+    setShapeArgs: function () {
+        return columnRangeProto.translate.apply(this, arguments);
+    },
+    seriesDrawPoints: function () {
+        return areaRangeProto.drawPoints.apply(this, arguments);
+    },
+    translatePoint: function () {
+        return areaRangeProto.translate.apply(this, arguments);
+    },
     /**
      * Extend the arearange series' drawPoints method by applying a connector
      * and coloring markers.

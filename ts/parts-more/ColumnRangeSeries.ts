@@ -27,12 +27,18 @@ declare global {
             public shapeType: ColumnPoint['shapeType'];
         }
         class ColumnRangeSeries extends AreaRangeSeries {
+            public addPoint: ColumnSeries['addPoint'];
             public animate: ColumnSeries['animate'];
+            public correctStackLabels: ColumnSeries['correctStackLabels'];
             public crispCol: ColumnSeries['crispCol'];
             public data: Array<ColumnRangePoint>;
             public drawPoints: ColumnSeries['drawPoints'];
             public drawTracker: ColumnSeries['drawTracker'];
+            public getMaxColumnCount: ColumnSeries['getMaxColumnCount'];
+            public getMinColumnWidth: ColumnSeries['getMinColumnWidth'];
+            public getColumnCount: ColumnSeries['getColumnCount'];
             public getColumnMetrics: ColumnSeries['getColumnMetrics'];
+            public hasValueInX: ColumnSeries['hasValueInX'];
             public options: ColumnRangeSeriesOptions;
             public pointAttribs: ColumnSeries['pointAttribs'];
             public pointClass: typeof ColumnRangePoint;
@@ -223,7 +229,20 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     drawGraph: noop as any,
     getSymbol: noop as any,
 
-    // Overrides from modules that may be loaded after this module
+    // Overrides from modules that may be loaded after this module.
+    // All below methods always fire the currect method from colProto
+    // even when we change/wrap them in colProto.
+    addPoint: function (
+        this: Highcharts.ColumnRangeSeries
+    ): void {
+        return colProto.addPoint.apply(this, arguments as any);
+    },
+    correctStackLabels: function (
+        this: Highcharts.ColumnSeries,
+        point: Highcharts.ColumnPoint
+    ): void {
+        return colProto.correctStackLabels.apply(this, arguments as any);
+    },
     crispCol: function (
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.BBoxObject {
@@ -235,10 +254,31 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
     drawTracker: function (this: Highcharts.ColumnRangeSeries): void {
         return colProto.drawTracker.apply(this, arguments as any);
     },
+    getMaxColumnCount: function (
+        this: Highcharts.ColumnRangeSeries
+    ): number|undefined {
+        return colProto.getMaxColumnCount.apply(this, arguments as any);
+    },
+    getMinColumnWidth: function (this: Highcharts.ColumnRangeSeries): number {
+        return colProto.getMinColumnWidth.apply(this, arguments as any);
+    },
+    getColumnCount: function (
+        this: Highcharts.ColumnRangeSeries,
+        point: Highcharts.ColumnPoint
+    ): number {
+        return colProto.getColumnCount.apply(this, arguments as any);
+    },
     getColumnMetrics: function (
         this: Highcharts.ColumnRangeSeries
     ): Highcharts.ColumnMetricsObject {
         return colProto.getColumnMetrics.apply(this, arguments as any);
+    },
+    hasValueInX: function (
+        this: Highcharts.ColumnRangeSeries,
+        point: Highcharts.Point,
+        otherSeries: Highcharts.Series
+    ): boolean {
+        return colProto.hasValueInX.apply(this, arguments as any);
     },
     pointAttribs: function (
         this: Highcharts.ColumnRangeSeries
@@ -258,7 +298,9 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
         return colProto.translate3dShapes.apply(this, arguments as any);
     }
 }, {
-    setState: colProto.pointClass.prototype.setState
+    setState: colProto.pointClass.prototype.setState,
+    remove: colProto.pointClass.prototype.remove,
+    update: colProto.pointClass.prototype.update
 });
 
 
