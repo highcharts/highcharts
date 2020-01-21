@@ -912,7 +912,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         if (
                             !chart.resetZoomButton &&
                             !hasMapNavigation &&
-                            type === 'xy' || type === 'y'
+                            type.match('y') !== null
                         ) {
                             chart.showResetZoom();
                             axis.displayBtn = false;

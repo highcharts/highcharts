@@ -2896,12 +2896,16 @@ addEvent(Axis, 'afterSetScale', function (
     this: Highcharts.Axis
 ): void {
     var axis = this,
-        panning = axis.chart.options.chart &&
-            axis.chart.options.chart.panning;
+        chartOptions = axis.chart.options.chart,
+        panning = chartOptions &&
+            chartOptions.panning;
 
     if (
         panning &&
-        (panning.type === 'y' || panning.type === 'xy') &&
+        (
+            panning.type &&
+            panning.type.match('y') !== null
+        ) &&
         !axis.isXAxis &&
         !defined(axis.panningState) &&
         axis.series.length

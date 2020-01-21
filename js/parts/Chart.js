@@ -2029,10 +2029,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 // (including min/maxPadding). This is related to using vertical panning
 // (#11315).
 addEvent(Axis, 'afterSetScale', function () {
-    var axis = this, panning = axis.chart.options.chart &&
-        axis.chart.options.chart.panning;
+    var axis = this, chartOptions = axis.chart.options.chart, panning = chartOptions &&
+        chartOptions.panning;
     if (panning &&
-        (panning.type === 'y' || panning.type === 'xy') &&
+        (panning.type &&
+            panning.type.match('y') !== null) &&
         !axis.isXAxis &&
         !defined(axis.panningState) &&
         axis.series.length) {
