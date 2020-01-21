@@ -167,6 +167,7 @@ declare global {
         }
         interface LangOptions {
             contextButtonTitle?: string;
+            exitFullscreen?: string;
             downloadJPEG?: string;
             downloadPDF?: string;
             downloadPNG?: string;
@@ -322,14 +323,24 @@ extend(defaultOptions.lang
     , {
 
         /**
-         * Exporting module only. View the chart in full screen.
+         * Exporting module only. The text for the menu item to view the chart
+         * in full screen.
          *
-         * @since    7.1.0
-         * @requires modules/exporting
+         * @since next
          *
          * @private
          */
         viewFullscreen: 'View in full screen',
+
+        /**
+         * Exporting module only. The text for the menu item to exit the chart
+         * from full screen.
+         *
+         * @since next
+         *
+         * @private
+         */
+        exitFullscreen: 'Exit from full screen',
 
 
         /**
@@ -1093,12 +1104,16 @@ defaultOptions.exporting = {
      * - **textKey:** If internationalization is required, the key to a language
      *   string
      *
+     * Custom text for the "exitFullScreen" can be set only in lang options
+     * (it is not a separate button).
+     *
      * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highstock} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
+     *
      *
      * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
      * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
@@ -1112,7 +1127,7 @@ defaultOptions.exporting = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function (): void {
-                this.fullscreen = new H.FullScreen(this.container);
+                this.toggleFullscreen();
             }
         },
 
