@@ -50,7 +50,7 @@ defaultPlotOptions.area, {
  *
  *
  * @extends   series,plotOptions.areaspline
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, step
  * @product   highcharts highstock
  * @apioption series.areaspline
  */

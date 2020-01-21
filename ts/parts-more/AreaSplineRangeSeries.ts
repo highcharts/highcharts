@@ -77,7 +77,7 @@ seriesType<Highcharts.AreaSplineSeries>(
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.areasplinerange
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, stack, step
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.areasplinerange
