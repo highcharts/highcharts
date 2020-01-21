@@ -288,8 +288,9 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import timeModule from './Time.js';
-const Time: typeof Highcharts.Time = timeModule.Time as any;
+import MSPointer from './MSPointer.js';
+import Pointer from './Pointer.js';
+import Time from './Time.js';
 import utilitiesModule from './Utilities.js';
 const {
     animObject,
@@ -331,7 +332,6 @@ var addEvent = H.addEvent,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     merge = H.merge,
-    Pointer = H.Pointer, // @todo add as requirement
     seriesTypes = H.seriesTypes,
     win = H.win;
 
@@ -2835,16 +2835,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // depends on inverted and on margins being set
         if (Pointer) {
-
-            /**
-             * The Pointer that keeps track of mouse and touch interaction.
-             *
-             * @memberof Highcharts.Chart
-             * @name pointer
-             * @type {Highcharts.Pointer}
-             * @instance
-             */
-            chart.pointer = new Pointer(chart, options);
+            if (!H.hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
+                chart.pointer = new MSPointer(chart, options);
+            } else {
+                /**
+                 * The Pointer that keeps track of mouse and touch interaction.
+                 *
+                 * @memberof Highcharts.Chart
+                 * @name pointer
+                 * @type {Highcharts.Pointer}
+                 * @instance
+                 */
+                chart.pointer = new Pointer(chart, options);
+            }
         }
 
         chart.render();
