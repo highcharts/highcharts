@@ -1214,6 +1214,14 @@ extend((
             // Remove shadows from previous runs.
             this.removeTextOutline(tspans);
 
+            // Check if the element contains RTL characters.
+            // Comparing against Hebrew and Arabic characters,
+            // excluding Arabic digits. Source:
+            // https://www.unicode.org/Public/UNIDATA/extracted/DerivedBidiClass.txt
+            const isRTL = elem.textContent ?
+                /^[\u0591-\u065F\u066A-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
+                    .test(elem.textContent) : false;
+
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild as any;
             tspans.forEach(function (
@@ -1232,9 +1240,11 @@ extend((
                     }
                 }
 
-                // Create the clone and apply outline properties
+                // Create the clone and apply outline properties.
+                // For RTL elements apply outline properties for orginal element
+                // to prevent outline from overlapping the text (#10162).
                 clone = tspan.cloneNode(1 as any);
-                attr(clone, {
+                attr(isRTL ? tspan : clone, {
                     'class': 'highcharts-text-outline',
                     fill: color,
                     stroke: color,
