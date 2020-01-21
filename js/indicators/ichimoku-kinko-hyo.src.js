@@ -549,13 +549,7 @@ seriesType('ikh', 'sma',
             spanA[0][0] = 'L';
             path = SMA.prototype.getGraphPath.call(indicator, points);
             spanAarr = spanA.slice(0, path.length);
-            for (var i = (spanAarr.length - 1); i > 0; i -= 3) {
-                if (spanAarr[i - 2]) {
-                    path.push(spanAarr[i - 2]);
-                }
-                if (spanAarr[i - 1]) {
-                    path.push(spanAarr[i - 1]);
-                }
+            for (var i = spanAarr.length - 1; i > 0; i--) {
                 path.push(spanAarr[i]);
             }
         }
