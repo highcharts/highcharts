@@ -549,7 +549,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
                         if (!chart.resetZoomButton &&
                             !hasMapNavigation &&
-                            type.match('y') !== null) {
+                            type.match('y')) {
                             chart.showResetZoom();
                             axis.displayBtn = false;
                         }

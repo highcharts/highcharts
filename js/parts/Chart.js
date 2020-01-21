@@ -2033,7 +2033,7 @@ addEvent(Axis, 'afterSetScale', function () {
         chartOptions.panning;
     if (panning &&
         (panning.type &&
-            panning.type.match('y') !== null) &&
+            panning.type.match('y')) &&
         !axis.isXAxis &&
         !defined(axis.panningState) &&
         axis.series.length) {

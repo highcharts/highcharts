@@ -2904,7 +2904,7 @@ addEvent(Axis, 'afterSetScale', function (
         panning &&
         (
             panning.type &&
-            panning.type.match('y') !== null
+            panning.type.match('y')
         ) &&
         !axis.isXAxis &&
         !defined(axis.panningState) &&
