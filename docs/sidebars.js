@@ -115,6 +115,7 @@ module.exports = {
             'advanced-chart-features/annotations-and-fibonacci-retracements',
             'advanced-chart-features/axis-resizer',
             'advanced-chart-features/boost-module',
+            'advanced-chart-features/center-columns-with-empty-points',
             'advanced-chart-features/data-sorting',
             'advanced-chart-features/marker-clusters',
             'chart-concepts/bubble-legend',
