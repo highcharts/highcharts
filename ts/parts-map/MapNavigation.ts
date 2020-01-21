@@ -43,6 +43,7 @@ declare global {
         interface MapNavigationChart extends Chart {
             mapNavButtons: Array<SVGElement>;
             mapNavigation: MapNavigation;
+            pointer: MapPointer;
             fitToBox(inner: BBoxObject, outer: BBoxObject): BBoxObject;
             mapZoom(
                 howMuch?: number,
