@@ -27,7 +27,15 @@ declare global {
         type SVGPathCurveTo = ['C', number, number, number, number, number, number];
         type SVGPathLineTo = ['L', number, number];
         type SVGPathMoveTo = ['M', number, number];
-        type SVGPathSegment = (SVGPathArc|SVGPathClose|SVGPathCurveTo|SVGPathLineTo|SVGPathMoveTo);
+        type SVGPathQuadTo = ['Q', number, number, number, number];
+        type SVGPathSegment = (
+            SVGPathArc|
+            SVGPathClose|
+            SVGPathCurveTo|
+            SVGPathLineTo|
+            SVGPathMoveTo|
+            SVGPathQuadTo
+        );
         type SVGPathArray = Array<SVGPathSegment>;
         type SymbolKeyValue = (
             'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|

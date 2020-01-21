@@ -402,6 +402,18 @@ seriesType('map', 'scatter',
                         (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
                     ]);
                 }
+                else if (seg[0] === 'Q') {
+                    ret.push([
+                        'Q',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
+                }
+                else if (seg[0] === 'Z') {
+                    ret.push(['Z']);
+                }
             });
         }
         return ret;
