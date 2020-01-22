@@ -118,13 +118,14 @@ declare global {
     }
 }
 
-import timeModule from './Time.js';
-const Time: typeof Highcharts.Time = timeModule.Time as any;
+import Time from './Time.js';
 import utilitiesModule from './Utilities.js';
 const {
+    addEvent,
     defined,
     erase,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
@@ -141,13 +142,11 @@ import './Chart.js';
 import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    animate = H.animate,
+var animate = H.animate,
     Axis = H.Axis,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    fireEvent = H.fireEvent,
     merge = H.merge,
     Point = H.Point,
     Series = H.Series,
