@@ -23,18 +23,26 @@ declare global {
         type Renderer = SVGRenderer;
         type SVGDOMElement = GlobalSVGElement;
         type SVGPathArc = ['A'|'a', number, number, number, number, number, number, number];
-        type SVGPathClose = ['Z'];
-        type SVGPathCurveTo = ['C', number, number, number, number, number, number];
-        type SVGPathLineTo = ['L', number, number];
-        type SVGPathMoveTo = ['M', number, number];
-        type SVGPathQuadTo = ['Q', number, number, number, number];
+        type SVGPathClose = ['Z'|'z'];
+        type SVGPathCurveTo = ['C'|'c', number, number, number, number, number, number];
+        type SVGPathHorizontalLineTo = ['H'|'h', number];
+        type SVGPathLineTo = ['L'|'l', number, number];
+        type SVGPathMoveTo = ['M'|'m', number, number];
+        type SVGPathQuadTo = ['Q'|'q', number, number, number, number];
+        type SVGPathCurveSmoothTo = ['S'|'s', number, number, number, number];
+        type SVGPathQuadSmoothTo = ['T'|'t', number, number];
+        type SVGPathVerticalLineTo = ['V'|'v', number];
         type SVGPathSegment = (
             SVGPathArc|
             SVGPathClose|
             SVGPathCurveTo|
+            SVGPathCurveSmoothTo|
+            SVGPathHorizontalLineTo|
             SVGPathLineTo|
             SVGPathMoveTo|
-            SVGPathQuadTo
+            SVGPathQuadTo|
+            SVGPathQuadSmoothTo|
+            SVGPathVerticalLineTo
         );
         type SVGPathArray = Array<SVGPathSegment>;
         type SymbolKeyValue = (
@@ -5987,28 +5995,145 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     pathToSegments: function (
         path: Array<string|number>
     ): Highcharts.SVGPathArray {
-        const ret = [];
-        let seg = [],
-            i;
+        const ret: Highcharts.SVGPathArray = [],
+            commands = {
+                A: 7,
+                C: 6,
+                H: 1,
+                L: 2,
+                M: 2,
+                Q: 4,
+                S: 4,
+                T: 2,
+                V: 1,
+                Z: 0
+            };
 
-        for (i = 0; i <= path.length; i++) {
+        let i = 0,
+            lastI = 0,
+            lastCommand;
+
+        while (i < path.length) {
             const item = path[i];
-            if (
-                (typeof item !== 'number' && /[a-zA-Z]/.test(item)) ||
-                i === path.length // Push the last segment
-            ) {
-                if (seg.length) {
-                    ret.push(seg);
-                }
-                // To avoid an any cast here we would have to type check all
-                // positions of each segment type, which would be safer but
-                // very verbose
-                seg = [item] as any;
-            } else {
-                seg.push(typeof item === 'number' ? item : parseFloat(item));
-            }
-        }
 
+            let command;
+
+            if (typeof item === 'string') {
+                command = item;
+                i += 1;
+            } else {
+                command = lastCommand || 'M';
+            }
+
+            // Upper case
+            const commandUC = command.toUpperCase();
+
+            if (commandUC in commands) {
+
+                // No numeric parameters
+                if (command === 'Z' || command === 'z') {
+                    ret.push([command]);
+
+                // One numeric parameter
+                } else {
+                    const val0 = path[i];
+                    if (typeof val0 === 'number') {
+
+                        // Horizontal line to
+                        if (command === 'H' || command === 'h') {
+                            ret.push([command, val0]);
+                            i += 1;
+
+                        // Vertical line to
+                        } else if (command === 'V' || command === 'v') {
+                            ret.push([command, val0]);
+                            i += 1;
+
+                        // Two numeric parameters
+                        } else {
+                            const val1 = path[i + 1];
+                            if (typeof val1 === 'number') {
+                                // lineTo
+                                if (command === 'L' || command === 'l') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+
+                                // moveTo
+                                } else if (command === 'M' || command === 'm') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+
+                                // Smooth quadratic bezier
+                                } else if (command === 'T' || command === 't') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+
+                                // Four numeric parameters
+                                } else {
+                                    const val2 = path[i + 2],
+                                        val3 = path[i + 3];
+                                    if (
+                                        typeof val2 === 'number' &&
+                                        typeof val3 === 'number'
+                                    ) {
+                                        // Quadratic bezier to
+                                        if (command === 'Q' || command === 'q') {
+                                            ret.push([command, val0, val1, val2, val3]);
+                                            i += 4;
+
+                                        // Smooth cubic bezier to
+                                        } else if (command === 'S' || command === 's') {
+                                            ret.push([command, val0, val1, val2, val3]);
+                                            i += 4;
+
+                                        // Six numeric parameters
+                                        } else {
+                                            const val4 = path[i + 4],
+                                                val5 = path[i + 5];
+
+                                            if (
+                                                typeof val4 === 'number' &&
+                                                typeof val5 === 'number'
+                                            ) {
+                                                // Curve to
+                                                if (command === 'C' || command === 'c') {
+                                                    ret.push([command, val0, val1, val2, val3, val4, val5]);
+                                                    i += 6;
+
+                                                // Seven numeric parameters
+                                                } else {
+                                                    const val6 = path[i + 6];
+
+                                                    // Arc to
+                                                    if (
+                                                        typeof val6 === 'number' &&
+                                                        (command === 'A' || command === 'a')
+                                                    ) {
+                                                        ret.push([command, val0, val1, val2, val3, val4, val5, val6]);
+                                                        i += 7;
+
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            // An unmarked command following a moveTo is a lineTo
+            lastCommand = command === 'M' ? 'L' : command;
+
+            if (i === lastI) {
+                break;
+            }
+            lastI = i;
+        }
         return ret;
     },
 

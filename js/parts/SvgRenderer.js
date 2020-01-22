@@ -4157,24 +4157,119 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @return {Highcharts.SVGPathArray}
      */
     pathToSegments: function (path) {
-        var ret = [];
-        var seg = [], i;
-        for (i = 0; i <= path.length; i++) {
+        var ret = [], commands = {
+            A: 7,
+            C: 6,
+            H: 1,
+            L: 2,
+            M: 2,
+            Q: 4,
+            S: 4,
+            T: 2,
+            V: 1,
+            Z: 0
+        };
+        var i = 0, lastI = 0, lastCommand;
+        while (i < path.length) {
             var item = path[i];
-            if ((typeof item !== 'number' && /[a-zA-Z]/.test(item)) ||
-                i === path.length // Push the last segment
-            ) {
-                if (seg.length) {
-                    ret.push(seg);
-                }
-                // To avoid an any cast here we would have to type check all
-                // positions of each segment type, which would be safer but
-                // very verbose
-                seg = [item];
+            var command = void 0;
+            if (typeof item === 'string') {
+                command = item;
+                i += 1;
             }
             else {
-                seg.push(typeof item === 'number' ? item : parseFloat(item));
+                command = lastCommand || 'M';
             }
+            // Upper case
+            var commandUC = command.toUpperCase();
+            if (commandUC in commands) {
+                // No numeric parameters
+                if (command === 'Z' || command === 'z') {
+                    ret.push([command]);
+                    // One numeric parameter
+                }
+                else {
+                    var val0 = path[i];
+                    if (typeof val0 === 'number') {
+                        // Horizontal line to
+                        if (command === 'H' || command === 'h') {
+                            ret.push([command, val0]);
+                            i += 1;
+                            // Vertical line to
+                        }
+                        else if (command === 'V' || command === 'v') {
+                            ret.push([command, val0]);
+                            i += 1;
+                            // Two numeric parameters
+                        }
+                        else {
+                            var val1 = path[i + 1];
+                            if (typeof val1 === 'number') {
+                                // lineTo
+                                if (command === 'L' || command === 'l') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+                                    // moveTo
+                                }
+                                else if (command === 'M' || command === 'm') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+                                    // Smooth quadratic bezier
+                                }
+                                else if (command === 'T' || command === 't') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+                                    // Four numeric parameters
+                                }
+                                else {
+                                    var val2 = path[i + 2], val3 = path[i + 3];
+                                    if (typeof val2 === 'number' &&
+                                        typeof val3 === 'number') {
+                                        // Quadratic bezier to
+                                        if (command === 'Q' || command === 'q') {
+                                            ret.push([command, val0, val1, val2, val3]);
+                                            i += 4;
+                                            // Smooth cubic bezier to
+                                        }
+                                        else if (command === 'S' || command === 's') {
+                                            ret.push([command, val0, val1, val2, val3]);
+                                            i += 4;
+                                            // Six numeric parameters
+                                        }
+                                        else {
+                                            var val4 = path[i + 4], val5 = path[i + 5];
+                                            if (typeof val4 === 'number' &&
+                                                typeof val5 === 'number') {
+                                                // Curve to
+                                                if (command === 'C' || command === 'c') {
+                                                    ret.push([command, val0, val1, val2, val3, val4, val5]);
+                                                    i += 6;
+                                                    // Seven numeric parameters
+                                                }
+                                                else {
+                                                    var val6 = path[i + 6];
+                                                    // Arc to
+                                                    if (typeof val6 === 'number' &&
+                                                        (command === 'A' || command === 'a')) {
+                                                        ret.push([command, val0, val1, val2, val3, val4, val5, val6]);
+                                                        i += 7;
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // An unmarked command following a moveTo is a lineTo
+            lastCommand = command === 'M' ? 'L' : command;
+            if (i === lastI) {
+                break;
+            }
+            lastI = i;
         }
         return ret;
     },

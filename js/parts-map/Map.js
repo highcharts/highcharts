@@ -266,9 +266,16 @@ H.splitPath = function (path) {
             .replace(/([A-Za-z])/g, ' $1 ')
             // Trim
             .replace(/^\s*/, '').replace(/\s*$/, '');
-        // Split on spaces and commas
-        // Extra comma to escape gulp.scripts task
-        arr = path.split(/[ ,,]+/);
+        // Split on spaces and commas. The semicolon is bogus, designed to
+        // circumvent string replacement in the pre-v7 assembler that built
+        // specific styled mode files.
+        var split = path.split(/[ ,;]+/);
+        arr = split.map(function (item) {
+            if (!/[A-za-z]/.test(item)) {
+                return parseFloat(item);
+            }
+            return item;
+        });
     }
     else {
         arr = path;
