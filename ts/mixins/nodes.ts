@@ -58,6 +58,7 @@ declare global {
             public setNodeState: NodesMixin['setNodeState'];
             public to: string;
             public toNode: NodesPoint;
+            public weight?: number;
             public y?: (number|null);
             public getSum(): number;
             public hasShape(): boolean;
@@ -288,7 +289,6 @@ H.NodesMixin = {
         var args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
-
         if (state !== 'select') {
             others.forEach(function (linkOrNode: Highcharts.NodesPoint): void {
                 if (linkOrNode.series) {

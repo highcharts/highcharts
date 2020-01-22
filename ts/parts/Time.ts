@@ -12,18 +12,6 @@
 
 import Highcharts from './Globals.js';
 
-import U from './Utilities.js';
-const {
-    defined,
-    extend,
-    isObject,
-    objectEach,
-    pad,
-    pick,
-    splat,
-    timeUnits
-} = U;
-
 /**
  * Internal types
  * @private
@@ -160,6 +148,18 @@ declare global {
  * @return {number}
  * Timezone offset in minutes.
  */
+
+import utilitiesModule from './Utilities.js';
+const {
+    defined,
+    extend,
+    isObject,
+    objectEach,
+    pad,
+    pick,
+    splat,
+    timeUnits
+} = utilitiesModule;
 
 var H = Highcharts,
     merge = H.merge,
@@ -391,7 +391,7 @@ class Time {
 
     public variableTimezone: boolean = false;
 
-    private Date: typeof Date = win.Date;
+    public Date: typeof Date = win.Date;
 
     private getTimezoneOffset: ReturnType<Time['timezoneOffsetFunction']>;
 
@@ -1066,8 +1066,4 @@ class Time {
 
 H.Time = Time as any;
 
-const timeModule = {
-    Time
-};
-
-export default timeModule;
+export default H.Time;

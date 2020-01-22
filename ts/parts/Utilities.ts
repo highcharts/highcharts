@@ -3130,7 +3130,7 @@ const removeEvent = H.removeEvent = function removeEvent<T>(
  *
  * @return {void}
  */
-H.fireEvent = function<T> (
+const fireEvent = H.fireEvent = function<T> (
     el: T,
     type: string,
     eventArguments?: (Highcharts.Dictionary<any>|Event),
@@ -3460,6 +3460,7 @@ const utils = {
     erase,
     extend,
     extendClass,
+    fireEvent,
     isArray,
     isClass,
     isDOMElement,

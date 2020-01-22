@@ -722,9 +722,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 // Check if zoomed area is within the pane (#1289).
                 // In case of multiple panes only one pane should be zoomed.
                 if (
-                    (!isXAxis &&
-                    mouseDownPos >= axisStartPos &&
-                    mouseDownPos <= axisEndPos) ||
+                    (
+                        !isXAxis &&
+                        (mouseDownPos as any) >= axisStartPos &&
+                        (mouseDownPos as any) <= axisEndPos
+                    ) ||
                     isXAxis ||
                     !defined(mouseDownPos)
                 ) {

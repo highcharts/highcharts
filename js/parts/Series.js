@@ -225,15 +225,16 @@ import H from './Globals.js';
  *
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
-import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+import pointModule from './Point.js';
+var Point = pointModule.Point;
+import utilitiesModule from './Utilities.js';
+var animObject = utilitiesModule.animObject, arrayMax = utilitiesModule.arrayMax, arrayMin = utilitiesModule.arrayMin, clamp = utilitiesModule.clamp, correctFloat = utilitiesModule.correctFloat, defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, removeEvent = utilitiesModule.removeEvent, splat = utilitiesModule.splat, syncTimeout = utilitiesModule.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
 var addEvent = H.addEvent, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-merge = H.merge, Point = H.Point, // @todo  add as a requirement
-seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
+merge = H.merge, seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -2035,9 +2036,9 @@ null,
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-style/
          *         Bold labels
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow/
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow/
          *         Long labels truncated with an ellipsis in a pie
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap/
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
          *         Long labels are wrapped in a pie
          * @sample {highmaps} maps/demo/color-axis/
          *         Bold labels

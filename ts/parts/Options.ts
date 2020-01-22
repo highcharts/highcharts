@@ -555,14 +555,12 @@ declare global {
  * @type {number}
  */
 
-import timeModule from './Time.js';
-const Time: typeof Highcharts.Time = timeModule.Time as any;
-
-import './Color.js';
+import Time from './Time.js';
+import colorModule from './Color.js';
+const color = colorModule.color;
 import './Utilities.js';
 
-var color = H.color,
-    isTouchDevice = H.isTouchDevice,
+var isTouchDevice = H.isTouchDevice,
     merge = H.merge,
     svg = H.svg;
 

@@ -98,8 +98,9 @@ import H from './Globals.js';
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-import timeModule from './Time.js';
-var Time = timeModule.Time;
+import MSPointer from './MSPointer.js';
+import Pointer from './Pointer.js';
+import Time from './Time.js';
 import utilitiesModule from './Utilities.js';
 var animObject = utilitiesModule.animObject, attr = utilitiesModule.attr, defined = utilitiesModule.defined, discardElement = utilitiesModule.discardElement, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, numberFormat = utilitiesModule.numberFormat, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt, relativeLength = utilitiesModule.relativeLength, removeEvent = utilitiesModule.removeEvent, setAnimation = utilitiesModule.setAnimation, splat = utilitiesModule.splat, syncTimeout = utilitiesModule.syncTimeout;
 import './Axis.js';
@@ -108,8 +109,7 @@ import './Options.js';
 import './Pointer.js';
 var addEvent = H.addEvent, animate = H.animate, doc = H.doc, Axis = H.Axis, // @todo add as requirement
 createElement = H.createElement, defaultOptions = H.defaultOptions, charts = H.charts, css = H.css, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
-marginNames = H.marginNames, merge = H.merge, Pointer = H.Pointer, // @todo add as requirement
-seriesTypes = H.seriesTypes, win = H.win;
+marginNames = H.marginNames, merge = H.merge, seriesTypes = H.seriesTypes, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.
@@ -467,11 +467,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         Returns true if the given point is inside the plot area.
      */
     isInsidePlot: function (plotX, plotY, inverted) {
-        var x = inverted ? plotY : plotX, y = inverted ? plotX : plotY;
-        return x >= 0 &&
-            x <= this.plotWidth &&
-            y >= 0 &&
-            y <= this.plotHeight;
+        var x = inverted ? plotY : plotX, y = inverted ? plotX : plotY, e = {
+            x: x,
+            y: y,
+            isInsidePlot: x >= 0 &&
+                x <= this.plotWidth &&
+                y >= 0 &&
+                y <= this.plotHeight
+        };
+        fireEvent(this, 'afterIsInsidePlot', e);
+        return e.isInsidePlot;
     },
     /**
      * Redraw the chart after changes have been done to the data, axis extremes
@@ -1979,15 +1984,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(chart, 'beforeRender');
         // depends on inverted and on margins being set
         if (Pointer) {
-            /**
-             * The Pointer that keeps track of mouse and touch interaction.
-             *
-             * @memberof Highcharts.Chart
-             * @name pointer
-             * @type {Highcharts.Pointer}
-             * @instance
-             */
-            chart.pointer = new Pointer(chart, options);
+            if (!H.hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
+                chart.pointer = new MSPointer(chart, options);
+            }
+            else {
+                /**
+                 * The Pointer that keeps track of mouse and touch interaction.
+                 *
+                 * @memberof Highcharts.Chart
+                 * @name pointer
+                 * @type {Highcharts.Pointer}
+                 * @instance
+                 */
+                chart.pointer = new Pointer(chart, options);
+            }
         }
         chart.render();
         // Fire the load event if there are no external images

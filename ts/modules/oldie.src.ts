@@ -444,7 +444,7 @@ if (!svg) {
     H.Pointer.prototype.normalize = function<
         T extends Highcharts.PointerEventObject
     > (
-        e: (T|PointerEvent),
+        e: (T|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
 
@@ -461,8 +461,8 @@ if (!svg) {
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
-            chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),
-            chartY: Math.round(e.y)
+            chartX: Math.round(Math.max((e as any).x, (e as any).clientX - chartPosition.left)),
+            chartY: Math.round((e as any).y)
         }) as T;
     };
 

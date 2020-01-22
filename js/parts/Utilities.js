@@ -2286,7 +2286,7 @@ var removeEvent = H.removeEvent = function removeEvent(el, type, fn) {
  *
  * @return {void}
  */
-H.fireEvent = function (el, type, eventArguments, defaultFunction) {
+var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunction) {
     /* eslint-enable valid-jsdoc */
     var e, i;
     eventArguments = eventArguments || {};
@@ -2546,6 +2546,7 @@ var utils = {
     erase: erase,
     extend: extend,
     extendClass: extendClass,
+    fireEvent: fireEvent,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,

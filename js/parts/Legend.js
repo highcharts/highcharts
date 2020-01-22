@@ -168,6 +168,7 @@ Highcharts.Legend.prototype = {
         this.symbolWidth = pick(options.symbolWidth, 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
+        this.baseline = void 0; // #12705: baseline has to be reset on every update
     },
     /**
      * Update the legend with new options. Equivalent to running `chart.update`

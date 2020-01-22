@@ -231,7 +231,7 @@ class Color {
             Highcharts.PatternObject|undefined
         )
     ): Highcharts.Color {
-        return new H.Color(input);
+        return new Color(input);
     }
 
     /* *
@@ -323,7 +323,7 @@ class Color {
             this.stops = (input as any).stops.map(function (
                 stop: [number, Highcharts.ColorString]
             ): Highcharts.Color {
-                return new H.Color(stop[1]);
+                return new Color(stop[1]);
             });
 
         // Solid colors
