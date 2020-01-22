@@ -135,9 +135,11 @@ QUnit.test('ignoreNulls', function (assert) {
         }
     });
 
-    assert.strictEqual(
+    // 1px difference on Mac Firefox.
+    assert.close(
         chart.series[3].points[0].shapeArgs.width,
         31,
+        1,
         '(ignoreNulls: \'fillSpace\') - point\'s width is ok.'
     );
 
