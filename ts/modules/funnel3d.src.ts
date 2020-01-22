@@ -91,18 +91,19 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     extend,
     pick,
     relativeLength
-} = U;
+} = utilitiesModule;
 
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 
 var charts = H.charts,
-    color = H.color,
     error = H.error,
     merge = H.merge,
     seriesType = H.seriesType,

@@ -87,7 +87,9 @@ declare global {
  * @type {boolean|undefined}
  */
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     clamp,
     extend,
@@ -95,7 +97,7 @@ const {
     pick,
     pInt,
     wrap
-} = U;
+} = utilitiesModule;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
@@ -194,8 +196,8 @@ colorAxisMethods = {
                         colorCounter = 0;
                     }
                 } else {
-                    dataClass.color = H.color(options.minColor).tweenTo(
-                        H.color(options.maxColor),
+                    dataClass.color = color(options.minColor).tweenTo(
+                        color(options.maxColor),
                         i / ((userOptions.dataClasses as any).length - 1)
                     );
                 }
@@ -214,7 +216,7 @@ colorAxisMethods = {
         this.stops.forEach(function (
             stop: Highcharts.GradientColorStopObject
         ): void {
-            stop.color = H.color(stop[1]);
+            stop.color = color(stop[1]);
         });
     },
     // Translate from a value to a color

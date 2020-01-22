@@ -16,7 +16,6 @@ import '../parts/LogarithmicAxis.js';
 import '../parts/PlotLineOrBand.js';
 import '../parts/Tooltip.js';
 import '../parts/Pointer.js';
-import '../parts/TouchPointer.js';
 import '../parts/MSPointer.js';
 import '../parts/Legend.js';
 import '../parts/Chart.js';

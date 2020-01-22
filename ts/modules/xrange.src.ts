@@ -102,7 +102,9 @@ declare global {
  * @requires modules/xrange
  */
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     clamp,
     correctFloat,
@@ -110,10 +112,9 @@ const {
     isNumber,
     isObject,
     pick
-} = U;
+} = utilitiesModule;
 
 var addEvent = H.addEvent,
-    color = H.color,
     columnType = H.seriesTypes.column,
     find = H.find,
     merge = H.merge,

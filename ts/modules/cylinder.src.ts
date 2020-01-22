@@ -77,15 +77,15 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    pick
-} = U;
+import colorModule from '../parts/Color.js';
+const color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
+const pick = utilitiesModule.pick;
+
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 
 var charts = H.charts,
-    color = H.color,
     deg2rad = H.deg2rad,
     perspective = H.perspective,
     seriesType = H.seriesType,
