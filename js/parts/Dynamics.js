@@ -9,15 +9,14 @@
  * */
 'use strict';
 import H from './Globals.js';
-import timeModule from './Time.js';
-var Time = timeModule.Time;
+import Time from './Time.js';
 import utilitiesModule from './Utilities.js';
-var defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, relativeLength = utilitiesModule.relativeLength, setAnimation = utilitiesModule.setAnimation, splat = utilitiesModule.splat;
+var addEvent = utilitiesModule.addEvent, defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, fireEvent = utilitiesModule.fireEvent, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, relativeLength = utilitiesModule.relativeLength, setAnimation = utilitiesModule.setAnimation, splat = utilitiesModule.splat;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, fireEvent = H.fireEvent, merge = H.merge, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
+var animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, merge = H.merge, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
