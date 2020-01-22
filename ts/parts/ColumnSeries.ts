@@ -1096,9 +1096,9 @@ seriesType<Highcharts.ColumnSeries>(
                         yAxis.len + safeDistance
                     ),
                     barX = (plotX as any) + seriesXOffset,
-                    barW = seriesBarW = Math.max(
+                    barW = ignoreNulls === 'fillSpace' ? Math.max(
                         seriesPointWidth, 1 + 2 * borderWidth
-                    ),
+                    ) : seriesBarW,
                     barY = Math.min(plotY, yBottom),
                     up,
                     barH = Math.max(plotY, yBottom) - barY;

@@ -774,7 +774,7 @@ seriesType('column', 'line',
                 series.getColumnMetrics(), seriesPointWidth = metrics.width, seriesXOffset = series.pointXOffset = metrics.offset, yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, ignoreNulls = series.options.ignoreNulls, plotX = point.plotX, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
-            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = plotX + seriesXOffset, barW = seriesBarW = Math.max(seriesPointWidth, 1 + 2 * borderWidth), barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
+            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = plotX + seriesXOffset, barW = ignoreNulls === 'fillSpace' ? Math.max(seriesPointWidth, 1 + 2 * borderWidth) : seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;

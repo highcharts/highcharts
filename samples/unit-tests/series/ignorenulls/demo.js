@@ -52,7 +52,7 @@ QUnit.test('ignoreNulls', function (assert) {
 
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
-        15,
+        16,
         '(ignoreNulls: false) - point\'s width is ok.'
     );
 
