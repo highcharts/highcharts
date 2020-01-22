@@ -458,6 +458,13 @@ element3dMethods = {
             newAttr[prop] = val;
             optionsToApply[0] = newAttr;
         } else {
+            // It is needed to deal with the whole group zIndexing
+            // in case of graph rotation
+            if (hasZIndexes && hasZIndexes.group) {
+                this.attr({
+                    zIndex: hasZIndexes.group
+                });
+            }
             objectEach(values, function (partVal: any, part: string): void {
                 newAttr[part] = {};
                 newAttr[part][prop] = partVal;
@@ -628,6 +635,9 @@ H.SVGRenderer.prototype.cuboidPath = function (
     var x = shapeArgs.x,
         y = shapeArgs.y,
         z = shapeArgs.z,
+        // For side calculation (right/left)
+        // there is a need for height (and other shapeArgs arguments)
+        // to be at least 1px
         h = shapeArgs.height,
         w = shapeArgs.width,
         d = shapeArgs.depth,
@@ -649,7 +659,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
         alpha = options3d.alpha,
         // Priority for x axis is the biggest,
         // because of x direction has biggest influence on zIndex
-        incrementX = 10000,
+        incrementX = 1000000,
         // y axis has the smallest priority in case of our charts
         // (needs to be set because of stacking)
         incrementY = 10,
@@ -700,29 +710,59 @@ H.SVGRenderer.prototype.cuboidPath = function (
      * helper method to decide which side is visible
      * @private
      */
+    function mapSidePath(i: number): Highcharts.Position3dObject {
+        // Added support for 0 value in columns, where height is 0
+        // but the shape is rendered.
+        // Height is used from 1st to 6th element of pArr
+        if (h === 0 && i > 1 && i < 6) {
+            return {
+                x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y + 10,
+                z: pArr[i].z
+            };
+        }
+        return pArr[i];
+    }
+
+    /**
+     * method creating the final side
+     * @private
+     */
     function mapPath(i: number): Highcharts.Position3dObject {
         return pArr[i];
     }
 
     /**
-     * First value - path with specific side
+     * First value - path with specific face
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
      * @private
      */
     pickShape = function (
-        path1: Array<number>,
-        path2: Array<number>
+        verticesIndex1: Array<number>,
+        verticesIndex2: Array<number>
     ): Array<number|Array<number>> {
-        var ret = [[] as any, -1];
-
-        path1 = path1.map(mapPath) as any;
-        path2 = path2.map(mapPath) as any;
-        if (H.shapeArea(path1 as any) < 0) {
-            ret = [path1 as any, 0];
-        } else if (H.shapeArea(path2 as any) < 0) {
-            ret = [path2 as any, 1];
+        var ret = [[] as any, -1],
+            // An array of vertices for cuboid face
+            face1: Array<Highcharts.Position3dObject> =
+                verticesIndex1.map(mapPath),
+            face2: Array<Highcharts.Position3dObject> =
+                verticesIndex2.map(mapPath),
+            // dummy face is calculated the same way as standard face,
+            // but if cuboid height is 0 additional height is added so it is
+            // possible to use this vertices array for visible face calculation
+            dummyFace1: Array<Highcharts.Position3dObject> =
+                verticesIndex1.map(mapSidePath),
+            dummyFace2: Array<Highcharts.Position3dObject> =
+                verticesIndex2.map(mapSidePath);
+        if (H.shapeArea(dummyFace1) < 0) {
+            ret = [face1, 0];
+        } else if (H.shapeArea(dummyFace2) < 0) {
+            ret = [face2, 1];
         }
         return ret;
     };
@@ -759,7 +799,9 @@ H.SVGRenderer.prototype.cuboidPath = function (
        correctly. */
 
     if (isRight === 1) {
-        zIndex += incrementX * (1000 - x);
+        // It is needed to connect value with current chart width
+        // for big chart size.
+        zIndex += incrementX * ((chart as any).plotWidth - x);
     } else if (!isRight) {
         zIndex += incrementX * x;
     }

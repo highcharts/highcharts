@@ -118,12 +118,14 @@ declare global {
     }
 }
 
-
-import U from './Utilities.js';
+import Time from './Time.js';
+import utilitiesModule from './Utilities.js';
 const {
+    addEvent,
     defined,
     erase,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
@@ -133,20 +135,18 @@ const {
     relativeLength,
     setAnimation,
     splat
-} = U;
+} = utilitiesModule;
 
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    animate = H.animate,
+var animate = H.animate,
     Axis = H.Axis,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    fireEvent = H.fireEvent,
     merge = H.merge,
     Point = H.Point,
     Series = H.Series,
@@ -747,7 +747,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
         if (options.time && this.time === H.time) {
-            this.time = new H.Time(options.time);
+            this.time = new Time(options.time);
         }
 
         // Some option stuctures correspond one-to-one to chart objects that

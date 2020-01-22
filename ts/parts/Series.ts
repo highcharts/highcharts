@@ -688,7 +688,9 @@ declare global {
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 
-import U from './Utilities.js';
+import pointModule from './Point.js';
+const Point = pointModule.Point;
+import utilitiesModule from './Utilities.js';
 const {
     animObject,
     arrayMax,
@@ -706,7 +708,7 @@ const {
     removeEvent,
     splat,
     syncTimeout
-} = U;
+} = utilitiesModule;
 
 import './Options.js';
 import './Legend.js';
@@ -719,7 +721,6 @@ var addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
-    Point = H.Point, // @todo  add as a requirement
     seriesTypes = H.seriesTypes,
     SVGElement = H.SVGElement,
     win = H.win;
@@ -2655,9 +2656,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
              *
              * @sample {highcharts} highcharts/plotoptions/series-datalabels-style/
              *         Bold labels
-             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow/
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow/
              *         Long labels truncated with an ellipsis in a pie
-             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap/
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
              *         Long labels are wrapped in a pie
              * @sample {highmaps} maps/demo/color-axis/
              *         Bold labels
@@ -3268,7 +3269,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         isCartesian: true,
         // each point's x and y values are stored in this.xData and this.yData
         parallelArrays: ['x', 'y'],
-        pointClass: Point,
+        pointClass: Point as any,
         requireSorting: true,
         sorted: true, // requires the data to be sorted
         init: function (
@@ -3656,22 +3657,22 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 date = new time.Date(xIncrement);
 
                 if (pointIntervalUnit === 'day') {
-                    time.set(
+                    (time.set as any)(
                         'Date',
                         date,
-                        time.get('Date', date) + pointInterval
+                        (time.get as any)('Date', date) + pointInterval
                     );
                 } else if (pointIntervalUnit === 'month') {
-                    time.set(
+                    (time.set as any)(
                         'Month',
                         date,
-                        time.get('Month', date) + pointInterval
+                        (time.get as any)('Month', date) + pointInterval
                     );
                 } else if (pointIntervalUnit === 'year') {
-                    time.set(
+                    (time.set as any)(
                         'FullYear',
                         date,
-                        time.get('FullYear', date) + pointInterval
+                        (time.get as any)('FullYear', date) + pointInterval
                     );
                 }
 

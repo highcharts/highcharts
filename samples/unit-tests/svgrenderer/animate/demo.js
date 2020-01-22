@@ -732,7 +732,7 @@ QUnit.test('3D arc animation (#7097)', function (assert) {
                 'End should continue to run after second animation'
             );
             assert.strictEqual(
-                Highcharts.Color(arc.top.attr('fill')).get(),
+                Highcharts.color(arc.top.attr('fill')).get(),
                 'rgb(15,240,15)',
                 'Fill from second animation should apply'
             );

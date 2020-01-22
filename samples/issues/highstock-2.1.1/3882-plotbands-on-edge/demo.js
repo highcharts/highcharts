@@ -5,7 +5,7 @@ $(function () {
             plotBands: [{
                 from: -1.1,
                 to: 1.1,
-                color: Highcharts.Color(Highcharts.getOptions().colors[4]).setOpacity(0.75).get()
+                color: Highcharts.color(Highcharts.getOptions().colors[4]).setOpacity(0.75).get()
             }]
         },
 
@@ -13,7 +13,7 @@ $(function () {
             plotBands: [{
                 from: 0.1,
                 to: 3.1,
-                color: Highcharts.Color(Highcharts.getOptions().colors[3]).setOpacity(0.75).get()
+                color: Highcharts.color(Highcharts.getOptions().colors[3]).setOpacity(0.75).get()
             }]
         },
 

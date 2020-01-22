@@ -298,9 +298,9 @@ seriesType('pie', 'line',
          */
         softConnector: true,
         /**
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow
          *         Long labels truncated with an ellipsis
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap
          *         Long labels are wrapped
          *
          * @type      {Highcharts.CSSObject}
@@ -878,6 +878,11 @@ seriesType('pie', 'line',
     drawPoints: function () {
         var renderer = this.chart.renderer;
         this.points.forEach(function (point) {
+            // When updating a series between 2d and 3d or cartesian and
+            // polar, the shape type changes.
+            if (point.graphic && point.hasNewShapeType()) {
+                point.graphic = point.graphic.destroy();
+            }
             if (!point.graphic) {
                 point.graphic = renderer[point.shapeType](point.shapeArgs)
                     .add(point.series.group);

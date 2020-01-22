@@ -185,10 +185,11 @@ import H from './Globals.js';
 * @name Highcharts.ChartSelectionAxisContextObject#min
 * @type {number}
 */
-import './Color.js';
+import Time from './Time.js';
+import colorModule from './Color.js';
+var color = colorModule.color;
 import './Utilities.js';
-import './Time.js';
-var color = H.color, isTouchDevice = H.isTouchDevice, merge = H.merge, svg = H.svg;
+var isTouchDevice = H.isTouchDevice, merge = H.merge, svg = H.svg;
 /* ************************************************************************** *
  * Handle the options                                                         *
  * ************************************************************************** */
@@ -497,7 +498,7 @@ H.defaultOptions = {
      * @apioption global.timezoneOffset
      */
     global: {},
-    time: H.Time.prototype.defaultOptions,
+    time: Time.defaultOptions,
     /**
      * General options for the chart.
      */
@@ -3559,7 +3560,7 @@ H.defaultPlotOptions = H.defaultOptions.plotOptions;
  * @name Highcharts.time
  * @type {Highcharts.Time}
  */
-H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
+H.time = new Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
  * human readable date string. The format is a subset of the formats for PHP's

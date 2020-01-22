@@ -8,9 +8,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 /* eslint-enable @typescript-eslint/interface-name-prefix */
-import U from '../parts/Utilities.js';
-var defined = U.defined, isArray = U.isArray, objectEach = U.objectEach;
-var UNDEFINED, seriesType = H.seriesType, merge = H.merge, color = H.color, SMA = H.seriesTypes.sma;
+import colorModule from '../parts/Color.js';
+var color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
+var defined = utilitiesModule.defined, isArray = utilitiesModule.isArray, objectEach = utilitiesModule.objectEach;
+var UNDEFINED, seriesType = H.seriesType, merge = H.merge, SMA = H.seriesTypes.sma;
 /* eslint-disable require-jsdoc */
 // Utils:
 function maxHigh(arr) {

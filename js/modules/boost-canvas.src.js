@@ -14,12 +14,13 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, wrap = U.wrap;
-import '../parts/Color.js';
+import colorModule from '../parts/Color.js';
+var Color = colorModule.Color, color = colorModule.color;
+import utilitiesModule from '../parts/Utilities.js';
+var extend = utilitiesModule.extend, isNumber = utilitiesModule.isNumber, wrap = utilitiesModule.wrap;
 import '../parts/Series.js';
 import '../parts/Options.js';
-var win = H.win, doc = win.document, noop = function () { }, Color = H.Color, Series = H.Series, seriesTypes = H.seriesTypes, addEvent = H.addEvent, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, CHUNK_SIZE = 50000, destroyLoadingDiv;
+var win = H.win, doc = win.document, noop = function () { }, Series = H.Series, seriesTypes = H.seriesTypes, addEvent = H.addEvent, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, CHUNK_SIZE = 50000, destroyLoadingDiv;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Initialize the canvas boost.
@@ -289,8 +290,7 @@ H.initCanvasBoost = function () {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: H.color('${palette.backgroundColor}')
-                            .setOpacity(0.75).get(),
+                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },

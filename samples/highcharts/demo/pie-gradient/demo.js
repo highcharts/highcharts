@@ -9,7 +9,7 @@ Highcharts.setOptions({
             },
             stops: [
                 [0, color],
-                [1, Highcharts.Color(color).brighten(-0.3).get('rgb')] // darken
+                [1, Highcharts.color(color).brighten(-0.3).get('rgb')] // darken
             ]
         };
     })

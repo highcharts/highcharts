@@ -352,6 +352,7 @@ declare global {
             method: string,
             func: WrapProceedFunction
         ): void;
+        let timeUnits: Dictionary<number>;
     }
 }
 
@@ -1383,9 +1384,9 @@ function clamp(value: number, min: number, max: number): number {
  * @return {number}
  *         number
  */
-function pInt(s: any, mag?: number): number {
+const pInt = H.pInt = function pInt(s: any, mag?: number): number {
     return parseInt(s, mag || 10);
-}
+};
 
 /**
  * Utility function to check for string type.
@@ -1398,9 +1399,9 @@ function pInt(s: any, mag?: number): number {
  * @return {boolean}
  *         True if the argument is a string.
  */
-function isString(s: unknown): s is string {
+const isString = H.isString = function isString(s: unknown): s is string {
     return typeof s === 'string';
-}
+};
 
 /**
  * Utility function to check if an item is an array.
@@ -1413,11 +1414,11 @@ function isString(s: unknown): s is string {
  * @return {boolean}
  *         True if the argument is an array.
  */
-function isArray(obj: unknown): obj is Array<unknown> {
+const isArray = H.isArray = function isArray(obj: unknown): obj is Array<unknown> {
     var str = Object.prototype.toString.call(obj);
 
     return str === '[object Array]' || str === '[object Array Iterator]';
-}
+};
 
 /**
  * Utility function to check if an item is of type object.
@@ -1433,7 +1434,7 @@ function isArray(obj: unknown): obj is Array<unknown> {
  * @return {boolean}
  *         True if the argument is an object.
  */
-function isObject<T1, T2 extends boolean = false>(
+const isObject = H.isObject = function isObject<T1, T2 extends boolean = false>(
     obj: T1,
     strict?: T2
 ): IsObjectConditionalType<T1, T2> {
@@ -1442,7 +1443,7 @@ function isObject<T1, T2 extends boolean = false>(
         typeof obj === 'object' &&
         (!strict || !isArray(obj))
     ) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-}
+};
 
 /**
  * Utility function to check if an Object is a HTML Element.
@@ -1455,9 +1456,9 @@ function isObject<T1, T2 extends boolean = false>(
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-function isDOMElement(obj: unknown): obj is HTMLElement {
+const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is Highcharts.HTMLElement {
     return isObject(obj) && typeof (obj as any).nodeType === 'number';
-}
+};
 
 /**
  * Utility function to check if an Object is a class.
@@ -1470,7 +1471,7 @@ function isDOMElement(obj: unknown): obj is HTMLElement {
  * @return {boolean}
  *         True if the argument is a class.
  */
-function isClass(obj: (object|undefined)): boolean {
+const isClass = H.isClass = function isClass(obj: (object|undefined)): obj is Highcharts.Class<any> {
     var c: (Function|undefined) = obj && obj.constructor;
 
     return !!(
@@ -1478,7 +1479,7 @@ function isClass(obj: (object|undefined)): boolean {
         !isDOMElement(obj) &&
         (c && (c as any).name && (c as any).name !== 'Object')
     );
-}
+};
 
 /**
  * Utility function to check if an item is a number and it is finite (not NaN,
@@ -1492,9 +1493,9 @@ function isClass(obj: (object|undefined)): boolean {
  * @return {boolean}
  *         True if the item is a finite number
  */
-function isNumber(n: unknown): n is number {
+const isNumber = H.isNumber = function isNumber(n: unknown): n is number {
     return typeof n === 'number' && !isNaN(n) && n < Infinity && n > -Infinity;
-}
+};
 
 /**
  * Remove the last occurence of an item from an array.
@@ -1509,7 +1510,7 @@ function isNumber(n: unknown): n is number {
  *
  * @return {void}
  */
-function erase(arr: Array<unknown>, item: unknown): void {
+const erase = H.erase = function erase(arr: Array<unknown>, item: unknown): void {
     var i = arr.length;
 
     while (i--) {
@@ -1518,7 +1519,7 @@ function erase(arr: Array<unknown>, item: unknown): void {
             break;
         }
     }
-}
+};
 
 /**
  * Check if an object is null or undefined.
@@ -1531,9 +1532,9 @@ function erase(arr: Array<unknown>, item: unknown): void {
  * @return {boolean}
  *         False if the object is null or undefined, otherwise true.
  */
-function defined<T>(obj: T): obj is NonNullable<T> {
+const defined = H.defined = function defined<T>(obj: T): obj is NonNullable<T> {
     return typeof obj !== 'undefined' && obj !== null;
-}
+};
 
 function attr(
     elem: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
@@ -1599,6 +1600,7 @@ function attr(
     }
     return ret;
 }
+H.attr = attr;
 
 /**
  * Check if an element is an array, and if not, make it into an array.
@@ -1611,9 +1613,9 @@ function attr(
  * @return {Array}
  *         The produced or original array.
  */
-function splat(obj: any): Array<any> {
+const splat = H.splat = function splat(obj: any): Array<any> {
     return isArray(obj) ? obj : [obj];
-}
+};
 
 /**
  * Set a timeout if the delay is given, otherwise perform the function
@@ -1634,7 +1636,7 @@ function splat(obj: any): Array<any> {
  *         An identifier for the timeout that can later be cleared with
  *         Highcharts.clearTimeout. Returns -1 if there is no timeout.
  */
-function syncTimeout(
+const syncTimeout = H.syncTimeout = function syncTimeout(
     fn: Function,
     delay: number,
     context?: unknown
@@ -1644,7 +1646,7 @@ function syncTimeout(
     }
     fn.call(0, context);
     return -1;
-}
+};
 
 /**
  * Internal clear timeout. The function checks that the `id` was not removed
@@ -1679,7 +1681,7 @@ H.clearTimeout = function (id: number): void {
  * @return {T}
  *         Object a, the original object.
  */
-function extend<T extends object>(a: (T|undefined), b: object): T {
+const extend = H.extend = function extend<T extends object>(a: (T|undefined), b: object): T {
     /* eslint-enable valid-jsdoc */
     var n;
 
@@ -1690,7 +1692,7 @@ function extend<T extends object>(a: (T|undefined), b: object): T {
         (a as any)[n] = (b as any)[n];
     }
     return a;
-}
+};
 
 function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
 T1 extends Nullable ?
@@ -1734,6 +1736,7 @@ function pick<T>(): T|undefined {
         }
     }
 }
+H.pick = pick;
 
 /**
  * Set CSS on a given element.
@@ -1825,7 +1828,7 @@ H.createElement = function (
  * @return {Highcharts.Class<T>}
  *         A new prototype.
  */
-function extendClass <T, TReturn = T>(
+const extendClass = H.extendClass = function extendClass <T, TReturn = T>(
     parent: Highcharts.Class<T>,
     members: any
 ): Highcharts.Class<TReturn> {
@@ -1834,7 +1837,7 @@ function extendClass <T, TReturn = T>(
     obj.prototype = new parent(); // eslint-disable-line new-cap
     extend(obj.prototype, members);
     return obj;
-}
+};
 
 /**
  * Left-pad a string to a given length by adding a character repetetively.
@@ -1853,7 +1856,7 @@ function extendClass <T, TReturn = T>(
  * @return {string}
  *         The padded string.
  */
-function pad(number: number, length?: number, padder?: string): string {
+const pad = H.pad = function pad(number: number, length?: number, padder?: string): string {
     return new Array(
         (length || 2) +
         1 -
@@ -1861,7 +1864,7 @@ function pad(number: number, length?: number, padder?: string): string {
             .replace('-', '')
             .length
     ).join(padder || '0') + number;
-}
+};
 
 /**
  * Return a length based on either the integer value, or a percentage of a base.
@@ -1881,7 +1884,7 @@ function pad(number: number, length?: number, padder?: string): string {
  * @return {number}
  *         The computed length.
  */
-function relativeLength(
+const relativeLength = H.relativeLength = function relativeLength(
     value: Highcharts.RelativeSize,
     base: number,
     offset?: number
@@ -1889,12 +1892,12 @@ function relativeLength(
     return (/%$/).test(value as any) ?
         (base * parseFloat(value as any) / 100) + (offset || 0) :
         parseFloat(value as any);
-}
+};
 
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
- * @function Highcharts.wrap
+' * @function Highcharts.wrap
  *
  * @param {*} obj
  *        The context object that the method belongs to. In real cases, this is
@@ -1910,7 +1913,7 @@ function relativeLength(
  *
  * @return {void}
  */
-function wrap(
+const wrap = H.wrap = function wrap(
     obj: any,
     method: string,
     func: Highcharts.WrapProceedFunction
@@ -1931,7 +1934,7 @@ function wrap(
         ctx.proceed = null;
         return ret;
     };
-}
+};
 
 
 /**
@@ -2214,7 +2217,7 @@ H.normalizeTickInterval = function (
  *
  * @return {void}
  */
-function stableSort(arr: Array<any>, sortFunction: Function): void {
+const stableSort = H.stableSort = function stableSort(arr: Array<any>, sortFunction: Function): void {
 
     // @todo It seems like Chrome since v70 sorts in a stable way internally,
     // plus all other browsers do it, so over time we may be able to remove this
@@ -2237,7 +2240,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
     for (i = 0; i < length; i++) {
         delete arr[i].safeI; // stable sort index
     }
-}
+};
 
 /**
  * Non-recursive method to find the lowest member of an array. `Math.min` raises
@@ -2252,7 +2255,7 @@ function stableSort(arr: Array<any>, sortFunction: Function): void {
  * @return {number}
  *         The lowest number.
  */
-function arrayMin(data: Array<any>): number {
+const arrayMin = H.arrayMin = function arrayMin(data: Array<any>): number {
     var i = data.length,
         min = data[0];
 
@@ -2262,7 +2265,7 @@ function arrayMin(data: Array<any>): number {
         }
     }
     return min;
-}
+};
 
 /**
  * Non-recursive method to find the lowest member of an array. `Math.max` raises
@@ -2277,7 +2280,7 @@ function arrayMin(data: Array<any>): number {
  * @return {number}
  *         The highest number.
  */
-function arrayMax(data: Array<any>): number {
+const arrayMax = H.arrayMax = function arrayMax(data: Array<any>): number {
     var i = data.length,
         max = data[0];
 
@@ -2287,7 +2290,7 @@ function arrayMax(data: Array<any>): number {
         }
     }
     return max;
-}
+};
 
 /**
  * Utility method that destroys any SVGElement instances that are properties on
@@ -2304,18 +2307,19 @@ function arrayMax(data: Array<any>): number {
  *
  * @return {void}
  */
-function destroyObjectProperties(obj: any, except?: any): void {
-    objectEach(obj, function (val: any, n: string): void {
-        // If the object is non-null and destroy is defined
-        if (val && val !== except && val.destroy) {
-            // Invoke the destroy
-            val.destroy();
-        }
+const destroyObjectProperties = H.destroyObjectProperties =
+    function destroyObjectProperties(obj: any, except?: any): void {
+        objectEach(obj, function (val: any, n: string): void {
+            // If the object is non-null and destroy is defined
+            if (val && val !== except && val.destroy) {
+                // Invoke the destroy
+                val.destroy();
+            }
 
-        // Delete the property from the object.
-        delete obj[n];
-    });
-}
+            // Delete the property from the object.
+            delete obj[n];
+        });
+    };
 
 
 /**
@@ -2328,7 +2332,7 @@ function destroyObjectProperties(obj: any, except?: any): void {
  *
  * @return {void}
  */
-function discardElement(element: Highcharts.HTMLDOMElement): void {
+const discardElement = H.discardElement = function discardElement(element: Highcharts.HTMLDOMElement): void {
     var garbageBin = (H as any).garbageBin;
 
     // create a garbage bin element, not part of the DOM
@@ -2341,7 +2345,7 @@ function discardElement(element: Highcharts.HTMLDOMElement): void {
         garbageBin.appendChild(element);
     }
     garbageBin.innerHTML = '';
-}
+};
 
 /**
  * Fix JS round off float errors.
@@ -2357,11 +2361,11 @@ function discardElement(element: Highcharts.HTMLDOMElement): void {
  * @return {number}
  *         The corrected float number.
  */
-function correctFloat(num: number, prec?: number): number {
+const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: number): number {
     return parseFloat(
         num.toPrecision(prec || 14)
     );
-}
+};
 
 /**
  * Set the global animation to either a given value, or fall back to the given
@@ -2381,7 +2385,7 @@ function correctFloat(num: number, prec?: number): number {
  * This function always relates to a chart, and sets a property on the renderer,
  * so it should be moved to the SVGRenderer.
  */
-function setAnimation(
+const setAnimation = H.setAnimation = function setAnimation(
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
     chart: Highcharts.Chart
 ): void {
@@ -2390,7 +2394,7 @@ function setAnimation(
         (chart.options.chart as any).animation,
         true
     );
-}
+};
 
 /**
  * Get the animation in object form, where a disabled animation is always
@@ -2405,20 +2409,21 @@ function setAnimation(
  * @return {Highcharts.AnimationOptionsObject}
  *         An object with at least a duration property.
  */
-function animObject(
+const animObject = H.animObject = function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
         H.merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
-}
+};
 
 /**
  * The time unit lookup
  *
  * @ignore
  */
-const timeUnits: Highcharts.Dictionary<number> = {
+
+const timeUnits: Highcharts.Dictionary<number> = H.timeUnits = {
     millisecond: 1,
     second: 1000,
     minute: 60000,
@@ -2455,7 +2460,7 @@ const timeUnits: Highcharts.Dictionary<number> = {
  * @return {string}
  *         The formatted number.
  */
-function numberFormat(
+const numberFormat = H.numberFormat = function numberFormat(
     number: number,
     decimals: number,
     decimalPoint?: string,
@@ -2542,7 +2547,7 @@ function numberFormat(
     }
 
     return ret;
-}
+};
 
 /**
  * Easing definition
@@ -2724,7 +2729,7 @@ H.keys = Object.keys;
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-function offset(el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
+const offset = H.offset = function offset(el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
     var docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
@@ -2736,7 +2741,7 @@ function offset(el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
         left: box.left + (win.pageXOffset || docElem.scrollLeft) -
             (docElem.clientLeft || 0)
     };
-}
+};
 
 /**
  * Stop running animation.
@@ -2791,7 +2796,7 @@ H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
  *
  * @return {void}
  */
-function objectEach<T>(
+const objectEach = H.objectEach = function objectEach<T>(
     obj: any,
     fn: Highcharts.ObjectEachCallbackFunction<T>,
     ctx?: T
@@ -2802,7 +2807,7 @@ function objectEach<T>(
             fn.call(ctx || obj[key], obj[key], key, obj);
         }
     }
-}
+};
 
 /**
  * Iterate over an array.
@@ -3014,7 +3019,7 @@ const addEvent = H.addEvent = function<T> (
  *
  * @return {void}
  */
-function removeEvent<T>(
+const removeEvent = H.removeEvent = function removeEvent<T>(
     el: (Highcharts.Class<T>|T),
     type?: string,
     fn?: (Highcharts.EventCallbackFunction<T>|Function)
@@ -3100,7 +3105,7 @@ function removeEvent<T>(
             }
         }
     });
-}
+};
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -3125,7 +3130,7 @@ function removeEvent<T>(
  *
  * @return {void}
  */
-H.fireEvent = function<T> (
+const fireEvent = H.fireEvent = function<T> (
     el: T,
     type: string,
     eventArguments?: (Highcharts.Dictionary<any>|Event),
@@ -3455,6 +3460,7 @@ const utils = {
     erase,
     extend,
     extendClass,
+    fireEvent,
     isArray,
     isClass,
     isDOMElement,

@@ -554,12 +554,12 @@ declare global {
  * @type {number}
  */
 
-import './Color.js';
+import Time from './Time.js';
+import colorModule from './Color.js';
+const color = colorModule.color;
 import './Utilities.js';
-import './Time.js';
 
-var color = H.color,
-    isTouchDevice = H.isTouchDevice,
+var isTouchDevice = H.isTouchDevice,
     merge = H.merge,
     svg = H.svg;
 
@@ -899,7 +899,7 @@ H.defaultOptions = {
 
     global: {},
 
-    time: H.Time.prototype.defaultOptions,
+    time: Time.defaultOptions,
 
     /**
      * General options for the chart.
@@ -4188,7 +4188,7 @@ H.defaultPlotOptions = H.defaultOptions.plotOptions as any;
  * @name Highcharts.time
  * @type {Highcharts.Time}
  */
-H.time = new H.Time(
+H.time = new Time(
     merge<Highcharts.TimeOptions>(
         H.defaultOptions.global as any,
         H.defaultOptions.time as any

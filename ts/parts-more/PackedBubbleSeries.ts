@@ -239,7 +239,11 @@ declare global {
  * @since 7.0.0
  */
 
-import U from '../parts/Utilities.js';
+import colorModule from '../parts/Color.js';
+const {
+    color
+} = colorModule;
+import utilitiesModule from '../parts/Utilities.js';
 const {
     clamp,
     defined,
@@ -248,7 +252,7 @@ const {
     isArray,
     isNumber,
     pick
-} = U;
+} = utilitiesModule;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -264,7 +268,6 @@ var seriesType = H.seriesType,
     addEvent = H.addEvent,
     fireEvent = H.fireEvent,
     Chart = H.Chart,
-    color = H.Color,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
     dragNodesMixin = H.dragNodesMixin;
@@ -1096,8 +1099,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 nodeMarker: Highcharts.BubblePointMarkerOptions =
                     (this.layout.options.parentNodeOptions as any).marker,
                 parentOptions: Highcharts.SVGAttributes = {
-                    fill: nodeMarker.fillColor ||
-                        (color as any)(series.color).brighten(0.4).get(),
+                    fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
                     opacity: nodeMarker.fillOpacity,
                     stroke: nodeMarker.lineColor || series.color,
                     'stroke-width': nodeMarker.lineWidth
