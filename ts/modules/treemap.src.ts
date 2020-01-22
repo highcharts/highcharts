@@ -2223,7 +2223,7 @@ H.addEvent(H.Series, 'afterBindAxes', function (): void {
         treeAxis;
 
     if (xAxis && yAxis) {
-        if (series.options.type === 'treemap') {
+        if (series.is('treemap')) {
             treeAxis = {
                 endOnTick: false,
                 gridLineWidth: 0,
