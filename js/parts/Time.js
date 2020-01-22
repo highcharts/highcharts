@@ -9,8 +9,6 @@
  * */
 'use strict';
 import Highcharts from './Globals.js';
-import U from './Utilities.js';
-var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pad = U.pad, pick = U.pick, splat = U.splat, timeUnits = U.timeUnits;
 /**
  * Normalized interval.
  *
@@ -72,6 +70,8 @@ var defined = U.defined, extend = U.extend, isObject = U.isObject, objectEach = 
  * @return {number}
  * Timezone offset in minutes.
  */
+import utilitiesModule from './Utilities.js';
+var defined = utilitiesModule.defined, extend = utilitiesModule.extend, isObject = utilitiesModule.isObject, objectEach = utilitiesModule.objectEach, pad = utilitiesModule.pad, pick = utilitiesModule.pick, splat = utilitiesModule.splat, timeUnits = utilitiesModule.timeUnits;
 var H = Highcharts, merge = H.merge, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -750,7 +750,4 @@ var Time = /** @class */ (function () {
     return Time;
 }());
 H.Time = Time;
-var timeModule = {
-    Time: Time
-};
-export default timeModule;
+export default H.Time;

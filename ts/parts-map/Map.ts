@@ -174,7 +174,7 @@ defaultOptions.mapNavigation = {
              * @type    {Function}
              * @default function () { this.mapZoom(0.5); }
              */
-            onclick: function (this: Highcharts.MapPointer): void {
+            onclick: function (this: Highcharts.MapNavigationChart): void {
                 this.mapZoom(0.5);
             },
 
@@ -209,7 +209,7 @@ defaultOptions.mapNavigation = {
              * @type    {Function}
              * @default function () { this.mapZoom(2); }
              */
-            onclick: function (this: Highcharts.MapPointer): void {
+            onclick: function (this: Highcharts.MapNavigationChart): void {
                 this.mapZoom(2);
             },
 
