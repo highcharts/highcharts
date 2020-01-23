@@ -139,8 +139,8 @@ seriesType('area', 'line',
      * between the graph and the threshold is filled.
      *
      * * If a number is given, the Y axis will scale to the threshold.
-     * * If `null`, the scaling behaves like a line series with fill between
-     *   the graph and the Y axis minimum.
+     * * If value is `0`, the scaling behaves like a line series with fill
+     *   between the graph and the Y axis minimum.
      * * If `Infinity` or `-Infinity`, the area between the graph and the
      *   corresponing Y axis extreme is filled (since v6.1.0).
      *
