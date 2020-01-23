@@ -951,7 +951,10 @@ Chart.prototype.drillUp = function (): void {
 
             level.levelSeriesOptions.forEach(addSeries);
 
-            fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+            fireEvent(chart, 'drillup', {
+                seriesOptions: level.seriesPurgedOptions ||
+                    level.seriesOptions
+            });
 
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
