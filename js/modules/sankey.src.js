@@ -537,7 +537,9 @@ seriesType('sankey', 'column',
             if (typeof node.level === 'undefined') {
                 node.level = level;
                 node.linksFrom.forEach(function (link) {
-                    order(link.toNode, level + 1);
+                    if (link.toNode) {
+                        order(link.toNode, level + 1);
+                    }
                 });
             }
         }
@@ -755,7 +757,7 @@ seriesType('sankey', 'column',
             node.linksFrom.forEach(function (linkPoint) {
                 // If weight is 0 - don't render the link path #12453,
                 // render null points (for organization chart)
-                if (linkPoint.weight || linkPoint.isNull) {
+                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
                     series.translateLink(linkPoint);
                     linkPoint.allowShadow = false;
                 }
