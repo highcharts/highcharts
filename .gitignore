@@ -6,16 +6,6 @@
 /.history
 /api-docs
 /out
-/js/annotations
-/js/indicators
-/js/mixins
-/js/modules
-/js/parts
-/js/parts-3d
-/js/parts-gantt
-/js/parts-map
-/js/parts-more
-/js/themes
 /js/highcharts-3d.src.js
 /js/highcharts-more.src.js
 /js/highcharts.js
