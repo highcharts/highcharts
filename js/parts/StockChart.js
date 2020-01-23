@@ -119,13 +119,10 @@ var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, format = H.format, me
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, 
     // to increase performance, don't merge the data
-    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, panning = options.chart && options.chart.panning, 
+    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
-    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning && /y/.test(panning.type), disableStartOnTick = {
-        startOnTick: false,
-        endOnTick: false
-    };
+    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true);
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
         return merge({
@@ -146,7 +143,10 @@ H.StockChart = H.stockChart = function (a, b, c) {
         {
             type: 'datetime',
             categories: null
-        }, (navigatorEnabled ? disableStartOnTick : null));
+        }, (navigatorEnabled ? {
+            startOnTick: false,
+            endOnTick: false
+        } : null));
     });
     // apply Y axis options to both single and multi y axes
     options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
@@ -172,8 +172,8 @@ H.StockChart = H.stockChart = function (a, b, c) {
             }
         }, defaultOptions.yAxis, // #3802
         defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
-        yAxisOptions, // user options
-        (verticalPanningEnabled ? disableStartOnTick : null));
+        yAxisOptions // user options
+        );
     });
     options.series = null;
     options = merge({

@@ -228,6 +228,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(this, 'init', { args: arguments }, function () {
             userOptions.series = null;
             options = merge(defaultOptions, userOptions); // do the merge
+            var optionsChart = options.chart || {}, panning = optionsChart && optionsChart.panning, verticalPanningEnabled = panning && /y/.test(panning.type);
+            // Automatically disable the yAxis start and endOnTick,
+            // when vertical panning is enabled
+            options.yAxis = options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions) {
+                return merge(yAxisOptions, (verticalPanningEnabled ? {
+                    startOnTick: false,
+                    endOnTick: false
+                } : null));
+            });
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (typeOptions, type) {
@@ -251,7 +260,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @type {Highcharts.Options}
              */
             this.userOptions = userOptions;
-            var optionsChart = options.chart;
             var chartEvents = optionsChart.events;
             this.margin = [];
             this.spacing = [];
