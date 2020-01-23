@@ -4440,7 +4440,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 // When x axis is dirty, we need new data extremes for y as
                 // well:
                 series.xAxis && series.xAxis.isDirty);
-        }), isDirtyAxisLength;
+        }), chartOptions = axis.chart.options.chart, panning = chartOptions &&
+            chartOptions.panning, isDirtyAxisLength;
         axis.oldMin = axis.min;
         axis.oldMax = axis.max;
         axis.oldAxisLength = axis.len;
@@ -4478,6 +4479,33 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         }
         else if (axis.cleanStacks) {
             axis.cleanStacks();
+        }
+        // Extend the Axis to calculate start min/max values
+        // (including min/maxPadding). This is related to using vertical
+        // panning (#11315).
+        if (panning &&
+            (panning.type &&
+                panning.type.match('y')) &&
+            !axis.isXAxis &&
+            !defined(axis.panningState) &&
+            axis.series.length) {
+            var min_1, max_1;
+            axis.series.forEach(function (series) {
+                if (series.yData) {
+                    if (!(isNumber(min_1) && isNumber(max_1))) {
+                        min_1 = Number.MAX_VALUE;
+                        max_1 = Number.MIN_VALUE;
+                    }
+                    min_1 = Math.min(H.arrayMin(series.yData), min_1) -
+                        (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
+                    max_1 = Math.max(H.arrayMax(series.yData), max_1 || 0) +
+                        (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
+                }
+            });
+            axis.panningState = {
+                startMin: min_1 || axis.min,
+                startMax: max_1 || axis.max
+            };
         }
         fireEvent(this, 'afterSetScale');
     },

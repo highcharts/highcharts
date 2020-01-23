@@ -5735,6 +5735,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     series.xAxis && (series.xAxis.isDirty as any)
                 );
             }),
+            chartOptions = axis.chart.options.chart,
+            panning = chartOptions &&
+                chartOptions.panning,
             isDirtyAxisLength;
 
         axis.oldMin = axis.min;
@@ -5783,6 +5786,41 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             }
         } else if (axis.cleanStacks) {
             axis.cleanStacks();
+        }
+
+        // Extend the Axis to calculate start min/max values
+        // (including min/maxPadding). This is related to using vertical
+        // panning (#11315).
+        if (
+            panning &&
+            (
+                panning.type &&
+                panning.type.match('y')
+            ) &&
+            !axis.isXAxis &&
+            !defined(axis.panningState) &&
+            axis.series.length
+        ) {
+            let min: (number | undefined),
+                max: (number | undefined);
+
+            axis.series.forEach(function (series): void {
+                if (series.yData) {
+                    if (!(isNumber(min) && isNumber(max))) {
+                        min = Number.MAX_VALUE;
+                        max = Number.MIN_VALUE;
+                    }
+                    min = Math.min(H.arrayMin(series.yData), min) -
+                        (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
+                    max = Math.max(H.arrayMax(series.yData), max || 0) +
+                        (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
+                }
+            });
+
+            axis.panningState = {
+                startMin: min || axis.min,
+                startMax: max || axis.max
+            };
         }
 
         fireEvent(this, 'afterSetScale');
