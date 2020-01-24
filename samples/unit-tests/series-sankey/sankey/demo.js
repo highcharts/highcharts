@@ -672,7 +672,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    'Render to null should not render the path but only increase the column height (value) #12666',
+    'Test null data in sankey #12666',
     function (assert) {
 
         var chart = Highcharts.chart('container', {
@@ -702,7 +702,7 @@ QUnit.test(
         assert.strictEqual(
             chart.series[0].nodes[2].sum,
             59,
-            'For this node value from the point with linkTo null should be added to sum (#12453)'
+            'For this node value from the point with linkTo null should be added to sum (#12666)'
         );
     }
 );
