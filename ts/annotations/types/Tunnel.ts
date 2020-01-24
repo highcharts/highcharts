@@ -157,7 +157,7 @@ H.extendAnnotation(
 
         /**
          * Translate start or end ("left" or "right") side of the tunnel.
-         *
+         * @private
          * @param {number} dx - the amount of x translation
          * @param {number} dy - the amount of y translation
          * @param {boolean} [end] - whether to translate start or end side
@@ -172,7 +172,7 @@ H.extendAnnotation(
 
         /**
          * Translate height of the tunnel.
-         *
+         * @private
          * @param {number} dh - the amount of height translation
          */
         translateHeight: function (this: Highcharts.AnnotationTunnel, dh: number): void {
