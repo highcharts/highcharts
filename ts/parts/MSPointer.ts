@@ -215,7 +215,7 @@ class MSPointer extends Pointer {
     }
 
     // Add IE specific touch events to chart
-    protected setDOMEvents(): void {
+    public setDOMEvents(): void {
 
         super.setDOMEvents();
 

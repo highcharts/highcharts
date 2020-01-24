@@ -290,7 +290,7 @@ declare global {
             fn: ObjectEachCallbackFunction<T>,
             ctx?: T
         ): void;
-        function offset(el: HTMLDOMElement): OffsetObject;
+        function offset(el: Element): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
         function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
         T1 extends Nullable ?
@@ -2722,14 +2722,14 @@ H.keys = Object.keys;
  *
  * @function Highcharts.offset
  *
- * @param {Highcharts.HTMLDOMElement} el
- *        The HTML element.
+ * @param {global.Element} el
+ *        The DOM element.
  *
  * @return {Highcharts.OffsetObject}
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-const offset = H.offset = function offset(el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
+const offset = H.offset = function offset(el: Element): Highcharts.OffsetObject {
     var docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
