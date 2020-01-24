@@ -455,11 +455,23 @@ Series.prototype.setStackedPoints = function () {
                     correctFloat(stack.total + (Math.abs(y) || 0));
             }
         }
+        else if (stacking === 'category-center') {
+            // In this stack, the total is the number of valid points
+            if (y !== null) {
+                stack.total = (stack.total || 0) + 1;
+            }
+        }
         else {
             stack.total = correctFloat(stack.total + (y || 0));
         }
-        stack.cumulative =
-            pick(stack.cumulative, stackThreshold) + (y || 0);
+        if (stacking === 'category-center') {
+            // This point's index within the stack, pushed to stack.points[1]
+            stack.cumulative = (stack.total || 1) - 1;
+        }
+        else {
+            stack.cumulative =
+                pick(stack.cumulative, stackThreshold) + (y || 0);
+        }
         if (y !== null) {
             stack.points[pointKey].push(stack.cumulative);
             stackedYData[i] = stack.cumulative;
@@ -468,7 +480,9 @@ Series.prototype.setStackedPoints = function () {
     if (stacking === 'percent') {
         yAxis.usePercentage = true;
     }
-    this.stackedYData = stackedYData; // To be used in getExtremes
+    if (stacking !== 'category-center') {
+        this.stackedYData = stackedYData; // To be used in getExtremes
+    }
     // Reset old stacks
     yAxis.oldStacks = {};
 };

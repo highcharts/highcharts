@@ -474,7 +474,7 @@ seriesType('column', 'line',
                             .ignoreHiddenSeries) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos) { // #642, #2086
-                    if (otherOptions.stacking) {
+                    if (otherOptions.stacking && otherOptions.stacking !== 'category-center') {
                         stackKey = otherSeries.stackKey;
                         if (typeof stackGroups[stackKey] ===
                             'undefined') {
@@ -504,7 +504,8 @@ seriesType('column', 'line',
         // Save it for reading in linked series (Error bars particularly)
         series.columnMetrics = {
             width: pointWidth,
-            offset: pointXOffset
+            offset: pointXOffset,
+            paddedWidth: pointOffsetWidth
         };
         return series.columnMetrics;
     },
@@ -577,10 +578,10 @@ seriesType('column', 'line',
         Series.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
-            var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX, 
+            var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX || 0, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
-            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
+            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
@@ -611,6 +612,13 @@ seriesType('column', 'line',
                 pointWidth = barW =
                     Math.ceil(point.options.pointWidth);
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+            }
+            // Handle stacking category-center
+            if (options.stacking === 'category-center' && point.stackTotal) {
+                var boxWidth = (point.stackTotal - 1) * metrics.paddedWidth +
+                    pointWidth;
+                barX = plotX + boxWidth / 2 - pointWidth -
+                    (point.indexInStack || 0) * metrics.paddedWidth;
             }
             // Cache for access in polar
             point.barX = barX;
