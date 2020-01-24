@@ -228,7 +228,7 @@ import H from './Globals.js';
 import pointModule from './Point.js';
 var Point = pointModule.Point;
 import utilitiesModule from './Utilities.js';
-var animObject = utilitiesModule.animObject, arrayMax = utilitiesModule.arrayMax, arrayMin = utilitiesModule.arrayMin, clamp = utilitiesModule.clamp, correctFloat = utilitiesModule.correctFloat, defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, removeEvent = utilitiesModule.removeEvent, splat = utilitiesModule.splat, syncTimeout = utilitiesModule.syncTimeout;
+var animObject = utilitiesModule.animObject, arrayMax = utilitiesModule.arrayMax, arrayMin = utilitiesModule.arrayMin, clamp = utilitiesModule.clamp, correctFloat = utilitiesModule.correctFloat, defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, getPropertyValue = utilitiesModule.getPropertyValue, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, removeEvent = utilitiesModule.removeEvent, splat = utilitiesModule.splat, syncTimeout = utilitiesModule.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -664,6 +664,14 @@ null,
      *
      * @type      {string|Highcharts.CursorValue}
      * @apioption plotOptions.series.cursor
+     */
+    /**
+     * A reserved subspace to store options and values for customized
+     * functionality. Here you can add additional data for your own event
+     * callbacks and formatter callbacks.
+     *
+     * @type      {Highcharts.Dictionary<*>}
+     * @apioption plotOptions.series.custom
      */
     /**
      * A name for the dash style to use for the graph, or for some series
@@ -3457,9 +3465,9 @@ null,
         }, this);
         // Sorting
         sortedData = data.concat().sort(function (a, b) {
-            return isNumber(b[sortKey]) ?
-                b[sortKey] - a[sortKey] :
-                -1;
+            var aValue = getPropertyValue(sortKey, a);
+            var bValue = getPropertyValue(sortKey, b);
+            return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         });
         // Set x value depending on the position in the array
         sortedData.forEach(function (point, i) {
@@ -5291,6 +5299,14 @@ null,
  * @since     5.0.0
  * @product   highcharts gantt
  * @apioption series.line.data.colorIndex
+ */
+/**
+ * A reserved subspace to store options and values for customized functionality.
+ * Here you can add additional data for your own event callbacks and formatter
+ * callbacks.
+ *
+ * @type      {Highcharts.Dictionary<*>}
+ * @apioption series.line.data.custom
  */
 /**
  * Individual data label for each point. The options are the same as

@@ -1383,7 +1383,7 @@ H.formatSingle = function (format, val, chart) {
  *         The formatted string.
  */
 H.format = function (str, ctx, chart) {
-    var splitter = '{', isInside = false, segment, valueAndFormat, path, i, len, ret = [], val, index;
+    var splitter = '{', isInside = false, segment, valueAndFormat, ret = [], val, index;
     while (str) {
         index = str.indexOf(splitter);
         if (index === -1) {
@@ -1392,16 +1392,7 @@ H.format = function (str, ctx, chart) {
         segment = str.slice(0, index);
         if (isInside) { // we're on the closing bracket looking back
             valueAndFormat = segment.split(':');
-            // get first and leave
-            path = valueAndFormat.shift().split('.');
-            len = path.length;
-            val = ctx;
-            // Assign deeper paths
-            for (i = 0; i < len; i++) {
-                if (val) {
-                    val = val[path[i]];
-                }
-            }
+            val = getPropertyValue(valueAndFormat.shift() || '', ctx);
             // Format the replacement
             if (valueAndFormat.length) {
                 val = H.formatSingle(valueAndFormat.join(':'), val, chart);
@@ -1807,6 +1798,39 @@ var numberFormat = H.numberFormat = function numberFormat(number, decimals, deci
 Math.easeInOutSine = function (pos) {
     return -0.5 * (Math.cos(Math.PI * pos) - 1);
 };
+/**
+ * Returns the value of the property path for a given object.
+ *
+ * @private
+ * @function getPropertyValue
+ *
+ * @param {string} path
+ * Path to the property, for example `custom.myValue`.
+ *
+ * @param {unknown} obj
+ * Instance containing the property on the specific path.
+ *
+ * @return {unknown}
+ * The unknown property value.
+ */
+function getPropertyValue(path, obj) {
+    if (!path) {
+        return obj;
+    }
+    var pathElements = path.split('.').reverse();
+    var subProperty = obj;
+    if (pathElements.length === 1) {
+        return subProperty[path];
+    }
+    var pathElement = pathElements.pop();
+    while (typeof pathElement !== 'undefined' &&
+        typeof subProperty !== 'undefined' &&
+        subProperty !== null) {
+        subProperty = subProperty[pathElement];
+        pathElement = pathElements.pop();
+    }
+    return subProperty;
+}
 /**
  * Get the computed CSS value for given element and property, only for numerical
  * properties. For width and height, the dimension of the inner box (excluding
@@ -2531,7 +2555,7 @@ if (win.jQuery) {
     };
 }
 // TODO use named exports when supported.
-var utils = {
+var utilitiesModule = {
     Fx: Fx,
     addEvent: addEvent,
     animObject: animObject,
@@ -2547,6 +2571,7 @@ var utils = {
     extend: extend,
     extendClass: extendClass,
     fireEvent: fireEvent,
+    getPropertyValue: getPropertyValue,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
@@ -2568,4 +2593,4 @@ var utils = {
     timeUnits: timeUnits,
     wrap: wrap
 };
-export default utils;
+export default utilitiesModule;

@@ -700,6 +700,7 @@ const {
     defined,
     erase,
     extend,
+    getPropertyValue,
     isArray,
     isNumber,
     isString,
@@ -1182,6 +1183,14 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * @apioption plotOptions.series.cursor
          */
 
+        /**
+         * A reserved subspace to store options and values for customized
+         * functionality. Here you can add additional data for your own event
+         * callbacks and formatter callbacks.
+         *
+         * @type      {Highcharts.Dictionary<*>}
+         * @apioption plotOptions.series.custom
+         */
 
         /**
          * A name for the dash style to use for the graph, or for some series
@@ -4461,13 +4470,13 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             }, this);
 
             // Sorting
-            sortedData = data.concat().sort(function (
+            sortedData = data.concat().sort((
                 a: Highcharts.PointOptionsObject,
                 b: Highcharts.PointOptionsObject
-            ): number {
-                return isNumber((b as any)[sortKey]) ?
-                    (b as any)[sortKey] - (a as any)[sortKey] :
-                    -1;
+            ): number => {
+                const aValue = getPropertyValue(sortKey, a) as (boolean|number|string);
+                const bValue = getPropertyValue(sortKey, b) as (boolean|number|string);
+                return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
             });
             // Set x value depending on the position in the array
             sortedData.forEach(function (
@@ -7148,6 +7157,15 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  * @since     5.0.0
  * @product   highcharts gantt
  * @apioption series.line.data.colorIndex
+ */
+
+/**
+ * A reserved subspace to store options and values for customized functionality.
+ * Here you can add additional data for your own event callbacks and formatter
+ * callbacks.
+ *
+ * @type      {Highcharts.Dictionary<*>}
+ * @apioption series.line.data.custom
  */
 
 /**

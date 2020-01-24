@@ -2037,9 +2037,6 @@ H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
         isInside = false,
         segment,
         valueAndFormat: Array<string>,
-        path,
-        i,
-        len,
         ret = [],
         val,
         index;
@@ -2054,17 +2051,7 @@ H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
         if (isInside) { // we're on the closing bracket looking back
 
             valueAndFormat = segment.split(':');
-            // get first and leave
-            path = (valueAndFormat.shift() as any).split('.');
-            len = path.length;
-            val = ctx;
-
-            // Assign deeper paths
-            for (i = 0; i < len; i++) {
-                if (val) {
-                    val = val[path[i]];
-                }
-            }
+            val = getPropertyValue(valueAndFormat.shift() || '', ctx);
 
             // Format the replacement
             if (valueAndFormat.length) {
@@ -2564,6 +2551,49 @@ const numberFormat = H.numberFormat = function numberFormat(
 Math.easeInOutSine = function (pos: number): number {
     return -0.5 * (Math.cos(Math.PI * pos) - 1);
 };
+
+/**
+ * Returns the value of the property path for a given object.
+ *
+ * @private
+ * @function getPropertyValue
+ *
+ * @param {string} path
+ * Path to the property, for example `custom.myValue`.
+ *
+ * @param {unknown} obj
+ * Instance containing the property on the specific path.
+ *
+ * @return {unknown}
+ * The unknown property value.
+ */
+function getPropertyValue(path: string, obj: unknown): unknown {
+
+    if (!path) {
+        return obj;
+    }
+
+    const pathElements = path.split('.').reverse();
+
+    let subProperty = obj as Record<string, unknown>;
+
+    if (pathElements.length === 1) {
+        return subProperty[path];
+    }
+
+    let pathElement = pathElements.pop();
+
+    while (
+        typeof pathElement !== 'undefined' &&
+        typeof subProperty !== 'undefined' &&
+        subProperty !== null
+    ) {
+        subProperty = subProperty[pathElement] as Record<string, unknown>;
+        pathElement = pathElements.pop();
+    }
+
+    return subProperty;
+}
 
 /**
  * Get the computed CSS value for given element and property, only for numerical
@@ -3445,7 +3475,7 @@ if ((win as any).jQuery) {
 }
 
 // TODO use named exports when supported.
-const utils = {
+const utilitiesModule = {
     Fx,
     addEvent,
     animObject,
@@ -3461,6 +3491,7 @@ const utils = {
     extend,
     extendClass,
     fireEvent,
+    getPropertyValue,
     isArray,
     isClass,
     isDOMElement,
@@ -3483,4 +3514,4 @@ const utils = {
     wrap
 };
 
-export default utils;
+export default utilitiesModule;
