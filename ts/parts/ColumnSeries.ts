@@ -21,6 +21,7 @@ declare global {
         interface ColumnMetricsObject {
             offset: number;
             width: number;
+            paddedWidth: number;
         }
         interface ColumnPointOptions extends LinePointOptions {
             dashStyle?: DashStyleValue;
@@ -637,7 +638,7 @@ seriesType<Highcharts.ColumnSeries>(
                         yAxis.len === otherYAxis.len &&
                         yAxis.pos === otherYAxis.pos
                     ) { // #642, #2086
-                        if (otherOptions.stacking) {
+                        if (otherOptions.stacking && otherOptions.stacking !== 'category-center') {
                             stackKey = otherSeries.stackKey;
                             if (
                                 typeof stackGroups[stackKey as any] ===
@@ -690,7 +691,8 @@ seriesType<Highcharts.ColumnSeries>(
             // Save it for reading in linked series (Error bars particularly)
             series.columnMetrics = {
                 width: pointWidth,
-                offset: pointXOffset
+                offset: pointXOffset,
+                paddedWidth: pointOffsetWidth
             };
             return series.columnMetrics;
 
@@ -808,7 +810,7 @@ seriesType<Highcharts.ColumnSeries>(
                 var yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
-                    plotX = point.plotX,
+                    plotX = point.plotX || 0,
                     // Don't draw too far outside plot area (#1303, #2241,
                     // #4264)
                     plotY = clamp(
@@ -816,7 +818,7 @@ seriesType<Highcharts.ColumnSeries>(
                         -safeDistance,
                         yAxis.len + safeDistance
                     ),
-                    barX = (point.plotX as any) + seriesXOffset,
+                    barX = plotX + seriesXOffset,
                     barW = seriesBarW,
                     barY = Math.min(plotY, yBottom),
                     up,
@@ -861,6 +863,15 @@ seriesType<Highcharts.ColumnSeries>(
                     pointWidth = barW =
                         Math.ceil(point.options.pointWidth as any);
                     barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+                }
+
+                // Handle stacking category-center
+                if (options.stacking === 'category-center' && point.stackTotal) {
+                    const boxWidth = (point.stackTotal - 1) * metrics.paddedWidth +
+                        pointWidth;
+
+                    barX = plotX + boxWidth / 2 - pointWidth -
+                        (point.indexInStack || 0) * metrics.paddedWidth;
                 }
 
                 // Cache for access in polar

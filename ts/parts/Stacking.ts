@@ -18,7 +18,7 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream');
+        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'category-center');
         interface Axis {
             oldStacks?: Dictionary<Dictionary<StackItem>>;
             stacks: Dictionary<Dictionary<StackItem>>;
@@ -752,7 +752,6 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
             }
             stack.touched = yAxis.stacksTouched;
 
-
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
             if (stackIndicator.index > 0 && series.singleStacks === false) {
@@ -784,12 +783,24 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
                 stack.total =
                     correctFloat((stack.total as any) + (Math.abs(y) || 0));
             }
+
+        } else if (stacking === 'category-center') {
+            // In this stack, the total is the number of valid points
+            if (y !== null) {
+                stack.total = (stack.total || 0) + 1;
+            }
+
         } else {
             stack.total = correctFloat(stack.total + (y || 0));
         }
 
-        stack.cumulative =
-            pick(stack.cumulative, stackThreshold as any) + (y || 0);
+        if (stacking === 'category-center') {
+            // This point's index within the stack, pushed to stack.points[1]
+            stack.cumulative = (stack.total || 1) - 1;
+        } else {
+            stack.cumulative =
+                pick(stack.cumulative, stackThreshold as any) + (y || 0);
+        }
 
         if (y !== null) {
             (stack.points[pointKey as any] as any).push(stack.cumulative);
@@ -802,7 +813,9 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
         yAxis.usePercentage = true;
     }
 
-    this.stackedYData = stackedYData as any; // To be used in getExtremes
+    if (stacking !== 'category-center') {
+        this.stackedYData = stackedYData as any; // To be used in getExtremes
+    }
 
     // Reset old stacks
     yAxis.oldStacks = {};

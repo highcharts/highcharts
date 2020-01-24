@@ -245,6 +245,7 @@ declare global {
             distX?: number;
             hasImage?: boolean;
             index?: number;
+            indexInStack?: number;
             isInside?: boolean;
             low?: number;
             negative?: boolean;
@@ -1569,11 +1570,22 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         /**
          * Whether to stack the values of each series on top of each other.
          * Possible values are `undefined` to disable, `"normal"` to stack by
-         * value or `"percent"`. When stacking is enabled, data must be sorted
-         * in ascending X order. A special stacking option is with the
-         * streamgraph series type, where the stacking option is set to
-         * `"stream"`. The second one is `"overlap"`, which only applies to
-         * waterfall series.
+         * value or `"percent"`.
+         *
+         * A third option is `"category-center"` to stack
+         * the items next to each other within the category. This is similar to
+         * how multiple column series are grouped without stacking, with the
+         * exception that no space is reserved for `null` or missing points, so
+         * the remaining points in the category are centered and rendered next
+         * to each other.
+         *
+         * When stacking is enabled, data must be sorted
+         * in ascending X order.
+         *
+         * Some stacking options are related to specific series types. In the
+         * streamgraph series type, the stacking option is set to `"stream"`.
+         * The second one is `"overlap"`, which only applies to waterfall
+         * series.
          *
          * @see [yAxis.reversedStacks](#yAxis.reversedStacks)
          *
@@ -1593,6 +1605,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          *         Bar
          * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-area/
          *         Area
+         * @sample {highcharts} highcharts/plotoptions/series-stacking-category-center/
+         *         Category center
          * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-normal-stacking
          *         Waterfall with normal stacking
          * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-overlap-stacking
@@ -1602,7 +1616,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          *
          * @type       {string}
          * @product    highcharts highstock
-         * @validvalue ["normal", "overlap", "percent", "stream"]
+         * @validvalue ["normal", "overlap", "percent", "category-center", "stream"]
          * @apioption  plotOptions.series.stacking
          */
 
@@ -5119,10 +5133,16 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         pointStack = stack[xValue as any];
                         stackValues =
                             pointStack.points[stackIndicator.key as any];
+
+                        point.total = point.stackTotal = (pointStack as any).total;
+
+                        if (stacking === 'category-center') {
+                            point.indexInStack = stackValues[1];
+                        }
                     }
                 }
 
-                if (isArray(stackValues)) {
+                if (isArray(stackValues) && stacking !== 'category-center') {
                     yBottom = stackValues[0];
                     yValue = stackValues[1];
 
@@ -5141,7 +5161,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         yBottom = null as any;
                     }
 
-                    point.total = point.stackTotal = (pointStack as any).total;
                     point.percentage =
                         (pointStack as any).total &&
                         ((point.y as any) / (pointStack as any).total * 100);
