@@ -17,9 +17,24 @@ declare global {
     namespace Highcharts {
         interface Chart {
             browserProps: {
-                fullscreenChange: string;
-                requestFullscreen: string;
-                exitFullscreen: string;
+                fullscreenChange: (
+                    'fullscreenchange'|
+                    'mozfullscreenchange'|
+                    'webkitfullscreenchange'|
+                    'MSFullscreenChange'
+                );
+                requestFullscreen: (
+                    'msRequestFullscreen'|
+                    'mozRequestFullScreen'|
+                    'requestFullscreen'|
+                    'webkitRequestFullScreen'
+                );
+                exitFullscreen: (
+                    'exitFullscreen'|
+                    'mozCancelFullScreen'|
+                    'webkitExitFullscreen'|
+                    'msExitFullscreen'
+                );
             };
             isFullscreen?: boolean;
             /** @requires modules/full-screen */
@@ -72,7 +87,9 @@ H.Chart.prototype.openFullscreen = function (this: Highcharts.Chart): void {
         }
     );
 
-    (chart as any).container.parentNode[chart.browserProps.requestFullscreen]();
+    if (chart.container.parentNode instanceof Element) {
+        chart.container.parentNode[chart.browserProps.requestFullscreen]();
+    }
 
     // Replace button text. When chart.toggleFullscreen() will be fired customly
     // by user before exporting context button is created, text will not be
@@ -99,8 +116,11 @@ H.Chart.prototype.closeFullscreen = function (this: Highcharts.Chart): void {
         menuItems = exportingOptions?.buttons?.contextButton.menuItems;
 
     // Don't fire exitFullscreen() when user exited using 'Escape' button.
-    if (chart.isFullscreen) {
-        (chart as any).container.ownerDocument[chart.browserProps.exitFullscreen]();
+    if (
+        chart.isFullscreen &&
+        chart.container.ownerDocument instanceof Document
+    ) {
+        chart.container.ownerDocument[chart.browserProps.exitFullscreen]();
     }
 
     // Replace button text.
@@ -157,13 +177,13 @@ H.Chart.prototype.toggleFullscreen = function (this: Highcharts.Chart): void {
         } else if (container.mozRequestFullScreen) {
             chart.browserProps = {
                 fullscreenChange: 'mozfullscreenchange',
-                requestFullscreen: 'mozRequestFullscreen',
+                requestFullscreen: 'mozRequestFullScreen',
                 exitFullscreen: 'mozCancelFullScreen'
             };
-        } else if (container.webkitRequestFullscreen) {
+        } else if (container.webkitRequestFullScreen) {
             chart.browserProps = {
                 fullscreenChange: 'webkitfullscreenchange',
-                requestFullscreen: 'webkitRequestFullscreen',
+                requestFullscreen: 'webkitRequestFullScreen',
                 exitFullscreen: 'webkitExitFullscreen'
             };
         } else if (container.msRequestFullscreen) {

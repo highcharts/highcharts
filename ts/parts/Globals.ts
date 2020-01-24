@@ -87,7 +87,11 @@ declare global {
         ): TReturn;
     }
     interface Document {
+        exitFullscreen: () => Promise<void>;
+        mozCancelFullScreen: Function;
+        msExitFullscreen: Function;
         msHidden: boolean;
+        webkitExitFullscreen: Function;
         webkitHidden: boolean;
     }
     interface Element {
@@ -95,7 +99,7 @@ declare global {
         msMatchesSelector: Element['matches'];
         msRequestFullscreen: Function;
         webkitMatchesSelector: Element['matches'];
-        webkitRequestFullscreen: Function;
+        webkitRequestFullScreen: Function;
         setAttribute(
             qualifiedName: string,
             value: (boolean|number|string)
