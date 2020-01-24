@@ -20,17 +20,19 @@ QUnit.test('RTL characters on data labels', function (assert) {
         }]
     });
 
+    // In Firefox the placement is reversed.
+    const expectedClass = Highcharts.isFirefox ? null : 'highcharts-text-outline';
     assert.notOk(
         ~[].indexOf.apply(
             chart.series[0].data[0].dataLabel.text.element.children[0].classList,
-            ['highcharts-text-outline']
+            [expectedClass]
         ),
         'The data label which includes Arabic characters is not covered with the outline'
     );
     assert.notOk(
         ~[].indexOf.apply(
             chart.series[0].data[1].dataLabel.text.element.children[0].classList,
-            ['highcharts-text-outline']
+            [expectedClass]
         ),
         'The data label which includes Hebrew characters is not covered with the outline'
     );
