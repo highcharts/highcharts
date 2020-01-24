@@ -179,6 +179,7 @@ declare global {
             categories?: Array<string>;
             ceiling?: number;
             className?: string;
+            clipCrosshair?: SVGElement;
             crosshair?: (boolean|XAxisCrosshairOptions);
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
@@ -190,6 +191,7 @@ declare global {
             gridZIndex?: number;
             height?: (number|string);
             id?: string;
+            isCircular?: (undefined|boolean);
             isX?: boolean;
             labels?: XAxisLabelsOptions;
             left?: (number|string);
@@ -297,6 +299,7 @@ declare global {
             public bottom: number;
             public categories: (boolean|Array<string>);
             public chart: Chart;
+            public clipCrosshair?: SVGElement;
             public closestPointRange: number;
             public coll: string;
             public cross?: SVGElement;
@@ -319,6 +322,7 @@ declare global {
             public height: number;
             public horiz?: boolean;
             public isBroken?: boolean;
+            public isCircular?: (undefined|boolean);
             public isDatetimeAxis: boolean;
             public isDirty?: boolean;
             public isLinked: boolean;
@@ -7332,7 +7336,12 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions;
+            crossOptions,
+            chart = this.chart,
+            pane = this.pane,
+            center = pane && pane.center,
+            clipCrosshair,
+            clipOptions;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -7380,7 +7389,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     translatedValue: pos
                 };
 
-                if (this.chart.polar) {
+                if (chart.polar) {
                     // Additional information required for crosshairs in
                     // polar chart
                     extend(crossOptions, {
@@ -7404,7 +7413,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Draw the cross
             if (!graphic) {
-                this.cross = graphic = this.chart.renderer
+                this.cross = graphic = chart.renderer
                     .path()
                     .addClass(
                         'highcharts-crosshair highcharts-crosshair-' +
@@ -7417,7 +7426,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     .add();
 
                 // Presentational attributes
-                if (!this.chart.styledMode) {
+                if (!chart.styledMode) {
                     graphic.attr({
                         stroke: (options as any).color ||
                             (
@@ -7436,7 +7445,32 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         });
                     }
                 }
+            }
 
+            // Clip crosshair of the circular axis only when the pane's
+            // innerSize is bigger than 0
+            if (this.isCircular && center && center[3] > 0) {
+                clipCrosshair = this.clipCrosshair;
+                clipOptions = {
+                    x: center[0] + chart.plotLeft,
+                    y: center[1] + chart.plotTop,
+                    r: center[2] / 2,
+                    innerR: center[3] / 2
+                };
+
+                // Create or update clip
+                this.clipCrosshair = clipCrosshair ?
+                    clipCrosshair.attr(clipOptions) :
+                    chart.renderer.clipCircle(
+                        clipOptions.x,
+                        clipOptions.y,
+                        clipOptions.r,
+                        clipOptions.innerR
+                    );
+
+                if (this.cross) {
+                    this.cross.clip(this.clipCrosshair);
+                }
             }
 
             graphic.show().attr({
