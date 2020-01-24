@@ -88,15 +88,33 @@ H.CenteredSeriesMixin = {
             plotWidth = chart.plotWidth - 2 * slicingRoom,
             plotHeight = chart.plotHeight - 2 * slicingRoom,
             centerOption: Array<(number|string|null)> = options.center as any,
-            positions: Array<number> = [
-                pick(centerOption[0] as any, '50%' as any),
-                pick(centerOption[1] as any, '50%' as any),
-                options.size || '100%' as any,
-                options.innerSize || 0
-            ],
             smallestSize = Math.min(plotWidth, plotHeight),
+            size = options.size,
+            innerSize = options.innerSize,
+            positions: Array<number>,
             i: number,
             value: number;
+
+        if (typeof size === 'string') {
+            size = parseFloat(size);
+        }
+
+        if (typeof innerSize === 'string') {
+            innerSize = parseFloat(innerSize);
+        }
+
+        positions = [
+            pick(centerOption[0] as any, '50%' as any),
+            pick(centerOption[1] as any, '50%' as any),
+            // Prevent from negative values
+            pick(size && size < 0 ? void 0 : options.size, '100%'),
+            pick(innerSize && innerSize < 0 ? void 0 : options.innerSize, '0%')
+        ];
+
+        // No need for inner size in angular (gauges) series
+        if (chart.angular) {
+            positions[3] = 0;
+        }
 
         for (i = 0; i < 4; ++i) {
             value = positions[i];

@@ -174,6 +174,18 @@ extend(Pane.prototype, {
          */
         size: '85%',
         /**
+         * The size of pane's inner area (area in the center that is not
+         * occupied), either as a number defining pixels, or a
+         * percentage defining a percentage of the plot area.
+         *
+         * @sample {highcharts} highcharts/series-polar/column-inverted-inner
+         *         The inner size set to 20%
+         *
+         * @type    {number|string}
+         * @product highcharts
+         */
+        innerSize: '0%',
+        /**
          * The start angle of the polar X axis or gauge axis, given in degrees
          * where 0 is north. Defaults to 0.
          *
