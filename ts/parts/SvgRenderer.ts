@@ -1221,7 +1221,6 @@ extend((
             const isRTL = elem.textContent ?
                 /^[\u0591-\u065F\u066A-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
                     .test(elem.textContent) : false;
-
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild as any;
             tspans.forEach(function (
@@ -1234,17 +1233,18 @@ extend((
                 if (y === 0) {
                     tspan.setAttribute('x', elem.getAttribute('x') as any);
                     y = elem.getAttribute('y') as any;
-                    tspan.setAttribute('y', y as any || 0);
+                    tspan.setAttribute('y', y || 0);
                     if (y === null) {
-                        elem.setAttribute('y', 0 as any);
+                        elem.setAttribute('y', 0);
                     }
                 }
 
                 // Create the clone and apply outline properties.
                 // For RTL elements apply outline properties for orginal element
-                // to prevent outline from overlapping the text (#10162).
-                clone = tspan.cloneNode(1 as any);
-                attr(isRTL ? tspan : clone, {
+                // to prevent outline from overlapping the text.
+                // For RTL in Firefox keep the orginal order (#10162).
+                clone = tspan.cloneNode(true);
+                attr((isRTL && !isFirefox) ? tspan : clone, {
                     'class': 'highcharts-text-outline',
                     fill: color,
                     stroke: color,
@@ -1253,6 +1253,14 @@ extend((
                 });
                 elem.insertBefore(clone, firstRealChild);
             });
+
+            // Create a whitespace between tspan and clone,
+            // to fix the display of Arabic characters in Firefox.
+            if (isRTL && isFirefox && tspans[0]) {
+                const whitespace = tspans[0].cloneNode(true);
+                whitespace.textContent = ' ';
+                elem.insertBefore(whitespace, firstRealChild);
+            }
         }
     },
 
