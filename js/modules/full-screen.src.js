@@ -36,7 +36,9 @@ H.Chart.prototype.openFullscreen = function () {
             chart.isFullscreen = true;
         }
     });
-    chart.container.parentNode[chart.browserProps.requestFullscreen]();
+    if (chart.container.parentNode instanceof Element) {
+        chart.container.parentNode[chart.browserProps.requestFullscreen]();
+    }
     // Replace button text. When chart.toggleFullscreen() will be fired customly
     // by user before exporting context button is created, text will not be
     // replaced - it's on the user side.
@@ -55,7 +57,8 @@ H.Chart.prototype.closeFullscreen = function () {
     var _a, _b, _c, _d, _e;
     var chart = this, exportingOptions = chart.options.exporting, exportDivElements = chart.exportDivElements, menuItems = (_b = (_a = exportingOptions) === null || _a === void 0 ? void 0 : _a.buttons) === null || _b === void 0 ? void 0 : _b.contextButton.menuItems;
     // Don't fire exitFullscreen() when user exited using 'Escape' button.
-    if (chart.isFullscreen) {
+    if (chart.isFullscreen &&
+        chart.container.ownerDocument instanceof Document) {
         chart.container.ownerDocument[chart.browserProps.exitFullscreen]();
     }
     // Replace button text.
@@ -101,14 +104,14 @@ H.Chart.prototype.toggleFullscreen = function () {
         else if (container.mozRequestFullScreen) {
             chart.browserProps = {
                 fullscreenChange: 'mozfullscreenchange',
-                requestFullscreen: 'mozRequestFullscreen',
+                requestFullscreen: 'mozRequestFullScreen',
                 exitFullscreen: 'mozCancelFullScreen'
             };
         }
-        else if (container.webkitRequestFullscreen) {
+        else if (container.webkitRequestFullScreen) {
             chart.browserProps = {
                 fullscreenChange: 'webkitfullscreenchange',
-                requestFullscreen: 'webkitRequestFullscreen',
+                requestFullscreen: 'webkitRequestFullScreen',
                 exitFullscreen: 'webkitExitFullscreen'
             };
         }
