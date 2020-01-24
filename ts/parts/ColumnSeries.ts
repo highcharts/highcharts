@@ -638,7 +638,7 @@ seriesType<Highcharts.ColumnSeries>(
                         yAxis.len === otherYAxis.len &&
                         yAxis.pos === otherYAxis.pos
                     ) { // #642, #2086
-                        if (otherOptions.stacking && otherOptions.stacking !== 'category-center') {
+                        if (otherOptions.stacking && otherOptions.stacking !== 'group') {
                             stackKey = otherSeries.stackKey;
                             if (
                                 typeof stackGroups[stackKey as any] ===
@@ -787,7 +787,8 @@ seriesType<Highcharts.ColumnSeries>(
                     Math.max(seriesPointWidth, 1 + 2 * borderWidth),
                 seriesXOffset = series.pointXOffset = metrics.offset,
                 dataMin = series.dataMin,
-                dataMax = series.dataMax;
+                dataMax = series.dataMax,
+                centeringStack = yAxis.stacks[`${series.type},group`];
 
             if (chart.inverted) {
                 (translatedThreshold as any) -= 0.5; // #3355
@@ -865,14 +866,18 @@ seriesType<Highcharts.ColumnSeries>(
                     barX -= Math.round((pointWidth - seriesPointWidth) / 2);
                 }
 
-                // Handle stacking category-center
-                if (options.stacking === 'category-center' && point.stackTotal) {
-                    const boxWidth = (point.stackTotal - 1) * metrics.paddedWidth +
+                // Center in category operates with its specific StackItems
+                if (centeringStack && !point.isNull) {
+                    const pointStack = centeringStack[point.x as any];
+                    const indexInCategory = pointStack.points[series.index as any][1];
+                    const totalInCategory = pointStack.total || 0;
+                    const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
                         pointWidth;
 
                     barX = plotX + boxWidth / 2 - pointWidth -
-                        (point.indexInStack || 0) * metrics.paddedWidth;
+                        indexInCategory * metrics.paddedWidth;
                 }
+
 
                 // Cache for access in polar
                 point.barX = barX;

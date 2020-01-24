@@ -18,7 +18,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            stacking: 'category-center'
+            stacking: 'group'
         }
     },
 

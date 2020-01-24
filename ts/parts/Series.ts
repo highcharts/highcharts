@@ -245,7 +245,6 @@ declare global {
             distX?: number;
             hasImage?: boolean;
             index?: number;
-            indexInStack?: number;
             isInside?: boolean;
             low?: number;
             negative?: boolean;
@@ -321,6 +320,7 @@ declare global {
             boostThreshold?: number;
             borderColor?: ColorType;
             borderWidth?: number;
+            centerInCategory?: boolean;
             className?: string;
             clip?: boolean;
             color?: ColorType;
@@ -5133,16 +5133,10 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         pointStack = stack[xValue as any];
                         stackValues =
                             pointStack.points[stackIndicator.key as any];
-
-                        point.total = point.stackTotal = (pointStack as any).total;
-
-                        if (stacking === 'category-center') {
-                            point.indexInStack = stackValues[1];
-                        }
                     }
                 }
 
-                if (isArray(stackValues) && stacking !== 'category-center') {
+                if (isArray(stackValues)) {
                     yBottom = stackValues[0];
                     yValue = stackValues[1];
 
@@ -5161,6 +5155,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                         yBottom = null as any;
                     }
 
+                    point.total = point.stackTotal = (pointStack as any).total;
                     point.percentage =
                         (pointStack as any).total &&
                         ((point.y as any) / (pointStack as any).total * 100);

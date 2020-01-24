@@ -291,6 +291,7 @@ Axis.prototype.buildStacks = function () {
         while (i--) {
             actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
             actualSeries.setStackedPoints();
+            actualSeries.setGroupedPoints();
         }
         // Loop up again to compute percent and stream stack
         for (i = 0; i < len; i++) {
@@ -372,7 +373,12 @@ Axis.prototype.cleanStacks = function () {
         });
     }
 };
-// Stacking methods defnied for Series prototype
+// Stacking methods defined for Series prototype
+Series.prototype.setGroupedPoints = function () {
+    if (this.options.centerInCategory) {
+        Series.prototype.setStackedPoints.call(this, 'group');
+    }
+};
 /**
  * Adds series' points value to corresponding stack
  *
@@ -380,13 +386,14 @@ Axis.prototype.cleanStacks = function () {
  * @function Highcharts.Series#setStackedPoints
  * @return {void}
  */
-Series.prototype.setStackedPoints = function () {
-    if (!this.options.stacking ||
+Series.prototype.setStackedPoints = function (stackingParam) {
+    var stacking = stackingParam || this.options.stacking;
+    if (!stacking ||
         (this.visible !== true &&
             this.chart.options.chart.ignoreHiddenSeries !== false)) {
         return;
     }
-    var series = this, xData = series.processedXData, yData = series.processedYData, stackedYData = [], yDataLength = yData.length, seriesOptions = series.options, threshold = seriesOptions.threshold, stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0), stackOption = seriesOptions.stack, stacking = seriesOptions.stacking, stackKey = series.stackKey, negKey = '-' + stackKey, negStacks = series.negStacks, yAxis = series.yAxis, stacks = yAxis.stacks, oldStacks = yAxis.oldStacks, stackIndicator, isNegative, stack, other, key, pointKey, i, x, y;
+    var series = this, xData = series.processedXData, yData = series.processedYData, stackedYData = [], yDataLength = yData.length, seriesOptions = series.options, threshold = seriesOptions.threshold, stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0), stackOption = seriesOptions.stack, stackKey = series.stackKey || series.type + "," + stacking, negKey = '-' + stackKey, negStacks = series.negStacks && stacking !== 'group', yAxis = series.yAxis, stacks = yAxis.stacks, oldStacks = yAxis.oldStacks, stackIndicator, isNegative, stack, other, key, pointKey, i, x, y;
     yAxis.stacksTouched += 1;
     // loop over the non-null y values and read them into a local array
     for (i = 0; i < yDataLength; i++) {
@@ -455,7 +462,7 @@ Series.prototype.setStackedPoints = function () {
                     correctFloat(stack.total + (Math.abs(y) || 0));
             }
         }
-        else if (stacking === 'category-center') {
+        else if (stacking === 'group') {
             // In this stack, the total is the number of valid points
             if (y !== null) {
                 stack.total = (stack.total || 0) + 1;
@@ -464,7 +471,7 @@ Series.prototype.setStackedPoints = function () {
         else {
             stack.total = correctFloat(stack.total + (y || 0));
         }
-        if (stacking === 'category-center') {
+        if (stacking === 'group') {
             // This point's index within the stack, pushed to stack.points[1]
             stack.cumulative = (stack.total || 1) - 1;
         }
@@ -480,7 +487,7 @@ Series.prototype.setStackedPoints = function () {
     if (stacking === 'percent') {
         yAxis.usePercentage = true;
     }
-    if (stacking !== 'category-center') {
+    if (stacking !== 'group') {
         this.stackedYData = stackedYData; // To be used in getExtremes
     }
     // Reset old stacks

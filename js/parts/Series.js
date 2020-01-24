@@ -3902,13 +3902,9 @@ null,
                     pointStack = stack[xValue];
                     stackValues =
                         pointStack.points[stackIndicator.key];
-                    point.total = point.stackTotal = pointStack.total;
-                    if (stacking === 'category-center') {
-                        point.indexInStack = stackValues[1];
-                    }
                 }
             }
-            if (isArray(stackValues) && stacking !== 'category-center') {
+            if (isArray(stackValues)) {
                 yBottom = stackValues[0];
                 yValue = stackValues[1];
                 if (yBottom === stackThreshold &&
@@ -3920,6 +3916,7 @@ null,
                 if (yAxis.positiveValuesOnly && yBottom <= 0) {
                     yBottom = null;
                 }
+                point.total = point.stackTotal = pointStack.total;
                 point.percentage =
                     pointStack.total &&
                         (point.y / pointStack.total * 100);

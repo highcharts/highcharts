@@ -18,7 +18,7 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'category-center');
+        type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream'|'group');
         interface Axis {
             oldStacks?: Dictionary<Dictionary<StackItem>>;
             stacks: Dictionary<Dictionary<StackItem>>;
@@ -55,7 +55,10 @@ declare global {
                 stack: StackItem,
                 i: number
             ): void;
-            setStackedPoints(): void;
+            setGroupedPoints(): void;
+            setStackedPoints(
+                stackingParam?: string
+            ): void;
         }
         interface StackItemIndicatorObject {
             index: number;
@@ -545,6 +548,7 @@ Axis.prototype.buildStacks = function (this: Highcharts.Axis): void {
         while (i--) {
             actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
             actualSeries.setStackedPoints();
+            actualSeries.setGroupedPoints();
         }
 
         // Loop up again to compute percent and stream stack
@@ -652,7 +656,12 @@ Axis.prototype.cleanStacks = function (this: Highcharts.Axis): void {
 };
 
 
-// Stacking methods defnied for Series prototype
+// Stacking methods defined for Series prototype
+Series.prototype.setGroupedPoints = function (this: Highcharts.Series): void {
+    if (this.options.centerInCategory) {
+        Series.prototype.setStackedPoints.call(this, 'group');
+    }
+};
 
 /**
  * Adds series' points value to corresponding stack
@@ -661,8 +670,14 @@ Axis.prototype.cleanStacks = function (this: Highcharts.Axis): void {
  * @function Highcharts.Series#setStackedPoints
  * @return {void}
  */
-Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
-    if (!this.options.stacking ||
+Series.prototype.setStackedPoints = function (
+    this: Highcharts.Series,
+    stackingParam: string
+): void {
+
+    const stacking = stackingParam || this.options.stacking;
+
+    if (!stacking ||
         (this.visible !== true &&
         (this.chart.options.chart as any).ignoreHiddenSeries !== false)
     ) {
@@ -678,10 +693,9 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
         threshold = seriesOptions.threshold,
         stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0),
         stackOption = seriesOptions.stack,
-        stacking = seriesOptions.stacking,
-        stackKey = series.stackKey,
+        stackKey = series.stackKey || `${series.type},${stacking}`,
         negKey = '-' + stackKey,
-        negStacks = series.negStacks,
+        negStacks = series.negStacks && stacking !== 'group',
         yAxis = series.yAxis,
         stacks = yAxis.stacks,
         oldStacks = yAxis.oldStacks,
@@ -784,7 +798,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
                     correctFloat((stack.total as any) + (Math.abs(y) || 0));
             }
 
-        } else if (stacking === 'category-center') {
+        } else if (stacking === 'group') {
             // In this stack, the total is the number of valid points
             if (y !== null) {
                 stack.total = (stack.total || 0) + 1;
@@ -794,7 +808,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
             stack.total = correctFloat(stack.total + (y || 0));
         }
 
-        if (stacking === 'category-center') {
+        if (stacking === 'group') {
             // This point's index within the stack, pushed to stack.points[1]
             stack.cumulative = (stack.total || 1) - 1;
         } else {
@@ -806,14 +820,13 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
             (stack.points[pointKey as any] as any).push(stack.cumulative);
             stackedYData[i] = stack.cumulative;
         }
-
     }
 
     if (stacking === 'percent') {
         yAxis.usePercentage = true;
     }
 
-    if (stacking !== 'category-center') {
+    if (stacking !== 'group') {
         this.stackedYData = stackedYData as any; // To be used in getExtremes
     }
 
