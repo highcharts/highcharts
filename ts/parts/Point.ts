@@ -351,12 +351,15 @@ declare global {
  * @type {Highcharts.PointOptionsType}
  */
 
+''; // detach doclet above
+
 import U from './Utilities.js';
 const {
     animObject,
     defined,
     erase,
     extend,
+    getPropertyValue,
     isArray,
     isNumber,
     isObject,
@@ -609,7 +612,9 @@ class Point {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = (point as any)[pointValKey];
+            point.y = pointValKey.indexOf('custom.') === 0 ?
+                getPropertyValue(pointValKey, point) :
+                (point as any)[pointValKey];
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),

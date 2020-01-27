@@ -154,8 +154,9 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointUpdateEventObject#options
 * @type {Highcharts.PointOptionsType}
 */
+''; // detach doclet above
 import U from './Utilities.js';
-var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent;
+var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, getPropertyValue = U.getPropertyValue, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent;
 var H = Highcharts, fireEvent = H.fireEvent, format = H.format, uniqueKey = H.uniqueKey;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -339,7 +340,9 @@ var Point = /** @class */ (function () {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = point[pointValKey];
+            point.y = pointValKey.indexOf('custom.') === 0 ?
+                getPropertyValue(pointValKey, point) :
+                point[pointValKey];
         }
         point.isNull = pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y)); // #3571, check for NaN
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
