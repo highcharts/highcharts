@@ -139,6 +139,7 @@ import U from '../parts/Utilities.js';
 const {
     erase,
     extend,
+    getPropertyValue,
     isNumber,
     pick,
     splat
@@ -1210,7 +1211,11 @@ extend(ColorAxis.prototype, {
             axisLen = this.len;
 
         if (point) {
-            crossPos = this.toPixels((point as any)[point.series.colorKey]);
+            crossPos = this.toPixels(
+                point.series.colorKey.indexOf('custom.') === 0 ?
+                    getPropertyValue(point.series.colorKey, point.options) as number :
+                    (point as any)[point.series.colorKey]
+            );
             if (crossPos < (axisPos as any)) {
                 crossPos = (axisPos as any) - 2;
             } else if (crossPos > (axisPos as any) + axisLen) {

@@ -42,6 +42,11 @@ declare global {
     }
 }
 
+import U from '../parts/Utilities.js';
+const {
+    getPropertyValue
+} = U;
+
 /**
  * Mixin for maps and heatmaps
  *
@@ -101,7 +106,11 @@ H.colorSeriesMixin = {
             colorKey = this.colorKey;
 
         points.forEach(function (point: Highcharts.ColorPoint): void {
-            var value = (point as any)[colorKey],
+            var value = (
+                colorKey?.indexOf('custom.') === 0 ?
+                    getPropertyValue(colorKey, point.options) as number :
+                    (point as any)[colorKey]
+                ),
                 color;
 
             color = point.options.color ||
