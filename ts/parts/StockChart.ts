@@ -61,6 +61,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     clamp,
@@ -88,8 +89,7 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     format = H.format,
     merge = H.merge,

@@ -5,8 +5,8 @@
  * */
 import H from '../parts/Globals.js';
 import colorModule from '../parts/Color.js';
-import utilitiesModule from '../parts/Utilities.js';
-var extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, pick = utilitiesModule.pick;
+import U from '../parts/Utilities.js';
+var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
 var isBoolean = function (x) {
     return typeof x === 'boolean';
 }, isFn = function (x) {

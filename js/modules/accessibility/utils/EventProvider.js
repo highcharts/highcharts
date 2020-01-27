@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
-var extend = U.extend;
+var addEvent = U.addEvent, extend = U.extend;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -29,7 +29,7 @@ extend(EventProvider.prototype, {
      * @return {Function}
      */
     addEvent: function () {
-        var remover = H.addEvent.apply(H, arguments);
+        var remover = addEvent.apply(H, arguments);
         this.eventRemovers.push(remover);
         return remover;
     },

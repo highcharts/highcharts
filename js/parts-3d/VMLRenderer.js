@@ -11,10 +11,11 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent;
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
-var addEvent = H.addEvent, Axis = H.Axis, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
+var Axis = H.Axis, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
 if (VMLRenderer) {
     H.setOptions({ animate: false });
     VMLRenderer.prototype.face3d = SVGRenderer.prototype.face3d;

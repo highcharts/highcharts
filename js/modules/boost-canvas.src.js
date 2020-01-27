@@ -16,11 +16,11 @@
 import H from '../parts/Globals.js';
 import colorModule from '../parts/Color.js';
 var Color = colorModule.Color, color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-var extend = utilitiesModule.extend, isNumber = utilitiesModule.isNumber, wrap = utilitiesModule.wrap;
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';
 import '../parts/Options.js';
-var win = H.win, doc = win.document, noop = function () { }, Series = H.Series, seriesTypes = H.seriesTypes, addEvent = H.addEvent, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, CHUNK_SIZE = 50000, destroyLoadingDiv;
+var win = H.win, doc = win.document, noop = function () { }, Series = H.Series, seriesTypes = H.seriesTypes, merge = H.merge, CHUNK_SIZE = 50000, destroyLoadingDiv;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Initialize the canvas boost.

@@ -253,14 +253,14 @@ declare global {
  */
 
 import colorModule from '../parts/Color.js';
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
     defined,
     isObject,
     pick,
     relativeLength,
     stableSort
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../mixins/nodes.js';

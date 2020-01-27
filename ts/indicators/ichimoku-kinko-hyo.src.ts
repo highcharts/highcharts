@@ -109,12 +109,12 @@ declare global {
 
 import colorModule from '../parts/Color.js';
 const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
     defined,
     isArray,
     objectEach
-} = utilitiesModule;
+} = U;
 
 var UNDEFINED: undefined,
     seriesType = H.seriesType,

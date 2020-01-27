@@ -13,8 +13,8 @@
 import H from '../parts/Globals.js';
 import colorModule from '../parts/Color.js';
 var color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-var defined = utilitiesModule.defined, discardElement = utilitiesModule.discardElement, erase = utilitiesModule.erase, extend = utilitiesModule.extend, extendClass = utilitiesModule.extendClass, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, offset = utilitiesModule.offset, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt;
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, offset = U.offset, pick = U.pick, pInt = U.pInt;
 import '../parts/SvgRenderer.js';
 var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, doc = H.doc, merge = H.merge, noop = H.noop, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /**
@@ -64,7 +64,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement, 'afterInit', function () {
+    addEvent(SVGElement, 'afterInit', function () {
         if (this.element.nodeName === 'text') {
             this.css({
                 position: 'absolute'

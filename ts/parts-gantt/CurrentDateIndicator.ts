@@ -56,11 +56,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     wrap
 } = U;
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     PlotLineOrBand = H.PlotLineOrBand,
     merge = H.merge;
 

@@ -33,11 +33,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     pick
 } = U;
 
-var addEvent = H.addEvent,
-    perspective = H.perspective;
+var perspective = H.perspective;
 
 /* eslint-disable no-invalid-this */
 

@@ -99,6 +99,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     defined,
     isNumber,
     objectEach,
@@ -109,8 +110,7 @@ import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
-var addEvent = H.addEvent,
-    merge = H.merge,
+var merge = H.merge,
     noop = H.noop,
     Renderer = H.Renderer,
     Series = H.Series,

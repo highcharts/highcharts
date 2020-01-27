@@ -190,6 +190,7 @@ import '../parts/Point.js';
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
     extend,
     objectEach,
@@ -201,7 +202,6 @@ import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import './ArrowSymbols.js';
 
 var deg2rad = H.deg2rad,
-    addEvent = H.addEvent,
     merge = H.merge,
     max = Math.max,
     min = Math.min;

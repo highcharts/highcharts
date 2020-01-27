@@ -21,10 +21,6 @@ WIP on vertical scrollable plot area (#9378). To do:
 'use strict';
 
 import H from './Globals.js';
-import U from './Utilities.js';
-const {
-    pick
-} = U;
 
 /**
  * Internal types
@@ -47,9 +43,13 @@ declare global {
     }
 }
 
+import U from './Utilities.js';
+const {
+    addEvent,
+    pick
+} = U;
 
-var addEvent = H.addEvent,
-    Chart = H.Chart;
+var Chart = H.Chart;
 
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for

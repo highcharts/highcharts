@@ -188,6 +188,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     clamp,
     correctFloat,
     defined,
@@ -208,8 +209,7 @@ import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     color = H.color,
     defaultOptions = H.defaultOptions,

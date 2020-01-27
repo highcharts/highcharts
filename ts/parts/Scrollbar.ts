@@ -145,9 +145,11 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     correctFloat,
     defined,
     destroyObjectProperties,
+    fireEvent,
     pick,
     removeEvent
 } = U;
@@ -155,10 +157,8 @@ const {
 import './Axis.js';
 import './Options.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     defaultOptions = H.defaultOptions,
-    fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     merge = H.merge,

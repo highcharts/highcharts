@@ -12,10 +12,10 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var clamp = U.clamp, defined = U.defined, extend = U.extend, pick = U.pick, setAnimation = U.setAnimation;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
-var addEvent = H.addEvent, Chart = H.Chart;
+var Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.layouts = {
     'reingold-fruchterman': function () {

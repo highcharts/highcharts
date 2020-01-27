@@ -85,6 +85,7 @@ import '../mixins/centered-series.js';
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     extend,
     pick,
     splat
@@ -540,7 +541,7 @@ H.Chart.prototype.getHoverPane = function (
     return hoverPane;
 };
 
-H.addEvent(H.Chart, 'afterIsInsidePlot', function (
+addEvent(H.Chart, 'afterIsInsidePlot', function (
     this: Highcharts.Chart | Highcharts.PaneChart,
     e: {
         x: number;
@@ -556,7 +557,7 @@ H.addEvent(H.Chart, 'afterIsInsidePlot', function (
     }
 });
 
-H.addEvent(H.Pointer, 'beforeGetHoverData', function (
+addEvent(H.Pointer, 'beforeGetHoverData', function (
     this: Highcharts.Pointer,
     eventArgs: {
         chartX: number;
@@ -582,7 +583,7 @@ H.addEvent(H.Pointer, 'beforeGetHoverData', function (
     }
 });
 
-H.addEvent(H.Pointer, 'afterGetHoverData', function (
+addEvent(H.Pointer, 'afterGetHoverData', function (
     this: Highcharts.Pointer,
     eventArgs: Highcharts.PointerEventArgsObject
 ): void {
