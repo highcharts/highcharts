@@ -1083,7 +1083,7 @@ addEvent(Axis, 'afterTrimTicks', function (
     var axis = this,
         tickPositions = e.tickPositions;
 
-    if (axis.isOrdinal && axis.min && axis.max && tickPositions) {
+    if (axis.isOrdinal && defined(axis.min) && defined(axis.max) && tickPositions) {
         while (axis.min > tickPositions[0]) {
             tickPositions.shift();
         }
