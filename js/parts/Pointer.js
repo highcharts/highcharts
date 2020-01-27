@@ -93,8 +93,8 @@ import Highcharts from './Globals.js';
 * @name Highcharts.SelectEventObject#yAxis
 * @type {Array<Highcharts.SelectDataObject>}
 */
-import utilitiesModule from './Utilities.js';
-var addEvent = utilitiesModule.addEvent, attr = utilitiesModule.attr, defined = utilitiesModule.defined, extend = utilitiesModule.extend, fireEvent = utilitiesModule.fireEvent, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, objectEach = utilitiesModule.objectEach, offset = utilitiesModule.offset, pick = utilitiesModule.pick, splat = utilitiesModule.splat;
+import U from './Utilities.js';
+var addEvent = U.addEvent, attr = U.attr, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
 import './Tooltip.js';
 import './Color.js';
 var H = Highcharts, charts = H.charts, color = H.color, css = H.css, find = H.find, noop = H.noop, Tooltip = H.Tooltip;

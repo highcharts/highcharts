@@ -319,8 +319,9 @@ import colorModule from '../parts/Color.js';
 const {
     color
 } = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
     discardElement,
     erase,
@@ -332,7 +333,7 @@ const {
     offset,
     pick,
     pInt
-} = utilitiesModule;
+} = U;
 
 import '../parts/SvgRenderer.js';
 
@@ -421,7 +422,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement, 'afterInit', function (
+    addEvent(SVGElement, 'afterInit', function (
         this: Highcharts.SVGElement
     ): void {
         if (this.element.nodeName === 'text') {

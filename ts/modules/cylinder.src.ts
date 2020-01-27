@@ -79,8 +79,10 @@ declare global {
 
 import colorModule from '../parts/Color.js';
 const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-const pick = utilitiesModule.pick;
+import U from '../parts/Utilities.js';
+const {
+    pick
+} = U;
 
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';

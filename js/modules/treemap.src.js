@@ -15,13 +15,13 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import colorModule from '../parts/Color.js';
 var color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-var correctFloat = utilitiesModule.correctFloat, defined = utilitiesModule.defined, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, stableSort = utilitiesModule.stableSort;
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../parts/Series.js';
 /* eslint-disable no-invalid-this */
 var AXIS_MAX = 100;
-var seriesType = H.seriesType, seriesTypes = H.seriesTypes, addEvent = H.addEvent, merge = H.merge, error = H.error, noop = H.noop, fireEvent = H.fireEvent, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
+var seriesType = H.seriesType, seriesTypes = H.seriesTypes, merge = H.merge, error = H.error, noop = H.noop, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
 // @todo Similar to eachObject, this function is likely redundant
 isBoolean = function (x) {
     return typeof x === 'boolean';
@@ -1421,7 +1421,7 @@ seriesType('treemap', 'scatter'
         return isNumber(point.plotY) && point.y !== null;
     }
 });
-H.addEvent(H.Series, 'afterBindAxes', function () {
+addEvent(H.Series, 'afterBindAxes', function () {
     var series = this, xAxis = series.xAxis, yAxis = series.yAxis, treeAxis;
     if (xAxis && yAxis) {
         if (series.is('treemap')) {

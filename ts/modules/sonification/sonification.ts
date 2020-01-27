@@ -12,9 +12,11 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-var addEvent = H.addEvent;
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    addEvent,
+    extend
+} = U;
 
 /**
  * Internal types.

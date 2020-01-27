@@ -64,6 +64,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     extend,
     pick,
     splat,
@@ -75,7 +76,6 @@ import '../parts/Chart.js';
 import '../parts/Tick.js';
 
 var ZAxis: typeof Highcharts.Axis,
-    addEvent = H.addEvent,
     Axis = H.Axis,
     Chart = H.Chart,
     deg2rad = H.deg2rad,

@@ -89,7 +89,7 @@ declare global {
 
 import colorModule from '../parts/Color.js';
 const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
     clamp,
     extend,
@@ -97,7 +97,7 @@ const {
     pick,
     pInt,
     wrap
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';

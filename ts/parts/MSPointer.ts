@@ -26,12 +26,12 @@ declare global {
 /* globals MSPointerEvent, PointerEvent */
 
 import Pointer from './Pointer.js';
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
     objectEach,
     removeEvent
-} = utilitiesModule;
+} = U;
 
 var charts = H.charts,
     css = H.css,

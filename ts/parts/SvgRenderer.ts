@@ -811,8 +811,9 @@ import colorModule from './Color.js';
 const {
     color
 } = colorModule;
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
+    addEvent,
     animObject,
     attr,
     defined,
@@ -828,12 +829,10 @@ const {
     pInt,
     removeEvent,
     splat
-} = utilitiesModule;
+} = U;
 
 var SVGElement: Highcharts.SVGElement,
     SVGRenderer,
-
-    addEvent = H.addEvent,
     animate = H.animate,
     charts = H.charts,
     css = H.css,

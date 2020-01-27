@@ -150,6 +150,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     correctFloat,
     defined,
     extend,
@@ -163,8 +164,7 @@ import '../parts/Axis.js';
 import '../parts/Tick.js';
 import './Pane.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     merge = H.merge,
     noop = H.noop,
     Tick = H.Tick,

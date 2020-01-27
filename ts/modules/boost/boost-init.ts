@@ -33,7 +33,9 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
+    addEvent,
     extend,
+    fireEvent,
     wrap
 } = U;
 
@@ -42,9 +44,7 @@ import '../../parts/Series.js';
 import butils from './boost-utils.js';
 import createAndAttachRenderer from './boost-attach.js';
 
-var addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
-    Series = H.Series,
+var Series = H.Series,
     seriesTypes = H.seriesTypes,
     noop = function (): void {},
     eachAsync = butils.eachAsync,

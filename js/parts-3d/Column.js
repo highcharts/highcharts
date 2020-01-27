@@ -10,9 +10,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';
-var addEvent = H.addEvent, perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;
+var perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;
 /**
  * Depth of the columns in a 3D column chart.
  *

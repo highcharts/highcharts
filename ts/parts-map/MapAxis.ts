@@ -33,13 +33,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     pick
 } = U;
 
 import '../parts/Axis.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis;
+var Axis = H.Axis;
 
 /* eslint-disable no-invalid-this */
 

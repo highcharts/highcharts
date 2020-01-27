@@ -112,11 +112,11 @@ const {
     Color,
     color
 } = colorModule;
-import utilitiesModule from '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
 const {
     isNumber,
     objectEach
-} = utilitiesModule;
+} = U;
 
 var win = H.win,
     doc = win.document,
