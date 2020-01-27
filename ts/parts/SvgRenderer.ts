@@ -1923,7 +1923,7 @@ extend((
         if (hasTouch && eventType === 'click') {
             element.ontouchstart = function (e: Event): void {
                 svgElement.touchEventFired = Date.now(); // #2269
-                e.preventDefault();
+                // e.preventDefault(); #9682
                 handler.call(element, e);
             };
             element.onclick = function (e: Event): void {
