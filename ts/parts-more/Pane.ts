@@ -577,7 +577,7 @@ addEvent(H.Pointer, 'beforeGetHoverData', function (
                 s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821
                 pick(s.options.enableMouseTracking, true) &&
-                (!chart.polar || s.xAxis.pane === chart.hoverPane)
+                (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
             );
         };
     }
