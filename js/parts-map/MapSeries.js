@@ -17,7 +17,7 @@ import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var extend = U.extend, getPropertyValue = U.getPropertyValue, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
@@ -484,9 +484,13 @@ seriesType('map', 'scatter',
             this.mapMap = mapMap;
             // Registered the point codes that actually hold data
             if (data && joinBy[1]) {
+                var joinKey_1 = joinBy[1];
                 data.forEach(function (point) {
-                    if (mapMap[point[joinBy[1]]]) {
-                        dataUsed.push(mapMap[point[joinBy[1]]]);
+                    var mapKey = joinKey_1.indexOf('custom.') === 0 ?
+                        getPropertyValue(joinKey_1, point) :
+                        point[joinKey_1];
+                    if (mapMap[mapKey]) {
+                        dataUsed.push(mapMap[mapKey]);
                     }
                 });
             }
@@ -495,8 +499,11 @@ seriesType('map', 'scatter',
                 data = data || [];
                 // Registered the point codes that actually hold data
                 if (joinBy[1]) {
+                    var joinKey_2 = joinBy[1];
                     data.forEach(function (point) {
-                        dataUsed.push(point[joinBy[1]]);
+                        dataUsed.push(joinKey_2.indexOf('custom.') === 0 ?
+                            getPropertyValue(joinKey_2, point) :
+                            point[joinKey_2]);
                     });
                 }
                 // Add those map points that don't correspond to data, which
@@ -821,9 +828,13 @@ seriesType('map', 'scatter',
     // Extend the Point object to split paths
     applyOptions: function (options, x) {
         var series = this.series, point = Point.prototype.applyOptions.call(this, options, x), joinBy = series.joinBy, mapPoint;
-        if (series.mapData) {
-            mapPoint = typeof point[joinBy[1]] !== 'undefined' &&
-                series.mapMap[point[joinBy[1]]];
+        if (series.mapData && series.mapMap) {
+            var joinKey = joinBy[1];
+            var mapKey = joinKey.indexOf('custom.') === 0 ?
+                getPropertyValue(joinKey, point.properties) :
+                point[joinKey];
+            mapPoint = typeof mapKey !== 'undefined' &&
+                series.mapMap[mapKey];
             if (mapPoint) {
                 // This applies only to bubbles
                 if (series.xyFromShape) {
