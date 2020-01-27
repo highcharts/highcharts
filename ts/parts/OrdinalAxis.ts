@@ -60,6 +60,7 @@ import './Axis.js';
 
 import U from './Utilities.js';
 const {
+    addEvent,
     defined,
     extend,
     pick,
@@ -71,8 +72,7 @@ import './Series.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import './Navigator.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     css = H.css,
     noop = H.noop,

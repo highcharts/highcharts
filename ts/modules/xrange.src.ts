@@ -104,18 +104,18 @@ declare global {
 
 import colorModule from '../parts/Color.js';
 const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
+    addEvent,
     clamp,
     correctFloat,
     defined,
     isNumber,
     isObject,
     pick
-} = utilitiesModule;
+} = U;
 
-var addEvent = H.addEvent,
-    columnType = H.seriesTypes.column,
+var columnType = H.seriesTypes.column,
     find = H.find,
     merge = H.merge,
     seriesType = H.seriesType,

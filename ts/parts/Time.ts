@@ -149,7 +149,7 @@ declare global {
  * Timezone offset in minutes.
  */
 
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
     defined,
     extend,
@@ -159,7 +159,7 @@ const {
     pick,
     splat,
     timeUnits
-} = utilitiesModule;
+} = U;
 
 var H = Highcharts,
     merge = H.merge,

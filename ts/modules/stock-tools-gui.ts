@@ -136,13 +136,15 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var extend = U.extend,
-    isArray = U.isArray,
-    pick = U.pick;
+const {
+    addEvent,
+    extend,
+    fireEvent,
+    isArray,
+    pick
+} = U;
 
-var addEvent = H.addEvent,
-    createElement = H.createElement,
-    fireEvent = H.fireEvent,
+var createElement = H.createElement,
     getStyle = H.getStyle,
     merge = H.merge,
     css = H.css,

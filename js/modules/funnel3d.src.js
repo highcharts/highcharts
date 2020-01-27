@@ -15,8 +15,8 @@
 import H from '../parts/Globals.js';
 import colorModule from '../parts/Color.js';
 var color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-var extend = utilitiesModule.extend, pick = utilitiesModule.pick, relativeLength = utilitiesModule.relativeLength;
+import U from '../parts/Utilities.js';
+var extend = U.extend, pick = U.pick, relativeLength = U.relativeLength;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 var charts = H.charts, error = H.error, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, 

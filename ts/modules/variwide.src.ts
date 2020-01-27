@@ -72,6 +72,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     isNumber,
     pick,
     wrap
@@ -79,8 +80,7 @@ const {
 
 import '../parts/AreaSeries.js';
 
-var addEvent = H.addEvent,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

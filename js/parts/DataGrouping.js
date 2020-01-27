@@ -25,11 +25,11 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
-var addEvent = H.addEvent, Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, format = H.format, merge = H.merge, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
+var Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, format = H.format, merge = H.merge, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */

@@ -11,8 +11,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
-var addEvent = H.addEvent, argsToArray = function (args) {
+var addEvent = U.addEvent, defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
+var argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
 }, dateFormat = H.dateFormat, isObject = function (x) {
     // Always use strict mode

@@ -3092,6 +3092,17 @@ H.defaultOptions = {
          * @apioption tooltip.split
          */
         /**
+         * Prevents the tooltip from switching or closing, when touched or
+         * pointed.
+         *
+         * @sample highcharts/tooltip/stickonhover/
+         *         Tooltip sticks on hover event
+         *
+         * @type      {boolean}
+         * @since     8.0.1
+         * @apioption tooltip.stickOnHover
+         */
+        /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using
          * HTML allows advanced formatting like tables and images in the
          * tooltip. It is also recommended for rtl languages as it works around

@@ -340,6 +340,7 @@ declare global {
             shared?: boolean;
             snap?: number;
             split?: boolean;
+            stickOnHover?: boolean;
             style?: CSSObject;
             useHTML?: boolean;
             valueDecimals?: number;
@@ -3673,6 +3674,18 @@ H.defaultOptions = {
          * @since     5.0.0
          * @product   highcharts highstock
          * @apioption tooltip.split
+         */
+
+        /**
+         * Prevents the tooltip from switching or closing, when touched or
+         * pointed.
+         *
+         * @sample highcharts/tooltip/stickonhover/
+         *         Tooltip sticks on hover event
+         *
+         * @type      {boolean}
+         * @since     8.0.1
+         * @apioption tooltip.stickOnHover
          */
 
         /**

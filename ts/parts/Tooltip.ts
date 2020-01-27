@@ -41,6 +41,7 @@ declare global {
             public followPointer?: boolean;
             public hideTimer?: number;
             public isHidden: boolean;
+            public isSticky: boolean;
             public label?: SVGElement;
             public len?: number;
             public now: Dictionary<number>;

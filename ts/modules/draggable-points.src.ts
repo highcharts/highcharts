@@ -357,13 +357,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     clamp,
     objectEach,
     pick
 } = U;
 
-var addEvent = H.addEvent,
-    merge = H.merge,
+var merge = H.merge,
     seriesTypes = H.seriesTypes;
 
 /**

@@ -14,7 +14,7 @@ import H from '../parts/Globals.js';
  */
 import '../mixins/centered-series.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, extend = U.extend, pick = U.pick, splat = U.splat;
 var CenteredSeriesMixin = H.CenteredSeriesMixin, merge = H.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.Chart.prototype.collectionsWithUpdate.push('pane');
@@ -352,13 +352,13 @@ H.Chart.prototype.getHoverPane = function (eventArgs) {
     }
     return hoverPane;
 };
-H.addEvent(H.Chart, 'afterIsInsidePlot', function (e) {
+addEvent(H.Chart, 'afterIsInsidePlot', function (e) {
     var chart = this;
     if (chart.polar) {
         e.isInsidePlot = chart.pane.some(function (pane) { return isInsidePane(e.x, e.y, pane.center); });
     }
 });
-H.addEvent(H.Pointer, 'beforeGetHoverData', function (eventArgs) {
+addEvent(H.Pointer, 'beforeGetHoverData', function (eventArgs) {
     var chart = this.chart;
     if (chart.polar) {
         // Find pane we are currently hovering over.
@@ -372,7 +372,7 @@ H.addEvent(H.Pointer, 'beforeGetHoverData', function (eventArgs) {
         };
     }
 });
-H.addEvent(H.Pointer, 'afterGetHoverData', function (eventArgs) {
+addEvent(H.Pointer, 'afterGetHoverData', function (eventArgs) {
     var chart = this.chart;
     if (eventArgs.hoverPoint &&
         eventArgs.hoverPoint.plotX &&

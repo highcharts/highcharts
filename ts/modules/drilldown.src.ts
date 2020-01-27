@@ -296,14 +296,16 @@ import colorModule from '../parts/Color.js';
 const {
     Color
 } = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
+    addEvent,
     animObject,
     extend,
+    fireEvent,
     objectEach,
     pick,
     syncTimeout
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -311,8 +313,7 @@ import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 import '../parts/Tick.js';
 
-var addEvent = H.addEvent,
-    noop = H.noop,
+var noop = H.noop,
     defaultOptions = H.defaultOptions,
     format = H.format,
     Chart = H.Chart,
@@ -320,7 +321,6 @@ var addEvent = H.addEvent,
     PieSeries = seriesTypes.pie,
     ColumnSeries = seriesTypes.column,
     Tick = H.Tick,
-    fireEvent = H.fireEvent,
     ddSeriesId = 1;
 
 // Add language

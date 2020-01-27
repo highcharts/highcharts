@@ -687,6 +687,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     animObject,
     arrayMax,
     arrayMin,
@@ -695,6 +696,7 @@ const {
     defined,
     destroyObjectProperties,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isString,
@@ -710,11 +712,9 @@ import './Color.js';
 import './Options.js';
 import './Tick.js';
 
-var addEvent = H.addEvent,
-    color = H.color,
+var color = H.color,
     defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
-    fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
     merge = H.merge,

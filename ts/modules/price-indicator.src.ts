@@ -36,10 +36,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    addEvent,
+    isArray
+} = U;
 
-var addEvent = H.addEvent,
-    merge = H.merge;
+var merge = H.merge;
 
 /**
  * The line marks the last price from visible range of points.
