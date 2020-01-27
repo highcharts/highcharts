@@ -4,7 +4,7 @@ Highcharts.chart('container', {
     },
 
     title: {
-        text: 'Stacking in category center'
+        text: 'Columns centered in category'
     },
 
     subtitle: {
@@ -18,7 +18,7 @@ Highcharts.chart('container', {
 
     plotOptions: {
         series: {
-            stacking: 'group'
+            centerInCategory: true
         }
     },
 

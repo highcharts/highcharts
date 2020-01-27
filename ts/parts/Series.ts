@@ -1572,13 +1572,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * Possible values are `undefined` to disable, `"normal"` to stack by
          * value or `"percent"`.
          *
-         * A third option is `"category-center"` to stack
-         * the items next to each other within the category. This is similar to
-         * how multiple column series are grouped without stacking, with the
-         * exception that no space is reserved for `null` or missing points, so
-         * the remaining points in the category are centered and rendered next
-         * to each other.
-         *
          * When stacking is enabled, data must be sorted
          * in ascending X order.
          *
@@ -1605,8 +1598,6 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          *         Bar
          * @sample {highcharts} highcharts/plotoptions/series-stacking-percent-area/
          *         Area
-         * @sample {highcharts} highcharts/plotoptions/series-stacking-category-center/
-         *         Category center
          * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-normal-stacking
          *         Waterfall with normal stacking
          * @sample {highcharts} highcharts/plotoptions/series-waterfall-with-overlap-stacking
@@ -1616,7 +1607,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          *
          * @type       {string}
          * @product    highcharts highstock
-         * @validvalue ["normal", "overlap", "percent", "category-center", "stream"]
+         * @validvalue ["normal", "overlap", "percent", "stream"]
          * @apioption  plotOptions.series.stacking
          */
 

@@ -110,6 +110,7 @@ declare global {
             public axis: Axis;
             public base?: string;
             public cumulative?: (null|number);
+            public hasValidPoints: boolean;
             public isNegative: boolean;
             public label?: SVGElement;
             public leftCliff: number;
@@ -244,6 +245,7 @@ H.StackItem = function (
     // This will keep each points' extremes stored by series.index and point
     // index
     this.points = {};
+    this.hasValidPoints = false;
 
     // Save the stack option on the series configuration object, and whether to
     // treat it as percent
@@ -625,6 +627,7 @@ Axis.prototype.resetStacks = function (this: Highcharts.Axis): void {
                 } else {
                     stack.total = null;
                     stack.cumulative = null;
+                    stack.hasValidPoints = false;
                 }
             });
         });
@@ -656,9 +659,24 @@ Axis.prototype.cleanStacks = function (this: Highcharts.Axis): void {
 };
 
 
-// Stacking methods defined for Series prototype
+/**
+ * Set grouped points in a stack-like object. When `centerInCategory` is true,
+ * and `stacking` is not enabled, we need a pseudo (horizontal) stack in order
+ * to handle grouping of points within the same category.
+ *
+ * @private
+ * @function Highcharts.Series#setStackedPoints
+ * @return {void}
+ */
 Series.prototype.setGroupedPoints = function (this: Highcharts.Series): void {
-    if (this.options.centerInCategory) {
+    if (
+        this.options.centerInCategory &&
+        // With stacking enabled, we already have stacks that we can compute
+        // from
+        !this.options.stacking &&
+        // With only one series, we don't need to consider centerInCategory
+        this.chart.series.length > 1
+    ) {
         Series.prototype.setStackedPoints.call(this, 'group');
     }
 };
@@ -693,7 +711,7 @@ Series.prototype.setStackedPoints = function (
         threshold = seriesOptions.threshold,
         stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0),
         stackOption = seriesOptions.stack,
-        stackKey = series.stackKey || `${series.type},${stacking}`,
+        stackKey = stackingParam ? `${series.type},${stacking}` : series.stackKey,
         negKey = '-' + stackKey,
         negStacks = series.negStacks && stacking !== 'group',
         yAxis = series.yAxis,
@@ -819,6 +837,7 @@ Series.prototype.setStackedPoints = function (
         if (y !== null) {
             (stack.points[pointKey as any] as any).push(stack.cumulative);
             stackedYData[i] = stack.cumulative;
+            stack.hasValidPoints = true;
         }
     }
 

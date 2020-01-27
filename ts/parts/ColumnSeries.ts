@@ -22,6 +22,7 @@ declare global {
             offset: number;
             width: number;
             paddedWidth: number;
+            columnCount: number;
         }
         interface ColumnPointOptions extends LinePointOptions {
             dashStyle?: DashStyleValue;
@@ -83,6 +84,12 @@ declare global {
             public points: Array<ColumnPoint>;
             public pointXOffset: number;
             public translatedThreshold?: number;
+            public adjustForMissingColumns(
+                x: number,
+                pointWidth: number,
+                point: ColumnPoint,
+                metrics: ColumnMetricsObject
+            ): number;
             public crispCol(
                 x: number,
                 y: number,
@@ -209,6 +216,19 @@ seriesType<Highcharts.ColumnSeries>(
          * @product   highcharts highstock gantt
          * @apioption plotOptions.column.colors
          */
+
+        /**
+         * When `true`, the columns will center in the category, ignoring null
+         * or missing points. When `false`, space will be reserved for null or
+         * missing points.
+         *
+         * @sample {highcharts} highcharts/series-column/centerincategory/
+         *         Center in category
+         *
+         * @since   8.0.1
+         * @product highcharts highstock gantt
+         */
+        centerInCategory: false,
 
         /**
          * When true, each column edge is rounded to its nearest pixel in order
@@ -692,7 +712,8 @@ seriesType<Highcharts.ColumnSeries>(
             series.columnMetrics = {
                 width: pointWidth,
                 offset: pointXOffset,
-                paddedWidth: pointOffsetWidth
+                paddedWidth: pointOffsetWidth,
+                columnCount
             };
             return series.columnMetrics;
 
@@ -758,6 +779,84 @@ seriesType<Highcharts.ColumnSeries>(
         },
 
         /**
+         * Adjust for missing columns, according to the `centerInCategory`
+         * option. Missing columns are either single points or stacks where the
+         * point or points are either missing or null.
+         *
+         * @private
+         * @function Highcharts.seriesTypes.column#adjustForMissingColumns
+         * @param {number} x
+         *        The x coordinate of the column, left side
+         * @param {number} pointWidth
+         *        The pointWidth, already computed upstream
+         * @param {Highcharts.ColumnPoint} point
+         *        The point instance
+         * @param {Highcharts.ColumnMetricsObject} metrics
+         *        The series-wide column metrics
+         * @return {number}
+         *        The adjusted x position, or the original if not adjusted
+         */
+        adjustForMissingColumns: function (
+            this: Highcharts.ColumnSeries,
+            x: number,
+            pointWidth: number,
+            point: Highcharts.ColumnPoint,
+            metrics: Highcharts.ColumnMetricsObject
+        ): number {
+            const stacking = this.options.stacking;
+            if (!point.isNull && metrics.columnCount > 1) {
+                let indexInCategory = 0;
+                let totalInCategory = 0;
+
+                // Loop over all the stacks on the Y axis. When stacking is
+                // enabled, these are real point stacks. When stacking is not
+                // enabled, but `centerInCategory` is true, there is one stack
+                // handling the grouping of points in each category. This is
+                // done in the `setGroupedPoints` function.
+                Highcharts.objectEach(
+                    this.yAxis.stacks,
+                    (stack: Highcharts.Dictionary<Highcharts.StackItem>): void => {
+                        if (typeof point.x === 'number') {
+                            const stackItem = stack[point.x.toString()];
+
+                            if (stackItem) {
+                                const pointValues = stackItem.points[this.index as any],
+                                    total = stackItem.total;
+
+                                // If true `stacking` is enabled, count the
+                                // total number of non-null stacks in the
+                                // category, and note which index this point is
+                                // within those stacks.
+                                if (stacking) {
+                                    if (pointValues) {
+                                        indexInCategory = totalInCategory;
+                                    }
+                                    if (stackItem.hasValidPoints) {
+                                        totalInCategory++;
+                                    }
+
+                                // If `stacking` is not enabled, look for the
+                                // index and total of the `group` stack.
+                                } else {
+                                    indexInCategory = pointValues[1];
+                                    totalInCategory = total || 0;
+                                }
+                            }
+                        }
+                    }
+                );
+
+                // Compute the adjusted x position
+                const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
+                    pointWidth;
+                x = (point.plotX || 0) + boxWidth / 2 - pointWidth -
+                    indexInCategory * metrics.paddedWidth;
+
+            }
+            return x;
+        },
+
+        /**
          * Translate each point to the plot area coordinate system and find
          * shape positions
          *
@@ -787,8 +886,7 @@ seriesType<Highcharts.ColumnSeries>(
                     Math.max(seriesPointWidth, 1 + 2 * borderWidth),
                 seriesXOffset = series.pointXOffset = metrics.offset,
                 dataMin = series.dataMin,
-                dataMax = series.dataMax,
-                centeringStack = yAxis.stacks[`${series.type},group`];
+                dataMax = series.dataMax;
 
             if (chart.inverted) {
                 (translatedThreshold as any) -= 0.5; // #3355
@@ -866,18 +964,10 @@ seriesType<Highcharts.ColumnSeries>(
                     barX -= Math.round((pointWidth - seriesPointWidth) / 2);
                 }
 
-                // Center in category operates with its specific StackItems
-                if (centeringStack && !point.isNull) {
-                    const pointStack = centeringStack[point.x as any];
-                    const indexInCategory = pointStack.points[series.index as any][1];
-                    const totalInCategory = pointStack.total || 0;
-                    const boxWidth = (totalInCategory - 1) * metrics.paddedWidth +
-                        pointWidth;
-
-                    barX = plotX + boxWidth / 2 - pointWidth -
-                        indexInCategory * metrics.paddedWidth;
+                // Adjust for null or missing points
+                if (options.centerInCategory) {
+                    barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
                 }
-
 
                 // Cache for access in polar
                 point.barX = barX;
