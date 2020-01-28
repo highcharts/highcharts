@@ -1312,7 +1312,7 @@ seriesType<Highcharts.MapSeries>(
             if (series.mapData && series.mapMap) {
                 const joinKey = joinBy[1];
                 const mapKey = joinKey.indexOf('custom.') === 0 ?
-                    getPropertyValue(joinKey, point.properties) :
+                    getPropertyValue(joinKey, point.options) :
                     (point as any)[joinKey];
                 mapPoint = typeof mapKey !== 'undefined' &&
                     series.mapMap[mapKey];

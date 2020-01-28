@@ -831,7 +831,7 @@ seriesType('map', 'scatter',
         if (series.mapData && series.mapMap) {
             var joinKey = joinBy[1];
             var mapKey = joinKey.indexOf('custom.') === 0 ?
-                getPropertyValue(joinKey, point.properties) :
+                getPropertyValue(joinKey, point.options) :
                 point[joinKey];
             mapPoint = typeof mapKey !== 'undefined' &&
                 series.mapMap[mapKey];
