@@ -13,8 +13,8 @@
 import H from '../../parts/Globals.js';
 import GLShader from './wgl-shader.js';
 import GLVertexBuffer from './wgl-vbuffer.js';
-import colorModule from '../../parts/Color.js';
-var Color = colorModule.Color, color = colorModule.color;
+import Color from '../../parts/Color.js';
+var color = Color.parse;
 import U from '../../parts/Utilities.js';
 var isNumber = U.isNumber, objectEach = U.objectEach;
 var win = H.win, doc = win.document, merge = H.merge, some = H.some, pick = H.pick;

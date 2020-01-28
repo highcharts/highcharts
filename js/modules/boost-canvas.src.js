@@ -14,8 +14,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import colorModule from '../parts/Color.js';
-var Color = colorModule.Color, color = colorModule.color;
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';

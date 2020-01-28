@@ -556,8 +556,8 @@ declare global {
  */
 
 import Time from './Time.js';
-import colorModule from './Color.js';
-const color = colorModule.color;
+import Color from './Color.js';
+const color = Color.parse;
 import './Utilities.js';
 
 var isTouchDevice = H.isTouchDevice,

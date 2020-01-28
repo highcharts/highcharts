@@ -401,9 +401,5 @@ H.Color = Color;
  * @return {Highcharts.Color}
  *         Color instance
  */
-var color = H.color = Color.parse;
-var exports = {
-    Color: Color,
-    color: color
-};
-export default exports;
+H.color = Color.parse;
+export default H.Color;

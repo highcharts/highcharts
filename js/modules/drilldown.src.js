@@ -124,16 +124,15 @@ import H from '../parts/Globals.js';
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import colorModule from '../parts/Color.js';
-var Color = colorModule.Color;
+import Color from '../parts/Color.js';
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
-import '../parts/Tick.js';
-var noop = H.noop, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, Tick = H.Tick, ddSeriesId = 1;
+var noop = H.noop, defaultOptions = H.defaultOptions, format = H.format, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**

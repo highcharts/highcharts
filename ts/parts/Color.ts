@@ -50,6 +50,8 @@ declare global {
             r: number;
         }
         class Color {
+            public static names: Record<string, ColorString>;
+            public static parse(input: (ColorType|undefined)): Color;
             public constructor(
                 input: (ColorString|GradientColorObject|PatternObject|undefined)
             );
@@ -225,12 +227,7 @@ class Color {
      * @return {Highcharts.Color}
      * Color instance.
      */
-    public static parse(
-        input: (
-            Highcharts.ColorString|Highcharts.GradientColorObject|
-            Highcharts.PatternObject|undefined
-        )
-    ): Highcharts.Color {
+    public static parse(input: (Highcharts.ColorType|undefined)): Highcharts.Color {
         return new Color(input);
     }
 
@@ -538,11 +535,6 @@ H.Color = Color;
  * @return {Highcharts.Color}
  *         Color instance
  */
-const color = H.color = Color.parse;
+H.color = Color.parse;
 
-const exports = {
-    Color,
-    color
-};
-
-export default exports;
+export default H.Color;
