@@ -68,7 +68,7 @@ declare global {
  */
 
 // Helping function - to open fullscreen, use toggleFullscreen() instead.
-H.Chart.prototype.openFullscreen = function (this: Highcharts.Chart): void {
+H.Chart.prototype.openFullscreen = function (): void {
     const chart = this,
         menuItems = chart.options.exporting?.buttons?.contextButton.menuItems;
 
@@ -109,8 +109,8 @@ H.Chart.prototype.openFullscreen = function (this: Highcharts.Chart): void {
 };
 
 // Helping function - to close fullscreen, use toggleFullscreen() instead.
-H.Chart.prototype.closeFullscreen = function (this: Highcharts.Chart): void {
-    var chart = this,
+H.Chart.prototype.closeFullscreen = function (): void {
+    const chart = this,
         exportingOptions = chart.options.exporting,
         exportDivElements = chart.exportDivElements,
         menuItems = exportingOptions?.buttons?.contextButton.menuItems;
@@ -145,7 +145,7 @@ H.Chart.prototype.closeFullscreen = function (this: Highcharts.Chart): void {
     chart.isFullscreen = false;
 };
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 /**
  * Exporting module required. Toggles displaying the chart in fullscreen mode.
@@ -162,13 +162,18 @@ H.Chart.prototype.closeFullscreen = function (this: Highcharts.Chart): void {
  * @requires    modules/exporting
  * @requires    modules/fullscreen
  */
-H.Chart.prototype.toggleFullscreen = function (this: Highcharts.Chart): void {
-    var chart = this,
-        container = chart.container.parentNode as Highcharts.HTMLDOMElement;
+H.Chart.prototype.toggleFullscreen = function (): void {
+    const chart = this;
+
+    if (!(chart.container.parentNode instanceof HTMLElement)) {
+        return;
+    }
+
+    const container = chart.container.parentNode;
 
     // Hold event and methods available only for a current browser.
     if (!chart.browserProps) {
-        if (container.requestFullscreen as unknown) {
+        if (typeof container.requestFullscreen === 'function') {
             chart.browserProps = {
                 fullscreenChange: 'fullscreenchange',
                 requestFullscreen: 'requestFullscreen',
