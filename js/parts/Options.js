@@ -3095,6 +3095,10 @@ H.defaultOptions = {
          * Prevents the tooltip from switching or closing, when touched or
          * pointed.
          *
+         * Defaults to `true` if the
+         * [Accessibility Module](https://www.highcharts.com/docs/accessibility/accessibility-module)
+         * is loaded.
+         *
          * @sample highcharts/tooltip/stickonhover/
          *         Tooltip sticks on hover event
          *
