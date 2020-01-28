@@ -119,7 +119,7 @@ Good to Know
 ------------
 
 
-### Make use of common ES6 features
+### Make use of common ES6+ features
 
 TypeScript does transpile most common ES6 features down to ES5-capable browsers
 like Internet Explorer 9+, Chrome 5+, Firefox 4+, Safari 5+. So you can make use
@@ -154,6 +154,12 @@ of them:
 
 * Spread objects into objects:
   `const obj = { cool: true }; const clone = { isClone: true, ...obj };`
+
+* Optional chaining for props that might not exist:
+  `const option = grandparent?.parent?.myOption;`
+
+* Nullish coalescing operator instead of pick():
+  `const option = optionThatCanBeNull ?? defaultOption;`
 
 
 ### Type check for interfaces
