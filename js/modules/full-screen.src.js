@@ -74,7 +74,7 @@ H.Chart.prototype.closeFullscreen = function () {
     }
     chart.isFullscreen = false;
 };
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 /**
  * Exporting module required. Toggles displaying the chart in fullscreen mode.
  * By default, when the exporting module is enabled, a context button with
@@ -91,10 +91,14 @@ H.Chart.prototype.closeFullscreen = function () {
  * @requires    modules/fullscreen
  */
 H.Chart.prototype.toggleFullscreen = function () {
-    var chart = this, container = chart.container.parentNode;
+    var chart = this;
+    if (!(chart.container.parentNode instanceof HTMLElement)) {
+        return;
+    }
+    var container = chart.container.parentNode;
     // Hold event and methods available only for a current browser.
     if (!chart.browserProps) {
-        if (container.requestFullscreen) {
+        if (typeof container.requestFullscreen === 'function') {
             chart.browserProps = {
                 fullscreenChange: 'fullscreenchange',
                 requestFullscreen: 'requestFullscreen',
