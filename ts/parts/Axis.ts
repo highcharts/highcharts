@@ -685,6 +685,9 @@ declare global {
  * @return {string}
  */
 
+import Color from './Color.js';
+const color = Color.parse;
+import Tick from './Tick.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -708,18 +711,14 @@ const {
     syncTimeout
 } = U;
 
-import './Color.js';
 import './Options.js';
-import './Tick.js';
 
-var color = H.color,
-    defaultOptions = H.defaultOptions,
+var defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
     format = H.format,
     getMagnitude = H.getMagnitude,
     merge = H.merge,
-    normalizeTickInterval = H.normalizeTickInterval,
-    Tick = H.Tick;
+    normalizeTickInterval = H.normalizeTickInterval;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
