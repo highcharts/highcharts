@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isObject = U.isObject, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -205,6 +205,18 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          *         Set annotation visibility
          */
         visible: true,
+        /**
+         * Whether to defer displaying the annotations until the set
+         * duration time has finished. Setting to `'false'` disable
+         * the display delay time. If set to `'true'` inherits the duration
+         * time set in [plotOptions.series.animation](#plotOptions.series.animation).
+         *
+         * @sample highcharts/annotations/defer
+         *         Set defer duration time
+         *
+         * @type {boolean|Highcharts.AnnotationDeferOptionsObject}
+         */
+        defer: true,
         /**
          * Allow an annotation to be draggable by a user. Possible
          * values are `'x'`, `'xy'`, `'y'` and `''` (disabled).
@@ -782,12 +794,23 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         }
     },
     render: function () {
-        var renderer = this.chart.renderer;
+        var renderer = this.chart.renderer, plotOptions = this.chart.options.plotOptions, defer = this.options.defer;
+        if (defer) {
+            // If defer duration is set use set value,
+            // else inherits from animation set in plotOptions
+            this.options.defer = isObject(this.options.defer) ? this.options.defer : (plotOptions.series && defined(plotOptions.series.animation) ?
+                plotOptions.series.animation :
+                plotOptions.line.animation);
+            if (this.chart.renderer.forExport) {
+                this.options.defer = false;
+            }
+        }
         this.graphic = renderer
             .g('annotation')
             .attr({
             zIndex: this.options.zIndex,
-            visibility: this.options.visible ?
+            visibility: this.options.visible &&
+                !this.options.defer ?
                 'visible' :
                 'hidden'
         })
@@ -1043,6 +1066,21 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this.plotBoxClip.attr(this.plotBox);
         this.annotations.forEach(function (annotation) {
             annotation.redraw();
+        });
+        this.delayRendering(); // #12584
+    },
+    delayRendering: function () {
+        var chart = this;
+        chart.annotations.forEach(function (annotation) {
+            var defer = annotation.options.defer, seriesAnimDuration = animObject(defer).duration, fadeInDuration = seriesAnimDuration ? Math.min(seriesAnimDuration, 200) : 0, annotationsGroup = [annotation.shapesGroup, annotation.labelsGroup];
+            if (defer && seriesAnimDuration) {
+                annotationsGroup.forEach(function (element) {
+                    setTimeout(function () {
+                        element.show();
+                        element.animate({ opacity: 1 }, { duration: fadeInDuration });
+                    }, seriesAnimDuration - fadeInDuration);
+                });
+            }
         });
     }
 });

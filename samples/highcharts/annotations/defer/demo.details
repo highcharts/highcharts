@@ -1,0 +1,6 @@
+---
+ name: Highcharts Anootations Demo
+ authors:
+   - Sebastian Wędzel
+ js_wrap: b
+...

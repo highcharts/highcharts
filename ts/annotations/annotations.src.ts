@@ -104,6 +104,7 @@ declare global {
             plotBoxClip: SVGElement;
             addAnnotation(userOptions: AnnotationsOptions, redraw?: boolean): Annotation;
             drawAnnotations(): void;
+            delayRendering(): void;
             initAnnotation(userOptions: AnnotationsOptions): Annotation;
             removeAnnotation(idOrAnnotation: (number|string|Annotation)): void;
         }
@@ -119,6 +120,7 @@ declare global {
             drag?: AnnotationControlPointDragEventFunction;
         }
         interface AnnotationControlPointOptionsObject {
+            defer?: (boolean|AnnotationDeferOptionsObject);
             draggable?: undefined;
             events: AnnotationControlPointEventsOptionsObject;
             height: number;
@@ -147,6 +149,9 @@ declare global {
         interface AnnotationSeries extends Series {
             chart: AnnotationChart;
             points: Array<AnnotationPoint>;
+        }
+        interface AnnotationDeferOptionsObject {
+            duration: number;
         }
         interface AnnotationsEventsOptions {
             afterUpdate?: EventCallbackFunction<Annotation>;
@@ -184,6 +189,7 @@ declare global {
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
             controlPointOptions: AnnotationControlPointOptionsObject;
+            defer?: (boolean|AnimationOptionsObject);
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -250,10 +256,12 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    animObject,
     defined,
     destroyObjectProperties,
     erase,
     extend,
+    isObject,
     pick,
     splat,
     wrap
@@ -496,6 +504,19 @@ merge(
              *         Set annotation visibility
              */
             visible: true,
+
+            /**
+             * Whether to defer displaying the annotations until the set
+             * duration time has finished. Setting to `'false'` disable
+             * the display delay time. If set to `'true'` inherits the duration
+             * time set in [plotOptions.series.animation](#plotOptions.series.animation).
+             *
+             * @sample highcharts/annotations/defer
+             *         Set defer duration time
+             *
+             * @type {boolean|Highcharts.AnnotationDeferOptionsObject}
+             */
+            defer: true,
 
             /**
              * Allow an annotation to be draggable by a user. Possible
@@ -1198,13 +1219,29 @@ merge(
         },
 
         render: function (this: Highcharts.Annotation): void {
-            var renderer = this.chart.renderer;
+            var renderer = this.chart.renderer,
+                plotOptions = this.chart.options.plotOptions as any,
+                defer = this.options.defer;
+
+            if (defer) {
+                // If defer duration is set use set value,
+                // else inherits from animation set in plotOptions
+                this.options.defer = isObject(this.options.defer) ? this.options.defer : (
+                    plotOptions.series && defined(plotOptions.series.animation) ?
+                        plotOptions.series.animation :
+                        plotOptions.line.animation
+                );
+                if (this.chart.renderer.forExport) {
+                    this.options.defer = false;
+                }
+            }
 
             this.graphic = renderer
                 .g('annotation')
                 .attr({
                     zIndex: this.options.zIndex,
-                    visibility: this.options.visible ?
+                    visibility: this.options.visible &&
+                        !this.options.defer ?
                         'visible' :
                         'hidden'
                 })
@@ -1607,6 +1644,27 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
 
         this.annotations.forEach(function (annotation): void {
             annotation.redraw();
+        });
+        this.delayRendering(); // #12584
+    },
+
+    delayRendering: function (this: Highcharts.AnnotationChart): void {
+        var chart = this;
+
+        chart.annotations.forEach(function (annotation): void {
+            var defer = annotation.options.defer,
+                seriesAnimDuration = animObject(defer).duration,
+                fadeInDuration = seriesAnimDuration ? Math.min(seriesAnimDuration, 200) : 0,
+                annotationsGroup = [annotation.shapesGroup, annotation.labelsGroup];
+
+            if (defer && seriesAnimDuration) {
+                annotationsGroup.forEach(function (element): void {
+                    setTimeout(function (): void {
+                        element.show();
+                        element.animate({ opacity: 1 }, { duration: fadeInDuration });
+                    }, (seriesAnimDuration as any) - fadeInDuration);
+                });
+            }
         });
     }
 });
