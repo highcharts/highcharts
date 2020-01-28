@@ -734,6 +734,12 @@ var options = {
              */
             enabled: true
         }
+    },
+    /**
+     * @optionparent tooltip
+     */
+    tooltip: {
+        stickOnHover: true
     }
 };
 export default options;

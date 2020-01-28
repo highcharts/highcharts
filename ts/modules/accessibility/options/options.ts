@@ -932,6 +932,13 @@ var options: DeepPartial<Highcharts.Options> = {
              */
             enabled: true
         }
+    },
+
+    /**
+     * @optionparent tooltip
+     */
+    tooltip: {
+        stickOnHover: true
     }
 
 };
