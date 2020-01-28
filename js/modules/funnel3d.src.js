@@ -13,8 +13,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import colorModule from '../parts/Color.js';
-var color = colorModule.color;
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
 var extend = U.extend, pick = U.pick, relativeLength = U.relativeLength;
 import '../parts/ColumnSeries.js';

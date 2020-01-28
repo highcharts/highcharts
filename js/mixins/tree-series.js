@@ -4,7 +4,7 @@
  *
  * */
 import H from '../parts/Globals.js';
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
 var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
 var isBoolean = function (x) {
@@ -68,7 +68,7 @@ var getColor = function getColor(node, options) {
         var colorVariation = level && level.colorVariation;
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
-                return colorModule.color(color).brighten(colorVariation.to * (index / siblings)).get();
+                return Color.parse(color).brighten(colorVariation.to * (index / siblings)).get();
             }
         }
         return color;

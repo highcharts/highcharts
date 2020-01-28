@@ -186,8 +186,8 @@ import H from './Globals.js';
 * @type {number}
 */
 import Time from './Time.js';
-import colorModule from './Color.js';
-var color = colorModule.color;
+import Color from './Color.js';
+var color = Color.parse;
 import './Utilities.js';
 var isTouchDevice = H.isTouchDevice, merge = H.merge, svg = H.svg;
 /* ************************************************************************** *

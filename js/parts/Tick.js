@@ -658,7 +658,4 @@ var Tick = /** @class */ (function () {
     return Tick;
 }());
 H.Tick = Tick;
-var tickModule = {
-    Tick: Tick
-};
-export default tickModule;
+export default H.Tick;

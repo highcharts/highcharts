@@ -20,8 +20,8 @@ import H from '../parts/Globals.js';
 * @name Highcharts.SymbolOptionsObject#rounded
 * @type {boolean|undefined}
 */
-import colorModule from '../parts/Color.js';
-var color = colorModule.color;
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
 import '../parts/Options.js';

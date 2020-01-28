@@ -807,10 +807,8 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-import colorModule from './Color.js';
-const {
-    color
-} = colorModule;
+import Color from './Color.js';
+const color = Color.parse;
 import U from './Utilities.js';
 const {
     addEvent,

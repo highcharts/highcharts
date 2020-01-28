@@ -66,7 +66,7 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
 const {
     extend,
@@ -196,7 +196,7 @@ var getColor = function getColor(
 
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
-                return colorModule.color(color).brighten(
+                return Color.parse(color).brighten(
                     colorVariation.to * (index / siblings)
                 ).get() as any;
             }
