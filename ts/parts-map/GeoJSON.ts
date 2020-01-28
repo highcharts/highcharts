@@ -53,6 +53,10 @@ declare global {
                 transform: any
             ): (MapLatLonObject|undefined);
         }
+        interface ChartOptions {
+            /** @requires modules/map */
+            proj4?: any;
+        }
         /** @requires modules/maps */
         function geojson(
             geojson: any,
@@ -170,7 +174,20 @@ Chart.prototype.transformFromLatLon = function (
     latLon: Highcharts.MapLatLonObject,
     transform: any
 ): Highcharts.MapCoordinateObject {
-    if (typeof win.proj4 === 'undefined') {
+
+    /**
+     * Allows to manually load the proj4 library from Highcharts options
+     * instead of the `window`.
+     * In case of loading the library from a `script` tag,
+     * this option is not needed, it will be loaded from there by default.
+     *
+     * @type       {function}
+     * @product    highmaps
+     * @apioption  chart.proj4
+     */
+
+    const proj4 = (this.userOptions.chart?.proj4 || win.proj4);
+    if (!proj4) {
         H.error(21, false, this);
         return {
             x: 0,
@@ -178,7 +195,7 @@ Chart.prototype.transformFromLatLon = function (
         };
     }
 
-    var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]),
+    var projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
         sinAngle = transform.sinAngle ||
