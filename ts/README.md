@@ -159,7 +159,7 @@ of them:
   `const option = grandparent?.parent?.myOption;`
 
 * Nullish coalescing operator instead of pick():
-  `const option = optionThatCanBeNull ?? defaultOption;`
+  `const option = optionThatCanBeNullOrUndefined ?? defaultOption;`
 
 
 ### Type check for interfaces
