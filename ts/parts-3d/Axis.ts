@@ -62,6 +62,7 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -73,7 +74,6 @@ const {
 
 import '../parts/Axis.js';
 import '../parts/Chart.js';
-import '../parts/Tick.js';
 
 var ZAxis: typeof Highcharts.Axis,
     Axis = H.Axis,
@@ -82,8 +82,7 @@ var ZAxis: typeof Highcharts.Axis,
     merge = H.merge,
     perspective = H.perspective,
     perspective3D = H.perspective3D,
-    shapeArea = H.shapeArea,
-    Tick = H.Tick;
+    shapeArea = H.shapeArea;
 
 /**
  * @optionparent xAxis
