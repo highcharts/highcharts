@@ -1534,6 +1534,9 @@ extend(Data.prototype, {
                         item: Element,
                         colNo: number
                     ): void {
+                        const row = (columns as any)[colNo - startColumn];
+                        let i = 1;
+
                         if (
                             (
                                 item.tagName === 'TD' ||
@@ -1549,6 +1552,16 @@ extend(Data.prototype, {
                             (columns as any)[colNo - startColumn][
                                 rowNo - startRow
                             ] = item.innerHTML;
+
+                            // Loop over all previous indices and make sure
+                            // they are nulls, not undefined.
+                            while (
+                                rowNo - startRow >= i &&
+                                row[rowNo - startRow - i] === void 0
+                            ) {
+                                row[rowNo - startRow - i] = null;
+                                i++;
+                            }
                         }
                     });
                 }
