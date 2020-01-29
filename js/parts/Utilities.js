@@ -1392,7 +1392,7 @@ H.format = function (str, ctx, chart) {
         segment = str.slice(0, index);
         if (isInside) { // we're on the closing bracket looking back
             valueAndFormat = segment.split(':');
-            val = getPropertyValue(valueAndFormat.shift() || '', ctx);
+            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
             // Format the replacement
             if (valueAndFormat.length) {
                 val = H.formatSingle(valueAndFormat.join(':'), val, chart);
@@ -1799,10 +1799,10 @@ Math.easeInOutSine = function (pos) {
     return -0.5 * (Math.cos(Math.PI * pos) - 1);
 };
 /**
- * Returns the value of the property path for a given object.
+ * Returns the value of a property path on a given object.
  *
  * @private
- * @function getPropertyValue
+ * @function getNestedProperty
  *
  * @param {string} path
  * Path to the property, for example `custom.myValue`.
@@ -1813,7 +1813,7 @@ Math.easeInOutSine = function (pos) {
  * @return {unknown}
  * The unknown property value.
  */
-function getPropertyValue(path, obj) {
+function getNestedProperty(path, obj) {
     if (!path) {
         return obj;
     }
@@ -2571,7 +2571,7 @@ var utilitiesModule = {
     extend: extend,
     extendClass: extendClass,
     fireEvent: fireEvent,
-    getPropertyValue: getPropertyValue,
+    getNestedProperty: getNestedProperty,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,

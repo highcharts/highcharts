@@ -148,7 +148,7 @@ import './ColorMapSeriesMixin.js';
 import U from '../parts/Utilities.js';
 const {
     extend,
-    getPropertyValue,
+    getNestedProperty,
     isArray,
     isNumber,
     objectEach,
@@ -786,11 +786,9 @@ seriesType<Highcharts.MapSeries>(
                 if (data && joinBy[1]) {
                     const joinKey = joinBy[1];
                     data.forEach(function (
-                        point: Highcharts.MapPointOptions
+                        pointOptions: Highcharts.MapPointOptions
                     ): void {
-                        const mapKey = joinKey.indexOf('custom.') === 0 ?
-                            getPropertyValue(joinKey, point) :
-                            (point as any)[joinKey];
+                        const mapKey = getNestedProperty(joinKey, pointOptions) as string;
                         if (mapMap[mapKey]) {
                             dataUsed.push(mapMap[mapKey]);
                         }
@@ -805,11 +803,9 @@ seriesType<Highcharts.MapSeries>(
                     if (joinBy[1]) {
                         const joinKey = joinBy[1];
                         data.forEach(function (
-                            point: Highcharts.MapPointOptions
+                            pointOptions: Highcharts.MapPointOptions
                         ): void {
-                            dataUsed.push(joinKey.indexOf('custom.') === 0 ?
-                                getPropertyValue(joinKey, point) :
-                                (point as any)[joinKey]);
+                            dataUsed.push(getNestedProperty(joinKey, pointOptions) as Highcharts.MapPointOptions);
                         } as any);
                     }
 
@@ -1311,9 +1307,7 @@ seriesType<Highcharts.MapSeries>(
 
             if (series.mapData && series.mapMap) {
                 const joinKey = joinBy[1];
-                const mapKey = joinKey.indexOf('custom.') === 0 ?
-                    getPropertyValue(joinKey, point.options) :
-                    (point as any)[joinKey];
+                const mapKey = Point.prototype.getNestedProperty.call(point, joinKey) as string;
                 mapPoint = typeof mapKey !== 'undefined' &&
                     series.mapMap[mapKey];
                 if (mapPoint) {

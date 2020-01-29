@@ -702,7 +702,7 @@ const {
     erase,
     extend,
     fireEvent,
-    getPropertyValue,
+    getNestedProperty,
     isArray,
     isNumber,
     isString,
@@ -4474,8 +4474,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 a: Highcharts.PointOptionsObject,
                 b: Highcharts.PointOptionsObject
             ): number => {
-                const aValue = getPropertyValue(sortKey, a) as (boolean|number|string);
-                const bValue = getPropertyValue(sortKey, b) as (boolean|number|string);
+                const aValue = getNestedProperty(sortKey, a) as (boolean|number|string);
+                const bValue = getNestedProperty(sortKey, b) as (boolean|number|string);
                 return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
             });
             // Set x value depending on the position in the array

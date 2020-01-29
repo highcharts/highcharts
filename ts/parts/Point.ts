@@ -55,6 +55,7 @@ declare global {
                 defaultFunction?: (EventCallbackFunction<Point>|Function)
             ): void;
             public getLabelConfig(): PointLabelObject;
+            public getNestedProperty(key: string): unknown;
             public getZone(): SeriesZonesOptions;
             public hasNewShapeType (this: Point): boolean|undefined;
             public init(
@@ -359,7 +360,7 @@ const {
     defined,
     erase,
     extend,
-    getPropertyValue,
+    getNestedProperty,
     isArray,
     isNumber,
     isObject,
@@ -612,9 +613,7 @@ class Point {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = pointValKey.indexOf('custom.') === 0 ?
-                getPropertyValue(pointValKey, point) :
-                (point as any)[pointValKey];
+            point.y = Point.prototype.getNestedProperty.call(point, pointValKey) as (number|null|undefined);
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
@@ -886,6 +885,20 @@ class Point {
             percentage: this.percentage,
             total: this.total || (this as any).stackTotal
         };
+    }
+
+    /**
+     * Returns the value of the point property for a given value.
+     * @private
+     */
+    public getNestedProperty(key: string): unknown {
+        if (!key) {
+            return;
+        }
+        if (key.indexOf('custom.') === 0) {
+            return getNestedProperty(key, this.options);
+        }
+        return (this as any)[key];
     }
 
     /**

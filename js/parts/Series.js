@@ -228,7 +228,7 @@ import H from './Globals.js';
 import pointModule from './Point.js';
 var Point = pointModule.Point;
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, getPropertyValue = U.getPropertyValue, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -3465,8 +3465,8 @@ null,
         }, this);
         // Sorting
         sortedData = data.concat().sort(function (a, b) {
-            var aValue = getPropertyValue(sortKey, a);
-            var bValue = getPropertyValue(sortKey, b);
+            var aValue = getNestedProperty(sortKey, a);
+            var bValue = getNestedProperty(sortKey, b);
             return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         });
         // Set x value depending on the position in the array

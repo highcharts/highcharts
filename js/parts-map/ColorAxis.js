@@ -16,7 +16,7 @@ import H from '../parts/Globals.js';
  */
 ''; // detach doclet above
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, erase = U.erase, extend = U.extend, getPropertyValue = U.getPropertyValue, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, erase = U.erase, extend = U.extend, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
@@ -838,9 +838,7 @@ extend(ColorAxis.prototype, {
     drawCrosshair: function (e, point) {
         var plotX = point && point.plotX, plotY = point && point.plotY, crossPos, axisPos = this.pos, axisLen = this.len;
         if (point) {
-            crossPos = this.toPixels(point.series.colorKey.indexOf('custom.') === 0 ?
-                getPropertyValue(point.series.colorKey, point.options) :
-                point[point.series.colorKey]);
+            crossPos = this.toPixels(point.getNestedProperty(point.series.colorKey));
             if (crossPos < axisPos) {
                 crossPos = axisPos - 2;
             }

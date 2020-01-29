@@ -17,7 +17,7 @@ import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, getPropertyValue = U.getPropertyValue, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var extend = U.extend, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
@@ -485,10 +485,8 @@ seriesType('map', 'scatter',
             // Registered the point codes that actually hold data
             if (data && joinBy[1]) {
                 var joinKey_1 = joinBy[1];
-                data.forEach(function (point) {
-                    var mapKey = joinKey_1.indexOf('custom.') === 0 ?
-                        getPropertyValue(joinKey_1, point) :
-                        point[joinKey_1];
+                data.forEach(function (pointOptions) {
+                    var mapKey = getNestedProperty(joinKey_1, pointOptions);
                     if (mapMap[mapKey]) {
                         dataUsed.push(mapMap[mapKey]);
                     }
@@ -500,10 +498,8 @@ seriesType('map', 'scatter',
                 // Registered the point codes that actually hold data
                 if (joinBy[1]) {
                     var joinKey_2 = joinBy[1];
-                    data.forEach(function (point) {
-                        dataUsed.push(joinKey_2.indexOf('custom.') === 0 ?
-                            getPropertyValue(joinKey_2, point) :
-                            point[joinKey_2]);
+                    data.forEach(function (pointOptions) {
+                        dataUsed.push(getNestedProperty(joinKey_2, pointOptions));
                     });
                 }
                 // Add those map points that don't correspond to data, which
@@ -830,9 +826,7 @@ seriesType('map', 'scatter',
         var series = this.series, point = Point.prototype.applyOptions.call(this, options, x), joinBy = series.joinBy, mapPoint;
         if (series.mapData && series.mapMap) {
             var joinKey = joinBy[1];
-            var mapKey = joinKey.indexOf('custom.') === 0 ?
-                getPropertyValue(joinKey, point.options) :
-                point[joinKey];
+            var mapKey = Point.prototype.getNestedProperty.call(point, joinKey);
             mapPoint = typeof mapKey !== 'undefined' &&
                 series.mapMap[mapKey];
             if (mapPoint) {

@@ -156,7 +156,7 @@ import Highcharts from './Globals.js';
 */
 ''; // detach doclet above
 import U from './Utilities.js';
-var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, getPropertyValue = U.getPropertyValue, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent;
+var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent;
 var H = Highcharts, fireEvent = H.fireEvent, format = H.format, uniqueKey = H.uniqueKey;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -340,9 +340,7 @@ var Point = /** @class */ (function () {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = pointValKey.indexOf('custom.') === 0 ?
-                getPropertyValue(pointValKey, point) :
-                point[pointValKey];
+            point.y = Point.prototype.getNestedProperty.call(point, pointValKey);
         }
         point.isNull = pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y)); // #3571, check for NaN
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
@@ -555,6 +553,19 @@ var Point = /** @class */ (function () {
             percentage: this.percentage,
             total: this.total || this.stackTotal
         };
+    };
+    /**
+     * Returns the value of the point property for a given value.
+     * @private
+     */
+    Point.prototype.getNestedProperty = function (key) {
+        if (!key) {
+            return;
+        }
+        if (key.indexOf('custom.') === 0) {
+            return getNestedProperty(key, this.options);
+        }
+        return this[key];
     };
     /**
      * In a series with `zones`, return the zone that the point belongs to.

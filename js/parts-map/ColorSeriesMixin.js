@@ -9,8 +9,6 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var getPropertyValue = U.getPropertyValue;
 /**
  * Mixin for maps and heatmaps
  *
@@ -56,10 +54,7 @@ H.colorSeriesMixin = {
     translateColors: function () {
         var series = this, points = this.data.length ? this.data : this.points, nullColor = this.options.nullColor, colorAxis = this.colorAxis, colorKey = this.colorKey;
         points.forEach(function (point) {
-            var _a;
-            var value = (((_a = colorKey) === null || _a === void 0 ? void 0 : _a.indexOf('custom.')) === 0 ?
-                getPropertyValue(colorKey, point.options) :
-                point[colorKey]), color;
+            var value = point.getNestedProperty(colorKey), color;
             color = point.options.color ||
                 (point.isNull ?
                     nullColor :

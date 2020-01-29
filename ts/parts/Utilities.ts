@@ -2051,7 +2051,7 @@ H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
         if (isInside) { // we're on the closing bracket looking back
 
             valueAndFormat = segment.split(':');
-            val = getPropertyValue(valueAndFormat.shift() || '', ctx);
+            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
 
             // Format the replacement
             if (valueAndFormat.length) {
@@ -2553,10 +2553,10 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
- * Returns the value of the property path for a given object.
+ * Returns the value of a property path on a given object.
  *
  * @private
- * @function getPropertyValue
+ * @function getNestedProperty
  *
  * @param {string} path
  * Path to the property, for example `custom.myValue`.
@@ -2567,7 +2567,7 @@ Math.easeInOutSine = function (pos: number): number {
  * @return {unknown}
  * The unknown property value.
  */
-function getPropertyValue(path: string, obj: unknown): unknown {
+function getNestedProperty(path: string, obj: unknown): unknown {
 
     if (!path) {
         return obj;
@@ -3491,7 +3491,7 @@ const utilitiesModule = {
     extend,
     extendClass,
     fireEvent,
-    getPropertyValue,
+    getNestedProperty,
     isArray,
     isClass,
     isDOMElement,
