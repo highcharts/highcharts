@@ -37,8 +37,8 @@ seriesType('flags', 'column'
  *
  * @extends      plotOptions.column
  * @excluding    animation, borderColor, borderRadius, borderWidth,
- *               colorByPoint, dataGrouping, marker, pointPadding, pointWidth,
- *               turboThreshold
+ *               colorByPoint, dataGrouping, marker, pointPadding,
+ *               pointWidth, turboThreshold
  * @product      highstock
  * @optionparent plotOptions.flags
  */
