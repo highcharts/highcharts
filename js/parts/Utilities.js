@@ -827,7 +827,6 @@ function merge() {
     }
     return ret;
 }
-;
 H.merge = merge;
 /**
  * Constrain a value to within a lower and upper threshold.
