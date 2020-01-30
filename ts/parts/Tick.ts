@@ -1177,10 +1177,6 @@ class Tick {
     }
 }
 
-H.Tick = Tick as any;
+H.Tick = Tick as typeof Highcharts.Tick;
 
-const tickModule = {
-    Tick
-};
-
-export default tickModule;
+export default H.Tick;

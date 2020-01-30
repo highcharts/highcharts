@@ -315,10 +315,8 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
-const {
-    color
-} = colorModule;
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
     addEvent,

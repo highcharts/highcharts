@@ -107,11 +107,8 @@ declare global {
 
 import GLShader from './wgl-shader.js';
 import GLVertexBuffer from './wgl-vbuffer.js';
-import colorModule from '../../parts/Color.js';
-const {
-    Color,
-    color
-} = colorModule;
+import Color from '../../parts/Color.js';
+const color = Color.parse;
 import U from '../../parts/Utilities.js';
 const {
     isNumber,

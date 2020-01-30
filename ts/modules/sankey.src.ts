@@ -252,7 +252,7 @@ declare global {
  * @type {Highcharts.SankeyNodeObject}
  */
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -824,7 +824,7 @@ seriesType<Highcharts.SankeySeries>(
 
             // Link attributes
             return {
-                fill: colorModule.color(color).setOpacity(values.linkOpacity).get()
+                fill: Color.parse(color).setOpacity(values.linkOpacity).get()
             };
 
         },
@@ -848,7 +848,9 @@ seriesType<Highcharts.SankeySeries>(
                     node.linksFrom.forEach(function (
                         link: Highcharts.SankeyPoint
                     ): void {
-                        order(link.toNode, level + 1);
+                        if (link.toNode) {
+                            order(link.toNode, level + 1);
+                        }
                     });
                 }
             }
@@ -1192,7 +1194,7 @@ seriesType<Highcharts.SankeySeries>(
                 ): void {
                     // If weight is 0 - don't render the link path #12453,
                     // render null points (for organization chart)
-                    if (linkPoint.weight || linkPoint.isNull) {
+                    if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
                         series.translateLink(linkPoint);
                         linkPoint.allowShadow = false;
                     }

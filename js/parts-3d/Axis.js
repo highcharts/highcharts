@@ -11,12 +11,12 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
-import '../parts/Tick.js';
-var ZAxis, Axis = H.Axis, Chart = H.Chart, deg2rad = H.deg2rad, perspective = H.perspective, perspective3D = H.perspective3D, shapeArea = H.shapeArea, Tick = H.Tick;
+var ZAxis, Axis = H.Axis, Chart = H.Chart, deg2rad = H.deg2rad, perspective = H.perspective, perspective3D = H.perspective3D, shapeArea = H.shapeArea;
 /**
  * @optionparent xAxis
  */

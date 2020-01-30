@@ -754,6 +754,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
         /**
          * In networkgraph, series.points refers to links,
          * but series.nodes refers to actual points.
+         * @private
          */
         getPointsCollection: function (
             this: Highcharts.NetworkgraphSeries

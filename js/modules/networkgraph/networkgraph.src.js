@@ -504,6 +504,7 @@ seriesType('networkgraph', 'line',
     /**
      * In networkgraph, series.points refers to links,
      * but series.nodes refers to actual points.
+     * @private
      */
     getPointsCollection: function () {
         return this.nodes || [];

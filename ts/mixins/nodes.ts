@@ -291,7 +291,7 @@ H.NodesMixin = {
                 [this.fromNode, this.toNode];
         if (state !== 'select') {
             others.forEach(function (linkOrNode: Highcharts.NodesPoint): void {
-                if (linkOrNode.series) {
+                if (linkOrNode && linkOrNode.series) {
                     Point.prototype.setState.apply(linkOrNode, args as any);
 
                     if (!linkOrNode.isNode) {
@@ -301,7 +301,7 @@ H.NodesMixin = {
                                 args as any
                             );
                         }
-                        if (linkOrNode.toNode.graphic) {
+                        if (linkOrNode.toNode && linkOrNode.toNode.graphic) {
                             Point.prototype.setState.apply(
                                 linkOrNode.toNode,
                                 args as any

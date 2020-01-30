@@ -292,10 +292,8 @@ declare global {
  * @type {"drillup"}
  */
 
-import colorModule from '../parts/Color.js';
-const {
-    Color
-} = colorModule;
+import Color from '../parts/Color.js';
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -312,7 +310,6 @@ import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
-import '../parts/Tick.js';
 
 var noop = H.noop,
     defaultOptions = H.defaultOptions,
@@ -321,7 +318,6 @@ var noop = H.noop,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
     ColumnSeries = seriesTypes.column,
-    Tick = H.Tick,
     ddSeriesId = 1;
 
 // Add language

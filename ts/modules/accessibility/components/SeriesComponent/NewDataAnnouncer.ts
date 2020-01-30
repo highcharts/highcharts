@@ -152,6 +152,7 @@ extend(NewDataAnnouncer.prototype, {
 
     /**
      * Initialize the new data announcer.
+     * @private
      */
     init: function (this: Highcharts.NewDataAnnouncer): void {
         this.lastAnnouncementTime = 0;
@@ -169,6 +170,7 @@ extend(NewDataAnnouncer.prototype, {
 
     /**
      * Remove traces of announcer.
+     * @private
      */
     destroy: function (this: Highcharts.NewDataAnnouncer): void {
         this.eventProvider.removeAddedEvents();
