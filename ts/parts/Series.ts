@@ -690,8 +690,9 @@ declare global {
 
 import pointModule from './Point.js';
 const Point = pointModule.Point;
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
+    addEvent,
     animObject,
     arrayMax,
     arrayMin,
@@ -700,6 +701,7 @@ const {
     defined,
     erase,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isString,
@@ -708,17 +710,15 @@ const {
     removeEvent,
     splat,
     syncTimeout
-} = utilitiesModule;
+} = U;
 
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
 
-var addEvent = H.addEvent,
-    defaultOptions = H.defaultOptions,
+var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    fireEvent = H.fireEvent,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     merge = H.merge,
     seriesTypes = H.seriesTypes,
@@ -3564,6 +3564,8 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
                 });
             });
+
+            fireEvent(this, 'afterBindAxes');
         },
 
         /**

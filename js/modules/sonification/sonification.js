@@ -11,9 +11,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-var addEvent = H.addEvent;
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+var addEvent = U.addEvent, extend = U.extend;
 import Instrument from './Instrument.js';
 import instruments from './instrumentDefinitions.js';
 import Earcon from './Earcon.js';

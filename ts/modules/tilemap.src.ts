@@ -14,13 +14,6 @@
 'use strict';
 import H from '../parts/Globals.js';
 
-import U from '../parts/Utilities.js';
-const {
-    clamp,
-    extend,
-    pick
-} = U;
-
 /**
  * Internal types
  * @private
@@ -95,6 +88,16 @@ declare global {
 /**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
+
+''; // detach doclets above
+
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    extend,
+    pick
+} = U;
 
 import '../parts-map/HeatmapSeries.js';
 
@@ -641,7 +644,7 @@ H.tileShapeTypes = {
 // Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
 // series and adds the largest padding required. If no series has this function
 // defined, we add nothing.
-H.addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
+addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
 
     if (this.recomputingForTilemap || this.coll === 'colorAxis') {
         return;

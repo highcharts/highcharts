@@ -168,8 +168,8 @@ import H from '../parts/Globals.js';
 * @type {"drop"}
 */
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, objectEach = U.objectEach, pick = U.pick;
-var addEvent = H.addEvent, merge = H.merge, seriesTypes = H.seriesTypes;
+var addEvent = U.addEvent, clamp = U.clamp, objectEach = U.objectEach, pick = U.pick;
+var merge = H.merge, seriesTypes = H.seriesTypes;
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return
  * "right" etc.

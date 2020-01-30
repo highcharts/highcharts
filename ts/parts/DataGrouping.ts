@@ -149,6 +149,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
@@ -162,8 +163,7 @@ import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
     format = H.format,
     merge = H.merge,

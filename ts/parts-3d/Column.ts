@@ -53,14 +53,14 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     pick,
     wrap
 } = U;
 
 import '../parts/Series.js';
 
-var addEvent = H.addEvent,
-    perspective = H.perspective,
+var perspective = H.perspective,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     svg = H.svg;

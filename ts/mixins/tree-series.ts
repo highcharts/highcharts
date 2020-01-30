@@ -67,14 +67,14 @@ declare global {
 }
 
 import colorModule from '../parts/Color.js';
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
     extend,
     isArray,
     isNumber,
     isObject,
     pick
-} = utilitiesModule;
+} = U;
 
 var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';

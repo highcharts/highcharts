@@ -8,7 +8,8 @@ QUnit.test('#3165 - Stack labels in waterfall series', function (assert) {
         },
         yAxis: {
             stackLabels: {
-                enabled: true
+                enabled: true,
+                padding: 0
             }
         },
         plotOptions: {

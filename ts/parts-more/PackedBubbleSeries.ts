@@ -243,16 +243,18 @@ import colorModule from '../parts/Color.js';
 const {
     color
 } = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
+    addEvent,
     clamp,
     defined,
     extend,
     extendClass,
+    fireEvent,
     isArray,
     isNumber,
     pick
-} = utilitiesModule;
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -265,8 +267,6 @@ import '../modules/networkgraph/draggable-nodes.js';
 var seriesType = H.seriesType,
     Series = H.Series,
     Point = H.Point,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
     Chart = H.Chart,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,

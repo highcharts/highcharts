@@ -374,9 +374,9 @@ import H from './Globals.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 import colorModule from './Color.js';
 var color = colorModule.color;
-import utilitiesModule from './Utilities.js';
-var animObject = utilitiesModule.animObject, attr = utilitiesModule.attr, defined = utilitiesModule.defined, destroyObjectProperties = utilitiesModule.destroyObjectProperties, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt, removeEvent = utilitiesModule.removeEvent, splat = utilitiesModule.splat;
-var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, charts = H.charts, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+import U from './Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat;
+var SVGElement, SVGRenderer, animate = H.animate, charts = H.charts, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link

@@ -151,8 +151,10 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     defined,
     extend,
+    fireEvent,
     isArray,
     isObject,
     objectEach,
@@ -165,13 +167,11 @@ import './Legend.js';
 import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    Chart = H.Chart,
+var Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     Legend = H.Legend,
     merge = H.merge,
@@ -296,8 +296,14 @@ TrackerMixin = H.TrackerMixin = {
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
             i,
-            onMouseOver = function (): void {
-                if (chart.hoverSeries !== series) {
+            onMouseOver = function (e: Highcharts.PointerEventObject): void {
+
+                pointer.normalize(e);
+
+                if (
+                    chart.hoverSeries !== series &&
+                    !pointer.isStickyTooltip(e)
+                ) {
                     (series as any).onMouseOver();
                 }
             },

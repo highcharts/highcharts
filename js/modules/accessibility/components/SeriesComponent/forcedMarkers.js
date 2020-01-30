@@ -12,6 +12,8 @@
 'use strict';
 import H from '../../../../parts/Globals.js';
 var merge = H.merge;
+import U from '../../../../parts/Utilities.js';
+var addEvent = U.addEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -119,7 +121,7 @@ function addForceMarkersEvents() {
      * Keep track of forcing markers.
      * @private
      */
-    H.addEvent(H.Series, 'render', function () {
+    addEvent(H.Series, 'render', function () {
         var series = this, options = series.options;
         if (shouldForceMarkers(series)) {
             if (options.marker && options.marker.enabled === false) {
@@ -139,7 +141,7 @@ function addForceMarkersEvents() {
      * Keep track of options to reset markers to if no longer forced.
      * @private
      */
-    H.addEvent(H.Series, 'afterSetOptions', function (e) {
+    addEvent(H.Series, 'afterSetOptions', function (e) {
         this.resetA11yMarkerOptions = merge(e.options.marker || {}, this.userOptions.marker || {});
     });
 }

@@ -60,7 +60,7 @@ seriesType('streamgraph', 'areaspline'
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.streamgraph
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, step
  * @product   highcharts highstock
  * @requires  modules/streamgraph
  * @apioption series.streamgraph

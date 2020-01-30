@@ -90,8 +90,8 @@ import H from '../parts/Globals.js';
 * @type {Highcharts.SankeyNodeObject}
 */
 import colorModule from '../parts/Color.js';
-import utilitiesModule from '../parts/Utilities.js';
-var defined = utilitiesModule.defined, isObject = utilitiesModule.isObject, pick = utilitiesModule.pick, relativeLength = utilitiesModule.relativeLength, stableSort = utilitiesModule.stableSort;
+import U from '../parts/Utilities.js';
+var defined = U.defined, isObject = U.isObject, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -537,7 +537,9 @@ seriesType('sankey', 'column',
             if (typeof node.level === 'undefined') {
                 node.level = level;
                 node.linksFrom.forEach(function (link) {
-                    order(link.toNode, level + 1);
+                    if (link.toNode) {
+                        order(link.toNode, level + 1);
+                    }
                 });
             }
         }
@@ -755,7 +757,7 @@ seriesType('sankey', 'column',
             node.linksFrom.forEach(function (linkPoint) {
                 // If weight is 0 - don't render the link path #12453,
                 // render null points (for organization chart)
-                if (linkPoint.weight || linkPoint.isNull) {
+                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
                     series.translateLink(linkPoint);
                     linkPoint.allowShadow = false;
                 }

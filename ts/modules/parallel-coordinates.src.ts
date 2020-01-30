@@ -57,6 +57,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     defined,
@@ -77,8 +78,7 @@ var Axis = H.Axis,
     ChartProto = Chart.prototype,
     AxisProto = H.Axis.prototype;
 
-var addEvent = H.addEvent,
-    merge = H.merge;
+var merge = H.merge;
 
 var defaultXAxisOptions = {
     lineWidth: 0,
@@ -491,7 +491,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
 }, { order: 1 });
 
 // On destroy, we need to remove series from each axis.series
-H.addEvent(H.Series, 'destroy', function (): void {
+addEvent(H.Series, 'destroy', function (): void {
     if (this.chart.hasParallelCoordinates) {
         (this.chart.axes || []).forEach(function (axis: Highcharts.Axis): void {
             if (axis && axis.series) {

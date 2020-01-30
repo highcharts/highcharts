@@ -34,10 +34,10 @@ import H from '../parts/Globals.js';
  */
 import '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import './ArrowSymbols.js';
-var deg2rad = H.deg2rad, addEvent = H.addEvent, merge = H.merge, max = Math.max, min = Math.min;
+var deg2rad = H.deg2rad, merge = H.merge, max = Math.max, min = Math.min;
 /*
  @todo:
      - Document how to write your own algorithms

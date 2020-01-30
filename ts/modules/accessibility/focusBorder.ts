@@ -13,11 +13,12 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-var addEvent = H.addEvent;
-
 import U from '../../parts/Utilities.js';
-var extend = U.extend,
-    pick = U.pick;
+const {
+    addEvent,
+    extend,
+    pick
+} = U;
 
 declare global {
     namespace Highcharts {

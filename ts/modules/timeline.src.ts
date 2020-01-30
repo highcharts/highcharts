@@ -145,6 +145,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     defined,
@@ -153,8 +154,7 @@ const {
     pick
 } = U;
 
-var addEvent = H.addEvent,
-    LegendSymbolMixin = H.LegendSymbolMixin,
+var LegendSymbolMixin = H.LegendSymbolMixin,
     TrackerMixin = H.TrackerMixin,
     merge = H.merge,
     Point = H.Point,

@@ -283,8 +283,10 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     discardElement,
     extend,
+    fireEvent,
     isObject,
     objectEach,
     pick,
@@ -299,8 +301,6 @@ import chartNavigationMixin from '../mixins/navigation.js';
 var defaultOptions = H.defaultOptions,
     doc = H.doc,
     Chart = H.Chart,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
     createElement = H.createElement,
     css = H.css,
     merge = H.merge,

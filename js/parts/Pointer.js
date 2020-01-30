@@ -93,8 +93,8 @@ import Highcharts from './Globals.js';
 * @name Highcharts.SelectEventObject#yAxis
 * @type {Array<Highcharts.SelectDataObject>}
 */
-import utilitiesModule from './Utilities.js';
-var addEvent = utilitiesModule.addEvent, attr = utilitiesModule.attr, defined = utilitiesModule.defined, extend = utilitiesModule.extend, fireEvent = utilitiesModule.fireEvent, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, objectEach = utilitiesModule.objectEach, offset = utilitiesModule.offset, pick = utilitiesModule.pick, splat = utilitiesModule.splat;
+import U from './Utilities.js';
+var addEvent = U.addEvent, attr = U.attr, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
 import './Tooltip.js';
 import './Color.js';
 var H = Highcharts, charts = H.charts, color = H.color, css = H.css, find = H.find, noop = H.noop, Tooltip = H.Tooltip;
@@ -437,6 +437,9 @@ var Pointer = /** @class */ (function () {
             }
             return result;
         };
+        if (this.isStickyTooltip(e)) {
+            return this.chart.hoverPoint;
+        }
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared, compareX = (!noSharedTooltip &&
                 s.options.findNearestPointBy.indexOf('y') < 0), point = s.searchPoint(e, compareX);
@@ -641,6 +644,7 @@ var Pointer = /** @class */ (function () {
         if (series &&
             relatedTarget &&
             !series.stickyTracking &&
+            !this.isStickyTooltip(e) &&
             !this.inClass(relatedTarget, 'highcharts-tooltip') &&
             (!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465, #5553
                 !this.inClass(relatedTarget, 'highcharts-tracker'))) {
@@ -715,6 +719,52 @@ var Pointer = /** @class */ (function () {
             this.followTouchMove = pick(options.tooltip.followTouchMove, true);
         }
         this.setDOMEvents();
+    };
+    /**
+     * Returns true, if the `stickOnHover` option is active and a given pointer
+     * event occurs inside the combined boundings of the hovered point and
+     * tooltip.
+     *
+     * @private
+     * @param {Highcharts.PointerEventObject} e
+     * Pointer event to check agains the active tooltip.
+     *
+     * @return {boolean}
+     * True, if the pointer event occurs inside of the hovered boundings.
+     */
+    Pointer.prototype.isStickyTooltip = function (e) {
+        var chart = this.chart;
+        var chartPosition = this.chartPosition;
+        var point = chart.hoverPoint;
+        var tooltip = chart.tooltip;
+        var eventPosition = {
+            x: e.chartX,
+            y: e.chartY
+        };
+        var isSticky = false;
+        if (chartPosition &&
+            point &&
+            point.graphic &&
+            tooltip &&
+            !tooltip.isHidden &&
+            tooltip.options.stickOnHover &&
+            tooltip.label) {
+            var labelBBox = tooltip.label.getBBox();
+            var labelOffset = Highcharts.offset(tooltip.label.element);
+            var pointBBox = point.graphic.getBBox();
+            var pointOffset = Highcharts.offset(point.graphic.element);
+            labelBBox.x = labelOffset.left - chartPosition.left;
+            labelBBox.y = labelOffset.top - chartPosition.top;
+            pointBBox.x = pointOffset.left - chartPosition.left;
+            pointBBox.y = pointOffset.top - chartPosition.top;
+            var x1 = Math.min(pointBBox.x, labelBBox.x);
+            var y1 = Math.min(pointBBox.y, labelBBox.y);
+            var x2 = Math.max((pointBBox.x + pointBBox.width), (labelBBox.x + labelBBox.width));
+            var y2 = Math.max((pointBBox.y + pointBBox.height), (labelBBox.y + labelBBox.height));
+            isSticky = ((eventPosition.x >= x1 && eventPosition.x <= x2) &&
+                (eventPosition.y >= y1 && eventPosition.y <= y2));
+        }
+        return isSticky;
     };
     /**
      * Takes a browser event object and extends it with custom Highcharts
@@ -860,9 +910,10 @@ var Pointer = /** @class */ (function () {
             this.drag(e);
         }
         // Show the tooltip and run mouse over events (#977)
-        if ((this.inClass(e.target, 'highcharts-tracker') ||
-            chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) &&
-            !chart.openMenu) {
+        if (!chart.openMenu &&
+            !this.isStickyTooltip(e) &&
+            (this.inClass(e.target, 'highcharts-tracker') ||
+                chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop))) {
             this.runPointActions(e);
         }
     };
@@ -919,6 +970,7 @@ var Pointer = /** @class */ (function () {
         e = this.normalize(e, chartPosition);
         // If we're outside, hide the tooltip
         if (chartPosition &&
+            !this.isStickyTooltip(e) &&
             !this.inClass(e.target, 'highcharts-tracker') &&
             !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
             this.reset();

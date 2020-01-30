@@ -46,15 +46,15 @@ import H from '../parts/Globals.js';
 */
 import colorModule from '../parts/Color.js';
 var color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-var clamp = utilitiesModule.clamp, defined = utilitiesModule.defined, extend = utilitiesModule.extend, extendClass = utilitiesModule.extendClass, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, pick = utilitiesModule.pick;
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
-var seriesType = H.seriesType, Series = H.Series, Point = H.Point, addEvent = H.addEvent, fireEvent = H.fireEvent, Chart = H.Chart, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
+var seriesType = H.seriesType, Series = H.Series, Point = H.Point, Chart = H.Chart, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
 H.networkgraphIntegrations.packedbubble = {
     repulsiveForceFunction: function (d, k, node, repNode) {
         return Math.min(d, (node.marker.radius + repNode.marker.radius) / 2);
