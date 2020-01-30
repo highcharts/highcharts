@@ -15,7 +15,7 @@ var numberFormat = H.numberFormat, format = H.format, find = H.find;
 import U from '../../../../parts/Utilities.js';
 var isNumber = U.isNumber, pick = U.pick, defined = U.defined;
 import AnnotationsA11y from '../AnnotationsA11y.js';
-var getPointAnnotationText = AnnotationsA11y.getPointAnnotationText;
+var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 import HTMLUtilities from '../../utils/htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString, reverseChildNodes = HTMLUtilities.reverseChildNodes;
 import ChartUtilities from '../../utils/chartUtilities.js';
@@ -246,9 +246,9 @@ function getPointValue(point) {
 function getPointAnnotationDescription(point) {
     var chart = point.series.chart;
     var langKey = 'accessibility.series.pointAnnotationsDescription';
-    var annotationsText = getPointAnnotationText(point);
-    var context = { point: point, annotationsText: annotationsText };
-    return annotationsText ? chart.langFormat(langKey, context) : '';
+    var annotations = getPointAnnotationTexts(point);
+    var context = { point: point, annotations: annotations };
+    return annotations.length ? chart.langFormat(langKey, context) : '';
 }
 /**
  * Return string with information about point.

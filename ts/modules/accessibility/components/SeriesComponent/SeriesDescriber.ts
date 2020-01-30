@@ -23,7 +23,7 @@ var isNumber = U.isNumber,
     defined = U.defined;
 
 import AnnotationsA11y from '../AnnotationsA11y.js';
-const getPointAnnotationText = AnnotationsA11y.getPointAnnotationText;
+const getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 
 import HTMLUtilities from '../../utils/htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
@@ -439,10 +439,10 @@ function getPointValue(
 function getPointAnnotationDescription(point: Highcharts.Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
-    const annotationsText = getPointAnnotationText(point as Highcharts.AnnotationPoint);
-    const context = { point, annotationsText };
+    const annotations = getPointAnnotationTexts(point as Highcharts.AnnotationPoint);
+    const context = { point, annotations };
 
-    return annotationsText ? chart.langFormat(langKey, context) : '';
+    return annotations.length ? chart.langFormat(langKey, context) : '';
 }
 
 

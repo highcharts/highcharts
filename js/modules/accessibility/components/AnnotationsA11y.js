@@ -102,27 +102,26 @@ function getAnnotationsInfoHTML(chart) {
     return "<ul>" + annotationItems.join(' ') + "</ul>";
 }
 /**
- * Return the text for the annotation(s) connected to a point, or empty string
+ * Return the texts for the annotation(s) connected to a point, or empty array
  * if none.
  *
  * @private
  * @param {Highcharts.Point} point The data point to get the annotation info from.
- * @return {string} Annotation text
+ * @return {Array<string>} Annotation texts
  */
-function getPointAnnotationText(point) {
+function getPointAnnotationTexts(point) {
     var labels = getChartAnnotationLabels(point.series.chart);
     var pointLabels = labels
         .filter(function (label) { return inArray(point, label.points) > -1; });
     if (!pointLabels.length) {
-        return '';
+        return [];
     }
-    var labelTexts = pointLabels.map(function (label) { return "\"" + getLabelText(label) + "\""; });
-    return labelTexts.join(' ');
+    return pointLabels.map(function (label) { return "" + getLabelText(label); });
 }
 var AnnotationsA11y = {
     getAnnotationsInfoHTML: getAnnotationsInfoHTML,
     getAnnotationLabelDescription: getAnnotationLabelDescription,
     getAnnotationListItems: getAnnotationListItems,
-    getPointAnnotationText: getPointAnnotationText
+    getPointAnnotationTexts: getPointAnnotationTexts
 };
 export default AnnotationsA11y;

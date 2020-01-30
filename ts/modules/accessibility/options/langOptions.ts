@@ -506,7 +506,7 @@ var langOptions: Highcharts.LangOptions = {
              *
              * @since next
              */
-            pointAnnotationsDescription: 'Annotations: {annotationsText}'
+            pointAnnotationsDescription: '{Annotation: "#each(annotations)". }'
         }
     }
 };

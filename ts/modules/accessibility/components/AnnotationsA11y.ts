@@ -124,24 +124,23 @@ function getAnnotationsInfoHTML(chart: Highcharts.AnnotationChart): string {
 
 
 /**
- * Return the text for the annotation(s) connected to a point, or empty string
+ * Return the texts for the annotation(s) connected to a point, or empty array
  * if none.
  *
  * @private
  * @param {Highcharts.Point} point The data point to get the annotation info from.
- * @return {string} Annotation text
+ * @return {Array<string>} Annotation texts
  */
-function getPointAnnotationText(point: Highcharts.AnnotationPoint): string {
+function getPointAnnotationTexts(point: Highcharts.AnnotationPoint): Array<string> {
     const labels = getChartAnnotationLabels(point.series.chart);
     const pointLabels = labels
         .filter((label): boolean => inArray(point, label.points) > -1);
 
     if (!pointLabels.length) {
-        return '';
+        return [];
     }
 
-    const labelTexts = pointLabels.map((label): string => `"${getLabelText(label)}"`);
-    return labelTexts.join(' ');
+    return pointLabels.map((label): string => `${getLabelText(label)}`);
 }
 
 
@@ -149,7 +148,7 @@ const AnnotationsA11y = {
     getAnnotationsInfoHTML,
     getAnnotationLabelDescription,
     getAnnotationListItems,
-    getPointAnnotationText
+    getPointAnnotationTexts
 };
 
 export default AnnotationsA11y;
