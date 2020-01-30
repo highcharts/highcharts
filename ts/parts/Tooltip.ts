@@ -20,6 +20,7 @@ const {
     extend,
     isNumber,
     isString,
+    merge,
     pick,
     splat,
     syncTimeout,
@@ -257,8 +258,7 @@ declare global {
 ''; // separates doclets above from variables below
 
 var doc = H.doc,
-    format = H.format,
-    merge = H.merge;
+    format = H.format;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

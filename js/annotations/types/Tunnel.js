@@ -5,7 +5,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
 var Annotation = H.Annotation, CrookedLine = Annotation.types.crookedLine, ControlPoint = Annotation.ControlPoint, MockPoint = Annotation.MockPoint;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -28,13 +29,13 @@ H.extendAnnotation(Tunnel, CrookedLine, {
         return this.getPointsOptions().slice(0, 2);
     },
     heightPointOptions: function (pointOptions) {
-        var heightPointOptions = H.merge(pointOptions);
+        var heightPointOptions = merge(pointOptions);
         heightPointOptions.y += this.options.typeOptions.height;
         return heightPointOptions;
     },
     addControlPoints: function () {
         CrookedLine.prototype.addControlPoints.call(this);
-        var options = this.options, controlPoint = new ControlPoint(this.chart, this, H.merge(options.controlPointOptions, options.typeOptions.heightControlPoint), 2);
+        var options = this.options, controlPoint = new ControlPoint(this.chart, this, merge(options.controlPointOptions, options.typeOptions.heightControlPoint), 2);
         this.controlPoints.push(controlPoint);
         options.typeOptions.heightControlPoint = controlPoint.options;
     },
@@ -43,7 +44,7 @@ H.extendAnnotation(Tunnel, CrookedLine, {
         this.addBackground();
     },
     addLine: function () {
-        var line = this.initShape(H.merge(this.options.typeOptions.line, {
+        var line = this.initShape(merge(this.options.typeOptions.line, {
             type: 'path',
             points: [
                 this.points[0],
@@ -59,7 +60,7 @@ H.extendAnnotation(Tunnel, CrookedLine, {
         this.options.typeOptions.line = line.options;
     },
     addBackground: function () {
-        var background = this.initShape(H.merge(this.options.typeOptions.background, {
+        var background = this.initShape(merge(this.options.typeOptions.background, {
             type: 'path',
             points: this.points.slice()
         }));

@@ -4,8 +4,6 @@
  *
  * */
 
-import H from '../parts/Globals.js';
-
 /**
  * Internal types
  * @private
@@ -66,13 +64,14 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
 const {
     extend,
     isArray,
     isNumber,
     isObject,
+    merge,
     pick
 } = U;
 
@@ -81,8 +80,7 @@ var isBoolean = function (x: unknown): x is boolean {
     },
     isFn = function (x: unknown): x is Function {
         return typeof x === 'function';
-    },
-    merge = H.merge;
+    };
 
 /* eslint-disable valid-jsdoc */
 
@@ -196,7 +194,7 @@ var getColor = function getColor(
 
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
-                return colorModule.color(color).brighten(
+                return Color.parse(color).brighten(
                     colorVariation.to * (index / siblings)
                 ).get() as any;
             }

@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var merge = H.merge, SMA = H.seriesTypes.sma;
+var isArray = U.isArray, merge = U.merge;
+var SMA = H.seriesTypes.sma;
 /**
  * The Price Envelopes series type.
  *

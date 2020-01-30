@@ -39,7 +39,10 @@ declare global {
 }
 
 
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint;
@@ -100,7 +103,7 @@ H.extendAnnotation(VerticalLine, null,
         addShapes: function (this: Highcharts.AnnotationVerticalLine): void {
             var typeOptions = this.options.typeOptions,
                 connector = this.initShape(
-                    H.merge(typeOptions.connector, {
+                    merge(typeOptions.connector, {
                         type: 'path',
                         points: [
                             VerticalLine.connectorFirstPoint,
@@ -129,7 +132,7 @@ H.extendAnnotation(VerticalLine, null,
             }
 
             var label = (this.initLabel as any)(
-                H.merge(labelOptions, {
+                merge(labelOptions, {
                     verticalAlign: verticalAlign,
                     align: align,
                     x: x,

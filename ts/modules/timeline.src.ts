@@ -150,13 +150,13 @@ const {
     arrayMin,
     defined,
     isNumber,
+    merge,
     objectEach,
     pick
 } = U;
 
 var LegendSymbolMixin = H.LegendSymbolMixin,
     TrackerMixin = H.TrackerMixin,
-    merge = H.merge,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,

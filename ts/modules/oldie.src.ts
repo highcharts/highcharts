@@ -315,10 +315,8 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
-const {
-    color
-} = colorModule;
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -330,6 +328,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    merge,
     offset,
     pick,
     pInt
@@ -345,7 +344,6 @@ var VMLRenderer,
     css = H.css,
     deg2rad = H.deg2rad,
     doc = H.doc,
-    merge = H.merge,
     noop = H.noop,
     svg = H.svg,
     SVGElement = H.SVGElement,

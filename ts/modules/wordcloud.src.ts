@@ -131,17 +131,19 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var extend = U.extend,
-    isArray = U.isArray,
-    isNumber = U.isNumber,
-    isObject = U.isObject;
+const {
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    merge
+} = U;
 
 import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 
-var merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     find = H.find,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
     getPolygon = polygon.getPolygon,

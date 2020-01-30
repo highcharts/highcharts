@@ -42,6 +42,7 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -49,6 +50,7 @@ const {
     erase,
     isArray,
     isNumber,
+    merge,
     pick,
     timeUnits,
     wrap
@@ -62,10 +64,8 @@ var argsToArray = function (args: IArguments): Array<any> {
         // Always use strict mode
         return U.isObject(x, true);
     },
-    merge = H.merge,
     Chart = H.Chart,
-    Axis = H.Axis,
-    Tick = H.Tick;
+    Axis = H.Axis;
 
 var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     var options = axis.options;

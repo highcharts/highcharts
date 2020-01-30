@@ -556,12 +556,14 @@ declare global {
  */
 
 import Time from './Time.js';
-import colorModule from './Color.js';
-const color = colorModule.color;
-import './Utilities.js';
+import Color from './Color.js';
+const color = Color.parse;
+import U from './Utilities.js';
+const {
+    merge
+} = U;
 
 var isTouchDevice = H.isTouchDevice,
-    merge = H.merge,
     svg = H.svg;
 
 /* ************************************************************************** *

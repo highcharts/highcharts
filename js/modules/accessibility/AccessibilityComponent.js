@@ -11,9 +11,9 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-var win = H.win, doc = win.document, merge = H.merge, fireEvent = H.fireEvent;
+var win = H.win, doc = win.document, fireEvent = H.fireEvent;
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend, merge = U.merge;
 import HTMLUtilities from './utils/htmlUtilities.js';
 var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 import ChartUtilities from './utils/chartUtilities.js';

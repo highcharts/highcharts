@@ -61,6 +61,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isNumber,
+    merge,
     pick,
     relativeLength
 } = U;
@@ -199,7 +200,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
                     y;
 
                 if (isNumber(targetVal) && targetVal !== null) {
-                    targetOptions = H.merge(
+                    targetOptions = merge(
                         options.targetOptions,
                         pointOptions.targetOptions
                     );

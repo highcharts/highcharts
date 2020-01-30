@@ -62,10 +62,12 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
     extend,
+    merge,
     pick,
     splat,
     wrap
@@ -73,17 +75,14 @@ const {
 
 import '../parts/Axis.js';
 import '../parts/Chart.js';
-import '../parts/Tick.js';
 
 var ZAxis: typeof Highcharts.Axis,
     Axis = H.Axis,
     Chart = H.Chart,
     deg2rad = H.deg2rad,
-    merge = H.merge,
     perspective = H.perspective,
     perspective3D = H.perspective3D,
-    shapeArea = H.shapeArea,
-    Tick = H.Tick;
+    shapeArea = H.shapeArea;
 
 /**
  * @optionparent xAxis

@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var objectEach = U.objectEach;
+var merge = U.merge, objectEach = U.objectEach;
 /**
  * @interface Highcharts.AjaxSettingsObject
  */ /**
@@ -55,7 +55,7 @@ var objectEach = U.objectEach;
  *         Returns false, if error occured.
  */
 H.ajax = function (attr) {
-    var options = H.merge(true, {
+    var options = merge(true, {
         url: false,
         type: 'get',
         dataType: 'json',

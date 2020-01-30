@@ -54,12 +54,14 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    isArray,
+    merge
+} = U;
 
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var merge = H.merge,
-    SMA = H.seriesTypes.sma;
+var SMA = H.seriesTypes.sma;
 
 /* eslint-disable valid-jsdoc */
 
@@ -173,7 +175,7 @@ H.seriesType<Highcharts.BBIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    H.merge(multipleLinesMixin, {
+    merge(multipleLinesMixin, {
         pointArrayMap: ['top', 'middle', 'bottom'],
         pointValKey: 'middle',
         nameComponents: ['period', 'standardDeviation'],

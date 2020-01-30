@@ -14,8 +14,8 @@ import H from '../parts/Globals.js';
  */
 import '../mixins/centered-series.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, extend = U.extend, pick = U.pick, splat = U.splat;
-var CenteredSeriesMixin = H.CenteredSeriesMixin, merge = H.merge;
+var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
+var CenteredSeriesMixin = H.CenteredSeriesMixin;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.Chart.prototype.collectionsWithUpdate.push('pane');
 /**
@@ -368,7 +368,7 @@ addEvent(H.Pointer, 'beforeGetHoverData', function (eventArgs) {
             return (s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821
                 pick(s.options.enableMouseTracking, true) &&
-                (!chart.polar || s.xAxis.pane === chart.hoverPane));
+                (!chart.hoverPane || s.xAxis.pane === chart.hoverPane));
         };
     }
 });

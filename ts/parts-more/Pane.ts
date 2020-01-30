@@ -87,12 +87,12 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     extend,
+    merge,
     pick,
     splat
 } = U;
 
-var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    merge = H.merge;
+var CenteredSeriesMixin = H.CenteredSeriesMixin;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -577,7 +577,7 @@ addEvent(H.Pointer, 'beforeGetHoverData', function (
                 s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821
                 pick(s.options.enableMouseTracking, true) &&
-                (!chart.polar || s.xAxis.pane === chart.hoverPane)
+                (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
             );
         };
     }

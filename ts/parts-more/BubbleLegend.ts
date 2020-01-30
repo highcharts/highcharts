@@ -149,6 +149,7 @@ const {
     arrayMax,
     arrayMin,
     isNumber,
+    merge,
     objectEach,
     pick,
     stableSort,
@@ -159,7 +160,6 @@ var Series = H.Series,
     Legend = H.Legend,
     Chart = H.Chart,
     color = H.color,
-    merge = H.merge,
     noop = H.noop,
     setOptions = H.setOptions;
 

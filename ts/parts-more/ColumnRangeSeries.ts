@@ -55,11 +55,11 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     clamp,
+    merge,
     pick
 } = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
-    merge = H.merge,
     noop = H.noop,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;

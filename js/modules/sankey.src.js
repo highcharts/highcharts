@@ -89,14 +89,14 @@ import H from '../parts/Globals.js';
 * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
 * @type {Highcharts.SankeyNodeObject}
 */
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
+var defined = U.defined, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
-var find = H.find, merge = H.merge, seriesType = H.seriesType, Point = H.Point;
+var find = H.find, seriesType = H.seriesType, Point = H.Point;
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -518,7 +518,7 @@ seriesType('sankey', 'column',
         }
         // Link attributes
         return {
-            fill: colorModule.color(color).setOpacity(values.linkOpacity).get()
+            fill: Color.parse(color).setOpacity(values.linkOpacity).get()
         };
     },
     /**

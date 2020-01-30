@@ -252,11 +252,12 @@ declare global {
  * @type {Highcharts.SankeyNodeObject}
  */
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
     isObject,
+    merge,
     pick,
     relativeLength,
     stableSort
@@ -270,7 +271,6 @@ const {
 } = mixinTreeSeries;
 
 var find = H.find,
-    merge = H.merge,
     seriesType = H.seriesType,
     Point = H.Point;
 
@@ -824,7 +824,7 @@ seriesType<Highcharts.SankeySeries>(
 
             // Link attributes
             return {
-                fill: colorModule.color(color).setOpacity(values.linkOpacity).get()
+                fill: Color.parse(color).setOpacity(values.linkOpacity).get()
             };
 
         },

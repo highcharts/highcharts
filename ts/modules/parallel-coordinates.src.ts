@@ -63,6 +63,7 @@ const {
     defined,
     erase,
     extend,
+    merge,
     pick,
     splat,
     wrap
@@ -77,8 +78,6 @@ var Axis = H.Axis,
     Chart = H.Chart,
     ChartProto = Chart.prototype,
     AxisProto = H.Axis.prototype;
-
-var merge = H.merge;
 
 var defaultXAxisOptions = {
     lineWidth: 0,
