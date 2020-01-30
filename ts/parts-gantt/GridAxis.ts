@@ -42,19 +42,21 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
     erase,
     isArray,
     isNumber,
+    merge,
     pick,
     timeUnits,
     wrap
 } = U;
 
-var addEvent = H.addEvent,
-    argsToArray = function (args: IArguments): Array<any> {
+var argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
     dateFormat = H.dateFormat,
@@ -62,10 +64,8 @@ var addEvent = H.addEvent,
         // Always use strict mode
         return U.isObject(x, true);
     },
-    merge = H.merge,
     Chart = H.Chart,
-    Axis = H.Axis,
-    Tick = H.Tick;
+    Axis = H.Axis;
 
 var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     var options = axis.options;

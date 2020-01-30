@@ -122,9 +122,12 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     clamp,
     defined,
+    fireEvent,
     isNumber,
+    merge,
     pick,
     relativeLength,
     setAnimation
@@ -137,17 +140,14 @@ import './Options.js';
 import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    CenteredSeriesMixin = H.CenteredSeriesMixin,
+var CenteredSeriesMixin = H.CenteredSeriesMixin,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
     Point = H.Point,
     Series = H.Series,
     seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    fireEvent = H.fireEvent;
+    seriesTypes = H.seriesTypes;
 
 /**
  * Pie series type.

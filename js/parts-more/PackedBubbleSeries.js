@@ -44,17 +44,17 @@ import H from '../parts/Globals.js';
 * @type {string}
 * @since 7.0.0
 */
-import colorModule from '../parts/Color.js';
-var color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-var clamp = utilitiesModule.clamp, defined = utilitiesModule.defined, extend = utilitiesModule.extend, extendClass = utilitiesModule.extendClass, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, pick = utilitiesModule.pick;
+import Color from '../parts/Color.js';
+var color = Color.parse;
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import '../parts/Axis.js';
 import '../parts/Color.js';
 import '../parts/Point.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
-var seriesType = H.seriesType, Series = H.Series, Point = H.Point, addEvent = H.addEvent, fireEvent = H.fireEvent, Chart = H.Chart, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
+var seriesType = H.seriesType, Series = H.Series, Point = H.Point, Chart = H.Chart, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
 H.networkgraphIntegrations.packedbubble = {
     repulsiveForceFunction: function (d, k, node, repNode) {
         return Math.min(d, (node.marker.radius + repNode.marker.radius) / 2);
@@ -690,7 +690,7 @@ seriesType('packedbubble', 'bubble',
             });
         }
         this.calculateParentRadius();
-        parentAttribs = H.merge({
+        parentAttribs = merge({
             x: series.parentNode.plotX -
                 series.parentNodeRadius,
             y: series.parentNode.plotY -
@@ -754,7 +754,7 @@ seriesType('packedbubble', 'bubble',
      * @private
      */
     addSeriesLayout: function () {
-        var series = this, layoutOptions = series.options.layoutAlgorithm, graphLayoutsStorage = series.chart.graphLayoutsStorage, graphLayoutsLookup = series.chart.graphLayoutsLookup, parentNodeOptions = H.merge(layoutOptions, layoutOptions.parentNodeOptions, {
+        var series = this, layoutOptions = series.options.layoutAlgorithm, graphLayoutsStorage = series.chart.graphLayoutsStorage, graphLayoutsLookup = series.chart.graphLayoutsLookup, parentNodeOptions = merge(layoutOptions, layoutOptions.parentNodeOptions, {
             enableSimulation: series.layout.options.enableSimulation
         }), parentNodeLayout;
         parentNodeLayout = graphLayoutsStorage[layoutOptions.type + '-series'];
@@ -1156,7 +1156,7 @@ seriesType('packedbubble', 'bubble',
                             node.marker.radius -
                             point.marker.radius);
                         if (distanceR < 0) {
-                            node.series.addPoint(H.merge(point.options, {
+                            node.series.addPoint(merge(point.options, {
                                 plotX: point.plotX,
                                 plotY: point.plotY
                             }), false);

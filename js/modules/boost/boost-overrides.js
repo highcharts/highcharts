@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber, wrap = U.wrap;
+var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../../parts/Color.js';
 import '../../parts/Series.js';
 import '../../parts/Options.js';
@@ -21,7 +21,7 @@ import '../../parts/Interaction.js';
 import butils from './boost-utils.js';
 import boostable from './boostables.js';
 import boostableMap from './boostable-map.js';
-var boostEnabled = butils.boostEnabled, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, Chart = H.Chart, Series = H.Series, Point = H.Point, seriesTypes = H.seriesTypes, addEvent = H.addEvent, pick = H.pick, plotOptions = H.getOptions().plotOptions;
+var boostEnabled = butils.boostEnabled, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, Chart = H.Chart, Series = H.Series, Point = H.Point, seriesTypes = H.seriesTypes, plotOptions = H.getOptions().plotOptions;
 /**
  * Returns true if the chart is in series boost mode.
  *

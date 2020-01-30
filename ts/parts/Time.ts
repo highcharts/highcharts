@@ -51,7 +51,6 @@ declare global {
             public timezoneOffset?: number;
             public useUTC: boolean;
             public variableTimezone: boolean;
-            public dateFormat(timestamp: number, capitalize?: boolean): string;
             public dateFormat(
                 format: string,
                 timestamp: number,
@@ -149,20 +148,20 @@ declare global {
  * Timezone offset in minutes.
  */
 
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
     defined,
     extend,
     isObject,
+    merge,
     objectEach,
     pad,
     pick,
     splat,
     timeUnits
-} = utilitiesModule;
+} = U;
 
 var H = Highcharts,
-    merge = H.merge,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -393,11 +392,11 @@ class Time {
 
     public Date: typeof Date = win.Date;
 
-    private getTimezoneOffset: ReturnType<Time['timezoneOffsetFunction']>;
+    public getTimezoneOffset: ReturnType<Time['timezoneOffsetFunction']>;
 
-    private get?: (unit: string, date: Date) => number;
+    public get?: (unit: string, date: Date) => number;
 
-    private set?: (unit: string, date: Date, value: number) => (number|undefined);
+    public set?: (unit: string, date: Date, value: number) => (number|undefined);
 
     /* *
      *
@@ -555,7 +554,7 @@ class Time {
         var d, offset, newOffset;
 
         if (this.useUTC) {
-            d = this.Date.UTC.apply(0, arguments as any);
+            d = this.Date.UTC.apply(0, arguments);
             offset = this.getTimezoneOffset(d);
             d += offset;
             newOffset = this.getTimezoneOffset(d);
@@ -674,7 +673,7 @@ class Time {
      *
      * @function Highcharts.Time#dateFormat
      *
-     * @param {string} [format]
+     * @param {string} format
      *        The desired format where various time representations are
      *        prefixed with %.
      *
@@ -688,12 +687,12 @@ class Time {
      *         The formatted date.
      */
     public dateFormat(
-        format: (number|string),
-        timestamp?: (boolean|number),
+        format: string,
+        timestamp: number,
         capitalize?: boolean
     ): string {
         if (!defined(timestamp) || isNaN(timestamp as any) || typeof this.get === 'undefined') {
-            return (H.defaultOptions.lang as any).invalidDate || '';
+            return H.defaultOptions.lang?.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
 
@@ -706,8 +705,8 @@ class Time {
             month = this.get('Month', date),
             fullYear = this.get('FullYear', date),
             lang = H.defaultOptions.lang,
-            langWeekdays = (lang as any).weekdays,
-            shortWeekdays = (lang as any).shortWeekdays,
+            langWeekdays = (lang?.weekdays as any),
+            shortWeekdays = lang?.shortWeekdays,
 
             // List all format keys. Custom formats can be added from the
             // outside.
@@ -771,15 +770,14 @@ class Time {
                 H.dateFormats
             );
 
-
         // Do the replaces
         objectEach(replacements, function (
             val: (string|Function),
             key: string
         ): void {
             // Regex would do it in one line, but this is faster
-            while ((format as any).indexOf('%' + key) !== -1) {
-                format = (format as any).replace(
+            while (format.indexOf('%' + key) !== -1) {
+                format = format.replace(
                     '%' + key,
                     typeof val === 'function' ? val.call(time, timestamp) : val
                 );
@@ -790,8 +788,8 @@ class Time {
         // Optionally capitalize the string and return
         return capitalize ?
             (
-                (format as any).substr(0, 1).toUpperCase() +
-                (format as any).substr(1)
+                format.substr(0, 1).toUpperCase() +
+                format.substr(1)
             ) :
             format;
     }
@@ -1054,7 +1052,7 @@ class Time {
 
 
         // record information on the chosen unit - for dynamic label formatter
-        tickPositions.info = extend(normalizedInterval as any, {
+        tickPositions.info = extend(normalizedInterval, {
             higherRanks: higherRanks,
             totalRange: interval * count
         }) as Highcharts.TimeTicksInfoObject;
@@ -1064,6 +1062,6 @@ class Time {
 
 }
 
-H.Time = Time as any;
+H.Time = Time;
 
 export default H.Time;

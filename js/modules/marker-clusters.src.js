@@ -29,7 +29,6 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
 /**
  * Function callback when a cluster is clicked.
  *
@@ -41,11 +40,14 @@ import U from '../parts/Utilities.js';
  * @param {Highcharts.PointClickEventObject} event
  *          Event arguments.
  */
+''; // detach doclets from following code
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /* eslint-disable no-invalid-this */
 import '../parts/Series.js';
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
-var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, addEvent = H.addEvent, merge = H.merge, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isFunction = H.isFunction, isNumber = U.isNumber, relativeLength = H.relativeLength, error = H.error, objectEach = U.objectEach, syncTimeout = U.syncTimeout, animObject = H.animObject, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
+var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, isFunction = H.isFunction, error = H.error, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
 oldPointsStateId = [];

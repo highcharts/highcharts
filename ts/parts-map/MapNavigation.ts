@@ -84,17 +84,17 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     extend,
+    merge,
     objectEach,
     pick
 } = U;
 
 import '../parts/Chart.js';
 
-var addEvent = H.addEvent,
-    Chart = H.Chart,
-    doc = H.doc,
-    merge = H.merge;
+var Chart = H.Chart,
+    doc = H.doc;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

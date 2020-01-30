@@ -104,6 +104,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
@@ -116,8 +117,7 @@ import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Point.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     Point = H.Point,
     Series = H.Series,

@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import '../parts/Chart.js';
-var addEvent = H.addEvent, Chart = H.Chart, merge = H.merge, perspective = H.perspective;
+var Chart = H.Chart, perspective = H.perspective;
 /**
  * Shorthand to check the is3d flag.
  * @private

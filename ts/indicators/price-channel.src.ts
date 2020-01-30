@@ -58,12 +58,14 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    merge
+} = U;
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var getArrayExtremes = reduceArrayMixin.getArrayExtremes,
-    merge = H.merge;
+var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
 /**
  * The Price Channel series type.

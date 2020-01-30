@@ -63,13 +63,15 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    isArray,
+    merge
+} = U;
 
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var merge = H.merge,
-    SMA = H.seriesTypes.sma,
+var SMA = H.seriesTypes.sma,
     getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
 /**
@@ -149,7 +151,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    H.merge(multipleLinesMixin, {
+    merge(multipleLinesMixin, {
         nameComponents: ['periods'],
         nameBase: 'Stochastic',
         pointArrayMap: ['y', 'smoothed'],

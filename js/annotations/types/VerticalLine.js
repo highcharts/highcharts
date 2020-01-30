@@ -5,7 +5,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
 var Annotation = H.Annotation, MockPoint = Annotation.MockPoint;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var VerticalLine = function () {
@@ -38,7 +39,7 @@ H.extendAnnotation(VerticalLine, null, {
         return [this.options.typeOptions.point];
     },
     addShapes: function () {
-        var typeOptions = this.options.typeOptions, connector = this.initShape(H.merge(typeOptions.connector, {
+        var typeOptions = this.options.typeOptions, connector = this.initShape(merge(typeOptions.connector, {
             type: 'path',
             points: [
                 VerticalLine.connectorFirstPoint,
@@ -55,7 +56,7 @@ H.extendAnnotation(VerticalLine, null, {
             verticalAlign = 'middle';
             align = labelOptions.offset < 0 ? 'right' : 'left';
         }
-        var label = this.initLabel(H.merge(labelOptions, {
+        var label = this.initLabel(merge(labelOptions, {
             verticalAlign: verticalAlign,
             align: align,
             x: x,

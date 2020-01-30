@@ -291,18 +291,21 @@ declare global {
 import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
+    addEvent,
     animObject,
     attr,
     defined,
     discardElement,
     erase,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
     isString,
+    merge,
     numberFormat,
     objectEach,
     pick,
@@ -312,15 +315,14 @@ const {
     setAnimation,
     splat,
     syncTimeout
-} = utilitiesModule;
+} = U;
 
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 
-var addEvent = H.addEvent,
-    animate = H.animate,
+var animate = H.animate,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,
@@ -328,10 +330,8 @@ var addEvent = H.addEvent,
     charts = H.charts,
     css = H.css,
     find = H.find,
-    fireEvent = H.fireEvent,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
-    merge = H.merge,
     seriesTypes = H.seriesTypes,
     win = H.win;
 

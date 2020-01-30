@@ -50,7 +50,11 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    addEvent
+} = U;
+
 import './Options.js';
 import './Series.js';
 
@@ -262,7 +266,7 @@ seriesType<Highcharts.ScatterSeries>(
 
 /* eslint-disable no-invalid-this */
 
-H.addEvent(Series as any, 'afterTranslate', function (
+addEvent(Series as any, 'afterTranslate', function (
     this: Highcharts.ScatterSeries
 ): void {
     if (this.applyJitter) {

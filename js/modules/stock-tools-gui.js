@@ -12,8 +12,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, pick = U.pick;
-var addEvent = H.addEvent, createElement = H.createElement, fireEvent = H.fireEvent, getStyle = H.getStyle, merge = H.merge, css = H.css, win = H.win, DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, merge = U.merge, pick = U.pick;
+var createElement = H.createElement, getStyle = H.getStyle, css = H.css, win = H.win, DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
 H.setOptions({
     /**
      * @optionparent lang

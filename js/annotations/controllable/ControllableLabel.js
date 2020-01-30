@@ -6,7 +6,7 @@
 'use strict';
 import H from './../../parts/Globals.js';
 import U from './../../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
 import MockPoint from './../MockPoint.js';
@@ -149,7 +149,7 @@ ControllableLabel.attrsMap = {
     borderRadius: 'r',
     padding: 'padding'
 };
-H.merge(true, ControllableLabel.prototype, controllableMixin, 
+merge(true, ControllableLabel.prototype, controllableMixin, 
 /** @lends Annotation.ControllableLabel# */ {
     /**
      * Translate the point of the label by deltaX and deltaY translations.

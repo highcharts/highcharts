@@ -89,6 +89,7 @@ import U from '../parts/Utilities.js';
 const {
     clamp,
     isNumber,
+    merge,
     pick,
     pInt
 } = U;
@@ -98,8 +99,7 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
 
-var merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
     seriesType = H.seriesType,
     TrackerMixin = H.TrackerMixin;

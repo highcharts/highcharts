@@ -113,8 +113,7 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
-var merge = H.merge;
+var isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Handle color operations. Some object methods are chainable.
@@ -401,9 +400,5 @@ H.Color = Color;
  * @return {Highcharts.Color}
  *         Color instance
  */
-var color = H.color = Color.parse;
-var exports = {
-    Color: Color,
-    color: color
-};
-export default exports;
+H.color = Color.parse;
+export default H.Color;

@@ -85,13 +85,14 @@ import '../mixins/centered-series.js';
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     extend,
+    merge,
     pick,
     splat
 } = U;
 
-var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    merge = H.merge;
+var CenteredSeriesMixin = H.CenteredSeriesMixin;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -540,7 +541,7 @@ H.Chart.prototype.getHoverPane = function (
     return hoverPane;
 };
 
-H.addEvent(H.Chart, 'afterIsInsidePlot', function (
+addEvent(H.Chart, 'afterIsInsidePlot', function (
     this: Highcharts.Chart | Highcharts.PaneChart,
     e: {
         x: number;
@@ -556,7 +557,7 @@ H.addEvent(H.Chart, 'afterIsInsidePlot', function (
     }
 });
 
-H.addEvent(H.Pointer, 'beforeGetHoverData', function (
+addEvent(H.Pointer, 'beforeGetHoverData', function (
     this: Highcharts.Pointer,
     eventArgs: {
         chartX: number;
@@ -576,13 +577,13 @@ H.addEvent(H.Pointer, 'beforeGetHoverData', function (
                 s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821
                 pick(s.options.enableMouseTracking, true) &&
-                (!chart.polar || s.xAxis.pane === chart.hoverPane)
+                (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
             );
         };
     }
 });
 
-H.addEvent(H.Pointer, 'afterGetHoverData', function (
+addEvent(H.Pointer, 'afterGetHoverData', function (
     this: Highcharts.Pointer,
     eventArgs: Highcharts.PointerEventArgsObject
 ): void {

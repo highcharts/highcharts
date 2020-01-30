@@ -8,9 +8,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray, merge = U.merge;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var merge = H.merge, SMA = H.seriesTypes.sma;
+var SMA = H.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**
@@ -108,7 +108,7 @@ H.seriesType('bb', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-H.merge(multipleLinesMixin, {
+merge(multipleLinesMixin, {
     pointArrayMap: ['top', 'middle', 'bottom'],
     pointValKey: 'middle',
     nameComponents: ['period', 'standardDeviation'],

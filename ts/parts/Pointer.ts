@@ -264,7 +264,7 @@ declare global {
  * @type {Array<Highcharts.SelectDataObject>}
  */
 
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
     attr,
@@ -277,7 +277,7 @@ const {
     offset,
     pick,
     splat
-} = utilitiesModule;
+} = U;
 
 import './Tooltip.js';
 import './Color.js';
@@ -2057,7 +2057,7 @@ class Pointer {
             chart.hoverPoint = hoverPoint;
 
             // Draw tooltip if necessary
-            if (tooltip && !chart.polar) {
+            if (tooltip) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
         // Update positions (regardless of kdpoint or hoverPoint)

@@ -47,12 +47,12 @@ import H from '../../parts/Globals.js';
 * @since 7.0.0
 */
 import U from '../../parts/Utilities.js';
-var defined = U.defined, pick = U.pick;
+var addEvent = U.addEvent, defined = U.defined, pick = U.pick;
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
-var addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
+var seriesType = H.seriesType, seriesTypes = H.seriesTypes, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private
  * @class
@@ -504,6 +504,7 @@ seriesType('networkgraph', 'line',
     /**
      * In networkgraph, series.points refers to links,
      * but series.nodes refers to actual points.
+     * @private
      */
     getPointsCollection: function () {
         return this.nodes || [];

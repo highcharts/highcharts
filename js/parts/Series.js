@@ -227,14 +227,14 @@ import H from './Globals.js';
  */
 import pointModule from './Point.js';
 var Point = pointModule.Point;
-import utilitiesModule from './Utilities.js';
-var animObject = utilitiesModule.animObject, arrayMax = utilitiesModule.arrayMax, arrayMin = utilitiesModule.arrayMin, clamp = utilitiesModule.clamp, correctFloat = utilitiesModule.correctFloat, defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, removeEvent = utilitiesModule.removeEvent, splat = utilitiesModule.splat, syncTimeout = utilitiesModule.syncTimeout;
+import U from './Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-merge = H.merge, seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
+var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
+seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the

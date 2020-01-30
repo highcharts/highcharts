@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../parts/AreaSeries.js';
-var addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class

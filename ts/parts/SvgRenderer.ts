@@ -807,12 +807,11 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-import colorModule from './Color.js';
+import Color from './Color.js';
+const color = Color.parse;
+import U from './Utilities.js';
 const {
-    color
-} = colorModule;
-import utilitiesModule from './Utilities.js';
-const {
+    addEvent,
     animObject,
     attr,
     defined,
@@ -823,17 +822,16 @@ const {
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
     pInt,
     removeEvent,
     splat
-} = utilitiesModule;
+} = U;
 
 var SVGElement: Highcharts.SVGElement,
     SVGRenderer,
-
-    addEvent = H.addEvent,
     animate = H.animate,
     charts = H.charts,
     css = H.css,
@@ -844,7 +842,6 @@ var SVGElement: Highcharts.SVGElement,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
-    merge = H.merge,
     noop = H.noop,
     stop = H.stop,
     svg = H.svg,
