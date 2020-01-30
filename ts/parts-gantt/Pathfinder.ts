@@ -193,6 +193,7 @@ const {
     addEvent,
     defined,
     extend,
+    merge,
     objectEach,
     pick,
     splat
@@ -202,7 +203,6 @@ import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import './ArrowSymbols.js';
 
 var deg2rad = H.deg2rad,
-    merge = H.merge,
     max = Math.max,
     min = Math.min;
 

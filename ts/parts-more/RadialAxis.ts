@@ -154,6 +154,7 @@ const {
     correctFloat,
     defined,
     extend,
+    merge,
     pick,
     pInt,
     relativeLength,
@@ -165,7 +166,6 @@ import '../parts/Tick.js';
 import './Pane.js';
 
 var Axis = H.Axis,
-    merge = H.merge,
     noop = H.noop,
     Tick = H.Tick,
 

@@ -188,8 +188,9 @@ import H from './Globals.js';
 import Time from './Time.js';
 import colorModule from './Color.js';
 var color = colorModule.color;
-import './Utilities.js';
-var isTouchDevice = H.isTouchDevice, merge = H.merge, svg = H.svg;
+import U from './Utilities.js';
+var merge = U.merge;
+var isTouchDevice = H.isTouchDevice, svg = H.svg;
 /* ************************************************************************** *
  * Handle the options                                                         *
  * ************************************************************************** */

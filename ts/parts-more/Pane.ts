@@ -87,12 +87,12 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     extend,
+    merge,
     pick,
     splat
 } = U;
 
-var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    merge = H.merge;
+var CenteredSeriesMixin = H.CenteredSeriesMixin;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

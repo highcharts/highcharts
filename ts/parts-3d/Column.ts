@@ -633,7 +633,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
 /*
 var defaultOptions = H.getOptions();
 defaultOptions.plotOptions.cylinder =
-    H.merge(defaultOptions.plotOptions.column);
+    merge(defaultOptions.plotOptions.column);
 var CylinderSeries = H.extendClass(seriesTypes.column, {
     type: 'cylinder'
 });

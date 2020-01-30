@@ -302,6 +302,7 @@ const {
     animObject,
     extend,
     fireEvent,
+    merge,
     objectEach,
     pick,
     syncTimeout
@@ -728,7 +729,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
                 levelSeries.push(series);
 
                 // (#10597)
-                series.purgedOptions = H.merge({
+                series.purgedOptions = merge({
                     _ddSeriesId: series.options._ddSeriesId,
                     _levelNumber: series.options._levelNumber,
                     selected: series.options.selected
@@ -1021,7 +1022,7 @@ Chart.prototype.callbacks.push(function (): void {
             options: Highcharts.DrilldownOptions,
             redraw?: boolean
         ): void {
-            H.merge(true, chart.options.drilldown, options);
+            merge(true, chart.options.drilldown, options);
             if (pick(redraw, true)) {
                 chart.redraw();
             }
@@ -1257,7 +1258,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
             if (animationOptions.duration) {
                 graphic.animate(
                     animateTo as any,
-                    H.merge(animationOptions, { complete: complete })
+                    merge(animationOptions, { complete: complete })
                 );
             } else {
                 graphic.attr(animateTo);
@@ -1302,7 +1303,7 @@ if (PieSeries) {
 
                     if (point.graphic) {
                         point.graphic
-                            .attr(H.merge(animateFrom, {
+                            .attr(merge(animateFrom, {
                                 start: start + i * startAngle,
                                 end: start + (i + 1) * startAngle
                             }))[animationOptions ? 'animate' : 'attr'](
@@ -1435,7 +1436,7 @@ Tick.prototype.drillable = function (): void {
             label.drillable = true;
 
             if (!label.basicStyles && !styledMode) {
-                label.basicStyles = H.merge(label.styles);
+                label.basicStyles = merge(label.styles);
             }
 
             label.addClass('highcharts-drilldown-axis-label');

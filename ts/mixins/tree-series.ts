@@ -4,8 +4,6 @@
  *
  * */
 
-import H from '../parts/Globals.js';
-
 /**
  * Internal types
  * @private
@@ -73,6 +71,7 @@ const {
     isArray,
     isNumber,
     isObject,
+    merge,
     pick
 } = U;
 
@@ -81,8 +80,7 @@ var isBoolean = function (x: unknown): x is boolean {
     },
     isFn = function (x: unknown): x is Function {
         return typeof x === 'function';
-    },
-    merge = H.merge;
+    };
 
 /* eslint-disable valid-jsdoc */
 

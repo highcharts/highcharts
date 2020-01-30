@@ -180,10 +180,9 @@ declare global {
 import U from './Utilities.js';
 const {
     isNumber,
+    merge,
     pInt
 } = U;
-
-var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

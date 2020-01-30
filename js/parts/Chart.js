@@ -102,14 +102,14 @@ import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 var animate = H.animate, doc = H.doc, Axis = H.Axis, // @todo add as requirement
 createElement = H.createElement, defaultOptions = H.defaultOptions, charts = H.charts, css = H.css, find = H.find, Legend = H.Legend, // @todo add as requirement
-marginNames = H.marginNames, merge = H.merge, seriesTypes = H.seriesTypes, win = H.win;
+marginNames = H.marginNames, seriesTypes = H.seriesTypes, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.

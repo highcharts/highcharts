@@ -127,7 +127,7 @@ import H from '../parts/Globals.js';
 import colorModule from '../parts/Color.js';
 var Color = colorModule.Color;
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -491,7 +491,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (point, ddOptions) {
             else {
                 levelSeries.push(series);
                 // (#10597)
-                series.purgedOptions = H.merge({
+                series.purgedOptions = merge({
                     _ddSeriesId: series.options._ddSeriesId,
                     _levelNumber: series.options._levelNumber,
                     selected: series.options.selected
@@ -700,7 +700,7 @@ Chart.prototype.callbacks.push(function () {
     var chart = this;
     chart.drilldown = {
         update: function (options, redraw) {
-            H.merge(true, chart.options.drilldown, options);
+            merge(true, chart.options.drilldown, options);
             if (pick(redraw, true)) {
                 chart.redraw();
             }
@@ -862,7 +862,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
                 animateTo.fill = level.color;
             }
             if (animationOptions.duration) {
-                graphic.animate(animateTo, H.merge(animationOptions, { complete: complete }));
+                graphic.animate(animateTo, merge(animationOptions, { complete: complete }));
             }
             else {
                 graphic.attr(animateTo);
@@ -886,7 +886,7 @@ if (PieSeries) {
                     }
                     if (point.graphic) {
                         point.graphic
-                            .attr(H.merge(animateFrom, {
+                            .attr(merge(animateFrom, {
                             start: start + i * startAngle,
                             end: start + (i + 1) * startAngle
                         }))[animationOptions ? 'animate' : 'attr'](animateTo, animationOptions);
@@ -979,7 +979,7 @@ Tick.prototype.drillable = function () {
         if (label && ddPointsX && ddPointsX.length) {
             label.drillable = true;
             if (!label.basicStyles && !styledMode) {
-                label.basicStyles = H.merge(label.styles);
+                label.basicStyles = merge(label.styles);
             }
             label.addClass('highcharts-drilldown-axis-label');
             label.removeOnDrillableClick = addEvent(label.element, 'click', function (e) {

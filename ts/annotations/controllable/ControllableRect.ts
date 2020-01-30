@@ -4,8 +4,6 @@
  *
  * */
 
-import H from '../../parts/Globals.js';
-
 /**
  * Internal types.
  * @private
@@ -53,7 +51,10 @@ declare global {
     }
 }
 
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 import controllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 
@@ -99,12 +100,12 @@ const ControllableRect: typeof Highcharts.AnnotationControllableRect = function 
  *
  * @type {Annotation.ControllableRect.AttrsMap}
  */
-ControllableRect.attrsMap = H.merge(ControllablePath.attrsMap, {
+ControllableRect.attrsMap = merge(ControllablePath.attrsMap, {
     width: 'width',
     height: 'height'
 });
 
-H.merge<Highcharts.AnnotationControllableRect, Partial<Highcharts.AnnotationControllableRect>>(
+merge<Highcharts.AnnotationControllableRect, Partial<Highcharts.AnnotationControllableRect>>(
     true,
     ControllableRect.prototype,
     controllableMixin, /** @lends Annotation.ControllableRect# */ {

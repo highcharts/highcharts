@@ -113,8 +113,7 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
-var merge = H.merge;
+var isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Handle color operations. Some object methods are chainable.

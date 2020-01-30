@@ -12,9 +12,13 @@
 
 'use strict';
 
+import U from '../../../parts/Utilities.js';
+const {
+    merge
+} = U;
+
 import H from '../../../parts/Globals.js';
-var merge = H.merge,
-    win = H.win,
+var win = H.win,
     doc = win.document;
 
 

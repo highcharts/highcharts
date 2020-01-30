@@ -4,8 +4,8 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
-import './../../parts/Utilities.js';
+import U from './../../parts/Utilities.js';
+var merge = U.merge;
 import controllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -32,10 +32,10 @@ var ControllableCircle = function (annotation, options, index) {
  * @name Highcharts.AnnotationControllableCircle.attrsMap
  * @type {Highcharts.Dictionary<string>}
  */
-ControllableCircle.attrsMap = H.merge(ControllablePath.attrsMap, {
+ControllableCircle.attrsMap = merge(ControllablePath.attrsMap, {
     r: 'r'
 });
-H.merge(true, ControllableCircle.prototype, controllableMixin, /** @lends Highcharts.AnnotationControllableCircle# */ {
+merge(true, ControllableCircle.prototype, controllableMixin, /** @lends Highcharts.AnnotationControllableCircle# */ {
     /**
      * @type 'circle'
      */

@@ -45,10 +45,12 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    merge
+} = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
-    merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 

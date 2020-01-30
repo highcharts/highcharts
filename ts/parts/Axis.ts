@@ -700,6 +700,7 @@ const {
     isArray,
     isNumber,
     isString,
+    merge,
     objectEach,
     pick,
     relativeLength,
@@ -717,7 +718,6 @@ var color = H.color,
     deg2rad = H.deg2rad,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    merge = H.merge,
     normalizeTickInterval = H.normalizeTickInterval,
     Tick = H.Tick;
 

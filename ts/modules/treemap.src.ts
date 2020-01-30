@@ -302,6 +302,7 @@ const {
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
     stableSort
@@ -315,7 +316,6 @@ const AXIS_MAX = 100;
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    merge = H.merge,
     error = H.error,
     noop = H.noop,
     getColor = mixinTreeSeries.getColor,

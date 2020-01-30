@@ -177,6 +177,7 @@ const {
     isNumber,
     isObject,
     isString,
+    merge,
     splat
 } = U;
 
@@ -195,7 +196,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
-    merge = H.merge,
     noop = H.noop,
     rad2deg = 180 / Math.PI,
     seriesType = H.seriesType,

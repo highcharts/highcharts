@@ -151,9 +151,11 @@ const {
     addEvent,
     attr,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
+    merge,
     objectEach,
     pick
 } = U;
@@ -162,8 +164,6 @@ import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
     win = H.win,
-    merge = H.merge,
-    fireEvent = H.fireEvent,
     PREFIX = 'highcharts-';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -1076,7 +1076,7 @@ function selectableAnnotation(annotationType: typeof Highcharts.Annotation): voi
         event.activeAnnotation = true;
     }
 
-    H.merge(
+    merge(
         true,
         annotationType.prototype.defaultOptions.events,
         {

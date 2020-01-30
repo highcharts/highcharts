@@ -11,9 +11,8 @@
  * */
 'use strict';
 import H from '../../../../parts/Globals.js';
-var merge = H.merge;
 import U from '../../../../parts/Utilities.js';
-var addEvent = U.addEvent;
+var addEvent = U.addEvent, merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private

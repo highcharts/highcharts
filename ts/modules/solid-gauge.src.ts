@@ -94,6 +94,7 @@ const {
     clamp,
     extend,
     isNumber,
+    merge,
     pick,
     pInt,
     wrap
@@ -185,7 +186,7 @@ colorAxisMethods = {
         ): void {
             var colors: (Array<string>|undefined);
 
-            dataClass = H.merge(dataClass);
+            dataClass = merge(dataClass);
             dataClasses.push(dataClass);
             if (!dataClass.color) {
                 if (options.dataClassColor === 'category') {

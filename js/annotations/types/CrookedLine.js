@@ -5,7 +5,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
 var Annotation = H.Annotation, MockPoint = Annotation.MockPoint, ControlPoint = Annotation.ControlPoint;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var CrookedLine = function () {
@@ -33,13 +34,13 @@ H.extendAnnotation(CrookedLine, null, {
     },
     addControlPoints: function () {
         this.getControlPointsOptions().forEach(function (pointOptions, i) {
-            var controlPoint = new ControlPoint(this.chart, this, H.merge(this.options.controlPointOptions, pointOptions.controlPoint), i);
+            var controlPoint = new ControlPoint(this.chart, this, merge(this.options.controlPointOptions, pointOptions.controlPoint), i);
             this.controlPoints.push(controlPoint);
             pointOptions.controlPoint = controlPoint.options;
         }, this);
     },
     addShapes: function () {
-        var typeOptions = this.options.typeOptions, shape = this.initShape(H.merge(typeOptions.line, {
+        var typeOptions = this.options.typeOptions, shape = this.initShape(merge(typeOptions.line, {
             type: 'path',
             points: this.points.map(function (_point, i) {
                 return function (target) {

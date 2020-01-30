@@ -76,6 +76,7 @@ const {
     addEvent,
     clamp,
     isNumber,
+    merge,
     objectEach,
     relativeLength,
     wrap
@@ -85,7 +86,6 @@ import '../parts/Axis.js';
 import '../parts/Pointer.js';
 
 var hasTouch = H.hasTouch,
-    merge = H.merge,
     Axis = H.Axis,
     Pointer = H.Pointer,
 

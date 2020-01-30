@@ -75,9 +75,12 @@ declare global
 }
 
 import U from './../../parts/Utilities.js';
-var extend = U.extend,
-    isNumber = U.isNumber,
-    pick = U.pick;
+const {
+    extend,
+    isNumber,
+    merge,
+    pick
+} = U;
 
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
@@ -256,7 +259,7 @@ ControllableLabel.attrsMap = {
     padding: 'padding'
 };
 
-H.merge(
+merge(
     true,
     ControllableLabel.prototype,
     controllableMixin,

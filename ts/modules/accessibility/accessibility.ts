@@ -70,11 +70,11 @@ import U from '../../parts/Utilities.js';
 const {
     addEvent,
     extend,
-    fireEvent
+    fireEvent,
+    merge
 } = U;
 
-var doc = H.win.document,
-    merge = H.merge;
+var doc = H.win.document;
 
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';

@@ -26,9 +26,9 @@ var nelderMead = nelderMeadModule.nelderMead;
 import colorModule from '../parts/Color.js';
 var color = colorModule.color;
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge;
 import '../parts/Series.js';
-var getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
         return obj[x];

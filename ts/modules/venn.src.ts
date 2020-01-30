@@ -157,14 +157,14 @@ const {
     isArray,
     isNumber,
     isObject,
-    isString
+    isString,
+    merge
 } = U;
 
 import '../parts/Series.js';
 
 var getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 

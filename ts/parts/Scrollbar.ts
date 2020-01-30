@@ -150,6 +150,7 @@ const {
     defined,
     destroyObjectProperties,
     fireEvent,
+    merge,
     pick,
     removeEvent
 } = U;
@@ -161,7 +162,6 @@ var Axis = H.Axis,
     defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
-    merge = H.merge,
     swapXY: (
         path: Highcharts.SVGPathArray,
         vertical?: boolean
