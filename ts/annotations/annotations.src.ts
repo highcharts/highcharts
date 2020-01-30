@@ -38,6 +38,7 @@ declare global {
             public collection: AnnotationControllable['collection'];
             public controlPoints: Array<AnnotationControlPoint>;
             public defaultOptions: AnnotationsOptions;
+            public defer: false|AnnotationDeferOptionsObject;
             public getPointsOptions: AnnotationControllableMixin['getPointsOptions'];
             public graphic: SVGElement;
             public group: SVGElement;
@@ -289,6 +290,16 @@ var merge = H.merge,
  * ANNOTATION
  *
  ******************************************************************** */
+/**
+ * An defer configuration. Defer configurations can also be defined as
+ * booleans, where `false` displays annotation immediately and `true` inherits
+ * the animation duration value set for chart in the plotOptions.
+ * @interface Highcharts.AnnotationDeferOptionsObject
+ *//**
+ * The duration time until annotations will be displayed.
+ * @name Highcharts.AnnotationDeferOptionsObject#duration
+ * @type {number|undefined}
+ */
 
 /**
  * Possible directions for draggable annotations. An empty string (`''`)
@@ -507,8 +518,8 @@ merge(
 
             /**
              * Whether to defer displaying the annotations until the set
-             * duration time has finished. Setting to `'false'` disable
-             * the display delay time. If set to `'true'` inherits the duration
+             * duration time has finished. Setting to `false` renders
+             * annotation immediately. If set to `true` inherits the duration
              * time set in [plotOptions.series.animation](#plotOptions.series.animation).
              *
              * @sample highcharts/annotations/defer
@@ -1044,12 +1055,28 @@ merge(
          * @private
          */
         init: function (this: Highcharts.Annotation): void {
+            var plotOptions = this.chart.options.plotOptions as any,
+                defer = this.options.defer;
+
             this.linkPoints();
             this.addControlPoints();
             this.addShapes();
             this.addLabels();
             this.addClipPaths();
             this.setLabelCollector();
+
+            if (defer) {
+                // If defer duration is set use set value,
+                // else inherits from animation set in plotOptions
+                this.defer = isObject(this.options.defer) ?
+                    this.options.defer :
+                    (plotOptions.series && defined(plotOptions.series.animation) ?
+                        plotOptions.series.animation :
+                        plotOptions.line.animation);
+                if (this.chart.renderer.forExport) {
+                    this.defer = false;
+                }
+            }
         },
 
         getLabelsAndShapesOptions: function (
@@ -1219,29 +1246,14 @@ merge(
         },
 
         render: function (this: Highcharts.Annotation): void {
-            var renderer = this.chart.renderer,
-                plotOptions = this.chart.options.plotOptions as any,
-                defer = this.options.defer;
-
-            if (defer) {
-                // If defer duration is set use set value,
-                // else inherits from animation set in plotOptions
-                this.options.defer = isObject(this.options.defer) ? this.options.defer : (
-                    plotOptions.series && defined(plotOptions.series.animation) ?
-                        plotOptions.series.animation :
-                        plotOptions.line.animation
-                );
-                if (this.chart.renderer.forExport) {
-                    this.options.defer = false;
-                }
-            }
+            var renderer = this.chart.renderer;
 
             this.graphic = renderer
                 .g('annotation')
                 .attr({
                     zIndex: this.options.zIndex,
                     visibility: this.options.visible &&
-                        !this.options.defer ?
+                        !this.defer ?
                         'visible' :
                         'hidden'
                 })
@@ -1652,18 +1664,15 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         var chart = this;
 
         chart.annotations.forEach(function (annotation): void {
-            var defer = annotation.options.defer,
+            var defer = annotation.defer,
                 seriesAnimDuration = animObject(defer).duration,
-                fadeInDuration = seriesAnimDuration ? Math.min(seriesAnimDuration, 200) : 0,
-                annotationsGroup = [annotation.shapesGroup, annotation.labelsGroup];
+                fadeInDuration = seriesAnimDuration ? Math.min(seriesAnimDuration, 200) : 0;
 
             if (defer && seriesAnimDuration) {
-                annotationsGroup.forEach(function (element): void {
-                    setTimeout(function (): void {
-                        element.show();
-                        element.animate({ opacity: 1 }, { duration: fadeInDuration });
-                    }, (seriesAnimDuration as any) - fadeInDuration);
-                });
+                setTimeout(function (): void {
+                    annotation.graphic.show();
+                    annotation.graphic.animate({ opacity: 1 }, { duration: fadeInDuration });
+                }, (seriesAnimDuration as any) - fadeInDuration);
             }
         });
     }

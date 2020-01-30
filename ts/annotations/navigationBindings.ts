@@ -1623,6 +1623,19 @@ H.setOptions({
          *            measure, pitchfork, tunnel, verticalLine
          * @apioption navigation.annotationsOptions
          */
-        annotationsOptions: {}
+        annotationsOptions: {
+            /**
+             * Whether to defer displaying the annotations until the set
+             * duration time has finished. Setting to `false` renders
+             * annotation immediately. If set to `true` inherits the duration
+             * time set in [plotOptions.series.animation](#plotOptions.series.animation).
+             *
+             * @sample highcharts/annotations/defer
+             *         Set defer duration time
+             *
+             * @type {boolean|Highcharts.AnnotationDeferOptionsObject}
+             */
+            defer: false
+        }
     }
 });

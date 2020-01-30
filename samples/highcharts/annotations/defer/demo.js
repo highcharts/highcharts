@@ -1,5 +1,9 @@
 Highcharts.chart('container', {
 
+    title: {
+        text: 'Highcharts Annotations - defer options'
+    },
+
     plotOptions: {
         series: {
             animation: {
@@ -19,16 +23,21 @@ Highcharts.chart('container', {
     }],
 
     annotations: [{
-        defer: {
-            duration: 4000
-        },
+        defer: true, //duration value is inherited from plotOptions
         labels: [{
             point: 'max',
             text: 'Max'
-        }, {
+        }]
+    }, {
+        defer: false,
+        labels: [{
             point: 'min',
             text: 'Min'
-        }],
+        }]
+    }, {
+        defer: {
+            duration: 1000
+        },
         shapes: [{
             type: 'circle',
             point: {

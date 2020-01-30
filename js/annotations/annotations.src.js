@@ -28,6 +28,16 @@ var merge = H.merge, fireEvent = H.fireEvent, find = H.find, reduce = H.reduce, 
  *
  ******************************************************************** */
 /**
+ * An defer configuration. Defer configurations can also be defined as
+ * booleans, where `false` displays annotation immediately and `true` inherits
+ * the animation duration value set for chart in the plotOptions.
+ * @interface Highcharts.AnnotationDeferOptionsObject
+ */ /**
+* The duration time until annotations will be displayed.
+* @name Highcharts.AnnotationDeferOptionsObject#duration
+* @type {number|undefined}
+*/
+/**
  * Possible directions for draggable annotations. An empty string (`''`)
  * makes the annotation undraggable.
  *
@@ -207,8 +217,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         visible: true,
         /**
          * Whether to defer displaying the annotations until the set
-         * duration time has finished. Setting to `'false'` disable
-         * the display delay time. If set to `'true'` inherits the duration
+         * duration time has finished. Setting to `false` renders
+         * annotation immediately. If set to `true` inherits the duration
          * time set in [plotOptions.series.animation](#plotOptions.series.animation).
          *
          * @sample highcharts/annotations/defer
@@ -689,12 +699,25 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @private
      */
     init: function () {
+        var plotOptions = this.chart.options.plotOptions, defer = this.options.defer;
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
         this.addClipPaths();
         this.setLabelCollector();
+        if (defer) {
+            // If defer duration is set use set value,
+            // else inherits from animation set in plotOptions
+            this.defer = isObject(this.options.defer) ?
+                this.options.defer :
+                (plotOptions.series && defined(plotOptions.series.animation) ?
+                    plotOptions.series.animation :
+                    plotOptions.line.animation);
+            if (this.chart.renderer.forExport) {
+                this.defer = false;
+            }
+        }
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {
         var mergedOptions = {};
@@ -794,23 +817,13 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         }
     },
     render: function () {
-        var renderer = this.chart.renderer, plotOptions = this.chart.options.plotOptions, defer = this.options.defer;
-        if (defer) {
-            // If defer duration is set use set value,
-            // else inherits from animation set in plotOptions
-            this.options.defer = isObject(this.options.defer) ? this.options.defer : (plotOptions.series && defined(plotOptions.series.animation) ?
-                plotOptions.series.animation :
-                plotOptions.line.animation);
-            if (this.chart.renderer.forExport) {
-                this.options.defer = false;
-            }
-        }
+        var renderer = this.chart.renderer;
         this.graphic = renderer
             .g('annotation')
             .attr({
             zIndex: this.options.zIndex,
             visibility: this.options.visible &&
-                !this.options.defer ?
+                !this.defer ?
                 'visible' :
                 'hidden'
         })
@@ -1072,14 +1085,12 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
     delayRendering: function () {
         var chart = this;
         chart.annotations.forEach(function (annotation) {
-            var defer = annotation.options.defer, seriesAnimDuration = animObject(defer).duration, fadeInDuration = seriesAnimDuration ? Math.min(seriesAnimDuration, 200) : 0, annotationsGroup = [annotation.shapesGroup, annotation.labelsGroup];
+            var defer = annotation.defer, seriesAnimDuration = animObject(defer).duration, fadeInDuration = seriesAnimDuration ? Math.min(seriesAnimDuration, 200) : 0;
             if (defer && seriesAnimDuration) {
-                annotationsGroup.forEach(function (element) {
-                    setTimeout(function () {
-                        element.show();
-                        element.animate({ opacity: 1 }, { duration: fadeInDuration });
-                    }, seriesAnimDuration - fadeInDuration);
-                });
+                setTimeout(function () {
+                    annotation.graphic.show();
+                    annotation.graphic.animate({ opacity: 1 }, { duration: fadeInDuration });
+                }, seriesAnimDuration - fadeInDuration);
             }
         });
     }

@@ -1,5 +1,5 @@
 ---
- name: Highcharts Anootations Demo
+ name: Highcharts Annotations Demo
  authors:
    - Sebastian Wędzel
  js_wrap: b
