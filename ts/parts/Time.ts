@@ -153,6 +153,7 @@ const {
     defined,
     extend,
     isObject,
+    merge,
     objectEach,
     pad,
     pick,
@@ -161,7 +162,6 @@ const {
 } = U;
 
 var H = Highcharts,
-    merge = H.merge,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

@@ -257,6 +257,7 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     isObject,
+    merge,
     pick,
     relativeLength,
     stableSort
@@ -270,7 +271,6 @@ const {
 } = mixinTreeSeries;
 
 var find = H.find,
-    merge = H.merge,
     seriesType = H.seriesType,
     Point = H.Point;
 

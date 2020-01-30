@@ -112,12 +112,12 @@ const color = Color.parse;
 import U from '../../parts/Utilities.js';
 const {
     isNumber,
+    merge,
     objectEach
 } = U;
 
 var win = H.win,
     doc = win.document,
-    merge = H.merge,
     some = H.some,
     pick = H.pick;
 

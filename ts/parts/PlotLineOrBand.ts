@@ -163,11 +163,10 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    merge,
     objectEach,
     pick
 } = U;
-
-var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

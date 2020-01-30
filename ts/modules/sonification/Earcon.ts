@@ -14,7 +14,10 @@
 
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -147,7 +150,7 @@ Earcon.prototype.sonify = function (
     this: Highcharts.Earcon,
     options: Highcharts.EarconOptionsObject
 ): void {
-    var playOptions = H.merge(this.options, options);
+    var playOptions = merge(this.options, options);
 
     // Find master volume/pan settings
     var masterVolume = pick(playOptions.volume, 1),
@@ -162,7 +165,7 @@ Earcon.prototype.sonify = function (
     ): void {
         var instrument = typeof opts.instrument === 'string' ?
                 H.sonification.instruments[opts.instrument] : opts.instrument,
-            instrumentOpts = H.merge(opts.playOptions),
+            instrumentOpts = merge(opts.playOptions),
             instrOnEnd: (Function|undefined),
             instrumentCopy,
             copyId = '';

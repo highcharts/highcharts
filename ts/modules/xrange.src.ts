@@ -112,12 +112,12 @@ const {
     defined,
     isNumber,
     isObject,
+    merge,
     pick
 } = U;
 
 var columnType = H.seriesTypes.column,
     find = H.find,
-    merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     Axis = H.Axis,

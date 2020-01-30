@@ -155,6 +155,7 @@ const {
     correctFloat,
     defined,
     extend,
+    merge,
     pick,
     pInt,
     relativeLength,
@@ -165,7 +166,6 @@ import '../parts/Axis.js';
 import './Pane.js';
 
 var Axis = H.Axis,
-    merge = H.merge,
     noop = H.noop,
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,

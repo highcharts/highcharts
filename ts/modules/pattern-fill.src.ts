@@ -174,13 +174,11 @@ const {
     addEvent,
     animObject,
     erase,
+    merge,
     pick,
     removeEvent,
     wrap
 } = U;
-
-var merge = H.merge;
-
 
 // Add the predefined patterns
 H.patterns = ((): Array<Highcharts.PatternOptionsObject> => {

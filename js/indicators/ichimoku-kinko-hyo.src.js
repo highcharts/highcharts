@@ -11,8 +11,8 @@ import H from '../parts/Globals.js';
 import Color from '../parts/Color.js';
 var color = Color.parse;
 import U from '../parts/Utilities.js';
-var defined = U.defined, isArray = U.isArray, objectEach = U.objectEach;
-var UNDEFINED, seriesType = H.seriesType, merge = H.merge, SMA = H.seriesTypes.sma;
+var defined = U.defined, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach;
+var UNDEFINED, seriesType = H.seriesType, SMA = H.seriesTypes.sma;
 /* eslint-disable require-jsdoc */
 // Utils:
 function maxHigh(arr) {

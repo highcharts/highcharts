@@ -82,6 +82,7 @@ const {
     extend,
     isNumber,
     isString,
+    merge,
     pick,
     wrap
 } = U;
@@ -94,7 +95,6 @@ var argsToArray = function (args: IArguments): Array<any> {
     },
     find = H.find,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    merge = H.merge,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },

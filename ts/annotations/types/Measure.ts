@@ -94,12 +94,14 @@ declare global {
 }
 
 import U from '../../parts/Utilities.js';
-var extend = U.extend,
-    isNumber = U.isNumber;
+const {
+    extend,
+    isNumber,
+    merge
+} = U;
 
 var Annotation = H.Annotation,
-    ControlPoint = Annotation.ControlPoint,
-    merge = H.merge;
+    ControlPoint = Annotation.ControlPoint;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

@@ -3,15 +3,14 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../parts/Globals.js';
 import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, pick = U.pick;
+var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick;
 var isBoolean = function (x) {
     return typeof x === 'boolean';
 }, isFn = function (x) {
     return typeof x === 'function';
-}, merge = H.merge;
+};
 /* eslint-disable valid-jsdoc */
 /**
  * @todo Combine buildTree and buildNode with setTreeValues

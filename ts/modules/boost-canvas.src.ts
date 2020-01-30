@@ -81,6 +81,7 @@ const {
     extend,
     fireEvent,
     isNumber,
+    merge,
     pick,
     wrap
 } = U;
@@ -93,7 +94,6 @@ var win = H.win,
     noop = function (): void {},
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    merge = H.merge,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 

@@ -69,6 +69,7 @@ const {
     extend,
     isNumber,
     isString,
+    merge,
     pick,
     splat
 } = U;
@@ -92,7 +93,6 @@ import './RangeSelector.js';
 var Axis = H.Axis,
     Chart = H.Chart,
     format = H.format,
-    merge = H.merge,
     Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,

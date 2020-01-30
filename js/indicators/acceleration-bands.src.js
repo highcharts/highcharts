@@ -8,9 +8,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat;
+var correctFloat = U.correctFloat, merge = U.merge;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var SMA = H.seriesTypes.sma, merge = H.merge;
+var SMA = H.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 /**
  * @private

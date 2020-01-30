@@ -143,12 +143,12 @@ const {
     destroyObjectProperties,
     extend,
     isNumber,
+    merge,
     objectEach,
     pick
 } = U;
 
 var fireEvent = H.fireEvent,
-    merge = H.merge,
     deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

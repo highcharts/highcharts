@@ -38,7 +38,10 @@ declare global {
 }
 
 
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 var Annotation = H.Annotation,
     CrookedLine = Annotation.types.crookedLine;
@@ -57,7 +60,7 @@ H.extendAnnotation(ElliottWave, CrookedLine,
                 point: Highcharts.AnnotationMockPointOptionsObject,
                 i: number
             ): void {
-                var label = this.initLabel(H.merge(
+                var label = this.initLabel(merge(
                     point.label, {
                         text: this.options.typeOptions.labels[i],
                         point: function (target: any): any {

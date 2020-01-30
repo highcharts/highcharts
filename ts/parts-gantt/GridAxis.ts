@@ -50,6 +50,7 @@ const {
     erase,
     isArray,
     isNumber,
+    merge,
     pick,
     timeUnits,
     wrap
@@ -63,7 +64,6 @@ var argsToArray = function (args: IArguments): Array<any> {
         // Always use strict mode
         return U.isObject(x, true);
     },
-    merge = H.merge,
     Chart = H.Chart,
     Axis = H.Axis;
 

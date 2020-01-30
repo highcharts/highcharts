@@ -157,6 +157,7 @@ const {
     fireEvent,
     isArray,
     isObject,
+    merge,
     objectEach,
     pick
 } = U;
@@ -174,7 +175,6 @@ var Chart = H.Chart,
     defaultPlotOptions = H.defaultPlotOptions,
     hasTouch = H.hasTouch,
     Legend = H.Legend,
-    merge = H.merge,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
