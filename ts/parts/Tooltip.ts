@@ -633,8 +633,8 @@ H.Tooltip.prototype = {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container as any);
         }
-        H.clearTimeout(this.hideTimer as any);
-        H.clearTimeout(this.tooltipTimeout as any);
+        U.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.tooltipTimeout as any);
     },
 
     /**
@@ -689,7 +689,7 @@ H.Tooltip.prototype = {
         if (animate) {
 
             // Never allow two timeouts
-            H.clearTimeout(this.tooltipTimeout as any);
+            U.clearTimeout(this.tooltipTimeout as any);
 
             // Set the fixed interval ticking for the smooth tooltip
             this.tooltipTimeout = setTimeout(function (): void {
@@ -719,7 +719,7 @@ H.Tooltip.prototype = {
         var tooltip = this;
 
         // disallow duplicate timers (#1728, #1766)
-        H.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.hideTimer as any);
         delay = pick(delay, this.options.hideDelay, 500);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
@@ -1068,7 +1068,7 @@ H.Tooltip.prototype = {
             return;
         }
 
-        H.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.hideTimer as any);
 
         // get the reference point coordinates (pie charts use tooltipPos)
         tooltip.followPointer = splat(point)[0].series.tooltipOptions

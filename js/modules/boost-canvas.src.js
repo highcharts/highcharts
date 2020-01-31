@@ -299,7 +299,7 @@ H.initCanvasBoost = function () {
                         opacity: 1
                     }
                 });
-                H.clearTimeout(destroyLoadingDiv);
+                U.clearTimeout(destroyLoadingDiv);
                 chart.showLoading('Drawing...');
                 chart.options.loading = loadingOptions; // reset
             }

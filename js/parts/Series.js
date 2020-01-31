@@ -4390,7 +4390,7 @@ null,
         series.points = null;
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        H.clearTimeout(series.animationTimeout);
+        U.clearTimeout(series.animationTimeout);
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val, prop) {
             // Survive provides a hook for not destroying

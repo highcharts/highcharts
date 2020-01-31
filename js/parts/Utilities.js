@@ -1085,7 +1085,7 @@ var syncTimeout = H.syncTimeout = function syncTimeout(fn, delay, context) {
  *
  * @return {void}
  */
-H.clearTimeout = function (id) {
+var internalClearTimeout = H.clearTimeout = function (id) {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -2540,6 +2540,7 @@ var utils = {
     arrayMin: arrayMin,
     attr: attr,
     clamp: clamp,
+    clearTimeout: internalClearTimeout,
     correctFloat: correctFloat,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,
