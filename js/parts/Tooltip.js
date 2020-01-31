@@ -413,8 +413,8 @@ H.Tooltip.prototype = {
             this.renderer = this.renderer.destroy();
             discardElement(this.container);
         }
-        H.clearTimeout(this.hideTimer);
-        H.clearTimeout(this.tooltipTimeout);
+        U.clearTimeout(this.hideTimer);
+        U.clearTimeout(this.tooltipTimeout);
     },
     /**
      * Moves the tooltip with a soft animation to a new position.
@@ -454,7 +454,7 @@ H.Tooltip.prototype = {
         // Run on next tick of the mouse tracker
         if (animate) {
             // Never allow two timeouts
-            H.clearTimeout(this.tooltipTimeout);
+            U.clearTimeout(this.tooltipTimeout);
             // Set the fixed interval ticking for the smooth tooltip
             this.tooltipTimeout = setTimeout(function () {
                 // The interval function may still be running during destroy,
@@ -480,7 +480,7 @@ H.Tooltip.prototype = {
     hide: function (delay) {
         var tooltip = this;
         // disallow duplicate timers (#1728, #1766)
-        H.clearTimeout(this.hideTimer);
+        U.clearTimeout(this.hideTimer);
         delay = pick(delay, this.options.hideDelay, 500);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function () {
@@ -727,7 +727,7 @@ H.Tooltip.prototype = {
         if (!options.enabled) {
             return;
         }
-        H.clearTimeout(this.hideTimer);
+        U.clearTimeout(this.hideTimer);
         // get the reference point coordinates (pie charts use tooltipPos)
         tooltip.followPointer = splat(point)[0].series.tooltipOptions
             .followPointer;

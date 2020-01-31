@@ -673,7 +673,7 @@ function drawLabels(e) {
     var chart = this, delay = animObject(chart.renderer.globalAnimation).duration;
     chart.labelSeries = [];
     chart.labelSeriesMaxSum = 0;
-    H.clearTimeout(chart.seriesLabelTimer);
+    U.clearTimeout(chart.seriesLabelTimer);
     // Which series should have labels
     chart.series.forEach(function (series) {
         var options = series.options.label, label = series.labelBySeries, closest = label && label.closest;

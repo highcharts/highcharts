@@ -1237,7 +1237,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             (target === win || target === doc)) {
             if (width !== chart.containerWidth ||
                 height !== chart.containerHeight) {
-                H.clearTimeout(chart.reflowTimeout);
+                U.clearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function () {

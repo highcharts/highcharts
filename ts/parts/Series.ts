@@ -5909,7 +5909,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
             // Clear the animation timeout if we are destroying the series
             // during initial animation
-            H.clearTimeout(series.animationTimeout as any);
+            U.clearTimeout(series.animationTimeout as any);
 
             // Destroy all SVGElements associated to the series
             objectEach(series, function (val: any, prop: string): void {

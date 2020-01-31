@@ -1420,14 +1420,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 chart.openMenu = false;
                 css(chart.renderTo, { overflow: 'hidden' }); // #10361
-                H.clearTimeout(menu.hideTimer);
+                U.clearTimeout(menu.hideTimer);
                 fireEvent(chart, 'exportMenuHidden');
             };
             // Hide the menu some time after mouse leave (#1357)
             chart.exportEvents.push(addEvent(menu, 'mouseleave', function () {
                 menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
             }), addEvent(menu, 'mouseenter', function () {
-                H.clearTimeout(menu.hideTimer);
+                U.clearTimeout(menu.hideTimer);
             }), 
             // Hide it on clicking or touching outside the menu (#2258,
             // #2335, #2407)
@@ -1644,7 +1644,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (exportDivElements) {
             exportDivElements.forEach(function (elem, i) {
                 // Remove the event handler
-                H.clearTimeout(elem.hideTimer); // #5427
+                U.clearTimeout(elem.hideTimer); // #5427
                 removeEvent(elem, 'mouseleave');
                 // Remove inline events
                 chart.exportDivElements[i] =

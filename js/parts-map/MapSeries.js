@@ -845,7 +845,7 @@ seriesType('map', 'scatter',
     },
     // Stop the fade-out
     onMouseOver: function (e) {
-        H.clearTimeout(this.colorInterval);
+        U.clearTimeout(this.colorInterval);
         if (this.value !== null || this.series.options.nullInteraction) {
             Point.prototype.onMouseOver.call(this, e);
         }

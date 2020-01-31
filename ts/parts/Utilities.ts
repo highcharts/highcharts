@@ -1687,7 +1687,7 @@ const syncTimeout = H.syncTimeout = function syncTimeout(
  *
  * @return {void}
  */
-H.clearTimeout = function (id: number): void {
+const internalClearTimeout = H.clearTimeout = function (id: number): void {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -3510,6 +3510,7 @@ const utilitiesModule = {
     arrayMin,
     attr,
     clamp,
+    clearTimeout: internalClearTimeout,
     correctFloat,
     defined,
     destroyObjectProperties,
