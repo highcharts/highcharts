@@ -577,6 +577,10 @@ H.defaultOptions = {
          *   `Math` object. See
          *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          *
+         * When zooming on a series with less than 100 points, the chart redraw
+         * will be done with animation, but in case of more data points, it is
+         * necessary to set this option to ensure animation on zoom.
+         *
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
          * @sample {highcharts} highcharts/chart/animation-duration/
@@ -589,7 +593,7 @@ H.defaultOptions = {
          *         With a longer duration
          *
          * @type      {boolean|Highcharts.AnimationOptionsObject}
-         * @default   true
+         * @default   undefined
          * @apioption chart.animation
          */
         /**
