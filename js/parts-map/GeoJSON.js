@@ -36,7 +36,7 @@ import H from '../parts/Globals.js';
 * @type {number}
 */
 import U from '../parts/Utilities.js';
-var extend = U.extend, merge = U.merge, wrap = U.wrap;
+var error = U.error, extend = U.extend, merge = U.merge, wrap = U.wrap;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 var Chart = H.Chart, format = H.format, win = H.win;
@@ -83,7 +83,7 @@ function pointInPolygon(point, polygon) {
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
     if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+        error(21, false, this);
         return {
             x: 0,
             y: null
@@ -128,7 +128,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
     if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+        error(21, false, this);
         return;
     }
     var normalized = {
@@ -170,7 +170,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 Chart.prototype.fromPointToLatLon = function (point) {
     var transforms = this.mapTransforms, transform;
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return;
     }
     for (transform in transforms) {
@@ -203,7 +203,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 Chart.prototype.fromLatLonToPoint = function (latLon) {
     var transforms = this.mapTransforms, transform, coords;
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return {
             x: 0,
             y: null

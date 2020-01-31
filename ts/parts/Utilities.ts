@@ -717,7 +717,7 @@ var charts = H.charts,
  *
  * @return {void}
  */
-H.error = function (
+const error = H.error = function (
     code: (number|string),
     stop?: boolean,
     chart?: Highcharts.Chart,
@@ -2659,7 +2659,7 @@ H.getStyle = function (
 
     if (!win.getComputedStyle) {
         // SVG not supported, forgot to load oldie.js?
-        H.error(27, true);
+        error(27, true);
     }
 
     // Otherwise, get the computed style
@@ -3485,6 +3485,7 @@ const utils = {
     destroyObjectProperties,
     discardElement,
     erase,
+    error,
     extend,
     extendClass,
     fireEvent,

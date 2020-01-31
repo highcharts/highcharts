@@ -14,7 +14,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
+var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
 import '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -789,7 +789,7 @@ var sunburstSeries = {
         // #10669 - verify if all nodes have unique ids
         series.data.forEach(function (child) {
             if (nodeIds[child.id]) {
-                H.error(31, false, series.chart);
+                error(31, false, series.chart);
             }
             // map
             nodeIds[child.id] = true;

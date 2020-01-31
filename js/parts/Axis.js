@@ -208,7 +208,7 @@ import Color from './Color.js';
 var color = Color.parse;
 import Tick from './Tick.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 var defaultOptions = H.defaultOptions, deg2rad = H.deg2rad, format = H.format, getMagnitude = H.getMagnitude, normalizeTickInterval = H.normalizeTickInterval;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -3987,7 +3987,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             axis.max = pick(linkedParentExtremes.max, linkedParentExtremes.dataMax);
             if (options.type !== axis.linkedParent.options.type) {
                 // Can't link axes of different type
-                H.error(11, 1, chart);
+                error(11, 1, chart);
             }
             // Initial min and max from the extreme data values
         }
@@ -4011,7 +4011,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 !secondPass &&
                 Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
                 // Can't plot negative values on log axis
-                H.error(10, 1, chart);
+                error(10, 1, chart);
             }
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
@@ -4226,7 +4226,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                     this.tickInterval >
                     Math.max(2 * this.len, 200))) {
                 tickPositions = [this.min, this.max];
-                H.error(19, false, this.chart);
+                error(19, false, this.chart);
             }
             else if (this.isDatetimeAxis) {
                 tickPositions = this.getTimeTicks(this.normalizeTimeTickInterval(this.tickInterval, options.units), this.min, this.max, options.startOfWeek, this.ordinalPositions, this.closestPointRange, true);

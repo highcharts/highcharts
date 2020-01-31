@@ -95,6 +95,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    error,
     extend,
     merge,
     wrap
@@ -171,7 +172,7 @@ Chart.prototype.transformFromLatLon = function (
     transform: any
 ): Highcharts.MapCoordinateObject {
     if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+        error(21, false, this);
         return {
             x: 0,
             y: null
@@ -230,7 +231,7 @@ Chart.prototype.transformToLatLon = function (
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
     if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+        error(21, false, this);
         return;
     }
 
@@ -290,7 +291,7 @@ Chart.prototype.fromPointToLatLon = function (
         transform;
 
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return;
     }
 
@@ -339,7 +340,7 @@ Chart.prototype.fromLatLonToPoint = function (
         coords;
 
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return {
             x: 0,
             y: null

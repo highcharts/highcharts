@@ -173,6 +173,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
+    error,
     extend,
     isNumber,
     isObject,
@@ -1230,7 +1231,7 @@ var sunburstSeries = {
         // #10669 - verify if all nodes have unique ids
         series.data.forEach(function (child: Highcharts.SunburstPoint): void {
             if (nodeIds[child.id]) {
-                H.error(31, false, series.chart);
+                error(31, false, series.chart);
             }
             // map
             nodeIds[child.id] = true;

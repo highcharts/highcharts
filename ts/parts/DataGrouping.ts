@@ -154,6 +154,7 @@ const {
     arrayMin,
     correctFloat,
     defined,
+    error,
     extend,
     isNumber,
     merge,
@@ -862,7 +863,7 @@ addEvent(Point, 'update', function (
     this: Highcharts.Point
 ): (boolean|undefined) {
     if (this.dataGroup) {
-        H.error(24, false, this.series.chart);
+        error(24, false, this.series.chart);
         return false;
     }
 });

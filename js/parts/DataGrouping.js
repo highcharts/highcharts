@@ -25,7 +25,7 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import './Axis.js';
 import './Series.js';
 import './Tooltip.js';
@@ -522,7 +522,7 @@ seriesProto.generatePoints = function () {
 // points.
 addEvent(Point, 'update', function () {
     if (this.dataGroup) {
-        H.error(24, false, this.series.chart);
+        error(24, false, this.series.chart);
         return false;
     }
 });

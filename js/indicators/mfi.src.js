@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var error = U.error, isArray = U.isArray;
 /* eslint-disable require-jsdoc */
 // Utils:
 function sumArray(array) {
@@ -83,7 +83,7 @@ H.seriesType('mfi', 'sma',
         // Cause we need to calculate change between two points
         range = 1, volumeSeries = series.chart.get(params.volumeSeriesID), yValVolume = (volumeSeries && volumeSeries.yData), MFI = [], isUp = false, xData = [], yData = [], positiveMoneyFlow = [], negativeMoneyFlow = [], newTypicalPrice, oldTypicalPrice, rawMoneyFlow, negativeMoneyFlowSum, positiveMoneyFlowSum, moneyFlowRatio, MFIPoint, i;
         if (!volumeSeries) {
-            H.error('Series ' +
+            error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, series.chart);
             return;

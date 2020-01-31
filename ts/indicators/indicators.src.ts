@@ -95,6 +95,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    error,
     extend,
     isArray,
     pick,
@@ -103,8 +104,7 @@ const {
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var error = H.error,
-    Series = H.Series,
+var Series = H.Series,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     ohlcProto = H.seriesTypes.ohlc.prototype,

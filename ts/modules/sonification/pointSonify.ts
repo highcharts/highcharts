@@ -14,6 +14,7 @@
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
+    error,
     merge,
     pick
 } = U;
@@ -404,7 +405,7 @@ function pointSonify(
                 maxFrequency: extremes.maxFrequency
             });
         } else {
-            H.error(30);
+            error(30);
         }
     });
 }

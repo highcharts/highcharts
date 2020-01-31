@@ -151,6 +151,7 @@ declare global {
 import U from './Utilities.js';
 const {
     defined,
+    error,
     extend,
     isObject,
     merge,
@@ -614,7 +615,7 @@ class Time {
             if (!moment) {
                 // getTimezoneOffset-function stays undefined because it depends
                 // on Moment.js
-                H.error(25);
+                error(25);
 
             } else {
                 return function (timestamp: (number|Date)): number {

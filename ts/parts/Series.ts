@@ -700,6 +700,7 @@ const {
     correctFloat,
     defined,
     erase,
+    error,
     extend,
     fireEvent,
     isArray,
@@ -3560,7 +3561,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     if (!(series as any)[AXIS] &&
                         series.optionalAxis !== AXIS
                     ) {
-                        H.error(18, true, chart);
+                        error(18, true, chart);
                     }
 
                 });
@@ -4368,7 +4369,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                     } else {
                         // Highcharts expects configs to be numbers or arrays in
                         // turbo mode
-                        H.error(12, false, chart);
+                        error(12, false, chart);
                     }
                 } else {
                     for (i = 0; i < dataLength; i++) {
@@ -4387,7 +4388,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // Forgetting to cast strings to numbers is a common caveat when
                 // handling CSV or JSON
                 if (yData && isString(yData[0])) {
-                    H.error(14, true, chart);
+                    error(14, true, chart);
                 }
 
                 series.data = [];
@@ -4640,7 +4641,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 // as data grouping and navigation in Stock charts (#725) and
                 // width calculation of columns (#1900)
                 } else if (distance < 0 && throwOnUnsorted) {
-                    H.error(15, false, series.chart);
+                    error(15, false, series.chart);
                     throwOnUnsorted = false; // Only once
                 }
             }

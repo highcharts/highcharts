@@ -9,9 +9,9 @@
 import H from '../parts/Globals.js';
 import './accumulation-distribution.src.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat;
+var correctFloat = U.correctFloat, error = U.error;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
-var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad, error = H.error, requiredIndicator = requiredIndicatorMixin;
+var EMA = H.seriesTypes.ema, AD = H.seriesTypes.ad, requiredIndicator = requiredIndicatorMixin;
 /**
  * The Chaikin series type.
  *
