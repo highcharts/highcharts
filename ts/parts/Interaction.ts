@@ -156,6 +156,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isFunction,
     isObject,
     merge,
     objectEach,
@@ -1099,7 +1100,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 event: Function,
                 eventType: string
             ): void {
-                if (H.isFunction(event)) {
+                if (isFunction(event)) {
                     addEvent(point, eventType, event);
                 }
             });

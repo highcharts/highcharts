@@ -228,7 +228,7 @@ import H from './Globals.js';
 import pointModule from './Point.js';
 var Point = pointModule.Point;
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -2670,11 +2670,11 @@ null,
         // Register event listeners
         events = options.events;
         objectEach(events, function (event, eventType) {
-            if (H.isFunction(event)) {
+            if (isFunction(event)) {
                 // If event does not exist, or is changed by Series.update
                 if (series.eventOptions[eventType] !== event) {
                     // Remove existing if set by option
-                    if (H.isFunction(series.eventOptions[eventType])) {
+                    if (isFunction(series.eventOptions[eventType])) {
                         removeEvent(series, eventType, series.eventOptions[eventType]);
                     }
                     series.eventOptions[eventType] = event;

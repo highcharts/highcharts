@@ -36,7 +36,7 @@ import H from '../parts/Globals.js';
 * @type {Array<Function>|undefined}
 */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, attr = U.attr, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import chartNavigationMixin from '../mixins/navigation.js';
 var doc = H.doc, win = H.win, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -198,7 +198,7 @@ extend(H.NavigationBindings.prototype, {
             }));
         });
         objectEach(options.events || {}, function (callback, eventName) {
-            if (H.isFunction(callback)) {
+            if (isFunction(callback)) {
                 navigation.eventsToUnbind.push(addEvent(navigation, eventName, callback));
             }
         });

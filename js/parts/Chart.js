@@ -102,7 +102,7 @@ import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
@@ -336,7 +336,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Chart event handlers
             if (chartEvents) {
                 objectEach(chartEvents, function (event, eventType) {
-                    if (H.isFunction(event)) {
+                    if (isFunction(event)) {
                         addEvent(chart, eventType, event);
                     }
                 });

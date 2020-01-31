@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, pick = U.pick, setAnimation = U.setAnimation;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
 var Chart = H.Chart;
@@ -166,7 +166,7 @@ H.layouts['reingold-fruchterman'].prototype, {
     },
     initPositions: function () {
         var initialPositions = this.options.initialPositions;
-        if (H.isFunction(initialPositions)) {
+        if (isFunction(initialPositions)) {
             initialPositions.call(this);
             this.nodes.forEach(function (node) {
                 if (!defined(node.prevX)) {

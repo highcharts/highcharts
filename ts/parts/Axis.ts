@@ -701,6 +701,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isFunction,
     isNumber,
     isString,
     merge,
@@ -4021,7 +4022,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         // register event listeners
         objectEach(events, function (event: any, eventType: string): void {
-            if (H.isFunction(event)) {
+            if (isFunction(event)) {
                 addEvent(axis, eventType, event);
             }
         });
