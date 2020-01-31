@@ -13,10 +13,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import colorModule from '../parts/Color.js';
-var color = colorModule.color;
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
-var pick = U.pick;
+var merge = U.merge, pick = U.pick;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, seriesType = H.seriesType, 
@@ -131,7 +131,7 @@ seriesType('cylinder', 'column',
  * @apioption series.cylinder.data
  */
 // cylinder extends cuboid
-cylinderMethods = H.merge(RendererProto.elements3d.cuboid, {
+cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
     fillSetter: function (fill) {

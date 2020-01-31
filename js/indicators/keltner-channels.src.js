@@ -8,9 +8,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat;
+var correctFloat = U.correctFloat, merge = U.merge;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, ATR = H.seriesTypes.atr, merge = H.merge;
+var SMA = H.seriesTypes.sma, EMA = H.seriesTypes.ema, ATR = H.seriesTypes.atr;
 /**
  * The Keltner Channels series type.
  *

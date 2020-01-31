@@ -793,7 +793,7 @@ H.Fx = Fx;
 *         The merged object. If the first argument is true, the return is the
 *         same as the second argument.
 */
-H.merge = function () {
+function merge() {
     /* eslint-enable valid-jsdoc */
     var i, args = arguments, len, ret = {}, doCopy = function (copy, original) {
         // An object is replacing a primitive
@@ -826,7 +826,8 @@ H.merge = function () {
         ret = doCopy(ret, args[i]);
     }
     return ret;
-};
+}
+H.merge = merge;
 /**
  * Constrain a value to within a lower and upper threshold.
  *
@@ -1674,7 +1675,7 @@ var setAnimation = H.setAnimation = function setAnimation(animation, chart) {
  */
 var animObject = H.animObject = function animObject(animation) {
     return isObject(animation) ?
-        H.merge(animation) :
+        merge(animation) :
         { duration: animation ? 500 : 0 };
 };
 /**
@@ -2407,7 +2408,7 @@ H.animate = function (el, params, opt) {
     opt.easing = typeof opt.easing === 'function' ?
         opt.easing :
         (Math[opt.easing] || Math.easeInOutSine);
-    opt.curAnim = H.merge(params);
+    opt.curAnim = merge(params);
     objectEach(params, function (val, prop) {
         // Stop current running animation of this property
         H.stop(el, prop);
@@ -2469,7 +2470,7 @@ H.animate = function (el, params, opt) {
 H.seriesType = function (type, parent, options, props, pointProps) {
     var defaultOptions = H.getOptions(), seriesTypes = H.seriesTypes;
     // Merge the options
-    defaultOptions.plotOptions[type] = H.merge(defaultOptions.plotOptions[parent], options);
+    defaultOptions.plotOptions[type] = merge(defaultOptions.plotOptions[parent], options);
     // Create the class
     seriesTypes[type] = extendClass(seriesTypes[parent] || function () { }, props);
     seriesTypes[type].prototype.type = type;
@@ -2578,6 +2579,7 @@ var utilitiesModule = {
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,
+    merge: merge,
     numberFormat: numberFormat,
     objectEach: objectEach,
     offset: offset,

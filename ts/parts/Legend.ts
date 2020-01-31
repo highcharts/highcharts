@@ -214,6 +214,7 @@ const {
     discardElement,
     fireEvent,
     isNumber,
+    merge,
     pick,
     relativeLength,
     setAnimation,
@@ -226,7 +227,6 @@ var H = Highcharts,
     css = H.css,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
-    merge = H.merge,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

@@ -11,12 +11,12 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import colorModule from '../parts/Color.js';
-var color = colorModule.color;
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, offset = U.offset, pick = U.pick, pInt = U.pInt;
+var addEvent = U.addEvent, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, offset = U.offset, pick = U.pick, pInt = U.pInt;
 import '../parts/SvgRenderer.js';
-var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, doc = H.doc, merge = H.merge, noop = H.noop, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
+var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, doc = H.doc, noop = H.noop, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /**
  * Path to the pattern image required by VML browsers in order to
  * draw radial gradients.

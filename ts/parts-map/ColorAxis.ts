@@ -143,6 +143,7 @@ const {
     erase,
     extend,
     isNumber,
+    merge,
     pick,
     splat
 } = U;
@@ -163,8 +164,7 @@ var Axis = H.Axis,
     LegendSymbolMixin = H.LegendSymbolMixin,
     colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
-    noop = H.noop,
-    merge = H.merge;
+    noop = H.noop;
 
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);

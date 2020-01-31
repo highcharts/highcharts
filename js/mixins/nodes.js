@@ -159,13 +159,13 @@ H.NodesMixin = {
             [this.fromNode, this.toNode];
         if (state !== 'select') {
             others.forEach(function (linkOrNode) {
-                if (linkOrNode.series) {
+                if (linkOrNode && linkOrNode.series) {
                     Point.prototype.setState.apply(linkOrNode, args);
                     if (!linkOrNode.isNode) {
                         if (linkOrNode.fromNode.graphic) {
                             Point.prototype.setState.apply(linkOrNode.fromNode, args);
                         }
-                        if (linkOrNode.toNode.graphic) {
+                        if (linkOrNode.toNode && linkOrNode.toNode.graphic) {
                             Point.prototype.setState.apply(linkOrNode.toNode, args);
                         }
                     }

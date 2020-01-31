@@ -148,12 +148,14 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
     correctFloat,
     defined,
     extend,
+    merge,
     pick,
     pInt,
     relativeLength,
@@ -161,14 +163,10 @@ const {
 } = U;
 
 import '../parts/Axis.js';
-import '../parts/Tick.js';
 import './Pane.js';
 
 var Axis = H.Axis,
-    merge = H.merge,
     noop = H.noop,
-    Tick = H.Tick,
-
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,
     // @todo Extract this to a new file

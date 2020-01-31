@@ -141,4 +141,22 @@ QUnit.test('Testing hovering over panes.', function (assert) {
         chart.tooltip.isHidden,
         'Tooltip should not be displayed (point is out of pane)' // #11148
     );
+
+    chart.update({
+        tooltip: {
+            shared: true
+        }
+    }, false);
+
+    chart.addSeries({
+        data: [125, 110, 43, 44, 20]
+    });
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.ok(
+        !chart.tooltip.isHidden,
+        'Tooltip should be displayed without any errors' // #12856
+    );
+
 });

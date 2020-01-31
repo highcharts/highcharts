@@ -182,6 +182,7 @@ const {
     extend,
     fireEvent,
     isNumber,
+    merge,
     objectEach,
     pick,
     pInt,
@@ -195,8 +196,7 @@ var Axis = H.Axis,
     Chart = H.Chart,
     css = H.css,
     createElement = H.createElement,
-    defaultOptions = H.defaultOptions,
-    merge = H.merge;
+    defaultOptions = H.defaultOptions;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *

@@ -77,6 +77,7 @@ const {
     defined,
     extend,
     isNumber,
+    merge,
     objectEach,
     pick
 } = U;
@@ -84,7 +85,6 @@ const {
 import '../parts/Series.js';
 
 var fireEvent = H.fireEvent,
-    merge = H.merge,
     piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 
 /**

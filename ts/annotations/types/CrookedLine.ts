@@ -41,7 +41,10 @@ declare global {
     }
 }
 
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
@@ -96,7 +99,7 @@ H.extendAnnotation(
                     var controlPoint = new ControlPoint(
                         this.chart,
                         this,
-                        H.merge(
+                        merge(
                             this.options.controlPointOptions,
                             pointOptions.controlPoint
                         ),
@@ -114,7 +117,7 @@ H.extendAnnotation(
         addShapes: function (this: Highcharts.AnnotationCrookedLine): void {
             var typeOptions = this.options.typeOptions,
                 shape = this.initShape(
-                    H.merge(typeOptions.line, {
+                    merge(typeOptions.line, {
                         type: 'path',
                         points: this.points.map(function (
                             _point: Highcharts.AnnotationPointType,

@@ -11,20 +11,21 @@
 /* eslint no-console: 0 */
 'use strict';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, fireEvent = U.fireEvent, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, wrap = U.wrap;
-import './GridAxis.js';
-import Tree from './Tree.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
+import Tick from '../parts/Tick.js';
+import Tree from './Tree.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, fireEvent = U.fireEvent, extend = U.extend, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
+import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
-}, find = H.find, getLevelOptions = mixinTreeSeries.getLevelOptions, merge = H.merge, isBoolean = function (x) {
+}, find = H.find, getLevelOptions = mixinTreeSeries.getLevelOptions, isBoolean = function (x) {
     return typeof x === 'boolean';
 }, isObject = function (x) {
     // Always use strict mode.
     return U.isObject(x, true);
-}, GridAxis = H.Axis, GridAxisTick = H.Tick;
+}, GridAxis = H.Axis, GridAxisTick = Tick;
 var override = function (obj, methods) {
     var method, func;
     for (method in methods) {

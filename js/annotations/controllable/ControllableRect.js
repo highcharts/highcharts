@@ -3,8 +3,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
 import controllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -41,11 +41,11 @@ var ControllableRect = function (annotation, options, index) {
  *
  * @type {Annotation.ControllableRect.AttrsMap}
  */
-ControllableRect.attrsMap = H.merge(ControllablePath.attrsMap, {
+ControllableRect.attrsMap = merge(ControllablePath.attrsMap, {
     width: 'width',
     height: 'height'
 });
-H.merge(true, ControllableRect.prototype, controllableMixin, /** @lends Annotation.ControllableRect# */ {
+merge(true, ControllableRect.prototype, controllableMixin, /** @lends Annotation.ControllableRect# */ {
     /**
      * @type 'rect'
      */

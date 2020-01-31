@@ -73,17 +73,15 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
-const {
-    Color,
-    color
-} = colorModule;
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
     addEvent,
     extend,
     fireEvent,
     isNumber,
+    merge,
     pick,
     wrap
 } = U;
@@ -96,7 +94,6 @@ var win = H.win,
     noop = function (): void {},
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    merge = H.merge,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 

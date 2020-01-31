@@ -1270,6 +1270,32 @@ class Fx {
 
 H.Fx = Fx;
 
+function merge<T1, T2 = object>(
+    extend: boolean,
+    a?: T1,
+    ...n: Array<T2|undefined>
+): (T1&T2);
+function merge<
+    T1 extends object = object,
+    T2 = unknown,
+    T3 = unknown,
+    T4 = unknown,
+    T5 = unknown,
+    T6 = unknown,
+    T7 = unknown,
+    T8 = unknown,
+    T9 = unknown
+>(
+    a?: T1,
+    b?: T2,
+    c?: T3,
+    d?: T4,
+    e?: T5,
+    f?: T6,
+    g?: T7,
+    h?: T8,
+    i?: T9,
+): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
@@ -1311,7 +1337,7 @@ H.Fx = Fx;
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-H.merge = function<T> (): T {
+function merge<T>(): T {
     /* eslint-enable valid-jsdoc */
     var i,
         args = arguments,
@@ -1354,7 +1380,8 @@ H.merge = function<T> (): T {
     }
 
     return ret;
-};
+}
+H.merge = merge;
 
 /**
  * Constrain a value to within a lower and upper threshold.
@@ -2400,7 +2427,7 @@ const animObject = H.animObject = function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
-        H.merge(animation as Highcharts.AnimationOptionsObject) as any :
+        merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
 };
 
@@ -3290,7 +3317,7 @@ H.animate = function (
     (opt as any).easing = typeof (opt as any).easing === 'function' ?
         (opt as any).easing :
         ((Math as any)[(opt as any).easing as any] || Math.easeInOutSine);
-    (opt as any).curAnim = H.merge(params) as any;
+    (opt as any).curAnim = merge(params) as any;
 
     objectEach(params, function (val: any, prop: string): void {
         // Stop current running animation of this property
@@ -3367,7 +3394,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
         seriesTypes = H.seriesTypes;
 
     // Merge the options
-    (defaultOptions.plotOptions as any)[type] = H.merge(
+    (defaultOptions.plotOptions as any)[type] = merge(
         (defaultOptions.plotOptions as any)[parent],
         options
     );
@@ -3498,6 +3525,7 @@ const utilitiesModule = {
     isNumber,
     isObject,
     isString,
+    merge,
     numberFormat,
     objectEach,
     offset,

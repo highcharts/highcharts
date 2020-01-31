@@ -45,7 +45,10 @@ declare global {
     }
 }
 
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
@@ -193,7 +196,7 @@ H.extendAnnotation(Fibonacci, Tunnel,
             Fibonacci.levels.forEach(function (this: Highcharts.AnnotationFibonacci, level: number, i: number): void {
                 var options = this.options.typeOptions,
                     label = (this.initLabel as any)(
-                        H.merge(options.labels[i], {
+                        merge(options.labels[i], {
                             point: function (target: any): Highcharts.AnnotationMockPointOptionsObject {
                                 var point = MockPoint.pointToOptions(
                                     target.annotation.startRetracements[i]

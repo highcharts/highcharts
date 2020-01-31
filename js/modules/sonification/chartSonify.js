@@ -94,7 +94,7 @@ import H from '../../parts/Globals.js';
 * @type {Function|undefined}
 */
 import U from '../../parts/Utilities.js';
-var isArray = U.isArray, pick = U.pick, splat = U.splat;
+var isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
 import utilities from './utilities.js';
 /**
  * Get the relative time value of a point.
@@ -158,7 +158,7 @@ function getExtremesForInstrumentProps(chart, instruments, dataExtremes) {
             }
         });
         return newExtremes;
-    }, H.merge(dataExtremes));
+    }, merge(dataExtremes));
 }
 /**
  * Get earcons for the point if there are any.
@@ -207,7 +207,7 @@ function makeInstrumentCopies(instruments) {
         var instrument = instrumentDef.instrument, copy = (typeof instrument === 'string' ?
             H.sonification.instruments[instrument] :
             instrument).copy();
-        return H.merge(instrumentDef, { instrument: copy });
+        return merge(instrumentDef, { instrument: copy });
     });
 }
 /**
@@ -348,7 +348,7 @@ function seriesSonify(options) {
  */
 function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
     var seriesOptions = chartSonifyOptions.seriesOptions || {};
-    return H.merge({
+    return merge({
         // Calculated dataExtremes for chart
         dataExtremes: dataExtremes,
         // We need to get timeExtremes for each series. We pass this

@@ -13,10 +13,10 @@
 'use strict';
 
 import H from '../../../../parts/Globals.js';
-var merge = H.merge;
 import U from '../../../../parts/Utilities.js';
 const {
-    addEvent
+    addEvent,
+    merge
 } = U;
 
 /**

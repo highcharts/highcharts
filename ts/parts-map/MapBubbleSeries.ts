@@ -52,13 +52,16 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    merge
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Point.js';
 import '../parts-more/BubbleSeries.js';
 
-var merge = H.merge,
-    Point = H.Point,
+var Point = H.Point,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 

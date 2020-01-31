@@ -58,13 +58,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    merge
 } = U;
 
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var SMA = H.seriesTypes.sma,
-    merge = H.merge;
+var SMA = H.seriesTypes.sma;
 
 /* eslint-disable valid-jsdoc */
 /**

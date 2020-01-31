@@ -87,6 +87,7 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     isArray,
+    merge,
     pick,
     wrap
 } = U;
@@ -94,7 +95,6 @@ const {
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    merge = H.merge,
     perspective = H.perspective;
 
 /**

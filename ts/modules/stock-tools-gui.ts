@@ -141,12 +141,12 @@ const {
     extend,
     fireEvent,
     isArray,
+    merge,
     pick
 } = U;
 
 var createElement = H.createElement,
     getStyle = H.getStyle,
-    merge = H.merge,
     css = H.css,
     win = H.win,
     DIV = 'div',

@@ -57,13 +57,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    merge
 } = U;
 import '../parts/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
 
-var seriesType = H.seriesType,
-    merge = H.merge;
+var seriesType = H.seriesType;
 
 
 /**
