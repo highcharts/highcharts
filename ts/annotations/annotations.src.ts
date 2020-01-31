@@ -525,6 +525,8 @@ merge(
              * @sample highcharts/annotations/defer
              *         Set defer duration time
              *
+             * @since        8.0.1
+             *
              * @type {boolean|Highcharts.AnnotationDeferOptionsObject}
              */
             defer: true,
@@ -1065,18 +1067,16 @@ merge(
             this.addClipPaths();
             this.setLabelCollector();
 
-            if (defer) {
-                // If defer duration is set use set value,
-                // else inherits from animation set in plotOptions
-                this.defer = isObject(this.options.defer) ?
-                    this.options.defer :
-                    (plotOptions.series && defined(plotOptions.series.animation) ?
-                        plotOptions.series.animation :
-                        plotOptions.line.animation);
-                if (this.chart.renderer.forExport) {
-                    this.defer = false;
-                }
-            }
+            this.defer = (defer === false || this.chart.renderer.forExport) ?
+                false : (
+                    // If defer duration is set use set value,
+                    // else inherits from animation set in plotOptions
+                    isObject(defer) ?
+                        defer :
+                        (plotOptions.series && defined(plotOptions.series.animation) ?
+                            plotOptions.series.animation :
+                            plotOptions.line.animation)
+                );
         },
 
         getLabelsAndShapesOptions: function (
