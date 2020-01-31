@@ -4281,7 +4281,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @private
      */
     trimTicks: function (tickPositions, startOnTick, endOnTick) {
-        var roundedMin = tickPositions[0], roundedMax = tickPositions[tickPositions.length - 1], minPointOffset = (!this.isOrdinal && this.minPointOffset) || 0;
+        var roundedMin = tickPositions[0], roundedMax = tickPositions[tickPositions.length - 1], minPointOffset = (!this.isOrdinal && this.minPointOffset) || 0; // (#12716)
         fireEvent(this, 'trimTicks');
         if (!this.isLinked) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
