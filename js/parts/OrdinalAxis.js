@@ -711,15 +711,3 @@ addEvent(Axis, 'afterSetScale', function () {
             !axis.chart.navigator.adaptToUpdatedData;
     }
 });
-// Make sure ticks are within axis min and max range (#12716).
-addEvent(Axis, 'afterTrimTicks', function (e) {
-    var axis = this, tickPositions = e.tickPositions;
-    if (axis.isOrdinal && defined(axis.min) && defined(axis.max) && tickPositions) {
-        while (axis.min > tickPositions[0]) {
-            tickPositions.shift();
-        }
-        while (axis.max < tickPositions[tickPositions.length - 1]) {
-            tickPositions.pop();
-        }
-    }
-});

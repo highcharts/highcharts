@@ -4281,7 +4281,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @private
      */
     trimTicks: function (tickPositions, startOnTick, endOnTick) {
-        var roundedMin = tickPositions[0], roundedMax = tickPositions[tickPositions.length - 1], minPointOffset = this.minPointOffset || 0;
+        var roundedMin = tickPositions[0], roundedMax = tickPositions[tickPositions.length - 1], minPointOffset = (!this.isOrdinal && this.minPointOffset) || 0;
         fireEvent(this, 'trimTicks');
         if (!this.isLinked) {
             if (startOnTick && roundedMin !== -Infinity) { // #6502
@@ -4308,7 +4308,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 tickPositions.push((roundedMax + roundedMin) / 2);
             }
         }
-        fireEvent(this, 'afterTrimTicks', { tickPositions: tickPositions });
     },
     /**
      * Check if there are multiple axes in the same pane.

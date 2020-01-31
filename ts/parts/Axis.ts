@@ -5518,7 +5518,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     ): void {
         var roundedMin = tickPositions[0],
             roundedMax = tickPositions[tickPositions.length - 1],
-            minPointOffset = this.minPointOffset || 0;
+            minPointOffset = (!this.isOrdinal && this.minPointOffset) || 0;
 
         fireEvent(this, 'trimTicks');
 
@@ -5549,8 +5549,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 tickPositions.push((roundedMax + roundedMin) / 2);
             }
         }
-
-        fireEvent(this, 'afterTrimTicks', { tickPositions });
     },
 
     /**
