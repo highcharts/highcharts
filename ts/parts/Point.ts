@@ -125,6 +125,7 @@ declare global {
             className?: string;
             color?: ColorType;
             colorIndex?: number;
+            custom?: Dictionary<any>;
             drilldown?: string;
             events?: PointEventsOptionsObject;
             id?: string;

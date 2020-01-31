@@ -1188,6 +1188,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
          * functionality. Here you can add additional data for your own event
          * callbacks and formatter callbacks.
          *
+         * @sample {highcharts} highcharts/point/custom/
+         *         Point and series with custom data
+         *
          * @type      {Highcharts.Dictionary<*>}
          * @apioption plotOptions.series.custom
          */
@@ -7096,11 +7099,11 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  *    ```
  *
  * **Note:** In TypeScript you have to extend `PointOptionsObject` with an
- * additional declaration to allow custom data options:
+ * additional declaration to allow custom data types:
  * ```ts
  * declare module `highcharts` {
  *   interface PointOptionsObject {
- *     customProperty: string;
+ *     custom: Record<string, (boolean|number|string)>;
  *   }
  * }
  * ```
@@ -7163,6 +7166,9 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
  * A reserved subspace to store options and values for customized functionality.
  * Here you can add additional data for your own event callbacks and formatter
  * callbacks.
+ *
+ * @sample {highcharts} highcharts/point/custom/
+ *         Point and series with custom data
  *
  * @type      {Highcharts.Dictionary<*>}
  * @apioption series.line.data.custom
