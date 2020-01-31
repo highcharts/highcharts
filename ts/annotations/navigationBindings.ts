@@ -153,6 +153,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isFunction,
     isNumber,
     isObject,
     merge,
@@ -377,7 +378,7 @@ extend(H.NavigationBindings.prototype, {
             callback: Function,
             eventName: string
         ): void {
-            if (H.isFunction(callback)) {
+            if (isFunction(callback)) {
                 navigation.eventsToUnbind.push(
                     addEvent(
                         navigation,

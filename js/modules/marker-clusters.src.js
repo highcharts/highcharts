@@ -42,12 +42,12 @@ import H from '../parts/Globals.js';
  */
 ''; // detach doclets from following code
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /* eslint-disable no-invalid-this */
 import '../parts/Series.js';
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
-var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, isFunction = H.isFunction, error = H.error, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
+var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, error = H.error, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
 oldPointsStateId = [];
