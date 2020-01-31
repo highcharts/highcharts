@@ -45,6 +45,7 @@ declare global {
             opacity?: number;
             path: (string|SVGAttributes);
             patternContentUnits?: 'string';
+            patternTransform?: string;
             width: number;
             x?: number;
             y?: number;
@@ -110,6 +111,11 @@ declare global {
  * pattern, the `image` property is ignored.
  * @name Highcharts.PatternOptionsObject#path
  * @type {string|Highcharts.SVGAttributes}
+ *//**
+ * SVG patternTransform to apply to the entire pattern.
+ * @name Highcharts.PatternOptionsObject#patternTransform
+ * @type {string}
+ * @see [patternTransform demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/pattern-fill-transform)
  *//**
  * Pattern color, used as default path stroke.
  * @name Highcharts.PatternOptionsObject#color
@@ -401,8 +407,8 @@ H.SVGRenderer.prototype.addPattern = function (
     // Store ID in list to avoid duplicates
     this.defIds.push(id);
 
-    // Create pattern element
-    pattern = this.createElement('pattern').attr({
+    // Calculate pattern element attributes
+    const attrs: Highcharts.SVGAttributes = {
         id: id,
         patternUnits: 'userSpaceOnUse',
         patternContentUnits: options.patternContentUnits || 'userSpaceOnUse',
@@ -410,7 +416,12 @@ H.SVGRenderer.prototype.addPattern = function (
         height: height,
         x: options._x || options.x || 0,
         y: options._y || options.y || 0
-    }).add(this.defs);
+    };
+    if (options.patternTransform) {
+        attrs.patternTransform = options.patternTransform;
+    }
+
+    pattern = this.createElement('pattern').attr(attrs).add(this.defs);
 
     // Set id on the SVGRenderer object
     pattern.id = id;
