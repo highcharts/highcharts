@@ -5519,7 +5519,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     ): void {
         var roundedMin = tickPositions[0],
             roundedMax = tickPositions[tickPositions.length - 1],
-            minPointOffset = (!this.isOrdinal && this.minPointOffset) || 0;
+            minPointOffset =
+                (!this.isOrdinal && this.minPointOffset) || 0; // (#12716)
 
         fireEvent(this, 'trimTicks');
 
