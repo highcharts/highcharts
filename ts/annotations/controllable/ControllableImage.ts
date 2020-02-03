@@ -5,7 +5,6 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
 
 /**
  * Internal types.
@@ -50,7 +49,10 @@ declare global {
     }
 }
 
-import './../../parts/Utilities.js';
+import U from './../../parts/Utilities.js';
+const {
+    merge
+} = U;
 import controllableMixin from './controllableMixin.js';
 import ControllableLabel from './ControllableLabel.js';
 
@@ -96,7 +98,7 @@ ControllableImage.attrsMap = {
     zIndex: 'zIndex'
 };
 
-H.merge<Highcharts.AnnotationControllableImage, Partial<Highcharts.AnnotationControllableImage>>(
+merge<Highcharts.AnnotationControllableImage, Partial<Highcharts.AnnotationControllableImage>>(
     true,
     ControllableImage.prototype,
     controllableMixin, /** @lends Annotation.ControllableImage# */ {

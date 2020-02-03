@@ -150,6 +150,7 @@ const {
     extend,
     isArray,
     isNumber,
+    merge,
     objectEach,
     pick,
     splat
@@ -158,7 +159,6 @@ const {
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
     fireEvent = H.fireEvent,
     Point = H.Point,

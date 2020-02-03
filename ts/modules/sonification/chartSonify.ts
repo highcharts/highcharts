@@ -165,9 +165,12 @@ declare global {
 
 
 import U from '../../parts/Utilities.js';
-var isArray = U.isArray,
-    pick = U.pick,
-    splat = U.splat;
+const {
+    isArray,
+    merge,
+    pick,
+    splat
+} = U;
 
 import utilities from './utilities.js';
 
@@ -264,7 +267,7 @@ function getExtremesForInstrumentProps(
             }
         );
         return newExtremes;
-    }, H.merge(dataExtremes));
+    }, merge(dataExtremes));
 }
 
 
@@ -333,7 +336,7 @@ function makeInstrumentCopies(
                 H.sonification.instruments[instrument] :
                 instrument).copy();
 
-        return H.merge(instrumentDef, { instrument: copy });
+        return merge(instrumentDef, { instrument: copy });
     });
 }
 
@@ -523,7 +526,7 @@ function buildSeriesOptions(
         Array<Partial<Highcharts.SonifySeriesOptionsObject>>
     ) = chartSonifyOptions.seriesOptions || {};
 
-    return H.merge(
+    return merge(
         {
             // Calculated dataExtremes for chart
             dataExtremes: dataExtremes,

@@ -13,15 +13,15 @@
 import H from '../parts/Globals.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import colorModule from '../parts/Color.js';
-var color = colorModule.color;
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../parts/Series.js';
 /* eslint-disable no-invalid-this */
 var AXIS_MAX = 100;
-var seriesType = H.seriesType, seriesTypes = H.seriesTypes, merge = H.merge, error = H.error, noop = H.noop, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
+var seriesType = H.seriesType, seriesTypes = H.seriesTypes, error = H.error, noop = H.noop, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, 
 // @todo Similar to eachObject, this function is likely redundant
 isBoolean = function (x) {
     return typeof x === 'boolean';

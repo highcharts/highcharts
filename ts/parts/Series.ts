@@ -705,6 +705,7 @@ const {
     isArray,
     isNumber,
     isString,
+    merge,
     objectEach,
     pick,
     removeEvent,
@@ -720,7 +721,6 @@ import './SvgRenderer.js';
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-    merge = H.merge,
     seriesTypes = H.seriesTypes,
     SVGElement = H.SVGElement,
     win = H.win;

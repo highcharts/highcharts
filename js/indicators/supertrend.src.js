@@ -8,9 +8,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat;
+var correctFloat = U.correctFloat, merge = U.merge;
 var isArray = U.isArray, objectEach = U.objectEach;
-var ATR = H.seriesTypes.atr, SMA = H.seriesTypes.sma, merge = H.merge;
+var ATR = H.seriesTypes.atr, SMA = H.seriesTypes.sma;
 /* eslint-disable require-jsdoc */
 // Utils:
 function createPointObj(mainSeries, index, close) {

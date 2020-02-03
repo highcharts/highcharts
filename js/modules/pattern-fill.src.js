@@ -115,8 +115,7 @@ import H from '../parts/Globals.js';
 * @type {number|undefined}
 */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
-var merge = H.merge;
+var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
 // Add the predefined patterns
 H.patterns = (function () {
     var patterns = [], colors = H.getOptions().colors;

@@ -71,6 +71,9 @@ declare global {
     }
 }
 
+import mixinTreeSeries from '../mixins/tree-series.js';
+import Tick from '../parts/Tick.js';
+import Tree from './Tree.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -79,13 +82,12 @@ const {
     extend,
     isNumber,
     isString,
+    merge,
     pick,
     wrap
 } = U;
 
 import './GridAxis.js';
-import Tree from './Tree.js';
-import mixinTreeSeries from '../mixins/tree-series.js';
 import '../modules/broken-axis.src.js';
 
 var argsToArray = function (args: IArguments): Array<any> {
@@ -93,7 +95,6 @@ var argsToArray = function (args: IArguments): Array<any> {
     },
     find = H.find,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    merge = H.merge,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
@@ -102,7 +103,7 @@ var argsToArray = function (args: IArguments): Array<any> {
         return U.isObject(x, true);
     },
     GridAxis: Highcharts.TreeGridAxis = H.Axis as any,
-    GridAxisTick: Highcharts.TreeGridTick = H.Tick as any;
+    GridAxisTick: Highcharts.TreeGridTick = Tick as any;
 
 var override = function<T> (
     obj: T,

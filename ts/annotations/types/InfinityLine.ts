@@ -42,7 +42,10 @@ declare global {
 }
 
 
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
@@ -199,7 +202,7 @@ H.extendAnnotation(
             }
 
             var line = this.initShape(
-                H.merge(typeOptions.line, {
+                merge(typeOptions.line, {
                     type: 'path',
                     points: points
                 }),

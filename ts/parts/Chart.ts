@@ -305,6 +305,7 @@ const {
     isNumber,
     isObject,
     isString,
+    merge,
     numberFormat,
     objectEach,
     pick,
@@ -331,7 +332,6 @@ var animate = H.animate,
     find = H.find,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
-    merge = H.merge,
     seriesTypes = H.seriesTypes,
     win = H.win;
 

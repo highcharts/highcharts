@@ -239,10 +239,8 @@ declare global {
  * @since 7.0.0
  */
 
-import colorModule from '../parts/Color.js';
-const {
-    color
-} = colorModule;
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -253,6 +251,7 @@ const {
     fireEvent,
     isArray,
     isNumber,
+    merge,
     pick
 } = U;
 
@@ -1120,7 +1119,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             }
 
             this.calculateParentRadius();
-            parentAttribs = H.merge({
+            parentAttribs = merge({
                 x: (series.parentNode as any).plotX -
                     (series.parentNodeRadius as any),
                 y: (series.parentNode as any).plotY -
@@ -1210,7 +1209,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 layoutOptions = series.options.layoutAlgorithm,
                 graphLayoutsStorage = series.chart.graphLayoutsStorage,
                 graphLayoutsLookup = series.chart.graphLayoutsLookup,
-                parentNodeOptions = H.merge(
+                parentNodeOptions = merge(
                     layoutOptions,
                     (layoutOptions as any).parentNodeOptions,
                     {
@@ -1825,7 +1824,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                                 (point.marker as any).radius
                             );
                             if (distanceR < 0) {
-                                node.series.addPoint(H.merge(point.options, {
+                                node.series.addPoint(merge(point.options, {
                                     plotX: point.plotX,
                                     plotY: point.plotY
                                 }), false);

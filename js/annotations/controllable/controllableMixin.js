@@ -40,7 +40,7 @@ import H from './../../parts/Globals.js';
 * @type {Array<Highcharts.Point>}
 */
 import U from './../../parts/Utilities.js';
-var isObject = U.isObject, isString = U.isString, splat = U.splat;
+var isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
 import './../../parts/Tooltip.js';
 import ControlPoint from './../ControlPoint.js';
 import MockPoint from './../MockPoint.js';
@@ -126,7 +126,7 @@ var controllableMixin = {
         };
         return {
             relativePosition: anchor,
-            absolutePosition: H.merge(anchor, {
+            absolutePosition: merge(anchor, {
                 x: anchor.x + plotBox.translateX,
                 y: anchor.y + plotBox.translateY
             })
@@ -190,7 +190,7 @@ var controllableMixin = {
     addControlPoints: function () {
         var controlPointsOptions = this.options.controlPoints;
         (controlPointsOptions || []).forEach(function (controlPointOptions, i) {
-            var options = H.merge(this.options.controlPointOptions, controlPointOptions);
+            var options = merge(this.options.controlPointOptions, controlPointOptions);
             if (!options.index) {
                 options.index = i;
             }
@@ -360,7 +360,7 @@ var controllableMixin = {
      * @param {Object} newOptions
      */
     update: function (newOptions) {
-        var annotation = this.annotation, options = H.merge(true, this.options, newOptions), parentGroup = this.graphic.parentGroup;
+        var annotation = this.annotation, options = merge(true, this.options, newOptions), parentGroup = this.graphic.parentGroup;
         this.destroy();
         this.constructor(annotation, options);
         this.render(parentGroup);

@@ -2057,7 +2057,7 @@ class Pointer {
             chart.hoverPoint = hoverPoint;
 
             // Draw tooltip if necessary
-            if (tooltip && !chart.polar) {
+            if (tooltip) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
         // Update positions (regardless of kdpoint or hoverPoint)

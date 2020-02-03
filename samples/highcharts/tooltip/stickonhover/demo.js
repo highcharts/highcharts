@@ -2,15 +2,14 @@
 Highcharts.chart('container', {
 
     title: {
-        text: 'Solar Employment Growth by Sector, 2010-2017'
+        text: 'Tooltip sticks on hover'
     },
 
     subtitle: {
-        text: 'Source: thesolarfoundation.com'
+        text: 'Once the pointer is over it, it won\'t move to reveal underlying points'
     },
 
     tooltip: {
-        // Enables a more stable tooltip behavior during hover:
         stickOnHover: true
     },
 

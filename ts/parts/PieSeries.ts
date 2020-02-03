@@ -127,6 +127,7 @@ const {
     defined,
     fireEvent,
     isNumber,
+    merge,
     pick,
     relativeLength,
     setAnimation
@@ -142,7 +143,6 @@ import './Series.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
     Point = H.Point,
     Series = H.Series,
