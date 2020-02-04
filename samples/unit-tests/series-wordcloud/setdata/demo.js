@@ -23,13 +23,13 @@ QUnit.test('Update the chart using the same data (#11993)', function (assert) {
                 data: data
             }]
         }),
-        widthBeforeUpdate = chart.series[0].points[0].graphic.element.getBBox(true).width;
+        widthBeforeUpdate = chart.series[0].points[0].graphic.getBBox(true).width;
 
     chart.series[0].setData(data);
 
     assert.strictEqual(
         widthBeforeUpdate,
-        chart.series[0].points[0].graphic.element.getBBox(true).width,
+        chart.series[0].points[0].graphic.getBBox(true).width,
         'Width of the element should be exactly the same after the update.'
     );
 });
