@@ -1212,7 +1212,7 @@ extend(ColorAxis.prototype, {
             axisLen = this.len;
 
         if (point) {
-            crossPos = this.toPixels((point as any)[point.series.colorKey]);
+            crossPos = this.toPixels(point.getNestedProperty(point.series.colorKey) as number);
             if (crossPos < (axisPos as any)) {
                 crossPos = (axisPos as any) - 2;
             } else if (crossPos > (axisPos as any) + axisLen) {

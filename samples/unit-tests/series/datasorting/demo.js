@@ -95,3 +95,54 @@ QUnit.test('Data sorting ', function (assert) {
     );
 
 });
+
+QUnit.test('Data sorting with sortKey', function (assert) {
+
+    Highcharts.chart('container', {
+        series: [{
+            type: 'column',
+            data: [{
+                custom: {
+                    myValue: 'b'
+                },
+                y: 3
+            }, {
+                custom: {
+                    myValue: 'c'
+                },
+                y: 1
+            }, {
+                custom: {
+                    myValue: 'a'
+                },
+                y: 2
+            }],
+            dataSorting: {
+                enabled: true
+            }
+        }]
+    }, function (chart) {
+
+        assert.deepEqual(
+            chart.series[0].xData,
+            [0, 2, 1],
+            "Data should be sorted by y value."
+        );
+
+        chart.update({
+            series: [{
+                data: chart.series[0].data,
+                dataSorting: {
+                    sortKey: 'custom.myValue'
+                }
+            }]
+        });
+
+        assert.deepEqual(
+            chart.series[0].xData,
+            [1, 0, 2],
+            "Data should be sorted by custom.myValue value."
+        );
+
+    });
+});
