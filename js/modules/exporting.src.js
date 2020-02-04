@@ -823,7 +823,7 @@ defaultOptions.exporting = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function () {
-                this.toggleFullscreen();
+                this.fullscreenController.toggleFullscreen();
             }
         },
         /**

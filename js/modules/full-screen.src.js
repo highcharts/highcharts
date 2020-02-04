@@ -7,6 +7,7 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
+var addEvent = H.addEvent, Chart = H.Chart;
 /**
  * The module allows user to enable display chart in full screen mode.
  * Used in StockTools too.
@@ -20,117 +21,136 @@ import H from '../parts/Globals.js';
  * @type {boolean|undefined}
  * @since next
  */
-// Helping function - to open fullscreen, use toggleFullscreen() instead.
-H.Chart.prototype.openFullscreen = function () {
-    var _a, _b;
-    var chart = this, menuItems = (_b = (_a = chart.options.exporting) === null || _a === void 0 ? void 0 : _a.buttons) === null || _b === void 0 ? void 0 : _b.contextButton.menuItems;
-    // Handle closeFullscreen() method when user clicks 'Escape' button.
-    chart.unbindFullscreenEvent = H.addEvent(chart.container.ownerDocument, // chart's document
-    chart.browserProps.fullscreenChange, function () {
-        // Handle lack of async of browser's fullScreenChange event.
-        if (chart.isFullscreen) {
-            chart.isFullscreen = false;
-            chart.closeFullscreen();
+/* eslint-disable no-invalid-this, valid-jsdoc */
+H.FullscreenController = function (chart) {
+    this.chart = chart;
+};
+// Initialize fullscreen
+addEvent(Chart, 'beforeRender', function () {
+    this.fullscreenController = new H.FullscreenController(this);
+});
+H.FullscreenController.prototype = {
+    /**
+     * Replace button text. When toggleFullscreen() will be fired customly
+     * by user before exporting context button is created, text will not be
+     * replaced - it's on the user side.
+     * @private
+     * @return {void}
+     */
+    setButtonText: function () {
+        var _a, _b, _c, _d;
+        var chart = this.chart, exportDivElements = chart.exportDivElements, exportingOptions = chart.options.exporting, menuItems = (_b = (_a = exportingOptions) === null || _a === void 0 ? void 0 : _a.buttons) === null || _b === void 0 ? void 0 : _b.contextButton.menuItems, lang = chart.options.lang;
+        if (((_c = exportingOptions) === null || _c === void 0 ? void 0 : _c.menuItemDefinitions) && ((_d = lang) === null || _d === void 0 ? void 0 : _d.exitFullscreen) &&
+            lang.viewFullscreen &&
+            menuItems &&
+            exportDivElements &&
+            exportDivElements.length) {
+            exportDivElements[menuItems.indexOf('viewFullscreen')]
+                .innerHTML = chart.isFullscreen ?
+                (exportingOptions.menuItemDefinitions.viewFullscreen.text ||
+                    lang.viewFullscreen) : lang.exitFullscreen;
+        }
+    },
+    // Helping function - to open fullscreen, use toggleFullscreen() instead.
+    openFullscreen: function () {
+        var fullscreenController = this, chart = fullscreenController.chart;
+        // Handle closeFullscreen() method when user clicks 'Escape' button.
+        chart.unbindFullscreenEvent = H.addEvent(chart.container.ownerDocument, // chart's document
+        fullscreenController.browserProps.fullscreenChange, function () {
+            // Handle lack of async of browser's fullScreenChange event.
+            if (chart.isFullscreen) {
+                chart.isFullscreen = false;
+                fullscreenController.closeFullscreen();
+            }
+            else {
+                chart.isFullscreen = true;
+            }
+        });
+        if (chart.container.parentNode instanceof Element) {
+            var promise = chart.container.parentNode[fullscreenController.browserProps.requestFullscreen]();
+            if (promise) {
+                promise.catch(function () {
+                    alert(// eslint-disable-line no-alert
+                    'Full screen is not supported inside a frame');
+                });
+            }
+            fullscreenController.setButtonText();
+        }
+        H.addEvent(chart, 'destroy', chart.unbindFullscreenEvent);
+    },
+    // Helping function - to close fullscreen, use toggleFullscreen() instead.
+    closeFullscreen: function () {
+        var fullscreenController = this, chart = fullscreenController.chart;
+        // Don't fire exitFullscreen() when user exited using 'Escape' button.
+        if (chart.isFullscreen &&
+            chart.container.ownerDocument instanceof Document) {
+            chart.container.ownerDocument[fullscreenController.browserProps.exitFullscreen]();
+            this.setButtonText();
+        }
+        // Unbind event as it's necessary only before exiting from fullscreen.
+        if (chart.unbindFullscreenEvent) {
+            chart.unbindFullscreenEvent();
+        }
+        chart.isFullscreen = false;
+    },
+    /**
+     * Toggles displaying the chart in fullscreen mode.
+     * By default, when the exporting module is enabled, a context button with
+     * a drop down menu in the upper right corner accesses this function.
+     * Exporting module required.
+     *
+     * @since       next
+     *
+     * @sample      highcharts/members/chart-togglefullscreen/
+     *              Toggle fullscreen mode from a HTML button
+     *
+     * @function    Highcharts.Chart#toggleFullscreen
+     * @return      {void}
+     * @requires    modules/exporting
+     * @requires    modules/fullscreen
+     */
+    toggleFullscreen: function () {
+        var fullscreenController = this, chart = fullscreenController.chart;
+        if (!(chart.container.parentNode instanceof HTMLElement)) {
+            return;
+        }
+        var container = chart.container.parentNode;
+        // Hold event and methods available only for a current browser.
+        if (!fullscreenController.browserProps) {
+            if (typeof container.requestFullscreen === 'function') {
+                fullscreenController.browserProps = {
+                    fullscreenChange: 'fullscreenchange',
+                    requestFullscreen: 'requestFullscreen',
+                    exitFullscreen: 'exitFullscreen'
+                };
+            }
+            else if (container.mozRequestFullScreen) {
+                fullscreenController.browserProps = {
+                    fullscreenChange: 'mozfullscreenchange',
+                    requestFullscreen: 'mozRequestFullScreen',
+                    exitFullscreen: 'mozCancelFullScreen'
+                };
+            }
+            else if (container.webkitRequestFullScreen) {
+                fullscreenController.browserProps = {
+                    fullscreenChange: 'webkitfullscreenchange',
+                    requestFullscreen: 'webkitRequestFullScreen',
+                    exitFullscreen: 'webkitExitFullscreen'
+                };
+            }
+            else if (container.msRequestFullscreen) {
+                fullscreenController.browserProps = {
+                    fullscreenChange: 'MSFullscreenChange',
+                    requestFullscreen: 'msRequestFullscreen',
+                    exitFullscreen: 'msExitFullscreen'
+                };
+            }
+        }
+        if (!chart.isFullscreen) {
+            fullscreenController.openFullscreen();
         }
         else {
-            chart.isFullscreen = true;
+            fullscreenController.closeFullscreen();
         }
-    });
-    if (chart.container.parentNode instanceof Element) {
-        chart.container.parentNode[chart.browserProps.requestFullscreen]();
-    }
-    // Replace button text. When chart.toggleFullscreen() will be fired customly
-    // by user before exporting context button is created, text will not be
-    // replaced - it's on the user side.
-    if (chart.exportDivElements &&
-        chart.exportDivElements.length &&
-        menuItems &&
-        chart.options.lang &&
-        chart.options.lang.exitFullscreen) {
-        chart.exportDivElements[menuItems.indexOf('viewFullscreen')].innerHTML =
-            chart.options.lang.exitFullscreen;
-    }
-    H.addEvent(chart, 'destroy', chart.unbindFullscreenEvent);
-};
-// Helping function - to close fullscreen, use toggleFullscreen() instead.
-H.Chart.prototype.closeFullscreen = function () {
-    var _a, _b, _c, _d, _e;
-    var chart = this, exportingOptions = chart.options.exporting, exportDivElements = chart.exportDivElements, menuItems = (_b = (_a = exportingOptions) === null || _a === void 0 ? void 0 : _a.buttons) === null || _b === void 0 ? void 0 : _b.contextButton.menuItems;
-    // Don't fire exitFullscreen() when user exited using 'Escape' button.
-    if (chart.isFullscreen &&
-        chart.container.ownerDocument instanceof Document) {
-        chart.container.ownerDocument[chart.browserProps.exitFullscreen]();
-    }
-    // Replace button text.
-    if (exportDivElements &&
-        exportDivElements.length && ((_d = (_c = exportingOptions) === null || _c === void 0 ? void 0 : _c.menuItemDefinitions) === null || _d === void 0 ? void 0 : _d.viewFullscreen) &&
-        menuItems && ((_e = chart.options.lang) === null || _e === void 0 ? void 0 : _e.viewFullscreen)) {
-        exportDivElements[menuItems.indexOf('viewFullscreen')].innerHTML = (exportingOptions.menuItemDefinitions.viewFullscreen.text ||
-            chart.options.lang.viewFullscreen);
-    }
-    // Unbind event as it's necessary only before exiting from fullscreen.
-    if (chart.unbindFullscreenEvent) {
-        chart.unbindFullscreenEvent();
-    }
-    chart.isFullscreen = false;
-};
-/* eslint-disable valid-jsdoc */
-/**
- * Exporting module required. Toggles displaying the chart in fullscreen mode.
- * By default, when the exporting module is enabled, a context button with
- * a drop down menu in the upper right corner accesses this function.
- *
- * @since       next
- *
- * @sample      highcharts/members/chart-togglefullscreen/
- *              Toggle fullscreen mode from a HTML button
- *
- * @function    Highcharts.Chart#toggleFullscreen
- * @return      {void}
- * @requires    modules/exporting
- * @requires    modules/fullscreen
- */
-H.Chart.prototype.toggleFullscreen = function () {
-    var chart = this;
-    if (!(chart.container.parentNode instanceof HTMLElement)) {
-        return;
-    }
-    var container = chart.container.parentNode;
-    // Hold event and methods available only for a current browser.
-    if (!chart.browserProps) {
-        if (typeof container.requestFullscreen === 'function') {
-            chart.browserProps = {
-                fullscreenChange: 'fullscreenchange',
-                requestFullscreen: 'requestFullscreen',
-                exitFullscreen: 'exitFullscreen'
-            };
-        }
-        else if (container.mozRequestFullScreen) {
-            chart.browserProps = {
-                fullscreenChange: 'mozfullscreenchange',
-                requestFullscreen: 'mozRequestFullScreen',
-                exitFullscreen: 'mozCancelFullScreen'
-            };
-        }
-        else if (container.webkitRequestFullScreen) {
-            chart.browserProps = {
-                fullscreenChange: 'webkitfullscreenchange',
-                requestFullscreen: 'webkitRequestFullScreen',
-                exitFullscreen: 'webkitExitFullscreen'
-            };
-        }
-        else if (container.msRequestFullscreen) {
-            chart.browserProps = {
-                fullscreenChange: 'MSFullscreenChange',
-                requestFullscreen: 'msRequestFullscreen',
-                exitFullscreen: 'msExitFullscreen'
-            };
-        }
-    }
-    if (!chart.isFullscreen) {
-        chart.openFullscreen();
-    }
-    else {
-        chart.closeFullscreen();
     }
 };

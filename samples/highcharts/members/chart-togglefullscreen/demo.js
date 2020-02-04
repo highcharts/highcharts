@@ -20,5 +20,5 @@ var chart = Highcharts.chart('container', {
 
 // The button handler
 document.getElementById('button').addEventListener('click', function () {
-    chart.toggleFullscreen();
+    chart.fullscreenController.toggleFullscreen();
 });

@@ -1999,10 +1999,6 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
         ): void {
-            var chart = this.chart;
-
-            (chart as any).fullScreen = new H.FullScreen(chart.container);
-
             fireEvent(
                 this,
                 'deselectButton',
