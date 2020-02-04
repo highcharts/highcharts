@@ -1,5 +1,44 @@
-// Issue #
-QUnit.test('Stick on hover tooltip', function (assert) {
+// Issue #12885
+// Tooltip stickOnHover and followPointer
+QUnit.test('Do not stick on hover tooltip following pointer (#12885)', function (assert) {
+    Highcharts.chart('container', {
+        series: [{
+            type: 'pie',
+            data: [3, 2, 1]
+        }],
+        tooltip: {
+            followPointer: true,
+            stickOnHover: true
+        }
+    }, function (chart) {
+
+        var controller = new TestController(chart),
+            pointBox = chart.series[0].points[0].graphic.getBBox(),
+            pointerPosition = {
+                x: (chart.plotLeft + pointBox.x + (pointBox.width / 2)),
+                y: (chart.plotTop + pointBox.y + (pointBox.height / 2))
+            },
+            tooltip = chart.tooltip;
+
+        controller.moveTo(pointerPosition.x, pointerPosition.y);
+
+        var tooltipPosition1 = { x: tooltip.label.x, y: tooltip.label.y };
+
+        controller.moveTo(pointerPosition.x + 1, pointerPosition.y + 1);
+
+        var tooltipPosition2 = { x: tooltip.label.x, y: tooltip.label.y };
+
+        assert.deepEqual(
+            tooltipPosition2,
+            { x: tooltipPosition1.x + 1, y: tooltipPosition1.y + 1 },
+            'Tooltip should move with pointer movement.'
+        );
+    });
+});
+
+// Issue #12736
+// Mousing over tooltip should not dismiss it, move it, or change points.
+QUnit.test('Stick on hover tooltip (#12736)', function (assert) {
 
     Highcharts.chart('container', {
         series: [{

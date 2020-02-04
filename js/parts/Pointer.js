@@ -747,6 +747,7 @@ var Pointer = /** @class */ (function () {
             point.graphic &&
             tooltip &&
             !tooltip.isHidden &&
+            !tooltip.options.followPointer &&
             tooltip.options.stickOnHover &&
             tooltip.label) {
             var labelBBox = tooltip.label.getBBox();

@@ -1195,6 +1195,7 @@ class Pointer {
             point.graphic &&
             tooltip &&
             !tooltip.isHidden &&
+            !tooltip.options.followPointer &&
             tooltip.options.stickOnHover &&
             tooltip.label
         ) {
