@@ -704,6 +704,7 @@ const {
     fireEvent,
     getNestedProperty,
     isArray,
+    isFunction,
     isNumber,
     isString,
     merge,
@@ -3365,13 +3366,13 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
             events = options.events;
 
             objectEach(events, function (event: any, eventType: string): void {
-                if (H.isFunction(event)) {
+                if (isFunction(event)) {
 
                     // If event does not exist, or is changed by Series.update
                     if (series.eventOptions[eventType] !== event) {
 
                         // Remove existing if set by option
-                        if (H.isFunction(series.eventOptions[eventType])) {
+                        if (isFunction(series.eventOptions[eventType])) {
                             removeEvent(
                                 series,
                                 eventType,

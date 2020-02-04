@@ -3438,7 +3438,7 @@ H.uniqueKey = (function (): any {
     };
 }());
 
-H.isFunction = function (obj: unknown): obj is Function {
+const isFunction = H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
 };
 
@@ -3522,6 +3522,7 @@ const utilitiesModule = {
     isArray,
     isClass,
     isDOMElement,
+    isFunction,
     isNumber,
     isObject,
     isString,

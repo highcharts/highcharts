@@ -2500,7 +2500,7 @@ H.uniqueKey = (function () {
         return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
     };
 }());
-H.isFunction = function (obj) {
+var isFunction = H.isFunction = function (obj) {
     return typeof obj === 'function';
 };
 // Register Highcharts as a plugin in jQuery
@@ -2576,6 +2576,7 @@ var utilitiesModule = {
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
+    isFunction: isFunction,
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,

@@ -302,6 +302,7 @@ const {
     extend,
     fireEvent,
     isArray,
+    isFunction,
     isNumber,
     isObject,
     isString,
@@ -615,7 +616,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     event: Highcharts.EventCallbackFunction<Highcharts.Chart>,
                     eventType: string
                 ): void {
-                    if (H.isFunction(event)) {
+                    if (isFunction(event)) {
                         addEvent(chart, eventType, event);
                     }
                 });

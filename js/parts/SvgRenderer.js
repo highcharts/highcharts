@@ -653,6 +653,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             });
             // Remove shadows from previous runs.
             this.removeTextOutline(tspans);
+            // Check if the element contains RTL characters.
+            // Comparing against Hebrew and Arabic characters,
+            // excluding Arabic digits. Source:
+            // https://www.unicode.org/Public/UNIDATA/extracted/DerivedBidiClass.txt
+            var isRTL_1 = elem.textContent ?
+                /^[\u0591-\u065F\u066A-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
+                    .test(elem.textContent) : false;
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild;
             tspans.forEach(function (tspan, y) {
@@ -666,9 +673,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                         elem.setAttribute('y', 0);
                     }
                 }
-                // Create the clone and apply outline properties
-                clone = tspan.cloneNode(1);
-                attr(clone, {
+                // Create the clone and apply outline properties.
+                // For RTL elements apply outline properties for orginal element
+                // to prevent outline from overlapping the text.
+                // For RTL in Firefox keep the orginal order (#10162).
+                clone = tspan.cloneNode(true);
+                attr((isRTL_1 && !isFirefox) ? tspan : clone, {
                     'class': 'highcharts-text-outline',
                     fill: color,
                     stroke: color,
@@ -677,6 +687,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 });
                 elem.insertBefore(clone, firstRealChild);
             });
+            // Create a whitespace between tspan and clone,
+            // to fix the display of Arabic characters in Firefox.
+            if (isRTL_1 && isFirefox && tspans[0]) {
+                var whitespace = tspans[0].cloneNode(true);
+                whitespace.textContent = ' ';
+                elem.insertBefore(whitespace, firstRealChild);
+            }
         }
     },
     /**
