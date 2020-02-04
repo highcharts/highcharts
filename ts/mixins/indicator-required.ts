@@ -10,8 +10,6 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
-
 /**
  * Internal types
  * @private
@@ -40,9 +38,10 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
-
-var error = H.error;
+import U from '../parts/Utilities.js';
+const {
+    error
+} = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

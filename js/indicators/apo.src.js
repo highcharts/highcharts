@@ -7,9 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var error = U.error;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
-var EMA = H.seriesTypes.ema, error = H.error, requiredIndicator = requiredIndicatorMixin;
+var EMA = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin;
 /**
  * The APO series type.
  *

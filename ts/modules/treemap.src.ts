@@ -294,6 +294,7 @@ const {
     addEvent,
     correctFloat,
     defined,
+    error,
     extend,
     fireEvent,
     isArray,
@@ -314,7 +315,6 @@ const AXIS_MAX = 100;
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    error = H.error,
     noop = H.noop,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,

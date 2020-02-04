@@ -61,11 +61,11 @@
 
 'use strict';
 
-import H from '../../../parts/Globals.js';
-var error = H.error;
-
 import U from '../../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    error,
+    pick
+} = U;
 
 /**
  * Internal types.

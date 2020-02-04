@@ -15,6 +15,7 @@
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
+    error,
     merge,
     pick
 } = U;
@@ -204,7 +205,7 @@ Earcon.prototype.sonify = function (
                 instrumentCopy.play(instrumentOpts);
             }
         } else {
-            H.error(30);
+            error(30);
         }
     });
 };

@@ -698,6 +698,7 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
+    error,
     extend,
     fireEvent,
     isArray,
@@ -5106,7 +5107,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             );
             if (options.type !== (axis.linkedParent as any).options.type) {
                 // Can't link axes of different type
-                H.error(11, 1 as any, chart);
+                error(11, 1 as any, chart);
             }
 
         // Initial min and max from the extreme data values
@@ -5137,7 +5138,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 ) <= 0
             ) { // #978
                 // Can't plot negative values on log axis
-                H.error(10, 1 as any, chart);
+                error(10, 1 as any, chart);
             }
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
@@ -5425,7 +5426,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 )
             ) {
                 tickPositions = [this.min, this.max];
-                H.error(19, false, this.chart);
+                error(19, false, this.chart);
 
             } else if (this.isDatetimeAxis) {
                 tickPositions = (this.getTimeTicks as any)(

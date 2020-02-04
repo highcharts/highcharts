@@ -52,7 +52,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    error,
+    isArray
+} = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -162,7 +165,7 @@ H.seriesType<Highcharts.MFIIndicator>(
                 i: number;
 
             if (!volumeSeries) {
-                H.error(
+                error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',

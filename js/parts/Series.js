@@ -228,7 +228,7 @@ import H from './Globals.js';
 import pointModule from './Point.js';
 var Point = pointModule.Point;
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -2834,7 +2834,7 @@ null,
                 // The series needs an X and an Y axis
                 if (!series[AXIS] &&
                     series.optionalAxis !== AXIS) {
-                    H.error(18, true, chart);
+                    error(18, true, chart);
                 }
             });
         });
@@ -3400,7 +3400,7 @@ null,
                 else {
                     // Highcharts expects configs to be numbers or arrays in
                     // turbo mode
-                    H.error(12, false, chart);
+                    error(12, false, chart);
                 }
             }
             else {
@@ -3416,7 +3416,7 @@ null,
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             if (yData && isString(yData[0])) {
-                H.error(14, true, chart);
+                error(14, true, chart);
             }
             series.data = [];
             series.options.data = series.userOptions.data = data;
@@ -3572,7 +3572,7 @@ null,
                 // width calculation of columns (#1900)
             }
             else if (distance < 0 && throwOnUnsorted) {
-                H.error(15, false, series.chart);
+                error(15, false, series.chart);
                 throwOnUnsorted = false; // Only once
             }
         }

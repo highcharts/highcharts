@@ -14,6 +14,7 @@
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
+    error,
     merge,
     pick
 } = U;
@@ -224,7 +225,7 @@ Instrument.prototype.init = function (
     options: Highcharts.InstrumentOptionsObject
 ): void {
     if (!this.initAudioContext()) {
-        H.error(29);
+        error(29);
         return;
     }
     this.options = merge(defaultOptions, options);

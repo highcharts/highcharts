@@ -58,10 +58,8 @@
  */
 /* eslint-enable max-len */
 'use strict';
-import H from '../../../parts/Globals.js';
-var error = H.error;
 import U from '../../../parts/Utilities.js';
-var pick = U.pick;
+var error = U.error, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * Warn user that a deprecated option was used.

@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var merge = U.merge, pick = U.pick;
+var error = U.error, merge = U.merge, pick = U.pick;
 /**
  * Define an Instrument and the options for playing it.
  *
@@ -140,7 +140,7 @@ Earcon.prototype.sonify = function (options) {
             }
         }
         else {
-            H.error(30);
+            error(30);
         }
     });
 };

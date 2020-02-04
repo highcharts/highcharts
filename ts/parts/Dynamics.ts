@@ -124,6 +124,7 @@ const {
     addEvent,
     defined,
     erase,
+    error,
     extend,
     fireEvent,
     isArray,
@@ -1578,7 +1579,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
         } else {
-            H.error(
+            error(
                 17,
                 true,
                 chart,

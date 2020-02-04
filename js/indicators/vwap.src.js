@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var error = U.error, isArray = U.isArray;
 var seriesType = H.seriesType;
 /**
  * The Volume Weighted Average Price (VWAP) series type.
@@ -70,7 +70,7 @@ seriesType('vwap', 'sma',
         var indicator = this, chart = series.chart, xValues = series.xData, yValues = series.yData, period = params.period, isOHLC = true, volumeSeries;
         // Checks if volume series exists
         if (!(volumeSeries = (chart.get(params.volumeSeriesID)))) {
-            H.error('Series ' +
+            error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, chart);
             return;

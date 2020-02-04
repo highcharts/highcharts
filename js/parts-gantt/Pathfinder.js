@@ -34,7 +34,7 @@ import H from '../parts/Globals.js';
  */
 import '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, defined = U.defined, error = U.error, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import './ArrowSymbols.js';
 var deg2rad = H.deg2rad, max = Math.max, min = Math.min;
@@ -571,7 +571,7 @@ Connection.prototype = {
     getPath: function (options) {
         var pathfinder = this.pathfinder, chart = this.chart, algorithm = pathfinder.algorithms[options.type], chartObstacles = pathfinder.chartObstacles;
         if (typeof algorithm !== 'function') {
-            H.error('"' + options.type + '" is not a Pathfinder algorithm.');
+            error('"' + options.type + '" is not a Pathfinder algorithm.');
             return;
         }
         // This function calculates obstacles on demand if they don't exist
@@ -1062,7 +1062,7 @@ function warnLegacy(chart) {
             return acc || series.options && series.options.pathfinder;
         }, false)) {
         merge(true, (chart.options.connectors = chart.options.connectors || {}), chart.options.pathfinder);
-        H.error('WARNING: Pathfinder options have been renamed. ' +
+        error('WARNING: Pathfinder options have been renamed. ' +
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }

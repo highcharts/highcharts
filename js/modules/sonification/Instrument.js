@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var merge = U.merge, pick = U.pick;
+var error = U.error, merge = U.merge, pick = U.pick;
 /**
  * A set of options for the Instrument class.
  *
@@ -137,7 +137,7 @@ function Instrument(options) {
 }
 Instrument.prototype.init = function (options) {
     if (!this.initAudioContext()) {
-        H.error(29);
+        error(29);
         return;
     }
     this.options = merge(defaultOptions, options);

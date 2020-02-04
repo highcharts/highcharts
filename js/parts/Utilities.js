@@ -348,7 +348,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  *
  * @return {void}
  */
-H.error = function (code, stop, chart, params) {
+var error = H.error = function (code, stop, chart, params) {
     var isCode = isNumber(code), message = isCode ?
         "Highcharts error #" + code + ": www.highcharts.com/errors/" + code + "/" :
         code.toString(), defaultHandler = function () {
@@ -1880,7 +1880,7 @@ H.getStyle = function (el, prop, toInt) {
     }
     if (!win.getComputedStyle) {
         // SVG not supported, forgot to load oldie.js?
-        H.error(27, true);
+        error(27, true);
     }
     // Otherwise, get the computed style
     style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
@@ -2569,6 +2569,7 @@ var utilitiesModule = {
     destroyObjectProperties: destroyObjectProperties,
     discardElement: discardElement,
     erase: erase,
+    error: error,
     extend: extend,
     extendClass: extendClass,
     fireEvent: fireEvent,

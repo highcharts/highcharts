@@ -6,7 +6,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var error = U.error;
 var seriesType = H.seriesType;
 /* eslint-disable valid-jsdoc */
 // Utils:
@@ -70,7 +71,7 @@ seriesType('ad', 'sma',
             return;
         }
         if (!volumeSeries) {
-            H.error('Series ' +
+            error('Series ' +
                 volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, series.chart);
             return;
