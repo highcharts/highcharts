@@ -33,10 +33,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
+const {
+    addEvent,
+    isNumber
+} = U;
 
-var addEvent = H.addEvent,
-    setOptions = H.setOptions,
+var setOptions = H.setOptions,
     each = H.each;
 
 setOptions({

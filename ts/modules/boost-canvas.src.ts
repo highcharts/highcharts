@@ -73,17 +73,18 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import U from '../parts/Utilities.js';
 const {
-    Color,
-    color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
-const {
+    addEvent,
     extend,
+    fireEvent,
     isNumber,
+    merge,
+    pick,
     wrap
-} = utilitiesModule;
+} = U;
 
 import '../parts/Series.js';
 import '../parts/Options.js';
@@ -93,10 +94,6 @@ var win = H.win,
     noop = function (): void {},
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
-    merge = H.merge,
-    pick = H.pick,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 

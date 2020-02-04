@@ -119,7 +119,7 @@ declare global {
 }
 
 import Time from './Time.js';
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
     defined,
@@ -130,12 +130,13 @@ const {
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
     relativeLength,
     setAnimation,
     splat
-} = utilitiesModule;
+} = U;
 
 import './Axis.js';
 import './Chart.js';
@@ -147,7 +148,6 @@ var animate = H.animate,
     Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
-    merge = H.merge,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;

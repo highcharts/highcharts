@@ -36,9 +36,9 @@ import H from '../parts/Globals.js';
 * @type {Array<Function>|undefined}
 */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, attr = U.attr, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import chartNavigationMixin from '../mixins/navigation.js';
-var doc = H.doc, win = H.win, merge = H.merge, fireEvent = H.fireEvent, PREFIX = 'highcharts-';
+var doc = H.doc, win = H.win, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * IE 9-11 polyfill for Element.closest():
@@ -698,7 +698,7 @@ function selectableAnnotation(annotationType) {
         // Let bubble event to chart.click:
         event.activeAnnotation = true;
     }
-    H.merge(true, annotationType.prototype.defaultOptions.events, {
+    merge(true, annotationType.prototype.defaultOptions.events, {
         click: selectAndshowPopup
     });
 }

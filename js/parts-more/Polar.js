@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -181,7 +181,7 @@ if (seriesTypes.spline) {
  * and (yAxis.len - plotY) is the pixel distance from center.
  * @private
  */
-H.addEvent(Series, 'afterTranslate', function () {
+addEvent(Series, 'afterTranslate', function () {
     var series = this;
     var chart = series.chart;
     if (chart.polar && series.xAxis) {
@@ -213,7 +213,7 @@ H.addEvent(Series, 'afterTranslate', function () {
         }
         // Perform clip after render
         if (!this.hasClipCircleSetter) {
-            this.hasClipCircleSetter = !!series.eventsToUnbind.push(H.addEvent(series, 'afterRender', function () {
+            this.hasClipCircleSetter = !!series.eventsToUnbind.push(addEvent(series, 'afterRender', function () {
                 var circ;
                 if (chart.polar) {
                     // For clipping purposes there is a need for
@@ -698,7 +698,7 @@ H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
     wrapper.clipPath = clipPath;
     return wrapper;
 };
-H.addEvent(H.Chart, 'getAxes', function () {
+addEvent(H.Chart, 'getAxes', function () {
     if (!this.pane) {
         this.pane = [];
     }
@@ -707,12 +707,12 @@ H.addEvent(H.Chart, 'getAxes', function () {
         paneOptions, this);
     }, this);
 });
-H.addEvent(H.Chart, 'afterDrawChartBox', function () {
+addEvent(H.Chart, 'afterDrawChartBox', function () {
     this.pane.forEach(function (pane) {
         pane.render();
     });
 });
-H.addEvent(H.Series, 'afterInit', function () {
+addEvent(H.Series, 'afterInit', function () {
     var chart = this.chart;
     // Add flags that identifies radial inverted series
     if (chart.inverted && chart.polar) {

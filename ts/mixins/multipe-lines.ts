@@ -49,10 +49,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined,
+    merge
+} = U;
 
 var each = H.each,
-    merge = H.merge,
     error = H.error,
     SMA = H.seriesTypes.sma;
 

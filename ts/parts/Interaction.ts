@@ -151,10 +151,13 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     defined,
     extend,
+    fireEvent,
     isArray,
     isObject,
+    merge,
     objectEach,
     pick
 } = U;
@@ -165,16 +168,13 @@ import './Legend.js';
 import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    Chart = H.Chart,
+var Chart = H.Chart,
     createElement = H.createElement,
     css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     Legend = H.Legend,
-    merge = H.merge,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,

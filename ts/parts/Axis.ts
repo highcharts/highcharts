@@ -689,8 +689,12 @@ declare global {
  * @return {string}
  */
 
+import Color from './Color.js';
+const color = Color.parse;
+import Tick from './Tick.js';
 import U from './Utilities.js';
 const {
+    addEvent,
     animObject,
     arrayMax,
     arrayMin,
@@ -699,9 +703,11 @@ const {
     defined,
     destroyObjectProperties,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isString,
+    merge,
     objectEach,
     pick,
     relativeLength,
@@ -710,20 +716,13 @@ const {
     syncTimeout
 } = U;
 
-import './Color.js';
 import './Options.js';
-import './Tick.js';
 
-var addEvent = H.addEvent,
-    color = H.color,
-    defaultOptions = H.defaultOptions,
+var defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
-    fireEvent = H.fireEvent,
     format = H.format,
     getMagnitude = H.getMagnitude,
-    merge = H.merge,
-    normalizeTickInterval = H.normalizeTickInterval,
-    Tick = H.Tick;
+    normalizeTickInterval = H.normalizeTickInterval;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

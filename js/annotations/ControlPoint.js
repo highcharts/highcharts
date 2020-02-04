@@ -3,7 +3,6 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import H from './../parts/Globals.js';
 /**
  * Callback to modify annotation's possitioner controls.
  *
@@ -13,7 +12,7 @@ import H from './../parts/Globals.js';
  * @return {Highcharts.PositionObject}
  */
 import U from './../parts/Utilities.js';
-var extend = U.extend, pick = U.pick;
+var extend = U.extend, merge = U.merge, pick = U.pick;
 import eventEmitterMixin from './eventEmitterMixin.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -113,7 +112,7 @@ ControlPoint.prototype.destroy = function () {
  * @return {void}
  */
 ControlPoint.prototype.update = function (userOptions) {
-    var chart = this.chart, target = this.target, index = this.index, options = H.merge(true, this.options, userOptions);
+    var chart = this.chart, target = this.target, index = this.index, options = merge(true, this.options, userOptions);
     this.destroy();
     this.constructor(chart, target, options, index);
     this.render(chart.controlPointsGroup);

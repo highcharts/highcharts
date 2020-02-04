@@ -23,7 +23,7 @@ import H from './Globals.js';
  */
 import './Chart.js';
 import U from './Utilities.js';
-var isArray = U.isArray, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 var Chart = H.Chart;
 /**
  * Allows setting a set of rules to apply for different screen or chart
@@ -156,7 +156,7 @@ Chart.prototype.setResponsive = function (redraw, reset) {
         }, this);
     }
     // Merge matching rules
-    var mergedOptions = H.merge.apply(0, ruleIds.map(function (ruleId) {
+    var mergedOptions = merge.apply(0, ruleIds.map(function (ruleId) {
         return H.find(options.rules, function (rule) {
             return rule._id === ruleId;
         }).chartOptions;

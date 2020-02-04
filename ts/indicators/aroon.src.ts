@@ -11,6 +11,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
+    merge,
     pick
 } = U;
 
@@ -168,7 +169,7 @@ H.seriesType<Highcharts.AroonIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    H.merge(multipleLinesMixin, {
+    merge(multipleLinesMixin, {
         nameBase: 'Aroon',
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',

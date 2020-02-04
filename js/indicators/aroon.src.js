@@ -8,7 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
+var merge = U.merge, pick = U.pick;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 /* eslint-disable valid-jsdoc */
 // Utils
@@ -102,7 +102,7 @@ H.seriesType('aroon', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-H.merge(multipleLinesMixin, {
+merge(multipleLinesMixin, {
     nameBase: 'Aroon',
     pointArrayMap: ['y', 'aroonDown'],
     pointValKey: 'y',

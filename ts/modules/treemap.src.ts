@@ -287,23 +287,24 @@ declare global {
 
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import U from '../parts/Utilities.js';
 const {
-    color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
-const {
+    addEvent,
     correctFloat,
     defined,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
     stableSort
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -313,11 +314,8 @@ const AXIS_MAX = 100;
 
 var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    merge = H.merge,
     error = H.error,
     noop = H.noop,
-    fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     // @todo Similar to eachObject, this function is likely redundant
@@ -2216,7 +2214,7 @@ seriesType<Highcharts.TreemapSeries>(
     }
 );
 
-H.addEvent(H.Series, 'afterBindAxes', function (): void {
+addEvent(H.Series, 'afterBindAxes', function (): void {
     var series = this,
         xAxis = series.xAxis,
         yAxis = series.yAxis,

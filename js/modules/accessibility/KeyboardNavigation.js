@@ -11,7 +11,9 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-var addEvent = H.addEvent, fireEvent = H.fireEvent, win = H.win, doc = win.document;
+var win = H.win, doc = win.document;
+import U from '../../parts/Utilities.js';
+var addEvent = U.addEvent, fireEvent = U.fireEvent;
 import HTMLUtilities from './utils/htmlUtilities.js';
 var getElement = HTMLUtilities.getElement;
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';

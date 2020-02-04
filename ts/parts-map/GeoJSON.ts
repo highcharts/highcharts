@@ -96,6 +96,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
+    merge,
     wrap
 } = U;
 
@@ -104,7 +105,6 @@ import '../parts/Chart.js';
 
 var Chart = H.Chart,
     format = H.format,
-    merge = H.merge,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

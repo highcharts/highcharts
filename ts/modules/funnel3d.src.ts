@@ -91,21 +91,21 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
-const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import U from '../parts/Utilities.js';
 const {
     extend,
+    merge,
     pick,
     relativeLength
-} = utilitiesModule;
+} = U;
 
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 
 var charts = H.charts,
     error = H.error,
-    merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     // Use H.Renderer instead of H.SVGRenderer for VML support.
@@ -559,7 +559,7 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
  * @apioption series.funnel3d.data.gradientForSides
  */
 
-funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
+funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
     parts: [
         'top', 'bottom',
         'frontUpper', 'backUpper',
@@ -898,7 +898,7 @@ RendererProto.funnel3dPath = function (
             Math.abs(((chart.options.chart as any).options3d.alpha % 180) - 90),
 
         // set zIndexes of parts based on cubiod logic, for consistency
-        cuboidData = cuboidPath.call(renderer, H.merge(shapeArgs, {
+        cuboidData = cuboidPath.call(renderer, merge(shapeArgs, {
             depth: shapeArgs.width,
             width: (shapeArgs.width + shapeArgs.bottom.width) / 2
         })),
@@ -908,14 +908,14 @@ RendererProto.funnel3dPath = function (
         //
         top = renderer.getCylinderEnd(
             chart,
-            H.merge(shapeArgs, {
+            merge(shapeArgs, {
                 x: shapeArgs.x - shapeArgs.width / 2,
                 z: shapeArgs.z - shapeArgs.width / 2,
                 alphaCorrection: alphaCorrection
             })
         ),
         bottomWidth = shapeArgs.bottom.width,
-        bottomArgs = H.merge<Highcharts.SVGAttributes>(shapeArgs, {
+        bottomArgs = merge<Highcharts.SVGAttributes>(shapeArgs, {
             width: bottomWidth,
             x: shapeArgs.x - bottomWidth / 2,
             z: shapeArgs.z - bottomWidth / 2,
@@ -934,7 +934,7 @@ RendererProto.funnel3dPath = function (
 
     if (hasMiddle) {
         middleWidth = shapeArgs.middle.width;
-        middleTopArgs = H.merge<Highcharts.SVGAttributes>(shapeArgs, {
+        middleTopArgs = merge<Highcharts.SVGAttributes>(shapeArgs, {
             y: shapeArgs.y + shapeArgs.middle.fraction * shapeArgs.height,
             width: middleWidth,
             x: shapeArgs.x - middleWidth / 2,
@@ -970,7 +970,7 @@ RendererProto.funnel3dPath = function (
     ret.rightUpper = renderer.getCylinderFront(
         renderer.getCylinderEnd(
             chart,
-            H.merge(shapeArgs, {
+            merge(shapeArgs, {
                 x: shapeArgs.x - shapeArgs.width / 2,
                 z: shapeArgs.z - shapeArgs.width / 2,
                 alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
@@ -979,7 +979,7 @@ RendererProto.funnel3dPath = function (
         ),
         renderer.getCylinderEnd(
             chart,
-            H.merge(middleTopArgs, {
+            merge(middleTopArgs, {
                 alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
             }),
             !hasMiddle
@@ -990,13 +990,13 @@ RendererProto.funnel3dPath = function (
         useAlphaCorrection = (Math.min(middleWidth, bottomWidth) /
             Math.max(middleWidth, bottomWidth)) !== 1;
 
-        H.merge(true, ret, {
+        merge(true, ret, {
             frontLower: renderer.getCylinderFront(middleBottom, bottom),
             backLower: renderer.getCylinderBack(middleBottom, bottom),
             rightLower: renderer.getCylinderFront(
                 renderer.getCylinderEnd(
                     chart,
-                    H.merge(bottomArgs, {
+                    merge(bottomArgs, {
                         alphaCorrection: useAlphaCorrection ?
                             -alphaCorrection : 0
                     }),
@@ -1004,7 +1004,7 @@ RendererProto.funnel3dPath = function (
                 ),
                 renderer.getCylinderEnd(
                     chart,
-                    H.merge(middleTopArgs, {
+                    merge(middleTopArgs, {
                         alphaCorrection: useAlphaCorrection ?
                             -alphaCorrection : 0
                     }),

@@ -13,7 +13,11 @@
 'use strict';
 
 import H from '../../../../parts/Globals.js';
-var merge = H.merge;
+import U from '../../../../parts/Utilities.js';
+const {
+    addEvent,
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -178,7 +182,7 @@ function addForceMarkersEvents(): void {
      * Keep track of forcing markers.
      * @private
      */
-    H.addEvent(H.Series as any, 'render', function (
+    addEvent(H.Series as any, 'render', function (
         this: Highcharts.AccessibilitySeries
     ): void {
         var series = this,
@@ -206,7 +210,7 @@ function addForceMarkersEvents(): void {
      * Keep track of options to reset markers to if no longer forced.
      * @private
      */
-    H.addEvent(H.Series, 'afterSetOptions', function (
+    addEvent(H.Series, 'afterSetOptions', function (
         e: { options: Highcharts.SeriesOptions }
     ): void {
         this.resetA11yMarkerOptions = merge(

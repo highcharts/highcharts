@@ -76,6 +76,7 @@ import U from './Utilities.js';
 const {
     isArray,
     isObject,
+    merge,
     objectEach,
     pick,
     splat
@@ -237,7 +238,7 @@ Chart.prototype.setResponsive = function (
     }
 
     // Merge matching rules
-    var mergedOptions = H.merge.apply(0, ruleIds.map(function (
+    var mergedOptions = merge.apply(0, ruleIds.map(function (
         ruleId: string
     ): (Highcharts.Options|undefined) {
         return (H.find(

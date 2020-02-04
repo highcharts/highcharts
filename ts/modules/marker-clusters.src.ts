@@ -15,7 +15,6 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
 
 /**
  * Internal types
@@ -237,6 +236,22 @@ declare global {
  *          Event arguments.
  */
 
+''; // detach doclets from following code
+
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    defined,
+    isArray,
+    isObject,
+    isNumber,
+    merge,
+    objectEach,
+    relativeLength,
+    syncTimeout
+} = U;
+
 /* eslint-disable no-invalid-this */
 
 import '../parts/Series.js';
@@ -247,18 +262,8 @@ var Series = H.Series,
     Scatter = H.seriesTypes.scatter,
     Point = H.Point,
     SvgRenderer = H.SVGRenderer,
-    addEvent = H.addEvent,
-    merge = H.merge,
-    defined = U.defined,
-    isArray = U.isArray,
-    isObject = U.isObject,
     isFunction = H.isFunction,
-    isNumber = U.isNumber,
-    relativeLength = H.relativeLength,
     error = H.error,
-    objectEach = U.objectEach,
-    syncTimeout = U.syncTimeout,
-    animObject = H.animObject,
     baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array

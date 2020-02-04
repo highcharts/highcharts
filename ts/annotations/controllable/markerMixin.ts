@@ -35,6 +35,7 @@ import U from './../../parts/Utilities.js';
 const {
     addEvent,
     defined,
+    merge,
     objectEach
 } = U;
 
@@ -130,10 +131,10 @@ H.SVGRenderer.prototype.addMarker = function (
     options.children = markerOptions.children.map(function (
         child: Highcharts.SVGDefinitionObject
     ): Highcharts.SVGDefinitionObject {
-        return H.merge(attrs, child);
+        return merge(attrs, child);
     });
 
-    var marker = this.definition(H.merge(true, {
+    var marker = this.definition(merge(true, {
         markerWidth: 20,
         markerHeight: 20,
         refX: 0,
@@ -205,7 +206,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                             .addMarker(
                                 (itemOptions.id || H.uniqueKey()) + '-' +
                                 predefinedMarker.id,
-                                H.merge(predefinedMarker, { color: color })
+                                merge(predefinedMarker, { color: color })
                             );
 
                         item.attr(markerType, marker.attr('id') as any);
@@ -218,7 +219,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
 };
 
 addEvent(H.Chart as any, 'afterGetContainer', function (this: Highcharts.AnnotationChart): void {
-    this.options.defs = H.merge(defaultMarkers, this.options.defs || {});
+    this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
     objectEach(this.options.defs, function (def: Highcharts.SVGDefinitionObject): void {
         if (def.tagName === 'marker' && def.render !== false) {

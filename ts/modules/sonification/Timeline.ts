@@ -13,7 +13,10 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var splat = U.splat;
+const {
+    merge,
+    splat
+} = U;
 
 /**
  * Internal types.
@@ -202,7 +205,7 @@ TimelineEvent.prototype.play = function (
         playOnEnd = options && options.onEnd,
         playOptionsOnEnd = this.options.playOptions &&
             this.options.playOptions.onEnd,
-        playOptions = H.merge(this.options.playOptions, options);
+        playOptions = merge(this.options.playOptions, options);
 
     if (eventObject && eventObject.sonify) {
         // If we have multiple onEnds defined, use all
@@ -332,7 +335,7 @@ TimelinePath.prototype.init = function (
         ['playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd']
     );
     this.signalHandler.registerSignalCallbacks(
-        H.merge(options as any, { masterOnEnd: options.onEnd })
+        merge(options as any, { masterOnEnd: options.onEnd })
     );
 };
 
@@ -648,7 +651,7 @@ Timeline.prototype.init = function (
         ['playOnEnd', 'masterOnEnd', 'onPathStart', 'onPathEnd']
     );
     this.signalHandler.registerSignalCallbacks(
-        H.merge(options as any, { masterOnEnd: options.onEnd })
+        merge(options as any, { masterOnEnd: options.onEnd })
     );
 };
 

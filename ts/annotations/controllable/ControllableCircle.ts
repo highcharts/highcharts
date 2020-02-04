@@ -5,7 +5,6 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
 
 /**
  * Internal types.
@@ -52,7 +51,10 @@ declare global {
 }
 
 
-import './../../parts/Utilities.js';
+import U from './../../parts/Utilities.js';
+const {
+    merge
+} = U;
 import controllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
 
@@ -87,11 +89,11 @@ const ControllableCircle: typeof Highcharts.AnnotationControllableCircle = funct
  * @name Highcharts.AnnotationControllableCircle.attrsMap
  * @type {Highcharts.Dictionary<string>}
  */
-ControllableCircle.attrsMap = H.merge(ControllablePath.attrsMap, {
+ControllableCircle.attrsMap = merge(ControllablePath.attrsMap, {
     r: 'r'
 });
 
-H.merge<Highcharts.AnnotationControllableCircle, Partial<Highcharts.AnnotationControllableCircle>>(
+merge<Highcharts.AnnotationControllableCircle, Partial<Highcharts.AnnotationControllableCircle>>(
     true,
     ControllableCircle.prototype,
     controllableMixin, /** @lends Highcharts.AnnotationControllableCircle# */ {

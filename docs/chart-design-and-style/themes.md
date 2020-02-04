@@ -6,7 +6,7 @@ A Highcharts theme is a set of pre-defined options that are applied as default H
     
     <script src="/js/themes/gray.js"></script>
 
-The themes can also be found on github: [https://github.com/highslide-software/highcharts.com/tree/master/js/themes](https://github.com/highslide-software/highcharts.com/tree/master/js/themes).
+The themes can also be found on the [Highcharts repository](https://github.com/highcharts/highcharts/tree/master/js/masters/themes).
 
 Creating your own theme
 -----------------------

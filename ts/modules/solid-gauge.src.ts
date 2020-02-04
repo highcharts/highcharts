@@ -87,17 +87,18 @@ declare global {
  * @type {boolean|undefined}
  */
 
-import colorModule from '../parts/Color.js';
-const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import U from '../parts/Utilities.js';
 const {
     clamp,
     extend,
     isNumber,
+    merge,
     pick,
     pInt,
     wrap
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
@@ -185,7 +186,7 @@ colorAxisMethods = {
         ): void {
             var colors: (Array<string>|undefined);
 
-            dataClass = H.merge(dataClass);
+            dataClass = merge(dataClass);
             dataClasses.push(dataClass);
             if (!dataClass.color) {
                 if (options.dataClassColor === 'category') {

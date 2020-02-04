@@ -76,11 +76,11 @@ const {
     defined,
     extend,
     isNumber,
+    merge,
     pick
 } = U;
 
 var fireEvent = H.fireEvent,
-    merge = H.merge,
     bindingsUtils = H.NavigationBindings.prototype.utils,
     PREFIX = 'highcharts-';
 

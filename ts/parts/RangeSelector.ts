@@ -175,11 +175,14 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     defined,
     destroyObjectProperties,
     discardElement,
     extend,
+    fireEvent,
     isNumber,
+    merge,
     objectEach,
     pick,
     pInt,
@@ -189,14 +192,11 @@ const {
 import './Axis.js';
 import './Chart.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     css = H.css,
     createElement = H.createElement,
-    defaultOptions = H.defaultOptions,
-    fireEvent = H.fireEvent,
-    merge = H.merge;
+    defaultOptions = H.defaultOptions;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *

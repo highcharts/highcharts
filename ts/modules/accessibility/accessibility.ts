@@ -67,12 +67,14 @@ declare global {
 }
 
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    addEvent,
+    extend,
+    fireEvent,
+    merge
+} = U;
 
-var addEvent = H.addEvent,
-    doc = H.win.document,
-    merge = H.merge,
-    fireEvent = H.fireEvent;
+var doc = H.win.document;
 
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';

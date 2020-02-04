@@ -9,7 +9,8 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent;
 import './Options.js';
 import './Series.js';
 var Series = H.Series, seriesType = H.seriesType;
@@ -174,7 +175,7 @@ seriesType('scatter', 'line',
     /* eslint-enable valid-jsdoc */
 });
 /* eslint-disable no-invalid-this */
-H.addEvent(Series, 'afterTranslate', function () {
+addEvent(Series, 'afterTranslate', function () {
     if (this.applyJitter) {
         this.applyJitter();
     }

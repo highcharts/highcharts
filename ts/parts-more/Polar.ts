@@ -107,6 +107,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
     pick,
     splat,
@@ -385,7 +386,7 @@ if (seriesTypes.spline) {
  * and (yAxis.len - plotY) is the pixel distance from center.
  * @private
  */
-H.addEvent(Series as any, 'afterTranslate', function (
+addEvent(Series as any, 'afterTranslate', function (
     this: Highcharts.PolarSeries
 ): void {
     const series = this;
@@ -428,7 +429,7 @@ H.addEvent(Series as any, 'afterTranslate', function (
         // Perform clip after render
         if (!this.hasClipCircleSetter) {
             this.hasClipCircleSetter = !!series.eventsToUnbind.push(
-                H.addEvent(series, 'afterRender', function (
+                addEvent(series, 'afterRender', function (
                     this: Highcharts.PolarSeries
                 ): void {
                     var circ: Array<number>;
@@ -1113,7 +1114,7 @@ H.SVGRenderer.prototype.clipCircle = function (
     return wrapper;
 };
 
-H.addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
+addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
 
     if (!this.pane) {
         this.pane = [];
@@ -1128,7 +1129,7 @@ H.addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
     }, this);
 });
 
-H.addEvent(H.Chart, 'afterDrawChartBox', function (
+addEvent(H.Chart, 'afterDrawChartBox', function (
     this: Highcharts.Chart
 ): void {
     (this.pane as any).forEach(function (pane: Highcharts.Pane): void {
@@ -1136,7 +1137,7 @@ H.addEvent(H.Chart, 'afterDrawChartBox', function (
     });
 });
 
-H.addEvent(H.Series, 'afterInit', function (
+addEvent(H.Series, 'afterInit', function (
     this: Highcharts.Series
 ): void {
     var chart = this.chart;

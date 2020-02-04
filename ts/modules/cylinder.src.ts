@@ -77,10 +77,13 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
-const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-const pick = utilitiesModule.pick;
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import U from '../parts/Utilities.js';
+const {
+    merge,
+    pick
+} = U;
 
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
@@ -211,7 +214,7 @@ seriesType<Highcharts.CylinderSeries>(
  */
 
 // cylinder extends cuboid
-cylinderMethods = H.merge(RendererProto.elements3d.cuboid, {
+cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
 

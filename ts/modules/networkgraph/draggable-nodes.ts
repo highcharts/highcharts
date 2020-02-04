@@ -65,8 +65,12 @@ declare global {
     }
 }
 
-var Chart = H.Chart,
-    addEvent = H.addEvent;
+import U from '../../parts/Utilities.js';
+const {
+    addEvent
+} = U;
+
+var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
