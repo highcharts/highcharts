@@ -838,7 +838,7 @@ extend(ColorAxis.prototype, {
     drawCrosshair: function (e, point) {
         var plotX = point && point.plotX, plotY = point && point.plotY, crossPos, axisPos = this.pos, axisLen = this.len;
         if (point) {
-            crossPos = this.toPixels(point[point.series.colorKey]);
+            crossPos = this.toPixels(point.getNestedProperty(point.series.colorKey));
             if (crossPos < axisPos) {
                 crossPos = axisPos - 2;
             }

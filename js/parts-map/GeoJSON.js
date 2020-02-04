@@ -82,14 +82,26 @@ function pointInPolygon(point, polygon) {
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
-    if (typeof win.proj4 === 'undefined') {
+    /**
+     * Allows to manually load the proj4 library from Highcharts options
+     * instead of the `window`.
+     * In case of loading the library from a `script` tag,
+     * this option is not needed, it will be loaded from there by default.
+     *
+     * @type       {function}
+     * @product    highmaps
+     * @apioption  chart.proj4
+     */
+    var _a;
+    var proj4 = (((_a = this.userOptions.chart) === null || _a === void 0 ? void 0 : _a.proj4) || win.proj4);
+    if (!proj4) {
         error(21, false, this);
         return {
             x: 0,
             y: null
         };
     }
-    var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]), cosAngle = transform.cosAngle ||
+    var projected = proj4(transform.crs, [latLon.lon, latLon.lat]), cosAngle = transform.cosAngle ||
         (transform.rotation && Math.cos(transform.rotation)), sinAngle = transform.sinAngle ||
         (transform.rotation && Math.sin(transform.rotation)), rotated = transform.rotation ? [
         projected[0] * cosAngle + projected[1] * sinAngle,

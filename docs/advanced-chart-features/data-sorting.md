@@ -35,21 +35,21 @@ The data will be internally converted to:
         type: 'column',
         dataSorting: {
             enabled: true,
-            sortKey: 'customValue'
+            sortKey: 'custom.value'
         },
         data: [
-            { y: 2, customValue: 7 },
-            { y: 5, customValue: 10 },
-            { y: 8, customValue: 1 }
+            { y: 2, custom: { value: 7 } },
+            { y: 5, custom: { value: 10 } },
+            { y: 8, custom: { value: 1 } }
         ]
     }]
 
 The data will be internally converted to:
 
     data: [
-        { y: 2, customValue: 7, x: 1 },
-        { y: 5, customValue: 10, x: 0 },
-        { y: 8, customValue: 1, x: 2 }
+        { y: 2, custom: { value: 7 }, x: 1 },
+        { y: 5, custom: { value: 10 }, x: 0 },
+        { y: 8, custom: { value: 1 }, x: 2 }
     ]
 
 **Enabled `matchByName`**

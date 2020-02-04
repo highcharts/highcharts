@@ -153,7 +153,7 @@ seriesType<Highcharts.FlagsSeries>(
          * In case the flag is placed on a series, on what point key to place
          * it. Line and columns have one key, `y`. In range or OHLC-type series,
          * however, the flag can optionally be placed on the `open`, `high`,
-         *  `low` or `close` key.
+         * `low` or `close` key.
          *
          * @sample {highstock} stock/plotoptions/flags-onkey/
          *         Range series, flag on high
@@ -839,7 +839,10 @@ if ((Renderer as unknown) === VMLRenderer) {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.flags
- * @excluding dataParser, dataURL
+ * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
+ *            connectNulls, dashStyle, dataGrouping, dataParser, dataURL,
+ *            gapSize, gapUnit, linecap, lineWidth, marker, pointPadding,
+ *            pointWidth, step, turboThreshold, useOhlcData
  * @product   highstock
  * @apioption series.flags
  */
