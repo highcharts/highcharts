@@ -221,6 +221,7 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
+    addEvent,
     defined,
     pick
 } = U;
@@ -231,8 +232,7 @@ import './layouts.js';
 import './draggable-nodes.js';
 
 
-var addEvent = H.addEvent,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     Point = H.Point,
     Series = H.Series,
@@ -754,6 +754,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
         /**
          * In networkgraph, series.points refers to links,
          * but series.nodes refers to actual points.
+         * @private
          */
         getPointsCollection: function (
             this: Highcharts.NetworkgraphSeries

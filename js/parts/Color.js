@@ -113,8 +113,7 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var isNumber = U.isNumber, pInt = U.pInt;
-var merge = H.merge;
+var isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Handle color operations. Some object methods are chainable.
@@ -176,7 +175,7 @@ var Color = /** @class */ (function () {
      * Color instance.
      */
     Color.parse = function (input) {
-        return new H.Color(input);
+        return new Color(input);
     };
     /* *
      *
@@ -202,7 +201,7 @@ var Color = /** @class */ (function () {
         // Gradients
         if (input && input.stops) {
             this.stops = input.stops.map(function (stop) {
-                return new H.Color(stop[1]);
+                return new Color(stop[1]);
             });
             // Solid colors
         }
@@ -401,9 +400,5 @@ H.Color = Color;
  * @return {Highcharts.Color}
  *         Color instance
  */
-var color = H.color = Color.parse;
-var exports = {
-    Color: Color,
-    color: color
-};
-export default exports;
+H.color = Color.parse;
+export default H.Color;

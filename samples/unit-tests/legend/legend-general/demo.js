@@ -119,3 +119,30 @@ QUnit.test('Legend redraws', function (assert) {
         'Legend item text has changed (#2165)'
     );
 });
+
+
+QUnit.test('Legend item alignment after the font size update (#12705)', function (assert) {
+    var chart = Highcharts.chart('container', {
+            legend: {
+                borderWidth: 1,
+                verticalAlign: 'top'
+            },
+            series: [{
+                data: [1, 2, 3]
+            }]
+        }),
+        itemOriginalYPos = +chart.legend.allItems[0].legendItem.element.attributes.y.value;
+
+    chart.update({
+        legend: {
+            itemStyle: {
+                fontSize: "24px"
+            }
+        }
+    });
+
+    assert.ok(
+        itemOriginalYPos < +chart.legend.allItems[0].legendItem.element.attributes.y.value,
+        'The item should be moved down.'
+    );
+});

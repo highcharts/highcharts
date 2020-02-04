@@ -13,7 +13,10 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -224,7 +227,7 @@ Instrument.prototype.init = function (
         H.error(29);
         return;
     }
-    this.options = H.merge(defaultOptions, options);
+    this.options = merge(defaultOptions, options);
     this.id = this.options.id = options && options.id || H.uniqueKey();
 
     // Init the audio nodes
@@ -270,7 +273,7 @@ Instrument.prototype.copy = function (
     options?: Highcharts.InstrumentOptionsObject
 ): Highcharts.Instrument {
     return new (Instrument as any)(
-        H.merge(this.options, { id: null }, options)
+        merge(this.options, { id: null }, options)
     );
 };
 

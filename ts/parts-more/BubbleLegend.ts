@@ -145,9 +145,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     isNumber,
+    merge,
     objectEach,
     pick,
     stableSort,
@@ -157,9 +159,7 @@ const {
 var Series = H.Series,
     Legend = H.Legend,
     Chart = H.Chart,
-    addEvent = H.addEvent,
     color = H.color,
-    merge = H.merge,
     noop = H.noop,
     setOptions = H.setOptions;
 

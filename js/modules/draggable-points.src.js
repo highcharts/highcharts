@@ -168,8 +168,8 @@ import H from '../parts/Globals.js';
 * @type {"drop"}
 */
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, objectEach = U.objectEach, pick = U.pick;
-var addEvent = H.addEvent, merge = H.merge, seriesTypes = H.seriesTypes;
+var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var seriesTypes = H.seriesTypes;
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return
  * "right" etc.
@@ -2140,7 +2140,7 @@ function mouseUp(e, chart) {
  * @return {void}
  */
 function mouseDown(e, chart) {
-    var dragPoint = chart.hoverPoint, dragDropOptions = H.merge(dragPoint && dragPoint.series.options.dragDrop, dragPoint && dragPoint.options.dragDrop), draggableX = dragDropOptions.draggableX || false, draggableY = dragDropOptions.draggableY || false;
+    var dragPoint = chart.hoverPoint, dragDropOptions = merge(dragPoint && dragPoint.series.options.dragDrop, dragPoint && dragPoint.options.dragDrop), draggableX = dragDropOptions.draggableX || false, draggableY = dragDropOptions.draggableY || false;
     // Reset cancel click
     chart.cancelClick = false;
     // Ignore if:

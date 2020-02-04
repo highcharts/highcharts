@@ -144,27 +144,25 @@ import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = nelderMeadModule.nelderMead;
 
-import colorModule from '../parts/Color.js';
-const {
-    color
-} = colorModule;
+import Color from '../parts/Color.js';
+const color = Color.parse;
 
-import utilitiesModule from '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
 const {
+    addEvent,
     animObject,
+    extend,
     isArray,
     isNumber,
     isObject,
-    isString
-} = utilitiesModule;
+    isString,
+    merge
+} = U;
 
 import '../parts/Series.js';
 
-var addEvent = H.addEvent,
-    extend = H.extend,
-    getCenterOfPoints = geometry.getCenterOfPoints,
+var getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    merge = H.merge,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 

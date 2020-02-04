@@ -13,9 +13,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Chart.js';
-var Chart = H.Chart, addEvent = H.addEvent, fireEvent = H.fireEvent;
+var Chart = H.Chart;
 /* eslint-disable no-invalid-this */
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie

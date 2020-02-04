@@ -14,9 +14,9 @@ import H from '../parts/Globals.js';
  */
 import '../mixins/centered-series.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, splat = U.splat;
-var CenteredSeriesMixin = H.CenteredSeriesMixin, merge = H.merge;
-/* eslint-disable valid-jsdoc */
+var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
+var CenteredSeriesMixin = H.CenteredSeriesMixin;
+/* eslint-disable no-invalid-this, valid-jsdoc */
 H.Chart.prototype.collectionsWithUpdate.push('pane');
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
@@ -328,3 +328,57 @@ extend(Pane.prototype, {
     }
 });
 H.Pane = Pane;
+/**
+ * Check whether element is inside or outside pane.
+ * @private
+ * @param  {number} x Element's x coordinate
+ * @param  {number} y Element's y coordinate
+ * @param  {Array<number>} center Pane's center (x, y) and diameter
+ * @return {boolean}
+ */
+function isInsidePane(x, y, center) {
+    return Math.sqrt(Math.pow(x - center[0], 2) + Math.pow(y - center[1], 2)) < center[2] / 2;
+}
+H.Chart.prototype.getHoverPane = function (eventArgs) {
+    var chart = this;
+    var hoverPane;
+    if (eventArgs) {
+        chart.pane.forEach(function (pane) {
+            var plotX = eventArgs.chartX - chart.plotLeft, plotY = eventArgs.chartY - chart.plotTop, x = chart.inverted ? plotY : plotX, y = chart.inverted ? plotX : plotY;
+            if (isInsidePane(x, y, pane.center)) {
+                hoverPane = pane;
+            }
+        });
+    }
+    return hoverPane;
+};
+addEvent(H.Chart, 'afterIsInsidePlot', function (e) {
+    var chart = this;
+    if (chart.polar) {
+        e.isInsidePlot = chart.pane.some(function (pane) { return isInsidePane(e.x, e.y, pane.center); });
+    }
+});
+addEvent(H.Pointer, 'beforeGetHoverData', function (eventArgs) {
+    var chart = this.chart;
+    if (chart.polar) {
+        // Find pane we are currently hovering over.
+        chart.hoverPane = chart.getHoverPane(eventArgs);
+        // Edit filter method to handle polar
+        eventArgs.filter = function (s) {
+            return (s.visible &&
+                !(!eventArgs.shared && s.directTouch) && // #3821
+                pick(s.options.enableMouseTracking, true) &&
+                (!chart.hoverPane || s.xAxis.pane === chart.hoverPane));
+        };
+    }
+});
+addEvent(H.Pointer, 'afterGetHoverData', function (eventArgs) {
+    var chart = this.chart;
+    if (eventArgs.hoverPoint &&
+        eventArgs.hoverPoint.plotX &&
+        eventArgs.hoverPoint.plotY &&
+        chart.hoverPane &&
+        !isInsidePane(eventArgs.hoverPoint.plotX, eventArgs.hoverPoint.plotY, chart.hoverPane.center)) {
+        eventArgs.hoverPoint = void 0;
+    }
+});

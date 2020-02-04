@@ -1,5 +1,40 @@
 /* eslint func-style:0 */
+QUnit.test('options3d update', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'pie'
+        },
+        series: [{
+            data: [1, 2, 3]
+        }]
+    });
+    const series = chart.series[0];
+    const elements3d = ['top', 'side1', 'side2', 'out'];
+    let result = true;
 
+    chart.update({
+        chart: {
+            options3d: {
+                enabled: true,
+                alpha: 45,
+                beta: 0
+            }
+        }
+    });
+
+    const graphicKeys = Object.keys(series.points[0].graphic);
+
+    elements3d.forEach(function (elem) {
+        if (graphicKeys.indexOf(elem) === -1) {
+            result = false;
+        }
+    });
+
+    assert.ok(
+        result,
+        'After updating chart options3d pie series points should be redrawn (#12714).'
+    );
+});
 
 QUnit.test('3D pie animation', function (assert) {
     var chart = Highcharts.chart('container', {

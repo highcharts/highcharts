@@ -20,6 +20,7 @@ const {
     extend,
     isNumber,
     isString,
+    merge,
     pick,
     splat,
     syncTimeout,
@@ -41,6 +42,7 @@ declare global {
             public followPointer?: boolean;
             public hideTimer?: number;
             public isHidden: boolean;
+            public isSticky: boolean;
             public label?: SVGElement;
             public len?: number;
             public now: Dictionary<number>;
@@ -256,8 +258,7 @@ declare global {
 ''; // separates doclets above from variables below
 
 var doc = H.doc,
-    format = H.format,
-    merge = H.merge;
+    format = H.format;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

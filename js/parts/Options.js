@@ -185,10 +185,12 @@ import H from './Globals.js';
 * @name Highcharts.ChartSelectionAxisContextObject#min
 * @type {number}
 */
-import './Color.js';
-import './Utilities.js';
-import './Time.js';
-var color = H.color, isTouchDevice = H.isTouchDevice, merge = H.merge, svg = H.svg;
+import Time from './Time.js';
+import Color from './Color.js';
+var color = Color.parse;
+import U from './Utilities.js';
+var merge = U.merge;
+var isTouchDevice = H.isTouchDevice, svg = H.svg;
 /* ************************************************************************** *
  * Handle the options                                                         *
  * ************************************************************************** */
@@ -497,7 +499,7 @@ H.defaultOptions = {
      * @apioption global.timezoneOffset
      */
     global: {},
-    time: H.Time.prototype.defaultOptions,
+    time: Time.defaultOptions,
     /**
      * General options for the chart.
      */
@@ -3091,6 +3093,17 @@ H.defaultOptions = {
          * @apioption tooltip.split
          */
         /**
+         * Prevents the tooltip from switching or closing, when touched or
+         * pointed.
+         *
+         * @sample highcharts/tooltip/stickonhover/
+         *         Tooltip sticks on hover event
+         *
+         * @type      {boolean}
+         * @since     8.0.1
+         * @apioption tooltip.stickOnHover
+         */
+        /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using
          * HTML allows advanced formatting like tables and images in the
          * tooltip. It is also recommended for rtl languages as it works around
@@ -3559,7 +3572,7 @@ H.defaultPlotOptions = H.defaultOptions.plotOptions;
  * @name Highcharts.time
  * @type {Highcharts.Time}
  */
-H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
+H.time = new Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
  * human readable date string. The format is a subset of the formats for PHP's

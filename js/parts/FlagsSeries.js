@@ -13,11 +13,11 @@ import H from './Globals.js';
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, wrap = U.wrap;
 import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
-var addEvent = H.addEvent, merge = H.merge, noop = H.noop, Renderer = H.Renderer, Series = H.Series, seriesType = H.seriesType, SVGRenderer = H.SVGRenderer, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
+var noop = H.noop, Renderer = H.Renderer, Series = H.Series, seriesType = H.seriesType, SVGRenderer = H.SVGRenderer, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
 /**
  * The Flags series.
  *

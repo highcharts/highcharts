@@ -188,6 +188,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     clamp,
     correctFloat,
     defined,
@@ -196,6 +197,7 @@ const {
     extend,
     isArray,
     isNumber,
+    merge,
     pick,
     removeEvent,
     splat
@@ -208,14 +210,12 @@ import './Series.js';
 import './Options.js';
 import './Scrollbar.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     color = H.color,
     defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
-    merge = H.merge,
     Scrollbar = H.Scrollbar,
     Series = H.Series,
     seriesTypes = H.seriesTypes,

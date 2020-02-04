@@ -292,35 +292,32 @@ declare global {
  * @type {"drillup"}
  */
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
+import Tick from '../parts/Tick.js';
+import U from '../parts/Utilities.js';
 const {
-    Color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
-const {
+    addEvent,
     animObject,
     extend,
+    fireEvent,
+    merge,
     objectEach,
     pick,
     syncTimeout
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
-import '../parts/Tick.js';
 
-var addEvent = H.addEvent,
-    noop = H.noop,
+var noop = H.noop,
     defaultOptions = H.defaultOptions,
     format = H.format,
     Chart = H.Chart,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
     ColumnSeries = seriesTypes.column,
-    Tick = H.Tick,
-    fireEvent = H.fireEvent,
     ddSeriesId = 1;
 
 // Add language
@@ -728,7 +725,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
                 levelSeries.push(series);
 
                 // (#10597)
-                series.purgedOptions = H.merge({
+                series.purgedOptions = merge({
                     _ddSeriesId: series.options._ddSeriesId,
                     _levelNumber: series.options._levelNumber,
                     selected: series.options.selected
@@ -951,7 +948,10 @@ Chart.prototype.drillUp = function (): void {
 
             level.levelSeriesOptions.forEach(addSeries);
 
-            fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+            fireEvent(chart, 'drillup', {
+                seriesOptions: level.seriesPurgedOptions ||
+                    level.seriesOptions
+            });
 
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
@@ -1018,7 +1018,7 @@ Chart.prototype.callbacks.push(function (): void {
             options: Highcharts.DrilldownOptions,
             redraw?: boolean
         ): void {
-            H.merge(true, chart.options.drilldown, options);
+            merge(true, chart.options.drilldown, options);
             if (pick(redraw, true)) {
                 chart.redraw();
             }
@@ -1254,7 +1254,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
             if (animationOptions.duration) {
                 graphic.animate(
                     animateTo as any,
-                    H.merge(animationOptions, { complete: complete })
+                    merge(animationOptions, { complete: complete })
                 );
             } else {
                 graphic.attr(animateTo);
@@ -1299,7 +1299,7 @@ if (PieSeries) {
 
                     if (point.graphic) {
                         point.graphic
-                            .attr(H.merge(animateFrom, {
+                            .attr(merge(animateFrom, {
                                 start: start + i * startAngle,
                                 end: start + (i + 1) * startAngle
                             }))[animationOptions ? 'animate' : 'attr'](
@@ -1432,7 +1432,7 @@ Tick.prototype.drillable = function (): void {
             label.drillable = true;
 
             if (!label.basicStyles && !styledMode) {
-                label.basicStyles = H.merge(label.styles);
+                label.basicStyles = merge(label.styles);
             }
 
             label.addClass('highcharts-drilldown-axis-label');

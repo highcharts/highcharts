@@ -78,8 +78,8 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, stableSort = U.stableSort, syncTimeout = U.syncTimeout, wrap = U.wrap;
-var H = Highcharts, addEvent = H.addEvent, css = H.css, fireEvent = H.fireEvent, isFirefox = H.isFirefox, marginNames = H.marginNames, merge = H.merge, win = H.win;
+var addEvent = U.addEvent, defined = U.defined, discardElement = U.discardElement, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, stableSort = U.stableSort, syncTimeout = U.syncTimeout, wrap = U.wrap;
+var H = Highcharts, css = H.css, isFirefox = H.isFirefox, marginNames = H.marginNames, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The overview of the chart's series. The legend object is instanciated
@@ -168,6 +168,7 @@ Highcharts.Legend.prototype = {
         this.symbolWidth = pick(options.symbolWidth, 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
+        this.baseline = void 0; // #12705: baseline has to be reset on every update
     },
     /**
      * Update the legend with new options. Equivalent to running `chart.update`

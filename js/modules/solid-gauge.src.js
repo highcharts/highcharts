@@ -20,8 +20,10 @@ import H from '../parts/Globals.js';
 * @name Highcharts.SymbolOptionsObject#rounded
 * @type {boolean|undefined}
 */
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
+var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 var Renderer = H.Renderer, colorAxisMethods;
@@ -68,7 +70,7 @@ colorAxisMethods = {
         this.dataClasses = dataClasses = [];
         userOptions.dataClasses.forEach(function (dataClass, i) {
             var colors;
-            dataClass = H.merge(dataClass);
+            dataClass = merge(dataClass);
             dataClasses.push(dataClass);
             if (!dataClass.color) {
                 if (options.dataClassColor === 'category') {
@@ -80,7 +82,7 @@ colorAxisMethods = {
                     }
                 }
                 else {
-                    dataClass.color = H.color(options.minColor).tweenTo(H.color(options.maxColor), i / (userOptions.dataClasses.length - 1));
+                    dataClass.color = color(options.minColor).tweenTo(color(options.maxColor), i / (userOptions.dataClasses.length - 1));
                 }
             }
         });
@@ -91,7 +93,7 @@ colorAxisMethods = {
             [1, this.options.maxColor]
         ];
         this.stops.forEach(function (stop) {
-            stop.color = H.color(stop[1]);
+            stop.color = color(stop[1]);
         });
     },
     // Translate from a value to a color

@@ -249,6 +249,7 @@ const {
     defined,
     extend,
     isArray,
+    merge,
     objectEach,
     pick,
     relativeLength,
@@ -259,7 +260,6 @@ const {
 import './Series.js';
 
 var format = H.format,
-    merge = H.merge,
     noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes;

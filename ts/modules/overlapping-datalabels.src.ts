@@ -16,6 +16,8 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
+    fireEvent,
     isArray,
     objectEach,
     pick
@@ -23,9 +25,7 @@ const {
 
 import '../parts/Chart.js';
 
-var Chart = H.Chart,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent;
+var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this */
 

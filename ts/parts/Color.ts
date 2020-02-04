@@ -50,6 +50,8 @@ declare global {
             r: number;
         }
         class Color {
+            public static names: Record<string, ColorString>;
+            public static parse(input: (ColorType|undefined)): Color;
             public constructor(
                 input: (ColorString|GradientColorObject|PatternObject|undefined)
             );
@@ -180,10 +182,9 @@ declare global {
 import U from './Utilities.js';
 const {
     isNumber,
+    merge,
     pInt
 } = U;
-
-var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -225,13 +226,8 @@ class Color {
      * @return {Highcharts.Color}
      * Color instance.
      */
-    public static parse(
-        input: (
-            Highcharts.ColorString|Highcharts.GradientColorObject|
-            Highcharts.PatternObject|undefined
-        )
-    ): Highcharts.Color {
-        return new H.Color(input);
+    public static parse(input: (Highcharts.ColorType|undefined)): Highcharts.Color {
+        return new Color(input);
     }
 
     /* *
@@ -323,7 +319,7 @@ class Color {
             this.stops = (input as any).stops.map(function (
                 stop: [number, Highcharts.ColorString]
             ): Highcharts.Color {
-                return new H.Color(stop[1]);
+                return new Color(stop[1]);
             });
 
         // Solid colors
@@ -538,11 +534,6 @@ H.Color = Color;
  * @return {Highcharts.Color}
  *         Color instance
  */
-const color = H.color = Color.parse;
+H.color = Color.parse;
 
-const exports = {
-    Color,
-    color
-};
-
-export default exports;
+export default H.Color;

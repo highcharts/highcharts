@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -21,7 +21,7 @@ import ControllableLabel from './controllable/ControllableLabel.js';
 import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var merge = H.merge, fireEvent = H.fireEvent, find = H.find, reduce = H.reduce, chartProto = H.Chart.prototype;
+var fireEvent = H.fireEvent, find = H.find, reduce = H.reduce, chartProto = H.Chart.prototype;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -872,7 +872,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @return {void}
      */
     update: function (userOptions) {
-        var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = H.merge(true, this.userOptions, userOptions);
+        var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = merge(true, this.userOptions, userOptions);
         options.labels = labelsAndShapes.labels;
         options.shapes = labelsAndShapes.shapes;
         this.destroy();

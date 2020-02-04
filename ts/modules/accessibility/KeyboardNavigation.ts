@@ -12,13 +12,16 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-var addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
-    win = H.win,
+var win = H.win,
     doc = win.document;
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    fireEvent
+} = U;
 
 import HTMLUtilities from './utils/htmlUtilities.js';
-var getElement = HTMLUtilities.getElement;
+const getElement = HTMLUtilities.getElement;
 
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import EventProvider from './utils/EventProvider.js';

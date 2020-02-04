@@ -75,10 +75,12 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    isArray,
+    merge
+} = U;
 
-var merge = H.merge,
-    SMA = H.seriesTypes.sma;
+var SMA = H.seriesTypes.sma;
 
 /**
  * The Price Envelopes series type.

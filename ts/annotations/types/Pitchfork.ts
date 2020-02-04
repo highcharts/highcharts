@@ -42,7 +42,10 @@ declare global {
 }
 
 
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 var Annotation = H.Annotation,
     MockPoint = Annotation.MockPoint,
@@ -154,7 +157,7 @@ H.extendAnnotation(Pitchfork, InfinityLine,
                 typeOptions = this.options.typeOptions;
 
             var innerBackground = (this.initShape as any)(
-                H.merge(typeOptions.innerBackground, {
+                merge(typeOptions.innerBackground, {
                     type: 'path',
                     points: [
                         function (target: any): Highcharts.AnnotationMockPointOptionsObject {
@@ -188,7 +191,7 @@ H.extendAnnotation(Pitchfork, InfinityLine,
             );
 
             var outerBackground = (this.initShape as any)(
-                H.merge(typeOptions.outerBackground, {
+                merge(typeOptions.outerBackground, {
                     type: 'path',
                     points: [
                         this.points[1],

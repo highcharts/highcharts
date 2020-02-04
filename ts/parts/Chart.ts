@@ -288,18 +288,24 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
+import MSPointer from './MSPointer.js';
+import Pointer from './Pointer.js';
+import Time from './Time.js';
 import U from './Utilities.js';
 const {
+    addEvent,
     animObject,
     attr,
     defined,
     discardElement,
     erase,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
     isString,
+    merge,
     numberFormat,
     objectEach,
     pick,
@@ -316,8 +322,7 @@ import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 
-var addEvent = H.addEvent,
-    animate = H.animate,
+var animate = H.animate,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     createElement = H.createElement,
@@ -325,11 +330,8 @@ var addEvent = H.addEvent,
     charts = H.charts,
     css = H.css,
     find = H.find,
-    fireEvent = H.fireEvent,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
-    merge = H.merge,
-    Pointer = H.Pointer, // @todo add as requirement
     seriesTypes = H.seriesTypes,
     win = H.win;
 
@@ -569,7 +571,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              */
             this.time =
                 userOptions.time && Object.keys(userOptions.time).length ?
-                    new H.Time(userOptions.time) :
+                    new Time(userOptions.time) :
                     H.time;
 
             /**
@@ -782,12 +784,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         inverted?: boolean
     ): boolean {
         var x = inverted ? plotY : plotX,
-            y = inverted ? plotX : plotY;
+            y = inverted ? plotX : plotY,
+            e = {
+                x,
+                y,
+                isInsidePlot: x >= 0 &&
+                    x <= this.plotWidth &&
+                    y >= 0 &&
+                    y <= this.plotHeight
+            };
 
-        return x >= 0 &&
-            x <= this.plotWidth &&
-            y >= 0 &&
-            y <= this.plotHeight;
+        fireEvent(this, 'afterIsInsidePlot', e);
+
+        return e.isInsidePlot;
     },
 
     /**
@@ -2826,16 +2835,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // depends on inverted and on margins being set
         if (Pointer) {
-
-            /**
-             * The Pointer that keeps track of mouse and touch interaction.
-             *
-             * @memberof Highcharts.Chart
-             * @name pointer
-             * @type {Highcharts.Pointer}
-             * @instance
-             */
-            chart.pointer = new Pointer(chart, options);
+            if (!H.hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
+                chart.pointer = new MSPointer(chart, options);
+            } else {
+                /**
+                 * The Pointer that keeps track of mouse and touch interaction.
+                 *
+                 * @memberof Highcharts.Chart
+                 * @name pointer
+                 * @type {Highcharts.Pointer}
+                 * @instance
+                 */
+                chart.pointer = new Pointer(chart, options);
+            }
         }
 
         chart.render();

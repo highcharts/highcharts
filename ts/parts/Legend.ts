@@ -209,9 +209,12 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     defined,
     discardElement,
+    fireEvent,
     isNumber,
+    merge,
     pick,
     relativeLength,
     setAnimation,
@@ -221,12 +224,9 @@ const {
 } = U;
 
 var H = Highcharts,
-    addEvent = H.addEvent,
     css = H.css,
-    fireEvent = H.fireEvent,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
-    merge = H.merge,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -348,7 +348,7 @@ Highcharts.Legend.prototype = {
         this.symbolWidth = pick(options.symbolWidth, 16);
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
-
+        this.baseline = void 0; // #12705: baseline has to be reset on every update
     },
 
     /**

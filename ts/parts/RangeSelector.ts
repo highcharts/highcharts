@@ -175,11 +175,14 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     defined,
     destroyObjectProperties,
     discardElement,
     extend,
+    fireEvent,
     isNumber,
+    merge,
     objectEach,
     pick,
     pInt,
@@ -189,14 +192,11 @@ const {
 import './Axis.js';
 import './Chart.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     css = H.css,
     createElement = H.createElement,
-    defaultOptions = H.defaultOptions,
-    fireEvent = H.fireEvent,
-    merge = H.merge;
+    defaultOptions = H.defaultOptions;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
@@ -1501,7 +1501,7 @@ RangeSelector.prototype = {
         var time = this.chart.time,
             min,
             now = new time.Date(dataMax),
-            year = time.get('FullYear', now),
+            year = (time.get as any)('FullYear', now),
             startOfYear = useUTC ?
                 time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
                 +new time.Date(year, 0, 1);
@@ -2047,12 +2047,12 @@ Axis.prototype.minFromRange = function (
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
             var date = new time.Date(base),
-                basePeriod = time.get(timeName, date);
+                basePeriod = (time.get as any)(timeName, date);
 
-            time.set(timeName, date, basePeriod + count);
+            (time.set as any)(timeName, date, basePeriod + count);
 
-            if (basePeriod === time.get(timeName, date)) {
-                time.set('Date', date, 0); // #6537
+            if (basePeriod === (time.get as any)(timeName, date)) {
+                (time.set as any)('Date', date, 0); // #6537
             }
 
             return date.getTime() - base;

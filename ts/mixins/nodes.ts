@@ -58,6 +58,7 @@ declare global {
             public setNodeState: NodesMixin['setNodeState'];
             public to: string;
             public toNode: NodesPoint;
+            public weight?: number;
             public y?: (number|null);
             public getSum(): number;
             public hasShape(): boolean;
@@ -288,10 +289,9 @@ H.NodesMixin = {
         var args = arguments,
             others = this.isNode ? this.linksTo.concat(this.linksFrom) :
                 [this.fromNode, this.toNode];
-
         if (state !== 'select') {
             others.forEach(function (linkOrNode: Highcharts.NodesPoint): void {
-                if (linkOrNode.series) {
+                if (linkOrNode && linkOrNode.series) {
                     Point.prototype.setState.apply(linkOrNode, args as any);
 
                     if (!linkOrNode.isNode) {
@@ -301,7 +301,7 @@ H.NodesMixin = {
                                 args as any
                             );
                         }
-                        if (linkOrNode.toNode.graphic) {
+                        if (linkOrNode.toNode && linkOrNode.toNode.graphic) {
                             Point.prototype.setState.apply(
                                 linkOrNode.toNode,
                                 args as any

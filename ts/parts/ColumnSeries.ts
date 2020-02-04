@@ -116,6 +116,7 @@ const {
     defined,
     extend,
     isNumber,
+    merge,
     pick
 } = U;
 
@@ -126,7 +127,6 @@ import './Options.js';
 
 var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
     Series = H.Series,
     seriesType = H.seriesType,

@@ -89,13 +89,14 @@ import H from '../parts/Globals.js';
 * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
 * @type {Highcharts.SankeyNodeObject}
 */
+import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
+var defined = U.defined, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
-var find = H.find, merge = H.merge, seriesType = H.seriesType, Point = H.Point;
+var find = H.find, seriesType = H.seriesType, Point = H.Point;
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -404,7 +405,14 @@ seriesType('sankey', 'column',
         column.offset = function (node, factor) {
             var offset = 0, totalNodeOffset;
             for (var i = 0; i < column.length; i++) {
-                totalNodeOffset = column[i].getSum() * factor + nodePadding;
+                var sum = column[i].getSum();
+                if (sum) {
+                    totalNodeOffset = sum * factor + nodePadding;
+                }
+                else {
+                    // If node sum equals 0 nodePadding is missed #12453
+                    totalNodeOffset = 0;
+                }
                 if (column[i] === node) {
                     return {
                         relativeTop: offset + relativeLength(node.options.offset || 0, totalNodeOffset)
@@ -510,7 +518,7 @@ seriesType('sankey', 'column',
         }
         // Link attributes
         return {
-            fill: H.color(color).setOpacity(values.linkOpacity).get()
+            fill: Color.parse(color).setOpacity(values.linkOpacity).get()
         };
     },
     /**
@@ -529,7 +537,9 @@ seriesType('sankey', 'column',
             if (typeof node.level === 'undefined') {
                 node.level = level;
                 node.linksFrom.forEach(function (link) {
-                    order(link.toNode, level + 1);
+                    if (link.toNode) {
+                        order(link.toNode, level + 1);
+                    }
                 });
             }
         }
@@ -560,34 +570,42 @@ seriesType('sankey', 'column',
             chart.plotSizeX - left :
             left, nodeWidth = Math.round(this.nodeWidth);
         node.sum = sum;
-        // Draw the node
-        node.shapeType = 'rect';
-        node.nodeX = nodeLeft;
-        node.nodeY = fromNodeTop;
-        if (!chart.inverted) {
-            node.shapeArgs = {
-                x: nodeLeft,
-                y: fromNodeTop,
-                width: node.options.width || options.width || nodeWidth,
-                height: node.options.height || options.height || height
-            };
+        // If node sum is 0, don't render the rect #12453
+        if (sum) {
+            // Draw the node
+            node.shapeType = 'rect';
+            node.nodeX = nodeLeft;
+            node.nodeY = fromNodeTop;
+            if (!chart.inverted) {
+                node.shapeArgs = {
+                    x: nodeLeft,
+                    y: fromNodeTop,
+                    width: node.options.width || options.width || nodeWidth,
+                    height: node.options.height || options.height || height
+                };
+            }
+            else {
+                node.shapeArgs = {
+                    x: nodeLeft - nodeWidth,
+                    y: chart.plotSizeY - fromNodeTop - height,
+                    width: node.options.height || options.height || nodeWidth,
+                    height: node.options.width || options.width || height
+                };
+            }
+            node.shapeArgs.display = node.hasShape() ? '' : 'none';
+            // Calculate data label options for the point
+            node.dlOptions = getDLOptions({
+                level: this.mapOptionsToLevel[node.level],
+                optionsPoint: node.options
+            });
+            // Pass test in drawPoints
+            node.plotY = 1;
         }
         else {
-            node.shapeArgs = {
-                x: nodeLeft - nodeWidth,
-                y: chart.plotSizeY - fromNodeTop - height,
-                width: node.options.height || options.height || nodeWidth,
-                height: node.options.width || options.width || height
+            node.dlOptions = {
+                enabled: false
             };
         }
-        node.shapeArgs.display = node.hasShape() ? '' : 'none';
-        // Calculate data label options for the point
-        node.dlOptions = getDLOptions({
-            level: this.mapOptionsToLevel[node.level],
-            optionsPoint: node.options
-        });
-        // Pass test in drawPoints
-        node.plotY = 1;
     },
     /**
      * Run translation operations for one link.
@@ -737,8 +755,12 @@ seriesType('sankey', 'column',
         this.nodes.forEach(function (node) {
             // Translate the links from this node
             node.linksFrom.forEach(function (linkPoint) {
-                series.translateLink(linkPoint);
-                linkPoint.allowShadow = false;
+                // If weight is 0 - don't render the link path #12453,
+                // render null points (for organization chart)
+                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
+                    series.translateLink(linkPoint);
+                    linkPoint.allowShadow = false;
+                }
             });
         });
     },
