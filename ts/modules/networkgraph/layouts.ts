@@ -147,6 +147,7 @@ const {
     clamp,
     defined,
     extend,
+    isFunction,
     pick,
     setAnimation
 } = U;
@@ -390,7 +391,7 @@ extend(
         ): void {
             var initialPositions = this.options.initialPositions;
 
-            if (H.isFunction(initialPositions)) {
+            if (isFunction(initialPositions)) {
                 initialPositions.call(this);
                 this.nodes.forEach(function (node: Highcharts.Point): void {
                     if (!defined(node.prevX)) {
