@@ -32,7 +32,6 @@ declare global {
             exportMenuWidth?: number;
             exportSVGElements?: Array<SVGElement>;
             forExport?: boolean;
-            fullscreen?: FullScreen;
             isDirtyExporting?: boolean;
             isPrinting?: boolean;
             openMenu?: boolean;
@@ -1127,7 +1126,7 @@ defaultOptions.exporting = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function (): void {
-                this.toggleFullscreen();
+                this.fullscreenController.toggleFullscreen();
             }
         },
 
