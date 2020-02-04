@@ -1,3 +1,25 @@
+QUnit.test("Mapping of joinBy with custom sub options", function (assert) {
+    var chart = Highcharts.mapChart("container", {
+        colorAxis: {
+            min: 0,
+            minColor: "#EFEFFF",
+            maxColor: "#102D4C"
+        },
+        series: [{}, {
+            data: [{
+                custom: {
+                    code: "au-nt"
+                },
+                value: 0
+            }],
+            mapData: Highcharts.maps['countries/au/au-all'],
+            joinBy: ['hc-key', 'custom.code']
+        }]
+    });
+
+    assert.strictEqual(chart.series[1].points[0].color, 'rgb(128,142,166)', 'Territory should be colored');
+});
+
 QUnit.test('Point selected color after updating. (#3529)', function (assert) {
     var chart;
 
@@ -87,6 +109,7 @@ QUnit.test("Empty first series in map should render without problems (#5295)", f
 
     assert.strictEqual(chart.series[1].points[0].color, 'rgb(128,142,166)', 'Color has been set correctly');
 });
+
 
 QUnit.test('Null points', function (assert) {
     var chart = Highcharts.mapChart('container', {

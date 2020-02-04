@@ -237,18 +237,25 @@ MapNavigation.prototype.update = function (
                 })
                 .add() as any;
             (button as any).handler = buttonOptions.onclick;
-            (button as any).align(
-                extend(buttonOptions, {
-                    width: button.width,
-                    height: 2 * (button.height as any)
-                }),
-                null,
-                buttonOptions.alignTo
-            );
+
             // Stop double click event (#4444)
             addEvent((button as any).element, 'dblclick', stopEvent);
 
             mapNavButtons.push(button as any);
+
+            // Align it after the plotBox is known (#12776)
+            const bo = buttonOptions;
+            const un = addEvent(chart, 'load', (): void => {
+                (button as any).align(
+                    extend(bo, {
+                        width: button.width,
+                        height: 2 * (button.height as any)
+                    }),
+                    null,
+                    bo.alignTo
+                );
+                un();
+            });
 
         });
     }
