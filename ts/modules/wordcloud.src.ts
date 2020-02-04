@@ -982,13 +982,20 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
                 return p.weight;
             }),
             maxWeight = Math.max.apply(null, weights),
-            data = series.points.sort(function (
+            // concat() prevents from sorting the original array.
+            data = series.points.concat().sort(function (
                 a: Highcharts.WordcloudPoint,
                 b: Highcharts.WordcloudPoint
             ): number {
                 return b.weight - a.weight; // Sort descending
             }),
             field: Highcharts.WordcloudFieldObject;
+
+        // Reset the scale before finding the dimensions (#11993)
+        series.group.attr({
+            scaleX: 1,
+            scaleY: 1
+        });
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
