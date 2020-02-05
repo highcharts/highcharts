@@ -58,7 +58,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PatternOptionsObject#path
 * @type {string|Highcharts.SVGAttributes}
 */ /**
-* SVG patternTransform to apply to the entire pattern.
+* SVG `patternTransform` to apply to the entire pattern.
 * @name Highcharts.PatternOptionsObject#patternTransform
 * @type {string}
 * @see [patternTransform demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/series/pattern-fill-transform)
