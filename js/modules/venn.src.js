@@ -726,6 +726,9 @@ var vennOptions = {
             color: '${palette.neutralColor20}',
             borderColor: '${palette.neutralColor100}',
             animation: false
+        },
+        inactive: {
+            opacity: 0.075
         }
     },
     tooltip: {
