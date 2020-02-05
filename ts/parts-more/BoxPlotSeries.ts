@@ -215,6 +215,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
+     * @type    {number|null}
      * @since   3.0
      * @product highcharts
      */
