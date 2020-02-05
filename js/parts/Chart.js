@@ -228,15 +228,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(this, 'init', { args: arguments }, function () {
             userOptions.series = null;
             options = merge(defaultOptions, userOptions); // do the merge
-            var optionsChart = options.chart || {}, panning = optionsChart && optionsChart.panning, verticalPanningEnabled = panning && /y/.test(panning.type);
-            // Automatically disable the yAxis start and endOnTick,
-            // when vertical panning is enabled
-            options.yAxis = options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions) {
-                return merge(yAxisOptions, (verticalPanningEnabled ? {
-                    startOnTick: false,
-                    endOnTick: false
-                } : null));
-            });
+            var optionsChart = options.chart || {};
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (typeOptions, type) {
@@ -2031,5 +2023,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         // Don't run again
         this.onload = null;
+    },
+    /**
+    * Check whether the chart has vertical panning ('y' or 'xy' type).
+    *
+    * @private
+    * @function Highcharts.Chart#hasVerticalPanning
+    * @return {boolean}
+    *
+    */
+    hasVerticalPanning: function () {
+        var _a, _b;
+        return /y/.test(((_b = (_a = this.options.chart) === null || _a === void 0 ? void 0 : _a.panning) === null || _b === void 0 ? void 0 : _b.type) || '');
     }
 }); // end Chart

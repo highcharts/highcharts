@@ -144,6 +144,7 @@ declare global {
             public getSelectedPoints(): Array<Point>;
             public getSelectedSeries(): Array<Series>;
             public getSeriesOrderByLinks(): Array<Series>;
+            public hasVerticalPanning(): boolean;
             public init(
                 userOptions: Options,
                 callback?: ChartCallbackFunction
@@ -478,23 +479,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             userOptions.series = null as any;
             options = merge(defaultOptions, userOptions); // do the merge
 
-            const optionsChart: Highcharts.ChartOptions = options.chart || {},
-                panning = optionsChart && optionsChart.panning,
-                verticalPanningEnabled = panning && /y/.test(panning.type);
-
-            // Automatically disable the yAxis start and endOnTick,
-            // when vertical panning is enabled
-            options.yAxis = options.yAxis = splat(options.yAxis || {}).map(function (
-                yAxisOptions: Highcharts.YAxisOptions
-            ): Highcharts.YAxisOptions {
-                return merge(
-                    yAxisOptions,
-                    (verticalPanningEnabled ? {
-                        startOnTick: false,
-                        endOnTick: false
-                    } : null)
-                );
-            });
+            const optionsChart: Highcharts.ChartOptions = options.chart || {};
 
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
@@ -2901,6 +2886,20 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Don't run again
         this.onload = null as any;
+    },
+
+    /**
+    * Check whether the chart has vertical panning ('y' or 'xy' type).
+    *
+    * @private
+    * @function Highcharts.Chart#hasVerticalPanning
+    * @return {boolean}
+    *
+    */
+    hasVerticalPanning: function (
+        this: Highcharts.Chart
+    ): boolean {
+        return /y/.test(this.options.chart?.panning?.type || '');
     }
 
 }); // end Chart

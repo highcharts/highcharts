@@ -71,7 +71,7 @@ declare global {
             (this: Point, event: PointInteractionEventObject): void;
         }
         interface PanningOptions {
-            type: string;
+            type: ('x'|'y'|'xy');
             enabled: boolean;
         }
         interface Series {

@@ -5381,8 +5381,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickPositionsOption = options.tickPositions,
             minorTickIntervalOption = this.getMinorTickInterval(),
             tickPositioner = options.tickPositioner,
-            startOnTick = options.startOnTick,
-            endOnTick = options.endOnTick;
+            verticalPanning = this.chart.hasVerticalPanning(),
+            startOnTick = !verticalPanning && options.startOnTick,
+            endOnTick = !verticalPanning && options.endOnTick;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
