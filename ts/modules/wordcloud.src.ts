@@ -991,7 +991,11 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
             }),
             field: Highcharts.WordcloudFieldObject;
 
-        // Reset the scale before finding the dimensions (#11993)
+        // Reset the scale before finding the dimensions (#11993).
+        // SVGGRaphicsElement.getBBox() (used in SVGElement.getBBox(boolean))
+        // returns slightly different values for the same element depending on
+        // whether it is rendered in a group which has already defined scale
+        // (e.g. 6) or in the group without a scale (scale = 1).
         series.group.attr({
             scaleX: 1,
             scaleY: 1
