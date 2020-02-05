@@ -4193,7 +4193,9 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @fires Highcharts.Axis#event:afterSetTickPositions
      */
     setTickPositions: function () {
-        var options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, verticalPanning = this.chart.hasVerticalPanning(), startOnTick = !verticalPanning && options.startOnTick, endOnTick = !verticalPanning && options.endOnTick;
+        var options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, verticalPanning = this.chart.hasVerticalPanning(), isColorAxis = this.coll === 'colorAxis', startOnTick = isColorAxis ?
+            options.startOnTick : !verticalPanning && options.startOnTick, endOnTick = isColorAxis ?
+            options.endOnTick : !verticalPanning && options.endOnTick;
         // Set the tickmarkOffset
         this.tickmarkOffset = (this.categories &&
             options.tickmarkPlacement === 'between' &&
@@ -4504,6 +4506,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             (panning.type &&
                 panning.type.match('y')) &&
             !axis.isXAxis &&
+            axis.coll !== 'colorAxis' &&
             !defined(axis.panningState) &&
             axis.series.length) {
             var min_1, max_1;
