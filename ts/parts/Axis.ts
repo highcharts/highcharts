@@ -3135,7 +3135,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * Whether to force the axis to end on a tick. Use this option with
          * the `maxPadding` option to control the axis end.
          *
-         * This option is always set to `false`, when panning type is
+         * This option is always disabled, when panning type is
          * either `y` or `xy`.
          *
          * @see [type](#chart.panning.type)
@@ -3525,7 +3525,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * Whether to force the axis to start on a tick. Use this option with
          * the `maxPadding` option to control the axis start.
          *
-         * This option is always set to `false`, when panning type is
+         * This option is always disabled, when panning type is
          * either `y` or `xy`.
          *
          * @see [type](#chart.panning.type)
