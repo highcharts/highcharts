@@ -1,68 +1,101 @@
 Highcharts.chart('container', {
     title: {
-        text: 'Accessible annotations'
+        text: 'Total CSUN conference sessions by year'
+    },
+
+    subtitle: {
+        text: '2015 to 2020'
     },
 
     series: [{
-        name: 'Line series',
-        data: [1, 3, 4, 6, { y: 7, id: 'peak1' }, 5, 3, 4, 8, { y: 9, id: 'peak2' }, 7, 6]
-    }, {
-        type: 'column',
-        name: 'Column series',
-        data: [0.5, 1.5, 2, 3, 3.5, 2.5, 1.5, 2, 4, 4.5, { y: 3.5, id: 'important' }, 3]
+        name: 'Total sessions',
+        pointStart: 2015,
+        data: [{
+            id: '2015',
+            y: 382
+        }, {
+            id: '2016',
+            y: 389
+        }, {
+            id: '2017',
+            y: 426
+        }, {
+            id: '2018',
+            y: 442
+        }, {
+            id: '2019',
+            y: 381
+        }, {
+            id: '2020',
+            y: 468
+        }]
     }],
 
+    legend: {
+        enabled: false
+    },
+
     xAxis: {
-        categories: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
-            'September', 'October', 'November', 'December']
+        type: 'category'
     },
 
     yAxis: {
-        title: false,
+        title: {
+            text: 'Sessions'
+        },
         labels: {
-            format: '{value}%'
+            format: '{value}'
         }
-    },
-
-    tooltip: {
-        valueSuffix: '%'
     },
 
     annotations: [{
         draggable: false,
-        shapes: [{
-            point: 'peak2',
-            type: 'circle',
-            fill: 'rgba(255, 120, 120, 0.4)',
-            stroke: '#ff7070',
-            r: 10
-        }, {
-            points: ['peak1', 'peak2'],
-            type: 'path',
-            fill: 'none',
-            stroke: '#ff7070',
-            strokeWidth: 2,
-            markerEnd: 'arrow'
-        }],
         labels: [{
             point: {
-                x: 50, y: 20
+                x: 0, y: 0
             },
+            x: -10,
+            y: 10,
+            style: {
+                width: 150
+            },
+            borderRadius: 5,
             shape: 'rect',
-            text: 'Freestanding annotation',
-            backgroundColor: 'rgba(240, 240, 255, 0.7)',
-            borderColor: 'rgb(240, 240, 255)'
+            text: 'Annotations showing presentation info for Elsevier and Highcharts',
+            backgroundColor: 'rgb(250, 245, 245)',
+            borderColor: 'rgb(255, 250, 250)',
+            padding: 10
+        }]
+    }, {
+        draggable: false,
+        labelOptions: {
+            allowOverlap: true,
+            y: 0,
+            distance: 15
+        },
+        labels: [{
+            point: '2016',
+            text: 'Elsevier & Highcharts presented together'
         }, {
-            point: 'important',
-            text: 'This is an important point'
+            points: '2017',
+            text: 'Elsevier presented on VPATs'
         }, {
-            points: ['peak1', 'peak2'],
-            text: 'The second peak is higher than the first'
+            point: '2018',
+            text: 'Elsevier presented 2 sessions',
+            shape: 'rect',
+            verticalAlign: 'top',
+            distance: 40
         }, {
-            point: 'peak2',
-            text: 'This is the max peak',
-            align: 'left',
-            x: 20
+            point: '2018',
+            text: 'Highcharts presented 1 session',
+            verticalAlign: 'top'
+        }, {
+            point: '2019',
+            text: 'Elsevier & Highcharts presented together'
+        }, {
+            point: '2020',
+            text: 'Elsevier & Highcharts is presenting together',
+            y: -35
         }]
     }]
 });
