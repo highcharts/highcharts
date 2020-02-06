@@ -70,21 +70,29 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
+/**
+ * Handles displaying chart's container in the fullscreen mode.
+ *
+ * @class
+ * @name Highcharts.FullscreenController
+ * @hideconstructor
+ * @requires modules/full-screen
+ */
 class FullscreenController {
+
     /* *
      *
      *  Constructors
      *
      * */
 
-    /**
-     * Handles displaying chart's container in the fullscreen mode.
-     *
-     * @param {Highcharts.Chart} chart
-     */
+    /** @private */
     public constructor(chart: Highcharts.Chart) {
-        const fullscreenController = this;
-
+        /**
+         * Chart managed by the fullscreen controller.
+         * @name Highcharts.FullscreenController#chart
+         * @type {Highcharts.Chart}
+         */
         this.chart = chart;
 
         if (!(chart.container.parentNode instanceof HTMLElement)) {
@@ -94,27 +102,27 @@ class FullscreenController {
         const container = chart.container.parentNode;
 
         // Hold event and methods available only for a current browser.
-        if (!fullscreenController.browserProps) {
+        if (!this.browserProps) {
             if (typeof container.requestFullscreen === 'function') {
-                fullscreenController.browserProps = {
+                this.browserProps = {
                     fullscreenChange: 'fullscreenchange',
                     requestFullscreen: 'requestFullscreen',
                     exitFullscreen: 'exitFullscreen'
                 };
             } else if (container.mozRequestFullScreen) {
-                fullscreenController.browserProps = {
+                this.browserProps = {
                     fullscreenChange: 'mozfullscreenchange',
                     requestFullscreen: 'mozRequestFullScreen',
                     exitFullscreen: 'mozCancelFullScreen'
                 };
             } else if (container.webkitRequestFullScreen) {
-                fullscreenController.browserProps = {
+                this.browserProps = {
                     fullscreenChange: 'webkitfullscreenchange',
                     requestFullscreen: 'webkitRequestFullScreen',
                     exitFullscreen: 'webkitExitFullscreen'
                 };
             } else if (container.msRequestFullscreen) {
-                fullscreenController.browserProps = {
+                this.browserProps = {
                     fullscreenChange: 'MSFullscreenChange',
                     requestFullscreen: 'msRequestFullscreen',
                     exitFullscreen: 'msExitFullscreen'
@@ -122,52 +130,27 @@ class FullscreenController {
             }
         }
     }
+
     /* *
      *
      *  Properties
      *
      * */
-    /**
-     * Chart managed by the fullscreen controller.
-     * @name Highcharts.FullscreenController#chart
-     * @type {Highcharts.Chart}
-     */
+
     public chart: Highcharts.Chart;
-    /** @private */
-    public unbindFullscreenEvent?: Function;
+
     /** @private */
     public browserProps: Highcharts.FullscreenController['browserProps'];
+
+    /** @private */
+    public unbindFullscreenEvent?: Function;
+
     /* *
      *
      *  Functions
      *
      * */
-    /**
-    /**
-     * Toggles displaying the chart in fullscreen mode.
-     * By default, when the exporting module is enabled, a context button with
-     * a drop down menu in the upper right corner accesses this function.
-     * Exporting module required.
-     *
-     * @since       next
-     *
-     * @sample      highcharts/members/chart-togglefullscreen/
-     *              Toggle fullscreen mode from a HTML button
-     *
-     * @function Highcharts.FullscreenController#toggleFullscreen
-     * @return      {void}
-     * @requires    modules/exporting
-     * @requires    modules/full-screen
-     */
-    public toggleFullscreen(): void {
-        const fullscreenController = this;
 
-        if (!fullscreenController.chart.isFullscreen) {
-            fullscreenController.openFullscreen();
-        } else {
-            fullscreenController.closeFullscreen();
-        }
-    }
     /**
      * Stops displaying the chart in fullscreen mode.
      * Exporting module required.
@@ -176,7 +159,6 @@ class FullscreenController {
      *
      * @function Highcharts.FullscreenController#toggleFullscreen
      * @return      {void}
-     * @requires    modules/exporting
      * @requires    modules/full-screen
      */
     public closeFullscreen(): void {
@@ -213,7 +195,6 @@ class FullscreenController {
      *
      * @function Highcharts.FullscreenController#openFullscreen
      * @return      {void}
-     * @requires    modules/exporting
      * @requires    modules/full-screen
      */
     public openFullscreen(): void {
@@ -262,7 +243,6 @@ class FullscreenController {
      *
      * @since       next
      *
-     * @requires modules/exporting
      * @requires modules/full-screen
      * @return {void}
      */
@@ -289,6 +269,29 @@ class FullscreenController {
                     ) : lang.exitFullscreen;
         }
     }
+    /**
+     * Toggles displaying the chart in fullscreen mode.
+     * By default, when the exporting module is enabled, a context button with
+     * a drop down menu in the upper right corner accesses this function.
+     * Exporting module required.
+     *
+     * @since       next
+     *
+     * @sample      highcharts/members/chart-togglefullscreen/
+     *              Toggle fullscreen mode from a HTML button
+     *
+     * @function Highcharts.FullscreenController#toggleFullscreen
+     * @requires    modules/full-screen
+     */
+    public toggleFullscreen(): void {
+        const fullscreenController = this;
+
+        if (!fullscreenController.chart.isFullscreen) {
+            fullscreenController.openFullscreen();
+        } else {
+            fullscreenController.closeFullscreen();
+        }
+    }
 }
 
 H.FullscreenController = FullscreenController;
@@ -300,7 +303,6 @@ addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
     /**
      * @name Highcharts.Chart#fullscreenController
      * @type {Highcharts.FullscreenController}
-     * @requires modules/exporting
      * @requires modules/full-screen
      */
     this.fullscreenController = new H.FullscreenController(this);
