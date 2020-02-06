@@ -55,6 +55,7 @@ declare global {
 import U from './Utilities.js';
 const {
     attr,
+    createElement,
     css,
     defined,
     extend,
@@ -64,8 +65,7 @@ const {
 
 import './SvgRenderer.js';
 
-var createElement = H.createElement,
-    isFirefox = H.isFirefox,
+var isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     SVGElement = H.SVGElement,

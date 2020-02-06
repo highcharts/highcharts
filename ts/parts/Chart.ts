@@ -296,6 +296,7 @@ const {
     addEvent,
     animObject,
     attr,
+    createElement,
     css,
     defined,
     discardElement,
@@ -328,7 +329,6 @@ import './Pointer.js';
 var animate = H.animate,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
-    createElement = H.createElement,
     defaultOptions = H.defaultOptions,
     charts = H.charts,
     find = H.find,

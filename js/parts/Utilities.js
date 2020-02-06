@@ -1184,7 +1184,7 @@ var css = H.css = function css(el, styles) {
  * @return {Highcharts.HTMLDOMElement}
  *         The created DOM element.
  */
-H.createElement = function (tag, attribs, styles, parent, nopad) {
+var createElement = H.createElement = function createElement(tag, attribs, styles, parent, nopad) {
     var el = doc.createElement(tag);
     if (attribs) {
         extend(el, attribs);
@@ -1614,7 +1614,7 @@ var discardElement = H.discardElement = function discardElement(element) {
     var garbageBin = H.garbageBin;
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
-        garbageBin = H.createElement('div');
+        garbageBin = createElement('div');
     }
     // move the node and empty bin
     if (element) {
@@ -2566,6 +2566,7 @@ var utilitiesModule = {
     clamp: clamp,
     clearTimeout: internalClearTimeout,
     correctFloat: correctFloat,
+    createElement: createElement,
     css: css,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,

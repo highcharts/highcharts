@@ -176,6 +176,7 @@ declare global {
 import U from './Utilities.js';
 const {
     addEvent,
+    createElement,
     css,
     defined,
     destroyObjectProperties,
@@ -195,7 +196,6 @@ import './Chart.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    createElement = H.createElement,
     defaultOptions = H.defaultOptions;
 
 /* ************************************************************************** *

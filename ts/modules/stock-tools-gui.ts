@@ -138,6 +138,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    createElement,
     css,
     extend,
     fireEvent,
@@ -146,8 +147,7 @@ const {
     pick
 } = U;
 
-var createElement = H.createElement,
-    getStyle = H.getStyle,
+var getStyle = H.getStyle,
     win = H.win,
     DIV = 'div',
     SPAN = 'span',
