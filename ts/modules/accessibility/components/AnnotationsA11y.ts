@@ -64,12 +64,14 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
     const chart = label.chart;
     const labelText = getLabelText(label);
     const points = label.points as Array<Highcharts.AccessibilityPoint>;
+    const hasMultipleSeries = chart.series.length > 1;
     const getAriaLabel = (point: Highcharts.Point): string =>
         point?.graphic?.element?.getAttribute('aria-label') || '';
     const getValueDesc = (point: Highcharts.AccessibilityPoint): string => {
         const valDesc = point?.accessibility?.valueDescription || getAriaLabel(point);
         const seriesName = point?.series.name || '';
-        return (seriesName ? seriesName + ', ' : '') + valDesc;
+        const shouldUseSeriesName = seriesName && hasMultipleSeries;
+        return (shouldUseSeriesName ? seriesName + ', ' : '') + valDesc;
     };
     const pointValueDescriptions = points.map(getValueDesc)
         .filter((desc: string): boolean => !!desc);

@@ -52,12 +52,14 @@ function getAnnotationLabelDescription(label) {
     var chart = label.chart;
     var labelText = getLabelText(label);
     var points = label.points;
+    var hasMultipleSeries = chart.series.length > 1;
     var getAriaLabel = function (point) { var _a, _b, _c; return ((_c = (_b = (_a = point) === null || _a === void 0 ? void 0 : _a.graphic) === null || _b === void 0 ? void 0 : _b.element) === null || _c === void 0 ? void 0 : _c.getAttribute('aria-label')) || ''; };
     var getValueDesc = function (point) {
         var _a, _b, _c;
         var valDesc = ((_b = (_a = point) === null || _a === void 0 ? void 0 : _a.accessibility) === null || _b === void 0 ? void 0 : _b.valueDescription) || getAriaLabel(point);
         var seriesName = ((_c = point) === null || _c === void 0 ? void 0 : _c.series.name) || '';
-        return (seriesName ? seriesName + ', ' : '') + valDesc;
+        var shouldUseSeriesName = seriesName && hasMultipleSeries;
+        return (shouldUseSeriesName ? seriesName + ', ' : '') + valDesc;
     };
     var pointValueDescriptions = points.map(getValueDesc)
         .filter(function (desc) { return !!desc; });
