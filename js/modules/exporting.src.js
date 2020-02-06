@@ -78,12 +78,12 @@ import H from '../parts/Globals.js';
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
+var addEvent = U.addEvent, css = U.css, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
 // create shortcuts
-var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, createElement = H.createElement, css = H.css, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
+var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, createElement = H.createElement, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
 /**
@@ -1420,14 +1420,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 chart.openMenu = false;
                 css(chart.renderTo, { overflow: 'hidden' }); // #10361
-                H.clearTimeout(menu.hideTimer);
+                U.clearTimeout(menu.hideTimer);
                 fireEvent(chart, 'exportMenuHidden');
             };
             // Hide the menu some time after mouse leave (#1357)
             chart.exportEvents.push(addEvent(menu, 'mouseleave', function () {
                 menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
             }), addEvent(menu, 'mouseenter', function () {
-                H.clearTimeout(menu.hideTimer);
+                U.clearTimeout(menu.hideTimer);
             }), 
             // Hide it on clicking or touching outside the menu (#2258,
             // #2335, #2407)
@@ -1644,7 +1644,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (exportDivElements) {
             exportDivElements.forEach(function (elem, i) {
                 // Remove the event handler
-                H.clearTimeout(elem.hideTimer); // #5427
+                U.clearTimeout(elem.hideTimer); // #5427
                 removeEvent(elem, 'mouseleave');
                 // Remove inline events
                 chart.exportDivElements[i] =

@@ -152,6 +152,7 @@ declare global {
 import U from './Utilities.js';
 const {
     addEvent,
+    css,
     defined,
     extend,
     fireEvent,
@@ -171,7 +172,6 @@ import './Series.js';
 
 var Chart = H.Chart,
     createElement = H.createElement,
-    css = H.css,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     hasTouch = H.hasTouch,

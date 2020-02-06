@@ -296,6 +296,7 @@ const {
     addEvent,
     animObject,
     attr,
+    css,
     defined,
     discardElement,
     erase,
@@ -330,7 +331,6 @@ var animate = H.animate,
     createElement = H.createElement,
     defaultOptions = H.defaultOptions,
     charts = H.charts,
-    css = H.css,
     find = H.find,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
@@ -1510,7 +1510,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         tempStyle.height = 0;
                     }
 
-                    H.css(node, tempStyle);
+                    css(node, tempStyle);
 
                     // If it still doesn't have an offset width after setting
                     // display to block, it probably has an !important priority
@@ -1528,7 +1528,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else {
             while (node && node.style) {
                 if ((node as any).hcOrigStyle) {
-                    H.css(node, (node as any).hcOrigStyle);
+                    css(node, (node as any).hcOrigStyle);
                     delete (node as any).hcOrigStyle;
                 }
                 if ((node as any).hcOrigDetached) {
@@ -1833,7 +1833,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 width !== chart.containerWidth ||
                 height !== chart.containerHeight
             ) {
-                H.clearTimeout(chart.reflowTimeout as any);
+                U.clearTimeout(chart.reflowTimeout as any);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function (): void {

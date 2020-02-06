@@ -210,6 +210,7 @@ declare global {
 import U from './Utilities.js';
 const {
     addEvent,
+    css,
     defined,
     discardElement,
     fireEvent,
@@ -224,7 +225,6 @@ const {
 } = U;
 
 var H = Highcharts,
-    css = H.css,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
     win = H.win;

@@ -1687,7 +1687,7 @@ const syncTimeout = H.syncTimeout = function syncTimeout(
  *
  * @return {void}
  */
-H.clearTimeout = function (id: number): void {
+const internalClearTimeout = H.clearTimeout = function (id: number): void {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -1778,7 +1778,7 @@ H.pick = pick;
  *
  * @return {void}
  */
-H.css = function (
+const css = H.css = function css(
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
     styles: Highcharts.CSSObject
 ): void {
@@ -1821,8 +1821,7 @@ H.createElement = function (
     parent?: Highcharts.HTMLDOMElement,
     nopad?: boolean
 ): Highcharts.HTMLDOMElement {
-    var el = doc.createElement(tag),
-        css = H.css;
+    var el = doc.createElement(tag);
 
     if (attribs) {
         extend(el, attribs);
@@ -3510,7 +3509,9 @@ const utilitiesModule = {
     arrayMin,
     attr,
     clamp,
+    clearTimeout: internalClearTimeout,
     correctFloat,
+    css,
     defined,
     destroyObjectProperties,
     discardElement,

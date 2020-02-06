@@ -138,6 +138,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    css,
     extend,
     fireEvent,
     isArray,
@@ -147,7 +148,6 @@ const {
 
 var createElement = H.createElement,
     getStyle = H.getStyle,
-    css = H.css,
     win = H.win,
     DIV = 'div',
     SPAN = 'span',

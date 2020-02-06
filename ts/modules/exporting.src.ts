@@ -284,6 +284,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    css,
     discardElement,
     extend,
     fireEvent,
@@ -303,7 +304,6 @@ var defaultOptions = H.defaultOptions,
     doc = H.doc,
     Chart = H.Chart,
     createElement = H.createElement,
-    css = H.css,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,
@@ -1919,7 +1919,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 chart.openMenu = false;
                 css(chart.renderTo, { overflow: 'hidden' }); // #10361
-                H.clearTimeout(menu.hideTimer as any);
+                U.clearTimeout(menu.hideTimer as any);
                 fireEvent(chart, 'exportMenuHidden');
             };
 
@@ -1929,7 +1929,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
                 }),
                 addEvent(menu, 'mouseenter', function (): void {
-                    H.clearTimeout(menu.hideTimer as any);
+                    U.clearTimeout(menu.hideTimer as any);
                 }),
 
                 // Hide it on clicking or touching outside the menu (#2258,
@@ -2272,7 +2272,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             ): void {
 
                 // Remove the event handler
-                H.clearTimeout(elem.hideTimer as any); // #5427
+                U.clearTimeout(elem.hideTimer as any); // #5427
                 removeEvent(elem, 'mouseleave');
 
                 // Remove inline events

@@ -15,6 +15,7 @@ import H from './Globals.js';
 import U from './Utilities.js';
 const {
     clamp,
+    css,
     defined,
     discardElement,
     extend,
@@ -495,7 +496,7 @@ H.Tooltip.prototype = {
                 this.container = container = H.doc.createElement('div');
 
                 container.className = 'highcharts-tooltip-container';
-                H.css(container, {
+                css(container, {
                     position: 'absolute',
                     top: '1px',
                     pointerEvents: options.style && options.style.pointerEvents,
@@ -633,8 +634,8 @@ H.Tooltip.prototype = {
             this.renderer = this.renderer.destroy() as any;
             discardElement(this.container as any);
         }
-        H.clearTimeout(this.hideTimer as any);
-        H.clearTimeout(this.tooltipTimeout as any);
+        U.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.tooltipTimeout as any);
     },
 
     /**
@@ -689,7 +690,7 @@ H.Tooltip.prototype = {
         if (animate) {
 
             // Never allow two timeouts
-            H.clearTimeout(this.tooltipTimeout as any);
+            U.clearTimeout(this.tooltipTimeout as any);
 
             // Set the fixed interval ticking for the smooth tooltip
             this.tooltipTimeout = setTimeout(function (): void {
@@ -719,7 +720,7 @@ H.Tooltip.prototype = {
         var tooltip = this;
 
         // disallow duplicate timers (#1728, #1766)
-        H.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.hideTimer as any);
         delay = pick(delay, this.options.hideDelay, 500);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
@@ -1068,7 +1069,7 @@ H.Tooltip.prototype = {
             return;
         }
 
-        H.clearTimeout(this.hideTimer as any);
+        U.clearTimeout(this.hideTimer as any);
 
         // get the reference point coordinates (pie charts use tooltipPos)
         tooltip.followPointer = splat(point)[0].series.tooltipOptions
@@ -1565,7 +1566,7 @@ H.Tooltip.prototype = {
             // scale transform/css zoom. #11329.
             const containerScaling = chart.containerScaling;
             if (containerScaling) {
-                H.css(this.container as Highcharts.HTMLDOMElement, {
+                css(this.container as Highcharts.HTMLDOMElement, {
                     transform: `scale(${
                         containerScaling.scaleX
                     }, ${

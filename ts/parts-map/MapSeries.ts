@@ -1330,7 +1330,7 @@ seriesType<Highcharts.MapSeries>(
             this: Highcharts.MapPoint,
             e?: Highcharts.PointerEventObject
         ): void {
-            H.clearTimeout(this.colorInterval as any);
+            U.clearTimeout(this.colorInterval as any);
             if (this.value !== null || this.series.options.nullInteraction) {
                 (Point.prototype.onMouseOver as any).call(this, e);
             } else {

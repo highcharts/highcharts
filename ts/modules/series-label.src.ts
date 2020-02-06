@@ -1095,7 +1095,7 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
     chart.labelSeries = [];
     chart.labelSeriesMaxSum = 0;
 
-    H.clearTimeout(chart.seriesLabelTimer as any);
+    U.clearTimeout(chart.seriesLabelTimer as any);
 
     // Which series should have labels
     chart.series.forEach(function (series: Highcharts.Series): void {
