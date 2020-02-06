@@ -133,7 +133,7 @@ var path = require('path'),
         return (
             `<div id="${product.changelogId}">
             <div class="changelog-header">
-            <h2 id="${product.name}">${product.header}</h2>
+            <h4 id="${product.name}">${product.header}</h4>
             </div>
             <div class="changelog-container">`);
     }
