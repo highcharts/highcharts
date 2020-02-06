@@ -285,6 +285,7 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     css,
+    createElement,
     discardElement,
     extend,
     fireEvent,
@@ -303,7 +304,6 @@ import chartNavigationMixin from '../mixins/navigation.js';
 var defaultOptions = H.defaultOptions,
     doc = H.doc,
     Chart = H.Chart,
-    createElement = H.createElement,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,

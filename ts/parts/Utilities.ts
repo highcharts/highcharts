@@ -1814,7 +1814,7 @@ const css = H.css = function css(
  * @return {Highcharts.HTMLDOMElement}
  *         The created DOM element.
  */
-H.createElement = function (
+const createElement = H.createElement = function createElement(
     tag: string,
     attribs?: Highcharts.HTMLAttributes,
     styles?: Highcharts.CSSObject,
@@ -2350,7 +2350,7 @@ const discardElement = H.discardElement = function discardElement(element: Highc
 
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
-        garbageBin = H.createElement('div');
+        garbageBin = createElement('div');
     }
 
     // move the node and empty bin
@@ -3511,6 +3511,7 @@ const utilitiesModule = {
     clamp,
     clearTimeout: internalClearTimeout,
     correctFloat,
+    createElement,
     css,
     defined,
     destroyObjectProperties,

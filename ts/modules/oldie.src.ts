@@ -320,6 +320,7 @@ const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    createElement,
     css,
     defined,
     discardElement,
@@ -341,7 +342,6 @@ var VMLRenderer,
     VMLRendererExtension,
     VMLElement: typeof Highcharts.VMLElement,
     Chart = H.Chart,
-    createElement = H.createElement,
     deg2rad = H.deg2rad,
     doc = H.doc,
     noop = H.noop,
