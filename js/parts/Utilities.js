@@ -1152,7 +1152,7 @@ H.pick = pick;
  *
  * @return {void}
  */
-H.css = function (el, styles) {
+var css = H.css = function css(el, styles) {
     if (H.isMS && !H.svg) { // #2686
         if (styles && typeof styles.opacity !== 'undefined') {
             styles.filter =
@@ -1185,7 +1185,7 @@ H.css = function (el, styles) {
  *         The created DOM element.
  */
 H.createElement = function (tag, attribs, styles, parent, nopad) {
-    var el = doc.createElement(tag), css = H.css;
+    var el = doc.createElement(tag);
     if (attribs) {
         extend(el, attribs);
     }
@@ -2566,6 +2566,7 @@ var utilitiesModule = {
     clamp: clamp,
     clearTimeout: internalClearTimeout,
     correctFloat: correctFloat,
+    css: css,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,
     discardElement: discardElement,

@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var clamp = U.clamp, defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
+var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -310,7 +310,7 @@ H.Tooltip.prototype = {
                  */
                 this.container = container = H.doc.createElement('div');
                 container.className = 'highcharts-tooltip-container';
-                H.css(container, {
+                css(container, {
                     position: 'absolute',
                     top: '1px',
                     pointerEvents: options.style && options.style.pointerEvents,
@@ -1067,7 +1067,7 @@ H.Tooltip.prototype = {
             // scale transform/css zoom. #11329.
             var containerScaling = chart.containerScaling;
             if (containerScaling) {
-                H.css(this.container, {
+                css(this.container, {
                     transform: "scale(" + containerScaling.scaleX + ", " + containerScaling.scaleY + ")"
                 });
                 anchorX *= containerScaling.scaleX;

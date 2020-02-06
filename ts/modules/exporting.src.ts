@@ -284,6 +284,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    css,
     discardElement,
     extend,
     fireEvent,
@@ -303,7 +304,6 @@ var defaultOptions = H.defaultOptions,
     doc = H.doc,
     Chart = H.Chart,
     createElement = H.createElement,
-    css = H.css,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,

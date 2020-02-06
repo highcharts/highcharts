@@ -1778,7 +1778,7 @@ H.pick = pick;
  *
  * @return {void}
  */
-H.css = function (
+const css = H.css = function css(
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
     styles: Highcharts.CSSObject
 ): void {
@@ -1821,8 +1821,7 @@ H.createElement = function (
     parent?: Highcharts.HTMLDOMElement,
     nopad?: boolean
 ): Highcharts.HTMLDOMElement {
-    var el = doc.createElement(tag),
-        css = H.css;
+    var el = doc.createElement(tag);
 
     if (attribs) {
         extend(el, attribs);
@@ -3512,6 +3511,7 @@ const utilitiesModule = {
     clamp,
     clearTimeout: internalClearTimeout,
     correctFloat,
+    css,
     defined,
     destroyObjectProperties,
     discardElement,

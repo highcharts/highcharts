@@ -15,6 +15,7 @@ import H from './Globals.js';
 import U from './Utilities.js';
 const {
     clamp,
+    css,
     defined,
     discardElement,
     extend,
@@ -495,7 +496,7 @@ H.Tooltip.prototype = {
                 this.container = container = H.doc.createElement('div');
 
                 container.className = 'highcharts-tooltip-container';
-                H.css(container, {
+                css(container, {
                     position: 'absolute',
                     top: '1px',
                     pointerEvents: options.style && options.style.pointerEvents,
@@ -1565,7 +1566,7 @@ H.Tooltip.prototype = {
             // scale transform/css zoom. #11329.
             const containerScaling = chart.containerScaling;
             if (containerScaling) {
-                H.css(this.container as Highcharts.HTMLDOMElement, {
+                css(this.container as Highcharts.HTMLDOMElement, {
                     transform: `scale(${
                         containerScaling.scaleX
                     }, ${
