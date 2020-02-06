@@ -29,10 +29,9 @@ var FullscreenController = /** @class */ (function () {
      *
      * */
     /**
-     * Handle color operations. Some object methods are chainable.
+     * Handles displaying chart's container in the fullscreen mode.
      *
-     * @param {Highcharts.ColorType} input
-     *        The input color in either rbga or hex format
+     * @param {Highcharts.Chart} chart
      */
     function FullscreenController(chart) {
         var fullscreenController = this;
@@ -104,8 +103,17 @@ var FullscreenController = /** @class */ (function () {
             fullscreenController.closeFullscreen();
         }
     };
-    ;
-    // Helping function - to close fullscreen, use toggleFullscreen() instead.
+    /**
+     * Stops displaying the chart in fullscreen mode.
+     * Exporting module required.
+     *
+     * @since       next
+     *
+     * @function Highcharts.FullscreenController#toggleFullscreen
+     * @return      {void}
+     * @requires    modules/exporting
+     * @requires    modules/full-screen
+     */
     FullscreenController.prototype.closeFullscreen = function () {
         var fullscreenController = this, chart = fullscreenController.chart;
         // Don't fire exitFullscreen() when user exited using 'Escape' button.
@@ -121,8 +129,19 @@ var FullscreenController = /** @class */ (function () {
         chart.isFullscreen = false;
         fullscreenController.setButtonText();
     };
-    ;
-    // Helping function - to close fullscreen, use toggleFullscreen() instead.
+    /**
+     * Displays the chart in fullscreen mode.
+     * When fired customly by user before exporting context button is created,
+     * button's text will not be replaced - it's on the user side.
+     * Exporting module required.
+     *
+     * @since       next
+     *
+     * @function Highcharts.FullscreenController#openFullscreen
+     * @return      {void}
+     * @requires    modules/exporting
+     * @requires    modules/full-screen
+     */
     FullscreenController.prototype.openFullscreen = function () {
         var fullscreenController = this, chart = fullscreenController.chart;
         // Handle exitFullscreen() method when user clicks 'Escape' button.
@@ -151,12 +170,16 @@ var FullscreenController = /** @class */ (function () {
             H.addEvent(chart, 'destroy', fullscreenController.unbindFullscreenEvent);
         }
     };
-    ;
     /**
-     * Replace button text. When toggleFullscreen() will be fired customly
-     * by user before exporting context button is created, text will not be
-     * replaced - it's on the user side.
+     * Replaces the exporting context button's text when toogling the
+     * fullscreen mode.
+     *
      * @private
+     *
+     * @since       next
+     *
+     * @requires modules/exporting
+     * @requires modules/full-screen
      * @return {void}
      */
     FullscreenController.prototype.setButtonText = function () {
@@ -173,10 +196,8 @@ var FullscreenController = /** @class */ (function () {
                     lang.viewFullscreen) : lang.exitFullscreen;
         }
     };
-    ;
     return FullscreenController;
 }());
-;
 H.FullscreenController = FullscreenController;
 export default H.FullscreenController;
 // Initialize fullscreen
