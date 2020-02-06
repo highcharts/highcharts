@@ -872,11 +872,9 @@ class Pointer {
      *         The offset of the chart container within the page
      */
     public getChartPosition(): Highcharts.OffsetObject {
-        const { chart } = this;
-        const container = chart.scrollingContainer || chart.container;
         return (
             this.chartPosition ||
-            (this.chartPosition = offset(container))
+            (this.chartPosition = offset(this.chart.container))
         );
     }
 

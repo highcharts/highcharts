@@ -261,6 +261,12 @@ Chart.prototype.setUpScrolling = function (this: Highcharts.Chart): void {
         'className': 'highcharts-scrolling'
     }, attribs, this.renderTo);
 
+    // On scroll, reset the chart position because it applies to the scrolled
+    // container
+    addEvent(this.scrollingContainer, 'scroll', (): void => {
+        delete this.pointer.chartPosition;
+    });
+
     this.innerContainer = H.createElement('div', {
         'className': 'highcharts-inner-container'
     }, null as any, this.scrollingContainer);
