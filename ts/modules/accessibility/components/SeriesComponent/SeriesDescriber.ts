@@ -27,6 +27,7 @@ const getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 
 import HTMLUtilities from '../../utils/htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
+    escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
     reverseChildNodes = HTMLUtilities.reverseChildNodes;
 
 import ChartUtilities from '../../utils/chartUtilities.js';
@@ -514,12 +515,14 @@ function setPointScreenReaderAttribs(
     var series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
         seriesA11yOptions = series.options.accessibility || {},
-        label = stripHTMLTags(
-            seriesA11yOptions.pointDescriptionFormatter &&
-            seriesA11yOptions.pointDescriptionFormatter(point) ||
-            a11yPointOptions.descriptionFormatter &&
-            a11yPointOptions.descriptionFormatter(point) ||
-            defaultPointDescriptionFormatter(point)
+        label = escapeStringForHTML(
+            stripHTMLTags(
+                seriesA11yOptions.pointDescriptionFormatter &&
+                seriesA11yOptions.pointDescriptionFormatter(point) ||
+                a11yPointOptions.descriptionFormatter &&
+                a11yPointOptions.descriptionFormatter(point) ||
+                defaultPointDescriptionFormatter(point)
+            )
         );
 
     pointElement.setAttribute('role', 'img');
@@ -625,10 +628,12 @@ function describeSeriesElement(
     seriesElement.setAttribute('tabindex', '-1');
     seriesElement.setAttribute(
         'aria-label',
-        stripHTMLTags(
-            (a11yOptions.series as any).descriptionFormatter &&
-            (a11yOptions.series as any).descriptionFormatter(series) ||
-            defaultSeriesDescriptionFormatter(series)
+        escapeStringForHTML(
+            stripHTMLTags(
+                (a11yOptions.series as any).descriptionFormatter &&
+                (a11yOptions.series as any).descriptionFormatter(series) ||
+                defaultSeriesDescriptionFormatter(series)
+            )
         )
     );
 }
