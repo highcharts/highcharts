@@ -86,7 +86,6 @@ class FullscreenController {
      *
      * */
 
-    /** @private */
     public constructor(chart: Highcharts.Chart) {
         /**
          * Chart managed by the fullscreen controller.
@@ -95,11 +94,7 @@ class FullscreenController {
          */
         this.chart = chart;
 
-        // IE8 compatibility
-        const HTMLelement = typeof HTMLElement === 'undefined' ?
-            Element : HTMLElement;
-
-        if (!(chart.container.parentNode instanceof HTMLelement)) {
+        if (!(chart.container.parentNode instanceof Element)) {
             return;
         }
 
