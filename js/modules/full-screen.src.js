@@ -44,7 +44,9 @@ var FullscreenController = /** @class */ (function () {
          * @type {Highcharts.Chart}
          */
         this.chart = chart;
-        if (!(chart.container.parentNode instanceof HTMLElement)) {
+        var elementPrototype = typeof HTMLElement === 'undefined' ?
+            Element : HTMLElement;
+        if (!(chart.container.parentNode instanceof elementPrototype)) {
             return;
         }
         var container = chart.container.parentNode;
@@ -141,7 +143,7 @@ var FullscreenController = /** @class */ (function () {
             if (chart.container.parentNode instanceof Element) {
                 var promise = chart.container.parentNode[fullscreenController.browserProps.requestFullscreen]();
                 if (promise) {
-                    promise.catch(function () {
+                    promise['catch'](function () {
                         alert(// eslint-disable-line no-alert
                         'Full screen is not supported inside a frame.');
                     });
