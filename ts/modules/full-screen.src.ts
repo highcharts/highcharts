@@ -95,10 +95,11 @@ class FullscreenController {
          */
         this.chart = chart;
 
-        const elementPrototype = typeof HTMLElement === 'undefined' ?
+        // IE8 compatibility
+        const HTMLelement = typeof HTMLElement === 'undefined' ?
             Element : HTMLElement;
 
-        if (!(chart.container.parentNode instanceof elementPrototype)) {
+        if (!(chart.container.parentNode instanceof HTMLelement)) {
             return;
         }
 

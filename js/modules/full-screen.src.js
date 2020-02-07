@@ -44,9 +44,10 @@ var FullscreenController = /** @class */ (function () {
          * @type {Highcharts.Chart}
          */
         this.chart = chart;
-        var elementPrototype = typeof HTMLElement === 'undefined' ?
+        // IE8 compatibility
+        var HTMLelement = typeof HTMLElement === 'undefined' ?
             Element : HTMLElement;
-        if (!(chart.container.parentNode instanceof elementPrototype)) {
+        if (!(chart.container.parentNode instanceof HTMLelement)) {
             return;
         }
         var container = chart.container.parentNode;
