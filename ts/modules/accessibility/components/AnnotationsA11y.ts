@@ -71,7 +71,8 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
         const valDesc = point?.accessibility?.valueDescription || getAriaLabel(point);
         const seriesName = point?.series.name || '';
         const shouldUseSeriesName = seriesName && hasMultipleSeries;
-        return (shouldUseSeriesName ? seriesName + ', ' : '') + valDesc;
+        return (shouldUseSeriesName ? seriesName + ', ' : '') +
+            (valDesc ? 'data point ' + valDesc : '');
     };
     const pointValueDescriptions = points.map(getValueDesc)
         .filter((desc: string): boolean => !!desc);

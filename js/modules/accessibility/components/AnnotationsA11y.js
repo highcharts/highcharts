@@ -59,7 +59,8 @@ function getAnnotationLabelDescription(label) {
         var valDesc = ((_b = (_a = point) === null || _a === void 0 ? void 0 : _a.accessibility) === null || _b === void 0 ? void 0 : _b.valueDescription) || getAriaLabel(point);
         var seriesName = ((_c = point) === null || _c === void 0 ? void 0 : _c.series.name) || '';
         var shouldUseSeriesName = seriesName && hasMultipleSeries;
-        return (shouldUseSeriesName ? seriesName + ', ' : '') + valDesc;
+        return (shouldUseSeriesName ? seriesName + ', ' : '') +
+            (valDesc ? 'data point ' + valDesc : '');
     };
     var pointValueDescriptions = points.map(getValueDesc)
         .filter(function (desc) { return !!desc; });
