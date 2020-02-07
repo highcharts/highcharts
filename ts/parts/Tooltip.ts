@@ -375,10 +375,6 @@ H.Tooltip.prototype = {
          * @readonly
          * @name Highcharts.Tooltip#outside
          * @type {boolean}
-         *
-         * @todo
-         * Split tooltip does not support outside in the first iteration. Should
-         * not be too complicated to implement.
          */
         this.outside = pick(
             options.outside,
@@ -1199,10 +1195,8 @@ H.Tooltip.prototype = {
                 plotHeight,
                 plotLeft,
                 plotTop,
-                plotWidth,
                 pointer,
                 renderer: ren,
-                scrollablePixelsX = 0,
                 scrollablePixelsY = 0,
                 scrollingContainer: {
                     scrollLeft,
@@ -1219,21 +1213,19 @@ H.Tooltip.prototype = {
 
         // The area which the tooltip should be limited to. Limit to scrollable
         // plot area if enabled, otherwise limit to the chart container.
-        const boundaries = {
-            left: scrollablePixelsX ? plotLeft : 0,
-            right: scrollablePixelsX ?
-                plotLeft + plotWidth - scrollablePixelsX : chartWidth,
-            top: scrollablePixelsY ? plotTop : 0,
-            bottom: scrollablePixelsY ?
-                plotTop + plotHeight - scrollablePixelsY : chartHeight
+        const bounds = {
+            left: scrollLeft,
+            right: scrollLeft + chartWidth,
+            top: scrollTop,
+            bottom: scrollTop + chartHeight
         };
 
         const tooltipLabel = tooltip.getLabel();
         const headerTop = Boolean(chart.xAxis[0] && chart.xAxis[0].opposite);
 
-        let distributionBoxTop = plotTop;
+        let distributionBoxTop = plotTop + scrollTop;
         let headerHeight = 0;
-        let maxLength = plotHeight - scrollablePixelsY;
+        let adjustedPlotHeight = plotHeight - scrollablePixelsY;
 
         /**
          * Calculates the anchor position for the partial tooltip
@@ -1244,32 +1236,38 @@ H.Tooltip.prototype = {
          */
         function getAnchor(
             point: Highcharts.Point & { isHeader?: boolean }
-        ): ({ anchorX: number; anchorY: number }) {
+        ): ({ anchorX: number; anchorY: number|undefined }) {
             const { isHeader, plotX = 0, plotY = 0, series } = point;
 
             let anchorX;
             let anchorY;
             if (isHeader) {
                 // Set anchorX to plotX
-                anchorX = plotLeft + plotX - scrollLeft;
+                anchorX = plotLeft + plotX;
                 // Set anchorY to center of visible plot area.
-                anchorY = plotTop + (plotHeight - scrollablePixelsY) / 2;
+                anchorY = plotTop + plotHeight / 2;
             } else {
                 const { xAxis, yAxis } = series;
                 // Set anchorX to plotX. Limit to within xAxis.
                 anchorX = xAxis.pos +
-                    clamp(plotX, -distance, xAxis.len + distance) - scrollLeft;
-                // Set anchorY to plotY. Limit to within yAxis.
-                anchorY = yAxis.pos + clamp(plotY, 0, yAxis.len) - scrollTop;
+                    clamp(plotX, -distance, xAxis.len + distance);
+
+                // Set anchorY, limit to the scrollable plot area
+                if (
+                    yAxis.pos + plotY >= scrollTop + plotTop &&
+                    yAxis.pos + plotY <= scrollTop + plotTop + plotHeight - scrollablePixelsY
+                ) {
+                    anchorY = yAxis.pos + plotY;
+                }
             }
 
             // Limit values to plot area
             anchorX = clamp(
                 anchorX,
-                boundaries.left - distance,
-                boundaries.right + distance
+                bounds.left - distance,
+                bounds.right + distance
             );
-            anchorY = clamp(anchorY, boundaries.top, boundaries.bottom);
+
             return { anchorX, anchorY };
         }
 
@@ -1279,7 +1277,7 @@ H.Tooltip.prototype = {
          * @private
          * @param {number} anchorX The partial tooltip anchor x position
          * @param {number} anchorY The partial tooltip anchor y position
-         * @param {boolean} isHeader Wether the partial tooltip is a header
+         * @param {boolean} isHeader Whether the partial tooltip is a header
          * @param {number} boxWidth Width of the partial tooltip
          * @return {Highcharts.PositionObject} Returns the partial tooltip x and
          * y position
@@ -1294,11 +1292,11 @@ H.Tooltip.prototype = {
             let y;
             let x;
             if (isHeader) {
-                y = headerTop ? 0 : maxLength;
+                y = headerTop ? 0 : adjustedPlotHeight;
                 x = clamp(
                     anchorX - (boxWidth / 2),
-                    boundaries.left,
-                    boundaries.right - boxWidth
+                    bounds.left,
+                    bounds.right - boxWidth
                 );
             } else {
                 y = anchorY - distributionBoxTop;
@@ -1306,7 +1304,7 @@ H.Tooltip.prototype = {
                     anchorX - boxWidth - distance :
                     anchorX + distance;
                 x = clamp(
-                    x, alignedLeft ? x : boundaries.left, boundaries.right
+                    x, alignedLeft ? x : bounds.left, bounds.right
                 );
             }
 
@@ -1350,13 +1348,13 @@ H.Tooltip.prototype = {
 
                 tt = ren
                     .label(
-                        null as any,
-                        null as any,
-                        null as any,
+                        '',
+                        0,
+                        0,
                         (options[isHeader ? 'headerShape' : 'shape']) ||
                         'callout',
-                        null as any,
-                        null as any,
+                        void 0,
+                        void 0,
                         options.useHTML
                     )
                     .addClass(
@@ -1420,45 +1418,52 @@ H.Tooltip.prototype = {
                 const boxWidth = bBox.width + tt.strokeWidth();
                 if (isHeader) {
                     headerHeight = bBox.height;
-                    maxLength += headerHeight;
+                    adjustedPlotHeight += headerHeight;
                     if (headerTop) {
                         distributionBoxTop -= headerHeight;
                     }
                 }
 
                 const { anchorX, anchorY } = getAnchor(point);
-                const size = bBox.height + 1;
-                const boxPosition = positioner ? positioner.call(
-                    tooltip,
-                    boxWidth,
-                    size,
-                    point as any
-                ) : defaultPositioner(
-                    anchorX,
-                    anchorY,
-                    isHeader,
-                    boxWidth
-                );
 
-                boxes.push({
-                    // 0-align to the top, 1-align to the bottom
-                    align: positioner ? 0 : void 0,
-                    anchorX,
-                    anchorY,
-                    boxWidth,
-                    point: point as any,
-                    rank: pick((boxPosition as any).rank, isHeader ? 1 : 0),
-                    size,
-                    target: boxPosition.y,
-                    tt,
-                    x: boxPosition.x
-                });
+                if (typeof anchorY === 'number') {
+                    const size = bBox.height + 1;
+                    const boxPosition = positioner ? positioner.call(
+                        tooltip,
+                        boxWidth,
+                        size,
+                        point as any
+                    ) : defaultPositioner(
+                        anchorX,
+                        anchorY,
+                        isHeader,
+                        boxWidth
+                    );
+
+                    boxes.push({
+                        // 0-align to the top, 1-align to the bottom
+                        align: positioner ? 0 : void 0,
+                        anchorX,
+                        anchorY,
+                        boxWidth,
+                        point: point as any,
+                        rank: pick((boxPosition as any).rank, isHeader ? 1 : 0),
+                        size,
+                        target: boxPosition.y,
+                        tt,
+                        x: boxPosition.x
+                    });
+                } else {
+                    // Hide tooltips which anchorY is outside the visible plot
+                    // area
+                    tt.isActive = false;
+                }
             }
             return boxes;
         }, []);
 
         // If overflow left then align all labels to the right
-        if (!positioner && boxes.some((box): boolean => box.x < 0)) {
+        if (!positioner && boxes.some((box): boolean => box.x < bounds.left)) {
             boxes = boxes.map((box): Highcharts.Dictionary<any> => {
                 const { x, y } = defaultPositioner(
                     box.anchorX,
@@ -1478,7 +1483,7 @@ H.Tooltip.prototype = {
         tooltip.cleanSplit();
 
         // Distribute and put in place
-        H.distribute(boxes as any, maxLength);
+        H.distribute(boxes as any, adjustedPlotHeight);
         boxes.forEach(function (box: Highcharts.Dictionary<any>): void {
             const { anchorX, anchorY, pos, x } = box;
             // Put the label in place

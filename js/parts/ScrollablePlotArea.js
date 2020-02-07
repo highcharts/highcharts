@@ -190,7 +190,9 @@ Chart.prototype.setUpScrolling = function () {
     // On scroll, reset the chart position because it applies to the scrolled
     // container
     addEvent(this.scrollingContainer, 'scroll', function () {
-        delete _this.pointer.chartPosition;
+        if (_this.pointer) {
+            delete _this.pointer.chartPosition;
+        }
     });
     this.innerContainer = H.createElement('div', {
         'className': 'highcharts-inner-container'
