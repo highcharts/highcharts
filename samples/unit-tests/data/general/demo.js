@@ -199,7 +199,8 @@ QUnit.test("Data module - empty point should be parsed to null (#12566).", funct
 
     const table = document.createElement('table');
     document.body.appendChild(table);
-    table.innerHTML = `<table id="secondTable">
+    table.id = 'secondTable';
+    table.innerHTML = `
         <thead>
             <tr>
                 <th></th>
@@ -231,8 +232,7 @@ QUnit.test("Data module - empty point should be parsed to null (#12566).", funct
                 <td>-3,12</td>
                 <td>-2,9</td>
             </tr>
-        </tbody>
-    </table>`;
+        </tbody>`;
 
     const chart = Highcharts.chart('container', {
         chart: {
