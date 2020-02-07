@@ -157,7 +157,7 @@ class FullscreenController {
      *
      * @since       next
      *
-     * @function Highcharts.FullscreenController#toggleFullscreen
+     * @function    Highcharts.FullscreenController#closeFullscreen
      * @return      {void}
      * @requires    modules/full-screen
      */
