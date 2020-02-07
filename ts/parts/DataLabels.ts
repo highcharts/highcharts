@@ -248,6 +248,7 @@ const {
     clamp,
     defined,
     extend,
+    format,
     isArray,
     merge,
     objectEach,
@@ -259,8 +260,7 @@ const {
 
 import './Series.js';
 
-var format = H.format,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 

@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, format = U.format, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -375,7 +375,7 @@ function addFormattedValue(proceed) {
          */
         yAxisOptions.tooltipValueFormat, yAxisOptions.labels.format);
         if (labelFormat) {
-            formattedValue = H.format(labelFormat, extend(this, { value: this.y }), chart);
+            formattedValue = format(labelFormat, extend(this, { value: this.y }), chart);
         }
         else if (yAxis.isDatetimeAxis) {
             formattedValue = chart.time.dateFormat(chart.time.resolveDTLFormat(yAxisOptions.dateTimeLabelFormats[yAxis.tickPositions.info.unitName]).main, this.y);

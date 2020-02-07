@@ -361,6 +361,7 @@ const {
     defined,
     erase,
     extend,
+    format,
     getNestedProperty,
     isArray,
     isNumber,
@@ -372,7 +373,6 @@ const {
 
 var H = Highcharts,
     fireEvent = H.fireEvent,
-    format = H.format,
     uniqueKey = H.uniqueKey;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

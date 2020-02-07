@@ -67,6 +67,7 @@ const {
     clamp,
     defined,
     extend,
+    format,
     isNumber,
     isString,
     merge,
@@ -92,7 +93,6 @@ import './RangeSelector.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    format = H.format,
     Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,

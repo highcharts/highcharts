@@ -214,6 +214,7 @@ const {
     defined,
     discardElement,
     fireEvent,
+    format,
     isNumber,
     merge,
     pick,
@@ -704,7 +705,7 @@ Highcharts.Legend.prototype = {
 
         (item.legendItem as any).attr({
             text: options.labelFormat ?
-                H.format(options.labelFormat, item, this.chart) :
+                format(options.labelFormat, item, this.chart) :
                 (options.labelFormatter as any).call(item)
         });
     },

@@ -151,6 +151,7 @@ const {
     addEvent,
     attr,
     extend,
+    format,
     fireEvent,
     isArray,
     isFunction,
@@ -815,7 +816,7 @@ extend(H.NavigationBindings.prototype, {
                     // Leaf:
                     if (key === 'format') {
                         parent[key] = [
-                            H.format(
+                            format(
                                 option,
                                 annotation.labels[0].points[0]
                             ).toString(),

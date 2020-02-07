@@ -701,6 +701,7 @@ const {
     error,
     extend,
     fireEvent,
+    format,
     isArray,
     isFunction,
     isNumber,
@@ -718,7 +719,6 @@ import './Options.js';
 
 var defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad,
-    format = H.format,
     getMagnitude = H.getMagnitude,
     normalizeTickInterval = H.normalizeTickInterval;
 

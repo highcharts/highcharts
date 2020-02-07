@@ -2058,7 +2058,7 @@ H.formatSingle = function (
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
+const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
@@ -3521,6 +3521,7 @@ const utilitiesModule = {
     extend,
     extendClass,
     fireEvent,
+    format,
     getNestedProperty,
     isArray,
     isClass,

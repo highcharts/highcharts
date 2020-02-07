@@ -36,10 +36,10 @@ import H from '../parts/Globals.js';
 * @type {number}
 */
 import U from '../parts/Utilities.js';
-var error = U.error, extend = U.extend, merge = U.merge, wrap = U.wrap;
+var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-var Chart = H.Chart, format = H.format, win = H.win;
+var Chart = H.Chart, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Test for point in polygon. Polygon defined as array of [x,y] points.

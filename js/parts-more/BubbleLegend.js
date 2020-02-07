@@ -571,7 +571,7 @@ H.BubbleLegend.prototype = {
     formatLabel: function (range) {
         var options = this.options, formatter = options.labels.formatter, format = options.labels.format;
         var numberFormatter = this.chart.numberFormatter;
-        return format ? H.format(format, range) :
+        return format ? U.format(format, range) :
             formatter ? formatter.call(range) :
                 numberFormatter(range.value, 1);
     },
