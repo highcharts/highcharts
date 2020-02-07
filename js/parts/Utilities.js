@@ -1422,7 +1422,7 @@ var format = H.format = function (str, ctx, chart) {
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-H.getMagnitude = function (num) {
+var getMagnitude = H.getMagnitude = function (num) {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 /**
@@ -2577,6 +2577,7 @@ var utilitiesModule = {
     extendClass: extendClass,
     fireEvent: fireEvent,
     format: format,
+    getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
     isArray: isArray,
     isClass: isClass,

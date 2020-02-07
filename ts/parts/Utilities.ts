@@ -2110,7 +2110,7 @@ const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Ch
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-H.getMagnitude = function (num: number): number {
+const getMagnitude = H.getMagnitude = function (num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 
@@ -3522,6 +3522,7 @@ const utilitiesModule = {
     extendClass,
     fireEvent,
     format,
+    getMagnitude,
     getNestedProperty,
     isArray,
     isClass,
