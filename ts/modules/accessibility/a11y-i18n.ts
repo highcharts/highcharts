@@ -15,7 +15,10 @@
 
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    format,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -167,7 +170,7 @@ function formatExtendedStatement(
         return typeof val !== 'undefined' ? val : '';
     }
 
-    // Standard substitution, delegate to H.format or similar
+    // Standard substitution, delegate to format or similar
     return '{' + statement + '}';
 }
 
@@ -240,7 +243,7 @@ function formatExtendedStatement(
  *
  * @param {Highcharts.Chart} chart
  *        A `Chart` instance with a time object and numberFormatter, passed on
- *        to H.format().
+ *        to format().
  *
  * @return {string}
  *         The formatted string.
@@ -300,16 +303,16 @@ H.i18nFormat = function (
 
     // Perform the formatting. The formatArrayStatement function returns the
     // statement in brackets if it is not an array statement, which means it
-    // gets picked up by H.format below.
+    // gets picked up by format below.
     tokens.forEach(function (token: Highcharts.A11yFormatTokenObject): void {
         if (token.type === 'statement') {
             token.value = formatExtendedStatement(token.value, context);
         }
     });
 
-    // Join string back together and pass to H.format to pick up non-array
+    // Join string back together and pass to format to pick up non-array
     // statements.
-    return H.format(tokens.reduce(function (
+    return format(tokens.reduce(function (
         acc: string,
         cur: Highcharts.A11yFormatTokenObject
     ): string {

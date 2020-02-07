@@ -76,9 +76,9 @@ import H from './Globals.js';
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
-var format = H.format, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size

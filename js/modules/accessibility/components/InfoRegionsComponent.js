@@ -11,9 +11,9 @@
  * */
 'use strict';
 import H from '../../../parts/Globals.js';
-var doc = H.win.document, format = H.format;
+var doc = H.win.document;
 import U from '../../../parts/Utilities.js';
-var extend = U.extend, pick = U.pick;
+var extend = U.extend, format = U.format, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import ChartUtilities from '../utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle, getAxisDescription = ChartUtilities.getAxisDescription;

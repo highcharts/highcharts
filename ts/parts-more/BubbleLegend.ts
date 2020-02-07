@@ -908,7 +908,7 @@ H.BubbleLegend.prototype = {
             format = (options.labels as any).format;
         const { numberFormatter } = this.chart;
 
-        return format ? H.format(format, range) :
+        return format ? U.format(format, range) :
             formatter ? formatter.call(range) :
                 numberFormatter(range.value, 1);
     },

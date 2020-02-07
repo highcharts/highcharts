@@ -63,6 +63,7 @@ const {
     defined,
     erase,
     extend,
+    format,
     merge,
     pick,
     splat,
@@ -557,7 +558,7 @@ function addFormattedValue(
         );
 
         if (labelFormat) {
-            formattedValue = H.format(
+            formattedValue = format(
                 labelFormat,
                 extend(
                     this,

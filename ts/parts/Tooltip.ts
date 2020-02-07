@@ -19,6 +19,7 @@ const {
     defined,
     discardElement,
     extend,
+    format,
     isNumber,
     isString,
     merge,
@@ -258,8 +259,7 @@ declare global {
 
 ''; // separates doclets above from variables below
 
-var doc = H.doc,
-    format = H.format;
+var doc = H.doc;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

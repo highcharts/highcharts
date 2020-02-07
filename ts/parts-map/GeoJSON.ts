@@ -101,6 +101,7 @@ import U from '../parts/Utilities.js';
 const {
     error,
     extend,
+    format,
     merge,
     wrap
 } = U;
@@ -109,7 +110,6 @@ import '../parts/Options.js';
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    format = H.format,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

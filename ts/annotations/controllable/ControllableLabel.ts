@@ -77,6 +77,7 @@ declare global
 import U from './../../parts/Utilities.js';
 const {
     extend,
+    format,
     isNumber,
     merge,
     pick
@@ -362,7 +363,7 @@ merge(
 
             label.attr({
                 text: text ?
-                    H.format(
+                    format(
                         text,
                         point.getLabelConfig(),
                         this.annotation.chart

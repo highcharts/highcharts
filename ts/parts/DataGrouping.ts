@@ -156,6 +156,7 @@ const {
     defined,
     error,
     extend,
+    format,
     isNumber,
     merge,
     pick
@@ -167,7 +168,6 @@ import './Tooltip.js';
 
 var Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
-    format = H.format,
     Point = H.Point,
     Series = H.Series,
     Tooltip = H.Tooltip;

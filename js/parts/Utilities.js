@@ -1383,7 +1383,7 @@ H.formatSingle = function (format, val, chart) {
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str, ctx, chart) {
+var format = H.format = function (str, ctx, chart) {
     var splitter = '{', isInside = false, segment, valueAndFormat, ret = [], val, index;
     while (str) {
         index = str.indexOf(splitter);
@@ -2576,6 +2576,7 @@ var utilitiesModule = {
     extend: extend,
     extendClass: extendClass,
     fireEvent: fireEvent,
+    format: format,
     getNestedProperty: getNestedProperty,
     isArray: isArray,
     isClass: isClass,
