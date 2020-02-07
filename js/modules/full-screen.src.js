@@ -36,7 +36,6 @@ var FullscreenController = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /** @private */
     function FullscreenController(chart) {
         /**
          * Chart managed by the fullscreen controller.
@@ -44,10 +43,7 @@ var FullscreenController = /** @class */ (function () {
          * @type {Highcharts.Chart}
          */
         this.chart = chart;
-        // IE8 compatibility
-        var HTMLelement = typeof HTMLElement === 'undefined' ?
-            Element : HTMLElement;
-        if (!(chart.container.parentNode instanceof HTMLelement)) {
+        if (!(chart.container.parentNode instanceof Element)) {
             return;
         }
         var container = chart.container.parentNode;
