@@ -60,10 +60,12 @@ function getAnnotationLabelDescription(label) {
         var seriesName = ((_c = point) === null || _c === void 0 ? void 0 : _c.series.name) || '';
         var shouldUseSeriesName = seriesName && hasMultipleSeries;
         return (shouldUseSeriesName ? seriesName + ', ' : '') +
-            (valDesc ? 'data point ' + valDesc : '');
+            'data point ' + valDesc;
     };
-    var pointValueDescriptions = points.map(getValueDesc)
-        .filter(function (desc) { return !!desc; });
+    var pointValueDescriptions = points
+        .filter(function (p) { return !!p.graphic; }) // Filter out mock points
+        .map(getValueDesc)
+        .filter(function (desc) { return !!desc; }); // Filter out points we can't describe
     var numPoints = pointValueDescriptions.length;
     var pointsSelector = numPoints > 1 ? 'MultiplePoints' : numPoints ? 'SinglePoint' : 'NoPoints';
     var langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;

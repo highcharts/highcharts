@@ -72,10 +72,12 @@ function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): s
         const seriesName = point?.series.name || '';
         const shouldUseSeriesName = seriesName && hasMultipleSeries;
         return (shouldUseSeriesName ? seriesName + ', ' : '') +
-            (valDesc ? 'data point ' + valDesc : '');
+           'data point ' + valDesc;
     };
-    const pointValueDescriptions = points.map(getValueDesc)
-        .filter((desc: string): boolean => !!desc);
+    const pointValueDescriptions = points
+        .filter((p): boolean => !!p.graphic) // Filter out mock points
+        .map(getValueDesc)
+        .filter((desc: string): boolean => !!desc); // Filter out points we can't describe
     const numPoints = pointValueDescriptions.length;
     const pointsSelector = numPoints > 1 ? 'MultiplePoints' : numPoints ? 'SinglePoint' : 'NoPoints';
     const langFormatStr = 'accessibility.screenReaderSection.annotations.description' + pointsSelector;
