@@ -4020,8 +4020,6 @@ H.defaultOptions = {
             /** @internal */
             fontSize: '12px',
             /** @internal */
-            pointerEvents: 'none',
-            /** @internal */
             whiteSpace: 'nowrap'
         }
     },

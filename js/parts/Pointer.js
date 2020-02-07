@@ -726,30 +726,26 @@ var Pointer = /** @class */ (function () {
      * tooltip.
      *
      * @private
-     * @param {Highcharts.PointerEventObject} e
-     * Pointer event to check agains the active tooltip.
+     * @param {Highcharts.PointerCoordinatesObject} pointerPosition
+     * Pointers position to check agains the active tooltip.
      *
      * @return {boolean}
      * True, if the pointer event occurs inside of the hovered boundings.
      */
-    Pointer.prototype.isStickyTooltip = function (e) {
+    Pointer.prototype.isStickyTooltip = function (pointerPosition) {
         var chart = this.chart;
         var chartPosition = this.chartPosition;
         var point = chart.hoverPoint;
         var tooltip = chart.tooltip;
-        var eventPosition = {
-            x: e.chartX,
-            y: e.chartY
-        };
         var isSticky = false;
-        if (chartPosition &&
+        if (tooltip &&
+            tooltip.options.stickOnHover &&
+            tooltip.label &&
+            !tooltip.isHidden &&
+            !tooltip.followPointer &&
             point &&
             point.graphic &&
-            tooltip &&
-            !tooltip.isHidden &&
-            !tooltip.options.followPointer &&
-            tooltip.options.stickOnHover &&
-            tooltip.label) {
+            chartPosition) {
             var labelBBox = tooltip.label.getBBox();
             var labelOffset = Highcharts.offset(tooltip.label.element);
             var pointBBox = point.graphic.getBBox();
@@ -758,12 +754,23 @@ var Pointer = /** @class */ (function () {
             labelBBox.y = labelOffset.top - chartPosition.top;
             pointBBox.x = pointOffset.left - chartPosition.left;
             pointBBox.y = pointOffset.top - chartPosition.top;
-            var x1 = Math.min(pointBBox.x, labelBBox.x);
-            var y1 = Math.min(pointBBox.y, labelBBox.y);
-            var x2 = Math.max((pointBBox.x + pointBBox.width), (labelBBox.x + labelBBox.width));
-            var y2 = Math.max((pointBBox.y + pointBBox.height), (labelBBox.y + labelBBox.height));
-            isSticky = ((eventPosition.x >= x1 && eventPosition.x <= x2) &&
-                (eventPosition.y >= y1 && eventPosition.y <= y2));
+            var x1 = void 0, y1 = void 0, x2 = void 0, y2 = void 0;
+            if (typeof point.shapeArgs !== 'undefined') {
+                // pie points have to be ignored
+                x1 = labelBBox.x;
+                y1 = labelBBox.y;
+                x2 = labelBBox.x + labelBBox.width;
+                y2 = labelBBox.y + labelBBox.height;
+            }
+            else {
+                // combine tooltip and point shape
+                x1 = Math.min(pointBBox.x, labelBBox.x);
+                y1 = Math.min(pointBBox.y, labelBBox.y);
+                x2 = Math.max((pointBBox.x + pointBBox.width), (labelBBox.x + labelBBox.width));
+                y2 = Math.max((pointBBox.y + pointBBox.height), (labelBBox.y + labelBBox.height));
+            }
+            isSticky = ((pointerPosition.chartX >= x1 && pointerPosition.chartX <= x2) &&
+                (pointerPosition.chartY >= y1 && pointerPosition.chartY <= y2));
         }
         return isSticky;
     };
@@ -875,7 +882,9 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.onContainerMouseLeave = function (e) {
         var chart = charts[H.hoverChartIndex];
         // #4886, MS Touch end fires mouseleave but with no related target
-        if (chart && (e.relatedTarget || e.toElement)) {
+        if ((e.relatedTarget || e.toElement) &&
+            chart &&
+            chart.pointer.isStickyTooltip(e)) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
@@ -971,9 +980,9 @@ var Pointer = /** @class */ (function () {
         e = this.normalize(e, chartPosition);
         // If we're outside, hide the tooltip
         if (chartPosition &&
-            !this.isStickyTooltip(e) &&
+            !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) &&
             !this.inClass(e.target, 'highcharts-tracker') &&
-            !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+            !this.isStickyTooltip(e)) {
             this.reset();
         }
     };

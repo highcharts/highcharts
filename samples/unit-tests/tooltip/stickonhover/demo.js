@@ -7,7 +7,6 @@ QUnit.test('Do not stick on hover tooltip following pointer (#12885)', function 
             data: [3, 2, 1]
         }],
         tooltip: {
-            followPointer: true,
             stickOnHover: true
         }
     }, function (chart) {

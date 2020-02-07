@@ -587,7 +587,8 @@ H.Tooltip.prototype = {
 
             this.label
                 .attr({
-                    zIndex: 8
+                    zIndex: 8,
+                    pointerEvents: (options.style?.pointerEvents || options.stickOnHover ? 'auto' : 'none')
                 })
                 .add();
         }
