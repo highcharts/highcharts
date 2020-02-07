@@ -95,7 +95,10 @@ class FullscreenController {
          */
         this.chart = chart;
 
-        if (!(chart.container.parentNode instanceof HTMLElement)) {
+        const elementPrototype = typeof HTMLElement === 'undefined' ?
+            Element : HTMLElement;
+
+        if (!(chart.container.parentNode instanceof elementPrototype)) {
             return;
         }
 
@@ -224,7 +227,7 @@ class FullscreenController {
                 ]();
 
                 if (promise) {
-                    promise.catch(function (): void {
+                    promise['catch'](function (): void { // eslint-disable-line dot-notation
                         alert( // eslint-disable-line no-alert
                             'Full screen is not supported inside a frame.'
                         );
