@@ -280,8 +280,10 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             },
             // Focus export menu button
             init: function () {
-                var exportBtn = this.exportButtonProxy, exportGroup = chart.exportingGroup;
-                chart.setFocusToElement(exportGroup, exportBtn.element);
+                var exportBtn = component.exportButtonProxy, exportGroup = chart.exportingGroup;
+                if (exportGroup && exportBtn) {
+                    chart.setFocusToElement(exportGroup, exportBtn);
+                }
             },
             // Hide the menu
             terminate: function () {
