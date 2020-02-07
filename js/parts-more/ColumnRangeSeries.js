@@ -98,10 +98,8 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
             }
             if (isRadial) {
                 start = point.barX + startAngleRad;
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: series.polarArc(y + height, y, start, start + point.pointWidth)
-                };
+                point.shapeType = 'arc';
+                point.shapeArgs = series.polarArc(y + height, y, start, start + point.pointWidth);
             }
             else {
                 shapeArgs.height = height;

@@ -304,7 +304,8 @@ extend(Pane.prototype, {
 
         /**
          * The size of the pane, either as a number defining pixels, or a
-         * percentage defining a percentage of the plot are.
+         * percentage defining a percentage of the available plot area (the
+         * smallest of the plot height or plot width).
          *
          * @sample {highcharts} highcharts/demo/gauge-vu-meter/
          *         Smaller size
@@ -315,9 +316,8 @@ extend(Pane.prototype, {
         size: '85%',
 
         /**
-         * The size of pane's inner area (area in the center that is not
-         * occupied), either as a number defining pixels, or a
-         * percentage defining a percentage of the plot area.
+         * The inner size of the pane, either as a number defining pixels, or a
+         * percentage defining a percentage of the pane's size.
          *
          * @sample {highcharts} highcharts/series-polar/column-inverted-inner
          *         The inner size set to 20%
