@@ -94,10 +94,10 @@ import Highcharts from './Globals.js';
 * @type {Array<Highcharts.SelectDataObject>}
 */
 import U from './Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
 import './Tooltip.js';
 import './Color.js';
-var H = Highcharts, charts = H.charts, color = H.color, css = H.css, find = H.find, noop = H.noop, Tooltip = H.Tooltip;
+var H = Highcharts, charts = H.charts, color = H.color, find = H.find, noop = H.noop, Tooltip = H.Tooltip;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one

@@ -222,6 +222,7 @@ declare global {
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
+    css,
     defined,
     pick
 } = U;
@@ -1050,10 +1051,10 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 !this.series.chart.styledMode
             ) {
                 addEvent(this, 'mouseOver', function (): void {
-                    H.css(this.series.chart.container, { cursor: 'move' });
+                    css(this.series.chart.container, { cursor: 'move' });
                 });
                 addEvent(this, 'mouseOut', function (): void {
-                    H.css(
+                    css(
                         this.series.chart.container, { cursor: 'default' }
                     );
                 });

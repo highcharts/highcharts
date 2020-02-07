@@ -47,7 +47,7 @@ import H from '../../parts/Globals.js';
 * @since 7.0.0
 */
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, pick = U.pick;
+var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick;
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
@@ -715,10 +715,10 @@ seriesType('networkgraph', 'line',
         if (this.series.options.draggable &&
             !this.series.chart.styledMode) {
             addEvent(this, 'mouseOver', function () {
-                H.css(this.series.chart.container, { cursor: 'move' });
+                css(this.series.chart.container, { cursor: 'move' });
             });
             addEvent(this, 'mouseOut', function () {
-                H.css(this.series.chart.container, { cursor: 'default' });
+                css(this.series.chart.container, { cursor: 'default' });
             });
         }
         return this;

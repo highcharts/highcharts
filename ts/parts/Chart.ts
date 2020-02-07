@@ -296,6 +296,8 @@ const {
     addEvent,
     animObject,
     attr,
+    createElement,
+    css,
     defined,
     discardElement,
     erase,
@@ -327,10 +329,8 @@ import './Pointer.js';
 var animate = H.animate,
     doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
-    createElement = H.createElement,
     defaultOptions = H.defaultOptions,
     charts = H.charts,
-    css = H.css,
     find = H.find,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
@@ -1510,7 +1510,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         tempStyle.height = 0;
                     }
 
-                    H.css(node, tempStyle);
+                    css(node, tempStyle);
 
                     // If it still doesn't have an offset width after setting
                     // display to block, it probably has an !important priority
@@ -1528,7 +1528,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else {
             while (node && node.style) {
                 if ((node as any).hcOrigStyle) {
-                    H.css(node, (node as any).hcOrigStyle);
+                    css(node, (node as any).hcOrigStyle);
                     delete (node as any).hcOrigStyle;
                 }
                 if ((node as any).hcOrigDetached) {

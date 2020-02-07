@@ -1778,7 +1778,7 @@ H.pick = pick;
  *
  * @return {void}
  */
-H.css = function (
+const css = H.css = function css(
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
     styles: Highcharts.CSSObject
 ): void {
@@ -1814,15 +1814,14 @@ H.css = function (
  * @return {Highcharts.HTMLDOMElement}
  *         The created DOM element.
  */
-H.createElement = function (
+const createElement = H.createElement = function createElement(
     tag: string,
     attribs?: Highcharts.HTMLAttributes,
     styles?: Highcharts.CSSObject,
     parent?: Highcharts.HTMLDOMElement,
     nopad?: boolean
 ): Highcharts.HTMLDOMElement {
-    var el = doc.createElement(tag),
-        css = H.css;
+    var el = doc.createElement(tag);
 
     if (attribs) {
         extend(el, attribs);
@@ -2351,7 +2350,7 @@ const discardElement = H.discardElement = function discardElement(element: Highc
 
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
-        garbageBin = H.createElement('div');
+        garbageBin = createElement('div');
     }
 
     // move the node and empty bin
@@ -3512,6 +3511,8 @@ const utilitiesModule = {
     clamp,
     clearTimeout: internalClearTimeout,
     correctFloat,
+    createElement,
+    css,
     defined,
     destroyObjectProperties,
     discardElement,

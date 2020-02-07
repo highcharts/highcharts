@@ -122,6 +122,8 @@ import Time from './Time.js';
 import U from './Utilities.js';
 const {
     addEvent,
+    createElement,
+    css,
     defined,
     erase,
     error,
@@ -147,8 +149,6 @@ import './Series.js';
 var animate = H.animate,
     Axis = H.Axis,
     Chart = H.Chart,
-    createElement = H.createElement,
-    css = H.css,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;

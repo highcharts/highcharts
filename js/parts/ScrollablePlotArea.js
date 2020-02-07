@@ -19,7 +19,7 @@ WIP on vertical scrollable plot area (#9378). To do:
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, pick = U.pick;
+var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick;
 var Chart = H.Chart;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
@@ -184,7 +184,7 @@ Chart.prototype.setUpScrolling = function () {
         attribs.overflowY = 'auto';
     }
     // Add the necessary divs to provide scrolling
-    this.scrollingContainer = H.createElement('div', {
+    this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
     }, attribs, this.renderTo);
     // On scroll, reset the chart position because it applies to the scrolled
@@ -194,7 +194,7 @@ Chart.prototype.setUpScrolling = function () {
             delete _this.pointer.chartPosition;
         }
     });
-    this.innerContainer = H.createElement('div', {
+    this.innerContainer = createElement('div', {
         'className': 'highcharts-inner-container'
     }, null, this.scrollingContainer);
     // Now move the container inside
@@ -253,7 +253,7 @@ Chart.prototype.applyFixed = function () {
     var fixedRenderer, scrollableWidth, scrollableHeight, firstTime = !this.fixedDiv, scrollableOptions = this.options.chart.scrollablePlotArea;
     // First render
     if (firstTime) {
-        this.fixedDiv = H.createElement('div', {
+        this.fixedDiv = createElement('div', {
             className: 'highcharts-fixed'
         }, {
             position: 'absolute',
