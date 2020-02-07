@@ -744,7 +744,7 @@ radialAxisMixin = {
             isCrosshair = options.isCrosshair,
             paneInnerR = center[3] / 2,
             innerRatio,
-            pyth,
+            distance,
             a,
             b,
             otherAxis: (Highcharts.RadialAxis|undefined),
@@ -764,19 +764,19 @@ radialAxisMixin = {
 
         // Spokes
         if (axis.isCircular) {
-            pyth =
+            distance =
                 Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 
             a = (typeof innerRadius === 'string') ?
-                relativeLength(innerRadius, 1) : (innerRadius / pyth);
+                relativeLength(innerRadius, 1) : (innerRadius / distance);
             b = (typeof outerRadius === 'string') ?
-                relativeLength(outerRadius, 1) : (outerRadius / pyth);
+                relativeLength(outerRadius, 1) : (outerRadius / distance);
 
             // To ensure that gridlines won't be displayed in area
             // defined by innerSize in case of custom radiuses of pane's
             // background
             if (center && paneInnerR) {
-                innerRatio = paneInnerR / pyth;
+                innerRatio = paneInnerR / distance;
                 if (a < innerRatio) {
                     a = innerRatio;
                 }
@@ -804,11 +804,8 @@ radialAxisMixin = {
             // rendering above the center after they supposed to be
             // displayed below the center point
             if (value) {
-                if (value < 0) {
+                if (value < 0 || value > height) {
                     value = 0;
-                } else if (value > height) {
-                    value = isCrosshair ? height :
-                        (axis.reversed ? height : 0);
                 }
             }
 

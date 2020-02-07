@@ -422,7 +422,7 @@ radialAxisMixin = {
         var axis = this, center = axis.center, chart = axis.chart, inverted = chart.inverted, value = options.value, reverse = options.reverse, end = axis.getPosition(value), background = axis.pane.options.background ?
             (axis.pane.options.background[0] ||
                 axis.pane.options.background) :
-            {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, height = axis.height, isCrosshair = options.isCrosshair, paneInnerR = center[3] / 2, innerRatio, pyth, a, b, otherAxis, xy, tickPositions, crossPos, ret;
+            {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, height = axis.height, isCrosshair = options.isCrosshair, paneInnerR = center[3] / 2, innerRatio, distance, a, b, otherAxis, xy, tickPositions, crossPos, ret;
         // Crosshair logic
         if (isCrosshair) {
             // Find crosshair's position and perform destructuring assignment
@@ -433,17 +433,17 @@ radialAxisMixin = {
         }
         // Spokes
         if (axis.isCircular) {
-            pyth =
+            distance =
                 Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
             a = (typeof innerRadius === 'string') ?
-                relativeLength(innerRadius, 1) : (innerRadius / pyth);
+                relativeLength(innerRadius, 1) : (innerRadius / distance);
             b = (typeof outerRadius === 'string') ?
-                relativeLength(outerRadius, 1) : (outerRadius / pyth);
+                relativeLength(outerRadius, 1) : (outerRadius / distance);
             // To ensure that gridlines won't be displayed in area
             // defined by innerSize in case of custom radiuses of pane's
             // background
             if (center && paneInnerR) {
-                innerRatio = paneInnerR / pyth;
+                innerRatio = paneInnerR / distance;
                 if (a < innerRatio) {
                     a = innerRatio;
                 }
@@ -470,12 +470,8 @@ radialAxisMixin = {
             // rendering above the center after they supposed to be
             // displayed below the center point
             if (value) {
-                if (value < 0) {
+                if (value < 0 || value > height) {
                     value = 0;
-                }
-                else if (value > height) {
-                    value = isCrosshair ? height :
-                        (axis.reversed ? height : 0);
                 }
             }
             if (axis.options.gridLineInterpolation === 'circle') {

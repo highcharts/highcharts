@@ -7334,11 +7334,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             categorized,
             graphic = this.cross,
             crossOptions,
-            chart = this.chart,
-            pane = this.pane,
-            center = pane && pane.center,
-            clipCrosshair,
-            clipOptions;
+            chart = this.chart;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -7441,32 +7437,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                             dashstyle: (options as any).dashStyle
                         });
                     }
-                }
-            }
-
-            // Clip crosshair of the circular axis only when the pane's
-            // innerSize is bigger than 0
-            if (this.isCircular && center && center[3] > 0) {
-                clipCrosshair = this.clipCrosshair;
-                clipOptions = {
-                    x: center[0] + chart.plotLeft,
-                    y: center[1] + chart.plotTop,
-                    r: center[2] / 2,
-                    innerR: center[3] / 2
-                };
-
-                // Create or update clip
-                this.clipCrosshair = clipCrosshair ?
-                    clipCrosshair.attr(clipOptions) :
-                    chart.renderer.clipCircle(
-                        clipOptions.x,
-                        clipOptions.y,
-                        clipOptions.r,
-                        clipOptions.innerR
-                    );
-
-                if (this.cross) {
-                    this.cross.clip(this.clipCrosshair);
                 }
             }
 

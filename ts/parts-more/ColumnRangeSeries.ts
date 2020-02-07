@@ -188,15 +188,13 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
             if (isRadial) {
 
                 start = (point.barX as any) + startAngleRad;
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: series.polarArc(
-                        y + height,
-                        y,
-                        start,
-                        start + point.pointWidth
-                    )
-                };
+                point.shapeType = 'arc';
+                point.shapeArgs = series.polarArc(
+                    y + height,
+                    y,
+                    start,
+                    start + point.pointWidth
+                );
             } else {
 
                 shapeArgs.height = height;

@@ -308,7 +308,7 @@ var polarAnimate = function (proceed, init) {
             if (chart.renderer.isSVG) {
                 animation = H.animObject(animation);
                 // A different animation needed for column like series
-                if (series instanceof seriesTypes.column) {
+                if (series.is('column')) {
                     if (!init) {
                         paneInnerR = center[3] / 2;
                         series.points.forEach(function (point) {
@@ -379,14 +379,6 @@ if (seriesTypes.column) {
     colProto = seriesTypes.column.prototype;
     colProto.polarArc = function (low, high, start, end) {
         var center = this.xAxis.center, len = this.yAxis.len, paneInnerR = center[3] / 2, r = len - high + paneInnerR, innerR = len - pick(low, len) + paneInnerR;
-        // Render columnrange series the old way, enhance in the future
-        if (this instanceof seriesTypes.columnrange) {
-            return this.chart.renderer.symbols.arc(center[0], center[1], len - high, null, {
-                start: start,
-                end: end,
-                innerR: len - pick(low, len)
-            });
-        }
         // Prevent columns from shooting through the pane's center
         if (this.yAxis.reversed) {
             if (r < 0) {
@@ -693,7 +685,7 @@ H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
     }).add(this.defs);
     wrapper = innerR ?
         this.arc(x, y, r, innerR, 0, 2 * Math.PI).add(clipPath) :
-        wrapper = this.circle(x, y, r).add(clipPath);
+        this.circle(x, y, r).add(clipPath);
     wrapper.id = id;
     wrapper.clipPath = clipPath;
     return wrapper;
