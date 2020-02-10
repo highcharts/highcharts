@@ -26,15 +26,19 @@ import AnnotationsA11y from '../AnnotationsA11y.js';
 const getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 
 import HTMLUtilities from '../../utils/htmlUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
-    escapeStringForHTML = HTMLUtilities.escapeStringForHTML,
-    reverseChildNodes = HTMLUtilities.reverseChildNodes;
+const {
+    escapeStringForHTML,
+    reverseChildNodes,
+    stripHTMLTagsFromString: stripHTMLTags
+} = HTMLUtilities;
 
 import ChartUtilities from '../../utils/chartUtilities.js';
-var getAxisDescription = ChartUtilities.getAxisDescription,
-    getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement,
-    getSeriesA11yElement = ChartUtilities.getSeriesA11yElement,
-    unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+const {
+    getAxisDescription,
+    getSeriesFirstPointElement,
+    getSeriesA11yElement,
+    unhideChartElementFromAT
+} = ChartUtilities;
 
 /**
  * Internal types.

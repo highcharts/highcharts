@@ -17,7 +17,7 @@ var isNumber = U.isNumber, pick = U.pick, defined = U.defined;
 import AnnotationsA11y from '../AnnotationsA11y.js';
 var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 import HTMLUtilities from '../../utils/htmlUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString, escapeStringForHTML = HTMLUtilities.escapeStringForHTML, reverseChildNodes = HTMLUtilities.reverseChildNodes;
+var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import ChartUtilities from '../../utils/chartUtilities.js';
 var getAxisDescription = ChartUtilities.getAxisDescription, getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement, getSeriesA11yElement = ChartUtilities.getSeriesA11yElement, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 /* eslint-disable valid-jsdoc */
