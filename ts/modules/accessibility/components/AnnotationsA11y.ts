@@ -16,6 +16,12 @@ import '../../../parts/Utilities.js';
 import H from '../../../parts/Globals.js';
 const inArray = H.inArray;
 
+import HTMLUtilities from '../utils/htmlUtilities.js';
+const {
+    escapeStringForHTML,
+    stripHTMLTagsFromString
+} = HTMLUtilities;
+
 
 /**
  * Get list of all annotation labels in the chart.
@@ -100,7 +106,11 @@ function getAnnotationListItems(chart: Highcharts.AnnotationChart): string[] {
     const labels = getChartAnnotationLabels(chart);
 
     return labels.map((label): string => {
-        const desc = getAnnotationLabelDescription(label);
+        const desc = escapeStringForHTML(
+            stripHTMLTagsFromString(
+                getAnnotationLabelDescription(label)
+            )
+        );
         return desc ? `<li>${desc}</li>` : '';
     });
 }

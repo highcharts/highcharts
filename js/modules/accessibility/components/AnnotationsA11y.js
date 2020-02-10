@@ -13,6 +13,8 @@
 import '../../../parts/Utilities.js';
 import H from '../../../parts/Globals.js';
 var inArray = H.inArray;
+import HTMLUtilities from '../utils/htmlUtilities.js';
+var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString;
 /**
  * Get list of all annotation labels in the chart.
  *
@@ -84,7 +86,7 @@ function getAnnotationLabelDescription(label) {
 function getAnnotationListItems(chart) {
     var labels = getChartAnnotationLabels(chart);
     return labels.map(function (label) {
-        var desc = getAnnotationLabelDescription(label);
+        var desc = escapeStringForHTML(stripHTMLTagsFromString(getAnnotationLabelDescription(label)));
         return desc ? "<li>" + desc + "</li>" : '';
     });
 }
