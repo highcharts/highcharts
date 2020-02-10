@@ -108,6 +108,9 @@ Accessibility.prototype = {
      * @private
      */
     getComponentOrder: function () {
+        if (!this.components) {
+            return []; // For zombie accessibility object on old browsers
+        }
         if (!this.components.series) {
             return Object.keys(this.components);
         }
