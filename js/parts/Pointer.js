@@ -719,9 +719,9 @@ var Pointer = /** @class */ (function () {
         this.setDOMEvents();
     };
     /**
-     * Returns true, if the `stickOnHover` option is active and a given pointer
-     * event occurs inside the combined boundings of the hovered point and
-     * tooltip.
+     * Returns true, if the `stickOnContact` option is active and a given
+     * pointer event occurs inside the combined boundings of the hovered point
+     * and tooltip.
      *
      * @private
      * @param {Highcharts.PointerCoordinatesObject} pointerPosition
@@ -737,7 +737,7 @@ var Pointer = /** @class */ (function () {
         var tooltip = chart.tooltip;
         var isSticky = false;
         if (tooltip &&
-            tooltip.options.stickOnHover &&
+            tooltip.options.stickOnContact &&
             tooltip.label &&
             !tooltip.isHidden &&
             !tooltip.followPointer &&

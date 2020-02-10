@@ -235,7 +235,7 @@ declare global {
         ): number;
         function isArray(obj: unknown): obj is Array<unknown>;
         function isClass(obj: (object|undefined)): obj is Class;
-        function isDOMElement(obj: unknown): obj is HTMLElement;
+        function isDOMElement(obj: unknown): obj is HTMLDOMElement;
         function isFunction(obj: unknown): obj is Function;
         function isNumber(n: unknown): n is number;
         function isObject<T1, T2 extends boolean = false>(
@@ -1484,7 +1484,7 @@ const isObject = H.isObject = function isObject<T1, T2 extends boolean = false>(
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is Highcharts.HTMLElement {
+const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is Highcharts.HTMLDOMElement {
     return isObject(obj) && typeof (obj as any).nodeType === 'number';
 };
 

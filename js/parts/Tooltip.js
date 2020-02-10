@@ -115,130 +115,44 @@ var doc = H.doc;
  *
  * @class
  * @name Highcharts.Tooltip
- *
- * @param {Highcharts.Chart} chart
- *        The chart instance.
- *
- * @param {Highcharts.TooltipOptions} options
- *        Tooltip options.
  */
-H.Tooltip = function () {
-    this.init.apply(this, arguments);
-};
-H.Tooltip.prototype = {
+var Tooltip = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
     /**
-     * @private
-     * @function Highcharts.Tooltip#init
+     * Tooltip of a chart.
      *
      * @param {Highcharts.Chart} chart
      *        The chart instance.
      *
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
-     *
-     * @return {void}
      */
-    init: function (chart, options) {
-        var _a;
-        /**
-         * Chart of the tooltip.
+    function Tooltip(chart, options) {
+        /* *
          *
-         * @readonly
-         * @name Highcharts.Tooltip#chart
-         * @type {Highcharts.Chart}
-         */
-        this.chart = chart;
-        /**
-         * Used tooltip options.
+         *  Properties
          *
-         * @readonly
-         * @name Highcharts.Tooltip#options
-         * @type {Highcharts.TooltipOptions}
-         */
-        this.options = options;
-        /**
-         * List of crosshairs.
-         *
-         * @private
-         * @readonly
-         * @name Highcharts.Tooltip#crosshairs
-         * @type {Array<*>}
-         */
+         * */
+        this.chart = void 0;
         this.crosshairs = [];
-        /**
-         * Current values of x and y when animating.
-         *
-         * @private
-         * @readonly
-         * @name Highcharts.Tooltip#now
-         * @type {Highcharts.PositionObject}
-         */
-        this.now = { x: 0, y: 0 };
-        /**
-         * Tooltips are initially hidden.
-         *
-         * @private
-         * @readonly
-         * @name Highcharts.Tooltip#isHidden
-         * @type {boolean}
-         */
+        this.distance = 0;
         this.isHidden = true;
-        /**
-         * True, if the tooltip is split into one label per series, with the
-         * header close to the axis.
-         *
-         * @readonly
-         * @name Highcharts.Tooltip#split
-         * @type {boolean|undefined}
-         */
-        this.split = options.split && !chart.inverted && !chart.polar;
-        /**
-         * When the tooltip is shared, the entire plot area will capture mouse
-         * movement or touch events.
-         *
-         * @readonly
-         * @name Highcharts.Tooltip#shared
-         * @type {boolean|undefined}
-         */
-        this.shared = options.shared || this.split;
-        /**
-         * Whether to allow the tooltip to render outside the chart's SVG
-         * element box. By default (false), the tooltip is rendered within the
-         * chart's SVG element, which results in the tooltip being aligned
-         * inside the chart area.
-         *
-         * @readonly
-         * @name Highcharts.Tooltip#outside
-         * @type {boolean}
-         */
-        this.outside = pick(options.outside, Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY));
-        this.pointerEvents = ((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || (options.stickOnHover ? 'auto' : 'none');
-    },
-    /**
-     * Destroy the single tooltips in a split tooltip.
-     * If the tooltip is active then it is not destroyed, unless forced to.
+        this.isSticky = false;
+        this.now = {};
+        this.options = {};
+        this.outside = false;
+        this.pointerEvents = 'none';
+        this.init(chart, options);
+    }
+    /* *
      *
-     * @private
-     * @function Highcharts.Tooltip#cleanSplit
+     *  Functions
      *
-     * @param {boolean} [force]
-     *        Force destroy all tooltips.
-     *
-     * @return {void}
-     */
-    cleanSplit: function (force) {
-        this.chart.series.forEach(function (series) {
-            var tt = series && series.tt;
-            if (tt) {
-                if (!tt.isActive || force) {
-                    series.tt = tt.destroy();
-                }
-                else {
-                    tt.isActive = false;
-                }
-            }
-        });
-    },
+     * */
     /**
      * In styled mode, apply the default filter for the tooltip drop-shadow. It
      * needs to have an id specific to the chart, otherwise there will be issues
@@ -247,9 +161,8 @@ H.Tooltip.prototype = {
      *
      * @private
      * @function Highcharts.Tooltip#applyFilter
-     * @return {void}
      */
-    applyFilter: function () {
+    Tooltip.prototype.applyFilter = function () {
         var chart = this.chart;
         chart.renderer.definition({
             tagName: 'filter',
@@ -286,14 +199,210 @@ H.Tooltip.prototype = {
                 'filter:url(#drop-shadow-' + chart.index + ')' +
                 '}'
         });
-    },
+    };
+    /**
+     * Build the body (lines) of the tooltip by iterating over the items and
+     * returning one entry for each item, abstracting this functionality allows
+     * to easily overwrite and extend it.
+     *
+     * @private
+     * @function Highcharts.Tooltip#bodyFormatter
+     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
+     * @return {Array<string>}
+     */
+    Tooltip.prototype.bodyFormatter = function (items) {
+        return items.map(function (item) {
+            var tooltipOptions = item.series.tooltipOptions;
+            return (tooltipOptions[(item.point.formatPrefix || 'point') + 'Formatter'] ||
+                item.point.tooltipFormatter).call(item.point, tooltipOptions[(item.point.formatPrefix || 'point') + 'Format'] || '');
+        });
+    };
+    /**
+     * Destroy the single tooltips in a split tooltip.
+     * If the tooltip is active then it is not destroyed, unless forced to.
+     *
+     * @private
+     * @function Highcharts.Tooltip#cleanSplit
+     *
+     * @param {boolean} [force]
+     *        Force destroy all tooltips.
+     */
+    Tooltip.prototype.cleanSplit = function (force) {
+        this.chart.series.forEach(function (series) {
+            var tt = series && series.tt;
+            if (tt) {
+                if (!tt.isActive || force) {
+                    series.tt = tt.destroy();
+                }
+                else {
+                    tt.isActive = false;
+                }
+            }
+        });
+    };
+    /**
+     * In case no user defined formatter is given, this will be used. Note that
+     * the context here is an object holding point, series, x, y etc.
+     *
+     * @function Highcharts.Tooltip#defaultFormatter
+     *
+     * @param {Highcharts.Tooltip} tooltip
+     *
+     * @return {Array<string>}
+     */
+    Tooltip.prototype.defaultFormatter = function (tooltip) {
+        var items = this.points || splat(this), s;
+        // Build the header
+        s = [tooltip.tooltipFooterHeaderFormatter(items[0])];
+        // build the values
+        s = s.concat(tooltip.bodyFormatter(items));
+        // footer
+        s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true));
+        return s;
+    };
+    /**
+     * Removes and destroys the tooltip and its elements.
+     *
+     * @function Highcharts.Tooltip#destroy
+     */
+    Tooltip.prototype.destroy = function () {
+        // Destroy and clear local variables
+        if (this.label) {
+            this.label = this.label.destroy();
+        }
+        if (this.split && this.tt) {
+            this.cleanSplit(this.chart, true);
+            this.tt = this.tt.destroy();
+        }
+        if (this.renderer) {
+            this.renderer = this.renderer.destroy();
+            discardElement(this.container);
+        }
+        U.clearTimeout(this.hideTimer);
+        U.clearTimeout(this.tooltipTimeout);
+    };
+    /**
+     * Extendable method to get the anchor position of the tooltip
+     * from a point or set of points
+     *
+     * @private
+     * @function Highcharts.Tooltip#getAnchor
+     *
+     * @param {Highcharts.Point|Array<Highcharts.Point>} points
+     *
+     * @param {Highcharts.PointerEventObject} [mouseEvent]
+     *
+     * @return {Array<number>}
+     */
+    Tooltip.prototype.getAnchor = function (points, mouseEvent) {
+        var ret, chart = this.chart, pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis;
+        points = splat(points);
+        // When tooltip follows mouse, relate the position to the mouse
+        if (this.followPointer && mouseEvent) {
+            if (typeof mouseEvent.chartX === 'undefined') {
+                mouseEvent = pointer.normalize(mouseEvent);
+            }
+            ret = [
+                mouseEvent.chartX - chart.plotLeft,
+                mouseEvent.chartY - plotTop
+            ];
+            // Pie uses a special tooltipPos
+        }
+        else if (points[0].tooltipPos) {
+            ret = points[0].tooltipPos;
+            // When shared, use the average position
+        }
+        else {
+            points.forEach(function (point) {
+                yAxis = point.series.yAxis;
+                xAxis = point.series.xAxis;
+                plotX += point.plotX +
+                    (!inverted && xAxis ? xAxis.left - plotLeft : 0);
+                plotY += (point.plotLow ?
+                    (point.plotLow + point.plotHigh) / 2 :
+                    point.plotY) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
+            });
+            plotX /= points.length;
+            plotY /= points.length;
+            ret = [
+                inverted ? chart.plotWidth - plotY : plotX,
+                this.shared && !inverted && points.length > 1 && mouseEvent ?
+                    // place shared tooltip next to the mouse (#424)
+                    mouseEvent.chartY - plotTop :
+                    inverted ? chart.plotHeight - plotX : plotY
+            ];
+        }
+        return ret.map(Math.round);
+    };
+    /**
+     * Get the optimal date format for a point, based on a range.
+     *
+     * @private
+     * @function Highcharts.Tooltip#getDateFormat
+     *
+     * @param {number} range
+     *        The time range
+     *
+     * @param {number} date
+     *        The date of the point in question
+     *
+     * @param {number} startOfWeek
+     *        An integer representing the first day of the week, where 0 is
+     *        Sunday.
+     *
+     * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
+     *        A map of time units to formats.
+     *
+     * @return {string}
+     *         The optimal date format for a point.
+     */
+    Tooltip.prototype.getDateFormat = function (range, date, startOfWeek, dateTimeLabelFormats) {
+        var time = this.chart.time, dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date), format, n, blank = '01-01 00:00:00.000', strpos = {
+            millisecond: 15,
+            second: 12,
+            minute: 9,
+            hour: 6,
+            day: 3
+        }, lastN = 'millisecond'; // for sub-millisecond data, #4223
+        for (n in timeUnits) { // eslint-disable-line guard-for-in
+            // If the range is exactly one week and we're looking at a
+            // Sunday/Monday, go for the week format
+            if (range === timeUnits.week &&
+                +time.dateFormat('%w', date) === startOfWeek &&
+                dateStr.substr(6) === blank.substr(6)) {
+                n = 'week';
+                break;
+            }
+            // The first format that is too great for the range
+            if (timeUnits[n] > range) {
+                n = lastN;
+                break;
+            }
+            // If the point is placed every day at 23:59, we need to show
+            // the minutes as well. #2637.
+            if (strpos[n] &&
+                dateStr.substr(strpos[n]) !== blank.substr(strpos[n])) {
+                break;
+            }
+            // Weeks are outside the hierarchy, only apply them on
+            // Mondays/Sundays like in the first condition
+            if (n !== 'week') {
+                lastN = n;
+            }
+        }
+        if (n) {
+            format = time.resolveDTLFormat(dateTimeLabelFormats[n]).main;
+        }
+        return format;
+    };
     /**
      * Creates the Tooltip label element if it does not exist, then returns it.
      *
      * @function Highcharts.Tooltip#getLabel
      * @return {Highcharts.SVGElement}
      */
-    getLabel: function () {
+    Tooltip.prototype.getLabel = function () {
+        var _a;
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = 'tooltip' +
             (defined(options.className) ? ' ' + options.className : ''), container, set;
         if (!this.label) {
@@ -371,176 +480,13 @@ H.Tooltip.prototype = {
             }
             this.label
                 .attr({
-                zIndex: 8
+                zIndex: 8,
+                pointerEvents: (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || options.stickOnContact ? 'auto' : 'none')
             })
                 .add();
         }
         return this.label;
-    },
-    /**
-     * Updates the tooltip with the provided tooltip options.
-     *
-     * @function Highcharts.Tooltip#update
-     *
-     * @param {Highcharts.TooltipOptions} options
-     *        The tooltip options to update.
-     *
-     * @return {void}
-     */
-    update: function (options) {
-        this.destroy();
-        // Update user options (#6218)
-        merge(true, this.chart.options.tooltip.userOptions, options);
-        this.init(this.chart, merge(true, this.options, options));
-    },
-    /**
-     * Removes and destroys the tooltip and its elements.
-     *
-     * @function Highcharts.Tooltip#destroy
-     * @return {void}
-     */
-    destroy: function () {
-        // Destroy and clear local variables
-        if (this.label) {
-            this.label = this.label.destroy();
-        }
-        if (this.split && this.tt) {
-            this.cleanSplit(this.chart, true);
-            this.tt = this.tt.destroy();
-        }
-        if (this.renderer) {
-            this.renderer = this.renderer.destroy();
-            discardElement(this.container);
-        }
-        U.clearTimeout(this.hideTimer);
-        U.clearTimeout(this.tooltipTimeout);
-    },
-    /**
-     * Moves the tooltip with a soft animation to a new position.
-     *
-     * @private
-     * @function Highcharts.Tooltip#move
-     *
-     * @param {number} x
-     *
-     * @param {number} y
-     *
-     * @param {number} anchorX
-     *
-     * @param {number} anchorY
-     *
-     * @return {void}
-     */
-    move: function (x, y, anchorX, anchorY) {
-        var tooltip = this, now = tooltip.now, animate = tooltip.options.animation !== false &&
-            !tooltip.isHidden &&
-            // When we get close to the target position, abort animation and
-            // land on the right place (#3056)
-            (Math.abs(x - now.x) > 1 || Math.abs(y - now.y) > 1), skipAnchor = tooltip.followPointer || tooltip.len > 1;
-        // Get intermediate values for animation
-        extend(now, {
-            x: animate ? (2 * now.x + x) / 3 : x,
-            y: animate ? (now.y + y) / 2 : y,
-            anchorX: skipAnchor ?
-                void 0 :
-                animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
-            anchorY: skipAnchor ?
-                void 0 :
-                animate ? (now.anchorY + anchorY) / 2 : anchorY
-        });
-        // Move to the intermediate value
-        tooltip.getLabel().attr(now);
-        // Run on next tick of the mouse tracker
-        if (animate) {
-            // Never allow two timeouts
-            U.clearTimeout(this.tooltipTimeout);
-            // Set the fixed interval ticking for the smooth tooltip
-            this.tooltipTimeout = setTimeout(function () {
-                // The interval function may still be running during destroy,
-                // so check that the chart is really there before calling.
-                if (tooltip) {
-                    tooltip.move(x, y, anchorX, anchorY);
-                }
-            }, 32);
-        }
-    },
-    /**
-     * Hides the tooltip with a fade out animation.
-     *
-     * @function Highcharts.Tooltip#hide
-     *
-     * @param {number} [delay]
-     *        The fade out in milliseconds. If no value is provided the value
-     *        of the tooltip.hideDelay option is used. A value of 0 disables
-     *        the fade out animation.
-     *
-     * @return {void}
-     */
-    hide: function (delay) {
-        var tooltip = this;
-        // disallow duplicate timers (#1728, #1766)
-        U.clearTimeout(this.hideTimer);
-        delay = pick(delay, this.options.hideDelay, 500);
-        if (!this.isHidden) {
-            this.hideTimer = syncTimeout(function () {
-                tooltip.getLabel()[delay ? 'fadeOut' : 'hide']();
-                tooltip.isHidden = true;
-            }, delay);
-        }
-    },
-    /**
-     * Extendable method to get the anchor position of the tooltip
-     * from a point or set of points
-     *
-     * @private
-     * @function Highcharts.Tooltip#getAnchor
-     *
-     * @param {Highcharts.Point|Array<Highcharts.Point>} points
-     *
-     * @param {Highcharts.PointerEventObject} [mouseEvent]
-     *
-     * @return {Array<number>}
-     */
-    getAnchor: function (points, mouseEvent) {
-        var ret, chart = this.chart, pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis;
-        points = splat(points);
-        // When tooltip follows mouse, relate the position to the mouse
-        if (this.followPointer && mouseEvent) {
-            if (typeof mouseEvent.chartX === 'undefined') {
-                mouseEvent = pointer.normalize(mouseEvent);
-            }
-            ret = [
-                mouseEvent.chartX - chart.plotLeft,
-                mouseEvent.chartY - plotTop
-            ];
-            // Pie uses a special tooltipPos
-        }
-        else if (points[0].tooltipPos) {
-            ret = points[0].tooltipPos;
-            // When shared, use the average position
-        }
-        else {
-            points.forEach(function (point) {
-                yAxis = point.series.yAxis;
-                xAxis = point.series.xAxis;
-                plotX += point.plotX +
-                    (!inverted && xAxis ? xAxis.left - plotLeft : 0);
-                plotY += (point.plotLow ?
-                    (point.plotLow + point.plotHigh) / 2 :
-                    point.plotY) + (!inverted && yAxis ? yAxis.top - plotTop : 0); // #1151
-            });
-            plotX /= points.length;
-            plotY /= points.length;
-            ret = [
-                inverted ? chart.plotWidth - plotY : plotX,
-                this.shared && !inverted && points.length > 1 && mouseEvent ?
-                    // place shared tooltip next to the mouse (#424)
-                    mouseEvent.chartY - plotTop :
-                    inverted ? chart.plotHeight - plotX : plotY
-            ];
-        }
-        return ret.map(Math.round);
-    },
+    };
     /**
      * Place the tooltip in a chart without spilling over
      * and not covering the point it self.
@@ -556,7 +502,7 @@ H.Tooltip.prototype = {
      *
      * @return {Highcharts.PositionObject}
      */
-    getPosition: function (boxWidth, boxHeight, point) {
+    Tooltip.prototype.getPosition = function (boxWidth, boxHeight, point) {
         var chart = this.chart, distance = this.distance, ret = {}, 
         // Don't use h if chart isn't inverted (#7242) ???
         h = (chart.inverted && point.h) || 0, // #4117 ???
@@ -686,27 +632,190 @@ H.Tooltip.prototype = {
         }
         run();
         return ret;
-    },
+    };
     /**
-     * In case no user defined formatter is given, this will be used. Note that
-     * the context here is an object holding point, series, x, y etc.
+     * Get the best X date format based on the closest point range on the axis.
      *
-     * @function Highcharts.Tooltip#defaultFormatter
+     * @private
+     * @function Highcharts.Tooltip#getXDateFormat
      *
-     * @param {Highcharts.Tooltip} tooltip
+     * @param {Highcharts.Point} point
      *
-     * @return {Array<string>}
+     * @param {Highcharts.TooltipOptions} options
+     *
+     * @param {Highcharts.Axis} xAxis
+     *
+     * @return {string}
      */
-    defaultFormatter: function (tooltip) {
-        var items = this.points || splat(this), s;
-        // Build the header
-        s = [tooltip.tooltipFooterHeaderFormatter(items[0])];
-        // build the values
-        s = s.concat(tooltip.bodyFormatter(items));
-        // footer
-        s.push(tooltip.tooltipFooterHeaderFormatter(items[0], true));
-        return s;
-    },
+    Tooltip.prototype.getXDateFormat = function (point, options, xAxis) {
+        var xDateFormat, dateTimeLabelFormats = options.dateTimeLabelFormats, closestPointRange = xAxis && xAxis.closestPointRange;
+        if (closestPointRange) {
+            xDateFormat = this.getDateFormat(closestPointRange, point.x, xAxis.options.startOfWeek, dateTimeLabelFormats);
+        }
+        else {
+            xDateFormat = dateTimeLabelFormats.day;
+        }
+        return xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
+    };
+    /**
+     * Hides the tooltip with a fade out animation.
+     *
+     * @function Highcharts.Tooltip#hide
+     *
+     * @param {number} [delay]
+     *        The fade out in milliseconds. If no value is provided the value
+     *        of the tooltip.hideDelay option is used. A value of 0 disables
+     *        the fade out animation.
+     */
+    Tooltip.prototype.hide = function (delay) {
+        var tooltip = this;
+        // disallow duplicate timers (#1728, #1766)
+        U.clearTimeout(this.hideTimer);
+        delay = pick(delay, this.options.hideDelay, 500);
+        if (!this.isHidden) {
+            this.hideTimer = syncTimeout(function () {
+                tooltip.getLabel()[delay ? 'fadeOut' : 'hide']();
+                tooltip.isHidden = true;
+            }, delay);
+        }
+    };
+    /**
+     * @private
+     * @function Highcharts.Tooltip#init
+     *
+     * @param {Highcharts.Chart} chart
+     *        The chart instance.
+     *
+     * @param {Highcharts.TooltipOptions} options
+     *        Tooltip options.
+     */
+    Tooltip.prototype.init = function (chart, options) {
+        var _a;
+        /**
+         * Chart of the tooltip.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#chart
+         * @type {Highcharts.Chart}
+         */
+        this.chart = chart;
+        /**
+         * Used tooltip options.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#options
+         * @type {Highcharts.TooltipOptions}
+         */
+        this.options = options;
+        /**
+         * List of crosshairs.
+         *
+         * @private
+         * @readonly
+         * @name Highcharts.Tooltip#crosshairs
+         * @type {Array<null>}
+         */
+        this.crosshairs = [];
+        /**
+         * Current values of x and y when animating.
+         *
+         * @private
+         * @readonly
+         * @name Highcharts.Tooltip#now
+         * @type {Highcharts.PositionObject}
+         */
+        this.now = { x: 0, y: 0 };
+        /**
+         * Tooltips are initially hidden.
+         *
+         * @private
+         * @readonly
+         * @name Highcharts.Tooltip#isHidden
+         * @type {boolean}
+         */
+        this.isHidden = true;
+        /**
+         * True, if the tooltip is split into one label per series, with the
+         * header close to the axis.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#split
+         * @type {boolean|undefined}
+         */
+        this.split = options.split && !chart.inverted && !chart.polar;
+        /**
+         * When the tooltip is shared, the entire plot area will capture mouse
+         * movement or touch events.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#shared
+         * @type {boolean|undefined}
+         */
+        this.shared = options.shared || this.split;
+        /**
+         * Whether to allow the tooltip to render outside the chart's SVG
+         * element box. By default (false), the tooltip is rendered within the
+         * chart's SVG element, which results in the tooltip being aligned
+         * inside the chart area.
+         *
+         * @readonly
+         * @name Highcharts.Tooltip#outside
+         * @type {boolean}
+         *
+         * @todo
+         * Split tooltip does not support outside in the first iteration. Should
+         * not be too complicated to implement.
+         */
+        this.outside = pick(options.outside, Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY));
+        this.pointerEvents = ((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || (options.stickOnContact ? 'auto' : 'none');
+    };
+    /**
+     * Moves the tooltip with a soft animation to a new position.
+     *
+     * @private
+     * @function Highcharts.Tooltip#move
+     *
+     * @param {number} x
+     *
+     * @param {number} y
+     *
+     * @param {number} anchorX
+     *
+     * @param {number} anchorY
+     */
+    Tooltip.prototype.move = function (x, y, anchorX, anchorY) {
+        var tooltip = this, now = tooltip.now, animate = tooltip.options.animation !== false &&
+            !tooltip.isHidden &&
+            // When we get close to the target position, abort animation and
+            // land on the right place (#3056)
+            (Math.abs(x - now.x) > 1 || Math.abs(y - now.y) > 1), skipAnchor = tooltip.followPointer || tooltip.len > 1;
+        // Get intermediate values for animation
+        extend(now, {
+            x: animate ? (2 * now.x + x) / 3 : x,
+            y: animate ? (now.y + y) / 2 : y,
+            anchorX: skipAnchor ?
+                void 0 :
+                animate ? (2 * now.anchorX + anchorX) / 3 : anchorX,
+            anchorY: skipAnchor ?
+                void 0 :
+                animate ? (now.anchorY + anchorY) / 2 : anchorY
+        });
+        // Move to the intermediate value
+        tooltip.getLabel().attr(now);
+        // Run on next tick of the mouse tracker
+        if (animate) {
+            // Never allow two timeouts
+            U.clearTimeout(this.tooltipTimeout);
+            // Set the fixed interval ticking for the smooth tooltip
+            this.tooltipTimeout = setTimeout(function () {
+                // The interval function may still be running during destroy,
+                // so check that the chart is really there before calling.
+                if (tooltip) {
+                    tooltip.move(x, y, anchorX, anchorY);
+                }
+            }, 32);
+        }
+    };
     /**
      * Refresh the tooltip's text and position.
      *
@@ -718,10 +827,8 @@ H.Tooltip.prototype = {
      * @param {Highcharts.PointerEventObject} [mouseEvent]
      *        Mouse event, that is responsible for the refresh and should be
      *        used for the tooltip update.
-     *
-     * @return {void}
      */
-    refresh: function (pointOrPoints, mouseEvent) {
+    Tooltip.prototype.refresh = function (pointOrPoints, mouseEvent) {
         var tooltip = this, chart = this.chart, options = tooltip.options, x, y, point = pointOrPoints, anchor, textConfig = {}, text, pointConfig = [], formatter = options.formatter || tooltip.defaultFormatter, shared = tooltip.shared, currentSeries, styledMode = chart.styledMode;
         if (!options.enabled) {
             return;
@@ -810,7 +917,7 @@ H.Tooltip.prototype = {
             tooltip.isHidden = false;
         }
         H.fireEvent(this, 'refresh');
-    },
+    };
     /**
      * Render the split tooltip. Loops over each point's text and adds
      * a label next to the point, then uses the distribute function to
@@ -823,7 +930,7 @@ H.Tooltip.prototype = {
      *
      * @param {Array<Highcharts.Point>} points
      */
-    renderSplit: function (labels, points) {
+    Tooltip.prototype.renderSplit = function (labels, points) {
         var tooltip = this;
         var chart = tooltip.chart, _a = tooltip.chart, chartWidth = _a.chartWidth, chartHeight = _a.chartHeight, plotHeight = _a.plotHeight, plotLeft = _a.plotLeft, plotTop = _a.plotTop, pointer = _a.pointer, ren = _a.renderer, _b = _a.scrollablePixelsY, scrollablePixelsY = _b === void 0 ? 0 : _b, _c = _a.scrollingContainer, _d = _c === void 0 ? { scrollLeft: 0, scrollTop: 0 } : _c, scrollLeft = _d.scrollLeft, scrollTop = _d.scrollTop, styledMode = _a.styledMode, distance = tooltip.distance, options = tooltip.options, positioner = tooltip.options.positioner;
         // The area which the tooltip should be limited to. Limit to scrollable
@@ -859,8 +966,7 @@ H.Tooltip.prototype = {
             else {
                 var xAxis = series.xAxis, yAxis = series.yAxis;
                 // Set anchorX to plotX. Limit to within xAxis.
-                anchorX = xAxis.pos +
-                    clamp(plotX, -distance, xAxis.len + distance);
+                anchorX = xAxis.pos + clamp(plotX, -distance, xAxis.len + distance);
                 // Set anchorY, limit to the scrollable plot area
                 if (yAxis.pos + plotY >= scrollTop + plotTop &&
                     yAxis.pos + plotY <= scrollTop + plotTop + plotHeight - scrollablePixelsY) {
@@ -1051,126 +1157,15 @@ H.Tooltip.prototype = {
             container.style.left = chartPosition.left + 'px';
             container.style.top = chartPosition.top + 'px';
         }
-    },
+    };
     /**
-     * Find the new position and perform the move
-     *
      * @private
-     * @function Highcharts.Tooltip#updatePosition
-     *
-     * @param {Highcharts.Point} point
      */
-    updatePosition: function (point) {
-        var chart = this.chart, pointer = chart.pointer, label = this.getLabel(), pos, anchorX = point.plotX + chart.plotLeft, anchorY = point.plotY + chart.plotTop, pad;
-        // Needed for outside: true (#11688)
-        var chartPosition = pointer.getChartPosition();
-        pos = (this.options.positioner || this.getPosition).call(this, label.width, label.height, point);
-        // Set the renderer size dynamically to prevent document size to change
-        if (this.outside) {
-            pad = (this.options.borderWidth || 0) + 2 * this.distance;
-            this.renderer.setSize(label.width + pad, label.height + pad, false);
-            // Anchor and tooltip container need scaling if chart container has
-            // scale transform/css zoom. #11329.
-            var containerScaling = chart.containerScaling;
-            if (containerScaling) {
-                css(this.container, {
-                    transform: "scale(" + containerScaling.scaleX + ", " + containerScaling.scaleY + ")"
-                });
-                anchorX *= containerScaling.scaleX;
-                anchorY *= containerScaling.scaleY;
-            }
-            anchorX += chartPosition.left - pos.x;
-            anchorY += chartPosition.top - pos.y;
-        }
-        // do the move
-        this.move(Math.round(pos.x), Math.round(pos.y || 0), // can be undefined (#3977)
-        anchorX, anchorY);
-    },
-    /**
-     * Get the optimal date format for a point, based on a range.
-     *
-     * @private
-     * @function Highcharts.Tooltip#getDateFormat
-     *
-     * @param {number} range
-     *        The time range
-     *
-     * @param {number} date
-     *        The date of the point in question
-     *
-     * @param {number} startOfWeek
-     *        An integer representing the first day of the week, where 0 is
-     *        Sunday.
-     *
-     * @param {Highcharts.Dictionary<string>} dateTimeLabelFormats
-     *        A map of time units to formats.
-     *
-     * @return {string}
-     *         The optimal date format for a point.
-     */
-    getDateFormat: function (range, date, startOfWeek, dateTimeLabelFormats) {
-        var time = this.chart.time, dateStr = time.dateFormat('%m-%d %H:%M:%S.%L', date), format, n, blank = '01-01 00:00:00.000', strpos = {
-            millisecond: 15,
-            second: 12,
-            minute: 9,
-            hour: 6,
-            day: 3
-        }, lastN = 'millisecond'; // for sub-millisecond data, #4223
-        for (n in timeUnits) { // eslint-disable-line guard-for-in
-            // If the range is exactly one week and we're looking at a
-            // Sunday/Monday, go for the week format
-            if (range === timeUnits.week &&
-                +time.dateFormat('%w', date) === startOfWeek &&
-                dateStr.substr(6) === blank.substr(6)) {
-                n = 'week';
-                break;
-            }
-            // The first format that is too great for the range
-            if (timeUnits[n] > range) {
-                n = lastN;
-                break;
-            }
-            // If the point is placed every day at 23:59, we need to show
-            // the minutes as well. #2637.
-            if (strpos[n] &&
-                dateStr.substr(strpos[n]) !== blank.substr(strpos[n])) {
-                break;
-            }
-            // Weeks are outside the hierarchy, only apply them on
-            // Mondays/Sundays like in the first condition
-            if (n !== 'week') {
-                lastN = n;
-            }
-        }
-        if (n) {
-            format = time.resolveDTLFormat(dateTimeLabelFormats[n]).main;
-        }
-        return format;
-    },
-    /**
-     * Get the best X date format based on the closest point range on the axis.
-     *
-     * @private
-     * @function Highcharts.Tooltip#getXDateFormat
-     *
-     * @param {Highcharts.Point} point
-     *
-     * @param {Highcharts.TooltipOptions} options
-     *
-     * @param {Highcharts.Axis} xAxis
-     *
-     * @return {string}
-     */
-    getXDateFormat: function (point, options, xAxis) {
-        var xDateFormat, dateTimeLabelFormats = options.dateTimeLabelFormats, closestPointRange = xAxis && xAxis.closestPointRange;
-        if (closestPointRange) {
-            xDateFormat = this.getDateFormat(closestPointRange, point.x, xAxis.options.startOfWeek, dateTimeLabelFormats);
-        }
-        else {
-            xDateFormat = dateTimeLabelFormats.day;
-        }
-        return xDateFormat || dateTimeLabelFormats.year; // #2546, 2581
-    },
+    Tooltip.prototype.styledModeFormat = function (formatString) {
+        return formatString
+            .replace('style="font-size: 10px"', 'class="highcharts-header"')
+            .replace(/style="color:{(point|series)\.color}"/g, 'class="highcharts-color-{$1.colorIndex}"');
+    };
     /**
      * Format the footer/header of the tooltip
      * #3397: abstraction to enable formatting of footer and header
@@ -1181,7 +1176,7 @@ H.Tooltip.prototype = {
      * @param {boolean} [isFooter]
      * @return {string}
      */
-    tooltipFooterHeaderFormatter: function (labelConfig, isFooter) {
+    Tooltip.prototype.tooltipFooterHeaderFormatter = function (labelConfig, isFooter) {
         var footOrHead = isFooter ? 'footer' : 'header', series = labelConfig.series, tooltipOptions = series.tooltipOptions, xDateFormat = tooltipOptions.xDateFormat, xAxis = series.xAxis, isDateTime = (xAxis &&
             xAxis.options.type === 'datetime' &&
             isNumber(labelConfig.key)), formatString = tooltipOptions[footOrHead + 'Format'], evt = {
@@ -1211,27 +1206,56 @@ H.Tooltip.prototype = {
             }, this.chart);
         });
         return evt.text;
-    },
+    };
     /**
-     * Build the body (lines) of the tooltip by iterating over the items and
-     * returning one entry for each item, abstracting this functionality allows
-     * to easily overwrite and extend it.
+     * Updates the tooltip with the provided tooltip options.
+     *
+     * @function Highcharts.Tooltip#update
+     *
+     * @param {Highcharts.TooltipOptions} options
+     *        The tooltip options to update.
+     */
+    Tooltip.prototype.update = function (options) {
+        this.destroy();
+        // Update user options (#6218)
+        merge(true, this.chart.options.tooltip.userOptions, options);
+        this.init(this.chart, merge(true, this.options, options));
+    };
+    /**
+     * Find the new position and perform the move
      *
      * @private
-     * @function Highcharts.Tooltip#bodyFormatter
-     * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
-     * @return {Array<string>}
+     * @function Highcharts.Tooltip#updatePosition
+     *
+     * @param {Highcharts.Point} point
      */
-    bodyFormatter: function (items) {
-        return items.map(function (item) {
-            var tooltipOptions = item.series.tooltipOptions;
-            return (tooltipOptions[(item.point.formatPrefix || 'point') + 'Formatter'] ||
-                item.point.tooltipFormatter).call(item.point, tooltipOptions[(item.point.formatPrefix || 'point') + 'Format'] || '');
-        });
-    },
-    styledModeFormat: function (formatString) {
-        return formatString
-            .replace('style="font-size: 10px"', 'class="highcharts-header"')
-            .replace(/style="color:{(point|series)\.color}"/g, 'class="highcharts-color-{$1.colorIndex}"');
-    }
-};
+    Tooltip.prototype.updatePosition = function (point) {
+        var chart = this.chart, pointer = chart.pointer, label = this.getLabel(), pos, anchorX = point.plotX + chart.plotLeft, anchorY = point.plotY + chart.plotTop, pad;
+        // Needed for outside: true (#11688)
+        var chartPosition = pointer.getChartPosition();
+        pos = (this.options.positioner || this.getPosition).call(this, label.width, label.height, point);
+        // Set the renderer size dynamically to prevent document size to change
+        if (this.outside) {
+            pad = (this.options.borderWidth || 0) + 2 * this.distance;
+            this.renderer.setSize(label.width + pad, label.height + pad, false);
+            // Anchor and tooltip container need scaling if chart container has
+            // scale transform/css zoom. #11329.
+            var containerScaling = chart.containerScaling;
+            if (containerScaling) {
+                css(this.container, {
+                    transform: "scale(" + containerScaling.scaleX + ", " + containerScaling.scaleY + ")"
+                });
+                anchorX *= containerScaling.scaleX;
+                anchorY *= containerScaling.scaleY;
+            }
+            anchorX += chartPosition.left - pos.x;
+            anchorY += chartPosition.top - pos.y;
+        }
+        // do the move
+        this.move(Math.round(pos.x), Math.round(pos.y || 0), // can be undefined (#3977)
+        anchorX, anchorY);
+    };
+    return Tooltip;
+}());
+H.Tooltip = Tooltip;
+export default H.Tooltip;

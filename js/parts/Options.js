@@ -3100,12 +3100,12 @@ H.defaultOptions = {
          * Prevents the tooltip from switching or closing, when touched or
          * pointed.
          *
-         * @sample highcharts/tooltip/stickonhover/
-         *         Tooltip sticks on hover event
+         * @sample highcharts/tooltip/stickoncontact/
+         *         Tooltip sticks on pointer contact
          *
          * @type      {boolean}
          * @since     8.0.1
-         * @apioption tooltip.stickOnHover
+         * @apioption tooltip.stickOnContact
          */
         /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using
