@@ -380,7 +380,7 @@ seriesType('windbarb', 'column'
 /**
  * The wind speed in meters per second.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts highstock
  * @apioption series.windbarb.data.value
  */

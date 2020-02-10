@@ -210,9 +210,11 @@ declare global {
 import U from './Utilities.js';
 const {
     addEvent,
+    css,
     defined,
     discardElement,
     fireEvent,
+    format,
     isNumber,
     merge,
     pick,
@@ -224,7 +226,6 @@ const {
 } = U;
 
 var H = Highcharts,
-    css = H.css,
     isFirefox = H.isFirefox,
     marginNames = H.marginNames,
     win = H.win;
@@ -704,7 +705,7 @@ Highcharts.Legend.prototype = {
 
         (item.legendItem as any).attr({
             text: options.labelFormat ?
-                H.format(options.labelFormat, item, this.chart) :
+                format(options.labelFormat, item, this.chart) :
                 (options.labelFormatter as any).call(item)
         });
     },

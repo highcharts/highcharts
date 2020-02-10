@@ -185,6 +185,7 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
+    format,
     objectEach,
     pick
 } = U;
@@ -195,7 +196,6 @@ import './Series.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    format = H.format,
     Series = H.Series;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

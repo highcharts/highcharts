@@ -228,7 +228,7 @@ import H from './Globals.js';
 import pointModule from './Point.js';
 var Point = pointModule.Point;
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -664,6 +664,17 @@ null,
      *
      * @type      {string|Highcharts.CursorValue}
      * @apioption plotOptions.series.cursor
+     */
+    /**
+     * A reserved subspace to store options and values for customized
+     * functionality. Here you can add additional data for your own event
+     * callbacks and formatter callbacks.
+     *
+     * @sample {highcharts} highcharts/point/custom/
+     *         Point and series with custom data
+     *
+     * @type      {Highcharts.Dictionary<*>}
+     * @apioption plotOptions.series.custom
      */
     /**
      * A name for the dash style to use for the graph, or for some series
@@ -2823,7 +2834,7 @@ null,
                 // The series needs an X and an Y axis
                 if (!series[AXIS] &&
                     series.optionalAxis !== AXIS) {
-                    H.error(18, true, chart);
+                    error(18, true, chart);
                 }
             });
         });
@@ -3389,7 +3400,7 @@ null,
                 else {
                     // Highcharts expects configs to be numbers or arrays in
                     // turbo mode
-                    H.error(12, false, chart);
+                    error(12, false, chart);
                 }
             }
             else {
@@ -3405,7 +3416,7 @@ null,
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             if (yData && isString(yData[0])) {
-                H.error(14, true, chart);
+                error(14, true, chart);
             }
             series.data = [];
             series.options.data = series.userOptions.data = data;
@@ -3457,9 +3468,9 @@ null,
         }, this);
         // Sorting
         sortedData = data.concat().sort(function (a, b) {
-            return isNumber(b[sortKey]) ?
-                b[sortKey] - a[sortKey] :
-                -1;
+            var aValue = getNestedProperty(sortKey, a);
+            var bValue = getNestedProperty(sortKey, b);
+            return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         });
         // Set x value depending on the position in the array
         sortedData.forEach(function (point, i) {
@@ -3561,7 +3572,7 @@ null,
                 // width calculation of columns (#1900)
             }
             else if (distance < 0 && throwOnUnsorted) {
-                H.error(15, false, series.chart);
+                error(15, false, series.chart);
                 throwOnUnsorted = false; // Only once
             }
         }
@@ -4390,7 +4401,7 @@ null,
         series.points = null;
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        H.clearTimeout(series.animationTimeout);
+        U.clearTimeout(series.animationTimeout);
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val, prop) {
             // Survive provides a hook for not destroying
@@ -5233,11 +5244,11 @@ null,
  *    ```
  *
  * **Note:** In TypeScript you have to extend `PointOptionsObject` with an
- * additional declaration to allow custom data options:
+ * additional declaration to allow custom data types:
  * ```ts
  * declare module `highcharts` {
  *   interface PointOptionsObject {
- *     customProperty: string;
+ *     custom: Record<string, (boolean|number|string)>;
  *   }
  * }
  * ```
@@ -5291,6 +5302,17 @@ null,
  * @since     5.0.0
  * @product   highcharts gantt
  * @apioption series.line.data.colorIndex
+ */
+/**
+ * A reserved subspace to store options and values for customized functionality.
+ * Here you can add additional data for your own event callbacks and formatter
+ * callbacks.
+ *
+ * @sample {highcharts} highcharts/point/custom/
+ *         Point and series with custom data
+ *
+ * @type      {Highcharts.Dictionary<*>}
+ * @apioption series.line.data.custom
  */
 /**
  * Individual data label for each point. The options are the same as

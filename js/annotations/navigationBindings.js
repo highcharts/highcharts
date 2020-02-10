@@ -36,7 +36,7 @@ import H from '../parts/Globals.js';
 * @type {Array<Function>|undefined}
 */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, attr = U.attr, extend = U.extend, format = U.format, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import chartNavigationMixin from '../mixins/navigation.js';
 var doc = H.doc, win = H.win, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -494,7 +494,7 @@ extend(H.NavigationBindings.prototype, {
                     // Leaf:
                     if (key === 'format') {
                         parent[key] = [
-                            H.format(option, annotation.labels[0].points[0]).toString(),
+                            format(option, annotation.labels[0].points[0]).toString(),
                             'text'
                         ];
                     }

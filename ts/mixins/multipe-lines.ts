@@ -51,11 +51,11 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     defined,
+    error,
     merge
 } = U;
 
 var each = H.each,
-    error = H.error,
     SMA = H.seriesTypes.sma;
 
 /**

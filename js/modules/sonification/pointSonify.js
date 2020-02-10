@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var merge = U.merge, pick = U.pick;
+var error = U.error, merge = U.merge, pick = U.pick;
 /**
  * Define the parameter mapping for an instrument.
  *
@@ -287,7 +287,7 @@ function pointSonify(options) {
             });
         }
         else {
-            H.error(30);
+            error(30);
         }
     });
 }

@@ -46,7 +46,10 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    error
+} = U;
 
 var seriesType = H.seriesType;
 
@@ -144,7 +147,7 @@ seriesType<Highcharts.ADIndicator>('ad', 'sma',
             }
 
             if (!volumeSeries) {
-                H.error(
+                error(
                     'Series ' +
                     volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',

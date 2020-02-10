@@ -99,7 +99,9 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    error,
     extend,
+    format,
     merge,
     wrap
 } = U;
@@ -108,7 +110,6 @@ import '../parts/Options.js';
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    format = H.format,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -188,7 +189,7 @@ Chart.prototype.transformFromLatLon = function (
 
     const proj4 = (this.userOptions.chart?.proj4 || win.proj4);
     if (!proj4) {
-        H.error(21, false, this);
+        error(21, false, this);
         return {
             x: 0,
             y: null
@@ -247,7 +248,7 @@ Chart.prototype.transformToLatLon = function (
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
     if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+        error(21, false, this);
         return;
     }
 
@@ -307,7 +308,7 @@ Chart.prototype.fromPointToLatLon = function (
         transform;
 
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return;
     }
 
@@ -356,7 +357,7 @@ Chart.prototype.fromLatLonToPoint = function (
         coords;
 
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return {
             x: 0,
             y: null

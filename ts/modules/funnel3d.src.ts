@@ -95,6 +95,7 @@ import Color from '../parts/Color.js';
 const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
+    error,
     extend,
     merge,
     pick,
@@ -105,7 +106,6 @@ import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 
 var charts = H.charts,
-    error = H.error,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     // Use H.Renderer instead of H.SVGRenderer for VML support.

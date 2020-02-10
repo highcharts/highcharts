@@ -149,6 +149,7 @@ seriesType('area', 'line',
      * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
      *         A threshold of Infinity
      *
+     * @type    {number|null}
      * @since   2.0
      * @product highcharts highstock
      */

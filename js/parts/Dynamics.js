@@ -11,12 +11,12 @@
 import H from './Globals.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
 import './Point.js';
 import './Series.js';
-var animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
+var animate = H.animate, Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -1114,7 +1114,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             extend(series, seriesTypes[newType || initialType].prototype);
         }
         else {
-            H.error(17, true, chart, { missingModuleFor: (newType || initialType) });
+            error(17, true, chart, { missingModuleFor: (newType || initialType) });
         }
         // Re-register groups (#3094) and other preserved properties
         preserve.forEach(function (prop) {

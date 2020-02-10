@@ -718,7 +718,7 @@ var charts = H.charts,
  *
  * @return {void}
  */
-H.error = function (
+const error = H.error = function (
     code: (number|string),
     stop?: boolean,
     chart?: Highcharts.Chart,
@@ -1688,7 +1688,7 @@ const syncTimeout = H.syncTimeout = function syncTimeout(
  *
  * @return {void}
  */
-H.clearTimeout = function (id: number): void {
+const internalClearTimeout = H.clearTimeout = function (id: number): void {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -1779,7 +1779,7 @@ H.pick = pick;
  *
  * @return {void}
  */
-H.css = function (
+const css = H.css = function css(
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
     styles: Highcharts.CSSObject
 ): void {
@@ -1815,15 +1815,14 @@ H.css = function (
  * @return {Highcharts.HTMLDOMElement}
  *         The created DOM element.
  */
-H.createElement = function (
+const createElement = H.createElement = function createElement(
     tag: string,
     attribs?: Highcharts.HTMLAttributes,
     styles?: Highcharts.CSSObject,
     parent?: Highcharts.HTMLDOMElement,
     nopad?: boolean
 ): Highcharts.HTMLDOMElement {
-    var el = doc.createElement(tag),
-        css = H.css;
+    var el = doc.createElement(tag);
 
     if (attribs) {
         extend(el, attribs);
@@ -2060,14 +2059,11 @@ H.formatSingle = function (
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
+const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
         valueAndFormat: Array<string>,
-        path,
-        i,
-        len,
         ret = [],
         val,
         index;
@@ -2082,17 +2078,7 @@ H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
         if (isInside) { // we're on the closing bracket looking back
 
             valueAndFormat = segment.split(':');
-            // get first and leave
-            path = (valueAndFormat.shift() as any).split('.');
-            len = path.length;
-            val = ctx;
-
-            // Assign deeper paths
-            for (i = 0; i < len; i++) {
-                if (val) {
-                    val = val[path[i]];
-                }
-            }
+            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
 
             // Format the replacement
             if (valueAndFormat.length) {
@@ -2125,7 +2111,7 @@ H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-H.getMagnitude = function (num: number): number {
+const getMagnitude = H.getMagnitude = function (num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 
@@ -2365,7 +2351,7 @@ const discardElement = H.discardElement = function discardElement(element: Highc
 
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
-        garbageBin = H.createElement('div');
+        garbageBin = createElement('div');
     }
 
     // move the node and empty bin
@@ -2594,6 +2580,49 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
+ * Returns the value of a property path on a given object.
+ *
+ * @private
+ * @function getNestedProperty
+ *
+ * @param {string} path
+ * Path to the property, for example `custom.myValue`.
+ *
+ * @param {unknown} obj
+ * Instance containing the property on the specific path.
+ *
+ * @return {unknown}
+ * The unknown property value.
+ */
+function getNestedProperty(path: string, obj: unknown): unknown {
+
+    if (!path) {
+        return obj;
+    }
+
+    const pathElements = path.split('.').reverse();
+
+    let subProperty = obj as Record<string, unknown>;
+
+    if (pathElements.length === 1) {
+        return subProperty[path];
+    }
+
+    let pathElement = pathElements.pop();
+
+    while (
+        typeof pathElement !== 'undefined' &&
+        typeof subProperty !== 'undefined' &&
+        subProperty !== null
+    ) {
+        subProperty = subProperty[pathElement] as Record<string, unknown>;
+        pathElement = pathElements.pop();
+    }
+
+    return subProperty;
+}
+
+/**
  * Get the computed CSS value for given element and property, only for numerical
  * properties. For width and height, the dimension of the inner box (excluding
  * padding) is returned. Used for fitting the chart within the container.
@@ -2660,7 +2689,7 @@ H.getStyle = function (
 
     if (!win.getComputedStyle) {
         // SVG not supported, forgot to load oldie.js?
-        H.error(27, true);
+        error(27, true);
     }
 
     // Otherwise, get the computed style
@@ -3473,7 +3502,7 @@ if ((win as any).jQuery) {
 }
 
 // TODO use named exports when supported.
-const utils = {
+const utilitiesModule = {
     Fx,
     addEvent,
     animObject,
@@ -3481,14 +3510,21 @@ const utils = {
     arrayMin,
     attr,
     clamp,
+    clearTimeout: internalClearTimeout,
     correctFloat,
+    createElement,
+    css,
     defined,
     destroyObjectProperties,
     discardElement,
     erase,
+    error,
     extend,
     extendClass,
     fireEvent,
+    format,
+    getMagnitude,
+    getNestedProperty,
     isArray,
     isClass,
     isDOMElement,
@@ -3513,4 +3549,4 @@ const utils = {
     wrap
 };
 
-export default utils;
+export default utilitiesModule;

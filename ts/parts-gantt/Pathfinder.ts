@@ -192,6 +192,7 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     defined,
+    error,
     extend,
     merge,
     objectEach,
@@ -871,7 +872,7 @@ Connection.prototype = {
             chartObstacles = pathfinder.chartObstacles;
 
         if (typeof algorithm !== 'function') {
-            H.error(
+            error(
                 '"' + options.type + '" is not a Pathfinder algorithm.'
             );
             return;
@@ -1558,7 +1559,7 @@ function warnLegacy(chart: Highcharts.Chart): void {
             (chart.options.connectors = chart.options.connectors || {}),
             (chart.options as any).pathfinder
         );
-        H.error('WARNING: Pathfinder options have been renamed. ' +
+        error('WARNING: Pathfinder options have been renamed. ' +
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }

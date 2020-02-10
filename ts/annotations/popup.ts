@@ -129,6 +129,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    createElement,
     defined,
     isArray,
     isObject,
@@ -138,8 +139,7 @@ const {
     wrap
 } = U;
 
-var createElement = H.createElement,
-    indexFilter = /\d/g,
+var indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',
     INPUT = 'input',

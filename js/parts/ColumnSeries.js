@@ -372,6 +372,7 @@ seriesType('column', 'line',
      * distinguishing between values above and below a threshold. If `null`,
      * the columns extend from the padding Y axis minimum.
      *
+     * @type    {number|null}
      * @since   2.0
      * @product highcharts
      *

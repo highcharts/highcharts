@@ -46,6 +46,7 @@ declare global {
 import U from './Utilities.js';
 const {
     addEvent,
+    createElement,
     pick
 } = U;
 
@@ -257,11 +258,19 @@ Chart.prototype.setUpScrolling = function (this: Highcharts.Chart): void {
     }
 
     // Add the necessary divs to provide scrolling
-    this.scrollingContainer = H.createElement('div', {
+    this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
     }, attribs, this.renderTo);
 
-    this.innerContainer = H.createElement('div', {
+    // On scroll, reset the chart position because it applies to the scrolled
+    // container
+    addEvent(this.scrollingContainer, 'scroll', (): void => {
+        if (this.pointer) {
+            delete this.pointer.chartPosition;
+        }
+    });
+
+    this.innerContainer = createElement('div', {
         'className': 'highcharts-inner-container'
     }, null as any, this.scrollingContainer);
 
@@ -340,7 +349,7 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
     // First render
     if (firstTime) {
 
-        this.fixedDiv = H.createElement(
+        this.fixedDiv = createElement(
             'div',
             {
                 className: 'highcharts-fixed'

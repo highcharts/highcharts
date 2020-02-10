@@ -102,13 +102,13 @@ import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 var animate = H.animate, doc = H.doc, Axis = H.Axis, // @todo add as requirement
-createElement = H.createElement, defaultOptions = H.defaultOptions, charts = H.charts, css = H.css, find = H.find, Legend = H.Legend, // @todo add as requirement
+defaultOptions = H.defaultOptions, charts = H.charts, find = H.find, Legend = H.Legend, // @todo add as requirement
 marginNames = H.marginNames, seriesTypes = H.seriesTypes, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -381,7 +381,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             optionsChart.defaultSeriesType), series, Constr = seriesTypes[type];
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart, { missingModuleFor: type });
+            error(17, true, chart, { missingModuleFor: type });
         }
         series = new Constr();
         series.init(this, options);
@@ -997,7 +997,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     if (node !== this.renderTo) {
                         tempStyle.height = 0;
                     }
-                    H.css(node, tempStyle);
+                    css(node, tempStyle);
                     // If it still doesn't have an offset width after setting
                     // display to block, it probably has an !important priority
                     // #2631, 6803
@@ -1014,7 +1014,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         else {
             while (node && node.style) {
                 if (node.hcOrigStyle) {
-                    H.css(node, node.hcOrigStyle);
+                    css(node, node.hcOrigStyle);
                     delete node.hcOrigStyle;
                 }
                 if (node.hcOrigDetached) {
@@ -1061,7 +1061,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         // Display an error if the renderTo is wrong
         if (!renderTo) {
-            H.error(13, true, chart);
+            error(13, true, chart);
         }
         // If the container already holds a chart, destroy it. The check for
         // hasRendered is there because web pages that are saved to disk from
@@ -1237,7 +1237,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             (target === win || target === doc)) {
             if (width !== chart.containerWidth ||
                 height !== chart.containerHeight) {
-                H.clearTimeout(chart.reflowTimeout);
+                U.clearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function () {

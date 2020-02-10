@@ -55,6 +55,7 @@ declare global {
                 defaultFunction?: (EventCallbackFunction<Point>|Function)
             ): void;
             public getLabelConfig(): PointLabelObject;
+            public getNestedProperty(key: string): unknown;
             public getZone(): SeriesZonesOptions;
             public hasNewShapeType (this: Point): boolean|undefined;
             public init(
@@ -124,6 +125,7 @@ declare global {
             className?: string;
             color?: ColorType;
             colorIndex?: number;
+            custom?: Dictionary<any>;
             drilldown?: string;
             events?: PointEventsOptionsObject;
             id?: string;
@@ -351,12 +353,16 @@ declare global {
  * @type {Highcharts.PointOptionsType}
  */
 
+''; // detach doclet above
+
 import U from './Utilities.js';
 const {
     animObject,
     defined,
     erase,
     extend,
+    format,
+    getNestedProperty,
     isArray,
     isNumber,
     isObject,
@@ -367,7 +373,6 @@ const {
 
 var H = Highcharts,
     fireEvent = H.fireEvent,
-    format = H.format,
     uniqueKey = H.uniqueKey;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -609,7 +614,7 @@ class Point {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = (point as any)[pointValKey];
+            point.y = Point.prototype.getNestedProperty.call(point, pointValKey) as (number|null|undefined);
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
@@ -881,6 +886,20 @@ class Point {
             percentage: this.percentage,
             total: this.total || (this as any).stackTotal
         };
+    }
+
+    /**
+     * Returns the value of the point property for a given value.
+     * @private
+     */
+    public getNestedProperty(key: string): unknown {
+        if (!key) {
+            return;
+        }
+        if (key.indexOf('custom.') === 0) {
+            return getNestedProperty(key, this.options);
+        }
+        return (this as any)[key];
     }
 
     /**

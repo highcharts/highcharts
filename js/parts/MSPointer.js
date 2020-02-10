@@ -25,8 +25,8 @@ import H from './Globals.js';
 /* globals MSPointerEvent, PointerEvent */
 import Pointer from './Pointer.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, objectEach = U.objectEach, removeEvent = U.removeEvent;
-var charts = H.charts, css = H.css, doc = H.doc, noop = H.noop, win = H.win;
+var addEvent = U.addEvent, css = U.css, objectEach = U.objectEach, removeEvent = U.removeEvent;
+var charts = H.charts, doc = H.doc, noop = H.noop, win = H.win;
 // The touches object keeps track of the points being touched at all times
 var touches = {};
 var hasPointerEvent = !!win.PointerEvent;

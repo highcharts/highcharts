@@ -154,7 +154,9 @@ const {
     arrayMin,
     correctFloat,
     defined,
+    error,
     extend,
+    format,
     isNumber,
     merge,
     pick
@@ -166,7 +168,6 @@ import './Tooltip.js';
 
 var Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
-    format = H.format,
     Point = H.Point,
     Series = H.Series,
     Tooltip = H.Tooltip;
@@ -862,7 +863,7 @@ addEvent(Point, 'update', function (
     this: Highcharts.Point
 ): (boolean|undefined) {
     if (this.dataGroup) {
-        H.error(24, false, this.series.chart);
+        error(24, false, this.series.chart);
         return false;
     }
 });

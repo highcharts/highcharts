@@ -300,6 +300,7 @@ const {
     animObject,
     extend,
     fireEvent,
+    format,
     merge,
     objectEach,
     pick,
@@ -313,7 +314,6 @@ import '../parts/ColumnSeries.js';
 
 var noop = H.noop,
     defaultOptions = H.defaultOptions,
-    format = H.format,
     Chart = H.Chart,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,

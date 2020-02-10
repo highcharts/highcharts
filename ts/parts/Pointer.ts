@@ -268,6 +268,7 @@ import U from './Utilities.js';
 const {
     addEvent,
     attr,
+    css,
     defined,
     extend,
     fireEvent,
@@ -285,7 +286,6 @@ import './Color.js';
 var H = Highcharts,
     charts = H.charts,
     color = H.color,
-    css = H.css,
     find = H.find,
     noop = H.noop,
     Tooltip = H.Tooltip;
@@ -872,11 +872,9 @@ class Pointer {
      *         The offset of the chart container within the page
      */
     public getChartPosition(): Highcharts.OffsetObject {
-        const { chart } = this;
-        const container = chart.scrollingContainer || chart.container;
         return (
             this.chartPosition ||
-            (this.chartPosition = offset(container))
+            (this.chartPosition = offset(this.chart.container))
         );
     }
 

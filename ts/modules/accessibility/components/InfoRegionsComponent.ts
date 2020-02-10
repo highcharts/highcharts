@@ -13,12 +13,14 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
-var doc = H.win.document,
-    format = H.format;
+var doc = H.win.document;
 
 import U from '../../../parts/Utilities.js';
-var extend = U.extend,
-    pick = U.pick;
+const {
+    extend,
+    format,
+    pick
+} = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 

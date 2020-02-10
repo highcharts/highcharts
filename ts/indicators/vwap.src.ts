@@ -59,7 +59,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    error,
+    isArray
+} = U;
 
 var seriesType = H.seriesType;
 
@@ -134,7 +137,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                H.error(
+                error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',

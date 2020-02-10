@@ -52,13 +52,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    error
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var EMA = H.seriesTypes.ema,
-    error = H.error,
     requiredIndicator = requiredIndicatorMixin;
 
 /**

@@ -61,6 +61,7 @@ import './Axis.js';
 import U from './Utilities.js';
 const {
     addEvent,
+    css,
     defined,
     extend,
     pick,
@@ -74,7 +75,6 @@ import './Navigator.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    css = H.css,
     noop = H.noop,
     Series = H.Series;
 
@@ -1074,6 +1074,7 @@ addEvent(Axis, 'afterSetScale', function (this: Highcharts.Axis): void {
             !(axis.chart.navigator as any).adaptToUpdatedData;
     }
 });
+
 /* ************************************************************************** *
  * End ordinal axis logic                                                     *
  * ************************************************************************** */

@@ -29,12 +29,12 @@ import Pointer from './Pointer.js';
 import U from './Utilities.js';
 const {
     addEvent,
+    css,
     objectEach,
     removeEvent
 } = U;
 
 var charts = H.charts,
-    css = H.css,
     doc = H.doc,
     noop = H.noop,
     win = H.win;
