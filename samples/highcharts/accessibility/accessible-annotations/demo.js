@@ -3,10 +3,6 @@ Highcharts.chart('container', {
         text: 'Total CSUN conference sessions by year'
     },
 
-    subtitle: {
-        text: '2015 to 2020'
-    },
-
     series: [{
         name: 'Total sessions',
         pointStart: 2015,
@@ -36,7 +32,11 @@ Highcharts.chart('container', {
     },
 
     xAxis: {
-        type: 'category'
+        type: 'category',
+        accessibility: {
+            description: 'Year',
+            rangeDescription: 'Range: 2015 to 2020.'
+        }
     },
 
     yAxis: {
@@ -46,6 +46,17 @@ Highcharts.chart('container', {
         labels: {
             format: '{value}'
         }
+    },
+
+    tooltip: {
+        // Position tooltip below points
+        positioner: function (labelWidth, labelHeight, point) {
+            const chart = this.chart;
+            const x = point.plotX + chart.plotLeft + labelWidth / 2;
+            const y = point.plotY + chart.plotTop + labelHeight * 2;
+            return { x, y };
+        },
+        outside: true
     },
 
     annotations: [{
@@ -79,6 +90,12 @@ Highcharts.chart('container', {
         }, {
             points: '2017',
             text: 'Elsevier presented on VPATs'
+        }, {
+            point: '2018',
+            text: 'Vidar got selfie with Stevie Wonder',
+            shape: 'rect',
+            verticalAlign: 'top',
+            distance: 65
         }, {
             point: '2018',
             text: 'Elsevier presented 2 sessions',
