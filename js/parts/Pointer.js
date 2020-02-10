@@ -95,9 +95,10 @@ import Highcharts from './Globals.js';
 */
 import U from './Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
-import './Tooltip.js';
-import './Color.js';
-var H = Highcharts, charts = H.charts, color = H.color, find = H.find, noop = H.noop, Tooltip = H.Tooltip;
+import Tooltip from './Tooltip.js';
+import Color from './Color.js';
+var color = Color.parse;
+var H = Highcharts, charts = H.charts, find = H.find, noop = H.noop;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one
