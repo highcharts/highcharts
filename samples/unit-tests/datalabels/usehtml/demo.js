@@ -99,7 +99,7 @@ QUnit.test(
 );
 
 QUnit.test(
-    '#10765: rotated labels support useHTML',
+    '#10765: rotated dataLabels support useHTML',
     function (assert) {
         Highcharts.chart('container', {
             series: [{
@@ -119,7 +119,7 @@ QUnit.test(
         assert.strictEqual(
             label.nodeName,
             'SPAN',
-            "Rotated datalabels support useHTML."
+            'Created dataLabel should be rendered as HTML element, not SVG (#10765 )'
         );
     }
 );
