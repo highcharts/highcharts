@@ -15,9 +15,10 @@ var numberFormat = H.numberFormat, find = H.find;
 import U from '../../../../parts/Utilities.js';
 var isNumber = U.isNumber, pick = U.pick, defined = U.defined;
 import HTMLUtilities from '../../utils/htmlUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString, reverseChildNodes = HTMLUtilities.reverseChildNodes;
+var reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import ChartUtilities from '../../utils/chartUtilities.js';
 var getAxisDescription = ChartUtilities.getAxisDescription, getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement, getSeriesA11yElement = ChartUtilities.getSeriesA11yElement, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
+import Tooltip from '../../../../parts/Tooltip.js';
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -176,8 +177,8 @@ function getSeriesAxisDescriptionText(series, axisCollection) {
 function getPointA11yTimeDescription(point) {
     var series = point.series, chart = series.chart, a11yOptions = chart.options.accessibility.point || {}, hasDateXAxis = series.xAxis && series.xAxis.isDatetimeAxis;
     if (hasDateXAxis) {
-        var tooltipDateFormat = H.Tooltip.prototype.getXDateFormat.call({
-            getDateFormat: H.Tooltip.prototype.getDateFormat,
+        var tooltipDateFormat = Tooltip.prototype.getXDateFormat.call({
+            getDateFormat: Tooltip.prototype.getDateFormat,
             chart: chart
         }, point, chart.options.tooltip, series.xAxis), dateFormat = a11yOptions.dateFormatter &&
             a11yOptions.dateFormatter(point) ||

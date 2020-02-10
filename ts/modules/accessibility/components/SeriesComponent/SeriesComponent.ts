@@ -27,6 +27,8 @@ var hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
 import SeriesDescriber from './SeriesDescriber.js';
 var describeSeries = SeriesDescriber.describeSeries;
 
+import Tooltip from '../../../../parts/Tooltip.js';
+
 /**
  * Internal types.
  * @private
@@ -93,7 +95,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
     ): void {
         var component = this;
 
-        this.addEvent(H.Tooltip, 'refresh', function (): void {
+        this.addEvent(Tooltip, 'refresh', function (): void {
             if (
                 this.chart === component.chart &&
                 this.label &&

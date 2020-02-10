@@ -162,15 +162,15 @@ const {
     pick
 } = U;
 
+import Tooltip from './Tooltip.js';
+
 import './Axis.js';
 import './Series.js';
-import './Tooltip.js';
 
 var Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
     Point = H.Point,
-    Series = H.Series,
-    Tooltip = H.Tooltip;
+    Series = H.Series;
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *
