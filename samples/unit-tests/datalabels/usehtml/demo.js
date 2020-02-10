@@ -97,3 +97,29 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    '#10765: rotated labels support useHTML',
+    function (assert) {
+        Highcharts.chart('container', {
+            series: [{
+                dataLabels: {
+                    enabled: true,
+                    rotation: 10,
+                    useHTML: true,
+                    formatter: function () {
+                        return "<span class='myLabel'>205.00</span>";
+                    }
+                },
+                data: [1, 3, 2]
+            }]
+        });
+        const label = document.querySelector('.myLabel');
+
+        assert.strictEqual(
+            label.nodeName,
+            'SPAN',
+            "Rotated datalabels support useHTML."
+        );
+    }
+);
