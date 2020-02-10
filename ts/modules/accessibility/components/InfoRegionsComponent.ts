@@ -482,6 +482,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             axesDesc = this.getAxesDescription(),
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
+            annotationsList = getAnnotationsInfoHTML(chart as Highcharts.AnnotationChart),
             annotationsTitleStr = chart.langFormat(
                 'accessibility.screenReaderSection.annotations.heading',
                 { chart: chart }
@@ -495,8 +496,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 yAxisDescription: axesDesc.yAxis,
                 viewTableButton: chart.getCSV ?
                     this.getDataTableButtonText(dataTableButtonId) : '',
-                annotationsTitle: annotationsTitleStr,
-                annotationsList: getAnnotationsInfoHTML(chart as Highcharts.AnnotationChart)
+                annotationsTitle: annotationsList ? annotationsTitleStr : '',
+                annotationsList: annotationsList
             },
             formattedString = H.i18nFormat(format, context, chart);
 

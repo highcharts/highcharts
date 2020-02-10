@@ -250,7 +250,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultBeforeChartFormatter: function () {
         var chart = this.chart, format = chart.options.accessibility
             .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
-            chart.index, annotationsTitleStr = chart.langFormat('accessibility.screenReaderSection.annotations.heading', { chart: chart }), context = {
+            chart.index, annotationsList = getAnnotationsInfoHTML(chart), annotationsTitleStr = chart.langFormat('accessibility.screenReaderSection.annotations.heading', { chart: chart }), context = {
             chartTitle: getChartTitle(chart),
             typeDescription: this.getTypeDescriptionText(),
             chartSubtitle: this.getSubtitleText(),
@@ -259,8 +259,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             yAxisDescription: axesDesc.yAxis,
             viewTableButton: chart.getCSV ?
                 this.getDataTableButtonText(dataTableButtonId) : '',
-            annotationsTitle: annotationsTitleStr,
-            annotationsList: getAnnotationsInfoHTML(chart)
+            annotationsTitle: annotationsList ? annotationsTitleStr : '',
+            annotationsList: annotationsList
         }, formattedString = H.i18nFormat(format, context, chart);
         this.dataTableButtonId = dataTableButtonId;
         return stringToSimpleHTML(formattedString);
