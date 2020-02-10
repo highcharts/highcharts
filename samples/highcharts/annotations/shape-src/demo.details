@@ -1,0 +1,6 @@
+---
+ name: Highcharts Annotations Demo
+ authors:
+   - Wojciech Chmiel
+ js_wrap: b
+...

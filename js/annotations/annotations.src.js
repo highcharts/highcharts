@@ -516,6 +516,17 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * @apioption annotations.shapes.points
          */
         /**
+         * The URL for an image to use as the annotation shape. Note,
+         * type has to be set to `'image'`.
+         *
+         * @see [annotations.shapes.type](annotations.shapes.type)
+         * @sample highcharts/annotations/shape-src/
+         *         Define a marker image url for annotations
+         *
+         * @type      {string}
+         * @apioption annotations.shapes.src
+         */
+        /**
          * Id of the marker which will be drawn at the final vertex of the
          * path. Custom markers can be defined in defs property.
          *
@@ -574,6 +585,17 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              * @type      {string}
              * @default   'rect'
              * @apioption annotations.shapeOptions.type
+             */
+            /**
+             * The URL for an image to use as the annotation shape. Note,
+             * type has to be set to `'image'`.
+             *
+             * @see [annotations.shapeOptions.type](annotations.shapeOptions.type)
+             * @sample highcharts/annotations/shape-src/
+             *         Define a marker image url for annotations
+             *
+             * @type      {string}
+             * @apioption annotations.shapeOptions.src
              */
             /**
              * The color of the shape's stroke.
