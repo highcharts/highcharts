@@ -171,6 +171,7 @@ addEvent(Chart, 'render', function () {
  * @return {void}
  */
 Chart.prototype.setUpScrolling = function () {
+    var _this = this;
     var attribs = {
         WebkitOverflowScrolling: 'touch',
         overflowX: 'hidden',
@@ -186,6 +187,13 @@ Chart.prototype.setUpScrolling = function () {
     this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
     }, attribs, this.renderTo);
+    // On scroll, reset the chart position because it applies to the scrolled
+    // container
+    addEvent(this.scrollingContainer, 'scroll', function () {
+        if (_this.pointer) {
+            delete _this.pointer.chartPosition;
+        }
+    });
     this.innerContainer = createElement('div', {
         'className': 'highcharts-inner-container'
     }, null, this.scrollingContainer);

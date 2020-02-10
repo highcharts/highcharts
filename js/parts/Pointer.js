@@ -490,10 +490,8 @@ var Pointer = /** @class */ (function () {
      *         The offset of the chart container within the page
      */
     Pointer.prototype.getChartPosition = function () {
-        var chart = this.chart;
-        var container = chart.scrollingContainer || chart.container;
         return (this.chartPosition ||
-            (this.chartPosition = offset(container)));
+            (this.chartPosition = offset(this.chart.container)));
     };
     /**
      * Get the click position in terms of axis values.
