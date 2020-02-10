@@ -280,15 +280,14 @@ const {
     splat
 } = U;
 
-import './Tooltip.js';
-import './Color.js';
+import Tooltip from './Tooltip.js';
+import Color from './Color.js';
+const color = Color.parse;
 
 var H = Highcharts,
     charts = H.charts,
-    color = H.color,
     find = H.find,
-    noop = H.noop,
-    Tooltip = H.Tooltip;
+    noop = H.noop;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

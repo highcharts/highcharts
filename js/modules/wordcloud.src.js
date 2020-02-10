@@ -667,9 +667,20 @@ var wordCloudSeries = {
     drawPoints: function () {
         var series = this, hasRendered = series.hasRendered, xAxis = series.xAxis, yAxis = series.yAxis, chart = series.chart, group = series.group, options = series.options, animation = options.animation, allowExtendPlayingField = options.allowExtendPlayingField, renderer = chart.renderer, testElement = renderer.text().add(group), placed = [], placementStrategy = series.placementStrategy[options.placementStrategy], spiral, rotation = options.rotation, scale, weights = series.points.map(function (p) {
             return p.weight;
-        }), maxWeight = Math.max.apply(null, weights), data = series.points.sort(function (a, b) {
+        }), maxWeight = Math.max.apply(null, weights), 
+        // concat() prevents from sorting the original array.
+        data = series.points.concat().sort(function (a, b) {
             return b.weight - a.weight; // Sort descending
         }), field;
+        // Reset the scale before finding the dimensions (#11993).
+        // SVGGRaphicsElement.getBBox() (used in SVGElement.getBBox(boolean))
+        // returns slightly different values for the same element depending on
+        // whether it is rendered in a group which has already defined scale
+        // (e.g. 6) or in the group without a scale (scale = 1).
+        series.group.attr({
+            scaleX: 1,
+            scaleY: 1
+        });
         // Get the dimensions for each word.
         // Used in calculating the playing field.
         data.forEach(function (point) {

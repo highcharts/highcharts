@@ -26,10 +26,10 @@ import H from './Globals.js';
 */
 import U from './Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+import Tooltip from './Tooltip.js';
 import './Axis.js';
 import './Series.js';
-import './Tooltip.js';
-var Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
+var Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, Point = H.Point, Series = H.Series;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
