@@ -16,7 +16,6 @@ import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent;
 import HTMLUtilities from './utils/htmlUtilities.js';
 var getElement = HTMLUtilities.getElement;
-import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import EventProvider from './utils/EventProvider.js';
 /* eslint-disable valid-jsdoc */
 // Add event listener to document to detect ESC key press and dismiss
@@ -71,19 +70,15 @@ KeyboardNavigation.prototype = {
      *        Map of component names to AccessibilityComponent objects.
      */
     init: function (chart, components) {
-        var keyboardNavigation = this, e = this.eventProvider = new EventProvider();
+        var _this = this;
+        var ep = this.eventProvider = new EventProvider();
         this.chart = chart;
         this.components = components;
         this.modules = [];
         this.currentModuleIx = 0;
-        // Add keydown event
-        e.addEvent(chart.renderTo, 'keydown', function (e) {
-            keyboardNavigation.onKeydown(e);
-        });
-        // Add mouseup event on doc
-        e.addEvent(doc, 'mouseup', function () {
-            keyboardNavigation.onMouseUp();
-        });
+        ep.addEvent(chart.renderTo, 'keydown', function (e) { return _this.onKeydown(e); });
+        ep.addEvent(chart.container, 'focus', function (e) { return _this.onFocus(e); });
+        ep.addEvent(doc, 'mouseup', function () { return _this.onMouseUp(); });
         // Run an update to get all modules
         this.update();
         // Init first module
@@ -107,19 +102,27 @@ KeyboardNavigation.prototype = {
             this.modules = order.reduce(function (modules, componentName) {
                 var navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
-            }, [
-                // Add an empty module at the start of list, to allow users to
-                // tab into the chart.
-                new KeyboardNavigationHandler(this.chart, {
-                    init: function () { }
-                })
-            ]);
+            }, []);
             this.updateExitAnchor();
         }
         else {
             this.modules = [];
             this.currentModuleIx = 0;
             this.removeExitAnchor();
+        }
+    },
+    /**
+     * Function to run on container focus
+     * @private
+     * @param {global.FocusEvent} e Browser focus event.
+     */
+    onFocus: function (e) {
+        var _a;
+        var chart = this.chart;
+        var focusComesFromChart = (e.relatedTarget &&
+            chart.container.contains(e.relatedTarget));
+        if (!focusComesFromChart) {
+            (_a = this.modules[0]) === null || _a === void 0 ? void 0 : _a.init(1);
         }
     },
     /**
@@ -145,8 +148,7 @@ KeyboardNavigation.prototype = {
     /**
      * Function to run on keydown
      * @private
-     * @param {global.KeyboardEvent} ev
-     * Browser keydown event.
+     * @param {global.KeyboardEvent} ev Browser keydown event.
      */
     onKeydown: function (ev) {
         var e = ev || win.event, preventDefault, curNavModule = this.modules && this.modules.length &&
@@ -222,7 +224,7 @@ KeyboardNavigation.prototype = {
             this.exitAnchor.focus();
         }
         else {
-            this.chart.renderTo.focus();
+            this.chart.container.focus();
         }
         return false;
     },
