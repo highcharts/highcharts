@@ -23,7 +23,6 @@ const {
 import HTMLUtilities from './utils/htmlUtilities.js';
 const getElement = HTMLUtilities.getElement;
 
-import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import EventProvider from './utils/EventProvider.js';
 
 /**
@@ -59,6 +58,7 @@ declare global {
             ): void;
             public move(direction: number): boolean;
             public next(): boolean;
+            public onFocus(e: FocusEvent): void;
             public onKeydown(ev: KeyboardEvent): void;
             public onMouseUp(): void;
             public prev(): boolean;
@@ -142,25 +142,20 @@ KeyboardNavigation.prototype = {
         chart: Highcharts.Chart,
         components: Highcharts.AccessibilityComponentsObject
     ): void {
-        var keyboardNavigation = this,
-            e = this.eventProvider = new EventProvider();
+        const ep = this.eventProvider = new EventProvider();
 
         this.chart = chart;
         this.components = components;
         this.modules = [];
         this.currentModuleIx = 0;
 
-        // Add keydown event
-        e.addEvent(
-            chart.renderTo, 'keydown', function (e: KeyboardEvent): void {
-                keyboardNavigation.onKeydown(e);
-            }
-        );
+        ep.addEvent(chart.renderTo, 'keydown',
+            (e: KeyboardEvent): void => this.onKeydown(e));
 
-        // Add mouseup event on doc
-        e.addEvent(doc, 'mouseup', function (): void {
-            keyboardNavigation.onMouseUp();
-        });
+        ep.addEvent(chart.container, 'focus',
+            (e: FocusEvent): void => this.onFocus(e));
+
+        ep.addEvent(doc, 'mouseup', (): void => this.onMouseUp());
 
         // Run an update to get all modules
         this.update();
@@ -200,13 +195,7 @@ KeyboardNavigation.prototype = {
             ): Array<Highcharts.KeyboardNavigationHandler> {
                 var navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
-            }, [
-                // Add an empty module at the start of list, to allow users to
-                // tab into the chart.
-                new (KeyboardNavigationHandler as any)(this.chart, {
-                    init: (): void => {}
-                })
-            ]);
+            }, []);
 
             this.updateExitAnchor();
 
@@ -214,6 +203,24 @@ KeyboardNavigation.prototype = {
             this.modules = [];
             this.currentModuleIx = 0;
             this.removeExitAnchor();
+        }
+    },
+
+
+    /**
+     * Function to run on container focus
+     * @private
+     * @param {global.FocusEvent} e Browser focus event.
+     */
+    onFocus: function (e: FocusEvent): void {
+        const chart = this.chart;
+        const focusComesFromChart = (
+            e.relatedTarget &&
+            chart.container.contains(e.relatedTarget as any)
+        );
+
+        if (!focusComesFromChart) {
+            this.modules[0]?.init(1);
         }
     },
 
@@ -247,8 +254,7 @@ KeyboardNavigation.prototype = {
     /**
      * Function to run on keydown
      * @private
-     * @param {global.KeyboardEvent} ev
-     * Browser keydown event.
+     * @param {global.KeyboardEvent} ev Browser keydown event.
      */
     onKeydown: function (
         this: Highcharts.KeyboardNavigation,
@@ -341,7 +347,7 @@ KeyboardNavigation.prototype = {
             this.exiting = true;
             this.exitAnchor.focus();
         } else {
-            this.chart.renderTo.focus();
+            this.chart.container.focus();
         }
 
         return false;
