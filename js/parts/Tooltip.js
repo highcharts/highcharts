@@ -139,6 +139,7 @@ H.Tooltip.prototype = {
      * @return {void}
      */
     init: function (chart, options) {
+        var _a;
         /**
          * Chart of the tooltip.
          *
@@ -215,6 +216,7 @@ H.Tooltip.prototype = {
          * not be too complicated to implement.
          */
         this.outside = pick(options.outside, Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY));
+        this.pointerEvents = ((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || (options.stickOnHover ? 'auto' : 'none');
     },
     /**
      * Destroy the single tooltips in a split tooltip.
@@ -296,7 +298,6 @@ H.Tooltip.prototype = {
      * @return {Highcharts.SVGElement}
      */
     getLabel: function () {
-        var _a;
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = 'tooltip' +
             (defined(options.className) ? ' ' + options.className : ''), container, set;
         if (!this.label) {
@@ -314,7 +315,7 @@ H.Tooltip.prototype = {
                 H.css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: options.style && options.style.pointerEvents,
+                    pointerEvents: this.pointerEvents,
                     zIndex: 3
                 });
                 H.doc.body.appendChild(container);
@@ -347,6 +348,7 @@ H.Tooltip.prototype = {
                     })
                         // #2301, #2657
                         .css(options.style)
+                        .css({ pointerEvents: this.pointerEvents })
                         .shadow(options.shadow);
                 }
             }
@@ -373,8 +375,7 @@ H.Tooltip.prototype = {
             }
             this.label
                 .attr({
-                zIndex: 8,
-                pointerEvents: (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || options.stickOnHover ? 'auto' : 'none')
+                zIndex: 8
             })
                 .add();
         }

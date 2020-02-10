@@ -1197,41 +1197,31 @@ class Pointer {
         ) {
             const labelBBox = tooltip.label.getBBox();
             const labelOffset = Highcharts.offset(tooltip.label.element);
-            const pointBBox = point.graphic.getBBox();
-            const pointOffset = Highcharts.offset(point.graphic.element);
-
             labelBBox.x = labelOffset.left - chartPosition.left;
             labelBBox.y = labelOffset.top - chartPosition.top;
-            pointBBox.x = pointOffset.left - chartPosition.left;
-            pointBBox.y = pointOffset.top - chartPosition.top;
 
-            let x1, y1, x2, y2;
+            // The tooltip anchor point, the coordinate that the chevron points
+            // to. When the mouse pointer is between the anchor point and the
+            // label, the label should stick.
+            const { anchorX, anchorY } = tooltip.now;
 
-            if (typeof point.shapeArgs !== 'undefined') {
-                // pie points have to be ignored
-                x1 = labelBBox.x;
-                y1 = labelBBox.y;
-                x2 = labelBBox.x + labelBBox.width;
-                y2 = labelBBox.y + labelBBox.height;
-            } else {
-                // combine tooltip and point shape
-                x1 = Math.min(
-                    pointBBox.x,
-                    labelBBox.x
-                );
-                y1 = Math.min(
-                    pointBBox.y,
-                    labelBBox.y
-                );
-                x2 = Math.max(
-                    (pointBBox.x + pointBBox.width),
-                    (labelBBox.x + labelBBox.width)
-                );
-                y2 = Math.max(
-                    (pointBBox.y + pointBBox.height),
-                    (labelBBox.y + labelBBox.height)
-                );
-            }
+            // Combine tooltip and point shape
+            const x1 = Math.min(
+                anchorX,
+                labelBBox.x
+            );
+            const y1 = Math.min(
+                anchorY,
+                labelBBox.y
+            );
+            const x2 = Math.max(
+                anchorX,
+                (labelBBox.x + labelBBox.width)
+            );
+            const y2 = Math.max(
+                anchorY,
+                (labelBBox.y + labelBBox.height)
+            );
 
             isSticky = (
                 (pointerPosition.chartX >= x1 && pointerPosition.chartX <= x2) &&

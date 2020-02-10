@@ -90,6 +90,7 @@ declare global {
                 anchorX: number,
                 anchorY: number
             ): void;
+            public pointerEvents: string; // private
             public refresh(
                 pointOrPoints: (Point|Array<Point>),
                 mouseEvent?: PointerEventObject
@@ -384,6 +385,8 @@ H.Tooltip.prototype = {
             options.outside,
             Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
         );
+
+        this.pointerEvents = options.style?.pointerEvents || (options.stickOnHover ? 'auto' : 'none');
     },
 
     /**
@@ -498,7 +501,7 @@ H.Tooltip.prototype = {
                 H.css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: options.style && options.style.pointerEvents,
+                    pointerEvents: this.pointerEvents,
                     zIndex: 3
                 });
                 H.doc.body.appendChild(container);
@@ -552,6 +555,7 @@ H.Tooltip.prototype = {
                         })
                         // #2301, #2657
                         .css(options.style as any)
+                        .css({ pointerEvents: this.pointerEvents })
                         .shadow(options.shadow);
                 }
             }
@@ -587,8 +591,7 @@ H.Tooltip.prototype = {
 
             this.label
                 .attr({
-                    zIndex: 8,
-                    pointerEvents: (options.style?.pointerEvents || options.stickOnHover ? 'auto' : 'none')
+                    zIndex: 8
                 })
                 .add();
         }

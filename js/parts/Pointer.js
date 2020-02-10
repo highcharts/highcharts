@@ -748,27 +748,17 @@ var Pointer = /** @class */ (function () {
             chartPosition) {
             var labelBBox = tooltip.label.getBBox();
             var labelOffset = Highcharts.offset(tooltip.label.element);
-            var pointBBox = point.graphic.getBBox();
-            var pointOffset = Highcharts.offset(point.graphic.element);
             labelBBox.x = labelOffset.left - chartPosition.left;
             labelBBox.y = labelOffset.top - chartPosition.top;
-            pointBBox.x = pointOffset.left - chartPosition.left;
-            pointBBox.y = pointOffset.top - chartPosition.top;
-            var x1 = void 0, y1 = void 0, x2 = void 0, y2 = void 0;
-            if (typeof point.shapeArgs !== 'undefined') {
-                // pie points have to be ignored
-                x1 = labelBBox.x;
-                y1 = labelBBox.y;
-                x2 = labelBBox.x + labelBBox.width;
-                y2 = labelBBox.y + labelBBox.height;
-            }
-            else {
-                // combine tooltip and point shape
-                x1 = Math.min(pointBBox.x, labelBBox.x);
-                y1 = Math.min(pointBBox.y, labelBBox.y);
-                x2 = Math.max((pointBBox.x + pointBBox.width), (labelBBox.x + labelBBox.width));
-                y2 = Math.max((pointBBox.y + pointBBox.height), (labelBBox.y + labelBBox.height));
-            }
+            // The tooltip anchor point, the coordinate that the chevron points
+            // to. When the mouse pointer is between the anchor point and the
+            // label, the label should stick.
+            var _a = tooltip.now, anchorX = _a.anchorX, anchorY = _a.anchorY;
+            // Combine tooltip and point shape
+            var x1 = Math.min(anchorX, labelBBox.x);
+            var y1 = Math.min(anchorY, labelBBox.y);
+            var x2 = Math.max(anchorX, (labelBBox.x + labelBBox.width));
+            var y2 = Math.max(anchorY, (labelBBox.y + labelBBox.height));
             isSticky = ((pointerPosition.chartX >= x1 && pointerPosition.chartX <= x2) &&
                 (pointerPosition.chartY >= y1 && pointerPosition.chartY <= y2));
         }
