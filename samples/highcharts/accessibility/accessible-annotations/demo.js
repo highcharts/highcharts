@@ -49,14 +49,22 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        // Position tooltip below points
-        positioner: function (labelWidth, labelHeight, point) {
-            const chart = this.chart;
-            const x = point.plotX + chart.plotLeft + labelWidth / 2;
-            const y = point.plotY + chart.plotTop + labelHeight * 2;
+        // Position tooltip below points except for the first one
+        positioner: function (_, labelHeight, point) {
+            const x = point.plotX;
+            const firstPoint = this.chart.series[0].points[0];
+            const isClose = (a, b) => Math.abs(a - b) < 1;
+            let y = point.plotY;
+
+            if (isClose(x, firstPoint.plotX)) {
+                y -= 15; // Display above
+            } else {
+                y += labelHeight + 15; // Display below
+            }
+
             return { x, y };
         },
-        outside: true
+        backgroundColor: 'rgba(250, 250, 250, 0.97)'
     },
 
     annotations: [{
@@ -81,10 +89,14 @@ Highcharts.chart('container', {
         draggable: false,
         labelOptions: {
             allowOverlap: true,
-            y: 0,
             distance: 15
         },
         labels: [{
+            point: '2015',
+            text: 'Ted nearly plows into Stevie Wonder<br> on his way to the bathroom',
+            distance: null,
+            y: 50
+        }, {
             point: '2016',
             text: 'Elsevier & Highcharts presented together'
         }, {
@@ -92,7 +104,7 @@ Highcharts.chart('container', {
             text: 'Elsevier presented on VPATs'
         }, {
             point: '2018',
-            text: 'Vidar got selfie with Stevie Wonder',
+            text: 'Vidar got selfie with Stevie',
             shape: 'rect',
             verticalAlign: 'top',
             distance: 65
@@ -108,7 +120,13 @@ Highcharts.chart('container', {
             verticalAlign: 'top'
         }, {
             point: '2019',
-            text: 'Elsevier & Highcharts presented together'
+            text: 'Elsevier & Highcharts presented together',
+            shape: 'rect',
+            verticalAlign: 'top',
+            distance: 40
+        }, {
+            point: '2019',
+            text: 'Ted passes by Stevie in the hotel lobby'
         }, {
             point: '2020',
             text: 'Elsevier & Highcharts is presenting together',
