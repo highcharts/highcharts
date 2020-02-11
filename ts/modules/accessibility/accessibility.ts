@@ -31,6 +31,7 @@ declare global {
             public getChartTypes(): Array<string>;
             public init(chart: Chart): void;
             public initComponents(): void;
+            public getComponentOrder(): Array<string>;
             public update(): void;
         }
         interface AccessibilityComponentsObject {
@@ -171,7 +172,7 @@ Accessibility.prototype = {
      * @private
      */
     initComponents: function (this: Highcharts.Accessibility): void {
-        var chart = this.chart,
+        const chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
         this.components = {
@@ -183,16 +184,38 @@ Accessibility.prototype = {
             series: new SeriesComponent(),
             zoom: new ZoomComponent()
         };
+
         if (a11yOptions.customComponents) {
             extend(this.components, a11yOptions.customComponents);
         }
 
-        var components = this.components;
-        // Refactor to use Object.values if we polyfill
-        Object.keys(components).forEach(function (componentName: string): void {
+        const components = this.components;
+        this.getComponentOrder().forEach(function (componentName: string): void {
             components[componentName].initBase(chart);
             components[componentName].init();
         });
+    },
+
+
+    /**
+     * Get order to update components in.
+     * @private
+     */
+    getComponentOrder: function (this: Highcharts.Accessibility): string[] {
+        if (!this.components) {
+            return []; // For zombie accessibility object on old browsers
+        }
+
+        if (!this.components.series) {
+            return Object.keys(this.components);
+        }
+
+        const componentsExceptSeries = Object.keys(this.components)
+            .filter((c): boolean => c !== 'series');
+
+        // Update series first, so that other components can read accessibility
+        // info on points.
+        return ['series'].concat(componentsExceptSeries);
     },
 
 
@@ -210,7 +233,7 @@ Accessibility.prototype = {
         chart.types = this.getChartTypes();
 
         // Update markup
-        Object.keys(components).forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (componentName: string): void {
             components[componentName].onChartUpdate();
 
             fireEvent(chart, 'afterA11yComponentUpdate', {
@@ -232,7 +255,9 @@ Accessibility.prototype = {
             whcm.setHighContrastTheme(chart);
         }
 
-        fireEvent(chart, 'afterA11yUpdate');
+        fireEvent(chart, 'afterA11yUpdate', {
+            accessibility: this
+        });
     },
 
 
@@ -314,7 +339,7 @@ addEvent(H.Chart, 'render', function (e: Event): void {
 
     const a11y = this.accessibility;
     if (a11y) {
-        Object.keys(a11y.components).forEach(function (
+        a11y.getComponentOrder().forEach(function (
             componentName: string
         ): void {
             a11y.components[componentName].onChartRender();

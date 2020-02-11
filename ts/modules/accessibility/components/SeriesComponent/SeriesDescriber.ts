@@ -28,6 +28,7 @@ declare global {
 }
 
 var numberFormat = H.numberFormat,
+    format = H.format,
     find = H.find;
 
 import U from '../../../../parts/Utilities.js';
@@ -37,8 +38,12 @@ const {
     defined
 } = U;
 
+import AnnotationsA11y from '../AnnotationsA11y.js';
+const getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
+
 import HTMLUtilities from '../../utils/htmlUtilities.js';
 const {
+    escapeStringForHTML,
     reverseChildNodes,
     stripHTMLTagsFromString: stripHTMLTags
 } = HTMLUtilities;
@@ -53,6 +58,20 @@ const {
 
 import Tooltip from '../../../../parts/Tooltip.js';
 
+/**
+ * Internal types.
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface AccessibilityPoint {
+            accessibility?: AccessibilityPointStateObject;
+        }
+        interface AccessibilityPointStateObject {
+            valueDescription?: string;
+        }
+    }
+}
 
 /* eslint-disable valid-jsdoc */
 
@@ -400,7 +419,7 @@ function getPointArrayMapValueDescription(
  * @param {Highcharts.Point} point
  * @return {string}
  */
-function getPointValueDescription(
+function getPointValue(
     point: Highcharts.AccessibilityPoint
 ): string {
     var series = point.series,
@@ -434,6 +453,53 @@ function getPointValueDescription(
 
 
 /**
+ * Return the description for the annotation(s) connected to a point, or empty
+ * string if none.
+ *
+ * @private
+ * @param {Highcharts.Point} point The data point to get the annotation info from.
+ * @return {string} Annotation description
+ */
+function getPointAnnotationDescription(point: Highcharts.Point): string {
+    const chart = point.series.chart;
+    const langKey = 'accessibility.series.pointAnnotationsDescription';
+    const annotations = getPointAnnotationTexts(point as Highcharts.AnnotationPoint);
+    const context = { point, annotations };
+
+    return annotations.length ? chart.langFormat(langKey, context) : '';
+}
+
+
+/**
+ * Return string with information about point.
+ * @private
+ * @return {string}
+ */
+function getPointValueDescription(point: Highcharts.AccessibilityPoint): string {
+    const series = point.series,
+        chart = series.chart,
+        pointValueDescriptionFormat = chart.options.accessibility
+            .point.valueDescriptionFormat,
+        showXDescription = pick(
+            series.xAxis &&
+            series.xAxis.options.accessibility &&
+            series.xAxis.options.accessibility.enabled,
+            !chart.angular
+        ),
+        xDesc = showXDescription ? getPointXDescription(point) : '',
+        context = {
+            point: point,
+            index: defined(point.index) ? (point.index + 1) : '',
+            xDescription: xDesc,
+            value: getPointValue(point),
+            separator: showXDescription ? ', ' : ''
+        };
+
+    return format(pointValueDescriptionFormat, context, chart);
+}
+
+
+/**
  * Return string with information about point.
  * @private
  * @return {string}
@@ -443,24 +509,19 @@ function defaultPointDescriptionFormatter(
 ): string {
     var series = point.series,
         chart = series.chart,
+        valText = getPointValueDescription(point),
         description = point.options && point.options.accessibility &&
-            point.options.accessibility.description,
-        showXDescription = pick(
-            series.xAxis &&
-            series.xAxis.options.accessibility &&
-            series.xAxis.options.accessibility.enabled,
-            !chart.angular
-        ),
-        xDesc = getPointXDescription(point),
-        valueDesc = getPointValueDescription(point),
-        indexText = defined(point.index) ? (point.index + 1) + '. ' : '',
-        xDescText = showXDescription ? xDesc + ', ' : '',
-        valText = valueDesc + '.',
+        point.options.accessibility.description,
         userDescText = description ? ' ' + description : '',
         seriesNameText = chart.series.length > 1 && series.name ?
-            ' ' + series.name + '.' : '';
+            ' ' + series.name + '.' : '',
+        annotationsDesc = getPointAnnotationDescription(point),
+        pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '';
 
-    return indexText + xDescText + valText + userDescText + seriesNameText;
+    point.accessibility = point.accessibility || {};
+    point.accessibility.valueDescription = valText;
+
+    return valText + userDescText + seriesNameText + pointAnnotationsText;
 }
 
 
@@ -477,12 +538,14 @@ function setPointScreenReaderAttribs(
     var series = point.series,
         a11yPointOptions = series.chart.options.accessibility.point || {},
         seriesA11yOptions = series.options.accessibility || {},
-        label = stripHTMLTags(
-            seriesA11yOptions.pointDescriptionFormatter &&
-            seriesA11yOptions.pointDescriptionFormatter(point) ||
-            a11yPointOptions.descriptionFormatter &&
-            a11yPointOptions.descriptionFormatter(point) ||
-            defaultPointDescriptionFormatter(point)
+        label = escapeStringForHTML(
+            stripHTMLTags(
+                seriesA11yOptions.pointDescriptionFormatter &&
+                seriesA11yOptions.pointDescriptionFormatter(point) ||
+                a11yPointOptions.descriptionFormatter &&
+                a11yPointOptions.descriptionFormatter(point) ||
+                defaultPointDescriptionFormatter(point)
+            )
         );
 
     pointElement.setAttribute('role', 'img');
@@ -588,10 +651,12 @@ function describeSeriesElement(
     seriesElement.setAttribute('tabindex', '-1');
     seriesElement.setAttribute(
         'aria-label',
-        stripHTMLTags(
-            (a11yOptions.series as any).descriptionFormatter &&
-            (a11yOptions.series as any).descriptionFormatter(series) ||
-            defaultSeriesDescriptionFormatter(series)
+        escapeStringForHTML(
+            stripHTMLTags(
+                (a11yOptions.series as any).descriptionFormatter &&
+                (a11yOptions.series as any).descriptionFormatter(series) ||
+                defaultSeriesDescriptionFormatter(series)
+            )
         )
     );
 }
@@ -628,13 +693,15 @@ function describeSeries(series: Highcharts.AccessibilitySeries): void {
     }
 }
 
-var SeriesDescriber = {
-    describeSeries: describeSeries,
-    defaultPointDescriptionFormatter: defaultPointDescriptionFormatter,
-    defaultSeriesDescriptionFormatter: defaultSeriesDescriptionFormatter,
-    getPointA11yTimeDescription: getPointA11yTimeDescription,
-    getPointXDescription: getPointXDescription,
-    getPointValueDescription: getPointValueDescription
+
+const SeriesDescriber = {
+    describeSeries,
+    defaultPointDescriptionFormatter,
+    defaultSeriesDescriptionFormatter,
+    getPointA11yTimeDescription,
+    getPointXDescription,
+    getPointValue,
+    getPointValueDescription
 };
 
 export default SeriesDescriber;
