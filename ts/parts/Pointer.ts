@@ -120,7 +120,7 @@ declare global {
                 className: string
             ): (boolean|undefined);
             public init(chart: Chart, options: Options): void;
-            public isStickyTooltip(pointerPosition: PointerCoordinatesObject): boolean;
+            public isStickyTooltip(pointerPosition: PointerEventObject): boolean;
             public normalize<T extends PointerEventObject>(
                 e: (T|PointerEvent|TouchEvent),
                 chartPosition?: OffsetObject
@@ -1066,7 +1066,7 @@ class Pointer {
             series &&
             relatedTarget &&
             !series.stickyTracking &&
-            !this.isStickyTooltip(this.normalize(e)) &&
+            !this.isStickyTooltip(e) &&
             !this.inClass(relatedTarget as any, 'highcharts-tooltip') &&
             (
                 !this.inClass(
@@ -1168,19 +1168,26 @@ class Pointer {
      * and tooltip.
      *
      * @private
-     * @param {Highcharts.PointerCoordinatesObject} pointerPosition
-     * Pointers position to check agains the active tooltip.
+     * @param {Highcharts.PointerEventObject} e
+     * Pointers event to check agains the active tooltip.
      *
      * @return {boolean}
      * True, if the pointer event occurs inside of the hovered boundings.
      */
-    public isStickyTooltip(pointerPosition: Highcharts.PointerCoordinatesObject): boolean {
+    public isStickyTooltip(e: Highcharts.PointerEventObject): boolean {
         const chart = this.chart;
         const chartPosition = this.chartPosition;
         const point = chart.hoverPoint;
         const tooltip = chart.tooltip;
 
         let isSticky = false;
+
+        if (
+            typeof e.chartX === 'undefined' ||
+            typeof e.chartY === 'undefined'
+        ) {
+            e = this.normalize(e);
+        }
 
         if (
             tooltip &&
@@ -1221,8 +1228,8 @@ class Pointer {
             );
 
             isSticky = (
-                (pointerPosition.chartX >= x1 && pointerPosition.chartX <= x2) &&
-                (pointerPosition.chartY >= y1 && pointerPosition.chartY <= y2)
+                (e.chartX >= x1 && e.chartX <= x2) &&
+                (e.chartY >= y1 && e.chartY <= y2)
             );
         }
 

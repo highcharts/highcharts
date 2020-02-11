@@ -643,7 +643,7 @@ var Pointer = /** @class */ (function () {
         if (series &&
             relatedTarget &&
             !series.stickyTracking &&
-            !this.isStickyTooltip(this.normalize(e)) &&
+            !this.isStickyTooltip(e) &&
             !this.inClass(relatedTarget, 'highcharts-tooltip') &&
             (!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465, #5553
                 !this.inClass(relatedTarget, 'highcharts-tracker'))) {
@@ -725,18 +725,22 @@ var Pointer = /** @class */ (function () {
      * and tooltip.
      *
      * @private
-     * @param {Highcharts.PointerCoordinatesObject} pointerPosition
-     * Pointers position to check agains the active tooltip.
+     * @param {Highcharts.PointerEventObject} e
+     * Pointers event to check agains the active tooltip.
      *
      * @return {boolean}
      * True, if the pointer event occurs inside of the hovered boundings.
      */
-    Pointer.prototype.isStickyTooltip = function (pointerPosition) {
+    Pointer.prototype.isStickyTooltip = function (e) {
         var chart = this.chart;
         var chartPosition = this.chartPosition;
         var point = chart.hoverPoint;
         var tooltip = chart.tooltip;
         var isSticky = false;
+        if (typeof e.chartX === 'undefined' ||
+            typeof e.chartY === 'undefined') {
+            e = this.normalize(e);
+        }
         if (tooltip &&
             tooltip.options.stickOnContact &&
             tooltip.label &&
@@ -758,8 +762,8 @@ var Pointer = /** @class */ (function () {
             var y1 = Math.min(anchorY, labelBBox.y);
             var x2 = Math.max(anchorX, (labelBBox.x + labelBBox.width));
             var y2 = Math.max(anchorY, (labelBBox.y + labelBBox.height));
-            isSticky = ((pointerPosition.chartX >= x1 && pointerPosition.chartX <= x2) &&
-                (pointerPosition.chartY >= y1 && pointerPosition.chartY <= y2));
+            isSticky = ((e.chartX >= x1 && e.chartX <= x2) &&
+                (e.chartY >= y1 && e.chartY <= y2));
         }
         return isSticky;
     };
