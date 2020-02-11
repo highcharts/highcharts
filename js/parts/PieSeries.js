@@ -1181,7 +1181,7 @@ seriesType('pie', 'line',
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting, step
  * @product   highcharts
  * @apioption series.pie
  */
