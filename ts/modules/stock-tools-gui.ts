@@ -142,13 +142,13 @@ const {
     css,
     extend,
     fireEvent,
+    getStyle,
     isArray,
     merge,
     pick
 } = U;
 
-var getStyle = H.getStyle,
-    win = H.win,
+var win = H.win,
     DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
@@ -904,8 +904,8 @@ addEvent(H.Chart, 'getMargins', function (): void {
         offsetWidth = listWrapper && (
             (
                 (listWrapper as any).startWidth +
-                H.getStyle(listWrapper, 'padding-left') +
-                H.getStyle(listWrapper, 'padding-right')
+                getStyle(listWrapper, 'padding-left') +
+                getStyle(listWrapper, 'padding-right')
             ) || listWrapper.offsetWidth
         );
 
@@ -1115,7 +1115,7 @@ H.Toolbar.prototype = {
                     buttonWrapper.className += ' ' + PREFIX + 'current';
                     (menuWrapper as any).startWidth = wrapper.offsetWidth;
                     menuWrapper.style.width = (menuWrapper as any).startWidth +
-                        H.getStyle(menuWrapper, 'padding-left') +
+                        getStyle(menuWrapper, 'padding-left') +
                         (submenuWrapper as any).offsetWidth + 3 + 'px';
                 }
             })
@@ -1427,10 +1427,10 @@ H.Toolbar.prototype = {
             wrapper.style.height = showhideBtn.offsetHeight + 'px';
         } else {
             wrapper.style.height = '100%';
-            showhideBtn.style.top = H.getStyle(toolbar, 'padding-top') + 'px';
+            showhideBtn.style.top = getStyle(toolbar, 'padding-top') + 'px';
             showhideBtn.style.left = (
                 wrapper.offsetWidth +
-                (H.getStyle(toolbar, 'padding-left') as any)
+                (getStyle(toolbar, 'padding-left') as any)
             ) + 'px';
         }
 

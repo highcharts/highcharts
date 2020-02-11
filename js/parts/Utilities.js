@@ -1851,7 +1851,7 @@ function getNestedProperty(path, obj) {
  * @return {number|string}
  *         The numeric value.
  */
-H.getStyle = function (el, prop, toInt) {
+var getStyle = H.getStyle = function (el, prop, toInt) {
     var style;
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -2424,7 +2424,7 @@ H.animate = function (el, params, opt) {
             start = el.attr(prop);
         }
         else {
-            start = parseFloat(H.getStyle(el, prop)) || 0;
+            start = parseFloat(getStyle(el, prop)) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }
@@ -2579,6 +2579,7 @@ var utilitiesModule = {
     format: format,
     getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
+    getStyle: getStyle,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
