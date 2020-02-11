@@ -31,7 +31,7 @@ H.getOptions().global.VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 // Utilites
 if (doc && !doc.defaultView) {
-    U.getStyle = function (el, prop) {
+    H.getStyle = U.getStyle = function (el, prop) {
         var val, alias = {
             width: 'clientWidth',
             height: 'clientHeight'
