@@ -2143,7 +2143,7 @@ const getMagnitude = H.getMagnitude = function (num: number): number {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (
+const normalizeTickInterval = H.normalizeTickInterval = function (
     interval: number,
     multiples?: Array<any>,
     magnitude?: number,
@@ -3532,6 +3532,7 @@ const utilitiesModule = {
     isObject,
     isString,
     merge,
+    normalizeTickInterval,
     numberFormat,
     objectEach,
     offset,
