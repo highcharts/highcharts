@@ -1,7 +1,8 @@
 // Table row definitions. The table is built from this data.
 var tableRows = [{
     trackTitle: 'Education',
-    chartData: [178, 184, 167, 183, 160, 138]
+    chartData: [178, 184, 167, 183, 160, 138],
+    chartDescription: 'Education has been declining the past few years, but is still the most popular track.'
 }, {
     trackTitle: 'Employment & Workplace',
     chartData: [87, 68, 99, 105, 91, 137]
@@ -25,6 +26,15 @@ var defaultChartOptions = {
     chart: {
         type: 'line',
         backgroundColor: 'transparent'
+    },
+
+    accessibility: {
+        point: {
+            valueSuffix: ' sessions'
+        },
+        screenReaderSection: {
+            beforeChartFormat: '<h5>{chartTitle}</h5><div>{chartLongdesc}</div>'
+        }
     },
 
     title: {
@@ -54,8 +64,17 @@ var defaultChartOptions = {
 
     tooltip: {
         outside: true,
-        headerFormat: '<span style="font-size: 10px">{series.name}</span><br/>',
-        pointFormat: '<span style="color:{point.color}">●</span> {point.x}: <b>{point.y}</b><br/>'
+        backgroundColor: 'rgba(250, 250, 250, 0.95)',
+        formatter: function () {
+            var point = this.point;
+            var chart = this.series.chart;
+            var longdescText = chart.accessibility.components.infoRegions.getLongdescText() || 'Sessions';
+            var longdescFormat = '<span style="font-size: 10px">' + longdescText + '</span><br/>';
+            var pointFormat = '<span style="color:' + point.color + '">●</span> ' +
+                point.x + ': <b>' + point.y + '</b><br/>';
+
+            return longdescFormat + pointFormat;
+        }
     },
 
     xAxis: {
@@ -97,7 +116,10 @@ function addSparklineCell(tableRowElement, rowDefinition) {
     cell.appendChild(sparklineContainer);
     tableRowElement.appendChild(cell);
 
-    Highcharts.chart(sparklineContainer, Object.assign(defaultChartOptions, {
+    Highcharts.chart(sparklineContainer, Highcharts.merge(defaultChartOptions, {
+        accessibility: {
+            description: rowDefinition.chartDescription
+        },
         series: [{
             name: 'Sessions',
             data: rowDefinition.chartData
