@@ -350,7 +350,7 @@ radialAxisMixin = {
             r = pick(radius, center[2] / 2 - this.offset),
             path: Highcharts.RadialAxisPath;
 
-        if (innerRadius === void 0) {
+        if (typeof innerRadius === 'undefined') {
             innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
         }
 
