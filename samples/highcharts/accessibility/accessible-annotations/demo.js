@@ -3,6 +3,10 @@ Highcharts.chart('container', {
         text: 'Total CSUN conference sessions by year'
     },
 
+    subtitle: {
+        text: 'Highlighting our sessions and Stevie Wonder encounters'
+    },
+
     series: [{
         name: 'Total sessions',
         pointStart: 2015,
@@ -56,10 +60,8 @@ Highcharts.chart('container', {
             const isClose = (a, b) => Math.abs(a - b) < 1;
             let y = point.plotY;
 
-            if (isClose(x, firstPoint.plotX)) {
-                y -= 15; // Display above
-            } else {
-                y += labelHeight + 15; // Display below
+            if (!isClose(x, firstPoint.plotX)) {
+                y += labelHeight + 30; // Display below
             }
 
             return { x, y };
@@ -89,41 +91,34 @@ Highcharts.chart('container', {
         draggable: false,
         labelOptions: {
             allowOverlap: true,
-            distance: 15
+            distance: 15,
+            style: {
+                width: 180
+            }
         },
         labels: [{
             point: '2015',
-            text: 'Ted nearly plows into Stevie Wonder<br> on his way to the bathroom',
+            text: 'Ted nearly plows into Stevie Wonder on his way to the bathroom',
             distance: null,
-            y: 50
+            y: 60
         }, {
             point: '2016',
-            text: 'Elsevier & Highcharts presented together'
-        }, {
-            points: '2017',
-            text: 'Elsevier presented on VPATs'
+            text: 'Elsevier & Highcharts presented first session together: Accessible SVG Charts'
         }, {
             point: '2018',
-            text: 'Vidar got selfie with Stevie',
-            shape: 'rect',
-            verticalAlign: 'top',
-            distance: 65
-        }, {
-            point: '2018',
-            text: 'Elsevier presented 2 sessions',
-            shape: 'rect',
-            verticalAlign: 'top',
-            distance: 40
-        }, {
-            point: '2018',
-            text: 'Highcharts presented 1 session',
-            verticalAlign: 'top'
+            text: 'Vidar got selfie with Stevie'
         }, {
             point: '2019',
-            text: 'Elsevier & Highcharts presented together',
+            text: 'First year in Anaheim',
             shape: 'rect',
             verticalAlign: 'top',
-            distance: 40
+            distance: 110
+        }, {
+            point: '2019',
+            text: 'Elsevier & Highcharts presented 2nd session together:  Highcharts, The Next Chapter',
+            shape: 'rect',
+            verticalAlign: 'top',
+            distance: 55
         }, {
             point: '2019',
             text: 'Ted passes by Stevie in the hotel lobby'
