@@ -1066,7 +1066,7 @@ class Pointer {
             series &&
             relatedTarget &&
             !series.stickyTracking &&
-            !this.isStickyTooltip(e) &&
+            !this.isStickyTooltip(this.normalize(e)) &&
             !this.inClass(relatedTarget as any, 'highcharts-tooltip') &&
             (
                 !this.inClass(

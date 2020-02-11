@@ -402,7 +402,6 @@ var Tooltip = /** @class */ (function () {
      * @return {Highcharts.SVGElement}
      */
     Tooltip.prototype.getLabel = function () {
-        var _a;
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = 'tooltip' +
             (defined(options.className) ? ' ' + options.className : ''), container, set;
         if (!this.label) {
@@ -480,8 +479,7 @@ var Tooltip = /** @class */ (function () {
             }
             this.label
                 .attr({
-                zIndex: 8,
-                pointerEvents: (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || options.stickOnContact ? 'auto' : 'none')
+                zIndex: 8
             })
                 .add();
         }

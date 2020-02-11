@@ -776,8 +776,7 @@ class Tooltip {
 
             this.label
                 .attr({
-                    zIndex: 8,
-                    pointerEvents: (options.style?.pointerEvents || options.stickOnContact ? 'auto' : 'none')
+                    zIndex: 8
                 })
                 .add();
         }

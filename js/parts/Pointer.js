@@ -643,7 +643,7 @@ var Pointer = /** @class */ (function () {
         if (series &&
             relatedTarget &&
             !series.stickyTracking &&
-            !this.isStickyTooltip(e) &&
+            !this.isStickyTooltip(this.normalize(e)) &&
             !this.inClass(relatedTarget, 'highcharts-tooltip') &&
             (!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465, #5553
                 !this.inClass(relatedTarget, 'highcharts-tracker'))) {
