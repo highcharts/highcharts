@@ -21,14 +21,7 @@ Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var index = point.index + 1,
-                    category = point.category,
-                    val = Math.abs(point.y),
-                    series = point.series.name;
-
-                return index + ', Age ' + category + ', ' + val + '%. ' + series + '.';
-            }
+            valueDescriptionFormat: '{index}. Age {xDescription}, {value}%.'
         }
     },
     xAxis: [{

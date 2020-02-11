@@ -35,11 +35,11 @@ declare global {
 import U from './Utilities.js';
 const {
     getMagnitude,
+    normalizeTickInterval,
     pick
 } = U;
 
-var Axis = H.Axis,
-    normalizeTickInterval = H.normalizeTickInterval;
+var Axis = H.Axis;
 
 /* ************************************************************************** *
  * Methods defined on the Axis prototype

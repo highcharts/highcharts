@@ -11,9 +11,7 @@ Highcharts.chart('container', {
                 '<div>{viewTableButton}</div>'
         },
         point: {
-            descriptionFormatter: function (point) {
-                return point.label + '. ' + point.description + '.';
-            }
+            valueDescriptionFormat: '{index}. {point.label}. {point.description}.'
         }
     },
     xAxis: {

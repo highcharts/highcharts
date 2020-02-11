@@ -396,7 +396,7 @@ Series.prototype.drawDataLabels = function () {
                         point.dataLabels = point.dataLabels || [];
                         dataLabel = point.dataLabels[i] = rotation ?
                             // Labels don't rotate, use text element
-                            renderer.text(labelText, 0, -9999)
+                            renderer.text(labelText, 0, -9999, labelOptions.useHTML)
                                 .addClass('highcharts-data-label') :
                             // We can use label
                             renderer.label(labelText, 0, -9999, labelOptions.shape, null, null, labelOptions.useHTML, null, 'data-label');

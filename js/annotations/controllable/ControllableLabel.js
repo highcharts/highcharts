@@ -10,6 +10,7 @@ var extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
 import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable label class.
@@ -258,7 +259,7 @@ merge(true, ControllableLabel.prototype, controllableMixin,
             MockPoint.prototype.isInsidePane.call(point);
         if (showItem) {
             if (itemOptions.distance) {
-                itemPosition = H.Tooltip.prototype.getPosition.call({
+                itemPosition = Tooltip.prototype.getPosition.call({
                     chart: chart,
                     distance: pick(itemOptions.distance, 16)
                 }, item.width, item.height, {

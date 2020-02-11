@@ -10,8 +10,8 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var getMagnitude = U.getMagnitude, timeUnits = U.timeUnits;
-var Axis = H.Axis, normalizeTickInterval = H.normalizeTickInterval;
+var getMagnitude = U.getMagnitude, normalizeTickInterval = U.normalizeTickInterval, timeUnits = U.timeUnits;
+var Axis = H.Axis;
 /* eslint-disable valid-jsdoc */
 /**
  * Set the tick positions to a time unit that makes sense, for example

@@ -40,7 +40,7 @@ addEvent(Chart, 'render', function collectAndHide() {
         var dlOptions = series.options.dataLabels;
         if (series.visible &&
             !(dlOptions.enabled === false && !series._hasPointLabels)) { // #3866
-            series.points.forEach(function (point) {
+            (series.nodes || series.points).forEach(function (point) {
                 if (point.visible) {
                     var dataLabels = (isArray(point.dataLabels) ?
                         point.dataLabels :

@@ -234,7 +234,7 @@ declare global {
         ): number;
         function isArray(obj: unknown): obj is Array<unknown>;
         function isClass(obj: (object|undefined)): obj is Class;
-        function isDOMElement(obj: unknown): obj is HTMLElement;
+        function isDOMElement(obj: unknown): obj is HTMLDOMElement;
         function isFunction(obj: unknown): obj is Function;
         function isNumber(n: unknown): n is number;
         function isObject<T1, T2 extends boolean = false>(
@@ -1483,7 +1483,7 @@ const isObject = H.isObject = function isObject<T1, T2 extends boolean = false>(
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is Highcharts.HTMLElement {
+const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is Highcharts.HTMLDOMElement {
     return isObject(obj) && typeof (obj as any).nodeType === 'number';
 };
 
@@ -2143,7 +2143,7 @@ const getMagnitude = H.getMagnitude = function (num: number): number {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (
+const normalizeTickInterval = H.normalizeTickInterval = function (
     interval: number,
     multiples?: Array<any>,
     magnitude?: number,
@@ -3532,6 +3532,7 @@ const utilitiesModule = {
     isObject,
     isString,
     merge,
+    normalizeTickInterval,
     numberFormat,
     objectEach,
     offset,
