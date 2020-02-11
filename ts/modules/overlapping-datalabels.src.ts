@@ -68,7 +68,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             series.visible &&
             !(dlOptions.enabled === false && !series._hasPointLabels)
         ) { // #3866
-            series.points.forEach(function (point: Highcharts.Point): void {
+            (series.nodes || series.points).forEach(function (point: Highcharts.Point): void {
                 if (point.visible) {
                     var dataLabels = (
                         isArray(point.dataLabels) ?
