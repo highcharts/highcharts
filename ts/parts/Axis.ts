@@ -179,7 +179,6 @@ declare global {
             categories?: Array<string>;
             ceiling?: number;
             className?: string;
-            clipCrosshair?: SVGElement;
             crosshair?: (boolean|XAxisCrosshairOptions);
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
@@ -191,7 +190,6 @@ declare global {
             gridZIndex?: number;
             height?: (number|string);
             id?: string;
-            isCircular?: (undefined|boolean);
             isX?: boolean;
             labels?: XAxisLabelsOptions;
             left?: (number|string);
@@ -299,7 +297,6 @@ declare global {
             public bottom: number;
             public categories: (boolean|Array<string>);
             public chart: Chart;
-            public clipCrosshair?: SVGElement;
             public closestPointRange: number;
             public coll: string;
             public cross?: SVGElement;
@@ -322,7 +319,6 @@ declare global {
             public height: number;
             public horiz?: boolean;
             public isBroken?: boolean;
-            public isCircular?: (undefined|boolean);
             public isDatetimeAxis: boolean;
             public isDirty?: boolean;
             public isLinked: boolean;

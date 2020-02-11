@@ -82,7 +82,7 @@ declare global {
                 high: number,
                 start: number,
                 end: number
-            ): SVGPathArray|SVGAttributes;
+            ): SVGAttributes;
             findAlignments(
                 angle: number,
                 options: DataLabelsOptionsObject,
@@ -653,7 +653,7 @@ if (seriesTypes.column) {
         high: number,
         start: number,
         end: number
-    ): Highcharts.SVGPathArray|Highcharts.SVGAttributes {
+    ): Highcharts.SVGAttributes {
         var center = this.xAxis.center,
             len = this.yAxis.len,
             paneInnerR = center[3] / 2,

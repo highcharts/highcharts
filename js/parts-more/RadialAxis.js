@@ -160,7 +160,7 @@ radialAxisMixin = {
      */
     getLinePath: function (lineWidth, radius, innerRadius) {
         var center = this.center, end, chart = this.chart, r = pick(radius, center[2] / 2 - this.offset), path;
-        if (innerRadius === void 0) {
+        if (typeof innerRadius === 'undefined') {
             innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
         }
         // In case when innerSize of pane is set, it must be included
