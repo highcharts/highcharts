@@ -526,6 +526,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
             series = point.series,
             chart = series.chart,
             seriesLowColor = series.options.lowColor,
+            seriesMarker = series.options.marker,
             pointOptions = point.options,
             pointLowColor = pointOptions.lowColor,
             zoneColor = point.zone && point.zone.color,
@@ -543,7 +544,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
 
         this.pointSetState.apply(this, arguments);
 
-        if (!this.state) {
+        if (!point.state) {
             verb = 'animate';
             if (point.lowerGraphic && !chart.styledMode) {
                 point.lowerGraphic.attr({
@@ -558,6 +559,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                     point.zone = point.zone ? point.getZone() : void 0;
                     upperGraphicColor = pick(
                         point.marker ? point.marker.fillColor : void 0,
+                        seriesMarker ? seriesMarker.fillColor : void 0,
                         pointOptions.color,
                         point.zone ? point.zone.color : void 0,
                         point.color
