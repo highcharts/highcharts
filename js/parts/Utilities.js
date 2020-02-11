@@ -1454,7 +1454,7 @@ var getMagnitude = H.getMagnitude = function (num) {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
+var normalizeTickInterval = H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
     var normalized, i, retInterval = interval;
     // round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, 1);
@@ -2587,6 +2587,7 @@ var utilitiesModule = {
     isObject: isObject,
     isString: isString,
     merge: merge,
+    normalizeTickInterval: normalizeTickInterval,
     numberFormat: numberFormat,
     objectEach: objectEach,
     offset: offset,

@@ -708,6 +708,7 @@ const {
     isNumber,
     isString,
     merge,
+    normalizeTickInterval,
     objectEach,
     pick,
     relativeLength,
@@ -719,8 +720,7 @@ const {
 import './Options.js';
 
 var defaultOptions = H.defaultOptions,
-    deg2rad = H.deg2rad,
-    normalizeTickInterval = H.normalizeTickInterval;
+    deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
