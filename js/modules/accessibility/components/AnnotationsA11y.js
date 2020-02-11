@@ -10,9 +10,8 @@
  *
  * */
 'use strict';
-import '../../../parts/Utilities.js';
-import H from '../../../parts/Globals.js';
-var inArray = H.inArray;
+import U from '../../../parts/Utilities.js';
+var inArray = U.inArray;
 import HTMLUtilities from '../utils/htmlUtilities.js';
 var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, stripHTMLTagsFromString = HTMLUtilities.stripHTMLTagsFromString;
 /**

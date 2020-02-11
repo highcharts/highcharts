@@ -12,9 +12,12 @@
 
 'use strict';
 
-import '../../../parts/Utilities.js';
+import U from '../../../parts/Utilities.js';
+const {
+    inArray
+} = U;
+
 import H from '../../../parts/Globals.js';
-const inArray = H.inArray;
 
 import HTMLUtilities from '../utils/htmlUtilities.js';
 const {

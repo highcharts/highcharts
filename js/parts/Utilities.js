@@ -1911,7 +1911,7 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
  * @return {number}
  *         The index within the array, or -1 if not found.
  */
-H.inArray = function (item, arr, fromIndex) {
+var inArray = H.inArray = function (item, arr, fromIndex) {
     return arr.indexOf(item, fromIndex);
 };
 /* eslint-disable valid-jsdoc */
@@ -2580,6 +2580,7 @@ var utilitiesModule = {
     getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
     getStyle: getStyle,
+    inArray: inArray,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
