@@ -820,6 +820,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    inArray,
     isArray,
     isNumber,
     isObject,
@@ -1408,7 +1409,7 @@ extend((
                 // Special handling of symbol attributes
                 if (
                     this.symbolName &&
-                    H.inArray(key, symbolCustomAttribs) !== -1
+                    inArray(key, symbolCustomAttribs) !== -1
                 ) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash as any);

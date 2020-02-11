@@ -2721,7 +2721,7 @@ const getStyle = H.getStyle = function (
  * @return {number}
  *         The index within the array, or -1 if not found.
  */
-H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
+const inArray = H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
     return arr.indexOf(item, fromIndex);
 };
 
@@ -3525,6 +3525,7 @@ const utilitiesModule = {
     getMagnitude,
     getNestedProperty,
     getStyle,
+    inArray,
     isArray,
     isClass,
     isDOMElement,
