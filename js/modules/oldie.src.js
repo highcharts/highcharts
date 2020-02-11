@@ -31,7 +31,7 @@ H.getOptions().global.VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = function (el, prop) {
+    U.getStyle = function (el, prop) {
         var val, alias = {
             width: 'clientWidth',
             height: 'clientHeight'
@@ -45,7 +45,7 @@ if (doc && !doc.defaultView) {
         // Getting the rendered width and height
         if (alias) {
             el.style.zoom = 1;
-            return Math.max(el[alias] - 2 * H.getStyle(el, 'padding'), 0);
+            return Math.max(el[alias] - 2 * U.getStyle(el, 'padding'), 0);
         }
         val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
             return b.toUpperCase();

@@ -2640,7 +2640,7 @@ function getNestedProperty(path: string, obj: unknown): unknown {
  * @return {number|string}
  *         The numeric value.
  */
-H.getStyle = function (
+const getStyle = H.getStyle = function (
     el: Highcharts.HTMLDOMElement,
     prop: string,
     toInt?: boolean
@@ -3337,7 +3337,7 @@ H.animate = function (
         } else if ((el as any).attr) {
             start = (el as any).attr(prop);
         } else {
-            start = parseFloat(H.getStyle(el as any, prop) as any) || 0;
+            start = parseFloat(getStyle(el as any, prop) as any) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }
@@ -3524,6 +3524,7 @@ const utilitiesModule = {
     format,
     getMagnitude,
     getNestedProperty,
+    getStyle,
     isArray,
     isClass,
     isDOMElement,
