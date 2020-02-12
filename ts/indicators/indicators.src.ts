@@ -99,13 +99,13 @@ const {
     extend,
     isArray,
     pick,
+    seriesType,
     splat
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     ohlcProto = H.seriesTypes.ohlc.prototype,
     generateMessage = requiredIndicatorMixin.generateMessage;

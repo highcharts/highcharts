@@ -87,13 +87,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
 
 var noop = H.noop,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

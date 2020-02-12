@@ -12,6 +12,7 @@
 
 import H from '../parts/Globals.js';
 
+
 /**
  * Internal types
  * @private
@@ -75,9 +76,12 @@ declare global {
         }
     }
 }
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 
 var pick = H.pick,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     seriesProto = H.Series.prototype,
     areaRangeProto = seriesTypes.arearange.prototype,

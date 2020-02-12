@@ -3382,7 +3382,7 @@ H.animate = function (
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function<TSeries extends Highcharts.Series> (
+const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     type: string,
     parent: string,
     options: TSeries['options'],
@@ -3544,6 +3544,7 @@ const utilitiesModule = {
     pInt,
     relativeLength,
     removeEvent,
+    seriesType,
     setAnimation,
     splat,
     stableSort,

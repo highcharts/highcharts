@@ -56,7 +56,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isArray,
-    merge
+    merge,
+    seriesType
 } = U;
 
 import multipleLinesMixin from '../mixins/multipe-lines.js';
@@ -101,7 +102,7 @@ function getStandardDeviation(
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.BBIndicator>(
+seriesType<Highcharts.BBIndicator>(
     'bb',
     'sma',
     /**

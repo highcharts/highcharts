@@ -713,6 +713,7 @@ const {
     objectEach,
     pick,
     removeEvent,
+    seriesType,
     splat,
     syncTimeout
 } = U;
@@ -793,7 +794,7 @@ var defaultOptions = H.defaultOptions,
  *
  * @augments Highcharts.Series
  */
-H.Series = H.seriesType<Highcharts.LineSeries>(
+H.Series = seriesType<Highcharts.LineSeries>(
     'line',
 
     /**

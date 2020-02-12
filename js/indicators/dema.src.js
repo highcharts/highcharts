@@ -8,7 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray;
+var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesType;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 var EMAindicator = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin;
 /**
@@ -20,7 +20,7 @@ var EMAindicator = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin
  *
  * @augments Highcharts.Series
  */
-H.seriesType('dema', 'ema', 
+seriesType('dema', 'ema', 
 /**
  * Double exponential moving average (DEMA) indicator. This series requires
  * `linkedTo` option to be set and should be loaded after the

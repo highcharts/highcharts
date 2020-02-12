@@ -60,11 +60,13 @@ declare global {
 }
 
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    seriesType
+} = U;
 import './Point.js';
 
 var Point = H.Point,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

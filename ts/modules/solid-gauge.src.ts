@@ -97,6 +97,7 @@ const {
     merge,
     pick,
     pInt,
+    seriesType,
     wrap
 } = U;
 
@@ -388,7 +389,7 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
 
 
 // The solidgauge series type
-H.seriesType<Highcharts.SolidGaugeSeries>(
+seriesType<Highcharts.SolidGaugeSeries>(
     'solidgauge',
     'gauge',
     solidGaugeOptions,

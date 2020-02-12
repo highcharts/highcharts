@@ -7,7 +7,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
 var ATR = H.seriesTypes.atr;
 /**
  * The NATR series type.
@@ -18,7 +19,7 @@ var ATR = H.seriesTypes.atr;
  *
  * @augments Highcharts.Series
  */
-H.seriesType('natr', 'sma', 
+seriesType('natr', 'sma', 
 /**
  * Normalized average true range indicator (NATR). This series requires
  * `linkedTo` option to be set and should be loaded after the

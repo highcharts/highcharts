@@ -54,7 +54,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    merge
+    merge,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -62,7 +63,6 @@ import '../parts/Point.js';
 import '../parts-more/BubbleSeries.js';
 
 var Point = H.Point,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 // The mapbubble series type

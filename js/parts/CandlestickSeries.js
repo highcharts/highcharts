@@ -10,8 +10,8 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var merge = U.merge;
-var defaultPlotOptions = H.defaultPlotOptions, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var merge = U.merge, seriesType = U.seriesType;
+var defaultPlotOptions = H.defaultPlotOptions, seriesTypes = H.seriesTypes;
 /**
  * A candlestick chart is a style of financial chart used to describe price
  * movements over time.

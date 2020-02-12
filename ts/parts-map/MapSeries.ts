@@ -154,6 +154,7 @@ const {
     merge,
     objectEach,
     pick,
+    seriesType,
     splat
 } = U;
 
@@ -164,7 +165,6 @@ var colorMapPointMixin = H.colorMapPointMixin,
     fireEvent = H.fireEvent,
     Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

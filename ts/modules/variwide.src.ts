@@ -75,13 +75,13 @@ const {
     addEvent,
     isNumber,
     pick,
+    seriesType,
     wrap
 } = U;
 
 import '../parts/AreaSeries.js';
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * @private

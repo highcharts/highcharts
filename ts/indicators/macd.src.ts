@@ -105,12 +105,12 @@ import U from '../parts/Utilities.js';
 const {
     correctFloat,
     defined,
-    merge
+    merge,
+    seriesType
 } = U;
 
 
-var seriesType = H.seriesType,
-    noop = H.noop,
+var noop = H.noop,
     SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema;
 

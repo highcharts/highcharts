@@ -5,10 +5,8 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var error = U.error;
-var seriesType = H.seriesType;
+var error = U.error, seriesType = U.seriesType;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**

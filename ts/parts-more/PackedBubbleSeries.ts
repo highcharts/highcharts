@@ -252,7 +252,8 @@ const {
     isArray,
     isNumber,
     merge,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Axis.js';
@@ -262,9 +263,7 @@ import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
 
-
-var seriesType = H.seriesType,
-    Series = H.Series,
+var Series = H.Series,
     Point = H.Point,
     Chart = H.Chart,
     Reingold = H.layouts['reingold-fruchterman'],

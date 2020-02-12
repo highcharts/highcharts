@@ -40,11 +40,13 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 import '../parts/Options.js';
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * The area spline range is a cartesian series type with higher and

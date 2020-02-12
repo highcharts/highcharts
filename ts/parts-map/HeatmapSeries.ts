@@ -99,7 +99,8 @@ const {
     clamp,
     extend,
     merge,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -114,7 +115,6 @@ var colorMapPointMixin = H.colorMapPointMixin,
     noop = H.noop,
     fireEvent = H.fireEvent,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

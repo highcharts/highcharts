@@ -130,6 +130,7 @@ const {
     merge,
     pick,
     relativeLength,
+    seriesType,
     setAnimation
 } = U;
 
@@ -146,7 +147,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     noop = H.noop,
     Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**
