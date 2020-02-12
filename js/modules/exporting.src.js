@@ -78,7 +78,7 @@ import H from '../parts/Globals.js';
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
+var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
@@ -1113,7 +1113,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis) {
-            var axisCopy = H.find(chartCopy.axes, function (copy) {
+            var axisCopy = find(chartCopy.axes, function (copy) {
                 return copy.options.internalKey ===
                     axis.userOptions.internalKey;
             }), extremes = axis.getExtremes(), userMin = extremes.userMin, userMax = extremes.userMax;

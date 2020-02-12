@@ -94,7 +94,7 @@ import H from '../../parts/Globals.js';
 * @type {Function|undefined}
 */
 import U from '../../parts/Utilities.js';
-var isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
+var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
 import utilities from './utilities.js';
 /**
  * Get the relative time value of a point.
@@ -362,7 +362,7 @@ function buildSeriesOptions(series, dataExtremes, chartSonifyOptions) {
         earcons: chartSonifyOptions.earcons
     }, 
     // Merge in the specific series options by ID
-    isArray(seriesOptions) ? (H.find(seriesOptions, function (optEntry) {
+    isArray(seriesOptions) ? (find(seriesOptions, function (optEntry) {
         return optEntry.id === pick(series.id, series.options.id);
     }) || {}) : seriesOptions, {
         // Forced options

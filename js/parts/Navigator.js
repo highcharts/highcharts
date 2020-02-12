@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
+var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
 import './Color.js';
 import './Axis.js';
 import './Chart.js';
@@ -1455,7 +1455,7 @@ Navigator.prototype = {
             chart.options && chart.options.navigator.baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
-                H.find(chart.series, function (s) {
+                find(chart.series, function (s) {
                     return !s.options.isInternal;
                 }).index :
                 0));

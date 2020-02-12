@@ -257,6 +257,7 @@ import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
+    find,
     isObject,
     merge,
     pick,
@@ -271,8 +272,7 @@ const {
     getLevelOptions
 } = mixinTreeSeries;
 
-var find = H.find,
-    seriesType = H.seriesType,
+var seriesType = H.seriesType,
     Point = H.Point;
 
 // eslint-disable-next-line valid-jsdoc

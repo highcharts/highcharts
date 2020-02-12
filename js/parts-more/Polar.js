@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, find = U.find, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -660,7 +660,7 @@ addEvent(H.Series, 'afterInit', function () {
  * @private
  */
 wrap(H.Chart.prototype, 'get', function (proceed, id) {
-    return H.find(this.pane, function (pane) {
+    return find(this.pane, function (pane) {
         return pane.options.id === id;
     }) || proceed.call(this, id);
 });

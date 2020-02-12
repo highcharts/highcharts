@@ -1931,7 +1931,7 @@ var inArray = H.inArray = function (item, arr, fromIndex) {
  * @return {T|undefined}
  *         The value of the element.
  */
-H.find = Array.prototype.find ?
+var find = H.find = Array.prototype.find ?
     /* eslint-enable valid-jsdoc */
     function (arr, callback) {
         return arr.find(callback);
@@ -2575,6 +2575,7 @@ var utilitiesModule = {
     error: error,
     extend: extend,
     extendClass: extendClass,
+    find: find,
     fireEvent: fireEvent,
     format: format,
     getMagnitude: getMagnitude,

@@ -2742,7 +2742,7 @@ const inArray = H.inArray = function (item: any, arr: Array<any>, fromIndex?: nu
  * @return {T|undefined}
  *         The value of the element.
  */
-H.find = (Array.prototype as any).find ?
+const find = H.find = (Array.prototype as any).find ?
     /* eslint-enable valid-jsdoc */
     function<T> (arr: Array<T>, callback: Function): (T|undefined) {
         return (arr as any).find(callback as any);
@@ -3520,6 +3520,7 @@ const utilitiesModule = {
     error,
     extend,
     extendClass,
+    find,
     fireEvent,
     format,
     getMagnitude,

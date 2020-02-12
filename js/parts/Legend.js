@@ -78,7 +78,7 @@ import Highcharts from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var addEvent = U.addEvent, css = U.css, defined = U.defined, discardElement = U.discardElement, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, stableSort = U.stableSort, syncTimeout = U.syncTimeout, wrap = U.wrap;
+var addEvent = U.addEvent, css = U.css, defined = U.defined, discardElement = U.discardElement, find = U.find, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, stableSort = U.stableSort, syncTimeout = U.syncTimeout, wrap = U.wrap;
 var H = Highcharts, isFirefox = H.isFirefox, marginNames = H.marginNames, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -660,7 +660,7 @@ Highcharts.Legend.prototype = {
                 if (item.xAxis.options.reversed) {
                     useFirstPoint = !useFirstPoint;
                 }
-                lastPoint = H.find(useFirstPoint ?
+                lastPoint = find(useFirstPoint ?
                     item.points :
                     item.points.slice(0).reverse(), function (item) {
                     return isNumber(item.plotY);

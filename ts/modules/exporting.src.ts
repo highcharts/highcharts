@@ -288,6 +288,7 @@ const {
     createElement,
     discardElement,
     extend,
+    find,
     fireEvent,
     isObject,
     merge,
@@ -1489,7 +1490,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
-            var axisCopy = H.find(chartCopy.axes, function (
+            var axisCopy = find(chartCopy.axes, function (
                     copy: Highcharts.Axis
                 ): boolean {
                     return copy.options.internalKey ===

@@ -133,6 +133,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
+    find,
     isArray,
     isNumber,
     isObject,
@@ -144,7 +145,6 @@ import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 
 var noop = H.noop,
-    find = H.find,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
     getPolygon = polygon.getPolygon,
     isPolygonsColliding = polygon.isPolygonsColliding,
