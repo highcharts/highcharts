@@ -53,6 +53,8 @@ declare global {
             public screenReaderSections: Dictionary<(
                 InfoRegionsComponentScreenReaderSectionObject
             )>;
+            sonifyButton?: HTMLDOMElement|SVGDOMElement|null;
+            public sonifyButtonId?: string;
             public viewDataTableButton?: (
                 ''|HTMLDOMElement|SVGDOMElement|null
             );
@@ -72,11 +74,13 @@ declare global {
             public getLinkedDescription(): string;
             public getLinkedDescriptionElement(): (HTMLDOMElement|undefined);
             public getLongdescText(): string;
+            public getSonifyButtonText(buttonId: string): string;
             public getSubtitleText(): string;
             public getTypeDescriptionText(): string;
             public init(): void;
             public initDataTableButton(tableButtonId: string): void;
             public initRegionsDefinitions(): void;
+            public initSonifyButton(sonifyButtonId: string): void;
             public onChartUpdate(): void;
             public onDataTableCreated(e: { html: string }): void;
             public setLinkedDescriptionAttrs(): void;
@@ -316,6 +320,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     );
                 },
                 afterInserted: function (): void {
+                    if (typeof component.sonifyButtonId !== 'undefined') {
+                        component.initSonifyButton(component.sonifyButtonId);
+                    }
                     if (typeof component.dataTableButtonId !== 'undefined') {
                         component.initDataTableButton(component.dataTableButtonId);
                     }
@@ -482,6 +489,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             format = chart.options.accessibility
                 .screenReaderSection.beforeChartFormat,
             axesDesc = this.getAxesDescription(),
+            sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
+                chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
             annotationsList = getAnnotationsInfoHTML(chart as Highcharts.AnnotationChart),
@@ -496,6 +505,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 chartLongdesc: this.getLongdescText(),
                 xAxisDescription: axesDesc.xAxis,
                 yAxisDescription: axesDesc.yAxis,
+                playAsSoundButton: chart.sonify ?
+                    this.getSonifyButtonText(sonifyButtonId) : '',
                 viewTableButton: chart.getCSV ?
                     this.getDataTableButtonText(dataTableButtonId) : '',
                 annotationsTitle: annotationsList ? annotationsTitleStr : '',
@@ -504,6 +515,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             formattedString = H.i18nFormat(format, context, chart);
 
         this.dataTableButtonId = dataTableButtonId;
+        this.sonifyButtonId = sonifyButtonId;
+
         return stringToSimpleHTML(formattedString);
     },
 
@@ -597,6 +610,30 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
     /**
      * @private
+     * @param {string} buttonId
+     * @return {string}
+     */
+    getSonifyButtonText: function (
+        this: Highcharts.InfoRegionsComponent,
+        buttonId: string
+    ): string {
+        const chart = this.chart;
+
+        if (chart.options.sonification?.enabled === false) {
+            return '';
+        }
+
+        const buttonText = chart.langFormat(
+            'accessibility.playAsSoundButtonText',
+            { chart: chart, chartTitle: getChartTitle(chart) }
+        );
+
+        return '<button id="' + buttonId + '">' + buttonText + '</button>';
+    },
+
+
+    /**
+     * @private
      * @return {string}
      */
     getSubtitleText: function (
@@ -659,6 +696,36 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         if (table && table.focus) {
             table.focus();
+        }
+    },
+
+
+    /**
+     * @private
+     * @param {string} sonifyButtonId
+     */
+    initSonifyButton: function (
+        this: Highcharts.InfoRegionsComponent,
+        sonifyButtonId: string
+    ): void {
+        const el = this.sonifyButton = getElement(sonifyButtonId);
+        const chart = this.chart as Highcharts.SonifyableChart;
+        const defaultHandler = (): void => {
+            setTimeout((): void => {
+                if (chart.sonify) {
+                    chart.sonify();
+                }
+            }, 400); // Short delay to let screen reader speak the button press
+        };
+
+        if (el && chart) {
+            setElAttrs(el, {
+                tabindex: '-1'
+            });
+
+            el.onclick = chart.options.accessibility?.screenReaderSection
+                .onPlayAsSoundClick ||
+                defaultHandler;
         }
     },
 

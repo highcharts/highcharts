@@ -150,6 +150,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart.renderTo.insertBefore(el, chart.renderTo.firstChild);
                 },
                 afterInserted: function () {
+                    if (typeof component.sonifyButtonId !== 'undefined') {
+                        component.initSonifyButton(component.sonifyButtonId);
+                    }
                     if (typeof component.dataTableButtonId !== 'undefined') {
                         component.initDataTableButton(component.dataTableButtonId);
                     }
@@ -249,7 +252,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     defaultBeforeChartFormatter: function () {
         var chart = this.chart, format = chart.options.accessibility
-            .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
+            .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
+            chart.index, dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
             chart.index, annotationsList = getAnnotationsInfoHTML(chart), annotationsTitleStr = chart.langFormat('accessibility.screenReaderSection.annotations.heading', { chart: chart }), context = {
             chartTitle: getChartTitle(chart),
             typeDescription: this.getTypeDescriptionText(),
@@ -257,12 +261,15 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             chartLongdesc: this.getLongdescText(),
             xAxisDescription: axesDesc.xAxis,
             yAxisDescription: axesDesc.yAxis,
+            playAsSoundButton: chart.sonify ?
+                this.getSonifyButtonText(sonifyButtonId) : '',
             viewTableButton: chart.getCSV ?
                 this.getDataTableButtonText(dataTableButtonId) : '',
             annotationsTitle: annotationsList ? annotationsTitleStr : '',
             annotationsList: annotationsList
         }, formattedString = H.i18nFormat(format, context, chart);
         this.dataTableButtonId = dataTableButtonId;
+        this.sonifyButtonId = sonifyButtonId;
         return stringToSimpleHTML(formattedString);
     },
     /**
@@ -316,6 +323,20 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     },
     /**
      * @private
+     * @param {string} buttonId
+     * @return {string}
+     */
+    getSonifyButtonText: function (buttonId) {
+        var _a;
+        var chart = this.chart;
+        if (((_a = chart.options.sonification) === null || _a === void 0 ? void 0 : _a.enabled) === false) {
+            return '';
+        }
+        var buttonText = chart.langFormat('accessibility.playAsSoundButtonText', { chart: chart, chartTitle: getChartTitle(chart) });
+        return '<button id="' + buttonId + '">' + buttonText + '</button>';
+    },
+    /**
+     * @private
      * @return {string}
      */
     getSubtitleText: function () {
@@ -350,6 +371,29 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         var tableDiv = this.dataTableDiv, table = tableDiv && tableDiv.getElementsByTagName('table')[0];
         if (table && table.focus) {
             table.focus();
+        }
+    },
+    /**
+     * @private
+     * @param {string} sonifyButtonId
+     */
+    initSonifyButton: function (sonifyButtonId) {
+        var _a;
+        var el = this.sonifyButton = getElement(sonifyButtonId);
+        var chart = this.chart;
+        var defaultHandler = function () {
+            setTimeout(function () {
+                if (chart.sonify) {
+                    chart.sonify();
+                }
+            }, 400); // Short delay to let screen reader speak the button press
+        };
+        if (el && chart) {
+            setElAttrs(el, {
+                tabindex: '-1'
+            });
+            el.onclick = ((_a = chart.options.accessibility) === null || _a === void 0 ? void 0 : _a.screenReaderSection.onPlayAsSoundClick) ||
+                defaultHandler;
         }
     },
     /**

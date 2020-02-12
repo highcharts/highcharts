@@ -86,6 +86,7 @@ declare global {
             axisRangeDateFormat: string;
             beforeChartFormat: string;
             beforeChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
+            onPlayAsSoundClick?: ScreenReaderClickCallbackFunction;
             onViewDataTableClick?: ScreenReaderClickCallbackFunction;
         }
         interface AccessibilitySeriesOptions {
@@ -258,6 +259,17 @@ var options: DeepPartial<Highcharts.Options> = {
              */
 
             /**
+             * Function to run upon clicking the "Play as sound" button in
+             * the screen reader region.
+             *
+             * By default Highcharts will call the `chart.sonify` function.
+             *
+             * @type      {Highcharts.ScreenReaderClickCallbackFunction}
+             * @since next
+             * @apioption accessibility.screenReaderSection.onPlayAsSoundClick
+             */
+
+            /**
              * A formatter function to create the HTML contents of the hidden
              * screen reader information region before the chart. Receives one
              * argument, `chart`, referring to the chart object. Should return a
@@ -286,6 +298,7 @@ var options: DeepPartial<Highcharts.Options> = {
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +
+                '<div>{playAsSoundButton}</div>' +
                 '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +

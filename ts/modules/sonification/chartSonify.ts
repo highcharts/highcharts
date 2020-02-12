@@ -23,7 +23,7 @@ declare global {
             cancel(this: SonifyableChart, fadeOut?: boolean): void;
             chartSonify(
                 this: SonifyableChart,
-                options: SonifyChartOptionsObject
+                options?: SonificationOptions
             ): void;
             getCurrentPoints(this: SonifyableChart): Array<Point>;
             pause(this: SonifyableChart, fadeOut?: boolean): void;
@@ -40,11 +40,12 @@ declare global {
                 points: (Point|Array<Point>)
             ): void;
         }
-        interface SonifyChartOptionsObject {
+        interface SonificationOptions {
             afterSeriesWait?: number;
             dataExtremes?: Dictionary<RangeObject>;
             duration: number;
             earcons?: Array<EarconConfiguration>;
+            enabled?: boolean;
             instruments?: Array<PointInstrumentObject>;
             onEnd?: Function;
             onSeriesEnd?: Function;
@@ -514,7 +515,7 @@ function seriesSonify(
  * The series to return options for.
  * @param {Highcharts.RangeObject} dataExtremes
  * Pre-calculated data extremes for the chart.
- * @param {Highcharts.SonifyChartOptionsObject} chartSonifyOptions
+ * @param {Highcharts.SonificationOptions} chartSonifyOptions
  * Options passed in to chart.sonify.
  * @return {Partial<Highcharts.SonifySeriesOptionsObject>}
  * Options for buildTimelinePathFromSeries.
@@ -522,7 +523,7 @@ function seriesSonify(
 function buildSeriesOptions(
     series: Highcharts.SonifyableSeries,
     dataExtremes: Highcharts.Dictionary<Highcharts.RangeObject>,
-    chartSonifyOptions: Highcharts.SonifyChartOptionsObject
+    chartSonifyOptions: Highcharts.SonificationOptions
 ): Partial<Highcharts.SonifySeriesOptionsObject> {
     var seriesOptions: (
         Partial<Highcharts.SonifySeriesOptionsObject>|
@@ -967,6 +968,24 @@ function buildPathsFromOrder(
 
 
 /**
+ * @private
+ * @param {Highcharts.Chart} chart The chart to get options for.
+ * @param {Highcharts.SonificationOptions} userOptions
+ *  Options to merge with options on chart and default options.
+ * @returns {Highcharts.SonificationOptions} The merged options.
+ */
+function getChartSonifyOptions(
+    chart: Highcharts.SonifyableChart,
+    userOptions?: Highcharts.SonificationOptions
+): Highcharts.SonificationOptions {
+    return merge(
+        chart.options.sonification,
+        userOptions
+    );
+}
+
+
+/**
  * Options for sonifying a chart.
  *
  * @requires module:modules/sonification
@@ -1075,38 +1094,44 @@ function buildPathsFromOrder(
  *
  * @function Highcharts.Chart#sonify
  *
- * @param {Highcharts.SonifyChartOptionsObject} options
+ * @param {Highcharts.SonificationOptions} options
  *        The options for sonifying this chart.
  *
  * @return {void}
  */
 function chartSonify(
     this: Highcharts.SonifyableChart,
-    options: Highcharts.SonifyChartOptionsObject
+    options?: Highcharts.SonificationOptions
 ): void {
+    const opts = getChartSonifyOptions(this, options);
+
+    if (opts.enabled === false) {
+        return;
+    }
+
     // Only one timeline can play at a time.
     if (this.sonification.timeline) {
         this.sonification.timeline.pause();
     }
 
     // Calculate data extremes for the props used
-    var dataExtremes = getExtremesForInstrumentProps(
-        this, options.instruments as any, options.dataExtremes as any
+    const dataExtremes = getExtremesForInstrumentProps(
+        this, opts.instruments as any, opts.dataExtremes as any
     );
 
     // Figure out ordering of series and custom paths
-    var order = buildPathOrder(options.order, this, function (
+    let order = buildPathOrder(opts.order, this, function (
         series: Highcharts.SonifyableSeries
     ): Partial<Highcharts.SonifySeriesOptionsObject> {
-        return buildSeriesOptions(series, dataExtremes, options);
+        return buildSeriesOptions(series, dataExtremes, opts);
     });
 
     // Add waits after simultaneous paths with series in them.
-    order = addAfterSeriesWaits(order, options.afterSeriesWait || 0);
+    order = addAfterSeriesWaits(order, opts.afterSeriesWait || 0);
 
     // We now have a list of either TimelinePath objects or series that need to
     // be converted to TimelinePath objects. Convert everything to paths.
-    var paths = buildPathsFromOrder(order, options.duration);
+    const paths = buildPathsFromOrder(order, opts.duration);
 
     // Sync simultaneous paths
     paths.forEach(function (
@@ -1118,7 +1143,7 @@ function chartSonify(
     // We have a set of paths. Create the timeline, and play it.
     this.sonification.timeline = new H.sonification.Timeline({
         paths: paths,
-        onEnd: options.onEnd
+        onEnd: opts.onEnd
     });
     this.sonification.timeline.play();
 }
