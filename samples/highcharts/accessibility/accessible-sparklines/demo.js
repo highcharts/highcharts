@@ -34,9 +34,13 @@ var defaultChartOptions = {
             valueSuffix: ' sessions'
         },
         screenReaderSection: {
-            beforeChartFormat: '<div>{chartLongdesc}</div>',
+            beforeChartFormat: '<div>{chartLongdesc}</div><div>{playAsSoundButton}</div>',
             afterChartFormat: ''
         }
+    },
+
+    sonification: {
+        duration: 1700
     },
 
     title: {
