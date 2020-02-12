@@ -830,7 +830,8 @@ const {
     pick,
     pInt,
     removeEvent,
-    splat
+    splat,
+    stop
 } = U;
 
 var SVGElement: Highcharts.SVGElement,
@@ -844,7 +845,6 @@ var SVGElement: Highcharts.SVGElement,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     noop = H.noop,
-    stop = H.stop,
     svg = H.svg,
     SVG_NS = H.SVG_NS,
     symbolSizes = H.symbolSizes,
