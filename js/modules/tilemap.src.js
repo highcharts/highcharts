@@ -19,14 +19,24 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick, seriesType = U.seriesType;
 import '../parts-map/HeatmapSeries.js';
-// Utility func to get padding definition from tile size division
-var tilePaddingFromTileSize = function (series, xDiv, yDiv) {
+/**
+ * Utility func to get padding definition from tile size division
+ * @private
+ * @param {Highcharts.TilemapSeries} series
+ * series
+ * @param {Highcharts.number} xDiv
+ * xDiv
+ * @param {Highcharts.number} yDiv
+ * yDiv
+ * @return {Highcharts.TilemapPaddingObject}
+ */
+function tilePaddingFromTileSize(series, xDiv, yDiv) {
     var options = series.options;
     return {
         xPad: (options.colsize || 1) / -xDiv,
         yPad: (options.rowsize || 1) / -yDiv
     };
-};
+}
 // Map of shape types.
 H.tileShapeTypes = {
     // Hexagon shape type.

@@ -101,8 +101,18 @@ const {
 
 import '../parts-map/HeatmapSeries.js';
 
-// Utility func to get padding definition from tile size division
-var tilePaddingFromTileSize = function (
+/**
+ * Utility func to get padding definition from tile size division
+ * @private
+ * @param {Highcharts.TilemapSeries} series
+ * series
+ * @param {Highcharts.number} xDiv
+ * xDiv
+ * @param {Highcharts.number} yDiv
+ * yDiv
+ * @return {Highcharts.TilemapPaddingObject}
+ */
+function tilePaddingFromTileSize(
     series: Highcharts.TilemapSeries,
     xDiv: number,
     yDiv: number
@@ -113,7 +123,7 @@ var tilePaddingFromTileSize = function (
         xPad: (options.colsize || 1) / -xDiv,
         yPad: (options.rowsize || 1) / -yDiv
     };
-};
+}
 
 // Map of shape types.
 H.tileShapeTypes = {
