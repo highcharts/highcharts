@@ -381,11 +381,11 @@ H.Series.prototype.gappedPath = function () {
      * Together with [gapSize](plotOptions.series.gapSize), this option defines
      * where to draw gaps in the graph.
      *
-     * When the `gapUnit` is `relative` (default), a gap size of 5 means
+     * When the `gapUnit` is `"relative"` (default), a gap size of 5 means
      * that if the distance between two points is greater than five times
      * that of the two closest points, the graph will be broken.
      *
-     * When the `gapUnit` is `value`, the gap is based on absolute axis values,
+     * When the `gapUnit` is `"value"`, the gap is based on absolute axis values,
      * which on a datetime axis is milliseconds. This also applies to the
      * navigator series that inherits gap options from the base series.
      *
