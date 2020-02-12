@@ -81,6 +81,7 @@ declare global {
             exporting: LangAccessibilityExportingOptions;
             graphicContainerLabel: string;
             legend: LangAccessibilityLegendOptions;
+            playAsSoundButtonText: string;
             rangeSelector: LangAccessibilityRangeSelectorOptions;
             screenReaderSection: LangAccessibilityScreenReaderSectionOptions;
             series: LangAccessibilitySeriesOptions;
@@ -194,6 +195,7 @@ var langOptions: Highcharts.LangOptions = {
         svgContainerLabel: 'Interactive chart',
         drillUpButton: '{buttonText}',
         credits: 'Chart credits: {creditsStr}',
+        playAsSoundButtonText: 'Play as sound',
 
         /**
          * Thousands separator to use when formatting numbers for screen

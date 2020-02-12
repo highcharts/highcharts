@@ -33,6 +33,7 @@ var langOptions = {
         svgContainerLabel: 'Interactive chart',
         drillUpButton: '{buttonText}',
         credits: 'Chart credits: {creditsStr}',
+        playAsSoundButtonText: 'Play as sound',
         /**
          * Thousands separator to use when formatting numbers for screen
          * readers. Note that many screen readers will not handle space as a

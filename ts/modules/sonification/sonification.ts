@@ -15,7 +15,8 @@ import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
-    extend
+    extend,
+    merge
 } = U;
 
 /**
@@ -91,6 +92,7 @@ import pointSonifyFunctions from './pointSonify.js';
 import chartSonifyFunctions from './chartSonify.js';
 import utilities from './utilities.js';
 import TimelineClasses from './Timeline.js';
+import sonificationOptions from './options.js';
 
 // Expose on the Highcharts object
 
@@ -161,6 +163,13 @@ H.sonification = {
     TimelinePath: TimelineClasses.TimelinePath,
     Timeline: TimelineClasses.Timeline
 };
+
+// Add default options
+merge(
+    true,
+    H.defaultOptions,
+    sonificationOptions
+);
 
 // Chart specific
 H.Point.prototype.sonify = pointSonifyFunctions.pointSonify;
