@@ -420,8 +420,9 @@ seriesType('sankey', 'column',
             var offset = 0, totalNodeOffset, nodePadding = series.nodePadding;
             for (var i = 0; i < column.length; i++) {
                 var sum = column[i].getSum();
+                var height = Math.max(sum * factor, series.options.minLinkWidth);
                 if (sum) {
-                    totalNodeOffset = sum * factor + nodePadding;
+                    totalNodeOffset = height + nodePadding;
                 }
                 else {
                     // If node sum equals 0 nodePadding is missed #12453
@@ -435,14 +436,15 @@ seriesType('sankey', 'column',
                 offset += totalNodeOffset;
             }
         };
-        // Get the column height in pixels.
+        // Get the top position of the column in pixels.
         column.top = function (factor) {
             var nodePadding = series.nodePadding;
             var height = this.reduce(function (height, node) {
                 if (height > 0) {
                     height += nodePadding;
                 }
-                height += node.getSum() * factor;
+                var nodeHeight = Math.max(node.getSum() * factor, series.options.minLinkWidth);
+                height += nodeHeight;
                 return height;
             }, 0);
             return (chart.plotSizeY - height) / 2;
@@ -579,7 +581,7 @@ seriesType('sankey', 'column',
      * @private
      */
     translateNode: function (node, column) {
-        var translationFactor = this.translationFactor, chart = this.chart, options = this.options, sum = node.getSum(), height = Math.round(sum * translationFactor), crisp = Math.round(options.borderWidth) % 2 / 2, nodeOffset = column.offset(node, translationFactor), fromNodeTop = Math.floor(pick(nodeOffset.absoluteTop, (column.top(translationFactor) +
+        var translationFactor = this.translationFactor, chart = this.chart, options = this.options, sum = node.getSum(), height = Math.max(Math.round(sum * translationFactor), this.options.minLinkWidth), crisp = Math.round(options.borderWidth) % 2 / 2, nodeOffset = column.offset(node, translationFactor), fromNodeTop = Math.floor(pick(nodeOffset.absoluteTop, (column.top(translationFactor) +
             nodeOffset.relativeTop))) + crisp, left = Math.floor(this.colDistance * node.column +
             options.borderWidth / 2) + crisp, nodeLeft = chart.inverted ?
             chart.plotSizeX - left :
@@ -627,13 +629,17 @@ seriesType('sankey', 'column',
      * @private
      */
     translateLink: function (point) {
-        var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart, translationFactor = this.translationFactor, linkHeight = Math.max(point.weight * translationFactor, this.options.minLinkWidth), options = this.options, fromLinkTop = (fromNode.offset(point, 'linksFrom') *
-            translationFactor), curvy = ((chart.inverted ? -this.colDistance : this.colDistance) *
-            options.curveFactor), fromY = fromNode.nodeY + fromLinkTop, nodeLeft = fromNode.nodeX, toColTop = this.nodeColumns[toNode.column]
-            .top(translationFactor), toY = (toColTop +
-            (toNode.offset(point, 'linksTo') *
-                translationFactor) +
-            this.nodeColumns[toNode.column].offset(toNode, translationFactor).relativeTop), nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft;
+        var getY = function (node, fromOrTo) {
+            var _a;
+            var linkTop = (node.offset(point, fromOrTo) *
+                translationFactor);
+            var y = Math.min(node.nodeY + linkTop, 
+            // Prevent links from spilling below the node (#12014)
+            node.nodeY + ((_a = node.shapeArgs) === null || _a === void 0 ? void 0 : _a.height) - linkHeight);
+            return y;
+        };
+        var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart, translationFactor = this.translationFactor, linkHeight = Math.max(point.weight * translationFactor, this.options.minLinkWidth), options = this.options, curvy = ((chart.inverted ? -this.colDistance : this.colDistance) *
+            options.curveFactor), fromY = getY(fromNode, 'linksFrom'), toY = getY(toNode, 'linksTo'), nodeLeft = fromNode.nodeX, nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft;
         if (chart.inverted) {
             fromY = chart.plotSizeY - fromY;
             toY = chart.plotSizeY - toY;
