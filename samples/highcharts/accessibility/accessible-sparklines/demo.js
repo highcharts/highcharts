@@ -144,11 +144,11 @@ function addSparklineCell(tableRowElement, rowDefinition) {
 
 
 // Populate the table
-var table = document.getElementById('table');
+var tableBody = document.getElementById('tbody');
 tableRows.forEach(function (rowDefinition) {
     var tableRowElement = document.createElement('tr');
 
-    table.appendChild(tableRowElement);
+    tableBody.appendChild(tableRowElement);
 
     addTrackCell(tableRowElement, rowDefinition);
     addAverageCell(tableRowElement, rowDefinition);
