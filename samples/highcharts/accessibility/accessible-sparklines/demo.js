@@ -29,11 +29,13 @@ var defaultChartOptions = {
     },
 
     accessibility: {
+        landmarkVerbosity: 'disabled',
         point: {
             valueSuffix: ' sessions'
         },
         screenReaderSection: {
-            beforeChartFormat: '<h5>{chartTitle}</h5><div>{chartLongdesc}</div>'
+            beforeChartFormat: '<div>{chartLongdesc}</div>',
+            afterChartFormat: ''
         }
     },
 
