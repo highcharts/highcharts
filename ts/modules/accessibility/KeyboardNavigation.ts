@@ -44,6 +44,7 @@ declare global {
             public exiting?: boolean;
             public keyboardReset?: boolean;
             public modules: Array<KeyboardNavigationHandler>;
+            public pointerIsOverChart?: boolean;
             public addExitAnchorEventsToEl(
                 element: (HTMLDOMElement|SVGDOMElement)
             ): void;
@@ -157,6 +158,14 @@ KeyboardNavigation.prototype = {
 
         ep.addEvent(doc, 'mouseup', (): void => this.onMouseUp());
 
+        ep.addEvent(chart.renderTo, 'mouseover', (): void => {
+            this.pointerIsOverChart = true;
+        });
+
+        ep.addEvent(chart.renderTo, 'mouseout', (): void => {
+            this.pointerIsOverChart = false;
+        });
+
         // Run an update to get all modules
         this.update();
 
@@ -231,10 +240,7 @@ KeyboardNavigation.prototype = {
      * @private
      */
     onMouseUp: function (this: Highcharts.KeyboardNavigation): void {
-        if (
-            !this.keyboardReset &&
-            !(this.chart.pointer && this.chart.pointer.chartPosition)
-        ) {
+        if (!this.keyboardReset && !this.pointerIsOverChart) {
             var chart = this.chart,
                 curMod = this.modules &&
                     this.modules[this.currentModuleIx || 0];
