@@ -23,6 +23,7 @@ const {
 } = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import Announcer from '../utils/Announcer.js';
 import AnnotationsA11y from './AnnotationsA11y.js';
 const getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 
@@ -47,6 +48,7 @@ declare global {
     namespace Highcharts {
         class InfoRegionsComponent extends AccessibilityComponent {
             public constructor();
+            public announcer: Announcer;
             public dataTableButtonId?: string;
             public dataTableDiv?: HTMLDOMElement;
             public linkedDescriptionElement: (HTMLDOMElement|undefined);
@@ -264,8 +266,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @private
      */
     init: function (this: Highcharts.InfoRegionsComponent): void {
-        var chart: Highcharts.Chart = this.chart as any,
-            component = this;
+        const chart = this.chart;
+        const component = this;
 
         this.initRegionsDefinitions();
 
@@ -285,6 +287,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 component.focusDataTable();
             }, 300);
         });
+
+        this.announcer = new Announcer(chart, 'assertive');
     },
 
 
@@ -624,7 +628,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         }
 
         const buttonText = chart.langFormat(
-            'accessibility.playAsSoundButtonText',
+            'accessibility.sonification.playAsSoundButtonText',
             { chart: chart, chartTitle: getChartTitle(chart) }
         );
 
@@ -710,12 +714,26 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     ): void {
         const el = this.sonifyButton = getElement(sonifyButtonId);
         const chart = this.chart as Highcharts.SonifyableChart;
-        const defaultHandler = (): void => {
+        const defaultHandler = (e: Event): void => {
+            el?.setAttribute('aria-hidden', 'true');
+            el?.setAttribute('aria-label', '');
+            e.preventDefault();
+            e.stopPropagation();
+
+            const announceMsg = chart.langFormat(
+                'accessibility.sonification.playAsSoundClickAnnouncement',
+                { chart: chart }
+            );
+            this.announcer.announce(announceMsg);
+
             setTimeout((): void => {
+                el?.removeAttribute('aria-hidden');
+                el?.removeAttribute('aria-label');
+
                 if (chart.sonify) {
                     chart.sonify();
                 }
-            }, 400); // Short delay to let screen reader speak the button press
+            }, 1000); // Delay to let screen reader speak the button press
         };
 
         if (el && chart) {

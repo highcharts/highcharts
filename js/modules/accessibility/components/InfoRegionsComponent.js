@@ -15,6 +15,7 @@ var doc = H.win.document;
 import U from '../../../parts/Utilities.js';
 var extend = U.extend, format = U.format, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import Announcer from '../utils/Announcer.js';
 import AnnotationsA11y from './AnnotationsA11y.js';
 var getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 import ChartUtilities from '../utils/chartUtilities.js';
@@ -119,7 +120,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @private
      */
     init: function () {
-        var chart = this.chart, component = this;
+        var chart = this.chart;
+        var component = this;
         this.initRegionsDefinitions();
         this.addEvent(chart, 'afterGetTable', function (e) {
             component.onDataTableCreated(e);
@@ -131,6 +133,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 component.focusDataTable();
             }, 300);
         });
+        this.announcer = new Announcer(chart, 'assertive');
     },
     /**
      * @private
@@ -332,7 +335,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         if (((_a = chart.options.sonification) === null || _a === void 0 ? void 0 : _a.enabled) === false) {
             return '';
         }
-        var buttonText = chart.langFormat('accessibility.playAsSoundButtonText', { chart: chart, chartTitle: getChartTitle(chart) });
+        var buttonText = chart.langFormat('accessibility.sonification.playAsSoundButtonText', { chart: chart, chartTitle: getChartTitle(chart) });
         return '<button id="' + buttonId + '">' + buttonText + '</button>';
     },
     /**
@@ -378,15 +381,26 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @param {string} sonifyButtonId
      */
     initSonifyButton: function (sonifyButtonId) {
+        var _this = this;
         var _a;
         var el = this.sonifyButton = getElement(sonifyButtonId);
         var chart = this.chart;
-        var defaultHandler = function () {
+        var defaultHandler = function (e) {
+            var _a, _b;
+            (_a = el) === null || _a === void 0 ? void 0 : _a.setAttribute('aria-hidden', 'true');
+            (_b = el) === null || _b === void 0 ? void 0 : _b.setAttribute('aria-label', '');
+            e.preventDefault();
+            e.stopPropagation();
+            var announceMsg = chart.langFormat('accessibility.sonification.playAsSoundClickAnnouncement', { chart: chart });
+            _this.announcer.announce(announceMsg);
             setTimeout(function () {
+                var _a, _b;
+                (_a = el) === null || _a === void 0 ? void 0 : _a.removeAttribute('aria-hidden');
+                (_b = el) === null || _b === void 0 ? void 0 : _b.removeAttribute('aria-label');
                 if (chart.sonify) {
                     chart.sonify();
                 }
-            }, 400); // Short delay to let screen reader speak the button press
+            }, 1000); // Delay to let screen reader speak the button press
         };
         if (el && chart) {
             setElAttrs(el, {

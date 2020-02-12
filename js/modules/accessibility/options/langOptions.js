@@ -33,7 +33,6 @@ var langOptions = {
         svgContainerLabel: 'Interactive chart',
         drillUpButton: '{buttonText}',
         credits: 'Chart credits: {creditsStr}',
-        playAsSoundButtonText: 'Play as sound, {chartTitle}',
         /**
          * Thousands separator to use when formatting numbers for screen
          * readers. Note that many screen readers will not handle space as a
@@ -89,6 +88,15 @@ var langOptions = {
              * @since 8.0.0
              */
             endOfChartMarker: 'End of interactive chart.'
+        },
+        /**
+         * Language options for sonification.
+         *
+         * @since next
+         */
+        sonification: {
+            playAsSoundButtonText: 'Play as sound, {chartTitle}',
+            playAsSoundClickAnnouncement: 'Play'
         },
         /**
          * Language options for accessibility of the legend.

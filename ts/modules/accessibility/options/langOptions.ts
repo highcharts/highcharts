@@ -81,13 +81,13 @@ declare global {
             exporting: LangAccessibilityExportingOptions;
             graphicContainerLabel: string;
             legend: LangAccessibilityLegendOptions;
-            playAsSoundButtonText: string;
             rangeSelector: LangAccessibilityRangeSelectorOptions;
             screenReaderSection: LangAccessibilityScreenReaderSectionOptions;
             series: LangAccessibilitySeriesOptions;
             seriesTypeDescriptions: (
                 LangAccessibilitySeriesTypeDescriptionsOptions
             );
+            sonification: LangAccessibilitySonificationOptions;
             svgContainerLabel: string;
             svgContainerTitle: string;
             table: LangAccessibilityTableOptions;
@@ -156,6 +156,10 @@ declare global {
             pyramid: string;
             waterfall: string;
         }
+        interface LangAccessibilitySonificationOptions {
+            playAsSoundButtonText: string;
+            playAsSoundClickAnnouncement: string;
+        }
         interface LangAccessibilityTableOptions {
             tableSummary: string;
             viewAsDataTableButtonText: string;
@@ -195,7 +199,6 @@ var langOptions: Highcharts.LangOptions = {
         svgContainerLabel: 'Interactive chart',
         drillUpButton: '{buttonText}',
         credits: 'Chart credits: {creditsStr}',
-        playAsSoundButtonText: 'Play as sound, {chartTitle}',
 
         /**
          * Thousands separator to use when formatting numbers for screen
@@ -257,6 +260,16 @@ var langOptions: Highcharts.LangOptions = {
              * @since 8.0.0
              */
             endOfChartMarker: 'End of interactive chart.'
+        },
+
+        /**
+         * Language options for sonification.
+         *
+         * @since next
+         */
+        sonification: {
+            playAsSoundButtonText: 'Play as sound, {chartTitle}',
+            playAsSoundClickAnnouncement: 'Play'
         },
 
         /**
