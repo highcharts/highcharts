@@ -28,11 +28,11 @@ declare global {
 }
 
 var numberFormat = H.numberFormat,
-    format = H.format,
-    find = H.find;
+    format = H.format;
 
 import U from '../../../../parts/Utilities.js';
 const {
+    find,
     isNumber,
     pick,
     defined

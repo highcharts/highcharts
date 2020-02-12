@@ -16,7 +16,10 @@ import HTMLUtilities from './htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 
 import H from '../../../parts/Globals.js';
-const find = H.find;
+import U from '../../../parts/Utilities.js';
+const {
+    find
+} = U;
 
 
 /**

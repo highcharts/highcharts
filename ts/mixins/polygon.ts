@@ -77,11 +77,13 @@ declare global {
  */
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    isNumber = U.isNumber;
+const {
+    find,
+    isArray,
+    isNumber
+} = U;
 
-var deg2rad = H.deg2rad,
-    find = H.find;
+var deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

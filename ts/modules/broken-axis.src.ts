@@ -65,6 +65,7 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     extend,
+    find,
     fireEvent,
     isArray,
     pick
@@ -73,8 +74,7 @@ const {
 import '../parts/Axis.js';
 import '../parts/Series.js';
 
-var find = H.find,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Series = H.Series;
 
 /**

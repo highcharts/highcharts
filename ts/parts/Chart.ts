@@ -303,6 +303,7 @@ const {
     erase,
     error,
     extend,
+    find,
     fireEvent,
     getStyle,
     isArray,
@@ -332,7 +333,6 @@ var animate = H.animate,
     Axis = H.Axis, // @todo add as requirement
     defaultOptions = H.defaultOptions,
     charts = H.charts,
-    find = H.find,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     seriesTypes = H.seriesTypes,

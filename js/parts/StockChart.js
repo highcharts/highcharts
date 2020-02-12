@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
 import './Chart.js';
 import './Axis.js';
 import './Point.js';
@@ -322,7 +322,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
         axes.forEach(function (axis2) {
             if (uniqueAxes.indexOf(axis2) === -1 &&
                 // Do not draw on axis which overlap completely. #5424
-                !H.find(uniqueAxes, function (unique) {
+                !find(uniqueAxes, function (unique) {
                     return unique.pos === axis2.pos && unique.len === axis2.len;
                 })) {
                 uniqueAxes.push(axis2);

@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -21,7 +21,7 @@ import ControllableLabel from './controllable/ControllableLabel.js';
 import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var fireEvent = H.fireEvent, find = H.find, reduce = H.reduce, chartProto = H.Chart.prototype;
+var fireEvent = H.fireEvent, reduce = H.reduce, chartProto = H.Chart.prototype;
 /* *********************************************************************
  *
  * ANNOTATION

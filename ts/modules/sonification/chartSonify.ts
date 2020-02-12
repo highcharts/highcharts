@@ -166,6 +166,7 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
+    find,
     isArray,
     merge,
     pick,
@@ -544,7 +545,7 @@ function buildSeriesOptions(
         },
         // Merge in the specific series options by ID
         isArray(seriesOptions) ? (
-            H.find(seriesOptions, function (optEntry: any): boolean {
+            find(seriesOptions, function (optEntry: any): boolean {
                 return optEntry.id === pick(series.id, series.options.id);
             }) || {}
         ) : seriesOptions,
