@@ -1124,7 +1124,7 @@ defaultOptions.exporting = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function (): void {
-                this.fullscreenController.toggleFullscreen();
+                this.fullscreen.toggle();
             }
         },
 

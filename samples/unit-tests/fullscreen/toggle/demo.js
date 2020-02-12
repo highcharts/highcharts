@@ -5,7 +5,7 @@ QUnit.test("Fullscreen module.", function (assert) {
         }]
     });
 
-    chart.fullscreenController.toggleFullscreen();
+    chart.fullscreen.toggle();
 
     assert.ok(
         true,
