@@ -322,7 +322,7 @@ var langOptions = {
              *
              * @since next
              */
-            pointAnnotationsDescription: '{Annotation: "#each(annotations)". }'
+            pointAnnotationsDescription: '{Annotation: #each(annotations). }'
         }
     }
 };

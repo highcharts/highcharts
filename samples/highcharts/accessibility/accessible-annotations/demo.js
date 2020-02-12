@@ -49,7 +49,8 @@ Highcharts.chart('container', {
         },
         labels: {
             format: '{value}'
-        }
+        },
+        softMax: 500
     },
 
     tooltip: {
@@ -103,7 +104,7 @@ Highcharts.chart('container', {
             y: 60
         }, {
             point: '2016',
-            text: 'Elsevier & Highcharts presented first session together: Accessible SVG Charts'
+            text: 'Elsevier and Highcharts presented first session together: Accessible SVG Charts'
         }, {
             point: '2018',
             text: 'Vidar got selfie with Stevie'
@@ -115,7 +116,7 @@ Highcharts.chart('container', {
             distance: 110
         }, {
             point: '2019',
-            text: 'Elsevier & Highcharts presented 2nd session together:  Highcharts, The Next Chapter',
+            text: 'Elsevier and Highcharts presented 2nd session together:  Highcharts, The Next Chapter',
             shape: 'rect',
             verticalAlign: 'top',
             distance: 55
@@ -124,7 +125,7 @@ Highcharts.chart('container', {
             text: 'Ted passes by Stevie in the hotel lobby'
         }, {
             point: '2020',
-            text: 'Elsevier & Highcharts is presenting together',
+            text: 'Elsevier and Highcharts presented together: Accessible Visualizations: Maps, Annotations, and Sparklines',
             y: -35
         }]
     }]
