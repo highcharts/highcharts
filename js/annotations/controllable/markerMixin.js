@@ -6,7 +6,7 @@
 'use strict';
 import H from './../../parts/Globals.js';
 import U from './../../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.objectEach;
+var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.objectEach, uniqueKey = U.uniqueKey;
 import './../../parts/Chart.js';
 import './../../parts/SvgRenderer.js';
 /**
@@ -137,7 +137,7 @@ var markerMixin = {
                 }
                 if (predefinedMarker) {
                     marker = item[markerType] = chart.renderer
-                        .addMarker((itemOptions.id || H.uniqueKey()) + '-' +
+                        .addMarker((itemOptions.id || uniqueKey()) + '-' +
                         predefinedMarker.id, merge(predefinedMarker, { color: color }));
                     item.attr(markerType, marker.attr('id'));
                 }

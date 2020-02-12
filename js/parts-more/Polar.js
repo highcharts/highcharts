@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, find = U.find, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, find = U.find, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -680,7 +680,7 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
     return ret;
 });
 H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
-    var wrapper, id = H.uniqueKey(), clipPath = this.createElement('clipPath').attr({
+    var wrapper, id = uniqueKey(), clipPath = this.createElement('clipPath').attr({
         id: id
     }).add(this.defs);
     wrapper = innerR ?

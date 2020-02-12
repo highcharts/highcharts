@@ -78,7 +78,7 @@ import H from '../parts/Globals.js';
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
+var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
@@ -1096,7 +1096,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Assign an internal key to ensure a one-to-one mapping (#5924)
         chart.axes.forEach(function (axis) {
             if (!axis.userOptions.internalKey) { // #6444
-                axis.userOptions.internalKey = H.uniqueKey();
+                axis.userOptions.internalKey = uniqueKey();
             }
         });
         // generate the chart copy

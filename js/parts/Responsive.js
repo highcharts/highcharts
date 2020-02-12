@@ -23,7 +23,7 @@ import H from './Globals.js';
  */
 import './Chart.js';
 import U from './Utilities.js';
-var find = U.find, isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var find = U.find, isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey;
 var Chart = H.Chart;
 /**
  * Allows setting a set of rules to apply for different screen or chart
@@ -150,7 +150,7 @@ Chart.prototype.setResponsive = function (redraw, reset) {
     if (!reset && options && options.rules) {
         options.rules.forEach(function (rule) {
             if (typeof rule._id === 'undefined') {
-                rule._id = H.uniqueKey();
+                rule._id = uniqueKey();
             }
             this.matchResponsiveRule(rule, ruleIds /* , redraw */);
         }, this);

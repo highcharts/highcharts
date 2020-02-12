@@ -36,7 +36,8 @@ const {
     addEvent,
     defined,
     merge,
-    objectEach
+    objectEach,
+    uniqueKey
 } = U;
 
 import './../../parts/Chart.js';
@@ -204,7 +205,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                     if (predefinedMarker) {
                         marker = item[markerType] = chart.renderer
                             .addMarker(
-                                (itemOptions.id || H.uniqueKey()) + '-' +
+                                (itemOptions.id || uniqueKey()) + '-' +
                                 predefinedMarker.id,
                                 merge(predefinedMarker, { color: color })
                             );

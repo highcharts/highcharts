@@ -333,7 +333,8 @@ const {
     merge,
     offset,
     pick,
-    pInt
+    pInt,
+    uniqueKey
 } = U;
 
 import '../parts/SvgRenderer.js';
@@ -561,7 +562,7 @@ if (!svg) {
 
             // unique function string (#6746)
             if (!fn.hcKey) {
-                fn.hcKey = H.uniqueKey();
+                fn.hcKey = uniqueKey();
             }
 
             // Link wrapped fn with original fn, so we can get this in

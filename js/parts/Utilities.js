@@ -2487,14 +2487,14 @@ var seriesType = H.seriesType = function (type, parent, options, props, pointPro
  * counter.
  *
  * @example
- * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
  * @return {string}
  *         A unique key.
  */
-H.uniqueKey = (function () {
+var uniqueKey = H.uniqueKey = (function () {
     var uniqueKeyHash = Math.random().toString(36).substring(2, 9), idCounter = 0;
     return function () {
         return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
@@ -2606,6 +2606,7 @@ var utilitiesModule = {
     stop: stop,
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
+    uniqueKey: uniqueKey,
     wrap: wrap
 };
 export default utilitiesModule;

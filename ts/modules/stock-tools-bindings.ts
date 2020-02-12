@@ -77,7 +77,8 @@ const {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    uniqueKey
 } = U;
 
 var fireEvent = H.fireEvent,
@@ -275,12 +276,12 @@ bindingsUtils.manageIndicators = function (
             }
         }
     } else {
-        seriesConfig.id = H.uniqueKey();
+        seriesConfig.id = uniqueKey();
         navigation.fieldsToOptions(data.fields, seriesConfig);
 
         if (indicatorsWithAxes.indexOf(data.type) >= 0) {
             yAxis = chart.addAxis({
-                id: H.uniqueKey(),
+                id: uniqueKey(),
                 offset: 0,
                 opposite: true,
                 title: {

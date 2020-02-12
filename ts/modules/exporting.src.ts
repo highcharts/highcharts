@@ -294,7 +294,8 @@ const {
     merge,
     objectEach,
     pick,
-    removeEvent
+    removeEvent,
+    uniqueKey
 } = U;
 
 import '../parts/Options.js';
@@ -1469,7 +1470,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Assign an internal key to ensure a one-to-one mapping (#5924)
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
             if (!axis.userOptions.internalKey) { // #6444
-                axis.userOptions.internalKey = H.uniqueKey();
+                axis.userOptions.internalKey = uniqueKey();
             }
         });
 

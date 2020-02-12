@@ -3420,14 +3420,14 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
  * counter.
  *
  * @example
- * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
  * @return {string}
  *         A unique key.
  */
-H.uniqueKey = (function (): any {
+const uniqueKey = H.uniqueKey = (function (): () => string {
 
     var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
         idCounter = 0;
@@ -3551,6 +3551,7 @@ const utilitiesModule = {
     stop,
     syncTimeout,
     timeUnits,
+    uniqueKey,
     wrap
 };
 
