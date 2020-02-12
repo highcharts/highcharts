@@ -294,10 +294,21 @@ var Tooltip = /** @class */ (function () {
      * @return {Array<number>}
      */
     Tooltip.prototype.getAnchor = function (points, mouseEvent) {
-        var ret, chart = this.chart, pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis;
+        var _a;
         points = splat(points);
-        // When tooltip follows mouse, relate the position to the mouse
-        if (this.followPointer && mouseEvent) {
+        var ret, chart = this.chart, firstPoint = points[0], pointer = chart.pointer, inverted = chart.inverted, plotTop = chart.plotTop, plotLeft = chart.plotLeft, plotX = 0, plotY = 0, yAxis, xAxis;
+        // When sankey, use data labels as a reference
+        if (((_a = firstPoint.series) === null || _a === void 0 ? void 0 : _a.type) === 'sankey') {
+            var sankeyDataLabel = firstPoint.dataLabel;
+            var sankeyDlBox = firstPoint.dlBox;
+            ret = sankeyDataLabel ?
+                [(sankeyDataLabel.x + (sankeyDataLabel.width / 2)), sankeyDataLabel.y] :
+                sankeyDlBox ?
+                    [(sankeyDlBox.x + (sankeyDlBox.width / 2)), (sankeyDlBox.y + (sankeyDlBox.height / 2))] :
+                    [0, 0];
+            // When tooltip follows mouse, relate the position to the mouse
+        }
+        else if (this.followPointer && mouseEvent) {
             if (typeof mouseEvent.chartX === 'undefined') {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
@@ -307,8 +318,8 @@ var Tooltip = /** @class */ (function () {
             ];
             // Pie uses a special tooltipPos
         }
-        else if (points[0].tooltipPos) {
-            ret = points[0].tooltipPos;
+        else if (firstPoint.tooltipPos) {
+            ret = firstPoint.tooltipPos;
             // When shared, use the average position
         }
         else {

@@ -511,8 +511,11 @@ class Tooltip {
         points: (Highcharts.Point|Array<Highcharts.Point>),
         mouseEvent?: Highcharts.PointerEventObject
     ): Array<number> {
+        points = splat(points);
+
         var ret,
             chart = this.chart,
+            firstPoint = points[0],
             pointer = chart.pointer,
             inverted = chart.inverted,
             plotTop = chart.plotTop,
@@ -522,10 +525,17 @@ class Tooltip {
             yAxis,
             xAxis;
 
-        points = splat(points);
-
+        // When sankey, use data labels as a reference
+        if (firstPoint.series?.type === 'sankey') {
+            const sankeyDataLabel = firstPoint.dataLabel;
+            const sankeyDlBox = (firstPoint as Highcharts.SankeyPoint).dlBox;
+            ret = sankeyDataLabel ?
+                [(sankeyDataLabel.x + (sankeyDataLabel.width / 2)), sankeyDataLabel.y] :
+                sankeyDlBox ?
+                    [(sankeyDlBox.x + (sankeyDlBox.width / 2)), (sankeyDlBox.y + (sankeyDlBox.height / 2))] :
+                    [0, 0];
         // When tooltip follows mouse, relate the position to the mouse
-        if (this.followPointer && mouseEvent) {
+        } else if (this.followPointer && mouseEvent) {
             if (typeof mouseEvent.chartX === 'undefined') {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
@@ -534,8 +544,8 @@ class Tooltip {
                 mouseEvent.chartY - plotTop
             ];
         // Pie uses a special tooltipPos
-        } else if (points[0].tooltipPos) {
-            ret = points[0].tooltipPos;
+        } else if (firstPoint.tooltipPos) {
+            ret = firstPoint.tooltipPos;
         // When shared, use the average position
         } else {
             points.forEach(function (point: Highcharts.Point): void {
