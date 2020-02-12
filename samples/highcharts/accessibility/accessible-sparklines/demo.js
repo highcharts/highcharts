@@ -66,17 +66,30 @@ var defaultChartOptions = {
 
     tooltip: {
         outside: true,
+        useHTML: true,
+        hideDelay: 100,
         backgroundColor: 'rgba(250, 250, 250, 0.95)',
         formatter: function () {
             var point = this.point;
             var chart = this.series.chart;
             var longdescText = chart.accessibility.components.infoRegions.getLongdescText() || 'Sessions';
             var longdescFormat = '<span style="font-size: 10px">' + longdescText + '</span><br/>';
-            var pointFormat = '<span style="color:' + point.color + '">●</span> ' +
-                point.x + ': <b>' + point.y + '</b><br/>';
+            var pointFormat = '<div style="margin-top:5px;"><span style="color:' + point.color +
+                '">●</span> ' + point.x + ': <b>' + point.y + '</b></div>';
 
             return longdescFormat + pointFormat;
-        }
+        },
+        positioner: function () {
+            var chart = this.chart;
+            var chartPosition = chart.pointer.getChartPosition();
+            var tooltipBBox = this.label && this.label.getBBox() || { width: 100, height: 100 };
+            var tooltipXOffset = (chart.plotWidth - tooltipBBox.width) / 2;
+            var tooltipYOffset = 12;
+            var x = chartPosition.left + tooltipXOffset;
+            var y = chartPosition.top - tooltipBBox.height - tooltipYOffset;
+            return { x: x, y: y };
+        },
+        shape: 'square'
     },
 
     xAxis: {
