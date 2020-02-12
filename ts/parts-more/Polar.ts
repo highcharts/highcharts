@@ -112,6 +112,7 @@ const {
     find,
     pick,
     splat,
+    uniqueKey,
     wrap
 } = U;
 
@@ -1085,7 +1086,7 @@ H.SVGRenderer.prototype.clipCircle = function (
     innerR: number
 ): Highcharts.SVGElement {
     var wrapper: Highcharts.SVGElement,
-        id = H.uniqueKey(),
+        id = uniqueKey(),
 
         clipPath = this.createElement('clipPath').attr({
             id: id

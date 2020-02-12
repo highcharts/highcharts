@@ -80,7 +80,8 @@ const {
     merge,
     objectEach,
     pick,
-    splat
+    splat,
+    uniqueKey
 } = U;
 
 var Chart = H.Chart;
@@ -231,7 +232,7 @@ Chart.prototype.setResponsive = function (
             rule: Highcharts.ResponsiveRulesOptions
         ): void {
             if (typeof rule._id === 'undefined') {
-                rule._id = H.uniqueKey();
+                rule._id = uniqueKey();
             }
 
             this.matchResponsiveRule(rule, ruleIds/* , redraw */);

@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var merge = U.merge, splat = U.splat;
+var merge = U.merge, splat = U.splat, uniqueKey = U.uniqueKey;
 /**
  * A set of options for the TimelineEvent class.
  *
@@ -66,7 +66,7 @@ function TimelineEvent(options) {
 TimelineEvent.prototype.init = function (options) {
     this.options = options;
     this.time = options.time || 0;
-    this.id = this.options.id = options.id || H.uniqueKey();
+    this.id = this.options.id = options.id || uniqueKey();
 };
 /**
  * Play the event. Does not take the TimelineEvent.time option into account,
@@ -172,7 +172,7 @@ function TimelinePath(options) {
 }
 TimelinePath.prototype.init = function (options) {
     this.options = options;
-    this.id = this.options.id = options.id || H.uniqueKey();
+    this.id = this.options.id = options.id || uniqueKey();
     this.cursor = 0;
     this.eventsPlaying = {};
     // Handle silent wait, otherwise use events from options

@@ -320,7 +320,8 @@ const {
     removeEvent,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    uniqueKey
 } = U;
 
 import './Axis.js';
@@ -1577,7 +1578,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             indexAttrName = 'data-highcharts-chart',
             oldChartIndex,
             Ren,
-            containerId = H.uniqueKey(),
+            containerId = uniqueKey(),
             containerStyle,
             key;
 
