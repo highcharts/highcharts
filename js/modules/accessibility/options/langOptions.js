@@ -33,7 +33,7 @@ var langOptions = {
         svgContainerLabel: 'Interactive chart',
         drillUpButton: '{buttonText}',
         credits: 'Chart credits: {creditsStr}',
-        playAsSoundButtonText: 'Play as sound',
+        playAsSoundButtonText: 'Play as sound, {chartTitle}',
         /**
          * Thousands separator to use when formatting numbers for screen
          * readers. Note that many screen readers will not handle space as a
@@ -125,7 +125,7 @@ var langOptions = {
          * @since 8.0.0
          */
         table: {
-            viewAsDataTableButtonText: 'View as data table. {chartTitle}',
+            viewAsDataTableButtonText: 'View as data table, {chartTitle}',
             tableSummary: 'Table representation of chart.'
         },
         /**

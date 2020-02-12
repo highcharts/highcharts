@@ -33,7 +33,9 @@ var defaultChartOptions = {
             valueSuffix: ' sessions'
         },
         screenReaderSection: {
-            beforeChartFormat: '<div>{chartLongdesc}</div><div>{playAsSoundButton}</div>',
+            beforeChartFormat: '<h5>{chartTitle}</h5>' +
+                    '<div>{chartLongdesc}</div>' +
+                    '<div>{playAsSoundButton}</div>',
             afterChartFormat: ''
         }
     },
@@ -42,8 +44,14 @@ var defaultChartOptions = {
         duration: 1700
     },
 
+    // Title is hidden, but exists for better accessibility, as
+    // the title value is picked up by the accessibility module
+    // and gives more context to screen reader users.
     title: {
-        text: null
+        floating: true,
+        style: {
+            display: 'none'
+        }
     },
 
     legend: {
@@ -72,12 +80,15 @@ var defaultChartOptions = {
         useHTML: true,
         hideDelay: 100,
         backgroundColor: 'rgba(250, 250, 250, 0.95)',
+        style: {
+            width: '200px'
+        },
         formatter: function () {
             var point = this.point;
             var chart = this.series.chart;
             var longdescText = chart.accessibility.components.infoRegions.getLongdescText() || 'Sessions';
-            var longdescFormat = '<span style="font-size: 10px">' + longdescText + '</span><br/>';
-            var pointFormat = '<div style="margin-top:5px;"><span style="color:' + point.color +
+            var longdescFormat = '<span style="font-size: 12px">' + longdescText + '</span><br/>';
+            var pointFormat = '<div style="margin-top:10px;"><span style="color:' + point.color +
                 '">●</span> ' + point.x + ': <b>' + point.y + '</b></div>';
 
             return longdescFormat + pointFormat;
@@ -114,8 +125,8 @@ function describeChart(data) {
     var maxPoint = Math.max.apply(null, data);
     var slopeText = firstPoint < lastPoint ? 'increased' : 'decreased';
 
-    return 'Chart ' + slopeText + ' from 2015 with ' + firstPoint +
-        ' sessions to 2020 with ' + lastPoint + ' sessions, with values ranging between ' +
+    return 'Sessions ' + slopeText + ' overall from 2015 to 2020, starting at ' + firstPoint +
+        ' and ending at ' + lastPoint + '. Values ranged between ' +
         minPoint + ' and ' + maxPoint + '.';
 }
 
@@ -155,6 +166,9 @@ function addSparklineCell(tableRowElement, rowDefinition) {
     tableRowElement.appendChild(cell);
 
     Highcharts.chart(sparklineContainer, Highcharts.merge(defaultChartOptions, {
+        title: {
+            text: rowDefinition.trackTitle
+        },
         accessibility: {
             description: rowDefinition.chartDescription
         },
