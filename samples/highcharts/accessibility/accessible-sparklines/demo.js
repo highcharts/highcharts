@@ -115,7 +115,7 @@ function describeChart(data) {
     var slopeText = firstPoint < lastPoint ? 'increased' : 'decreased';
 
     return 'Chart ' + slopeText + ' from 2015 with ' + firstPoint +
-        ' sessions to 2020 with ' + lastPoint + ' sessions, with values between ' +
+        ' sessions to 2020 with ' + lastPoint + ' sessions, with values ranging between ' +
         minPoint + ' and ' + maxPoint + '.';
 }
 
