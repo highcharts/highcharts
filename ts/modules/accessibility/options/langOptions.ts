@@ -195,7 +195,7 @@ var langOptions: Highcharts.LangOptions = {
         svgContainerLabel: 'Interactive chart',
         drillUpButton: '{buttonText}',
         credits: 'Chart credits: {creditsStr}',
-        playAsSoundButtonText: 'Play as sound',
+        playAsSoundButtonText: 'Play as sound, {chartTitle}',
 
         /**
          * Thousands separator to use when formatting numbers for screen
@@ -297,7 +297,7 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         table: {
-            viewAsDataTableButtonText: 'View as data table. {chartTitle}',
+            viewAsDataTableButtonText: 'View as data table, {chartTitle}',
             tableSummary: 'Table representation of chart.'
         },
 
