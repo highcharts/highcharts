@@ -7,6 +7,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
 import requiredIndicator from '../mixins/indicator-required.js';
 var seriesTypes = H.seriesTypes;
 /**
@@ -18,7 +20,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-H.seriesType('slowstochastic', 'stochastic', 
+seriesType('slowstochastic', 'stochastic', 
 /**
  * Slow Stochastic oscillator. This series requires the `linkedTo` option
  * to be set and should be loaded after `stock/indicators/indicators.js`

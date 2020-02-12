@@ -304,6 +304,7 @@ const {
     merge,
     objectEach,
     pick,
+    seriesType,
     stableSort
 } = U;
 
@@ -313,8 +314,7 @@ import '../parts/Series.js';
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     noop = H.noop,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,

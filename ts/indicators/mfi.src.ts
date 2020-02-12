@@ -54,7 +54,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     error,
-    isArray
+    isArray,
+    seriesType
 } = U;
 
 /* eslint-disable require-jsdoc */
@@ -90,7 +91,7 @@ function calculateRawMoneyFlow(typicalPrice: number, volume: number): number {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.MFIIndicator>(
+seriesType<Highcharts.MFIIndicator>(
     'mfi',
     'sma',
     /**

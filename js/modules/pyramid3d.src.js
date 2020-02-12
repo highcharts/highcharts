@@ -11,11 +11,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
-var seriesType = H.seriesType;
 /**
  * The pyramid3d series type.
  *

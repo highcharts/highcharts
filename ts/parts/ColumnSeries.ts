@@ -117,7 +117,8 @@ const {
     extend,
     isNumber,
     merge,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import './Color.js';
@@ -129,7 +130,6 @@ var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     svg = H.svg;
 
 /**

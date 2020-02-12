@@ -63,11 +63,11 @@ const {
     isNumber,
     merge,
     pick,
-    relativeLength
+    relativeLength,
+    seriesType
 } = U;
 
-var seriesType = H.seriesType,
-    columnProto = H.seriesTypes.column.prototype;
+var columnProto = H.seriesTypes.column.prototype;
 
 /**
  * The bullet series type.

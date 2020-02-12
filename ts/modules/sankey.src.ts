@@ -262,6 +262,7 @@ const {
     merge,
     pick,
     relativeLength,
+    seriesType,
     stableSort
 } = U;
 
@@ -272,8 +273,7 @@ const {
     getLevelOptions
 } = mixinTreeSeries;
 
-var seriesType = H.seriesType,
-    Point = H.Point;
+var Point = H.Point;
 
 // eslint-disable-next-line valid-jsdoc
 /**

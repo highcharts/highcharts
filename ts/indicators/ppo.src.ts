@@ -53,7 +53,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    error
+    error,
+    seriesType
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
@@ -70,7 +71,7 @@ var EMA = H.seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.PPOIndicator>(
+seriesType<Highcharts.PPOIndicator>(
     'ppo',
     'ema',
     /**

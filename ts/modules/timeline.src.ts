@@ -152,14 +152,14 @@ const {
     isNumber,
     merge,
     objectEach,
-    pick
+    pick,
+    seriesType
 } = U;
 
 var LegendSymbolMixin = H.LegendSymbolMixin,
     TrackerMixin = H.TrackerMixin,
     Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

@@ -10,12 +10,12 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var objectEach = U.objectEach, pick = U.pick;
+var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, Series = H.Series, seriesType = H.seriesType;
+var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, Series = H.Series;
 /**
  * Area series type.
  *

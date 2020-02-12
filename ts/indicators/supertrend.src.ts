@@ -90,7 +90,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    merge
+    merge,
+    seriesType
 } = U;
 
 var isArray = U.isArray,
@@ -124,7 +125,7 @@ function createPointObj(
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.SupertrendIndicator>(
+seriesType<Highcharts.SupertrendIndicator>(
     'supertrend',
     'sma',
     /**

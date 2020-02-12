@@ -95,25 +95,25 @@ const {
     addEvent,
     clamp,
     extend,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts-map/HeatmapSeries.js';
 
-var seriesType = H.seriesType,
-    // Utility func to get padding definition from tile size division
-    tilePaddingFromTileSize = function (
-        series: Highcharts.TilemapSeries,
-        xDiv: number,
-        yDiv: number
-    ): Highcharts.TilemapPaddingObject {
-        var options = series.options;
+// Utility func to get padding definition from tile size division
+var tilePaddingFromTileSize = function (
+    series: Highcharts.TilemapSeries,
+    xDiv: number,
+    yDiv: number
+): Highcharts.TilemapPaddingObject {
+    var options = series.options;
 
-        return {
-            xPad: (options.colsize || 1) / -xDiv,
-            yPad: (options.rowsize || 1) / -yDiv
-        };
+    return {
+        xPad: (options.colsize || 1) / -xDiv,
+        yPad: (options.rowsize || 1) / -yDiv
     };
+};
 
 // Map of shape types.
 H.tileShapeTypes = {

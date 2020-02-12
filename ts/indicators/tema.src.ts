@@ -76,7 +76,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    isArray
+    isArray,
+    seriesType
 } = U;
 
 
@@ -94,7 +95,7 @@ var EMAindicator = H.seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.TEMAIndicator>(
+seriesType<Highcharts.TEMAIndicator>(
     'tema',
     'ema',
     /**

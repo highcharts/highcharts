@@ -70,8 +70,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray;
+const {
+    defined,
+    isArray,
+    seriesType
+} = U;
 
 var SMA = H.seriesTypes.sma;
 
@@ -111,7 +114,7 @@ function destroyExtraLabels(
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.PivotPointsIndicator>(
+seriesType<Highcharts.PivotPointsIndicator>(
     'pivotpoints',
     'sma',
     /**

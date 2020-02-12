@@ -56,12 +56,12 @@ import U from '../parts/Utilities.js';
 const {
     clamp,
     merge,
-    pick
+    pick,
+    seriesType
 } = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
     noop = H.noop,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;

@@ -10,9 +10,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
+var pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
-var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var noop = H.noop, seriesTypes = H.seriesTypes;
 /**
  * The boxplot series type.
  *

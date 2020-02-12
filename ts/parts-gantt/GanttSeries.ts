@@ -83,6 +83,7 @@ const {
     isNumber,
     merge,
     pick,
+    seriesType,
     splat
 } = U;
 
@@ -94,7 +95,6 @@ import './Pathfinder.js';
 import '../modules/xrange.src.js';
 
 var dateFormat = H.dateFormat,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     Series = H.Series,
     parent = seriesTypes.xrange;

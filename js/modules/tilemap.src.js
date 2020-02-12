@@ -17,11 +17,10 @@ import H from '../parts/Globals.js';
  */
 ''; // detach doclets above
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick;
+var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick, seriesType = U.seriesType;
 import '../parts-map/HeatmapSeries.js';
-var seriesType = H.seriesType, 
 // Utility func to get padding definition from tile size division
-tilePaddingFromTileSize = function (series, xDiv, yDiv) {
+var tilePaddingFromTileSize = function (series, xDiv, yDiv) {
     var options = series.options;
     return {
         xPad: (options.colsize || 1) / -xDiv,
