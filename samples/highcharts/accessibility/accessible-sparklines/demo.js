@@ -1,8 +1,7 @@
 // Table row definitions. The table is built from this data.
 var tableRows = [{
     trackTitle: 'Education',
-    chartData: [178, 184, 167, 183, 160, 138],
-    chartDescription: 'Education has been declining the past few years, but is still the most popular track.'
+    chartData: [178, 184, 167, 183, 160, 138]
 }, {
     trackTitle: 'Employment & Workplace',
     chartData: [87, 68, 99, 105, 91, 137]
@@ -105,6 +104,26 @@ var defaultChartOptions = {
         visible: false
     }
 };
+
+
+// Get string with basic description of chart data.
+function describeChart(data) {
+    var firstPoint = data[0];
+    var lastPoint = data[data.length - 1];
+    var minPoint = Math.min.apply(null, data);
+    var maxPoint = Math.max.apply(null, data);
+    var slopeText = firstPoint < lastPoint ? 'increased' : 'decreased';
+
+    return 'Chart ' + slopeText + ' from 2015 with ' + firstPoint +
+        ' sessions to 2020 with ' + lastPoint + ' sessions, with values between ' +
+        minPoint + ' and ' + maxPoint + '.';
+}
+
+
+// Add automated descriptions to the data
+tableRows.forEach(function (rowDefinition) {
+    rowDefinition.chartDescription = describeChart(rowDefinition.chartData);
+});
 
 
 // Add a cell with the track title to a table row element
