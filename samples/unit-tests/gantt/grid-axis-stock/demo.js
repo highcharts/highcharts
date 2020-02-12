@@ -63,34 +63,6 @@ QUnit.test('isOuterAxis()', function (assert) {
     );
 });
 
-/**
- * Tests the additions to Highcharts.dateFormats
- */
-QUnit.test('dateFormats', function (assert) {
-    assert.equal(
-        typeof Highcharts.dateFormats.W,
-        'function',
-        'Weeks format exists'
-    );
-
-    assert.equal(
-        typeof Highcharts.dateFormats.E,
-        'function',
-        'Single character week day format exists'
-    );
-
-    assert.equal(
-        Highcharts.dateFormats.W(Date.UTC(2016, 8, 15)), // September 15th 2016
-        37,
-        'Week format produces correct output'
-    );
-
-    assert.equal(
-        Highcharts.dateFormats.E(Date.UTC(2016, 8, 15)), // September 15th 2016
-        'T',
-        'Signle character week day format produces correct output'
-    );
-});
 
 /**
  * Tests the vertical linear axis horizontal placement
@@ -585,7 +557,7 @@ QUnit.test('Horizontal axis ticks at start and end', function (assert) {
     };
 
     for (type in types) {
-        if (types.hasOwnProperty(type)) {
+        if (types.hasOwnProperty(type)) { // eslint-disable-line
             ignore = Highcharts.inArray(type, ignoreTypes) > -1;
             if (!ignore) {
                 test(type);
