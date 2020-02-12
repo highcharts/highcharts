@@ -2144,7 +2144,7 @@ const getMagnitude = H.getMagnitude = function (num: number): number {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (
+const normalizeTickInterval = H.normalizeTickInterval = function (
     interval: number,
     multiples?: Array<any>,
     magnitude?: number,
@@ -2641,7 +2641,7 @@ function getNestedProperty(path: string, obj: unknown): unknown {
  * @return {number|string}
  *         The numeric value.
  */
-H.getStyle = function (
+const getStyle = H.getStyle = function (
     el: Highcharts.HTMLDOMElement,
     prop: string,
     toInt?: boolean
@@ -2722,7 +2722,7 @@ H.getStyle = function (
  * @return {number}
  *         The index within the array, or -1 if not found.
  */
-H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
+const inArray = H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
     return arr.indexOf(item, fromIndex);
 };
 
@@ -2743,7 +2743,7 @@ H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
  * @return {T|undefined}
  *         The value of the element.
  */
-H.find = (Array.prototype as any).find ?
+const find = H.find = (Array.prototype as any).find ?
     /* eslint-enable valid-jsdoc */
     function<T> (arr: Array<T>, callback: Function): (T|undefined) {
         return (arr as any).find(callback as any);
@@ -2821,7 +2821,7 @@ const offset = H.offset = function offset(el: Element): Highcharts.OffsetObject 
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
+const stop = H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
 
     var i = H.timers.length;
 
@@ -3321,7 +3321,7 @@ H.animate = function (
 
     objectEach(params, function (val: any, prop: string): void {
         // Stop current running animation of this property
-        H.stop(el as any, prop);
+        stop(el as any, prop);
 
         fx = new Fx(el as any, opt as any, prop);
         end = null;
@@ -3338,7 +3338,7 @@ H.animate = function (
         } else if ((el as any).attr) {
             start = (el as any).attr(prop);
         } else {
-            start = parseFloat(H.getStyle(el as any, prop) as any) || 0;
+            start = parseFloat(getStyle(el as any, prop) as any) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }
@@ -3521,10 +3521,13 @@ const utilitiesModule = {
     error,
     extend,
     extendClass,
+    find,
     fireEvent,
     format,
     getMagnitude,
     getNestedProperty,
+    getStyle,
+    inArray,
     isArray,
     isClass,
     isDOMElement,
@@ -3533,6 +3536,7 @@ const utilitiesModule = {
     isObject,
     isString,
     merge,
+    normalizeTickInterval,
     numberFormat,
     objectEach,
     offset,
@@ -3544,6 +3548,7 @@ const utilitiesModule = {
     setAnimation,
     splat,
     stableSort,
+    stop,
     syncTimeout,
     timeUnits,
     wrap

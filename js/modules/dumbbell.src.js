@@ -340,9 +340,9 @@ seriesType('dumbbell', 'arearange', {
      * @return {void}
      */
     setState: function () {
-        var point = this, series = point.series, chart = series.chart, seriesLowColor = series.options.lowColor, pointOptions = point.options, pointLowColor = pointOptions.lowColor, zoneColor = point.zone && point.zone.color, lowerGraphicColor = pick(pointLowColor, seriesLowColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr', upperGraphicColor, origProps;
+        var point = this, series = point.series, chart = series.chart, seriesLowColor = series.options.lowColor, seriesMarker = series.options.marker, pointOptions = point.options, pointLowColor = pointOptions.lowColor, zoneColor = point.zone && point.zone.color, lowerGraphicColor = pick(pointLowColor, seriesLowColor, pointOptions.color, zoneColor, point.color, series.color), verb = 'attr', upperGraphicColor, origProps;
         this.pointSetState.apply(this, arguments);
-        if (!this.state) {
+        if (!point.state) {
             verb = 'animate';
             if (point.lowerGraphic && !chart.styledMode) {
                 point.lowerGraphic.attr({
@@ -355,7 +355,7 @@ seriesType('dumbbell', 'arearange', {
                     };
                     point.y = point.high;
                     point.zone = point.zone ? point.getZone() : void 0;
-                    upperGraphicColor = pick(point.marker ? point.marker.fillColor : void 0, pointOptions.color, point.zone ? point.zone.color : void 0, point.color);
+                    upperGraphicColor = pick(point.marker ? point.marker.fillColor : void 0, seriesMarker ? seriesMarker.fillColor : void 0, pointOptions.color, point.zone ? point.zone.color : void 0, point.color);
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });

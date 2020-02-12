@@ -11,11 +11,13 @@
  * */
 'use strict';
 import H from '../../../../parts/Globals.js';
-var numberFormat = H.numberFormat, find = H.find;
+var numberFormat = H.numberFormat, format = H.format;
 import U from '../../../../parts/Utilities.js';
-var isNumber = U.isNumber, pick = U.pick, defined = U.defined;
+var find = U.find, isNumber = U.isNumber, pick = U.pick, defined = U.defined;
+import AnnotationsA11y from '../AnnotationsA11y.js';
+var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 import HTMLUtilities from '../../utils/htmlUtilities.js';
-var reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
+var escapeStringForHTML = HTMLUtilities.escapeStringForHTML, reverseChildNodes = HTMLUtilities.reverseChildNodes, stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import ChartUtilities from '../../utils/chartUtilities.js';
 var getAxisDescription = ChartUtilities.getAxisDescription, getSeriesFirstPointElement = ChartUtilities.getSeriesFirstPointElement, getSeriesA11yElement = ChartUtilities.getSeriesA11yElement, unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT;
 import Tooltip from '../../../../parts/Tooltip.js';
@@ -219,7 +221,7 @@ function getPointArrayMapValueDescription(point, prefix, suffix) {
  * @param {Highcharts.Point} point
  * @return {string}
  */
-function getPointValueDescription(point) {
+function getPointValue(point) {
     var series = point.series, a11yPointOpts = series.chart.options.accessibility.point || {}, tooltipOptions = series.tooltipOptions || {}, valuePrefix = a11yPointOpts.valuePrefix ||
         tooltipOptions.valuePrefix || '', valueSuffix = a11yPointOpts.valueSuffix ||
         tooltipOptions.valueSuffix || '', fallbackKey = (typeof point.value !==
@@ -236,17 +238,50 @@ function getPointValueDescription(point) {
     return valuePrefix + fallbackDesc + valueSuffix;
 }
 /**
+ * Return the description for the annotation(s) connected to a point, or empty
+ * string if none.
+ *
+ * @private
+ * @param {Highcharts.Point} point The data point to get the annotation info from.
+ * @return {string} Annotation description
+ */
+function getPointAnnotationDescription(point) {
+    var chart = point.series.chart;
+    var langKey = 'accessibility.series.pointAnnotationsDescription';
+    var annotations = getPointAnnotationTexts(point);
+    var context = { point: point, annotations: annotations };
+    return annotations.length ? chart.langFormat(langKey, context) : '';
+}
+/**
+ * Return string with information about point.
+ * @private
+ * @return {string}
+ */
+function getPointValueDescription(point) {
+    var series = point.series, chart = series.chart, pointValueDescriptionFormat = chart.options.accessibility
+        .point.valueDescriptionFormat, showXDescription = pick(series.xAxis &&
+        series.xAxis.options.accessibility &&
+        series.xAxis.options.accessibility.enabled, !chart.angular), xDesc = showXDescription ? getPointXDescription(point) : '', context = {
+        point: point,
+        index: defined(point.index) ? (point.index + 1) : '',
+        xDescription: xDesc,
+        value: getPointValue(point),
+        separator: showXDescription ? ', ' : ''
+    };
+    return format(pointValueDescriptionFormat, context, chart);
+}
+/**
  * Return string with information about point.
  * @private
  * @return {string}
  */
 function defaultPointDescriptionFormatter(point) {
-    var series = point.series, chart = series.chart, description = point.options && point.options.accessibility &&
-        point.options.accessibility.description, showXDescription = pick(series.xAxis &&
-        series.xAxis.options.accessibility &&
-        series.xAxis.options.accessibility.enabled, !chart.angular), xDesc = getPointXDescription(point), valueDesc = getPointValueDescription(point), indexText = defined(point.index) ? (point.index + 1) + '. ' : '', xDescText = showXDescription ? xDesc + ', ' : '', valText = valueDesc + '.', userDescText = description ? ' ' + description : '', seriesNameText = chart.series.length > 1 && series.name ?
-        ' ' + series.name + '.' : '';
-    return indexText + xDescText + valText + userDescText + seriesNameText;
+    var series = point.series, chart = series.chart, valText = getPointValueDescription(point), description = point.options && point.options.accessibility &&
+        point.options.accessibility.description, userDescText = description ? ' ' + description : '', seriesNameText = chart.series.length > 1 && series.name ?
+        ' ' + series.name + '.' : '', annotationsDesc = getPointAnnotationDescription(point), pointAnnotationsText = annotationsDesc ? ' ' + annotationsDesc : '';
+    point.accessibility = point.accessibility || {};
+    point.accessibility.valueDescription = valText;
+    return valText + userDescText + seriesNameText + pointAnnotationsText;
 }
 /**
  * Set a11y props on a point element
@@ -255,11 +290,11 @@ function defaultPointDescriptionFormatter(point) {
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} pointElement
  */
 function setPointScreenReaderAttribs(point, pointElement) {
-    var series = point.series, a11yPointOptions = series.chart.options.accessibility.point || {}, seriesA11yOptions = series.options.accessibility || {}, label = stripHTMLTags(seriesA11yOptions.pointDescriptionFormatter &&
+    var series = point.series, a11yPointOptions = series.chart.options.accessibility.point || {}, seriesA11yOptions = series.options.accessibility || {}, label = escapeStringForHTML(stripHTMLTags(seriesA11yOptions.pointDescriptionFormatter &&
         seriesA11yOptions.pointDescriptionFormatter(point) ||
         a11yPointOptions.descriptionFormatter &&
             a11yPointOptions.descriptionFormatter(point) ||
-        defaultPointDescriptionFormatter(point));
+        defaultPointDescriptionFormatter(point)));
     pointElement.setAttribute('role', 'img');
     pointElement.setAttribute('aria-label', label);
 }
@@ -321,9 +356,9 @@ function describeSeriesElement(series, seriesElement) {
         seriesElement.setAttribute('role', 'region');
     } /* else do not add role */
     seriesElement.setAttribute('tabindex', '-1');
-    seriesElement.setAttribute('aria-label', stripHTMLTags(a11yOptions.series.descriptionFormatter &&
+    seriesElement.setAttribute('aria-label', escapeStringForHTML(stripHTMLTags(a11yOptions.series.descriptionFormatter &&
         a11yOptions.series.descriptionFormatter(series) ||
-        defaultSeriesDescriptionFormatter(series)));
+        defaultSeriesDescriptionFormatter(series))));
 }
 /**
  * Put accessible info on series and points of a series.
@@ -355,6 +390,7 @@ var SeriesDescriber = {
     defaultSeriesDescriptionFormatter: defaultSeriesDescriptionFormatter,
     getPointA11yTimeDescription: getPointA11yTimeDescription,
     getPointXDescription: getPointXDescription,
+    getPointValue: getPointValue,
     getPointValueDescription: getPointValueDescription
 };
 export default SeriesDescriber;

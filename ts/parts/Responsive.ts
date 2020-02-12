@@ -74,6 +74,7 @@ import './Chart.js';
 
 import U from './Utilities.js';
 const {
+    find,
     isArray,
     isObject,
     merge,
@@ -241,7 +242,7 @@ Chart.prototype.setResponsive = function (
     var mergedOptions = merge.apply(0, ruleIds.map(function (
         ruleId: string
     ): (Highcharts.Options|undefined) {
-        return (H.find(
+        return (find(
             (options as any).rules as Array<Highcharts.ResponsiveRulesOptions>,
             function (rule: Highcharts.ResponsiveRulesOptions): boolean {
                 return rule._id === ruleId;

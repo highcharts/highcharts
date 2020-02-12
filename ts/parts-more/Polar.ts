@@ -100,6 +100,7 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     defined,
+    find,
     pick,
     splat,
     wrap
@@ -1064,7 +1065,7 @@ wrap(H.Chart.prototype, 'get', function (
     proceed: Function,
     id: string
 ): boolean {
-    return H.find(this.pane as any, function (pane: Highcharts.Pane): boolean {
+    return find(this.pane as any, function (pane: Highcharts.Pane): boolean {
         return (pane.options as any).id === id;
     }) || proceed.call(this, id);
 });

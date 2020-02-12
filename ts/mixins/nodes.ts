@@ -84,6 +84,7 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     extend,
+    find,
     pick
 } = U;
 
@@ -107,7 +108,7 @@ H.NodesMixin = {
          * @private
          */
         function findById<T>(nodes: Array<T>, id: string): (T|undefined) {
-            return H.find(nodes, function (node: T): boolean {
+            return find(nodes, function (node: T): boolean {
                 return (node as any).id === id;
             });
         }

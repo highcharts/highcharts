@@ -213,6 +213,7 @@ const {
     css,
     defined,
     discardElement,
+    find,
     fireEvent,
     format,
     isNumber,
@@ -1086,7 +1087,7 @@ Highcharts.Legend.prototype = {
                 if ((item as any).xAxis.options.reversed) {
                     useFirstPoint = !useFirstPoint;
                 }
-                lastPoint = H.find(
+                lastPoint = find(
                     useFirstPoint ?
                         (item as any).points :
                         (item as any).points.slice(0).reverse(),

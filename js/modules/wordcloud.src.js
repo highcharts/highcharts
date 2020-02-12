@@ -12,11 +12,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
+var extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge;
 import drawPoint from '../mixins/draw-point.js';
 import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
-var noop = H.noop, find = H.find, getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon, getPolygon = polygon.getPolygon, isPolygonsColliding = polygon.isPolygonsColliding, movePolygon = polygon.movePolygon, Series = H.Series;
+var noop = H.noop, getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon, getPolygon = polygon.getPolygon, isPolygonsColliding = polygon.isPolygonsColliding, movePolygon = polygon.movePolygon, Series = H.Series;
 /**
  * Detects if there is a collision between two rectangles.
  *

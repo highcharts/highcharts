@@ -93,7 +93,7 @@ import '../modules/broken-axis.src.js';
 var argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
-    find = H.find,
+    find = U.find,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';

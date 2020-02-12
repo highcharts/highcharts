@@ -93,6 +93,23 @@ QUnit.test('Markers and zones for dumbbell.', function (assert) {
         'The lower marker should have a correct color (lowColor) without any state.'
     );
 
+    // Color all upper graphics
+    chart.series[0].update({
+        marker: {
+            fillColor: '#ffa500'
+        }
+    });
+
+    // Mouse over and mouse out of the point
+    chart.series[0].points[1].setState('hover');
+    chart.series[0].points[1].setState('');
+
+    assert.strictEqual(
+        chart.series[0].points[1].upperGraphic.attr('fill'),
+        chart.series[0].options.marker.fillColor,
+        'After mouseOut (without any state), the upper marker should have a correct color.'
+    );
+
 });
 
 QUnit.test('setData() and marker update for dumbbell.', function (assert) {

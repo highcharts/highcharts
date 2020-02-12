@@ -48,6 +48,7 @@ const {
     addEvent,
     defined,
     erase,
+    find,
     isArray,
     isNumber,
     merge,
@@ -990,7 +991,7 @@ var onGridAxisAfterInit = function onGridAxisAfterInit(
                 isFirst = value === tickPos[0],
                 isLast = value === tickPos[tickPos.length - 1],
                 point: (Highcharts.Point|undefined) =
-                    series && H.find(series.options.data as any, function (
+                    series && find(series.options.data as any, function (
                         p: Highcharts.PointOptionsType
                     ): boolean {
                         return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;

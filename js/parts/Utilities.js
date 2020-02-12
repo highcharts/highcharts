@@ -1454,7 +1454,7 @@ var getMagnitude = H.getMagnitude = function (num) {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
+var normalizeTickInterval = H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
     var normalized, i, retInterval = interval;
     // round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, 1);
@@ -1851,7 +1851,7 @@ function getNestedProperty(path, obj) {
  * @return {number|string}
  *         The numeric value.
  */
-H.getStyle = function (el, prop, toInt) {
+var getStyle = H.getStyle = function (el, prop, toInt) {
     var style;
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1911,7 +1911,7 @@ H.getStyle = function (el, prop, toInt) {
  * @return {number}
  *         The index within the array, or -1 if not found.
  */
-H.inArray = function (item, arr, fromIndex) {
+var inArray = H.inArray = function (item, arr, fromIndex) {
     return arr.indexOf(item, fromIndex);
 };
 /* eslint-disable valid-jsdoc */
@@ -1931,7 +1931,7 @@ H.inArray = function (item, arr, fromIndex) {
  * @return {T|undefined}
  *         The value of the element.
  */
-H.find = Array.prototype.find ?
+var find = H.find = Array.prototype.find ?
     /* eslint-enable valid-jsdoc */
     function (arr, callback) {
         return arr.find(callback);
@@ -2002,7 +2002,7 @@ var offset = H.offset = function offset(el) {
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-H.stop = function (el, prop) {
+var stop = H.stop = function (el, prop) {
     var i = H.timers.length;
     // Remove timers related to this element (#4519)
     while (i--) {
@@ -2411,7 +2411,7 @@ H.animate = function (el, params, opt) {
     opt.curAnim = merge(params);
     objectEach(params, function (val, prop) {
         // Stop current running animation of this property
-        H.stop(el, prop);
+        stop(el, prop);
         fx = new Fx(el, opt, prop);
         end = null;
         if (prop === 'd') {
@@ -2424,7 +2424,7 @@ H.animate = function (el, params, opt) {
             start = el.attr(prop);
         }
         else {
-            start = parseFloat(H.getStyle(el, prop)) || 0;
+            start = parseFloat(getStyle(el, prop)) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }
@@ -2575,10 +2575,13 @@ var utilitiesModule = {
     error: error,
     extend: extend,
     extendClass: extendClass,
+    find: find,
     fireEvent: fireEvent,
     format: format,
     getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
+    getStyle: getStyle,
+    inArray: inArray,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
@@ -2587,6 +2590,7 @@ var utilitiesModule = {
     isObject: isObject,
     isString: isString,
     merge: merge,
+    normalizeTickInterval: normalizeTickInterval,
     numberFormat: numberFormat,
     objectEach: objectEach,
     offset: offset,
@@ -2598,6 +2602,7 @@ var utilitiesModule = {
     setAnimation: setAnimation,
     splat: splat,
     stableSort: stableSort,
+    stop: stop,
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
     wrap: wrap

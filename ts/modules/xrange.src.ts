@@ -110,6 +110,7 @@ const {
     clamp,
     correctFloat,
     defined,
+    find,
     isNumber,
     isObject,
     merge,
@@ -117,7 +118,6 @@ const {
 } = U;
 
 var columnType = H.seriesTypes.column,
-    find = H.find,
     seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     Axis = H.Axis,

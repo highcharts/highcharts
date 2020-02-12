@@ -56,11 +56,11 @@ declare global {
 import U from './Utilities.js';
 const {
     getMagnitude,
+    normalizeTickInterval,
     timeUnits
 } = U;
 
-var Axis = H.Axis,
-    normalizeTickInterval = H.normalizeTickInterval;
+var Axis = H.Axis;
 
 /* eslint-disable valid-jsdoc */
 

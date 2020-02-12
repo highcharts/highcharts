@@ -20,7 +20,7 @@ import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
-}, find = H.find, getLevelOptions = mixinTreeSeries.getLevelOptions, isBoolean = function (x) {
+}, find = U.find, getLevelOptions = mixinTreeSeries.getLevelOptions, isBoolean = function (x) {
     return typeof x === 'boolean';
 }, isObject = function (x) {
     // Always use strict mode.

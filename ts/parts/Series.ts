@@ -702,6 +702,7 @@ const {
     erase,
     error,
     extend,
+    find,
     fireEvent,
     getNestedProperty,
     isArray,
@@ -4009,7 +4010,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 matchKey = (dataSorting && dataSorting.matchByName) ?
                     'name' : 'index';
 
-                matchingPoint = H.find(oldData, function (
+                matchingPoint = find(oldData, function (
                     oldPoint: Highcharts.Point
                 ): boolean {
                     return !oldPoint.touched && (oldPoint as any)[matchKey] ===

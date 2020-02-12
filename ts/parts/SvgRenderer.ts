@@ -820,6 +820,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    inArray,
     isArray,
     isNumber,
     isObject,
@@ -829,7 +830,8 @@ const {
     pick,
     pInt,
     removeEvent,
-    splat
+    splat,
+    stop
 } = U;
 
 var SVGElement: Highcharts.SVGElement,
@@ -843,7 +845,6 @@ var SVGElement: Highcharts.SVGElement,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     noop = H.noop,
-    stop = H.stop,
     svg = H.svg,
     SVG_NS = H.SVG_NS,
     symbolSizes = H.symbolSizes,
@@ -1408,7 +1409,7 @@ extend((
                 // Special handling of symbol attributes
                 if (
                     this.symbolName &&
-                    H.inArray(key, symbolCustomAttribs) !== -1
+                    inArray(key, symbolCustomAttribs) !== -1
                 ) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash as any);

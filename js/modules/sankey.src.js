@@ -91,12 +91,12 @@ import H from '../parts/Globals.js';
 */
 import Color from '../parts/Color.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
+var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
-var find = H.find, seriesType = H.seriesType, Point = H.Point;
+var seriesType = H.seriesType, Point = H.Point;
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -304,6 +304,10 @@ seriesType('sankey', 'column',
      * The padding between nodes in a sankey diagram or dependency wheel, in
      * pixels.
      *
+     * If the number of nodes is so great that it is possible to lay them
+     * out within the plot area with the given `nodePadding`, they will be
+     * rendered with a smaller padding as a strategy to avoid overflow.
+     *
      * @private
      */
     nodePadding: 10,
@@ -388,14 +392,24 @@ seriesType('sankey', 'column',
      * @private
      */
     getNodePadding: function () {
-        return this.options.nodePadding;
+        var nodePadding = this.options.nodePadding || 0;
+        // If the number of columns is so great that they will overflow with
+        // the given nodePadding, we sacrifice the padding in order to
+        // render all nodes within the plot area (#11917).
+        if (this.nodeColumns) {
+            var maxLength = this.nodeColumns.reduce(function (acc, col) { return Math.max(acc, col.length); }, 0);
+            if (maxLength * nodePadding > this.chart.plotSizeY) {
+                nodePadding = this.chart.plotSizeY / maxLength;
+            }
+        }
+        return nodePadding;
     },
     /**
      * Create a node column.
      * @private
      */
     createNodeColumn: function () {
-        var chart = this.chart, column = [], nodePadding = this.getNodePadding();
+        var series = this, chart = this.chart, column = [];
         column.sum = function () {
             return this.reduce(function (sum, node) {
                 return sum + node.getSum();
@@ -403,7 +417,7 @@ seriesType('sankey', 'column',
         };
         // Get the offset in pixels of a node inside the column.
         column.offset = function (node, factor) {
-            var offset = 0, totalNodeOffset;
+            var offset = 0, totalNodeOffset, nodePadding = series.nodePadding;
             for (var i = 0; i < column.length; i++) {
                 var sum = column[i].getSum();
                 if (sum) {
@@ -423,6 +437,7 @@ seriesType('sankey', 'column',
         };
         // Get the column height in pixels.
         column.top = function (factor) {
+            var nodePadding = series.nodePadding;
             var height = this.reduce(function (height, node) {
                 if (height > 0) {
                     height += nodePadding;
@@ -711,13 +726,14 @@ seriesType('sankey', 'column',
         this.generatePoints();
         this.nodeColumns = this.createNodeColumns();
         this.nodeWidth = relativeLength(this.options.nodeWidth, this.chart.plotSizeX);
-        var series = this, chart = this.chart, options = this.options, nodeWidth = this.nodeWidth, nodeColumns = this.nodeColumns, nodePadding = this.getNodePadding();
+        var series = this, chart = this.chart, options = this.options, nodeWidth = this.nodeWidth, nodeColumns = this.nodeColumns;
+        this.nodePadding = this.getNodePadding();
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.
         this.translationFactor = nodeColumns.reduce(function (translationFactor, column) {
             var height = chart.plotSizeY -
                 options.borderWidth -
-                (column.length - 1) * nodePadding;
+                (column.length - 1) * series.nodePadding;
             return Math.min(translationFactor, height / column.sum());
         }, Infinity);
         this.colDistance =

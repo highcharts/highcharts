@@ -195,6 +195,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    find,
     isArray,
     isNumber,
     merge,
@@ -2166,7 +2167,7 @@ Navigator.prototype = {
             chart.options && (chart.options.navigator as any).baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
-                (H.find(chart.series, function (s: Highcharts.Series): boolean {
+                (find(chart.series, function (s: Highcharts.Series): boolean {
                     return !s.options.isInternal;
                 }) as any).index :
                 0

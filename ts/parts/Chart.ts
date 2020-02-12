@@ -303,7 +303,9 @@ const {
     erase,
     error,
     extend,
+    find,
     fireEvent,
+    getStyle,
     isArray,
     isFunction,
     isNumber,
@@ -331,7 +333,6 @@ var animate = H.animate,
     Axis = H.Axis, // @todo add as requirement
     defaultOptions = H.defaultOptions,
     charts = H.charts,
-    find = H.find,
     Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     seriesTypes = H.seriesTypes,
@@ -1426,10 +1427,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Get inner width and height
         if (!defined(widthOption)) {
-            chart.containerWidth = H.getStyle(renderTo, 'width') as any;
+            chart.containerWidth = getStyle(renderTo, 'width') as any;
         }
         if (!defined(heightOption)) {
-            chart.containerHeight = H.getStyle(renderTo, 'height') as any;
+            chart.containerHeight = getStyle(renderTo, 'height') as any;
         }
 
         /**
@@ -1494,7 +1495,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     doc.body.appendChild(node);
                 }
                 if (
-                    H.getStyle(node, 'display', false) === 'none' ||
+                    getStyle(node, 'display', false) === 'none' ||
                     (node as any).hcOricDetached
                 ) {
                     (node as any).hcOrigStyle = {
@@ -1816,8 +1817,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 defined(optionsChart.width) &&
                 defined(optionsChart.height)
             ),
-            width = optionsChart.width || H.getStyle(renderTo, 'width'),
-            height = optionsChart.height || H.getStyle(renderTo, 'height'),
+            width = optionsChart.width || getStyle(renderTo, 'width'),
+            height = optionsChart.height || getStyle(renderTo, 'height'),
             target = e ? e.target : win;
 
         // Width and height checks for display:none. Target is doc in IE8 and

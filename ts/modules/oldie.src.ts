@@ -367,7 +367,7 @@ var VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = function (
+    H.getStyle = U.getStyle = function (
         el: Highcharts.HTMLDOMElement,
         prop: string
     ): number {
@@ -388,7 +388,7 @@ if (doc && !doc.defaultView) {
         if (alias) {
             el.style.zoom = 1 as any;
             return Math.max(
-                (el as any)[alias] - 2 * (H.getStyle(el, 'padding') as number),
+                (el as any)[alias] - 2 * (U.getStyle(el, 'padding') as number),
                 0
             );
         }
