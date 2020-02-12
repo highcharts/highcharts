@@ -519,10 +519,14 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     onHandlerTerminate: function () {
         var chart = this.chart;
+        var curPoint = chart.highlightedPoint;
         if (chart.tooltip) {
             chart.tooltip.hide(0);
         }
-        delete chart.highlightedPoint;
+        if (curPoint) {
+            curPoint.onMouseOut();
+            delete chart.highlightedPoint;
+        }
     },
     /**
      * Function that attempts to highlight next/prev point. Handles wrap around.

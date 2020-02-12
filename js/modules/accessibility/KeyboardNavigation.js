@@ -79,6 +79,12 @@ KeyboardNavigation.prototype = {
         ep.addEvent(chart.renderTo, 'keydown', function (e) { return _this.onKeydown(e); });
         ep.addEvent(chart.container, 'focus', function (e) { return _this.onFocus(e); });
         ep.addEvent(doc, 'mouseup', function () { return _this.onMouseUp(); });
+        ep.addEvent(chart.renderTo, 'mouseover', function () {
+            _this.pointerIsOverChart = true;
+        });
+        ep.addEvent(chart.renderTo, 'mouseout', function () {
+            _this.pointerIsOverChart = false;
+        });
         // Run an update to get all modules
         this.update();
         // Init first module
@@ -131,8 +137,7 @@ KeyboardNavigation.prototype = {
      * @private
      */
     onMouseUp: function () {
-        if (!this.keyboardReset &&
-            !(this.chart.pointer && this.chart.pointer.chartPosition)) {
+        if (!this.keyboardReset && !this.pointerIsOverChart) {
             var chart = this.chart, curMod = this.modules &&
                 this.modules[this.currentModuleIx || 0];
             if (curMod && curMod.terminate) {
