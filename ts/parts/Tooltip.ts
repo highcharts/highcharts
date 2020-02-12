@@ -23,6 +23,7 @@ const {
     isNumber,
     isString,
     merge,
+    offset,
     pick,
     splat,
     syncTimeout,
@@ -54,6 +55,7 @@ declare global {
             public renderer?: Renderer;
             public shared?: boolean;
             public split?: boolean;
+            public stickOnContactTracker?: SVGElement;
             public tooltipTimeout?: number;
             public tt?: SVGElement;
             public applyFilter(): void;
@@ -87,6 +89,7 @@ declare global {
             ): string;
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
+            public isStickyOnContact(e: PointerEventObject): boolean;
             public move(
                 x: number,
                 y: number,
@@ -291,6 +294,7 @@ class Tooltip {
         chart: Highcharts.Chart,
         options: Highcharts.TooltipOptions
     ) {
+        this.chart = chart;
         this.init(chart, options);
     }
 
@@ -300,7 +304,7 @@ class Tooltip {
      *
      * */
 
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Highcharts.Chart;
 
     public container?: Highcharts.HTMLDOMElement;
 
@@ -333,6 +337,8 @@ class Tooltip {
     public shared?: boolean;
 
     public split?: boolean;
+
+    public stickOnContactTracker?: Highcharts.SVGElement;
 
     public tooltipTimeout?: number;
 
@@ -661,11 +667,13 @@ class Tooltip {
     public getLabel(): Highcharts.SVGElement {
 
         var tooltip = this,
-            renderer = this.chart.renderer as Highcharts.Renderer,
+            renderer: (Highcharts.Renderer|Highcharts.SVGRenderer) = this.chart.renderer,
             styledMode = this.chart.styledMode,
             options = this.options,
-            className: string = 'tooltip' +
-                (defined(options.className) ? ' ' + options.className : ''),
+            className = (
+                'tooltip' +
+                (defined(options.className) ? ' ' + options.className : '')
+            ),
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>;
 
@@ -775,11 +783,13 @@ class Tooltip {
             }
 
             this.label
+                .on('mouseout', tooltip.unstickWithoutContact.bind(this))
                 .attr({
                     zIndex: 8
                 })
                 .add();
         }
+
         return this.label;
     }
 
@@ -1142,6 +1152,43 @@ class Tooltip {
     }
 
     /**
+     * Returns true, if pointer event is in contact with stick tooltip.
+     *
+     * @private
+     * @function Highcharts.Tooltip#isStickOnContact
+     *
+     * @param {Highcharts.PointerEventObject} e
+     * Pointer event to test.
+     *
+     * @return {boolean}
+     * True, if pointer is in contact with sticky tooltip.
+     */
+    public isStickyOnContact(e: Highcharts.PointerEventObject): boolean {
+        const stickOnContactTracker = this.stickOnContactTracker;
+
+        if (
+            !this.options.stickOnContact ||
+            !stickOnContactTracker
+        ) {
+            return false;
+        }
+
+        const bBox = stickOnContactTracker.getBBox();
+        const bBoxOffset = offset(stickOnContactTracker.element);
+        const chart = this.chart;
+
+        bBox.x = bBoxOffset.left - chart.container.offsetLeft;
+        bBox.y = bBoxOffset.top - chart.container.offsetTop;
+
+        e = chart.pointer.normalize(e);
+
+        return (
+            e.chartX >= bBox.x && e.chartX <= (bBox.x + bBox.width) &&
+            e.chartY >= bBox.y && e.chartY <= (bBox.y + bBox.height)
+        );
+    }
+
+    /**
      * Moves the tooltip with a soft animation to a new position.
      *
      * @private
@@ -1196,6 +1243,8 @@ class Tooltip {
                 }
             }, 32) as any;
 
+        } else {
+            this.stickOnContact();
         }
     }
 
@@ -1692,6 +1741,68 @@ class Tooltip {
     }
 
     /**
+     * If the `stickOnContact` option is active, this will add a tracker shape.
+     *
+     * @private
+     * @function Highcharts.Tooltip#stickOnContact
+     */
+    private stickOnContact(): void {
+        const tooltip = this;
+
+        if (tooltip.stickOnContactTracker) {
+            tooltip.stickOnContactTracker = tooltip.stickOnContactTracker.destroy();
+        }
+
+        if (!tooltip.options.stickOnContact) {
+            return;
+        }
+
+        const chart = tooltip.chart;
+        const label = tooltip.label;
+        const point = chart.hoverPoint;
+
+        if (!label || !point) {
+            return;
+        }
+
+        // When the mouse pointer is between the anchor point and the label,
+        // the label should stick.
+        const anchor = {
+            x: ((point.plotX || 0) + chart.plotLeft - label.translateX),
+            y: ((point.plotY || 0) + chart.plotTop - label.translateY)
+        };
+        const labelBBox = label.getBBox();
+
+        // Combine tooltip and point shape
+        const stickTrackerX = Math.min(
+            anchor.x - 1,
+            0
+        );
+        const stickTrackerY = Math.min(
+            anchor.y - 1,
+            0
+        );
+        const stickTrackerWidth = Math.max(
+            anchor.x + 1,
+            labelBBox.width
+        );
+        const stickTrackerHeight = Math.max(
+            anchor.y + 1,
+            labelBBox.height
+        );
+
+        tooltip.stickOnContactTracker = label.renderer
+            .rect(
+                stickTrackerX,
+                stickTrackerY,
+                stickTrackerWidth,
+                stickTrackerHeight
+            )
+            .attr({ fill: 'rgba(0,0,0,0)', zIndex: 1 })
+            .add(label);
+    }
+
+    /**
      * @private
      */
     public styledModeFormat(formatString: string): string {
@@ -1773,6 +1884,21 @@ class Tooltip {
 
         });
         return evt.text;
+    }
+
+    /**
+     * If the `stickOnContact` option is active, this will trigger onMouseOut on
+     * the hovered series.
+     *
+     * @private
+     * @function Highcharts.Tooltip#unstickWithoutContact
+     */
+    private unstickWithoutContact(e: Highcharts.PointerEventObject): void {
+        if (!this.options.stickOnContact) {
+            return;
+        }
+
+        this.chart.pointer.onTrackerMouseOut(e);
     }
 
     /**

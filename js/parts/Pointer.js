@@ -438,8 +438,13 @@ var Pointer = /** @class */ (function () {
             }
             return result;
         };
-        if (this.isStickyTooltip(e)) {
-            return this.chart.hoverPoint;
+        var chart = this.chart;
+        var hoverPoint = chart.hoverPoint;
+        var tooltip = chart.tooltip;
+        if (hoverPoint &&
+            tooltip &&
+            tooltip.isStickyOnContact(e)) {
+            return hoverPoint;
         }
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared, compareX = (!noSharedTooltip &&
@@ -638,12 +643,13 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onTrackerMouseOut = function (e) {
-        var series = this.chart.hoverSeries, relatedTarget = e.relatedTarget || e.toElement;
+        var chart = this.chart;
+        var series = chart.hoverSeries;
+        var relatedTarget = e.relatedTarget || e.toElement;
         this.isDirectTouch = false;
         if (series &&
             relatedTarget &&
             !series.stickyTracking &&
-            !this.isStickyTooltip(e) &&
             !this.inClass(relatedTarget, 'highcharts-tooltip') &&
             (!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465, #5553
                 !this.inClass(relatedTarget, 'highcharts-tracker'))) {
@@ -718,54 +724,6 @@ var Pointer = /** @class */ (function () {
             this.followTouchMove = pick(options.tooltip.followTouchMove, true);
         }
         this.setDOMEvents();
-    };
-    /**
-     * Returns true, if the `stickOnContact` option is active and a given
-     * pointer event occurs inside the combined boundings of the hovered point
-     * and tooltip.
-     *
-     * @private
-     * @param {Highcharts.PointerEventObject} e
-     * Pointers event to check agains the active tooltip.
-     *
-     * @return {boolean}
-     * True, if the pointer event occurs inside of the hovered boundings.
-     */
-    Pointer.prototype.isStickyTooltip = function (e) {
-        var chart = this.chart;
-        var chartPosition = this.chartPosition;
-        var point = chart.hoverPoint;
-        var tooltip = chart.tooltip;
-        var isSticky = false;
-        if (typeof e.chartX === 'undefined' ||
-            typeof e.chartY === 'undefined') {
-            e = this.normalize(e);
-        }
-        if (tooltip &&
-            tooltip.options.stickOnContact &&
-            tooltip.label &&
-            !tooltip.isHidden &&
-            !tooltip.followPointer &&
-            point &&
-            point.graphic &&
-            chartPosition) {
-            var labelBBox = tooltip.label.getBBox();
-            var labelOffset = Highcharts.offset(tooltip.label.element);
-            labelBBox.x = labelOffset.left - chartPosition.left;
-            labelBBox.y = labelOffset.top - chartPosition.top;
-            // The tooltip anchor point, the coordinate that the chevron points
-            // to. When the mouse pointer is between the anchor point and the
-            // label, the label should stick.
-            var _a = tooltip.now, anchorX = _a.anchorX, anchorY = _a.anchorY;
-            // Combine tooltip and point shape
-            var x1 = Math.min(anchorX, labelBBox.x);
-            var y1 = Math.min(anchorY, labelBBox.y);
-            var x2 = Math.max(anchorX, (labelBBox.x + labelBBox.width));
-            var y2 = Math.max(anchorY, (labelBBox.y + labelBBox.height));
-            isSticky = ((e.chartX >= x1 && e.chartX <= x2) &&
-                (e.chartY >= y1 && e.chartY <= y2));
-        }
-        return isSticky;
     };
     /**
      * Takes a browser event object and extends it with custom Highcharts
@@ -875,9 +833,9 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.onContainerMouseLeave = function (e) {
         var chart = charts[H.hoverChartIndex];
         // #4886, MS Touch end fires mouseleave but with no related target
-        if ((e.relatedTarget || e.toElement) &&
-            chart &&
-            chart.pointer.isStickyTooltip(e)) {
+        if (chart &&
+            (e.relatedTarget || e.toElement) &&
+            (!chart.tooltip || !chart.tooltip.isStickyOnContact(e))) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
@@ -895,6 +853,7 @@ var Pointer = /** @class */ (function () {
      */
     Pointer.prototype.onContainerMouseMove = function (e) {
         var chart = this.chart;
+        var tooltip = chart.tooltip;
         if (!defined(H.hoverChartIndex) ||
             !charts[H.hoverChartIndex] ||
             !charts[H.hoverChartIndex].mouseIsDown) {
@@ -914,7 +873,7 @@ var Pointer = /** @class */ (function () {
         }
         // Show the tooltip and run mouse over events (#977)
         if (!chart.openMenu &&
-            !this.isStickyTooltip(e) &&
+            (!tooltip || !tooltip.isStickyOnContact(e)) &&
             (this.inClass(e.target, 'highcharts-tracker') ||
                 chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop))) {
             this.runPointActions(e);
@@ -969,13 +928,15 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onDocumentMouseMove = function (e) {
-        var chart = this.chart, chartPosition = this.chartPosition;
+        var chart = this.chart;
+        var chartPosition = this.chartPosition;
+        var tooltip = chart.tooltip;
         e = this.normalize(e, chartPosition);
         // If we're outside, hide the tooltip
         if (chartPosition &&
             !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) &&
             !this.inClass(e.target, 'highcharts-tracker') &&
-            !this.isStickyTooltip(e)) {
+            (!tooltip || !tooltip.isStickyOnContact(e))) {
             this.reset();
         }
     };

@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
+var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, offset = U.offset, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -132,12 +132,6 @@ var Tooltip = /** @class */ (function () {
      *        Tooltip options.
      */
     function Tooltip(chart, options) {
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        this.chart = void 0;
         this.crosshairs = [];
         this.distance = 0;
         this.isHidden = true;
@@ -146,6 +140,7 @@ var Tooltip = /** @class */ (function () {
         this.options = {};
         this.outside = false;
         this.pointerEvents = 'none';
+        this.chart = chart;
         this.init(chart, options);
     }
     /* *
@@ -402,8 +397,8 @@ var Tooltip = /** @class */ (function () {
      * @return {Highcharts.SVGElement}
      */
     Tooltip.prototype.getLabel = function () {
-        var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = 'tooltip' +
-            (defined(options.className) ? ' ' + options.className : ''), container, set;
+        var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = ('tooltip' +
+            (defined(options.className) ? ' ' + options.className : '')), container, set;
         if (!this.label) {
             if (this.outside) {
                 /**
@@ -478,6 +473,7 @@ var Tooltip = /** @class */ (function () {
                 };
             }
             this.label
+                .on('mouseout', tooltip.unstickWithoutContact.bind(this))
                 .attr({
                 zIndex: 8
             })
@@ -768,6 +764,33 @@ var Tooltip = /** @class */ (function () {
         this.pointerEvents = ((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || (options.stickOnContact ? 'auto' : 'none');
     };
     /**
+     * Returns true, if pointer event is in contact with stick tooltip.
+     *
+     * @private
+     * @function Highcharts.Tooltip#isStickOnContact
+     *
+     * @param {Highcharts.PointerEventObject} e
+     * Pointer event to test.
+     *
+     * @return {boolean}
+     * True, if pointer is in contact with sticky tooltip.
+     */
+    Tooltip.prototype.isStickyOnContact = function (e) {
+        var stickOnContactTracker = this.stickOnContactTracker;
+        if (!this.options.stickOnContact ||
+            !stickOnContactTracker) {
+            return false;
+        }
+        var bBox = stickOnContactTracker.getBBox();
+        var bBoxOffset = offset(stickOnContactTracker.element);
+        var chart = this.chart;
+        bBox.x = bBoxOffset.left - chart.container.offsetLeft;
+        bBox.y = bBoxOffset.top - chart.container.offsetTop;
+        e = chart.pointer.normalize(e);
+        return (e.chartX >= bBox.x && e.chartX <= (bBox.x + bBox.width) &&
+            e.chartY >= bBox.y && e.chartY <= (bBox.y + bBox.height));
+    };
+    /**
      * Moves the tooltip with a soft animation to a new position.
      *
      * @private
@@ -812,6 +835,9 @@ var Tooltip = /** @class */ (function () {
                     tooltip.move(x, y, anchorX, anchorY);
                 }
             }, 32);
+        }
+        else {
+            this.stickOnContact();
         }
     };
     /**
@@ -1157,6 +1183,43 @@ var Tooltip = /** @class */ (function () {
         }
     };
     /**
+     * If the `stickOnContact` option is active, this will add a tracker shape.
+     *
+     * @private
+     * @function Highcharts.Tooltip#stickOnContact
+     */
+    Tooltip.prototype.stickOnContact = function () {
+        var tooltip = this;
+        if (tooltip.stickOnContactTracker) {
+            tooltip.stickOnContactTracker = tooltip.stickOnContactTracker.destroy();
+        }
+        if (!tooltip.options.stickOnContact) {
+            return;
+        }
+        var chart = tooltip.chart;
+        var label = tooltip.label;
+        var point = chart.hoverPoint;
+        if (!label || !point) {
+            return;
+        }
+        // When the mouse pointer is between the anchor point and the label,
+        // the label should stick.
+        var anchor = {
+            x: ((point.plotX || 0) + chart.plotLeft - label.translateX),
+            y: ((point.plotY || 0) + chart.plotTop - label.translateY)
+        };
+        var labelBBox = label.getBBox();
+        // Combine tooltip and point shape
+        var stickTrackerX = Math.min(anchor.x - 1, 0);
+        var stickTrackerY = Math.min(anchor.y - 1, 0);
+        var stickTrackerWidth = Math.max(anchor.x + 1, labelBBox.width);
+        var stickTrackerHeight = Math.max(anchor.y + 1, labelBBox.height);
+        tooltip.stickOnContactTracker = label.renderer
+            .rect(stickTrackerX, stickTrackerY, stickTrackerWidth, stickTrackerHeight)
+            .attr({ fill: 'rgba(0,0,0,0)', zIndex: 1 })
+            .add(label);
+    };
+    /**
      * @private
      */
     Tooltip.prototype.styledModeFormat = function (formatString) {
@@ -1204,6 +1267,19 @@ var Tooltip = /** @class */ (function () {
             }, this.chart);
         });
         return evt.text;
+    };
+    /**
+     * If the `stickOnContact` option is active, this will trigger onMouseOut on
+     * the hovered series.
+     *
+     * @private
+     * @function Highcharts.Tooltip#unstickWithoutContact
+     */
+    Tooltip.prototype.unstickWithoutContact = function (e) {
+        if (!this.options.stickOnContact) {
+            return;
+        }
+        this.chart.pointer.onTrackerMouseOut(e);
     };
     /**
      * Updates the tooltip with the provided tooltip options.

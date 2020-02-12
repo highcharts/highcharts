@@ -120,7 +120,6 @@ declare global {
                 className: string
             ): (boolean|undefined);
             public init(chart: Chart, options: Options): void;
-            public isStickyTooltip(pointerPosition: PointerEventObject): boolean;
             public normalize<T extends PointerEventObject>(
                 e: (T|PointerEvent|TouchEvent),
                 chartPosition?: OffsetObject
@@ -795,8 +794,16 @@ class Pointer {
                 return result;
             };
 
-        if (this.isStickyTooltip(e)) {
-            return this.chart.hoverPoint;
+        const chart = this.chart;
+        const hoverPoint = chart.hoverPoint;
+        const tooltip = chart.tooltip;
+
+        if (
+            hoverPoint &&
+            tooltip &&
+            tooltip.isStickyOnContact(e)
+        ) {
+            return hoverPoint;
         }
 
         series.forEach(function (s: Highcharts.Series): void {
@@ -1057,8 +1064,9 @@ class Pointer {
      * @return {void}
      */
     public onTrackerMouseOut(e: Highcharts.PointerEventObject): void {
-        var series = this.chart.hoverSeries,
-            relatedTarget = e.relatedTarget || e.toElement;
+        const chart = this.chart;
+        const series = chart.hoverSeries;
+        const relatedTarget = e.relatedTarget || e.toElement;
 
         this.isDirectTouch = false;
 
@@ -1066,7 +1074,6 @@ class Pointer {
             series &&
             relatedTarget &&
             !series.stickyTracking &&
-            !this.isStickyTooltip(e) &&
             !this.inClass(relatedTarget as any, 'highcharts-tooltip') &&
             (
                 !this.inClass(
@@ -1160,80 +1167,6 @@ class Pointer {
         }
 
         this.setDOMEvents();
-    }
-
-    /**
-     * Returns true, if the `stickOnContact` option is active and a given
-     * pointer event occurs inside the combined boundings of the hovered point
-     * and tooltip.
-     *
-     * @private
-     * @param {Highcharts.PointerEventObject} e
-     * Pointers event to check agains the active tooltip.
-     *
-     * @return {boolean}
-     * True, if the pointer event occurs inside of the hovered boundings.
-     */
-    public isStickyTooltip(e: Highcharts.PointerEventObject): boolean {
-        const chart = this.chart;
-        const chartPosition = this.chartPosition;
-        const point = chart.hoverPoint;
-        const tooltip = chart.tooltip;
-
-        let isSticky = false;
-
-        if (
-            typeof e.chartX === 'undefined' ||
-            typeof e.chartY === 'undefined'
-        ) {
-            e = this.normalize(e);
-        }
-
-        if (
-            tooltip &&
-            tooltip.options.stickOnContact &&
-            tooltip.label &&
-            !tooltip.isHidden &&
-            !tooltip.followPointer &&
-            point &&
-            point.graphic &&
-            chartPosition
-        ) {
-            const labelBBox = tooltip.label.getBBox();
-            const labelOffset = Highcharts.offset(tooltip.label.element);
-            labelBBox.x = labelOffset.left - chartPosition.left;
-            labelBBox.y = labelOffset.top - chartPosition.top;
-
-            // The tooltip anchor point, the coordinate that the chevron points
-            // to. When the mouse pointer is between the anchor point and the
-            // label, the label should stick.
-            const { anchorX, anchorY } = tooltip.now;
-
-            // Combine tooltip and point shape
-            const x1 = Math.min(
-                anchorX,
-                labelBBox.x
-            );
-            const y1 = Math.min(
-                anchorY,
-                labelBBox.y
-            );
-            const x2 = Math.max(
-                anchorX,
-                (labelBBox.x + labelBBox.width)
-            );
-            const y2 = Math.max(
-                anchorY,
-                (labelBBox.y + labelBBox.height)
-            );
-
-            isSticky = (
-                (e.chartX >= x1 && e.chartX <= x2) &&
-                (e.chartY >= y1 && e.chartY <= y2)
-            );
-        }
-
-        return isSticky;
     }
 
     /**
@@ -1374,13 +1307,13 @@ class Pointer {
      * @return {void}
      */
     public onContainerMouseLeave(e: Highcharts.PointerEventObject): void {
-        var chart = charts[H.hoverChartIndex as any];
+        const chart = charts[H.hoverChartIndex as any];
 
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
-            (e.relatedTarget || e.toElement) &&
             chart &&
-            chart.pointer.isStickyTooltip(e)
+            (e.relatedTarget || e.toElement) &&
+            (!chart.tooltip || !chart.tooltip.isStickyOnContact(e))
         ) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
@@ -1399,8 +1332,8 @@ class Pointer {
      * @return {void}
      */
     public onContainerMouseMove(e: Highcharts.PointerEventObject): void {
-
-        var chart = this.chart;
+        const chart = this.chart;
+        const tooltip = chart.tooltip;
 
         if (
             !defined(H.hoverChartIndex) ||
@@ -1428,7 +1361,7 @@ class Pointer {
         // Show the tooltip and run mouse over events (#977)
         if (
             !chart.openMenu &&
-            !this.isStickyTooltip(e) &&
+            (!tooltip || !tooltip.isStickyOnContact(e)) &&
             (
                 this.inClass(e.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
@@ -1493,8 +1426,9 @@ class Pointer {
      * @return {void}
      */
     public onDocumentMouseMove(e: Highcharts.PointerEventObject): void {
-        var chart = this.chart,
-            chartPosition = this.chartPosition;
+        const chart = this.chart;
+        const chartPosition = this.chartPosition;
+        const tooltip = chart.tooltip;
 
         e = this.normalize(e, chartPosition);
 
@@ -1506,7 +1440,7 @@ class Pointer {
                 e.chartY - chart.plotTop
             ) &&
             !this.inClass(e.target as any, 'highcharts-tracker') &&
-            !this.isStickyTooltip(e)
+            (!tooltip || !tooltip.isStickyOnContact(e))
         ) {
             this.reset();
         }
