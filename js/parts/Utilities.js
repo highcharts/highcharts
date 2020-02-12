@@ -2002,7 +2002,7 @@ var offset = H.offset = function offset(el) {
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-H.stop = function (el, prop) {
+var stop = H.stop = function (el, prop) {
     var i = H.timers.length;
     // Remove timers related to this element (#4519)
     while (i--) {
@@ -2411,7 +2411,7 @@ H.animate = function (el, params, opt) {
     opt.curAnim = merge(params);
     objectEach(params, function (val, prop) {
         // Stop current running animation of this property
-        H.stop(el, prop);
+        stop(el, prop);
         fx = new Fx(el, opt, prop);
         end = null;
         if (prop === 'd') {
@@ -2602,6 +2602,7 @@ var utilitiesModule = {
     setAnimation: setAnimation,
     splat: splat,
     stableSort: stableSort,
+    stop: stop,
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
     wrap: wrap

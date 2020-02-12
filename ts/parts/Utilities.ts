@@ -2820,7 +2820,7 @@ const offset = H.offset = function offset(el: Element): Highcharts.OffsetObject 
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
+const stop = H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
 
     var i = H.timers.length;
 
@@ -3320,7 +3320,7 @@ H.animate = function (
 
     objectEach(params, function (val: any, prop: string): void {
         // Stop current running animation of this property
-        H.stop(el as any, prop);
+        stop(el as any, prop);
 
         fx = new Fx(el as any, opt as any, prop);
         end = null;
@@ -3547,6 +3547,7 @@ const utilitiesModule = {
     setAnimation,
     splat,
     stableSort,
+    stop,
     syncTimeout,
     timeUnits,
     wrap

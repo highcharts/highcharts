@@ -47,7 +47,8 @@ import U from './Utilities.js';
 const {
     addEvent,
     createElement,
-    pick
+    pick,
+    stop
 } = U;
 
 var Chart = H.Chart;
@@ -403,7 +404,7 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
     // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0);
     scrollableHeight = this.chartHeight + (this.scrollablePixelsY || 0);
-    H.stop(this.container as any);
+    stop(this.container as any);
     this.container.style.width = scrollableWidth + 'px';
     this.container.style.height = scrollableHeight + 'px';
     this.renderer.boxWrapper.attr({
