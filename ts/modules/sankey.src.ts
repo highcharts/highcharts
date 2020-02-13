@@ -1142,6 +1142,45 @@ seriesType<Highcharts.SankeySeries>(
          * @private
          */
         translate: function (this: Highcharts.SankeySeries): void {
+
+            // Get the translation factor needed for each column to fill up the
+            // plot height
+            const getColumnTranslationFactor = (column: Highcharts.SankeyColumnArray): number => {
+                const nodes = column.slice();
+                const minLinkWidth = this.options.minLinkWidth || 0;
+                let exceedsMinLinkWidth: boolean;
+                let factor = 0;
+                let i: number;
+
+                let remainingHeight = (chart.plotSizeY as any) -
+                    (options.borderWidth as any) - (column.length - 1) * series.nodePadding;
+
+                // Because the minLinkWidth option doesn't obey the direct
+                // translation, we need to run translation iteratively, check
+                // node heights, remove those nodes affected by minLinkWidth,
+                // check again, etc.
+                while (column.length) {
+                    factor = remainingHeight / column.sum();
+                    exceedsMinLinkWidth = false;
+                    i = column.length;
+                    while (i--) {
+                        if (column[i].getSum() * factor < minLinkWidth) {
+                            column.splice(i, 1);
+                            remainingHeight -= minLinkWidth + series.nodePadding;
+                            exceedsMinLinkWidth = true;
+                        }
+                    }
+                    if (!exceedsMinLinkWidth) {
+                        break;
+                    }
+                }
+
+                // Re-insert original nodes
+                column.length = 0;
+                nodes.forEach((node): number => column.push(node));
+                return factor;
+            };
+
             if (!this.processedXData) {
                 this.processData();
             }
@@ -1164,18 +1203,17 @@ seriesType<Highcharts.SankeySeries>(
             // Find out how much space is needed. Base it on the translation
             // factor of the most spaceous column.
             this.translationFactor = nodeColumns.reduce(
-                function (
+                (
                     translationFactor: number,
                     column: Highcharts.SankeyColumnArray
-                ): number {
-                    var height = (chart.plotSizeY as any) -
-                    (options.borderWidth as any) -
-                    (column.length - 1) * series.nodePadding;
-
-                    return Math.min(translationFactor, height / column.sum());
-                },
+                ): number => Math.min(
+                    translationFactor,
+                    getColumnTranslationFactor(column)
+                ),
                 Infinity
             );
+
+
             this.colDistance =
                 (
                     (chart.plotSizeX as any) - nodeWidth -

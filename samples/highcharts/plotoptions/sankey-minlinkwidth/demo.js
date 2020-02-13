@@ -6,7 +6,7 @@ Highcharts.chart('container', {
 
     series: [{
         keys: ['from', 'to', 'weight'],
-        minLinkWidth: 5,
+        minLinkWidth: 1,
         data: [
             ['Brazil', 'Portugal', 5],
             ['Brazil', 'France', 1],

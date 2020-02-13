@@ -726,6 +726,41 @@ seriesType('sankey', 'column',
      * @private
      */
     translate: function () {
+        var _this = this;
+        // Get the translation factor needed for each column to fill up the
+        // plot height
+        var getColumnTranslationFactor = function (column) {
+            var nodes = column.slice();
+            var minLinkWidth = _this.options.minLinkWidth || 0;
+            var exceedsMinLinkWidth;
+            var factor = 0;
+            var i;
+            var remainingHeight = chart.plotSizeY -
+                options.borderWidth - (column.length - 1) * series.nodePadding;
+            // Because the minLinkWidth option doesn't obey the direct
+            // translation, we need to run translation iteratively, check
+            // node heights, remove those nodes affected by minLinkWidth,
+            // check again, etc.
+            while (column.length) {
+                factor = remainingHeight / column.sum();
+                exceedsMinLinkWidth = false;
+                i = column.length;
+                while (i--) {
+                    if (column[i].getSum() * factor < minLinkWidth) {
+                        column.splice(i, 1);
+                        remainingHeight -= minLinkWidth + series.nodePadding;
+                        exceedsMinLinkWidth = true;
+                    }
+                }
+                if (!exceedsMinLinkWidth) {
+                    break;
+                }
+            }
+            // Re-insert original nodes
+            column.length = 0;
+            nodes.forEach(function (node) { return column.push(node); });
+            return factor;
+        };
         if (!this.processedXData) {
             this.processData();
         }
@@ -736,12 +771,7 @@ seriesType('sankey', 'column',
         this.nodePadding = this.getNodePadding();
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.
-        this.translationFactor = nodeColumns.reduce(function (translationFactor, column) {
-            var height = chart.plotSizeY -
-                options.borderWidth -
-                (column.length - 1) * series.nodePadding;
-            return Math.min(translationFactor, height / column.sum());
-        }, Infinity);
+        this.translationFactor = nodeColumns.reduce(function (translationFactor, column) { return Math.min(translationFactor, getColumnTranslationFactor(column)); }, Infinity);
         this.colDistance =
             (chart.plotSizeX - nodeWidth -
                 options.borderWidth) / Math.max(1, nodeColumns.length - 1);
