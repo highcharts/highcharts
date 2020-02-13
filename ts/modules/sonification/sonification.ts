@@ -193,3 +193,14 @@ extend(H.Chart.prototype, {
 addEvent(H.Chart, 'init', function (): void {
     this.sonification = {};
 });
+
+// Update with chart/series/point updates
+addEvent(H.Chart as any, 'update', function (
+    this: Highcharts.SonifyableChart,
+    e: { options: Highcharts.Options }
+): void {
+    const newOptions = e.options.sonification;
+    if (newOptions) {
+        merge(true, this.options.sonification, newOptions);
+    }
+});

@@ -109,3 +109,10 @@ extend(H.Chart.prototype, {
 addEvent(H.Chart, 'init', function () {
     this.sonification = {};
 });
+// Update with chart/series/point updates
+addEvent(H.Chart, 'update', function (e) {
+    var newOptions = e.options.sonification;
+    if (newOptions) {
+        merge(true, this.options.sonification, newOptions);
+    }
+});
