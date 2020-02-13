@@ -671,9 +671,13 @@ seriesType<Highcharts.SankeySeries>(
 
                 for (var i = 0; i < column.length; i++) {
                     const sum = column[i].getSum();
+                    const height = Math.max(
+                        sum * factor,
+                        series.options.minLinkWidth as any
+                    );
 
                     if (sum) {
-                        totalNodeOffset = sum * factor + nodePadding;
+                        totalNodeOffset = height + nodePadding;
                     } else {
                         // If node sum equals 0 nodePadding is missed #12453
                         totalNodeOffset = 0;
@@ -690,7 +694,7 @@ seriesType<Highcharts.SankeySeries>(
                 }
             };
 
-            // Get the column height in pixels.
+            // Get the top position of the column in pixels.
             column.top = function (
                 this: Highcharts.SankeyColumnArray,
                 factor: number
@@ -703,7 +707,11 @@ seriesType<Highcharts.SankeySeries>(
                     if (height > 0) {
                         height += nodePadding;
                     }
-                    height += node.getSum() * factor;
+                    const nodeHeight = Math.max(
+                        node.getSum() * factor,
+                        series.options.minLinkWidth as any
+                    );
+                    height += nodeHeight;
                     return height;
                 }, 0);
                 return ((chart.plotSizeY as any) - height) / 2;
@@ -910,7 +918,10 @@ seriesType<Highcharts.SankeySeries>(
                 chart = this.chart,
                 options = this.options,
                 sum = node.getSum(),
-                height = Math.round(sum * translationFactor),
+                height = Math.max(
+                    Math.round(sum * translationFactor),
+                    this.options.minLinkWidth as any
+                ),
                 crisp = Math.round(options.borderWidth as any) % 2 / 2,
                 nodeOffset = column.offset(node, translationFactor),
                 fromNodeTop = Math.floor(pick(
@@ -987,6 +998,23 @@ seriesType<Highcharts.SankeySeries>(
             this: Highcharts.SankeySeries,
             point: Highcharts.SankeyPoint
         ): void {
+
+            const getY = (
+                node: Highcharts.SankeyPoint,
+                fromOrTo: string
+            ): number => {
+                const linkTop = (
+                    (node.offset(point, fromOrTo) as any) *
+                    translationFactor
+                );
+                const y = Math.min(
+                    node.nodeY + linkTop,
+                    // Prevent links from spilling below the node (#12014)
+                    node.nodeY + node.shapeArgs?.height - linkHeight
+                );
+                return y;
+            };
+
             var fromNode = point.fromNode,
                 toNode = point.toNode,
                 chart = this.chart,
@@ -996,29 +1024,13 @@ seriesType<Highcharts.SankeySeries>(
                     (this.options.minLinkWidth as any)
                 ),
                 options = this.options,
-                fromLinkTop = (
-                    (fromNode.offset(point, 'linksFrom') as any) *
-                    translationFactor
-                ),
                 curvy = (
                     (chart.inverted ? -this.colDistance : this.colDistance) *
                     (options.curveFactor as any)
                 ),
-                fromY = fromNode.nodeY + fromLinkTop,
+                fromY = getY(fromNode, 'linksFrom'),
+                toY = getY(toNode, 'linksTo'),
                 nodeLeft = fromNode.nodeX,
-                toColTop = this.nodeColumns[toNode.column as any]
-                    .top(translationFactor),
-                toY = (
-                    toColTop +
-                    (
-                        (toNode.offset(point, 'linksTo') as any) *
-                        translationFactor
-                    ) +
-                    (this.nodeColumns[toNode.column as any].offset(
-                        toNode,
-                        translationFactor
-                    ) as any).relativeTop
-                ),
                 nodeW = this.nodeWidth,
                 right = (toNode.column as any) * this.colDistance,
                 outgoing = point.outgoing,
@@ -1149,6 +1161,45 @@ seriesType<Highcharts.SankeySeries>(
          * @private
          */
         translate: function (this: Highcharts.SankeySeries): void {
+
+            // Get the translation factor needed for each column to fill up the
+            // plot height
+            const getColumnTranslationFactor = (column: Highcharts.SankeyColumnArray): number => {
+                const nodes = column.slice();
+                const minLinkWidth = this.options.minLinkWidth || 0;
+                let exceedsMinLinkWidth: boolean;
+                let factor = 0;
+                let i: number;
+
+                let remainingHeight = (chart.plotSizeY as any) -
+                    (options.borderWidth as any) - (column.length - 1) * series.nodePadding;
+
+                // Because the minLinkWidth option doesn't obey the direct
+                // translation, we need to run translation iteratively, check
+                // node heights, remove those nodes affected by minLinkWidth,
+                // check again, etc.
+                while (column.length) {
+                    factor = remainingHeight / column.sum();
+                    exceedsMinLinkWidth = false;
+                    i = column.length;
+                    while (i--) {
+                        if (column[i].getSum() * factor < minLinkWidth) {
+                            column.splice(i, 1);
+                            remainingHeight -= minLinkWidth + series.nodePadding;
+                            exceedsMinLinkWidth = true;
+                        }
+                    }
+                    if (!exceedsMinLinkWidth) {
+                        break;
+                    }
+                }
+
+                // Re-insert original nodes
+                column.length = 0;
+                nodes.forEach((node): number => column.push(node));
+                return factor;
+            };
+
             if (!this.processedXData) {
                 this.processData();
             }
@@ -1171,18 +1222,17 @@ seriesType<Highcharts.SankeySeries>(
             // Find out how much space is needed. Base it on the translation
             // factor of the most spaceous column.
             this.translationFactor = nodeColumns.reduce(
-                function (
+                (
                     translationFactor: number,
                     column: Highcharts.SankeyColumnArray
-                ): number {
-                    var height = (chart.plotSizeY as any) -
-                    (options.borderWidth as any) -
-                    (column.length - 1) * series.nodePadding;
-
-                    return Math.min(translationFactor, height / column.sum());
-                },
+                ): number => Math.min(
+                    translationFactor,
+                    getColumnTranslationFactor(column)
+                ),
                 Infinity
             );
+
+
             this.colDistance =
                 (
                     (chart.plotSizeX as any) - nodeWidth -
