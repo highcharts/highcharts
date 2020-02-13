@@ -963,6 +963,15 @@ seriesType<Highcharts.SankeySeries>(
 
                 // Pass test in drawPoints
                 node.plotY = 1;
+
+                // Set the anchor position for tooltips
+                node.tooltipPos = chart.inverted ? [
+                    (chart.plotSizeY as any) - node.shapeArgs.y - node.shapeArgs.height / 2,
+                    (chart.plotSizeX as any) - node.shapeArgs.x - node.shapeArgs.width / 2
+                ] : [
+                    node.shapeArgs.x + node.shapeArgs.width / 2,
+                    node.shapeArgs.y + node.shapeArgs.height / 2
+                ];
             } else {
                 node.dlOptions = {
                     enabled: false
@@ -1116,6 +1125,16 @@ seriesType<Highcharts.SankeySeries>(
                 height: linkHeight,
                 width: 0
             };
+
+            // And set the tooltip anchor in the middle
+            point.tooltipPos = chart.inverted ? [
+                (chart.plotSizeY as any) - point.dlBox.y - linkHeight / 2,
+                (chart.plotSizeX as any) - point.dlBox.x
+            ] : [
+                point.dlBox.x,
+                point.dlBox.y + linkHeight / 2
+            ];
+
             // Pass test in drawPoints
             point.y = point.plotY = 1;
 
