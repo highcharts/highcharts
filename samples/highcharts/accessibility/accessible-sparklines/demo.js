@@ -41,6 +41,7 @@ var defaultChartOptions = {
     },
 
     sonification: {
+        enabled: true,
         duration: 1700
     },
 

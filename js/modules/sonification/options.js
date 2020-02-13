@@ -10,8 +10,10 @@
  *
  * */
 'use strict';
+// Experimental, disabled by default, not exposed in API
 var options = {
     sonification: {
+        enabled: false,
         duration: 2000,
         afterSeriesWait: 1000,
         order: 'sequential',
