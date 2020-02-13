@@ -24,8 +24,10 @@ declare global {
     }
 }
 
+// Experimental, disabled by default, not exposed in API
 const options = {
     sonification: {
+        enabled: false,
         duration: 2000,
         afterSeriesWait: 1000,
         order: 'sequential',
