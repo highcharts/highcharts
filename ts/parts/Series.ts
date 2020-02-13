@@ -7016,7 +7016,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
 
         /**
          * @private
-         * @function Highcharts.Series#isPointInside
+         * @function Highcharts.Series#isPointInSight
          * @param {Highcharts.Point} point
          * @return {boolean}
          */
