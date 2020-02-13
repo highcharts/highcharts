@@ -168,6 +168,7 @@ declare global {
             public insert(collection: Array<Series>): number;
             public invertGroups(inverted?: boolean): void;
             public is (type: string): boolean;
+            public isPointInSight (point: Dictionary<number>|Point): boolean;
             public markerAttribs(point: Point, state?: string): SVGAttributes;
             public plotGroup(
                 prop: string,
@@ -5062,7 +5063,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
-                plotY,
                 lastPlotX,
                 stackIndicator,
                 zoneAxis = this.zoneAxis || 'y',
@@ -5189,7 +5189,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
                 // Set the the plotY value, reset it for redraws
                 // #3201
-                point.plotY = plotY = (
+                point.plotY = (
                     (typeof yValue === 'number' && yValue !== Infinity) ?
                         limitedRange(yAxis.translate(
                             yValue, 0 as any, 1 as any, 0 as any, 1 as any
@@ -5197,13 +5197,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                         void 0
                 );
 
-                point.isInside =
-                    typeof plotY !== 'undefined' &&
-                    plotY >= 0 &&
-                    plotY <= yAxis.len && // #3519
-                    plotX >= 0 &&
-                    plotX <= xAxis.len;
-
+                point.isInside = this.isPointInSight(point);
 
                 // Set client related positions for mouse tracking
                 point.clientX = dynamicallyPlaced ?
@@ -7025,6 +7019,27 @@ H.Series = seriesType<Highcharts.LineSeries>(
             return isNumber(factor) ?
                 factor * pick(pointRange, axis.pointRange) :
                 0;
+        },
+
+        /**
+         * @private
+         * @function Highcharts.Series#isPointInside
+         * @param {Highcharts.Point} point
+         * @return {boolean}
+         */
+        isPointInSight: function (
+            this: Highcharts.Series,
+            point: (Highcharts.Dictionary<number>|Highcharts.Point)
+        ): boolean {
+            const isInside =
+                typeof point.plotY !== 'undefined' &&
+                typeof point.plotX !== 'undefined' &&
+                point.plotY >= 0 &&
+                point.plotY <= this.yAxis.len && // #3519
+                point.plotX >= 0 &&
+                point.plotX <= this.xAxis.len;
+
+            return isInside;
         }
     }
 ) as any; // end Series prototype

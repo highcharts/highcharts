@@ -3859,7 +3859,7 @@ null,
         }
         this.generatePoints();
         var series = this, options = series.options, stacking = options.stacking, xAxis = series.xAxis, categories = xAxis.categories, enabledDataSorting = series.enabledDataSorting, yAxis = series.yAxis, points = series.points, dataLength = points.length, hasModifyValue = !!series.modifyValue, i, pointPlacement = series.pointPlacementToXValue(), // #7860
-        dynamicallyPlaced = Boolean(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, plotY, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
+        dynamicallyPlaced = Boolean(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
         /**
          * Plotted coordinates need to be within a limited range. Drawing
          * too far outside the viewport causes various rendering issues
@@ -3936,15 +3936,10 @@ null,
             }
             // Set the the plotY value, reset it for redraws
             // #3201
-            point.plotY = plotY = ((typeof yValue === 'number' && yValue !== Infinity) ?
+            point.plotY = ((typeof yValue === 'number' && yValue !== Infinity) ?
                 limitedRange(yAxis.translate(yValue, 0, 1, 0, 1)) :
                 void 0);
-            point.isInside =
-                typeof plotY !== 'undefined' &&
-                    plotY >= 0 &&
-                    plotY <= yAxis.len && // #3519
-                    plotX >= 0 &&
-                    plotX <= xAxis.len;
+            point.isInside = this.isPointInSight(point);
             // Set client related positions for mouse tracking
             point.clientX = dynamicallyPlaced ?
                 correctFloat(xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)) :
@@ -5169,6 +5164,21 @@ null,
         return isNumber(factor) ?
             factor * pick(pointRange, axis.pointRange) :
             0;
+    },
+    /**
+     * @private
+     * @function Highcharts.Series#isPointInside
+     * @param {Highcharts.Point} point
+     * @return {boolean}
+     */
+    isPointInSight: function (point) {
+        var isInside = typeof point.plotY !== 'undefined' &&
+            typeof point.plotX !== 'undefined' &&
+            point.plotY >= 0 &&
+            point.plotY <= this.yAxis.len && // #3519
+            point.plotX >= 0 &&
+            point.plotX <= this.xAxis.len;
+        return isInside;
     }
 }); // end Series prototype
 /**
