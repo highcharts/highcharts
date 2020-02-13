@@ -3438,7 +3438,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
         },
 
         /**
-         * Chech whether the series item is itself or inherits from a certain
+         * Check whether the series item is itself or inherits from a certain
          * series type.
          *
          * @function Highcharts.Series#is
