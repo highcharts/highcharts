@@ -987,14 +987,14 @@ function getChartSonifyOptions(
  *
  * @requires module:modules/sonification
  *
- * @interface Highcharts.SonifyChartOptionsObject
+ * @interface Highcharts.SonificationOptions
  *//**
  * Duration for sonifying the entire chart. The duration is distributed across
  * the different series intelligently, but does not take earcons into account.
  * It is also possible to set the duration explicitly per series, using
  * `seriesOptions`. Note that points may continue to play after the duration has
  * passed, but no new points will start playing.
- * @name Highcharts.SonifyChartOptionsObject#duration
+ * @name Highcharts.SonificationOptions#duration
  * @type {number}
  *//**
  * Define the order to play the series in. This can be given as a string, or an
@@ -1006,7 +1006,7 @@ function getChartSonifyOptions(
  * designating a number of milliseconds to wait before continuing. Each element
  * of the array will be played in order. To play elements simultaneously, group
  * the elements in an array.
- * @name Highcharts.SonifyChartOptionsObject#order
+ * @name Highcharts.SonificationOptions#order
  * @type {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>}
  *//**
  * The axis to use for when to play the points. Can be a string with a data
@@ -1015,28 +1015,28 @@ function getChartSonifyOptions(
  * with the lowest numeric values are then played first, and the time between
  * points will be proportional to the distance between the numeric values. This
  * option can not be overridden per series.
- * @name Highcharts.SonifyChartOptionsObject#pointPlayTime
+ * @name Highcharts.SonificationOptions#pointPlayTime
  * @type {string|Function}
  *//**
  * Milliseconds of silent waiting to add between series. Note that waiting time
  * is considered part of the sonify duration.
- * @name Highcharts.SonifyChartOptionsObject#afterSeriesWait
+ * @name Highcharts.SonificationOptions#afterSeriesWait
  * @type {number|undefined}
  *//**
  * Options as given to `series.sonify` to override options per series. If the
  * option is supplied as an array of options objects, the `id` property of the
  * object should correspond to the series' id. If the option is supplied as a
  * single object, the options apply to all series.
- * @name Highcharts.SonifyChartOptionsObject#seriesOptions
+ * @name Highcharts.SonificationOptions#seriesOptions
  * @type {Object|Array<object>|undefined}
  *//**
  * The instrument definitions for the points in this chart.
- * @name Highcharts.SonifyChartOptionsObject#instruments
+ * @name Highcharts.SonificationOptions#instruments
  * @type {Array<Highcharts.PointInstrumentObject>|undefined}
  *//**
  * Earcons to add to the chart. Note that earcons can also be added per series
  * using `seriesOptions`.
- * @name Highcharts.SonifyChartOptionsObject#earcons
+ * @name Highcharts.SonificationOptions#earcons
  * @type {Array<Highcharts.EarconConfiguration>|undefined}
  *//**
  * Optionally provide the minimum/maximum data values for the points. If this is
@@ -1056,19 +1056,19 @@ function getChartSonifyOptions(
  *          // Properties used and not provided are calculated on demand
  *      }
  *  ```
- * @name Highcharts.SonifyChartOptionsObject#dataExtremes
+ * @name Highcharts.SonificationOptions#dataExtremes
  * @type {Highcharts.Dictionary<Highcharts.RangeObject>|undefined}
  *//**
  * Callback before a series is played.
- * @name Highcharts.SonifyChartOptionsObject#onSeriesStart
+ * @name Highcharts.SonificationOptions#onSeriesStart
  * @type {Function|undefined}
  *//**
  * Callback after a series has finished playing.
- * @name Highcharts.SonifyChartOptionsObject#onSeriesEnd
+ * @name Highcharts.SonificationOptions#onSeriesEnd
  * @type {Function|undefined}
  *//**
  * Callback after the chart has played.
- * @name Highcharts.SonifyChartOptionsObject#onEnd
+ * @name Highcharts.SonificationOptions#onEnd
  * @type {Function|undefined}
  */
 
