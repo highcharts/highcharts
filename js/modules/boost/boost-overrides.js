@@ -94,6 +94,7 @@ Series.prototype.getPoint = function (boostPoint) {
         point.plotX = boostPoint.plotX;
         point.plotY = boostPoint.plotY;
         point.index = boostPoint.i;
+        point.isInside = this.isPointInSight(boostPoint);
     }
     return point;
 };
