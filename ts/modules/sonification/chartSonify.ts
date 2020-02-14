@@ -360,9 +360,7 @@ function buildTimelinePathFromSeries(
 ): Highcharts.TimelinePath {
     // options.timeExtremes is internal and used so that the calculations from
     // chart.sonify can be reused.
-    var timeExtremes = options.timeExtremes || (getTimeExtremes as any)(
-            series, options.pointPlayTime, options.dataExtremes
-        ),
+    var timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime),
         // Get time offset for a point, relative to duration
         pointToTime = function (point: Highcharts.SonifyablePoint): number {
             return utilities.virtualAxisTranslate(
