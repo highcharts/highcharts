@@ -1424,13 +1424,12 @@ RangeSelector.prototype = {
  *         The new minimum value.
  */
 Axis.prototype.minFromRange = function () {
-    var rangeOptions = this.range, type = rangeOptions.type, timeName = {
-        month: 'Month',
-        year: 'FullYear'
-    }[type], min, max = this.max, dataMin, range, time = this.chart.time, 
+    var rangeOptions = this.range, type = rangeOptions.type, min, max = this.max, dataMin, range, time = this.chart.time, 
     // Get the true range from a start date
     getTrueRange = function (base, count) {
-        var date = new time.Date(base), basePeriod = time.get(timeName, date);
+        var timeName = type === 'year' ? 'FullYear' : 'Month';
+        var date = new time.Date(base);
+        var basePeriod = time.get(timeName, date);
         time.set(timeName, date, basePeriod + count);
         if (basePeriod === time.get(timeName, date)) {
             time.set('Date', date, 0); // #6537
