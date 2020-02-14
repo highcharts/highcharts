@@ -42,3 +42,31 @@ QUnit.test('visibility', assert => {
         'Should not create a halo object on Series 2 after hover'
     );
 });
+
+QUnit.test('Halo with boost module, #12870', assert => {
+    const chart = Highcharts.chart('container', {
+        xAxis: {
+            min: -5,
+            max: 5
+        },
+        series: [{
+            boostThreshold: 1,
+            marker: {
+                radius: 75
+            },
+            data: [2]
+        }]
+    });
+
+    const series = chart.series[0];
+    const controller = new TestController(chart);
+    controller.mouseMove(
+        series.points[0].plotX + chart.plotLeft,
+        series.points[0].plotY + chart.plotTop
+    );
+
+    assert.ok(
+        !!series.halo,
+        'Should have created a halo object on Series after hover'
+    );
+});
