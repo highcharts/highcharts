@@ -174,16 +174,15 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
 // Adds week date format
 H.dateFormats.W = function (timestamp) {
     var d = new this.Date(timestamp);
-    var firstDay = (d.getDay() + 6) % 7;
+    var firstDay = (this.get('Day', d) + 6) % 7;
     var thursday = new this.Date(d.valueOf());
     this.set('Date', thursday, this.get('Date', d) - firstDay + 3);
     var firstThursday = new this.Date(this.get('FullYear', thursday), 0, 1);
     if (firstThursday.getDay() !== 4) {
         this.set('Month', d, 0);
-        this.set('Date', d, 1 + (11 - firstThursday.getDay()) % 7);
+        this.set('Date', d, 1 + (11 - this.get('Day', firstThursday)) % 7);
     }
-    return 1 + Math.floor((thursday.valueOf() - firstThursday.valueOf() +
-        (this.timezoneOffset || 0)) / 604800000);
+    return 1 + Math.floor((thursday.valueOf() - firstThursday.valueOf()) / 604800000);
 };
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
 H.dateFormats.E = function (timestamp) {
