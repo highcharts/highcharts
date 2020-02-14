@@ -94,26 +94,27 @@ declare global {
  * @type {number|null|undefined}
  */
 
+import L from '../parts/Legend.js';
+const {
+    LegendSymbolMixin
+} = L;
 import U from '../parts/Utilities.js';
 const {
     clamp,
     extend,
+    fireEvent,
     merge,
     pick,
     seriesType
 } = U;
 
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
-import '../parts/Legend.js';
 import './ColorMapSeriesMixin.js';
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
-    fireEvent = H.fireEvent,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 

@@ -143,6 +143,16 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import L from '../parts/Legend.js';
+const {
+    Legend
+} = L;
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -157,9 +167,7 @@ const {
 } = U;
 
 var Series = H.Series,
-    Legend = H.Legend,
     Chart = H.Chart,
-    color = H.color,
     noop = H.noop,
     setOptions = H.setOptions;
 
@@ -1120,7 +1128,7 @@ H.BubbleLegend.prototype = {
 } as any;
 
 // Start the bubble legend creation process.
-addEvent(H.Legend, 'afterGetAllItems', function (
+addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: { allItems: Array<(Highcharts.Point|Highcharts.Series)> }
 ): void {

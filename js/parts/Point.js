@@ -673,7 +673,7 @@ var Point = /** @class */ (function () {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
-                        H.Point.prototype.setNestedProperty(ret, options[i], pointArrayMap[j]);
+                        Point.prototype.setNestedProperty(ret, options[i], pointArrayMap[j]);
                     }
                     else {
                         ret[pointArrayMap[j]] = options[i];
@@ -800,7 +800,4 @@ var Point = /** @class */ (function () {
     return Point;
 }());
 H.Point = Point;
-var pointModule = {
-    Point: Point
-};
-export default pointModule;
+export default H.Point;

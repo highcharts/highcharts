@@ -102,6 +102,7 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -116,11 +117,9 @@ const {
 
 import '../parts/Options.js';
 import '../parts/Series.js';
-import '../parts/Point.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    Point = H.Point,
     Series = H.Series,
     StackItem = H.StackItem,
     seriesTypes = H.seriesTypes;

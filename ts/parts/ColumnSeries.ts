@@ -109,6 +109,14 @@ declare global {
  * @type {number}
  */
 
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
+import L from './Legend.js';
+const {
+    LegendSymbolMixin
+} = L;
 import U from './Utilities.js';
 const {
     animObject,
@@ -121,14 +129,10 @@ const {
     seriesType
 } = U;
 
-import './Color.js';
-import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var color = H.color,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
     svg = H.svg;
 

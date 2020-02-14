@@ -149,6 +149,11 @@ declare global {
  *        Event that occured.
  */
 
+import L from './Legend.js';
+const {
+    Legend
+} = L;
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -167,16 +172,12 @@ const {
 
 import './Chart.js';
 import './Options.js';
-import './Legend.js';
-import './Point.js';
 import './Series.js';
 
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     hasTouch = H.hasTouch,
-    Legend = H.Legend,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     svg = H.svg,

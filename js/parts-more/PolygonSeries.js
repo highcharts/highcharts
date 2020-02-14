@@ -9,13 +9,15 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import L from '../parts/Legend.js';
+var LegendSymbolMixin = L.LegendSymbolMixin;
 import U from '../parts/Utilities.js';
 var seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import '../parts/ScatterSeries.js';
-var LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
  * coordinate system. A fill is applied with the `color` option, and

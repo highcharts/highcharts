@@ -143,6 +143,11 @@ declare global {
  * @type {Highcharts.Series}
  */
 
+import Point from '../parts/Point.js';
+import L from '../parts/Legend.js';
+const {
+    LegendSymbolMixin
+} = L;
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -156,9 +161,7 @@ const {
     seriesType
 } = U;
 
-var LegendSymbolMixin = H.LegendSymbolMixin,
-    TrackerMixin = H.TrackerMixin,
-    Point = H.Point,
+var TrackerMixin = H.TrackerMixin,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 

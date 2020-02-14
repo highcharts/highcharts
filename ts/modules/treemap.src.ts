@@ -288,7 +288,14 @@ declare global {
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import Color from '../parts/Color.js';
-const color = Color.parse;
+const {
+    parse: color
+} = Color;
+import L from '../parts/Legend.js';
+const {
+    LegendSymbolMixin
+} = L;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -2128,7 +2135,7 @@ seriesType<Highcharts.TreemapSeries>(
             }
         },
         buildKDTree: noop as any,
-        drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
         getExtremes: function (this: Highcharts.TreemapSeries): void {
         // Get the extremes from the value data
             Series.prototype.getExtremes.call(this, this.colorValueData);
@@ -2164,7 +2171,7 @@ seriesType<Highcharts.TreemapSeries>(
         setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible,
         /* eslint-disable no-invalid-this, valid-jsdoc */
         getClassName: function (this: Highcharts.TreemapPoint): string {
-            var className = H.Point.prototype.getClassName.call(this),
+            var className = Point.prototype.getClassName.call(this),
                 series = this.series,
                 options = series.options;
 
@@ -2198,7 +2205,7 @@ seriesType<Highcharts.TreemapSeries>(
             this: Highcharts.TreemapPoint,
             state: string
         ): void {
-            H.Point.prototype.setState.call(this, state);
+            Point.prototype.setState.call(this, state);
 
             // Graphic does not exist when point is not visible.
             if (this.graphic) {

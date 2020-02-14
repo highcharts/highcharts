@@ -355,6 +355,9 @@ declare global {
  * @type {"drop"}
  */
 
+''; // detaches doclets above
+
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -2289,7 +2292,7 @@ H.Chart.prototype.setGuideBoxState = function (
  * @return {Highcharts.Dictionary<number>}
  *         An object with updated data values.
  */
-H.Point.prototype.getDropValues = function (
+Point.prototype.getDropValues = function (
     origin: Highcharts.DragDropPositionObject,
     newPos: Highcharts.PointerEventObject,
     updateProps: Highcharts.Dictionary<Highcharts.SeriesDragDropPropsObject>
@@ -2525,7 +2528,7 @@ function onResizeHandleMouseDown(
  * @function Highcharts.Point#showDragHandles
  * @return {void}
  */
-H.Point.prototype.showDragHandles = function (): void {
+Point.prototype.showDragHandles = function (): void {
     var point = this,
         series = point.series,
         chart = series.chart,
@@ -2950,7 +2953,7 @@ function mouseDown(
 // series are finicky since the markers are not individual points. This logic
 // should preferably be improved in the future. Notice that the mouseOut event
 // below must have a shorter timeout to ensure event order.
-addEvent(H.Point, 'mouseOver', function (): void {
+addEvent(Point, 'mouseOver', function (): void {
     var point = this;
 
     setTimeout(function (): void {
@@ -2960,7 +2963,7 @@ addEvent(H.Point, 'mouseOver', function (): void {
 
 
 // Point mouseleave event. See above function for explanation of the timeout.
-addEvent(H.Point, 'mouseOut', function (): void {
+addEvent(Point, 'mouseOut', function (): void {
     var point = this;
 
     setTimeout(function (): void {
@@ -2972,7 +2975,7 @@ addEvent(H.Point, 'mouseOut', function (): void {
 
 
 // Hide drag handles on a point if it is removed
-addEvent(H.Point, 'remove', function (): void {
+addEvent(Point, 'remove', function (): void {
     var chart = this.series.chart,
         dragHandles = chart.dragHandles;
 

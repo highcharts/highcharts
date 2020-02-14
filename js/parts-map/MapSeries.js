@@ -9,16 +9,16 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Color.js';
-import '../parts/Legend.js';
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
+import L from '../parts/Legend.js';
+var LegendSymbolMixin = L.LegendSymbolMixin;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, fireEvent = H.fireEvent, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
+var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -435,7 +435,7 @@ seriesType('map', 'scatter',
                         if (pointArrayMap[j] &&
                             typeof val[ix] !== 'undefined') {
                             if (pointArrayMap[j].indexOf('.') > 0) {
-                                H.Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
+                                Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
                             }
                             else {
                                 data[i][pointArrayMap[j]] =

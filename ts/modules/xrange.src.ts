@@ -103,7 +103,10 @@ declare global {
  */
 
 import Color from '../parts/Color.js';
-const color = Color.parse;
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -121,7 +124,6 @@ const {
 var columnType = H.seriesTypes.column,
     seriesTypes = H.seriesTypes,
     Axis = H.Axis,
-    Point = H.Point,
     Series = H.Series;
 
 /**

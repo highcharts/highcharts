@@ -85,6 +85,7 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -102,7 +103,7 @@ var noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     seriesProto = Series.prototype,
-    pointProto = H.Point.prototype;
+    pointProto = Point.prototype;
 
 /**
  * The area range series is a carteseian series with higher and lower values for

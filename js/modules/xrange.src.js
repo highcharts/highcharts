@@ -21,9 +21,10 @@ import H from '../parts/Globals.js';
 */
 import Color from '../parts/Color.js';
 var color = Color.parse;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
-var columnType = H.seriesTypes.column, seriesTypes = H.seriesTypes, Axis = H.Axis, Point = H.Point, Series = H.Series;
+var columnType = H.seriesTypes.column, seriesTypes = H.seriesTypes, Axis = H.Axis, Series = H.Series;
 /**
  * Return color of a point based on its category.
  *
