@@ -718,7 +718,7 @@ class Time {
         timestamp: number,
         capitalize?: boolean
     ): string {
-        if (!defined(timestamp) || isNaN(timestamp as any) || typeof this.get === 'undefined') {
+        if (!defined(timestamp) || isNaN(timestamp)) {
             return H.defaultOptions.lang?.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
