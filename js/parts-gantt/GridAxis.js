@@ -182,7 +182,8 @@ H.dateFormats.W = function (timestamp) {
         this.set('Month', d, 0);
         this.set('Date', d, 1 + (11 - this.get('Day', firstThursday)) % 7);
     }
-    return 1 + Math.floor((thursday.valueOf() - firstThursday.valueOf()) / 604800000);
+    return (1 +
+        Math.floor((thursday.valueOf() - firstThursday.valueOf()) / 604800000)).toString();
 };
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
 H.dateFormats.E = function (timestamp) {
