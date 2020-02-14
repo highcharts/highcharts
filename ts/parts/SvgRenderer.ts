@@ -812,6 +812,7 @@ const color = Color.parse;
 import U from './Utilities.js';
 const {
     addEvent,
+    animate,
     animObject,
     attr,
     createElement,
@@ -837,7 +838,6 @@ const {
 
 var SVGElement: Highcharts.SVGElement,
     SVGRenderer,
-    animate = H.animate,
     charts = H.charts,
     deg2rad = H.deg2rad,
     doc = H.doc,

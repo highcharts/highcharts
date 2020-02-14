@@ -1573,7 +1573,7 @@ function getNewPoints(dragDropData, newPos) {
  */
 function updatePoints(chart, animate) {
     var newPoints = chart.dragDropData.newPoints, animOptions = animate === false ? false : merge({
-        duration: 400 // 400 is the default in H.animate
+        duration: 400 // 400 is the default in animate
     }, chart.options.chart.animation);
     chart.isDragDropAnimating = true;
     // Update the points
