@@ -2042,7 +2042,7 @@ Axis.prototype.minFromRange = function (
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            const timeName: Highcharts.TimeUnit = type === 'year' ? 'FullYear' : 'Month';
+            const timeName: Highcharts.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
             const date = new time.Date(base);
             const basePeriod = time.get(timeName, date);
 
