@@ -9,12 +9,12 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../parts/Series.js';
-import '../parts/Point.js';
-var Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesTypes = H.seriesTypes;
+var Axis = H.Axis, Chart = H.Chart, Series = H.Series, StackItem = H.StackItem, seriesTypes = H.seriesTypes;
 /**
  * Returns true if the key is a direct property of the object.
  * @private

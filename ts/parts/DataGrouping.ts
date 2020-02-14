@@ -147,6 +147,10 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
+import Point from './Point.js';
+import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -162,14 +166,11 @@ const {
     pick
 } = U;
 
-import Tooltip from './Tooltip.js';
-
 import './Axis.js';
 import './Series.js';
 
 var Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
-    Point = H.Point,
     Series = H.Series;
 
 /* ************************************************************************** *

@@ -50,6 +50,14 @@ declare global {
     }
 }
 
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
+import L from './Legend.js';
+const {
+    LegendSymbolMixin
+} = L;
 import U from './Utilities.js';
 const {
     objectEach,
@@ -57,14 +65,10 @@ const {
     seriesType
 } = U;
 
-import './Color.js';
-import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var color = H.color,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    Series = H.Series;
+var Series = H.Series;
 
 /**
  * Area series type.

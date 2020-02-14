@@ -9,13 +9,15 @@
  * */
 'use strict';
 import H from './Globals.js';
+import Color from './Color.js';
+var color = Color.parse;
+import L from './Legend.js';
+var LegendSymbolMixin = L.LegendSymbolMixin;
 import U from './Utilities.js';
 var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
-import './Color.js';
-import './Legend.js';
 import './Series.js';
 import './Options.js';
-var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, Series = H.Series;
+var Series = H.Series;
 /**
  * Area series type.
  *

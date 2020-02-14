@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
@@ -471,7 +472,7 @@ seriesType('vbp', 'sma',
         if (this.negativeGraphic) {
             this.negativeGraphic = this.negativeGraphic.destroy();
         }
-        return H.Point.prototype.destroy.apply(this, arguments);
+        return Point.prototype.destroy.apply(this, arguments);
     }
 });
 /**

@@ -39,9 +39,12 @@ import H from '../parts/Globals.js';
 * @name Highcharts.TimelineDataLabelsFormatterContextObject#series
 * @type {Highcharts.Series}
 */
+import Point from '../parts/Point.js';
+import L from '../parts/Legend.js';
+var LegendSymbolMixin = L.LegendSymbolMixin;
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
-var LegendSymbolMixin = H.LegendSymbolMixin, TrackerMixin = H.TrackerMixin, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
+var TrackerMixin = H.TrackerMixin, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * The timeline series type.
  *

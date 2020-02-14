@@ -688,8 +688,13 @@ declare global {
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 
-import pointModule from './Point.js';
-const Point = pointModule.Point;
+''; // detach doclets above
+
+import L from './Legend.js';
+const {
+    LegendSymbolMixin
+} = L;
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -719,13 +724,10 @@ const {
 } = U;
 
 import './Options.js';
-import './Legend.js';
-import './Point.js';
 import './SvgRenderer.js';
 
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     seriesTypes = H.seriesTypes,
     SVGElement = H.SVGElement,
     win = H.win;

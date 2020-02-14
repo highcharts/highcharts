@@ -254,6 +254,7 @@ declare global {
  */
 
 import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -272,8 +273,6 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 const {
     getLevelOptions
 } = mixinTreeSeries;
-
-var Point = H.Point;
 
 // eslint-disable-next-line valid-jsdoc
 /**

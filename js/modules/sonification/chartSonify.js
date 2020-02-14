@@ -93,6 +93,8 @@ import H from '../../parts/Globals.js';
 * @name Highcharts.SonifySeriesOptionsObject#onEnd
 * @type {Function|undefined}
 */
+''; // detach doclets above
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 var find = U.find, isArray = U.isArray, merge = U.merge, pick = U.pick, splat = U.splat;
 import utilities from './utilities.js';
@@ -267,7 +269,7 @@ function buildTimelinePathFromSeries(series, options) {
         },
         onEventStart: function (event) {
             var eventObject = event.options && event.options.eventObject;
-            if (eventObject instanceof H.Point) {
+            if (eventObject instanceof Point) {
                 // Check for hidden series
                 if (!eventObject.series.visible &&
                     !eventObject.series.chart.series.some(function (series) {
@@ -287,7 +289,7 @@ function buildTimelinePathFromSeries(series, options) {
         onEventEnd: function (eventData) {
             var eventObject = eventData.event && eventData.event.options &&
                 eventData.event.options.eventObject;
-            if (eventObject instanceof H.Point && options.onPointEnd) {
+            if (eventObject instanceof Point && options.onPointEnd) {
                 options.onPointEnd(eventData.event, eventObject);
             }
         },
@@ -765,7 +767,7 @@ function getCurrentPoints() {
             return cursorObj[path].eventObject;
         }).filter(function (eventObj) {
             // Return the events that are points
-            return eventObj instanceof H.Point;
+            return eventObj instanceof Point;
         });
     }
     return [];

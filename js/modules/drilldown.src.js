@@ -125,6 +125,7 @@ import H from '../parts/Globals.js';
 * @type {"drillup"}
 */
 import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
@@ -896,7 +897,7 @@ if (PieSeries) {
         }
     });
 }
-H.Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
+Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
     var series = this.series, chart = series.chart, drilldown = chart.options.drilldown, i = (drilldown.series || []).length, seriesOptions;
     if (!chart.ddDupes) {
         chart.ddDupes = [];
@@ -1000,7 +1001,7 @@ Tick.prototype.drillable = function () {
 };
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
-addEvent(H.Point, 'afterInit', function () {
+addEvent(Point, 'afterInit', function () {
     var point = this, series = point.series;
     if (point.drilldown) {
         // Add the click event to the point
@@ -1054,7 +1055,7 @@ addEvent(H.Series, 'afterDrawTracker', function () {
         }
     });
 });
-addEvent(H.Point, 'afterSetState', function () {
+addEvent(Point, 'afterSetState', function () {
     var styledMode = this.series.chart.styledMode;
     if (this.drilldown && this.series.halo && this.state === 'hover') {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);

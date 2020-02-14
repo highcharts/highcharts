@@ -137,17 +137,20 @@ declare global {
     }
 }
 
-import '../parts/Color.js';
-import '../parts/Legend.js';
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 
+import L from '../parts/Legend.js';
+const {
+    LegendSymbolMixin
+} = L;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     extend,
+    fireEvent,
     getNestedProperty,
     isArray,
     isNumber,
@@ -160,10 +163,7 @@ const {
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
-    fireEvent = H.fireEvent,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -726,7 +726,7 @@ seriesType<Highcharts.MapSeries>(
                                 typeof val[ix] !== 'undefined'
                             ) {
                                 if (pointArrayMap[j].indexOf('.') > 0) {
-                                    H.Point.prototype.setNestedProperty(
+                                    Point.prototype.setNestedProperty(
                                         data[i], val[ix], pointArrayMap[j]
                                     );
                                 } else {
