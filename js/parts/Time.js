@@ -157,6 +157,11 @@ var Time = /** @class */ (function () {
      *
      * */
     /**
+     * Time units used in `Time.get` and `Time.set`
+     *
+     * @typedef {"Date"|"Day"|"FullYear"|"Hours"|"Milliseconds"|"Minutes"|"Month"|"Seconds"} Highcharts.TimeUnit
+     */
+    /**
      * Get the value of a date object in given units, and subject to the Time
      * object's current timezone settings. This function corresponds directly to
      * JavaScripts `Date.getXXX / Date.getUTCXXX`, so instead of calling
