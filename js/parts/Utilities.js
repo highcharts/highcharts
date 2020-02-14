@@ -2392,7 +2392,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
  *
  * @return {void}
  */
-H.animate = function (el, params, opt) {
+var animate = H.animate = function (el, params, opt) {
     var start, unit = '', end, fx, args;
     if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
@@ -2559,6 +2559,7 @@ if (win.jQuery) {
 var utilitiesModule = {
     Fx: Fx,
     addEvent: addEvent,
+    animate: animate,
     animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,

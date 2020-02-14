@@ -122,6 +122,7 @@ import Time from './Time.js';
 import U from './Utilities.js';
 const {
     addEvent,
+    animate,
     createElement,
     css,
     defined,
@@ -146,8 +147,7 @@ import './Chart.js';
 import './Point.js';
 import './Series.js';
 
-var animate = H.animate,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     Point = H.Point,
     Series = H.Series,

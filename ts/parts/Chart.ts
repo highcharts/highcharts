@@ -294,6 +294,7 @@ import Time from './Time.js';
 import U from './Utilities.js';
 const {
     addEvent,
+    animate,
     animObject,
     attr,
     createElement,
@@ -329,8 +330,7 @@ import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 
-var animate = H.animate,
-    doc = H.doc,
+var doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     defaultOptions = H.defaultOptions,
     charts = H.charts,

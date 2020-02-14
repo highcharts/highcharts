@@ -3291,7 +3291,7 @@ const fireEvent = H.fireEvent = function<T> (
  *
  * @return {void}
  */
-H.animate = function (
+const animate = H.animate = function (
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
     params: (Highcharts.CSSObject|Highcharts.SVGAttributes),
     opt?: Highcharts.AnimationOptionsObject
@@ -3504,6 +3504,7 @@ if ((win as any).jQuery) {
 const utilitiesModule = {
     Fx,
     addEvent,
+    animate,
     animObject,
     arrayMax,
     arrayMin,
