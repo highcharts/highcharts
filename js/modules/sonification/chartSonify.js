@@ -227,7 +227,7 @@ function makeInstrumentCopies(instruments) {
 function buildTimelinePathFromSeries(series, options) {
     // options.timeExtremes is internal and used so that the calculations from
     // chart.sonify can be reused.
-    var timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime, options.dataExtremes), 
+    var timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime), 
     // Get time offset for a point, relative to duration
     pointToTime = function (point) {
         return utilities.virtualAxisTranslate(getPointTimeValue(point, options.pointPlayTime), timeExtremes, { min: 0, max: options.duration });
