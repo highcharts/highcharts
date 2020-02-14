@@ -493,6 +493,9 @@ function seriesSonify(
         chartSonification.timeline.pause();
     }
 
+    // Store reference to duration
+    chartSonification.duration = options.duration;
+
     // Create new timeline for this series, and play it.
     chartSonification.timeline = new H.sonification.Timeline({
         paths: [timelinePath]
@@ -1108,6 +1111,9 @@ function chartSonify(
     if (this.sonification.timeline) {
         this.sonification.timeline.pause();
     }
+
+    // Store reference to duration
+    this.sonification.duration = opts.duration;
 
     // Calculate data extremes for the props used
     const dataExtremes = getExtremesForInstrumentProps(

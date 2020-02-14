@@ -32,6 +32,7 @@ declare global {
         interface ChartSonificationStateObject {
             currentlyPlayingPoint?: SonifyablePoint;
             timeline?: Timeline;
+            duration?: number;
         }
         interface Point {
             cancelSonify?: SonifyablePoint['cancelSonify'];
