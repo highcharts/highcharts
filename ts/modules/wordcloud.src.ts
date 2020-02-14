@@ -137,7 +137,8 @@ const {
     isArray,
     isNumber,
     isObject,
-    merge
+    merge,
+    seriesType
 } = U;
 
 import drawPoint from '../mixins/draw-point.js';
@@ -1309,7 +1310,7 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.WordcloudSeries>(
+seriesType<Highcharts.WordcloudSeries>(
     'wordcloud',
     'column',
     wordCloudOptions,

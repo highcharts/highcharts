@@ -57,7 +57,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    isArray
+    isArray,
+    seriesType
 } = U;
 
 var noop = H.noop;
@@ -71,7 +72,7 @@ var noop = H.noop;
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.AOIndicator>(
+seriesType<Highcharts.AOIndicator>(
     'ao',
     'sma',
     /**

@@ -203,21 +203,22 @@ const {
     removeEvent,
     splat
 } = U;
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
+import Scrollbar from './Scrollbar.js';
 
-import './Color.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
-import './Scrollbar.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    color = H.color,
     defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
-    Scrollbar = H.Scrollbar,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
 

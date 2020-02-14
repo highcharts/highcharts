@@ -81,13 +81,13 @@ import U from '../parts/Utilities.js';
 const {
     animObject,
     isNumber,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import onSeriesMixin from '../mixins/on-series.js';
 
-var noop = H.noop,
-    seriesType = H.seriesType;
+var noop = H.noop;
 
 // eslint-disable-next-line valid-jsdoc
 /**

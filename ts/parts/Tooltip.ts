@@ -542,9 +542,12 @@ class Tooltip {
                 mouseEvent.chartX - chart.plotLeft,
                 mouseEvent.chartY - plotTop
             ];
-        // Pie uses a special tooltipPos
+
+        // Some series types use a specificly calculated tooltip position for
+        // each point
         } else if (points[0].tooltipPos) {
             ret = points[0].tooltipPos;
+
         // When shared, use the average position
         } else {
             points.forEach(function (point: Highcharts.Point): void {

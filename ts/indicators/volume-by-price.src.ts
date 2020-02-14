@@ -130,7 +130,8 @@ const {
     correctFloat,
     error,
     extend,
-    isArray
+    isArray,
+    seriesType
 } = U;
 
 /* eslint-disable require-jsdoc */
@@ -166,7 +167,6 @@ function arrayExtremesOHLC(
 
 var abs = Math.abs,
     noop = H.noop,
-    seriesType = H.seriesType,
     columnPrototype = H.seriesTypes.column.prototype;
 
 /**

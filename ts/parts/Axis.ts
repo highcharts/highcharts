@@ -7332,7 +7332,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions;
+            crossOptions,
+            chart = this.chart;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -7380,7 +7381,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     translatedValue: pos
                 };
 
-                if (this.chart.polar) {
+                if (chart.polar) {
                     // Additional information required for crosshairs in
                     // polar chart
                     extend(crossOptions, {
@@ -7404,7 +7405,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Draw the cross
             if (!graphic) {
-                this.cross = graphic = this.chart.renderer
+                this.cross = graphic = chart.renderer
                     .path()
                     .addClass(
                         'highcharts-crosshair highcharts-crosshair-' +
@@ -7417,7 +7418,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     .add();
 
                 // Presentational attributes
-                if (!this.chart.styledMode) {
+                if (!chart.styledMode) {
                     graphic.attr({
                         stroke: (options as any).color ||
                             (
@@ -7436,7 +7437,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         });
                     }
                 }
-
             }
 
             graphic.show().attr({

@@ -78,7 +78,7 @@ import H from '../parts/Globals.js';
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
+var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
@@ -91,14 +91,23 @@ extend(defaultOptions.lang
  */
 , {
     /**
-     * Exporting module only. View the chart in full screen.
+     * Exporting module only. The text for the menu item to view the chart
+     * in full screen.
      *
-     * @since    7.1.0
-     * @requires modules/exporting
+     * @since next
      *
      * @private
      */
     viewFullscreen: 'View in full screen',
+    /**
+     * Exporting module only. The text for the menu item to exit the chart
+     * from full screen.
+     *
+     * @since next
+     *
+     * @private
+     */
+    exitFullscreen: 'Exit from full screen',
     /**
      * Exporting module only. The text for the menu item to print the chart.
      *
@@ -792,12 +801,16 @@ defaultOptions.exporting = {
      * - **textKey:** If internationalization is required, the key to a language
      *   string
      *
+     * Custom text for the "exitFullScreen" can be set only in lang options
+     * (it is not a separate button).
+     *
      * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highstock} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
+     *
      *
      * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
      * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
@@ -810,7 +823,7 @@ defaultOptions.exporting = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function () {
-                this.fullscreen = new H.FullScreen(this.container);
+                this.fullscreen.toggle();
             }
         },
         /**
@@ -1096,7 +1109,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Assign an internal key to ensure a one-to-one mapping (#5924)
         chart.axes.forEach(function (axis) {
             if (!axis.userOptions.internalKey) { // #6444
-                axis.userOptions.internalKey = H.uniqueKey();
+                axis.userOptions.internalKey = uniqueKey();
             }
         });
         // generate the chart copy

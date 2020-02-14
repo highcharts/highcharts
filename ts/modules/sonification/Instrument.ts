@@ -16,7 +16,8 @@ import U from '../../parts/Utilities.js';
 const {
     error,
     merge,
-    pick
+    pick,
+    uniqueKey
 } = U;
 
 /**
@@ -229,7 +230,7 @@ Instrument.prototype.init = function (
         return;
     }
     this.options = merge(defaultOptions, options);
-    this.id = this.options.id = options && options.id || H.uniqueKey();
+    this.id = this.options.id = options && options.id || uniqueKey();
 
     // Init the audio nodes
     var ctx = H.audioContext;

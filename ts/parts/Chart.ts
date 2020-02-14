@@ -294,6 +294,7 @@ import Time from './Time.js';
 import U from './Utilities.js';
 const {
     addEvent,
+    animate,
     animObject,
     attr,
     createElement,
@@ -320,7 +321,8 @@ const {
     removeEvent,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    uniqueKey
 } = U;
 
 import './Axis.js';
@@ -328,8 +330,7 @@ import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 
-var animate = H.animate,
-    doc = H.doc,
+var doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     defaultOptions = H.defaultOptions,
     charts = H.charts,
@@ -1577,7 +1578,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             indexAttrName = 'data-highcharts-chart',
             oldChartIndex,
             Ren,
-            containerId = H.uniqueKey(),
+            containerId = uniqueKey(),
             containerStyle,
             key;
 

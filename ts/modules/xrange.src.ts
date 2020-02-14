@@ -114,11 +114,11 @@ const {
     isNumber,
     isObject,
     merge,
-    pick
+    pick,
+    seriesType
 } = U;
 
 var columnType = H.seriesTypes.column,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     Axis = H.Axis,
     Point = H.Point,

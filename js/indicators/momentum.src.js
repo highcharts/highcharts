@@ -6,10 +6,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var seriesType = H.seriesType;
+var isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 function populateAverage(points, xVal, yVal, i, period) {
     var mmY = yVal[i - 1][3] - yVal[i - period - 1][3], mmX = xVal[i - 1];

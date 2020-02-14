@@ -10,10 +10,10 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent;
+var addEvent = U.addEvent, seriesType = U.seriesType;
 import './Options.js';
 import './Series.js';
-var Series = H.Series, seriesType = H.seriesType;
+var Series = H.Series;
 /**
  * Scatter series type.
  *

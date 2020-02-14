@@ -6,9 +6,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray, seriesType = U.seriesType;
 import reduceArrayMixin from '../mixins/reduce-array.js';
 var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 /**
@@ -20,7 +19,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-H.seriesType('williamsr', 'sma', 
+seriesType('williamsr', 'sma', 
 /**
  * Williams %R. This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js`.

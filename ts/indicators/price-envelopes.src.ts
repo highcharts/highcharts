@@ -77,7 +77,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isArray,
-    merge
+    merge,
+    seriesType
 } = U;
 
 var SMA = H.seriesTypes.sma;
@@ -91,7 +92,7 @@ var SMA = H.seriesTypes.sma;
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.PriceEnvelopesIndicator>(
+seriesType<Highcharts.PriceEnvelopesIndicator>(
     'priceenvelopes',
     'sma',
     /**

@@ -3292,7 +3292,7 @@ const fireEvent = H.fireEvent = function<T> (
  *
  * @return {void}
  */
-H.animate = function (
+const animate = H.animate = function (
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
     params: (Highcharts.CSSObject|Highcharts.SVGAttributes),
     opt?: Highcharts.AnimationOptionsObject
@@ -3383,7 +3383,7 @@ H.animate = function (
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function<TSeries extends Highcharts.Series> (
+const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     type: string,
     parent: string,
     options: TSeries['options'],
@@ -3421,14 +3421,14 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
  * counter.
  *
  * @example
- * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
  * @return {string}
  *         A unique key.
  */
-H.uniqueKey = (function (): any {
+const uniqueKey = H.uniqueKey = (function (): () => string {
 
     var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
         idCounter = 0;
@@ -3505,6 +3505,7 @@ if ((win as any).jQuery) {
 const utilitiesModule = {
     Fx,
     addEvent,
+    animate,
     animObject,
     arrayMax,
     arrayMin,
@@ -3545,12 +3546,14 @@ const utilitiesModule = {
     pInt,
     relativeLength,
     removeEvent,
+    seriesType,
     setAnimation,
     splat,
     stableSort,
     stop,
     syncTimeout,
     timeUnits,
+    uniqueKey,
     wrap
 };
 

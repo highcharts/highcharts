@@ -10,9 +10,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var error = U.error, isArray = U.isArray;
+var error = U.error, isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 // Utils:
 function sumArray(array) {
@@ -39,7 +38,7 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('mfi', 'sma', 
+seriesType('mfi', 'sma', 
 /**
  * Money Flow Index. This series requires `linkedTo` option to be set and
  * should be loaded after the `stock/indicators/indicators.js` file.

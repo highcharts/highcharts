@@ -179,6 +179,7 @@ const {
     isObject,
     isString,
     merge,
+    seriesType,
     splat
 } = U;
 
@@ -199,7 +200,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     },
     noop = H.noop,
     rad2deg = 180 / Math.PI,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     setTreeValues = mixinTreeSeries.setTreeValues,
     updateRootId = mixinTreeSeries.updateRootId;

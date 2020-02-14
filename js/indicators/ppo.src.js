@@ -8,7 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, error = U.error;
+var correctFloat = U.correctFloat, error = U.error, seriesType = U.seriesType;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 var EMA = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin;
 /**
@@ -20,7 +20,7 @@ var EMA = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin;
  *
  * @augments Highcharts.Series
  */
-H.seriesType('ppo', 'ema', 
+seriesType('ppo', 'ema', 
 /**
  * Percentage Price Oscillator. This series requires the
  * `linkedTo` option to be set and should be loaded after the

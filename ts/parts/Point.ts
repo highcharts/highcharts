@@ -368,12 +368,12 @@ const {
     isObject,
     syncTimeout,
     pick,
-    removeEvent
+    removeEvent,
+    uniqueKey
 } = U;
 
 var H = Highcharts,
-    fireEvent = H.fireEvent,
-    uniqueKey = H.uniqueKey;
+    fireEvent = H.fireEvent;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

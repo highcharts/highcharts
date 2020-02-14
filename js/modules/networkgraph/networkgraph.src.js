@@ -47,12 +47,12 @@ import H from '../../parts/Globals.js';
 * @since 7.0.0
 */
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick;
+var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
-var seriesType = H.seriesType, seriesTypes = H.seriesTypes, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
+var seriesTypes = H.seriesTypes, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private
  * @class

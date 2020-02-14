@@ -6,9 +6,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 // Utils:
 function toFixed(a, n) {
@@ -24,7 +23,7 @@ function toFixed(a, n) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('rsi', 'sma', 
+seriesType('rsi', 'sma', 
 /**
  * Relative strength index (RSI) technical indicator. This series
  * requires the `linkedTo` option to be set and should be loaded after

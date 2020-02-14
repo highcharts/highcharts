@@ -5523,7 +5523,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @fires Highcharts.Axis#event:drawCrosshair
      */
     drawCrosshair: function (e, point) {
-        var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions;
+        var path, options = this.crosshair, snap = pick(options.snap, true), pos, categorized, graphic = this.cross, crossOptions, chart = this.chart;
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
         // Use last available event when updating non-snapped crosshairs without
         // mouse interaction (#5287)
@@ -5561,7 +5561,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                         pick(point.stackY, point.y)),
                     translatedValue: pos
                 };
-                if (this.chart.polar) {
+                if (chart.polar) {
                     // Additional information required for crosshairs in
                     // polar chart
                     extend(crossOptions, {
@@ -5581,7 +5581,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             categorized = this.categories && !this.isRadial;
             // Draw the cross
             if (!graphic) {
-                this.cross = graphic = this.chart.renderer
+                this.cross = graphic = chart.renderer
                     .path()
                     .addClass('highcharts-crosshair highcharts-crosshair-' +
                     (categorized ? 'category ' : 'thin ') +
@@ -5591,7 +5591,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 })
                     .add();
                 // Presentational attributes
-                if (!this.chart.styledMode) {
+                if (!chart.styledMode) {
                     graphic.attr({
                         stroke: options.color ||
                             (categorized ?

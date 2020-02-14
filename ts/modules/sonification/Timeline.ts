@@ -15,7 +15,8 @@ import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
     merge,
-    splat
+    splat,
+    uniqueKey
 } = U;
 
 /**
@@ -181,7 +182,7 @@ TimelineEvent.prototype.init = function (
 ): void {
     this.options = options;
     this.time = options.time || 0;
-    this.id = this.options.id = options.id || H.uniqueKey();
+    this.id = this.options.id = options.id || uniqueKey();
 };
 
 
@@ -312,7 +313,7 @@ TimelinePath.prototype.init = function (
     options: Highcharts.TimelinePathOptionsObject
 ): void {
     this.options = options;
-    this.id = this.options.id = options.id || H.uniqueKey();
+    this.id = this.options.id = options.id || uniqueKey();
     this.cursor = 0;
     this.eventsPlaying = {};
 

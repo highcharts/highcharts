@@ -9,6 +9,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -57,7 +61,7 @@ var seriesTypes = H.seriesTypes;
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.SlowStochasticIndicator>(
+seriesType<Highcharts.SlowStochasticIndicator>(
     'slowstochastic',
     'stochastic',
     /**

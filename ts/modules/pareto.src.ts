@@ -58,13 +58,11 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    merge
+    merge,
+    seriesType
 } = U;
 import '../parts/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
-
-var seriesType = H.seriesType;
-
 
 /**
  * The pareto series type.

@@ -2392,7 +2392,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
  *
  * @return {void}
  */
-H.animate = function (el, params, opt) {
+var animate = H.animate = function (el, params, opt) {
     var start, unit = '', end, fx, args;
     if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
@@ -2467,7 +2467,7 @@ H.animate = function (el, params, opt) {
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function (type, parent, options, props, pointProps) {
+var seriesType = H.seriesType = function (type, parent, options, props, pointProps) {
     var defaultOptions = H.getOptions(), seriesTypes = H.seriesTypes;
     // Merge the options
     defaultOptions.plotOptions[type] = merge(defaultOptions.plotOptions[parent], options);
@@ -2487,14 +2487,14 @@ H.seriesType = function (type, parent, options, props, pointProps) {
  * counter.
  *
  * @example
- * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
  * @return {string}
  *         A unique key.
  */
-H.uniqueKey = (function () {
+var uniqueKey = H.uniqueKey = (function () {
     var uniqueKeyHash = Math.random().toString(36).substring(2, 9), idCounter = 0;
     return function () {
         return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
@@ -2559,6 +2559,7 @@ if (win.jQuery) {
 var utilitiesModule = {
     Fx: Fx,
     addEvent: addEvent,
+    animate: animate,
     animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,
@@ -2599,12 +2600,14 @@ var utilitiesModule = {
     pInt: pInt,
     relativeLength: relativeLength,
     removeEvent: removeEvent,
+    seriesType: seriesType,
     setAnimation: setAnimation,
     splat: splat,
     stableSort: stableSort,
     stop: stop,
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
+    uniqueKey: uniqueKey,
     wrap: wrap
 };
 export default utilitiesModule;
