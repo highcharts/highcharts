@@ -1905,21 +1905,16 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         if (isArray(value)) {
             // Backwards compatibility, convert one-dimensional array into an
             // array of segments
-            if (value[0] === 'M') {
+            if (typeof value[0] === 'string') {
                 value = this.renderer.pathToSegments(value);
             }
-            var invalidPath_1 = false;
             this.pathArray = value;
             value = value.reduce(function (acc, seg, i) {
                 if (!seg || !seg.join) {
-                    invalidPath_1 = true;
                     return (seg || '').toString();
                 }
                 return (i ? acc + ' ' : '') + seg.join(' ');
             }, '');
-            if (invalidPath_1) {
-                H.error(32, false);
-            }
         }
         if (/(NaN| {2}|^$)/.test(value)) {
             value = 'M 0 0';

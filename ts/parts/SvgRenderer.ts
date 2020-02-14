@@ -2899,24 +2899,19 @@ extend((
         if (isArray(value)) {
             // Backwards compatibility, convert one-dimensional array into an
             // array of segments
-            if (value[0] as any === 'M') {
+            if (typeof value[0] === 'string') {
                 value = this.renderer.pathToSegments(value as any);
             }
-            let invalidPath = false;
             this.pathArray = value;
             value = value.reduce(
                 (acc, seg, i): string => {
                     if (!seg || !seg.join) {
-                        invalidPath = true;
                         return (seg || '').toString();
                     }
                     return (i ? acc + ' ' : '') + seg.join(' ');
                 },
                 ''
             );
-            if (invalidPath) {
-                H.error(32, false);
-            }
         }
         if (/(NaN| {2}|^$)/.test(value)) {
             value = 'M 0 0';
