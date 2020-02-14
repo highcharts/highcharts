@@ -258,18 +258,21 @@ Axis.prototype.getMaxLabelDimensions = function (
     return dimensions;
 };
 
-// Add custom date formats
-H.dateFormats.W = function (timestamp: number): string {
-    var d = new Date(timestamp),
-        yearStart: Date,
-        weekNo: number;
+// Adds week date format
+H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
+    const d = new this.Date(timestamp);
+    const firstDay = (d.getDay() + 6) % 7;
+    const thursday = new this.Date(d.valueOf());
+    (this.set as any)('Date', thursday, (this.get as any)('Date', d) - firstDay + 3);
 
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() - (d.getDay() || 7));
-    yearStart = new Date(d.getFullYear(), 0, 1);
-    weekNo =
-        Math.ceil(((((d as any) - (yearStart as any)) / 86400000) + 1) / 7);
-    return weekNo as any;
+    const firstThursday = new this.Date((this.get as any)('FullYear', thursday), 0, 1);
+
+    if (firstThursday.getDay() !== 4) {
+        (this.set as any)('Month', d, 0);
+        (this.set as any)('Date', d, 1 + (11 - firstThursday.getDay()) % 7);
+    }
+    return 1 + Math.floor((thursday.valueOf() - firstThursday.valueOf() +
+        (this.timezoneOffset || 0)) / 604800000) as any;
 };
 
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
