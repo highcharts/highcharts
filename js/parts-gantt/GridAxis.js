@@ -178,7 +178,7 @@ H.dateFormats.W = function (timestamp) {
     var thursday = new this.Date(d.valueOf());
     this.set('Date', thursday, this.get('Date', d) - firstDay + 3);
     var firstThursday = new this.Date(this.get('FullYear', thursday), 0, 1);
-    if (firstThursday.getDay() !== 4) {
+    if (this.get('Day', firstThursday) !== 4) {
         this.set('Month', d, 0);
         this.set('Date', d, 1 + (11 - this.get('Day', firstThursday)) % 7);
     }
