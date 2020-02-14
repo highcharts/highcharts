@@ -335,7 +335,7 @@ declare global {
             data?: Array<PointOptionsType>;
             dataGrouping?: DataGroupingOptionsObject;
             dataLabels?: (
-                DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
+                DataLabelsOptions|Array<DataLabelsOptions>
             );
             dataSorting?: DataSortingOptionsObject;
             description?: string;
@@ -2286,7 +2286,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @sample {highcharts} highcharts/css/series-datalabels
          *         Style mode example
          *
-         * @declare Highcharts.DataLabelsOptionsObject
          * @type    {*|Array<*>}
          * @product highcharts highstock highmaps gantt
          *
@@ -2526,11 +2525,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
              *
              * @type {Highcharts.DataLabelsFormatterCallbackFunction}
              */
-            formatter: function (
-                this: Highcharts.DataLabelsFormatterContextObject
-            ): string {
+            formatter: function (this: Highcharts.PointLabelObject): string {
                 const { numberFormatter } = this.series.chart;
-                return this.y === null ? '' : numberFormatter(this.y, -1);
+                return typeof this.y !== 'number' ? '' : numberFormatter(this.y, -1);
             },
 
             /**
@@ -2775,7 +2772,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
              */
             y: 0
 
-        } as Highcharts.DataLabelsOptionsObject,
+        } as Highcharts.DataLabelsOptions,
 
         /**
          * When the series contains less points than the crop threshold, all
@@ -7186,7 +7183,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
- * @declare   Highcharts.DataLabelsOptionsObject
+ * @declare   Highcharts.DataLabelsOptions
  * @extends   plotOptions.line.dataLabels
  * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels

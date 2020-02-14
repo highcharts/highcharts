@@ -78,7 +78,7 @@ declare global {
                 this: (
                     OrganizationDataLabelsFormatterContextObject|
                     SankeyDataLabelsFormatterContextObject|
-                    DataLabelsFormatterContextObject
+                    PointLabelObject
                 )
             ): (string|undefined);
         }
@@ -217,7 +217,7 @@ seriesType<Highcharts.OrganizationSeries>(
              */
             nodeFormatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.OrganizationDataLabelsFormatterContextObject|
                     Highcharts.SankeyDataLabelsFormatterContextObject
                 )

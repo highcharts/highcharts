@@ -106,7 +106,7 @@ declare global {
             animationLimit?: number;
             crisp?: boolean;
             dataGrouping?: DataGroupingOptionsObject;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             enableMouseTracking?: boolean;
             params?: VBPIndicatorParamsOptions;
             pointPadding?: number;

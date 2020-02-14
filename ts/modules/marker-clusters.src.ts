@@ -55,7 +55,7 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
             layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
             marker?: PointMarkerOptionsObject;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             zones?: Array<MarkerClusterZonesOptions>;
             states?: PointStatesOptionsObject;
             events?: MarkerClusterEventsOptions;
@@ -544,7 +544,7 @@ var clusterDefaultOptions = {
 
     /**
      * Options for the cluster data labels.
-     * @type    {Highcharts.DataLabelsOptionsObject}
+     * @type    {Highcharts.DataLabelsOptions}
      */
     dataLabels: {
         /** @internal */

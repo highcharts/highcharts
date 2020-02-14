@@ -82,7 +82,7 @@ declare global {
             alignment: AlignValue;
         }
         interface PieSeriesDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             alignTo?: string;
             connectorColor?: (ColorString|GradientColorObject|PatternObject);
@@ -434,7 +434,7 @@ seriesType<Highcharts.PieSeries>(
             enabled: true,
 
             formatter: function (
-                this: Highcharts.DataLabelsFormatterContextObject
+                this: Highcharts.PointLabelObject
             ): (string|undefined) { // #2945
                 return this.point.isNull ? void 0 : this.point.name;
             },

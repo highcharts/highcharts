@@ -129,17 +129,17 @@ declare global {
         }
         interface PackedBubbleDataLabelsFormatterCallbackFunction {
             (this: (
-                DataLabelsFormatterContextObject|
+                PointLabelObject|
                 PackedBubbleDataLabelsFormatterContextObject
             )): (number|string|null|undefined);
         }
         interface PackedBubbleDataLabelsFormatterContextObject
-            extends DataLabelsFormatterContextObject
+            extends PointLabelObject
         {
             point: PackedBubblePoint;
         }
         interface PackedBubbleDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             format?: string;
             formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
@@ -218,7 +218,7 @@ declare global {
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  *//**
  * The color of the node.
@@ -633,7 +633,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              */
             formatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): (number|null) {
@@ -657,7 +657,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              */
             parentNodeFormatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): string {

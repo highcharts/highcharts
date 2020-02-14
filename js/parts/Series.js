@@ -1690,7 +1690,6 @@ null,
      * @sample {highcharts} highcharts/css/series-datalabels
      *         Style mode example
      *
-     * @declare Highcharts.DataLabelsOptionsObject
      * @type    {*|Array<*>}
      * @product highcharts highstock highmaps gantt
      *
@@ -1915,7 +1914,7 @@ null,
          */
         formatter: function () {
             var numberFormatter = this.series.chart.numberFormatter;
-            return this.y === null ? '' : numberFormatter(this.y, -1);
+            return typeof this.y !== 'number' ? '' : numberFormatter(this.y, -1);
         },
         /**
          * For points with an extent, like columns or map areas, whether to
@@ -5322,7 +5321,7 @@ null,
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
- * @declare   Highcharts.DataLabelsOptionsObject
+ * @declare   Highcharts.DataLabelsOptions
  * @extends   plotOptions.line.dataLabels
  * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels

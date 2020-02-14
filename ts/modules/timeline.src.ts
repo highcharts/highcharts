@@ -76,20 +76,20 @@ declare global {
         {
             (
                 this: (
-                    DataLabelsFormatterContextObject|
+                    PointLabelObject|
                     TimelineDataLabelsFormatterContextObject
                 )
             ): string;
         }
         interface TimelineDataLabelsFormatterContextObject
-            extends DataLabelsFormatterContextObject
+            extends PointLabelObject
         {
             key?: string;
             point: TimelinePoint;
             series: TimelineSeries;
         }
         interface TimelineDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             alternate?: boolean;
             connectorColor?: ColorType;
@@ -122,7 +122,7 @@ declare global {
  *
  * @callback Highcharts.TimelineDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
+ * @param {Highcharts.PointLabelObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {number|string|null|undefined}
@@ -131,7 +131,7 @@ declare global {
 
 /**
  * @interface Highcharts.TimelineDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  *//**
  * @name Highcharts.TimelineDataLabelsFormatterContextObject#key
  * @type {string|undefined}
@@ -293,7 +293,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
              */
             formatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.TimelineDataLabelsFormatterContextObject
                 )
             ): string {

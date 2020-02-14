@@ -53,11 +53,12 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointLabelObject#percentage
 * @type {number}
 */ /**
-* The related point.
+* The related point. The point name, if defined, is available through
+* `this.point.name`.
 * @name Highcharts.PointLabelObject#point
 * @type {Highcharts.Point}
 */ /**
-* The related series.
+* The related series. The series name is available through `this.series.name`.
 * @name Highcharts.PointLabelObject#series
 * @type {Highcharts.Series}
 */ /**

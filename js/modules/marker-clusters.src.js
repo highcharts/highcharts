@@ -318,7 +318,7 @@ var clusterDefaultOptions = {
      */
     /**
      * Options for the cluster data labels.
-     * @type    {Highcharts.DataLabelsOptionsObject}
+     * @type    {Highcharts.DataLabelsOptions}
      */
     dataLabels: {
         /** @internal */

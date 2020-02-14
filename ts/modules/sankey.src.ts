@@ -102,7 +102,7 @@ declare global {
             (
                 this: (
                     SankeyDataLabelsFormatterContextObject|
-                    DataLabelsFormatterContextObject
+                    PointLabelObject
                 )
             ): (string|undefined);
         }
@@ -110,7 +110,7 @@ declare global {
             point: SankeyPoint;
         }
         interface SankeyDataLabelsOptionsObject
-            extends DataLabelsOptionsObject {
+            extends DataLabelsOptions {
             nodeFormat?: string;
             nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
         }
@@ -234,7 +234,7 @@ declare global {
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string|undefined}
@@ -245,7 +245,7 @@ declare global {
  * Context for the node formatter function.
  *
  * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  *//**
  * The node object. The node name, if defined, is available through
  * `this.point.name`.
@@ -391,7 +391,7 @@ seriesType<Highcharts.SankeySeries>(
             nodeFormatter: function (
                 this: (
                     Highcharts.SankeyDataLabelsFormatterContextObject|
-                    Highcharts.DataLabelsFormatterContextObject
+                    Highcharts.PointLabelObject
                 )
             ): (string|undefined) {
                 return this.point.name;
