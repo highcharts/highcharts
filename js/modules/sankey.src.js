@@ -72,7 +72,7 @@ import H from '../parts/Globals.js';
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string|undefined}
@@ -82,7 +82,7 @@ import H from '../parts/Globals.js';
  * Context for the node formatter function.
  *
  * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  */ /**
 * The node object. The node name, if defined, is available through
 * `this.point.name`.

@@ -20,7 +20,7 @@ import H from '../parts/Globals.js';
  *
  * @callback Highcharts.TimelineDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
+ * @param {Highcharts.PointLabelObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {number|string|null|undefined}
@@ -28,7 +28,7 @@ import H from '../parts/Globals.js';
  */
 /**
  * @interface Highcharts.TimelineDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  */ /**
 * @name Highcharts.TimelineDataLabelsFormatterContextObject#key
 * @type {string|undefined}

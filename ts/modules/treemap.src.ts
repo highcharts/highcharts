@@ -102,7 +102,7 @@ declare global {
             public alignDataLabel(
                 point: TreemapPoint,
                 dataLabel: SVGElement,
-                labelOptions: DataLabelsOptionsObject
+                labelOptions: DataLabelsOptions
             ): void;
             public bindAxes(): void;
             public buildNode(
@@ -1680,7 +1680,7 @@ seriesType<Highcharts.TreemapSeries>(
                 ): boolean {
                     return n.node.visible;
                 }),
-                options: Highcharts.DataLabelsOptionsObject,
+                options: Highcharts.DataLabelsOptions,
                 level: Highcharts.TreemapSeriesOptions;
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
@@ -1720,7 +1720,7 @@ seriesType<Highcharts.TreemapSeries>(
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
             dataLabel: Highcharts.SVGElement,
-            labelOptions: Highcharts.DataLabelsOptionsObject
+            labelOptions: Highcharts.DataLabelsOptions
         ): void {
             var style: Highcharts.SVGAttributes = labelOptions.style as any;
 

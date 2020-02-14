@@ -16,7 +16,7 @@ import H from '../../parts/Globals.js';
  *
  * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -26,7 +26,7 @@ import H from '../../parts/Globals.js';
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  */ /**
 * The color of the node.

@@ -949,7 +949,7 @@ seriesType('map', 'scatter',
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type      {Highcharts.DataLabelsOptionsObject}
+ * @type      {Highcharts.DataLabelsOptions}
  * @product   highmaps
  * @apioption series.map.data.dataLabels
  */

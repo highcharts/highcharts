@@ -19,7 +19,7 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface AreaRangeDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             xHigh?: number;
             xLow?: number;

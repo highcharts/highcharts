@@ -27,18 +27,18 @@ declare global {
         interface NetworkgraphDataLabelsFormatterCallbackFunction {
             (this: (
                 NetworkgraphDataLabelsFormatterContextObject|
-                DataLabelsFormatterContextObject
+                PointLabelObject
             )): (number|string|null|undefined);
         }
         interface NetworkgraphDataLabelsFormatterContextObject
-            extends DataLabelsFormatterContextObject
+            extends PointLabelObject
         {
             color: ColorString;
             key: string;
             point: NetworkgraphPoint;
         }
         interface NetworkgraphDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             format?: string;
             formatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
@@ -187,7 +187,7 @@ declare global {
  *
  * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -198,7 +198,7 @@ declare global {
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  *//**
  * The color of the node.
@@ -370,7 +370,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
              */
             formatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.NetworkgraphDataLabelsFormatterContextObject
                 )
             ): string {
@@ -403,7 +403,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
              */
             linkFormatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.NetworkgraphDataLabelsFormatterContextObject
                 )
             ): string {

@@ -99,7 +99,7 @@ declare global {
         }
         interface MapPointOptions extends ScatterPointOptions {
             color?: ColorType;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             drilldown?: string;
             id?: string;
             labelrank?: number;
@@ -1451,7 +1451,7 @@ seriesType<Highcharts.MapSeries>(
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type      {Highcharts.DataLabelsOptionsObject}
+ * @type      {Highcharts.DataLabelsOptions}
  * @product   highmaps
  * @apioption series.map.data.dataLabels
  */
