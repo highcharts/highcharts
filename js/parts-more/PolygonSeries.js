@@ -9,8 +9,7 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import L from '../parts/Legend.js';
-var LegendSymbolMixin = L.LegendSymbolMixin;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 var seriesType = U.seriesType;
 import '../parts/Options.js';

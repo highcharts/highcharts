@@ -94,10 +94,7 @@ declare global {
  * @type {number|null|undefined}
  */
 
-import L from '../parts/Legend.js';
-const {
-    LegendSymbolMixin
-} = L;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 const {
     clamp,

@@ -21,8 +21,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PointOptionsObject#value
 * @type {number|null|undefined}
 */
-import L from '../parts/Legend.js';
-var LegendSymbolMixin = L.LegendSymbolMixin;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';

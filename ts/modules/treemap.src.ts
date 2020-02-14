@@ -291,10 +291,7 @@ import Color from '../parts/Color.js';
 const {
     parse: color
 } = Color;
-import L from '../parts/Legend.js';
-const {
-    LegendSymbolMixin
-} = L;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {

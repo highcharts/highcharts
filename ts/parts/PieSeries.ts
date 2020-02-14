@@ -120,10 +120,7 @@ declare global {
     }
 }
 
-import L from './Legend.js';
-const {
-    LegendSymbolMixin
-} = L;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from './Point.js';
 import U from './Utilities.js';
 const {

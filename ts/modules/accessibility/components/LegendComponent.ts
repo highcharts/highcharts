@@ -13,10 +13,7 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
-import L from '../../../parts/Legend.js';
-const {
-    Legend
-} = L;
+import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
 const {
     addEvent,

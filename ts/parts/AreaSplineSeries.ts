@@ -41,10 +41,7 @@ declare global {
     }
 }
 
-import L from './Legend.js';
-const {
-    LegendSymbolMixin
-} = L;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
 const {
     seriesType
