@@ -173,10 +173,13 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
+    error,
     extend,
     isNumber,
     isObject,
     isString,
+    merge,
+    seriesType,
     splat
 } = U;
 
@@ -195,10 +198,8 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
-    merge = H.merge,
     noop = H.noop,
     rad2deg = 180 / Math.PI,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     setTreeValues = mixinTreeSeries.setTreeValues,
     updateRootId = mixinTreeSeries.updateRootId;
@@ -1230,7 +1231,7 @@ var sunburstSeries = {
         // #10669 - verify if all nodes have unique ids
         series.data.forEach(function (child: Highcharts.SunburstPoint): void {
             if (nodeIds[child.id]) {
-                H.error(31, false, series.chart);
+                error(31, false, series.chart);
             }
             // map
             nodeIds[child.id] = true;

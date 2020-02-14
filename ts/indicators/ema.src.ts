@@ -64,10 +64,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    isArray
+    isArray,
+    seriesType
 } = U;
-
-var seriesType = H.seriesType;
 
 /**
  * The EMA series type.

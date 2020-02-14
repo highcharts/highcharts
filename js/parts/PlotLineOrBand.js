@@ -31,8 +31,7 @@ import Axis from './Axis.js';
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
-var merge = H.merge;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The object wrapper for plot lines and plot bands
@@ -524,6 +523,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {Array<*>}
      * @product   highcharts highstock gantt
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *         Basic plot line
+     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
+     *         Solid gauge plot line
      * @apioption xAxis.plotLines
      */
     /**
@@ -774,7 +777,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @apioption xAxis.plotLines.label.y
      */
     /**
-     * An array of objects defining plot bands on the Y axis.
      *
      * @type      {Array<*>}
      * @extends   xAxis.plotBands
@@ -826,13 +828,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @apioption yAxis.plotBands.thickness
      */
     /**
-     * An array of objects representing plot lines on the X axis
-     *
      * @type      {Array<*>}
-     * @sample {highcharts} highcharts/xaxis/plotlines-color/
-     *      Basic plot line
-     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
-     *      Solid gauge plot line
      * @extends   xAxis.plotLines
      * @apioption yAxis.plotLines
      */

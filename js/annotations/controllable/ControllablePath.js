@@ -6,7 +6,7 @@
 'use strict';
 import H from './../../parts/Globals.js';
 import U from './../../parts/Utilities.js';
-var extend = U.extend;
+var extend = U.extend, merge = U.merge;
 import controllableMixin from './controllableMixin.js';
 import markerMixin from './markerMixin.js';
 // See TRACKER_FILL in highcharts.src.js
@@ -47,7 +47,7 @@ ControllablePath.attrsMap = {
     fill: 'fill',
     zIndex: 'zIndex'
 };
-H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts.AnnotationControllablePath# */ {
+merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts.AnnotationControllablePath# */ {
     /**
      * @type 'path'
      */

@@ -64,13 +64,12 @@ const {
     arrayMin,
     correctFloat,
     isNumber,
-    objectEach
+    merge,
+    objectEach,
+    seriesType
 } = U;
 
 import derivedSeriesMixin from '../mixins/derived-series.js';
-
-var seriesType = H.seriesType,
-    merge = H.merge;
 
 /* ************************************************************************** *
  *  HISTOGRAM

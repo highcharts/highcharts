@@ -73,8 +73,10 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     clamp,
     isNumber,
+    merge,
     objectEach,
     relativeLength,
     wrap
@@ -84,8 +86,6 @@ import '../parts/Axis.js';
 import '../parts/Pointer.js';
 
 var hasTouch = H.hasTouch,
-    merge = H.merge,
-    addEvent = H.addEvent,
     Axis = H.Axis,
     Pointer = H.Pointer,
 

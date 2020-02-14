@@ -81,13 +81,13 @@ import U from '../parts/Utilities.js';
 const {
     animObject,
     isNumber,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import onSeriesMixin from '../mixins/on-series.js';
 
-var noop = H.noop,
-    seriesType = H.seriesType;
+var noop = H.noop;
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -549,7 +549,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
 /**
  * The wind speed in meters per second.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts highstock
  * @apioption series.windbarb.data.value
  */

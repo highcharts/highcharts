@@ -13,7 +13,10 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
-var find = H.find;
+import U from '../../parts/Utilities.js';
+const {
+    find
+} = U;
 
 /**
  * Internal types.

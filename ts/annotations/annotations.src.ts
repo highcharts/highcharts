@@ -254,6 +254,8 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    find,
+    merge,
     pick,
     splat,
     wrap
@@ -270,9 +272,7 @@ import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
 
-var merge = H.merge,
-    fireEvent = H.fireEvent,
-    find = H.find,
+var fireEvent = H.fireEvent,
     reduce = H.reduce,
     chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
 
@@ -1327,7 +1327,7 @@ merge(
                     userOptions
                 ),
                 userOptionsIndex = chart.annotations.indexOf(this),
-                options = H.merge(true, this.userOptions, userOptions);
+                options = merge(true, this.userOptions, userOptions);
 
             options.labels = labelsAndShapes.labels;
             options.shapes = labelsAndShapes.shapes;

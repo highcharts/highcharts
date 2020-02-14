@@ -13,11 +13,13 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
-var pick = U.pick;
+var merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
-var charts = H.charts, color = H.color, deg2rad = H.deg2rad, perspective = H.perspective, seriesType = H.seriesType, 
+var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, 
 // Work on H.Renderer instead of H.SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, cuboidPath = RendererProto.cuboidPath, cylinderMethods;
 // Check if a path is simplified. The simplified path contains only lineTo
@@ -134,7 +136,7 @@ seriesType('cylinder', 'column',
  * @apioption series.cylinder.data
  */
 // cylinder extends cuboid
-cylinderMethods = H.merge(RendererProto.elements3d.cuboid, {
+cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
     fillSetter: function (fill) {

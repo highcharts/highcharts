@@ -221,8 +221,11 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
+    addEvent,
+    css,
     defined,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../../parts/Options.js';
@@ -231,9 +234,7 @@ import './layouts.js';
 import './draggable-nodes.js';
 
 
-var addEvent = H.addEvent,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     Point = H.Point,
     Series = H.Series,
     dragNodesMixin = H.dragNodesMixin;
@@ -754,6 +755,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
         /**
          * In networkgraph, series.points refers to links,
          * but series.nodes refers to actual points.
+         * @private
          */
         getPointsCollection: function (
             this: Highcharts.NetworkgraphSeries
@@ -1049,10 +1051,10 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 !this.series.chart.styledMode
             ) {
                 addEvent(this, 'mouseOver', function (): void {
-                    H.css(this.series.chart.container, { cursor: 'move' });
+                    css(this.series.chart.container, { cursor: 'move' });
                 });
                 addEvent(this, 'mouseOut', function (): void {
-                    H.css(
+                    css(
                         this.series.chart.container, { cursor: 'default' }
                     );
                 });

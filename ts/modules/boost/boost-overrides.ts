@@ -50,7 +50,10 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
+    addEvent,
+    error,
     isNumber,
+    pick,
     wrap
 } = U;
 
@@ -70,8 +73,6 @@ var boostEnabled = butils.boostEnabled,
     Series = H.Series,
     Point = H.Point,
     seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    pick = H.pick,
     plotOptions: Highcharts.PlotOptions = H.getOptions().plotOptions as any;
 
 /**
@@ -400,7 +401,7 @@ wrap(Series.prototype, 'processData', function (
             // Force turbo-mode:
             firstPoint = this.getFirstValidPoint(this.options.data as any);
             if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
-                H.error(12, false, this.chart);
+                error(12, false, this.chart);
             }
             this.enterBoost();
         } else if (this.exitBoost) {

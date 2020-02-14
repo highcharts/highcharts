@@ -135,11 +135,15 @@ declare global {
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
 
+''; // detach doclet above
+
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     erase,
     extend,
     isNumber,
+    merge,
     pick,
     splat
 } = U;
@@ -150,8 +154,7 @@ import '../parts/Color.js';
 import '../parts/Legend.js';
 import './ColorSeriesMixin.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
     Series = H.Series,
     Point = H.Point,
@@ -161,8 +164,7 @@ var addEvent = H.addEvent,
     LegendSymbolMixin = H.LegendSymbolMixin,
     colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
-    noop = H.noop,
-    merge = H.merge;
+    noop = H.noop;
 
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
@@ -1210,7 +1212,7 @@ extend(ColorAxis.prototype, {
             axisLen = this.len;
 
         if (point) {
-            crossPos = this.toPixels((point as any)[point.series.colorKey]);
+            crossPos = this.toPixels(point.getNestedProperty(point.series.colorKey) as number);
             if (crossPos < (axisPos as any)) {
                 crossPos = (axisPos as any) - 2;
             } else if (crossPos > (axisPos as any) + axisLen) {

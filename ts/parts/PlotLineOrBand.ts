@@ -163,11 +163,10 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    merge,
     objectEach,
     pick
 } = U;
-
-var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -778,6 +777,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {Array<*>}
      * @product   highcharts highstock gantt
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *         Basic plot line
+     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
+     *         Solid gauge plot line
      * @apioption xAxis.plotLines
      */
 
@@ -1053,7 +1056,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     * An array of objects defining plot bands on the Y axis.
      *
      * @type      {Array<*>}
      * @extends   xAxis.plotBands
@@ -1109,13 +1111,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     * An array of objects representing plot lines on the X axis
-     *
      * @type      {Array<*>}
-     * @sample {highcharts} highcharts/xaxis/plotlines-color/
-     *      Basic plot line
-     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
-     *      Solid gauge plot line
      * @extends   xAxis.plotLines
      * @apioption yAxis.plotLines
      */

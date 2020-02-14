@@ -74,11 +74,14 @@ import './Chart.js';
 
 import U from './Utilities.js';
 const {
+    find,
     isArray,
     isObject,
+    merge,
     objectEach,
     pick,
-    splat
+    splat,
+    uniqueKey
 } = U;
 
 var Chart = H.Chart;
@@ -229,7 +232,7 @@ Chart.prototype.setResponsive = function (
             rule: Highcharts.ResponsiveRulesOptions
         ): void {
             if (typeof rule._id === 'undefined') {
-                rule._id = H.uniqueKey();
+                rule._id = uniqueKey();
             }
 
             this.matchResponsiveRule(rule, ruleIds/* , redraw */);
@@ -237,10 +240,10 @@ Chart.prototype.setResponsive = function (
     }
 
     // Merge matching rules
-    var mergedOptions = H.merge.apply(0, ruleIds.map(function (
+    var mergedOptions = merge.apply(0, ruleIds.map(function (
         ruleId: string
     ): (Highcharts.Options|undefined) {
-        return (H.find(
+        return (find(
             (options as any).rules as Array<Highcharts.ResponsiveRulesOptions>,
             function (rule: Highcharts.ResponsiveRulesOptions): boolean {
                 return rule._id === ruleId;

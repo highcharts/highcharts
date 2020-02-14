@@ -6,11 +6,11 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var merge = U.merge, seriesType = U.seriesType;
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var getArrayExtremes = reduceArrayMixin.getArrayExtremes, merge = H.merge;
+var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 /**
  * The Price Channel series type.
  *
@@ -20,7 +20,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes, merge = H.merge;
  *
  * @augments Highcharts.Series
  */
-H.seriesType('pc', 'sma', 
+seriesType('pc', 'sma', 
 /**
  * Price channel (PC). This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js`.

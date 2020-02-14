@@ -53,7 +53,8 @@ declare global {
 import U from './Utilities.js';
 const {
     objectEach,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import './Color.js';
@@ -63,8 +64,7 @@ import './Options.js';
 
 var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    Series = H.Series,
-    seriesType = H.seriesType;
+    Series = H.Series;
 
 /**
  * Area series type.
@@ -209,6 +209,7 @@ seriesType<Highcharts.AreaSeries>(
          * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
          *         A threshold of Infinity
          *
+         * @type    {number|null}
          * @since   2.0
          * @product highcharts highstock
          */

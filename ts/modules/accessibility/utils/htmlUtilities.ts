@@ -12,9 +12,13 @@
 
 'use strict';
 
+import U from '../../../parts/Utilities.js';
+const {
+    merge
+} = U;
+
 import H from '../../../parts/Globals.js';
-var merge = H.merge,
-    win = H.win,
+var win = H.win,
     doc = win.document;
 
 
@@ -189,6 +193,7 @@ function visuallyHideElement(element: Highcharts.HTMLDOMElement): void {
         width: '1px',
         height: '1px',
         overflow: 'hidden',
+        whiteSpace: 'nowrap',
         clip: 'rect(1px, 1px, 1px, 1px)',
         marginTop: '-3px',
         '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',

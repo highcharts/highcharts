@@ -14,10 +14,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, isNumber = U.isNumber, objectEach = U.objectEach, relativeLength = U.relativeLength, wrap = U.wrap;
+var addEvent = U.addEvent, clamp = U.clamp, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Pointer.js';
-var hasTouch = H.hasTouch, merge = H.merge, addEvent = H.addEvent, Axis = H.Axis, Pointer = H.Pointer, 
+var hasTouch = H.hasTouch, Axis = H.Axis, Pointer = H.Pointer, 
 // Default options for AxisResizer.
 resizerOptions = {
     /**

@@ -14,14 +14,15 @@ import H from '../parts/Globals.js';
  *
  * @typedef {"linear"|"logarithmic"} Highcharts.ColorAxisTypeValue
  */
+''; // detach doclet above
 import U from '../parts/Utilities.js';
-var erase = U.erase, extend = U.extend, isNumber = U.isNumber, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, erase = U.erase, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Color.js';
 import '../parts/Legend.js';
 import './ColorSeriesMixin.js';
-var addEvent = H.addEvent, Axis = H.Axis, Chart = H.Chart, Series = H.Series, Point = H.Point, color = H.color, ColorAxis, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, noop = H.noop, merge = H.merge;
+var Axis = H.Axis, Chart = H.Chart, Series = H.Series, Point = H.Point, color = H.color, ColorAxis, Legend = H.Legend, LegendSymbolMixin = H.LegendSymbolMixin, colorPointMixin = H.colorPointMixin, colorSeriesMixin = H.colorSeriesMixin, noop = H.noop;
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
 Chart.prototype.collectionsWithUpdate.push('colorAxis');
@@ -837,7 +838,7 @@ extend(ColorAxis.prototype, {
     drawCrosshair: function (e, point) {
         var plotX = point && point.plotX, plotY = point && point.plotY, crossPos, axisPos = this.pos, axisLen = this.len;
         if (point) {
-            crossPos = this.toPixels(point[point.series.colorKey]);
+            crossPos = this.toPixels(point.getNestedProperty(point.series.colorKey));
             if (crossPos < axisPos) {
                 crossPos = axisPos - 2;
             }

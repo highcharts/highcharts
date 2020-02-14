@@ -372,11 +372,11 @@ import H from './Globals.js';
  * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
  */
 /* eslint-disable no-invalid-this, valid-jsdoc */
-import colorModule from './Color.js';
-var color = colorModule.color;
-import utilitiesModule from './Utilities.js';
-var animObject = utilitiesModule.animObject, attr = utilitiesModule.attr, defined = utilitiesModule.defined, destroyObjectProperties = utilitiesModule.destroyObjectProperties, erase = utilitiesModule.erase, extend = utilitiesModule.extend, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt, removeEvent = utilitiesModule.removeEvent, splat = utilitiesModule.splat;
-var SVGElement, SVGRenderer, addEvent = H.addEvent, animate = H.animate, charts = H.charts, css = H.css, createElement = H.createElement, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, merge = H.merge, noop = H.noop, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+import Color from './Color.js';
+var color = Color.parse;
+import U from './Utilities.js';
+var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, inArray = U.inArray, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, uniqueKey = U.uniqueKey;
+var SVGElement, SVGRenderer, charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link
@@ -563,7 +563,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 }
                 else {
                     // Set the id and create the element
-                    gradAttr.id = id = H.uniqueKey();
+                    gradAttr.id = id = uniqueKey();
                     gradients[key] = gradientObject =
                         renderer.createElement(gradName)
                             .attr(gradAttr)
@@ -653,6 +653,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             });
             // Remove shadows from previous runs.
             this.removeTextOutline(tspans);
+            // Check if the element contains RTL characters.
+            // Comparing against Hebrew and Arabic characters,
+            // excluding Arabic digits. Source:
+            // https://www.unicode.org/Public/UNIDATA/extracted/DerivedBidiClass.txt
+            var isRTL_1 = elem.textContent ?
+                /^[\u0591-\u065F\u066A-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
+                    .test(elem.textContent) : false;
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild;
             tspans.forEach(function (tspan, y) {
@@ -666,9 +673,12 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                         elem.setAttribute('y', 0);
                     }
                 }
-                // Create the clone and apply outline properties
-                clone = tspan.cloneNode(1);
-                attr(clone, {
+                // Create the clone and apply outline properties.
+                // For RTL elements apply outline properties for orginal element
+                // to prevent outline from overlapping the text.
+                // For RTL in Firefox keep the orginal order (#10162).
+                clone = tspan.cloneNode(true);
+                attr((isRTL_1 && !isFirefox) ? tspan : clone, {
                     'class': 'highcharts-text-outline',
                     fill: color,
                     stroke: color,
@@ -677,6 +687,13 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 });
                 elem.insertBefore(clone, firstRealChild);
             });
+            // Create a whitespace between tspan and clone,
+            // to fix the display of Arabic characters in Firefox.
+            if (isRTL_1 && isFirefox && tspans[0]) {
+                var whitespace = tspans[0].cloneNode(true);
+                whitespace.textContent = ' ';
+                elem.insertBefore(whitespace, firstRealChild);
+            }
         }
     },
     /**
@@ -795,7 +812,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 }
                 // Special handling of symbol attributes
                 if (this.symbolName &&
-                    H.inArray(key, symbolCustomAttribs) !== -1) {
+                    inArray(key, symbolCustomAttribs) !== -1) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash);
                         hasSetSymbolSize = true;
@@ -2081,7 +2098,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Set ID for the path
             textPathId = path.element.getAttribute('id');
             if (!textPathId) {
-                path.element.setAttribute('id', textPathId = H.uniqueKey());
+                path.element.setAttribute('id', textPathId = uniqueKey());
             }
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
@@ -4003,7 +4020,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var wrapper, 
         // Add a hyphen at the end to avoid confusion in testing indexes
         // -1 and -10, -11 etc (#6550)
-        id = H.uniqueKey() + '-', clipPath = this.createElement('clipPath').attr({
+        id = uniqueKey() + '-', clipPath = this.createElement('clipPath').attr({
             id: id
         }).add(this.defs);
         wrapper = this.rect(x, y, width, height, 0).add(clipPath);

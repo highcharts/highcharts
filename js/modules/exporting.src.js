@@ -78,12 +78,12 @@ import H from '../parts/Globals.js';
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 import U from '../parts/Utilities.js';
-var discardElement = U.discardElement, extend = U.extend, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
+var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
 // create shortcuts
-var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, addEvent = H.addEvent, fireEvent = H.fireEvent, createElement = H.createElement, css = H.css, merge = H.merge, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
+var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
 /**
@@ -91,14 +91,23 @@ extend(defaultOptions.lang
  */
 , {
     /**
-     * Exporting module only. View the chart in full screen.
+     * Exporting module only. The text for the menu item to view the chart
+     * in full screen.
      *
-     * @since    7.1.0
-     * @requires modules/exporting
+     * @since next
      *
      * @private
      */
     viewFullscreen: 'View in full screen',
+    /**
+     * Exporting module only. The text for the menu item to exit the chart
+     * from full screen.
+     *
+     * @since next
+     *
+     * @private
+     */
+    exitFullscreen: 'Exit from full screen',
     /**
      * Exporting module only. The text for the menu item to print the chart.
      *
@@ -792,12 +801,16 @@ defaultOptions.exporting = {
      * - **textKey:** If internationalization is required, the key to a language
      *   string
      *
+     * Custom text for the "exitFullScreen" can be set only in lang options
+     * (it is not a separate button).
+     *
      * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highstock} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
+     *
      *
      * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
      * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
@@ -810,7 +823,7 @@ defaultOptions.exporting = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function () {
-                this.fullscreen = new H.FullScreen(this.container);
+                this.fullscreen.toggle();
             }
         },
         /**
@@ -1096,7 +1109,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Assign an internal key to ensure a one-to-one mapping (#5924)
         chart.axes.forEach(function (axis) {
             if (!axis.userOptions.internalKey) { // #6444
-                axis.userOptions.internalKey = H.uniqueKey();
+                axis.userOptions.internalKey = uniqueKey();
             }
         });
         // generate the chart copy
@@ -1113,7 +1126,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis) {
-            var axisCopy = H.find(chartCopy.axes, function (copy) {
+            var axisCopy = find(chartCopy.axes, function (copy) {
                 return copy.options.internalKey ===
                     axis.userOptions.internalKey;
             }), extremes = axis.getExtremes(), userMin = extremes.userMin, userMax = extremes.userMax;
@@ -1420,14 +1433,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 chart.openMenu = false;
                 css(chart.renderTo, { overflow: 'hidden' }); // #10361
-                H.clearTimeout(menu.hideTimer);
+                U.clearTimeout(menu.hideTimer);
                 fireEvent(chart, 'exportMenuHidden');
             };
             // Hide the menu some time after mouse leave (#1357)
             chart.exportEvents.push(addEvent(menu, 'mouseleave', function () {
                 menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
             }), addEvent(menu, 'mouseenter', function () {
-                H.clearTimeout(menu.hideTimer);
+                U.clearTimeout(menu.hideTimer);
             }), 
             // Hide it on clicking or touching outside the menu (#2258,
             // #2335, #2407)
@@ -1644,7 +1657,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (exportDivElements) {
             exportDivElements.forEach(function (elem, i) {
                 // Remove the event handler
-                H.clearTimeout(elem.hideTimer); // #5427
+                U.clearTimeout(elem.hideTimer); // #5427
                 removeEvent(elem, 'mouseleave');
                 // Remove inline events
                 chart.exportDivElements[i] =

@@ -151,9 +151,13 @@ const {
     addEvent,
     attr,
     extend,
+    format,
+    fireEvent,
     isArray,
+    isFunction,
     isNumber,
     isObject,
+    merge,
     objectEach,
     pick
 } = U;
@@ -162,8 +166,6 @@ import chartNavigationMixin from '../mixins/navigation.js';
 
 var doc = H.doc,
     win = H.win,
-    merge = H.merge,
-    fireEvent = H.fireEvent,
     PREFIX = 'highcharts-';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -377,7 +379,7 @@ extend(H.NavigationBindings.prototype, {
             callback: Function,
             eventName: string
         ): void {
-            if (H.isFunction(callback)) {
+            if (isFunction(callback)) {
                 navigation.eventsToUnbind.push(
                     addEvent(
                         navigation,
@@ -814,7 +816,7 @@ extend(H.NavigationBindings.prototype, {
                     // Leaf:
                     if (key === 'format') {
                         parent[key] = [
-                            H.format(
+                            format(
                                 option,
                                 annotation.labels[0].points[0]
                             ).toString(),
@@ -1076,7 +1078,7 @@ function selectableAnnotation(annotationType: typeof Highcharts.Annotation): voi
         event.activeAnnotation = true;
     }
 
-    H.merge(
+    merge(
         true,
         annotationType.prototype.defaultOptions.events,
         {

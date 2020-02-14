@@ -225,14 +225,15 @@ import H from './Globals.js';
  *
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
+import pointModule from './Point.js';
+var Point = pointModule.Point;
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isString = U.isString, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
 import './SvgRenderer.js';
-var addEvent = H.addEvent, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, fireEvent = H.fireEvent, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-merge = H.merge, Point = H.Point, // @todo  add as a requirement
+var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
 seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
@@ -298,7 +299,7 @@ seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 *
 * @augments Highcharts.Series
 */
-H.Series = H.seriesType('line', 
+H.Series = seriesType('line', 
 /**
  * Series options for specific data and the data itself. In TypeScript you
  * have to cast the series options to specific series types, to get all
@@ -663,6 +664,17 @@ null,
      *
      * @type      {string|Highcharts.CursorValue}
      * @apioption plotOptions.series.cursor
+     */
+    /**
+     * A reserved subspace to store options and values for customized
+     * functionality. Here you can add additional data for your own event
+     * callbacks and formatter callbacks.
+     *
+     * @sample {highcharts} highcharts/point/custom/
+     *         Point and series with custom data
+     *
+     * @type      {Highcharts.Dictionary<*>}
+     * @apioption plotOptions.series.custom
      */
     /**
      * A name for the dash style to use for the graph, or for some series
@@ -2035,9 +2047,9 @@ null,
          *
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-style/
          *         Bold labels
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow/
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow/
          *         Long labels truncated with an ellipsis in a pie
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap/
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap/
          *         Long labels are wrapped in a pie
          * @sample {highmaps} maps/demo/color-axis/
          *         Bold labels
@@ -2669,11 +2681,11 @@ null,
         // Register event listeners
         events = options.events;
         objectEach(events, function (event, eventType) {
-            if (H.isFunction(event)) {
+            if (isFunction(event)) {
                 // If event does not exist, or is changed by Series.update
                 if (series.eventOptions[eventType] !== event) {
                     // Remove existing if set by option
-                    if (H.isFunction(series.eventOptions[eventType])) {
+                    if (isFunction(series.eventOptions[eventType])) {
                         removeEvent(series, eventType, series.eventOptions[eventType]);
                     }
                     series.eventOptions[eventType] = event;
@@ -2719,7 +2731,7 @@ null,
         fireEvent(this, 'afterInit');
     },
     /**
-     * Chech whether the series item is itself or inherits from a certain
+     * Check whether the series item is itself or inherits from a certain
      * series type.
      *
      * @function Highcharts.Series#is
@@ -2822,10 +2834,11 @@ null,
                 // The series needs an X and an Y axis
                 if (!series[AXIS] &&
                     series.optionalAxis !== AXIS) {
-                    H.error(18, true, chart);
+                    error(18, true, chart);
                 }
             });
         });
+        fireEvent(this, 'afterBindAxes');
     },
     /**
      * For simple series types like line and column, the data values are
@@ -3120,7 +3133,7 @@ null,
         else if (this.linkedParent || this.enabledDataSorting) {
             matchKey = (dataSorting && dataSorting.matchByName) ?
                 'name' : 'index';
-            matchingPoint = H.find(oldData, function (oldPoint) {
+            matchingPoint = find(oldData, function (oldPoint) {
                 return !oldPoint.touched && oldPoint[matchKey] ===
                     optionsObject[matchKey];
             });
@@ -3387,7 +3400,7 @@ null,
                 else {
                     // Highcharts expects configs to be numbers or arrays in
                     // turbo mode
-                    H.error(12, false, chart);
+                    error(12, false, chart);
                 }
             }
             else {
@@ -3403,7 +3416,7 @@ null,
             // Forgetting to cast strings to numbers is a common caveat when
             // handling CSV or JSON
             if (yData && isString(yData[0])) {
-                H.error(14, true, chart);
+                error(14, true, chart);
             }
             series.data = [];
             series.options.data = series.userOptions.data = data;
@@ -3455,9 +3468,9 @@ null,
         }, this);
         // Sorting
         sortedData = data.concat().sort(function (a, b) {
-            return isNumber(b[sortKey]) ?
-                b[sortKey] - a[sortKey] :
-                -1;
+            var aValue = getNestedProperty(sortKey, a);
+            var bValue = getNestedProperty(sortKey, b);
+            return bValue < aValue ? -1 : bValue > aValue ? 1 : 0;
         });
         // Set x value depending on the position in the array
         sortedData.forEach(function (point, i) {
@@ -3559,7 +3572,7 @@ null,
                 // width calculation of columns (#1900)
             }
             else if (distance < 0 && throwOnUnsorted) {
-                H.error(15, false, series.chart);
+                error(15, false, series.chart);
                 throwOnUnsorted = false; // Only once
             }
         }
@@ -4388,7 +4401,7 @@ null,
         series.points = null;
         // Clear the animation timeout if we are destroying the series
         // during initial animation
-        H.clearTimeout(series.animationTimeout);
+        U.clearTimeout(series.animationTimeout);
         // Destroy all SVGElements associated to the series
         objectEach(series, function (val, prop) {
             // Survive provides a hook for not destroying
@@ -5236,11 +5249,11 @@ null,
  *    ```
  *
  * **Note:** In TypeScript you have to extend `PointOptionsObject` with an
- * additional declaration to allow custom data options:
+ * additional declaration to allow custom data types:
  * ```ts
  * declare module `highcharts` {
  *   interface PointOptionsObject {
- *     customProperty: string;
+ *     custom: Record<string, (boolean|number|string)>;
  *   }
  * }
  * ```
@@ -5294,6 +5307,17 @@ null,
  * @since     5.0.0
  * @product   highcharts gantt
  * @apioption series.line.data.colorIndex
+ */
+/**
+ * A reserved subspace to store options and values for customized functionality.
+ * Here you can add additional data for your own event callbacks and formatter
+ * callbacks.
+ *
+ * @sample {highcharts} highcharts/point/custom/
+ *         Point and series with custom data
+ *
+ * @type      {Highcharts.Dictionary<*>}
+ * @apioption series.line.data.custom
  */
 /**
  * Individual data label for each point. The options are the same as

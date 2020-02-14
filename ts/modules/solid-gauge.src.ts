@@ -87,13 +87,17 @@ declare global {
  * @type {boolean|undefined}
  */
 
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
     clamp,
     extend,
     isNumber,
+    merge,
     pick,
     pInt,
+    seriesType,
     wrap
 } = U;
 
@@ -187,7 +191,7 @@ colorAxisMethods = {
         ): void {
             var colors: (Array<string>|undefined);
 
-            dataClass = H.merge(dataClass);
+            dataClass = merge(dataClass);
             dataClasses.push(dataClass);
             if (!dataClass.color) {
                 if (options.dataClassColor === 'category') {
@@ -198,8 +202,8 @@ colorAxisMethods = {
                         colorCounter = 0;
                     }
                 } else {
-                    dataClass.color = H.color(options.minColor).tweenTo(
-                        H.color(options.maxColor),
+                    dataClass.color = color(options.minColor).tweenTo(
+                        color(options.maxColor),
                         i / ((userOptions.dataClasses as any).length - 1)
                     );
                 }
@@ -218,7 +222,7 @@ colorAxisMethods = {
         this.stops.forEach(function (
             stop: Highcharts.GradientColorStopObject
         ): void {
-            stop.color = H.color(stop[1]);
+            stop.color = color(stop[1]);
         });
     },
     // Translate from a value to a color
@@ -389,7 +393,7 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
 
 
 // The solidgauge series type
-H.seriesType<Highcharts.SolidGaugeSeries>(
+seriesType<Highcharts.SolidGaugeSeries>(
     'solidgauge',
     'gauge',
     solidGaugeOptions,

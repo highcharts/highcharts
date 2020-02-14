@@ -15,7 +15,9 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
+    css,
     pick,
+    seriesType,
     wrap
 } = U;
 
@@ -140,7 +142,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType<Highcharts.OrganizationSeries>(
+seriesType<Highcharts.OrganizationSeries>(
     'organization',
     'sankey',
     /**
@@ -642,13 +644,13 @@ H.seriesType<Highcharts.OrganizationSeries>(
                 width -= padjust;
 
                 // Set the size of the surrounding div emulating `g`
-                H.css(dataLabel.text.element.parentNode, {
+                css(dataLabel.text.element.parentNode, {
                     width: width + 'px',
                     height: height + 'px'
                 });
 
                 // Set properties for the span emulating `text`
-                H.css(dataLabel.text.element, {
+                css(dataLabel.text.element, {
                     left: 0,
                     top: 0,
                     width: '100%',

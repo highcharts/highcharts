@@ -340,6 +340,7 @@ declare global {
             shared?: boolean;
             snap?: number;
             split?: boolean;
+            stickOnHover?: boolean;
             style?: CSSObject;
             useHTML?: boolean;
             valueDecimals?: number;
@@ -554,13 +555,15 @@ declare global {
  * @type {number}
  */
 
-import './Color.js';
-import './Utilities.js';
-import './Time.js';
+import Time from './Time.js';
+import Color from './Color.js';
+const color = Color.parse;
+import U from './Utilities.js';
+const {
+    merge
+} = U;
 
-var color = H.color,
-    isTouchDevice = H.isTouchDevice,
-    merge = H.merge,
+var isTouchDevice = H.isTouchDevice,
     svg = H.svg;
 
 /* ************************************************************************** *
@@ -899,7 +902,7 @@ H.defaultOptions = {
 
     global: {},
 
-    time: H.Time.prototype.defaultOptions,
+    time: Time.defaultOptions,
 
     /**
      * General options for the chart.
@@ -982,6 +985,10 @@ H.defaultOptions = {
          *   `Math` object. See
          *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          *
+         * When zooming on a series with less than 100 points, the chart redraw
+         * will be done with animation, but in case of more data points, it is
+         * necessary to set this option to ensure animation on zoom.
+         *
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
          * @sample {highcharts} highcharts/chart/animation-duration/
@@ -994,7 +1001,7 @@ H.defaultOptions = {
          *         With a longer duration
          *
          * @type      {boolean|Highcharts.AnimationOptionsObject}
-         * @default   true
+         * @default   undefined
          * @apioption chart.animation
          */
 
@@ -3676,6 +3683,18 @@ H.defaultOptions = {
          */
 
         /**
+         * Prevents the tooltip from switching or closing, when touched or
+         * pointed.
+         *
+         * @sample highcharts/tooltip/stickonhover/
+         *         Tooltip sticks on hover event
+         *
+         * @type      {boolean}
+         * @since     8.0.1
+         * @apioption tooltip.stickOnHover
+         */
+
+        /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using
          * HTML allows advanced formatting like tables and images in the
          * tooltip. It is also recommended for rtl languages as it works around
@@ -4188,7 +4207,7 @@ H.defaultPlotOptions = H.defaultOptions.plotOptions as any;
  * @name Highcharts.time
  * @type {Highcharts.Time}
  */
-H.time = new H.Time(
+H.time = new Time(
     merge<Highcharts.TimeOptions>(
         H.defaultOptions.global as any,
         H.defaultOptions.time as any

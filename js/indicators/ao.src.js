@@ -8,7 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray;
+var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesType;
 var noop = H.noop;
 /**
  * The AO series type
@@ -19,7 +19,7 @@ var noop = H.noop;
  *
  * @augments Highcharts.Series
  */
-H.seriesType('ao', 'sma', 
+seriesType('ao', 'sma', 
 /**
  * Awesome Oscillator. This series requires the `linkedTo` option to
  * be set and should be loaded after the `stock/indicators/indicators.js`

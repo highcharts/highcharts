@@ -107,6 +107,7 @@ const {
     animObject,
     defined,
     extend,
+    merge,
     objectEach,
     pick
 } = U;
@@ -121,7 +122,6 @@ var cos = Math.cos,
 var charts = H.charts,
     color = H.color,
     deg2rad = H.deg2rad,
-    merge = H.merge,
     perspective = H.perspective,
     SVGElement = H.SVGElement,
     SVGRenderer = H.SVGRenderer,
@@ -519,7 +519,7 @@ element3dMethods = {
 };
 
 // CUBOID
-cuboidMethods = H.merge(element3dMethods, {
+cuboidMethods = merge(element3dMethods, {
     parts: ['front', 'top', 'side'],
     pathType: 'cuboid',
 

@@ -9,7 +9,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-var seriesType = H.seriesType, areaProto = H.seriesTypes.area.prototype, colProto = H.seriesTypes.column.prototype;
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
+var areaProto = H.seriesTypes.area.prototype, colProto = H.seriesTypes.column.prototype;
 /**
  * The lollipop series is a carteseian series with a line anchored from
  * the x axis and a dot at the end to mark the value.

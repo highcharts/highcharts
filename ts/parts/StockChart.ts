@@ -58,13 +58,17 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     clamp,
     defined,
     extend,
+    find,
+    format,
     isNumber,
     isString,
+    merge,
     pick,
     splat
 } = U;
@@ -85,11 +89,8 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
-    format = H.format,
-    merge = H.merge,
     Point = H.Point,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
@@ -508,7 +509,7 @@ addEvent(Axis, 'getPlotLinePath', function (
             if (
                 uniqueAxes.indexOf(axis2) === -1 &&
                 // Do not draw on axis which overlap completely. #5424
-                !H.find(uniqueAxes, function (
+                !find(uniqueAxes, function (
                     unique: Highcharts.Axis
                 ): boolean {
                     return unique.pos === axis2.pos && unique.len === axis2.len;

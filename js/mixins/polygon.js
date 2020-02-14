@@ -23,8 +23,8 @@ import H from '../parts/Globals.js';
 * @type {Array<PolygonPointObject>}
 */
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, isNumber = U.isNumber;
-var deg2rad = H.deg2rad, find = H.find;
+var find = U.find, isArray = U.isArray, isNumber = U.isNumber;
+var deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Alternative solution to correctFloat.

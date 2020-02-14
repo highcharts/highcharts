@@ -248,7 +248,9 @@ const {
     clamp,
     defined,
     extend,
+    format,
     isArray,
+    merge,
     objectEach,
     pick,
     relativeLength,
@@ -258,9 +260,7 @@ const {
 
 import './Series.js';
 
-var format = H.format,
-    merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -753,7 +753,11 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
                         dataLabel = point.dataLabels[i] = rotation ?
 
                             // Labels don't rotate, use text element
-                            renderer.text(labelText, 0, -9999)
+                            renderer.text(
+                                labelText,
+                                0,
+                                -9999,
+                                labelOptions.useHTML)
                                 .addClass('highcharts-data-label') :
 
                             // We can use label

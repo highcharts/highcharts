@@ -8,7 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat;
+var correctFloat = U.correctFloat, seriesType = U.seriesType;
 import requiredIndicator from '../mixins/indicator-required.js';
 var TEMA = H.seriesTypes.tema;
 /**
@@ -20,7 +20,7 @@ var TEMA = H.seriesTypes.tema;
  *
  * @augments Highcharts.Series
  */
-H.seriesType('trix', 'tema', 
+seriesType('trix', 'tema', 
 /**
  * Triple exponential average (TRIX) oscillator. This series requires
  * `linkedTo` option to be set.

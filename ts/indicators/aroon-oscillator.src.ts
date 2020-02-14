@@ -57,6 +57,11 @@ declare global {
 
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
+import U from '../parts/Utilities.js';
+const {
+    merge,
+    seriesType
+} = U;
 
 var AROON = H.seriesTypes.aroon,
     requiredIndicator = requiredIndicatorMixin;
@@ -70,7 +75,7 @@ var AROON = H.seriesTypes.aroon,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.AroonOscillatorIndicator>(
+seriesType<Highcharts.AroonOscillatorIndicator>(
     'aroonoscillator',
     'aroon',
     /**
@@ -115,7 +120,7 @@ H.seriesType<Highcharts.AroonOscillatorIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    H.merge(multipleLinesMixin, {
+    merge(multipleLinesMixin, {
         nameBase: 'Aroon Oscillator',
         pointArrayMap: ['y'],
         pointValKey: 'y',

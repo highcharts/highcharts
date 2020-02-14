@@ -149,27 +149,28 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
     defined,
+    error,
     extend,
+    format,
     isNumber,
+    merge,
     pick
 } = U;
 
+import Tooltip from './Tooltip.js';
+
 import './Axis.js';
 import './Series.js';
-import './Tooltip.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
-    format = H.format,
-    merge = H.merge,
     Point = H.Point,
-    Series = H.Series,
-    Tooltip = H.Tooltip;
+    Series = H.Series;
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *
@@ -862,7 +863,7 @@ addEvent(Point, 'update', function (
     this: Highcharts.Point
 ): (boolean|undefined) {
     if (this.dataGroup) {
-        H.error(24, false, this.series.chart);
+        error(24, false, this.series.chart);
         return false;
     }
 });

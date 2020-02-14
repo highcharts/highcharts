@@ -53,14 +53,15 @@ declare global {
 import './accumulation-distribution.src.js';
 import U from '../parts/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    error,
+    seriesType
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
 var EMA = H.seriesTypes.ema,
     AD = H.seriesTypes.ad,
-    error = H.error,
     requiredIndicator = requiredIndicatorMixin;
 
 /**
@@ -72,7 +73,7 @@ var EMA = H.seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.ChaikinIndicator>(
+seriesType<Highcharts.ChaikinIndicator>(
     'chaikin',
     'ema',
     /**

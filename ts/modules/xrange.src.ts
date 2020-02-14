@@ -102,22 +102,23 @@ declare global {
  * @requires modules/xrange
  */
 
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     clamp,
     correctFloat,
     defined,
+    find,
     isNumber,
     isObject,
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
 
-var addEvent = H.addEvent,
-    color = H.color,
-    columnType = H.seriesTypes.column,
-    find = H.find,
-    merge = H.merge,
-    seriesType = H.seriesType,
+var columnType = H.seriesTypes.column,
     seriesTypes = H.seriesTypes,
     Axis = H.Axis,
     Point = H.Point,

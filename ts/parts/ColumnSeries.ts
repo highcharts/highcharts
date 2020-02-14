@@ -116,7 +116,9 @@ const {
     defined,
     extend,
     isNumber,
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
 
 import './Color.js';
@@ -126,10 +128,8 @@ import './Options.js';
 
 var color = H.color,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     svg = H.svg;
 
 /**
@@ -506,6 +506,7 @@ seriesType<Highcharts.ColumnSeries>(
          * distinguishing between values above and below a threshold. If `null`,
          * the columns extend from the padding Y axis minimum.
          *
+         * @type    {number|null}
          * @since   2.0
          * @product highcharts
          *

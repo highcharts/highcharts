@@ -5,7 +5,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
 var Annotation = H.Annotation, MockPoint = Annotation.MockPoint, Tunnel = Annotation.types.tunnel;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var createPathDGenerator = function (retracementIndex, isBackground) {
@@ -76,7 +77,7 @@ H.extendAnnotation(Fibonacci, Tunnel, {
     },
     addLabels: function () {
         Fibonacci.levels.forEach(function (level, i) {
-            var options = this.options.typeOptions, label = this.initLabel(H.merge(options.labels[i], {
+            var options = this.options.typeOptions, label = this.initLabel(merge(options.labels[i], {
                 point: function (target) {
                     var point = MockPoint.pointToOptions(target.annotation.startRetracements[i]);
                     return point;

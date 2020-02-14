@@ -107,15 +107,18 @@ declare global {
 
 /* eslint-enable @typescript-eslint/interface-name-prefix */
 
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray,
-    objectEach = U.objectEach;
+const {
+    defined,
+    isArray,
+    merge,
+    objectEach,
+    seriesType
+} = U;
 
 var UNDEFINED: undefined,
-    seriesType = H.seriesType,
-    merge = H.merge,
-    color = H.color,
     SMA = H.seriesTypes.sma;
 
 /* eslint-disable require-jsdoc */

@@ -76,11 +76,12 @@ const {
     defined,
     extend,
     isNumber,
-    pick
+    merge,
+    pick,
+    uniqueKey
 } = U;
 
 var fireEvent = H.fireEvent,
-    merge = H.merge,
     bindingsUtils = H.NavigationBindings.prototype.utils,
     PREFIX = 'highcharts-';
 
@@ -275,12 +276,12 @@ bindingsUtils.manageIndicators = function (
             }
         }
     } else {
-        seriesConfig.id = H.uniqueKey();
+        seriesConfig.id = uniqueKey();
         navigation.fieldsToOptions(data.fields, seriesConfig);
 
         if (indicatorsWithAxes.indexOf(data.type) >= 0) {
             yAxis = chart.addAxis({
-                id: H.uniqueKey(),
+                id: uniqueKey(),
                 offset: 0,
                 opposite: true,
                 title: {
@@ -1999,10 +2000,6 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
         ): void {
-            var chart = this.chart;
-
-            (chart as any).fullScreen = new H.FullScreen(chart.container);
-
             fireEvent(
                 this,
                 'deselectButton',

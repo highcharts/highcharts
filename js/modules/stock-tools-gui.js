@@ -12,8 +12,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, pick = U.pick;
-var addEvent = H.addEvent, createElement = H.createElement, fireEvent = H.fireEvent, getStyle = H.getStyle, merge = H.merge, css = H.css, win = H.win, DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick;
+var win = H.win, DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
 H.setOptions({
     /**
      * @optionparent lang
@@ -745,8 +745,8 @@ addEvent(H.Chart, 'afterGetContainer', function () {
 });
 addEvent(H.Chart, 'getMargins', function () {
     var listWrapper = this.stockTools && this.stockTools.listWrapper, offsetWidth = listWrapper && ((listWrapper.startWidth +
-        H.getStyle(listWrapper, 'padding-left') +
-        H.getStyle(listWrapper, 'padding-right')) || listWrapper.offsetWidth);
+        getStyle(listWrapper, 'padding-left') +
+        getStyle(listWrapper, 'padding-right')) || listWrapper.offsetWidth);
     if (offsetWidth && offsetWidth < this.plotWidth) {
         this.plotLeft += offsetWidth;
     }
@@ -879,7 +879,7 @@ H.Toolbar.prototype = {
                 buttonWrapper.className += ' ' + PREFIX + 'current';
                 menuWrapper.startWidth = wrapper.offsetWidth;
                 menuWrapper.style.width = menuWrapper.startWidth +
-                    H.getStyle(menuWrapper, 'padding-left') +
+                    getStyle(menuWrapper, 'padding-left') +
                     submenuWrapper.offsetWidth + 3 + 'px';
             }
         }));
@@ -1089,9 +1089,9 @@ H.Toolbar.prototype = {
         }
         else {
             wrapper.style.height = '100%';
-            showhideBtn.style.top = H.getStyle(toolbar, 'padding-top') + 'px';
+            showhideBtn.style.top = getStyle(toolbar, 'padding-top') + 'px';
             showhideBtn.style.left = (wrapper.offsetWidth +
-                H.getStyle(toolbar, 'padding-left')) + 'px';
+                getStyle(toolbar, 'padding-left')) + 'px';
         }
         // Toggle menu
         stockToolbar.eventsToUnbind.push(addEvent(showhideBtn, 'click', function () {

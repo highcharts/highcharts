@@ -239,20 +239,22 @@ declare global {
  * @since 7.0.0
  */
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import U from '../parts/Utilities.js';
 const {
-    color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
-const {
+    addEvent,
     clamp,
     defined,
     extend,
     extendClass,
+    fireEvent,
     isArray,
     isNumber,
-    pick
-} = utilitiesModule;
+    merge,
+    pick,
+    seriesType
+} = U;
 
 import '../parts/Axis.js';
 import '../parts/Color.js';
@@ -261,12 +263,8 @@ import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
 
-
-var seriesType = H.seriesType,
-    Series = H.Series,
+var Series = H.Series,
     Point = H.Point,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
     Chart = H.Chart,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
@@ -1120,7 +1118,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             }
 
             this.calculateParentRadius();
-            parentAttribs = H.merge({
+            parentAttribs = merge({
                 x: (series.parentNode as any).plotX -
                     (series.parentNodeRadius as any),
                 y: (series.parentNode as any).plotY -
@@ -1210,7 +1208,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 layoutOptions = series.options.layoutAlgorithm,
                 graphLayoutsStorage = series.chart.graphLayoutsStorage,
                 graphLayoutsLookup = series.chart.graphLayoutsLookup,
-                parentNodeOptions = H.merge(
+                parentNodeOptions = merge(
                     layoutOptions,
                     (layoutOptions as any).parentNodeOptions,
                     {
@@ -1825,7 +1823,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                                 (point.marker as any).radius
                             );
                             if (distanceR < 0) {
-                                node.series.addPoint(H.merge(point.options, {
+                                node.series.addPoint(merge(point.options, {
                                     plotX: point.plotX,
                                     plotY: point.plotY
                                 }), false);

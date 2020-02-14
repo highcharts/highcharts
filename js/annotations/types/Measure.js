@@ -6,8 +6,8 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber;
-var Annotation = H.Annotation, ControlPoint = Annotation.ControlPoint, merge = H.merge;
+var extend = U.extend, isNumber = U.isNumber, merge = U.merge;
+var Annotation = H.Annotation, ControlPoint = Annotation.ControlPoint;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var Measure = function () {
     Annotation.apply(this, arguments);

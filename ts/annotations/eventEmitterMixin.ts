@@ -54,6 +54,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    inArray,
     objectEach,
     pick,
     removeEvent
@@ -103,7 +104,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 }
             };
 
-            if (H.inArray(type, emitter.nonDOMEvents || []) === -1) {
+            if (inArray(type, emitter.nonDOMEvents || []) === -1) {
                 emitter.graphic.on(type, eventHandler);
             } else {
                 addEvent(emitter, type, eventHandler);

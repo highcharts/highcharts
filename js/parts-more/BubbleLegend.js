@@ -27,8 +27,8 @@ import H from '../parts/Globals.js';
 * @type {number}
 */
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort, wrap = U.wrap;
-var Series = H.Series, Legend = H.Legend, Chart = H.Chart, addEvent = H.addEvent, color = H.color, merge = H.merge, noop = H.noop, setOptions = H.setOptions;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort, wrap = U.wrap;
+var Series = H.Series, Legend = H.Legend, Chart = H.Chart, color = H.color, noop = H.noop, setOptions = H.setOptions;
 setOptions({
     legend: {
         /**
@@ -567,7 +567,7 @@ H.BubbleLegend.prototype = {
     formatLabel: function (range) {
         var options = this.options, formatter = options.labels.formatter, format = options.labels.format;
         var numberFormatter = this.chart.numberFormatter;
-        return format ? H.format(format, range) :
+        return format ? U.format(format, range) :
             formatter ? formatter.call(range) :
                 numberFormatter(range.value, 1);
     },

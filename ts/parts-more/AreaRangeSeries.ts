@@ -91,7 +91,8 @@ const {
     extend,
     isArray,
     isNumber,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -99,7 +100,6 @@ import '../parts/Series.js';
 
 var noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     seriesProto = Series.prototype,
     pointProto = H.Point.prototype;

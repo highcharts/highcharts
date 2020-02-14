@@ -77,14 +77,15 @@ const {
     defined,
     extend,
     isNumber,
+    merge,
     objectEach,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Series.js';
 
 var fireEvent = H.fireEvent,
-    merge = H.merge,
     piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 
 /**
@@ -98,7 +99,7 @@ var fireEvent = H.fireEvent,
  *
  * @augments Highcharts.seriesTypes.pie
  */
-H.seriesType<Highcharts.ItemSeries>(
+seriesType<Highcharts.ItemSeries>(
     'item',
     // Inherits pie as the most tested non-cartesian series with individual
     // point legend, tooltips etc. Only downside is we need to re-enable

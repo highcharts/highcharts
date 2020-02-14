@@ -61,7 +61,10 @@ declare global {
 }
 
 import U from './../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    extend,
+    merge
+} = U;
 
 import controllableMixin from './controllableMixin.js';
 import markerMixin from './markerMixin.js';
@@ -113,7 +116,7 @@ ControllablePath.attrsMap = {
     zIndex: 'zIndex'
 };
 
-H.merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationControllablePath>>(
+merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationControllablePath>>(
     true,
     ControllablePath.prototype,
     controllableMixin, /** @lends Highcharts.AnnotationControllablePath# */ {

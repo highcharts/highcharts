@@ -24,12 +24,12 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import './Color.js';
 import './Legend.js';
 import './Series.js';
 import './Options.js';
-var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, Series = H.Series, svg = H.svg;
 /**
  * The column series type.
  *
@@ -372,6 +372,7 @@ seriesType('column', 'line',
      * distinguishing between values above and below a threshold. If `null`,
      * the columns extend from the padding Y axis minimum.
      *
+     * @type    {number|null}
      * @since   2.0
      * @product highcharts
      *

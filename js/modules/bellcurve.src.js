@@ -10,11 +10,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, isNumber = U.isNumber;
+var correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, seriesType = U.seriesType;
 import derivedSeriesMixin from '../mixins/derived-series.js';
-var seriesType = H.seriesType, merge = H.merge;
 /* ************************************************************************** *
  *  BELL CURVE                                                                *
  * ************************************************************************** */

@@ -8,7 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isArray = U.isArray;
+var defined = U.defined, isArray = U.isArray, seriesType = U.seriesType;
 var SMA = H.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
 /**
@@ -36,7 +36,7 @@ function destroyExtraLabels(point, functionName) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('pivotpoints', 'sma', 
+seriesType('pivotpoints', 'sma', 
 /**
  * Pivot points indicator. This series requires the `linkedTo` option to be
  * set and should be loaded after `stock/indicators/indicators.js` file.

@@ -75,13 +75,18 @@ declare global
 }
 
 import U from './../../parts/Utilities.js';
-var extend = U.extend,
-    isNumber = U.isNumber,
-    pick = U.pick;
+const {
+    extend,
+    format,
+    isNumber,
+    merge,
+    pick
+} = U;
 
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
 import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -256,7 +261,7 @@ ControllableLabel.attrsMap = {
     padding: 'padding'
 };
 
-H.merge(
+merge(
     true,
     ControllableLabel.prototype,
     controllableMixin,
@@ -359,7 +364,7 @@ H.merge(
 
             label.attr({
                 text: text ?
-                    H.format(
+                    format(
                         text,
                         point.getLabelConfig(),
                         this.annotation.chart
@@ -437,7 +442,7 @@ H.merge(
             if (showItem) {
 
                 if (itemOptions.distance) {
-                    itemPosition = H.Tooltip.prototype.getPosition.call(
+                    itemPosition = Tooltip.prototype.getPosition.call(
                         {
                             chart: chart,
                             distance: pick(itemOptions.distance, 16)

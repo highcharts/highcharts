@@ -9,11 +9,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType;
 import derivedSeriesMixin from '../mixins/derived-series.js';
-var seriesType = H.seriesType, merge = H.merge;
 /* ************************************************************************** *
  *  HISTOGRAM
  * ************************************************************************** */

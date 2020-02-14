@@ -8,8 +8,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var merge = H.merge, SMA = H.seriesTypes.sma;
+var isArray = U.isArray, merge = U.merge, seriesType = U.seriesType;
+var SMA = H.seriesTypes.sma;
 /**
  * The Price Envelopes series type.
  *
@@ -19,7 +19,7 @@ var merge = H.merge, SMA = H.seriesTypes.sma;
  *
  * @augments Highcharts.Series
  */
-H.seriesType('priceenvelopes', 'sma', 
+seriesType('priceenvelopes', 'sma', 
 /**
  * Price envelopes indicator based on [SMA](#plotOptions.sma) calculations.
  * This series requires the `linkedTo` option to be set and should be loaded

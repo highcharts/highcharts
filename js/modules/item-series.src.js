@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
+var defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Series.js';
-var fireEvent = H.fireEvent, merge = H.merge, piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
+var fireEvent = H.fireEvent, piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 /**
  * The item series type.
  *
@@ -26,7 +26,7 @@ var fireEvent = H.fireEvent, merge = H.merge, piePoint = H.seriesTypes.pie.proto
  *
  * @augments Highcharts.seriesTypes.pie
  */
-H.seriesType('item', 
+seriesType('item', 
 // Inherits pie as the most tested non-cartesian series with individual
 // point legend, tooltips etc. Only downside is we need to re-enable
 // marker options.

@@ -12,8 +12,8 @@
 'use strict';
 import HTMLUtilities from './htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
-import H from '../../../parts/Globals.js';
-var find = H.find;
+import U from '../../../parts/Utilities.js';
+var find = U.find;
 /* eslint-disable valid-jsdoc */
 /**
  * @return {string}

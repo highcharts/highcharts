@@ -151,10 +151,16 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
+    createElement,
+    css,
     defined,
     extend,
+    fireEvent,
     isArray,
+    isFunction,
     isObject,
+    merge,
     objectEach,
     pick
 } = U;
@@ -165,16 +171,11 @@ import './Legend.js';
 import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    Chart = H.Chart,
-    createElement = H.createElement,
-    css = H.css,
+var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    fireEvent = H.fireEvent,
     hasTouch = H.hasTouch,
     Legend = H.Legend,
-    merge = H.merge,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -197,7 +198,6 @@ TrackerMixin = H.TrackerMixin = {
      * @private
      * @function Highcharts.TrackerMixin.drawTrackerPoint
      * @param {Highcharts.Series} this
-     * @return {void}
      * @fires Highcharts.Series#event:afterDrawTracker
      */
     drawTrackerPoint: function (this: Highcharts.Series): void {
@@ -276,7 +276,6 @@ TrackerMixin = H.TrackerMixin = {
      * @private
      * @function Highcharts.TrackerMixin.drawTrackerGraph
      * @param {Highcharts.Series} this
-     * @return {void}
      * @fires Highcharts.Series#event:afterDrawTracker
      */
     drawTrackerGraph: function (this: Highcharts.Series): void {
@@ -295,9 +294,15 @@ TrackerMixin = H.TrackerMixin = {
             renderer = chart.renderer,
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
-            // i,
-            onMouseOver = function (): void {
-                if (chart.hoverSeries !== series) {
+            i,
+            onMouseOver = function (e: Highcharts.PointerEventObject): void {
+
+                pointer.normalize(e);
+
+                if (
+                    chart.hoverSeries !== series &&
+                    !pointer.isStickyTooltip(e)
+                ) {
                     (series as any).onMouseOver();
                 }
             },
@@ -409,7 +414,6 @@ extend(Legend.prototype, {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
-     * @return {void}
      * @fires Highcharts.Point#event:legendItemClick
      * @fires Highcharts.Series#event:legendItemClick
      */
@@ -546,7 +550,6 @@ extend(Legend.prototype, {
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
-     * @return {void}
      * @fires Highcharts.Series#event:checkboxClick
      */
     createCheckboxForItem: function (
@@ -586,11 +589,12 @@ extend(Legend.prototype, {
 extend(Chart.prototype, /** @lends Chart.prototype */ {
 
     /**
-     * Display the zoom button.
+     * Display the zoom button, so users can reset zoom to the default view
+     * settings.
      *
-     * @private
      * @function Highcharts.Chart#showResetZoom
-     * @return {void}
+     *
+     * @fires Highcharts.Chart#event:afterShowResetZoom
      * @fires Highcharts.Chart#event:beforeShowResetZoom
      */
     showResetZoom: function (this: Highcharts.Chart): void {
@@ -640,7 +644,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * [Axis.setExtremes](/class-reference/Highcharts.Axis#setExtremes).
      *
      * @function Highcharts.Chart#zoomOut
-     * @return {void}
+     *
      * @fires Highcharts.Chart#event:selection
      */
     zoomOut: function (this: Highcharts.Chart): void {
@@ -653,7 +657,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @private
      * @function Highcharts.Chart#zoom
      * @param {Highcharts.SelectEventObject} event
-     * @return {void}
      */
     zoom: function (
         this: Highcharts.Chart,
@@ -688,9 +691,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 // Check if zoomed area is within the pane (#1289).
                 // In case of multiple panes only one pane should be zoomed.
                 if (
-                    (!isXAxis &&
-                    mouseDownPos >= axisStartPos &&
-                    mouseDownPos <= axisEndPos) ||
+                    (
+                        !isXAxis &&
+                        (mouseDownPos as any) >= axisStartPos &&
+                        (mouseDownPos as any) <= axisEndPos
+                    ) ||
                     isXAxis ||
                     !defined(mouseDownPos)
                 ) {
@@ -737,7 +742,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @function Highcharts.Chart#pan
      * @param {Highcharts.PointerEventObject} e
      * @param {string} panning
-     * @return {void}
      */
     pan: function (
         this: Highcharts.Chart,
@@ -905,19 +909,16 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @function Highcharts.Point#select
      *
      * @param {boolean} [selected]
-     *        When `true`, the point is selected. When `false`, the point is
-     *        unselected. When `null` or `undefined`, the selection state is
-     *        toggled.
+     * When `true`, the point is selected. When `false`, the point is
+     * unselected. When `null` or `undefined`, the selection state is toggled.
      *
      * @param {boolean} [accumulate=false]
-     *        When `true`, the selection is added to other selected points.
-     *        When `false`, other selected points are deselected. Internally in
-     *        Highcharts, when
-     *        [allowPointSelect](https://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect)
-     *        is `true`, selected points are accumulated on Control, Shift or
-     *        Cmd clicking the point.
-     *
-     * @return {void}
+     * When `true`, the selection is added to other selected points.
+     * When `false`, other selected points are deselected. Internally in
+     * Highcharts, when
+     * [allowPointSelect](https://api.highcharts.com/highcharts/plotOptions.series.allowPointSelect)
+     * is `true`, selected points are accumulated on Control, Shift or Cmd
+     * clicking the point.
      *
      * @fires Highcharts.Point#event:select
      * @fires Highcharts.Point#event:unselect
@@ -996,8 +997,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @param {Highcharts.PointerEventObject} [e]
      *        The event arguments.
-     *
-     * @return {void}
      */
     onMouseOver: function (
         this: Highcharts.Point,
@@ -1020,7 +1019,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * events.
      *
      * @function Highcharts.Point#onMouseOut
-     * @return {void}
      * @fires Highcharts.Point#event:mouseOut
      */
     onMouseOut: function (this: Highcharts.Point): void {
@@ -1046,7 +1044,6 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *
      * @private
      * @function Highcharts.Point#importEvents
-     * @return {void}
      */
     importEvents: function (this: Highcharts.Point): void {
         if (!this.hasImportedEvents) {
@@ -1063,7 +1060,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 event: Function,
                 eventType: string
             ): void {
-                if (H.isFunction(event)) {
+                if (isFunction(event)) {
                     addEvent(point, eventType, event);
                 }
             });
@@ -1364,7 +1361,6 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      * Runs on mouse over the series graphical items.
      *
      * @function Highcharts.Series#onMouseOver
-     * @return {void}
      * @fires Highcharts.Series#event:mouseOver
      */
     onMouseOver: function (this: Highcharts.Series): void {
@@ -1599,15 +1595,13 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      * @function Highcharts.Series#setVisible
      *
      * @param {boolean} [visible]
-     *        True to show the series, false to hide. If undefined, the
-     *        visibility is toggled.
+     * True to show the series, false to hide. If undefined, the visibility is
+     * toggled.
      *
      * @param {boolean} [redraw=true]
-     *        Whether to redraw the chart after the series is altered. If doing
-     *        more operations on the chart, it is a good idea to set redraw to
-     *        false and call {@link Chart#redraw|chart.redraw()} after.
-     *
-     * @return {void}
+     * Whether to redraw the chart after the series is altered. If doing more
+     * operations on the chart, it is a good idea to set redraw to false and
+     * call {@link Chart#redraw|chart.redraw()} after.
      *
      * @fires Highcharts.Series#event:hide
      * @fires Highcharts.Series#event:show
@@ -1699,7 +1693,6 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      *         Toggle visibility from a button
      *
      * @function Highcharts.Series#show
-     * @return {void}
      * @fires Highcharts.Series#event:show
      */
     show: function (this: Highcharts.Series): void {
@@ -1707,16 +1700,14 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
     },
 
     /**
-     * Hide the series if visible. If the {@link
-     * https://api.highcharts.com/highcharts/chart.ignoreHiddenSeries|
-     * chart.ignoreHiddenSeries} option is true, the chart is redrawn without
-     * this series.
+     * Hide the series if visible. If the
+     * [chart.ignoreHiddenSeries](https://api.highcharts.com/highcharts/chart.ignoreHiddenSeries)
+     * option is true, the chart is redrawn without this series.
      *
      * @sample highcharts/members/series-hide/
      *         Toggle visibility from a button
      *
      * @function Highcharts.Series#hide
-     * @return {void}
      * @fires Highcharts.Series#event:hide
      */
     hide: function (this: Highcharts.Series): void {
@@ -1728,8 +1719,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      * Select or unselect the series. This means its
      * {@link Highcharts.Series.selected|selected}
      * property is set, the checkbox in the legend is toggled and when selected,
-     * the series is returned by the
-     * {@link Highcharts.Chart#getSelectedSeries}
+     * the series is returned by the {@link Highcharts.Chart#getSelectedSeries}
      * function.
      *
      * @sample highcharts/members/series-select/
@@ -1738,10 +1728,8 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      * @function Highcharts.Series#select
      *
      * @param {boolean} [selected]
-     *        True to select the series, false to unselect. If undefined, the
-     *        selection state is toggled.
-     *
-     * @return {void}
+     * True to select the series, false to unselect. If undefined, the selection
+     * state is toggled.
      *
      * @fires Highcharts.Series#event:select
      * @fires Highcharts.Series#event:unselect

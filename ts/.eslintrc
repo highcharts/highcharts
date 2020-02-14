@@ -52,6 +52,16 @@
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
+        "valid-jsdoc": [ // @todo EOL 2018-11
+            "error",
+            {
+                "prefer": {
+                    "returns": "return"
+                },
+                "requireReturn": false,
+                "requireReturnDescription": false
+            }
+        ],
         "@typescript-eslint/array-type": 0,
         "@typescript-eslint/explicit-function-return-type": [
             "error",
@@ -64,6 +74,7 @@
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-inferrable-types": 0, // @todo ?
         "@typescript-eslint/no-namespace": 0,
         "@typescript-eslint/no-object-literal-type-assertion": 0,
         "@typescript-eslint/no-this-alias": 0, // @todo

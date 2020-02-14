@@ -98,7 +98,9 @@ import U from '../parts/Utilities.js';
 const {
     clamp,
     extend,
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -110,11 +112,9 @@ import './ColorMapSeriesMixin.js';
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
     fireEvent = H.fireEvent,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

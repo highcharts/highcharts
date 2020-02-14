@@ -357,14 +357,14 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     clamp,
+    merge,
     objectEach,
     pick
 } = U;
 
-var addEvent = H.addEvent,
-    merge = H.merge,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return
@@ -2088,7 +2088,7 @@ function updatePoints(
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,
         animOptions = animate === false ? false : merge({
-            duration: 400 // 400 is the default in H.animate
+            duration: 400 // 400 is the default in animate
         }, (chart.options.chart as any).animation);
 
     chart.isDragDropAnimating = true;
@@ -2907,7 +2907,7 @@ function mouseDown(
     chart: Highcharts.Chart
 ): void {
     var dragPoint = chart.hoverPoint,
-        dragDropOptions = H.merge(
+        dragDropOptions = merge(
             dragPoint && dragPoint.series.options.dragDrop,
             dragPoint && dragPoint.options.dragDrop
         ),

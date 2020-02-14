@@ -76,9 +76,9 @@ import H from './Globals.js';
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
-var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -396,7 +396,7 @@ Series.prototype.drawDataLabels = function () {
                         point.dataLabels = point.dataLabels || [];
                         dataLabel = point.dataLabels[i] = rotation ?
                             // Labels don't rotate, use text element
-                            renderer.text(labelText, 0, -9999)
+                            renderer.text(labelText, 0, -9999, labelOptions.useHTML)
                                 .addClass('highcharts-data-label') :
                             // We can use label
                             renderer.label(labelText, 0, -9999, labelOptions.shape, null, null, labelOptions.useHTML, null, 'data-label');

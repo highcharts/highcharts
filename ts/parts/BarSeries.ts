@@ -39,10 +39,11 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    seriesType
+} = U;
 import './ColumnSeries.js';
-
-var seriesType = H.seriesType;
 
 /**
  * Bar series type.

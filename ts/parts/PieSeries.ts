@@ -122,11 +122,15 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     clamp,
     defined,
+    fireEvent,
     isNumber,
+    merge,
     pick,
     relativeLength,
+    seriesType,
     setAnimation
 } = U;
 
@@ -137,17 +141,13 @@ import './Options.js';
 import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    CenteredSeriesMixin = H.CenteredSeriesMixin,
+var CenteredSeriesMixin = H.CenteredSeriesMixin,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
     LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
     Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    fireEvent = H.fireEvent;
+    seriesTypes = H.seriesTypes;
 
 /**
  * Pie series type.
@@ -455,9 +455,9 @@ seriesType<Highcharts.PieSeries>(
             softConnector: true,
 
             /**
-             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow
              *         Long labels truncated with an ellipsis
-             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap
              *         Long labels are wrapped
              *
              * @type      {Highcharts.CSSObject}
@@ -1190,6 +1190,12 @@ seriesType<Highcharts.PieSeries>(
             var renderer = this.chart.renderer;
 
             this.points.forEach(function (point: Highcharts.PiePoint): void {
+                // When updating a series between 2d and 3d or cartesian and
+                // polar, the shape type changes.
+                if (point.graphic && point.hasNewShapeType()) {
+                    point.graphic = point.graphic.destroy();
+                }
+
                 if (!point.graphic) {
                     point.graphic = (renderer as any)[point.shapeType as any](
                         point.shapeArgs
@@ -1593,7 +1599,7 @@ seriesType<Highcharts.PieSeries>(
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting, step
  * @product   highcharts
  * @apioption series.pie
  */

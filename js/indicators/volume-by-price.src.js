@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 // Utils
 function arrayExtremesOHLC(data) {
@@ -32,7 +32,7 @@ function arrayExtremesOHLC(data) {
     };
 }
 /* eslint-enable require-jsdoc */
-var abs = Math.abs, noop = H.noop, seriesType = H.seriesType, columnPrototype = H.seriesTypes.column.prototype;
+var abs = Math.abs, noop = H.noop, columnPrototype = H.seriesTypes.column.prototype;
 /**
  * The Volume By Price (VBP) series type.
  *
@@ -306,13 +306,13 @@ seriesType('vbp', 'sma',
         var indicator = this, xValues = series.processedXData, yValues = series.processedYData, chart = indicator.chart, ranges = params.ranges, VBP = [], xData = [], yData = [], isOHLC, volumeSeries, priceZones;
         // Checks if base series exists
         if (!series.chart) {
-            H.error('Base series not found! In case it has been removed, add ' +
+            error('Base series not found! In case it has been removed, add ' +
                 'a new one.', true, chart);
             return;
         }
         // Checks if volume series exists
         if (!(volumeSeries = (chart.get(params.volumeSeriesID)))) {
-            H.error('Series ' +
+            error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, chart);
             return;
@@ -320,7 +320,7 @@ seriesType('vbp', 'sma',
         // Checks if series data fits the OHLC format
         isOHLC = isArray(yValues[0]);
         if (isOHLC && yValues[0].length !== 4) {
-            H.error('Type of ' +
+            error('Type of ' +
                 series.name +
                 ' series is different than line, OHLC or candlestick.', true, chart);
             return;

@@ -11,12 +11,12 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import colorModule from '../parts/Color.js';
-var color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-var defined = utilitiesModule.defined, discardElement = utilitiesModule.discardElement, erase = utilitiesModule.erase, extend = utilitiesModule.extend, extendClass = utilitiesModule.extendClass, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, offset = utilitiesModule.offset, pick = utilitiesModule.pick, pInt = utilitiesModule.pInt;
+import Color from '../parts/Color.js';
+var color = Color.parse;
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, offset = U.offset, pick = U.pick, pInt = U.pInt, uniqueKey = U.uniqueKey;
 import '../parts/SvgRenderer.js';
-var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, doc = H.doc, merge = H.merge, noop = H.noop, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
+var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, deg2rad = H.deg2rad, doc = H.doc, noop = H.noop, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /**
  * Path to the pattern image required by VML browsers in order to
  * draw radial gradients.
@@ -31,7 +31,7 @@ H.getOptions().global.VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = function (el, prop) {
+    H.getStyle = U.getStyle = function (el, prop) {
         var val, alias = {
             width: 'clientWidth',
             height: 'clientHeight'
@@ -45,7 +45,7 @@ if (doc && !doc.defaultView) {
         // Getting the rendered width and height
         if (alias) {
             el.style.zoom = 1;
-            return Math.max(el[alias] - 2 * H.getStyle(el, 'padding'), 0);
+            return Math.max(el[alias] - 2 * U.getStyle(el, 'padding'), 0);
         }
         val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
             return b.toUpperCase();
@@ -64,7 +64,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement, 'afterInit', function () {
+    addEvent(SVGElement, 'afterInit', function () {
         if (this.element.nodeName === 'text') {
             this.css({
                 position: 'absolute'
@@ -175,7 +175,7 @@ if (!svg) {
             }
             // unique function string (#6746)
             if (!fn.hcKey) {
-                fn.hcKey = H.uniqueKey();
+                fn.hcKey = uniqueKey();
             }
             // Link wrapped fn with original fn, so we can get this in
             // removeEvent

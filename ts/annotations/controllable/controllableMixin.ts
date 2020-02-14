@@ -5,7 +5,6 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
 
 /**
  * Internal types.
@@ -145,13 +144,17 @@ declare global {
  */
 
 import U from './../../parts/Utilities.js';
-var isObject = U.isObject,
-    isString = U.isString,
-    splat = U.splat;
+const {
+    isObject,
+    isString,
+    merge,
+    splat
+} = U;
 
 import './../../parts/Tooltip.js';
 import ControlPoint from './../ControlPoint.js';
 import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -259,7 +262,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
 
             box = point.mock ?
                 point.toAnchor() :
-                H.Tooltip.prototype.getAnchor.call({
+                Tooltip.prototype.getAnchor.call({
                     chart: point.series.chart
                 }, point),
 
@@ -272,7 +275,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
 
         return {
             relativePosition: anchor,
-            absolutePosition: H.merge(anchor, {
+            absolutePosition: merge(anchor, {
                 x: anchor.x + plotBox.translateX,
                 y: anchor.y + plotBox.translateY
             })
@@ -369,7 +372,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
                 controlPointOptions: Highcharts.AnnotationControlPointOptionsObject,
                 i: number
             ): void {
-                var options = H.merge(
+                var options = merge(
                     (this.options as any).controlPointOptions,
                     controlPointOptions
                 );
@@ -592,7 +595,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
         newOptions: Highcharts.AnnotationControllableOptionsObject
     ): void {
         var annotation = this.annotation,
-            options = H.merge(true, this.options, newOptions),
+            options = merge(true, this.options, newOptions),
             parentGroup = this.graphic.parentGroup;
 
         this.destroy();

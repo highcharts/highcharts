@@ -128,8 +128,10 @@ const {
     arrayMax,
     arrayMin,
     correctFloat,
+    error,
     extend,
-    isArray
+    isArray,
+    seriesType
 } = U;
 
 /* eslint-disable require-jsdoc */
@@ -165,7 +167,6 @@ function arrayExtremesOHLC(
 
 var abs = Math.abs,
     noop = H.noop,
-    seriesType = H.seriesType,
     columnPrototype = H.seriesTypes.column.prototype;
 
 /**
@@ -564,7 +565,7 @@ seriesType<Highcharts.VBPIndicator>(
 
             // Checks if base series exists
             if (!series.chart) {
-                H.error(
+                error(
                     'Base series not found! In case it has been removed, add ' +
                     'a new one.',
                     true,
@@ -577,7 +578,7 @@ seriesType<Highcharts.VBPIndicator>(
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                H.error(
+                error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
@@ -591,7 +592,7 @@ seriesType<Highcharts.VBPIndicator>(
             isOHLC = isArray(yValues[0]);
 
             if (isOHLC && yValues[0].length !== 4) {
-                H.error(
+                error(
                     'Type of ' +
                     series.name +
                     ' series is different than line, OHLC or candlestick.',
