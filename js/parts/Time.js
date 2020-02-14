@@ -159,7 +159,7 @@ var Time = /** @class */ (function () {
     /**
      * Time units used in `Time.get` and `Time.set`
      *
-     * @typedef {"Date"|"Day"|"FullYear"|"Hours"|"Milliseconds"|"Minutes"|"Month"|"Seconds"} Highcharts.TimeUnit
+     * @typedef {"Date"|"Day"|"FullYear"|"Hours"|"Milliseconds"|"Minutes"|"Month"|"Seconds"} Highcharts.TimeUnitValue
      */
     /**
      * Get the value of a date object in given units, and subject to the Time
@@ -170,7 +170,7 @@ var Time = /** @class */ (function () {
      *
      * @function Highcharts.Time#get
      *
-     * @param {Highcharts.TimeUnit} unit
+     * @param {Highcharts.TimeUnitValue} unit
      * @param {Date} date
      *
      * @return {number}
@@ -201,7 +201,7 @@ var Time = /** @class */ (function () {
      *
      * @function Highcharts.Time#set
      *
-     * @param {Highcharts.TimeUnit} unit
+     * @param {Highcharts.TimeUnitValue} unit
      * @param {Date} date
      * @param {number} value
      *

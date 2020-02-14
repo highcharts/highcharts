@@ -22,7 +22,7 @@ declare global {
         Date: any;
     }
     namespace Highcharts {
-        type TimeUnit = (
+        type TimeUnitValue = (
             'Date'|
             'Day'|
             'FullYear'|
@@ -66,7 +66,7 @@ declare global {
                 timestamp: number,
                 capitalize?: boolean
             ): string;
-            public get(unit: TimeUnit, date: Date): number;
+            public get(unit: TimeUnitValue, date: Date): number;
             public getTimeTicks(
                 normalizedInterval: TimeNormalizedObject,
                 min?: number,
@@ -85,7 +85,7 @@ declare global {
             public resolveDTLFormat<T>(
                 f: (string|Array<T>|Dictionary<T>)
             ): Dictionary<T>;
-            public set(unit: TimeUnit, date: Date, value: number): (number|undefined);
+            public set(unit: TimeUnitValue, date: Date, value: number): (number|undefined);
             public timezoneOffsetFunction(): Time['getTimezoneOffset']
             public update(options: TimeOptions): void;
         }
@@ -414,7 +414,7 @@ class Time {
     /**
      * Time units used in `Time.get` and `Time.set`
      *
-     * @typedef {"Date"|"Day"|"FullYear"|"Hours"|"Milliseconds"|"Minutes"|"Month"|"Seconds"} Highcharts.TimeUnit
+     * @typedef {"Date"|"Day"|"FullYear"|"Hours"|"Milliseconds"|"Minutes"|"Month"|"Seconds"} Highcharts.TimeUnitValue
      */
 
     /**
@@ -426,13 +426,13 @@ class Time {
      *
      * @function Highcharts.Time#get
      *
-     * @param {Highcharts.TimeUnit} unit
+     * @param {Highcharts.TimeUnitValue} unit
      * @param {Date} date
      *
      * @return {number}
      *        The given time unit
      */
-    public get(unit: Highcharts.TimeUnit, date: Date): number {
+    public get(unit: Highcharts.TimeUnitValue, date: Date): number {
         if (this.variableTimezone || this.timezoneOffset) {
             const realMs = date.getTime();
             const ms = realMs - this.getTimezoneOffset(date);
@@ -461,14 +461,14 @@ class Time {
      *
      * @function Highcharts.Time#set
      *
-     * @param {Highcharts.TimeUnit} unit
+     * @param {Highcharts.TimeUnitValue} unit
      * @param {Date} date
      * @param {number} value
      *
      * @return {number}
      *        The epoch milliseconds of the updated date
      */
-    public set(unit: Highcharts.TimeUnit, date: Date, value: number): number {
+    public set(unit: Highcharts.TimeUnitValue, date: Date, value: number): number {
         // UTC time with timezone handling
         if (this.variableTimezone || this.timezoneOffset) {
             // For lower order time units, just set it directly using UTC
