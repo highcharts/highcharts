@@ -262,7 +262,7 @@ Axis.prototype.getMaxLabelDimensions = function (
 // Adds week date format
 H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
     const d = new this.Date(timestamp);
-    const firstDay = (d.getDay() + 6) % 7;
+    const firstDay = ((this.get as any)('Day', d) + 6) % 7;
     const thursday = new this.Date(d.valueOf());
     (this.set as any)('Date', thursday, (this.get as any)('Date', d) - firstDay + 3);
 
@@ -270,10 +270,9 @@ H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
 
     if (firstThursday.getDay() !== 4) {
         (this.set as any)('Month', d, 0);
-        (this.set as any)('Date', d, 1 + (11 - firstThursday.getDay()) % 7);
+        (this.set as any)('Date', d, 1 + (11 - (this.get as any)('Day', firstThursday)) % 7);
     }
-    return 1 + Math.floor((thursday.valueOf() - firstThursday.valueOf() +
-        (this.timezoneOffset || 0)) / 604800000) as any;
+    return 1 + Math.floor((thursday.valueOf() - firstThursday.valueOf()) / 604800000) as any;
 };
 
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
