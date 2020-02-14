@@ -329,6 +329,8 @@ function seriesSonify(options) {
     if (chartSonification.timeline) {
         chartSonification.timeline.pause();
     }
+    // Store reference to duration
+    chartSonification.duration = options.duration;
     // Create new timeline for this series, and play it.
     chartSonification.timeline = new H.sonification.Timeline({
         paths: [timelinePath]
@@ -740,6 +742,8 @@ function chartSonify(options) {
     if (this.sonification.timeline) {
         this.sonification.timeline.pause();
     }
+    // Store reference to duration
+    this.sonification.duration = opts.duration;
     // Calculate data extremes for the props used
     var dataExtremes = getExtremesForInstrumentProps(this, opts.instruments, opts.dataExtremes);
     // Figure out ordering of series and custom paths
