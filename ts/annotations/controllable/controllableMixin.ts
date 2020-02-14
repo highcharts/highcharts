@@ -5,7 +5,6 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
 
 /**
  * Internal types.
@@ -155,6 +154,7 @@ const {
 import './../../parts/Tooltip.js';
 import ControlPoint from './../ControlPoint.js';
 import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -262,7 +262,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
 
             box = point.mock ?
                 point.toAnchor() :
-                H.Tooltip.prototype.getAnchor.call({
+                Tooltip.prototype.getAnchor.call({
                     chart: point.series.chart
                 }, point),
 

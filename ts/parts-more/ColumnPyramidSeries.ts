@@ -43,11 +43,11 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     clamp,
-    pick
+    pick,
+    seriesType
 } = U;
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 var colProto = seriesTypes.column.prototype;
 

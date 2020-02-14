@@ -61,10 +61,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     error,
-    isArray
+    isArray,
+    seriesType
 } = U;
-
-var seriesType = H.seriesType;
 
 /**
  * The Volume Weighted Average Price (VWAP) series type.

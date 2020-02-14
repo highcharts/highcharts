@@ -17,6 +17,7 @@ import U from '../parts/Utilities.js';
 const {
     css,
     pick,
+    seriesType,
     wrap
 } = U;
 
@@ -141,7 +142,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType<Highcharts.OrganizationSeries>(
+seriesType<Highcharts.OrganizationSeries>(
     'organization',
     'sankey',
     /**

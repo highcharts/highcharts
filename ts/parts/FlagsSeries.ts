@@ -104,6 +104,7 @@ const {
     isNumber,
     merge,
     objectEach,
+    seriesType,
     wrap
 } = U;
 
@@ -114,7 +115,6 @@ import onSeriesMixin from '../mixins/on-series.js';
 var noop = H.noop,
     Renderer = H.Renderer,
     Series = H.Series,
-    seriesType = H.seriesType,
     SVGRenderer = H.SVGRenderer,
     TrackerMixin = H.TrackerMixin,
     VMLRenderer = H.VMLRenderer,

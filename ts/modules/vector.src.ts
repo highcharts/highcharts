@@ -16,7 +16,8 @@ import U from '../parts/Utilities.js';
 const {
     animObject,
     arrayMax,
-    pick
+    pick,
+    seriesType
 } = U;
 
 /**
@@ -63,8 +64,6 @@ declare global {
         type VectorRotationOriginValue = ('start'|'center'|'end');
     }
 }
-
-var seriesType = H.seriesType;
 
 /**
  * The vector series class.

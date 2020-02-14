@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var css = U.css, pick = U.pick, wrap = U.wrap;
+var css = U.css, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this
  * node's children will hang below their parent, allowing a tighter packing of
@@ -28,7 +28,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType('organization', 'sankey', 
+seriesType('organization', 'sankey', 
 /**
  * An organization chart is a diagram that shows the structure of an
  * organization and the relationships and relative ranks of its parts and

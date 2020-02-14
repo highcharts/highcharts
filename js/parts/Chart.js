@@ -102,13 +102,13 @@ import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
 import './Axis.js';
 import './Legend.js';
 import './Options.js';
 import './Pointer.js';
-var animate = H.animate, doc = H.doc, Axis = H.Axis, // @todo add as requirement
-defaultOptions = H.defaultOptions, charts = H.charts, find = H.find, Legend = H.Legend, // @todo add as requirement
+var doc = H.doc, Axis = H.Axis, // @todo add as requirement
+defaultOptions = H.defaultOptions, charts = H.charts, Legend = H.Legend, // @todo add as requirement
 marginNames = H.marginNames, seriesTypes = H.seriesTypes, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -933,10 +933,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         var chart = this, optionsChart = chart.options.chart, widthOption = optionsChart.width, heightOption = optionsChart.height, renderTo = chart.renderTo;
         // Get inner width and height
         if (!defined(widthOption)) {
-            chart.containerWidth = H.getStyle(renderTo, 'width');
+            chart.containerWidth = getStyle(renderTo, 'width');
         }
         if (!defined(heightOption)) {
-            chart.containerHeight = H.getStyle(renderTo, 'height');
+            chart.containerHeight = getStyle(renderTo, 'height');
         }
         /**
          * The current pixel width of the chart.
@@ -983,7 +983,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     node.hcOrigDetached = true;
                     doc.body.appendChild(node);
                 }
-                if (H.getStyle(node, 'display', false) === 'none' ||
+                if (getStyle(node, 'display', false) === 'none' ||
                     node.hcOricDetached) {
                     node.hcOrigStyle = {
                         display: node.style.display,
@@ -1050,7 +1050,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:afterGetContainer
      */
     getContainer: function () {
-        var chart = this, container, options = chart.options, optionsChart = options.chart, chartWidth, chartHeight, renderTo = chart.renderTo, indexAttrName = 'data-highcharts-chart', oldChartIndex, Ren, containerId = H.uniqueKey(), containerStyle, key;
+        var chart = this, container, options = chart.options, optionsChart = options.chart, chartWidth, chartHeight, renderTo = chart.renderTo, indexAttrName = 'data-highcharts-chart', oldChartIndex, Ren, containerId = uniqueKey(), containerStyle, key;
         if (!renderTo) {
             chart.renderTo = renderTo =
                 optionsChart.renderTo;
@@ -1227,7 +1227,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     reflow: function (e) {
         var chart = this, optionsChart = chart.options.chart, renderTo = chart.renderTo, hasUserSize = (defined(optionsChart.width) &&
-            defined(optionsChart.height)), width = optionsChart.width || H.getStyle(renderTo, 'width'), height = optionsChart.height || H.getStyle(renderTo, 'height'), target = e ? e.target : win;
+            defined(optionsChart.height)), width = optionsChart.width || getStyle(renderTo, 'width'), height = optionsChart.height || getStyle(renderTo, 'height'), target = e ? e.target : win;
         // Width and height checks for display:none. Target is doc in IE8 and
         // Opera, win in Firefox, Chrome and IE9.
         if (!hasUserSize &&

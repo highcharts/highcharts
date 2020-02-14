@@ -60,7 +60,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    merge
+    merge,
+    seriesType
 } = U;
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
@@ -76,7 +77,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.PCIndicator>(
+seriesType<Highcharts.PCIndicator>(
     'pc',
     'sma',
     /**

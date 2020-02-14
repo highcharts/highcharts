@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var error = U.error, merge = U.merge, pick = U.pick;
+var error = U.error, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
 /**
  * A set of options for the Instrument class.
  *
@@ -141,7 +141,7 @@ Instrument.prototype.init = function (options) {
         return;
     }
     this.options = merge(defaultOptions, options);
-    this.id = this.options.id = options && options.id || H.uniqueKey();
+    this.id = this.options.id = options && options.id || uniqueKey();
     // Init the audio nodes
     var ctx = H.audioContext;
     this.gainNode = ctx.createGain();

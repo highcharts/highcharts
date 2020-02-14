@@ -17,7 +17,8 @@ import U from '../../parts/Utilities.js';
 const {
     error,
     merge,
-    pick
+    pick,
+    uniqueKey
 } = U;
 
 /**
@@ -128,7 +129,7 @@ Earcon.prototype.init = function (
 ): void {
     this.options = options;
     if (!this.options.id) {
-        this.options.id = this.id = H.uniqueKey();
+        this.options.id = this.id = uniqueKey();
     }
     this.instrumentsPlaying = {};
 };

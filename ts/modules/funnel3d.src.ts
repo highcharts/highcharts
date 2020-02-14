@@ -99,14 +99,14 @@ const {
     extend,
     merge,
     pick,
-    relativeLength
+    relativeLength,
+    seriesType
 } = U;
 
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
 
 var charts = H.charts,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     // Use H.Renderer instead of H.SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,

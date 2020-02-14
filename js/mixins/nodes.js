@@ -5,7 +5,7 @@
  * */
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, pick = U.pick;
+var defined = U.defined, extend = U.extend, find = U.find, pick = U.pick;
 var Point = H.Point;
 H.NodesMixin = {
     /* eslint-disable valid-jsdoc */
@@ -19,7 +19,7 @@ H.NodesMixin = {
          * @private
          */
         function findById(nodes, id) {
-            return H.find(nodes, function (node) {
+            return find(nodes, function (node) {
                 return node.id === id;
             });
         }

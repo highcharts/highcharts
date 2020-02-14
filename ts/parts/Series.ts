@@ -702,6 +702,7 @@ const {
     erase,
     error,
     extend,
+    find,
     fireEvent,
     getNestedProperty,
     isArray,
@@ -712,6 +713,7 @@ const {
     objectEach,
     pick,
     removeEvent,
+    seriesType,
     splat,
     syncTimeout
 } = U;
@@ -792,7 +794,7 @@ var defaultOptions = H.defaultOptions,
  *
  * @augments Highcharts.Series
  */
-H.Series = H.seriesType<Highcharts.LineSeries>(
+H.Series = seriesType<Highcharts.LineSeries>(
     'line',
 
     /**
@@ -3436,7 +3438,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
         },
 
         /**
-         * Chech whether the series item is itself or inherits from a certain
+         * Check whether the series item is itself or inherits from a certain
          * series type.
          *
          * @function Highcharts.Series#is
@@ -4009,7 +4011,7 @@ H.Series = H.seriesType<Highcharts.LineSeries>(
                 matchKey = (dataSorting && dataSorting.matchByName) ?
                     'name' : 'index';
 
-                matchingPoint = H.find(oldData, function (
+                matchingPoint = find(oldData, function (
                     oldPoint: Highcharts.Point
                 ): boolean {
                     return !oldPoint.touched && (oldPoint as any)[matchKey] ===

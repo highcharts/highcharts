@@ -195,6 +195,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    find,
     isArray,
     isNumber,
     merge,
@@ -202,21 +203,22 @@ const {
     removeEvent,
     splat
 } = U;
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
+import Scrollbar from './Scrollbar.js';
 
-import './Color.js';
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
-import './Scrollbar.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    color = H.color,
     defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
-    Scrollbar = H.Scrollbar,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
 
@@ -2166,7 +2168,7 @@ Navigator.prototype = {
             chart.options && (chart.options.navigator as any).baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
-                (H.find(chart.series, function (s: Highcharts.Series): boolean {
+                (find(chart.series, function (s: Highcharts.Series): boolean {
                     return !s.options.isInternal;
                 }) as any).index :
                 0

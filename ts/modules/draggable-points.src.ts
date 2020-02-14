@@ -2088,7 +2088,7 @@ function updatePoints(
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,
         animOptions = animate === false ? false : merge({
-            duration: 400 // 400 is the default in H.animate
+            duration: 400 // 400 is the default in animate
         }, (chart.options.chart as any).animation);
 
     chart.isDragDropAnimating = true;

@@ -51,6 +51,7 @@ const SOURCE_GLOBS = [
     'js/modules/drilldown.src.js',
     'js/modules/exporting.src.js',
     'js/modules/export-data.src.js',
+    'js/modules/full-screen.src.js',
     'js/modules/marker-clusters.src.js',
     'js/modules/networkgraph/*.js',
     'js/modules/offline-exporting.src.js',

@@ -86,6 +86,7 @@ const {
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
 import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -441,7 +442,7 @@ merge(
             if (showItem) {
 
                 if (itemOptions.distance) {
-                    itemPosition = H.Tooltip.prototype.getPosition.call(
+                    itemPosition = Tooltip.prototype.getPosition.call(
                         {
                             chart: chart,
                             distance: pick(itemOptions.distance, 16)

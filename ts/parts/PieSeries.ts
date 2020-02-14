@@ -130,6 +130,7 @@ const {
     merge,
     pick,
     relativeLength,
+    seriesType,
     setAnimation
 } = U;
 
@@ -146,7 +147,6 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     noop = H.noop,
     Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**
@@ -1611,7 +1611,7 @@ seriesType<Highcharts.PieSeries>(
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting, step
  * @product   highcharts
  * @apioption series.pie
  */

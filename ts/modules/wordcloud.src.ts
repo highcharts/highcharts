@@ -133,10 +133,12 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
+    find,
     isArray,
     isNumber,
     isObject,
-    merge
+    merge,
+    seriesType
 } = U;
 
 import drawPoint from '../mixins/draw-point.js';
@@ -144,7 +146,6 @@ import polygon from '../mixins/polygon.js';
 import '../parts/Series.js';
 
 var noop = H.noop,
-    find = H.find,
     getBoundingBoxFromPolygon = polygon.getBoundingBoxFromPolygon,
     getPolygon = polygon.getPolygon,
     isPolygonsColliding = polygon.isPolygonsColliding,
@@ -982,13 +983,24 @@ var wordCloudSeries: Partial<Highcharts.WordcloudSeries> = {
                 return p.weight;
             }),
             maxWeight = Math.max.apply(null, weights),
-            data = series.points.sort(function (
+            // concat() prevents from sorting the original array.
+            data = series.points.concat().sort(function (
                 a: Highcharts.WordcloudPoint,
                 b: Highcharts.WordcloudPoint
             ): number {
                 return b.weight - a.weight; // Sort descending
             }),
             field: Highcharts.WordcloudFieldObject;
+
+        // Reset the scale before finding the dimensions (#11993).
+        // SVGGRaphicsElement.getBBox() (used in SVGElement.getBBox(boolean))
+        // returns slightly different values for the same element depending on
+        // whether it is rendered in a group which has already defined scale
+        // (e.g. 6) or in the group without a scale (scale = 1).
+        series.group.attr({
+            scaleX: 1,
+            scaleY: 1
+        });
 
         // Get the dimensions for each word.
         // Used in calculating the playing field.
@@ -1298,7 +1310,7 @@ var wordCloudPoint: Partial<Highcharts.WordcloudPoint> = {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.WordcloudSeries>(
+seriesType<Highcharts.WordcloudSeries>(
     'wordcloud',
     'column',
     wordCloudOptions,

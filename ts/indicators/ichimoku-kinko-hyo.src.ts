@@ -114,11 +114,11 @@ const {
     defined,
     isArray,
     merge,
-    objectEach
+    objectEach,
+    seriesType
 } = U;
 
 var UNDEFINED: undefined,
-    seriesType = H.seriesType,
     SMA = H.seriesTypes.sma;
 
 /* eslint-disable require-jsdoc */

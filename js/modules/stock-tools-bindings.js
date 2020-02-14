@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
 var fireEvent = H.fireEvent, bindingsUtils = H.NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -153,11 +153,11 @@ bindingsUtils.manageIndicators = function (data) {
         }
     }
     else {
-        seriesConfig.id = H.uniqueKey();
+        seriesConfig.id = uniqueKey();
         navigation.fieldsToOptions(data.fields, seriesConfig);
         if (indicatorsWithAxes.indexOf(data.type) >= 0) {
             yAxis = chart.addAxis({
-                id: H.uniqueKey(),
+                id: uniqueKey(),
                 offset: 0,
                 opposite: true,
                 title: {
@@ -1555,8 +1555,6 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
-            var chart = this.chart;
-            chart.fullScreen = new H.FullScreen(chart.container);
             fireEvent(this, 'deselectButton', { button: button });
         }
     },

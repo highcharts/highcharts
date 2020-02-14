@@ -46,7 +46,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    isArray,
+    seriesType
+} = U;
 
 /* eslint-disable require-jsdoc */
 
@@ -65,7 +68,7 @@ function toFixed(a: number, n: number): number {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.RSIIndicator>(
+seriesType<Highcharts.RSIIndicator>(
     'rsi',
     'sma',
     /**

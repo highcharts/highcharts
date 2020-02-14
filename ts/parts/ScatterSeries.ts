@@ -52,14 +52,14 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    addEvent
+    addEvent,
+    seriesType
 } = U;
 
 import './Options.js';
 import './Series.js';
 
-var Series = H.Series,
-    seriesType = H.seriesType;
+var Series = H.Series;
 
 /**
  * Scatter series type.

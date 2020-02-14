@@ -333,18 +333,100 @@ QUnit.test('positioning', assert => {
         isInsideAxis(yAxis2, tooltip),
         'Should have Series 2 tooltip anchorY aligned within yAxis when point is inside plot area'
     );
+});
 
-    // Test tooltip position when point is below plot area
-    series1.points[2].onMouseOver();
-    assert.ok(
-        isInsideAxis(yAxis2, tooltip),
-        'Should have Series 2 tooltip anchorY aligned within yAxis when point is below plot area'
+QUnit.test('Split tooltip, horizontal scrollable plot area', assert => {
+    const container = document.getElementById('container');
+    const originalContainerWidth = container.style.width;
+
+    container.style.width = '400px';
+    try {
+        const chart = Highcharts.chart('container', {
+            chart: {
+                scrollablePlotArea: {
+                    minWidth: 700,
+                    scrollPositionX: 1
+                }
+            },
+            tooltip: {
+                split: true
+            },
+            yAxis: {
+                min: 0,
+                max: 10
+            },
+            series: [{
+                data: [1, 2, 3, 4, 5, 6, 17, 8, 9]
+            }, {
+                data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
+            }]
+        });
+        let bBox;
+
+        // Open tooltip
+        chart.series[0].points[8].onMouseOver();
+
+        bBox = chart.series[0].tt.element.getBoundingClientRect();
+        assert.ok(
+            bBox.x + bBox.width < 400,
+            'The tooltip should be inside the chart area'
+        );
+
+
+        chart.series[0].points[4].onMouseOver();
+        bBox = chart.series[0].tt.element.getBoundingClientRect();
+        assert.ok(
+            bBox.x > 0,
+            'The left-aligned tooltip should be inside the chart area'
+        );
+
+
+        chart.series[1].points[6].onMouseOver();
+        assert.strictEqual(
+            chart.series[0].tt,
+            undefined,
+            'When a point is outside the plot height, its tooltip should not show'
+        );
+
+
+    } finally {
+        container.style.width = originalContainerWidth;
+    }
+});
+
+QUnit.test('Split tooltip, vertical scrollable plot area', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            scrollablePlotArea: {
+                minHeight: 700,
+                scrollPositionY: 1
+            }
+        },
+        tooltip: {
+            split: true
+        },
+        yAxis: {
+            min: 0,
+            max: 10
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5, 6, 17, 8, 9]
+        }, {
+            data: [9, 8, 7, 6, 5, 4, 3, 2, 1]
+        }]
+    });
+
+    // Open tooltip
+    chart.series[1].points[8].onMouseOver();
+
+    assert.strictEqual(
+        chart.series[0].tt,
+        undefined,
+        'The tooltip is outside the visible area and should be hidden'
     );
-
-    // Test tooltip position when point is above plot area
-    series1.points[4].onMouseOver();
-    assert.ok(
-        isInsideAxis(yAxis2, tooltip),
-        'Should have Series 2 tooltip anchorY aligned within yAxis when point is above plot area'
+    assert.notEqual(
+        chart.series[1].tt,
+        undefined,
+        'The tooltip is inside the visible area and should be visible'
     );
 });

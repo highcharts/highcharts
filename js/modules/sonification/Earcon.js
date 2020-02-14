@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var error = U.error, merge = U.merge, pick = U.pick;
+var error = U.error, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
 /**
  * Define an Instrument and the options for playing it.
  *
@@ -82,7 +82,7 @@ function Earcon(options) {
 Earcon.prototype.init = function (options) {
     this.options = options;
     if (!this.options.id) {
-        this.options.id = this.id = H.uniqueKey();
+        this.options.id = this.id = uniqueKey();
     }
     this.instrumentsPlaying = {};
 };

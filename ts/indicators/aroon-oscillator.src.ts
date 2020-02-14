@@ -59,7 +59,8 @@ import multipleLinesMixin from '../mixins/multipe-lines.js';
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 import U from '../parts/Utilities.js';
 const {
-    merge
+    merge,
+    seriesType
 } = U;
 
 var AROON = H.seriesTypes.aroon,
@@ -74,7 +75,7 @@ var AROON = H.seriesTypes.aroon,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.AroonOscillatorIndicator>(
+seriesType<Highcharts.AroonOscillatorIndicator>(
     'aroonoscillator',
     'aroon',
     /**

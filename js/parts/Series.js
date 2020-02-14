@@ -228,7 +228,7 @@ import H from './Globals.js';
 import pointModule from './Point.js';
 var Point = pointModule.Point;
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
 import './Legend.js';
 import './Point.js';
@@ -299,7 +299,7 @@ seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 *
 * @augments Highcharts.Series
 */
-H.Series = H.seriesType('line', 
+H.Series = seriesType('line', 
 /**
  * Series options for specific data and the data itself. In TypeScript you
  * have to cast the series options to specific series types, to get all
@@ -2731,7 +2731,7 @@ null,
         fireEvent(this, 'afterInit');
     },
     /**
-     * Chech whether the series item is itself or inherits from a certain
+     * Check whether the series item is itself or inherits from a certain
      * series type.
      *
      * @function Highcharts.Series#is
@@ -3133,7 +3133,7 @@ null,
         else if (this.linkedParent || this.enabledDataSorting) {
             matchKey = (dataSorting && dataSorting.matchByName) ?
                 'name' : 'index';
-            matchingPoint = H.find(oldData, function (oldPoint) {
+            matchingPoint = find(oldData, function (oldPoint) {
                 return !oldPoint.touched && oldPoint[matchKey] ===
                     optionsObject[matchKey];
             });

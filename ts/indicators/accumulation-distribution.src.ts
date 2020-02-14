@@ -48,10 +48,9 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    error
+    error,
+    seriesType
 } = U;
-
-var seriesType = H.seriesType;
 
 /* eslint-disable valid-jsdoc */
 // Utils:

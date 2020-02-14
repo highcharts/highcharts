@@ -107,7 +107,8 @@ const {
     extend,
     isNumber,
     pick,
-    pInt
+    pInt,
+    seriesType
 } = U;
 
 import '../parts/Axis.js';
@@ -122,7 +123,6 @@ var Axis = H.Axis,
     noop = H.noop,
     Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 

@@ -47,11 +47,11 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    merge
+    merge,
+    seriesType
 } = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

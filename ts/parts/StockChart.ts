@@ -67,6 +67,7 @@ const {
     clamp,
     defined,
     extend,
+    find,
     format,
     isNumber,
     isString,
@@ -513,7 +514,7 @@ addEvent(Axis, 'getPlotLinePath', function (
             if (
                 uniqueAxes.indexOf(axis2) === -1 &&
                 // Do not draw on axis which overlap completely. #5424
-                !H.find(uniqueAxes, function (
+                !find(uniqueAxes, function (
                     unique: Highcharts.Axis
                 ): boolean {
                     return unique.pos === axis2.pos && unique.len === axis2.len;

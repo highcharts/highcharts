@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var animObject = U.animObject;
+var animObject = U.animObject, seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 var base = H.seriesTypes.sankey.prototype;
@@ -23,7 +23,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType('dependencywheel', 'sankey', 
+seriesType('dependencywheel', 'sankey', 
 /**
  * A dependency wheel chart is a type of flow diagram, where all nodes are
  * laid out in a circle, and the flow between the are drawn as link bands.

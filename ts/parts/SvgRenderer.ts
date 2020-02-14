@@ -812,6 +812,7 @@ const color = Color.parse;
 import U from './Utilities.js';
 const {
     addEvent,
+    animate,
     animObject,
     attr,
     createElement,
@@ -820,6 +821,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    inArray,
     isArray,
     isNumber,
     isObject,
@@ -829,12 +831,13 @@ const {
     pick,
     pInt,
     removeEvent,
-    splat
+    splat,
+    stop,
+    uniqueKey
 } = U;
 
 var SVGElement: Highcharts.SVGElement,
     SVGRenderer,
-    animate = H.animate,
     charts = H.charts,
     deg2rad = H.deg2rad,
     doc = H.doc,
@@ -843,7 +846,6 @@ var SVGElement: Highcharts.SVGElement,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     noop = H.noop,
-    stop = H.stop,
     svg = H.svg,
     SVG_NS = H.SVG_NS,
     symbolSizes = H.symbolSizes,
@@ -1089,7 +1091,7 @@ extend((
                 } else {
 
                     // Set the id and create the element
-                    gradAttr.id = id = H.uniqueKey();
+                    gradAttr.id = id = uniqueKey();
                     gradients[key as any] = gradientObject =
                         renderer.createElement(gradName)
                             .attr(gradAttr)
@@ -1408,7 +1410,7 @@ extend((
                 // Special handling of symbol attributes
                 if (
                     this.symbolName &&
-                    H.inArray(key, symbolCustomAttribs) !== -1
+                    inArray(key, symbolCustomAttribs) !== -1
                 ) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash as any);
@@ -3099,7 +3101,7 @@ extend((
             // Set ID for the path
             textPathId = path.element.getAttribute('id');
             if (!textPathId) {
-                path.element.setAttribute('id', textPathId = H.uniqueKey());
+                path.element.setAttribute('id', textPathId = uniqueKey());
             }
 
             // Change DOM structure, by placing <textPath> tag in <text>
@@ -5732,7 +5734,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var wrapper,
             // Add a hyphen at the end to avoid confusion in testing indexes
             // -1 and -10, -11 etc (#6550)
-            id = H.uniqueKey() + '-',
+            id = uniqueKey() + '-',
 
             clipPath = (this.createElement('clipPath').attr({
                 id: id

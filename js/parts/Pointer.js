@@ -94,10 +94,11 @@ import Highcharts from './Globals.js';
 * @type {Array<Highcharts.SelectDataObject>}
 */
 import U from './Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
-import './Tooltip.js';
-import './Color.js';
-var H = Highcharts, charts = H.charts, color = H.color, find = H.find, noop = H.noop, Tooltip = H.Tooltip;
+var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
+import Tooltip from './Tooltip.js';
+import Color from './Color.js';
+var color = Color.parse;
+var H = Highcharts, charts = H.charts, noop = H.noop;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one
@@ -490,10 +491,8 @@ var Pointer = /** @class */ (function () {
      *         The offset of the chart container within the page
      */
     Pointer.prototype.getChartPosition = function () {
-        var chart = this.chart;
-        var container = chart.scrollingContainer || chart.container;
         return (this.chartPosition ||
-            (this.chartPosition = offset(container)));
+            (this.chartPosition = offset(this.chart.container)));
     };
     /**
      * Get the click position in terms of axis values.
@@ -1355,7 +1354,7 @@ var Pointer = /** @class */ (function () {
         chart.axes.forEach(function drawAxisCrosshair(axis) {
             var snap = pick(axis.crosshair.snap, true), point = !snap ?
                 void 0 :
-                H.find(points, function (p) {
+                find(points, function (p) {
                     return p.series[axis.coll] === axis;
                 });
             // Axis has snapping crosshairs, and one of the hover points belongs

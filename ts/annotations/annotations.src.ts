@@ -254,6 +254,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    find,
     merge,
     pick,
     splat,
@@ -272,7 +273,6 @@ import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
 
 var fireEvent = H.fireEvent,
-    find = H.find,
     reduce = H.reduce,
     chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
 

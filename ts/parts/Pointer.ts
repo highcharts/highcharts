@@ -271,6 +271,7 @@ const {
     css,
     defined,
     extend,
+    find,
     fireEvent,
     isNumber,
     isObject,
@@ -280,15 +281,13 @@ const {
     splat
 } = U;
 
-import './Tooltip.js';
-import './Color.js';
+import Tooltip from './Tooltip.js';
+import Color from './Color.js';
+const color = Color.parse;
 
 var H = Highcharts,
     charts = H.charts,
-    color = H.color,
-    find = H.find,
-    noop = H.noop,
-    Tooltip = H.Tooltip;
+    noop = H.noop;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -872,11 +871,9 @@ class Pointer {
      *         The offset of the chart container within the page
      */
     public getChartPosition(): Highcharts.OffsetObject {
-        const { chart } = this;
-        const container = chart.scrollingContainer || chart.container;
         return (
             this.chartPosition ||
-            (this.chartPosition = offset(container))
+            (this.chartPosition = offset(this.chart.container))
         );
     }
 
@@ -2090,7 +2087,7 @@ class Pointer {
             var snap = pick((axis.crosshair as any).snap, true),
                 point = !snap ?
                     void 0 :
-                    H.find(points, function (p: Highcharts.Point): boolean {
+                    find(points, function (p: Highcharts.Point): boolean {
                         return (p.series as any)[axis.coll] === axis;
                     });
 

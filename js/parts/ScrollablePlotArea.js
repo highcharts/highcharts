@@ -19,7 +19,7 @@ WIP on vertical scrollable plot area (#9378). To do:
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick;
+var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick, stop = U.stop;
 var Chart = H.Chart;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
@@ -171,6 +171,7 @@ addEvent(Chart, 'render', function () {
  * @return {void}
  */
 Chart.prototype.setUpScrolling = function () {
+    var _this = this;
     var attribs = {
         WebkitOverflowScrolling: 'touch',
         overflowX: 'hidden',
@@ -186,6 +187,13 @@ Chart.prototype.setUpScrolling = function () {
     this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
     }, attribs, this.renderTo);
+    // On scroll, reset the chart position because it applies to the scrolled
+    // container
+    addEvent(this.scrollingContainer, 'scroll', function () {
+        if (_this.pointer) {
+            delete _this.pointer.chartPosition;
+        }
+    });
     this.innerContainer = createElement('div', {
         'className': 'highcharts-inner-container'
     }, null, this.scrollingContainer);
@@ -277,7 +285,7 @@ Chart.prototype.applyFixed = function () {
     // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0);
     scrollableHeight = this.chartHeight + (this.scrollablePixelsY || 0);
-    H.stop(this.container);
+    stop(this.container);
     this.container.style.width = scrollableWidth + 'px';
     this.container.style.height = scrollableHeight + 'px';
     this.renderer.boxWrapper.attr({

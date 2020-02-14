@@ -23,7 +23,7 @@ import H from '../parts/Globals.js';
 import Color from '../parts/Color.js';
 var color = Color.parse;
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, wrap = U.wrap;
+var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 var Renderer = H.Renderer, colorAxisMethods;
@@ -233,7 +233,7 @@ var solidGaugeOptions = {
     }
 };
 // The solidgauge series type
-H.seriesType('solidgauge', 'gauge', solidGaugeOptions, {
+seriesType('solidgauge', 'gauge', solidGaugeOptions, {
     drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).

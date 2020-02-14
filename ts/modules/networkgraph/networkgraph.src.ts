@@ -224,7 +224,8 @@ const {
     addEvent,
     css,
     defined,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../../parts/Options.js';
@@ -233,8 +234,7 @@ import './layouts.js';
 import './draggable-nodes.js';
 
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     Point = H.Point,
     Series = H.Series,
     dragNodesMixin = H.dragNodesMixin;

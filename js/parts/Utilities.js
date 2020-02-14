@@ -1422,7 +1422,7 @@ var format = H.format = function (str, ctx, chart) {
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-H.getMagnitude = function (num) {
+var getMagnitude = H.getMagnitude = function (num) {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 /**
@@ -1454,7 +1454,7 @@ H.getMagnitude = function (num) {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
+var normalizeTickInterval = H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
     var normalized, i, retInterval = interval;
     // round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, 1);
@@ -1851,7 +1851,7 @@ function getNestedProperty(path, obj) {
  * @return {number|string}
  *         The numeric value.
  */
-H.getStyle = function (el, prop, toInt) {
+var getStyle = H.getStyle = function (el, prop, toInt) {
     var style;
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1911,7 +1911,7 @@ H.getStyle = function (el, prop, toInt) {
  * @return {number}
  *         The index within the array, or -1 if not found.
  */
-H.inArray = function (item, arr, fromIndex) {
+var inArray = H.inArray = function (item, arr, fromIndex) {
     return arr.indexOf(item, fromIndex);
 };
 /* eslint-disable valid-jsdoc */
@@ -1931,7 +1931,7 @@ H.inArray = function (item, arr, fromIndex) {
  * @return {T|undefined}
  *         The value of the element.
  */
-H.find = Array.prototype.find ?
+var find = H.find = Array.prototype.find ?
     /* eslint-enable valid-jsdoc */
     function (arr, callback) {
         return arr.find(callback);
@@ -2002,7 +2002,7 @@ var offset = H.offset = function offset(el) {
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-H.stop = function (el, prop) {
+var stop = H.stop = function (el, prop) {
     var i = H.timers.length;
     // Remove timers related to this element (#4519)
     while (i--) {
@@ -2392,7 +2392,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
  *
  * @return {void}
  */
-H.animate = function (el, params, opt) {
+var animate = H.animate = function (el, params, opt) {
     var start, unit = '', end, fx, args;
     if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
@@ -2411,7 +2411,7 @@ H.animate = function (el, params, opt) {
     opt.curAnim = merge(params);
     objectEach(params, function (val, prop) {
         // Stop current running animation of this property
-        H.stop(el, prop);
+        stop(el, prop);
         fx = new Fx(el, opt, prop);
         end = null;
         if (prop === 'd') {
@@ -2424,7 +2424,7 @@ H.animate = function (el, params, opt) {
             start = el.attr(prop);
         }
         else {
-            start = parseFloat(H.getStyle(el, prop)) || 0;
+            start = parseFloat(getStyle(el, prop)) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }
@@ -2467,7 +2467,7 @@ H.animate = function (el, params, opt) {
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function (type, parent, options, props, pointProps) {
+var seriesType = H.seriesType = function (type, parent, options, props, pointProps) {
     var defaultOptions = H.getOptions(), seriesTypes = H.seriesTypes;
     // Merge the options
     defaultOptions.plotOptions[type] = merge(defaultOptions.plotOptions[parent], options);
@@ -2487,14 +2487,14 @@ H.seriesType = function (type, parent, options, props, pointProps) {
  * counter.
  *
  * @example
- * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
  * @return {string}
  *         A unique key.
  */
-H.uniqueKey = (function () {
+var uniqueKey = H.uniqueKey = (function () {
     var uniqueKeyHash = Math.random().toString(36).substring(2, 9), idCounter = 0;
     return function () {
         return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
@@ -2559,6 +2559,7 @@ if (win.jQuery) {
 var utilitiesModule = {
     Fx: Fx,
     addEvent: addEvent,
+    animate: animate,
     animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,
@@ -2575,9 +2576,13 @@ var utilitiesModule = {
     error: error,
     extend: extend,
     extendClass: extendClass,
+    find: find,
     fireEvent: fireEvent,
     format: format,
+    getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
+    getStyle: getStyle,
+    inArray: inArray,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
@@ -2586,6 +2591,7 @@ var utilitiesModule = {
     isObject: isObject,
     isString: isString,
     merge: merge,
+    normalizeTickInterval: normalizeTickInterval,
     numberFormat: numberFormat,
     objectEach: objectEach,
     offset: offset,
@@ -2594,11 +2600,14 @@ var utilitiesModule = {
     pInt: pInt,
     relativeLength: relativeLength,
     removeEvent: removeEvent,
+    seriesType: seriesType,
     setAnimation: setAnimation,
     splat: splat,
     stableSort: stableSort,
+    stop: stop,
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
+    uniqueKey: uniqueKey,
     wrap: wrap
 };
 export default utilitiesModule;

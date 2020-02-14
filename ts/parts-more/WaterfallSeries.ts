@@ -110,7 +110,8 @@ const {
     correctFloat,
     isNumber,
     objectEach,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -122,7 +123,6 @@ var Axis = H.Axis,
     Point = H.Point,
     Series = H.Series,
     StackItem = H.StackItem,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

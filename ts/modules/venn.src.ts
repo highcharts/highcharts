@@ -156,14 +156,14 @@ const {
     isNumber,
     isObject,
     isString,
-    merge
+    merge,
+    seriesType
 } = U;
 
 import '../parts/Series.js';
 
 var getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 var objectValues = function objectValues<T>(
@@ -1131,6 +1131,9 @@ var vennOptions: Highcharts.VennSeriesOptions = {
             color: '${palette.neutralColor20}',
             borderColor: '${palette.neutralColor100}',
             animation: false
+        },
+        inactive: {
+            opacity: 0.075
         }
     },
     tooltip: {

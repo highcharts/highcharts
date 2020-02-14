@@ -65,7 +65,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isArray,
-    merge
+    merge,
+    seriesType
 } = U;
 
 import reduceArrayMixin from '../mixins/reduce-array.js';
@@ -83,7 +84,7 @@ var SMA = H.seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.StochasticIndicator>(
+seriesType<Highcharts.StochasticIndicator>(
     'stochastic',
     'sma',
     /**

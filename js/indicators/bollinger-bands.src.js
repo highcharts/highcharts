@@ -8,7 +8,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, merge = U.merge;
+var isArray = U.isArray, merge = U.merge, seriesType = U.seriesType;
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 var SMA = H.seriesTypes.sma;
 /* eslint-disable valid-jsdoc */
@@ -36,7 +36,7 @@ function getStandardDeviation(arr, index, isOHLC, mean) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('bb', 'sma', 
+seriesType('bb', 'sma', 
 /**
  * Bollinger bands (BB). This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js` file.

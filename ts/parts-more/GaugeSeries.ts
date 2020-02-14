@@ -91,7 +91,8 @@ const {
     isNumber,
     merge,
     pick,
-    pInt
+    pInt,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -101,7 +102,6 @@ import '../parts/Interaction.js';
 
 var noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     TrackerMixin = H.TrackerMixin;
 
 /**

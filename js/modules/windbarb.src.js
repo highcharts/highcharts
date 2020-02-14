@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick;
+var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType;
 import onSeriesMixin from '../mixins/on-series.js';
-var noop = H.noop, seriesType = H.seriesType;
+var noop = H.noop;
 // eslint-disable-next-line valid-jsdoc
 /**
  * Once off, register the windbarb approximation for data grouping. This can be

@@ -164,7 +164,8 @@ extend(Pane.prototype, {
         center: ['50%', '50%'],
         /**
          * The size of the pane, either as a number defining pixels, or a
-         * percentage defining a percentage of the plot are.
+         * percentage defining a percentage of the available plot area (the
+         * smallest of the plot height or plot width).
          *
          * @sample {highcharts} highcharts/demo/gauge-vu-meter/
          *         Smaller size
@@ -173,6 +174,17 @@ extend(Pane.prototype, {
          * @product highcharts
          */
         size: '85%',
+        /**
+         * The inner size of the pane, either as a number defining pixels, or a
+         * percentage defining a percentage of the pane's size.
+         *
+         * @sample {highcharts} highcharts/series-polar/column-inverted-inner
+         *         The inner size set to 20%
+         *
+         * @type    {number|string}
+         * @product highcharts
+         */
+        innerSize: '0%',
         /**
          * The start angle of the polar X axis or gauge axis, given in degrees
          * where 0 is north. Defaults to 0.

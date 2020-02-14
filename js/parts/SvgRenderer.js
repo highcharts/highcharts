@@ -375,8 +375,8 @@ import H from './Globals.js';
 import Color from './Color.js';
 var color = Color.parse;
 import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat;
-var SVGElement, SVGRenderer, animate = H.animate, charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, stop = H.stop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
+var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, inArray = U.inArray, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, uniqueKey = U.uniqueKey;
+var SVGElement, SVGRenderer, charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
  * rendering layer of Highcharts. Combined with the {@link
@@ -563,7 +563,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 }
                 else {
                     // Set the id and create the element
-                    gradAttr.id = id = H.uniqueKey();
+                    gradAttr.id = id = uniqueKey();
                     gradients[key] = gradientObject =
                         renderer.createElement(gradName)
                             .attr(gradAttr)
@@ -812,7 +812,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 }
                 // Special handling of symbol attributes
                 if (this.symbolName &&
-                    H.inArray(key, symbolCustomAttribs) !== -1) {
+                    inArray(key, symbolCustomAttribs) !== -1) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash);
                         hasSetSymbolSize = true;
@@ -2082,7 +2082,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             // Set ID for the path
             textPathId = path.element.getAttribute('id');
             if (!textPathId) {
-                path.element.setAttribute('id', textPathId = H.uniqueKey());
+                path.element.setAttribute('id', textPathId = uniqueKey());
             }
             // Change DOM structure, by placing <textPath> tag in <text>
             if (firstTime) {
@@ -3976,7 +3976,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var wrapper, 
         // Add a hyphen at the end to avoid confusion in testing indexes
         // -1 and -10, -11 etc (#6550)
-        id = H.uniqueKey() + '-', clipPath = this.createElement('clipPath').attr({
+        id = uniqueKey() + '-', clipPath = this.createElement('clipPath').attr({
             id: id
         }).add(this.defs);
         wrapper = this.rect(x, y, width, height, 0).add(clipPath);

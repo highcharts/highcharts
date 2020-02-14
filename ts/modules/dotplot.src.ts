@@ -54,12 +54,11 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     objectEach,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Series.js';
-
-var seriesType = H.seriesType;
 
 /**
  * @private
