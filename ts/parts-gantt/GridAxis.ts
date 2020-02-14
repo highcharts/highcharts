@@ -268,7 +268,7 @@ H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
 
     const firstThursday = new this.Date((this.get as any)('FullYear', thursday), 0, 1);
 
-    if (firstThursday.getDay() !== 4) {
+    if ((this.get as any)('Day', firstThursday) !== 4) {
         (this.set as any)('Month', d, 0);
         (this.set as any)('Date', d, 1 + (11 - (this.get as any)('Day', firstThursday)) % 7);
     }
