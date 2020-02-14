@@ -22,8 +22,7 @@ import H from '../parts/Globals.js';
 */
 import Color from '../parts/Color.js';
 var color = Color.parse;
-import L from '../parts/Legend.js';
-var LegendSymbolMixin = L.LegendSymbolMixin;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
 import '../parts/Options.js';

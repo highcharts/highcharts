@@ -149,10 +149,7 @@ declare global {
  *        Event that occured.
  */
 
-import L from './Legend.js';
-const {
-    Legend
-} = L;
+import Legend from './Legend.js';
 import Point from './Point.js';
 import U from './Utilities.js';
 const {

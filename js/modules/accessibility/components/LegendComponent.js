@@ -11,8 +11,7 @@
  * */
 'use strict';
 import H from '../../../parts/Globals.js';
-import L from '../../../parts/Legend.js';
-var Legend = L.Legend;
+import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent;
 import AccessibilityComponent from '../AccessibilityComponent.js';

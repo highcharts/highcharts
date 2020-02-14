@@ -142,10 +142,7 @@ import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 
-import L from '../parts/Legend.js';
-const {
-    LegendSymbolMixin
-} = L;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {

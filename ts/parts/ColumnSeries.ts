@@ -113,10 +113,7 @@ import Color from './Color.js';
 const {
     parse: color
 } = Color;
-import L from './Legend.js';
-const {
-    LegendSymbolMixin
-} = L;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
 const {
     animObject,

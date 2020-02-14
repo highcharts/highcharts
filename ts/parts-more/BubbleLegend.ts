@@ -149,10 +149,7 @@ import Color from '../parts/Color.js';
 const {
     parse: color
 } = Color;
-import L from '../parts/Legend.js';
-const {
-    Legend
-} = L;
+import Legend from '../parts/Legend.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,

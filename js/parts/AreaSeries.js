@@ -11,8 +11,7 @@
 import H from './Globals.js';
 import Color from './Color.js';
 var color = Color.parse;
-import L from './Legend.js';
-var LegendSymbolMixin = L.LegendSymbolMixin;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
 var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import './Series.js';

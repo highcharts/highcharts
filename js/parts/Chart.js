@@ -98,8 +98,7 @@ import H from './Globals.js';
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-import L from './Legend.js';
-var Legend = L.Legend;
+import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';

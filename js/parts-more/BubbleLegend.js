@@ -29,8 +29,7 @@ import H from '../parts/Globals.js';
 ''; // detach doclets above
 import Color from '../parts/Color.js';
 var color = Color.parse;
-import L from '../parts/Legend.js';
-var Legend = L.Legend;
+import Legend from '../parts/Legend.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort, wrap = U.wrap;
 var Series = H.Series, Chart = H.Chart, noop = H.noop, setOptions = H.setOptions;

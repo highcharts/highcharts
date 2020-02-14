@@ -288,10 +288,7 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import L from './Legend.js';
-const {
-    Legend
-} = L;
+import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';
