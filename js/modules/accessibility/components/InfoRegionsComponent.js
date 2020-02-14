@@ -552,6 +552,13 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             rangeFrom: format('min'),
             rangeTo: format('max')
         });
+    },
+    /**
+     * Remove component traces
+     */
+    destroy: function () {
+        var _a;
+        (_a = this.announcer) === null || _a === void 0 ? void 0 : _a.destroy();
     }
 });
 export default InfoRegionsComponent;

@@ -982,6 +982,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 rangeTo: format('max')
             }
         );
+    },
+
+
+    /**
+     * Remove component traces
+     */
+    destroy: function (this: Highcharts.InfoRegionsComponent): void {
+        this.announcer?.destroy();
     }
 });
 
