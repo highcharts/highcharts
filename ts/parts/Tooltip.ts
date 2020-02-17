@@ -147,14 +147,8 @@ declare global {
             (
                 labelWidth: number,
                 labelHeight: number,
-                point: TooltipPositionerPointObject
+                point: Point
             ): PositionObject;
-        }
-        interface TooltipPositionerPointObject {
-            isHeader: boolean;
-            negative: boolean;
-            plotX: number;
-            plotY: number;
         }
         type TooltipShapeValue = ('callout'|'circle'|'square');
     }
@@ -225,7 +219,7 @@ declare global {
  * @param {number} labelHeight
  *        Height of the tooltip.
  *
- * @param {Highcharts.TooltipPositionerPointObject} point
+ * @param {Highcharts.Point} point
  *        Point information for positioning a tooltip.
  *
  * @return {Highcharts.PositionObject}
@@ -539,7 +533,7 @@ class Tooltip {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
             ret = [
-                mouseEvent.chartX - chart.plotLeft,
+                mouseEvent.chartX - plotLeft,
                 mouseEvent.chartY - plotTop
             ];
 
@@ -786,10 +780,8 @@ class Tooltip {
             }
 
             this.label
-                .on('mouseout', tooltip.unstickWithoutContact.bind(this))
-                .attr({
-                    zIndex: 8
-                })
+                .on('mouseout', this.unstickWithoutContact.bind(this))
+                .attr({ zIndex: 8 })
                 .add();
         }
 
@@ -1247,7 +1239,9 @@ class Tooltip {
             }, 32) as any;
 
         } else {
+
             this.stickOnContact();
+
         }
     }
 
@@ -1752,11 +1746,10 @@ class Tooltip {
     private stickOnContact(): void {
         const tooltip = this;
 
-        if (tooltip.stickOnContactTracker) {
-            tooltip.stickOnContactTracker = tooltip.stickOnContactTracker.destroy();
-        }
-
-        if (!tooltip.options.stickOnContact) {
+        if (tooltip.options.followPointer || !tooltip.options.stickOnContact) {
+            if (tooltip.stickOnContactTracker) {
+                tooltip.stickOnContactTracker.destroy();
+            }
             return;
         }
 
@@ -1770,39 +1763,24 @@ class Tooltip {
 
         // When the mouse pointer is between the anchor point and the label,
         // the label should stick.
-        const anchor = {
-            x: ((point.plotX || 0) + chart.plotLeft - label.translateX),
-            y: ((point.plotY || 0) + chart.plotTop - label.translateY)
-        };
+        const anchorPos = this.getAnchor(point);
         const labelBBox = label.getBBox();
 
-        // Combine tooltip and point shape
-        const stickTrackerX = Math.min(
-            anchor.x - 1,
-            0
-        );
-        const stickTrackerY = Math.min(
-            anchor.y - 1,
-            0
-        );
-        const stickTrackerWidth = Math.max(
-            anchor.x + 1,
-            labelBBox.width
-        );
-        const stickTrackerHeight = Math.max(
-            anchor.y + 1,
-            labelBBox.height
-        );
+        // Combine anchor and tooltip
+        const size: Highcharts.SizeObject = {
+            width: Math.max((anchorPos[0] + chart.plotLeft - label.translateX), labelBBox.width),
+            height: Math.max((anchorPos[1] + chart.plotTop - label.translateY), labelBBox.height)
+        };
 
-        tooltip.stickOnContactTracker = label.renderer
-            .rect(
-                stickTrackerX,
-                stickTrackerY,
-                stickTrackerWidth,
-                stickTrackerHeight
-            )
-            .attr({ fill: 'rgba(0,0,0,0)', zIndex: 1 })
-            .add(label);
+        if (!tooltip.stickOnContactTracker) {
+            tooltip.stickOnContactTracker = label.renderer
+                .rect(0, 0, size.height, size.width)
+                .attr({ fill: 'rgba(0,0,0,0)' })
+                .add(label);
+        } else {
+            tooltip.stickOnContactTracker.attr('width', size.width.toString());
+            tooltip.stickOnContactTracker.attr('height', size.height.toString());
+        }
     }
 
     /**
@@ -1897,11 +1875,15 @@ class Tooltip {
      * @function Highcharts.Tooltip#unstickWithoutContact
      */
     private unstickWithoutContact(e: Highcharts.PointerEventObject): void {
-        if (!this.options.stickOnContact) {
+        if (this.options.followPointer || !this.options.stickOnContact) {
+            if (this.stickOnContactTracker) {
+                this.stickOnContactTracker.destroy();
+            }
             return;
         }
 
         this.chart.pointer.onTrackerMouseOut(e);
+        this.chart.pointer.onContainerMouseMove(e);
     }
 
     /**
@@ -1939,7 +1921,7 @@ class Tooltip {
         // Needed for outside: true (#11688)
         const chartPosition = pointer.getChartPosition();
 
-        pos = ((this.options.positioner as any) || this.getPosition).call(
+        pos = (this.options.positioner || this.getPosition).call(
             this,
             label.width,
             label.height,
