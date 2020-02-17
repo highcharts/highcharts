@@ -56,7 +56,8 @@ function getChartAnnotationLabels(
  * @return {string} The text in the label.
  */
 function getLabelText(label: Highcharts.AnnotationLabelType): string {
-    return label.graphic?.text?.textStr || '';
+    const a11yDesc = label.options?.accessibility?.description;
+    return a11yDesc ? a11yDesc : label.graphic?.text?.textStr || '';
 }
 
 
@@ -68,6 +69,11 @@ function getLabelText(label: Highcharts.AnnotationLabelType): string {
  * @return {string} The description for the label.
  */
 function getAnnotationLabelDescription(label: Highcharts.AnnotationLabelType): string {
+    const a11yDesc = label.options?.accessibility?.description;
+    if (a11yDesc) {
+        return a11yDesc;
+    }
+
     const chart = label.chart;
     const labelText = getLabelText(label);
     const points = label.points as Array<Highcharts.AccessibilityPoint>;

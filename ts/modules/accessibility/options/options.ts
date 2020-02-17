@@ -18,6 +18,12 @@
  */
 declare global {
     namespace Highcharts {
+        interface AnnotationsAccessibilityOptionsObject {
+            description?: string;
+        }
+        interface AnnotationsLabelOptions {
+            accessibility?: AnnotationsAccessibilityOptionsObject;
+        }
         interface AccessibilityAnnouncementFormatter {
             (
                 updatedSeries: Array<Series>,
@@ -863,6 +869,24 @@ var options: DeepPartial<Highcharts.Options> = {
      * @type       {boolean}
      * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
+     */
+
+    /**
+     * Accessibility options for an annotation label.
+     *
+     * @declare    Highcharts.AnnotationLabelAccessibilityOptionsObject
+     * @since      next
+     * @requires   modules/accessibility
+     * @apioption  annotations.labelOptions.accessibility
+     */
+
+    /**
+     * Description of an annotation label for screen readers and other assistive
+     * technology.
+     *
+     * @type       {string}
+     * @since      next
+     * @apioption  annotations.labelOptions.accessibility.description
      */
 
     /**
