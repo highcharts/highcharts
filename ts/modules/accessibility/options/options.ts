@@ -122,7 +122,7 @@ declare global {
             accessibility?: PointAccessibilityOptionsObject;
         }
         interface ScreenReaderClickCallbackFunction {
-            (evt: MouseEvent): void;
+            (evt: MouseEvent, chart?: AccessibilityChart): void;
         }
         interface ScreenReaderFormatterCallbackFunction<T> {
             (context: T): string;

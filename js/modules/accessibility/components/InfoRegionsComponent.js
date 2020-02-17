@@ -382,7 +382,6 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     initSonifyButton: function (sonifyButtonId) {
         var _this = this;
-        var _a;
         var el = this.sonifyButton = getElement(sonifyButtonId);
         var chart = this.chart;
         var defaultHandler = function (e) {
@@ -406,8 +405,11 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             setElAttrs(el, {
                 tabindex: '-1'
             });
-            el.onclick = ((_a = chart.options.accessibility) === null || _a === void 0 ? void 0 : _a.screenReaderSection.onPlayAsSoundClick) ||
-                defaultHandler;
+            el.onclick = function (e) {
+                var _a;
+                var onPlayAsSoundClick = (_a = chart.options.accessibility) === null || _a === void 0 ? void 0 : _a.screenReaderSection.onPlayAsSoundClick;
+                (onPlayAsSoundClick || defaultHandler).call(this, e, chart);
+            };
         }
     },
     /**

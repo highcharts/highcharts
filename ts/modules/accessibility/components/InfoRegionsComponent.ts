@@ -741,9 +741,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 tabindex: '-1'
             });
 
-            el.onclick = chart.options.accessibility?.screenReaderSection
-                .onPlayAsSoundClick ||
-                defaultHandler;
+            el.onclick = function (e): void {
+                const onPlayAsSoundClick = chart.options.accessibility?.screenReaderSection
+                    .onPlayAsSoundClick;
+
+                (onPlayAsSoundClick || defaultHandler).call(
+                    this, e, chart as Highcharts.AccessibilityChart
+                );
+            };
         }
     },
 
