@@ -17,8 +17,6 @@ const {
     inArray
 } = U;
 
-import H from '../../../parts/Globals.js';
-
 import HTMLUtilities from '../utils/htmlUtilities.js';
 const {
     escapeStringForHTML,
