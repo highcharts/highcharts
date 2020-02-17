@@ -388,16 +388,6 @@ var Point = /** @class */ (function () {
          * @private
          */
         function destroyPoint() {
-            if (hoverPoints) {
-                point.setState();
-                erase(hoverPoints, point);
-                if (!hoverPoints.length) {
-                    chart.hoverPoints = null;
-                }
-            }
-            if (point === chart.hoverPoint) {
-                point.onMouseOut();
-            }
             // Remove all events and elements
             if (point.graphic || point.dataLabel || point.dataLabels) {
                 removeEvent(point);
@@ -409,6 +399,16 @@ var Point = /** @class */ (function () {
         }
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
+        }
+        if (hoverPoints) {
+            point.setState();
+            erase(hoverPoints, point);
+            if (!hoverPoints.length) {
+                chart.hoverPoints = null;
+            }
+        }
+        if (point === chart.hoverPoint) {
+            point.onMouseOut();
         }
         // Remove properties after animation
         if (!dataSorting || !dataSorting.enabled) {
