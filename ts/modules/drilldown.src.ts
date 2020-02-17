@@ -1010,8 +1010,9 @@ Chart.prototype.drillUp = function (): void {
 
 /* eslint-disable no-invalid-this */
 
-// Add update function to be called internally from Chart.update (#7600)
-Chart.prototype.callbacks.push(function (): void {
+// Add update function to be called internally from Chart.update
+// (#7600, #12855)
+addEvent(Chart, 'afterInit', function (): void {
     var chart = this;
 
     chart.drilldown = {

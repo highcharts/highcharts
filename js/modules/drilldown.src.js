@@ -695,8 +695,9 @@ Chart.prototype.drillUp = function () {
     fireEvent(chart, 'drillupall');
 };
 /* eslint-disable no-invalid-this */
-// Add update function to be called internally from Chart.update (#7600)
-Chart.prototype.callbacks.push(function () {
+// Add update function to be called internally from Chart.update
+// (#7600, #12855)
+addEvent(Chart, 'afterInit', function () {
     var chart = this;
     chart.drilldown = {
         update: function (options, redraw) {
