@@ -837,7 +837,7 @@ seriesType<Highcharts.ColumnSeries>(
 
                                 // If `stacking` is not enabled, look for the
                                 // index and total of the `group` stack.
-                                } else {
+                                } else if (H.isArray(pointValues)) {
                                     indexInCategory = pointValues[1];
                                     totalInCategory = total || 0;
                                 }
