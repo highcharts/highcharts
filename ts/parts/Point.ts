@@ -678,18 +678,6 @@ class Point {
          * @private
          */
         function destroyPoint(): void {
-            if (hoverPoints) {
-                point.setState();
-                erase(hoverPoints, point);
-                if (!hoverPoints.length) {
-                    chart.hoverPoints = null as any;
-                }
-
-            }
-            if (point === chart.hoverPoint) {
-                point.onMouseOut();
-            }
-
             // Remove all events and elements
             if (point.graphic || point.dataLabel || point.dataLabels) {
                 removeEvent(point);
@@ -703,6 +691,18 @@ class Point {
 
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
+        }
+
+        if (hoverPoints) {
+            point.setState();
+            erase(hoverPoints, point);
+            if (!hoverPoints.length) {
+                chart.hoverPoints = null as any;
+            }
+
+        }
+        if (point === chart.hoverPoint) {
+            point.onMouseOut();
         }
 
         // Remove properties after animation
