@@ -1962,76 +1962,6 @@ const wrap = H.wrap = function wrap(
     };
 };
 
-
-/**
- * Recursively converts all Date properties to timestamps.
- *
- * @private
- * @function Highcharts.datePropsToTimestamps
- *
- * @param {*} obj - any object to convert properties of
- *
- * @return {void}
- */
-H.datePropsToTimestamps = function (obj: any): void {
-    objectEach(obj, function (val: any, key: string): void {
-        if (isObject(val) && typeof val.getTime === 'function') {
-            obj[key] = val.getTime();
-        } else if (isObject(val) || isArray(val)) {
-            H.datePropsToTimestamps(val);
-        }
-    });
-};
-
-/**
- * Format a single variable. Similar to sprintf, without the % prefix.
- *
- * @example
- * formatSingle('.2f', 5); // => '5.00'.
- *
- * @function Highcharts.formatSingle
- *
- * @param {string} format
- *        The format string.
- *
- * @param {*} val
- *        The value.
- *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
- *
- * @return {string}
- *         The formatted representation of the value.
- */
-H.formatSingle = function (
-    format: string,
-    val: any,
-    chart?: Highcharts.Chart
-): string {
-    var floatRegex = /f$/,
-        decRegex = /\.([0-9])/,
-        lang = H.defaultOptions.lang,
-        decimals: number;
-    const time = chart && chart.time || H.time;
-    const numberFormatter = chart && chart.numberFormatter || numberFormat;
-
-    if (floatRegex.test(format)) { // float
-        decimals = format.match(decRegex) as any;
-        decimals = decimals ? (decimals as any)[1] : -1;
-        if (val !== null) {
-            val = numberFormatter(
-                val,
-                decimals,
-                (lang as any).decimalPoint,
-                format.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
-            );
-        }
-    } else {
-        val = time.dateFormat(format, val);
-    }
-    return val;
-};
-
 /**
  * Format a string according to a subset of the rules of Python's String.format
  * method.
@@ -2048,7 +1978,7 @@ H.formatSingle = function (
  * @param {string} str
  *        The string to format.
  *
- * @param {*} ctx
+ * @param {Record<string, *>} ctx
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
@@ -2066,6 +1996,11 @@ const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Ch
         ret = [],
         val,
         index;
+    const floatRegex = /f$/;
+    const decRegex = /\.([0-9])/;
+    const lang = H.defaultOptions.lang;
+    const time = chart && chart.time || H.time;
+    const numberFormatter = chart && chart.numberFormatter || numberFormat;
 
     while (str) {
         index = str.indexOf(splitter);
@@ -2080,13 +2015,27 @@ const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Ch
             val = getNestedProperty(valueAndFormat.shift() || '', ctx);
 
             // Format the replacement
-            if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
+            if (valueAndFormat.length && typeof val === 'number') {
+
+                segment = valueAndFormat.join(':');
+
+                if (floatRegex.test(segment)) { // float
+                    const decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    if (val !== null) {
+                        val = numberFormatter(
+                            val,
+                            decimals,
+                            (lang as any).decimalPoint,
+                            segment.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
+                        );
+                    }
+                } else {
+                    val = time.dateFormat(segment, val);
+                }
             }
 
             // Push the result and advance the cursor
             ret.push(val);
-
         } else {
             ret.push(segment);
 
