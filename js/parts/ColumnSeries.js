@@ -611,7 +611,7 @@ seriesType('column', 'line',
                             // If `stacking` is not enabled, look for the
                             // index and total of the `group` stack.
                         }
-                        else {
+                        else if (H.isArray(pointValues)) {
                             indexInCategory_1 = pointValues[1];
                             totalInCategory_1 = total || 0;
                         }
