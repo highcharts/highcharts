@@ -168,7 +168,7 @@ function addSparklineCell(tableRowElement, rowDefinition) {
 
     Highcharts.chart(sparklineContainer, Highcharts.merge(defaultChartOptions, {
         title: {
-            text: rowDefinition.trackTitle
+            text: rowDefinition.trackTitle + ' Chart'
         },
         accessibility: {
             description: rowDefinition.chartDescription
