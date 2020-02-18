@@ -285,7 +285,7 @@ var Tooltip = /** @class */ (function () {
      * @return {boolean}
      * True, if tooltip should stick under pointer.
      */
-    Tooltip.prototype.doStickOnContact = function () {
+    Tooltip.prototype.isStickyOnContact = function () {
         var options = this.options;
         return !!(!options.followPointer &&
             options.stickOnContact &&
@@ -778,7 +778,8 @@ var Tooltip = /** @class */ (function () {
          * not be too complicated to implement.
          */
         this.outside = pick(options.outside, Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY));
-        this.pointerEvents = ((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || (options.stickOnContact ? 'auto' : 'none');
+        this.pointerEvents = (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) ||
+            (!options.followPointer && options.stickOnContact ? 'auto' : 'none'));
     };
     /**
      * Moves the tooltip with a soft animation to a new position.

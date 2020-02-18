@@ -146,10 +146,9 @@ TrackerMixin = H.TrackerMixin = {
     drawTrackerGraph: function () {
         var series = this, options = series.options, trackByArea = options.trackByArea, trackerPath = [].concat(trackByArea ?
             series.areaPath :
-            series.graphPath), trackerPathLength = trackerPath.length, chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
-            var _a;
+            series.graphPath), trackerPathLength = trackerPath.length, chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function () {
             if (chart.hoverSeries !== series &&
-                !((_a = chart.tooltip) === null || _a === void 0 ? void 0 : _a.doStickOnContact())) {
+                (!chart.tooltip || !chart.tooltip.isStickyOnContact())) {
                 series.onMouseOver();
             }
         }, 

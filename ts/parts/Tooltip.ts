@@ -67,7 +67,6 @@ declare global {
                 tooltip: Tooltip
             ): (string|Array<string>);
             public destroy(): void;
-            public doStickOnContact(): boolean;
             public getAnchor(
                 points: (Point|Array<Point>),
                 mouseEvent?: PointerEventObject
@@ -91,6 +90,7 @@ declare global {
             ): string;
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
+            public isStickyOnContact(): boolean;
             public move(
                 x: number,
                 y: number,
@@ -509,7 +509,7 @@ class Tooltip {
      * @return {boolean}
      * True, if tooltip should stick under pointer.
      */
-    public doStickOnContact(): boolean {
+    public isStickyOnContact(): boolean {
         const options = this.options;
 
         return !!(
@@ -1169,7 +1169,10 @@ class Tooltip {
             Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
         );
 
-        this.pointerEvents = options.style?.pointerEvents || (options.stickOnContact ? 'auto' : 'none');
+        this.pointerEvents = (
+            options.style?.pointerEvents ||
+            (!options.followPointer && options.stickOnContact ? 'auto' : 'none')
+        );
     }
 
     /**
