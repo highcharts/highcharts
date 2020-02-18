@@ -296,7 +296,10 @@ TrackerMixin = H.TrackerMixin = {
             tracker = series.tracker,
             i,
             onMouseOver = function (e: Highcharts.PointerEventObject): void {
-                if (chart.hoverSeries !== series) {
+                if (
+                    chart.hoverSeries !== series &&
+                    !chart.tooltip?.doStickOnContact()
+                ) {
                     (series as any).onMouseOver();
                 }
             },

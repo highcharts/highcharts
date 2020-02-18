@@ -277,6 +277,21 @@ var Tooltip = /** @class */ (function () {
         U.clearTimeout(this.tooltipTimeout);
     };
     /**
+     * Returns true, if tooltip should stick under pointer.
+     *
+     * @private
+     * @function Highcharts.Tooltip#isStickOnContact
+     *
+     * @return {boolean}
+     * True, if tooltip should stick under pointer.
+     */
+    Tooltip.prototype.doStickOnContact = function () {
+        var options = this.options;
+        return !!(!options.followPointer &&
+            options.stickOnContact &&
+            this.inContact);
+    };
+    /**
      * Extendable method to get the anchor position of the tooltip
      * from a point or set of points
      *
@@ -399,7 +414,9 @@ var Tooltip = /** @class */ (function () {
      */
     Tooltip.prototype.getLabel = function () {
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = ('tooltip' +
-            (defined(options.className) ? ' ' + options.className : '')), container, set;
+            (defined(options.className) ? ' ' + options.className : '')), container, set, updateStickOnContact = function (e) {
+            tooltip.inContact = (e.type === 'mouseover');
+        };
         if (!this.label) {
             if (this.outside) {
                 /**
@@ -474,7 +491,8 @@ var Tooltip = /** @class */ (function () {
                 };
             }
             this.label
-                .on('mouseout', this.unstickWithoutContact.bind(this))
+                .on('mouseout', updateStickOnContact)
+                .on('mouseover', updateStickOnContact)
                 .attr({ zIndex: 8 })
                 .add();
         }
@@ -761,33 +779,6 @@ var Tooltip = /** @class */ (function () {
          */
         this.outside = pick(options.outside, Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY));
         this.pointerEvents = ((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) || (options.stickOnContact ? 'auto' : 'none');
-    };
-    /**
-     * Returns true, if pointer event is in contact with stick tooltip.
-     *
-     * @private
-     * @function Highcharts.Tooltip#isStickOnContact
-     *
-     * @param {Highcharts.PointerEventObject} e
-     * Pointer event to test.
-     *
-     * @return {boolean}
-     * True, if pointer is in contact with sticky tooltip.
-     */
-    Tooltip.prototype.isStickyOnContact = function (e) {
-        var stickOnContactTracker = this.stickOnContactTracker;
-        if (!this.options.stickOnContact ||
-            !stickOnContactTracker) {
-            return false;
-        }
-        var bBox = stickOnContactTracker.getBBox();
-        var bBoxOffset = offset(stickOnContactTracker.element);
-        var chart = this.chart;
-        bBox.x = bBoxOffset.left - chart.container.offsetLeft;
-        bBox.y = bBoxOffset.top - chart.container.offsetTop;
-        e = chart.pointer.normalize(e);
-        return (e.chartX >= bBox.x && e.chartX <= (bBox.x + bBox.width) &&
-            e.chartY >= bBox.y && e.chartY <= (bBox.y + bBox.height));
     };
     /**
      * Moves the tooltip with a soft animation to a new position.
@@ -1269,23 +1260,6 @@ var Tooltip = /** @class */ (function () {
             }, this.chart);
         });
         return evt.text;
-    };
-    /**
-     * If the `stickOnContact` option is active, this will trigger onMouseOut on
-     * the hovered series.
-     *
-     * @private
-     * @function Highcharts.Tooltip#unstickWithoutContact
-     */
-    Tooltip.prototype.unstickWithoutContact = function (e) {
-        if (this.options.followPointer || !this.options.stickOnContact) {
-            if (this.stickOnContactTracker) {
-                this.stickOnContactTracker.destroy();
-            }
-            return;
-        }
-        this.chart.pointer.onTrackerMouseOut(e);
-        this.chart.pointer.onContainerMouseMove(e);
     };
     /**
      * Updates the tooltip with the provided tooltip options.

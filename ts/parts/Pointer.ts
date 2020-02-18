@@ -801,7 +801,7 @@ class Pointer {
         if (
             hoverPoint &&
             tooltip &&
-            tooltip.isStickyOnContact(e)
+            tooltip.doStickOnContact()
         ) {
             return hoverPoint;
         }
@@ -1313,7 +1313,7 @@ class Pointer {
         if (
             chart &&
             (e.relatedTarget || e.toElement) &&
-            (!chart.tooltip || !chart.tooltip.isStickyOnContact(e))
+            (!chart.tooltip || !chart.tooltip.doStickOnContact())
         ) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
@@ -1361,7 +1361,7 @@ class Pointer {
         // Show the tooltip and run mouse over events (#977)
         if (
             !chart.openMenu &&
-            (!tooltip || !tooltip.isStickyOnContact(e)) &&
+            (!tooltip || !tooltip.doStickOnContact()) &&
             (
                 this.inClass(e.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
@@ -1440,7 +1440,7 @@ class Pointer {
                 e.chartY - chart.plotTop
             ) &&
             !this.inClass(e.target as any, 'highcharts-tracker') &&
-            (!tooltip || !tooltip.isStickyOnContact(e))
+            (!tooltip || !tooltip.doStickOnContact())
         ) {
             this.reset();
         }

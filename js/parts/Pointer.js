@@ -443,7 +443,7 @@ var Pointer = /** @class */ (function () {
         var tooltip = chart.tooltip;
         if (hoverPoint &&
             tooltip &&
-            tooltip.isStickyOnContact(e)) {
+            tooltip.doStickOnContact()) {
             return hoverPoint;
         }
         series.forEach(function (s) {
@@ -835,7 +835,7 @@ var Pointer = /** @class */ (function () {
         // #4886, MS Touch end fires mouseleave but with no related target
         if (chart &&
             (e.relatedTarget || e.toElement) &&
-            (!chart.tooltip || !chart.tooltip.isStickyOnContact(e))) {
+            (!chart.tooltip || !chart.tooltip.doStickOnContact())) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
@@ -873,7 +873,7 @@ var Pointer = /** @class */ (function () {
         }
         // Show the tooltip and run mouse over events (#977)
         if (!chart.openMenu &&
-            (!tooltip || !tooltip.isStickyOnContact(e)) &&
+            (!tooltip || !tooltip.doStickOnContact()) &&
             (this.inClass(e.target, 'highcharts-tracker') ||
                 chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop))) {
             this.runPointActions(e);
@@ -936,7 +936,7 @@ var Pointer = /** @class */ (function () {
         if (chartPosition &&
             !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) &&
             !this.inClass(e.target, 'highcharts-tracker') &&
-            (!tooltip || !tooltip.isStickyOnContact(e))) {
+            (!tooltip || !tooltip.doStickOnContact())) {
             this.reset();
         }
     };
