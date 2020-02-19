@@ -55,8 +55,7 @@ const {
     merge
 } = U;
 
-var each = H.each,
-    SMA = H.seriesTypes.sma;
+var SMA = H.seriesTypes.sma;
 
 /**
  * Mixin useful for all indicators that have more than one line.
@@ -122,8 +121,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
     ): Array<string> {
         var translatedLines: Array<string> = [];
 
-        each(
-            (this.pointArrayMap as any),
+        (this.pointArrayMap || []).forEach(
             function (propertyName: string): void {
                 if (propertyName !== excludedValue) {
                     translatedLines.push(
@@ -151,8 +149,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
     ): Array<number> {
         var pointColl: Array<number> = [];
 
-        each(
-            (this.pointArrayMap as any),
+        (this.pointArrayMap || []).forEach(
             function (propertyName: string): void {
                 pointColl.push((point as any)[propertyName]);
             }
@@ -176,8 +173,8 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
 
         SMA.prototype.translate.apply(indicator, arguments as any);
 
-        each(indicator.points, function (point: Highcharts.Point): void {
-            each(pointArrayMap, function (
+        indicator.points.forEach(function (point: Highcharts.Point): void {
+            pointArrayMap.forEach(function (
                 propertyName: string,
                 i: number
             ): void {
@@ -221,7 +218,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
 
 
         // Generate points for additional lines:
-        each(secondaryLinesNames, function (
+        secondaryLinesNames.forEach(function (
             plotLine: string,
             index: number
         ): void {
@@ -243,7 +240,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
         });
 
         // Modify options and generate additional lines:
-        each(linesApiNames, function (lineName: string, i: number): void {
+        linesApiNames.forEach(function (lineName: string, i: number): void {
             if (secondaryLines[i]) {
                 indicator.points = secondaryLines[i];
                 if ((mainLineOptions as any)[lineName]) {

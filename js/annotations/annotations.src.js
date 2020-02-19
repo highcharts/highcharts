@@ -21,7 +21,7 @@ import ControllableLabel from './controllable/ControllableLabel.js';
 import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var reduce = H.reduce, chartProto = H.Chart.prototype;
+var chartProto = H.Chart.prototype;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -736,7 +736,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         }
     },
     setClipAxes: function () {
-        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = reduce((this.options.labels || []).concat(this.options.shapes || []), function (axes, labelOrShape) {
+        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = (this.options.labels || [])
+            .concat(this.options.shapes || [])
+            .reduce(function (axes, labelOrShape) {
             return [
                 xAxes[labelOrShape &&
                     labelOrShape.point &&

@@ -17,7 +17,7 @@ import Color from '../../parts/Color.js';
 var color = Color.parse;
 import U from '../../parts/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-var win = H.win, doc = win.document, some = H.some;
+var win = H.win, doc = win.document;
 /* eslint-disable valid-jsdoc */
 /**
  * Main renderer. Used to render series.
@@ -217,11 +217,12 @@ function GLRenderer(postRenderCallback) {
                 options.gapSize;
         }
         if (zones) {
-            some(zones, function (zone) {
+            zones.some(function (zone) {
                 if (typeof zone.value === 'undefined') {
                     zoneDefColor = new Color(zone.color);
                     return true;
                 }
+                return false;
             });
             if (!zoneDefColor) {
                 zoneDefColor = ((series.pointAttribs && series.pointAttribs().fill) ||
@@ -507,7 +508,7 @@ function GLRenderer(postRenderCallback) {
             // Note: Boost requires that zones are sorted!
             if (zones) {
                 pcolor = zoneDefColor.rgba;
-                some(zones, function (// eslint-disable-line no-loop-func
+                zones.some(function (// eslint-disable-line no-loop-func
                 zone, i) {
                     var last = zones[i - 1];
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
@@ -516,6 +517,7 @@ function GLRenderer(postRenderCallback) {
                         }
                         return true;
                     }
+                    return false;
                 });
                 pcolor[0] /= 255.0;
                 pcolor[1] /= 255.0;
