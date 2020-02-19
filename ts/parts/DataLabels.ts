@@ -248,6 +248,7 @@ const {
     clamp,
     defined,
     extend,
+    fireEvent,
     format,
     isArray,
     merge,
@@ -566,7 +567,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         seriesDlOptions as any
     );
 
-    H.fireEvent(this, 'drawDataLabels');
+    fireEvent(this, 'drawDataLabels');
 
     if (
         isArray(seriesDlOptions) ||
@@ -835,7 +836,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         });
     }
 
-    H.fireEvent(this, 'afterDrawDataLabels');
+    fireEvent(this, 'afterDrawDataLabels');
 };
 
 /**

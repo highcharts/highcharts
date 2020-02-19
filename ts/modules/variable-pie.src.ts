@@ -68,14 +68,14 @@ const {
     arrayMax,
     arrayMin,
     clamp,
+    fireEvent,
     pick,
     seriesType
 } = U;
 
 import '../parts/Options.js';
 
-var fireEvent = H.fireEvent,
-    pieProto = H.seriesTypes.pie.prototype;
+var pieProto = H.seriesTypes.pie.prototype;
 
 /**
  * The variablepie series type.

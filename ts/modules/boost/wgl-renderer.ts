@@ -113,13 +113,13 @@ import U from '../../parts/Utilities.js';
 const {
     isNumber,
     merge,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 var win = H.win,
     doc = win.document,
-    some = H.some,
-    pick = H.pick;
+    some = H.some;
 
 /* eslint-disable valid-jsdoc */
 

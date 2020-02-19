@@ -19,6 +19,7 @@ const {
     defined,
     discardElement,
     extend,
+    fireEvent,
     format,
     isNumber,
     isString,
@@ -1334,7 +1335,7 @@ class Tooltip {
             tooltip.isHidden = false;
         }
 
-        H.fireEvent(this, 'refresh');
+        fireEvent(this, 'refresh');
     }
 
     /**
@@ -1731,7 +1732,7 @@ class Tooltip {
                 labelConfig: labelConfig
             } as Highcharts.Dictionary<any>;
 
-        H.fireEvent(this, 'headerFormatter', evt, function (
+        fireEvent(this, 'headerFormatter', evt, function (
             this: Highcharts.Tooltip,
             e: Highcharts.Dictionary<any>
         ): void {

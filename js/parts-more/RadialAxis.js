@@ -11,7 +11,7 @@
 import H from '../parts/Globals.js';
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
 import '../parts/Axis.js';
 import './Pane.js';
 var Axis = H.Axis, noop = H.noop, 
@@ -139,7 +139,7 @@ radialAxisMixin = {
         if (!options.plotBands) {
             options.plotBands = [];
         }
-        H.fireEvent(this, 'afterSetOptions');
+        fireEvent(this, 'afterSetOptions');
     },
     /**
      * Wrap the getOffset method to return zero offset for title or labels in a

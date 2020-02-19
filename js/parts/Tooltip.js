@@ -10,7 +10,7 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
+var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -913,7 +913,7 @@ var Tooltip = /** @class */ (function () {
             }
             tooltip.isHidden = false;
         }
-        H.fireEvent(this, 'refresh');
+        fireEvent(this, 'refresh');
     };
     /**
      * Render the split tooltip. Loops over each point's text and adds
@@ -1180,7 +1180,7 @@ var Tooltip = /** @class */ (function () {
             isFooter: isFooter,
             labelConfig: labelConfig
         };
-        H.fireEvent(this, 'headerFormatter', evt, function (e) {
+        fireEvent(this, 'headerFormatter', evt, function (e) {
             // Guess the best date format based on the closest point distance
             // (#568, #3418)
             if (isDateTime && !xDateFormat) {

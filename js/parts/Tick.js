@@ -26,8 +26,8 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-var fireEvent = H.fireEvent, deg2rad = H.deg2rad;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Tick class.
@@ -486,7 +486,7 @@ var Tick = /** @class */ (function () {
         // the label is created on init - now move it into place
         this.renderLabel(xy, old, opacity, index);
         tick.isNew = false;
-        H.fireEvent(this, 'afterRender');
+        fireEvent(this, 'afterRender');
     };
     /**
      * Renders the gridLine.

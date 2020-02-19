@@ -821,6 +821,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    fireEvent,
     inArray,
     isArray,
     isNumber,
@@ -931,7 +932,7 @@ extend((
          */
         this.renderer = renderer;
 
-        H.fireEvent(this, 'afterInit');
+        fireEvent(this, 'afterInit');
     },
 
     /**
@@ -1029,7 +1030,7 @@ extend((
             key = [] as (string|Array<string>),
             value: string;
 
-        H.fireEvent(this.renderer, 'complexColor', {
+        fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function (): void {
             // Apply linear or radial gradients

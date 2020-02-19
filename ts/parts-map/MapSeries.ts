@@ -148,6 +148,7 @@ import './ColorMapSeriesMixin.js';
 import U from '../parts/Utilities.js';
 const {
     extend,
+    fireEvent,
     getNestedProperty,
     isArray,
     isNumber,
@@ -162,7 +163,6 @@ var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
     LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
-    fireEvent = H.fireEvent,
     Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;

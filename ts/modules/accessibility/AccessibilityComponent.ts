@@ -14,12 +14,12 @@
 
 import H from '../../parts/Globals.js';
 var win = H.win,
-    doc = win.document,
-    fireEvent = H.fireEvent;
+    doc = win.document;
 
 import U from '../../parts/Utilities.js';
 const {
     extend,
+    fireEvent,
     merge
 } = U;
 

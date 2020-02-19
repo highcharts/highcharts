@@ -156,6 +156,7 @@ const {
     correctFloat,
     defined,
     extend,
+    fireEvent,
     merge,
     pick,
     pInt,
@@ -313,7 +314,7 @@ radialAxisMixin = {
             options.plotBands = [];
         }
 
-        H.fireEvent(this, 'afterSetOptions');
+        fireEvent(this, 'afterSetOptions');
 
     },
 

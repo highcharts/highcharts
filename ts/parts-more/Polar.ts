@@ -108,8 +108,10 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    animObject,
     defined,
     find,
+    isNumber,
     pick,
     splat,
     uniqueKey,
@@ -571,7 +573,7 @@ var polarAnimate = function (
             // Enable animation on polar charts only in SVG. In VML, the scaling
             // is different, plus animation would be so slow it would't matter.
             if (chart.renderer.isSVG) {
-                animation = H.animObject(animation);
+                animation = animObject(animation);
 
                 // A different animation needed for column like series
                 if (series.is('column')) {
@@ -743,7 +745,7 @@ if (seriesTypes.column) {
 
             if (chart.inverted) {
                 // Finding a correct threshold
-                if (H.isNumber(threshold)) {
+                if (isNumber(threshold)) {
                     thresholdAngleRad = yAxis.translate(threshold);
 
                     // Checks if threshold is outside the visible range

@@ -142,6 +142,7 @@ const {
     addEvent,
     erase,
     extend,
+    Fx,
     isNumber,
     merge,
     pick,

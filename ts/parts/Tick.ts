@@ -142,14 +142,14 @@ const {
     defined,
     destroyObjectProperties,
     extend,
+    fireEvent,
     isNumber,
     merge,
     objectEach,
     pick
 } = U;
 
-var fireEvent = H.fireEvent,
-    deg2rad = H.deg2rad;
+var deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -896,7 +896,7 @@ class Tick {
 
         tick.isNew = false;
 
-        H.fireEvent(this, 'afterRender');
+        fireEvent(this, 'afterRender');
     }
 
     /**

@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, error = U.error, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, error = U.error, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../../parts/Color.js';
 import '../../parts/Series.js';
 import '../../parts/Options.js';
@@ -243,7 +243,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
             firstPoint = this.getFirstValidPoint(this.options.data);
-            if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
+            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
                 error(12, false, this.chart);
             }
             this.enterBoost();

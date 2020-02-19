@@ -255,6 +255,7 @@ const {
     erase,
     extend,
     find,
+    fireEvent,
     merge,
     pick,
     splat,
@@ -272,8 +273,7 @@ import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
 
-var fireEvent = H.fireEvent,
-    reduce = H.reduce,
+var reduce = H.reduce,
     chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
 
 /* *********************************************************************

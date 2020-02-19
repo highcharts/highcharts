@@ -742,7 +742,7 @@ const error = H.error = function (
         if (isCode) {
             message += '?';
         }
-        H.objectEach(params, function (value: string, key: string): void {
+        objectEach(params, function (value: string, key: string): void {
             additionalMessages += ('\n' + key + ': ' + value);
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
@@ -752,7 +752,7 @@ const error = H.error = function (
     }
 
     if (chart) {
-        H.fireEvent(
+        fireEvent(
             chart,
             'displayError',
             { code, message, params } as Highcharts.ErrorMessageEventObject,
@@ -1248,7 +1248,7 @@ class Fx {
      * @return {void}
      */
     public fillSetter(): void {
-        H.Fx.prototype.strokeSetter.apply(this, arguments as any);
+        Fx.prototype.strokeSetter.apply(this, arguments as any);
     }
 
     /**
@@ -1741,6 +1741,7 @@ T1 extends Nullable ?
     T2 extends Nullable ? undefined : T2 : T1;
 function pick<T1>(...args: [T1]):
 T1 extends Nullable ? undefined : T1;
+function pick<T>(...args: Array<T|null|undefined>): T|undefined;
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
