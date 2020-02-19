@@ -202,6 +202,72 @@ QUnit.test('X-Range', function (assert) {
         1,
         'The point should now be on the center of the plot area'
     );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        plotOptions: {
+            series: {
+                dragDrop: {
+                    draggableX: true
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 1,
+            categories: ['Prototyping', 'Development']
+        },
+        series: [{
+            data: [{
+                x: 2,
+                x2: 5,
+                y: 0
+            }, {
+                x: 2,
+                x2: 5,
+                y: 1
+            }]
+        }, {
+            data: [{
+                x: 3,
+                x2: 6,
+                y: 0
+            }]
+        }, {
+            data: [{
+                x: 2.5,
+                x2: 6,
+                y: 0
+            }]
+        }]
+    });
+
+    point = chart.series[0].points[0];
+    point.showDragHandles();
+
+    var leftHandleX = chart.dragHandles.left.translateX,
+        leftHandleY = chart.dragHandles.left.translateY +
+            chart.plotTop - chart.dragHandles.left.getBBox().height / 2,
+        rightHandleX = chart.dragHandles.right.translateX,
+        rightHandleY = chart.dragHandles.right.translateY +
+            chart.plotTop - chart.dragHandles.right.getBBox().height / 2,
+        result = false;
+
+    if (
+        Math.abs(leftHandleX - point.plotX) <= 1 &&
+        Math.abs(leftHandleY - point.plotY) <= 1 &&
+        Math.abs(rightHandleX - (point.plotX + point.shapeArgs.width)) <= 1 &&
+        Math.abs(rightHandleY - point.plotY) <= 1
+    ) {
+        result = true;
+    }
+
+    assert.ok(
+        result,
+        'Drag handles should be in correct positions (#12872).'
+    );
 });
 
 QUnit.test('Partial fill reversed', assert => {

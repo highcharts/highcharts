@@ -1055,15 +1055,17 @@ if (seriesTypes.xrange) {
                 // Using toPixels handles axis.reversed, but doesn't take
                 // chart.inverted into account.
                 newX = xAxis.toPixels((point as any)[xProp], true),
-                newY = yAxis.toPixels(point.y as any, true);
+                newY = yAxis.toPixels(point.y as any, true),
+                offsetY = series.columnMetrics ? series.columnMetrics.offset :
+                    -(point.shapeArgs as any).height / 2;
 
             // Handle chart inverted
             if (inverted) {
                 newX = xAxis.len - newX;
-                newY = yAxis.len - newY - (point.shapeArgs as any).height / 2;
-            } else {
-                newY -= (point.shapeArgs as any).height / 2;
+                newY = yAxis.len - newY;
             }
+
+            newY += offsetY; // (#12872)
 
             return {
                 x: Math.round(newX),
