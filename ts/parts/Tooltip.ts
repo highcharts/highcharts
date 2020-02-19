@@ -805,8 +805,8 @@ class Tooltip {
             }
 
             this.label
-                .on('mouseout', updateStickOnContact)
                 .on('mouseover', updateStickOnContact)
+                .on('mouseout', updateStickOnContact)
                 .attr({ zIndex: 8 })
                 .add();
         }

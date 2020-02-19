@@ -1944,8 +1944,10 @@ extend((
                 handler.call(element, e);
             };
             element.onclick = function (e: Event): void {
-                if (win.navigator.userAgent.indexOf('Android') === -1 ||
-                        Date.now() - (svgElement.touchEventFired || 0) > 1100) {
+                if (
+                    win.navigator.userAgent.indexOf('Android') === -1 ||
+                    Date.now() - (svgElement.touchEventFired || 0) > 1100
+                ) {
                     handler.call(element, e);
                 }
             };
