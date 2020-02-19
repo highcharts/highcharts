@@ -1934,18 +1934,63 @@ extend((
         handler: Function
     ): Highcharts.SVGElement {
         var svgElement = this,
-            element = svgElement.element;
+            element = svgElement.element,
+            touchEventTime = 0,
+            touchStartPos: Highcharts.Dictionary<number>;
 
         // touch
         if (hasTouch && eventType === 'click') {
-            element.ontouchstart = function (e: Event): void {
+            element.ontouchstart = function (e: TouchEvent): void {
+                // save touch position for later calculation
+                touchStartPos = {
+                    clientX: e.touches[0].clientX,
+                    clientY: e.touches[0].clientY
+                };
                 svgElement.touchEventFired = Date.now(); // #2269
-                e.preventDefault();
-                handler.call(element, e);
             };
+
+            // Instead of ontouchstart, event handlers should be called
+            // on touchend - similar to how current mouseup events are called
+            element.ontouchend = function (e: TouchEvent): void {
+
+                // hasMoved is a boolean variable containing logic if page
+                // was scrolled, so if touch position changed more than
+                // ~4px (value borrowed from general touch handler)
+                const hasMoved = touchStartPos.clientX ? Math.sqrt(
+                    Math.pow(
+                        touchStartPos.clientX - e.changedTouches[0].clientX,
+                        2
+                    ) +
+                    Math.pow(
+                        touchStartPos.clientY - e.changedTouches[0].clientY,
+                        2
+                    )
+                ) >= 4 : false;
+
+                // calculate the total time of touch event
+                touchEventTime = Date.now() - (svgElement.touchEventFired || 0);
+
+                if (!hasMoved) { // only call handlers if page was not scrolled
+                    handler.call(element, e);
+                }
+                // prevent other events from being fired. #9682
+                e.preventDefault();
+            };
+
             element.onclick = function (e: Event): void {
-                if (win.navigator.userAgent.indexOf('Android') === -1 ||
-                        Date.now() - (svgElement.touchEventFired || 0) > 1100) {
+                if (
+                    win.navigator.userAgent.indexOf('Android') === -1 ||
+                    (
+                        // if touchEventTime was set before, use it for
+                        // calculation, if not, calculate the total time now.
+                        touchEventTime ?
+                            (touchEventTime > 1100) :
+                            (
+                                Date.now() -
+                                (svgElement.touchEventFired || 0) > 1100
+                            )
+                    )
+                ) {
                     handler.call(element, e);
                 }
             };
