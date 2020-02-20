@@ -50,7 +50,8 @@ Highcharts.chart('container', {
         labels: {
             format: '{value}'
         },
-        softMax: 500
+        max: 500,
+        min: 360
     },
 
     tooltip: {
