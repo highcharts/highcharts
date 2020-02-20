@@ -205,7 +205,14 @@ QUnit.test('X-Range', function (assert) {
 
     chart = Highcharts.chart('container', {
         chart: {
-            type: 'xrange'
+            type: 'xrange',
+            plotBorderWidth: 1,
+            plotBorderColor: 'red',
+            borderColor: 'red',
+            borderWidth: 1
+        },
+        title: {
+            text: ''
         },
         plotOptions: {
             series: {
@@ -247,19 +254,24 @@ QUnit.test('X-Range', function (assert) {
     point = chart.series[0].points[0];
     point.showDragHandles();
 
-    var leftHandleX = chart.dragHandles.left.translateX,
+    var leftHandleBBox = chart.dragHandles.left.getBBox(),
+        rightHandleBBox = chart.dragHandles.right.getBBox(),
+        leftHandleX = chart.dragHandles.left.translateX,
         leftHandleY = chart.dragHandles.left.translateY +
-            chart.plotTop - chart.dragHandles.left.getBBox().height / 2,
+            leftHandleBBox.y + leftHandleBBox.height / 2,
         rightHandleX = chart.dragHandles.right.translateX,
         rightHandleY = chart.dragHandles.right.translateY +
-            chart.plotTop - chart.dragHandles.right.getBBox().height / 2,
+            rightHandleBBox.y + rightHandleBBox.height / 2,
+        plotX = point.plotX,
+        plotY = point.plotY + point.series.columnMetrics.offset +
+            point.series.columnMetrics.width / 2,
         result = false;
 
     if (
-        Math.abs(leftHandleX - point.plotX) <= 1 &&
-        Math.abs(leftHandleY - point.plotY) <= 1 &&
-        Math.abs(rightHandleX - (point.plotX + point.shapeArgs.width)) <= 1 &&
-        Math.abs(rightHandleY - point.plotY) <= 1
+        Math.abs(leftHandleX - plotX) <= 1 &&
+        Math.abs(leftHandleY - plotY) <= 1 &&
+        Math.abs(rightHandleX - point.shapeArgs.width - plotX) <= 1 &&
+        Math.abs(rightHandleY - plotY) <= 1
     ) {
         result = true;
     }
