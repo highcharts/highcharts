@@ -886,13 +886,19 @@ if (seriesTypes.pie) {
                 };
                 dataLabel._pos = {
                     x: (x +
-                        options.x +
+                        ( // (#12985)
+                        ((point.options || {}).dataLabels || {}).x ||
+                            options.x) +
                         ({
                             left: connectorPadding,
                             right: -connectorPadding
                         }[labelPosition.alignment] || 0)),
                     // 10 is for the baseline (label vs text)
-                    y: y + options.y - 10
+                    y: (y +
+                        ( // (#12985)
+                        ((point.options || {}).dataLabels || {}).y ||
+                            options.y) -
+                        10)
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
@@ -1027,6 +1033,9 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.placeDataLabels = function () {
+        // Zmienic pozycje labelek tutaj
+        // (jak to zrobic zeby na serii jak sie ustawi
+        // to nie bylo brane pod uwage tylko w punkcie?)
         this.points.forEach(function (point) {
             var dataLabel = point.dataLabel, _pos;
             if (dataLabel && point.visible) {
