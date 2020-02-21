@@ -833,6 +833,7 @@ const {
     removeEvent,
     splat,
     stop,
+    syncTimeout,
     uniqueKey
 } = U;
 
@@ -963,7 +964,7 @@ extend((
         var animOptions = animObject(
                 pick(options, this.renderer.globalAnimation, true)
             ),
-            deferTime = animOptions.defer ? animOptions.defer : 0;
+            deferTime = animOptions.defer || 0;
 
 
         // When the page is hidden save resources in the background by not
@@ -978,7 +979,8 @@ extend((
             if (complete) {
                 animOptions.complete = complete;
             }
-            H.syncTimeout((): void => {
+            // If defer option is defined delay the animation #12901
+            syncTimeout((): void => {
                 animate(this, params, animOptions);
             }, deferTime);
         } else {

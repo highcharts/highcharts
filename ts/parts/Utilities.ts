@@ -63,8 +63,8 @@ declare global {
         interface AnimationOptionsObject {
             complete?: Function;
             curAnim?: Dictionary<boolean>;
-            duration?: number;
             defer?: number;
+            duration?: number;
             easing?: (string|Function);
             step?: AnimationStepCallbackFunction;
         }
