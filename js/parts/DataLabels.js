@@ -693,7 +693,7 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.drawDataLabels = function () {
-        var series = this, data = series.data, point, chart = series.chart, options = series.options.dataLabels, connectorPadding = options.connectorPadding, connectorWidth, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotLeft = chart.plotLeft, maxWidth = Math.round(chart.chartWidth / 3), connector, seriesCenter = series.center, radius = seriesCenter[2] / 2, centerY = seriesCenter[1], dataLabel, dataLabelWidth, 
+        var series = this, data = series.data, point, chart = series.chart, options = series.options.dataLabels || {}, connectorPadding = options.connectorPadding, connectorWidth, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotLeft = chart.plotLeft, maxWidth = Math.round(chart.chartWidth / 3), connector, seriesCenter = series.center, radius = seriesCenter[2] / 2, centerY = seriesCenter[1], dataLabel, dataLabelWidth, 
         // labelPos,
         labelPosition, labelHeight, 
         // divide the points into right and left halves for anti collision
@@ -839,19 +839,17 @@ if (seriesTypes.pie) {
                     visibility: visibility,
                     align: labelPosition.alignment
                 };
-                // (#12985)
-                pointDataLabelsOptions =
-                    merge(options, point.options.dataLabels);
+                pointDataLabelsOptions = point.options.dataLabels || {};
                 dataLabel._pos = {
                     x: (x +
-                        pointDataLabelsOptions.x +
+                        pick(pointDataLabelsOptions.x, options.x) + // (#12985)
                         ({
                             left: connectorPadding,
                             right: -connectorPadding
                         }[labelPosition.alignment] || 0)),
                     // 10 is for the baseline (label vs text)
                     y: (y +
-                        pointDataLabelsOptions.y -
+                        pick(pointDataLabelsOptions.y, options.y) - // (#12985)
                         10)
                 };
                 // labelPos.x = x;
