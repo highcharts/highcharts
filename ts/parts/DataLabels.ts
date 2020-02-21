@@ -1285,7 +1285,7 @@ if (seriesTypes.pie) {
             data = series.data,
             point,
             chart = series.chart,
-            options = series.options.dataLabels,
+            options = series.options.dataLabels || {},
             connectorPadding = (options as any).connectorPadding,
             connectorWidth,
             plotWidth = chart.plotWidth,
@@ -1521,14 +1521,12 @@ if (seriesTypes.pie) {
                     align: (labelPosition as any).alignment
                 };
 
-                // (#12985)
-                pointDataLabelsOptions =
-                    merge(options, point.options.dataLabels);
+                pointDataLabelsOptions = point.options.dataLabels || {};
 
                 (dataLabel as any)._pos = {
                     x: (
                         x +
-                        pointDataLabelsOptions.x +
+                        pick(pointDataLabelsOptions.x, options.x) + // (#12985)
                         (({
                             left: connectorPadding,
                             right: -connectorPadding
@@ -1538,7 +1536,7 @@ if (seriesTypes.pie) {
                     // 10 is for the baseline (label vs text)
                     y: (
                         y +
-                        pointDataLabelsOptions.y -
+                        pick(pointDataLabelsOptions.y, options.y) - // (#12985)
                         10
                     )
                 };
