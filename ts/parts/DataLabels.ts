@@ -1469,7 +1469,10 @@ if (seriesTypes.pie) {
                 (dataLabel as any)._pos = {
                     x: (
                         x +
-                        (options as any).x +
+                        ( // (#12985)
+                            ((point.options || {}).dataLabels || {}).x ||
+                            (options as any).x
+                        ) +
                         (({
                             left: connectorPadding,
                             right: -connectorPadding
@@ -1477,7 +1480,14 @@ if (seriesTypes.pie) {
                     ),
 
                     // 10 is for the baseline (label vs text)
-                    y: y + (options as any).y - 10
+                    y: (
+                        y +
+                        ( // (#12985)
+                            ((point.options || {}).dataLabels || {}).y ||
+                            (options as any).y
+                        ) -
+                        10
+                    )
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
@@ -1653,6 +1663,9 @@ if (seriesTypes.pie) {
     seriesTypes.pie.prototype.placeDataLabels = function (
         this: Highcharts.PieSeries
     ): void {
+        // Zmienic pozycje labelek tutaj
+        // (jak to zrobic zeby na serii jak sie ustawi
+        // to nie bylo brane pod uwage tylko w punkcie?)
         this.points.forEach(function (point: Highcharts.Point): void {
             var dataLabel = point.dataLabel,
                 _pos;
