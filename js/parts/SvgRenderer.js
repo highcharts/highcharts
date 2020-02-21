@@ -466,7 +466,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Returns the SVGElement for chaining.
      */
     animate: function (params, options, complete) {
-        var animOptions = animObject(pick(options, this.renderer.globalAnimation, true));
+        var _this = this;
+        var animOptions = animObject(pick(options, this.renderer.globalAnimation, true)), deferTime = animOptions.defer ? animOptions.defer : 0;
         // When the page is hidden save resources in the background by not
         // running animation at all (#9749).
         if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {
@@ -478,7 +479,9 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             if (complete) {
                 animOptions.complete = complete;
             }
-            animate(this, params, animOptions);
+            H.syncTimeout(function () {
+                animate(_this, params, animOptions);
+            }, deferTime);
         }
         else {
             this.attr(params, void 0, complete);

@@ -961,8 +961,10 @@ extend((
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = animObject(
-            pick(options, this.renderer.globalAnimation, true)
-        );
+                pick(options, this.renderer.globalAnimation, true)
+            ),
+            deferTime = animOptions.defer ? animOptions.defer : 0;
+
 
         // When the page is hidden save resources in the background by not
         // running animation at all (#9749).
@@ -976,7 +978,9 @@ extend((
             if (complete) {
                 animOptions.complete = complete;
             }
-            animate(this, params, animOptions);
+            H.syncTimeout((): void => {
+                animate(this, params, animOptions);
+            }, deferTime);
         } else {
             this.attr(params, void 0, complete);
             // Call the end step synchronously

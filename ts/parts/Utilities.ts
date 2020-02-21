@@ -64,6 +64,7 @@ declare global {
             complete?: Function;
             curAnim?: Dictionary<boolean>;
             duration?: number;
+            defer?: number;
             easing?: (string|Function);
             step?: AnimationStepCallbackFunction;
         }
