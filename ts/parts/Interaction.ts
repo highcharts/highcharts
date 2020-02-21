@@ -37,8 +37,8 @@ declare global {
             ): void;
         }
         interface AxisPanningState {
-            startMin: (number|null);
-            startMax: (number|null);
+            startMin: (number|null|undefined);
+            startMax: (number|null|undefined);
         }
         interface Point {
             className?: string;
@@ -849,8 +849,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     flipped = panMax < panMin,
                     newMin = flipped ? panMax : panMin,
                     newMax = flipped ? panMin : panMax,
+                    panningState = axis.panningState,
                     paddedMin = Math.min(
-                        extremes.dataMin,
+                        H.pick(panningState?.startMin, extremes.dataMin),
                         halfPointRange ?
                             extremes.min :
                             axis.toValue(
@@ -859,7 +860,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             )
                     ),
                     paddedMax = Math.max(
-                        extremes.dataMax,
+                        H.pick(panningState?.startMax, extremes.dataMax),
                         halfPointRange ?
                             extremes.max :
                             axis.toValue(
@@ -875,17 +876,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 if (!axisOpt.ordinal) {
                     // If the new range spills over, either to the min or max,
                     // adjust the new range.
-                    if (isX) {
-                        spill = paddedMin - newMin;
-                        if (spill > 0) {
-                            newMax += spill;
-                            newMin = paddedMin;
-                        }
-                        spill = newMax - paddedMax;
-                        if (spill > 0) {
-                            newMax = paddedMax;
-                            newMin -= spill;
-                        }
+                    spill = paddedMin - newMin;
+                    if (spill > 0) {
+                        newMax += spill;
+                        newMin = paddedMin;
+                    }
+
+                    spill = newMax - paddedMax;
+                    if (spill > 0) {
+                        newMax = paddedMax;
+                        newMin -= spill;
                     }
 
                     // Set new extremes if they are actually new
@@ -894,11 +894,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             newMin !== extremes.min &&
                             newMax !== extremes.max &&
                             isX ? true : (
-                                axis.panningState &&
-                                H.isNumber(axis.panningState.startMin) &&
-                                H.isNumber(axis.panningState.startMax) &&
-                                newMin >= axis.panningState.startMin &&
-                                newMax <= axis.panningState.startMax
+                                panningState &&
+                                H.isNumber(panningState?.startMin) &&
+                                H.isNumber(panningState?.startMax) &&
+                                newMin >= panningState?.startMin &&
+                                newMax <= panningState?.startMax
                             )
                     ) {
                         axis.setExtremes(

@@ -5745,21 +5745,22 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      */
     setScale: function (this: Highcharts.Axis): void {
         var axis = this,
-            isDirtyData = axis.series.some(function (
-                series: Highcharts.Series
-            ): boolean {
-                return (
-                    series.isDirtyData ||
-                    series.isDirty ||
-                    // When x axis is dirty, we need new data extremes for y as
-                    // well:
-                    series.xAxis && (series.xAxis.isDirty as any)
-                );
-            }),
             chartOptions = axis.chart.options.chart,
             panning = chartOptions &&
                 chartOptions.panning,
-            isDirtyAxisLength;
+            isDirtyAxisLength,
+            isDirtyData = false,
+            isXAxisDirty = false;
+
+        axis.series.forEach(function (
+            series: Highcharts.Series
+        ): void {
+            isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
+
+            // When x axis is dirty, we need new data extremes for y as
+            // well:
+            isXAxisDirty = isXAxisDirty || series.xAxis?.isDirty || false;
+        });
 
         axis.oldMin = axis.min;
         axis.oldMax = axis.max;
@@ -5773,6 +5774,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         if (
             isDirtyAxisLength ||
             isDirtyData ||
+            isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
             axis.userMin !== axis.oldUserMin ||
@@ -5819,8 +5821,13 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 panning.type.match('y')
             ) &&
             !axis.isXAxis &&
+            // Avoid adding panningState object to colorAxis
             axis.coll !== 'colorAxis' &&
-            !defined(axis.panningState) &&
+            (
+                !defined(axis.panningState) ||
+                // Recalculate panning state object, when the data has changed.
+                isDirtyData
+            ) &&
             axis.series.length
         ) {
             let min: (number | undefined),
@@ -5832,16 +5839,14 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         min = Number.MAX_VALUE;
                         max = Number.MIN_VALUE;
                     }
-                    min = Math.min(H.arrayMin(series.yData), min) -
-                        (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-                    max = Math.max(H.arrayMax(series.yData), max || 0) +
-                        (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
+                    min = Math.min(H.arrayMin(series.yData), min);
+                    max = Math.max(H.arrayMax(series.yData), max || 0);
                 }
             });
 
             axis.panningState = {
-                startMin: min || axis.min,
-                startMax: max || axis.max
+                startMin: (isNumber(min) ? min : axis.min),
+                startMax: (isNumber(max) ? max : axis.max)
             };
         }
 
