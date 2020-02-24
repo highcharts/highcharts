@@ -426,6 +426,7 @@ declare global {
             public getTickAmount(): void;
             public getTitlePosition(): PositionObject;
             public hasData(): boolean;
+            public hasVerticalPanning(): boolean;
             public hideCrosshair(): void;
             public init(chart: Chart, userOptions: AxisOptions): void;
             public labelMetrics(): FontMetricsObject;
@@ -5381,12 +5382,14 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickPositionsOption = options.tickPositions,
             minorTickIntervalOption = this.getMinorTickInterval(),
             tickPositioner = options.tickPositioner,
-            verticalPanning = this.chart.hasVerticalPanning(),
+            hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
             startOnTick = isColorAxis ?
-                options.startOnTick : !verticalPanning && options.startOnTick,
+                options.startOnTick :
+                !hasVerticalPanning && options.startOnTick,
             endOnTick = isColorAxis ?
-                options.endOnTick : !verticalPanning && options.endOnTick;
+                options.endOnTick :
+                !hasVerticalPanning && options.endOnTick;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
@@ -5745,9 +5748,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
      */
     setScale: function (this: Highcharts.Axis): void {
         var axis = this,
-            chartOptions = axis.chart.options.chart,
-            panning = chartOptions &&
-                chartOptions.panning,
+            hasVerticalPanning = axis.hasVerticalPanning(),
             isDirtyAxisLength,
             isDirtyData = false,
             isXAxisDirty = false;
@@ -5815,11 +5816,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
         // (including min/maxPadding). This is related to using vertical
         // panning (#11315).
         if (
-            panning &&
-            (
-                panning.type &&
-                panning.type.match('y')
-            ) &&
+            hasVerticalPanning &&
             !axis.isXAxis &&
             // Avoid adding panningState object to colorAxis
             axis.coll !== 'colorAxis' &&
@@ -7526,7 +7523,22 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             this.cross.hide();
         }
         fireEvent(this, 'afterHideCrosshair');
+    },
+
+    /**
+    * Check whether the chart has vertical panning ('y' or 'xy' type).
+    *
+    * @private
+    * @function Highcharts.Axis#hasVerticalPanning
+    * @return {boolean}
+    *
+    */
+    hasVerticalPanning: function (
+        this: Highcharts.Axis
+    ): boolean {
+        return /y/.test(this.chart.options.chart?.panning?.type || '');
     }
+
 }); // end Axis
 
 H.Axis = Axis;

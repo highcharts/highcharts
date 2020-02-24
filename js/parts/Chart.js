@@ -2023,17 +2023,5 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         // Don't run again
         this.onload = null;
-    },
-    /**
-    * Check whether the chart has vertical panning ('y' or 'xy' type).
-    *
-    * @private
-    * @function Highcharts.Chart#hasVerticalPanning
-    * @return {boolean}
-    *
-    */
-    hasVerticalPanning: function () {
-        var _a, _b;
-        return /y/.test(((_b = (_a = this.options.chart) === null || _a === void 0 ? void 0 : _a.panning) === null || _b === void 0 ? void 0 : _b.type) || '');
     }
 }); // end Chart

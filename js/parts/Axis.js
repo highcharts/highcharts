@@ -4193,9 +4193,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @fires Highcharts.Axis#event:afterSetTickPositions
      */
     setTickPositions: function () {
-        var options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, verticalPanning = this.chart.hasVerticalPanning(), isColorAxis = this.coll === 'colorAxis', startOnTick = isColorAxis ?
-            options.startOnTick : !verticalPanning && options.startOnTick, endOnTick = isColorAxis ?
-            options.endOnTick : !verticalPanning && options.endOnTick;
+        var options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, hasVerticalPanning = this.hasVerticalPanning(), isColorAxis = this.coll === 'colorAxis', startOnTick = isColorAxis ?
+            options.startOnTick :
+            !hasVerticalPanning && options.startOnTick, endOnTick = isColorAxis ?
+            options.endOnTick :
+            !hasVerticalPanning && options.endOnTick;
         // Set the tickmarkOffset
         this.tickmarkOffset = (this.categories &&
             options.tickmarkPlacement === 'between' &&
@@ -4453,8 +4455,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @fires Highcharts.Axis#event:afterSetScale
      */
     setScale: function () {
-        var axis = this, chartOptions = axis.chart.options.chart, panning = chartOptions &&
-            chartOptions.panning, isDirtyAxisLength, isDirtyData = false, isXAxisDirty = false;
+        var axis = this, hasVerticalPanning = axis.hasVerticalPanning(), isDirtyAxisLength, isDirtyData = false, isXAxisDirty = false;
         axis.series.forEach(function (series) {
             var _a;
             isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
@@ -4504,9 +4505,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         // Extend the Axis to calculate start min/max values
         // (including min/maxPadding). This is related to using vertical
         // panning (#11315).
-        if (panning &&
-            (panning.type &&
-                panning.type.match('y')) &&
+        if (hasVerticalPanning &&
             !axis.isXAxis &&
             // Avoid adding panningState object to colorAxis
             axis.coll !== 'colorAxis' &&
@@ -5679,6 +5678,18 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             this.cross.hide();
         }
         fireEvent(this, 'afterHideCrosshair');
+    },
+    /**
+    * Check whether the chart has vertical panning ('y' or 'xy' type).
+    *
+    * @private
+    * @function Highcharts.Axis#hasVerticalPanning
+    * @return {boolean}
+    *
+    */
+    hasVerticalPanning: function () {
+        var _a, _b;
+        return /y/.test(((_b = (_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.panning) === null || _b === void 0 ? void 0 : _b.type) || '');
     }
 }); // end Axis
 H.Axis = Axis;

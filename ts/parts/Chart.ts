@@ -144,7 +144,6 @@ declare global {
             public getSelectedPoints(): Array<Point>;
             public getSelectedSeries(): Array<Series>;
             public getSeriesOrderByLinks(): Array<Series>;
-            public hasVerticalPanning(): boolean;
             public init(
                 userOptions: Options,
                 callback?: ChartCallbackFunction
@@ -2886,20 +2885,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Don't run again
         this.onload = null as any;
-    },
-
-    /**
-    * Check whether the chart has vertical panning ('y' or 'xy' type).
-    *
-    * @private
-    * @function Highcharts.Chart#hasVerticalPanning
-    * @return {boolean}
-    *
-    */
-    hasVerticalPanning: function (
-        this: Highcharts.Chart
-    ): boolean {
-        return /y/.test(this.options.chart?.panning?.type || '');
     }
 
 }); // end Chart
