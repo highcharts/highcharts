@@ -4511,6 +4511,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             // Avoid adding panningState object to colorAxis
             axis.coll !== 'colorAxis' &&
             (!defined(axis.panningState) ||
+                // Recalculate panning state object, when the data has changed.
                 isDirtyData) &&
             axis.series.length) {
             var min_1, max_1;

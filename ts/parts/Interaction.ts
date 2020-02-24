@@ -895,10 +895,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             newMax !== extremes.max &&
                             isX ? true : (
                                 panningState &&
-                                H.isNumber(panningState?.startMin) &&
-                                H.isNumber(panningState?.startMax) &&
-                                newMin >= panningState?.startMin &&
-                                newMax <= panningState?.startMax
+                                newMin >= paddedMin &&
+                                newMax <= paddedMax
                             )
                     ) {
                         axis.setExtremes(

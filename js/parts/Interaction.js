@@ -507,7 +507,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 xy = [0];
             }
             xy.forEach(function (isX) {
-                var _a, _b, _c, _d, _e, _f;
+                var _a, _b;
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?
                     -1 :
@@ -526,7 +526,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 if (!axisOpt.ordinal) {
                     // If the new range spills over, either to the min or max,
                     // adjust the new range.
-                    debugger;
                     spill = paddedMin - newMin;
                     if (spill > 0) {
                         newMax += spill;
@@ -542,10 +541,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         newMin !== extremes.min &&
                         newMax !== extremes.max &&
                         isX ? true : (panningState &&
-                        H.isNumber((_c = panningState) === null || _c === void 0 ? void 0 : _c.startMin) &&
-                        H.isNumber((_d = panningState) === null || _d === void 0 ? void 0 : _d.startMax) &&
-                        newMin >= ((_e = panningState) === null || _e === void 0 ? void 0 : _e.startMin) &&
-                        newMax <= ((_f = panningState) === null || _f === void 0 ? void 0 : _f.startMax))) {
+                        newMin >= paddedMin &&
+                        newMax <= paddedMax)) {
                         axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
                         if (!chart.resetZoomButton &&
                             !hasMapNavigation &&
