@@ -3942,7 +3942,7 @@ null,
             point.plotY = ((typeof yValue === 'number' && yValue !== Infinity) ?
                 limitedRange(yAxis.translate(yValue, 0, 1, 0, 1)) :
                 void 0);
-            point.isInside = this.isPointInSight(point);
+            point.isInside = this.isPointInside(point);
             // Set client related positions for mouse tracking
             point.clientX = dynamicallyPlaced ?
                 correctFloat(xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)) :
@@ -5164,11 +5164,11 @@ null,
     },
     /**
      * @private
-     * @function Highcharts.Series#isPointInSight
+     * @function Highcharts.Series#isPointInside
      * @param {Highcharts.Point} point
      * @return {boolean}
      */
-    isPointInSight: function (point) {
+    isPointInside: function (point) {
         var isInside = typeof point.plotY !== 'undefined' &&
             typeof point.plotX !== 'undefined' &&
             point.plotY >= 0 &&
