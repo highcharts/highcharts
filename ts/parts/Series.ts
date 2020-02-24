@@ -168,7 +168,7 @@ declare global {
             public insert(collection: Array<Series>): number;
             public invertGroups(inverted?: boolean): void;
             public is (type: string): boolean;
-            public isPointInSight (point: Dictionary<number>|Point): boolean;
+            public isPointInside (point: Dictionary<number>|Point): boolean;
             public markerAttribs(point: Point, state?: string): SVGAttributes;
             public plotGroup(
                 prop: string,
@@ -5197,7 +5197,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                         void 0
                 );
 
-                point.isInside = this.isPointInSight(point);
+                point.isInside = this.isPointInside(point);
 
                 // Set client related positions for mouse tracking
                 point.clientX = dynamicallyPlaced ?
@@ -7023,11 +7023,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
         /**
          * @private
-         * @function Highcharts.Series#isPointInSight
+         * @function Highcharts.Series#isPointInside
          * @param {Highcharts.Point} point
          * @return {boolean}
          */
-        isPointInSight: function (
+        isPointInside: function (
             this: Highcharts.Series,
             point: (Highcharts.Dictionary<number>|Highcharts.Point)
         ): boolean {
