@@ -250,6 +250,7 @@ const {
     extend,
     format,
     isArray,
+    isNumber,
     merge,
     objectEach,
     pick,
@@ -583,22 +584,34 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         );
 
         if (defer) {
+            var deferTime,
+                seriesDefer = animObject(seriesOptions.animation).defer;
+
+            // Get a sum of the series duration and the defer if it is defined
+            if (seriesAnimDuration && seriesDefer) {
+                seriesAnimDuration += seriesDefer;
+            }
+            // Defer difned in the dataLabel object has higher priority
+            // than series defer
+            deferTime = isNumber(defer) ? defer : seriesAnimDuration;
+
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-            if (!hasRendered) {
-                setTimeout(function (): void {
-                    var group = series.dataLabelsGroup;
-                    if (group) {
-                        if (series.visible) { // #2597, #3023, #3024
-                            dataLabelsGroup.show(true);
-                        }
-                        (group[
-                            seriesOptions.animation ? 'animate' : 'attr'
-                        ] as any)(
-                            { opacity: 1 },
-                            { duration: fadeInDuration }
-                        );
+            if (!hasRendered && deferTime) {
+                var group = series.dataLabelsGroup;
+                if (group) {
+                    if (series.visible) { // #2597, #3023, #3024
+                        dataLabelsGroup.show(true);
                     }
-                }, (seriesAnimDuration as any) - fadeInDuration);
+                    (group[
+                        seriesOptions.animation ? 'animate' : 'attr'
+                    ] as any)(
+                        { opacity: 1 },
+                        {
+                            duration: fadeInDuration,
+                            defer: deferTime - fadeInDuration
+                        }
+                    );
+                }
             }
         }
 

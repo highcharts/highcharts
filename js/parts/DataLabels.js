@@ -76,7 +76,7 @@ import H from './Globals.js';
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, format = U.format, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
 var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
@@ -281,17 +281,26 @@ Series.prototype.drawDataLabels = function () {
         dataLabelsGroup = series.plotGroup('dataLabelsGroup', 'data-labels', defer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
         seriesDlOptions.zIndex || 6);
         if (defer) {
+            var deferTime, seriesDefer = animObject(seriesOptions.animation).defer;
+            // Get a sum of the series duration and the defer if it is defined
+            if (seriesAnimDuration && seriesDefer) {
+                seriesAnimDuration += seriesDefer;
+            }
+            // Defer difned in the dataLabel object has higher priority
+            // than series defer
+            deferTime = isNumber(defer) ? defer : seriesAnimDuration;
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-            if (!hasRendered) {
-                setTimeout(function () {
-                    var group = series.dataLabelsGroup;
-                    if (group) {
-                        if (series.visible) { // #2597, #3023, #3024
-                            dataLabelsGroup.show(true);
-                        }
-                        group[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, { duration: fadeInDuration });
+            if (!hasRendered && deferTime) {
+                var group = series.dataLabelsGroup;
+                if (group) {
+                    if (series.visible) { // #2597, #3023, #3024
+                        dataLabelsGroup.show(true);
                     }
-                }, seriesAnimDuration - fadeInDuration);
+                    group[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, {
+                        duration: fadeInDuration,
+                        defer: deferTime - fadeInDuration
+                    });
+                }
             }
         }
         // Make the labels for each point
