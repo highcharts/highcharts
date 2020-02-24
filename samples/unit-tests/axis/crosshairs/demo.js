@@ -326,7 +326,7 @@ QUnit.test('Show only one crosshair at the same time', function (assert) {
     );
 });
 
-QUnit.test('Use correct hover point for axis. #6860', function (assert) {
+QUnit.test('Use correct hover point for axis.', function (assert) {
     var AxisPrototype = Highcharts.Axis.prototype,
         drawCrosshair = AxisPrototype.drawCrosshair,
         events = [],
@@ -368,20 +368,49 @@ QUnit.test('Use correct hover point for axis. #6860', function (assert) {
     assert.strictEqual(
         events.shift(),
         'xAxis,side: 2,point: A.0',
-        'xAxis is assigned point A.0'
+        'xAxis is assigned point A.0 (#6860).'
     );
     assert.strictEqual(
         events.shift(),
         'yAxis,side: 3,point: A.0',
-        'yAxis left side is assigned point A.0'
+        'yAxis left side is assigned point A.0 (#6860).'
     );
     assert.strictEqual(
         events.shift(),
         'yAxis,side: 1,point: B.0',
-        'yAxis on right side is assigned point B.0'
+        'yAxis on right side is assigned point B.0 (#6860).'
     );
     // restore to default function
     AxisPrototype.drawCrosshair = drawCrosshair;
+
+    chart = Highcharts.chart('container', {
+        yAxis: {
+            crosshair: true
+        },
+        tooltip: {
+            shared: true
+        },
+        series: [{
+            data: [50.9, 71.5, 106.4, 129.2, 144.0]
+        }, {
+            data: [9.9, 7.5, 36.4, 19.2, 14.0, 16.0]
+        }]
+    });
+
+    var point1 = chart.series[1].points[2],
+        point2 = chart.series[0].points[2];
+
+    point1.onMouseOver();
+    assert.ok(
+        Math.abs(point1.series.yAxis.cross.getBBox().y - (point1.plotY + chart.plotTop)) < 1,
+        'Crosshair should be placed correctly when tooltip is shared (#13002).'
+    );
+
+    point2.onMouseOver();
+    assert.ok(
+        Math.abs(point2.series.yAxis.cross.getBBox().y - (point2.plotY + chart.plotTop)) < 1,
+        'Crosshair should be placed correctly when tooltip is shared (#13002).'
+    );
 });
 
 

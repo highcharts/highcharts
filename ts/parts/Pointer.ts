@@ -2028,11 +2028,34 @@ class Pointer {
             axis: Highcharts.Axis
         ): void {
             var snap = pick((axis.crosshair as any).snap, true),
-                point = !snap ?
-                    void 0 :
-                    find(points, function (p: Highcharts.Point): boolean {
-                        return (p.series as any)[axis.coll] === axis;
-                    });
+                distance: (number|undefined),
+                tempDistance,
+                point: (Highcharts.Point|undefined);
+
+            if (!snap) {
+                point = void 0;
+            } else if (
+                points &&
+                points.length === 1 &&
+                (points[0].series as any)[axis.coll] === axis
+            ) {
+                point = points[0];
+            } else if (e) {
+                // A point closest to the pointer should be chosen (#13002).
+                points.forEach(function (p): void {
+                    if (p.plotX && p.plotY && (p.series as any)[axis.coll] === axis) {
+                        tempDistance = Math.sqrt(
+                            Math.pow(e.chartX - (p.plotX + chart.plotLeft), 2) +
+                            Math.pow(e.chartY - (p.plotY + chart.plotTop), 2)
+                        );
+
+                        distance = !defined(distance) ?
+                            tempDistance : (tempDistance < distance ? tempDistance : distance);
+
+                        point = distance === tempDistance ? p : point;
+                    }
+                });
+            }
 
             // Axis has snapping crosshairs, and one of the hover points belongs
             // to axis. Always call drawCrosshair when it is not snap.
