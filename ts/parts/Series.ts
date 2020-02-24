@@ -6707,6 +6707,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
             // overwrite the animation.complete option which should be available
             // to the user).
             if (!hasRendered) {
+                // Additional time if defer is defined before afterAnimate
+                // will be triggered
+                if (animDuration && defined(animObject(options.animation).defer)) {
+                    animDuration += animObject(options.animation).defer || 0;
+                }
                 series.animationTimeout = syncTimeout(function (): void {
                     series.afterAnimate();
                 }, animDuration || 0);
