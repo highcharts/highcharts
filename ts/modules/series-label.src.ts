@@ -57,6 +57,7 @@ declare global {
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
             connectorAllowed?: boolean;
             connectorNeighbourDistance?: number;
+            defer?: number;
             enabled?: boolean;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
@@ -1132,7 +1133,12 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
                     animObject(series.options.animation).duration as any
                 );
             }
-
+            // Add the label or the series defer time
+            if (options.defer || animObject(series.options.animation).defer) {
+                options.defer ?
+                    (delay as any) += options.defer :
+                    delay += animObject(series.options.animation).defer as any;
+            }
             // Keep the position updated to the axis while redrawing
             if (closest) {
                 if (typeof closest[0].plotX !== 'undefined') {

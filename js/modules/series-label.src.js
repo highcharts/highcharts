@@ -692,6 +692,12 @@ function drawLabels(e) {
             if (e.type === 'load') {
                 delay = Math.max(delay, animObject(series.options.animation).duration);
             }
+            // Add the label or the series defer time
+            if (options.defer || animObject(series.options.animation).defer) {
+                options.defer ?
+                    delay += options.defer :
+                    delay += animObject(series.options.animation).defer;
+            }
             // Keep the position updated to the axis while redrawing
             if (closest) {
                 if (typeof closest[0].plotX !== 'undefined') {
