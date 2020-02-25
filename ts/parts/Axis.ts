@@ -3148,8 +3148,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          *         False
          * @sample {highstock} stock/demo/basic-line/
          *         True by default
-         * @sample {highstock} stock/yaxis/endontick/
-         *         False
+         * @sample {highstock} stock/xaxis/endontick/
+         *         False for Y axis
          *
          * @since 1.2.0
          */
