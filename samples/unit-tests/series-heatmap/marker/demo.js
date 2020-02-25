@@ -42,13 +42,13 @@ QUnit.test('General marker tests', function (assert) {
     assert.strictEqual(
         marker.element.getAttribute('stroke'),
         'rgba(0, 255, 0, 1)',
-        'Marker\'s line color is set.'
+        'Marker\'s line color should set.'
     );
 
     assert.strictEqual(
         marker.element.getAttribute('stroke-width'),
         '2',
-        'Marker\'s line width is set.'
+        'Marker\'s line width should set.'
     );
 
     // Set marker's fixed width and height
@@ -62,10 +62,15 @@ QUnit.test('General marker tests', function (assert) {
     var bBox = heatmap.points[0].graphic.getBBox();
 
     assert.strictEqual(
-        bBox.width - heatmap.options.marker.lineWidth === 50 &&
-        bBox.height - heatmap.options.marker.lineWidth === 50,
-        true,
-        'Marker\'s fixed width and height are set correctly through series.marker options.'
+        bBox.width - heatmap.options.marker.lineWidth,
+        50,
+        'Marker\'s fixed width should set correctly through series.marker options.'
+    );
+
+    assert.strictEqual(
+        bBox.height - heatmap.options.marker.lineWidth,
+        50,
+        'Marker\'s fixed height should set correctly through series.marker options.'
     );
 
     var point = heatmap.points[4];
@@ -82,10 +87,21 @@ QUnit.test('General marker tests', function (assert) {
     bBox = point.graphic.getBBox();
 
     assert.strictEqual(
-        bBox.width - point.options.marker.lineWidth === 20 &&
-        bBox.height - point.options.marker.lineWidth === 20,
-        true,
-        'Marker\'s fixed width and height are set correctly through point.marker, and marker\'s lineWidth and color as well.'
+        bBox.width - point.options.marker.lineWidth,
+        20,
+        'Marker\'s fixed width lineWidth should set correctly through point.marker.'
+    );
+
+    assert.strictEqual(
+        bBox.height - point.options.marker.lineWidth,
+        20,
+        'Marker\'s fixed height lineWidth should set correctly through point.marker.'
+    );
+
+    assert.strictEqual(
+        point.graphic.stroke,
+        "red",
+        'Marker\'s lineWidth color should set correctly through point.marker.'
     );
 
     // Test marker states
@@ -109,13 +125,13 @@ QUnit.test('General marker tests', function (assert) {
     assert.strictEqual(
         point.graphic.element.getAttribute('stroke'),
         heatmap.options.marker.states.hover.lineColor,
-        'Marker\'s line color is set on hover state.'
+        'Marker\'s line color should set on hover state.'
     );
 
     assert.strictEqual(
         parseInt(point.graphic.element.getAttribute('stroke-width'), 10),
         heatmap.options.marker.states.hover.lineWidth,
-        'Marker\'s line width is set on hover state.'
+        'Marker\'s line width should set on hover state.'
     );
 
     assert.strictEqual(
@@ -146,7 +162,7 @@ QUnit.test('General marker tests', function (assert) {
         parseInt(point.graphic.element.getAttribute('stroke-width'), 10),
         point.options.marker.lineWidth +
         heatmap.options.marker.states.hover.lineWidthPlus,
-        'Marker\'s lineWidthPlus is applied correctly.'
+        'Marker\'s lineWidthPlus value should be applied on hover.'
     );
 
     bBox = point.graphic.getBBox();
@@ -157,7 +173,7 @@ QUnit.test('General marker tests', function (assert) {
             heatmap.options.marker.states.hover.widthPlus -
             point.options.marker.lineWidth +
             heatmap.options.marker.states.hover.lineWidthPlus,
-        'Marker\'s widthPlus is applied correctly.'
+        'Marker\'s widthPlus value should be applied on hover.'
     );
 
     assert.strictEqual(
@@ -166,7 +182,7 @@ QUnit.test('General marker tests', function (assert) {
         heatmap.options.marker.states.hover.heightPlus -
         point.options.marker.lineWidth +
         heatmap.options.marker.states.hover.lineWidthPlus,
-        'Marker\'s heightPlus is applied correctly.'
+        'Marker\'s heightPlus value should be applied on hover.'
     );
 
     // Testing image as symbol
@@ -182,7 +198,7 @@ QUnit.test('General marker tests', function (assert) {
         point.graphic.element.tagName === "image" &&
         point.hasImage,
         true,
-        "Point's marker is correctly set as an image."
+        "The image should set as a point's marker."
     );
 
 });
