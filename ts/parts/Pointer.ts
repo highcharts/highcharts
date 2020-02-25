@@ -2045,8 +2045,8 @@ class Pointer {
                 points.forEach(function (p): void {
                     if ((p.series as any)[axis.coll] === axis) {
                         tempDistance = Math.sqrt(
-                            Math.pow(e.chartX - (p.plotX || 0 + chart.plotLeft), 2) +
-                            Math.pow(e.chartY - (p.plotY || 0 + chart.plotTop), 2)
+                            Math.pow(e.chartX - ((p.plotX || 0) + chart.plotLeft), 2) +
+                            Math.pow(e.chartY - ((p.plotY || 0) + chart.plotTop), 2)
                         );
 
                         distance = !defined(distance) ?
