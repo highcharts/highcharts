@@ -1364,9 +1364,9 @@ var Pointer = /** @class */ (function () {
             else if (e) {
                 // A point closest to the pointer should be chosen (#13002).
                 points.forEach(function (p) {
-                    if (p.plotX && p.plotY && p.series[axis.coll] === axis) {
-                        tempDistance = Math.sqrt(Math.pow(e.chartX - (p.plotX + chart.plotLeft), 2) +
-                            Math.pow(e.chartY - (p.plotY + chart.plotTop), 2));
+                    if (p.series[axis.coll] === axis) {
+                        tempDistance = Math.sqrt(Math.pow(e.chartX - (p.plotX || 0 + chart.plotLeft), 2) +
+                            Math.pow(e.chartY - (p.plotY || 0 + chart.plotTop), 2));
                         distance = !defined(distance) ?
                             tempDistance : (tempDistance < distance ? tempDistance : distance);
                         point = distance === tempDistance ? p : point;
