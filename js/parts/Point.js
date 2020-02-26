@@ -53,11 +53,12 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointLabelObject#percentage
 * @type {number}
 */ /**
-* The related point.
+* The related point. The point name, if defined, is available through
+* `this.point.name`.
 * @name Highcharts.PointLabelObject#point
 * @type {Highcharts.Point}
 */ /**
-* The related series.
+* The related series. The series name is available through `this.series.name`.
 * @name Highcharts.PointLabelObject#series
 * @type {Highcharts.Series}
 */ /**
@@ -387,16 +388,6 @@ var Point = /** @class */ (function () {
          * @private
          */
         function destroyPoint() {
-            if (hoverPoints) {
-                point.setState();
-                erase(hoverPoints, point);
-                if (!hoverPoints.length) {
-                    chart.hoverPoints = null;
-                }
-            }
-            if (point === chart.hoverPoint) {
-                point.onMouseOut();
-            }
             // Remove all events and elements
             if (point.graphic || point.dataLabel || point.dataLabels) {
                 removeEvent(point);
@@ -408,6 +399,16 @@ var Point = /** @class */ (function () {
         }
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
+        }
+        if (hoverPoints) {
+            point.setState();
+            erase(hoverPoints, point);
+            if (!hoverPoints.length) {
+                chart.hoverPoints = null;
+            }
+        }
+        if (point === chart.hoverPoint) {
+            point.onMouseOut();
         }
         // Remove properties after animation
         if (!dataSorting || !dataSorting.enabled) {
@@ -673,7 +674,7 @@ var Point = /** @class */ (function () {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
-                        H.Point.prototype.setNestedProperty(ret, options[i], pointArrayMap[j]);
+                        Point.prototype.setNestedProperty(ret, options[i], pointArrayMap[j]);
                     }
                     else {
                         ret[pointArrayMap[j]] = options[i];
@@ -800,7 +801,4 @@ var Point = /** @class */ (function () {
     return Point;
 }());
 H.Point = Point;
-var pointModule = {
-    Point: Point
-};
-export default pointModule;
+export default H.Point;

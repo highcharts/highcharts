@@ -106,7 +106,7 @@ declare global {
             animationLimit?: number;
             crisp?: boolean;
             dataGrouping?: DataGroupingOptionsObject;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             enableMouseTracking?: boolean;
             params?: VBPIndicatorParamsOptions;
             pointPadding?: number;
@@ -121,6 +121,7 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -841,7 +842,7 @@ seriesType<Highcharts.VBPIndicator>(
             if (this.negativeGraphic) {
                 this.negativeGraphic = (this.negativeGraphic as any).destroy();
             }
-            return H.Point.prototype.destroy.apply(this, arguments);
+            return Point.prototype.destroy.apply(this, arguments);
         }
     }
 );

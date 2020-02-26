@@ -175,6 +175,9 @@ declare global {
  * @type {number|undefined}
  */
 
+''; // detach doclets above
+
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -276,7 +279,7 @@ function hashFromObject(obj: object, preSeed?: boolean): string {
  *
  * @requires modules/pattern-fill
  */
-H.Point.prototype.calculatePatternDimensions = function (
+Point.prototype.calculatePatternDimensions = function (
     pattern: Highcharts.PatternOptionsObject
 ): void {
     if (pattern.width && pattern.height) {
@@ -558,7 +561,7 @@ addEvent(H.Series, 'render', function (): void {
 
 
 // Merge series color options to points
-addEvent(H.Point, 'afterInit', function (): void {
+addEvent(Point, 'afterInit', function (): void {
     var point = this,
         colorOptions: (Highcharts.PatternObject|undefined) =
             point.options.color as any;
@@ -629,7 +632,7 @@ addEvent(H.SVGRenderer, 'complexColor', function (
         // If we don't have a width/height yet, handle it. Try faking a point
         // and running the algorithm again.
         if (pattern._width === 'defer' || pattern._height === 'defer') {
-            H.Point.prototype.calculatePatternDimensions.call(
+            Point.prototype.calculatePatternDimensions.call(
                 { graphic: { element: element } }, pattern
             );
         }

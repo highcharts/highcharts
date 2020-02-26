@@ -243,11 +243,12 @@ declare global {
  * @name Highcharts.PointLabelObject#percentage
  * @type {number}
  *//**
- * The related point.
+ * The related point. The point name, if defined, is available through
+ * `this.point.name`.
  * @name Highcharts.PointLabelObject#point
  * @type {Highcharts.Point}
  *//**
- * The related series.
+ * The related series. The series name is available through `this.series.name`.
  * @name Highcharts.PointLabelObject#series
  * @type {Highcharts.Series}
  *//**
@@ -678,18 +679,6 @@ class Point {
          * @private
          */
         function destroyPoint(): void {
-            if (hoverPoints) {
-                point.setState();
-                erase(hoverPoints, point);
-                if (!hoverPoints.length) {
-                    chart.hoverPoints = null as any;
-                }
-
-            }
-            if (point === chart.hoverPoint) {
-                point.onMouseOut();
-            }
-
             // Remove all events and elements
             if (point.graphic || point.dataLabel || point.dataLabels) {
                 removeEvent(point);
@@ -703,6 +692,18 @@ class Point {
 
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
+        }
+
+        if (hoverPoints) {
+            point.setState();
+            erase(hoverPoints, point);
+            if (!hoverPoints.length) {
+                chart.hoverPoints = null as any;
+            }
+
+        }
+        if (point === chart.hoverPoint) {
+            point.onMouseOut();
         }
 
         // Remove properties after animation
@@ -1032,7 +1033,7 @@ class Point {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
-                        H.Point.prototype.setNestedProperty(
+                        Point.prototype.setNestedProperty(
                             ret, (options as any)[i], pointArrayMap[j]
                         );
                     } else {
@@ -1200,8 +1201,4 @@ class Point {
 
 H.Point = Point as any;
 
-const pointModule = {
-    Point
-};
-
-export default pointModule;
+export default H.Point;

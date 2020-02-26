@@ -9,12 +9,12 @@
  * */
 'use strict';
 import H from './Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
 var seriesType = U.seriesType;
-import './Legend.js';
 import './AreaSeries.js';
 import './SplineSeries.js';
-var areaProto = H.seriesTypes.area.prototype, defaultPlotOptions = H.defaultPlotOptions, LegendSymbolMixin = H.LegendSymbolMixin;
+var areaProto = H.seriesTypes.area.prototype, defaultPlotOptions = H.defaultPlotOptions;
 /**
  * AreaSpline series type.
  *

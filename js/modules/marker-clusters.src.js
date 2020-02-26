@@ -41,13 +41,14 @@ import H from '../parts/Globals.js';
  *          Event arguments.
  */
 ''; // detach doclets from following code
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /* eslint-disable no-invalid-this */
-import '../parts/Series.js';
 import '../parts/Axis.js';
+import '../parts/Series.js';
 import '../parts/SvgRenderer.js';
-var Series = H.Series, Scatter = H.seriesTypes.scatter, Point = H.Point, SvgRenderer = H.SVGRenderer, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
+var Series = H.Series, Scatter = H.seriesTypes.scatter, SvgRenderer = H.SVGRenderer, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
 oldPointsStateId = [];
@@ -318,7 +319,7 @@ var clusterDefaultOptions = {
      */
     /**
      * Options for the cluster data labels.
-     * @type    {Highcharts.DataLabelsOptionsObject}
+     * @type    {Highcharts.DataLabelsOptions}
      */
     dataLabels: {
         /** @internal */
@@ -1498,7 +1499,7 @@ addEvent(Series, 'afterRender', function () {
         });
     }
 });
-addEvent(H.Point, 'drillToCluster', function (event) {
+addEvent(Point, 'drillToCluster', function (event) {
     var point = event.point || event.target, series = point.series, clusterOptions = series.options.cluster, onDrillToCluster = ((clusterOptions || {}).events || {}).drillToCluster;
     if (isFunction(onDrillToCluster)) {
         onDrillToCluster.call(this, event);

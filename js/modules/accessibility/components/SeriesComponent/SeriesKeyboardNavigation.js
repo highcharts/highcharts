@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../../../parts/Globals.js';
+import Point from '../../../../parts/Point.js';
 import U from '../../../../parts/Utilities.js';
 var extend = U.extend, defined = U.defined;
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -141,7 +142,7 @@ function getClosestPoint(point, series, xWeight, yWeight) {
  * @return {Highcharts.Point}
  *         This highlighted point.
  */
-H.Point.prototype.highlight = function () {
+Point.prototype.highlight = function () {
     var chart = this.series.chart;
     if (!this.isNull) {
         this.onMouseOver(); // Show the hover marker and tooltip

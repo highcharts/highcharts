@@ -41,13 +41,13 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     seriesType
 } = U;
 
-var Point = H.Point,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * @private

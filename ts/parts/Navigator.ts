@@ -186,6 +186,11 @@ declare global {
     }
 }
 
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
+import Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -203,11 +208,6 @@ const {
     removeEvent,
     splat
 } = U;
-import Color from './Color.js';
-const {
-    parse: color
-} = Color;
-import Scrollbar from './Scrollbar.js';
 
 import './Axis.js';
 import './Chart.js';

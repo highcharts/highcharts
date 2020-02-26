@@ -68,7 +68,7 @@ declare global {
                 this: TilemapSeries,
                 point: Point,
                 dataLabel: SVGElement,
-                options: DataLabelsOptionsObject,
+                options: DataLabelsOptions,
                 alignTo: BBoxObject,
                 isNew?: boolean
             ): void;

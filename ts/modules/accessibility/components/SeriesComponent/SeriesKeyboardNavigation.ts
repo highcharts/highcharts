@@ -81,6 +81,7 @@ declare global {
     }
 }
 
+import Point from '../../../../parts/Point.js';
 import U from '../../../../parts/Utilities.js';
 var extend = U.extend,
     defined = U.defined;
@@ -257,7 +258,7 @@ function getClosestPoint(
  * @return {Highcharts.Point}
  *         This highlighted point.
  */
-H.Point.prototype.highlight = function (): Highcharts.Point {
+Point.prototype.highlight = function (): Highcharts.Point {
     var chart = this.series.chart;
 
     if (!this.isNull) {

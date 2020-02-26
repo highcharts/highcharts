@@ -24,12 +24,14 @@ import H from './Globals.js';
 * @name Highcharts.DataGroupingInfoObject#start
 * @type {number}
 */
+''; // detach doclets above
+import Point from './Point.js';
+import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
-import Tooltip from './Tooltip.js';
 import './Axis.js';
 import './Series.js';
-var Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, Point = H.Point, Series = H.Series;
+var Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, Series = H.Series;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
