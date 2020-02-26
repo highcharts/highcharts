@@ -42,7 +42,7 @@ declare global {
             groupZPadding?: number;
             inactiveOtherPoints?: boolean;
         }
-        interface DataLabelsOptionsObject {
+        interface DataLabelsOptions {
             outside3dPlot?: (boolean|null);
         }
         interface Series {
@@ -518,7 +518,7 @@ wrap(Series.prototype, 'alignDataLabel', function (
     proceed: Function,
     point: Highcharts.ColumnPoint,
     dataLabel: Highcharts.SVGElement,
-    options: Highcharts.DataLabelsOptionsObject,
+    options: Highcharts.DataLabelsOptions,
     alignTo: Highcharts.BBoxObject
 ): void {
     const chart = this.chart;

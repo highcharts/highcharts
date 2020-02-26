@@ -674,6 +674,22 @@ var options = {
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
      */
     /**
+     * Accessibility options for an annotation label.
+     *
+     * @declare    Highcharts.AnnotationLabelAccessibilityOptionsObject
+     * @since      next
+     * @requires   modules/accessibility
+     * @apioption  annotations.labelOptions.accessibility
+     */
+    /**
+     * Description of an annotation label for screen readers and other assistive
+     * technology.
+     *
+     * @type       {string}
+     * @since      next
+     * @apioption  annotations.labelOptions.accessibility.description
+     */
+    /**
      * Accessibility options for an axis. Requires the accessibility module.
      *
      * @declare    Highcharts.AxisAccessibilityOptionsObject

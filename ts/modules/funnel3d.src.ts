@@ -418,7 +418,7 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
             this: Highcharts.Funnel3dSeries,
             point: Highcharts.Funnel3dPoint,
             dataLabel: Highcharts.SVGElement,
-            options: Highcharts.DataLabelsOptionsObject
+            options: Highcharts.DataLabelsOptions
         ): void {
             var series = this,
                 dlBoxRaw = point.dlBoxRaw,

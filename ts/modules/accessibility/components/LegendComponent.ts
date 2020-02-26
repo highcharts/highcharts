@@ -13,6 +13,7 @@
 'use strict';
 
 import H from '../../../parts/Globals.js';
+import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
 const {
     addEvent,
@@ -143,7 +144,7 @@ H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
 };
 
 // Keep track of pressed state for legend items
-addEvent(H.Legend, 'afterColorizeItem', function (
+addEvent(Legend, 'afterColorizeItem', function (
     e: {
         item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series);
         visible: (boolean|undefined);
@@ -180,7 +181,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     init: function (this: Highcharts.LegendComponent): void {
         var component = this;
 
-        this.addEvent(H.Legend, 'afterScroll', function (): void {
+        this.addEvent(Legend, 'afterScroll', function (): void {
             if (this.chart === component.chart) {
                 component.updateProxies();
             }

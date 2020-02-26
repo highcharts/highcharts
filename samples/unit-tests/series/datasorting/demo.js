@@ -146,3 +146,47 @@ QUnit.test('Data sorting with sortKey', function (assert) {
 
     });
 });
+
+QUnit.test('Data sorting with drilldown', function (assert) {
+
+    Highcharts.chart('container', {
+        chart: {
+            type: "bar",
+            animation: true
+        },
+        series: [{
+            dataSorting: {
+                enabled: true
+            },
+            data: [{
+                y: 3,
+                drilldown: "A"
+            }]
+        }],
+        drilldown: {
+            series: [{
+                id: "A",
+                data: [
+                    ["AAA", 1]
+                ]
+            }]
+        }
+    }, function (chart) {
+
+        var point = chart.series[0].points[0];
+
+        point.onMouseOver();
+        point.doDrilldown();
+
+        chart.drillUp();
+        point = chart.series[0].points[0];
+
+        point.onMouseOver();
+        point.doDrilldown();
+
+        assert.ok(
+            chart.series[0].points[0],
+            'Axis labels group should be transform rotation by 90 deg.'
+        );
+    });
+});

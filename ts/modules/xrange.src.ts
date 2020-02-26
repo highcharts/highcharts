@@ -103,7 +103,10 @@ declare global {
  */
 
 import Color from '../parts/Color.js';
-const color = Color.parse;
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -121,7 +124,6 @@ const {
 var columnType = H.seriesTypes.column,
     seriesTypes = H.seriesTypes,
     Axis = H.Axis,
-    Point = H.Point,
     Series = H.Series;
 
 /**
@@ -432,7 +434,8 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                 dlLeft,
                 dlRight,
                 dlWidth,
-                clipRectWidth;
+                clipRectWidth,
+                tooltipYOffset;
 
             if (minPointLength) {
                 widthDifference = minPointLength - length;
@@ -499,6 +502,10 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             const tooltipPos: number[] = (point.tooltipPos as any);
             const xIndex = !inverted ? 0 : 1;
             const yIndex = !inverted ? 1 : 0;
+
+            tooltipYOffset = series.columnMetrics ?
+                series.columnMetrics.offset : -metrics.width / 2;
+
             // Limit position by the correct axis size (#9727)
             tooltipPos[xIndex] = clamp(
                 tooltipPos[xIndex] + (
@@ -510,7 +517,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             );
             tooltipPos[yIndex] = clamp(
                 tooltipPos[yIndex] + (
-                    (!inverted ? -1 : 1) * (metrics.width / 2)
+                    (inverted ? -1 : 1) * tooltipYOffset
                 ),
                 0,
                 yAxis.len - 1
