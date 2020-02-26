@@ -335,9 +335,9 @@ class Tooltip {
 
     public split?: boolean;
 
-    public stickOnContactTracker?: Highcharts.SVGElement;
-
     public tooltipTimeout?: number;
+
+    public tracker?: Highcharts.SVGElement;
 
     public tt?: Highcharts.SVGElement;
 
@@ -1739,8 +1739,8 @@ class Tooltip {
         const tooltip = this;
 
         if (tooltip.options.followPointer || !tooltip.options.stickOnContact) {
-            if (tooltip.stickOnContactTracker) {
-                tooltip.stickOnContactTracker.destroy();
+            if (tooltip.tracker) {
+                tooltip.tracker.destroy();
             }
             return;
         }
@@ -1759,19 +1759,26 @@ class Tooltip {
         const labelBBox = label.getBBox();
 
         // Combine anchor and tooltip
-        const size: Highcharts.SizeObject = {
+        const size: Highcharts.RectangleObject = {
+            x: 0,
+            y: 0,
             width: Math.max((anchorPos[0] + chart.plotLeft - label.translateX), labelBBox.width),
             height: Math.max((anchorPos[1] + chart.plotTop - label.translateY), labelBBox.height)
         };
 
-        if (!tooltip.stickOnContactTracker) {
-            tooltip.stickOnContactTracker = label.renderer
-                .rect(0, 0, size.height, size.width)
-                .attr({ fill: 'rgba(0,0,0,0)' })
-                .add(label);
+        if (tooltip.tracker) {
+            tooltip.tracker.attr(size);
         } else {
-            tooltip.stickOnContactTracker.attr('width', size.width.toString());
-            tooltip.stickOnContactTracker.attr('height', size.height.toString());
+            tooltip.tracker = label.renderer
+                .rect(size)
+                .addClass('highcharts-tracker')
+                .add(label);
+
+            if (!chart.styledMode) {
+                tooltip.tracker.attr({
+                    fill: 'rgba(0,0,0,0)'
+                });
+            }
         }
     }
 
