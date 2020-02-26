@@ -1032,7 +1032,7 @@ extend(ColorAxis.prototype, {
 * @function Highcharts.Fx#strokeSetter
 */
 ['fill', 'stroke'].forEach(function (prop) {
-    H.Fx.prototype[prop + 'Setter'] = function () {
+    Fx.prototype[prop + 'Setter'] = function () {
         this.elem.attr(prop, color(this.start).tweenTo(color(this.end), this.pos), null, true);
     };
 });

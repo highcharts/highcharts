@@ -1460,14 +1460,14 @@ extend(ColorAxis.prototype, {
  * @function Highcharts.Fx#strokeSetter
  */
 ['fill', 'stroke'].forEach(function (prop: string): void {
-    H.Fx.prototype[prop + 'Setter'] = function (this: Highcharts.Fx): void {
-        (this.elem as any).attr(
+    (Fx.prototype as any)[prop + 'Setter'] = function (): void {
+        this.elem.attr(
             prop,
             color(this.start).tweenTo(
                 color(this.end),
                 this.pos
             ),
-            null,
+            null as any,
             true
         );
     };

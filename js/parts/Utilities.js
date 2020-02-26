@@ -2557,7 +2557,7 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utilitiesModule = {
-    Fx: Fx,
+    Fx: H.Fx,
     addEvent: addEvent,
     animate: animate,
     animObject: animObject,
