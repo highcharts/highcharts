@@ -49,7 +49,7 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, objectEach = U.objectEach, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, getDeferTime = U.getDeferTime, objectEach = U.objectEach, pick = U.pick;
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
@@ -322,7 +322,7 @@ Axis.prototype.buildStacks = function () {
  * @return {vopid}
  */
 Axis.prototype.renderStackTotals = function () {
-    var axis = this, chart = axis.chart, renderer = chart.renderer, stacks = axis.stacks, stackTotalGroup = axis.stackTotalGroup;
+    var axis = this, chart = axis.chart, renderer = chart.renderer, stacks = axis.stacks, deferTime, defer = axis.userOptions.stackLabels.defer, stackTotalGroup = axis.stackTotalGroup;
     // Create a separate group for the stack total labels
     if (!stackTotalGroup) {
         axis.stackTotalGroup = stackTotalGroup =
@@ -330,7 +330,8 @@ Axis.prototype.renderStackTotals = function () {
                 .g('stack-labels')
                 .attr({
                 visibility: 'visible',
-                zIndex: 6
+                zIndex: 6,
+                opacity: 0
             })
                 .add();
     }
@@ -342,6 +343,12 @@ Axis.prototype.renderStackTotals = function () {
         objectEach(type, function (stack) {
             stack.render(stackTotalGroup);
         });
+    });
+    deferTime = getDeferTime(chart, defer);
+    stackTotalGroup.animate({
+        opacity: 1
+    }, {
+        defer: deferTime
     });
 };
 /**

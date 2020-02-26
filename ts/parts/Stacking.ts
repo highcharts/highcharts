@@ -186,6 +186,7 @@ const {
     defined,
     destroyObjectProperties,
     format,
+    getDeferTime,
     objectEach,
     pick
 } = U;
@@ -594,6 +595,8 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
         chart = axis.chart,
         renderer = chart.renderer,
         stacks = axis.stacks,
+        deferTime,
+        defer = axis.userOptions.stackLabels.defer,
         stackTotalGroup = axis.stackTotalGroup as Highcharts.SVGElement;
 
     // Create a separate group for the stack total labels
@@ -603,7 +606,8 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
                 .g('stack-labels')
                 .attr({
                     visibility: 'visible',
-                    zIndex: 6
+                    zIndex: 6,
+                    opacity: 0
                 })
                 .add();
     }
@@ -619,6 +623,14 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
         objectEach(type, function (stack: Highcharts.StackItem): void {
             stack.render(stackTotalGroup);
         });
+    });
+
+    deferTime = getDeferTime(chart, defer);
+
+    stackTotalGroup.animate({
+        opacity: 1
+    }, {
+        defer: deferTime
     });
 };
 

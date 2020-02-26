@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, getDeferTime = U.getDeferTime, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -205,6 +205,20 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          *         Set annotation visibility
          */
         visible: true,
+        /**
+         * Whether to defer displaying the annotations until the set
+         * duration time has finished. Setting to `false` renders
+         * annotation immediately. If set to `true` inherits the duration
+         * time set in [plotOptions.series.animation](#plotOptions.series.animation).
+         *
+         * @sample highcharts/annotations/defer
+         *         Set defer duration time
+         *
+         * @since        8.0.1
+         *
+         * @type {boolean | number}
+         */
+        defer: true,
         /**
          * Allow an annotation to be draggable by a user. Possible
          * values are `'x'`, `'xy'`, `'y'` and `''` (disabled).
@@ -699,39 +713,14 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @private
      */
     init: function () {
+        var chart = this.chart, defer = this.options.defer;
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
         this.addClipPaths();
         this.setLabelCollector();
-        this.deferTime = this.getDeferTime();
-    },
-    getDeferTime: function () {
-        var chart = this.chart, plotOptions = chart.options.plotOptions, defer = this.options.defer, deferTime;
-        if (defer === false || chart.renderer.forExport) {
-            // If defer is disabled deferTime is set to 0 (invoke immediately)
-            deferTime = 0;
-        }
-        else if (isNumber(defer)) {
-            // If defer is a number - animate defer will be set to this value
-            deferTime = defer;
-        }
-        else if (plotOptions.series && defined(plotOptions.series.animation)) {
-            if (plotOptions.series.animation.defer && plotOptions.series.animation.duration) {
-                //  If defer and duration are set, the animation will be
-                // triggered after their sum value
-                deferTime = plotOptions.series.animation.defer + plotOptions.series.animation.duration;
-            }
-            else {
-                deferTime = plotOptions.series.animation.defer ? plotOptions.series.animation.defer :
-                    plotOptions.series.animation.duration;
-            }
-        }
-        else {
-            deferTime = plotOptions.line.animation.duration;
-        }
-        return deferTime;
+        this.deferTime = getDeferTime(chart, defer);
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {
         var mergedOptions = {};

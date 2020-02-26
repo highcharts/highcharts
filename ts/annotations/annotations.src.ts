@@ -78,7 +78,6 @@ declare global {
             public destroy(): void;
             public destroyItem(item: AnnotationControllable): void;
             public getClipBox(): BBoxObject;
-            public getDeferTime(): number;
             public getLabelsAndShapesOptions(
                 baseOptions: AnnotationsOptions,
                 newOptions: Partial<AnnotationsOptions>
@@ -186,7 +185,7 @@ declare global {
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
             controlPointOptions: AnnotationControlPointOptionsObject;
-            defer?: boolean | number;
+            defer: boolean | number;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -258,7 +257,7 @@ const {
     erase,
     extend,
     find,
-    isNumber,
+    getDeferTime,
     merge,
     pick,
     splat,
@@ -500,6 +499,21 @@ merge(
              *         Set annotation visibility
              */
             visible: true,
+
+            /**
+             * Whether to defer displaying the annotations until the set
+             * duration time has finished. Setting to `false` renders
+             * annotation immediately. If set to `true` inherits the duration
+             * time set in [plotOptions.series.animation](#plotOptions.series.animation).
+             *
+             * @sample highcharts/annotations/defer
+             *         Set defer duration time
+             *
+             * @since        8.0.1
+             *
+             * @type {boolean | number}
+             */
+            defer: true,
 
             /**
              * Allow an annotation to be draggable by a user. Possible
@@ -1051,42 +1065,16 @@ merge(
          * @private
          */
         init: function (this: Highcharts.Annotation): void {
+            const chart = this.chart,
+                defer = this.options.defer;
+
             this.linkPoints();
             this.addControlPoints();
             this.addShapes();
             this.addLabels();
             this.addClipPaths();
             this.setLabelCollector();
-            this.deferTime = this.getDeferTime();
-        },
-        getDeferTime: function (
-            this: Highcharts.Annotation
-        ): number {
-            var chart = this.chart,
-                plotOptions = chart.options.plotOptions as any,
-                defer = this.options.defer,
-                deferTime;
-
-            if (defer === false || chart.renderer.forExport) {
-            // If defer is disabled deferTime is set to 0 (invoke immediately)
-                deferTime = 0;
-            } else if (isNumber(defer)) {
-            // If defer is a number - animate defer will be set to this value
-                deferTime = defer;
-            } else if (plotOptions.series && defined(plotOptions.series.animation)) {
-
-                if (plotOptions.series.animation.defer && plotOptions.series.animation.duration) {
-                //  If defer and duration are set, the animation will be
-                // triggered after their sum value
-                    deferTime = plotOptions.series.animation.defer + plotOptions.series.animation.duration;
-                } else {
-                    deferTime = plotOptions.series.animation.defer ? plotOptions.series.animation.defer :
-                        plotOptions.series.animation.duration;
-                }
-            } else {
-                deferTime = plotOptions.line.animation.duration;
-            }
-            return deferTime;
+            this.deferTime = getDeferTime(chart, defer);
         },
 
         getLabelsAndShapesOptions: function (
