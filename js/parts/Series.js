@@ -4972,7 +4972,7 @@ null,
         if (!hasRendered) {
             // Additional time if defer is defined before afterAnimate
             // will be triggered
-            if (animDuration && (animObject(options.animation).defer)) {
+            if (animDuration && animObject(options.animation).defer) {
                 animDuration += animObject(options.animation).defer || 0;
             }
             series.animationTimeout = syncTimeout(function () {

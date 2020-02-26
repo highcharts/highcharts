@@ -78,6 +78,7 @@ declare global {
             public destroy(): void;
             public destroyItem(item: AnnotationControllable): void;
             public getClipBox(): BBoxObject;
+            public getDeferTime(): number;
             public getLabelsAndShapesOptions(
                 baseOptions: AnnotationsOptions,
                 newOptions: Partial<AnnotationsOptions>
@@ -1050,38 +1051,42 @@ merge(
          * @private
          */
         init: function (this: Highcharts.Annotation): void {
-            const plotOptions = this.chart.options.plotOptions as any,
-                defer = this.options.defer;
-
             this.linkPoints();
             this.addControlPoints();
             this.addShapes();
             this.addLabels();
             this.addClipPaths();
             this.setLabelCollector();
-            this.deferTime = (defer === false || this.chart.renderer.forExport) ?
-                // If defer is disabled deferTime is set to 0
-                // (invoke immediately)
-                0 : (
-                    isNumber(defer) ?
-                        // If defer is a number - animate will triger
-                        // after this number, otherwise the time will be taken
-                        // from the plotOptions.series.animation
-                        defer :
-                        (plotOptions.series && defined(plotOptions.series.animation) ?
-                            (
-                                (
-                                    plotOptions.series.animation.defer &&
-                                    plotOptions.series.animation.duration
-                                ) ?
-                                // If defer and duration are set the animation
-                                //  will be triggered after their sum value
-                                    plotOptions.series.animation.defer + plotOptions.series.animation.duration :
-                                    plotOptions.series.animation.defer ? plotOptions.series.animation.defer :
-                                        plotOptions.series.animation.duration
-                            ) :
-                            plotOptions.line.animation)
-                );
+            this.deferTime = this.getDeferTime();
+        },
+        getDeferTime: function (
+            this: Highcharts.Annotation
+        ): number {
+            var chart = this.chart,
+                plotOptions = chart.options.plotOptions as any,
+                defer = this.options.defer,
+                deferTime;
+
+            if (defer === false || chart.renderer.forExport) {
+            // If defer is disabled deferTime is set to 0 (invoke immediately)
+                deferTime = 0;
+            } else if (isNumber(defer)) {
+            // If defer is a number - animate defer will be set to this value
+                deferTime = defer;
+            } else if (plotOptions.series && defined(plotOptions.series.animation)) {
+
+                if (plotOptions.series.animation.defer && plotOptions.series.animation.duration) {
+                //  If defer and duration are set, the animation will be
+                // triggered after their sum value
+                    deferTime = plotOptions.series.animation.defer + plotOptions.series.animation.duration;
+                } else {
+                    deferTime = plotOptions.series.animation.defer ? plotOptions.series.animation.defer :
+                        plotOptions.series.animation.duration;
+                }
+            } else {
+                deferTime = plotOptions.line.animation.duration;
+            }
+            return deferTime;
         },
 
         getLabelsAndShapesOptions: function (
