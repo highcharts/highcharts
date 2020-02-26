@@ -1711,11 +1711,12 @@ RangeSelector.prototype = {
             exportingX = -40;
         }
 
-        if ((buttonPosition as any).align === 'left') {
-            translateX = (buttonPosition as any).x - chart.spacing[3];
-        } else if ((buttonPosition as any).align === 'right') {
-            translateX =
-                (buttonPosition as any).x + exportingX - chart.spacing[1];
+        translateX = (buttonPosition as any).x - chart.spacing[3];
+
+        if ((buttonPosition as any).align === 'right') {
+            translateX += exportingX - plotLeft; // (#13014)
+        } else if ((buttonPosition as any).align === 'center') {
+            translateX -= plotLeft / 2;
         }
 
         // align button group
