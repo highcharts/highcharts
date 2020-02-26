@@ -814,6 +814,7 @@ var Tooltip = /** @class */ (function () {
         });
         // Move to the intermediate value
         tooltip.getLabel().attr(now);
+        tooltip.drawTracker();
         // Run on next tick of the mouse tracker
         if (animate) {
             // Never allow two timeouts
@@ -826,9 +827,6 @@ var Tooltip = /** @class */ (function () {
                     tooltip.move(x, y, anchorX, anchorY);
                 }
             }, 32);
-        }
-        else {
-            this.stickOnContact();
         }
     };
     /**
@@ -1179,7 +1177,7 @@ var Tooltip = /** @class */ (function () {
      * @private
      * @function Highcharts.Tooltip#stickOnContact
      */
-    Tooltip.prototype.stickOnContact = function () {
+    Tooltip.prototype.drawTracker = function () {
         var tooltip = this;
         if (tooltip.options.followPointer || !tooltip.options.stickOnContact) {
             if (tooltip.tracker) {

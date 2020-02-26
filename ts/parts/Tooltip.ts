@@ -56,8 +56,8 @@ declare global {
             public renderer?: Renderer;
             public shared?: boolean;
             public split?: boolean;
-            public stickOnContactTracker?: SVGElement;
             public tooltipTimeout?: number;
+            public tracker?: SVGElement;
             public tt?: SVGElement;
             public applyFilter(): void;
             public bodyFormatter(items: Array<(Point|Series)>): Array<string>;
@@ -1213,7 +1213,7 @@ class Tooltip {
 
         // Move to the intermediate value
         tooltip.getLabel().attr(now);
-
+        tooltip.drawTracker();
 
         // Run on next tick of the mouse tracker
         if (animate) {
@@ -1229,10 +1229,6 @@ class Tooltip {
                     tooltip.move(x, y, anchorX, anchorY);
                 }
             }, 32) as any;
-
-        } else {
-
-            this.stickOnContact();
 
         }
     }
@@ -1735,7 +1731,7 @@ class Tooltip {
      * @private
      * @function Highcharts.Tooltip#stickOnContact
      */
-    private stickOnContact(): void {
+    private drawTracker(): void {
         const tooltip = this;
 
         if (tooltip.options.followPointer || !tooltip.options.stickOnContact) {
