@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -699,12 +699,30 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @private
      */
     init: function () {
+        var plotOptions = this.chart.options.plotOptions, defer = this.options.defer;
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
         this.addClipPaths();
         this.setLabelCollector();
+        this.deferTime = (defer === false || this.chart.renderer.forExport) ?
+            // If defer is disabled deferTime is set to 0
+            // (invoke immediately)
+            0 : (isNumber(defer) ?
+            // If defer is a number - animate will triger
+            // after this number, otherwise the time will be taken
+            // from the plotOptions.series.animation
+            defer :
+            (plotOptions.series && defined(plotOptions.series.animation) ?
+                ((plotOptions.series.animation.defer &&
+                    plotOptions.series.animation.duration) ?
+                    // If defer and duration are set the animation
+                    //  will be triggered after their sum value
+                    plotOptions.series.animation.defer + plotOptions.series.animation.duration :
+                    plotOptions.series.animation.defer ? plotOptions.series.animation.defer :
+                        plotOptions.series.animation.duration) :
+                plotOptions.line.animation));
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {
         var mergedOptions = {};
@@ -808,6 +826,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         this.graphic = renderer
             .g('annotation')
             .attr({
+            opacity: 0,
             zIndex: this.options.zIndex,
             visibility: this.options.visible ?
                 'visible' :
@@ -1065,6 +1084,11 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this.plotBoxClip.attr(this.plotBox);
         this.annotations.forEach(function (annotation) {
             annotation.redraw();
+            annotation.graphic.animate({
+                opacity: 1
+            }, {
+                defer: annotation.deferTime
+            });
         });
     }
 });

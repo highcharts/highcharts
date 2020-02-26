@@ -38,6 +38,7 @@ declare global {
             public collection: AnnotationControllable['collection'];
             public controlPoints: Array<AnnotationControlPoint>;
             public defaultOptions: AnnotationsOptions;
+            public deferTime: number;
             public getPointsOptions: AnnotationControllableMixin['getPointsOptions'];
             public graphic: SVGElement;
             public group: SVGElement;
@@ -184,6 +185,7 @@ declare global {
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
             controlPointOptions: AnnotationControlPointOptionsObject;
+            defer?: boolean | number;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -255,6 +257,7 @@ const {
     erase,
     extend,
     find,
+    isNumber,
     merge,
     pick,
     splat,
@@ -1047,12 +1050,38 @@ merge(
          * @private
          */
         init: function (this: Highcharts.Annotation): void {
+            const plotOptions = this.chart.options.plotOptions as any,
+                defer = this.options.defer;
+
             this.linkPoints();
             this.addControlPoints();
             this.addShapes();
             this.addLabels();
             this.addClipPaths();
             this.setLabelCollector();
+            this.deferTime = (defer === false || this.chart.renderer.forExport) ?
+                // If defer is disabled deferTime is set to 0
+                // (invoke immediately)
+                0 : (
+                    isNumber(defer) ?
+                        // If defer is a number - animate will triger
+                        // after this number, otherwise the time will be taken
+                        // from the plotOptions.series.animation
+                        defer :
+                        (plotOptions.series && defined(plotOptions.series.animation) ?
+                            (
+                                (
+                                    plotOptions.series.animation.defer &&
+                                    plotOptions.series.animation.duration
+                                ) ?
+                                // If defer and duration are set the animation
+                                //  will be triggered after their sum value
+                                    plotOptions.series.animation.defer + plotOptions.series.animation.duration :
+                                    plotOptions.series.animation.defer ? plotOptions.series.animation.defer :
+                                        plotOptions.series.animation.duration
+                            ) :
+                            plotOptions.line.animation)
+                );
         },
 
         getLabelsAndShapesOptions: function (
@@ -1227,6 +1256,7 @@ merge(
             this.graphic = renderer
                 .g('annotation')
                 .attr({
+                    opacity: 0,
                     zIndex: this.options.zIndex,
                     visibility: this.options.visible ?
                         'visible' :
@@ -1631,6 +1661,11 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
 
         this.annotations.forEach(function (annotation): void {
             annotation.redraw();
+            annotation.graphic.animate({
+                opacity: 1
+            }, {
+                defer: annotation.deferTime
+            });
         });
     }
 });

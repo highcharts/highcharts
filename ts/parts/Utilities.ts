@@ -2428,7 +2428,10 @@ const animObject = H.animObject = function animObject(
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
         merge(animation as Highcharts.AnimationOptionsObject) as any :
-        { duration: animation as boolean ? 500 : 0 };
+        {
+            duration: animation as boolean ? 500 : 0,
+            defer: 0
+        };
 };
 
 /**
