@@ -36,7 +36,22 @@ extend(H.SVGElement.prototype, {
         var bb = this.getBBox(), pad = pick(margin, 3);
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
-        this.focusBorder = this.renderer.rect(bb.x - pad, bb.y - pad, bb.width + 2 * pad, bb.height + 2 * pad, parseInt((style && style.borderRadius || 0).toString(), 10))
+        var borderPosX, borderPosY;
+        // For text elements, apply x and y offset, #11397.
+        if (this.element.nodeName === 'text') {
+            var isRotated = Boolean(this.rotation);
+            var isFirefox = H.isFirefox;
+            borderPosX =
+                this.attr('x') - (bb.width * 0.5) - pad +
+                    (isRotated ? bb.height * 0.068 : 0);
+            borderPosY = this.attr('y') - (bb.height * 0.5) - pad +
+                (isRotated ? 0 : -bb.height * (isFirefox ? 0.25 : 0.068));
+        }
+        else {
+            borderPosX = bb.x - pad;
+            borderPosY = bb.y - pad;
+        }
+        this.focusBorder = this.renderer.rect(borderPosX, borderPosY, bb.width + 2 * pad, bb.height + 2 * pad, parseInt((style && style.borderRadius || 0).toString(), 10))
             .addClass('highcharts-focus-border')
             .attr({
             zIndex: 99
