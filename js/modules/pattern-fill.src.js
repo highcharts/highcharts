@@ -524,9 +524,10 @@ addEvent(H.Chart, 'redraw', function () {
                 node.getAttribute('color') ||
                 node.getAttribute('stroke');
             if (id) {
-                usedIds.push(id
-                    .substring(id.indexOf('url(') + 5)
-                    .replace(')', ''));
+                var sanitizedId = id.replace(renderer.url, '').replace('url(#', '').replace(')', '');
+                if (usedIds.indexOf(sanitizedId) === -1) {
+                    usedIds.push(sanitizedId);
+                }
             }
         });
         // Loop through the patterns that exist and see if they are used

@@ -740,13 +740,11 @@ addEvent(H.Chart, 'redraw', function (): void {
                 var id = node.getAttribute('fill') ||
                         node.getAttribute('color') ||
                         node.getAttribute('stroke');
-
                 if (id) {
-                    usedIds.push(
-                        id
-                            .substring(id.indexOf('url(') + 5)
-                            .replace(')', '')
-                    );
+                    const sanitizedId = id.replace(renderer.url, '').replace('url(#', '').replace(')', '');
+                    if (usedIds.indexOf(sanitizedId) === -1) {
+                        usedIds.push(sanitizedId);
+                    }
                 }
             }
         );
