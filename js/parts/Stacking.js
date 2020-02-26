@@ -322,7 +322,7 @@ Axis.prototype.buildStacks = function () {
  * @return {vopid}
  */
 Axis.prototype.renderStackTotals = function () {
-    var axis = this, chart = axis.chart, renderer = chart.renderer, stacks = axis.stacks, deferTime, defer = axis.userOptions.stackLabels.defer, stackTotalGroup = axis.stackTotalGroup;
+    var axis = this, chart = axis.chart, renderer = chart.renderer, stacks = axis.stacks, deferTime, durationTime, defer = axis.userOptions.stackLabels.defer, stackTotalGroup = axis.stackTotalGroup;
     // Create a separate group for the stack total labels
     if (!stackTotalGroup) {
         axis.stackTotalGroup = stackTotalGroup =
@@ -345,10 +345,12 @@ Axis.prototype.renderStackTotals = function () {
         });
     });
     deferTime = getDeferTime(chart, defer);
+    durationTime = Math.min(deferTime, 200);
     stackTotalGroup.animate({
         opacity: 1
     }, {
-        defer: deferTime
+        duration: durationTime,
+        defer: deferTime - durationTime
     });
 };
 /**

@@ -39,6 +39,7 @@ declare global {
             public controlPoints: Array<AnnotationControlPoint>;
             public defaultOptions: AnnotationsOptions;
             public deferTime: number;
+            public durationTime: number;
             public getPointsOptions: AnnotationControllableMixin['getPointsOptions'];
             public graphic: SVGElement;
             public group: SVGElement;
@@ -1075,6 +1076,7 @@ merge(
             this.addClipPaths();
             this.setLabelCollector();
             this.deferTime = getDeferTime(chart, defer);
+            this.durationTime = Math.min(this.deferTime, 200);
         },
 
         getLabelsAndShapesOptions: function (
@@ -1657,7 +1659,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
             annotation.graphic.animate({
                 opacity: 1
             }, {
-                defer: annotation.deferTime
+                defer: annotation.deferTime - annotation.durationTime,
+                duration: annotation.durationTime
             });
         });
     }

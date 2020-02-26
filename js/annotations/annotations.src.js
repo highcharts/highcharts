@@ -721,6 +721,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         this.addClipPaths();
         this.setLabelCollector();
         this.deferTime = getDeferTime(chart, defer);
+        this.durationTime = Math.min(this.deferTime, 200);
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {
         var mergedOptions = {};
@@ -1085,7 +1086,8 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
             annotation.graphic.animate({
                 opacity: 1
             }, {
-                defer: annotation.deferTime
+                defer: annotation.deferTime - annotation.durationTime,
+                duration: annotation.durationTime
             });
         });
     }

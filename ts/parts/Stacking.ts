@@ -596,6 +596,7 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
         renderer = chart.renderer,
         stacks = axis.stacks,
         deferTime,
+        durationTime,
         defer = axis.userOptions.stackLabels.defer,
         stackTotalGroup = axis.stackTotalGroup as Highcharts.SVGElement;
 
@@ -626,11 +627,13 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
     });
 
     deferTime = getDeferTime(chart, defer);
+    durationTime = Math.min(deferTime, 200);
 
     stackTotalGroup.animate({
         opacity: 1
     }, {
-        defer: deferTime
+        duration: durationTime,
+        defer: deferTime - durationTime
     });
 };
 
