@@ -1106,6 +1106,8 @@ H.setOptions({
          *            measure, pitchfork, tunnel, verticalLine
          * @apioption navigation.annotationsOptions
          */
-        annotationsOptions: {}
+        annotationsOptions: {
+            defer: false
+        }
     }
 });
