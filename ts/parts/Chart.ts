@@ -1691,6 +1691,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
         );
+        // Set the initial animation from the options
+        setAnimation(void 0, chart);
 
 
         chart.setClassName(optionsChart.className);

@@ -1131,6 +1131,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @type {Highcharts.SVGRenderer}
          */
         chart.renderer = new Ren(container, chartWidth, chartHeight, null, optionsChart.forExport, options.exporting && options.exporting.allowHTML, chart.styledMode);
+        // Set the initial animation from the options
+        setAnimation(void 0, chart);
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style);
