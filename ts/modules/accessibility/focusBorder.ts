@@ -80,10 +80,11 @@ extend(H.SVGElement.prototype, {
         if (this.element.nodeName === 'text') {
             const isRotated = Boolean(this.rotation);
             const isFirefox = H.isFirefox;
-            borderPosX =
-                this.attr('x') as number - (bb.width * 0.5) - pad +
+            borderPosX = this.attr('x') as number - (bb.width * 0.5) - pad +
+                // Correct the offset caused by the browser.
                 (isRotated ? bb.height * 0.068 : 0);
             borderPosY = this.attr('y') as number - (bb.height * 0.5) - pad +
+                // Firefox needs different correction value.
                 (isRotated ? 0 : -bb.height * (isFirefox ? 0.25 : 0.068));
         } else {
             borderPosX = bb.x - pad;
