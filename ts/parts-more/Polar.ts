@@ -116,6 +116,8 @@ const {
     wrap
 } = U;
 
+import paneModule from '../parts-more/Pane.js';
+const Pane: typeof Highcharts.Pane = paneModule.Pane as any;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -1109,7 +1111,7 @@ addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
     splat(this.options.pane).forEach(function (
         paneOptions: Highcharts.PaneOptions
     ): void {
-        new H.Pane( // eslint-disable-line no-new
+        new Pane( // eslint-disable-line no-new
             paneOptions,
             this
         );

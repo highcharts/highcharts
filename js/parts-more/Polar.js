@@ -11,6 +11,8 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, find = U.find, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
+import paneModule from '../parts-more/Pane.js';
+var Pane = paneModule.Pane;
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -695,7 +697,7 @@ addEvent(H.Chart, 'getAxes', function () {
         this.pane = [];
     }
     splat(this.options.pane).forEach(function (paneOptions) {
-        new H.Pane(// eslint-disable-line no-new
+        new Pane(// eslint-disable-line no-new
         paneOptions, this);
     }, this);
 });
