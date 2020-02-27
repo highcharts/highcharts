@@ -2728,8 +2728,12 @@ const getDeferTime = H.getDeferTime = function (
 ): number {
     var plotOptions = chart.options.plotOptions as any,
         deferTime;
-    if (defer === false || chart.renderer.forExport) {
-        // If defer is disabled deferTime is set to 0 (invoke immediately)
+    if (
+        defer === false || chart.renderer.forExport ||
+        (plotOptions.series && plotOptions.series.animation === false)
+    ) {
+        // If defer or animation is disabled deferTime is set to 0
+        // (invoke immediately)
         deferTime = 0;
     } else if (isNumber(defer)) {
         // If defer is a number - animate defer will be set to this value

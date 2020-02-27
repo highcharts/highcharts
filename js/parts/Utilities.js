@@ -1912,8 +1912,10 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
  */
 var getDeferTime = H.getDeferTime = function (chart, defer) {
     var plotOptions = chart.options.plotOptions, deferTime;
-    if (defer === false || chart.renderer.forExport) {
-        // If defer is disabled deferTime is set to 0 (invoke immediately)
+    if (defer === false || chart.renderer.forExport ||
+        (plotOptions.series && plotOptions.series.animation === false)) {
+        // If defer or animation is disabled deferTime is set to 0
+        // (invoke immediately)
         deferTime = 0;
     }
     else if (isNumber(defer)) {
