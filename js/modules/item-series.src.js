@@ -120,6 +120,7 @@ seriesType('item',
 }, 
 // Prototype members
 {
+    markerAttribs: void 0,
     translate: function () {
         if (!this.slots) {
             this.slots = [];
