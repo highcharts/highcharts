@@ -139,7 +139,6 @@ var Tooltip = /** @class */ (function () {
         this.now = {};
         this.options = {};
         this.outside = false;
-        this.pointerEvents = 'none';
         this.chart = chart;
         this.init(chart, options);
     }
@@ -398,9 +397,11 @@ var Tooltip = /** @class */ (function () {
      * @return {Highcharts.SVGElement}
      */
     Tooltip.prototype.getLabel = function () {
+        var _a;
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = ('tooltip' + (defined(options.className) ?
             ' ' + options.className :
-            '')), container, set, onMouseLeave = function (e) {
+            '')), pointerEvents = (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) ||
+            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, set, onMouseLeave = function () {
             var series = tooltip.chart.hoverSeries;
             if (series &&
                 series.onMouseOut) {
@@ -422,7 +423,7 @@ var Tooltip = /** @class */ (function () {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: this.pointerEvents,
+                    pointerEvents: options.style && options.style.pointerEvents,
                     zIndex: 3
                 });
                 H.doc.body.appendChild(container);
@@ -455,7 +456,7 @@ var Tooltip = /** @class */ (function () {
                     })
                         // #2301, #2657
                         .css(options.style)
-                        .css({ pointerEvents: this.pointerEvents })
+                        .css({ pointerEvents: pointerEvents })
                         .shadow(options.shadow);
                 }
             }
@@ -690,7 +691,6 @@ var Tooltip = /** @class */ (function () {
      *        Tooltip options.
      */
     Tooltip.prototype.init = function (chart, options) {
-        var _a;
         /**
          * Chart of the tooltip.
          *
@@ -767,8 +767,6 @@ var Tooltip = /** @class */ (function () {
          * not be too complicated to implement.
          */
         this.outside = pick(options.outside, Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY));
-        this.pointerEvents = (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) ||
-            (!options.followPointer && options.stickOnContact ? 'auto' : 'none'));
     };
     /**
      * Moves the tooltip with a soft animation to a new position.
@@ -1168,7 +1166,8 @@ var Tooltip = /** @class */ (function () {
      */
     Tooltip.prototype.drawTracker = function () {
         var tooltip = this;
-        if (tooltip.options.followPointer || !tooltip.options.stickOnContact) {
+        if (tooltip.followPointer ||
+            !tooltip.options.stickOnContact) {
             if (tooltip.tracker) {
                 tooltip.tracker.destroy();
             }
@@ -1186,24 +1185,21 @@ var Tooltip = /** @class */ (function () {
             width: 0,
             height: 0
         };
-        if (!tooltip.options.followPointer &&
-            tooltip.options.stickOnContact) {
-            // Combine anchor and tooltip
-            var anchorPos = this.getAnchor(point);
-            var labelBBox = label.getBBox();
-            anchorPos[0] += chart.plotLeft - label.translateX;
-            anchorPos[1] += chart.plotTop - label.translateY;
-            // When the mouse pointer is between the anchor point and the label,
-            // the label should stick.
-            box.x = Math.min(0, anchorPos[0]);
-            box.y = Math.min(0, anchorPos[1]);
-            box.width = (anchorPos[0] < 0 ?
-                Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
-                Math.max(Math.abs(anchorPos[0]), labelBBox.width));
-            box.height = (anchorPos[1] < 0 ?
-                Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
-                Math.max(Math.abs(anchorPos[1]), labelBBox.height));
-        }
+        // Combine anchor and tooltip
+        var anchorPos = this.getAnchor(point);
+        var labelBBox = label.getBBox();
+        anchorPos[0] += chart.plotLeft - label.translateX;
+        anchorPos[1] += chart.plotTop - label.translateY;
+        // When the mouse pointer is between the anchor point and the label,
+        // the label should stick.
+        box.x = Math.min(0, anchorPos[0]);
+        box.y = Math.min(0, anchorPos[1]);
+        box.width = (anchorPos[0] < 0 ?
+            Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
+            Math.max(Math.abs(anchorPos[0]), labelBBox.width));
+        box.height = (anchorPos[1] < 0 ?
+            Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
+            Math.max(Math.abs(anchorPos[1]), labelBBox.height));
         if (tooltip.tracker) {
             tooltip.tracker.attr(box);
         }

@@ -51,7 +51,6 @@ declare global {
             public now: Dictionary<number>;
             public options: TooltipOptions;
             public outside?: boolean;
-            public pointerEvents: string; // private
             public renderer?: Renderer;
             public shared?: boolean;
             public split?: boolean;
@@ -324,8 +323,6 @@ class Tooltip {
     public options: Highcharts.TooltipOptions = {};
 
     public outside: boolean = false;
-
-    public pointerEvents: string = 'none';
 
     public renderer?: Highcharts.Renderer;
 
@@ -675,9 +672,13 @@ class Tooltip {
                         ''
                 )
             ),
+            pointerEvents = (
+                options.style?.pointerEvents ||
+                (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
+            ),
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>,
-            onMouseLeave = function (e: Highcharts.PointerEventObject): void {
+            onMouseLeave = function (): void {
                 const series = tooltip.chart.hoverSeries;
                 if (
                     series &&
@@ -704,7 +705,7 @@ class Tooltip {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: this.pointerEvents,
+                    pointerEvents: options.style && options.style.pointerEvents,
                     zIndex: 3
                 });
                 H.doc.body.appendChild(container);
@@ -758,7 +759,7 @@ class Tooltip {
                         })
                         // #2301, #2657
                         .css(options.style as any)
-                        .css({ pointerEvents: this.pointerEvents })
+                        .css({ pointerEvents })
                         .shadow(options.shadow);
                 }
             }
@@ -1154,11 +1155,6 @@ class Tooltip {
         this.outside = pick(
             options.outside,
             Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
-        );
-
-        this.pointerEvents = (
-            options.style?.pointerEvents ||
-            (!options.followPointer && options.stickOnContact ? 'auto' : 'none')
         );
     }
 
@@ -1721,7 +1717,10 @@ class Tooltip {
     private drawTracker(): void {
         const tooltip = this;
 
-        if (tooltip.options.followPointer || !tooltip.options.stickOnContact) {
+        if (
+            tooltip.followPointer ||
+            !tooltip.options.stickOnContact
+        ) {
             if (tooltip.tracker) {
                 tooltip.tracker.destroy();
             }
@@ -1743,32 +1742,27 @@ class Tooltip {
             height: 0
         };
 
-        if (
-            !tooltip.options.followPointer &&
-            tooltip.options.stickOnContact
-        ) {
-            // Combine anchor and tooltip
-            const anchorPos = this.getAnchor(point);
-            const labelBBox = label.getBBox();
+        // Combine anchor and tooltip
+        const anchorPos = this.getAnchor(point);
+        const labelBBox = label.getBBox();
 
-            anchorPos[0] += chart.plotLeft - label.translateX;
-            anchorPos[1] += chart.plotTop - label.translateY;
+        anchorPos[0] += chart.plotLeft - label.translateX;
+        anchorPos[1] += chart.plotTop - label.translateY;
 
-            // When the mouse pointer is between the anchor point and the label,
-            // the label should stick.
-            box.x = Math.min(0, anchorPos[0]);
-            box.y = Math.min(0, anchorPos[1]);
-            box.width = (
-                anchorPos[0] < 0 ?
-                    Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
-                    Math.max(Math.abs(anchorPos[0]), labelBBox.width)
-            );
-            box.height = (
-                anchorPos[1] < 0 ?
-                    Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
-                    Math.max(Math.abs(anchorPos[1]), labelBBox.height)
-            );
-        }
+        // When the mouse pointer is between the anchor point and the label,
+        // the label should stick.
+        box.x = Math.min(0, anchorPos[0]);
+        box.y = Math.min(0, anchorPos[1]);
+        box.width = (
+            anchorPos[0] < 0 ?
+                Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
+                Math.max(Math.abs(anchorPos[0]), labelBBox.width)
+        );
+        box.height = (
+            anchorPos[1] < 0 ?
+                Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
+                Math.max(Math.abs(anchorPos[1]), labelBBox.height)
+        );
 
         if (tooltip.tracker) {
             tooltip.tracker.attr(box);
