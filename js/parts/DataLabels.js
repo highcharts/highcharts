@@ -16,59 +16,14 @@ import H from './Globals.js';
  *
  * @callback Highcharts.DataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject} this
- *        Data label context to format
+ * @param {Highcharts.PointLabelObject} this
+ * Data label context to format
+ *
+ * @param {Highcharts.DataLabelsOptions} options
+ * [API options](/highcharts/plotOptions.series.dataLabels) of the data label
  *
  * @return {number|string|null|undefined}
- *         Formatted data label text
- */
-/**
- * Context for the callback function to format the data label.
- *
- * @interface Highcharts.DataLabelsFormatterContextObject
- */ /**
-* Stacked series and pies only. The point's percentage of the total.
-* @name Highcharts.DataLabelsFormatterContextObject#percentage
-* @type {number|undefined}
-*/ /**
-* The point object. The point name, if defined, is available through
-* `this.point.name`.
-* @name Highcharts.DataLabelsFormatterContextObject#point
-* @type {Highcharts.Point}
-*/ /**
-* The series object. The series name is available through `this.series.name`.
-* @name Highcharts.DataLabelsFormatterContextObject#series
-* @type {Highcharts.Series}
-*/ /**
-* Stacked series only. The total value at this point's x value.
-* @name Highcharts.DataLabelsFormatterContextObject#total
-* @type {number|undefined}
-*/ /**
-* The x value.
-* @name Highcharts.DataLabelsFormatterContextObject#x
-* @type {number}
-*/ /**
-* The y value.
-* @name Highcharts.DataLabelsFormatterContextObject#y
-* @type {number|null}
-*/
-/**
- * Options for the series data labels, appearing next to each data point.
- *
- * Since v6.2.0, multiple data labels can be applied to each single point by
- * defining them as an array of configs.
- *
- * In styled mode, the data labels can be styled with the
- * `.highcharts-data-label-box` and `.highcharts-data-label` class names.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-enabled|Highcharts-Demo:}
- *      Data labels enabled
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple|Highcharts-Demo:}
- *      Multiple data labels on a bar series
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
- *      Style mode example
- *
- * @interface Highcharts.DataLabelsOptionsObject
+ * Formatted data label text
  */
 /**
  * Values for handling data labels that flow outside the plot area.
@@ -451,7 +406,7 @@ Series.prototype.drawDataLabels = function () {
  * @function Highcharts.Series#alignDataLabel
  * @param {Highcharts.Point} point
  * @param {Highcharts.SVGElement} dataLabel
- * @param {Highcharts.DataLabelsOptionsObject} options
+ * @param {Highcharts.DataLabelsOptions} options
  * @param {Highcharts.BBoxObject} alignTo
  * @param {boolean} [isNew]
  * @return {void}
@@ -622,7 +577,7 @@ Series.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isIns
  * @private
  * @function Highcharts.Series#justifyDataLabel
  * @param {Highcharts.SVGElement} dataLabel
- * @param {Highcharts.DataLabelsOptionsObject} options
+ * @param {Highcharts.DataLabelsOptions} options
  * @param {Highcharts.SVGAttributes} alignAttr
  * @param {Highcharts.BBoxObject} bBox
  * @param {Highcharts.BBoxObject} [alignTo]
@@ -738,7 +693,7 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.drawDataLabels = function () {
-        var series = this, data = series.data, point, chart = series.chart, options = series.options.dataLabels, connectorPadding = options.connectorPadding, connectorWidth, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotLeft = chart.plotLeft, maxWidth = Math.round(chart.chartWidth / 3), connector, seriesCenter = series.center, radius = seriesCenter[2] / 2, centerY = seriesCenter[1], dataLabel, dataLabelWidth, 
+        var series = this, data = series.data, point, chart = series.chart, options = series.options.dataLabels || {}, connectorPadding = options.connectorPadding, connectorWidth, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotLeft = chart.plotLeft, maxWidth = Math.round(chart.chartWidth / 3), connector, seriesCenter = series.center, radius = seriesCenter[2] / 2, centerY = seriesCenter[1], dataLabel, dataLabelWidth, 
         // labelPos,
         labelPosition, labelHeight, 
         // divide the points into right and left halves for anti collision
@@ -884,15 +839,18 @@ if (seriesTypes.pie) {
                     visibility: visibility,
                     align: labelPosition.alignment
                 };
+                pointDataLabelsOptions = point.options.dataLabels || {};
                 dataLabel._pos = {
                     x: (x +
-                        options.x +
+                        pick(pointDataLabelsOptions.x, options.x) + // (#12985)
                         ({
                             left: connectorPadding,
                             right: -connectorPadding
                         }[labelPosition.alignment] || 0)),
                     // 10 is for the baseline (label vs text)
-                    y: y + options.y - 10
+                    y: (y +
+                        pick(pointDataLabelsOptions.y, options.y) - // (#12985)
+                        10)
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
@@ -1127,7 +1085,7 @@ if (seriesTypes.column) {
      * @function Highcharts.seriesTypes.column#alignDataLabel
      * @param {Highcharts.Point} point
      * @param {Highcharts.SVGElement} dataLabel
-     * @param {Highcharts.DataLabelsOptionsObject} options
+     * @param {Highcharts.DataLabelsOptions} options
      * @param {Highcharts.BBoxObject} alignTo
      * @param {boolean} [isNew]
      * @return {void}

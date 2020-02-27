@@ -3,7 +3,7 @@
 }
 
 .highcharts-figure, .highcharts-data-table table {
-    min-width: 360px; 
+    min-width: 455px; 
     max-width: 920px;
     margin: 1em auto;
 }

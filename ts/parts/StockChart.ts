@@ -59,6 +59,7 @@ declare global {
     }
 }
 
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -78,7 +79,6 @@ const {
 
 import './Chart.js';
 import './Axis.js';
-import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -94,7 +94,6 @@ import './RangeSelector.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,

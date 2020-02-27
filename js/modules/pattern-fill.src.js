@@ -119,6 +119,8 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PatternObject#patternIndex
 * @type {number|undefined}
 */
+''; // detach doclets above
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
 // Add the predefined patterns
@@ -196,7 +198,7 @@ function hashFromObject(obj, preSeed) {
  *
  * @requires modules/pattern-fill
  */
-H.Point.prototype.calculatePatternDimensions = function (pattern) {
+Point.prototype.calculatePatternDimensions = function (pattern) {
     if (pattern.width && pattern.height) {
         return;
     }
@@ -404,7 +406,7 @@ addEvent(H.Series, 'render', function () {
     }
 });
 // Merge series color options to points
-addEvent(H.Point, 'afterInit', function () {
+addEvent(Point, 'afterInit', function () {
     var point = this, colorOptions = point.options.color;
     // Only do this if we have defined a specific color on this point. Otherwise
     // we will end up trying to re-add the series color for each point.
@@ -448,7 +450,7 @@ addEvent(H.SVGRenderer, 'complexColor', function (args) {
         // If we don't have a width/height yet, handle it. Try faking a point
         // and running the algorithm again.
         if (pattern._width === 'defer' || pattern._height === 'defer') {
-            H.Point.prototype.calculatePatternDimensions.call({ graphic: { element: element } }, pattern);
+            Point.prototype.calculatePatternDimensions.call({ graphic: { element: element } }, pattern);
         }
         // If we don't have an explicit ID, compute a hash from the
         // definition and use that as the ID. This ensures that points with

@@ -408,7 +408,7 @@ var Time = /** @class */ (function () {
      */
     Time.prototype.dateFormat = function (format, timestamp, capitalize) {
         var _a, _b, _c;
-        if (!defined(timestamp) || isNaN(timestamp) || typeof this.get === 'undefined') {
+        if (!defined(timestamp) || isNaN(timestamp)) {
             return ((_a = H.defaultOptions.lang) === null || _a === void 0 ? void 0 : _a.invalidDate) || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');

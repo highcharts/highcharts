@@ -82,7 +82,7 @@ declare global {
             alignment: AlignValue;
         }
         interface PieSeriesDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             alignTo?: string;
             connectorColor?: (ColorString|GradientColorObject|PatternObject);
@@ -120,6 +120,8 @@ declare global {
     }
 }
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -136,16 +138,12 @@ const {
 
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
-import './Legend.js';
 import './Options.js';
-import './Point.js';
 import './Series.js';
 
 var CenteredSeriesMixin = H.CenteredSeriesMixin,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
-    LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -434,7 +432,7 @@ seriesType<Highcharts.PieSeries>(
             enabled: true,
 
             formatter: function (
-                this: Highcharts.DataLabelsFormatterContextObject
+                this: Highcharts.PointLabelObject
             ): (string|undefined) { // #2945
                 return this.point.isNull ? void 0 : this.point.name;
             },

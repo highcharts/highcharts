@@ -67,6 +67,7 @@ declare global {
     }
 }
 
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
@@ -374,7 +375,7 @@ addEvent(H.Chart as any, 'update', function (
 });
 
 // Mark dirty for update
-addEvent(H.Point, 'update', function (): void {
+addEvent(Point, 'update', function (): void {
     if (this.series.chart.accessibility) {
         this.series.chart.a11yDirty = true;
     }

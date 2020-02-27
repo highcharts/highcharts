@@ -85,8 +85,8 @@ declare global {
             ): SVGAttributes;
             findAlignments(
                 angle: number,
-                options: DataLabelsOptionsObject,
-            ): DataLabelsOptionsObject;
+                options: DataLabelsOptions,
+            ): DataLabelsOptions;
             searchPointByAngle(e: PointerEventObject): (Point|undefined);
             translate(): void;
             toXY(point: Point): void;
@@ -909,8 +909,8 @@ if (seriesTypes.column) {
     colProto.findAlignments = function (
         this: Highcharts.PolarSeries,
         angle: number,
-        options: Highcharts.DataLabelsOptionsObject
-    ): Highcharts.DataLabelsOptionsObject {
+        options: Highcharts.DataLabelsOptions
+    ): Highcharts.DataLabelsOptions {
         var align: Highcharts.AlignValue,
             verticalAlign: Highcharts.VerticalAlignValue;
 
@@ -952,7 +952,7 @@ if (seriesTypes.column) {
         proceed: Function,
         point: (Highcharts.ColumnPoint | Highcharts.PolarPoint),
         dataLabel: Highcharts.SVGElement,
-        options: Highcharts.DataLabelsOptionsObject,
+        options: Highcharts.DataLabelsOptions,
         alignTo: Highcharts.BBoxObject,
         isNew?: boolean
     ): void {

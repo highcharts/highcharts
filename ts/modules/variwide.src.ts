@@ -421,7 +421,7 @@ wrap(H.Tick.prototype, 'getLabelPosition', function (
     y: number,
     label: Highcharts.SVGElement,
     horiz: boolean,
-    labelOptions: Highcharts.DataLabelsOptionsObject,
+    labelOptions: Highcharts.DataLabelsOptions,
     tickmarkOffset: number,
     index: number
 ): Highcharts.PositionObject {

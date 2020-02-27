@@ -94,6 +94,7 @@ declare global {
  * @type {number|null|undefined}
  */
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 const {
     clamp,
@@ -105,14 +106,11 @@ const {
 } = U;
 
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
-import '../parts/Legend.js';
 import './ColorMapSeriesMixin.js';
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes;

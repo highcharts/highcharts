@@ -6,7 +6,10 @@ Highcharts.chart('container', {
         text: 'Specifies which array options map to which keys'
     },
     tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        pointFormat: '{series.name}: <b>{point.y:.1f}%</b>'
+    },
+    xAxis: {
+        categories: true
     },
     yAxis: {
         max: 100,

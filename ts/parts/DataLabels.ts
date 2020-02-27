@@ -37,19 +37,11 @@ declare global {
             value: (null|number);
         }
         interface DataLabelsFormatterCallbackFunction {
-            (this: DataLabelsFormatterContextObject): (
+            (this: PointLabelObject): (
                 number|string|null|undefined
             );
         }
-        interface DataLabelsFormatterContextObject {
-            percentage?: number;
-            point: Point;
-            series: Series;
-            total?: number;
-            x: number;
-            y: (number|null);
-        }
-        interface DataLabelsOptionsObject {
+        interface DataLabelsOptions {
             align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
@@ -93,7 +85,7 @@ declare global {
             dataLabels?: Array<SVGElement>;
             distributeBox?: DataLabelsBoxObject;
             dlBox?: BBoxObject;
-            dlOptions?: DataLabelsOptionsObject;
+            dlOptions?: DataLabelsOptions;
             graphic?: SVGElement;
             /** @deprecated */
             positionIndex?: unknown;
@@ -102,8 +94,8 @@ declare global {
         }
         interface PointOptionsObject {
             dataLabels?: (
-                DataLabelsOptionsObject|
-                Array<DataLabelsOptionsObject>
+                DataLabelsOptions|
+                Array<DataLabelsOptions>
             );
             labelrank?: number;
         }
@@ -114,14 +106,14 @@ declare global {
             alignDataLabel(
                 point: Point,
                 dataLabel: SVGElement,
-                options: DataLabelsOptionsObject,
+                options: DataLabelsOptions,
                 alignTo: BBoxObject,
                 isNew?: boolean
             ): void;
             drawDataLabels(): void;
             justifyDataLabel(
                 dataLabel: SVGElement,
-                options: DataLabelsOptionsObject,
+                options: DataLabelsOptions,
                 alignAttr: SVGAttributes,
                 bBox: BBoxObject,
                 alignTo?: BBoxObject,
@@ -178,61 +170,14 @@ declare global {
  *
  * @callback Highcharts.DataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject} this
- *        Data label context to format
+ * @param {Highcharts.PointLabelObject} this
+ * Data label context to format
+ *
+ * @param {Highcharts.DataLabelsOptions} options
+ * [API options](/highcharts/plotOptions.series.dataLabels) of the data label
  *
  * @return {number|string|null|undefined}
- *         Formatted data label text
- */
-
-/**
- * Context for the callback function to format the data label.
- *
- * @interface Highcharts.DataLabelsFormatterContextObject
- *//**
- * Stacked series and pies only. The point's percentage of the total.
- * @name Highcharts.DataLabelsFormatterContextObject#percentage
- * @type {number|undefined}
- *//**
- * The point object. The point name, if defined, is available through
- * `this.point.name`.
- * @name Highcharts.DataLabelsFormatterContextObject#point
- * @type {Highcharts.Point}
- *//**
- * The series object. The series name is available through `this.series.name`.
- * @name Highcharts.DataLabelsFormatterContextObject#series
- * @type {Highcharts.Series}
- *//**
- * Stacked series only. The total value at this point's x value.
- * @name Highcharts.DataLabelsFormatterContextObject#total
- * @type {number|undefined}
- *//**
- * The x value.
- * @name Highcharts.DataLabelsFormatterContextObject#x
- * @type {number}
- *//**
- * The y value.
- * @name Highcharts.DataLabelsFormatterContextObject#y
- * @type {number|null}
- */
-
-/**
- * Options for the series data labels, appearing next to each data point.
- *
- * Since v6.2.0, multiple data labels can be applied to each single point by
- * defining them as an array of configs.
- *
- * In styled mode, the data labels can be styled with the
- * `.highcharts-data-label-box` and `.highcharts-data-label` class names.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-enabled|Highcharts-Demo:}
- *      Data labels enabled
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple|Highcharts-Demo:}
- *      Multiple data labels on a bar series
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
- *      Style mode example
- *
- * @interface Highcharts.DataLabelsOptionsObject
+ * Formatted data label text
  */
 
 /**
@@ -475,7 +420,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
      */
     function applyFilter(
         point: Highcharts.Point,
-        options: Highcharts.DataLabelsOptionsObject
+        options: Highcharts.DataLabelsOptions
     ): boolean {
         var filter = options.filter,
             op,
@@ -509,36 +454,36 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
      */
     function mergeArrays(
         one: (
-            Highcharts.DataLabelsOptionsObject|
-            Array<Highcharts.DataLabelsOptionsObject>
+            Highcharts.DataLabelsOptions|
+            Array<Highcharts.DataLabelsOptions>
         ),
         two: (
-            Highcharts.DataLabelsOptionsObject|
-            Array<Highcharts.DataLabelsOptionsObject>
+            Highcharts.DataLabelsOptions|
+            Array<Highcharts.DataLabelsOptions>
         )
     ): (
-        Highcharts.DataLabelsOptionsObject|
-        Array<Highcharts.DataLabelsOptionsObject>
+        Highcharts.DataLabelsOptions|
+        Array<Highcharts.DataLabelsOptions>
     ) { // eslint-disable-line @typescript-eslint/indent
         var res = [] as (
-                Highcharts.DataLabelsOptionsObject|
-                Array<Highcharts.DataLabelsOptionsObject>
+                Highcharts.DataLabelsOptions|
+                Array<Highcharts.DataLabelsOptions>
             ),
             i;
 
         if (isArray(one) && !isArray(two)) {
             res = (one as any).map(
                 function (
-                    el: Highcharts.DataLabelsOptionsObject
-                ): Highcharts.DataLabelsOptionsObject {
+                    el: Highcharts.DataLabelsOptions
+                ): Highcharts.DataLabelsOptions {
                     return merge(el, two);
                 }
             );
         } else if (isArray(two) && !isArray(one)) {
             res = (two as any).map(
                 function (
-                    el: Highcharts.DataLabelsOptionsObject
-                ): Highcharts.DataLabelsOptionsObject {
+                    el: Highcharts.DataLabelsOptions
+                ): Highcharts.DataLabelsOptions {
                     return merge(one, el);
                 }
             );
@@ -619,7 +564,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
 
             // Handle each individual data label for this point
             pointOptions.forEach(function (
-                labelOptions: Highcharts.DataLabelsOptionsObject,
+                labelOptions: Highcharts.DataLabelsOptions,
                 i: number
             ): void {
                 // Options for one datalabel
@@ -846,7 +791,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
  * @function Highcharts.Series#alignDataLabel
  * @param {Highcharts.Point} point
  * @param {Highcharts.SVGElement} dataLabel
- * @param {Highcharts.DataLabelsOptionsObject} options
+ * @param {Highcharts.DataLabelsOptions} options
  * @param {Highcharts.BBoxObject} alignTo
  * @param {boolean} [isNew]
  * @return {void}
@@ -855,7 +800,7 @@ Series.prototype.alignDataLabel = function (
     this: Highcharts.Series,
     point: Highcharts.Point,
     dataLabel: Highcharts.SVGElement,
-    options: Highcharts.DataLabelsOptionsObject,
+    options: Highcharts.DataLabelsOptions,
     alignTo: Highcharts.BBoxObject,
     isNew?: boolean
 ): void {
@@ -1116,7 +1061,7 @@ Series.prototype.setDataLabelStartPos = function (
  * @private
  * @function Highcharts.Series#justifyDataLabel
  * @param {Highcharts.SVGElement} dataLabel
- * @param {Highcharts.DataLabelsOptionsObject} options
+ * @param {Highcharts.DataLabelsOptions} options
  * @param {Highcharts.SVGAttributes} alignAttr
  * @param {Highcharts.BBoxObject} bBox
  * @param {Highcharts.BBoxObject} [alignTo]
@@ -1126,7 +1071,7 @@ Series.prototype.setDataLabelStartPos = function (
 Series.prototype.justifyDataLabel = function (
     this: Highcharts.Series,
     dataLabel: Highcharts.SVGElement,
-    options: Highcharts.DataLabelsOptionsObject,
+    options: Highcharts.DataLabelsOptions,
     alignAttr: Highcharts.SVGAttributes,
     bBox: Highcharts.BBoxObject,
     alignTo?: Highcharts.BBoxObject,
@@ -1286,7 +1231,7 @@ if (seriesTypes.pie) {
             data = series.data,
             point,
             chart = series.chart,
-            options = series.options.dataLabels,
+            options = series.options.dataLabels || {},
             connectorPadding = (options as any).connectorPadding,
             connectorWidth,
             plotWidth = chart.plotWidth,
@@ -1522,10 +1467,12 @@ if (seriesTypes.pie) {
                     align: (labelPosition as any).alignment
                 };
 
+                pointDataLabelsOptions = point.options.dataLabels || {};
+
                 (dataLabel as any)._pos = {
                     x: (
                         x +
-                        (options as any).x +
+                        pick(pointDataLabelsOptions.x, options.x) + // (#12985)
                         (({
                             left: connectorPadding,
                             right: -connectorPadding
@@ -1533,7 +1480,11 @@ if (seriesTypes.pie) {
                     ),
 
                     // 10 is for the baseline (label vs text)
-                    y: y + (options as any).y - 10
+                    y: (
+                        y +
+                        pick(pointDataLabelsOptions.y, options.y) - // (#12985)
+                        10
+                    )
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
@@ -1840,7 +1791,7 @@ if (seriesTypes.column) {
      * @function Highcharts.seriesTypes.column#alignDataLabel
      * @param {Highcharts.Point} point
      * @param {Highcharts.SVGElement} dataLabel
-     * @param {Highcharts.DataLabelsOptionsObject} options
+     * @param {Highcharts.DataLabelsOptions} options
      * @param {Highcharts.BBoxObject} alignTo
      * @param {boolean} [isNew]
      * @return {void}
@@ -1849,7 +1800,7 @@ if (seriesTypes.column) {
         this: Highcharts.ColumnSeries,
         point: Highcharts.Point,
         dataLabel: Highcharts.SVGElement,
-        options: Highcharts.DataLabelsOptionsObject,
+        options: Highcharts.DataLabelsOptions,
         alignTo: Highcharts.BBoxObject,
         isNew?: boolean
     ): void {

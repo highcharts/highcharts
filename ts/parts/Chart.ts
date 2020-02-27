@@ -288,6 +288,7 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
+import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';
@@ -326,7 +327,6 @@ const {
 } = U;
 
 import './Axis.js';
-import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 
@@ -334,7 +334,6 @@ var doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     defaultOptions = H.defaultOptions,
     charts = H.charts,
-    Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     seriesTypes = H.seriesTypes,
     win = H.win;
