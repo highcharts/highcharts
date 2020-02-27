@@ -676,7 +676,7 @@ var Tooltip = /** @class */ (function () {
         delay = pick(delay, this.options.hideDelay, 500);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function () {
-                tooltip.getLabel()[delay ? 'fadeOut' : 'hide']();
+                tooltip.getLabel().fadeOut();
                 tooltip.isHidden = true;
             }, delay);
         }
