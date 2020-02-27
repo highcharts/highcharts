@@ -1573,7 +1573,7 @@ RangeSelector.prototype = {
             legendOptions = legend && legend.options,
             buttonPositionY = (buttonPosition as any).y,
             inputPositionY = (inputPosition as any).y,
-            animate = rendered || false,
+            animate = chart.hasLoaded,
             verb = animate ? 'animate' : 'attr',
             exportingX = 0,
             alignTranslateY,

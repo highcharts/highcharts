@@ -83,6 +83,7 @@ declare global {
             public credits?: SVGElement;
             public caption?: SVGElement;
             public hasCartesianSeries?: boolean;
+            public hasLoaded?: boolean;
             public hasRendered?: boolean;
             public index: number;
             public isDirtyBox?: boolean;
@@ -2856,7 +2857,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.render();
 
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && chart.onload) {
+        if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
         }
 
@@ -2899,7 +2900,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Don't run again
-        this.onload = null as any;
+        this.hasLoaded = true;
     }
 
 }); // end Chart

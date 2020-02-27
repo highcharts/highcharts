@@ -2000,7 +2000,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         chart.render();
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && chart.onload) {
+        if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
         }
         // If the chart was rendered outside the top container, put it back in
@@ -2033,6 +2033,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.setReflow(this.options.chart.reflow);
         }
         // Don't run again
-        this.onload = null;
+        this.hasLoaded = true;
     }
 }); // end Chart
