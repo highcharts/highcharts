@@ -42,7 +42,7 @@ extend(H.SVGElement.prototype, {
             var isRotated = Boolean(this.rotation);
             var isFirefox = H.isFirefox;
             borderPosX = this.attr('x') - (bb.width * 0.5) - pad +
-                // Correct the offset caused by the browser. 
+                // Correct the offset caused by the browser.
                 (isRotated ? bb.height * 0.068 : 0);
             borderPosY = this.attr('y') - (bb.height * 0.5) - pad +
                 // Firefox needs different correction value.
