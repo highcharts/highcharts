@@ -794,18 +794,6 @@ class Pointer {
                 return result;
             };
 
-        const chart = this.chart;
-        const hoverPoint = chart.hoverPoint;
-        const tooltip = chart.tooltip;
-
-        if (
-            hoverPoint &&
-            tooltip &&
-            tooltip.isStickyOnContact()
-        ) {
-            return hoverPoint;
-        }
-
         series.forEach(function (s: Highcharts.Series): void {
             var noSharedTooltip = s.noSharedTooltip && shared,
                 compareX = (
@@ -1312,8 +1300,7 @@ class Pointer {
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             chart &&
-            (e.relatedTarget || e.toElement) &&
-            (!chart.tooltip || !chart.tooltip.isStickyOnContact())
+            (e.relatedTarget || e.toElement)
         ) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
@@ -1333,7 +1320,6 @@ class Pointer {
      */
     public onContainerMouseMove(e: Highcharts.PointerEventObject): void {
         const chart = this.chart;
-        const tooltip = chart.tooltip;
 
         if (
             !defined(H.hoverChartIndex) ||
@@ -1361,7 +1347,6 @@ class Pointer {
         // Show the tooltip and run mouse over events (#977)
         if (
             !chart.openMenu &&
-            (!tooltip || !tooltip.isStickyOnContact()) &&
             (
                 this.inClass(e.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
@@ -1428,7 +1413,6 @@ class Pointer {
     public onDocumentMouseMove(e: Highcharts.PointerEventObject): void {
         const chart = this.chart;
         const chartPosition = this.chartPosition;
-        const tooltip = chart.tooltip;
 
         e = this.normalize(e, chartPosition);
 
@@ -1439,8 +1423,7 @@ class Pointer {
                 e.chartX - chart.plotLeft,
                 e.chartY - chart.plotTop
             ) &&
-            !this.inClass(e.target as any, 'highcharts-tracker') &&
-            (!tooltip || !tooltip.isStickyOnContact())
+            !this.inClass(e.target as any, 'highcharts-tracker')
         ) {
             this.reset();
         }

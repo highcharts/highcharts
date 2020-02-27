@@ -44,7 +44,6 @@ declare global {
             public distance: number;
             public followPointer?: boolean;
             public hideTimer?: number;
-            public inContact?: boolean;
             public isHidden: boolean;
             public isSticky: boolean;
             public label?: SVGElement;
@@ -90,7 +89,6 @@ declare global {
             ): string;
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
-            public isStickyOnContact(): boolean;
             public move(
                 x: number,
                 y: number,
@@ -501,25 +499,6 @@ class Tooltip {
     }
 
     /**
-     * Returns true, if tooltip should stick under pointer.
-     *
-     * @private
-     * @function Highcharts.Tooltip#isStickOnContact
-     *
-     * @return {boolean}
-     * True, if tooltip should stick under pointer.
-     */
-    public isStickyOnContact(): boolean {
-        const options = this.options;
-
-        return !!(
-            !options.followPointer &&
-            options.stickOnContact &&
-            this.inContact
-        );
-    }
-
-    /**
      * Extendable method to get the anchor position of the tooltip
      * from a point or set of points
      *
@@ -690,13 +669,22 @@ class Tooltip {
             styledMode = this.chart.styledMode,
             options = this.options,
             className = (
-                'tooltip' +
-                (defined(options.className) ? ' ' + options.className : '')
+                'tooltip' + (
+                    defined(options.className) ?
+                        ' ' + options.className :
+                        ''
+                )
             ),
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>,
-            updateStickOnContact = function (e: Highcharts.PointerEventObject): void {
-                tooltip.inContact = (e.type === 'mouseover');
+            onMouseLeave = function (e: Highcharts.PointerEventObject): void {
+                const series = tooltip.chart.hoverSeries;
+                if (
+                    series &&
+                    series.onMouseOut
+                ) {
+                    series.onMouseOut();
+                }
             };
 
         if (!this.label) {
@@ -805,8 +793,7 @@ class Tooltip {
             }
 
             this.label
-                .on('mouseover', updateStickOnContact)
-                .on('mouseout', updateStickOnContact)
+                .on('mouseleave', onMouseLeave)
                 .attr({ zIndex: 8 })
                 .add();
         }
@@ -1729,7 +1716,7 @@ class Tooltip {
      * If the `stickOnContact` option is active, this will add a tracker shape.
      *
      * @private
-     * @function Highcharts.Tooltip#stickOnContact
+     * @function Highcharts.Tooltip#drawTracker
      */
     private drawTracker(): void {
         const tooltip = this;
@@ -1749,24 +1736,45 @@ class Tooltip {
             return;
         }
 
-        // When the mouse pointer is between the anchor point and the label,
-        // the label should stick.
-        const anchorPos = this.getAnchor(point);
-        const labelBBox = label.getBBox();
-
-        // Combine anchor and tooltip
-        const size: Highcharts.RectangleObject = {
+        const box: Highcharts.RectangleObject = {
             x: 0,
             y: 0,
-            width: Math.max((anchorPos[0] + chart.plotLeft - label.translateX), labelBBox.width),
-            height: Math.max((anchorPos[1] + chart.plotTop - label.translateY), labelBBox.height)
+            width: 0,
+            height: 0
         };
 
+        if (
+            !tooltip.options.followPointer &&
+            tooltip.options.stickOnContact
+        ) {
+            // Combine anchor and tooltip
+            const anchorPos = this.getAnchor(point);
+            const labelBBox = label.getBBox();
+
+            anchorPos[0] += chart.plotLeft - label.translateX;
+            anchorPos[1] += chart.plotTop - label.translateY;
+
+            // When the mouse pointer is between the anchor point and the label,
+            // the label should stick.
+            box.x = Math.min(0, anchorPos[0]);
+            box.y = Math.min(0, anchorPos[1]);
+            box.width = (
+                anchorPos[0] < 0 ?
+                    Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
+                    Math.max(Math.abs(anchorPos[0]), labelBBox.width)
+            );
+            box.height = (
+                anchorPos[1] < 0 ?
+                    Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
+                    Math.max(Math.abs(anchorPos[1]), labelBBox.height)
+            );
+        }
+
         if (tooltip.tracker) {
-            tooltip.tracker.attr(size);
+            tooltip.tracker.attr(box);
         } else {
             tooltip.tracker = label.renderer
-                .rect(size)
+                .rect(box)
                 .addClass('highcharts-tracker')
                 .add(label);
 

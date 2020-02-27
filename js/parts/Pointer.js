@@ -438,14 +438,6 @@ var Pointer = /** @class */ (function () {
             }
             return result;
         };
-        var chart = this.chart;
-        var hoverPoint = chart.hoverPoint;
-        var tooltip = chart.tooltip;
-        if (hoverPoint &&
-            tooltip &&
-            tooltip.isStickyOnContact()) {
-            return hoverPoint;
-        }
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared, compareX = (!noSharedTooltip &&
                 s.options.findNearestPointBy.indexOf('y') < 0), point = s.searchPoint(e, compareX);
@@ -834,8 +826,7 @@ var Pointer = /** @class */ (function () {
         var chart = charts[H.hoverChartIndex];
         // #4886, MS Touch end fires mouseleave but with no related target
         if (chart &&
-            (e.relatedTarget || e.toElement) &&
-            (!chart.tooltip || !chart.tooltip.isStickyOnContact())) {
+            (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
@@ -853,7 +844,6 @@ var Pointer = /** @class */ (function () {
      */
     Pointer.prototype.onContainerMouseMove = function (e) {
         var chart = this.chart;
-        var tooltip = chart.tooltip;
         if (!defined(H.hoverChartIndex) ||
             !charts[H.hoverChartIndex] ||
             !charts[H.hoverChartIndex].mouseIsDown) {
@@ -873,7 +863,6 @@ var Pointer = /** @class */ (function () {
         }
         // Show the tooltip and run mouse over events (#977)
         if (!chart.openMenu &&
-            (!tooltip || !tooltip.isStickyOnContact()) &&
             (this.inClass(e.target, 'highcharts-tracker') ||
                 chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop))) {
             this.runPointActions(e);
@@ -930,13 +919,11 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.onDocumentMouseMove = function (e) {
         var chart = this.chart;
         var chartPosition = this.chartPosition;
-        var tooltip = chart.tooltip;
         e = this.normalize(e, chartPosition);
         // If we're outside, hide the tooltip
         if (chartPosition &&
             !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) &&
-            !this.inClass(e.target, 'highcharts-tracker') &&
-            (!tooltip || !tooltip.isStickyOnContact())) {
+            !this.inClass(e.target, 'highcharts-tracker')) {
             this.reset();
         }
     };

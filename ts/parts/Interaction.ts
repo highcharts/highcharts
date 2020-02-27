@@ -294,10 +294,7 @@ TrackerMixin = H.TrackerMixin = {
             tracker = series.tracker,
             i,
             onMouseOver = function (): void {
-                if (
-                    chart.hoverSeries !== series &&
-                    (!chart.tooltip || !chart.tooltip.isStickyOnContact())
-                ) {
+                if (chart.hoverSeries !== series) {
                     series.onMouseOver();
                 }
             },
