@@ -73,22 +73,18 @@ extend(H.SVGElement.prototype, {
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
 
-        let borderPosX: number,
-            borderPosY: number;
+        let borderPosX = bb.x - pad,
+            borderPosY = bb.y - pad;
 
         // For text elements, apply x and y offset, #11397.
         if (this.element.nodeName === 'text') {
-            const isRotated = Boolean(this.rotation);
-            const isFirefox = H.isFirefox;
-            borderPosX = this.attr('x') as number - (bb.width * 0.5) - pad +
+            const isRotated = !!this.rotation;
+            borderPosX = +this.attr('x') - (bb.width * 0.5) - pad +
                 // Correct the offset caused by the browser.
                 (isRotated ? bb.height * 0.068 : 0);
-            borderPosY = this.attr('y') as number - (bb.height * 0.5) - pad +
+            borderPosY = +this.attr('y') - (bb.height * 0.5) - pad +
                 // Firefox needs different correction value.
-                (isRotated ? 0 : -bb.height * (isFirefox ? 0.25 : 0.068));
-        } else {
-            borderPosX = bb.x - pad;
-            borderPosY = bb.y - pad;
+                (isRotated ? 0 : -bb.height * (H.isFirefox ? 0.25 : 0.068));
         }
 
         this.focusBorder = this.renderer.rect(
