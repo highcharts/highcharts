@@ -1093,6 +1093,59 @@ chartProto.callbacks.push(function (chart) {
         chart.plotBoxClip.destroy();
         chart.controlPointsGroup.destroy();
     });
+    addEvent(chart, 'exportData', function (event) {
+        var annotations = chart.annotations;
+        annotations.forEach(function (annotation) {
+            annotation.labels.forEach(function (label) {
+                var annotationText = label.options.text;
+                label.points.forEach(function (points) {
+                    var annotationX = points.x, xAxisIndex = points.series.xAxis ? points.series.xAxis.options.index : -1;
+                    var wasAdded = false;
+                    if (xAxisIndex === -1) {
+                        var newRow = new Array(event.dataRows[0].length);
+                        newRow.fill('');
+                        newRow.push(annotationText);
+                        newRow.xValues = [];
+                        newRow.xValues[xAxisIndex] = annotationX;
+                        event.dataRows.push(newRow);
+                        wasAdded = true;
+                    }
+                    if (!wasAdded) {
+                        event.dataRows.forEach(function (row, rowIndex) {
+                            if (!wasAdded &&
+                                rowIndex > 1 &&
+                                row.xValues &&
+                                xAxisIndex !== void 0 &&
+                                annotationX === row.xValues[xAxisIndex]) {
+                                row.push(annotationText);
+                                wasAdded = true;
+                            }
+                        });
+                    }
+                    if (!wasAdded) {
+                        var newRow = new Array(event.dataRows[0].length);
+                        newRow.fill('');
+                        newRow[0] = annotationX;
+                        newRow.push(annotationText);
+                        newRow.xValues = [];
+                        if (xAxisIndex !== void 0) {
+                            newRow.xValues[xAxisIndex] = annotationX;
+                        }
+                        event.dataRows.push(newRow);
+                    }
+                });
+            });
+        });
+        var maxRowLen = 0;
+        event.dataRows.forEach(function (row) {
+            maxRowLen = Math.max(maxRowLen, row.length);
+        });
+        var newRows = maxRowLen - event.dataRows[0].length;
+        for (var i = 0; i < newRows; i++) {
+            event.dataRows[0].push("Annotations " + (i + 1));
+            event.dataRows[1].push("Annotations " + (i + 1));
+        }
+    });
 });
 wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed) {
     if (!this.chart.hasDraggedAnnotation) {

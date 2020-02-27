@@ -1674,6 +1674,73 @@ chartProto.callbacks.push(function (
         chart.plotBoxClip.destroy();
         chart.controlPointsGroup.destroy();
     });
+    addEvent(chart, 'exportData', function (this: Highcharts.AnnotationChart, event: any): void {
+        const annotations = chart.annotations;
+
+        annotations.forEach((annotation): void => {
+            annotation.labels.forEach((label): void => {
+                const annotationText = label.options.text;
+
+                label.points.forEach((points): void => {
+                    const annotationX = points.x,
+                        xAxisIndex = points.series.xAxis ? points.series.xAxis.options.index : -1;
+                    let wasAdded = false;
+
+                    if (xAxisIndex === -1) {
+                        const newRow: any = new Array(event.dataRows[0].length);
+
+                        newRow.fill('');
+                        newRow.push(annotationText);
+                        newRow.xValues = [];
+                        newRow.xValues[xAxisIndex] = annotationX;
+                        event.dataRows.push(newRow);
+                        wasAdded = true;
+                    }
+
+                    if (!wasAdded) {
+                        event.dataRows.forEach((row: any, rowIndex: number): void => {
+                            if (
+                                !wasAdded &&
+                                rowIndex > 1 &&
+                                row.xValues &&
+                                xAxisIndex !== void 0 &&
+                                annotationX === row.xValues[xAxisIndex]
+                            ) {
+                                row.push(annotationText);
+                                wasAdded = true;
+                            }
+                        });
+                    }
+
+                    if (!wasAdded) {
+                        const newRow: any = new Array(event.dataRows[0].length);
+
+                        newRow.fill('');
+                        newRow[0] = annotationX;
+                        newRow.push(annotationText);
+                        newRow.xValues = [];
+                        if (xAxisIndex !== void 0) {
+                            newRow.xValues[xAxisIndex] = annotationX;
+                        }
+                        event.dataRows.push(newRow);
+                    }
+                });
+            });
+        });
+
+        let maxRowLen = 0;
+
+        event.dataRows.forEach((row: any): void => {
+            maxRowLen = Math.max(maxRowLen, row.length);
+        });
+
+        const newRows = maxRowLen - event.dataRows[0].length;
+
+        for (let i = 0; i < newRows; i++) {
+            event.dataRows[0].push(`Annotations ${i + 1}`);
+            event.dataRows[1].push(`Annotations ${i + 1}`);
+        }
+    });
 } as any);
 
 wrap(
