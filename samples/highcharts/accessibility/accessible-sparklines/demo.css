@@ -1,3 +1,16 @@
+#table-intro-text {
+    font-family: Verdana, sans-serif;
+    color: #222;
+    width: 100%;
+    max-width: 950px;
+    margin: 30px auto;
+}
+
+#table-intro-text h1 {
+    font-size: 1.9em;
+    color: #363636;
+}
+
 .sparkline-container {
     height: 80px; 
     width: 170px;    
