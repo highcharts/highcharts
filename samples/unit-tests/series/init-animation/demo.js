@@ -76,9 +76,10 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                 series: [{
                     data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175],
                     animation: {
-                        defer: 2000,
-                        duration: 1000
-                    }
+                        defer: 200,
+                        duration: 200
+                    },
+                    clip: false
                 }]
             }),
             done = assert.async(),
@@ -103,7 +104,7 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                     true,
                     'Animation uncovers most of the plot'
                 );
-            }, 1100);
+            }, 250);
 
             setTimeout(function () {
                 // animation finished
@@ -119,8 +120,8 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
 
                 // all tests are done
                 done();
-            }, 1500);
-        }, 1500);
+            }, 400);
+        }, 100);
 
         TestUtilities.lolexRunAndUninstall(clock);
     } finally {
