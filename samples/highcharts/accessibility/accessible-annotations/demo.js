@@ -1,4 +1,20 @@
 Highcharts.chart('container', {
+    accessibility: {
+        point: {
+            valueSuffix: ' sessions'
+        }
+    },
+
+    lang: {
+        accessibility: {
+            screenReaderSection: {
+                // No need for end of chart maker when using <figure>
+                // with no content after the chart.
+                endOfChartMarker: ''
+            }
+        }
+    },
+
     title: {
         text: 'Total CSUN conference sessions by year'
     },
@@ -50,8 +66,8 @@ Highcharts.chart('container', {
         labels: {
             format: '{value}'
         },
-        max: 500,
-        min: 360
+        minPadding: 0.3,
+        maxPadding: 0.25
     },
 
     tooltip: {
