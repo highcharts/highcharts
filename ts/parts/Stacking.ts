@@ -671,7 +671,7 @@ Axis.prototype.cleanStacks = function (this: Highcharts.Axis): void {
 Series.prototype.setGroupedPoints = function (this: Highcharts.Series): void {
     if (
         this.options.centerInCategory &&
-        this.type.match(/column|columnrange|bar/g) &&
+        (this.is('column') || this.is('columnrange')) &&
         // With stacking enabled, we already have stacks that we can compute
         // from
         !this.options.stacking &&
