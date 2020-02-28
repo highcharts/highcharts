@@ -610,9 +610,4 @@ addEvent(H.Pointer, 'afterGetHoverData', function (
 });
 
 H.Pane = Pane as any;
-
-const paneModule = {
-    Pane
-};
-
-export default paneModule;
+export default H.Pane;

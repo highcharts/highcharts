@@ -116,8 +116,7 @@ const {
     wrap
 } = U;
 
-import paneModule from '../parts-more/Pane.js';
-const Pane: typeof Highcharts.Pane = paneModule.Pane as any;
+import Pane from '../parts-more/Pane.js';
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
