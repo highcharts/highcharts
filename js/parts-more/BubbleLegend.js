@@ -724,7 +724,6 @@ var BubbleLegend = /** @class */ (function () {
     };
     return BubbleLegend;
 }());
-;
 // Start the bubble legend creation process.
 addEvent(Legend, 'afterGetAllItems', function (e) {
     var legend = this, bubbleLegend = legend.bubbleLegend, legendOptions = legend.options, options = legendOptions.bubbleLegend, bubbleSeriesIndex = legend.chart.getVisibleBubbleSeriesIndex();
