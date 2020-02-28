@@ -191,7 +191,7 @@ var Point = /** @class */ (function () {
          * @name Highcharts.Point#colorIndex
          * @type {number}
          */
-        this.colorIndex = 0;
+        this.colorIndex = void 0;
         this.formatPrefix = 'point';
         this.id = void 0;
         this.isNull = false;
