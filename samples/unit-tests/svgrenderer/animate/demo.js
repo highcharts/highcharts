@@ -906,8 +906,8 @@ QUnit.test('Defer test #12901', function (assert) {
             x: 300,
             y: 300
         }, {
-            duration: 2000,
-            defer: 2000
+            duration: 200,
+            defer: 200
         });
 
         setTimeout(function () {
@@ -916,7 +916,7 @@ QUnit.test('Defer test #12901', function (assert) {
                 10,
                 'X should be not changed until the defer time will be gone'
             );
-        }, 1800);
+        }, 100);
 
         setTimeout(function () {
             assert.strictEqual(
@@ -925,7 +925,7 @@ QUnit.test('Defer test #12901', function (assert) {
                 'X should be in the final position after sum of the duration and defer time'
             );
             document.body.removeChild(div);
-        }, 4200);
+        }, 500);
 
         // Reset animation
         TestUtilities.lolexRunAndUninstall(clock);
