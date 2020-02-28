@@ -398,7 +398,4 @@ addEvent(H.Pointer, 'afterGetHoverData', function (eventArgs) {
     }
 });
 H.Pane = Pane;
-var paneModule = {
-    Pane: Pane
-};
-export default paneModule;
+export default H.Pane;
