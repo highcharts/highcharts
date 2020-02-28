@@ -63,7 +63,7 @@ The best practice in integrating Highcharts may differ from system to system. Yo
 
 For a live connection to the server, you may set up the web page to load new data over XHR or set up direct communicatations using WebSockets. With the new data arriving in the browser, the chart can be kept updated through various dynamic endpoints like `Series.addPoint()`, `Point.update()`, `Chart.addSeries()`, `Chart.update()` etc.
 
-Before you start to set up a complex backend, you may want to check out [www.highcharts.com/download](download) whether someone has created a wrapper for your specific system.
+Before you start to set up a complex backend, you may want to check out [highcharts.com/download](https://highcharts.com/download) to see if there is a wrapper for your specific system.
 
 * * *
 
@@ -97,7 +97,7 @@ How can I get the best performance out of Highcharts?
 
 When working with series with a high number of data points, there are a few things to consider.
 
-1.  First of all, consider using [the Boost module](news/175-highcharts-performance-boost).
+1.  First of all, consider using the [Boost module](https://www.highcharts.com/blog/tutorials/highcharts-high-performance-boost-module/).
 2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [https://highcharts.com/demo/line-time-series](https://highcharts.com/demo/line-time-series).
 3.  Disabling shadows increases performance, as three shadow elements are created for each shape that includes a shadow.
 4.  For large column series, it is recommended that you disable the initial animation, [plotOptions.column.animation](https://api.highcharts.com/highcharts#plotOptions.column.animation), at least for VML based browsers. The best way to distinguish between fast SVG browsers and slower VML browsers is to use the Highcharts.svg boolean property.

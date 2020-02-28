@@ -83,6 +83,7 @@ declare global {
             public credits?: SVGElement;
             public caption?: SVGElement;
             public hasCartesianSeries?: boolean;
+            public hasLoaded?: boolean;
             public hasRendered?: boolean;
             public index: number;
             public isDirtyBox?: boolean;
@@ -288,6 +289,7 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
+import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
 import Pointer from './Pointer.js';
 import Time from './Time.js';
@@ -326,7 +328,6 @@ const {
 } = U;
 
 import './Axis.js';
-import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 
@@ -334,7 +335,6 @@ var doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
     defaultOptions = H.defaultOptions,
     charts = H.charts,
-    Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
     seriesTypes = H.seriesTypes,
     win = H.win;
@@ -1691,6 +1691,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
         );
+        // Set the initial animation from the options
+        setAnimation(void 0, chart);
 
 
         chart.setClassName(optionsChart.className);
@@ -2857,7 +2859,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.render();
 
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && chart.onload) {
+        if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
         }
 
@@ -2900,7 +2902,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Don't run again
-        this.onload = null as any;
+        this.hasLoaded = true;
     }
 
 }); // end Chart

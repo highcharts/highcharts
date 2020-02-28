@@ -88,7 +88,7 @@ seriesType<Highcharts.MapPointSeries>(
             defer: false,
             enabled: true,
             formatter: function (
-                this: Highcharts.DataLabelsFormatterContextObject
+                this: Highcharts.PointLabelObject
             ): (string|undefined) { // #2945
                 return this.point.name;
             },

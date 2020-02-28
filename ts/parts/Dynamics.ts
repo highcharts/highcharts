@@ -118,6 +118,7 @@ declare global {
     }
 }
 
+import Point from './Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
@@ -144,12 +145,10 @@ const {
 
 import './Axis.js';
 import './Chart.js';
-import './Point.js';
 import './Series.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 

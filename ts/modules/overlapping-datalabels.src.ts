@@ -60,7 +60,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
     });
 
     (this.series || []).forEach(function (series: Highcharts.Series): void {
-        var dlOptions: Highcharts.DataLabelsOptionsObject = (
+        var dlOptions: Highcharts.DataLabelsOptions = (
             series.options.dataLabels as any
         );
 

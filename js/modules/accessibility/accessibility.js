@@ -13,6 +13,7 @@
 import ChartUtilities from './utils/chartUtilities.js';
 import H from '../../parts/Globals.js';
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
 var doc = H.win.document;
@@ -244,7 +245,7 @@ addEvent(H.Chart, 'update', function (e) {
     this.a11yDirty = true;
 });
 // Mark dirty for update
-addEvent(H.Point, 'update', function () {
+addEvent(Point, 'update', function () {
     if (this.series.chart.accessibility) {
         this.series.chart.a11yDirty = true;
     }

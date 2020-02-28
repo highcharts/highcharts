@@ -12,6 +12,7 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
@@ -163,8 +164,8 @@ H.sonification = {
 };
 
 // Chart specific
-H.Point.prototype.sonify = pointSonifyFunctions.pointSonify;
-H.Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
+Point.prototype.sonify = pointSonifyFunctions.pointSonify;
+Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
 H.Series.prototype.sonify = chartSonifyFunctions.seriesSonify;
 extend(H.Chart.prototype, {
     sonify: chartSonifyFunctions.chartSonify,

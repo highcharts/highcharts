@@ -293,6 +293,7 @@ declare global {
  */
 
 import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
@@ -1009,8 +1010,9 @@ Chart.prototype.drillUp = function (): void {
 
 /* eslint-disable no-invalid-this */
 
-// Add update function to be called internally from Chart.update (#7600)
-Chart.prototype.callbacks.push(function (): void {
+// Add update function to be called internally from Chart.update
+// (#7600, #12855)
+addEvent(Chart, 'afterInit', function (): void {
     var chart = this;
 
     chart.drilldown = {
@@ -1314,7 +1316,7 @@ if (PieSeries) {
     });
 }
 
-H.Point.prototype.doDrilldown = function (
+Point.prototype.doDrilldown = function (
     _holdRedraw: (boolean|undefined),
     category: (number|undefined),
     originalEvent: Event
@@ -1465,7 +1467,7 @@ Tick.prototype.drillable = function (): void {
 
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
-addEvent(H.Point, 'afterInit', function (): Highcharts.Point {
+addEvent(Point, 'afterInit', function (): Highcharts.Point {
     var point = this,
         series = point.series;
 
@@ -1556,7 +1558,7 @@ addEvent(H.Series, 'afterDrawTracker', function (): void {
 });
 
 
-addEvent(H.Point, 'afterSetState', function (): void {
+addEvent(Point, 'afterSetState', function (): void {
     var styledMode = this.series.chart.styledMode;
 
     if (this.drilldown && this.series.halo && this.state === 'hover') {
