@@ -386,7 +386,7 @@ Axis.prototype.cleanStacks = function () {
  */
 Series.prototype.setGroupedPoints = function () {
     if (this.options.centerInCategory &&
-        this.type.match(/column|columnrange|bar/g) &&
+        (this.is('column') || this.is('columnrange')) &&
         // With stacking enabled, we already have stacks that we can compute
         // from
         !this.options.stacking &&
