@@ -77,6 +77,7 @@ seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
         }
     }
 }, {
+    markerAttribs: void 0,
     drawPoints: function (this: Highcharts.DotplotSeries): void {
         var series = this,
             renderer = series.chart.renderer,

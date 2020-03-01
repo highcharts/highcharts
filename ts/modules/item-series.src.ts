@@ -197,6 +197,7 @@ seriesType<Highcharts.ItemSeries>(
     },
     // Prototype members
     {
+        markerAttribs: void 0,
         translate: function (this: Highcharts.ItemSeries): void {
             if (!this.slots) {
                 this.slots = [];

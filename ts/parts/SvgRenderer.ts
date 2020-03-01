@@ -5421,7 +5421,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // Fire the load event when all external images are
                         // loaded
                         ren.imgCount--;
-                        if (!ren.imgCount && chart && chart.onload) {
+                        if (!ren.imgCount && chart && !chart.hasLoaded) {
                             chart.onload();
                         }
                     },

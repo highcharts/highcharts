@@ -38,6 +38,7 @@ seriesType('dotplot', 'column', {
         }
     }
 }, {
+    markerAttribs: void 0,
     drawPoints: function () {
         var series = this, renderer = series.chart.renderer, seriesMarkerOptions = this.options.marker, itemPaddingTranslated = this.yAxis.transA *
             series.options.itemPadding, borderWidth = this.borderWidth, crisp = borderWidth % 2 ? 0.5 : 1;
