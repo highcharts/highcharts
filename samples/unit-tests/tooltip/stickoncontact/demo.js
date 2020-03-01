@@ -75,8 +75,8 @@ QUnit.test('Stick on hover tooltip (#12736)', function (assert) {
         controller.moveTo(series1PointPosition.x, series1PointPosition.y);
 
         assert.strictEqual(
-            tooltip.isHidden,
-            false,
+            !tooltip.isHidden,
+            true,
             'Tooltip should be visible.'
         );
 
@@ -89,13 +89,13 @@ QUnit.test('Stick on hover tooltip (#12736)', function (assert) {
         controller.moveTo(series1PointPosition.x, series1PointPosition.y - 1);
 
         assert.strictEqual(
-            tooltip.isHidden,
-            false,
+            !tooltip.isHidden,
+            true,
             'Tooltip should be visible.'
         );
 
         assert.strictEqual(
-            tooltip.label.text.element.textContent,
+            tooltip.label && tooltip.label.text.element.textContent,
             '0● Series 1: 1',
             'Tooltip should have label text of first series. (2)'
         );
@@ -104,13 +104,13 @@ QUnit.test('Stick on hover tooltip (#12736)', function (assert) {
         controller.moveTo(series2PointPosition.x, series2PointPosition.y);
 
         assert.strictEqual(
-            tooltip.isHidden,
-            false,
+            !tooltip.isHidden,
+            true,
             'Tooltip should be visible.'
         );
 
         assert.strictEqual(
-            tooltip.label.text.element.textContent,
+            tooltip.label && tooltip.label.text.element.textContent,
             '0● Series 2: 1.1',
             'Tooltip should have label text of second series.'
         );
