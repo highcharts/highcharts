@@ -855,7 +855,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive(false);
         }
 
-        setAnimation(animation as any, chart);
+        // Set the global animation. When chart.hasRendered is not true, the
+        // redraw call comes from a responsive rule and animation should not
+        // occur.
+        setAnimation(chart.hasRendered ? animation : false, chart);
 
         if (isHiddenChart) {
             chart.temporaryDisplay();
