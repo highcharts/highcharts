@@ -66,7 +66,7 @@ import Highcharts from './Globals.js';
  * @callback Highcharts.TimezoneOffsetCallbackFunction
  *
  * @param {number} timestamp
- * Timestamp in terms of milliseconds since January 1 1970.
+ * Date instance or timestamp in terms of milliseconds since January 1 1970.
  *
  * @return {number}
  * Timezone offset in minutes.
@@ -347,7 +347,7 @@ var Time = /** @class */ (function () {
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && options.getTimezoneOffset) {
             return function (timestamp) {
-                return options.getTimezoneOffset(timestamp) * 60000;
+                return options.getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
         // Last, use the `timezoneOffset` option if set
