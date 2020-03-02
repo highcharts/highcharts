@@ -95,7 +95,7 @@
         <property name="prototype.minified.name" value="prototype-adapter.js"/-->
         <property name="standalone.minified.name" value="standalone-framework.js"/>
         <property name="exporting.minified.name" value="exporting.js"/>
-        <property name="offline-exporting.minified.name" value="offline-exporting.js"/>        
+        <property name="offline-exporting.minified.name" value="offline-exporting.js"/>
         <property name="boost.minified.name" value="boost.js"/>
         <property name="broken-axis.minified.name" value="broken-axis.js"/>
         <property name="data.minified.name" value="data.js"/>
@@ -128,7 +128,7 @@
         <property name="annotations.src.file" value="${basedir}/js/modules/${annotations.src.name}"/>
         <property name="highstock-all.minified.name" value="highstock-all.js"/>
 
-        
+
         <!-- ant-contrib -->
         <property name="ant.contrib.dir" value="${tools.dir}/ant-contrib-0.6-bin"/>
         <property name="ant.contrib.jar" location="${ant.contrib.dir}/lib/ant-contrib-0.6.jar"/>
@@ -161,7 +161,7 @@
             <file name="parts/PlotLineOrBand.js"/>
             <file name="parts/Axis.js"/>
             <file name="parts/DateTimeAxis.js"/>
-            <file name="parts/LogarithmicAxis.js"/> 
+            <file name="parts/LogarithmicAxis.js"/>
             <file name="parts/Tooltip.js"/>
             <file name="parts/Pointer.js"/>
             <file name="parts/TouchPointer.js"/>
@@ -402,7 +402,7 @@
         <zip destfile="${dist.dir}/${highstock.product.name}-${highstock.product.version}.zip" basedir="${dist.dir}/highstock"/>
         <zip destfile="${dist.dir}/${highmaps.product.name}-${highmaps.product.version}.zip" basedir="${dist.dir}/highmaps"/>
         <zip destfile="${dist.dir}/Highcharts-Gantt-${gantt.product.version}.zip" basedir="${dist.dir}/gantt"/>
-        
+
 
     </target>
 
