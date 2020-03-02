@@ -65,7 +65,7 @@ import Highcharts from './Globals.js';
  * @callback Highcharts.TimezoneOffsetCallbackFunction
  *
  * @param {number} timestamp
- * Timestamp in terms of milliseconds since January 1 1970.
+ * Date instance or timestamp in terms of milliseconds since January 1 1970.
  *
  * @return {number}
  * Timezone offset in minutes.
@@ -107,10 +107,13 @@ var H = Highcharts, win = H.win;
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
+ * @since 6.0.5
+ *
  * @class
  * @name Highcharts.Time
  *
- * @since 6.0.5
+ * @param {Highcharts.TimeOptions} options
+ * Time options as defined in [chart.options.time](/highcharts/time).
  */
 var Time = /** @class */ (function () {
     /* *
@@ -118,14 +121,6 @@ var Time = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * Time settings are applied in general for each page using
-     * `Highcharts.setOptions`, or individually for each Chart item through the
-     * [time](https://api.highcharts.com/highcharts/time) options set.
-     *
-     * @param {Highcharts.TimeOptions} options
-     * Time options as defined in [chart.options.time](/highcharts/time).
-     */
     function Time(options) {
         /* *
          *
@@ -351,7 +346,7 @@ var Time = /** @class */ (function () {
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && options.getTimezoneOffset) {
             return function (timestamp) {
-                return options.getTimezoneOffset(timestamp) * 60000;
+                return options.getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
         // Last, use the `timezoneOffset` option if set
