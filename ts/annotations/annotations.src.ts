@@ -503,14 +503,14 @@ merge(
 
             /**
              * Whether to defer displaying the annotations until the set
-             * duration time has finished. Setting to `false` renders
+             * time in milliseconds has finished. Setting to `false` renders
              * annotation immediately. If set to `true` inherits the duration
              * time set in [plotOptions.series.animation](#plotOptions.series.animation).
              *
              * @sample highcharts/annotations/defer
              *         Set defer duration time
              *
-             * @since        8.0.1
+             * @since        8.0.3
              *
              * @type {boolean | number}
              */

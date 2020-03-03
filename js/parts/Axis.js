@@ -2930,6 +2930,16 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              */
             crop: true,
             /**
+             * Whether to defer displaying the stack labels until the set
+             * time in milliseconds has finished. Setting to `false` renders
+             * stack labels immediately. If set to `true` inherits the defer
+             * time set in [plotOptions.series.animation](#plotOptions.series.animation).
+             *
+             * @type {boolean|number}
+             * @since 8.0.3
+             */
+            defer: true,
+            /**
              * How to handle stack total labels that flow outside the plot area.
              * The default is set to `"justify"`,
              * which aligns them inside the plot area.

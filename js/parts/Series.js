@@ -528,6 +528,8 @@ null,
      *
      * - `duration`: The duration of the animation in milliseconds.
      *
+     * - `defer`: The animation delay time in milliseconds.
+     *
      * - `easing`: Can be a string reference to an easing function set on
      *   the `Math` object or a function. See the _Custom easing function_
      *   demo below.
@@ -1821,9 +1823,11 @@ null,
          */
         /**
          * Whether to defer displaying the data labels until the initial
-         * series animation has finished.
+         * series animation has finished. Setting to `false` renders the
+         * data label immediately. If set to `true` inherits the defer
+         * time set in [plotOptions.series.animation](#plotOptions.series.animation).
          *
-         * @type      {boolean}
+         * @type      {boolean|number}
          * @default   true
          * @since     4.0.0
          * @product   highcharts highstock gantt

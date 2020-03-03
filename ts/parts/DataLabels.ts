@@ -59,7 +59,7 @@ declare global {
             className?: string;
             color?: (ColorString|GradientColorObject|PatternObject);
             crop?: boolean;
-            defer?: boolean;
+            defer?: (boolean|number);
             enabled?: boolean;
             filter?: DataLabelsFilterOptionsObject;
             format?: string;

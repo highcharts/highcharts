@@ -35,9 +35,7 @@ Highcharts.chart('container', {
             text: 'Min'
         }]
     }, {
-        defer: {
-            duration: 1000
-        },
+        defer: 1000,
         shapes: [{
             type: 'circle',
             point: {

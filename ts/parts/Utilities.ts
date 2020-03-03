@@ -361,13 +361,17 @@ declare global {
 /**
  * An animation configuration. Animation configurations can also be defined as
  * booleans, where `false` turns off animation and `true` defaults to a duration
- * of 500ms.
+ * of 500ms and defer of 0ms.
  *
  * @interface Highcharts.AnimationOptionsObject
  *//**
  * A callback function to exectute when the animation finishes.
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
+ *//**
+ * The animation defer in milliseconds.
+ * @name Highcharts.AnimationOptionsObject#defer
+ * @type {number|undefined}
  *//**
  * The animation duration in milliseconds.
  * @name Highcharts.AnimationOptionsObject#duration

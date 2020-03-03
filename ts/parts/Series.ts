@@ -1039,6 +1039,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * #chart.animation) and the animation parameter under the API methods.
          * The following properties are supported:
          *
+         * - `defer`: The animation delay time in milliseconds.
+         *
          * - `duration`: The duration of the animation in milliseconds.
          *
          * - `easing`: Can be a string reference to an easing function set on
@@ -2427,9 +2429,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
             /**
              * Whether to defer displaying the data labels until the initial
-             * series animation has finished.
+             * series animation has finished. Setting to `false` renders the
+             * data label immediately. If set to `true` inherits the defer
+             * time set in [plotOptions.series.animation](#plotOptions.series.animation).
              *
-             * @type      {boolean}
+             * @type      {boolean|number}
              * @default   true
              * @since     4.0.0
              * @product   highcharts highstock gantt

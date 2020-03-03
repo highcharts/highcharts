@@ -57,7 +57,7 @@ declare global {
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
             connectorAllowed?: boolean;
             connectorNeighbourDistance?: number;
-            defer?: number;
+            defer?: (number|boolean);
             enabled?: boolean;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
@@ -152,6 +152,18 @@ H.setOptions({
              * @requires modules/series-label
              */
             label: {
+
+                /**
+                 * Whether to defer displaying the series label until the set
+                 * time in milliseconds has finished. Setting to `false` renders
+                 * the series label immediately. If set to `true` inherits
+                 * the defer time set in [series.animation](#series.animation).
+                 *
+                 * @since        8.0.3
+                 *
+                 * @type {boolean|number}
+                 */
+                defer: true,
 
                 /**
                  * Enable the series label per series.
