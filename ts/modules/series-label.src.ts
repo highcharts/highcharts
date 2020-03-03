@@ -1140,7 +1140,7 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
 
             // The labels are processing heavy, wait until the animation is done
             if (e.type === 'load') {
-                delay = Math.max(
+                delay = Math.min(
                     delay as any,
                     animObject(series.options.animation).duration as any
                 );

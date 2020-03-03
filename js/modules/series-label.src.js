@@ -701,7 +701,7 @@ function drawLabels(e) {
             }
             // The labels are processing heavy, wait until the animation is done
             if (e.type === 'load') {
-                delay = Math.max(delay, animObject(series.options.animation).duration);
+                delay = Math.min(delay, animObject(series.options.animation).duration);
             }
             // Add the label or the series defer time
             if (options.defer || animObject(series.options.animation).defer) {
