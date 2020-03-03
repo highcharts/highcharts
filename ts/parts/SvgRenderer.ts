@@ -2750,13 +2750,22 @@ extend((
             strokeWidth,
             shadowWidth,
             shadowElementOpacity,
+            update = false,
 
             // compensate for inverted plot area
             transform;
 
         // Update shadow when options change (#12091).
-        if (shadowOptions) {
-            if (JSON.stringify(this.oldShadowOptions) !== JSON.stringify(shadowOptions)) {
+        if (isObject(shadowOptions)) {
+            if (this.oldShadowOptions) {
+                Object.keys(this.oldShadowOptions || {}).forEach((key): void => {
+                    if ((shadowOptions as any)[key] !== this.oldShadowOptions[key]) {
+                        update = true;
+                    }
+                });
+            }
+
+            if (update) {
                 this.destroyShadows();
             }
 

@@ -1809,12 +1809,20 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Returns the SVGElement for chaining.
      */
     shadow: function (shadowOptions, group, cutOff) {
-        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, 
+        var _this = this;
+        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, update = false, 
         // compensate for inverted plot area
         transform;
         // Update shadow when options change (#12091).
-        if (shadowOptions) {
-            if (JSON.stringify(this.oldShadowOptions) !== JSON.stringify(shadowOptions)) {
+        if (isObject(shadowOptions)) {
+            if (this.oldShadowOptions) {
+                Object.keys(this.oldShadowOptions || {}).forEach(function (key) {
+                    if (shadowOptions[key] !== _this.oldShadowOptions[key]) {
+                        update = true;
+                    }
+                });
+            }
+            if (update) {
                 this.destroyShadows();
             }
             this.oldShadowOptions = shadowOptions;
