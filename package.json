@@ -1,6 +1,6 @@
 {
   "name": "highcharts",
-  "version": "8.0.1",
+  "version": "8.0.2",
   "description": "JavaScript charting framework",
   "main": "lib/highcharts",
   "module": "es-modules/masters/highcharts.src.js",
