@@ -705,7 +705,7 @@ function drawLabels(e) {
             }
             // Add the label or the series defer time
             if (options.defer || animObject(series.options.animation).defer) {
-                options.defer ?
+                isNumber(options.defer) ?
                     delay += options.defer :
                     delay += animObject(series.options.animation).defer;
             }

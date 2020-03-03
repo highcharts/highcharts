@@ -526,9 +526,9 @@ null,
      * #chart.animation) and the animation parameter under the API methods.
      * The following properties are supported:
      *
-     * - `duration`: The duration of the animation in milliseconds.
-     *
      * - `defer`: The animation delay time in milliseconds.
+     *
+     * - `duration`: The duration of the animation in milliseconds.
      *
      * - `easing`: Can be a string reference to an easing function set on
      *   the `Math` object or a function. See the _Custom easing function_

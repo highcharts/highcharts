@@ -571,9 +571,9 @@ H.defaultOptions = {
          * duration of 500 ms. If used as a configuration object, the following
          * properties are supported:
          *
-         * - `duration`: The duration of the animation in milliseconds.
-         *
          * - `defer`: The animation delay time in milliseconds.
+         *
+         * - `duration`: The duration of the animation in milliseconds.
          *
          * - **easing**: A string reference to an easing function set on the
          *   `Math` object. See

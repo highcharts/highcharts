@@ -1147,7 +1147,7 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
             }
             // Add the label or the series defer time
             if (options.defer || animObject(series.options.animation).defer) {
-                options.defer ?
+                isNumber(options.defer) ?
                     (delay as any) += options.defer :
                     delay += animObject(series.options.animation).defer as any;
             }
