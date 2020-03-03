@@ -65,7 +65,7 @@ QUnit.test('Initial animation - series.clip set to false', function (assert) {
     }
 });
 
-QUnit.test('Initial animation - defer test #12901', function (assert) {
+QUnit.test('Initial animation - defer and series label test #12901', function (assert) {
 
     var clock = null;
 

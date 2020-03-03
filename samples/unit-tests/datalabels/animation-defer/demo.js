@@ -25,10 +25,23 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                         enabled: true,
                         defer: 400
                     }
+                }, {
+                    data: [43934, 52503, 57177, 69658].reverse(),
+                    dataLabels: {
+                        enabled: true,
+                        defer: false
+                    }
                 }]
             }),
             done = assert.async(),
-            dlOpacity;
+            dlOpacity = chart.series[2].dataLabelsGroup.attr('opacity');
+
+        // defer false - label should be visible immediately
+        assert.strictEqual(
+            dlOpacity === 1,
+            true,
+            'Animate should be finished - dataLabels should be visible'
+        );
 
         setTimeout(function () {
             // animation started

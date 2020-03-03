@@ -324,3 +324,78 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         'This stack-label text x attribute should be equal to set padding #12308'
     );
 });
+
+QUnit.test('StackLabels Initial animation - defer test #12901', function (assert) {
+
+    var clock = null;
+
+    try {
+        clock = TestUtilities.lolexInstall();
+
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+
+                plotOptions: {
+                    series: {
+                        stacking: 'normal',
+                        animation: {
+                            defer: 400
+                        }
+                    }
+                },
+
+                yAxis: {
+                    stackLabels: {
+                        enabled: true
+                    }
+                },
+
+                series: [{
+                    data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
+
+                }, {
+                    data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175].reverse()
+                }]
+            }),
+            done = assert.async(),
+            slOpacity;
+
+        setTimeout(function () {
+            // animation started
+            slOpacity = chart.yAxis[0].stackTotalGroup.opacity;
+            assert.strictEqual(
+                slOpacity === 0,
+                true,
+                'Animate should not be started - stackLabels should be invisible'
+            );
+
+            setTimeout(function () {
+                slOpacity = chart.yAxis[0].stackTotalGroup.opacity;
+                // animation finished
+                assert.strictEqual(
+                    slOpacity > 0 && slOpacity < 1,
+                    true,
+                    'Animation should be started but not finished'
+                );
+            }, 100);
+
+            setTimeout(function () {
+                slOpacity = chart.yAxis[0].stackTotalGroup.opacity;
+                // animation finished
+                assert.strictEqual(
+                    slOpacity === 1,
+                    true,
+                    'Animate should be finished - stackLabels should be visible'
+                );
+                // all tests are done
+                done();
+            }, 400);
+        }, 200);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});
