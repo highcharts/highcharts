@@ -298,6 +298,13 @@ var H = Highcharts,
  *
  * @class
  * @name Highcharts.Pointer
+ *
+ * @param {Highcharts.Chart} chart
+ * The chart instance.
+ *
+ * @param {Highcharts.Options} options
+ * The root options object. The pointer uses options from the chart and
+ * tooltip structures.
  */
 class Pointer {
 
@@ -307,16 +314,6 @@ class Pointer {
      *
      * */
 
-    /**
-     * Initiates mouse and touch tracker object.
-     *
-     * @param {Highcharts.Chart} chart
-     * The chart instance.
-     *
-     * @param {Highcharts.Options} options
-     * The root options object. The pointer uses options from the chart and
-     * tooltip structures.
-     */
     public constructor(chart: Highcharts.Chart, options: Highcharts.Options) {
         this.chart = chart;
         this.hasDragged = false;

@@ -210,10 +210,13 @@ var H = Highcharts,
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
+ * @since 6.0.5
+ *
  * @class
  * @name Highcharts.Time
  *
- * @since 6.0.5
+ * @param {Highcharts.TimeOptions} options
+ * Time options as defined in [chart.options.time](/highcharts/time).
  */
 class Time {
 
@@ -359,14 +362,6 @@ class Time {
      *
      * */
 
-    /**
-     * Time settings are applied in general for each page using
-     * `Highcharts.setOptions`, or individually for each Chart item through the
-     * [time](https://api.highcharts.com/highcharts/time) options set.
-     *
-     * @param {Highcharts.TimeOptions} options
-     * Time options as defined in [chart.options.time](/highcharts/time).
-     */
     public constructor(
         options: Highcharts.TimeOptions
     ) {

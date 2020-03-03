@@ -115,6 +115,12 @@ var doc = H.doc;
  *
  * @class
  * @name Highcharts.Tooltip
+ *
+ * @param {Highcharts.Chart} chart
+ * The chart instance.
+ *
+ * @param {Highcharts.TooltipOptions} options
+ * Tooltip options.
  */
 var Tooltip = /** @class */ (function () {
     /* *
@@ -122,15 +128,6 @@ var Tooltip = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * Tooltip of a chart.
-     *
-     * @param {Highcharts.Chart} chart
-     *        The chart instance.
-     *
-     * @param {Highcharts.TooltipOptions} options
-     *        Tooltip options.
-     */
     function Tooltip(chart, options) {
         /* *
          *
