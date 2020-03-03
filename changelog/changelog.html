@@ -34,7 +34,20 @@
             </ul>
             <div id="accordion" class="card-group">
               <div class="card">
+                <div id="heading-8-0-1-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#8-0-1-upgrade-notes" data-toggle="collapse" data-parent="#accordion"> Upgrade notes</a>
+                  </h4>
+                </div>
+                <div id="8-0-1-upgrade-notes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>The <a href="https://api.highcharts.com/class-reference/Highcharts.Color">Highcharts.Color</a> constructor will not work without the <code>new</code> keyword. Use either <code>new Highcharts.Color</code> or the <code>Highcharts.color</code> factory.</li>
+                    </ul>
 
+                  </div>
+
+                </div>
                 <div id="heading-8-0-1-bug-fixes" class="card-header">
                   <h4 class="card-title">
                     <a href="#8-0-1-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
