@@ -163,7 +163,7 @@ const browserStackBrowsers = {
         browser: 'safari',
         browser_version: '13.0',
         os: 'OS X',
-        os_version: 'Mojave'
+        os_version: 'Catalina'
     },
     'Win.Chrome': {
         base: 'BrowserStack',
