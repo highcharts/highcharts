@@ -11,17 +11,9 @@
  * */
 
 /**
- * DOM elements
- */
-type HighchartsDOMElement = (
-    Highcharts.HTMLDOMElement|
-    Highcharts.SVGDOMElement
-);
-
-/**
  * Contains x and y position relative to the chart.
  */
-type TestControllerPoint = [number,number];
+type TestControllerPoint = [number, number];
 
 /* *
  *
@@ -33,7 +25,7 @@ type TestControllerPoint = [number,number];
  * SVG clip paths
  */
 interface ClipPaths {
-    elements: Array<HighchartsDOMElement>;
+    elements: Array<Element>;
     values: Array<string>;
 }
 
@@ -41,7 +33,7 @@ interface ClipPaths {
  * Chart position of a controller instance
  */
 interface TestControllerPosition extends Highcharts.PositionObject {
-    relatedTarget: (HighchartsDOMElement|null);
+    relatedTarget: (Element|null);
 }
 
 /**
@@ -201,7 +193,7 @@ class TestController {
     
     private positionY: number;
 
-    private relatedTarget: (HighchartsDOMElement | null);
+    private relatedTarget: (Element|null);
 
     /* *
      *
@@ -302,7 +294,7 @@ class TestController {
         chartX: number = this.positionX,
         chartY: number = this.positionY,
         useMSWorkaround: boolean = true
-    ): (HighchartsDOMElement|null) {
+    ): (Element|undefined) {
 
         const chartOffset = Highcharts.offset(this.chart.container);
         let clipPaths;
@@ -311,10 +303,14 @@ class TestController {
             clipPaths = this.setUpMSWorkaround()
         }
 
-        const element = document.elementFromPoint(
+        let element = document.elementFromPoint(
             (chartOffset.left + chartX),
             (chartOffset.top + chartY)
-        ) as HighchartsDOMElement;
+        );
+
+        if (element && getComputedStyle(element).pointerEvents === 'none') {
+            element = this.elementsFromPoint(chartX, chartY, useMSWorkaround)[0];
+        }
 
         // Reset clip paths for Edge and IE
         if (clipPaths) {
@@ -336,10 +332,14 @@ class TestController {
             clipPaths = this.setUpMSWorkaround()
         }
 
-        const elements = document.elementsFromPoint(
-            (chartOffset.left + chartX),
-            (chartOffset.top + chartY)
-        );
+        const elements = document
+            .elementsFromPoint(
+                (chartOffset.left + chartX),
+                (chartOffset.top + chartY)
+            )
+            .filter(
+                element => (getComputedStyle(element).pointerEvents !== 'none')
+            );
 
         // Reset clip paths for Edge and IE
         if (clipPaths) {
@@ -841,7 +841,7 @@ class TestController {
             [].slice
                 .call(document.querySelectorAll('[clip-path],[CLIP-PATH]'))
                 .forEach(
-                    function (elemCP: HighchartsDOMElement) {
+                    function (elemCP: Element): void {
                         clipPaths.elements.push(elemCP);
                         clipPaths.values.push(
                             elemCP.getAttribute('clip-path')!

@@ -188,6 +188,9 @@ var TestController = /** @class */ (function () {
             clipPaths = this.setUpMSWorkaround();
         }
         var element = document.elementFromPoint((chartOffset.left + chartX), (chartOffset.top + chartY));
+        if (element && getComputedStyle(element).pointerEvents === 'none') {
+            element = this.elementsFromPoint(chartX, chartY, useMSWorkaround)[0];
+        }
         // Reset clip paths for Edge and IE
         if (clipPaths) {
             this.tearDownMSWorkaround(clipPaths);
@@ -203,7 +206,9 @@ var TestController = /** @class */ (function () {
         if (useMSWorkaround) {
             clipPaths = this.setUpMSWorkaround();
         }
-        var elements = document.elementsFromPoint((chartOffset.left + chartX), (chartOffset.top + chartY));
+        var elements = document
+            .elementsFromPoint((chartOffset.left + chartX), (chartOffset.top + chartY))
+            .filter(function (element) { return (getComputedStyle(element).pointerEvents !== 'none'); });
         // Reset clip paths for Edge and IE
         if (clipPaths) {
             this.tearDownMSWorkaround(clipPaths);

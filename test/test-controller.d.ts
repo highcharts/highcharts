@@ -4,10 +4,6 @@
  *
  *!*/
 /**
- * DOM elements
- */
-declare type HighchartsDOMElement = (Highcharts.HTMLDOMElement | Highcharts.SVGDOMElement);
-/**
  * Contains x and y position relative to the chart.
  */
 declare type TestControllerPoint = [number, number];
@@ -15,14 +11,14 @@ declare type TestControllerPoint = [number, number];
  * SVG clip paths
  */
 interface ClipPaths {
-    elements: Array<HighchartsDOMElement>;
+    elements: Array<Element>;
     values: Array<string>;
 }
 /**
  * Chart position of a controller instance
  */
 interface TestControllerPosition extends Highcharts.PositionObject {
-    relatedTarget: (HighchartsDOMElement | null);
+    relatedTarget: (Element | null);
 }
 /**
  * Page coordinates of a controller instance
@@ -113,7 +109,7 @@ declare class TestController {
      * @param chartY
      * Y relative to the chart.
      */
-    elementFromPoint(chartX?: number, chartY?: number, useMSWorkaround?: boolean): (HighchartsDOMElement | null);
+    elementFromPoint(chartX?: number, chartY?: number, useMSWorkaround?: boolean): (Element | undefined);
     elementsFromPoint(chartX?: number, chartY?: number, useMSWorkaround?: boolean): (Array<Element>);
     /**
      * Get the current position of the cursor.
