@@ -1816,8 +1816,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         // Update shadow when options change (#12091).
         if (isObject(shadowOptions)) {
             if (this.oldShadowOptions) {
-                Object.keys(this.oldShadowOptions || {}).forEach(function (key) {
-                    if (shadowOptions[key] !== _this.oldShadowOptions[key]) {
+                objectEach(shadowOptions, function (value, key) {
+                    if (value !== _this.oldShadowOptions[key]) {
                         update = true;
                     }
                 });

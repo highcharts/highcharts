@@ -130,6 +130,7 @@ declare global {
             public renderer: SVGRenderer;
             public rotation?: number;
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
+            public oldShadowOptions?: (boolean|Highcharts.ShadowOptionsObject);
             public styles?: CSSObject;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
@@ -2758,8 +2759,8 @@ extend((
         // Update shadow when options change (#12091).
         if (isObject(shadowOptions)) {
             if (this.oldShadowOptions) {
-                Object.keys(this.oldShadowOptions || {}).forEach((key): void => {
-                    if ((shadowOptions as any)[key] !== this.oldShadowOptions[key]) {
+                objectEach((shadowOptions as any), (value, key): void => {
+                    if (value !== (this.oldShadowOptions as any)[key]) {
                         update = true;
                     }
                 });
