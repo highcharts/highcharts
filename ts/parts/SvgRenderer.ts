@@ -1935,8 +1935,8 @@ extend((
     ): Highcharts.SVGElement {
         var svgElement = this,
             element = svgElement.element,
-            touchEventTime = 0,
-            touchStartPos: Highcharts.Dictionary<number>;
+            touchStartPos: Highcharts.Dictionary<number>,
+            touchEventFired: boolean;
 
         // touch
         if (hasTouch && eventType === 'click') {
@@ -1946,7 +1946,6 @@ extend((
                     clientX: e.touches[0].clientX,
                     clientY: e.touches[0].clientY
                 };
-                svgElement.touchEventFired = Date.now(); // #2269
             };
 
             // Instead of ontouchstart, event handlers should be called
@@ -1967,30 +1966,18 @@ extend((
                     )
                 ) >= 4 : false;
 
-                // calculate the total time of touch event
-                touchEventTime = Date.now() - (svgElement.touchEventFired || 0);
-
                 if (!hasMoved) { // only call handlers if page was not scrolled
                     handler.call(element, e);
                 }
+
+                touchEventFired = true;
                 // prevent other events from being fired. #9682
                 e.preventDefault();
             };
 
             element.onclick = function (e: Event): void {
-                if (
-                    win.navigator.userAgent.indexOf('Android') === -1 ||
-                    (
-                        // if touchEventTime was set before, use it for
-                        // calculation, if not, calculate the total time now.
-                        touchEventTime ?
-                            (touchEventTime > 1100) :
-                            (
-                                Date.now() -
-                                (svgElement.touchEventFired || 0) > 1100
-                            )
-                    )
-                ) {
+                // Do not call onclick handler if touch event was fired already.
+                if (!touchEventFired) {
                     handler.call(element, e);
                 }
             };

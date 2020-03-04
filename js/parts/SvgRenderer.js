@@ -1210,7 +1210,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         The SVGElement for chaining.
      */
     on: function (eventType, handler) {
-        var svgElement = this, element = svgElement.element, touchEventTime = 0, touchStartPos;
+        var svgElement = this, element = svgElement.element, touchStartPos, touchEventFired;
         // touch
         if (hasTouch && eventType === 'click') {
             element.ontouchstart = function (e) {
@@ -1219,7 +1219,6 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                     clientX: e.touches[0].clientX,
                     clientY: e.touches[0].clientY
                 };
-                svgElement.touchEventFired = Date.now(); // #2269
             };
             // Instead of ontouchstart, event handlers should be called
             // on touchend - similar to how current mouseup events are called
@@ -1229,23 +1228,16 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 // ~4px (value borrowed from general touch handler)
                 var hasMoved = touchStartPos.clientX ? Math.sqrt(Math.pow(touchStartPos.clientX - e.changedTouches[0].clientX, 2) +
                     Math.pow(touchStartPos.clientY - e.changedTouches[0].clientY, 2)) >= 4 : false;
-                // calculate the total time of touch event
-                touchEventTime = Date.now() - (svgElement.touchEventFired || 0);
                 if (!hasMoved) { // only call handlers if page was not scrolled
                     handler.call(element, e);
                 }
+                touchEventFired = true;
                 // prevent other events from being fired. #9682
                 e.preventDefault();
             };
             element.onclick = function (e) {
-                if (win.navigator.userAgent.indexOf('Android') === -1 ||
-                    (
-                    // if touchEventTime was set before, use it for
-                    // calculation, if not, calculate the total time now.
-                    touchEventTime ?
-                        (touchEventTime > 1100) :
-                        (Date.now() -
-                            (svgElement.touchEventFired || 0) > 1100))) {
+                // Do not call onclick handler if touch event was fired already.
+                if (!touchEventFired) {
                     handler.call(element, e);
                 }
             };
