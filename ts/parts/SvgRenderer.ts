@@ -964,7 +964,7 @@ extend((
         var animOptions = animObject(
                 pick(options, this.renderer.globalAnimation, true)
             ),
-            deferTime = animOptions.defer || 0;
+            deferTime = animOptions.defer;
 
 
         // When the page is hidden save resources in the background by not

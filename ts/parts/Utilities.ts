@@ -68,6 +68,10 @@ declare global {
             easing?: (string|Function);
             step?: AnimationStepCallbackFunction;
         }
+        interface AnimationObject extends AnimationOptionsObject {
+            defer: number;
+            duration: number;
+        }
         interface AnimationStepCallbackFunction {
             (this: SVGElement, ...args: Array<any>): void;
         }
@@ -2430,7 +2434,7 @@ const setAnimation = H.setAnimation = function setAnimation(
  */
 const animObject = H.animObject = function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
-): Highcharts.AnimationOptionsObject {
+): Highcharts.AnimationObject {
     return isObject(animation) ?
         merge(animation as Highcharts.AnimationOptionsObject) as any :
         {

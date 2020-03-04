@@ -467,7 +467,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     animate: function (params, options, complete) {
         var _this = this;
-        var animOptions = animObject(pick(options, this.renderer.globalAnimation, true)), deferTime = animOptions.defer || 0;
+        var animOptions = animObject(pick(options, this.renderer.globalAnimation, true)), deferTime = animOptions.defer;
         // When the page is hidden save resources in the background by not
         // running animation at all (#9749).
         if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {

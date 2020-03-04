@@ -6718,7 +6718,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 // Additional time if defer is defined before afterAnimate
                 // will be triggered
                 if (animDuration && animObject(options.animation).defer) {
-                    animDuration += animObject(options.animation).defer || 0;
+                    animDuration += animObject(options.animation).defer;
                 }
                 series.animationTimeout = syncTimeout(function (): void {
                     series.afterAnimate();
