@@ -566,7 +566,6 @@ seriesType<Highcharts.ItemSeries>(
                 (this.group as any).animate({
                     opacity: 1
                 }, this.options.animation);
-                this.animate = null as any;
             }
         }
     },

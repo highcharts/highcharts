@@ -1375,7 +1375,6 @@ var vennSeries = {
                     }
                 }
             }, series);
-            series.animate = null as any;
         }
     },
     utils: {

@@ -329,8 +329,6 @@ var polarAnimate = function (proceed, init) {
                                 }, series.options.animation);
                             }
                         });
-                        // Delete this function to allow it only once
-                        series.animate = null;
                     }
                 }
                 else {
@@ -360,8 +358,6 @@ var polarAnimate = function (proceed, init) {
                         if (markerGroup) {
                             markerGroup.animate(attribs, animation);
                         }
-                        // Delete this function to allow it only once
-                        series.animate = null;
                     }
                 }
             }
