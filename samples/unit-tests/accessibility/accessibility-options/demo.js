@@ -263,3 +263,50 @@ QUnit.test('exposeAsGroupOnly', function (assert) {
     assert.ok(isPointAriaHidden(point), 'Point is aria hidden');
     assert.ok(getSeriesAriaLabel(chart.series[0]), 'Series has aria');
 });
+
+QUnit.test('Focus border', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            margin: 0
+        },
+        series: [{
+            type: 'wordcloud',
+            data: [
+                {
+                    name: 'Lorem',
+                    weight: 1
+                },
+                {
+                    name: 'ipsum',
+                    weight: 2
+                },
+                {
+                    name: 'test',
+                    weight: 1
+                }
+            ]
+        }]
+    });
+
+    const point = chart.series[0].points[2];
+    // Apply focus border.
+    chart.setFocusToElement(point.graphic);
+
+    const focusBorderX = chart.focusElement.focusBorder.attr('x'),
+        focusBorderWidth = chart.focusElement.focusBorder.attr('width'),
+        focusBorderY = chart.focusElement.focusBorder.attr('y'),
+        focusBorderHeight = chart.focusElement.focusBorder.attr('height'),
+        focusElementX = chart.focusElement.attr('x'),
+        focusElementY = chart.focusElement.attr('y');
+
+    assert.strictEqual(
+        Math.round(focusBorderX + focusBorderWidth / 2 - focusElementX),
+        0,
+        'Focus border is correctly applied for text elements horizontally, #11397'
+    );
+
+    assert.ok(
+        Math.round(focusBorderY + focusBorderHeight / 2 - focusElementY) <= -1,
+        'Focus border is correctly applied for text elements vertically, #11397'
+    );
+});
