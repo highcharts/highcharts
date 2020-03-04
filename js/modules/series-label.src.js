@@ -80,6 +80,9 @@ H.setOptions({
                  * the series label immediately. If set to `true` inherits
                  * the defer time set in [series.animation](#series.animation).
                  *
+                 * @sample highcharts/plotoptions/defer
+                 *         Set defer time
+                 *
                  * @since        8.0.3
                  *
                  * @type {boolean|number}

@@ -1827,6 +1827,9 @@ null,
          * data label immediately. If set to `true` inherits the defer
          * time set in [plotOptions.series.animation](#plotOptions.series.animation).
          *
+         * @sample highcharts/plotoptions/defer
+         *         Set defer time
+         *
          * @type      {boolean|number}
          * @default   true
          * @since     4.0.0
