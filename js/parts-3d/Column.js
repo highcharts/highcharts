@@ -198,8 +198,6 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 });
                 // redraw datalabels to the correct position
                 this.drawDataLabels();
-                // delete this function to allow it only once
-                series.animate = null;
             }
         }
     }

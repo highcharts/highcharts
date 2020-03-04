@@ -542,9 +542,6 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
                     graphic.animate(animationTarget, this.options.animation);
                 }
             }, this);
-
-            // delete this function to allow it only once
-            this.animate = null as any;
         }
     },
 

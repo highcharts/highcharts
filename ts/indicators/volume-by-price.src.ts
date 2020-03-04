@@ -363,7 +363,7 @@ seriesType<Highcharts.VBPIndicator>(
             var series = this,
                 attr: Highcharts.SVGAttributes = {};
 
-            if (H.svg && !init) {
+            if (!init) {
                 attr.translateX = series.yAxis.pos;
                 (series.group as any).animate(
                     attr,
@@ -376,8 +376,6 @@ seriesType<Highcharts.VBPIndicator>(
                     })
                 );
 
-                // Delete this function to allow it only once
-                (series.animate as any) = null;
             }
         },
         drawPoints: function (this: Highcharts.VBPIndicator): void {
