@@ -299,14 +299,17 @@ QUnit.test('Focus border', function (assert) {
         focusElementX = chart.focusElement.attr('x'),
         focusElementY = chart.focusElement.attr('y');
 
-    assert.strictEqual(
-        Math.round(focusBorderX + focusBorderWidth / 2 - focusElementX),
-        0,
+    assert.close(
+        focusBorderX + focusBorderWidth / 2,
+        focusElementX,
+        3,
         'Focus border is correctly applied for text elements horizontally, #11397'
     );
 
-    assert.ok(
-        Math.round(focusBorderY + focusBorderHeight / 2 - focusElementY) <= -1,
+    assert.close(
+        focusBorderY + focusBorderHeight / 2,
+        focusElementY,
+        3,
         'Focus border is correctly applied for text elements vertically, #11397'
     );
 });
