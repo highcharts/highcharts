@@ -152,7 +152,7 @@ declare global {
  * @callback Highcharts.TimezoneOffsetCallbackFunction
  *
  * @param {number} timestamp
- * Date instance or timestamp in terms of milliseconds since January 1 1970.
+ * Timestamp in terms of milliseconds since January 1 1970.
  *
  * @return {number}
  * Timezone offset in minutes.
