@@ -508,7 +508,7 @@ merge(
              * time set in [plotOptions.series.animation](#plotOptions.series.animation).
              *
              * @sample highcharts/annotations/defer
-             *         Set defer duration time
+             *         Set defer time
              *
              * @since        8.0.3
              *
