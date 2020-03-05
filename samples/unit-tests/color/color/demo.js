@@ -1,3 +1,11 @@
+QUnit.test('Compatibility', function (assert) {
+    assert.strictEqual(
+        Highcharts.Color('#ff0000').get('rgba'),
+        'rgba(255,0,0,1)',
+        'Backwards compatibility - the Color class should work without the "new" keyword'
+    );
+});
+
 QUnit.test('Interpolate colors', function (assert) {
 
     // Cache names from Boost module
