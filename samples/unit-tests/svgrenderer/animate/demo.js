@@ -896,6 +896,12 @@ QUnit.test('Defer test #12901', function (assert) {
             400
         );
 
+        var circle = ren.circle(200, 80, 20)
+            .attr({
+                fill: '#FCFFC5'
+            })
+            .add();
+
         var circ = ren.circle(10, 10, 3)
             .attr({
                 fill: 'red'
@@ -910,6 +916,18 @@ QUnit.test('Defer test #12901', function (assert) {
             defer: 200
         });
 
+        circle.animate({
+            x: 500
+        }, {
+            defer: 500,
+            duration: 200
+        });
+        circle.animate({
+            x: 50
+        }, {
+            duration: 1000
+        });
+
         setTimeout(function () {
             assert.strictEqual(
                 circ.attr('x'),
@@ -919,6 +937,11 @@ QUnit.test('Defer test #12901', function (assert) {
         }, 100);
 
         setTimeout(function () {
+            assert.strictEqual(
+                circle.attr('x') !== 200,
+                true,
+                'X should be different than the initial position - element cannot be back to the initial position after the defer time #12901.'
+            );
             assert.strictEqual(
                 circ.attr('x'),
                 300,
