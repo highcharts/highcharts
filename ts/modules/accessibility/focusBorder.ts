@@ -80,11 +80,10 @@ extend(H.SVGElement.prototype, {
         if (this.element.nodeName === 'text') {
             const isRotated = !!this.rotation;
             borderPosX = +this.attr('x') - (bb.width * 0.5) - pad +
-                // Correct the offset caused by the browser.
-                (isRotated ? bb.height * 0.068 : 0);
+                // Correct baseline position on Firefox.
+                (isRotated ? bb.width * (H.isFirefox ? 0.25 : 0) : 0);
             borderPosY = +this.attr('y') - (bb.height * 0.5) - pad +
-                // Firefox needs different correction value.
-                (isRotated ? 0 : -bb.height * (H.isFirefox ? 0.25 : 0.068));
+                (isRotated ? 0 : -bb.height * (H.isFirefox ? 0.25 : 0));
         }
 
         this.focusBorder = this.renderer.rect(
