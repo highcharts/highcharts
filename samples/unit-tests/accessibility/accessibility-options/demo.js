@@ -297,19 +297,20 @@ QUnit.test('Focus border', function (assert) {
         focusBorderY = chart.focusElement.focusBorder.attr('y'),
         focusBorderHeight = chart.focusElement.focusBorder.attr('height'),
         focusElementX = chart.focusElement.attr('x'),
-        focusElementY = chart.focusElement.attr('y');
+        focusElementY = chart.focusElement.attr('y'),
+        focusElementHeight = point.graphic.getBBox().height,
+        H = Highcharts;
 
-    assert.close(
+    assert.strictEqual(
         focusBorderX + focusBorderWidth / 2,
         focusElementX,
-        3,
         'Focus border is correctly applied for text elements horizontally, #11397'
     );
 
-    assert.close(
+    // Correct baseline position on Firefox.
+    assert.strictEqual(
         focusBorderY + focusBorderHeight / 2,
-        focusElementY,
-        3,
+        H.isFirefox ? focusElementY - (focusElementHeight * 0.25) : focusElementY,
         'Focus border is correctly applied for text elements vertically, #11397'
     );
 });
