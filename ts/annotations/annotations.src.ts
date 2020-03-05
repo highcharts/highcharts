@@ -1655,11 +1655,12 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
         this.plotBoxClip.attr(this.plotBox);
 
         this.annotations.forEach(function (annotation): void {
+            const deferDiff = annotation.deferTime - annotation.durationTime;
             annotation.redraw();
             annotation.graphic.animate({
                 opacity: 1
             }, {
-                defer: annotation.deferTime - annotation.durationTime,
+                defer: deferDiff === 0 ? annotation.deferTime : deferDiff,
                 duration: annotation.durationTime
             });
         });

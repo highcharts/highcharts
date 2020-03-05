@@ -1082,11 +1082,12 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
     drawAnnotations: function () {
         this.plotBoxClip.attr(this.plotBox);
         this.annotations.forEach(function (annotation) {
+            var deferDiff = annotation.deferTime - annotation.durationTime;
             annotation.redraw();
             annotation.graphic.animate({
                 opacity: 1
             }, {
-                defer: annotation.deferTime - annotation.durationTime,
+                defer: deferDiff === 0 ? annotation.deferTime : deferDiff,
                 duration: annotation.durationTime
             });
         });

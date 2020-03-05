@@ -2935,7 +2935,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              * stack labels immediately. If set to `true` inherits the defer
              * time set in [plotOptions.series.animation](#plotOptions.series.animation).
              *
-             * @sample highcharts/plotoptions/defer
+             * @sample highcharts/plotoptions/animation-defer
              *         Set defer time
              *
              * @type {boolean|number}

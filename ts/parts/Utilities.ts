@@ -2436,11 +2436,11 @@ const animObject = H.animObject = function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationObject {
     return isObject(animation) ?
-        merge(animation as Highcharts.AnimationOptionsObject) as any :
-        {
-            duration: animation as boolean ? 500 : 0,
-            defer: 0
-        };
+        H.merge(
+            { duration: 500, defer: 0 },
+            animation as Highcharts.AnimationOptionsObject
+        ) as any :
+        { duration: animation as boolean ? 500 : 0, defer: 0 };
 };
 
 /**

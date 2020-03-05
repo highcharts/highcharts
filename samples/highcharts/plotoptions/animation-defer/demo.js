@@ -12,6 +12,7 @@ Highcharts.chart('container', {
             }
         },
         series: {
+        //series labels will be shown after defer set in animation
             animation: {
                 defer: 4000
             }

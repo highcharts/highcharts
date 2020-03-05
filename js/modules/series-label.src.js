@@ -80,7 +80,7 @@ H.setOptions({
                  * the series label immediately. If set to `true` inherits
                  * the defer time set in [series.animation](#series.animation).
                  *
-                 * @sample highcharts/plotoptions/defer
+                 * @sample highcharts/plotoptions/animation-defer
                  *         Set defer time
                  *
                  * @since        8.0.3
@@ -690,7 +690,7 @@ function drawLabels(e) {
     U.clearTimeout(chart.seriesLabelTimer);
     // Which series should have labels
     chart.series.forEach(function (series) {
-        var options = series.options.label, label = series.labelBySeries, closest = label && label.closest;
+        var options = series.options.label, label = series.labelBySeries, closest = label && label.closest, defer = animObject(series.options.animation).defer;
         if (options.enabled &&
             series.visible &&
             (series.graph || series.area) &&
@@ -707,10 +707,10 @@ function drawLabels(e) {
                 delay = Math.min(delay, animObject(series.options.animation).duration);
             }
             // Add the label or the series defer time
-            if (options.defer || animObject(series.options.animation).defer) {
+            if (options.defer || defer) {
                 isNumber(options.defer) ?
                     delay += options.defer :
-                    delay += animObject(series.options.animation).defer;
+                    delay += defer;
             }
             // Keep the position updated to the axis while redrawing
             if (closest) {

@@ -561,9 +561,14 @@ null,
      */
     animation: {
         /** @internal */
-        duration: 1000,
-        defer: 0
+        duration: 1000
     },
+    /**
+     * @default   0
+     * @type      {number}
+     * @since     8.0.3
+     * @apioption plotOptions.series.animation.defer
+     */
     /**
      * An additional class name to apply to the series' graphical elements.
      * This option does not replace default class names of the graphical
@@ -1827,7 +1832,7 @@ null,
          * data label immediately. If set to `true` inherits the defer
          * time set in [plotOptions.series.animation](#plotOptions.series.animation).
          *
-         * @sample highcharts/plotoptions/defer
+         * @sample highcharts/plotoptions/animation-defer
          *         Set defer time
          *
          * @type      {boolean|number}

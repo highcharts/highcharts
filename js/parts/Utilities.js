@@ -1679,11 +1679,8 @@ var setAnimation = H.setAnimation = function setAnimation(animation, chart) {
  */
 var animObject = H.animObject = function animObject(animation) {
     return isObject(animation) ?
-        merge(animation) :
-        {
-            duration: animation ? 500 : 0,
-            defer: 0
-        };
+        H.merge({ duration: 500, defer: 0 }, animation) :
+        { duration: animation ? 500 : 0, defer: 0 };
 };
 /**
  * The time unit lookup
