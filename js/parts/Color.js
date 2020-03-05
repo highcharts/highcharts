@@ -153,6 +153,10 @@ var Color = /** @class */ (function () {
                 }
             }];
         this.rgba = [];
+        // Backwards compatibility, allow instanciation without new (#13053)
+        if (!(this instanceof Color)) {
+            return new Color(input);
+        }
         this.init(input);
     }
     /* *
