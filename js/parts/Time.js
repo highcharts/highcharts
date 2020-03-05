@@ -402,14 +402,14 @@ var Time = /** @class */ (function () {
      *         The formatted date.
      */
     Time.prototype.dateFormat = function (format, timestamp, capitalize) {
-        var _a;
+        var _a, _b, _c;
         if (!defined(timestamp) || isNaN(timestamp)) {
             return ((_a = H.defaultOptions.lang) === null || _a === void 0 ? void 0 : _a.invalidDate) || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
         var time = this, date = new this.Date(timestamp), 
         // get the basic time values
-        hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date), month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang, langWeekdays = lang === null || lang === void 0 ? void 0 : lang.weekdays, shortWeekdays = lang === null || lang === void 0 ? void 0 : lang.shortWeekdays, 
+        hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date), month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang, langWeekdays = (_b = lang) === null || _b === void 0 ? void 0 : _b.weekdays, shortWeekdays = (_c = lang) === null || _c === void 0 ? void 0 : _c.shortWeekdays, 
         // List all format keys. Custom formats can be added from the
         // outside.
         replacements = extend({
