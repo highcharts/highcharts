@@ -242,6 +242,10 @@ class Color {
     public constructor(
         input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
     ) {
+        // Backwards compatibility, allow instanciation without new (#13053)
+        if (!(this instanceof Color)) {
+            return new Color(input);
+        }
         this.init(input);
     }
 
