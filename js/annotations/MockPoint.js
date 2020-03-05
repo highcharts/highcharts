@@ -42,7 +42,7 @@ import H from '../parts/Globals.js';
  * @type {boolean|undefined}
  */
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend;
+var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
 import '../parts/Axis.js';
 import '../parts/Series.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -285,18 +285,23 @@ extend(MockPoint.prototype, /** @lends Highcharts.AnnotationMockPoint# */ {
      * @private
      * @return {boolean} A flag indicating whether the point is inside the pane.
      */
-    isInsidePane: function () {
-        var plotX = this.plotX, plotY = this.plotY, xAxis = this.series.xAxis, yAxis = this.series.yAxis, isInside = true;
+    isInsidePlot: function () {
+        var plotX = this.plotX, plotY = this.plotY, xAxis = this.series.xAxis, yAxis = this.series.yAxis, e = {
+            x: plotX,
+            y: plotY,
+            isInsidePlot: true
+        };
         if (xAxis) {
-            isInside = defined(plotX) && plotX >= 0 && plotX <= xAxis.len;
+            e.isInsidePlot = defined(plotX) && plotX >= 0 && plotX <= xAxis.len;
         }
         if (yAxis) {
-            isInside =
-                isInside &&
+            e.isInsidePlot =
+                e.isInsidePlot &&
                     defined(plotY) &&
                     plotY >= 0 && plotY <= yAxis.len;
         }
-        return isInside;
+        fireEvent(this.series.chart, 'afterIsInsidePlot', e);
+        return e.isInsidePlot;
     },
     /**
      * Refresh point values and coordinates based on its options.
@@ -320,7 +325,7 @@ extend(MockPoint.prototype, /** @lends Highcharts.AnnotationMockPoint# */ {
             this.y = null;
             this.plotY = options.y;
         }
-        this.isInside = this.isInsidePane();
+        this.isInside = this.isInsidePlot();
     },
     /**
      * Translate the point.
