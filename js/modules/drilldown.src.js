@@ -790,8 +790,8 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
                 });
             }
         }, Math.max(this.chart.options.drilldown.animation.duration - 50, 0));
-        // Reset
-        this.animate = noop;
+        // Reset to prototype
+        delete this.animate;
     }
 };
 ColumnSeries.prototype.animateDrilldown = function (init) {
@@ -823,7 +823,8 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
                 point.dataLabel.fadeIn(animationOptions);
             }
         });
-        this.animate = null;
+        // Reset to prototype
+        delete this.animate;
     }
 };
 /**
@@ -893,7 +894,8 @@ if (PieSeries) {
                         }))[animationOptions ? 'animate' : 'attr'](animateTo, animationOptions);
                     }
                 });
-                this.animate = null;
+                // Reset to prototype
+                delete this.animate;
             }
         }
     });

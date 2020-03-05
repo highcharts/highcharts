@@ -6615,7 +6615,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 // Animation doesn't work in IE8 quirks when the group div is
                 // hidden, and looks bad in other oldIE
                 animDuration = (
-                    !chart.hasRendered &&
+                    !series.finishedAnimating &&
                     chart.renderer.isSVG &&
                     animObject(options.animation).duration
                 ),
@@ -6645,7 +6645,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             );
 
             // initiate the animation
-            if (animDuration) {
+            if (animDuration && series.animate) {
                 series.animate(true);
             }
 
@@ -6704,7 +6704,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             }
 
             // Run the animation
-            if (animDuration) {
+            if (animDuration && series.animate) {
                 series.animate();
             }
 

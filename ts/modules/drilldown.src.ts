@@ -1141,8 +1141,8 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
             (this.chart.options.drilldown as any).animation.duration - 50, 0
         ));
 
-        // Reset
-        this.animate = noop as any;
+        // Reset to prototype
+        delete this.animate;
     }
 
 };
@@ -1198,7 +1198,9 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
                 point.dataLabel.fadeIn(animationOptions);
             }
         });
-        this.animate = null as any;
+
+        // Reset to prototype
+        delete this.animate;
     }
 
 };
@@ -1310,7 +1312,9 @@ if (PieSeries) {
                             );
                     }
                 });
-                this.animate = null as any;
+
+                // Reset to prototype
+                delete this.animate;
             }
         }
     });

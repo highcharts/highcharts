@@ -4911,7 +4911,7 @@ null,
         var series = this, chart = series.chart, group, options = series.options, 
         // Animation doesn't work in IE8 quirks when the group div is
         // hidden, and looks bad in other oldIE
-        animDuration = (!chart.hasRendered &&
+        animDuration = (!series.finishedAnimating &&
             chart.renderer.isSVG &&
             animObject(options.animation).duration), visibility = series.visible ? 'inherit' : 'hidden', // #2597
         zIndex = options.zIndex, hasRendered = series.hasRendered, chartSeriesGroup = chart.seriesGroup, inverted = chart.inverted;
@@ -4920,7 +4920,7 @@ null,
         group = series.plotGroup('group', 'series', visibility, zIndex, chartSeriesGroup);
         series.markerGroup = series.plotGroup('markerGroup', 'markers', visibility, zIndex, chartSeriesGroup);
         // initiate the animation
-        if (animDuration) {
+        if (animDuration && series.animate) {
             series.animate(true);
         }
         // SVGRenderer needs to know this before drawing elements (#1089,
@@ -4965,7 +4965,7 @@ null,
             group.clip(chart.clipRect);
         }
         // Run the animation
-        if (animDuration) {
+        if (animDuration && series.animate) {
             series.animate();
         }
         // Call the afterAnimate function on animation complete (but don't

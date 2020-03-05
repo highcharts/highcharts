@@ -283,9 +283,6 @@ Series.prototype.enterBoost = function () {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
-    // Once we've been in boost mode, we don't want animation when returning to
-    // vanilla mode.
-    this.animate = null;
     // Hide series label if any
     if (this.labelBySeries) {
         this.labelBySeries = this.labelBySeries.destroy();
