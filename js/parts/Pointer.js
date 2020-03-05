@@ -107,6 +107,13 @@ var H = Highcharts, charts = H.charts, noop = H.noop;
  *
  * @class
  * @name Highcharts.Pointer
+ *
+ * @param {Highcharts.Chart} chart
+ * The chart instance.
+ *
+ * @param {Highcharts.Options} options
+ * The root options object. The pointer uses options from the chart and
+ * tooltip structures.
  */
 var Pointer = /** @class */ (function () {
     /* *
@@ -114,16 +121,6 @@ var Pointer = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * Initiates mouse and touch tracker object.
-     *
-     * @param {Highcharts.Chart} chart
-     * The chart instance.
-     *
-     * @param {Highcharts.Options} options
-     * The root options object. The pointer uses options from the chart and
-     * tooltip structures.
-     */
     function Pointer(chart, options) {
         this.lastValidTouch = {};
         this.pinchDown = [];

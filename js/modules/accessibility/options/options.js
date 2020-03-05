@@ -114,7 +114,7 @@ var options = {
              * By default Highcharts will call the `chart.sonify` function.
              *
              * @type      {Highcharts.ScreenReaderClickCallbackFunction}
-             * @since next
+             * @since 8.0.1
              * @apioption accessibility.screenReaderSection.onPlayAsSoundClick
              */
             /**
@@ -237,7 +237,7 @@ var options = {
              * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
              *
              * @type      {string}
-             * @since next
+             * @since 8.0.1
              */
             valueDescriptionFormat: '{index}. {xDescription}{separator}{value}.'
             /**
@@ -688,7 +688,7 @@ var options = {
      * Accessibility options for an annotation label.
      *
      * @declare    Highcharts.AnnotationLabelAccessibilityOptionsObject
-     * @since      next
+     * @since 8.0.1
      * @requires   modules/accessibility
      * @apioption  annotations.labelOptions.accessibility
      */
@@ -697,7 +697,7 @@ var options = {
      * technology.
      *
      * @type       {string}
-     * @since      next
+     * @since 8.0.1
      * @apioption  annotations.labelOptions.accessibility.description
      */
     /**

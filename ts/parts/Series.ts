@@ -5388,18 +5388,20 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 clipRect = (chart as any)[sharedClipKey],
                 markerClipRect = (chart as any)[sharedClipKey + 'm'];
 
+            if (animation) {
+                clipBox.width = 0;
+                if (inverted) {
+                    clipBox.x = chart.plotHeight +
+                        (options.clip !== false ? 0 : chart.plotTop);
+                }
+            }
+
             // If a clipping rectangle with the same properties is currently
             // present in the chart, use that.
             if (!clipRect) {
 
                 // When animation is set, prepare the initial positions
                 if (animation) {
-                    clipBox.width = 0;
-                    if (inverted) {
-                        clipBox.x = (chart.plotSizeX as any) +
-                            (options.clip !== false ? 0 : chart.plotTop);
-                    }
-
                     (chart as any)[sharedClipKey + 'm'] = markerClipRect =
                         renderer.clipRect(
                             // include the width of the first marker
@@ -5408,19 +5410,27 @@ H.Series = seriesType<Highcharts.LineSeries>(
                             99,
                             inverted ? chart.chartWidth : chart.chartHeight
                         );
+
+
                 }
-                (chart as any)[sharedClipKey] = clipRect =
-                    (renderer.clipRect as any)(clipBox);
+                (chart as any)[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+
                 // Create hashmap for series indexes
                 clipRect.count = { length: 0 };
 
+            // When the series is rendered again before starting animating, in
+            // compliance to a responsive rule
+            } else if (!chart.hasLoaded) {
+                clipRect.attr(clipBox);
             }
+
             if (animation) {
                 if (!clipRect.count[this.index as any]) {
                     clipRect.count[this.index as any] = true;
                     clipRect.count.length += 1;
                 }
             }
+
 
             if (options.clip !== false || animation) {
                 (this.group as any).clip(
@@ -5477,29 +5487,28 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 finalBox;
 
             // Initialize the animation. Set up the clipping rectangle.
-            if (init) {
+            if (!chart.hasRendered) {
+                if (init) {
 
-                series.setClip(animation);
+                    series.setClip(animation);
 
-            // Run the animation
-            } else {
-                sharedClipKey = this.sharedClipKey;
-                clipRect = (chart as any)[sharedClipKey as any];
+                // Run the animation
+                } else {
+                    sharedClipKey = this.sharedClipKey;
+                    clipRect = (chart as any)[sharedClipKey as any];
 
-                finalBox = series.getClipBox(animation, true);
+                    finalBox = series.getClipBox(animation, true);
 
-                if (clipRect) {
-                    clipRect.animate(finalBox, animation);
+                    if (clipRect) {
+                        clipRect.animate(finalBox, animation);
+                    }
+                    if ((chart as any)[sharedClipKey + 'm']) {
+                        (chart as any)[sharedClipKey + 'm'].animate({
+                            width: finalBox.width + 99,
+                            x: finalBox.x - (chart.inverted ? 0 : 99)
+                        }, animation);
+                    }
                 }
-                if ((chart as any)[sharedClipKey + 'm']) {
-                    (chart as any)[sharedClipKey + 'm'].animate({
-                        width: finalBox.width + 99,
-                        x: finalBox.x - (chart.inverted ? 0 : 99)
-                    }, animation);
-                }
-
-                // Delete this function to allow it only once
-                series.animate = null as any;
             }
         },
 
@@ -6606,7 +6615,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 // Animation doesn't work in IE8 quirks when the group div is
                 // hidden, and looks bad in other oldIE
                 animDuration = (
-                    !!series.animate &&
+                    !series.finishedAnimating &&
                     chart.renderer.isSVG &&
                     animObject(options.animation).duration
                 ),
@@ -6636,8 +6645,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
             );
 
             // initiate the animation
-            if (animDuration) {
-                (series.animate as any)(true);
+            if (animDuration && series.animate) {
+                series.animate(true);
             }
 
             // SVGRenderer needs to know this before drawing elements (#1089,
@@ -6695,7 +6704,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             }
 
             // Run the animation
-            if (animDuration) {
+            if (animDuration && series.animate) {
                 series.animate();
             }
 

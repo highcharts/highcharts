@@ -244,7 +244,6 @@ seriesType('vector', 'scatter'
             this.markerGroup.animate({
                 opacity: 1
             }, animObject(this.options.animation));
-            this.animate = null;
         }
     }
     /* eslint-enable valid-jsdoc */

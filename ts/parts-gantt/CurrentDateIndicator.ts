@@ -61,8 +61,9 @@ const {
     wrap
 } = U;
 
-var Axis = H.Axis,
-    PlotLineOrBand = H.PlotLineOrBand;
+import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+
+var Axis = H.Axis;
 
 
 var defaultConfig: (

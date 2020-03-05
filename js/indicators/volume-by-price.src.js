@@ -196,7 +196,7 @@ seriesType('vbp', 'sma',
     // Initial animation
     animate: function (init) {
         var series = this, attr = {};
-        if (H.svg && !init) {
+        if (!init) {
             attr.translateX = series.yAxis.pos;
             series.group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
@@ -205,8 +205,6 @@ seriesType('vbp', 'sma',
                     });
                 }
             }));
-            // Delete this function to allow it only once
-            series.animate = null;
         }
     },
     drawPoints: function () {

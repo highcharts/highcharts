@@ -1138,48 +1138,43 @@ seriesType<Highcharts.ColumnSeries>(
                 translateStart: number,
                 translatedThreshold;
 
-            if (svg) { // VML is too slow anyway
-                if (init) {
-                    attr.scaleY = 0.001;
-                    translatedThreshold = clamp(
-                        yAxis.toPixels(options.threshold as any),
-                        yAxis.pos,
-                        yAxis.pos + yAxis.len
-                    );
-                    if (inverted) {
-                        attr.translateX = translatedThreshold - yAxis.len;
-                    } else {
-                        attr.translateY = translatedThreshold;
-                    }
-
-                    // apply finnal clipping (used in Highstock) (#7083)
-                    // animation is done by scaleY, so cliping is for panes
-                    if (series.clipBox) {
-                        series.setClip();
-                    }
-
-                    series.group.attr(attr);
-
-                } else { // run the animation
-                    translateStart = series.group.attr(translateProp) as any;
-                    series.group.animate(
-                        { scaleY: 1 },
-                        extend(animObject(series.options.animation), {
-                            // Do the scale synchronously to ensure smooth
-                            // updating (#5030, #7228)
-                            step: function (val: any, fx: any): void {
-
-                                attr[translateProp] =
-                            translateStart +
-                            fx.pos * ((yAxis.pos as any) - translateStart);
-                                series.group.attr(attr);
-                            }
-                        })
-                    );
-
-                    // delete this function to allow it only once
-                    series.animate = null as any;
+            if (init) {
+                attr.scaleY = 0.001;
+                translatedThreshold = clamp(
+                    yAxis.toPixels(options.threshold as any),
+                    yAxis.pos,
+                    yAxis.pos + yAxis.len
+                );
+                if (inverted) {
+                    attr.translateX = translatedThreshold - yAxis.len;
+                } else {
+                    attr.translateY = translatedThreshold;
                 }
+
+                // apply finnal clipping (used in Highstock) (#7083)
+                // animation is done by scaleY, so cliping is for panes
+                if (series.clipBox) {
+                    series.setClip();
+                }
+
+                series.group.attr(attr);
+
+            } else { // run the animation
+                translateStart = series.group.attr(translateProp) as any;
+                series.group.animate(
+                    { scaleY: 1 },
+                    extend(animObject(series.options.animation), {
+                        // Do the scale synchronously to ensure smooth
+                        // updating (#5030, #7228)
+                        step: function (val: any, fx: any): void {
+
+                            attr[translateProp] =
+                        translateStart +
+                        fx.pos * ((yAxis.pos as any) - translateStart);
+                            series.group.attr(attr);
+                        }
+                    })
+                );
             }
         },
 

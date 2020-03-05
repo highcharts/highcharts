@@ -1292,9 +1292,6 @@ var sunburstSeries = {
                 opacity: 1
             };
             group.animate(attribs, this.options.animation);
-
-            // Delete this function to allow it only once
-            this.animate = null as any;
         }
     },
     utils: {

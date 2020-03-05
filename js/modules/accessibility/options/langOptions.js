@@ -73,7 +73,7 @@ var langOptions = {
             /**
              * Language options for annotation descriptions.
              *
-             * @since next
+             * @since 8.0.1
              */
             annotations: {
                 heading: 'Chart annotations summary',
@@ -92,7 +92,7 @@ var langOptions = {
         /**
          * Language options for sonification.
          *
-         * @since next
+         * @since 8.0.1
          */
         sonification: {
             playAsSoundButtonText: 'Play as sound, {chartTitle}',
@@ -329,7 +329,7 @@ var langOptions = {
              * Description for annotations on a point, as it is made available
              * to assistive technology.
              *
-             * @since next
+             * @since 8.0.1
              */
             pointAnnotationsDescription: '{Annotation: #each(annotations). }'
         }
