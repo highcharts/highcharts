@@ -1059,7 +1059,8 @@ class Tooltip {
         delay = pick(delay, this.options.hideDelay, 500);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
-                tooltip.getLabel().fadeOut();
+                // Pass the delay argument only if it is a 0.
+                tooltip.getLabel().fadeOut(delay ? void 0 : delay);
                 tooltip.isHidden = true;
             }, delay);
         }
