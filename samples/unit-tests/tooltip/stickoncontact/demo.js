@@ -104,7 +104,7 @@ QUnit.test('Stick on hover tooltip (#12736)', function (assert) {
             '0● Series 1: 1',
             'Tooltip should have label text of first series. (2)'
         );
-        /*
+
         controller.moveTo(chart.PlotLeft, chart.plotTop);
         controller.moveTo(series2PointPosition.x, series2PointPosition.y);
 
@@ -118,6 +118,6 @@ QUnit.test('Stick on hover tooltip (#12736)', function (assert) {
             tooltip.label && tooltip.label.text.element.textContent,
             '0● Series 2: 1.1',
             'Tooltip should have label text of second series.'
-        );*/
+        );
     });
 });
