@@ -23,6 +23,7 @@ import H from './Globals.js';
 * @name Highcharts.ColumnMetricsObject#offset
 * @type {number}
 */
+''; // detach doclets above
 import Color from './Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
@@ -50,8 +51,8 @@ seriesType('column', 'line',
  *         Column chart
  *
  * @extends      plotOptions.line
- * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
- *               lineWidth, marker, connectEnds, step, useOhlcData
+ * @excluding    connectEnds, connectNulls, gapSize, gapUnit, linecap,
+ *               lineWidth, marker, step, useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.column
  */

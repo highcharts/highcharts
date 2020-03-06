@@ -124,7 +124,7 @@ declare global {
  * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
- * @augments Highcharts.TimeNormalizedObject
+ * @extends Highcharts.TimeNormalizedObject
  *//**
  * @name Highcharts.TimeTicksInfoObject#higherRanks
  * @type {Array<string>}
@@ -137,9 +137,10 @@ declare global {
  * Time ticks.
  *
  * @interface Highcharts.AxisTickPositionsArray
+ * @extends global.Array<number>
  *//**
  * @name Highcharts.AxisTickPositionsArray#info
- * @type {Highcharts.TimeTicksInfoObject}
+ * @type {Highcharts.TimeTicksInfoObject|undefined}
  */
 
 /**
@@ -651,7 +652,7 @@ class Time {
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && options.getTimezoneOffset) {
             return function (timestamp: (number|Date)): number {
-                return (options.getTimezoneOffset as any)(timestamp) * 60000;
+                return (options.getTimezoneOffset as any)(timestamp.valueOf()) * 60000;
             };
         }
 
