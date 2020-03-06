@@ -1200,8 +1200,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
 
         /**
-         * A name for the dash style to use for the graph, or for some series
-         * types the outline of each shape.
+         * Name of the dash style to use for the graph, or for some series types
+         * the outline of each shape.
          *
          * In styled mode, the
          * [stroke dash-array](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-dashstyle/)

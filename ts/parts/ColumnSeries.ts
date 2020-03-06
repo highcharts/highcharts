@@ -109,6 +109,8 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
 import Color from './Color.js';
 const {
     parse: color
@@ -155,8 +157,8 @@ seriesType<Highcharts.ColumnSeries>(
      *         Column chart
      *
      * @extends      plotOptions.line
-     * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
-     *               lineWidth, marker, connectEnds, step, useOhlcData
+     * @excluding    connectEnds, connectNulls, gapSize, gapUnit, linecap,
+     *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
