@@ -759,37 +759,52 @@ class Pointer {
         shared: (boolean|undefined),
         e: Highcharts.PointerEventObject
     ): (Highcharts.Point|undefined) {
-        var closest: (Highcharts.Point|undefined),
-            sort = function (
-                p1: Highcharts.Point,
-                p2: Highcharts.Point
-            ): number {
-                var isCloserX = (p1.distX as any) - (p2.distX as any),
-                    isCloser = (p1.dist as any) - (p2.dist as any),
-                    isAbove =
-                        (p2.series.group && p2.series.group.zIndex) -
-                        (p1.series.group && p1.series.group.zIndex),
-                    result;
 
-                // We have two points which are not in the same place on xAxis
-                // and shared tooltip:
-                if (isCloserX !== 0 && shared) { // #5721
-                    result = isCloserX;
-                // Points are not exactly in the same place on x/yAxis:
-                } else if (isCloser !== 0) {
-                    result = isCloser;
-                // The same xAxis and yAxis position, sort by z-index:
-                } else if (isAbove !== 0) {
-                    result = isAbove;
-                // The same zIndex, sort by array index:
-                } else {
-                    result =
-                        (p1.series.index as any) > (p2.series.index as any) ?
-                            -1 :
-                            1;
-                }
-                return result;
-            };
+        const chart = this.chart;
+        const hoverPoint = chart.hoverPoint;
+        const tooltip = chart.tooltip;
+
+        if (
+            hoverPoint &&
+            tooltip &&
+            tooltip.isStickyOnContact()
+        ) {
+            return hoverPoint;
+        }
+
+        let closest: (Highcharts.Point|undefined);
+
+        /** @private */
+        function sort(
+            p1: Highcharts.Point,
+            p2: Highcharts.Point
+        ): number {
+            var isCloserX = (p1.distX as any) - (p2.distX as any),
+                isCloser = (p1.dist as any) - (p2.dist as any),
+                isAbove =
+                    (p2.series.group && p2.series.group.zIndex) -
+                    (p1.series.group && p1.series.group.zIndex),
+                result;
+
+            // We have two points which are not in the same place on xAxis
+            // and shared tooltip:
+            if (isCloserX !== 0 && shared) { // #5721
+                result = isCloserX;
+            // Points are not exactly in the same place on x/yAxis:
+            } else if (isCloser !== 0) {
+                result = isCloser;
+            // The same xAxis and yAxis position, sort by z-index:
+            } else if (isAbove !== 0) {
+                result = isAbove;
+            // The same zIndex, sort by array index:
+            } else {
+                result =
+                    (p1.series.index as any) > (p2.series.index as any) ?
+                        -1 :
+                        1;
+            }
+            return result;
+        }
 
         series.forEach(function (s: Highcharts.Series): void {
             var noSharedTooltip = s.noSharedTooltip && shared,
@@ -1410,12 +1425,17 @@ class Pointer {
     public onDocumentMouseMove(e: Highcharts.PointerEventObject): void {
         const chart = this.chart;
         const chartPosition = this.chartPosition;
+        const tooltip = chart.tooltip;
 
         e = this.normalize(e, chartPosition);
 
         // If we're outside, hide the tooltip
         if (
             chartPosition &&
+            (
+                !tooltip ||
+                !tooltip.isStickyOnContact()
+            ) &&
             !chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
                 e.chartY - chart.plotTop

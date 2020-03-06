@@ -88,6 +88,7 @@ declare global {
             ): string;
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
+            public isStickyOnContact(): boolean;
             public move(
                 x: number,
                 y: number,
@@ -675,8 +676,14 @@ class Tooltip {
             ),
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>,
+            onMouseEnter = function (): void {
+                tooltip.inContact = true;
+            },
             onMouseLeave = function (): void {
                 const series = tooltip.chart.hoverSeries;
+
+                tooltip.inContact = false;
+
                 if (
                     series &&
                     series.onMouseOut
@@ -791,6 +798,7 @@ class Tooltip {
             }
 
             this.label
+                .on('mouseenter', onMouseEnter)
                 .on('mouseleave', onMouseLeave)
                 .attr({ zIndex: 8 })
                 .add();
@@ -1152,6 +1160,17 @@ class Tooltip {
         this.outside = pick(
             options.outside,
             Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY)
+        );
+    }
+
+    /**
+     * Returns true, if the pointer is in contact with the tooltip tracker.
+     */
+    public isStickyOnContact(): boolean {
+        return !!(
+            !this.followPointer &&
+            this.options.stickOnContact &&
+            this.inContact
         );
     }
 

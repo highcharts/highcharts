@@ -398,8 +398,11 @@ var Tooltip = /** @class */ (function () {
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = ('tooltip' + (defined(options.className) ?
             ' ' + options.className :
             '')), pointerEvents = (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) ||
-            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, set, onMouseLeave = function () {
+            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, set, onMouseEnter = function () {
+            tooltip.inContact = true;
+        }, onMouseLeave = function () {
             var series = tooltip.chart.hoverSeries;
+            tooltip.inContact = false;
             if (series &&
                 series.onMouseOut) {
                 series.onMouseOut();
@@ -479,6 +482,7 @@ var Tooltip = /** @class */ (function () {
                 };
             }
             this.label
+                .on('mouseenter', onMouseEnter)
                 .on('mouseleave', onMouseLeave)
                 .attr({ zIndex: 8 })
                 .add();
@@ -764,6 +768,14 @@ var Tooltip = /** @class */ (function () {
          * not be too complicated to implement.
          */
         this.outside = pick(options.outside, Boolean(chart.scrollablePixelsX || chart.scrollablePixelsY));
+    };
+    /**
+     * Returns true, if the pointer is in contact with the tooltip tracker.
+     */
+    Tooltip.prototype.isStickyOnContact = function () {
+        return !!(!this.followPointer &&
+            this.options.stickOnContact &&
+            this.inContact);
     };
     /**
      * Moves the tooltip with a soft animation to a new position.

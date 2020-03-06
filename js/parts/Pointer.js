@@ -410,7 +410,17 @@ var Pointer = /** @class */ (function () {
      *         The point closest to given coordinates.
      */
     Pointer.prototype.findNearestKDPoint = function (series, shared, e) {
-        var closest, sort = function (p1, p2) {
+        var chart = this.chart;
+        var hoverPoint = chart.hoverPoint;
+        var tooltip = chart.tooltip;
+        if (hoverPoint &&
+            tooltip &&
+            tooltip.isStickyOnContact()) {
+            return hoverPoint;
+        }
+        var closest;
+        /** @private */
+        function sort(p1, p2) {
             var isCloserX = p1.distX - p2.distX, isCloser = p1.dist - p2.dist, isAbove = (p2.series.group && p2.series.group.zIndex) -
                 (p1.series.group && p1.series.group.zIndex), result;
             // We have two points which are not in the same place on xAxis
@@ -434,7 +444,7 @@ var Pointer = /** @class */ (function () {
                         1;
             }
             return result;
-        };
+        }
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared, compareX = (!noSharedTooltip &&
                 s.options.findNearestPointBy.indexOf('y') < 0), point = s.searchPoint(e, compareX);
@@ -916,9 +926,12 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.onDocumentMouseMove = function (e) {
         var chart = this.chart;
         var chartPosition = this.chartPosition;
+        var tooltip = chart.tooltip;
         e = this.normalize(e, chartPosition);
         // If we're outside, hide the tooltip
         if (chartPosition &&
+            (!tooltip ||
+                !tooltip.isStickyOnContact()) &&
             !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) &&
             !this.inClass(e.target, 'highcharts-tracker')) {
             this.reset();

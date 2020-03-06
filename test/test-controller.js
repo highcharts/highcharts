@@ -142,8 +142,8 @@ var TestController = /** @class */ (function () {
         }
         else {
             evt = new Event(type, {
-                bubbles: (_a = extra.bubbles, (_a !== null && _a !== void 0 ? _a : true)),
-                cancelable: (_b = extra.cancelable, (_b !== null && _b !== void 0 ? _b : true))
+                bubbles: ((_a = extra.bubbles) !== null && _a !== void 0 ? _a : true),
+                cancelable: ((_b = extra.cancelable) !== null && _b !== void 0 ? _b : true)
             });
         }
         extra = (extra || {});
