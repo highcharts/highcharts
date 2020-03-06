@@ -1,6 +1,6 @@
 // Issue #12885
 // Tooltip stickOnContact and followPointer
-QUnit.skip('Do not stick on hover tooltip following pointer (#12885)', function (assert) {
+QUnit.test('Do not stick on hover tooltip following pointer (#12885)', function (assert) {
     Highcharts.chart('container', {
         series: [{
             type: 'pie',
