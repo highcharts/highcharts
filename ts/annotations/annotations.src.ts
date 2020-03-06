@@ -932,6 +932,16 @@ merge(
                  */
 
                 /**
+                 * Name of the dash style to use for the shape's stroke.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+                 *         Possible values demonstrated
+                 *
+                 * @type      {Highcharts.DashStyleValue}
+                 * @apioption annotations.shapeOptions.dashStyle
+                 */
+
+                /**
                  * The color of the shape's stroke.
                  *
                  * @sample highcharts/annotations/shape/

@@ -159,7 +159,7 @@ radialAxisMixin = {
      * @private
      */
     getLinePath: function (lineWidth, radius, innerRadius) {
-        var center = this.center, end, chart = this.chart, r = pick(radius, center[2] / 2 - this.offset), path;
+        var center = this.pane.center, end, chart = this.chart, r = pick(radius, center[2] / 2 - this.offset), path;
         if (typeof innerRadius === 'undefined') {
             innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
         }
@@ -168,7 +168,7 @@ radialAxisMixin = {
             r += innerRadius;
         }
         if (this.isCircular || typeof radius !== 'undefined') {
-            path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1] + (innerRadius || 0), r, r, {
+            path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1], r, r, {
                 start: this.startAngleRad,
                 end: this.endAngleRad,
                 open: true,
@@ -183,8 +183,8 @@ radialAxisMixin = {
             end = this.postTranslate(this.angleRad, r);
             path = [
                 'M',
-                center[0] + chart.plotLeft,
-                center[1] + chart.plotTop,
+                this.center[0] + chart.plotLeft,
+                this.center[1] + chart.plotTop,
                 'L',
                 end.x,
                 end.y
@@ -256,22 +256,29 @@ radialAxisMixin = {
      * @private
      */
     setAxisSize: function () {
+        var center, start;
         axisProto.setAxisSize.call(this);
         if (this.isRadial) {
             // Set the center array
             this.pane.updateCenter(this);
+            // In case when the innerSize is set in a polar chart, the axis'
+            // center cannot be a reference to pane's center
+            center = this.center = extend([], this.pane.center);
             // The sector is used in Axis.translate to compute the
             // translation of reversed axis points (#2570)
             if (this.isCircular) {
                 this.sector = this.endAngleRad - this.startAngleRad;
             }
             else {
-                this.center[1] -= this.center[3] / 2;
+                // When the pane's startAngle or the axis' angle is set then new
+                // x and y values for vertical axis' center must be calulated
+                start = this.postTranslate(this.angleRad, center[3] / 2);
+                center[0] = start.x - this.chart.plotLeft;
+                center[1] = start.y - this.chart.plotTop;
             }
             // Axis len is used to lay out the ticks
             this.len = this.width = this.height =
-                (this.center[2] - this.center[3]) *
-                    pick(this.sector, 1) / 2;
+                (center[2] - center[3]) * pick(this.sector, 1) / 2;
         }
     },
     /**
@@ -419,7 +426,7 @@ radialAxisMixin = {
      * Find the path for plot lines perpendicular to the radial axis.
      */
     getPlotLinePath: function (options) {
-        var axis = this, center = axis.center, chart = axis.chart, inverted = chart.inverted, value = options.value, reverse = options.reverse, end = axis.getPosition(value), background = axis.pane.options.background ?
+        var axis = this, center = axis.pane.center, chart = axis.chart, inverted = chart.inverted, value = options.value, reverse = options.reverse, end = axis.getPosition(value), background = axis.pane.options.background ?
             (axis.pane.options.background[0] ||
                 axis.pane.options.background) :
             {}, innerRadius = background.innerRadius || '0%', outerRadius = background.outerRadius || '100%', x1 = center[0] + chart.plotLeft, y1 = center[1] + chart.plotTop, x2 = end.x, y2 = end.y, height = axis.height, isCrosshair = options.isCrosshair, paneInnerR = center[3] / 2, innerRatio, distance, a, b, otherAxis, xy, tickPositions, crossPos, ret;

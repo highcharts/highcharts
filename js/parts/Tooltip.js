@@ -423,7 +423,7 @@ var Tooltip = /** @class */ (function () {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: options.style && options.style.pointerEvents,
+                    pointerEvents: pointerEvents,
                     zIndex: 3
                 });
                 H.doc.body.appendChild(container);
