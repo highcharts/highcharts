@@ -16,11 +16,11 @@ Highcharts.chart('container', {
         pointFormat: 'Tooltip inside the chart',
         headerFormat: '',
         shape: 'square',
-        positioner: function() {
+        positioner: function () {
             return {
                 x: 100,
                 y: this.chart.container.getBoundingClientRect().top + 50
-            }
+            };
         }
     }
-});  
+});

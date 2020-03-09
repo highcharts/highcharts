@@ -10,7 +10,7 @@ Highcharts.chart('container', {
     },
 
     tooltip: {
-        stickOnHover: true
+        stickOnContact: true
     },
 
     plotOptions: {
