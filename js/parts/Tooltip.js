@@ -676,7 +676,9 @@ var Tooltip = /** @class */ (function () {
         delay = pick(delay, this.options.hideDelay, 500);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function () {
-                // Pass the delay argument only if it is a 0.
+                // If there is a delay, do fadeOut with the default duration. If
+                // the hideDelay is 0, we assume no animation is wanted, so we
+                // pass 0 duration. #12994.
                 tooltip.getLabel().fadeOut(delay ? void 0 : delay);
                 tooltip.isHidden = true;
             }, delay);
