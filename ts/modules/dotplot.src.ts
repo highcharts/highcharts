@@ -54,12 +54,11 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     objectEach,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Series.js';
-
-var seriesType = H.seriesType;
 
 /**
  * @private
@@ -78,6 +77,7 @@ seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
         }
     }
 }, {
+    markerAttribs: void 0,
     drawPoints: function (this: Highcharts.DotplotSeries): void {
         var series = this,
             renderer = series.chart.renderer,

@@ -8,7 +8,8 @@
  * in each sub-directory of this directory into a new html output file.
  */
 var path = require('path'),
-    replaceString = require('replace-string');
+    replaceString = require('replace-string'),
+    { uploadFiles } = require(path.join(__dirname, '../tools/gulptasks/lib/uploadS3'));
 
 (function () {
     var marked = require('marked'),
@@ -133,7 +134,7 @@ var path = require('path'),
         return (
             `<div id="${product.changelogId}">
             <div class="changelog-header">
-            <h2 id="${product.name}">${product.header}</h2>
+            <h4 id="${product.name}">${product.header}</h4>
             </div>
             <div class="changelog-container">`);
     }
@@ -216,6 +217,17 @@ var path = require('path'),
         return versionNumber.split('.').join('-').slice(0, -3);
     }
 
+    function uploadFile(filename) {
+        uploadFiles({
+            bucket: 'assets.highcharts.com',
+            files: [{
+                from: filename,
+                to: 'changelog/changelog.html',
+                name: 'changelog'
+            }]
+        });
+    }
+
     function writeContentToNewHTMLFile() {
         var outputFile = path.join(__dirname, (process.argv[2] || 'changelog') + '.html');
         fs.writeFile(outputFile, pretty(htmlContent), function (err) {
@@ -223,6 +235,7 @@ var path = require('path'),
                 throw err;
             }
             console.log(outputFile + ' was successfully created!');
+            uploadFile(outputFile);
         });
     }
 

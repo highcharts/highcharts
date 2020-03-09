@@ -14,7 +14,8 @@
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
-    clamp
+    clamp,
+    error
 } = U;
 
 /**
@@ -297,7 +298,7 @@ function GLShader(gl: WebGLRenderingContext): (false|Highcharts.BoostGLShader) {
      */
     function handleErrors(): void {
         if (errors.length) {
-            H.error('[highcharts boost] shader error - ' + errors.join('\n'));
+            error('[highcharts boost] shader error - ' + errors.join('\n'));
         }
     }
 

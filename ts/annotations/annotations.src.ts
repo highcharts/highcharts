@@ -254,6 +254,8 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    find,
+    merge,
     pick,
     splat,
     wrap
@@ -270,9 +272,7 @@ import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
 
-var merge = H.merge,
-    fireEvent = H.fireEvent,
-    find = H.find,
+var fireEvent = H.fireEvent,
     reduce = H.reduce,
     chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
 
@@ -841,6 +841,18 @@ merge(
              */
 
             /**
+             * The URL for an image to use as the annotation shape. Note,
+             * type has to be set to `'image'`.
+             *
+             * @see [annotations.shapes.type](annotations.shapes.type)
+             * @sample highcharts/annotations/shape-src/
+             *         Define a marker image url for annotations
+             *
+             * @type      {string}
+             * @apioption annotations.shapes.src
+             */
+
+            /**
              * Id of the marker which will be drawn at the final vertex of the
              * path. Custom markers can be defined in defs property.
              *
@@ -905,6 +917,28 @@ merge(
                  * @type      {string}
                  * @default   'rect'
                  * @apioption annotations.shapeOptions.type
+                 */
+
+                /**
+                 * The URL for an image to use as the annotation shape. Note,
+                 * type has to be set to `'image'`.
+                 *
+                 * @see [annotations.shapeOptions.type](annotations.shapeOptions.type)
+                 * @sample highcharts/annotations/shape-src/
+                 *         Define a marker image url for annotations
+                 *
+                 * @type      {string}
+                 * @apioption annotations.shapeOptions.src
+                 */
+
+                /**
+                 * Name of the dash style to use for the shape's stroke.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+                 *         Possible values demonstrated
+                 *
+                 * @type      {Highcharts.DashStyleValue}
+                 * @apioption annotations.shapeOptions.dashStyle
                  */
 
                 /**
@@ -1327,7 +1361,7 @@ merge(
                     userOptions
                 ),
                 userOptionsIndex = chart.annotations.indexOf(this),
-                options = H.merge(true, this.userOptions, userOptions);
+                options = merge(true, this.userOptions, userOptions);
 
             options.labels = labelsAndShapes.labels;
             options.shapes = labelsAndShapes.shapes;

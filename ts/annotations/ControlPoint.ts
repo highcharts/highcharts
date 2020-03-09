@@ -4,8 +4,6 @@
  *
  * */
 
-import H from './../parts/Globals.js';
-
 /**
  * Internal types.
  * @private
@@ -58,8 +56,11 @@ declare global {
  */
 
 import U from './../parts/Utilities.js';
-var extend = U.extend,
-    pick = U.pick;
+const {
+    extend,
+    merge,
+    pick
+} = U;
 
 import eventEmitterMixin from './eventEmitterMixin.js';
 
@@ -199,7 +200,7 @@ ControlPoint.prototype.update = function (
     var chart = this.chart,
         target = this.target,
         index = this.index,
-        options = H.merge(true, this.options, userOptions);
+        options = merge(true, this.options, userOptions);
 
     this.destroy();
     this.constructor(chart, target, options, index);

@@ -42,19 +42,22 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
     erase,
+    find,
     isArray,
     isNumber,
+    merge,
     pick,
     timeUnits,
     wrap
 } = U;
 
-var addEvent = H.addEvent,
-    argsToArray = function (args: IArguments): Array<any> {
+var argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
     dateFormat = H.dateFormat,
@@ -62,10 +65,8 @@ var addEvent = H.addEvent,
         // Always use strict mode
         return U.isObject(x, true);
     },
-    merge = H.merge,
     Chart = H.Chart,
-    Axis = H.Axis,
-    Tick = H.Tick;
+    Axis = H.Axis;
 
 var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     var options = axis.options;
@@ -258,18 +259,23 @@ Axis.prototype.getMaxLabelDimensions = function (
     return dimensions;
 };
 
-// Add custom date formats
-H.dateFormats.W = function (timestamp: number): string {
-    var d = new Date(timestamp),
-        yearStart: Date,
-        weekNo: number;
+// Adds week date format
+H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
+    const d = new this.Date(timestamp);
+    const firstDay = (this.get('Day', d) + 6) % 7;
+    const thursday = new this.Date(d.valueOf());
+    this.set('Date', thursday, this.get('Date', d) - firstDay + 3);
 
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() - (d.getDay() || 7));
-    yearStart = new Date(d.getFullYear(), 0, 1);
-    weekNo =
-        Math.ceil(((((d as any) - (yearStart as any)) / 86400000) + 1) / 7);
-    return weekNo as any;
+    const firstThursday = new this.Date(this.get('FullYear', thursday), 0, 1);
+
+    if (this.get('Day', firstThursday) !== 4) {
+        this.set('Month', d, 0);
+        this.set('Date', d, 1 + (11 - this.get('Day', firstThursday)) % 7);
+    }
+    return (
+        1 +
+        Math.floor((thursday.valueOf() - firstThursday.valueOf()) / 604800000)
+    ).toString();
 };
 
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
@@ -990,7 +996,7 @@ var onGridAxisAfterInit = function onGridAxisAfterInit(
                 isFirst = value === tickPos[0],
                 isLast = value === tickPos[tickPos.length - 1],
                 point: (Highcharts.Point|undefined) =
-                    series && H.find(series.options.data as any, function (
+                    series && find(series.options.data as any, function (
                         p: Highcharts.PointOptionsType
                     ): boolean {
                         return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;

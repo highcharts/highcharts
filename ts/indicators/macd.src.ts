@@ -104,13 +104,13 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    defined
+    defined,
+    merge,
+    seriesType
 } = U;
 
 
-var seriesType = H.seriesType,
-    noop = H.noop,
-    merge = H.merge,
+var noop = H.noop,
     SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema;
 

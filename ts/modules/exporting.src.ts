@@ -32,7 +32,6 @@ declare global {
             exportMenuWidth?: number;
             exportSVGElements?: Array<SVGElement>;
             forExport?: boolean;
-            fullscreen?: FullScreen;
             isDirtyExporting?: boolean;
             isPrinting?: boolean;
             openMenu?: boolean;
@@ -167,6 +166,7 @@ declare global {
         }
         interface LangOptions {
             contextButtonTitle?: string;
+            exitFullscreen?: string;
             downloadJPEG?: string;
             downloadPDF?: string;
             downloadPNG?: string;
@@ -283,12 +283,19 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
+    css,
+    createElement,
     discardElement,
     extend,
+    find,
+    fireEvent,
     isObject,
+    merge,
     objectEach,
     pick,
-    removeEvent
+    removeEvent,
+    uniqueKey
 } = U;
 
 import '../parts/Options.js';
@@ -299,11 +306,6 @@ import chartNavigationMixin from '../mixins/navigation.js';
 var defaultOptions = H.defaultOptions,
     doc = H.doc,
     Chart = H.Chart,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
-    createElement = H.createElement,
-    css = H.css,
-    merge = H.merge,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,
@@ -320,14 +322,24 @@ extend(defaultOptions.lang
     , {
 
         /**
-         * Exporting module only. View the chart in full screen.
+         * Exporting module only. The text for the menu item to view the chart
+         * in full screen.
          *
-         * @since    7.1.0
-         * @requires modules/exporting
+         * @since 8.0.1
          *
          * @private
          */
         viewFullscreen: 'View in full screen',
+
+        /**
+         * Exporting module only. The text for the menu item to exit the chart
+         * from full screen.
+         *
+         * @since 8.0.1
+         *
+         * @private
+         */
+        exitFullscreen: 'Exit from full screen',
 
 
         /**
@@ -1091,12 +1103,16 @@ defaultOptions.exporting = {
      * - **textKey:** If internationalization is required, the key to a language
      *   string
      *
+     * Custom text for the "exitFullScreen" can be set only in lang options
+     * (it is not a separate button).
+     *
      * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highstock} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
+     *
      *
      * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
      * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
@@ -1110,7 +1126,7 @@ defaultOptions.exporting = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function (): void {
-                this.fullscreen = new H.FullScreen(this.container);
+                this.fullscreen.toggle();
             }
         },
 
@@ -1468,7 +1484,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Assign an internal key to ensure a one-to-one mapping (#5924)
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
             if (!axis.userOptions.internalKey) { // #6444
-                axis.userOptions.internalKey = H.uniqueKey();
+                axis.userOptions.internalKey = uniqueKey();
             }
         });
 
@@ -1489,7 +1505,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
-            var axisCopy = H.find(chartCopy.axes, function (
+            var axisCopy = find(chartCopy.axes, function (
                     copy: Highcharts.Axis
                 ): boolean {
                     return copy.options.internalKey ===
@@ -1919,7 +1935,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 chart.openMenu = false;
                 css(chart.renderTo, { overflow: 'hidden' }); // #10361
-                H.clearTimeout(menu.hideTimer as any);
+                U.clearTimeout(menu.hideTimer as any);
                 fireEvent(chart, 'exportMenuHidden');
             };
 
@@ -1929,7 +1945,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
                 }),
                 addEvent(menu, 'mouseenter', function (): void {
-                    H.clearTimeout(menu.hideTimer as any);
+                    U.clearTimeout(menu.hideTimer as any);
                 }),
 
                 // Hide it on clicking or touching outside the menu (#2258,
@@ -2272,7 +2288,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             ): void {
 
                 // Remove the event handler
-                H.clearTimeout(elem.hideTimer as any); // #5427
+                U.clearTimeout(elem.hideTimer as any); // #5427
                 removeEvent(elem, 'mouseleave');
 
                 // Remove inline events

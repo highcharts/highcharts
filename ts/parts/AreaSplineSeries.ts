@@ -41,15 +41,16 @@ declare global {
     }
 }
 
-import './Utilities.js';
-import './Legend.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import U from './Utilities.js';
+const {
+    seriesType
+} = U;
 import './AreaSeries.js';
 import './SplineSeries.js';
 
 var areaProto = H.seriesTypes.area.prototype as Highcharts.AreaSeries,
-    defaultPlotOptions = H.defaultPlotOptions,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    seriesType = H.seriesType;
+    defaultPlotOptions = H.defaultPlotOptions;
 
 /**
  * AreaSpline series type.
@@ -93,7 +94,7 @@ seriesType<Highcharts.AreaSplineSeries>(
  *
  *
  * @extends   series,plotOptions.areaspline
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, step
  * @product   highcharts highstock
  * @apioption series.areaspline
  */

@@ -87,17 +87,20 @@ declare global {
  * @type {boolean|undefined}
  */
 
-import colorModule from '../parts/Color.js';
-const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import U from '../parts/Utilities.js';
 const {
     clamp,
     extend,
     isNumber,
+    merge,
     pick,
     pInt,
+    seriesType,
     wrap
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
@@ -185,7 +188,7 @@ colorAxisMethods = {
         ): void {
             var colors: (Array<string>|undefined);
 
-            dataClass = H.merge(dataClass);
+            dataClass = merge(dataClass);
             dataClasses.push(dataClass);
             if (!dataClass.color) {
                 if (options.dataClassColor === 'category') {
@@ -387,12 +390,12 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
 
 
 // The solidgauge series type
-H.seriesType<Highcharts.SolidGaugeSeries>(
+seriesType<Highcharts.SolidGaugeSeries>(
     'solidgauge',
     'gauge',
     solidGaugeOptions,
     {
-        drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
         // Extend the translate function to extend the Y axis with the necessary
         // decoration (#5895).
         translate: function (this: Highcharts.SolidGaugeSeries): void {

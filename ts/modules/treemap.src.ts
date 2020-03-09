@@ -102,7 +102,7 @@ declare global {
             public alignDataLabel(
                 point: TreemapPoint,
                 dataLabel: SVGElement,
-                labelOptions: DataLabelsOptionsObject
+                labelOptions: DataLabelsOptions
             ): void;
             public bindAxes(): void;
             public buildNode(
@@ -287,23 +287,30 @@ declare global {
 
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
 const {
-    color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
+    parse: color
+} = Color;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
 const {
+    addEvent,
     correctFloat,
     defined,
+    error,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
+    seriesType,
     stableSort
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -311,13 +318,8 @@ import '../parts/Series.js';
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    merge = H.merge,
-    error = H.error,
+var seriesTypes = H.seriesTypes,
     noop = H.noop,
-    fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     // @todo Similar to eachObject, this function is likely redundant
@@ -353,7 +355,8 @@ var seriesType = H.seriesType,
             recursive(next, func, context);
         }
     },
-    updateRootId = mixinTreeSeries.updateRootId;
+    updateRootId = mixinTreeSeries.updateRootId,
+    treemapAxisDefaultValues = false;
 
 /* eslint-enable no-invalid-this */
 
@@ -1677,7 +1680,7 @@ seriesType<Highcharts.TreemapSeries>(
                 ): boolean {
                     return n.node.visible;
                 }),
-                options: Highcharts.DataLabelsOptionsObject,
+                options: Highcharts.DataLabelsOptions,
                 level: Highcharts.TreemapSeriesOptions;
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
@@ -1717,7 +1720,7 @@ seriesType<Highcharts.TreemapSeries>(
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
             dataLabel: Highcharts.SVGElement,
-            labelOptions: Highcharts.DataLabelsOptionsObject
+            labelOptions: Highcharts.DataLabelsOptions
         ): void {
             var style: Highcharts.SVGAttributes = labelOptions.style as any;
 
@@ -2129,7 +2132,7 @@ seriesType<Highcharts.TreemapSeries>(
             }
         },
         buildKDTree: noop as any,
-        drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
         getExtremes: function (this: Highcharts.TreemapSeries): void {
         // Get the extremes from the value data
             Series.prototype.getExtremes.call(this, this.colorValueData);
@@ -2140,26 +2143,6 @@ seriesType<Highcharts.TreemapSeries>(
             Series.prototype.getExtremes.call(this);
         },
         getExtremesFromAll: true,
-        bindAxes: function (this: Highcharts.TreemapSeries): void {
-            var treeAxis = {
-                endOnTick: false,
-                gridLineWidth: 0,
-                lineWidth: 0,
-                min: 0,
-                dataMin: 0,
-                minPadding: 0,
-                max: AXIS_MAX,
-                dataMax: AXIS_MAX,
-                maxPadding: 0,
-                startOnTick: false,
-                title: null,
-                tickPositions: []
-            };
-
-            Series.prototype.bindAxes.call(this);
-            extend(this.yAxis.options, treeAxis);
-            extend(this.xAxis.options, treeAxis);
-        },
 
         /**
          * Workaround for `inactive` state. Since `series.opacity` option is
@@ -2185,7 +2168,7 @@ seriesType<Highcharts.TreemapSeries>(
         setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible,
         /* eslint-disable no-invalid-this, valid-jsdoc */
         getClassName: function (this: Highcharts.TreemapPoint): string {
-            var className = H.Point.prototype.getClassName.call(this),
+            var className = Point.prototype.getClassName.call(this),
                 series = this.series,
                 options = series.options;
 
@@ -2219,7 +2202,7 @@ seriesType<Highcharts.TreemapSeries>(
             this: Highcharts.TreemapPoint,
             state: string
         ): void {
-            H.Point.prototype.setState.call(this, state);
+            Point.prototype.setState.call(this, state);
 
             // Graphic does not exist when point is not visible.
             if (this.graphic) {
@@ -2232,9 +2215,44 @@ seriesType<Highcharts.TreemapSeries>(
             var point = this;
             return isNumber(point.plotY) && point.y !== null;
         }
-        /* eslint-enable no-invalid-this, valid-jsdoc */
     }
 );
+
+addEvent(H.Series, 'afterBindAxes', function (): void {
+    var series = this,
+        xAxis = series.xAxis,
+        yAxis = series.yAxis,
+        treeAxis;
+
+    if (xAxis && yAxis) {
+        if (series.is('treemap')) {
+            treeAxis = {
+                endOnTick: false,
+                gridLineWidth: 0,
+                lineWidth: 0,
+                min: 0,
+                dataMin: 0,
+                minPadding: 0,
+                max: AXIS_MAX,
+                dataMax: AXIS_MAX,
+                maxPadding: 0,
+                startOnTick: false,
+                title: null,
+                tickPositions: []
+            };
+
+            extend(yAxis.options, treeAxis);
+            extend(xAxis.options, treeAxis);
+            treemapAxisDefaultValues = true;
+
+        } else if (treemapAxisDefaultValues) {
+            yAxis.setOptions(yAxis.userOptions);
+            xAxis.setOptions(xAxis.userOptions);
+            treemapAxisDefaultValues = false;
+        }
+    }
+});
+/* eslint-enable no-invalid-this, valid-jsdoc */
 
 /**
  * A `treemap` series. If the [type](#series.treemap.type) option is

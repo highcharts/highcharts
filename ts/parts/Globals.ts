@@ -87,15 +87,26 @@ declare global {
         ): TReturn;
     }
     interface Document {
+        /** @deprecated */
+        exitFullscreen: () => Promise<void>;
+        /** @deprecated */
+        mozCancelFullScreen: Function;
+        /** @deprecated */
+        msExitFullscreen: Function;
         msHidden: boolean;
+        /** @deprecated */
+        webkitExitFullscreen: Function;
         webkitHidden: boolean;
     }
     interface Element {
+        /** @deprecated */
         mozRequestFullScreen: Function;
         msMatchesSelector: Element['matches'];
+        /** @deprecated */
         msRequestFullscreen: Function;
         webkitMatchesSelector: Element['matches'];
-        webkitRequestFullscreen: Function;
+        /** @deprecated */
+        webkitRequestFullScreen: Function;
         setAttribute(
             qualifiedName: string,
             value: (boolean|number|string)

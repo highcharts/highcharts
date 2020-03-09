@@ -438,10 +438,12 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
             // Focus export menu button
             init: function (): void {
-                const exportBtn = this.exportButtonProxy,
-                    exportGroup = chart.exportingGroup as Highcharts.SVGElement;
+                const exportBtn = component.exportButtonProxy,
+                    exportGroup = chart.exportingGroup;
 
-                chart.setFocusToElement(exportGroup, exportBtn.element);
+                if (exportGroup && exportBtn) {
+                    chart.setFocusToElement(exportGroup, exportBtn);
+                }
             },
 
             // Hide the menu

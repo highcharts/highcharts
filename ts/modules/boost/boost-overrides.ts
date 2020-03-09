@@ -48,16 +48,18 @@ declare global {
     }
 }
 
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
+    addEvent,
+    error,
     isNumber,
+    pick,
     wrap
 } = U;
 
-import '../../parts/Color.js';
 import '../../parts/Series.js';
 import '../../parts/Options.js';
-import '../../parts/Point.js';
 import '../../parts/Interaction.js';
 
 import butils from './boost-utils.js';
@@ -68,10 +70,7 @@ var boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
     Chart = H.Chart,
     Series = H.Series,
-    Point = H.Point,
     seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    pick = H.pick,
     plotOptions: Highcharts.PlotOptions = H.getOptions().plotOptions as any;
 
 /**
@@ -175,6 +174,7 @@ Series.prototype.getPoint = function (
         point.plotX = boostPoint.plotX;
         point.plotY = boostPoint.plotY;
         point.index = boostPoint.i;
+        point.isInside = this.isPointInside(boostPoint);
     }
 
     return point;
@@ -400,7 +400,7 @@ wrap(Series.prototype, 'processData', function (
             // Force turbo-mode:
             firstPoint = this.getFirstValidPoint(this.options.data as any);
             if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
-                H.error(12, false, this.chart);
+                error(12, false, this.chart);
             }
             this.enterBoost();
         } else if (this.exitBoost) {
@@ -448,10 +448,6 @@ Series.prototype.enterBoost = function (): void {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
-
-    // Once we've been in boost mode, we don't want animation when returning to
-    // vanilla mode.
-    this.animate = null as any;
 
     // Hide series label if any
     if (this.labelBySeries) {

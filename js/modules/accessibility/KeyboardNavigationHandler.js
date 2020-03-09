@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
-var find = H.find;
+import U from '../../parts/Utilities.js';
+var find = U.find;
 /**
  * Options for the keyboard navigation handler.
  *

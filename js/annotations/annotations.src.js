@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -21,7 +21,7 @@ import ControllableLabel from './controllable/ControllableLabel.js';
 import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var merge = H.merge, fireEvent = H.fireEvent, find = H.find, reduce = H.reduce, chartProto = H.Chart.prototype;
+var fireEvent = H.fireEvent, reduce = H.reduce, chartProto = H.Chart.prototype;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -516,6 +516,17 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * @apioption annotations.shapes.points
          */
         /**
+         * The URL for an image to use as the annotation shape. Note,
+         * type has to be set to `'image'`.
+         *
+         * @see [annotations.shapes.type](annotations.shapes.type)
+         * @sample highcharts/annotations/shape-src/
+         *         Define a marker image url for annotations
+         *
+         * @type      {string}
+         * @apioption annotations.shapes.src
+         */
+        /**
          * Id of the marker which will be drawn at the final vertex of the
          * path. Custom markers can be defined in defs property.
          *
@@ -574,6 +585,26 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              * @type      {string}
              * @default   'rect'
              * @apioption annotations.shapeOptions.type
+             */
+            /**
+             * The URL for an image to use as the annotation shape. Note,
+             * type has to be set to `'image'`.
+             *
+             * @see [annotations.shapeOptions.type](annotations.shapeOptions.type)
+             * @sample highcharts/annotations/shape-src/
+             *         Define a marker image url for annotations
+             *
+             * @type      {string}
+             * @apioption annotations.shapeOptions.src
+             */
+            /**
+             * Name of the dash style to use for the shape's stroke.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+             *         Possible values demonstrated
+             *
+             * @type      {Highcharts.DashStyleValue}
+             * @apioption annotations.shapeOptions.dashStyle
              */
             /**
              * The color of the shape's stroke.
@@ -872,7 +903,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @return {void}
      */
     update: function (userOptions) {
-        var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = H.merge(true, this.userOptions, userOptions);
+        var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = merge(true, this.userOptions, userOptions);
         options.labels = labelsAndShapes.labels;
         options.shapes = labelsAndShapes.shapes;
         this.destroy();

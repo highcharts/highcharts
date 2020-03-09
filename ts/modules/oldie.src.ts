@@ -315,12 +315,13 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import U from '../parts/Utilities.js';
 const {
-    color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
-const {
+    addEvent,
+    createElement,
+    css,
     defined,
     discardElement,
     erase,
@@ -329,10 +330,12 @@ const {
     isArray,
     isNumber,
     isObject,
+    merge,
     offset,
     pick,
-    pInt
-} = utilitiesModule;
+    pInt,
+    uniqueKey
+} = U;
 
 import '../parts/SvgRenderer.js';
 
@@ -340,11 +343,8 @@ var VMLRenderer,
     VMLRendererExtension,
     VMLElement: typeof Highcharts.VMLElement,
     Chart = H.Chart,
-    createElement = H.createElement,
-    css = H.css,
     deg2rad = H.deg2rad,
     doc = H.doc,
-    merge = H.merge,
     noop = H.noop,
     svg = H.svg,
     SVGElement = H.SVGElement,
@@ -368,7 +368,7 @@ var VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = function (
+    H.getStyle = U.getStyle = function (
         el: Highcharts.HTMLDOMElement,
         prop: string
     ): number {
@@ -389,7 +389,7 @@ if (doc && !doc.defaultView) {
         if (alias) {
             el.style.zoom = 1 as any;
             return Math.max(
-                (el as any)[alias] - 2 * (H.getStyle(el, 'padding') as number),
+                (el as any)[alias] - 2 * (U.getStyle(el, 'padding') as number),
                 0
             );
         }
@@ -421,7 +421,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement, 'afterInit', function (
+    addEvent(SVGElement, 'afterInit', function (
         this: Highcharts.SVGElement
     ): void {
         if (this.element.nodeName === 'text') {
@@ -444,7 +444,7 @@ if (!svg) {
     H.Pointer.prototype.normalize = function<
         T extends Highcharts.PointerEventObject
     > (
-        e: (T|PointerEvent),
+        e: (T|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
 
@@ -461,8 +461,8 @@ if (!svg) {
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
-            chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),
-            chartY: Math.round(e.y)
+            chartX: Math.round(Math.max((e as any).x, (e as any).clientX - chartPosition.left)),
+            chartY: Math.round((e as any).y)
         }) as T;
     };
 
@@ -562,7 +562,7 @@ if (!svg) {
 
             // unique function string (#6746)
             if (!fn.hcKey) {
-                fn.hcKey = H.uniqueKey();
+                fn.hcKey = uniqueKey();
             }
 
             // Link wrapped fn with original fn, so we can get this in

@@ -8,10 +8,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var isArray = U.isArray, merge = U.merge, seriesType = U.seriesType;
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
-var merge = H.merge, SMA = H.seriesTypes.sma, getArrayExtremes = reduceArrayMixin.getArrayExtremes;
+var SMA = H.seriesTypes.sma, getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 /**
  * The Stochastic series type.
  *
@@ -21,7 +21,7 @@ var merge = H.merge, SMA = H.seriesTypes.sma, getArrayExtremes = reduceArrayMixi
  *
  * @augments Highcharts.Series
  */
-H.seriesType('stochastic', 'sma', 
+seriesType('stochastic', 'sma', 
 /**
  * Stochastic oscillator. This series requires the `linkedTo` option to be
  * set and should be loaded after the `stock/indicators/indicators.js` file.
@@ -87,7 +87,7 @@ H.seriesType('stochastic', 'sma',
 /**
  * @lends Highcharts.Series#
  */
-H.merge(multipleLinesMixin, {
+merge(multipleLinesMixin, {
     nameComponents: ['periods'],
     nameBase: 'Stochastic',
     pointArrayMap: ['y', 'smoothed'],

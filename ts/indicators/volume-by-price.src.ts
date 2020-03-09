@@ -106,7 +106,7 @@ declare global {
             animationLimit?: number;
             crisp?: boolean;
             dataGrouping?: DataGroupingOptionsObject;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             enableMouseTracking?: boolean;
             params?: VBPIndicatorParamsOptions;
             pointPadding?: number;
@@ -121,6 +121,7 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -128,8 +129,10 @@ const {
     arrayMax,
     arrayMin,
     correctFloat,
+    error,
     extend,
-    isArray
+    isArray,
+    seriesType
 } = U;
 
 /* eslint-disable require-jsdoc */
@@ -165,7 +168,6 @@ function arrayExtremesOHLC(
 
 var abs = Math.abs,
     noop = H.noop,
-    seriesType = H.seriesType,
     columnPrototype = H.seriesTypes.column.prototype;
 
 /**
@@ -361,7 +363,7 @@ seriesType<Highcharts.VBPIndicator>(
             var series = this,
                 attr: Highcharts.SVGAttributes = {};
 
-            if (H.svg && !init) {
+            if (!init) {
                 attr.translateX = series.yAxis.pos;
                 (series.group as any).animate(
                     attr,
@@ -374,8 +376,6 @@ seriesType<Highcharts.VBPIndicator>(
                     })
                 );
 
-                // Delete this function to allow it only once
-                (series.animate as any) = null;
             }
         },
         drawPoints: function (this: Highcharts.VBPIndicator): void {
@@ -564,7 +564,7 @@ seriesType<Highcharts.VBPIndicator>(
 
             // Checks if base series exists
             if (!series.chart) {
-                H.error(
+                error(
                     'Base series not found! In case it has been removed, add ' +
                     'a new one.',
                     true,
@@ -577,7 +577,7 @@ seriesType<Highcharts.VBPIndicator>(
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                H.error(
+                error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',
@@ -591,7 +591,7 @@ seriesType<Highcharts.VBPIndicator>(
             isOHLC = isArray(yValues[0]);
 
             if (isOHLC && yValues[0].length !== 4) {
-                H.error(
+                error(
                     'Type of ' +
                     series.name +
                     ' series is different than line, OHLC or candlestick.',
@@ -840,7 +840,7 @@ seriesType<Highcharts.VBPIndicator>(
             if (this.negativeGraphic) {
                 this.negativeGraphic = (this.negativeGraphic as any).destroy();
             }
-            return H.Point.prototype.destroy.apply(this, arguments);
+            return Point.prototype.destroy.apply(this, arguments);
         }
     }
 );

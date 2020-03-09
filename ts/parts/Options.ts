@@ -340,6 +340,7 @@ declare global {
             shared?: boolean;
             snap?: number;
             split?: boolean;
+            stickOnContact?: boolean;
             style?: CSSObject;
             useHTML?: boolean;
             valueDecimals?: number;
@@ -555,12 +556,14 @@ declare global {
  */
 
 import Time from './Time.js';
-import colorModule from './Color.js';
-const color = colorModule.color;
-import './Utilities.js';
+import Color from './Color.js';
+const color = Color.parse;
+import U from './Utilities.js';
+const {
+    merge
+} = U;
 
 var isTouchDevice = H.isTouchDevice,
-    merge = H.merge,
     svg = H.svg;
 
 /* ************************************************************************** *
@@ -982,6 +985,10 @@ H.defaultOptions = {
          *   `Math` object. See
          *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          *
+         * When zooming on a series with less than 100 points, the chart redraw
+         * will be done with animation, but in case of more data points, it is
+         * necessary to set this option to ensure animation on zoom.
+         *
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
          * @sample {highcharts} highcharts/chart/animation-duration/
@@ -994,7 +1001,7 @@ H.defaultOptions = {
          *         With a longer duration
          *
          * @type      {boolean|Highcharts.AnimationOptionsObject}
-         * @default   true
+         * @default   undefined
          * @apioption chart.animation
          */
 
@@ -3579,6 +3586,8 @@ H.defaultOptions = {
          *         A fixed tooltip position
          * @sample {highstock} stock/tooltip/split-positioner/
          *         Split tooltip with fixed positions
+         * @sample {highstock} stock/tooltip/positioner-scrollable-plotarea/
+         *         Scrollable plot area combined with tooltip positioner
          *
          * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
@@ -3673,6 +3682,18 @@ H.defaultOptions = {
          * @since     5.0.0
          * @product   highcharts highstock
          * @apioption tooltip.split
+         */
+
+        /**
+         * Prevents the tooltip from switching or closing, when touched or
+         * pointed.
+         *
+         * @sample highcharts/tooltip/stickoncontact/
+         *         Tooltip sticks on pointer contact
+         *
+         * @type      {boolean}
+         * @since     8.0.1
+         * @apioption tooltip.stickOnContact
          */
 
         /**
@@ -4000,8 +4021,6 @@ H.defaultOptions = {
             cursor: 'default',
             /** @internal */
             fontSize: '12px',
-            /** @internal */
-            pointerEvents: 'none',
             /** @internal */
             whiteSpace: 'nowrap'
         }

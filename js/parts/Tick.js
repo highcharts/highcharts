@@ -26,14 +26,29 @@ import H from './Globals.js';
 * @type {number|undefined}
 */
 import U from './Utilities.js';
-var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
-var fireEvent = H.fireEvent, merge = H.merge, deg2rad = H.deg2rad;
+var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var fireEvent = H.fireEvent, deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Tick class.
  *
  * @class
  * @name Highcharts.Tick
+ *
+ * @param {Highcharts.Axis} axis
+ * The axis of the tick.
+ *
+ * @param {number} pos
+ * The position of the tick on the axis in terms of axis values.
+ *
+ * @param {string} [type]
+ * The type of tick, either 'minor' or an empty string
+ *
+ * @param {boolean} [noLabel=false]
+ * Whether to disable the label or not. Defaults to false.
+ *
+ * @param {object} [parameters]
+ * Optional parameters for the tick.
  */
 var Tick = /** @class */ (function () {
     /* *
@@ -41,22 +56,6 @@ var Tick = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * @param {Highcharts.Axis} axis
-     * The axis of the tick.
-     *
-     * @param {number} pos
-     * The position of the tick on the axis in terms of axis values.
-     *
-     * @param {string} [type]
-     * The type of tick, either 'minor' or an empty string
-     *
-     * @param {boolean} [noLabel=false]
-     * Whether to disable the label or not. Defaults to false.
-     *
-     * @param {object} [parameters]
-     * Optional parameters for the tick.
-     */
     function Tick(axis, pos, type, noLabel, parameters) {
         this.isNew = true;
         this.isNewLabel = true;
@@ -658,7 +657,4 @@ var Tick = /** @class */ (function () {
     return Tick;
 }());
 H.Tick = Tick;
-var tickModule = {
-    Tick: Tick
-};
-export default tickModule;
+export default H.Tick;

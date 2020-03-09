@@ -49,6 +49,7 @@ declare global {
             background?: Array<PaneBackgroundOptions>;
             center?: Array<(string|number)>;
             endAngle?: number;
+            innerSize?: (number|string);
             size?: (number|string);
             startAngle?: number;
             zIndex?: number;
@@ -61,7 +62,7 @@ declare global {
             public chart: PaneChart;
             public coll: 'pane';
             public defaultBackgroundOptions?: PaneBackgroundOptions;
-            public defaultOptions?: PaneOptions;
+            public defaultOptions: PaneOptions;
             public group?: SVGElement;
             public options: PaneOptions;
             public init(options: PaneOptions, chart: Chart): void;
@@ -85,13 +86,14 @@ import '../mixins/centered-series.js';
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     extend,
+    merge,
     pick,
     splat
 } = U;
 
-var CenteredSeriesMixin = H.CenteredSeriesMixin,
-    merge = H.merge;
+var CenteredSeriesMixin = H.CenteredSeriesMixin;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -108,18 +110,22 @@ H.Chart.prototype.collectionsWithUpdate.push('pane');
  * @param {Highcharts.PaneOptions} options
  * @param {Highcharts.Chart} chart
  */
-function Pane(
-    this: Highcharts.Pane,
-    options: Highcharts.PaneOptions,
-    chart: Highcharts.Chart
-): void {
-    this.init(options, chart);
-}
+class Pane {
+    public constructor(
+        options: Highcharts.PaneOptions,
+        chart: Highcharts.PaneChart
+    ) {
+        this.init(options, chart);
+    }
 
-// Extend the Pane prototype
-extend(Pane.prototype, {
+    public axis?: Highcharts.RadialAxis;
+    public background: Array<Highcharts.SVGElement> = void 0 as any;
+    public center: Array<number> = void 0 as any;
+    public chart: Highcharts.PaneChart = void 0 as any;
+    public group?: Highcharts.SVGElement;
+    public options: Highcharts.PaneOptions = void 0 as any;
 
-    coll: 'pane', // Member of chart.pane
+    public coll = 'pane'; // Member of chart.pane
 
     /**
      * Initialize the Pane object
@@ -131,18 +137,17 @@ extend(Pane.prototype, {
      *
      * @param {Highcharts.Chart} chart
      */
-    init: function (
-        this: Highcharts.Pane,
+    public init(
         options: Highcharts.PaneOptions,
         chart: Highcharts.PaneChart
     ): void {
         this.chart = chart;
         this.background = [];
 
-        chart.pane.push(this);
+        chart.pane.push(this as any);
 
         this.setOptions(options);
-    },
+    }
 
     /**
      * @private
@@ -150,10 +155,7 @@ extend(Pane.prototype, {
      *
      * @param {Highcharts.PaneOptions} options
      */
-    setOptions: function (
-        this: Highcharts.Pane,
-        options: Highcharts.PaneOptions
-    ): void {
+    public setOptions(options: Highcharts.PaneOptions): void {
 
         // Set options. Angular charts have a default background (#3318)
         this.options = options = merge(
@@ -161,7 +163,7 @@ extend(Pane.prototype, {
             this.chart.angular ? { background: ({} as any) } : void 0,
             options
         );
-    },
+    }
 
     /**
      * Render the pane with its backgrounds.
@@ -169,8 +171,7 @@ extend(Pane.prototype, {
      * @private
      * @function Highcharts.Pane#render
      */
-    render: function (this: Highcharts.Pane): void {
-
+    public render(): void {
         var options = this.options,
             backgroundOption = this.options.background,
             renderer = this.chart.renderer,
@@ -211,7 +212,7 @@ extend(Pane.prototype, {
                 }
             }
         }
-    },
+    }
 
     /**
      * Render an individual pane background.
@@ -225,8 +226,7 @@ extend(Pane.prototype, {
      * @param {number} i
      *        The index of the background in this.backgrounds
      */
-    renderBackground: function (
-        this: Highcharts.Pane,
+    public renderBackground(
         backgroundOptions: Highcharts.PaneBackgroundOptions,
         i: number
     ): void {
@@ -259,7 +259,7 @@ extend(Pane.prototype, {
             )
         }).attr(attribs);
 
-    },
+    }
 
     /**
      * The pane serves as a container for axes and backgrounds for circular
@@ -270,7 +270,7 @@ extend(Pane.prototype, {
      * @requires     highcharts-more
      * @optionparent pane
      */
-    defaultOptions: {
+    public defaultOptions: Highcharts.PaneOptions = {
 
         /**
          * The end angle of the polar X axis or gauge value axis, given in
@@ -303,7 +303,8 @@ extend(Pane.prototype, {
 
         /**
          * The size of the pane, either as a number defining pixels, or a
-         * percentage defining a percentage of the plot are.
+         * percentage defining a percentage of the available plot area (the
+         * smallest of the plot height or plot width).
          *
          * @sample {highcharts} highcharts/demo/gauge-vu-meter/
          *         Smaller size
@@ -312,6 +313,18 @@ extend(Pane.prototype, {
          * @product highcharts
          */
         size: '85%',
+
+        /**
+         * The inner size of the pane, either as a number defining pixels, or a
+         * percentage defining a percentage of the pane's size.
+         *
+         * @sample {highcharts} highcharts/series-polar/column-inverted-inner
+         *         The inner size set to 20%
+         *
+         * @type    {number|string}
+         * @product highcharts
+         */
+        innerSize: '0%',
 
         /**
          * The start angle of the polar X axis or gauge axis, given in degrees
@@ -324,7 +337,7 @@ extend(Pane.prototype, {
          * @product highcharts
          */
         startAngle: 0
-    },
+    };
 
     /**
      * An array of background items for the pane.
@@ -335,7 +348,7 @@ extend(Pane.prototype, {
      * @type         {Array<*>}
      * @optionparent pane.background
      */
-    defaultBackgroundOptions: {
+    public defaultBackgroundOptions: Highcharts.PaneBackgroundOptions = {
 
         /**
          * The class name for this background.
@@ -428,7 +441,7 @@ extend(Pane.prototype, {
          */
         outerRadius: '105%'
 
-    },
+    };
 
     /**
      * Gets the center for the pane and its axis.
@@ -438,16 +451,13 @@ extend(Pane.prototype, {
      * @param {Highcharts.RadialAxis} [axis]
      * @return {void}
      */
-    updateCenter: function (
-        this: Highcharts.Pane,
-        axis?: Highcharts.RadialAxis
-    ): void {
+    public updateCenter(axis?: Highcharts.RadialAxis): void {
         this.center = (
             axis ||
             this.axis ||
             ({} as Highcharts.Dictionary<Array<number>>)
         ).center = CenteredSeriesMixin.getCenter.call(this as any);
-    },
+    }
 
     /**
      * Destroy the pane item
@@ -476,8 +486,7 @@ extend(Pane.prototype, {
      * @param {boolean} [redraw]
      * @return {void}
      */
-    update: function (
-        this: Highcharts.Pane,
+    public update(
         options: Highcharts.PaneOptions,
         redraw?: boolean
     ): void {
@@ -493,9 +502,7 @@ extend(Pane.prototype, {
             }
         }, this);
     }
-});
-
-H.Pane = Pane as any;
+}
 
 /**
  * Check whether element is inside or outside pane.
@@ -540,7 +547,7 @@ H.Chart.prototype.getHoverPane = function (
     return hoverPane;
 };
 
-H.addEvent(H.Chart, 'afterIsInsidePlot', function (
+addEvent(H.Chart, 'afterIsInsidePlot', function (
     this: Highcharts.Chart | Highcharts.PaneChart,
     e: {
         x: number;
@@ -556,7 +563,7 @@ H.addEvent(H.Chart, 'afterIsInsidePlot', function (
     }
 });
 
-H.addEvent(H.Pointer, 'beforeGetHoverData', function (
+addEvent(H.Pointer, 'beforeGetHoverData', function (
     this: Highcharts.Pointer,
     eventArgs: {
         chartX: number;
@@ -576,13 +583,13 @@ H.addEvent(H.Pointer, 'beforeGetHoverData', function (
                 s.visible &&
                 !(!eventArgs.shared && s.directTouch) && // #3821
                 pick(s.options.enableMouseTracking, true) &&
-                (!chart.polar || s.xAxis.pane === chart.hoverPane)
+                (!chart.hoverPane || s.xAxis.pane === chart.hoverPane)
             );
         };
     }
 });
 
-H.addEvent(H.Pointer, 'afterGetHoverData', function (
+addEvent(H.Pointer, 'afterGetHoverData', function (
     this: Highcharts.Pointer,
     eventArgs: Highcharts.PointerEventArgsObject
 ): void {
@@ -601,3 +608,6 @@ H.addEvent(H.Pointer, 'afterGetHoverData', function (
         eventArgs.hoverPoint = void 0;
     }
 });
+
+H.Pane = Pane as any;
+export default H.Pane;

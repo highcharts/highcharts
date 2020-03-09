@@ -4,8 +4,8 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
-import './../../parts/Utilities.js';
+import U from './../../parts/Utilities.js';
+var merge = U.merge;
 import controllableMixin from './controllableMixin.js';
 import ControllableLabel from './ControllableLabel.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -42,7 +42,7 @@ ControllableImage.attrsMap = {
     height: 'height',
     zIndex: 'zIndex'
 };
-H.merge(true, ControllableImage.prototype, controllableMixin, /** @lends Annotation.ControllableImage# */ {
+merge(true, ControllableImage.prototype, controllableMixin, /** @lends Annotation.ControllableImage# */ {
     /**
      * @type 'image'
      */

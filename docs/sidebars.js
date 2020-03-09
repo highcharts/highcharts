@@ -125,7 +125,7 @@ module.exports = {
             'advanced-chart-features/internationalization',
             'advanced-chart-features/pie-datalabels-alignment',
             'advanced-chart-features/stacking-charts',
-            'advanced-chart-features/highcharts-typescript-beta'
+            'advanced-chart-features/highcharts-typescript-declarations'
         ],
         'Export module': [
             'export-module/export-module-overview',

@@ -348,7 +348,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  *
  * @return {void}
  */
-H.error = function (code, stop, chart, params) {
+var error = H.error = function (code, stop, chart, params) {
     var isCode = isNumber(code), message = isCode ?
         "Highcharts error #" + code + ": www.highcharts.com/errors/" + code + "/" :
         code.toString(), defaultHandler = function () {
@@ -793,7 +793,7 @@ H.Fx = Fx;
 *         The merged object. If the first argument is true, the return is the
 *         same as the second argument.
 */
-H.merge = function () {
+function merge() {
     /* eslint-enable valid-jsdoc */
     var i, args = arguments, len, ret = {}, doCopy = function (copy, original) {
         // An object is replacing a primitive
@@ -826,7 +826,8 @@ H.merge = function () {
         ret = doCopy(ret, args[i]);
     }
     return ret;
-};
+}
+H.merge = merge;
 /**
  * Constrain a value to within a lower and upper threshold.
  *
@@ -1084,7 +1085,7 @@ var syncTimeout = H.syncTimeout = function syncTimeout(fn, delay, context) {
  *
  * @return {void}
  */
-H.clearTimeout = function (id) {
+var internalClearTimeout = H.clearTimeout = function (id) {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -1151,7 +1152,7 @@ H.pick = pick;
  *
  * @return {void}
  */
-H.css = function (el, styles) {
+var css = H.css = function css(el, styles) {
     if (H.isMS && !H.svg) { // #2686
         if (styles && typeof styles.opacity !== 'undefined') {
             styles.filter =
@@ -1183,8 +1184,8 @@ H.css = function (el, styles) {
  * @return {Highcharts.HTMLDOMElement}
  *         The created DOM element.
  */
-H.createElement = function (tag, attribs, styles, parent, nopad) {
-    var el = doc.createElement(tag), css = H.css;
+var createElement = H.createElement = function createElement(tag, attribs, styles, parent, nopad) {
+    var el = doc.createElement(tag);
     if (attribs) {
         extend(el, attribs);
     }
@@ -1301,62 +1302,6 @@ var wrap = H.wrap = function wrap(obj, method, func) {
     };
 };
 /**
- * Recursively converts all Date properties to timestamps.
- *
- * @private
- * @function Highcharts.datePropsToTimestamps
- *
- * @param {*} obj - any object to convert properties of
- *
- * @return {void}
- */
-H.datePropsToTimestamps = function (obj) {
-    objectEach(obj, function (val, key) {
-        if (isObject(val) && typeof val.getTime === 'function') {
-            obj[key] = val.getTime();
-        }
-        else if (isObject(val) || isArray(val)) {
-            H.datePropsToTimestamps(val);
-        }
-    });
-};
-/**
- * Format a single variable. Similar to sprintf, without the % prefix.
- *
- * @example
- * formatSingle('.2f', 5); // => '5.00'.
- *
- * @function Highcharts.formatSingle
- *
- * @param {string} format
- *        The format string.
- *
- * @param {*} val
- *        The value.
- *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
- *
- * @return {string}
- *         The formatted representation of the value.
- */
-H.formatSingle = function (format, val, chart) {
-    var floatRegex = /f$/, decRegex = /\.([0-9])/, lang = H.defaultOptions.lang, decimals;
-    var time = chart && chart.time || H.time;
-    var numberFormatter = chart && chart.numberFormatter || numberFormat;
-    if (floatRegex.test(format)) { // float
-        decimals = format.match(decRegex);
-        decimals = decimals ? decimals[1] : -1;
-        if (val !== null) {
-            val = numberFormatter(val, decimals, lang.decimalPoint, format.indexOf(',') > -1 ? lang.thousandsSep : '');
-        }
-    }
-    else {
-        val = time.dateFormat(format, val);
-    }
-    return val;
-};
-/**
  * Format a string according to a subset of the rules of Python's String.format
  * method.
  *
@@ -1372,7 +1317,7 @@ H.formatSingle = function (format, val, chart) {
  * @param {string} str
  *        The string to format.
  *
- * @param {*} ctx
+ * @param {Record<string, *>} ctx
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
@@ -1382,8 +1327,13 @@ H.formatSingle = function (format, val, chart) {
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str, ctx, chart) {
-    var splitter = '{', isInside = false, segment, valueAndFormat, path, i, len, ret = [], val, index;
+var format = H.format = function (str, ctx, chart) {
+    var splitter = '{', isInside = false, segment, valueAndFormat, ret = [], val, index;
+    var floatRegex = /f$/;
+    var decRegex = /\.([0-9])/;
+    var lang = H.defaultOptions.lang;
+    var time = chart && chart.time || H.time;
+    var numberFormatter = chart && chart.numberFormatter || numberFormat;
     while (str) {
         index = str.indexOf(splitter);
         if (index === -1) {
@@ -1392,19 +1342,19 @@ H.format = function (str, ctx, chart) {
         segment = str.slice(0, index);
         if (isInside) { // we're on the closing bracket looking back
             valueAndFormat = segment.split(':');
-            // get first and leave
-            path = valueAndFormat.shift().split('.');
-            len = path.length;
-            val = ctx;
-            // Assign deeper paths
-            for (i = 0; i < len; i++) {
-                if (val) {
-                    val = val[path[i]];
-                }
-            }
+            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
             // Format the replacement
-            if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
+            if (valueAndFormat.length && typeof val === 'number') {
+                segment = valueAndFormat.join(':');
+                if (floatRegex.test(segment)) { // float
+                    var decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    if (val !== null) {
+                        val = numberFormatter(val, decimals, lang.decimalPoint, segment.indexOf(',') > -1 ? lang.thousandsSep : '');
+                    }
+                }
+                else {
+                    val = time.dateFormat(segment, val);
+                }
             }
             // Push the result and advance the cursor
             ret.push(val);
@@ -1430,7 +1380,7 @@ H.format = function (str, ctx, chart) {
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-H.getMagnitude = function (num) {
+var getMagnitude = H.getMagnitude = function (num) {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 /**
@@ -1462,7 +1412,7 @@ H.getMagnitude = function (num) {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
+var normalizeTickInterval = H.normalizeTickInterval = function (interval, multiples, magnitude, allowDecimals, hasTickAmount) {
     var normalized, i, retInterval = interval;
     // round to a tenfold of 1, 2, 2.5 or 5
     magnitude = pick(magnitude, 1);
@@ -1622,7 +1572,7 @@ var discardElement = H.discardElement = function discardElement(element) {
     var garbageBin = H.garbageBin;
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
-        garbageBin = H.createElement('div');
+        garbageBin = createElement('div');
     }
     // move the node and empty bin
     if (element) {
@@ -1683,7 +1633,7 @@ var setAnimation = H.setAnimation = function setAnimation(animation, chart) {
  */
 var animObject = H.animObject = function animObject(animation) {
     return isObject(animation) ?
-        H.merge(animation) :
+        merge(animation) :
         { duration: animation ? 500 : 0 };
 };
 /**
@@ -1808,6 +1758,39 @@ Math.easeInOutSine = function (pos) {
     return -0.5 * (Math.cos(Math.PI * pos) - 1);
 };
 /**
+ * Returns the value of a property path on a given object.
+ *
+ * @private
+ * @function getNestedProperty
+ *
+ * @param {string} path
+ * Path to the property, for example `custom.myValue`.
+ *
+ * @param {unknown} obj
+ * Instance containing the property on the specific path.
+ *
+ * @return {unknown}
+ * The unknown property value.
+ */
+function getNestedProperty(path, obj) {
+    if (!path) {
+        return obj;
+    }
+    var pathElements = path.split('.').reverse();
+    var subProperty = obj;
+    if (pathElements.length === 1) {
+        return subProperty[path];
+    }
+    var pathElement = pathElements.pop();
+    while (typeof pathElement !== 'undefined' &&
+        typeof subProperty !== 'undefined' &&
+        subProperty !== null) {
+        subProperty = subProperty[pathElement];
+        pathElement = pathElements.pop();
+    }
+    return subProperty;
+}
+/**
  * Get the computed CSS value for given element and property, only for numerical
  * properties. For width and height, the dimension of the inner box (excluding
  * padding) is returned. Used for fitting the chart within the container.
@@ -1826,7 +1809,7 @@ Math.easeInOutSine = function (pos) {
  * @return {number|string}
  *         The numeric value.
  */
-H.getStyle = function (el, prop, toInt) {
+var getStyle = H.getStyle = function (el, prop, toInt) {
     var style;
     // For width and height, return the actual inner pixel size (#4913)
     if (prop === 'width') {
@@ -1855,7 +1838,7 @@ H.getStyle = function (el, prop, toInt) {
     }
     if (!win.getComputedStyle) {
         // SVG not supported, forgot to load oldie.js?
-        H.error(27, true);
+        error(27, true);
     }
     // Otherwise, get the computed style
     style = win.getComputedStyle(el, undefined); // eslint-disable-line no-undefined
@@ -1886,7 +1869,7 @@ H.getStyle = function (el, prop, toInt) {
  * @return {number}
  *         The index within the array, or -1 if not found.
  */
-H.inArray = function (item, arr, fromIndex) {
+var inArray = H.inArray = function (item, arr, fromIndex) {
     return arr.indexOf(item, fromIndex);
 };
 /* eslint-disable valid-jsdoc */
@@ -1906,7 +1889,7 @@ H.inArray = function (item, arr, fromIndex) {
  * @return {T|undefined}
  *         The value of the element.
  */
-H.find = Array.prototype.find ?
+var find = H.find = Array.prototype.find ?
     /* eslint-enable valid-jsdoc */
     function (arr, callback) {
         return arr.find(callback);
@@ -1938,8 +1921,8 @@ H.keys = Object.keys;
  *
  * @function Highcharts.offset
  *
- * @param {Highcharts.HTMLDOMElement} el
- *        The HTML element.
+ * @param {global.Element} el
+ *        The DOM element.
  *
  * @return {Highcharts.OffsetObject}
  *         An object containing `left` and `top` properties for the position in
@@ -1977,7 +1960,7 @@ var offset = H.offset = function offset(el) {
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-H.stop = function (el, prop) {
+var stop = H.stop = function (el, prop) {
     var i = H.timers.length;
     // Remove timers related to this element (#4519)
     while (i--) {
@@ -2367,7 +2350,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
  *
  * @return {void}
  */
-H.animate = function (el, params, opt) {
+var animate = H.animate = function (el, params, opt) {
     var start, unit = '', end, fx, args;
     if (!isObject(opt)) { // Number or undefined/null
         args = arguments;
@@ -2383,10 +2366,10 @@ H.animate = function (el, params, opt) {
     opt.easing = typeof opt.easing === 'function' ?
         opt.easing :
         (Math[opt.easing] || Math.easeInOutSine);
-    opt.curAnim = H.merge(params);
+    opt.curAnim = merge(params);
     objectEach(params, function (val, prop) {
         // Stop current running animation of this property
-        H.stop(el, prop);
+        stop(el, prop);
         fx = new Fx(el, opt, prop);
         end = null;
         if (prop === 'd') {
@@ -2399,7 +2382,7 @@ H.animate = function (el, params, opt) {
             start = el.attr(prop);
         }
         else {
-            start = parseFloat(H.getStyle(el, prop)) || 0;
+            start = parseFloat(getStyle(el, prop)) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }
@@ -2442,10 +2425,10 @@ H.animate = function (el, params, opt) {
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function (type, parent, options, props, pointProps) {
+var seriesType = H.seriesType = function (type, parent, options, props, pointProps) {
     var defaultOptions = H.getOptions(), seriesTypes = H.seriesTypes;
     // Merge the options
-    defaultOptions.plotOptions[type] = H.merge(defaultOptions.plotOptions[parent], options);
+    defaultOptions.plotOptions[type] = merge(defaultOptions.plotOptions[parent], options);
     // Create the class
     seriesTypes[type] = extendClass(seriesTypes[parent] || function () { }, props);
     seriesTypes[type].prototype.type = type;
@@ -2462,20 +2445,20 @@ H.seriesType = function (type, parent, options, props, pointProps) {
  * counter.
  *
  * @example
- * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
  * @return {string}
  *         A unique key.
  */
-H.uniqueKey = (function () {
+var uniqueKey = H.uniqueKey = (function () {
     var uniqueKeyHash = Math.random().toString(36).substring(2, 9), idCounter = 0;
     return function () {
         return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
     };
 }());
-H.isFunction = function (obj) {
+var isFunction = H.isFunction = function (obj) {
     return typeof obj === 'function';
 };
 // Register Highcharts as a plugin in jQuery
@@ -2531,28 +2514,42 @@ if (win.jQuery) {
     };
 }
 // TODO use named exports when supported.
-var utils = {
+var utilitiesModule = {
     Fx: Fx,
     addEvent: addEvent,
+    animate: animate,
     animObject: animObject,
     arrayMax: arrayMax,
     arrayMin: arrayMin,
     attr: attr,
     clamp: clamp,
+    clearTimeout: internalClearTimeout,
     correctFloat: correctFloat,
+    createElement: createElement,
+    css: css,
     defined: defined,
     destroyObjectProperties: destroyObjectProperties,
     discardElement: discardElement,
     erase: erase,
+    error: error,
     extend: extend,
     extendClass: extendClass,
+    find: find,
     fireEvent: fireEvent,
+    format: format,
+    getMagnitude: getMagnitude,
+    getNestedProperty: getNestedProperty,
+    getStyle: getStyle,
+    inArray: inArray,
     isArray: isArray,
     isClass: isClass,
     isDOMElement: isDOMElement,
+    isFunction: isFunction,
     isNumber: isNumber,
     isObject: isObject,
     isString: isString,
+    merge: merge,
+    normalizeTickInterval: normalizeTickInterval,
     numberFormat: numberFormat,
     objectEach: objectEach,
     offset: offset,
@@ -2561,11 +2558,14 @@ var utils = {
     pInt: pInt,
     relativeLength: relativeLength,
     removeEvent: removeEvent,
+    seriesType: seriesType,
     setAnimation: setAnimation,
     splat: splat,
     stableSort: stableSort,
+    stop: stop,
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
+    uniqueKey: uniqueKey,
     wrap: wrap
 };
-export default utils;
+export default utilitiesModule;

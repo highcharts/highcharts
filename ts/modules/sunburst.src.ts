@@ -60,7 +60,7 @@ declare global {
             public alignDataLabel(
                 point: SunburstPoint,
                 dataLabel: SVGElement,
-                labelOptions: DataLabelsOptionsObject
+                labelOptions: DataLabelsOptions
             ): void;
         }
         interface SeriesTypesDictionary {
@@ -79,7 +79,7 @@ declare global {
             visible: boolean;
         }
         interface SunburstDataLabelsOptionsObject
-            extends DataLabelsOptionsObject {
+            extends DataLabelsOptions {
             allowOverlap?: boolean;
             rotationMode?: SunburstDataLabelsRotationValue;
         }
@@ -173,10 +173,13 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
+    error,
     extend,
     isNumber,
     isObject,
     isString,
+    merge,
+    seriesType,
     splat
 } = U;
 
@@ -195,10 +198,8 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
-    merge = H.merge,
     noop = H.noop,
     rad2deg = 180 / Math.PI,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     setTreeValues = mixinTreeSeries.setTreeValues,
     updateRootId = mixinTreeSeries.updateRootId;
@@ -1230,7 +1231,7 @@ var sunburstSeries = {
         // #10669 - verify if all nodes have unique ids
         series.data.forEach(function (child: Highcharts.SunburstPoint): void {
             if (nodeIds[child.id]) {
-                H.error(31, false, series.chart);
+                error(31, false, series.chart);
             }
             // map
             nodeIds[child.id] = true;
@@ -1244,7 +1245,7 @@ var sunburstSeries = {
         this: Highcharts.SunburstSeries,
         point: Highcharts.SunburstPoint,
         dataLabel: Highcharts.SVGElement,
-        labelOptions: Highcharts.DataLabelsOptionsObject): void {
+        labelOptions: Highcharts.DataLabelsOptions): void {
 
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
@@ -1291,9 +1292,6 @@ var sunburstSeries = {
                 opacity: 1
             };
             group.animate(attribs, this.options.animation);
-
-            // Delete this function to allow it only once
-            this.animate = null as any;
         }
     },
     utils: {

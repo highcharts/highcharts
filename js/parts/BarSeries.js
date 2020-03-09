@@ -8,10 +8,9 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
-import './Utilities.js';
+import U from './Utilities.js';
+var seriesType = U.seriesType;
 import './ColumnSeries.js';
-var seriesType = H.seriesType;
 /**
  * Bar series type.
  *

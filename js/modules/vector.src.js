@@ -12,8 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, pick = U.pick;
-var seriesType = H.seriesType;
+var animObject = U.animObject, arrayMax = U.arrayMax, pick = U.pick, seriesType = U.seriesType;
 /**
  * The vector series class.
  *
@@ -245,7 +244,6 @@ seriesType('vector', 'scatter'
             this.markerGroup.animate({
                 opacity: 1
             }, animObject(this.options.animation));
-            this.animate = null;
         }
     }
     /* eslint-enable valid-jsdoc */

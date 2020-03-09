@@ -6,10 +6,11 @@
 'use strict';
 import H from './../../parts/Globals.js';
 import U from './../../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
 import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable label class.
@@ -149,7 +150,7 @@ ControllableLabel.attrsMap = {
     borderRadius: 'r',
     padding: 'padding'
 };
-H.merge(true, ControllableLabel.prototype, controllableMixin, 
+merge(true, ControllableLabel.prototype, controllableMixin, 
 /** @lends Annotation.ControllableLabel# */ {
     /**
      * Translate the point of the label by deltaX and deltaY translations.
@@ -212,7 +213,7 @@ H.merge(true, ControllableLabel.prototype, controllableMixin,
         var options = this.options, text = this.text || options.format || options.text, label = this.graphic, point = this.points[0], show = false, anchor, attrs;
         label.attr({
             text: text ?
-                H.format(text, point.getLabelConfig(), this.annotation.chart) :
+                format(text, point.getLabelConfig(), this.annotation.chart) :
                 options.formatter.call(point, this)
         });
         anchor = this.anchor(point);
@@ -258,7 +259,7 @@ H.merge(true, ControllableLabel.prototype, controllableMixin,
             MockPoint.prototype.isInsidePane.call(point);
         if (showItem) {
             if (itemOptions.distance) {
-                itemPosition = H.Tooltip.prototype.getPosition.call({
+                itemPosition = Tooltip.prototype.getPosition.call({
                     chart: chart,
                     distance: pick(itemOptions.distance, 16)
                 }, item.width, item.height, {

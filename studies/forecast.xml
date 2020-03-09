@@ -10,16 +10,16 @@
   <credit>
     <!--For å bruke gratis værdata fra yr.no, MÅ du vise følgende tekst godt synlig på nettsiden din. Teksten skal være en lenke til URL-en som er spesifisert.-->
     <!--Les mer om vilkår for bruk av gratis værdata + retningslinjer på 
-http://om.yr.no/verdata/ -->
-    <link text="Værvarsel fra yr.no, levert av NRK og Meteorologisk institutt" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/" />
+https://om.yr.no/verdata/ -->
+    <link text="Værvarsel fra yr.no, levert av NRK og Meteorologisk institutt" url="https://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/" />
   </credit>
   <links>
-    <link id="xmlSource" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/varsel.xml" />
-    <link id="xmlSourceHourByHour" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/varsel_time_for_time.xml" />
-    <link id="overview" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/" />
-    <link id="hourByHour" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/time_for_time.html" />
-    <link id="longTermForecast" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/langtidsvarsel.html" />
-    <link id="radar" url="http://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/radar.html" />
+    <link id="xmlSource" url="https://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/varsel.xml" />
+    <link id="xmlSourceHourByHour" url="https://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/varsel_time_for_time.xml" />
+    <link id="overview" url="https://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/" />
+    <link id="hourByHour" url="https://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/time_for_time.html" />
+    <link id="longTermForecast" url="https://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/langtidsvarsel.html" />
+    <link id="radar" url="https://www.yr.no/sted/Norge/Sogn_og_Fjordane/Vik/Vik~137606/radar.html" />
   </links>
   <meta>
     <lastupdate>2012-10-04T06:45:57</lastupdate>

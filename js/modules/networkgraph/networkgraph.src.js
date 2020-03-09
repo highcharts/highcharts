@@ -16,7 +16,7 @@ import H from '../../parts/Globals.js';
  *
  * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -26,7 +26,7 @@ import H from '../../parts/Globals.js';
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  */ /**
 * The color of the node.
@@ -46,13 +46,15 @@ import H from '../../parts/Globals.js';
 * @type {string}
 * @since 7.0.0
 */
+''; // detach doclets above
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
-var defined = U.defined, pick = U.pick;
+var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
-var addEvent = H.addEvent, seriesType = H.seriesType, seriesTypes = H.seriesTypes, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
+var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private
  * @class
@@ -504,6 +506,7 @@ seriesType('networkgraph', 'line',
     /**
      * In networkgraph, series.points refers to links,
      * but series.nodes refers to actual points.
+     * @private
      */
     getPointsCollection: function () {
         return this.nodes || [];
@@ -714,10 +717,10 @@ seriesType('networkgraph', 'line',
         if (this.series.options.draggable &&
             !this.series.chart.styledMode) {
             addEvent(this, 'mouseOver', function () {
-                H.css(this.series.chart.container, { cursor: 'move' });
+                css(this.series.chart.container, { cursor: 'move' });
             });
             addEvent(this, 'mouseOut', function () {
-                H.css(this.series.chart.container, { cursor: 'default' });
+                css(this.series.chart.container, { cursor: 'default' });
             });
         }
         return this;

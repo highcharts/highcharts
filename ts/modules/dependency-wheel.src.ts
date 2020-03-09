@@ -70,7 +70,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    animObject
+    animObject,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -85,7 +86,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType<Highcharts.DependencyWheelSeries>(
+seriesType<Highcharts.DependencyWheelSeries>(
     'dependencywheel',
     'sankey',
     /**
@@ -391,7 +392,6 @@ H.seriesType<Highcharts.DependencyWheelSeries>(
                     }
                 }, this);
 
-                this.animate = null as any;
             }
         }
 

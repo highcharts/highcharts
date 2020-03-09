@@ -20,7 +20,7 @@ import H from '../parts/Globals.js';
  *
  * @callback Highcharts.TimelineDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
+ * @param {Highcharts.PointLabelObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {number|string|null|undefined}
@@ -28,7 +28,7 @@ import H from '../parts/Globals.js';
  */
 /**
  * @interface Highcharts.TimelineDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  */ /**
 * @name Highcharts.TimelineDataLabelsFormatterContextObject#key
 * @type {string|undefined}
@@ -39,9 +39,11 @@ import H from '../parts/Globals.js';
 * @name Highcharts.TimelineDataLabelsFormatterContextObject#series
 * @type {Highcharts.Series}
 */
+import Point from '../parts/Point.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
-var addEvent = H.addEvent, LegendSymbolMixin = H.LegendSymbolMixin, TrackerMixin = H.TrackerMixin, merge = H.merge, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
+var TrackerMixin = H.TrackerMixin, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * The timeline series type.
  *

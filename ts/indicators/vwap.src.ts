@@ -59,9 +59,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-
-var seriesType = H.seriesType;
+const {
+    error,
+    isArray,
+    seriesType
+} = U;
 
 /**
  * The Volume Weighted Average Price (VWAP) series type.
@@ -134,7 +136,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                H.error(
+                error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',

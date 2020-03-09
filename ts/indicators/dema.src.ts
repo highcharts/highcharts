@@ -62,7 +62,8 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    isArray
+    isArray,
+    seriesType
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
@@ -79,7 +80,7 @@ var EMAindicator = H.seriesTypes.ema,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.DEMAIndicator>(
+seriesType<Highcharts.DEMAIndicator>(
     'dema',
     'ema',
     /**

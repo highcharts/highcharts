@@ -9,9 +9,10 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
-import './Point.js';
-var Point = H.Point, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+import Point from './Point.js';
+import U from './Utilities.js';
+var seriesType = U.seriesType;
+var seriesTypes = H.seriesTypes;
 /**
  * The ohlc series type.
  *

@@ -129,17 +129,17 @@ declare global {
         }
         interface PackedBubbleDataLabelsFormatterCallbackFunction {
             (this: (
-                DataLabelsFormatterContextObject|
+                PointLabelObject|
                 PackedBubbleDataLabelsFormatterContextObject
             )): (number|string|null|undefined);
         }
         interface PackedBubbleDataLabelsFormatterContextObject
-            extends DataLabelsFormatterContextObject
+            extends PointLabelObject
         {
             point: PackedBubblePoint;
         }
         interface PackedBubbleDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             format?: string;
             formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
@@ -218,7 +218,7 @@ declare global {
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  *//**
  * The color of the node.
@@ -239,34 +239,30 @@ declare global {
  * @since 7.0.0
  */
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
 const {
-    color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
-const {
+    addEvent,
     clamp,
     defined,
     extend,
     extendClass,
+    fireEvent,
     isArray,
     isNumber,
-    pick
-} = utilitiesModule;
+    merge,
+    pick,
+    seriesType
+} = U;
 
 import '../parts/Axis.js';
-import '../parts/Color.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
 
-
-var seriesType = H.seriesType,
-    Series = H.Series,
-    Point = H.Point,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
+var Series = H.Series,
     Chart = H.Chart,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
@@ -635,7 +631,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              */
             formatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): (number|null) {
@@ -659,7 +655,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              */
             parentNodeFormatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): string {
@@ -947,7 +943,13 @@ seriesType<Highcharts.PackedBubbleSeries>(
                         });
                     }
                 });
-                series.chart.hideOverlappingLabels(dataLabels);
+
+                // Only hide overlapping dataLabels for layouts that
+                // use simulation. Spiral packedbubble don't need
+                // additional dataLabel hiding on every simulation step
+                if (series.options.useSimulation) {
+                    series.chart.hideOverlappingLabels(dataLabels);
+                }
             }
         },
         // Needed because of z-indexing issue if point is added in series.group
@@ -1120,7 +1122,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             }
 
             this.calculateParentRadius();
-            parentAttribs = H.merge({
+            parentAttribs = merge({
                 x: (series.parentNode as any).plotX -
                     (series.parentNodeRadius as any),
                 y: (series.parentNode as any).plotY -
@@ -1210,7 +1212,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 layoutOptions = series.options.layoutAlgorithm,
                 graphLayoutsStorage = series.chart.graphLayoutsStorage,
                 graphLayoutsLookup = series.chart.graphLayoutsLookup,
-                parentNodeOptions = H.merge(
+                parentNodeOptions = merge(
                     layoutOptions,
                     (layoutOptions as any).parentNodeOptions,
                     {
@@ -1825,7 +1827,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                                 (point.marker as any).radius
                             );
                             if (distanceR < 0) {
-                                node.series.addPoint(H.merge(point.options, {
+                                node.series.addPoint(merge(point.options, {
                                     plotX: point.plotX,
                                     plotY: point.plotY
                                 }), false);
@@ -1898,7 +1900,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
  * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
- * @product   highcharts highstock
+ * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble
  */

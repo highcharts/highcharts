@@ -10,14 +10,15 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, erase = U.erase, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
-var addEvent = H.addEvent, argsToArray = function (args) {
+var addEvent = U.addEvent, defined = U.defined, erase = U.erase, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
+var argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
 }, dateFormat = H.dateFormat, isObject = function (x) {
     // Always use strict mode
     return U.isObject(x, true);
-}, merge = H.merge, Chart = H.Chart, Axis = H.Axis, Tick = H.Tick;
+}, Chart = H.Chart, Axis = H.Axis;
 var applyGridOptions = function applyGridOptions(axis) {
     var options = axis.options;
     // Center-align by default
@@ -170,15 +171,19 @@ Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
     });
     return dimensions;
 };
-// Add custom date formats
+// Adds week date format
 H.dateFormats.W = function (timestamp) {
-    var d = new Date(timestamp), yearStart, weekNo;
-    d.setHours(0, 0, 0, 0);
-    d.setDate(d.getDate() - (d.getDay() || 7));
-    yearStart = new Date(d.getFullYear(), 0, 1);
-    weekNo =
-        Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
-    return weekNo;
+    var d = new this.Date(timestamp);
+    var firstDay = (this.get('Day', d) + 6) % 7;
+    var thursday = new this.Date(d.valueOf());
+    this.set('Date', thursday, this.get('Date', d) - firstDay + 3);
+    var firstThursday = new this.Date(this.get('FullYear', thursday), 0, 1);
+    if (this.get('Day', firstThursday) !== 4) {
+        this.set('Month', d, 0);
+        this.set('Date', d, 1 + (11 - this.get('Day', firstThursday)) % 7);
+    }
+    return (1 +
+        Math.floor((thursday.valueOf() - firstThursday.valueOf()) / 604800000)).toString();
 };
 // First letter of the day of the week, e.g. 'M' for 'Monday'.
 H.dateFormats.E = function (timestamp) {
@@ -629,7 +634,7 @@ var onGridAxisAfterInit = function onGridAxisAfterInit() {
         wrap(axis, 'labelFormatter', function (proceed) {
             var axis = this.axis, tickPos = axis.tickPositions, value = this.value, series = (axis.isLinked ?
                 axis.linkedParent :
-                axis).series[0], isFirst = value === tickPos[0], isLast = value === tickPos[tickPos.length - 1], point = series && H.find(series.options.data, function (p) {
+                axis).series[0], isFirst = value === tickPos[0], isLast = value === tickPos[tickPos.length - 1], point = series && find(series.options.data, function (p) {
                 return p[axis.isXAxis ? 'x' : 'y'] === value;
             });
             // Make additional properties available for the

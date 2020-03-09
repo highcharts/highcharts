@@ -92,7 +92,7 @@ options.series.push({
 ```
     
 
-*   Another fact that can come in handy when working on JavaScript objects, is that the dot notation and square bracket notation are equivalent, so you can access all members by their string names. Which in practice means that `options.renderTo` is always the same as: `options['renderTo']`
+*   Another fact that can come in handy when working on JavaScript objects, is that the dot notation and square bracket notation are equivalent, so you can access all members by their string names. Which in practice means that `options.charts.renderTo` is always the same as: `options['charts']['renderTo']`
 
 Global Options
 --------------

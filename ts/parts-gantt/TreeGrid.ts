@@ -71,29 +71,30 @@ declare global {
     }
 }
 
+import mixinTreeSeries from '../mixins/tree-series.js';
+import Tick from '../parts/Tick.js';
+import Tree from './Tree.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
+    fireEvent,
     extend,
     isNumber,
     isString,
+    merge,
     pick,
     wrap
 } = U;
 
 import './GridAxis.js';
-import Tree from './Tree.js';
-import mixinTreeSeries from '../mixins/tree-series.js';
 import '../modules/broken-axis.src.js';
 
-var addEvent = H.addEvent,
-    argsToArray = function (args: IArguments): Array<any> {
+var argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
-    find = H.find,
-    fireEvent = H.fireEvent,
+    find = U.find,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
-    merge = H.merge,
     isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
@@ -102,7 +103,7 @@ var addEvent = H.addEvent,
         return U.isObject(x, true);
     },
     GridAxis: Highcharts.TreeGridAxis = H.Axis as any,
-    GridAxisTick: Highcharts.TreeGridTick = H.Tick as any;
+    GridAxisTick: Highcharts.TreeGridTick = Tick as any;
 
 var override = function<T> (
     obj: T,
@@ -686,7 +687,7 @@ var onBeforeRender = function (e: Event): void {
                 // its dependency on axis.max.
                 if (e.type === 'beforeRender') {
                     removeFoundExtremesEvent =
-                        H.addEvent(axis, 'foundExtremes', function (): void {
+                        addEvent(axis, 'foundExtremes', function (): void {
                             treeGrid.collapsedNodes.forEach(function (
                                 node: any
                             ): void {
@@ -1074,16 +1075,16 @@ override(GridAxisTick.prototype, {
             ): void {
                 if (!object.attachedTreeGridEvents) {
                     // On hover
-                    H.addEvent(object.element, 'mouseover', function (): void {
+                    addEvent(object.element, 'mouseover', function (): void {
                         onTickHover(label);
                     });
 
                     // On hover out
-                    H.addEvent(object.element, 'mouseout', function (): void {
+                    addEvent(object.element, 'mouseout', function (): void {
                         onTickHoverExit(label, labelOptions);
                     });
 
-                    H.addEvent(object.element, 'click', function (): void {
+                    addEvent(object.element, 'click', function (): void {
                         tick.toggleCollapse();
                     });
                     object.attachedTreeGridEvents = true;

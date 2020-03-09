@@ -21,7 +21,7 @@ declare global {
         class Point {
             public constructor();
             public color?: ColorType;
-            public colorIndex: number;
+            public colorIndex?: number;
             public formatPrefix: string;
             public id: string;
             public isNew?: boolean;
@@ -55,6 +55,7 @@ declare global {
                 defaultFunction?: (EventCallbackFunction<Point>|Function)
             ): void;
             public getLabelConfig(): PointLabelObject;
+            public getNestedProperty(key: string): unknown;
             public getZone(): SeriesZonesOptions;
             public hasNewShapeType (this: Point): boolean|undefined;
             public init(
@@ -94,7 +95,7 @@ declare global {
             x?: string;
             y?: (number|null);
             color?: ColorType;
-            colorIndex: number;
+            colorIndex?: number;
             key?: string;
             series: Series;
             point: Point;
@@ -124,6 +125,7 @@ declare global {
             className?: string;
             color?: ColorType;
             colorIndex?: number;
+            custom?: Dictionary<any>;
             drilldown?: string;
             events?: PointEventsOptionsObject;
             id?: string;
@@ -241,11 +243,12 @@ declare global {
  * @name Highcharts.PointLabelObject#percentage
  * @type {number}
  *//**
- * The related point.
+ * The related point. The point name, if defined, is available through
+ * `this.point.name`.
  * @name Highcharts.PointLabelObject#point
  * @type {Highcharts.Point}
  *//**
- * The related series.
+ * The related series. The series name is available through `this.series.name`.
  * @name Highcharts.PointLabelObject#series
  * @type {Highcharts.Series}
  *//**
@@ -351,24 +354,27 @@ declare global {
  * @type {Highcharts.PointOptionsType}
  */
 
+''; // detach doclet above
+
 import U from './Utilities.js';
 const {
     animObject,
     defined,
     erase,
     extend,
+    format,
+    getNestedProperty,
     isArray,
     isNumber,
     isObject,
     syncTimeout,
     pick,
-    removeEvent
+    removeEvent,
+    uniqueKey
 } = U;
 
 var H = Highcharts,
-    fireEvent = H.fireEvent,
-    format = H.format,
-    uniqueKey = H.uniqueKey;
+    fireEvent = H.fireEvent;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -407,7 +413,7 @@ class Point {
      * @name Highcharts.Point#colorIndex
      * @type {number}
      */
-    public colorIndex: number = 0;
+    public colorIndex?: number = void 0;
 
     public dataLabels?: Array<Highcharts.SVGElement>;
 
@@ -609,7 +615,7 @@ class Point {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = (point as any)[pointValKey];
+            point.y = Point.prototype.getNestedProperty.call(point, pointValKey) as (number|null|undefined);
         }
         point.isNull = pick(
             point.isValid && !point.isValid(),
@@ -673,18 +679,6 @@ class Point {
          * @private
          */
         function destroyPoint(): void {
-            if (hoverPoints) {
-                point.setState();
-                erase(hoverPoints, point);
-                if (!hoverPoints.length) {
-                    chart.hoverPoints = null as any;
-                }
-
-            }
-            if (point === chart.hoverPoint) {
-                point.onMouseOut();
-            }
-
             // Remove all events and elements
             if (point.graphic || point.dataLabel || point.dataLabels) {
                 removeEvent(point);
@@ -698,6 +692,18 @@ class Point {
 
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
+        }
+
+        if (hoverPoints) {
+            point.setState();
+            erase(hoverPoints, point);
+            if (!hoverPoints.length) {
+                chart.hoverPoints = null as any;
+            }
+
+        }
+        if (point === chart.hoverPoint) {
+            point.onMouseOut();
         }
 
         // Remove properties after animation
@@ -884,6 +890,20 @@ class Point {
     }
 
     /**
+     * Returns the value of the point property for a given value.
+     * @private
+     */
+    public getNestedProperty(key: string): unknown {
+        if (!key) {
+            return;
+        }
+        if (key.indexOf('custom.') === 0) {
+            return getNestedProperty(key, this.options);
+        }
+        return (this as any)[key];
+    }
+
+    /**
      * In a series with `zones`, return the zone that the point belongs to.
      *
      * @function Highcharts.Point#getZone
@@ -1013,7 +1033,7 @@ class Point {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
-                        H.Point.prototype.setNestedProperty(
+                        Point.prototype.setNestedProperty(
                             ret, (options as any)[i], pointArrayMap[j]
                         );
                     } else {
@@ -1181,8 +1201,4 @@ class Point {
 
 H.Point = Point as any;
 
-const pointModule = {
-    Point
-};
-
-export default pointModule;
+export default H.Point;

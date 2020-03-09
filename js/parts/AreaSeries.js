@@ -9,13 +9,14 @@
  * */
 'use strict';
 import H from './Globals.js';
+import Color from './Color.js';
+var color = Color.parse;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
-var objectEach = U.objectEach, pick = U.pick;
-import './Color.js';
-import './Legend.js';
+var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import './Series.js';
 import './Options.js';
-var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, Series = H.Series, seriesType = H.seriesType;
+var Series = H.Series;
 /**
  * Area series type.
  *
@@ -149,6 +150,7 @@ seriesType('area', 'line',
      * @sample {highcharts} highcharts/plotoptions/area-threshold-infinity/
      *         A threshold of Infinity
      *
+     * @type    {number|null}
      * @since   2.0
      * @product highcharts highstock
      */

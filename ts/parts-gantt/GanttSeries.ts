@@ -81,7 +81,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isNumber,
+    merge,
     pick,
+    seriesType,
     splat
 } = U;
 
@@ -93,8 +95,6 @@ import './Pathfinder.js';
 import '../modules/xrange.src.js';
 
 var dateFormat = H.dateFormat,
-    merge = H.merge,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     Series = H.Series,
     parent = seriesTypes.xrange;

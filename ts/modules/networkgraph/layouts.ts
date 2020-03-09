@@ -143,9 +143,11 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
+    addEvent,
     clamp,
     defined,
     extend,
+    isFunction,
     pick,
     setAnimation
 } = U;
@@ -154,8 +156,7 @@ const {
 import './integrations.js';
 import './QuadTree.js';
 
-var addEvent = H.addEvent,
-    Chart = H.Chart;
+var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -390,7 +391,7 @@ extend(
         ): void {
             var initialPositions = this.options.initialPositions;
 
-            if (H.isFunction(initialPositions)) {
+            if (isFunction(initialPositions)) {
                 initialPositions.call(this);
                 this.nodes.forEach(function (node: Highcharts.Point): void {
                     if (!defined(node.prevX)) {

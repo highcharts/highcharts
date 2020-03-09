@@ -19,7 +19,8 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
         inputGroupX,
         inputGroupWidth,
         buttonGroupX,
-        buttonGroupWidth;
+        buttonGroupWidth,
+        selectorGroupBBox;
 
     for (var i = 0; i < align.length; i++) {
         chart = Highcharts.stockChart('container', {
@@ -60,6 +61,75 @@ QUnit.test('Inputs and buttons aligning.', function (assert) {
             'rangeSelector'
         );
     }
+
+    chart = Highcharts.stockChart('container', {
+        chart: {
+            spacing: [10, 21, 10, 52]
+        },
+        yAxis: {
+            title: {
+                text: 'some y title'
+            },
+            opposite: false
+        },
+        rangeSelector: {
+            enabled: true,
+            inputEnabled: false,
+            buttonPosition: {
+                align: 'right'
+            }
+        },
+        series: [{
+            data: [10, 30, 20, 40, 30]
+        }],
+        exporting: {
+            enabled: false
+        }
+    });
+
+    selectorGroupBBox = chart.rangeSelector.group.getBBox();
+
+    assert.ok(
+        chart.plotWidth - selectorGroupBBox.width + chart.plotLeft - selectorGroupBBox.x <= 1,
+        'rangeSelector buttons should be right aligned correctly (#13014).'
+    );
+
+    chart.update({
+        rangeSelector: {
+            enabled: true,
+            inputEnabled: false,
+            buttonPosition: {
+                align: 'center'
+            }
+        }
+    });
+
+    selectorGroupBBox = chart.rangeSelector.group.getBBox();
+
+    assert.ok(
+        (chart.plotWidth - selectorGroupBBox.width) / 2 + chart.plotLeft - selectorGroupBBox.x <= 1,
+        'rangeSelector buttons should be centered correctly (#13014).'
+    );
+
+    chart.update({
+        rangeSelector: {
+            enabled: true,
+            inputEnabled: false,
+            buttonPosition: {
+                align: 'right'
+            }
+        },
+        exporting: {
+            enabled: true
+        }
+    });
+
+    selectorGroupBBox = chart.rangeSelector.group.getBBox();
+
+    assert.ok(
+        chart.plotWidth - selectorGroupBBox.width + chart.plotLeft - 40 - selectorGroupBBox.x <= 1,
+        'rangeSelector buttons should be right aligned correctly when exporting enabled (#13014).'
+    );
 });
 
 QUnit.test('Aligning after updates.', function (assert) {

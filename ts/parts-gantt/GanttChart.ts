@@ -32,13 +32,15 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray,
-    splat = U.splat;
+const {
+    isArray,
+    merge,
+    splat
+} = U;
 
 import './GanttSeries.js';
 
-var merge = H.merge,
-    Chart = H.Chart;
+var Chart = H.Chart;
 
 /**
  * Factory function for Gantt charts.

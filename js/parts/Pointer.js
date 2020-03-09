@@ -93,11 +93,12 @@ import Highcharts from './Globals.js';
 * @name Highcharts.SelectEventObject#yAxis
 * @type {Array<Highcharts.SelectDataObject>}
 */
-import utilitiesModule from './Utilities.js';
-var addEvent = utilitiesModule.addEvent, attr = utilitiesModule.attr, defined = utilitiesModule.defined, extend = utilitiesModule.extend, fireEvent = utilitiesModule.fireEvent, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, objectEach = utilitiesModule.objectEach, offset = utilitiesModule.offset, pick = utilitiesModule.pick, splat = utilitiesModule.splat;
-import './Tooltip.js';
-import './Color.js';
-var H = Highcharts, charts = H.charts, color = H.color, css = H.css, find = H.find, noop = H.noop, Tooltip = H.Tooltip;
+import U from './Utilities.js';
+var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
+import Tooltip from './Tooltip.js';
+import Color from './Color.js';
+var color = Color.parse;
+var H = Highcharts, charts = H.charts, noop = H.noop;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one
@@ -106,6 +107,13 @@ var H = Highcharts, charts = H.charts, color = H.color, css = H.css, find = H.fi
  *
  * @class
  * @name Highcharts.Pointer
+ *
+ * @param {Highcharts.Chart} chart
+ * The chart instance.
+ *
+ * @param {Highcharts.Options} options
+ * The root options object. The pointer uses options from the chart and
+ * tooltip structures.
  */
 var Pointer = /** @class */ (function () {
     /* *
@@ -113,16 +121,6 @@ var Pointer = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * Initiates mouse and touch tracker object.
-     *
-     * @param {Highcharts.Chart} chart
-     * The chart instance.
-     *
-     * @param {Highcharts.Options} options
-     * The root options object. The pointer uses options from the chart and
-     * tooltip structures.
-     */
     function Pointer(chart, options) {
         this.lastValidTouch = {};
         this.pinchDown = [];
@@ -412,7 +410,17 @@ var Pointer = /** @class */ (function () {
      *         The point closest to given coordinates.
      */
     Pointer.prototype.findNearestKDPoint = function (series, shared, e) {
-        var closest, sort = function (p1, p2) {
+        var chart = this.chart;
+        var hoverPoint = chart.hoverPoint;
+        var tooltip = chart.tooltip;
+        if (hoverPoint &&
+            tooltip &&
+            tooltip.isStickyOnContact()) {
+            return hoverPoint;
+        }
+        var closest;
+        /** @private */
+        function sort(p1, p2) {
             var isCloserX = p1.distX - p2.distX, isCloser = p1.dist - p2.dist, isAbove = (p2.series.group && p2.series.group.zIndex) -
                 (p1.series.group && p1.series.group.zIndex), result;
             // We have two points which are not in the same place on xAxis
@@ -436,7 +444,7 @@ var Pointer = /** @class */ (function () {
                         1;
             }
             return result;
-        };
+        }
         series.forEach(function (s) {
             var noSharedTooltip = s.noSharedTooltip && shared, compareX = (!noSharedTooltip &&
                 s.options.findNearestPointBy.indexOf('y') < 0), point = s.searchPoint(e, compareX);
@@ -487,10 +495,8 @@ var Pointer = /** @class */ (function () {
      *         The offset of the chart container within the page
      */
     Pointer.prototype.getChartPosition = function () {
-        var chart = this.chart;
-        var container = chart.scrollingContainer || chart.container;
         return (this.chartPosition ||
-            (this.chartPosition = offset(container)));
+            (this.chartPosition = offset(this.chart.container)));
     };
     /**
      * Get the click position in terms of axis values.
@@ -636,7 +642,9 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onTrackerMouseOut = function (e) {
-        var series = this.chart.hoverSeries, relatedTarget = e.relatedTarget || e.toElement;
+        var chart = this.chart;
+        var series = chart.hoverSeries;
+        var relatedTarget = e.relatedTarget || e.toElement;
         this.isDirectTouch = false;
         if (series &&
             relatedTarget &&
@@ -824,7 +832,8 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.onContainerMouseLeave = function (e) {
         var chart = charts[H.hoverChartIndex];
         // #4886, MS Touch end fires mouseleave but with no related target
-        if (chart && (e.relatedTarget || e.toElement)) {
+        if (chart &&
+            (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
@@ -860,9 +869,9 @@ var Pointer = /** @class */ (function () {
             this.drag(e);
         }
         // Show the tooltip and run mouse over events (#977)
-        if ((this.inClass(e.target, 'highcharts-tracker') ||
-            chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) &&
-            !chart.openMenu) {
+        if (!chart.openMenu &&
+            (this.inClass(e.target, 'highcharts-tracker') ||
+                chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop))) {
             this.runPointActions(e);
         }
     };
@@ -915,12 +924,16 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onDocumentMouseMove = function (e) {
-        var chart = this.chart, chartPosition = this.chartPosition;
+        var chart = this.chart;
+        var chartPosition = this.chartPosition;
+        var tooltip = chart.tooltip;
         e = this.normalize(e, chartPosition);
         // If we're outside, hide the tooltip
         if (chartPosition &&
-            !this.inClass(e.target, 'highcharts-tracker') &&
-            !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop)) {
+            (!tooltip ||
+                !tooltip.isStickyOnContact()) &&
+            !chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop) &&
+            !this.inClass(e.target, 'highcharts-tracker')) {
             this.reset();
         }
     };
@@ -1281,7 +1294,7 @@ var Pointer = /** @class */ (function () {
              */
             chart.hoverPoint = hoverPoint;
             // Draw tooltip if necessary
-            if (tooltip && !chart.polar) {
+            if (tooltip) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
             }
             // Update positions (regardless of kdpoint or hoverPoint)
@@ -1303,7 +1316,7 @@ var Pointer = /** @class */ (function () {
         chart.axes.forEach(function drawAxisCrosshair(axis) {
             var snap = pick(axis.crosshair.snap, true), point = !snap ?
                 void 0 :
-                H.find(points, function (p) {
+                find(points, function (p) {
                     return p.series[axis.coll] === axis;
                 });
             // Axis has snapping crosshairs, and one of the hover points belongs

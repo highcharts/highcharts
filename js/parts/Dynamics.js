@@ -9,14 +9,14 @@
  * */
 'use strict';
 import H from './Globals.js';
+import Point from './Point.js';
 import Time from './Time.js';
-import utilitiesModule from './Utilities.js';
-var addEvent = utilitiesModule.addEvent, defined = utilitiesModule.defined, erase = utilitiesModule.erase, extend = utilitiesModule.extend, fireEvent = utilitiesModule.fireEvent, isArray = utilitiesModule.isArray, isNumber = utilitiesModule.isNumber, isObject = utilitiesModule.isObject, isString = utilitiesModule.isString, objectEach = utilitiesModule.objectEach, pick = utilitiesModule.pick, relativeLength = utilitiesModule.relativeLength, setAnimation = utilitiesModule.setAnimation, splat = utilitiesModule.splat;
+import U from './Utilities.js';
+var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
 import './Axis.js';
 import './Chart.js';
-import './Point.js';
 import './Series.js';
-var animate = H.animate, Axis = H.Axis, Chart = H.Chart, createElement = H.createElement, css = H.css, merge = H.merge, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
+var Axis = H.Axis, Chart = H.Chart, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -1114,7 +1114,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             extend(series, seriesTypes[newType || initialType].prototype);
         }
         else {
-            H.error(17, true, chart, { missingModuleFor: (newType || initialType) });
+            error(17, true, chart, { missingModuleFor: (newType || initialType) });
         }
         // Re-register groups (#3094) and other preserved properties
         preserve.forEach(function (prop) {

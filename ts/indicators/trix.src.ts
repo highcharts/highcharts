@@ -51,7 +51,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    seriesType
 } = U;
 
 import requiredIndicator from '../mixins/indicator-required.js';
@@ -67,7 +68,7 @@ var TEMA = H.seriesTypes.tema;
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.TRIXIndicator>(
+seriesType<Highcharts.TRIXIndicator>(
     'trix',
     'tema',
     /**

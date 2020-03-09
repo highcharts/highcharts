@@ -1,9 +1,7 @@
 Highcharts.chart('container', {
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                return point.name + ': ' + point.longDescription;
-            }
+            valueDescriptionFormat: '{point.name}: {point.longDescription}.'
         }
     },
     series: [{

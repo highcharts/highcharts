@@ -95,3 +95,98 @@ QUnit.test('Data sorting ', function (assert) {
     );
 
 });
+
+QUnit.test('Data sorting with sortKey', function (assert) {
+
+    Highcharts.chart('container', {
+        series: [{
+            type: 'column',
+            data: [{
+                custom: {
+                    myValue: 'b'
+                },
+                y: 3
+            }, {
+                custom: {
+                    myValue: 'c'
+                },
+                y: 1
+            }, {
+                custom: {
+                    myValue: 'a'
+                },
+                y: 2
+            }],
+            dataSorting: {
+                enabled: true
+            }
+        }]
+    }, function (chart) {
+
+        assert.deepEqual(
+            chart.series[0].xData,
+            [0, 2, 1],
+            "Data should be sorted by y value."
+        );
+
+        chart.update({
+            series: [{
+                data: chart.series[0].data,
+                dataSorting: {
+                    sortKey: 'custom.myValue'
+                }
+            }]
+        });
+
+        assert.deepEqual(
+            chart.series[0].xData,
+            [1, 0, 2],
+            "Data should be sorted by custom.myValue value."
+        );
+
+    });
+});
+
+QUnit.test('Data sorting with drilldown', function (assert) {
+
+    Highcharts.chart('container', {
+        chart: {
+            type: "bar",
+            animation: true
+        },
+        series: [{
+            dataSorting: {
+                enabled: true
+            },
+            data: [{
+                y: 3,
+                drilldown: "A"
+            }]
+        }],
+        drilldown: {
+            series: [{
+                id: "A",
+                data: [
+                    ["AAA", 1]
+                ]
+            }]
+        }
+    }, function (chart) {
+
+        var point = chart.series[0].points[0];
+
+        point.onMouseOver();
+        point.doDrilldown();
+
+        chart.drillUp();
+        point = chart.series[0].points[0];
+
+        point.onMouseOver();
+        point.doDrilldown();
+
+        assert.ok(
+            chart.series[0].points[0],
+            'Axis labels group should be transform rotation by 90 deg.'
+        );
+    });
+});

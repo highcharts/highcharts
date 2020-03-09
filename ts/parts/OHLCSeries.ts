@@ -59,13 +59,13 @@ declare global {
     }
 }
 
+import Point from './Point.js';
+import U from './Utilities.js';
+const {
+    seriesType
+} = U;
 
-import './Utilities.js';
-import './Point.js';
-
-var Point = H.Point,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * The ohlc series type.

@@ -8,12 +8,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat;
+var correctFloat = U.correctFloat, merge = U.merge, seriesType = U.seriesType;
 import '../parts/Options.js';
 import derivedSeriesMixin from '../mixins/derived-series.js';
-var seriesType = H.seriesType, merge = H.merge;
 /**
  * The pareto series type.
  *

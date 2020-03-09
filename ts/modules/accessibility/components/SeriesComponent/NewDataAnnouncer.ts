@@ -17,9 +17,6 @@ import U from '../../../../parts/Utilities.js';
 var extend = U.extend,
     defined = U.defined;
 
-import HTMLUtilities from '../../utils/htmlUtilities.js';
-var visuallyHideElement = HTMLUtilities.visuallyHideElement;
-
 import ChartUtilities from '../../utils/chartUtilities.js';
 var getChartTitle = ChartUtilities.getChartTitle;
 
@@ -29,8 +26,8 @@ var defaultPointDescriptionFormatter = SeriesDescriber
     defaultSeriesDescriptionFormatter = SeriesDescriber
         .defaultSeriesDescriptionFormatter;
 
+import Announcer from '../../utils/Announcer.js';
 import EventProvider from '../../utils/EventProvider.js';
-import DOMElementProvider from '../../utils/DOMElementProvider.js';
 
 
 /**
@@ -41,18 +38,15 @@ declare global {
     namespace Highcharts {
         class NewDataAnnouncer {
             public constructor(chart: AccessibilityChart);
-            public announceRegion: HTMLDOMElement;
+            public announcer: Announcer;
             public chart: AccessibilityChart;
-            public clearAnnouncementContainerTimer?: number;
             public dirty: NewDataAnnouncerDirtyObject;
-            public domElementProvider: DOMElementProvider;
             public eventProvider: EventProvider;
             public lastAnnouncementTime: number;
             public queuedAnnouncement?: (
                 NewDataAnnouncerQueuedAnnouncementObject
             );
             public queuedAnnouncementTimer?: number;
-            public addAnnounceRegion(): HTMLDOMElement;
             public addEventListeners(): void;
             public announceDirtyData(): void;
             public buildAnnouncementMessage(
@@ -62,7 +56,6 @@ declare global {
             ): string;
             public destroy(): void;
             public init(): void;
-            public liveRegionSpeak(message: string): void;
             public onPointAdded(point: Point): void;
             public onSeriesAdded(series: Series): void;
             public onSeriesUpdatedData(series: Series): void;
@@ -152,52 +145,31 @@ extend(NewDataAnnouncer.prototype, {
 
     /**
      * Initialize the new data announcer.
+     * @private
      */
     init: function (this: Highcharts.NewDataAnnouncer): void {
+        const chart = this.chart;
+        const announceOptions = (chart.options.accessibility as any).announceNewData;
+        const announceType = announceOptions.interruptUser ? 'assertive' : 'polite';
+
         this.lastAnnouncementTime = 0;
         this.dirty = {
             allSeries: {}
         };
 
         this.eventProvider = new EventProvider();
-        this.domElementProvider = new DOMElementProvider();
-
-        this.announceRegion = this.addAnnounceRegion();
+        this.announcer = new Announcer(chart, announceType);
         this.addEventListeners();
     },
 
 
     /**
      * Remove traces of announcer.
+     * @private
      */
     destroy: function (this: Highcharts.NewDataAnnouncer): void {
         this.eventProvider.removeAddedEvents();
-        this.domElementProvider.destroyCreatedElements();
-    },
-
-
-    /**
-     * Add the announcement live region to the DOM.
-     * @private
-     */
-    addAnnounceRegion: function (
-        this: Highcharts.NewDataAnnouncer
-    ): Highcharts.HTMLDOMElement {
-        var chart = this.chart,
-            div = this.domElementProvider.createElement('div'),
-            announceOptions = (
-                (chart.options.accessibility as any).announceNewData
-            );
-
-        div.setAttribute('aria-hidden', false);
-        div.setAttribute(
-            'aria-live', announceOptions.interruptUser ? 'assertive' : 'polite'
-        );
-
-        visuallyHideElement(div);
-        chart.renderTo.insertBefore(div, chart.renderTo.firstChild);
-
-        return div;
+        this.announcer.destroy();
     },
 
 
@@ -347,27 +319,26 @@ extend(NewDataAnnouncer.prototype, {
         newSeries?: Highcharts.Series,
         newPoint?: Highcharts.Point
     ): void {
-        var chart = this.chart,
-            annOptions: Highcharts.AccessibilityAnnounceNewDataOptions = (
-                (chart.options.accessibility as any).announceNewData
-            );
+        const chart = this.chart;
+        const annOptions: Highcharts.AccessibilityAnnounceNewDataOptions =
+            (chart.options.accessibility as any).announceNewData;
 
         if (annOptions.enabled) {
-            var announcer = this,
-                now = +new Date(),
-                dTime = now - this.lastAnnouncementTime,
-                time = Math.max(
-                    0,
-                    (annOptions.minAnnounceInterval as any) - dTime
-                ),
-                // Add series from previously queued announcement.
-                allSeries = getUniqueSeries(
-                    this.queuedAnnouncement && this.queuedAnnouncement.series,
-                    dirtySeries
-                );
+            const now = +new Date();
+            const dTime = now - this.lastAnnouncementTime;
+            const time = Math.max(
+                0,
+                (annOptions.minAnnounceInterval as any) - dTime
+            );
+
+            // Add series from previously queued announcement.
+            const allSeries = getUniqueSeries(
+                this.queuedAnnouncement && this.queuedAnnouncement.series,
+                dirtySeries
+            );
 
             // Build message and announce
-            var message = this.buildAnnouncementMessage(
+            const message = this.buildAnnouncementMessage(
                 allSeries, newSeries, newPoint
             );
             if (message) {
@@ -384,51 +355,18 @@ extend(NewDataAnnouncer.prototype, {
                 };
 
                 // Queue the announcement
-                announcer.queuedAnnouncementTimer = setTimeout(
-                    function (): void {
-                        if (announcer && announcer.announceRegion) {
-                            announcer.lastAnnouncementTime = +new Date();
-                            announcer.liveRegionSpeak(
-                                (announcer.queuedAnnouncement as any).message
-                            );
-                            delete announcer.queuedAnnouncement;
-                            delete announcer.queuedAnnouncementTimer;
-                        }
-                    },
-                    time
-                );
+                this.queuedAnnouncementTimer = setTimeout((): void => {
+                    if (this && this.announcer) {
+                        this.lastAnnouncementTime = +new Date();
+                        this.announcer.announce(
+                            (this.queuedAnnouncement as any).message
+                        );
+                        delete this.queuedAnnouncement;
+                        delete this.queuedAnnouncementTimer;
+                    }
+                }, time);
             }
         }
-    },
-
-
-    /**
-     * Speak a message using the announcer live region.
-     * @private
-     * @param {string} message
-     */
-    liveRegionSpeak: function (
-        this: Highcharts.NewDataAnnouncer,
-        message: string
-    ): void {
-        var announcer = this;
-
-        this.announceRegion.innerHTML = message;
-
-        // Delete contents after a little while to avoid user finding the live
-        // region in the DOM.
-        if (this.clearAnnouncementContainerTimer) {
-            clearTimeout(
-                this.clearAnnouncementContainerTimer
-            );
-        }
-        this.clearAnnouncementContainerTimer = setTimeout(
-            function (): void {
-                announcer.announceRegion.innerHTML = '';
-                delete announcer.clearAnnouncementContainerTimer;
-            },
-            1000
-        );
     },
 
 

@@ -102,7 +102,7 @@ H.colorSeriesMixin = {
             colorKey = this.colorKey;
 
         points.forEach(function (point: Highcharts.ColorPoint): void {
-            var value = (point as any)[colorKey],
+            var value = point.getNestedProperty(colorKey) as number,
                 color;
 
             color = point.options.color ||

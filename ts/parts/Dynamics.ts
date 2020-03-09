@@ -118,37 +118,37 @@ declare global {
     }
 }
 
+import Point from './Point.js';
 import Time from './Time.js';
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
+    animate,
+    createElement,
+    css,
     defined,
     erase,
+    error,
     extend,
     fireEvent,
     isArray,
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
     relativeLength,
     setAnimation,
     splat
-} = utilitiesModule;
+} = U;
 
 import './Axis.js';
 import './Chart.js';
-import './Point.js';
 import './Series.js';
 
-var animate = H.animate,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
-    createElement = H.createElement,
-    css = H.css,
-    merge = H.merge,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -1578,7 +1578,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
         } else {
-            H.error(
+            error(
                 17,
                 true,
                 chart,

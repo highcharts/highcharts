@@ -3,6 +3,14 @@ import DrilldownModule from 'highcharts/modules/drilldown';
 
 DrilldownModule(Highcharts);
 
+test_drillUp();
+test_labelStyling();
+
+function test_drillUp() {
+    const chart = Highcharts.chart('container', {});
+    chart.drillUp();// #13037
+}
+
 function test_labelStyling() {
     enum relativeToValues {
         plotBox = 'plotBox',

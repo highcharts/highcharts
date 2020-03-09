@@ -49,13 +49,12 @@ declare global {
 
 import U from './Utilities.js';
 const {
-    pick
+    pick,
+    seriesType
 } = U;
 
 import './Options.js';
 import './Series.js';
-
-var seriesType = H.seriesType;
 
 /**
  * Spline series type.

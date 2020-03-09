@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick, wrap = U.wrap;
+var css = U.css, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
 /**
  * Layout value for the child nodes in an organization chart. If `hanging`, this
  * node's children will hang below their parent, allowing a tighter packing of
@@ -28,7 +28,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType('organization', 'sankey', 
+seriesType('organization', 'sankey', 
 /**
  * An organization chart is a diagram that shows the structure of an
  * organization and the relationships and relative ranks of its parts and
@@ -360,12 +360,12 @@ H.seriesType('organization', 'sankey',
             height -= padjust;
             width -= padjust;
             // Set the size of the surrounding div emulating `g`
-            H.css(dataLabel.text.element.parentNode, {
+            css(dataLabel.text.element.parentNode, {
                 width: width + 'px',
                 height: height + 'px'
             });
             // Set properties for the span emulating `text`
-            H.css(dataLabel.text.element, {
+            css(dataLabel.text.element, {
                 left: 0,
                 top: 0,
                 width: '100%',

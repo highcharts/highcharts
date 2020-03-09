@@ -5,7 +5,7 @@
  * */
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
+var addEvent = U.addEvent, inArray = U.inArray, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
 var fireEvent = H.fireEvent;
 /* eslint-disable valid-jsdoc */
 /**
@@ -34,7 +34,7 @@ var eventEmitterMixin = {
                     event.call(emitter, emitter.chart.pointer.normalize(e), emitter.target);
                 }
             };
-            if (H.inArray(type, emitter.nonDOMEvents || []) === -1) {
+            if (inArray(type, emitter.nonDOMEvents || []) === -1) {
                 emitter.graphic.on(type, eventHandler);
             }
             else {

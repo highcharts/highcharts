@@ -72,7 +72,7 @@ import H from '../parts/Globals.js';
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string|undefined}
@@ -82,21 +82,21 @@ import H from '../parts/Globals.js';
  * Context for the node formatter function.
  *
  * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  */ /**
 * The node object. The node name, if defined, is available through
 * `this.point.name`.
 * @name Highcharts.SeriesSankeyDataLabelsFormatterContextObject#point
 * @type {Highcharts.SankeyNodeObject}
 */
-import colorModule from '../parts/Color.js';
-import utilitiesModule from '../parts/Utilities.js';
-var defined = utilitiesModule.defined, isObject = utilitiesModule.isObject, pick = utilitiesModule.pick, relativeLength = utilitiesModule.relativeLength, stableSort = utilitiesModule.stableSort;
+import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
-var find = H.find, merge = H.merge, seriesType = H.seriesType, Point = H.Point;
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -304,6 +304,10 @@ seriesType('sankey', 'column',
      * The padding between nodes in a sankey diagram or dependency wheel, in
      * pixels.
      *
+     * If the number of nodes is so great that it is possible to lay them
+     * out within the plot area with the given `nodePadding`, they will be
+     * rendered with a smaller padding as a strategy to avoid overflow.
+     *
      * @private
      */
     nodePadding: 10,
@@ -379,6 +383,7 @@ seriesType('sankey', 'column',
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: H.NodesMixin.createNode,
+    searchPoint: H.noop,
     setData: H.NodesMixin.setData,
     destroy: H.NodesMixin.destroy,
     /* eslint-disable valid-jsdoc */
@@ -388,14 +393,24 @@ seriesType('sankey', 'column',
      * @private
      */
     getNodePadding: function () {
-        return this.options.nodePadding;
+        var nodePadding = this.options.nodePadding || 0;
+        // If the number of columns is so great that they will overflow with
+        // the given nodePadding, we sacrifice the padding in order to
+        // render all nodes within the plot area (#11917).
+        if (this.nodeColumns) {
+            var maxLength = this.nodeColumns.reduce(function (acc, col) { return Math.max(acc, col.length); }, 0);
+            if (maxLength * nodePadding > this.chart.plotSizeY) {
+                nodePadding = this.chart.plotSizeY / maxLength;
+            }
+        }
+        return nodePadding;
     },
     /**
      * Create a node column.
      * @private
      */
     createNodeColumn: function () {
-        var chart = this.chart, column = [], nodePadding = this.getNodePadding();
+        var series = this, chart = this.chart, column = [];
         column.sum = function () {
             return this.reduce(function (sum, node) {
                 return sum + node.getSum();
@@ -403,11 +418,12 @@ seriesType('sankey', 'column',
         };
         // Get the offset in pixels of a node inside the column.
         column.offset = function (node, factor) {
-            var offset = 0, totalNodeOffset;
+            var offset = 0, totalNodeOffset, nodePadding = series.nodePadding;
             for (var i = 0; i < column.length; i++) {
                 var sum = column[i].getSum();
+                var height = Math.max(sum * factor, series.options.minLinkWidth);
                 if (sum) {
-                    totalNodeOffset = sum * factor + nodePadding;
+                    totalNodeOffset = height + nodePadding;
                 }
                 else {
                     // If node sum equals 0 nodePadding is missed #12453
@@ -421,13 +437,15 @@ seriesType('sankey', 'column',
                 offset += totalNodeOffset;
             }
         };
-        // Get the column height in pixels.
+        // Get the top position of the column in pixels.
         column.top = function (factor) {
+            var nodePadding = series.nodePadding;
             var height = this.reduce(function (height, node) {
                 if (height > 0) {
                     height += nodePadding;
                 }
-                height += node.getSum() * factor;
+                var nodeHeight = Math.max(node.getSum() * factor, series.options.minLinkWidth);
+                height += nodeHeight;
                 return height;
             }, 0);
             return (chart.plotSizeY - height) / 2;
@@ -518,7 +536,7 @@ seriesType('sankey', 'column',
         }
         // Link attributes
         return {
-            fill: colorModule.color(color).setOpacity(values.linkOpacity).get()
+            fill: Color.parse(color).setOpacity(values.linkOpacity).get()
         };
     },
     /**
@@ -537,7 +555,9 @@ seriesType('sankey', 'column',
             if (typeof node.level === 'undefined') {
                 node.level = level;
                 node.linksFrom.forEach(function (link) {
-                    order(link.toNode, level + 1);
+                    if (link.toNode) {
+                        order(link.toNode, level + 1);
+                    }
                 });
             }
         }
@@ -562,7 +582,7 @@ seriesType('sankey', 'column',
      * @private
      */
     translateNode: function (node, column) {
-        var translationFactor = this.translationFactor, chart = this.chart, options = this.options, sum = node.getSum(), height = Math.round(sum * translationFactor), crisp = Math.round(options.borderWidth) % 2 / 2, nodeOffset = column.offset(node, translationFactor), fromNodeTop = Math.floor(pick(nodeOffset.absoluteTop, (column.top(translationFactor) +
+        var translationFactor = this.translationFactor, chart = this.chart, options = this.options, sum = node.getSum(), height = Math.max(Math.round(sum * translationFactor), this.options.minLinkWidth), crisp = Math.round(options.borderWidth) % 2 / 2, nodeOffset = column.offset(node, translationFactor), fromNodeTop = Math.floor(pick(nodeOffset.absoluteTop, (column.top(translationFactor) +
             nodeOffset.relativeTop))) + crisp, left = Math.floor(this.colDistance * node.column +
             options.borderWidth / 2) + crisp, nodeLeft = chart.inverted ?
             chart.plotSizeX - left :
@@ -598,6 +618,14 @@ seriesType('sankey', 'column',
             });
             // Pass test in drawPoints
             node.plotY = 1;
+            // Set the anchor position for tooltips
+            node.tooltipPos = chart.inverted ? [
+                chart.plotSizeY - node.shapeArgs.y - node.shapeArgs.height / 2,
+                chart.plotSizeX - node.shapeArgs.x - node.shapeArgs.width / 2
+            ] : [
+                node.shapeArgs.x + node.shapeArgs.width / 2,
+                node.shapeArgs.y + node.shapeArgs.height / 2
+            ];
         }
         else {
             node.dlOptions = {
@@ -610,13 +638,17 @@ seriesType('sankey', 'column',
      * @private
      */
     translateLink: function (point) {
-        var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart, translationFactor = this.translationFactor, linkHeight = Math.max(point.weight * translationFactor, this.options.minLinkWidth), options = this.options, fromLinkTop = (fromNode.offset(point, 'linksFrom') *
-            translationFactor), curvy = ((chart.inverted ? -this.colDistance : this.colDistance) *
-            options.curveFactor), fromY = fromNode.nodeY + fromLinkTop, nodeLeft = fromNode.nodeX, toColTop = this.nodeColumns[toNode.column]
-            .top(translationFactor), toY = (toColTop +
-            (toNode.offset(point, 'linksTo') *
-                translationFactor) +
-            this.nodeColumns[toNode.column].offset(toNode, translationFactor).relativeTop), nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft;
+        var getY = function (node, fromOrTo) {
+            var _a;
+            var linkTop = (node.offset(point, fromOrTo) *
+                translationFactor);
+            var y = Math.min(node.nodeY + linkTop, 
+            // Prevent links from spilling below the node (#12014)
+            node.nodeY + ((_a = node.shapeArgs) === null || _a === void 0 ? void 0 : _a.height) - linkHeight);
+            return y;
+        };
+        var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart, translationFactor = this.translationFactor, linkHeight = Math.max(point.weight * translationFactor, this.options.minLinkWidth), options = this.options, curvy = ((chart.inverted ? -this.colDistance : this.colDistance) *
+            options.curveFactor), fromY = getY(fromNode, 'linksFrom'), toY = getY(toNode, 'linksTo'), nodeLeft = fromNode.nodeX, nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft;
         if (chart.inverted) {
             fromY = chart.plotSizeY - fromY;
             toY = chart.plotSizeY - toY;
@@ -692,6 +724,14 @@ seriesType('sankey', 'column',
             height: linkHeight,
             width: 0
         };
+        // And set the tooltip anchor in the middle
+        point.tooltipPos = chart.inverted ? [
+            chart.plotSizeY - point.dlBox.y - linkHeight / 2,
+            chart.plotSizeX - point.dlBox.x
+        ] : [
+            point.dlBox.x,
+            point.dlBox.y + linkHeight / 2
+        ];
         // Pass test in drawPoints
         point.y = point.plotY = 1;
         if (!point.color) {
@@ -703,21 +743,52 @@ seriesType('sankey', 'column',
      * @private
      */
     translate: function () {
+        var _this = this;
+        // Get the translation factor needed for each column to fill up the
+        // plot height
+        var getColumnTranslationFactor = function (column) {
+            var nodes = column.slice();
+            var minLinkWidth = _this.options.minLinkWidth || 0;
+            var exceedsMinLinkWidth;
+            var factor = 0;
+            var i;
+            var remainingHeight = chart.plotSizeY -
+                options.borderWidth - (column.length - 1) * series.nodePadding;
+            // Because the minLinkWidth option doesn't obey the direct
+            // translation, we need to run translation iteratively, check
+            // node heights, remove those nodes affected by minLinkWidth,
+            // check again, etc.
+            while (column.length) {
+                factor = remainingHeight / column.sum();
+                exceedsMinLinkWidth = false;
+                i = column.length;
+                while (i--) {
+                    if (column[i].getSum() * factor < minLinkWidth) {
+                        column.splice(i, 1);
+                        remainingHeight -= minLinkWidth + series.nodePadding;
+                        exceedsMinLinkWidth = true;
+                    }
+                }
+                if (!exceedsMinLinkWidth) {
+                    break;
+                }
+            }
+            // Re-insert original nodes
+            column.length = 0;
+            nodes.forEach(function (node) { return column.push(node); });
+            return factor;
+        };
         if (!this.processedXData) {
             this.processData();
         }
         this.generatePoints();
         this.nodeColumns = this.createNodeColumns();
         this.nodeWidth = relativeLength(this.options.nodeWidth, this.chart.plotSizeX);
-        var series = this, chart = this.chart, options = this.options, nodeWidth = this.nodeWidth, nodeColumns = this.nodeColumns, nodePadding = this.getNodePadding();
+        var series = this, chart = this.chart, options = this.options, nodeWidth = this.nodeWidth, nodeColumns = this.nodeColumns;
+        this.nodePadding = this.getNodePadding();
         // Find out how much space is needed. Base it on the translation
         // factor of the most spaceous column.
-        this.translationFactor = nodeColumns.reduce(function (translationFactor, column) {
-            var height = chart.plotSizeY -
-                options.borderWidth -
-                (column.length - 1) * nodePadding;
-            return Math.min(translationFactor, height / column.sum());
-        }, Infinity);
+        this.translationFactor = nodeColumns.reduce(function (translationFactor, column) { return Math.min(translationFactor, getColumnTranslationFactor(column)); }, Infinity);
         this.colDistance =
             (chart.plotSizeX - nodeWidth -
                 options.borderWidth) / Math.max(1, nodeColumns.length - 1);
@@ -755,7 +826,7 @@ seriesType('sankey', 'column',
             node.linksFrom.forEach(function (linkPoint) {
                 // If weight is 0 - don't render the link path #12453,
                 // render null points (for organization chart)
-                if (linkPoint.weight || linkPoint.isNull) {
+                if ((linkPoint.weight || linkPoint.isNull) && linkPoint.to) {
                     series.translateLink(linkPoint);
                     linkPoint.allowShadow = false;
                 }

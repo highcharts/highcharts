@@ -12,7 +12,8 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    pick
+    pick,
+    seriesType
 } = U;
 
 /**
@@ -84,7 +85,7 @@ function accumulatePoints(
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.DPOIndicator>(
+seriesType<Highcharts.DPOIndicator>(
     'dpo',
     'sma',
     /**

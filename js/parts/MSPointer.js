@@ -24,9 +24,9 @@ var __extends = (this && this.__extends) || (function () {
 import H from './Globals.js';
 /* globals MSPointerEvent, PointerEvent */
 import Pointer from './Pointer.js';
-import utilitiesModule from './Utilities.js';
-var addEvent = utilitiesModule.addEvent, objectEach = utilitiesModule.objectEach, removeEvent = utilitiesModule.removeEvent;
-var charts = H.charts, css = H.css, doc = H.doc, noop = H.noop, win = H.win;
+import U from './Utilities.js';
+var addEvent = U.addEvent, css = U.css, objectEach = U.objectEach, removeEvent = U.removeEvent;
+var charts = H.charts, doc = H.doc, noop = H.noop, win = H.win;
 // The touches object keeps track of the points being touched at all times
 var touches = {};
 var hasPointerEvent = !!win.PointerEvent;

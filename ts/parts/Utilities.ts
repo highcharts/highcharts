@@ -81,6 +81,7 @@ declare global {
             cursor?: CursorValue;
             fontSize?: (number|string);
             lineWidth?: (number|string);
+            pointerEvents?: string;
             stroke?: ColorString;
             strokeWidth?: (number|string);
         }
@@ -234,7 +235,7 @@ declare global {
         ): number;
         function isArray(obj: unknown): obj is Array<unknown>;
         function isClass(obj: (object|undefined)): obj is Class;
-        function isDOMElement(obj: unknown): obj is HTMLElement;
+        function isDOMElement(obj: unknown): obj is HTMLDOMElement;
         function isFunction(obj: unknown): obj is Function;
         function isNumber(n: unknown): n is number;
         function isObject<T1, T2 extends boolean = false>(
@@ -290,7 +291,7 @@ declare global {
             fn: ObjectEachCallbackFunction<T>,
             ctx?: T
         ): void;
-        function offset(el: HTMLDOMElement): OffsetObject;
+        function offset(el: Element): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
         function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
         T1 extends Nullable ?
@@ -717,7 +718,7 @@ var charts = H.charts,
  *
  * @return {void}
  */
-H.error = function (
+const error = H.error = function (
     code: (number|string),
     stop?: boolean,
     chart?: Highcharts.Chart,
@@ -1270,6 +1271,32 @@ class Fx {
 
 H.Fx = Fx;
 
+function merge<T1, T2 = object>(
+    extend: boolean,
+    a?: T1,
+    ...n: Array<T2|undefined>
+): (T1&T2);
+function merge<
+    T1 extends object = object,
+    T2 = unknown,
+    T3 = unknown,
+    T4 = unknown,
+    T5 = unknown,
+    T6 = unknown,
+    T7 = unknown,
+    T8 = unknown,
+    T9 = unknown
+>(
+    a?: T1,
+    b?: T2,
+    c?: T3,
+    d?: T4,
+    e?: T5,
+    f?: T6,
+    g?: T7,
+    h?: T8,
+    i?: T9,
+): (T1&T2&T3&T4&T5&T6&T7&T8&T9);
 /* eslint-disable valid-jsdoc */
 /**
  * Utility function to deep merge two or more objects and return a third object.
@@ -1311,7 +1338,7 @@ H.Fx = Fx;
  *         The merged object. If the first argument is true, the return is the
  *         same as the second argument.
  */
-H.merge = function<T> (): T {
+function merge<T>(): T {
     /* eslint-enable valid-jsdoc */
     var i,
         args = arguments,
@@ -1354,7 +1381,8 @@ H.merge = function<T> (): T {
     }
 
     return ret;
-};
+}
+H.merge = merge;
 
 /**
  * Constrain a value to within a lower and upper threshold.
@@ -1456,7 +1484,7 @@ const isObject = H.isObject = function isObject<T1, T2 extends boolean = false>(
  * @return {boolean}
  *         True if the argument is a HTML Element.
  */
-const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is Highcharts.HTMLElement {
+const isDOMElement = H.isDOMElement = function isDOMElement(obj: unknown): obj is Highcharts.HTMLDOMElement {
     return isObject(obj) && typeof (obj as any).nodeType === 'number';
 };
 
@@ -1660,7 +1688,7 @@ const syncTimeout = H.syncTimeout = function syncTimeout(
  *
  * @return {void}
  */
-H.clearTimeout = function (id: number): void {
+const internalClearTimeout = H.clearTimeout = function (id: number): void {
     if (defined(id)) {
         clearTimeout(id);
     }
@@ -1751,7 +1779,7 @@ H.pick = pick;
  *
  * @return {void}
  */
-H.css = function (
+const css = H.css = function css(
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
     styles: Highcharts.CSSObject
 ): void {
@@ -1787,15 +1815,14 @@ H.css = function (
  * @return {Highcharts.HTMLDOMElement}
  *         The created DOM element.
  */
-H.createElement = function (
+const createElement = H.createElement = function createElement(
     tag: string,
     attribs?: Highcharts.HTMLAttributes,
     styles?: Highcharts.CSSObject,
     parent?: Highcharts.HTMLDOMElement,
     nopad?: boolean
 ): Highcharts.HTMLDOMElement {
-    var el = doc.createElement(tag),
-        css = H.css;
+    var el = doc.createElement(tag);
 
     if (attribs) {
         extend(el, attribs);
@@ -1936,76 +1963,6 @@ const wrap = H.wrap = function wrap(
     };
 };
 
-
-/**
- * Recursively converts all Date properties to timestamps.
- *
- * @private
- * @function Highcharts.datePropsToTimestamps
- *
- * @param {*} obj - any object to convert properties of
- *
- * @return {void}
- */
-H.datePropsToTimestamps = function (obj: any): void {
-    objectEach(obj, function (val: any, key: string): void {
-        if (isObject(val) && typeof val.getTime === 'function') {
-            obj[key] = val.getTime();
-        } else if (isObject(val) || isArray(val)) {
-            H.datePropsToTimestamps(val);
-        }
-    });
-};
-
-/**
- * Format a single variable. Similar to sprintf, without the % prefix.
- *
- * @example
- * formatSingle('.2f', 5); // => '5.00'.
- *
- * @function Highcharts.formatSingle
- *
- * @param {string} format
- *        The format string.
- *
- * @param {*} val
- *        The value.
- *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
- *
- * @return {string}
- *         The formatted representation of the value.
- */
-H.formatSingle = function (
-    format: string,
-    val: any,
-    chart?: Highcharts.Chart
-): string {
-    var floatRegex = /f$/,
-        decRegex = /\.([0-9])/,
-        lang = H.defaultOptions.lang,
-        decimals: number;
-    const time = chart && chart.time || H.time;
-    const numberFormatter = chart && chart.numberFormatter || numberFormat;
-
-    if (floatRegex.test(format)) { // float
-        decimals = format.match(decRegex) as any;
-        decimals = decimals ? (decimals as any)[1] : -1;
-        if (val !== null) {
-            val = numberFormatter(
-                val,
-                decimals,
-                (lang as any).decimalPoint,
-                format.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
-            );
-        }
-    } else {
-        val = time.dateFormat(format, val);
-    }
-    return val;
-};
-
 /**
  * Format a string according to a subset of the rules of Python's String.format
  * method.
@@ -2022,7 +1979,7 @@ H.formatSingle = function (
  * @param {string} str
  *        The string to format.
  *
- * @param {*} ctx
+ * @param {Record<string, *>} ctx
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
@@ -2032,17 +1989,19 @@ H.formatSingle = function (
  * @return {string}
  *         The formatted string.
  */
-H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
+const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
         valueAndFormat: Array<string>,
-        path,
-        i,
-        len,
         ret = [],
         val,
         index;
+    const floatRegex = /f$/;
+    const decRegex = /\.([0-9])/;
+    const lang = H.defaultOptions.lang;
+    const time = chart && chart.time || H.time;
+    const numberFormatter = chart && chart.numberFormatter || numberFormat;
 
     while (str) {
         index = str.indexOf(splitter);
@@ -2054,26 +2013,30 @@ H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
         if (isInside) { // we're on the closing bracket looking back
 
             valueAndFormat = segment.split(':');
-            // get first and leave
-            path = (valueAndFormat.shift() as any).split('.');
-            len = path.length;
-            val = ctx;
-
-            // Assign deeper paths
-            for (i = 0; i < len; i++) {
-                if (val) {
-                    val = val[path[i]];
-                }
-            }
+            val = getNestedProperty(valueAndFormat.shift() || '', ctx);
 
             // Format the replacement
-            if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
+            if (valueAndFormat.length && typeof val === 'number') {
+
+                segment = valueAndFormat.join(':');
+
+                if (floatRegex.test(segment)) { // float
+                    const decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    if (val !== null) {
+                        val = numberFormatter(
+                            val,
+                            decimals,
+                            (lang as any).decimalPoint,
+                            segment.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
+                        );
+                    }
+                } else {
+                    val = time.dateFormat(segment, val);
+                }
             }
 
             // Push the result and advance the cursor
             ret.push(val);
-
         } else {
             ret.push(segment);
 
@@ -2097,7 +2060,7 @@ H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
  * @return {number}
  *         The magnitude, where 1-9 are magnitude 1, 10-99 magnitude 2 etc.
  */
-H.getMagnitude = function (num: number): number {
+const getMagnitude = H.getMagnitude = function (num: number): number {
     return Math.pow(10, Math.floor(Math.log(num) / Math.LN10));
 };
 
@@ -2130,7 +2093,7 @@ H.getMagnitude = function (num: number): number {
  * Move this function to the Axis prototype. It is here only for historical
  * reasons.
  */
-H.normalizeTickInterval = function (
+const normalizeTickInterval = H.normalizeTickInterval = function (
     interval: number,
     multiples?: Array<any>,
     magnitude?: number,
@@ -2337,7 +2300,7 @@ const discardElement = H.discardElement = function discardElement(element: Highc
 
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
-        garbageBin = H.createElement('div');
+        garbageBin = createElement('div');
     }
 
     // move the node and empty bin
@@ -2413,7 +2376,7 @@ const animObject = H.animObject = function animObject(
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
-        H.merge(animation as Highcharts.AnimationOptionsObject) as any :
+        merge(animation as Highcharts.AnimationOptionsObject) as any :
         { duration: animation as boolean ? 500 : 0 };
 };
 
@@ -2566,6 +2529,49 @@ Math.easeInOutSine = function (pos: number): number {
 };
 
 /**
+ * Returns the value of a property path on a given object.
+ *
+ * @private
+ * @function getNestedProperty
+ *
+ * @param {string} path
+ * Path to the property, for example `custom.myValue`.
+ *
+ * @param {unknown} obj
+ * Instance containing the property on the specific path.
+ *
+ * @return {unknown}
+ * The unknown property value.
+ */
+function getNestedProperty(path: string, obj: unknown): unknown {
+
+    if (!path) {
+        return obj;
+    }
+
+    const pathElements = path.split('.').reverse();
+
+    let subProperty = obj as Record<string, unknown>;
+
+    if (pathElements.length === 1) {
+        return subProperty[path];
+    }
+
+    let pathElement = pathElements.pop();
+
+    while (
+        typeof pathElement !== 'undefined' &&
+        typeof subProperty !== 'undefined' &&
+        subProperty !== null
+    ) {
+        subProperty = subProperty[pathElement] as Record<string, unknown>;
+        pathElement = pathElements.pop();
+    }
+
+    return subProperty;
+}
+
+/**
  * Get the computed CSS value for given element and property, only for numerical
  * properties. For width and height, the dimension of the inner box (excluding
  * padding) is returned. Used for fitting the chart within the container.
@@ -2584,7 +2590,7 @@ Math.easeInOutSine = function (pos: number): number {
  * @return {number|string}
  *         The numeric value.
  */
-H.getStyle = function (
+const getStyle = H.getStyle = function (
     el: Highcharts.HTMLDOMElement,
     prop: string,
     toInt?: boolean
@@ -2632,7 +2638,7 @@ H.getStyle = function (
 
     if (!win.getComputedStyle) {
         // SVG not supported, forgot to load oldie.js?
-        H.error(27, true);
+        error(27, true);
     }
 
     // Otherwise, get the computed style
@@ -2665,7 +2671,7 @@ H.getStyle = function (
  * @return {number}
  *         The index within the array, or -1 if not found.
  */
-H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
+const inArray = H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
     return arr.indexOf(item, fromIndex);
 };
 
@@ -2686,7 +2692,7 @@ H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
  * @return {T|undefined}
  *         The value of the element.
  */
-H.find = (Array.prototype as any).find ?
+const find = H.find = (Array.prototype as any).find ?
     /* eslint-enable valid-jsdoc */
     function<T> (arr: Array<T>, callback: Function): (T|undefined) {
         return (arr as any).find(callback as any);
@@ -2722,14 +2728,14 @@ H.keys = Object.keys;
  *
  * @function Highcharts.offset
  *
- * @param {Highcharts.HTMLDOMElement} el
- *        The HTML element.
+ * @param {global.Element} el
+ *        The DOM element.
  *
  * @return {Highcharts.OffsetObject}
  *         An object containing `left` and `top` properties for the position in
  *         the page.
  */
-const offset = H.offset = function offset(el: Highcharts.HTMLDOMElement): Highcharts.OffsetObject {
+const offset = H.offset = function offset(el: Element): Highcharts.OffsetObject {
     var docElem = doc.documentElement,
         box = (el.parentElement || el.parentNode) ?
             el.getBoundingClientRect() :
@@ -2764,7 +2770,7 @@ const offset = H.offset = function offset(el: Highcharts.HTMLDOMElement): Highch
  * improvement in all cases where we stop the animation from .attr. Instead of
  * stopping everything, we can just stop the actual attributes we're setting.
  */
-H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
+const stop = H.stop = function (el: Highcharts.SVGElement, prop?: string): void {
 
     var i = H.timers.length;
 
@@ -3235,7 +3241,7 @@ const fireEvent = H.fireEvent = function<T> (
  *
  * @return {void}
  */
-H.animate = function (
+const animate = H.animate = function (
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
     params: (Highcharts.CSSObject|Highcharts.SVGAttributes),
     opt?: Highcharts.AnimationOptionsObject
@@ -3260,11 +3266,11 @@ H.animate = function (
     (opt as any).easing = typeof (opt as any).easing === 'function' ?
         (opt as any).easing :
         ((Math as any)[(opt as any).easing as any] || Math.easeInOutSine);
-    (opt as any).curAnim = H.merge(params) as any;
+    (opt as any).curAnim = merge(params) as any;
 
     objectEach(params, function (val: any, prop: string): void {
         // Stop current running animation of this property
-        H.stop(el as any, prop);
+        stop(el as any, prop);
 
         fx = new Fx(el as any, opt as any, prop);
         end = null;
@@ -3281,7 +3287,7 @@ H.animate = function (
         } else if ((el as any).attr) {
             start = (el as any).attr(prop);
         } else {
-            start = parseFloat(H.getStyle(el as any, prop) as any) || 0;
+            start = parseFloat(getStyle(el as any, prop) as any) || 0;
             if (prop !== 'opacity') {
                 unit = 'px';
             }
@@ -3326,7 +3332,7 @@ H.animate = function (
  *         derivatives.
  */
 // docs: add to API + extending Highcharts
-H.seriesType = function<TSeries extends Highcharts.Series> (
+const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     type: string,
     parent: string,
     options: TSeries['options'],
@@ -3337,7 +3343,7 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
         seriesTypes = H.seriesTypes;
 
     // Merge the options
-    (defaultOptions.plotOptions as any)[type] = H.merge(
+    (defaultOptions.plotOptions as any)[type] = merge(
         (defaultOptions.plotOptions as any)[parent],
         options
     );
@@ -3364,14 +3370,14 @@ H.seriesType = function<TSeries extends Highcharts.Series> (
  * counter.
  *
  * @example
- * var id = H.uniqueKey(); // => 'highcharts-x45f6hp-0'
+ * var id = uniqueKey(); // => 'highcharts-x45f6hp-0'
  *
  * @function Highcharts.uniqueKey
  *
  * @return {string}
  *         A unique key.
  */
-H.uniqueKey = (function (): any {
+const uniqueKey = H.uniqueKey = (function (): () => string {
 
     var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
         idCounter = 0;
@@ -3381,7 +3387,7 @@ H.uniqueKey = (function (): any {
     };
 }());
 
-H.isFunction = function (obj: unknown): obj is Function {
+const isFunction = H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
 };
 
@@ -3445,28 +3451,42 @@ if ((win as any).jQuery) {
 }
 
 // TODO use named exports when supported.
-const utils = {
+const utilitiesModule = {
     Fx,
     addEvent,
+    animate,
     animObject,
     arrayMax,
     arrayMin,
     attr,
     clamp,
+    clearTimeout: internalClearTimeout,
     correctFloat,
+    createElement,
+    css,
     defined,
     destroyObjectProperties,
     discardElement,
     erase,
+    error,
     extend,
     extendClass,
+    find,
     fireEvent,
+    format,
+    getMagnitude,
+    getNestedProperty,
+    getStyle,
+    inArray,
     isArray,
     isClass,
     isDOMElement,
+    isFunction,
     isNumber,
     isObject,
     isString,
+    merge,
+    normalizeTickInterval,
     numberFormat,
     objectEach,
     offset,
@@ -3475,12 +3495,15 @@ const utils = {
     pInt,
     relativeLength,
     removeEvent,
+    seriesType,
     setAnimation,
     splat,
     stableSort,
+    stop,
     syncTimeout,
     timeUnits,
+    uniqueKey,
     wrap
 };
 
-export default utils;
+export default utilitiesModule;

@@ -89,8 +89,10 @@ import U from '../parts/Utilities.js';
 const {
     clamp,
     isNumber,
+    merge,
     pick,
-    pInt
+    pInt,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -98,10 +100,8 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
 
-var merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     TrackerMixin = H.TrackerMixin;
 
 /**
@@ -569,9 +569,6 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
                     }, series.options.animation);
                 }
             });
-
-            // delete this function to allow it only once
-            series.animate = null as any;
         }
     },
 

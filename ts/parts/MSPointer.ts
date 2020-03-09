@@ -26,15 +26,15 @@ declare global {
 /* globals MSPointerEvent, PointerEvent */
 
 import Pointer from './Pointer.js';
-import utilitiesModule from './Utilities.js';
+import U from './Utilities.js';
 const {
     addEvent,
+    css,
     objectEach,
     removeEvent
-} = utilitiesModule;
+} = U;
 
 var charts = H.charts,
-    css = H.css,
     doc = H.doc,
     noop = H.noop,
     win = H.win;
@@ -215,7 +215,7 @@ class MSPointer extends Pointer {
     }
 
     // Add IE specific touch events to chart
-    protected setDOMEvents(): void {
+    public setDOMEvents(): void {
 
         super.setDOMEvents();
 

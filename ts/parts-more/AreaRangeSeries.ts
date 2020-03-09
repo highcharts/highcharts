@@ -19,7 +19,7 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface AreaRangeDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             xHigh?: number;
             xLow?: number;
@@ -85,13 +85,15 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
     extend,
     isArray,
     isNumber,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -99,10 +101,9 @@ import '../parts/Series.js';
 
 var noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
     seriesProto = Series.prototype,
-    pointProto = H.Point.prototype;
+    pointProto = Point.prototype;
 
 /**
  * The area range series is a carteseian series with higher and lower values for

@@ -16,7 +16,8 @@ import U from '../parts/Utilities.js';
 const {
     animObject,
     arrayMax,
-    pick
+    pick,
+    seriesType
 } = U;
 
 /**
@@ -63,8 +64,6 @@ declare global {
         type VectorRotationOriginValue = ('start'|'center'|'end');
     }
 }
-
-var seriesType = H.seriesType;
 
 /**
  * The vector series class.
@@ -355,8 +354,6 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
                 (this.markerGroup as any).animate({
                     opacity: 1
                 }, animObject(this.options.animation));
-
-                this.animate = null as any;
             }
         }
 
