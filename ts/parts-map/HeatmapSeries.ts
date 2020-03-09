@@ -575,25 +575,45 @@ seriesType<Highcharts.HeatmapSeries>(
             point: Highcharts.HeatmapPoint,
             state?: string
         ): Highcharts.SVGAttributes {
-            var attr = Series.prototype.pointAttribs
-                    .call(this, point, state),
-                seriesOptions = this.options || {},
+            var series = this,
+                attr = Series.prototype.pointAttribs
+                    .call(series, point, state),
+                seriesOptions = series.options || {},
+                plotOptions = series.chart.options.plotOptions || {},
+                seriesPlotOptions = plotOptions.series || {},
+                heatmapPlotOptions = plotOptions.heatmap || {},
                 stateOptions,
-                brightness;
+                brightness,
+                // Get old properties in order to keep backward compatibility
+                borderColor =
+                    seriesOptions.borderColor ||
+                    heatmapPlotOptions.borderColor ||
+                    seriesPlotOptions.borderColor,
+                borderWidth =
+                    seriesOptions.borderWidth ||
+                    heatmapPlotOptions.borderWidth ||
+                    seriesPlotOptions.borderWidth ||
+                    attr['stroke-width'];
 
             // Apply lineColor, or set it to default series color.
-            attr.stroke = (point && point.marker && point.marker.lineColor ||
-                seriesOptions.marker && seriesOptions.marker.lineColor ||
-                this.color);
+            attr.stroke = (
+                (point && point.marker && point.marker.lineColor) ||
+                (seriesOptions.marker && seriesOptions.marker.lineColor) ||
+                borderColor ||
+                this.color
+            );
+            // Apply old borderWidth property if exists.
+            attr['stroke-width'] = borderWidth;
 
             if (state) {
-                stateOptions = merge((seriesOptions.states as any)[state],
-                    (
+                stateOptions =
+                    merge(
+                        (seriesOptions.states as any)[state],
                         seriesOptions.marker &&
-                        seriesOptions.marker.states as any
-                    )[state],
-                    point.options.states &&
-                    (point.options.states as any)[state] || {});
+                        (seriesOptions.marker.states as any)[state],
+                        point.options.states &&
+                        (point.options.states as any)[state] || {}
+                    );
                 brightness = stateOptions.brightness;
 
                 attr.fill =
@@ -737,45 +757,6 @@ seriesType<Highcharts.HeatmapSeries>(
 
             // Get the extremes from the y data
             Series.prototype.getExtremes.call(this);
-        },
-
-        /**
-         * @private
-         * @borrows Highcharts.seriesTypes.line.setOptions as Highcharts.seriesTypes.heatmap#setOptions
-         */
-        setOptions: function (
-            this: Highcharts.HeatmapSeries,
-            itemOptions: Highcharts.SeriesOptionsType
-        ): Highcharts.HeatmapSeriesOptions {
-            var chart = this.chart,
-                plotOptions = chart.options && chart.options.plotOptions || {},
-                newOptions: Highcharts.HeatmapSeriesOptions | undefined;
-
-            [
-                ['borderWidth', 'lineWidth'],
-                ['borderColor', 'lineColor']
-            ].forEach((prop): void => {
-                const oldProp = (itemOptions as any)[prop[0]] ||
-                    (
-                        plotOptions.series &&
-                        (plotOptions.series as any)[prop[0]]
-                    ) ||
-                    (plotOptions as any)[this.type][prop[0]];
-
-                if (oldProp) {
-                    const markerOptions = {};
-
-                    // Remap property into marker object
-                    (markerOptions as any)[prop[1]] = oldProp;
-
-                    newOptions = H.merge(newOptions, itemOptions, {
-                        marker: H.merge(itemOptions.marker, markerOptions)
-                    });
-                }
-            });
-
-            return H.Series.prototype.setOptions
-                .apply(this, [newOptions || itemOptions]);
         }
 
         /* eslint-enable valid-jsdoc */

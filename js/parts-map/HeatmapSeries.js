@@ -397,16 +397,27 @@ seriesType('heatmap', 'scatter',
      * @return {Highcharts.SVGAttributes}
      */
     pointAttribs: function (point, state) {
-        var attr = Series.prototype.pointAttribs
-            .call(this, point, state), seriesOptions = this.options || {}, stateOptions, brightness;
+        var series = this, attr = Series.prototype.pointAttribs
+            .call(series, point, state), seriesOptions = series.options || {}, plotOptions = series.chart.options.plotOptions || {}, seriesPlotOptions = plotOptions.series || {}, heatmapPlotOptions = plotOptions.heatmap || {}, stateOptions, brightness, 
+        // Get old properties in order to keep backward compatibility
+        borderColor = seriesOptions.borderColor ||
+            heatmapPlotOptions.borderColor ||
+            seriesPlotOptions.borderColor, borderWidth = seriesOptions.borderWidth ||
+            heatmapPlotOptions.borderWidth ||
+            seriesPlotOptions.borderWidth ||
+            attr['stroke-width'];
         // Apply lineColor, or set it to default series color.
-        attr.stroke = (point && point.marker && point.marker.lineColor ||
-            seriesOptions.marker && seriesOptions.marker.lineColor ||
+        attr.stroke = ((point && point.marker && point.marker.lineColor) ||
+            (seriesOptions.marker && seriesOptions.marker.lineColor) ||
+            borderColor ||
             this.color);
+        // Apply old borderWidth property if exists.
+        attr['stroke-width'] = borderWidth;
         if (state) {
-            stateOptions = merge(seriesOptions.states[state], (seriesOptions.marker &&
-                seriesOptions.marker.states)[state], point.options.states &&
-                point.options.states[state] || {});
+            stateOptions =
+                merge(seriesOptions.states[state], seriesOptions.marker &&
+                    seriesOptions.marker.states[state], point.options.states &&
+                    point.options.states[state] || {});
             brightness = stateOptions.brightness;
             attr.fill =
                 stateOptions.color ||
@@ -504,33 +515,6 @@ seriesType('heatmap', 'scatter',
         this.valueMax = this.dataMax;
         // Get the extremes from the y data
         Series.prototype.getExtremes.call(this);
-    },
-    /**
-     * @private
-     * @borrows Highcharts.seriesTypes.line.setOptions as Highcharts.seriesTypes.heatmap#setOptions
-     */
-    setOptions: function (itemOptions) {
-        var _this = this;
-        var chart = this.chart, plotOptions = chart.options && chart.options.plotOptions || {}, newOptions;
-        [
-            ['borderWidth', 'lineWidth'],
-            ['borderColor', 'lineColor']
-        ].forEach(function (prop) {
-            var oldProp = itemOptions[prop[0]] ||
-                (plotOptions.series &&
-                    plotOptions.series[prop[0]]) ||
-                plotOptions[_this.type][prop[0]];
-            if (oldProp) {
-                var markerOptions = {};
-                // Remap property into marker object
-                markerOptions[prop[1]] = oldProp;
-                newOptions = H.merge(newOptions, itemOptions, {
-                    marker: H.merge(itemOptions.marker, markerOptions)
-                });
-            }
-        });
-        return H.Series.prototype.setOptions
-            .apply(this, [newOptions || itemOptions]);
     }
     /* eslint-enable valid-jsdoc */
 }), merge(colorMapPointMixin, {
