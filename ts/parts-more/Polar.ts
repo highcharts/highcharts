@@ -116,6 +116,7 @@ const {
     wrap
 } = U;
 
+import Pane from '../parts-more/Pane.js';
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
@@ -598,8 +599,6 @@ var polarAnimate = function (
                                 }, series.options.animation);
                             }
                         });
-                        // Delete this function to allow it only once
-                        series.animate = null as any;
                     }
                 } else {
                     // Initialize the animation
@@ -627,8 +626,6 @@ var polarAnimate = function (
                         if (markerGroup) {
                             markerGroup.animate(attribs, animation);
                         }
-                        // Delete this function to allow it only once
-                        series.animate = null as any;
                     }
                 }
             }
@@ -1109,7 +1106,7 @@ addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
     splat(this.options.pane).forEach(function (
         paneOptions: Highcharts.PaneOptions
     ): void {
-        new H.Pane( // eslint-disable-line no-new
+        new Pane( // eslint-disable-line no-new
             paneOptions,
             this
         );

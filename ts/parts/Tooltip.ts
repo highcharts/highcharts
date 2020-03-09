@@ -23,6 +23,7 @@ const {
     isNumber,
     isString,
     merge,
+    offset,
     pick,
     splat,
     syncTimeout,
@@ -54,6 +55,7 @@ declare global {
             public shared?: boolean;
             public split?: boolean;
             public tooltipTimeout?: number;
+            public tracker?: SVGElement;
             public tt?: SVGElement;
             public applyFilter(): void;
             public bodyFormatter(items: Array<(Point|Series)>): Array<string>;
@@ -86,6 +88,7 @@ declare global {
             ): string;
             public hide(delay?: number): void;
             public init(chart: Chart, options: TooltipOptions): void;
+            public isStickyOnContact(): boolean;
             public move(
                 x: number,
                 y: number,
@@ -143,14 +146,8 @@ declare global {
             (
                 labelWidth: number,
                 labelHeight: number,
-                point: TooltipPositionerPointObject
+                point: Point
             ): PositionObject;
-        }
-        interface TooltipPositionerPointObject {
-            isHeader: boolean;
-            negative: boolean;
-            plotX: number;
-            plotY: number;
         }
         type TooltipShapeValue = ('callout'|'circle'|'square');
     }
@@ -221,7 +218,7 @@ declare global {
  * @param {number} labelHeight
  *        Height of the tooltip.
  *
- * @param {Highcharts.TooltipPositionerPointObject} point
+ * @param {Highcharts.Point} point
  *        Point information for positioning a tooltip.
  *
  * @return {Highcharts.PositionObject}
@@ -268,6 +265,12 @@ var doc = H.doc;
  *
  * @class
  * @name Highcharts.Tooltip
+ *
+ * @param {Highcharts.Chart} chart
+ * The chart instance.
+ *
+ * @param {Highcharts.TooltipOptions} options
+ * Tooltip options.
  */
 class Tooltip {
 
@@ -277,19 +280,11 @@ class Tooltip {
      *
      * */
 
-    /**
-     * Tooltip of a chart.
-     *
-     * @param {Highcharts.Chart} chart
-     *        The chart instance.
-     *
-     * @param {Highcharts.TooltipOptions} options
-     *        Tooltip options.
-     */
     public constructor(
         chart: Highcharts.Chart,
         options: Highcharts.TooltipOptions
     ) {
+        this.chart = chart;
         this.init(chart, options);
     }
 
@@ -299,7 +294,7 @@ class Tooltip {
      *
      * */
 
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Highcharts.Chart;
 
     public container?: Highcharts.HTMLDOMElement;
 
@@ -310,6 +305,8 @@ class Tooltip {
     public followPointer?: boolean;
 
     public hideTimer?: number;
+
+    public inContact?: boolean;
 
     public isHidden: boolean = true;
 
@@ -332,6 +329,8 @@ class Tooltip {
     public split?: boolean;
 
     public tooltipTimeout?: number;
+
+    public tracker?: Highcharts.SVGElement;
 
     public tt?: Highcharts.SVGElement;
 
@@ -530,7 +529,7 @@ class Tooltip {
                 mouseEvent = pointer.normalize(mouseEvent);
             }
             ret = [
-                mouseEvent.chartX - chart.plotLeft,
+                mouseEvent.chartX - plotLeft,
                 mouseEvent.chartY - plotTop
             ];
 
@@ -661,13 +660,37 @@ class Tooltip {
     public getLabel(): Highcharts.SVGElement {
 
         var tooltip = this,
-            renderer = this.chart.renderer as Highcharts.Renderer,
+            renderer: (Highcharts.Renderer|Highcharts.SVGRenderer) = this.chart.renderer,
             styledMode = this.chart.styledMode,
             options = this.options,
-            className: string = 'tooltip' +
-                (defined(options.className) ? ' ' + options.className : ''),
+            className = (
+                'tooltip' + (
+                    defined(options.className) ?
+                        ' ' + options.className :
+                        ''
+                )
+            ),
+            pointerEvents = (
+                options.style?.pointerEvents ||
+                (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
+            ),
             container: Highcharts.HTMLDOMElement,
-            set: Highcharts.Dictionary<Function>;
+            set: Highcharts.Dictionary<Function>,
+            onMouseEnter = function (): void {
+                tooltip.inContact = true;
+            },
+            onMouseLeave = function (): void {
+                const series = tooltip.chart.hoverSeries;
+
+                tooltip.inContact = false;
+
+                if (
+                    series &&
+                    series.onMouseOut
+                ) {
+                    series.onMouseOut();
+                }
+            };
 
         if (!this.label) {
 
@@ -686,9 +709,10 @@ class Tooltip {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: options.style && options.style.pointerEvents,
+                    pointerEvents,
                     zIndex: 3
                 });
+
                 H.doc.body.appendChild(container);
 
                 /**
@@ -740,6 +764,7 @@ class Tooltip {
                         })
                         // #2301, #2657
                         .css(options.style as any)
+                        .css({ pointerEvents })
                         .shadow(options.shadow);
                 }
             }
@@ -774,12 +799,12 @@ class Tooltip {
             }
 
             this.label
-                .attr({
-                    zIndex: 8,
-                    pointerEvents: (options.style?.pointerEvents || options.stickOnHover ? 'auto' : 'none')
-                })
+                .on('mouseenter', onMouseEnter)
+                .on('mouseleave', onMouseLeave)
+                .attr({ zIndex: 8 })
                 .add();
         }
+
         return this.label;
     }
 
@@ -1141,6 +1166,17 @@ class Tooltip {
     }
 
     /**
+     * Returns true, if the pointer is in contact with the tooltip tracker.
+     */
+    public isStickyOnContact(): boolean {
+        return !!(
+            !this.followPointer &&
+            this.options.stickOnContact &&
+            this.inContact
+        );
+    }
+
+    /**
      * Moves the tooltip with a soft animation to a new position.
      *
      * @private
@@ -1178,7 +1214,7 @@ class Tooltip {
 
         // Move to the intermediate value
         tooltip.getLabel().attr(now);
-
+        tooltip.drawTracker();
 
         // Run on next tick of the mouse tracker
         if (animate) {
@@ -1691,6 +1727,78 @@ class Tooltip {
     }
 
     /**
+     * If the `stickOnContact` option is active, this will add a tracker shape.
+     *
+     * @private
+     * @function Highcharts.Tooltip#drawTracker
+     */
+    private drawTracker(): void {
+        const tooltip = this;
+
+        if (
+            tooltip.followPointer ||
+            !tooltip.options.stickOnContact
+        ) {
+            if (tooltip.tracker) {
+                tooltip.tracker.destroy();
+            }
+            return;
+        }
+
+        const chart = tooltip.chart;
+        const label = tooltip.label;
+        const point = chart.hoverPoint;
+
+        if (!label || !point) {
+            return;
+        }
+
+        const box: Highcharts.RectangleObject = {
+            x: 0,
+            y: 0,
+            width: 0,
+            height: 0
+        };
+
+        // Combine anchor and tooltip
+        const anchorPos = this.getAnchor(point);
+        const labelBBox = label.getBBox();
+
+        anchorPos[0] += chart.plotLeft - label.translateX;
+        anchorPos[1] += chart.plotTop - label.translateY;
+
+        // When the mouse pointer is between the anchor point and the label,
+        // the label should stick.
+        box.x = Math.min(0, anchorPos[0]);
+        box.y = Math.min(0, anchorPos[1]);
+        box.width = (
+            anchorPos[0] < 0 ?
+                Math.max(Math.abs(anchorPos[0]), (labelBBox.width - anchorPos[0])) :
+                Math.max(Math.abs(anchorPos[0]), labelBBox.width)
+        );
+        box.height = (
+            anchorPos[1] < 0 ?
+                Math.max(Math.abs(anchorPos[1]), (labelBBox.height - Math.abs(anchorPos[1]))) :
+                Math.max(Math.abs(anchorPos[1]), labelBBox.height)
+        );
+
+        if (tooltip.tracker) {
+            tooltip.tracker.attr(box);
+        } else {
+            tooltip.tracker = label.renderer
+                .rect(box)
+                .addClass('highcharts-tracker')
+                .add(label);
+
+            if (!chart.styledMode) {
+                tooltip.tracker.attr({
+                    fill: 'rgba(0,0,0,0)'
+                });
+            }
+        }
+    }
+
+    /**
      * @private
      */
     public styledModeFormat(formatString: string): string {
@@ -1809,7 +1917,7 @@ class Tooltip {
         // Needed for outside: true (#11688)
         const chartPosition = pointer.getChartPosition();
 
-        pos = ((this.options.positioner as any) || this.getPosition).call(
+        pos = (this.options.positioner || this.getPosition).call(
             this,
             label.width,
             label.height,

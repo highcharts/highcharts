@@ -307,7 +307,6 @@ seriesType('windbarb', 'column'
             this.markerGroup.animate({
                 opacity: 1
             }, animObject(this.options.animation));
-            this.animate = null;
         }
     },
     // Don't invert the marker group (#4960)

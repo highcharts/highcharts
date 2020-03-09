@@ -507,7 +507,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.setResponsive) {
             chart.setResponsive(false);
         }
-        setAnimation(animation, chart);
+        // Set the global animation. When chart.hasRendered is not true, the
+        // redraw call comes from a responsive rule and animation should not
+        // occur.
+        setAnimation(chart.hasRendered ? animation : false, chart);
         if (isHiddenChart) {
             chart.temporaryDisplay();
         }
@@ -1131,6 +1134,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @type {Highcharts.SVGRenderer}
          */
         chart.renderer = new Ren(container, chartWidth, chartHeight, null, optionsChart.forExport, options.exporting && options.exporting.allowHTML, chart.styledMode);
+        // Set the initial animation from the options
+        setAnimation(void 0, chart);
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style);
@@ -2000,7 +2005,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         chart.render();
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && chart.onload) {
+        if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
         }
         // If the chart was rendered outside the top container, put it back in
@@ -2033,6 +2038,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.setReflow(this.options.chart.reflow);
         }
         // Don't run again
-        this.onload = null;
+        this.hasLoaded = true;
     }
 }); // end Chart

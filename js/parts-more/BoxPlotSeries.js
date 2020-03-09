@@ -258,6 +258,7 @@ seriesType('boxplot', 'column', {
                     point[key + 'Plot'] = yAxis.translate(point[key], 0, 1, 0, 1);
                 }
             });
+            point.plotHigh = point.highPlot; // For data label validation
         });
     },
     // eslint-disable-next-line valid-jsdoc

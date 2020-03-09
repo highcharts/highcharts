@@ -87,6 +87,7 @@ declare global {
             seriesTypeDescriptions: (
                 LangAccessibilitySeriesTypeDescriptionsOptions
             );
+            sonification: LangAccessibilitySonificationOptions;
             svgContainerLabel: string;
             svgContainerTitle: string;
             table: LangAccessibilityTableOptions;
@@ -154,6 +155,10 @@ declare global {
             funnel: string;
             pyramid: string;
             waterfall: string;
+        }
+        interface LangAccessibilitySonificationOptions {
+            playAsSoundButtonText: string;
+            playAsSoundClickAnnouncement: string;
         }
         interface LangAccessibilityTableOptions {
             tableSummary: string;
@@ -239,10 +244,10 @@ var langOptions: Highcharts.LangOptions = {
             /**
              * Language options for annotation descriptions.
              *
-             * @since next
+             * @since 8.0.1
              */
             annotations: {
-                heading: 'Chart annotations',
+                heading: 'Chart annotations summary',
                 descriptionSinglePoint: '{annotationText}. Related to {annotationPoint}',
                 descriptionMultiplePoints: '{annotationText}. Related to {annotationPoint}' +
                     '{ Also related to, #each(additionalAnnotationPoints)}',
@@ -255,6 +260,16 @@ var langOptions: Highcharts.LangOptions = {
              * @since 8.0.0
              */
             endOfChartMarker: 'End of interactive chart.'
+        },
+
+        /**
+         * Language options for sonification.
+         *
+         * @since 8.0.1
+         */
+        sonification: {
+            playAsSoundButtonText: 'Play as sound, {chartTitle}',
+            playAsSoundClickAnnouncement: 'Play'
         },
 
         /**
@@ -295,7 +310,7 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         table: {
-            viewAsDataTableButtonText: 'View as data table. {chartTitle}',
+            viewAsDataTableButtonText: 'View as data table, {chartTitle}',
             tableSummary: 'Table representation of chart.'
         },
 
@@ -504,7 +519,7 @@ var langOptions: Highcharts.LangOptions = {
              * Description for annotations on a point, as it is made available
              * to assistive technology.
              *
-             * @since next
+             * @since 8.0.1
              */
             pointAnnotationsDescription: '{Annotation: #each(annotations). }'
         }

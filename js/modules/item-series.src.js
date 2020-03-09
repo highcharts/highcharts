@@ -120,6 +120,7 @@ seriesType('item',
 }, 
 // Prototype members
 {
+    markerAttribs: void 0,
     translate: function () {
         if (!this.slots) {
             this.slots = [];
@@ -372,7 +373,6 @@ seriesType('item',
             this.group.animate({
                 opacity: 1
             }, this.options.animation);
-            this.animate = null;
         }
     }
 }, 

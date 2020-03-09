@@ -16,7 +16,8 @@ import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
-    extend
+    extend,
+    merge
 } = U;
 
 /**
@@ -32,6 +33,7 @@ declare global {
         interface ChartSonificationStateObject {
             currentlyPlayingPoint?: SonifyablePoint;
             timeline?: Timeline;
+            duration?: number;
         }
         interface Point {
             cancelSonify?: SonifyablePoint['cancelSonify'];
@@ -92,6 +94,7 @@ import pointSonifyFunctions from './pointSonify.js';
 import chartSonifyFunctions from './chartSonify.js';
 import utilities from './utilities.js';
 import TimelineClasses from './Timeline.js';
+import sonificationOptions from './options.js';
 
 // Expose on the Highcharts object
 
@@ -163,6 +166,13 @@ H.sonification = {
     Timeline: TimelineClasses.Timeline
 };
 
+// Add default options
+merge(
+    true,
+    H.defaultOptions,
+    sonificationOptions
+);
+
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
@@ -184,4 +194,15 @@ extend(H.Chart.prototype, {
 // Prepare charts for sonification on init
 addEvent(H.Chart, 'init', function (): void {
     this.sonification = {};
+});
+
+// Update with chart/series/point updates
+addEvent(H.Chart as any, 'update', function (
+    this: Highcharts.SonifyableChart,
+    e: { options: Highcharts.Options }
+): void {
+    const newOptions = e.options.sonification;
+    if (newOptions) {
+        merge(true, this.options.sonification, newOptions);
+    }
 });
