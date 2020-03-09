@@ -643,12 +643,15 @@ var Pointer = /** @class */ (function () {
      */
     Pointer.prototype.onTrackerMouseOut = function (e) {
         var chart = this.chart;
-        var series = chart.hoverSeries;
         var relatedTarget = e.relatedTarget || e.toElement;
+        var series = chart.hoverSeries;
+        var tooltip = chart.tooltip;
         this.isDirectTouch = false;
         if (series &&
             relatedTarget &&
             !series.stickyTracking &&
+            (!tooltip ||
+                !tooltip.isStickyOnContact()) &&
             !this.inClass(relatedTarget, 'highcharts-tooltip') &&
             (!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465, #5553
                 !this.inClass(relatedTarget, 'highcharts-tracker'))) {
@@ -731,7 +734,7 @@ var Pointer = /** @class */ (function () {
      *
      * @function Highcharts.Pointer#normalize
      *
-     * @param {global.PointerEvent|global.TouchEvent} e
+     * @param {global.MouseEvent|global.PointerEvent|global.TouchEvent} e
      *        Event object in standard browsers.
      *
      * @param {Highcharts.OffsetObject} [chartPosition]
@@ -810,12 +813,18 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.onContainerMouseDown = function (e) {
         // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
-        if (e.button !== 2) {
+        this.onContainerMouseMove(e);
+        if (typeof e.button === 'undefined' ||
+            e.button === 0 // #11635, limiting to primary button
+        ) {
             this.zoomOption(e);
-            // issue #295, dragging not always working in Firefox
-            if (e.preventDefault) {
+            /*
+            // #295, dragging not always working in Firefox
+            // #11635, turn off condition because of wheel click issue
+            if (H.isFirefox) {
                 e.preventDefault();
             }
+             */
             this.dragStart(e);
         }
     };
@@ -830,13 +839,19 @@ var Pointer = /** @class */ (function () {
      * @return {void}
      */
     Pointer.prototype.onContainerMouseLeave = function (e) {
-        var chart = charts[H.hoverChartIndex];
+        var chart = charts[pick(H.hoverChartIndex, -1)];
+        var tooltip = this.chart.tooltip;
         // #4886, MS Touch end fires mouseleave but with no related target
         if (chart &&
             (e.relatedTarget || e.toElement)) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
+        }
+        if ( // #11635, Firefox wheel scroll does not fire out events consistently
+        tooltip &&
+            !tooltip.isHidden) {
+            this.reset();
         }
     };
     /**
@@ -851,11 +866,16 @@ var Pointer = /** @class */ (function () {
      */
     Pointer.prototype.onContainerMouseMove = function (e) {
         var chart = this.chart;
-        if (!defined(H.hoverChartIndex) ||
-            !charts[H.hoverChartIndex] ||
-            !charts[H.hoverChartIndex].mouseIsDown) {
+        /*
+        if (
+            !defined(H.hoverChartIndex) ||
+            !charts[H.hoverChartIndex as any] ||
+            !(charts[H.hoverChartIndex as any] as any).mouseIsDown
+        ) {
             H.hoverChartIndex = chart.index;
         }
+         */
+        this.setHoverChartIndex();
         e = this.normalize(e);
         // In IE8 we apparently need this returnValue set to false in order to
         // avoid text being selected. But in Chrome, e.returnValue is prevented,
@@ -1375,28 +1395,53 @@ var Pointer = /** @class */ (function () {
     Pointer.prototype.setDOMEvents = function () {
         var pointer = this, container = pointer.chart.container, ownerDoc = container.ownerDocument;
         container.onmousedown = function (e) {
-            pointer.onContainerMouseDown(e);
+            pointer.onContainerMouseDown(pointer.normalize(e));
         };
         container.onmousemove = function (e) {
-            pointer.onContainerMouseMove(e);
+            pointer.onContainerMouseMove(pointer.normalize(e));
         };
         container.onclick = function (e) {
-            pointer.onContainerClick(e);
+            pointer.onContainerClick(pointer.normalize(e));
         };
-        this.unbindContainerMouseLeave = addEvent(container, 'mouseleave', pointer.onContainerMouseLeave);
+        this.unbindContainerMouseLeave = addEvent(container, 'mouseleave', function (e) {
+            pointer.onContainerMouseLeave(pointer.normalize(e));
+        });
         if (!H.unbindDocumentMouseUp) {
-            H.unbindDocumentMouseUp = addEvent(ownerDoc, 'mouseup', pointer.onDocumentMouseUp);
+            H.unbindDocumentMouseUp = addEvent(ownerDoc, 'mouseup', function (e) {
+                pointer.onDocumentMouseUp(pointer.normalize(e));
+            });
         }
         if (H.hasTouch) {
             addEvent(container, 'touchstart', function (e) {
-                pointer.onContainerTouchStart(e);
+                pointer.onContainerTouchStart(pointer.normalize(e));
             });
             addEvent(container, 'touchmove', function (e) {
-                pointer.onContainerTouchMove(e);
+                pointer.onContainerTouchMove(pointer.normalize(e));
             });
             if (!H.unbindDocumentTouchEnd) {
-                H.unbindDocumentTouchEnd = addEvent(ownerDoc, 'touchend', pointer.onDocumentTouchEnd);
+                H.unbindDocumentTouchEnd = addEvent(ownerDoc, 'touchend', function (e) {
+                    pointer.onDocumentTouchEnd(pointer.normalize(e));
+                });
             }
+        }
+    };
+    /**
+     * Sets the index of the hovered chart and leaves the previous hovered
+     * chart, to reset states like tooltip.
+     *
+     * @private
+     * @function Highcharts.Pointer#setHoverChartIndex
+     */
+    Pointer.prototype.setHoverChartIndex = function () {
+        var chart = this.chart;
+        var hoverChart = H.charts[H.hoverChartIndex || -1];
+        if (hoverChart &&
+            hoverChart.index !== chart.index) {
+            hoverChart.pointer.onContainerMouseLeave({ relatedTarget: true });
+        }
+        if (!hoverChart ||
+            !hoverChart.mouseIsDown) {
+            H.hoverChartIndex = chart.index;
         }
     };
     /**
@@ -1413,10 +1458,13 @@ var Pointer = /** @class */ (function () {
      */
     Pointer.prototype.touch = function (e, start) {
         var chart = this.chart, hasMoved, pinchDown, isInside;
+        /*
         if (chart.index !== H.hoverChartIndex) {
-            this.onContainerMouseLeave({ relatedTarget: true });
+            this.onContainerMouseLeave({ relatedTarget: true } as any);
         }
         H.hoverChartIndex = chart.index;
+         */
+        this.setHoverChartIndex();
         if (e.touches.length === 1) {
             e = this.normalize(e);
             isInside = chart.isInsidePlot(e.chartX - chart.plotLeft, e.chartY - chart.plotTop);
