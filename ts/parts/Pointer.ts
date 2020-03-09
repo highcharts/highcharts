@@ -48,8 +48,6 @@ declare global {
             shared?: boolean;
         }
         interface PointerEventObject extends PointerCoordinatesObject, PointerEvent {
-            chartX: number;
-            chartY: number;
             touches?: Array<Touch>;
         }
         interface PointerHoverDataObject {
@@ -160,6 +158,7 @@ declare global {
                 clip?: boolean
             ): void;
             public setDOMEvents(): void;
+            public setHoverChartIndex(): void;
             public touch(e: PointerEventObject, start?: boolean): void;
             public zoomOption(e: Event): void;
         }
@@ -1065,8 +1064,9 @@ class Pointer {
      */
     public onTrackerMouseOut(e: Highcharts.PointerEventObject): void {
         const chart = this.chart;
-        const series = chart.hoverSeries;
         const relatedTarget = e.relatedTarget || e.toElement;
+        const series = chart.hoverSeries;
+        const tooltip = chart.tooltip;
 
         this.isDirectTouch = false;
 
@@ -1074,6 +1074,10 @@ class Pointer {
             series &&
             relatedTarget &&
             !series.stickyTracking &&
+            (
+                !tooltip ||
+                !tooltip.isStickyOnContact()
+            ) &&
             !this.inClass(relatedTarget as any, 'highcharts-tooltip') &&
             (
                 !this.inClass(
@@ -1176,7 +1180,7 @@ class Pointer {
      *
      * @function Highcharts.Pointer#normalize
      *
-     * @param {global.PointerEvent|global.TouchEvent} e
+     * @param {global.MouseEvent|global.PointerEvent|global.TouchEvent} e
      *        Event object in standard browsers.
      *
      * @param {Highcharts.OffsetObject} [chartPosition]
@@ -1186,7 +1190,7 @@ class Pointer {
      *         A browser event with extended properties `chartX` and `chartY`.
      */
     public normalize<T extends Highcharts.PointerEventObject>(
-        e: (T|PointerEvent|TouchEvent),
+        e: (T|MouseEvent|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
         const touches = (e as TouchEvent).touches;
@@ -1283,15 +1287,21 @@ class Pointer {
         // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
 
-        if ((e as any).button !== 2) {
+        this.onContainerMouseMove(e);
+
+        if (
+            typeof e.button === 'undefined' ||
+            e.button === 0 // #11635, limiting to primary button
+        ) {
 
             this.zoomOption(e);
-
-            // issue #295, dragging not always working in Firefox
-            if (e.preventDefault) {
+            /*
+            // #295, dragging not always working in Firefox
+            // #11635, turn off condition because of wheel click issue
+            if (H.isFirefox) {
                 e.preventDefault();
             }
-
+             */
             this.dragStart(e);
         }
     }
@@ -1307,7 +1317,8 @@ class Pointer {
      * @return {void}
      */
     public onContainerMouseLeave(e: Highcharts.PointerEventObject): void {
-        const chart = charts[H.hoverChartIndex as any];
+        const chart = charts[pick(H.hoverChartIndex, -1)];
+        const tooltip = this.chart.tooltip;
 
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
@@ -1317,6 +1328,13 @@ class Pointer {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
+        }
+
+        if ( // #11635, Firefox wheel scroll does not fire out events consistently
+            tooltip &&
+            !tooltip.isHidden
+        ) {
+            this.reset();
         }
     }
 
@@ -1333,6 +1351,7 @@ class Pointer {
     public onContainerMouseMove(e: Highcharts.PointerEventObject): void {
         const chart = this.chart;
 
+        /*
         if (
             !defined(H.hoverChartIndex) ||
             !charts[H.hoverChartIndex as any] ||
@@ -1340,6 +1359,8 @@ class Pointer {
         ) {
             H.hoverChartIndex = chart.index;
         }
+         */
+        this.setHoverChartIndex();
 
         e = this.normalize(e);
 
@@ -2106,24 +2127,28 @@ class Pointer {
             ownerDoc = container.ownerDocument;
 
         container.onmousedown = function (e: MouseEvent): void {
-            pointer.onContainerMouseDown(e as any);
+            pointer.onContainerMouseDown(pointer.normalize(e));
         };
         container.onmousemove = function (e: MouseEvent): void {
-            pointer.onContainerMouseMove(e as any);
+            pointer.onContainerMouseMove(pointer.normalize(e));
         };
         container.onclick = function (e: MouseEvent): void {
-            pointer.onContainerClick(e as any);
+            pointer.onContainerClick(pointer.normalize(e));
         };
         this.unbindContainerMouseLeave = addEvent(
             container,
             'mouseleave',
-            pointer.onContainerMouseLeave as any
+            function (e: MouseEvent): void {
+                pointer.onContainerMouseLeave(pointer.normalize(e));
+            }
         );
         if (!H.unbindDocumentMouseUp) {
             H.unbindDocumentMouseUp = addEvent(
                 ownerDoc,
                 'mouseup',
-                pointer.onDocumentMouseUp as any
+                function (e: MouseEvent): void {
+                    pointer.onDocumentMouseUp(pointer.normalize(e));
+                }
             );
         }
         if (H.hasTouch) {
@@ -2131,23 +2156,51 @@ class Pointer {
                 container,
                 'touchstart',
                 function (e: TouchEvent): void {
-                    pointer.onContainerTouchStart(e as any);
+                    pointer.onContainerTouchStart(pointer.normalize(e));
                 }
             );
             addEvent(
                 container,
                 'touchmove',
                 function (e: TouchEvent): void {
-                    pointer.onContainerTouchMove(e as any);
+                    pointer.onContainerTouchMove(pointer.normalize(e));
                 }
             );
             if (!H.unbindDocumentTouchEnd) {
                 H.unbindDocumentTouchEnd = addEvent(
                     ownerDoc,
                     'touchend',
-                    pointer.onDocumentTouchEnd as any
+                    function (e: TouchEvent): void {
+                        pointer.onDocumentTouchEnd(pointer.normalize(e));
+                    }
                 );
             }
+        }
+    }
+
+    /**
+     * Sets the index of the hovered chart and leaves the previous hovered
+     * chart, to reset states like tooltip.
+     *
+     * @private
+     * @function Highcharts.Pointer#setHoverChartIndex
+     */
+    public setHoverChartIndex(): void {
+        const chart = this.chart;
+        const hoverChart = H.charts[H.hoverChartIndex || -1];
+
+        if (
+            hoverChart &&
+            hoverChart.index !== chart.index
+        ) {
+            hoverChart.pointer.onContainerMouseLeave({ relatedTarget: true } as any);
+        }
+
+        if (
+            !hoverChart ||
+            !hoverChart.mouseIsDown
+        ) {
+            H.hoverChartIndex = chart.index;
         }
     }
 
@@ -2169,10 +2222,13 @@ class Pointer {
             pinchDown,
             isInside;
 
+        /*
         if (chart.index !== H.hoverChartIndex) {
             this.onContainerMouseLeave({ relatedTarget: true } as any);
         }
         H.hoverChartIndex = chart.index;
+         */
+        this.setHoverChartIndex();
 
         if ((e as any).touches.length === 1) {
 
