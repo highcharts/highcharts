@@ -9,6 +9,7 @@ import U from './../../parts/Utilities.js';
 var extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
+import eventEmitterMixin from './../eventEmitterMixin.js';
 import MockPoint from './../MockPoint.js';
 import Tooltip from '../../parts/Tooltip.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -150,7 +151,7 @@ ControllableLabel.attrsMap = {
     borderRadius: 'r',
     padding: 'padding'
 };
-merge(true, ControllableLabel.prototype, controllableMixin, 
+merge(true, ControllableLabel.prototype, controllableMixin, eventEmitterMixin, 
 /** @lends Annotation.ControllableLabel# */ {
     /**
      * Translate the point of the label by deltaX and deltaY translations.
@@ -189,6 +190,7 @@ merge(true, ControllableLabel.prototype, controllableMixin,
         labelOptions[this.collection][this.index].y = this.options.y;
     },
     render: function (parent) {
+        var _this = this;
         var options = this.options, attrs = this.attrsFromOptions(options), style = options.style;
         this.graphic = this.annotation.chart.renderer
             .label('', 0, -9999, // #10055
@@ -205,6 +207,21 @@ merge(true, ControllableLabel.prototype, controllableMixin,
         }
         if (options.className) {
             this.graphic.addClass(options.className);
+        }
+        // Mousedown event bound to HTML element (#13070).
+        if (options.useHTML) {
+            H.addEvent(this.graphic.text.element, 'mousedown', function (e) {
+                _this.annotation.onMouseDown(e);
+            });
+            if (!this.annotation.graphic.renderer.styledMode) {
+                this.graphic.text.css({
+                    cursor: {
+                        x: 'ew-resize',
+                        y: 'ns-resize',
+                        xy: 'move'
+                    }[this.annotation.options.draggable]
+                });
+            }
         }
         this.graphic.labelrank = options.labelrank;
         controllableMixin.render.call(this);

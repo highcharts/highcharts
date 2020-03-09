@@ -149,4 +149,63 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
         6,
         'Dragging an annotation should not drag point too (#12073)'
     );
+
+    chart = Highcharts.chart('container', {
+        series: [{
+            keys: ['y', 'id'],
+            data: [
+                [29.9, '0'],
+                [71.5, '1'],
+                [106.4, '2'],
+                [129.2, '3'],
+                [144.0, '4'],
+                [176.0, '5']
+            ]
+        }],
+        tooltip: {
+            enabled: false
+        },
+        annotations: [{
+            labels: [{
+                point: '2',
+                text: '<span class="html-annotation">HTML Text</span>',
+                useHTML: true
+            }],
+            draggable: 'xy'
+        }, {
+            labels: [{
+                point: '4',
+                text: 'Normal Text'
+            }],
+            draggable: 'xy'
+        }]
+    });
+
+    var labelGraphic = chart.annotations[0].labels[0].graphic,
+        offset = 5;
+
+    controller = new TestController(chart);
+    controller.mouseDown(
+        labelGraphic.x + offset,
+        labelGraphic.y + offset
+    );
+    controller.mouseMove(
+        chart.xAxis[0].toPixels(0.5),
+        chart.yAxis[0].toPixels(170)
+    );
+    controller.mouseUp();
+
+    assert.close(
+        labelGraphic.x,
+        chart.xAxis[0].toPixels(0.5) - offset,
+        0.1,
+        'An annotation with HTML label should be X draggable (#13070).'
+    );
+
+    assert.close(
+        labelGraphic.y,
+        chart.yAxis[0].toPixels(170) - offset,
+        0.1,
+        'An annotation with HTML label should be Y draggable (#13070).'
+    );
 });
