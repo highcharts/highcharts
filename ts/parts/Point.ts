@@ -362,6 +362,7 @@ const {
     defined,
     erase,
     extend,
+    fireEvent,
     format,
     getNestedProperty,
     isArray,
@@ -373,8 +374,7 @@ const {
     uniqueKey
 } = U;
 
-var H = Highcharts,
-    fireEvent = H.fireEvent;
+var H = Highcharts;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

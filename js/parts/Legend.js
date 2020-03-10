@@ -78,7 +78,7 @@ import H from './Globals.js';
 * @type {"legendItemClick"}
 */
 import U from './Utilities.js';
-var addEvent = U.addEvent, css = U.css, defined = U.defined, discardElement = U.discardElement, find = U.find, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, stableSort = U.stableSort, syncTimeout = U.syncTimeout, wrap = U.wrap;
+var addEvent = U.addEvent, animObject = U.animObject, css = U.css, defined = U.defined, discardElement = U.discardElement, find = U.find, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, stableSort = U.stableSort, syncTimeout = U.syncTimeout, wrap = U.wrap;
 var isFirefox = H.isFirefox, marginNames = H.marginNames, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -1067,7 +1067,7 @@ var Legend = /** @class */ (function () {
             this.currentPage = currentPage;
             this.positionCheckboxes();
             // Fire event after scroll animation is complete
-            var animOptions = H.animObject(pick(animation, chart.renderer.globalAnimation, true));
+            var animOptions = animObject(pick(animation, chart.renderer.globalAnimation, true));
             syncTimeout(function () {
                 fireEvent(_this, 'afterScroll', { currentPage: currentPage });
             }, animOptions.duration || 0);

@@ -15,7 +15,8 @@ import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
     clamp,
-    error
+    error,
+    pick
 } = U;
 
 /**
@@ -49,8 +50,6 @@ declare global {
         }
     }
 }
-
-var pick = H.pick;
 
 /* eslint-disable valid-jsdoc */
 

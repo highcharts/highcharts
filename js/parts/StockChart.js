@@ -775,9 +775,9 @@ addEvent(Axis, 'afterSetScale', function () {
         !defined(axis.panningState)) {
         var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
         axis.series.forEach(function (series) {
-            min = Math.min(H.arrayMin(series.yData), min) -
+            min = Math.min(arrayMin(series.yData), min) -
                 (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(H.arrayMax(series.yData), max) +
+            max = Math.max(arrayMax(series.yData), max) +
                 (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
         axis.panningState = {

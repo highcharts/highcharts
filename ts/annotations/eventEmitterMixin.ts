@@ -54,13 +54,12 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    fireEvent,
     inArray,
     objectEach,
     pick,
     removeEvent
 } = U;
-
-var fireEvent = H.fireEvent;
 
 /* eslint-disable valid-jsdoc */
 
