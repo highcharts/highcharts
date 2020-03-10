@@ -44,7 +44,7 @@ var Fullscreen = /** @class */ (function () {
          *
          * @name Highcharts.Fullscreen#isOpen
          * @type {boolean|undefined}
-         * @since next
+         * @since 8.0.1
          */
         this.isOpen = false;
         if (!(chart.container.parentNode instanceof Element)) {
@@ -92,7 +92,7 @@ var Fullscreen = /** @class */ (function () {
      * Stops displaying the chart in fullscreen mode.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function    Highcharts.Fullscreen#close
      * @return      {void}
@@ -119,7 +119,7 @@ var Fullscreen = /** @class */ (function () {
      * button's text will not be replaced - it's on the user side.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function Highcharts.Fullscreen#open
      * @return      {void}
@@ -159,7 +159,7 @@ var Fullscreen = /** @class */ (function () {
      *
      * @private
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @requires modules/full-screen
      * @return {void}
@@ -184,7 +184,7 @@ var Fullscreen = /** @class */ (function () {
      * a drop down menu in the upper right corner accesses this function.
      * Exporting module required.
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @sample      highcharts/members/chart-togglefullscreen/
      *              Toggle fullscreen mode from a HTML button

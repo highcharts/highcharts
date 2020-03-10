@@ -374,6 +374,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     );
                 }
             });
+            point.plotHigh = point.highPlot; // For data label validation
         });
     },
 

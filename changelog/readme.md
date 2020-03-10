@@ -25,10 +25,8 @@ in past tense.
 
 3. Manually edit these generated markdown files to your wish.
 
-4. Run the script that assembles the content of all markdown files in to a .html file.
+4. Run the script that assembles the content of all markdown files in to a .html file and uploads it to S3, where the website will pick it up.
 
     ```
-    node changelog/generate-html
+    node changelog/upload
     ```
-
-5. The generated `changelog.html` is committed to the _highcharts_ repo and will be picked up by the web server.

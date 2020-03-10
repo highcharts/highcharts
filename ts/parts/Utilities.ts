@@ -81,6 +81,7 @@ declare global {
             cursor?: CursorValue;
             fontSize?: (number|string);
             lineWidth?: (number|string);
+            pointerEvents?: string;
             stroke?: ColorString;
             strokeWidth?: (number|string);
         }

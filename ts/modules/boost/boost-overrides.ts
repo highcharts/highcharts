@@ -175,6 +175,7 @@ Series.prototype.getPoint = function (
         point.plotX = boostPoint.plotX;
         point.plotY = boostPoint.plotY;
         point.index = boostPoint.i;
+        point.isInside = this.isPointInside(boostPoint);
     }
 
     return point;
@@ -448,10 +449,6 @@ Series.prototype.enterBoost = function (): void {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
-
-    // Once we've been in boost mode, we don't want animation when returning to
-    // vanilla mode.
-    this.animate = null as any;
 
     // Hide series label if any
     if (this.labelBySeries) {

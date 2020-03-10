@@ -238,7 +238,6 @@ seriesType('dependencywheel', 'sankey',
                     }, this.options.animation);
                 }
             }, this);
-            this.animate = null;
         }
     }
     /* eslint-enable valid-jsdoc */

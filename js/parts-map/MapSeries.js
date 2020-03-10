@@ -772,8 +772,6 @@ seriesType('map', 'scatter',
                     scaleX: 1,
                     scaleY: 1
                 }, animation);
-                // Delete this function to allow it only once
-                this.animate = null;
             }
         }
     },
@@ -801,7 +799,6 @@ seriesType('map', 'scatter',
                     }, animationOptions);
                 }
             });
-            this.animate = null;
         }
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,

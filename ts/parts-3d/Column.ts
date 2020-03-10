@@ -312,9 +312,6 @@ wrap(seriesTypes.column.prototype, 'animate', function (
 
                 // redraw datalabels to the correct position
                 this.drawDataLabels();
-
-                // delete this function to allow it only once
-                series.animate = null as any;
             }
         }
     }

@@ -95,7 +95,7 @@ class Fullscreen {
          *
          * @name Highcharts.Fullscreen#isOpen
          * @type {boolean|undefined}
-         * @since next
+         * @since 8.0.1
          */
         this.isOpen = false;
 
@@ -161,7 +161,7 @@ class Fullscreen {
      * Stops displaying the chart in fullscreen mode.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function    Highcharts.Fullscreen#close
      * @return      {void}
@@ -197,7 +197,7 @@ class Fullscreen {
      * button's text will not be replaced - it's on the user side.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function Highcharts.Fullscreen#open
      * @return      {void}
@@ -247,7 +247,7 @@ class Fullscreen {
      *
      * @private
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @requires modules/full-screen
      * @return {void}
@@ -281,7 +281,7 @@ class Fullscreen {
      * a drop down menu in the upper right corner accesses this function.
      * Exporting module required.
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @sample      highcharts/members/chart-togglefullscreen/
      *              Toggle fullscreen mode from a HTML button

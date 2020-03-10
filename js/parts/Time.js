@@ -39,7 +39,7 @@ import Highcharts from './Globals.js';
  * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
- * @augments Highcharts.TimeNormalizedObject
+ * @extends Highcharts.TimeNormalizedObject
  */ /**
 * @name Highcharts.TimeTicksInfoObject#higherRanks
 * @type {Array<string>}
@@ -51,9 +51,10 @@ import Highcharts from './Globals.js';
  * Time ticks.
  *
  * @interface Highcharts.AxisTickPositionsArray
+ * @extends global.Array<number>
  */ /**
 * @name Highcharts.AxisTickPositionsArray#info
-* @type {Highcharts.TimeTicksInfoObject}
+* @type {Highcharts.TimeTicksInfoObject|undefined}
 */
 /**
  * A callback to return the time zone offset for a given datetime. It
@@ -107,10 +108,13 @@ var H = Highcharts, win = H.win;
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
+ * @since 6.0.5
+ *
  * @class
  * @name Highcharts.Time
  *
- * @since 6.0.5
+ * @param {Highcharts.TimeOptions} options
+ * Time options as defined in [chart.options.time](/highcharts/time).
  */
 var Time = /** @class */ (function () {
     /* *
@@ -118,14 +122,6 @@ var Time = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * Time settings are applied in general for each page using
-     * `Highcharts.setOptions`, or individually for each Chart item through the
-     * [time](https://api.highcharts.com/highcharts/time) options set.
-     *
-     * @param {Highcharts.TimeOptions} options
-     * Time options as defined in [chart.options.time](/highcharts/time).
-     */
     function Time(options) {
         /* *
          *
@@ -351,7 +347,7 @@ var Time = /** @class */ (function () {
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && options.getTimezoneOffset) {
             return function (timestamp) {
-                return options.getTimezoneOffset(timestamp) * 60000;
+                return options.getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
         // Last, use the `timezoneOffset` option if set

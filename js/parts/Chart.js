@@ -507,7 +507,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (chart.setResponsive) {
             chart.setResponsive(false);
         }
-        setAnimation(animation, chart);
+        // Set the global animation. When chart.hasRendered is not true, the
+        // redraw call comes from a responsive rule and animation should not
+        // occur.
+        setAnimation(chart.hasRendered ? animation : false, chart);
         if (isHiddenChart) {
             chart.temporaryDisplay();
         }
@@ -1131,6 +1134,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @type {Highcharts.SVGRenderer}
          */
         chart.renderer = new Ren(container, chartWidth, chartHeight, null, optionsChart.forExport, options.exporting && options.exporting.allowHTML, chart.styledMode);
+        // Set the initial animation from the options
+        setAnimation(void 0, chart);
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style);
@@ -1327,6 +1332,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.isResizing += 1;
         // set the animation for the current process
         setAnimation(animation, chart);
+        globalAnimation = renderer.globalAnimation;
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
         if (typeof width !== 'undefined') {
@@ -1339,14 +1345,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Resize the container with the global animation applied if enabled
         // (#2503)
         if (!chart.styledMode) {
-            globalAnimation = renderer.globalAnimation;
             (globalAnimation ? animate : css)(chart.container, {
                 width: chart.chartWidth + 'px',
                 height: chart.chartHeight + 'px'
             }, globalAnimation);
         }
         chart.setChartSize(true);
-        renderer.setSize(chart.chartWidth, chart.chartHeight, animation);
+        renderer.setSize(chart.chartWidth, chart.chartHeight, globalAnimation);
         // handle axes
         chart.axes.forEach(function (axis) {
             axis.isDirty = true;
@@ -1356,7 +1361,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.isDirtyBox = true; // force redraw of plot and chart border
         chart.layOutTitles(); // #2857
         chart.getMargins();
-        chart.redraw(animation);
+        chart.redraw(globalAnimation);
         chart.oldChartHeight = null;
         fireEvent(chart, 'resize');
         // Fire endResize and set isResizing back. If animation is disabled,
@@ -2000,7 +2005,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         chart.render();
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && chart.onload) {
+        if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
         }
         // If the chart was rendered outside the top container, put it back in
@@ -2033,6 +2038,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.setReflow(this.options.chart.reflow);
         }
         // Don't run again
-        this.onload = null;
+        this.hasLoaded = true;
     }
 }); // end Chart

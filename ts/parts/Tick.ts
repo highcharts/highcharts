@@ -158,6 +158,21 @@ var deg2rad = H.deg2rad;
  *
  * @class
  * @name Highcharts.Tick
+ *
+ * @param {Highcharts.Axis} axis
+ * The axis of the tick.
+ *
+ * @param {number} pos
+ * The position of the tick on the axis in terms of axis values.
+ *
+ * @param {string} [type]
+ * The type of tick, either 'minor' or an empty string
+ *
+ * @param {boolean} [noLabel=false]
+ * Whether to disable the label or not. Defaults to false.
+ *
+ * @param {object} [parameters]
+ * Optional parameters for the tick.
  */
 class Tick {
 
@@ -167,22 +182,6 @@ class Tick {
      *
      * */
 
-    /**
-     * @param {Highcharts.Axis} axis
-     * The axis of the tick.
-     *
-     * @param {number} pos
-     * The position of the tick on the axis in terms of axis values.
-     *
-     * @param {string} [type]
-     * The type of tick, either 'minor' or an empty string
-     *
-     * @param {boolean} [noLabel=false]
-     * Whether to disable the label or not. Defaults to false.
-     *
-     * @param {object} [parameters]
-     * Optional parameters for the tick.
-     */
     public constructor(
         axis: Highcharts.Axis,
         pos: number,

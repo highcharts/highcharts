@@ -1205,9 +1205,6 @@ seriesType<Highcharts.MapSeries>(
                         scaleX: 1,
                         scaleY: 1
                     }, animation);
-
-                    // Delete this function to allow it only once
-                    this.animate = null as any;
                 }
             }
         },
@@ -1255,8 +1252,6 @@ seriesType<Highcharts.MapSeries>(
                             }, animationOptions);
                     }
                 });
-
-                this.animate = null as any;
             }
 
         },

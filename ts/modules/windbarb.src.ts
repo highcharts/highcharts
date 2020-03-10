@@ -484,8 +484,6 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
                 (this.markerGroup as any).animate({
                     opacity: 1
                 }, animObject(this.options.animation));
-
-                this.animate = null as any;
             }
         },
 

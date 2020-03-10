@@ -814,13 +814,17 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
     onHandlerTerminate: function (
         this: Highcharts.SeriesKeyboardNavigation
     ): void {
-        var chart = this.chart;
+        const chart = this.chart;
+        const curPoint = chart.highlightedPoint;
 
         if (chart.tooltip) {
             chart.tooltip.hide(0);
         }
 
-        delete chart.highlightedPoint;
+        if (curPoint) {
+            curPoint.onMouseOut();
+            delete chart.highlightedPoint;
+        }
     },
 
 

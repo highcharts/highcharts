@@ -943,7 +943,13 @@ seriesType<Highcharts.PackedBubbleSeries>(
                         });
                     }
                 });
-                series.chart.hideOverlappingLabels(dataLabels);
+
+                // Only hide overlapping dataLabels for layouts that
+                // use simulation. Spiral packedbubble don't need
+                // additional dataLabel hiding on every simulation step
+                if (series.options.useSimulation) {
+                    series.chart.hideOverlappingLabels(dataLabels);
+                }
             }
         },
         // Needed because of z-indexing issue if point is added in series.group
@@ -1894,7 +1900,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
  * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
- * @product   highcharts highstock
+ * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble
  */

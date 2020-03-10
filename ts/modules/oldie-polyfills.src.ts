@@ -179,6 +179,24 @@ if (!Array.prototype.reduce) {
     };
 }
 
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function (): Function {
+        const thatFunc = this;
+        const thatArg = arguments[0];
+        const args = Array.prototype.slice.call(arguments, 1);
+        if (typeof thatFunc !== 'function') {
+            // closest thing possible to the ECMAScript 5
+            // internal IsCallable function
+            throw new TypeError('Function.prototype.bind - ' +
+                'what is trying to be bound is not callable');
+        }
+        return function (): unknown {
+            const funcArgs = args.concat(Array.prototype.slice.call(arguments));
+            return thatFunc.apply(thatArg, funcArgs);
+        };
+    };
+}
+
 if (!Object.keys) {
     Object.keys = function (
         this: Record<string, any>,

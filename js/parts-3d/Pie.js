@@ -135,8 +135,6 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
                 if (markerGroup) {
                     markerGroup.animate(attribs, animation);
                 }
-                // Delete this function to allow it only once
-                this.animate = null;
             }
         }
     }

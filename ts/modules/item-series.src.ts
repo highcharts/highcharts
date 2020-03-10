@@ -197,6 +197,7 @@ seriesType<Highcharts.ItemSeries>(
     },
     // Prototype members
     {
+        markerAttribs: void 0,
         translate: function (this: Highcharts.ItemSeries): void {
             if (!this.slots) {
                 this.slots = [];
@@ -565,7 +566,6 @@ seriesType<Highcharts.ItemSeries>(
                 (this.group as any).animate({
                     opacity: 1
                 }, this.options.animation);
-                this.animate = null as any;
             }
         }
     },
