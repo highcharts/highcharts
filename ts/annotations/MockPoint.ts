@@ -41,7 +41,7 @@ declare global {
             public getLabelConfig(): AnnotationMockLabelOptionsObject;
             public getOptions(): AnnotationMockPointOptionsObject;
             public hasDynamicOptions(): boolean;
-            public isInsidePane(): boolean;
+            public isInsidePlot(): boolean;
             public refresh(): void;
             public refreshOptions(): void;
             public rotate(cx: number, cy: number, radians: number): void;
@@ -111,7 +111,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 var defined = U.defined,
-    extend = U.extend;
+    extend = U.extend,
+    fireEvent = U.fireEvent;
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
@@ -408,25 +409,31 @@ extend(MockPoint.prototype, /** @lends Highcharts.AnnotationMockPoint# */ {
      * @private
      * @return {boolean} A flag indicating whether the point is inside the pane.
      */
-    isInsidePane: function (this: Highcharts.AnnotationMockPoint): boolean {
+    isInsidePlot: function (this: Highcharts.AnnotationMockPoint): boolean {
         var plotX = this.plotX,
             plotY = this.plotY,
             xAxis = this.series.xAxis,
             yAxis = this.series.yAxis,
-            isInside = true;
+            e = {
+                x: plotX,
+                y: plotY,
+                isInsidePlot: true
+            };
 
         if (xAxis) {
-            isInside = defined(plotX) && plotX >= 0 && plotX <= xAxis.len;
+            e.isInsidePlot = defined(plotX) && plotX >= 0 && plotX <= xAxis.len;
         }
 
         if (yAxis) {
-            isInside =
-                isInside &&
+            e.isInsidePlot =
+                e.isInsidePlot &&
                 defined(plotY) &&
                 plotY >= 0 && plotY <= yAxis.len;
         }
 
-        return isInside;
+        fireEvent(this.series.chart, 'afterIsInsidePlot', e);
+
+        return e.isInsidePlot;
     },
 
     /**
@@ -455,7 +462,7 @@ extend(MockPoint.prototype, /** @lends Highcharts.AnnotationMockPoint# */ {
             this.plotY = options.y;
         }
 
-        this.isInside = this.isInsidePane();
+        this.isInside = this.isInsidePlot();
     },
 
     /**
