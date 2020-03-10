@@ -735,9 +735,6 @@ function getChartSonifyOptions(chart, userOptions) {
  */
 function chartSonify(options) {
     var opts = getChartSonifyOptions(this, options);
-    if (opts.enabled === false) {
-        return;
-    }
     // Only one timeline can play at a time.
     if (this.sonification.timeline) {
         this.sonification.timeline.pause();
