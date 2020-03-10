@@ -1361,7 +1361,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.isDirtyBox = true; // force redraw of plot and chart border
         chart.layOutTitles(); // #2857
         chart.getMargins();
-        chart.redraw();
+        chart.redraw(globalAnimation);
         chart.oldChartHeight = null;
         fireEvent(chart, 'resize');
         // Fire endResize and set isResizing back. If animation is disabled,

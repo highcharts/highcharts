@@ -1987,7 +1987,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.layOutTitles(); // #2857
         chart.getMargins();
 
-        chart.redraw();
+        chart.redraw(globalAnimation);
 
 
         chart.oldChartHeight = null as any;
