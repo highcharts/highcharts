@@ -1314,26 +1314,15 @@ var Pointer = /** @class */ (function () {
         }
         // Issues related to crosshair #4927, #5269 #5066, #5658
         chart.axes.forEach(function drawAxisCrosshair(axis) {
-            var snap = pick(axis.crosshair.snap, true), distance, tempDistance, point;
-            if (!snap) {
-                point = void 0;
-            }
-            else if (points &&
-                points.length === 1 &&
-                points[0].series[axis.coll] === axis) {
-                point = points[0];
-            }
-            else if (e) {
-                // A point closest to the pointer should be chosen (#13002).
-                points.forEach(function (p) {
-                    if (p.series[axis.coll] === axis) {
-                        tempDistance = Math.sqrt(Math.pow(e.chartX - ((p.plotX || 0) + chart.plotLeft), 2) +
-                            Math.pow(e.chartY - ((p.plotY || 0) + chart.plotTop), 2));
-                        distance = !defined(distance) ?
-                            tempDistance : (tempDistance < distance ? tempDistance : distance);
-                        point = distance === tempDistance ? p : point;
-                    }
-                });
+            var snap = pick((axis.crosshair || {}).snap, true);
+            var point;
+            if (snap) {
+                point = chart.hoverPoint; // #13002
+                if (!point || point.series[axis.coll] !== axis) {
+                    point = find(points, function (p) {
+                        return p.series[axis.coll] === axis;
+                    });
+                }
             }
             // Axis has snapping crosshairs, and one of the hover points belongs
             // to axis. Always call drawCrosshair when it is not snap.
