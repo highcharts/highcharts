@@ -1169,11 +1169,11 @@ seriesType<Highcharts.ColumnSeries>(
                         // Do the scale synchronously to ensure smooth
                         // updating (#5030, #7228)
                         step: function (val: any, fx: any): void {
-
-                            attr[translateProp] =
-                        translateStart +
-                        fx.pos * ((yAxis.pos as any) - translateStart);
-                            series.group.attr(attr);
+                            if (series.group) {
+                                attr[translateProp] = translateStart +
+                                    fx.pos * (yAxis.pos - translateStart);
+                                series.group.attr(attr);
+                            }
                         }
                     })
                 );
