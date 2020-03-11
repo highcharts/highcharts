@@ -213,66 +213,80 @@ var Axis = H.Axis,
  * @param {number} x
  * @param {Highcharts.OptionsStackingValue} [stackOption]
  */
-H.StackItem = function (
-    this: Highcharts.StackItem,
-    axis: Highcharts.Axis,
-    options: Highcharts.YAxisStackLabelsOptions,
-    isNegative: boolean,
-    x: number,
-    stackOption?: Highcharts.OptionsStackingValue
-): void {
+class StackItem {
+    public constructor(
+        axis: Highcharts.Axis,
+        options: Highcharts.YAxisStackLabelsOptions,
+        isNegative: boolean,
+        x: number,
+        stackOption?: Highcharts.OptionsStackingValue
+    ) {
 
-    var inverted = axis.chart.inverted;
+        var inverted = axis.chart.inverted;
 
-    this.axis = axis;
+        this.axis = axis;
 
-    // Tells if the stack is negative
-    this.isNegative = isNegative;
+        // Tells if the stack is negative
+        this.isNegative = isNegative;
 
-    // Save the options to be able to style the label
-    this.options = options = options || {};
+        // Save the options to be able to style the label
+        this.options = options = options || {};
 
-    // Save the x value to be able to position the label later
-    this.x = x;
+        // Save the x value to be able to position the label later
+        this.x = x;
 
-    // Initialize total value
-    this.total = null;
+        // Initialize total value
+        this.total = null;
 
-    // This will keep each points' extremes stored by series.index and point
-    // index
-    this.points = {};
+        // This will keep each points' extremes stored by series.index and point
+        // index
+        this.points = {};
 
-    // Save the stack option on the series configuration object, and whether to
-    // treat it as percent
-    this.stack = stackOption;
-    this.leftCliff = 0;
-    this.rightCliff = 0;
+        // Save the stack option on the series configuration object,
+        // and whether to treat it as percent
+        this.stack = stackOption;
+        this.leftCliff = 0;
+        this.rightCliff = 0;
 
-    // The align options and text align varies on whether the stack is negative
-    // and if the chart is inverted or not.
-    // First test the user supplied value, then use the dynamic.
-    this.alignOptions = {
-        align: options.align ||
-            (inverted ? (isNegative ? 'left' : 'right') : 'center'),
-        verticalAlign: options.verticalAlign ||
-            (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
-        y: options.y,
-        x: options.x
-    };
-    this.textAlign = options.textAlign ||
-    (inverted ? (isNegative ? 'right' : 'left') : 'center');
-} as any;
+        // The align options and text align varies on whether the stack is
+        // negative and if the chart is inverted or not.
+        // First test the user supplied value, then use the dynamic.
+        this.alignOptions = {
+            align: options.align ||
+                (inverted ? (isNegative ? 'left' : 'right') : 'center'),
+            verticalAlign: options.verticalAlign ||
+                (inverted ? 'middle' : (isNegative ? 'bottom' : 'top')),
+            y: options.y,
+            x: options.x
+        };
+        this.textAlign = options.textAlign ||
+        (inverted ? (isNegative ? 'right' : 'left') : 'center');
+    }
 
-H.StackItem.prototype = {
+    public alignOptions: Highcharts.AlignObject;
+    public axis: Highcharts.Axis;
+    public base?: string;
+    public cumulative?: (null|number);
+    public isNegative: boolean;
+    public label?: Highcharts.SVGElement;
+    public leftCliff: number;
+    public options: Highcharts.YAxisStackLabelsOptions;
+    public points: Highcharts.Dictionary<Array<number>>;
+    public rightCliff: number;
+    public stack?: Highcharts.OptionsStackingValue;
+    public textAlign: Highcharts.AlignValue;
+    public total: (null|number);
+    public touched?: number;
+    public x: number;
 
     /**
      * @private
      * @function Highcharts.StackItem#destroy
      * @return {void}
      */
-    destroy: function (this: Highcharts.StackItem): void {
+    public destroy(): void {
         destroyObjectProperties(this, this.axis);
-    },
+    }
 
     /**
      * Renders the stack total label and adds it to the stack label group.
@@ -282,10 +296,7 @@ H.StackItem.prototype = {
      * @param {Highcharts.SVGElement} group
      * @return {void}
      */
-    render: function (
-        this: Highcharts.StackItem,
-        group: Highcharts.SVGElement
-    ): void {
+    public render(group: Highcharts.SVGElement): void {
         var chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,
@@ -330,7 +341,7 @@ H.StackItem.prototype = {
 
         // Rank it higher than data labels (#8742)
         this.label.labelrank = chart.plotHeight;
-    },
+    }
 
     /**
      * Sets the offset that the stack has from the x value and repositions the
@@ -345,8 +356,7 @@ H.StackItem.prototype = {
      * @param {number} [defaultX]
      * @return {void}
      */
-    setOffset: function (
-        this: Highcharts.StackItem,
+    public setOffset(
         xOffset: number,
         xWidth: number,
         boxBottom?: number,
@@ -460,7 +470,7 @@ H.StackItem.prototype = {
                 }
             }
         }
-    },
+    }
 
     /**
      * @private
@@ -482,8 +492,7 @@ H.StackItem.prototype = {
      *
      * @return {Highcharts.BBoxObject}
      */
-    getStackBox: function (
-        this: Highcharts.StackItem,
+    public getStackBox(
         chart: Highcharts.Chart,
         stackItem: Highcharts.StackItem,
         x: number,
@@ -511,7 +520,7 @@ H.StackItem.prototype = {
             height: inverted ? xWidth : h
         };
     }
-} as any;
+}
 
 /**
  * Generate stacks for each series and calculate stacks total values
@@ -757,7 +766,7 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
                 stacks[key as any][x] = (oldStacks as any)[key as any][x];
                 stacks[key as any][x].total = null;
             } else {
-                stacks[key as any][x] = new H.StackItem(
+                stacks[key as any][x] = new StackItem(
                     yAxis,
                     (
                         yAxis.options as Highcharts.YAxisOptions
@@ -947,3 +956,6 @@ Series.prototype.getStackIndicator = function (
 
     return stackIndicator as any;
 };
+
+H.StackItem = StackItem;
+export default H.StackItem;

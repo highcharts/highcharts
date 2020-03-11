@@ -59,6 +59,7 @@ const {
 } = U;
 
 import '../parts/Series.js';
+import StackItem from '../parts/Stacking.js';
 
 var perspective = H.perspective,
     Series = H.Series,
@@ -567,7 +568,7 @@ wrap(Series.prototype, 'alignDataLabel', function (
 });
 
 // Added stackLabels position calculation for 3D charts.
-wrap(H.StackItem.prototype, 'getStackBox', function (
+wrap(StackItem.prototype, 'getStackBox', function (
     this: Highcharts.StackItem,
     proceed: Function,
     chart: Highcharts.Chart,
