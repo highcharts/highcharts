@@ -73,6 +73,7 @@ const {
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
+import StackItem from '../parts/Stacking.js';
 
 var Axis = H.Axis,
     Series = H.Series;
@@ -673,7 +674,7 @@ H.Series.prototype.gappedPath = function (): Highcharts.SVGPathArray {
                 // For stacked chart generate empty stack items, #6546
                 if (this.options.stacking) {
                     stack = yAxis.stacks[this.stackKey as any][xRange] =
-                        new H.StackItem(
+                        new StackItem(
                             yAxis,
                             (
                                 (yAxis.options as Highcharts.YAxisOptions)

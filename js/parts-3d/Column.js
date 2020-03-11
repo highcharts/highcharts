@@ -12,6 +12,7 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';
+import StackItem from '../parts/Stacking.js';
 var perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;
 /**
  * Depth of the columns in a 3D column chart.
@@ -370,7 +371,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, op
     proceed.apply(this, [].slice.call(arguments, 1));
 });
 // Added stackLabels position calculation for 3D charts.
-wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x, y, xWidth, h, axis) {
+wrap(StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x, y, xWidth, h, axis) {
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
     // Only do this for 3D graph
     if (chart.is3d() && stackItem.base) {
