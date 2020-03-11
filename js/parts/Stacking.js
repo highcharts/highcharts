@@ -105,7 +105,6 @@ var StackItem = /** @class */ (function () {
     /**
      * @private
      * @function Highcharts.StackItem#destroy
-     * @return {void}
      */
     StackItem.prototype.destroy = function () {
         destroyObjectProperties(this, this.axis);
@@ -116,7 +115,6 @@ var StackItem = /** @class */ (function () {
      * @private
      * @function Highcharts.StackItem#render
      * @param {Highcharts.SVGElement} group
-     * @return {void}
      */
     StackItem.prototype.render = function (group) {
         var chart = this.axis.chart, options = this.options, formatOption = options.format, attr = {}, str = formatOption ? // format the text in the label
@@ -159,7 +157,6 @@ var StackItem = /** @class */ (function () {
      * @param {number} [boxBottom]
      * @param {number} [boxTop]
      * @param {number} [defaultX]
-     * @return {void}
      */
     StackItem.prototype.setOffset = function (xOffset, xWidth, boxBottom, boxTop, defaultX) {
         var stackItem = this, axis = stackItem.axis, chart = axis.chart, 
@@ -299,7 +296,6 @@ Chart.prototype.getStacks = function () {
  *
  * @private
  * @function Highcharts.Axis#buildStacks
- * @return {void}
  */
 Axis.prototype.buildStacks = function () {
     var axisSeries = this.series, reversedStacks = pick(this.options.reversedStacks, true), len = axisSeries.length, actualSeries, i;
@@ -350,7 +346,6 @@ Axis.prototype.renderStackTotals = function () {
  *
  * @private
  * @function Highcharts.Axis#resetStacks
- * @return {void}
  */
 Axis.prototype.resetStacks = function () {
     var axis = this, stacks = axis.stacks;
@@ -374,7 +369,6 @@ Axis.prototype.resetStacks = function () {
 /**
  * @private
  * @function Highcharts.Axis#cleanStacks
- * @return {void}
  */
 Axis.prototype.cleanStacks = function () {
     var stacks;
@@ -396,7 +390,6 @@ Axis.prototype.cleanStacks = function () {
  *
  * @private
  * @function Highcharts.Series#setStackedPoints
- * @return {void}
  */
 Series.prototype.setStackedPoints = function () {
     if (!this.options.stacking ||
@@ -495,7 +488,6 @@ Series.prototype.setStackedPoints = function () {
  *
  * @private
  * @function Highcharts.Series#modifyStacks
- * @return {void}
  */
 Series.prototype.modifyStacks = function () {
     var series = this, stackKey = series.stackKey, stacks = series.yAxis.stacks, processedXData = series.processedXData, stackIndicator, stacking = series.options.stacking;
@@ -523,7 +515,6 @@ Series.prototype.modifyStacks = function () {
  * @param {Array<number>} pointExtremes
  * @param {Highcharts.StackItem} stack
  * @param {number} i
- * @return {void}
  */
 Series.prototype.percentStacker = function (pointExtremes, stack, i) {
     var totalFactor = stack.total ? 100 / stack.total : 0;
@@ -559,7 +550,7 @@ Series.prototype.getStackIndicator = function (stackIndicator, x, index, key) {
         };
     }
     else {
-        stackIndicator.index++;
+        (stackIndicator).index++;
     }
     stackIndicator.key =
         [index, x, stackIndicator.index].join(',');

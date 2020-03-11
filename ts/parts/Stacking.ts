@@ -223,7 +223,7 @@ class StackItem {
         stackOption?: Highcharts.OptionsStackingValue
     ) {
 
-        var inverted = axis.chart.inverted;
+        const inverted = axis.chart.inverted;
 
         this.axis = axis;
 
@@ -283,7 +283,6 @@ class StackItem {
     /**
      * @private
      * @function Highcharts.StackItem#destroy
-     * @return {void}
      */
     public destroy(): void {
         destroyObjectProperties(this, this.axis);
@@ -295,7 +294,6 @@ class StackItem {
      * @private
      * @function Highcharts.StackItem#render
      * @param {Highcharts.SVGElement} group
-     * @return {void}
      */
     public render(group: Highcharts.SVGElement): void {
         var chart = this.axis.chart,
@@ -355,7 +353,6 @@ class StackItem {
      * @param {number} [boxBottom]
      * @param {number} [boxTop]
      * @param {number} [defaultX]
-     * @return {void}
      */
     public setOffset(
         xOffset: number,
@@ -569,7 +566,6 @@ Chart.prototype.getStacks = function (this: Highcharts.Chart): void {
  *
  * @private
  * @function Highcharts.Axis#buildStacks
- * @return {void}
  */
 Axis.prototype.buildStacks = function (this: Highcharts.Axis): void {
     var axisSeries = this.series,
@@ -637,7 +633,6 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
  *
  * @private
  * @function Highcharts.Axis#resetStacks
- * @return {void}
  */
 Axis.prototype.resetStacks = function (this: Highcharts.Axis): void {
     var axis = this,
@@ -669,7 +664,6 @@ Axis.prototype.resetStacks = function (this: Highcharts.Axis): void {
 /**
  * @private
  * @function Highcharts.Axis#cleanStacks
- * @return {void}
  */
 Axis.prototype.cleanStacks = function (this: Highcharts.Axis): void {
     var stacks;
@@ -698,7 +692,6 @@ Axis.prototype.cleanStacks = function (this: Highcharts.Axis): void {
  *
  * @private
  * @function Highcharts.Series#setStackedPoints
- * @return {void}
  */
 Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
     if (!this.options.stacking ||
@@ -852,7 +845,6 @@ Series.prototype.setStackedPoints = function (this: Highcharts.Series): void {
  *
  * @private
  * @function Highcharts.Series#modifyStacks
- * @return {void}
  */
 Series.prototype.modifyStacks = function (this: Highcharts.Series): void {
     var series = this,
@@ -900,7 +892,6 @@ Series.prototype.modifyStacks = function (this: Highcharts.Series): void {
  * @param {Array<number>} pointExtremes
  * @param {Highcharts.StackItem} stack
  * @param {number} i
- * @return {void}
  */
 Series.prototype.percentStacker = function (
     this: Highcharts.Series,
@@ -940,8 +931,8 @@ Series.prototype.getStackIndicator = function (
     // first point in a stack || x changed || stack type (negative vs positive)
     // changed:
     if (!defined(stackIndicator) ||
-        (stackIndicator as any).x !== x ||
-        (key && (stackIndicator as any).key !== key)
+        stackIndicator.x !== x ||
+        (key && stackIndicator.key !== key)
     ) {
         stackIndicator = {
             x: x,
@@ -949,13 +940,13 @@ Series.prototype.getStackIndicator = function (
             key: key
         };
     } else {
-        (stackIndicator as any).index++;
+        (stackIndicator).index++;
     }
 
-    (stackIndicator as any).key =
-        [index, x, (stackIndicator as any).index].join(',');
+    stackIndicator.key =
+        [index, x, stackIndicator.index].join(',');
 
-    return stackIndicator as any;
+    return stackIndicator;
 };
 
 H.StackItem = StackItem;
