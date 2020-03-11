@@ -375,7 +375,7 @@ import H from './Globals.js';
 import Color from './Color.js';
 var color = Color.parse;
 import U from './Utilities.js';
-var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, inArray = U.inArray, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, inArray = U.inArray, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
 var SVGElement, SVGRenderer, charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
@@ -443,7 +443,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
-        H.fireEvent(this, 'afterInit');
+        fireEvent(this, 'afterInit');
     },
     /**
      * Animate to given attributes or CSS properties.
@@ -516,7 +516,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     complexColor: function (colorOptions, prop, elem) {
         var renderer = this.renderer, colorObject, gradName, gradAttr, radAttr, gradients, gradientObject, stops, stopColor, stopOpacity, radialReference, id, key = [], value;
-        H.fireEvent(this.renderer, 'complexColor', {
+        fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function () {
             // Apply linear or radial gradients
@@ -1214,17 +1214,34 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         The SVGElement for chaining.
      */
     on: function (eventType, handler) {
-        var svgElement = this, element = svgElement.element;
+        var svgElement = this, element = svgElement.element, touchStartPos, touchEventFired;
         // touch
         if (hasTouch && eventType === 'click') {
             element.ontouchstart = function (e) {
-                svgElement.touchEventFired = Date.now(); // #2269
+                // save touch position for later calculation
+                touchStartPos = {
+                    clientX: e.touches[0].clientX,
+                    clientY: e.touches[0].clientY
+                };
+            };
+            // Instead of ontouchstart, event handlers should be called
+            // on touchend - similar to how current mouseup events are called
+            element.ontouchend = function (e) {
+                // hasMoved is a boolean variable containing logic if page
+                // was scrolled, so if touch position changed more than
+                // ~4px (value borrowed from general touch handler)
+                var hasMoved = touchStartPos.clientX ? Math.sqrt(Math.pow(touchStartPos.clientX - e.changedTouches[0].clientX, 2) +
+                    Math.pow(touchStartPos.clientY - e.changedTouches[0].clientY, 2)) >= 4 : false;
+                if (!hasMoved) { // only call handlers if page was not scrolled
+                    handler.call(element, e);
+                }
+                touchEventFired = true;
+                // prevent other events from being fired. #9682
                 e.preventDefault();
-                handler.call(element, e);
             };
             element.onclick = function (e) {
-                if (win.navigator.userAgent.indexOf('Android') === -1 ||
-                    Date.now() - (svgElement.touchEventFired || 0) > 1100) {
+                // Do not call onclick handler if touch event was fired already.
+                if (!touchEventFired) {
                     handler.call(element, e);
                 }
             };
@@ -3798,7 +3815,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // Fire the load event when all external images are
                         // loaded
                         ren.imgCount--;
-                        if (!ren.imgCount && chart && chart.onload) {
+                        if (!ren.imgCount && chart && !chart.hasLoaded) {
                             chart.onload();
                         }
                     },

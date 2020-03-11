@@ -43,6 +43,7 @@ declare global {
     }
 }
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 const {
     seriesType
@@ -52,8 +53,7 @@ import '../parts/Series.js';
 import '../parts/Legend.js';
 import '../parts/ScatterSeries.js';
 
-var LegendSymbolMixin = H.LegendSymbolMixin,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 

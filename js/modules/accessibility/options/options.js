@@ -108,6 +108,16 @@ var options = {
              * @apioption accessibility.screenReaderSection.onViewDataTableClick
              */
             /**
+             * Function to run upon clicking the "Play as sound" button in
+             * the screen reader region.
+             *
+             * By default Highcharts will call the `chart.sonify` function.
+             *
+             * @type      {Highcharts.ScreenReaderClickCallbackFunction}
+             * @since 8.0.1
+             * @apioption accessibility.screenReaderSection.onPlayAsSoundClick
+             */
+            /**
              * A formatter function to create the HTML contents of the hidden
              * screen reader information region before the chart. Receives one
              * argument, `chart`, referring to the chart object. Should return a
@@ -134,6 +144,7 @@ var options = {
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +
+                '<div>{playAsSoundButton}</div>' +
                 '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
@@ -226,7 +237,7 @@ var options = {
              * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
              *
              * @type      {string}
-             * @since next
+             * @since 8.0.1
              */
             valueDescriptionFormat: '{index}. {xDescription}{separator}{value}.'
             /**
@@ -672,6 +683,22 @@ var options = {
      * @type       {boolean}
      * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
+     */
+    /**
+     * Accessibility options for an annotation label.
+     *
+     * @declare    Highcharts.AnnotationLabelAccessibilityOptionsObject
+     * @since 8.0.1
+     * @requires   modules/accessibility
+     * @apioption  annotations.labelOptions.accessibility
+     */
+    /**
+     * Description of an annotation label for screen readers and other assistive
+     * technology.
+     *
+     * @type       {string}
+     * @since 8.0.1
+     * @apioption  annotations.labelOptions.accessibility.description
      */
     /**
      * Accessibility options for an axis. Requires the accessibility module.

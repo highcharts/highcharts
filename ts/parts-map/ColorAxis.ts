@@ -137,11 +137,19 @@ declare global {
 
 ''; // detach doclet above
 
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
+import Legend from '../parts/Legend.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
     erase,
     extend,
+    Fx,
     isNumber,
     merge,
     pick,
@@ -150,18 +158,12 @@ const {
 
 import '../parts/Axis.js';
 import '../parts/Chart.js';
-import '../parts/Color.js';
-import '../parts/Legend.js';
 import './ColorSeriesMixin.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
     Series = H.Series,
-    Point = H.Point,
-    color = H.color,
     ColorAxis: Highcharts.ColorAxis,
-    Legend = H.Legend,
-    LegendSymbolMixin = H.LegendSymbolMixin,
     colorPointMixin = H.colorPointMixin,
     colorSeriesMixin = H.colorSeriesMixin,
     noop = H.noop;
@@ -1459,14 +1461,14 @@ extend(ColorAxis.prototype, {
  * @function Highcharts.Fx#strokeSetter
  */
 ['fill', 'stroke'].forEach(function (prop: string): void {
-    H.Fx.prototype[prop + 'Setter'] = function (this: Highcharts.Fx): void {
-        (this.elem as any).attr(
+    (Fx.prototype as any)[prop + 'Setter'] = function (): void {
+        this.elem.attr(
             prop,
             color(this.start).tweenTo(
                 color(this.end),
                 this.pos
             ),
-            null,
+            null as any,
             true
         );
     };

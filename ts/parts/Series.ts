@@ -168,6 +168,7 @@ declare global {
             public insert(collection: Array<Series>): number;
             public invertGroups(inverted?: boolean): void;
             public is (type: string): boolean;
+            public isPointInside (point: Dictionary<number>|Point): boolean;
             public markerAttribs(point: Point, state?: string): SVGAttributes;
             public plotGroup(
                 prop: string,
@@ -335,7 +336,7 @@ declare global {
             data?: Array<PointOptionsType>;
             dataGrouping?: DataGroupingOptionsObject;
             dataLabels?: (
-                DataLabelsOptionsObject|Array<DataLabelsOptionsObject>
+                DataLabelsOptions|Array<DataLabelsOptions>
             );
             dataSorting?: DataSortingOptionsObject;
             description?: string;
@@ -688,8 +689,10 @@ declare global {
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 
-import pointModule from './Point.js';
-const Point = pointModule.Point;
+''; // detach doclets above
+
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -719,13 +722,10 @@ const {
 } = U;
 
 import './Options.js';
-import './Legend.js';
-import './Point.js';
 import './SvgRenderer.js';
 
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
-    LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
     seriesTypes = H.seriesTypes,
     SVGElement = H.SVGElement,
     win = H.win;
@@ -1209,8 +1209,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
 
         /**
-         * A name for the dash style to use for the graph, or for some series
-         * types the outline of each shape.
+         * Name of the dash style to use for the graph, or for some series types
+         * the outline of each shape.
          *
          * In styled mode, the
          * [stroke dash-array](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-dashstyle/)
@@ -2295,7 +2295,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @sample {highcharts} highcharts/css/series-datalabels
          *         Style mode example
          *
-         * @declare Highcharts.DataLabelsOptionsObject
          * @type    {*|Array<*>}
          * @product highcharts highstock highmaps gantt
          *
@@ -2540,11 +2539,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
              *
              * @type {Highcharts.DataLabelsFormatterCallbackFunction}
              */
-            formatter: function (
-                this: Highcharts.DataLabelsFormatterContextObject
-            ): string {
+            formatter: function (this: Highcharts.PointLabelObject): string {
                 const { numberFormatter } = this.series.chart;
-                return this.y === null ? '' : numberFormatter(this.y, -1);
+                return typeof this.y !== 'number' ? '' : numberFormatter(this.y, -1);
             },
 
             /**
@@ -2789,7 +2786,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
              */
             y: 0
 
-        } as Highcharts.DataLabelsOptionsObject,
+        } as Highcharts.DataLabelsOptions,
 
         /**
          * When the series contains less points than the crop threshold, all
@@ -5080,7 +5077,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 threshold = options.threshold,
                 stackThreshold = options.startFromThreshold ? threshold : 0,
                 plotX,
-                plotY,
                 lastPlotX,
                 stackIndicator,
                 zoneAxis = this.zoneAxis || 'y',
@@ -5207,7 +5203,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
                 // Set the the plotY value, reset it for redraws
                 // #3201
-                point.plotY = plotY = (
+                point.plotY = (
                     (typeof yValue === 'number' && yValue !== Infinity) ?
                         limitedRange(yAxis.translate(
                             yValue, 0 as any, 1 as any, 0 as any, 1 as any
@@ -5215,13 +5211,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                         void 0
                 );
 
-                point.isInside =
-                    typeof plotY !== 'undefined' &&
-                    plotY >= 0 &&
-                    plotY <= yAxis.len && // #3519
-                    plotX >= 0 &&
-                    plotX <= xAxis.len;
-
+                point.isInside = this.isPointInside(point);
 
                 // Set client related positions for mouse tracking
                 point.clientX = dynamicallyPlaced ?
@@ -5406,18 +5396,20 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 clipRect = (chart as any)[sharedClipKey],
                 markerClipRect = (chart as any)[sharedClipKey + 'm'];
 
+            if (animation) {
+                clipBox.width = 0;
+                if (inverted) {
+                    clipBox.x = chart.plotHeight +
+                        (options.clip !== false ? 0 : chart.plotTop);
+                }
+            }
+
             // If a clipping rectangle with the same properties is currently
             // present in the chart, use that.
             if (!clipRect) {
 
                 // When animation is set, prepare the initial positions
                 if (animation) {
-                    clipBox.width = 0;
-                    if (inverted) {
-                        clipBox.x = (chart.plotSizeX as any) +
-                            (options.clip !== false ? 0 : chart.plotTop);
-                    }
-
                     (chart as any)[sharedClipKey + 'm'] = markerClipRect =
                         renderer.clipRect(
                             // include the width of the first marker
@@ -5426,19 +5418,27 @@ H.Series = seriesType<Highcharts.LineSeries>(
                             99,
                             inverted ? chart.chartWidth : chart.chartHeight
                         );
+
+
                 }
-                (chart as any)[sharedClipKey] = clipRect =
-                    (renderer.clipRect as any)(clipBox);
+                (chart as any)[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
+
                 // Create hashmap for series indexes
                 clipRect.count = { length: 0 };
 
+            // When the series is rendered again before starting animating, in
+            // compliance to a responsive rule
+            } else if (!chart.hasLoaded) {
+                clipRect.attr(clipBox);
             }
+
             if (animation) {
                 if (!clipRect.count[this.index as any]) {
                     clipRect.count[this.index as any] = true;
                     clipRect.count.length += 1;
                 }
             }
+
 
             if (options.clip !== false || animation) {
                 (this.group as any).clip(
@@ -5495,29 +5495,28 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 finalBox;
 
             // Initialize the animation. Set up the clipping rectangle.
-            if (init) {
+            if (!chart.hasRendered) {
+                if (init) {
 
-                series.setClip(animation);
+                    series.setClip(animation);
 
-            // Run the animation
-            } else {
-                sharedClipKey = this.sharedClipKey;
-                clipRect = (chart as any)[sharedClipKey as any];
+                // Run the animation
+                } else {
+                    sharedClipKey = this.sharedClipKey;
+                    clipRect = (chart as any)[sharedClipKey as any];
 
-                finalBox = series.getClipBox(animation, true);
+                    finalBox = series.getClipBox(animation, true);
 
-                if (clipRect) {
-                    clipRect.animate(finalBox, animation);
+                    if (clipRect) {
+                        clipRect.animate(finalBox, animation);
+                    }
+                    if ((chart as any)[sharedClipKey + 'm']) {
+                        (chart as any)[sharedClipKey + 'm'].animate({
+                            width: finalBox.width + 99,
+                            x: finalBox.x - (chart.inverted ? 0 : 99)
+                        }, animation);
+                    }
                 }
-                if ((chart as any)[sharedClipKey + 'm']) {
-                    (chart as any)[sharedClipKey + 'm'].animate({
-                        width: finalBox.width + 99,
-                        x: finalBox.x - (chart.inverted ? 0 : 99)
-                    }, animation);
-                }
-
-                // Delete this function to allow it only once
-                series.animate = null as any;
             }
         },
 
@@ -6624,7 +6623,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 // Animation doesn't work in IE8 quirks when the group div is
                 // hidden, and looks bad in other oldIE
                 animDuration = (
-                    !!series.animate &&
+                    !series.finishedAnimating &&
                     chart.renderer.isSVG &&
                     animObject(options.animation).duration
                 ),
@@ -6654,8 +6653,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
             );
 
             // initiate the animation
-            if (animDuration) {
-                (series.animate as any)(true);
+            if (animDuration && series.animate) {
+                series.animate(true);
             }
 
             // SVGRenderer needs to know this before drawing elements (#1089,
@@ -6713,7 +6712,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             }
 
             // Run the animation
-            if (animDuration) {
+            if (animDuration && series.animate) {
                 series.animate();
             }
 
@@ -7039,6 +7038,27 @@ H.Series = seriesType<Highcharts.LineSeries>(
             return isNumber(factor) ?
                 factor * pick(pointRange, axis.pointRange) :
                 0;
+        },
+
+        /**
+         * @private
+         * @function Highcharts.Series#isPointInside
+         * @param {Highcharts.Point} point
+         * @return {boolean}
+         */
+        isPointInside: function (
+            this: Highcharts.Series,
+            point: (Highcharts.Dictionary<number>|Highcharts.Point)
+        ): boolean {
+            const isInside =
+                typeof point.plotY !== 'undefined' &&
+                typeof point.plotX !== 'undefined' &&
+                point.plotY >= 0 &&
+                point.plotY <= this.yAxis.len && // #3519
+                point.plotX >= 0 &&
+                point.plotX <= this.xAxis.len;
+
+            return isInside;
         }
     }
 ) as any; // end Series prototype
@@ -7205,7 +7225,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
- * @declare   Highcharts.DataLabelsOptionsObject
+ * @declare   Highcharts.DataLabelsOptions
  * @extends   plotOptions.line.dataLabels
  * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels

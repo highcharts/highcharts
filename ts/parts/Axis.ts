@@ -5421,7 +5421,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * instead.
          *
          * @name Highcharts.Axis#tickPositions
-         * @type {Array<number>|undefined}
+         * @type {Highcharts.AxisTickPositionsArray|undefined}
          */
         this.tickPositions =
             // Find the tick positions. Work on a copy (#1565)
@@ -7100,6 +7100,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         )
                     ) { // #2248, #4660
                         if (!alternateBands[pos]) {
+                            // Should be imported from PlotLineOrBand.js, but
+                            // the dependency cycle with axis is a problem
                             alternateBands[pos] = new H.PlotLineOrBand(axis);
                         }
                         from = pos + tickmarkOffset; // #949

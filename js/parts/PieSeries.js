@@ -9,15 +9,15 @@
  * */
 'use strict';
 import H from './Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
-import './Legend.js';
 import './Options.js';
-import './Point.js';
 import './Series.js';
-var CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
+var CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * Pie series type.
  *
@@ -583,8 +583,6 @@ seriesType('pie', 'line',
                     }, series.options.animation);
                 }
             });
-            // delete this function to allow it only once
-            series.animate = null;
         }
     },
     // Define hasData function for non-cartesian series.

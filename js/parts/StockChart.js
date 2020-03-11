@@ -9,11 +9,11 @@
  * */
 'use strict';
 import H from './Globals.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
 import './Chart.js';
 import './Axis.js';
-import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -26,7 +26,7 @@ import './Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
-var Axis = H.Axis, Chart = H.Chart, Point = H.Point, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
+var Axis = H.Axis, Chart = H.Chart, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * Compare the values of the series against the first non-null, non-
  * zero value in the visible range. The y axis will show percentage
@@ -775,9 +775,9 @@ addEvent(Axis, 'afterSetScale', function () {
         !defined(axis.panningState)) {
         var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
         axis.series.forEach(function (series) {
-            min = Math.min(H.arrayMin(series.yData), min) -
+            min = Math.min(arrayMin(series.yData), min) -
                 (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(H.arrayMax(series.yData), max) +
+            max = Math.max(arrayMax(series.yData), max) +
                 (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
         axis.panningState = {

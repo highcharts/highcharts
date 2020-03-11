@@ -76,20 +76,20 @@ declare global {
         {
             (
                 this: (
-                    DataLabelsFormatterContextObject|
+                    PointLabelObject|
                     TimelineDataLabelsFormatterContextObject
                 )
             ): string;
         }
         interface TimelineDataLabelsFormatterContextObject
-            extends DataLabelsFormatterContextObject
+            extends PointLabelObject
         {
             key?: string;
             point: TimelinePoint;
             series: TimelineSeries;
         }
         interface TimelineDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             alternate?: boolean;
             connectorColor?: ColorType;
@@ -122,7 +122,7 @@ declare global {
  *
  * @callback Highcharts.TimelineDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
+ * @param {Highcharts.PointLabelObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {number|string|null|undefined}
@@ -131,7 +131,7 @@ declare global {
 
 /**
  * @interface Highcharts.TimelineDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  *//**
  * @name Highcharts.TimelineDataLabelsFormatterContextObject#key
  * @type {string|undefined}
@@ -143,6 +143,8 @@ declare global {
  * @type {Highcharts.Series}
  */
 
+import Point from '../parts/Point.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -156,9 +158,7 @@ const {
     seriesType
 } = U;
 
-var LegendSymbolMixin = H.LegendSymbolMixin,
-    TrackerMixin = H.TrackerMixin,
-    Point = H.Point,
+var TrackerMixin = H.TrackerMixin,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -293,7 +293,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
              */
             formatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.TimelineDataLabelsFormatterContextObject
                 )
             ): string {

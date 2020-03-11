@@ -259,6 +259,7 @@ const {
     extend,
     find,
     getDeferTime,
+    fireEvent,
     merge,
     pick,
     splat,
@@ -276,9 +277,7 @@ import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
 
-var fireEvent = H.fireEvent,
-    reduce = H.reduce,
-    chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
+var chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
 
 /* *********************************************************************
  *
@@ -951,6 +950,16 @@ merge(
                  */
 
                 /**
+                 * Name of the dash style to use for the shape's stroke.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+                 *         Possible values demonstrated
+                 *
+                 * @type      {Highcharts.DashStyleValue}
+                 * @apioption annotations.shapeOptions.dashStyle
+                 */
+
+                /**
                  * The color of the shape's stroke.
                  *
                  * @sample highcharts/annotations/shape/
@@ -1137,29 +1146,30 @@ merge(
         setClipAxes: function (this: Highcharts.Annotation): void {
             var xAxes = this.chart.xAxis,
                 yAxes = this.chart.yAxis,
-                linkedAxes: Array<Highcharts.Axis> = reduce(
-                    ((this.options.labels || []) as Array<(
-                        Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions
-                    )>).concat(this.options.shapes || []),
-                    function (
-                        axes: Array<Highcharts.Axis>,
-                        labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
-                    ): Array<Highcharts.Axis> {
-                        return [
-                            xAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).xAxis
-                            ] || axes[0],
-                            yAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).yAxis
-                            ] || axes[1]
-                        ];
-                    },
-                    []
-                );
+                linkedAxes: Array<Highcharts.Axis> = ((
+                    this.options.labels || []
+                ) as Array<(Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)>)
+                    .concat(this.options.shapes || [])
+                    .reduce(
+                        function (
+                            axes: Array<Highcharts.Axis>,
+                            labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
+                        ): Array<Highcharts.Axis> {
+                            return [
+                                xAxes[
+                                    labelOrShape &&
+                                    labelOrShape.point &&
+                                    (labelOrShape.point as any).xAxis
+                                ] || axes[0],
+                                yAxes[
+                                    labelOrShape &&
+                                    labelOrShape.point &&
+                                    (labelOrShape.point as any).yAxis
+                                ] || axes[1]
+                            ];
+                        },
+                        []
+                    );
 
             this.clipXAxis = linkedAxes[0];
             this.clipYAxis = linkedAxes[1];

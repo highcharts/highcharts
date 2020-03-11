@@ -147,6 +147,10 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
+import Point from './Point.js';
+import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -162,14 +166,11 @@ const {
     pick
 } = U;
 
-import Tooltip from './Tooltip.js';
-
 import './Axis.js';
 import './Series.js';
 
 var Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
-    Point = H.Point,
     Series = H.Series;
 
 /* ************************************************************************** *
@@ -1136,7 +1137,8 @@ export default dataGrouping;
  *
  * @declare   Highcharts.DataGroupingOptionsObject
  * @product   highstock
- * @requires  modules/datagrouping
+ * @requires  product:highstock
+ * @requires  module:modules/datagrouping
  * @apioption plotOptions.series.dataGrouping
  */
 
@@ -1172,7 +1174,6 @@ export default dataGrouping;
  *         Approximation callback with custom data
  *
  * @type       {Highcharts.DataGroupingApproximationValue|Function}
- * @product    highstock
  * @apioption  plotOptions.series.dataGrouping.approximation
  */
 
@@ -1206,7 +1207,6 @@ export default dataGrouping;
  *  and applied to the start and end date of the time span.
  *
  * @type      {object}
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.dateTimeLabelFormats
  */
 
@@ -1215,7 +1215,6 @@ export default dataGrouping;
  *
  * @type      {boolean}
  * @default   true
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.enabled
  */
 
@@ -1226,7 +1225,6 @@ export default dataGrouping;
  *
  * @type      {boolean}
  * @default   false
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.forced
  */
 
@@ -1244,7 +1242,6 @@ export default dataGrouping;
  *
  * @type      {number}
  * @default   2
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
 
@@ -1262,7 +1259,6 @@ export default dataGrouping;
  * @type      {boolean}
  * @default   false
  * @since     6.1.0
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.groupAll
  */
 
@@ -1276,7 +1272,6 @@ export default dataGrouping;
  *
  * @type      {boolean}
  * @default   false
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.smoothed
  */
 
@@ -1315,7 +1310,6 @@ export default dataGrouping;
  * ```
  *
  * @type      {Array<Array<string,(Array<number>|null)>>}
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.units
  */
 
@@ -1332,7 +1326,6 @@ export default dataGrouping;
  *
  * @type      {number}
  * @default   10
- * @product   highstock
  * @apioption plotOptions.column.dataGrouping.groupPixelWidth
  */
 

@@ -39,7 +39,7 @@ import Highcharts from './Globals.js';
  * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
- * @augments Highcharts.TimeNormalizedObject
+ * @extends Highcharts.TimeNormalizedObject
  */ /**
 * @name Highcharts.TimeTicksInfoObject#higherRanks
 * @type {Array<string>}
@@ -51,9 +51,10 @@ import Highcharts from './Globals.js';
  * Time ticks.
  *
  * @interface Highcharts.AxisTickPositionsArray
+ * @extends global.Array<number>
  */ /**
 * @name Highcharts.AxisTickPositionsArray#info
-* @type {Highcharts.TimeTicksInfoObject}
+* @type {Highcharts.TimeTicksInfoObject|undefined}
 */
 /**
  * A callback to return the time zone offset for a given datetime. It
@@ -107,10 +108,13 @@ var H = Highcharts, win = H.win;
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
+ * @since 6.0.5
+ *
  * @class
  * @name Highcharts.Time
  *
- * @since 6.0.5
+ * @param {Highcharts.TimeOptions} options
+ * Time options as defined in [chart.options.time](/highcharts/time).
  */
 var Time = /** @class */ (function () {
     /* *
@@ -118,14 +122,6 @@ var Time = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * Time settings are applied in general for each page using
-     * `Highcharts.setOptions`, or individually for each Chart item through the
-     * [time](https://api.highcharts.com/highcharts/time) options set.
-     *
-     * @param {Highcharts.TimeOptions} options
-     * Time options as defined in [chart.options.time](/highcharts/time).
-     */
     function Time(options) {
         /* *
          *
@@ -351,7 +347,7 @@ var Time = /** @class */ (function () {
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && options.getTimezoneOffset) {
             return function (timestamp) {
-                return options.getTimezoneOffset(timestamp) * 60000;
+                return options.getTimezoneOffset(timestamp.valueOf()) * 60000;
             };
         }
         // Last, use the `timezoneOffset` option if set
@@ -407,14 +403,14 @@ var Time = /** @class */ (function () {
      *         The formatted date.
      */
     Time.prototype.dateFormat = function (format, timestamp, capitalize) {
-        var _a, _b, _c;
-        if (!defined(timestamp) || isNaN(timestamp) || typeof this.get === 'undefined') {
+        var _a;
+        if (!defined(timestamp) || isNaN(timestamp)) {
             return ((_a = H.defaultOptions.lang) === null || _a === void 0 ? void 0 : _a.invalidDate) || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
         var time = this, date = new this.Date(timestamp), 
         // get the basic time values
-        hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date), month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang, langWeekdays = (_b = lang) === null || _b === void 0 ? void 0 : _b.weekdays, shortWeekdays = (_c = lang) === null || _c === void 0 ? void 0 : _c.shortWeekdays, 
+        hours = this.get('Hours', date), day = this.get('Day', date), dayOfMonth = this.get('Date', date), month = this.get('Month', date), fullYear = this.get('FullYear', date), lang = H.defaultOptions.lang, langWeekdays = lang === null || lang === void 0 ? void 0 : lang.weekdays, shortWeekdays = lang === null || lang === void 0 ? void 0 : lang.shortWeekdays, 
         // List all format keys. Custom formats can be added from the
         // outside.
         replacements = extend({

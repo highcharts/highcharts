@@ -76,6 +76,7 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     extend,
+    fireEvent,
     isNumber,
     merge,
     objectEach,
@@ -85,8 +86,7 @@ const {
 
 import '../parts/Series.js';
 
-var fireEvent = H.fireEvent,
-    piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
+var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 
 /**
  * The item series type.
@@ -197,6 +197,7 @@ seriesType<Highcharts.ItemSeries>(
     },
     // Prototype members
     {
+        markerAttribs: void 0,
         translate: function (this: Highcharts.ItemSeries): void {
             if (!this.slots) {
                 this.slots = [];
@@ -565,7 +566,6 @@ seriesType<Highcharts.ItemSeries>(
                 (this.group as any).animate({
                     opacity: 1
                 }, this.options.animation);
-                this.animate = null as any;
             }
         }
     },

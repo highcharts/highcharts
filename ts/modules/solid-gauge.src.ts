@@ -89,6 +89,7 @@ declare global {
 
 import Color from '../parts/Color.js';
 const color = Color.parse;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 const {
     clamp,
@@ -394,7 +395,7 @@ seriesType<Highcharts.SolidGaugeSeries>(
     'gauge',
     solidGaugeOptions,
     {
-        drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
         // Extend the translate function to extend the Y axis with the necessary
         // decoration (#5895).
         translate: function (this: Highcharts.SolidGaugeSeries): void {

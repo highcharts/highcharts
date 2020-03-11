@@ -120,6 +120,9 @@ var isNumber = U.isNumber, merge = U.merge, pInt = U.pInt;
  *
  * @class
  * @name Highcharts.Color
+ *
+ * @param {Highcharts.ColorType} input
+ * The input color in either rbga or hex format
  */
 var Color = /** @class */ (function () {
     /* *
@@ -127,12 +130,6 @@ var Color = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * Handle color operations. Some object methods are chainable.
-     *
-     * @param {Highcharts.ColorType} input
-     *        The input color in either rbga or hex format
-     */
     function Color(input) {
         // Collection of parsers. This can be extended from the outside by pushing
         // parsers to Highcharts.Color.prototype.parsers.
@@ -156,6 +153,10 @@ var Color = /** @class */ (function () {
                 }
             }];
         this.rgba = [];
+        // Backwards compatibility, allow instanciation without new (#13053)
+        if (!(this instanceof Color)) {
+            return new Color(input);
+        }
         this.init(input);
     }
     /* *

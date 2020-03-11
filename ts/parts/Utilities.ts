@@ -86,6 +86,7 @@ declare global {
             cursor?: CursorValue;
             fontSize?: (number|string);
             lineWidth?: (number|string);
+            pointerEvents?: string;
             stroke?: ColorString;
             strokeWidth?: (number|string);
         }
@@ -136,11 +137,13 @@ declare global {
                 options: AnimationOptionsObject,
                 prop: string
             );
-            [key: string]: any;
             public elem: (HTMLElement|SVGElement);
+            public end?: any;
             public options: AnimationOptionsObject;
             public paths?: [SVGPathArray, SVGPathArray];
+            public pos?: any;
             public prop: string;
+            public start?: any;
             public dSetter(): void;
             public fillSetter(): void;
             public initPath(
@@ -201,8 +204,6 @@ declare global {
         function defined<T>(obj: T): obj is NonNullable<T>;
         function destroyObjectProperties(obj: any, except?: any): void;
         function discardElement(element: Highcharts.HTMLDOMElement): void;
-        /** @deprecated */
-        function each<T>(arr: Array<T>, fn: Function, ctx?: any): void;
         function erase(arr: Array<unknown>, item: unknown): void;
         function error(
             code: (number|string),
@@ -231,8 +232,6 @@ declare global {
             prop: string,
             toInt?: boolean
         ): (number|string);
-        /** @deprecated */
-        function grep<T>(arr: Array<T>, fn: Function): Array<T>;
         function inArray(
             item: any,
             arr: Array<any>,
@@ -250,8 +249,6 @@ declare global {
         function isString(s: unknown): s is string;
         /** @deprecated */
         function keys(obj: any): Array<string>;
-        /** @deprecated */
-        function map<T>(arr: Array<T>, fn: Function): Array<T>;
         function merge<T1, T2 = object>(
             extend: boolean,
             a?: T1,
@@ -319,8 +316,6 @@ declare global {
         function pick<T1>(...args: [T1]): T1 extends Nullable ? undefined : T1;
         function pick<T>(...args: Array<T|null|undefined>): T|undefined;
         function pInt(s: any, mag?: number): number;
-        /** @deprecated */
-        function reduce<T>(arr: Array<T>, fn: Function, initialValue: any): any;
         function relativeLength(
             value: RelativeSize,
             base: number,
@@ -342,8 +337,6 @@ declare global {
             animation: (boolean|AnimationOptionsObject|undefined),
             chart: Chart
         ): void
-        /** @deprecated */
-        function some<T>(arr: Array<T>, fn: Function, ctx?: any): boolean;
         function splat(obj: any): Array<any>;
         function stableSort(arr: Array<any>, sortFunction: Function): void;
         function stop(el: SVGElement, prop?: string): void;
@@ -752,7 +745,7 @@ const error = H.error = function (
         if (isCode) {
             message += '?';
         }
-        H.objectEach(params, function (value: string, key: string): void {
+        objectEach(params, function (value: string, key: string): void {
             additionalMessages += ('\n' + key + ': ' + value);
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
@@ -762,7 +755,7 @@ const error = H.error = function (
     }
 
     if (chart) {
-        H.fireEvent(
+        fireEvent(
             chart,
             'displayError',
             { code, message, params } as Highcharts.ErrorMessageEventObject,
@@ -1258,7 +1251,7 @@ class Fx {
      * @return {void}
      */
     public fillSetter(): void {
-        H.Fx.prototype.strokeSetter.apply(this, arguments as any);
+        Fx.prototype.strokeSetter.apply(this, arguments as any);
     }
 
     /**
@@ -1751,6 +1744,7 @@ T1 extends Nullable ?
     T2 extends Nullable ? undefined : T2 : T1;
 function pick<T1>(...args: [T1]):
 T1 extends Nullable ? undefined : T1;
+function pick<T>(...args: Array<T|null|undefined>): T|undefined;
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -1972,76 +1966,6 @@ const wrap = H.wrap = function wrap(
     };
 };
 
-
-/**
- * Recursively converts all Date properties to timestamps.
- *
- * @private
- * @function Highcharts.datePropsToTimestamps
- *
- * @param {*} obj - any object to convert properties of
- *
- * @return {void}
- */
-H.datePropsToTimestamps = function (obj: any): void {
-    objectEach(obj, function (val: any, key: string): void {
-        if (isObject(val) && typeof val.getTime === 'function') {
-            obj[key] = val.getTime();
-        } else if (isObject(val) || isArray(val)) {
-            H.datePropsToTimestamps(val);
-        }
-    });
-};
-
-/**
- * Format a single variable. Similar to sprintf, without the % prefix.
- *
- * @example
- * formatSingle('.2f', 5); // => '5.00'.
- *
- * @function Highcharts.formatSingle
- *
- * @param {string} format
- *        The format string.
- *
- * @param {*} val
- *        The value.
- *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
- *
- * @return {string}
- *         The formatted representation of the value.
- */
-H.formatSingle = function (
-    format: string,
-    val: any,
-    chart?: Highcharts.Chart
-): string {
-    var floatRegex = /f$/,
-        decRegex = /\.([0-9])/,
-        lang = H.defaultOptions.lang,
-        decimals: number;
-    const time = chart && chart.time || H.time;
-    const numberFormatter = chart && chart.numberFormatter || numberFormat;
-
-    if (floatRegex.test(format)) { // float
-        decimals = format.match(decRegex) as any;
-        decimals = decimals ? (decimals as any)[1] : -1;
-        if (val !== null) {
-            val = numberFormatter(
-                val,
-                decimals,
-                (lang as any).decimalPoint,
-                format.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
-            );
-        }
-    } else {
-        val = time.dateFormat(format, val);
-    }
-    return val;
-};
-
 /**
  * Format a string according to a subset of the rules of Python's String.format
  * method.
@@ -2058,7 +1982,7 @@ H.formatSingle = function (
  * @param {string} str
  *        The string to format.
  *
- * @param {*} ctx
+ * @param {Record<string, *>} ctx
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
@@ -2076,6 +2000,11 @@ const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Ch
         ret = [],
         val,
         index;
+    const floatRegex = /f$/;
+    const decRegex = /\.([0-9])/;
+    const lang = H.defaultOptions.lang;
+    const time = chart && chart.time || H.time;
+    const numberFormatter = chart && chart.numberFormatter || numberFormat;
 
     while (str) {
         index = str.indexOf(splitter);
@@ -2090,13 +2019,27 @@ const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Ch
             val = getNestedProperty(valueAndFormat.shift() || '', ctx);
 
             // Format the replacement
-            if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
+            if (valueAndFormat.length && typeof val === 'number') {
+
+                segment = valueAndFormat.join(':');
+
+                if (floatRegex.test(segment)) { // float
+                    const decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    if (val !== null) {
+                        val = numberFormatter(
+                            val,
+                            decimals,
+                            (lang as any).decimalPoint,
+                            segment.indexOf(',') > -1 ? (lang as any).thousandsSep : ''
+                        );
+                    }
+                } else {
+                    val = time.dateFormat(segment, val);
+                }
             }
 
             // Push the result and advance the cursor
             ret.push(val);
-
         } else {
             ret.push(segment);
 
@@ -3563,7 +3506,7 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utilitiesModule = {
-    Fx,
+    Fx: H.Fx as unknown as typeof Highcharts.Fx,
     addEvent,
     animate,
     animObject,

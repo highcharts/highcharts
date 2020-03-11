@@ -149,6 +149,8 @@ declare global {
  *        Event that occured.
  */
 
+import Legend from './Legend.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -167,16 +169,12 @@ const {
 
 import './Chart.js';
 import './Options.js';
-import './Legend.js';
-import './Point.js';
 import './Series.js';
 
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     hasTouch = H.hasTouch,
-    Legend = H.Legend,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     svg = H.svg,
@@ -295,15 +293,9 @@ TrackerMixin = H.TrackerMixin = {
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
             i,
-            onMouseOver = function (e: Highcharts.PointerEventObject): void {
-
-                pointer.normalize(e);
-
-                if (
-                    chart.hoverSeries !== series &&
-                    !pointer.isStickyTooltip(e)
-                ) {
-                    (series as any).onMouseOver();
+            onMouseOver = function (): void {
+                if (chart.hoverSeries !== series) {
+                    series.onMouseOver();
                 }
             },
             /*

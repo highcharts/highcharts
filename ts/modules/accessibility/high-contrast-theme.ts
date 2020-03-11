@@ -18,7 +18,7 @@
  */
 declare global {
     namespace Highcharts {
-        interface DataLabelsOptionsObject {
+        interface DataLabelsOptions {
             connectorColor?: ColorType;
         }
         interface SeriesOptions {

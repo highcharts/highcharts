@@ -109,6 +109,13 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
 const {
     animObject,
@@ -121,14 +128,10 @@ const {
     seriesType
 } = U;
 
-import './Color.js';
-import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var color = H.color,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
     svg = H.svg;
 
@@ -154,8 +157,8 @@ seriesType<Highcharts.ColumnSeries>(
      *         Column chart
      *
      * @extends      plotOptions.line
-     * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
-     *               lineWidth, marker, connectEnds, step, useOhlcData
+     * @excluding    connectEnds, connectNulls, gapSize, gapUnit, linecap,
+     *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
@@ -1137,48 +1140,43 @@ seriesType<Highcharts.ColumnSeries>(
                 translateStart: number,
                 translatedThreshold;
 
-            if (svg) { // VML is too slow anyway
-                if (init) {
-                    attr.scaleY = 0.001;
-                    translatedThreshold = clamp(
-                        yAxis.toPixels(options.threshold as any),
-                        yAxis.pos,
-                        yAxis.pos + yAxis.len
-                    );
-                    if (inverted) {
-                        attr.translateX = translatedThreshold - yAxis.len;
-                    } else {
-                        attr.translateY = translatedThreshold;
-                    }
+            if (init) {
+                attr.scaleY = 0.001;
+                translatedThreshold = clamp(
+                    yAxis.toPixels(options.threshold as any),
+                    yAxis.pos,
+                    yAxis.pos + yAxis.len
+                );
+                if (inverted) {
+                    attr.translateX = translatedThreshold - yAxis.len;
+                } else {
+                    attr.translateY = translatedThreshold;
+                }
 
-                    // apply finnal clipping (used in Highstock) (#7083)
-                    // animation is done by scaleY, so cliping is for panes
-                    if (series.clipBox) {
-                        series.setClip();
-                    }
+                // apply finnal clipping (used in Highstock) (#7083)
+                // animation is done by scaleY, so cliping is for panes
+                if (series.clipBox) {
+                    series.setClip();
+                }
 
-                    series.group.attr(attr);
+                series.group.attr(attr);
 
-                } else { // run the animation
-                    translateStart = series.group.attr(translateProp) as any;
-                    series.group.animate(
-                        { scaleY: 1 },
-                        extend(animObject(series.options.animation), {
-                            // Do the scale synchronously to ensure smooth
-                            // updating (#5030, #7228)
-                            step: function (val: any, fx: any): void {
-
-                                attr[translateProp] =
-                            translateStart +
-                            fx.pos * ((yAxis.pos as any) - translateStart);
+            } else { // run the animation
+                translateStart = series.group.attr(translateProp) as any;
+                series.group.animate(
+                    { scaleY: 1 },
+                    extend(animObject(series.options.animation), {
+                        // Do the scale synchronously to ensure smooth
+                        // updating (#5030, #7228)
+                        step: function (val: any, fx: any): void {
+                            if (series.group) {
+                                attr[translateProp] = translateStart +
+                                    fx.pos * (yAxis.pos - translateStart);
                                 series.group.attr(attr);
                             }
-                        })
-                    );
-
-                    // delete this function to allow it only once
-                    series.animate = null as any;
-                }
+                        }
+                    })
+                );
             }
         },
 

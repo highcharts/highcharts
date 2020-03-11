@@ -86,6 +86,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    Fx,
     isArray,
     merge,
     pick,
@@ -1827,13 +1828,13 @@ Chart.prototype.get3dFrame = function (): Highcharts.Chart3dFrameObject {
 };
 
 // Animation setter for matrix property.
-H.Fx.prototype.matrixSetter = function (): void {
-    var interpolated;
+Fx.prototype.matrixSetter = function (): void {
+    let interpolated;
 
     if (this.pos < 1 &&
             (isArray(this.start) || isArray(this.end))) {
-        var start = this.start || [1, 0, 0, 1, 0, 0];
-        var end = this.end || [1, 0, 0, 1, 0, 0];
+        var start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0];
+        var end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
 
         interpolated = [];
         for (var i = 0; i < 6; i++) {

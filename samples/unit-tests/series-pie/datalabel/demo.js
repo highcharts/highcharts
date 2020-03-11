@@ -1,3 +1,54 @@
+QUnit.test('Pie data labels general tests', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                animation: false
+            },
+            series: [{
+                animation: false,
+                type: 'pie',
+                data: [{
+                    name: 'Firefox',
+                    y: 44.2,
+                    dataLabels: {
+                        style: {
+                            fontSize: '40px'
+                        }
+                    }
+                },
+                ['IE7', 26.6],
+                ['IE6', 20]
+                ]
+            }]
+        }),
+        point = chart.series[0].points[0],
+        dataLabelOldX = point.dataLabel.translateX,
+        dataLabelOldY = point.dataLabel.translateY,
+        offsetX = 20,
+        offsetY = -30;
+
+    chart.series[0].points[0].update({
+        dataLabels: {
+            style: {
+                fontSize: '40px'
+            },
+            y: offsetY,
+            x: offsetX
+        }
+    });
+
+    assert.strictEqual(
+        point.dataLabel.translateX - dataLabelOldX,
+        offsetX,
+        'A point dataLabel x option should be used in calculations (#12985).'
+    );
+
+    assert.strictEqual(
+        point.dataLabel.translateY - dataLabelOldY,
+        offsetY,
+        'A point dataLabel y option should be used in calculations (#12985).'
+    );
+});
+
 QUnit.test('Pie data labels were not hidden on scaling down (#4905)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
@@ -189,9 +240,9 @@ QUnit.test("Null points should not have data labels(#4641)", function (assert) {
         'object',
         'Second point has data label'
     );
-});      
-      
-      
+});
+
+
 QUnit.test('Pie Point dataLabel distance (#1174)', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {

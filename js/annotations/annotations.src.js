@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, getDeferTime = U.getDeferTime, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, getDeferTime = U.getDeferTime, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -21,7 +21,7 @@ import ControllableLabel from './controllable/ControllableLabel.js';
 import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var fireEvent = H.fireEvent, reduce = H.reduce, chartProto = H.Chart.prototype;
+var chartProto = H.Chart.prototype;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -612,6 +612,15 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              * @apioption annotations.shapeOptions.src
              */
             /**
+             * Name of the dash style to use for the shape's stroke.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+             *         Possible values demonstrated
+             *
+             * @type      {Highcharts.DashStyleValue}
+             * @apioption annotations.shapeOptions.dashStyle
+             */
+            /**
              * The color of the shape's stroke.
              *
              * @sample highcharts/annotations/shape/
@@ -753,7 +762,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         }
     },
     setClipAxes: function () {
-        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = reduce((this.options.labels || []).concat(this.options.shapes || []), function (axes, labelOrShape) {
+        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = (this.options.labels || [])
+            .concat(this.options.shapes || [])
+            .reduce(function (axes, labelOrShape) {
             return [
                 xAxes[labelOrShape &&
                     labelOrShape.point &&

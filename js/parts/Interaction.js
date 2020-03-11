@@ -57,14 +57,14 @@ import H from './Globals.js';
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occured.
  */
+import Legend from './Legend.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import './Chart.js';
 import './Options.js';
-import './Legend.js';
-import './Point.js';
 import './Series.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, hasTouch = H.hasTouch, Legend = H.Legend, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
+var Chart = H.Chart, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**
  * TrackerMixin for points and graphs.
@@ -146,10 +146,8 @@ TrackerMixin = H.TrackerMixin = {
     drawTrackerGraph: function () {
         var series = this, options = series.options, trackByArea = options.trackByArea, trackerPath = [].concat(trackByArea ?
             series.areaPath :
-            series.graphPath), trackerPathLength = trackerPath.length, chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
-            pointer.normalize(e);
-            if (chart.hoverSeries !== series &&
-                !pointer.isStickyTooltip(e)) {
+            series.graphPath), trackerPathLength = trackerPath.length, chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function () {
+            if (chart.hoverSeries !== series) {
                 series.onMouseOver();
             }
         }, 

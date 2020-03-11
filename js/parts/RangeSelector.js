@@ -1095,7 +1095,7 @@ RangeSelector.prototype = {
             chartOptions.navigation.buttonOptions), lang = defaultOptions.lang, div = rangeSelector.div, options = chartOptions.rangeSelector, 
         // Place inputs above the container
         inputsZIndex = pick(chartOptions.chart.style &&
-            chartOptions.chart.style.zIndex, 0) + 1, floating = options.floating, buttons = rangeSelector.buttons, inputGroup = rangeSelector.inputGroup, buttonTheme = options.buttonTheme, buttonPosition = options.buttonPosition, inputPosition = options.inputPosition, inputEnabled = options.inputEnabled, states = buttonTheme && buttonTheme.states, plotLeft = chart.plotLeft, buttonLeft, buttonGroup = rangeSelector.buttonGroup, group, groupHeight, rendered = rangeSelector.rendered, verticalAlign = rangeSelector.options.verticalAlign, legend = chart.legend, legendOptions = legend && legend.options, buttonPositionY = buttonPosition.y, inputPositionY = inputPosition.y, animate = rendered || false, verb = animate ? 'animate' : 'attr', exportingX = 0, alignTranslateY, legendHeight, minPosition, translateY = 0, translateX;
+            chartOptions.chart.style.zIndex, 0) + 1, floating = options.floating, buttons = rangeSelector.buttons, inputGroup = rangeSelector.inputGroup, buttonTheme = options.buttonTheme, buttonPosition = options.buttonPosition, inputPosition = options.inputPosition, inputEnabled = options.inputEnabled, states = buttonTheme && buttonTheme.states, plotLeft = chart.plotLeft, buttonLeft, buttonGroup = rangeSelector.buttonGroup, group, groupHeight, rendered = rangeSelector.rendered, verticalAlign = rangeSelector.options.verticalAlign, legend = chart.legend, legendOptions = legend && legend.options, buttonPositionY = buttonPosition.y, inputPositionY = inputPosition.y, animate = chart.hasLoaded, verb = animate ? 'animate' : 'attr', exportingX = 0, alignTranslateY, legendHeight, minPosition, translateY = 0, translateX;
         if (options.enabled === false) {
             return;
         }
@@ -1177,12 +1177,12 @@ RangeSelector.prototype = {
                 navButtonOptions.height))) {
             exportingX = -40;
         }
-        if (buttonPosition.align === 'left') {
-            translateX = buttonPosition.x - chart.spacing[3];
+        translateX = buttonPosition.x - chart.spacing[3];
+        if (buttonPosition.align === 'right') {
+            translateX += exportingX - plotLeft; // (#13014)
         }
-        else if (buttonPosition.align === 'right') {
-            translateX =
-                buttonPosition.x + exportingX - chart.spacing[1];
+        else if (buttonPosition.align === 'center') {
+            translateX -= plotLeft / 2;
         }
         // align button group
         buttonGroup.align({

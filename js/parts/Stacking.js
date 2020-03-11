@@ -49,7 +49,7 @@ import H from './Globals.js';
 * @type {number}
 */
 import U from './Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, getDeferTime = U.getDeferTime, objectEach = U.objectEach, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, format = U.format, getDeferTime = U.getDeferTime, objectEach = U.objectEach, pick = U.pick;
 import './Axis.js';
 import './Chart.js';
 import './Series.js';
@@ -313,7 +313,7 @@ Axis.prototype.buildStacks = function () {
         for (i = 0; i < len; i++) {
             axisSeries[i].modifyStacks();
         }
-        H.fireEvent(this, 'afterBuildStacks');
+        fireEvent(this, 'afterBuildStacks');
     }
 };
 /**

@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../../parts/Globals.js';
+import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent;
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -60,7 +61,7 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
     return false;
 };
 // Keep track of pressed state for legend items
-addEvent(H.Legend, 'afterColorizeItem', function (e) {
+addEvent(Legend, 'afterColorizeItem', function (e) {
     var chart = this.chart, a11yOptions = chart.options.accessibility, legendItem = e.item;
     if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
         legendItem.a11yProxyElement.setAttribute('aria-pressed', e.visible ? 'false' : 'true');
@@ -82,7 +83,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     init: function () {
         var component = this;
-        this.addEvent(H.Legend, 'afterScroll', function () {
+        this.addEvent(Legend, 'afterScroll', function () {
             if (this.chart === component.chart) {
                 component.updateProxies();
             }

@@ -8,9 +8,12 @@
 
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent
+} = U;
 
-const addEvent = H.addEvent,
-    Chart = H.Chart;
+const Chart = H.Chart;
 
 /**
  * Internal types
@@ -92,7 +95,7 @@ class Fullscreen {
          *
          * @name Highcharts.Fullscreen#isOpen
          * @type {boolean|undefined}
-         * @since next
+         * @since 8.0.1
          */
         this.isOpen = false;
 
@@ -158,7 +161,7 @@ class Fullscreen {
      * Stops displaying the chart in fullscreen mode.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function    Highcharts.Fullscreen#close
      * @return      {void}
@@ -194,7 +197,7 @@ class Fullscreen {
      * button's text will not be replaced - it's on the user side.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function Highcharts.Fullscreen#open
      * @return      {void}
@@ -206,7 +209,7 @@ class Fullscreen {
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
-            fullscreen.unbindFullscreenEvent = H.addEvent(
+            fullscreen.unbindFullscreenEvent = addEvent(
                 chart.container.ownerDocument, // chart's document
                 fullscreen.browserProps.fullscreenChange,
                 function (): void {
@@ -235,7 +238,7 @@ class Fullscreen {
                 }
             }
 
-            H.addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
+            addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
         }
     }
     /**
@@ -244,7 +247,7 @@ class Fullscreen {
      *
      * @private
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @requires modules/full-screen
      * @return {void}
@@ -278,7 +281,7 @@ class Fullscreen {
      * a drop down menu in the upper right corner accesses this function.
      * Exporting module required.
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @sample      highcharts/members/chart-togglefullscreen/
      *              Toggle fullscreen mode from a HTML button

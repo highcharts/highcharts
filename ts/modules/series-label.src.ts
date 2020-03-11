@@ -107,6 +107,7 @@ const {
     addEvent,
     animObject,
     extend,
+    fireEvent,
     isNumber,
     pick,
     syncTimeout
@@ -1091,7 +1092,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
         }
     });
 
-    H.fireEvent(chart, 'afterDrawSeriesLabels');
+    fireEvent(chart, 'afterDrawSeriesLabels');
     // console.timeEnd('drawSeriesLabels');
 };
 

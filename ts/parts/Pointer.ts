@@ -47,7 +47,7 @@ declare global {
             hoverPoint?: Point;
             shared?: boolean;
         }
-        interface PointerEventObject extends PointerEvent {
+        interface PointerEventObject extends PointerCoordinatesObject, PointerEvent {
             chartX: number;
             chartY: number;
             touches?: Array<Touch>;
@@ -120,7 +120,6 @@ declare global {
                 className: string
             ): (boolean|undefined);
             public init(chart: Chart, options: Options): void;
-            public isStickyTooltip(e: PointerEventObject): boolean;
             public normalize<T extends PointerEventObject>(
                 e: (T|PointerEvent|TouchEvent),
                 chartPosition?: OffsetObject
@@ -129,22 +128,22 @@ declare global {
             public onContainerMouseDown(e: PointerEventObject): void;
             public onContainerMouseLeave(e: PointerEventObject): void;
             public onContainerMouseMove(e: PointerEventObject): void;
-            public onContainerTouchMove: (e: PointerEventObject) => void;
-            public onContainerTouchStart: (e: PointerEventObject) => void;
-            public onDocumentTouchEnd: (e: PointerEventObject) => void;
+            public onContainerTouchMove(e: PointerEventObject): void;
+            public onContainerTouchStart(e: PointerEventObject): void;
+            public onDocumentTouchEnd(e: PointerEventObject): void;
             public onDocumentMouseMove(e: PointerEventObject): void;
             public onDocumentMouseUp(e: PointerEventObject): void;
             public onTrackerMouseOut(e: PointerEventObject): void;
-            public pinch: (e: PointerEventObject) => void;
-            public pinchTranslate: (
+            public pinch(e: PointerEventObject): void;
+            public pinchTranslate(
                 pinchDown: Array<any>,
                 touches: Array<PointerEventObject>,
                 transform: any,
                 selectionMarker: any,
                 clip: any,
                 lastValidTouch: any
-            ) => void;
-            public pinchTranslateDirection: (
+            ): void;
+            public pinchTranslateDirection(
                 horiz: boolean,
                 pinchDown: Array<any>,
                 touches: Array<PointerEventObject>,
@@ -153,7 +152,7 @@ declare global {
                 clip: any,
                 lastValidTouch: any,
                 forcedScale?: number
-            ) => void;
+            ): void;
             public reset(allowMove?: boolean, delay?: number): void;
             public runPointActions(e?: PointerEventObject, p?: Point): void;
             public scaleGroups(
@@ -161,7 +160,7 @@ declare global {
                 clip?: boolean
             ): void;
             public setDOMEvents(): void;
-            public touch: (e: PointerEventObject, start?: boolean) => void;
+            public touch(e: PointerEventObject, start?: boolean): void;
             public zoomOption(e: Event): void;
         }
         let chartCount: number;
@@ -298,6 +297,13 @@ var H = Highcharts,
  *
  * @class
  * @name Highcharts.Pointer
+ *
+ * @param {Highcharts.Chart} chart
+ * The chart instance.
+ *
+ * @param {Highcharts.Options} options
+ * The root options object. The pointer uses options from the chart and
+ * tooltip structures.
  */
 class Pointer {
 
@@ -307,16 +313,6 @@ class Pointer {
      *
      * */
 
-    /**
-     * Initiates mouse and touch tracker object.
-     *
-     * @param {Highcharts.Chart} chart
-     * The chart instance.
-     *
-     * @param {Highcharts.Options} options
-     * The root options object. The pointer uses options from the chart and
-     * tooltip structures.
-     */
     public constructor(chart: Highcharts.Chart, options: Highcharts.Options) {
         this.chart = chart;
         this.hasDragged = false;
@@ -763,40 +759,51 @@ class Pointer {
         shared: (boolean|undefined),
         e: Highcharts.PointerEventObject
     ): (Highcharts.Point|undefined) {
-        var closest: (Highcharts.Point|undefined),
-            sort = function (
-                p1: Highcharts.Point,
-                p2: Highcharts.Point
-            ): number {
-                var isCloserX = (p1.distX as any) - (p2.distX as any),
-                    isCloser = (p1.dist as any) - (p2.dist as any),
-                    isAbove =
-                        (p2.series.group && p2.series.group.zIndex) -
-                        (p1.series.group && p1.series.group.zIndex),
-                    result;
 
-                // We have two points which are not in the same place on xAxis
-                // and shared tooltip:
-                if (isCloserX !== 0 && shared) { // #5721
-                    result = isCloserX;
-                // Points are not exactly in the same place on x/yAxis:
-                } else if (isCloser !== 0) {
-                    result = isCloser;
-                // The same xAxis and yAxis position, sort by z-index:
-                } else if (isAbove !== 0) {
-                    result = isAbove;
-                // The same zIndex, sort by array index:
-                } else {
-                    result =
-                        (p1.series.index as any) > (p2.series.index as any) ?
-                            -1 :
-                            1;
-                }
-                return result;
-            };
+        const chart = this.chart;
+        const hoverPoint = chart.hoverPoint;
+        const tooltip = chart.tooltip;
 
-        if (this.isStickyTooltip(e)) {
-            return this.chart.hoverPoint;
+        if (
+            hoverPoint &&
+            tooltip &&
+            tooltip.isStickyOnContact()
+        ) {
+            return hoverPoint;
+        }
+
+        let closest: (Highcharts.Point|undefined);
+
+        /** @private */
+        function sort(
+            p1: Highcharts.Point,
+            p2: Highcharts.Point
+        ): number {
+            var isCloserX = (p1.distX as any) - (p2.distX as any),
+                isCloser = (p1.dist as any) - (p2.dist as any),
+                isAbove =
+                    (p2.series.group && p2.series.group.zIndex) -
+                    (p1.series.group && p1.series.group.zIndex),
+                result;
+
+            // We have two points which are not in the same place on xAxis
+            // and shared tooltip:
+            if (isCloserX !== 0 && shared) { // #5721
+                result = isCloserX;
+            // Points are not exactly in the same place on x/yAxis:
+            } else if (isCloser !== 0) {
+                result = isCloser;
+            // The same xAxis and yAxis position, sort by z-index:
+            } else if (isAbove !== 0) {
+                result = isAbove;
+            // The same zIndex, sort by array index:
+            } else {
+                result =
+                    (p1.series.index as any) > (p2.series.index as any) ?
+                        -1 :
+                        1;
+            }
+            return result;
         }
 
         series.forEach(function (s: Highcharts.Series): void {
@@ -1057,8 +1064,9 @@ class Pointer {
      * @return {void}
      */
     public onTrackerMouseOut(e: Highcharts.PointerEventObject): void {
-        var series = this.chart.hoverSeries,
-            relatedTarget = e.relatedTarget || e.toElement;
+        const chart = this.chart;
+        const series = chart.hoverSeries;
+        const relatedTarget = e.relatedTarget || e.toElement;
 
         this.isDirectTouch = false;
 
@@ -1066,7 +1074,6 @@ class Pointer {
             series &&
             relatedTarget &&
             !series.stickyTracking &&
-            !this.isStickyTooltip(e) &&
             !this.inClass(relatedTarget as any, 'highcharts-tooltip') &&
             (
                 !this.inClass(
@@ -1160,75 +1167,6 @@ class Pointer {
         }
 
         this.setDOMEvents();
-    }
-
-    /**
-     * Returns true, if the `stickOnHover` option is active and a given pointer
-     * event occurs inside the combined boundings of the hovered point and
-     * tooltip.
-     *
-     * @private
-     * @param {Highcharts.PointerEventObject} e
-     * Pointer event to check agains the active tooltip.
-     *
-     * @return {boolean}
-     * True, if the pointer event occurs inside of the hovered boundings.
-     */
-    public isStickyTooltip(e: Highcharts.PointerEventObject): boolean {
-        const chart = this.chart;
-        const chartPosition = this.chartPosition;
-        const point = chart.hoverPoint;
-        const tooltip = chart.tooltip;
-        const eventPosition: Highcharts.PositionObject = {
-            x: e.chartX,
-            y: e.chartY
-        };
-
-        let isSticky = false;
-
-        if (
-            chartPosition &&
-            point &&
-            point.graphic &&
-            tooltip &&
-            !tooltip.isHidden &&
-            tooltip.options.stickOnHover &&
-            tooltip.label
-        ) {
-            const labelBBox = tooltip.label.getBBox();
-            const labelOffset = Highcharts.offset(tooltip.label.element);
-            const pointBBox = point.graphic.getBBox();
-            const pointOffset = Highcharts.offset(point.graphic.element);
-
-            labelBBox.x = labelOffset.left - chartPosition.left;
-            labelBBox.y = labelOffset.top - chartPosition.top;
-            pointBBox.x = pointOffset.left - chartPosition.left;
-            pointBBox.y = pointOffset.top - chartPosition.top;
-
-            const x1 = Math.min(
-                pointBBox.x,
-                labelBBox.x
-            );
-            const y1 = Math.min(
-                pointBBox.y,
-                labelBBox.y
-            );
-            const x2 = Math.max(
-                (pointBBox.x + pointBBox.width),
-                (labelBBox.x + labelBBox.width)
-            );
-            const y2 = Math.max(
-                (pointBBox.y + pointBBox.height),
-                (labelBBox.y + labelBBox.height)
-            );
-
-            isSticky = (
-                (eventPosition.x >= x1 && eventPosition.x <= x2) &&
-                (eventPosition.y >= y1 && eventPosition.y <= y2)
-            );
-        }
-
-        return isSticky;
     }
 
     /**
@@ -1369,10 +1307,13 @@ class Pointer {
      * @return {void}
      */
     public onContainerMouseLeave(e: Highcharts.PointerEventObject): void {
-        var chart = charts[H.hoverChartIndex as any];
+        const chart = charts[H.hoverChartIndex as any];
 
         // #4886, MS Touch end fires mouseleave but with no related target
-        if (chart && (e.relatedTarget || e.toElement)) {
+        if (
+            chart &&
+            (e.relatedTarget || e.toElement)
+        ) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
             chart.pointer.chartPosition = void 0;
@@ -1390,8 +1331,7 @@ class Pointer {
      * @return {void}
      */
     public onContainerMouseMove(e: Highcharts.PointerEventObject): void {
-
-        var chart = this.chart;
+        const chart = this.chart;
 
         if (
             !defined(H.hoverChartIndex) ||
@@ -1419,7 +1359,6 @@ class Pointer {
         // Show the tooltip and run mouse over events (#977)
         if (
             !chart.openMenu &&
-            !this.isStickyTooltip(e) &&
             (
                 this.inClass(e.target as any, 'highcharts-tracker') ||
                 chart.isInsidePlot(
@@ -1484,20 +1423,24 @@ class Pointer {
      * @return {void}
      */
     public onDocumentMouseMove(e: Highcharts.PointerEventObject): void {
-        var chart = this.chart,
-            chartPosition = this.chartPosition;
+        const chart = this.chart;
+        const chartPosition = this.chartPosition;
+        const tooltip = chart.tooltip;
 
         e = this.normalize(e, chartPosition);
 
         // If we're outside, hide the tooltip
         if (
             chartPosition &&
-            !this.isStickyTooltip(e) &&
-            !this.inClass(e.target as any, 'highcharts-tracker') &&
+            (
+                !tooltip ||
+                !tooltip.isStickyOnContact()
+            ) &&
             !chart.isInsidePlot(
                 e.chartX - chart.plotLeft,
                 e.chartY - chart.plotTop
-            )
+            ) &&
+            !this.inClass(e.target as any, 'highcharts-tracker')
         ) {
             this.reset();
         }
@@ -2084,12 +2027,17 @@ class Pointer {
         chart.axes.forEach(function drawAxisCrosshair(
             axis: Highcharts.Axis
         ): void {
-            var snap = pick((axis.crosshair as any).snap, true),
-                point = !snap ?
-                    void 0 :
-                    find(points, function (p: Highcharts.Point): boolean {
-                        return (p.series as any)[axis.coll] === axis;
-                    });
+            const snap = pick((axis.crosshair || {}).snap, true);
+
+            let point: Highcharts.Point|undefined;
+            if (snap) {
+                point = chart.hoverPoint; // #13002
+                if (!point || (point.series as any)[axis.coll] !== axis) {
+                    point = find(points, (p: Highcharts.Point): boolean =>
+                        (p.series as any)[axis.coll] === axis
+                    );
+                }
+            }
 
             // Axis has snapping crosshairs, and one of the hover points belongs
             // to axis. Always call drawCrosshair when it is not snap.

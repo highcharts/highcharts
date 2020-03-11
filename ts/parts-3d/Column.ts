@@ -42,7 +42,7 @@ declare global {
             groupZPadding?: number;
             inactiveOtherPoints?: boolean;
         }
-        interface DataLabelsOptionsObject {
+        interface DataLabelsOptions {
             outside3dPlot?: (boolean|null);
         }
         interface Series {
@@ -312,9 +312,6 @@ wrap(seriesTypes.column.prototype, 'animate', function (
 
                 // redraw datalabels to the correct position
                 this.drawDataLabels();
-
-                // delete this function to allow it only once
-                series.animate = null as any;
             }
         }
     }
@@ -518,7 +515,7 @@ wrap(Series.prototype, 'alignDataLabel', function (
     proceed: Function,
     point: Highcharts.ColumnPoint,
     dataLabel: Highcharts.SVGElement,
-    options: Highcharts.DataLabelsOptionsObject,
+    options: Highcharts.DataLabelsOptions,
     alignTo: Highcharts.BBoxObject
 ): void {
     const chart = this.chart;
@@ -634,7 +631,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
 var defaultOptions = H.getOptions();
 defaultOptions.plotOptions.cylinder =
     merge(defaultOptions.plotOptions.column);
-var CylinderSeries = H.extendClass(seriesTypes.column, {
+var CylinderSeries = extendClass(seriesTypes.column, {
     type: 'cylinder'
 });
 seriesTypes.cylinder = CylinderSeries;

@@ -59,6 +59,7 @@ declare global {
     }
 }
 
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -78,7 +79,6 @@ const {
 
 import './Chart.js';
 import './Axis.js';
-import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -94,7 +94,6 @@ import './RangeSelector.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
@@ -1127,9 +1126,9 @@ addEvent(Axis, 'afterSetScale', function (
             max = Number.MIN_VALUE;
 
         axis.series.forEach(function (series): void {
-            min = Math.min(H.arrayMin(series.yData as any), min) -
+            min = Math.min(arrayMin(series.yData as any), min) -
                 (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(H.arrayMax(series.yData as any), max) +
+            max = Math.max(arrayMax(series.yData as any), max) +
                 (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
 

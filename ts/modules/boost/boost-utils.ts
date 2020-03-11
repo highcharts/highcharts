@@ -33,9 +33,13 @@ import '../../parts/Series.js';
 import boostableMap from './boostable-map.js';
 import createAndAttachRenderer from './boost-attach.js';
 
+import U from '../../parts/Utilities.js';
+const {
+    pick
+} = U;
+
 var win = H.win,
-    doc = win.document,
-    pick = H.pick;
+    doc = win.document;
 
 // This should be a const.
 var CHUNK_SIZE = 3000;

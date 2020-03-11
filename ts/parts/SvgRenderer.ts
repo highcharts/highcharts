@@ -821,6 +821,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    fireEvent,
     inArray,
     isArray,
     isNumber,
@@ -932,7 +933,7 @@ extend((
          */
         this.renderer = renderer;
 
-        H.fireEvent(this, 'afterInit');
+        fireEvent(this, 'afterInit');
     },
 
     /**
@@ -1035,7 +1036,7 @@ extend((
             key = [] as (string|Array<string>),
             value: string;
 
-        H.fireEvent(this.renderer, 'complexColor', {
+        fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function (): void {
             // Apply linear or radial gradients
@@ -1940,18 +1941,50 @@ extend((
         handler: Function
     ): Highcharts.SVGElement {
         var svgElement = this,
-            element = svgElement.element;
+            element = svgElement.element,
+            touchStartPos: Highcharts.Dictionary<number>,
+            touchEventFired: boolean;
 
         // touch
         if (hasTouch && eventType === 'click') {
-            element.ontouchstart = function (e: Event): void {
-                svgElement.touchEventFired = Date.now(); // #2269
-                e.preventDefault();
-                handler.call(element, e);
+            element.ontouchstart = function (e: TouchEvent): void {
+                // save touch position for later calculation
+                touchStartPos = {
+                    clientX: e.touches[0].clientX,
+                    clientY: e.touches[0].clientY
+                };
             };
+
+            // Instead of ontouchstart, event handlers should be called
+            // on touchend - similar to how current mouseup events are called
+            element.ontouchend = function (e: TouchEvent): void {
+
+                // hasMoved is a boolean variable containing logic if page
+                // was scrolled, so if touch position changed more than
+                // ~4px (value borrowed from general touch handler)
+                const hasMoved = touchStartPos.clientX ? Math.sqrt(
+                    Math.pow(
+                        touchStartPos.clientX - e.changedTouches[0].clientX,
+                        2
+                    ) +
+                    Math.pow(
+                        touchStartPos.clientY - e.changedTouches[0].clientY,
+                        2
+                    )
+                ) >= 4 : false;
+
+                if (!hasMoved) { // only call handlers if page was not scrolled
+                    handler.call(element, e);
+                }
+
+                touchEventFired = true;
+                // prevent other events from being fired. #9682
+                e.preventDefault();
+            };
+
             element.onclick = function (e: Event): void {
-                if (win.navigator.userAgent.indexOf('Android') === -1 ||
-                        Date.now() - (svgElement.touchEventFired || 0) > 1100) {
+                // Do not call onclick handler if touch event was fired already.
+                if (!touchEventFired) {
                     handler.call(element, e);
                 }
             };
@@ -5425,7 +5458,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // Fire the load event when all external images are
                         // loaded
                         ren.imgCount--;
-                        if (!ren.imgCount && chart && chart.onload) {
+                        if (!ren.imgCount && chart && !chart.hasLoaded) {
                             chart.onload();
                         }
                     },
