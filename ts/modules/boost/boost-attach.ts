@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2020 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -42,6 +42,10 @@ declare global {
 
 import '../../parts/Series.js';
 import GLRenderer from './wgl-renderer.js';
+import U from '../../parts/Utilities.js';
+const {
+    error
+} = U;
 
 var win = H.win,
     doc = win.document,
@@ -210,7 +214,7 @@ function createAndAttachRenderer(
             // The OGL renderer couldn't be inited.
             // This likely means a shader error as we wouldn't get to this point
             // if there was no WebGL support.
-            H.error('[highcharts boost] - unable to init WebGL renderer');
+            error('[highcharts boost] - unable to init WebGL renderer');
         }
 
         // target.ogl.clear();

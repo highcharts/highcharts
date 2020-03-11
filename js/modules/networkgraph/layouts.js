@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2019 Paweł Fus
+ *  (c) 2010-2020 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -12,10 +12,10 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var clamp = U.clamp, defined = U.defined, extend = U.extend, pick = U.pick, setAnimation = U.setAnimation;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
-var addEvent = H.addEvent, Chart = H.Chart;
+var Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.layouts = {
     'reingold-fruchterman': function () {
@@ -166,7 +166,7 @@ H.layouts['reingold-fruchterman'].prototype, {
     },
     initPositions: function () {
         var initialPositions = this.options.initialPositions;
-        if (H.isFunction(initialPositions)) {
+        if (isFunction(initialPositions)) {
             initialPositions.call(this);
             this.nodes.forEach(function (node) {
                 if (!defined(node.prevX)) {

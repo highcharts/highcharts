@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Code for sonifying single points.
  *
@@ -13,7 +13,11 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    error,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -335,7 +339,7 @@ function pointSonify(
                 H.sonification.instruments[instrumentDefinition.instrument] :
                 instrumentDefinition.instrument,
             mapping = instrumentDefinition.instrumentMapping || {},
-            extremes = H.merge(
+            extremes = merge(
                 defaultInstrumentOptions,
                 instrumentDefinition.instrumentOptions
             ),
@@ -401,7 +405,7 @@ function pointSonify(
                 maxFrequency: extremes.maxFrequency
             });
         } else {
-            H.error(30);
+            error(30);
         }
     });
 }

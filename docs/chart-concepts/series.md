@@ -7,7 +7,7 @@ What is a series?
 A series is a set of data, for example a line graph or one set of columns. All data plotted on a chart comes from the series object. The series object has the structure:
 ```js
 series: [{
-    name: ''
+    name: '',
     data: []
 }]
 ```

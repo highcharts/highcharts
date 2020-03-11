@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2020 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -10,9 +10,7 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
-import '../../parts/Color.js';
-var Color = H.Color;
+import Color from '../../parts/Color.js';
 // Register color names since GL can't render those directly.
 // TODO: When supporting modern syntax, make this a const and a named export
 var defaultHTMLColorMap = {
@@ -160,5 +158,5 @@ var defaultHTMLColorMap = {
     yellow: '#ffff00',
     yellowgreen: '#9acd32'
 };
-Color.prototype.names = defaultHTMLColorMap;
+Color.names = defaultHTMLColorMap;
 export default defaultHTMLColorMap;

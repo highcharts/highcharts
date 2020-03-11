@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2019 Paweł Fus
+ *  (c) 2010-2020 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -65,8 +65,12 @@ declare global {
     }
 }
 
-var Chart = H.Chart,
-    addEvent = H.addEvent;
+import U from '../../parts/Utilities.js';
+const {
+    addEvent
+} = U;
+
+var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

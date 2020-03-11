@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2020 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -12,11 +12,11 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var extend = U.extend, wrap = U.wrap;
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, wrap = U.wrap;
 import '../../parts/Series.js';
 import butils from './boost-utils.js';
 import createAndAttachRenderer from './boost-attach.js';
-var addEvent = H.addEvent, fireEvent = H.fireEvent, Series = H.Series, seriesTypes = H.seriesTypes, noop = function () { }, eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler, allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting, renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
+var Series = H.Series, seriesTypes = H.seriesTypes, noop = function () { }, eachAsync = butils.eachAsync, pointDrawHandler = butils.pointDrawHandler, allocateIfNotSeriesBoosting = butils.allocateIfNotSeriesBoosting, renderIfNotSeriesBoosting = butils.renderIfNotSeriesBoosting, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, index;
 /* eslint-disable valid-jsdoc */
 /**
  * Initialize the boot module.
@@ -69,7 +69,6 @@ function init() {
             }
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points || this.graph) {
-                this.animate = null;
                 this.destroyGraphics();
             }
             // If we're rendering per. series we should create the marker groups

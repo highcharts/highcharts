@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2019 Pawel Fus
+ *  (c) 2010-2020 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -57,11 +57,14 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     defined,
     erase,
     extend,
+    format,
+    merge,
     pick,
     splat,
     wrap
@@ -76,9 +79,6 @@ var Axis = H.Axis,
     Chart = H.Chart,
     ChartProto = Chart.prototype,
     AxisProto = H.Axis.prototype;
-
-var addEvent = H.addEvent,
-    merge = H.merge;
 
 var defaultXAxisOptions = {
     lineWidth: 0,
@@ -491,7 +491,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
 }, { order: 1 });
 
 // On destroy, we need to remove series from each axis.series
-H.addEvent(H.Series, 'destroy', function (): void {
+addEvent(H.Series, 'destroy', function (): void {
     if (this.chart.hasParallelCoordinates) {
         (this.chart.axes || []).forEach(function (axis: Highcharts.Axis): void {
             if (axis && axis.series) {
@@ -558,7 +558,7 @@ function addFormattedValue(
         );
 
         if (labelFormat) {
-            formattedValue = H.format(
+            formattedValue = format(
                 labelFormat,
                 extend(
                     this,

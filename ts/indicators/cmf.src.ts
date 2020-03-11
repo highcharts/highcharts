@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Highsoft AS
+ *  (c) 2010-2020 Highsoft AS
  *
  *  Author: Sebastian Domas
  *
@@ -15,6 +15,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 
 /**
  * @private
@@ -74,7 +78,7 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
+seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
     /**
      * Chaikin Money Flow indicator (cmf).
      *

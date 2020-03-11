@@ -3,7 +3,7 @@
  *  Experimental Highcharts module which enables visualization of a Venn
  *  diagram.
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *  Authors: Jon Arild Nygard
  *
  *  Layout algorithm by Ben Frederickson:
@@ -18,15 +18,17 @@
 import H from '../parts/Globals.js';
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
-import GeometryCircleMixin from '../mixins/geometry-circles.js';
-var getAreaOfCircle = GeometryCircleMixin.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCircleMixin.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCircleMixin.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCircleMixin.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCircleMixin.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = GeometryCircleMixin.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = GeometryCircleMixin.isPointInsideAllCircles, isPointInsideCircle = GeometryCircleMixin.isPointInsideCircle, isPointOutsideAllCircles = GeometryCircleMixin.isPointOutsideAllCircles;
-import NelderMeadModule from '../mixins/nelder-mead.js';
+import geometryCirclesModule from '../mixins/geometry-circles.js';
+var getAreaOfCircle = geometryCirclesModule.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = geometryCirclesModule.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = geometryCirclesModule.getCircleCircleIntersection, getCirclesIntersectionPolygon = geometryCirclesModule.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = geometryCirclesModule.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = geometryCirclesModule.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = geometryCirclesModule.isPointInsideAllCircles, isPointInsideCircle = geometryCirclesModule.isPointInsideCircle, isPointOutsideAllCircles = geometryCirclesModule.isPointOutsideAllCircles;
+import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
-var nelderMead = NelderMeadModule.nelderMead;
+var nelderMead = nelderMeadModule.nelderMead;
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType;
 import '../parts/Series.js';
-var addEvent = H.addEvent, color = H.Color, extend = H.extend, getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
         return obj[x];
@@ -724,6 +726,9 @@ var vennOptions = {
             color: '${palette.neutralColor20}',
             borderColor: '${palette.neutralColor100}',
             animation: false
+        },
+        inactive: {
+            opacity: 0.075
         }
     },
     tooltip: {
@@ -901,19 +906,18 @@ var vennSeries = {
                     }
                 }
             }, series);
-            series.animate = null;
         }
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
-        geometryCircles: GeometryCircleMixin,
+        geometryCircles: geometryCirclesModule,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
-        nelderMead: NelderMeadModule,
+        nelderMead: nelderMeadModule,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }
@@ -1014,7 +1018,7 @@ seriesType('venn', 'scatter', vennOptions, vennSeries, vennPoint);
 // Modify final series options.
 addEvent(seriesTypes.venn, 'afterSetOptions', function (e) {
     var options = e.options, states = options.states;
-    if (this instanceof seriesTypes.venn) {
+    if (this.is('venn')) {
         // Explicitly disable all halo options.
         Object.keys(states).forEach(function (state) {
             states[state].halo = false;

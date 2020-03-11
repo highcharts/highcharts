@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -118,16 +118,24 @@ declare global {
     }
 }
 
-
+import Point from './Point.js';
+import Time from './Time.js';
 import U from './Utilities.js';
 const {
+    addEvent,
+    animate,
+    createElement,
+    css,
     defined,
     erase,
+    error,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
     relativeLength,
@@ -137,18 +145,10 @@ const {
 
 import './Axis.js';
 import './Chart.js';
-import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    animate = H.animate,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
-    createElement = H.createElement,
-    css = H.css,
-    fireEvent = H.fireEvent,
-    merge = H.merge,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -419,7 +419,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {string} [str]
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
-     *        [lang.loading](http://api.highcharts.com/highcharts/lang.loading).
+     *        [lang.loading](https://api.highcharts.com/highcharts/lang.loading).
      *
      * @return {void}
      */
@@ -747,7 +747,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
         if (options.time && this.time === H.time) {
-            this.time = new H.Time(options.time);
+            this.time = new Time(options.time);
         }
 
         // Some option stuctures correspond one-to-one to chart objects that
@@ -1040,10 +1040,15 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
             point.applyOptions(options);
 
-            // Update visuals
-            if (point.y === null && graphic) { // #4146
+            // Update visuals, #4146
+            // Handle dummy graphic elements for a11y, #12718
+            const hasDummyGraphic = graphic && point.hasDummyGraphic;
+            const shouldDestroyGraphic = point.y === null ? !hasDummyGraphic : hasDummyGraphic;
+            if (graphic && shouldDestroyGraphic) {
                 point.graphic = graphic.destroy();
+                delete point.hasDummyGraphic;
             }
+
             if (isObject(options, true)) {
                 // Destroy so we can get new elements
                 if (graphic && graphic.element) {
@@ -1573,7 +1578,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         if (seriesTypes[newType || initialType]) {
             extend(series, seriesTypes[newType || initialType].prototype);
         } else {
-            H.error(
+            error(
                 17,
                 true,
                 chart,

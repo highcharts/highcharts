@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -88,7 +88,7 @@ seriesType<Highcharts.MapPointSeries>(
             defer: false,
             enabled: true,
             formatter: function (
-                this: Highcharts.DataLabelsFormatterContextObject
+                this: Highcharts.PointLabelObject
             ): (string|undefined) { // #2945
                 return this.point.name;
             },

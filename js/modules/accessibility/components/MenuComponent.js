@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Accessibility component for exporting menu.
  *
@@ -21,14 +21,25 @@ import HTMLUtilities from '../utils/htmlUtilities.js';
 var removeElement = HTMLUtilities.removeElement, getFakeMouseEvent = HTMLUtilities.getFakeMouseEvent;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
+ * Get the wrapped export button element of a chart.
+ *
+ * @private
+ * @param {Highcharts.Chart} chart
+ * @returns {Highcharts.SVGElement}
+ */
+function getExportMenuButtonElement(chart) {
+    return chart.exportSVGElements && chart.exportSVGElements[0];
+}
+/**
  * Show the export menu and focus the first item (if exists).
  *
  * @private
  * @function Highcharts.Chart#showExportMenu
  */
 H.Chart.prototype.showExportMenu = function () {
-    if (this.exportSVGElements && this.exportSVGElements[0]) {
-        var el = this.exportSVGElements[0].element;
+    var exportButton = getExportMenuButtonElement(this);
+    if (exportButton) {
+        var el = exportButton.element;
         if (el.onclick) {
             el.onclick(getFakeMouseEvent('click'));
         }
@@ -112,14 +123,13 @@ H.Chart.prototype.highlightLastExportItem = function () {
  * @param {Highcharts.Chart} chart
  */
 function exportingShouldHaveA11y(chart) {
-    var exportingOpts = chart.options.exporting;
+    var exportingOpts = chart.options.exporting, exportButton = getExportMenuButtonElement(chart);
     return !!(exportingOpts &&
         exportingOpts.enabled !== false &&
         exportingOpts.accessibility &&
         exportingOpts.accessibility.enabled &&
-        chart.exportSVGElements &&
-        chart.exportSVGElements[0] &&
-        chart.exportSVGElements[0].element);
+        exportButton &&
+        exportButton.element);
 }
 /**
  * The MenuComponent class
@@ -151,6 +161,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
         if (menu) {
             menu.setAttribute('aria-hidden', 'true');
         }
+        this.isExportMenuShown = false;
         this.setExportButtonExpandedState('false');
     },
     /**
@@ -162,6 +173,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
             this.addAccessibleContextMenuAttribs();
             unhideChartElementFromAT(chart, menu);
         }
+        this.isExportMenuShown = true;
         this.setExportButtonExpandedState('true');
     },
     /**
@@ -191,7 +203,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                 'aria-label': chart.langFormat('accessibility.exporting.exportRegionLabel', { chart: chart }),
                 'role': 'region'
             } : {});
-            var button = (this.chart.exportSVGElements[0]);
+            var button = getExportMenuButtonElement(this.chart);
             this.exportButtonProxy = this.createProxyButton(button, this.exportProxyGroup, {
                 'aria-label': chart.langFormat('accessibility.exporting.menuButtonLabel', { chart: chart }),
                 'aria-expanded': 'false'
@@ -266,14 +278,11 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                     chart.options.exporting.accessibility.enabled !==
                         false;
             },
-            // Show export menu
-            init: function (direction) {
-                chart.showExportMenu();
-                if (direction < 0) {
-                    chart.highlightLastExportItem();
-                }
-                else {
-                    chart.highlightExportItem(0);
+            // Focus export menu button
+            init: function () {
+                var exportBtn = component.exportButtonProxy, exportGroup = chart.exportingGroup;
+                if (exportGroup && exportBtn) {
+                    chart.setFocusToElement(exportGroup, exportBtn);
                 }
             },
             // Hide the menu
@@ -333,8 +342,14 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * Response code
      */
     onKbdClick: function (keyboardNavigationHandler) {
-        var chart = this.chart;
-        this.fakeClickEvent(chart.exportDivElements[chart.highlightedExportItemIx]);
+        var chart = this.chart, curHighlightedItem = chart.exportDivElements[chart.highlightedExportItemIx], exportButtonElement = getExportMenuButtonElement(chart).element;
+        if (this.isExportMenuShown) {
+            this.fakeClickEvent(curHighlightedItem);
+        }
+        else {
+            this.fakeClickEvent(exportButtonElement);
+            chart.highlightExportItem(0);
+        }
         return keyboardNavigationHandler.response.success;
     }
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -99,7 +99,7 @@ declare global {
         }
         interface MapPointOptions extends ScatterPointOptions {
             color?: ColorType;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             drilldown?: string;
             id?: string;
             labelrank?: number;
@@ -137,33 +137,31 @@ declare global {
     }
 }
 
-import '../parts/Color.js';
-import '../parts/Legend.js';
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     extend,
+    fireEvent,
+    getNestedProperty,
     isArray,
     isNumber,
+    merge,
     objectEach,
     pick,
+    seriesType,
     splat
 } = U;
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
-    fireEvent = H.fireEvent,
-    Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**
@@ -725,7 +723,7 @@ seriesType<Highcharts.MapSeries>(
                                 typeof val[ix] !== 'undefined'
                             ) {
                                 if (pointArrayMap[j].indexOf('.') > 0) {
-                                    H.Point.prototype.setNestedProperty(
+                                    Point.prototype.setNestedProperty(
                                         data[i], val[ix], pointArrayMap[j]
                                     );
                                 } else {
@@ -783,11 +781,13 @@ seriesType<Highcharts.MapSeries>(
 
                 // Registered the point codes that actually hold data
                 if (data && joinBy[1]) {
+                    const joinKey = joinBy[1];
                     data.forEach(function (
-                        point: Highcharts.MapPointOptions
+                        pointOptions: Highcharts.MapPointOptions
                     ): void {
-                        if (mapMap[(point as any)[joinBy[1]]]) {
-                            dataUsed.push(mapMap[(point as any)[joinBy[1]]]);
+                        const mapKey = getNestedProperty(joinKey, pointOptions) as string;
+                        if (mapMap[mapKey]) {
+                            dataUsed.push(mapMap[mapKey]);
                         }
                     } as any);
                 }
@@ -798,10 +798,11 @@ seriesType<Highcharts.MapSeries>(
 
                     // Registered the point codes that actually hold data
                     if (joinBy[1]) {
+                        const joinKey = joinBy[1];
                         data.forEach(function (
-                            point: Highcharts.MapPointOptions
+                            pointOptions: Highcharts.MapPointOptions
                         ): void {
-                            dataUsed.push((point as any)[joinBy[1]]);
+                            dataUsed.push(getNestedProperty(joinKey, pointOptions) as Highcharts.MapPointOptions);
                         } as any);
                     }
 
@@ -1204,9 +1205,6 @@ seriesType<Highcharts.MapSeries>(
                         scaleX: 1,
                         scaleY: 1
                     }, animation);
-
-                    // Delete this function to allow it only once
-                    this.animate = null as any;
                 }
             }
         },
@@ -1254,8 +1252,6 @@ seriesType<Highcharts.MapSeries>(
                             }, animationOptions);
                     }
                 });
-
-                this.animate = null as any;
             }
 
         },
@@ -1301,9 +1297,11 @@ seriesType<Highcharts.MapSeries>(
                 joinBy = series.joinBy,
                 mapPoint;
 
-            if (series.mapData) {
-                mapPoint = typeof (point as any)[joinBy[1]] !== 'undefined' &&
-                    (series.mapMap as any)[(point as any)[joinBy[1]]];
+            if (series.mapData && series.mapMap) {
+                const joinKey = joinBy[1];
+                const mapKey = Point.prototype.getNestedProperty.call(point, joinKey) as string;
+                mapPoint = typeof mapKey !== 'undefined' &&
+                    series.mapMap[mapKey];
                 if (mapPoint) {
                     // This applies only to bubbles
                     if ((series as any).xyFromShape) {
@@ -1324,7 +1322,7 @@ seriesType<Highcharts.MapSeries>(
             this: Highcharts.MapPoint,
             e?: Highcharts.PointerEventObject
         ): void {
-            H.clearTimeout(this.colorInterval as any);
+            U.clearTimeout(this.colorInterval as any);
             if (this.value !== null || this.series.options.nullInteraction) {
                 (Point.prototype.onMouseOver as any).call(this, e);
             } else {
@@ -1448,7 +1446,7 @@ seriesType<Highcharts.MapSeries>(
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type      {Highcharts.DataLabelsOptionsObject}
+ * @type      {Highcharts.DataLabelsOptions}
  * @product   highmaps
  * @apioption series.map.data.dataLabels
  */

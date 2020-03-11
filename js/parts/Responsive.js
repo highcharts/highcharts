@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -23,7 +23,7 @@ import H from './Globals.js';
  */
 import './Chart.js';
 import U from './Utilities.js';
-var isArray = U.isArray, isObject = U.isObject, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
+var find = U.find, isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey;
 var Chart = H.Chart;
 /**
  * Allows setting a set of rules to apply for different screen or chart
@@ -150,14 +150,14 @@ Chart.prototype.setResponsive = function (redraw, reset) {
     if (!reset && options && options.rules) {
         options.rules.forEach(function (rule) {
             if (typeof rule._id === 'undefined') {
-                rule._id = H.uniqueKey();
+                rule._id = uniqueKey();
             }
             this.matchResponsiveRule(rule, ruleIds /* , redraw */);
         }, this);
     }
     // Merge matching rules
-    var mergedOptions = H.merge.apply(0, ruleIds.map(function (ruleId) {
-        return H.find(options.rules, function (rule) {
+    var mergedOptions = merge.apply(0, ruleIds.map(function (ruleId) {
+        return find(options.rules, function (rule) {
             return rule._id === ruleId;
         }).chartOptions;
     }));

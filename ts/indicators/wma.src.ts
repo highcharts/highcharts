@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Kacper Madej
+ *  (c) 2010-2020 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -51,9 +51,10 @@ declare global {
 
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-
-var seriesType = H.seriesType;
+const {
+    isArray,
+    seriesType
+} = U;
 
 /* eslint-disable valid-jsdoc */
 // Utils:

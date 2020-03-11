@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -48,12 +48,14 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
 
 var noop = H.noop,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

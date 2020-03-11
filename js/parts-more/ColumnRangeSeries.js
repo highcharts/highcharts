@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, pick = U.pick;
-var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var clamp = U.clamp, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
+var defaultPlotOptions = H.defaultPlotOptions, noop = H.noop, seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;
 /**
  * The column range is a cartesian series type with higher and lower
@@ -98,10 +98,8 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
             }
             if (isRadial) {
                 start = point.barX + startAngleRad;
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: series.polarArc(y + height, y, start, start + point.pointWidth)
-                };
+                point.shapeType = 'arc';
+                point.shapeArgs = series.polarArc(y + height, y, start, start + point.pointWidth);
             }
             else {
                 shapeArgs.height = height;

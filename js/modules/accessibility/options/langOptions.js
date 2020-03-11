@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Default lang/i18n options for accessibility.
  *
@@ -71,11 +71,32 @@ var langOptions = {
             beforeRegionLabel: 'Chart screen reader information.',
             afterRegionLabel: '',
             /**
+             * Language options for annotation descriptions.
+             *
+             * @since 8.0.1
+             */
+            annotations: {
+                heading: 'Chart annotations summary',
+                descriptionSinglePoint: '{annotationText}. Related to {annotationPoint}',
+                descriptionMultiplePoints: '{annotationText}. Related to {annotationPoint}' +
+                    '{ Also related to, #each(additionalAnnotationPoints)}',
+                descriptionNoPoints: '{annotationText}'
+            },
+            /**
              * Label for the end of the chart. Announced by screen readers.
              *
              * @since 8.0.0
              */
             endOfChartMarker: 'End of interactive chart.'
+        },
+        /**
+         * Language options for sonification.
+         *
+         * @since 8.0.1
+         */
+        sonification: {
+            playAsSoundButtonText: 'Play as sound, {chartTitle}',
+            playAsSoundClickAnnouncement: 'Play'
         },
         /**
          * Language options for accessibility of the legend.
@@ -112,7 +133,7 @@ var langOptions = {
          * @since 8.0.0
          */
         table: {
-            viewAsDataTableButtonText: 'View as data table. {chartTitle}',
+            viewAsDataTableButtonText: 'View as data table, {chartTitle}',
             tableSummary: 'Table representation of chart.'
         },
         /**
@@ -278,8 +299,8 @@ var langOptions = {
                 mapbubbleCombination: '{name}, series {ix} of {numSeries}. Bubble series with {numPoints} {#plural(numPoints, bubbles, bubble)}.'
             },
             /**
-             * User supplied description text. This is added after the main
-             * summary if present.
+             * User supplied description text. This is added in the point
+             * comment description by default if present.
              *
              * @since 6.0.6
              */
@@ -303,7 +324,14 @@ var langOptions = {
              *
              * @since 8.0.0
              */
-            nullPointValue: 'No value'
+            nullPointValue: 'No value',
+            /**
+             * Description for annotations on a point, as it is made available
+             * to assistive technology.
+             *
+             * @since 8.0.1
+             */
+            pointAnnotationsDescription: '{Annotation: #each(annotations). }'
         }
     }
 };

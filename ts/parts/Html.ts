@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -55,6 +55,8 @@ declare global {
 import U from './Utilities.js';
 const {
     attr,
+    createElement,
+    css,
     defined,
     extend,
     pick,
@@ -63,9 +65,7 @@ const {
 
 import './SvgRenderer.js';
 
-var createElement = H.createElement,
-    css = H.css,
-    isFirefox = H.isFirefox,
+var isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
     SVGElement = H.SVGElement,

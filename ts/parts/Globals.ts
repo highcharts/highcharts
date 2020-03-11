@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -19,12 +19,6 @@ declare global {
      * [[include:README.md]]
      */
     namespace Highcharts {
-        interface Annotation { // @todo annotations
-            [key: string]: any; // @todo annotations
-        }
-        interface AnnotationOptions { // @todo annotations
-            [key: string]: any; // @todo annotations
-        }
         interface Axis {
             rightWall?: any; // @todo
             beforePadding?: Function; // @todo
@@ -37,13 +31,9 @@ declare global {
             frameShapes?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
             hideOverlappingLabels: Function; // @todo overlapping module
-            navigationBindings?: any; // @todo annotations
         }
         interface ChartOptions {
             forExport?: any; // @todo
-        }
-        interface NavigationBindings { // @todo annotations
-            [key: string]: any; // @todo annotations
         }
         interface Options {
             toolbar?: any; // @todo stock-tools
@@ -63,15 +53,6 @@ declare global {
         interface SeriesTypesDictionary {
             [key: string]: typeof Series;
         }
-        interface StockToolsFieldsObject { // @todo annotations
-            [key: string]: any; // @todo annotations
-        }
-        interface Tick {
-            slotWidth?: any; // @todo
-        }
-        const Annotation: any; // @todo annotations
-        const AnnotationOptions: any; // @todo annotations
-        const NavigationBindings: any; // @todo annotations
         const SVG_NS: string;
         const charts: Array<Chart|undefined>;
         const dateFormats: Dictionary<TimeFormatCallbackFunction>;
@@ -106,13 +87,26 @@ declare global {
         ): TReturn;
     }
     interface Document {
+        /** @deprecated */
+        exitFullscreen: () => Promise<void>;
+        /** @deprecated */
+        mozCancelFullScreen: Function;
+        /** @deprecated */
+        msExitFullscreen: Function;
         msHidden: boolean;
+        /** @deprecated */
+        webkitExitFullscreen: Function;
         webkitHidden: boolean;
     }
     interface Element {
+        /** @deprecated */
         mozRequestFullScreen: Function;
+        msMatchesSelector: Element['matches'];
+        /** @deprecated */
         msRequestFullscreen: Function;
-        webkitRequestFullscreen: Function;
+        webkitMatchesSelector: Element['matches'];
+        /** @deprecated */
+        webkitRequestFullScreen: Function;
         setAttribute(
             qualifiedName: string,
             value: (boolean|number|string)

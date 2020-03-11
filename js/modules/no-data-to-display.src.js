@@ -2,7 +2,7 @@
  *
  *  Plugin for displaying a message when there is no data visible in chart.
  *
- *  (c) 2010-2019 Highsoft AS
+ *  (c) 2010-2020 Highsoft AS
  *
  *  Author: Oystein Moseng
  *
@@ -14,7 +14,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend;
+var addEvent = U.addEvent, extend = U.extend;
 import '../parts/Series.js';
 import '../parts/Options.js';
 var chartPrototype = H.Chart.prototype, defaultOptions = H.getOptions();
@@ -177,7 +177,7 @@ chartPrototype.hasData = function () {
 };
 /* eslint-disable no-invalid-this */
 // Add event listener to handle automatic show or hide no-data message.
-H.addEvent(H.Chart, 'render', function handleNoData() {
+addEvent(H.Chart, 'render', function handleNoData() {
     if (this.hasData()) {
         this.hideNoData();
     }

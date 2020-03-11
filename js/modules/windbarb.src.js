@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick;
+var animObject = U.animObject, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType;
 import onSeriesMixin from '../mixins/on-series.js';
-var noop = H.noop, seriesType = H.seriesType;
+var noop = H.noop;
 // eslint-disable-next-line valid-jsdoc
 /**
  * Once off, register the windbarb approximation for data grouping. This can be
@@ -307,7 +307,6 @@ seriesType('windbarb', 'column'
             this.markerGroup.animate({
                 opacity: 1
             }, animObject(this.options.animation));
-            this.animate = null;
         }
     },
     // Don't invert the marker group (#4960)
@@ -380,7 +379,7 @@ seriesType('windbarb', 'column'
 /**
  * The wind speed in meters per second.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts highstock
  * @apioption series.windbarb.data.value
  */

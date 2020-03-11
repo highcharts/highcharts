@@ -28,9 +28,120 @@ QUnit.test('3D columns dataLabels initial visibility', function (assert) {
             }]
         }]
     });
+    const points = chart.series[0].points;
+    let dataLabel = points[0].dataLabel;
+
     assert.strictEqual(
         chart.series[0].dataLabelsGroup.element.children.length > 0,
         true,
-        'Series dataLabels are visible'
+        'Series dataLabels should be visible'
+    );
+
+    assert.close(
+        dataLabel.x + dataLabel.width / 2,
+        points[0].plot3d.x,
+        4,
+        'dataLabel should be in proper x position'
+    );
+    assert.close(
+        dataLabel.y + dataLabel.height,
+        points[0].plot3d.y,
+        4,
+        'dataLabel should be in proper y position'
+    );
+
+    dataLabel = points[1].dataLabel;
+    assert.close(
+        dataLabel.x + dataLabel.width / 2,
+        points[1].plot3d.x,
+        4,
+        'dataLabel should be in proper x position'
+    );
+    assert.close(
+        dataLabel.y + dataLabel.height,
+        points[1].plot3d.y,
+        4,
+        'dataLabel should be in proper y position'
+    );
+
+
+    chart.update({
+        chart: {
+            options3d: {
+                enabled: true,
+                alpha: 180,
+                beta: 0,
+                depth: 300,
+                viewDistance: 5
+            }
+        }
+    });
+
+    dataLabel = points[0].dataLabel;
+    assert.close(
+        dataLabel.x + dataLabel.width / 2,
+        points[0].plot3d.x,
+        4,
+        'dataLabel should be in proper x position'
+    );
+    assert.close(
+        dataLabel.y + dataLabel.height,
+        points[0].plot3d.y,
+        4,
+        'dataLabel should be in proper y position'
+    );
+
+    dataLabel = points[1].dataLabel;
+    assert.close(
+        dataLabel.x + dataLabel.width / 2,
+        points[1].plot3d.x,
+        4,
+        'dataLabel should be in proper x position'
+    );
+    assert.close(
+        dataLabel.y + dataLabel.height,
+        points[1].plot3d.y,
+        4,
+        'dataLabel should be in proper y position'
+    );
+
+    chart.update({
+        chart: {
+            inverted: true,
+            options3d: {
+                enabled: true,
+                alpha: 180,
+                beta: 0,
+                depth: 300,
+                viewDistance: 5
+            }
+        }
+    });
+
+    dataLabel = points[0].dataLabel;
+    assert.close(
+        dataLabel.x + dataLabel.padding / 2,
+        points[0].plot3d.x,
+        4,
+        'dataLabel should be in proper x position in inverted graph'
+    );
+    assert.close(
+        dataLabel.y + dataLabel.absoluteBox.height / 2,
+        points[0].series.xAxis.height - points[0].plot3d.y,
+        4,
+        'dataLabel should be in proper y position in inverted graph'
+    );
+    dataLabel = points[1].dataLabel;
+    assert.close(
+        dataLabel.x + dataLabel.padding / 2,
+        points[1].plot3d.x,
+        4,
+        'dataLabel should be in proper x position in inverted graph'
+    );
+    assert.close(
+        dataLabel.y + dataLabel.absoluteBox.height / 2,
+        points[1].series.xAxis.height - points[1].plot3d.y,
+        4,
+        'dataLabel should be in proper y position in inverted graph'
     );
 });

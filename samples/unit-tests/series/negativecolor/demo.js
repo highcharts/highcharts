@@ -28,11 +28,11 @@ QUnit.test("Negative color shoud be respected for hover state (#3636)", function
         pointColor;
 
     var sColumn = chart.series[1];
-    seriesNegColor = Highcharts.Color(sColumn.options.negativeColor).brighten(0.1).get();
-    seriesPosColor = Highcharts.Color(sColumn.options.color).brighten(0.1).get();
+    seriesNegColor = Highcharts.color(sColumn.options.negativeColor).brighten(0.1).get();
+    seriesPosColor = Highcharts.color(sColumn.options.color).brighten(0.1).get();
     $.each(sColumn.points, function (j, point) {
         point.setState("hover");
-        pointColor = Highcharts.Color(point.graphic.attr("fill")).brighten(sColumn.options.brightness).get();
+        pointColor = Highcharts.color(point.graphic.attr("fill")).brighten(sColumn.options.brightness).get();
         assert.strictEqual(
             point.y <= 0 ? pointColor === seriesNegColor : pointColor === seriesPosColor,
             true,
@@ -42,11 +42,11 @@ QUnit.test("Negative color shoud be respected for hover state (#3636)", function
 
 
     var sLine = chart.series[0];
-    seriesNegColor = Highcharts.Color(sLine.options.negativeColor).get();
-    seriesPosColor = Highcharts.Color(sLine.options.color).get();
+    seriesNegColor = Highcharts.color(sLine.options.negativeColor).get();
+    seriesPosColor = Highcharts.color(sLine.options.color).get();
     $.each(sLine.points, function (j, point) {
         point.setState("hover");
-        pointColor = Highcharts.Color(point.graphic.attr("fill")).get();
+        pointColor = Highcharts.color(point.graphic.attr("fill")).get();
         assert.strictEqual(
             point.y <= 0 ? pointColor === seriesNegColor : pointColor === seriesPosColor,
             true,
@@ -57,10 +57,10 @@ QUnit.test("Negative color shoud be respected for hover state (#3636)", function
 
     // Higher priority for states.fillColor than series.negativeColor
     sLine = chart.series[2];
-    seriesPosColor = Highcharts.Color(sLine.options.marker.states.hover.fillColor).get();
+    seriesPosColor = Highcharts.color(sLine.options.marker.states.hover.fillColor).get();
     $.each(sLine.points, function (j, point) {
         point.setState("hover");
-        pointColor = Highcharts.Color(point.graphic.attr("fill")).get();
+        pointColor = Highcharts.color(point.graphic.attr("fill")).get();
         assert.strictEqual(
             pointColor === seriesPosColor,
             true,

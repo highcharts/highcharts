@@ -2,7 +2,7 @@
  *
  *  Data module
  *
- *  (c) 2012-2019 Torstein Honsi
+ *  (c) 2012-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -1093,6 +1093,8 @@ extend(Data.prototype, {
             [].forEach.call(table.getElementsByTagName('tr'), function (tr, rowNo) {
                 if (rowNo >= startRow && rowNo <= endRow) {
                     [].forEach.call(tr.children, function (item, colNo) {
+                        var row = columns[colNo - startColumn];
+                        var i = 1;
                         if ((item.tagName === 'TD' ||
                             item.tagName === 'TH') &&
                             colNo >= startColumn &&
@@ -1101,6 +1103,13 @@ extend(Data.prototype, {
                                 columns[colNo - startColumn] = [];
                             }
                             columns[colNo - startColumn][rowNo - startRow] = item.innerHTML;
+                            // Loop over all previous indices and make sure
+                            // they are nulls, not undefined.
+                            while (rowNo - startRow >= i &&
+                                row[rowNo - startRow - i] === void 0) {
+                                row[rowNo - startRow - i] = null;
+                                i++;
+                            }
                         }
                     });
                 }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -40,11 +40,13 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 import '../parts/Options.js';
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * The area spline range is a cartesian series type with higher and
@@ -77,7 +79,7 @@ seriesType<Highcharts.AreaSplineSeries>(
  * option is not specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.areasplinerange
- * @excluding dataParser, dataURL, stack
+ * @excluding dataParser, dataURL, stack, step
  * @product   highcharts highstock
  * @requires  highcharts-more
  * @apioption series.areasplinerange

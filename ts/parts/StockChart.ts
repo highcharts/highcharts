@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -54,22 +54,26 @@ declare global {
     }
 }
 
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     clamp,
     defined,
     extend,
+    find,
+    format,
     isNumber,
     isString,
+    merge,
     pick,
     splat
 } = U;
 
 import './Chart.js';
 import './Axis.js';
-import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -83,12 +87,8 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
-    format = H.format,
-    merge = H.merge,
-    Point = H.Point,
     Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
@@ -340,24 +340,17 @@ addEvent(Series, 'setOptions', function (
     this: Highcharts.Series,
     e: { plotOptions: Highcharts.PlotOptions }
 ): void {
-    var series = this,
-        overrides;
+    var overrides;
 
-    /**
-     * @private
-     */
-    function is(type: string): boolean {
-        return H.seriesTypes[type] && series instanceof H.seriesTypes[type];
-    }
     if (this.chart.options.isStock) {
 
-        if (is('column') || is('columnrange')) {
+        if (this.is('column') || this.is('columnrange')) {
             overrides = {
                 borderWidth: 0,
                 shadow: false
             };
 
-        } else if (is('line') && !is('scatter') && !is('sma')) {
+        } else if (!this.is('scatter') && !this.is('sma')) {
             overrides = {
                 marker: {
                     enabled: false,
@@ -511,7 +504,7 @@ addEvent(Axis, 'getPlotLinePath', function (
             if (
                 uniqueAxes.indexOf(axis2) === -1 &&
                 // Do not draw on axis which overlap completely. #5424
-                !H.find(uniqueAxes, function (
+                !find(uniqueAxes, function (
                     unique: Highcharts.Axis
                 ): boolean {
                     return unique.pos === axis2.pos && unique.len === axis2.len;

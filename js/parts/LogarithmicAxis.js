@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
 'use strict';
 import H from './Globals.js';
 import U from './Utilities.js';
-var pick = U.pick;
-var Axis = H.Axis, getMagnitude = H.getMagnitude, normalizeTickInterval = H.normalizeTickInterval;
+var getMagnitude = U.getMagnitude, normalizeTickInterval = U.normalizeTickInterval, pick = U.pick;
+var Axis = H.Axis;
 /* ************************************************************************** *
  * Methods defined on the Axis prototype
  * ************************************************************************** */

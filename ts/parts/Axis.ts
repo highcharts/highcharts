@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -686,8 +686,12 @@ declare global {
  * @return {string}
  */
 
+import Color from './Color.js';
+const color = Color.parse;
+import Tick from './Tick.js';
 import U from './Utilities.js';
 const {
+    addEvent,
     animObject,
     arrayMax,
     arrayMin,
@@ -695,10 +699,17 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
+    error,
     extend,
+    fireEvent,
+    format,
+    getMagnitude,
     isArray,
+    isFunction,
     isNumber,
     isString,
+    merge,
+    normalizeTickInterval,
     objectEach,
     pick,
     relativeLength,
@@ -707,21 +718,10 @@ const {
     syncTimeout
 } = U;
 
-import './Color.js';
 import './Options.js';
-import './Tick.js';
 
-var addEvent = H.addEvent,
-    color = H.color,
-    defaultOptions = H.defaultOptions,
-    deg2rad = H.deg2rad,
-    fireEvent = H.fireEvent,
-    format = H.format,
-    getMagnitude = H.getMagnitude,
-    merge = H.merge,
-    normalizeTickInterval = H.normalizeTickInterval,
-    seriesTypes = H.seriesTypes,
-    Tick = H.Tick;
+var defaultOptions = H.defaultOptions,
+    deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -3074,7 +3074,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * the gradient, and the second item is the color.
          *
          * For solid gauges, the Y axis also inherits the concept of
-         * [data classes](http://api.highcharts.com/highmaps#colorAxis.dataClasses)
+         * [data classes](https://api.highcharts.com/highmaps#colorAxis.dataClasses)
          * from the Highmaps color axis.
          *
          * @see [minColor](#yAxis.minColor)
@@ -3424,8 +3424,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          */
 
         /**
-         * A [format string](http://docs.highcharts.com/#formatting) for the
-         * data label. Available variables are the same as for `formatter`.
+         * A format string for the data label. Available variables are the same
+         * as for `formatter`.
          *
          * @type      {string}
          * @default   {total}
@@ -4041,7 +4041,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         // register event listeners
         objectEach(events, function (event: any, eventType: string): void {
-            if (H.isFunction(event)) {
+            if (isFunction(event)) {
                 addEvent(axis, eventType, event);
             }
         });
@@ -4994,10 +4994,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     if (!axis.single || hasCategories) {
                         // TODO: series should internally set x- and y-
                         // pointPlacement to simplify this logic.
-                        var isPointPlacementAxis = (
-                            seriesTypes.xrange &&
-                            series instanceof seriesTypes.xrange
-                        ) ? !isXAxis : isXAxis;
+                        var isPointPlacementAxis = series.is('xrange') ? !isXAxis : isXAxis;
 
                         // minPointOffset is the value padding to the left of
                         // the axis in order to make room for points with a
@@ -5128,7 +5125,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             );
             if (options.type !== (axis.linkedParent as any).options.type) {
                 // Can't link axes of different type
-                H.error(11, 1 as any, chart);
+                error(11, 1 as any, chart);
             }
 
         // Initial min and max from the extreme data values
@@ -5159,7 +5156,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 ) <= 0
             ) { // #978
                 // Can't plot negative values on log axis
-                H.error(10, 1 as any, chart);
+                error(10, 1 as any, chart);
             }
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
@@ -5434,7 +5431,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
          * instead.
          *
          * @name Highcharts.Axis#tickPositions
-         * @type {Array<number>|undefined}
+         * @type {Highcharts.AxisTickPositionsArray|undefined}
          */
         this.tickPositions =
             // Find the tick positions. Work on a copy (#1565)
@@ -5453,7 +5450,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                 )
             ) {
                 tickPositions = [this.min, this.max];
-                H.error(19, false, this.chart);
+                error(19, false, this.chart);
 
             } else if (this.isDatetimeAxis) {
                 tickPositions = (this.getTimeTicks as any)(
@@ -5514,7 +5511,14 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Substract half a unit (#2619, #2846, #2515, #3390),
             // but not in case of multiple ticks (#6897)
-            if (this.single && tickPositions.length < 2 && !this.categories) {
+            if (
+                this.single &&
+                tickPositions.length < 2 &&
+                !this.categories &&
+                !this.series.some((s: Highcharts.Series): boolean =>
+                    (s.is('heatmap') && s.options.pointPlacement === 'between')
+                )
+            ) {
                 (this.min as any) -= 0.5;
                 (this.max as any) += 0.5;
             }
@@ -5539,7 +5543,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
     ): void {
         var roundedMin = tickPositions[0],
             roundedMax = tickPositions[tickPositions.length - 1],
-            minPointOffset = this.minPointOffset || 0;
+            minPointOffset =
+                (!this.isOrdinal && this.minPointOffset) || 0; // (#12716)
 
         fireEvent(this, 'trimTicks');
 
@@ -6325,7 +6330,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
         return (
             tick &&
-            tick.slotWidth // Used by grid axis
+            tick.slotWidth as any // Used by grid axis
         ) || (
             horiz &&
             ((labelOptions as any).step || 0) < 2 &&
@@ -7143,6 +7148,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         )
                     ) { // #2248, #4660
                         if (!alternateBands[pos]) {
+                            // Should be imported from PlotLineOrBand.js, but
+                            // the dependency cycle with axis is a problem
                             alternateBands[pos] = new H.PlotLineOrBand(axis);
                         }
                         from = pos + tickmarkOffset; // #949
@@ -7389,7 +7396,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             pos,
             categorized,
             graphic = this.cross,
-            crossOptions;
+            crossOptions,
+            chart = this.chart;
 
         fireEvent(this, 'drawCrosshair', { e: e, point: point });
 
@@ -7437,7 +7445,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     translatedValue: pos
                 };
 
-                if (this.chart.polar) {
+                if (chart.polar) {
                     // Additional information required for crosshairs in
                     // polar chart
                     extend(crossOptions, {
@@ -7461,7 +7469,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
 
             // Draw the cross
             if (!graphic) {
-                this.cross = graphic = this.chart.renderer
+                this.cross = graphic = chart.renderer
                     .path()
                     .addClass(
                         'highcharts-crosshair highcharts-crosshair-' +
@@ -7474,7 +7482,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                     .add();
 
                 // Presentational attributes
-                if (!this.chart.styledMode) {
+                if (!chart.styledMode) {
                     graphic.attr({
                         stroke: (options as any).color ||
                             (
@@ -7493,7 +7501,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
                         });
                     }
                 }
-
             }
 
             graphic.show().attr({

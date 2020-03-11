@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2019 Paweł Fus
+ *  (c) 2010-2020 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,9 @@
  *
  * */
 import H from '../../parts/Globals.js';
-var Chart = H.Chart, addEvent = H.addEvent;
+import U from '../../parts/Utilities.js';
+var addEvent = U.addEvent;
+var Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.dragNodesMixin = {
     /**

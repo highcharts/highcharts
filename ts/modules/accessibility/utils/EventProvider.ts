@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Class that can keep track of events added, and clean them up on destroy.
  *
@@ -14,7 +14,10 @@
 
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    addEvent,
+    extend
+} = U;
 
 /**
  * Internal types.
@@ -51,7 +54,7 @@ extend(EventProvider.prototype, {
      * @return {Function}
      */
     addEvent: function (this: Highcharts.EventProvider): Function {
-        var remover = H.addEvent.apply(H, arguments);
+        var remover = addEvent.apply(H, arguments);
         this.eventRemovers.push(remover);
         return remover;
     },

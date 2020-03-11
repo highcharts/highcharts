@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Torstein Honsi
+ *  (c) 2009-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -40,10 +40,10 @@ import H from '../parts/Globals.js';
  * https://jsfiddle.net/highcharts/y5A37/
  */
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, extend = U.extend, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Chart.js';
 import '../parts/Series.js';
-var labelDistance = 3, addEvent = H.addEvent, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
+var labelDistance = 3, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
 H.setOptions({
     /**
      * @optionparent plotOptions
@@ -673,7 +673,7 @@ function drawLabels(e) {
     var chart = this, delay = animObject(chart.renderer.globalAnimation).duration;
     chart.labelSeries = [];
     chart.labelSeriesMaxSum = 0;
-    H.clearTimeout(chart.seriesLabelTimer);
+    U.clearTimeout(chart.seriesLabelTimer);
     // Which series should have labels
     chart.series.forEach(function (series) {
         var options = series.options.label, label = series.labelBySeries, closest = label && label.closest;

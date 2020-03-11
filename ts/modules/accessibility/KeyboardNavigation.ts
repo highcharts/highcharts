@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Main keyboard navigation handling.
  *
@@ -12,14 +12,17 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
-var merge = H.merge,
-    win = H.win,
+var win = H.win,
     doc = win.document;
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    fireEvent
+} = U;
 
 import HTMLUtilities from './utils/htmlUtilities.js';
-var getElement = HTMLUtilities.getElement;
+const getElement = HTMLUtilities.getElement;
 
-import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
 import EventProvider from './utils/EventProvider.js';
 
 /**
@@ -41,6 +44,7 @@ declare global {
             public exiting?: boolean;
             public keyboardReset?: boolean;
             public modules: Array<KeyboardNavigationHandler>;
+            public pointerIsOverChart?: boolean;
             public addExitAnchorEventsToEl(
                 element: (HTMLDOMElement|SVGDOMElement)
             ): void;
@@ -55,6 +59,7 @@ declare global {
             ): void;
             public move(direction: number): boolean;
             public next(): boolean;
+            public onFocus(e: FocusEvent): void;
             public onKeydown(ev: KeyboardEvent): void;
             public onMouseUp(): void;
             public prev(): boolean;
@@ -63,10 +68,44 @@ declare global {
             public updateExitAnchor(): void;
             public updateContainerTabindex(): void;
         }
+        interface Chart {
+            /** @requires modules/accessibility */
+            dismissPopupContent(): void;
+        }
     }
 }
 
 /* eslint-disable valid-jsdoc */
+
+// Add event listener to document to detect ESC key press and dismiss
+// hover/popup content.
+addEvent(doc, 'keydown', (e: KeyboardEvent): void => {
+    const keycode = e.which || e.keyCode;
+    const esc = 27;
+    if (keycode === esc && H.charts) {
+        H.charts.forEach((chart): void => {
+            if (chart && chart.dismissPopupContent) {
+                chart.dismissPopupContent();
+            }
+        });
+    }
+});
+
+
+/**
+ * Dismiss popup content in chart, including export menu and tooltip.
+ */
+H.Chart.prototype.dismissPopupContent = function (): void {
+    const chart = this;
+
+    fireEvent(this, 'dismissPopupContent', {}, function (): void {
+        if (chart.tooltip) {
+            chart.tooltip.hide(0);
+        }
+        chart.hideExportMenu();
+    });
+};
+
 
 /**
  * The KeyboardNavigation class, containing the overall keyboard navigation
@@ -104,24 +143,27 @@ KeyboardNavigation.prototype = {
         chart: Highcharts.Chart,
         components: Highcharts.AccessibilityComponentsObject
     ): void {
-        var keyboardNavigation = this,
-            e = this.eventProvider = new EventProvider();
+        const ep = this.eventProvider = new EventProvider();
 
         this.chart = chart;
         this.components = components;
         this.modules = [];
         this.currentModuleIx = 0;
 
-        // Add keydown event
-        e.addEvent(
-            chart.renderTo, 'keydown', function (e: KeyboardEvent): void {
-                keyboardNavigation.onKeydown(e);
-            }
-        );
+        ep.addEvent(chart.renderTo, 'keydown',
+            (e: KeyboardEvent): void => this.onKeydown(e));
 
-        // Add mouseup event on doc
-        e.addEvent(doc, 'mouseup', function (): void {
-            keyboardNavigation.onMouseUp();
+        ep.addEvent(chart.container, 'focus',
+            (e: FocusEvent): void => this.onFocus(e));
+
+        ep.addEvent(doc, 'mouseup', (): void => this.onMouseUp());
+
+        ep.addEvent(chart.renderTo, 'mouseover', (): void => {
+            this.pointerIsOverChart = true;
+        });
+
+        ep.addEvent(chart.renderTo, 'mouseout', (): void => {
+            this.pointerIsOverChart = false;
         });
 
         // Run an update to get all modules
@@ -162,13 +204,7 @@ KeyboardNavigation.prototype = {
             ): Array<Highcharts.KeyboardNavigationHandler> {
                 var navModules = components[componentName].getKeyboardNavigation();
                 return modules.concat(navModules);
-            }, [
-                // Add an empty module at the start of list, to allow users to
-                // tab into the chart.
-                new (KeyboardNavigationHandler as any)(this.chart, {
-                    init: (): void => {}
-                })
-            ]);
+            }, []);
 
             this.updateExitAnchor();
 
@@ -181,15 +217,30 @@ KeyboardNavigation.prototype = {
 
 
     /**
+     * Function to run on container focus
+     * @private
+     * @param {global.FocusEvent} e Browser focus event.
+     */
+    onFocus: function (e: FocusEvent): void {
+        const chart = this.chart;
+        const focusComesFromChart = (
+            e.relatedTarget &&
+            chart.container.contains(e.relatedTarget as any)
+        );
+
+        if (!focusComesFromChart) {
+            this.modules[0]?.init(1);
+        }
+    },
+
+
+    /**
      * Reset chart navigation state if we click outside the chart and it's
      * not already reset.
      * @private
      */
     onMouseUp: function (this: Highcharts.KeyboardNavigation): void {
-        if (
-            !this.keyboardReset &&
-            !(this.chart.pointer && this.chart.pointer.chartPosition)
-        ) {
+        if (!this.keyboardReset && !this.pointerIsOverChart) {
             var chart = this.chart,
                 curMod = this.modules &&
                     this.modules[this.currentModuleIx || 0];
@@ -209,8 +260,7 @@ KeyboardNavigation.prototype = {
     /**
      * Function to run on keydown
      * @private
-     * @param {global.KeyboardEvent} ev
-     * Browser keydown event.
+     * @param {global.KeyboardEvent} ev Browser keydown event.
      */
     onKeydown: function (
         this: Highcharts.KeyboardNavigation,
@@ -303,7 +353,7 @@ KeyboardNavigation.prototype = {
             this.exiting = true;
             this.exitAnchor.focus();
         } else {
-            this.chart.renderTo.focus();
+            this.chart.container.focus();
         }
 
         return false;
@@ -375,16 +425,6 @@ KeyboardNavigation.prototype = {
     createExitAnchor: function (this: Highcharts.KeyboardNavigation): void {
         var chart = this.chart,
             exitAnchor = this.exitAnchor = doc.createElement('div');
-
-        // Hide exit anchor
-        merge(true, exitAnchor.style, {
-            position: 'absolute',
-            width: '1px',
-            height: '1px',
-            zIndex: 0,
-            overflow: 'hidden',
-            outline: 'none'
-        });
 
         chart.renderTo.appendChild(exitAnchor);
         this.makeElementAnExitAnchor(exitAnchor);

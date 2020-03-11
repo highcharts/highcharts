@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,10 +9,11 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
 import '../parts/Options.js';
 import './BoxPlotSeries.js';
-var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var noop = H.noop, seriesTypes = H.seriesTypes;
 /**
  * Error bars are a graphical representation of the variability of data and are
  * used on graphs to indicate the error, or uncertainty in a reported

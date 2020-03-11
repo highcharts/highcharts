@@ -2,7 +2,7 @@
  *
  *  Parabolic SAR indicator for Highstock
  *
- *  (c) 2010-2019 Grzegorz Blachliński
+ *  (c) 2010-2020 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 // Utils:
 function toFixed(a, n) {
@@ -93,7 +93,7 @@ function getPSAR(pdir, sDir, PSAR, pACCMulti, sLow, pLow, pHigh, sHigh, pEP) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('psar', 'sma', 
+seriesType('psar', 'sma', 
 /**
  * Parabolic SAR. This series requires `linkedTo`
  * option to be set and should be loaded

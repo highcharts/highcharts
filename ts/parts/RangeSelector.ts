@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -175,11 +175,16 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
+    createElement,
+    css,
     defined,
     destroyObjectProperties,
     discardElement,
     extend,
+    fireEvent,
     isNumber,
+    merge,
     objectEach,
     pick,
     pInt,
@@ -189,14 +194,9 @@ const {
 import './Axis.js';
 import './Chart.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
-    css = H.css,
-    createElement = H.createElement,
-    defaultOptions = H.defaultOptions,
-    fireEvent = H.fireEvent,
-    merge = H.merge;
+    defaultOptions = H.defaultOptions;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
@@ -1573,7 +1573,7 @@ RangeSelector.prototype = {
             legendOptions = legend && legend.options,
             buttonPositionY = (buttonPosition as any).y,
             inputPositionY = (inputPosition as any).y,
-            animate = rendered || false,
+            animate = chart.hasLoaded,
             verb = animate ? 'animate' : 'attr',
             exportingX = 0,
             alignTranslateY,
@@ -1711,11 +1711,12 @@ RangeSelector.prototype = {
             exportingX = -40;
         }
 
-        if ((buttonPosition as any).align === 'left') {
-            translateX = (buttonPosition as any).x - chart.spacing[3];
-        } else if ((buttonPosition as any).align === 'right') {
-            translateX =
-                (buttonPosition as any).x + exportingX - chart.spacing[1];
+        translateX = (buttonPosition as any).x - chart.spacing[3];
+
+        if ((buttonPosition as any).align === 'right') {
+            translateX += exportingX - plotLeft; // (#13014)
+        } else if ((buttonPosition as any).align === 'center') {
+            translateX -= plotLeft / 2;
         }
 
         // align button group
@@ -2035,10 +2036,6 @@ Axis.prototype.minFromRange = function (
 ): (number|undefined) {
     var rangeOptions = this.range,
         type = (rangeOptions as any).type,
-        timeName = ({
-            month: 'Month',
-            year: 'FullYear'
-        } as Highcharts.Dictionary<string>)[type],
         min,
         max = this.max as any,
         dataMin,
@@ -2046,8 +2043,9 @@ Axis.prototype.minFromRange = function (
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            var date = new time.Date(base),
-                basePeriod = time.get(timeName, date);
+            const timeName: Highcharts.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
+            const date = new time.Date(base);
+            const basePeriod = time.get(timeName, date);
 
             time.set(timeName, date, basePeriod + count);
 

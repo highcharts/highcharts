@@ -6,10 +6,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var seriesType = H.seriesType;
+var isArray = U.isArray, seriesType = U.seriesType;
 /**
  * The Trend line series type.
  *

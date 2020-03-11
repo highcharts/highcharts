@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Handle keyboard navigation for series.
  *
@@ -81,6 +81,7 @@ declare global {
     }
 }
 
+import Point from '../../../../parts/Point.js';
 import U from '../../../../parts/Utilities.js';
 var extend = U.extend,
     defined = U.defined;
@@ -257,7 +258,7 @@ function getClosestPoint(
  * @return {Highcharts.Point}
  *         This highlighted point.
  */
-H.Point.prototype.highlight = function (): Highcharts.Point {
+Point.prototype.highlight = function (): Highcharts.Point {
     var chart = this.series.chart;
 
     if (!this.isNull) {
@@ -813,13 +814,17 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
     onHandlerTerminate: function (
         this: Highcharts.SeriesKeyboardNavigation
     ): void {
-        var chart = this.chart;
+        const chart = this.chart;
+        const curPoint = chart.highlightedPoint;
 
         if (chart.tooltip) {
             chart.tooltip.hide(0);
         }
 
-        delete chart.highlightedPoint;
+        if (curPoint) {
+            curPoint.onMouseOut();
+            delete chart.highlightedPoint;
+        }
     },
 
 

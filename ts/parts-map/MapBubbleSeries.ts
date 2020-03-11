@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -52,15 +52,17 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    merge,
+    seriesType
+} = U;
+
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts-more/BubbleSeries.js';
 
-var merge = H.merge,
-    Point = H.Point,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 // The mapbubble series type
 if (seriesTypes.bubble) {

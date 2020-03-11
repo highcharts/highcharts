@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2020 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -16,6 +16,10 @@ import butils from './boost-utils.js';
 import init from './boost-init.js';
 import './boost-overrides.js';
 import './named-colors.js';
+import U from '../../parts/Utilities.js';
+const {
+    error
+} = U;
 
 // These need to be fixed when we support named imports
 var hasWebGLSupport = butils.hasWebGLSupport;
@@ -25,7 +29,7 @@ if (!hasWebGLSupport()) {
         // Fallback to canvas boost
         H.initCanvasBoost();
     } else {
-        H.error(26);
+        error(26);
     }
 } else {
     // WebGL support is alright, and we're good to go.

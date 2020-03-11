@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -147,29 +147,31 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
+import Point from './Point.js';
+import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
     defined,
+    error,
     extend,
+    format,
     isNumber,
+    merge,
     pick
 } = U;
 
 import './Axis.js';
 import './Series.js';
-import './Tooltip.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     defaultPlotOptions = H.defaultPlotOptions,
-    format = H.format,
-    merge = H.merge,
-    Point = H.Point,
-    Series = H.Series,
-    Tooltip = H.Tooltip;
+    Series = H.Series;
 
 /* ************************************************************************** *
  *  Start data grouping module                                                *
@@ -603,13 +605,13 @@ var seriesProto = Series.prototype,
 // Set default approximations to the prototypes if present. Properties are
 // inherited down. Can be overridden for individual series types.
 seriesProto.getDGApproximation = function (this: Highcharts.Series): string {
-    if (H.seriesTypes.arearange && this instanceof H.seriesTypes.arearange) {
+    if (this.is('arearange')) {
         return 'range';
     }
-    if (H.seriesTypes.ohlc && this instanceof H.seriesTypes.ohlc) {
+    if (this.is('ohlc')) {
         return 'ohlc';
     }
-    if (H.seriesTypes.column && this instanceof H.seriesTypes.column) {
+    if (this.is('column')) {
         return 'sum';
     }
     return 'average';
@@ -862,7 +864,7 @@ addEvent(Point, 'update', function (
     this: Highcharts.Point
 ): (boolean|undefined) {
     if (this.dataGroup) {
-        H.error(24, false, this.series.chart);
+        error(24, false, this.series.chart);
         return false;
     }
 });

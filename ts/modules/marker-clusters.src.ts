@@ -2,7 +2,7 @@
  *
  *  Marker clusters module.
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Author: Wojciech Chmiel
  *
@@ -15,7 +15,6 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
 
 /**
  * Internal types
@@ -56,7 +55,7 @@ declare global {
             animation?: (boolean|AnimationOptionsObject);
             layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
             marker?: PointMarkerOptionsObject;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             zones?: Array<MarkerClusterZonesOptions>;
             states?: PointStatesOptionsObject;
             events?: MarkerClusterEventsOptions;
@@ -237,28 +236,34 @@ declare global {
  *          Event arguments.
  */
 
+''; // detach doclets from following code
+
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    defined,
+    error,
+    isArray,
+    isFunction,
+    isObject,
+    isNumber,
+    merge,
+    objectEach,
+    relativeLength,
+    syncTimeout
+} = U;
+
 /* eslint-disable no-invalid-this */
 
-import '../parts/Series.js';
 import '../parts/Axis.js';
+import '../parts/Series.js';
 import '../parts/SvgRenderer.js';
 
 var Series = H.Series,
     Scatter = H.seriesTypes.scatter,
-    Point = H.Point,
     SvgRenderer = H.SVGRenderer,
-    addEvent = H.addEvent,
-    merge = H.merge,
-    defined = U.defined,
-    isArray = U.isArray,
-    isObject = U.isObject,
-    isFunction = H.isFunction,
-    isNumber = U.isNumber,
-    relativeLength = H.relativeLength,
-    error = H.error,
-    objectEach = U.objectEach,
-    syncTimeout = U.syncTimeout,
-    animObject = H.animObject,
     baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array
@@ -539,7 +544,7 @@ var clusterDefaultOptions = {
 
     /**
      * Options for the cluster data labels.
-     * @type    {Highcharts.DataLabelsOptionsObject}
+     * @type    {Highcharts.DataLabelsOptions}
      */
     dataLabels: {
         /** @internal */
@@ -2372,7 +2377,7 @@ addEvent(Series, 'afterRender', function (
     }
 });
 
-addEvent(H.Point, 'drillToCluster', function (
+addEvent(Point, 'drillToCluster', function (
     this: Highcharts.Point,
     event: Highcharts.PointClickEventObject
 ): void {

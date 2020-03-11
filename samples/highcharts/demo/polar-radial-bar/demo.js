@@ -6,13 +6,14 @@ Highcharts.chart('container', {
         polar: true
     },
     title: {
-        text: 'Winter Olympic medals per existing country (TOP 10)'
+        text: 'Winter Olympic medals per existing country (TOP 5)'
     },
     tooltip: {
         outside: true
     },
     pane: {
         size: '85%',
+        innerSize: '20%',
         endAngle: 270
     },
     xAxis: {
@@ -22,9 +23,9 @@ Highcharts.chart('container', {
             useHTML: true,
             allowOverlap: true,
             step: 1,
-            y: 4,
+            y: 3,
             style: {
-                fontSize: '12px'
+                fontSize: '13px'
             }
         },
         lineWidth: 0,
@@ -38,20 +39,14 @@ Highcharts.chart('container', {
             'Canada <span class="f16"><span id="flag" class="flag ca">' +
             '</span></span>',
             'Austria <span class="f16"><span id="flag" class="flag at">' +
-            '</span></span>',
-            'Sweden <span class="f16"><span id="flag" class="flag se">' +
-            '</span></span>',
-            'Switzerland <span class="f16"><span id="flag" class="flag ch">' +
-            '</span></span>',
-            'Russia <span class="f16"><span id="flag" class="flag ru">' +
-            '</span></span>',
-            'Netherlands <span class="f16"><span id="flag" class="flag nl">' +
-            '</span></span>',
-            'Finland <span class="f16"><span id="flag" class="flag fi">' +
             '</span></span>'
         ]
     },
     yAxis: {
+        crosshair: {
+            enabled: true,
+            color: '#333'
+        },
         lineWidth: 0,
         tickInterval: 25,
         reversedStacks: false,
@@ -68,12 +63,12 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'Gold medals',
-        data: [132, 105, 92, 73, 64, 57, 55, 47, 45, 43]
+        data: [132, 105, 92, 73, 64]
     }, {
         name: 'Silver medals',
-        data: [125, 110, 86, 64, 81, 46, 46, 38, 44, 63]
+        data: [125, 110, 86, 64, 81]
     }, {
         name: 'Bronze medals',
-        data: [111, 90, 60, 62, 87, 55, 52, 35, 41, 61]
+        data: [111, 90, 60, 62, 87]
     }]
 });

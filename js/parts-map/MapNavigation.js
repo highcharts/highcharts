@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,9 +10,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Chart.js';
-var addEvent = H.addEvent, Chart = H.Chart, doc = H.doc, merge = H.merge;
+var Chart = H.Chart, doc = H.doc;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -109,13 +109,18 @@ MapNavigation.prototype.update = function (options) {
             })
                 .add();
             button.handler = buttonOptions.onclick;
-            button.align(extend(buttonOptions, {
-                width: button.width,
-                height: 2 * button.height
-            }), null, buttonOptions.alignTo);
             // Stop double click event (#4444)
             addEvent(button.element, 'dblclick', stopEvent);
             mapNavButtons.push(button);
+            // Align it after the plotBox is known (#12776)
+            var bo = buttonOptions;
+            var un = addEvent(chart, 'load', function () {
+                button.align(extend(bo, {
+                    width: button.width,
+                    height: 2 * button.height
+                }), null, bo.alignTo);
+                un();
+            });
         });
     }
     this.updateEvents(o);

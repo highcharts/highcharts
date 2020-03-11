@@ -2,7 +2,7 @@
  *
  *  Networkgraph series
  *
- *  (c) 2010-2019 Paweł Fus
+ *  (c) 2010-2020 Paweł Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -27,18 +27,18 @@ declare global {
         interface NetworkgraphDataLabelsFormatterCallbackFunction {
             (this: (
                 NetworkgraphDataLabelsFormatterContextObject|
-                DataLabelsFormatterContextObject
+                PointLabelObject
             )): (number|string|null|undefined);
         }
         interface NetworkgraphDataLabelsFormatterContextObject
-            extends DataLabelsFormatterContextObject
+            extends PointLabelObject
         {
             color: ColorString;
             key: string;
             point: NetworkgraphPoint;
         }
         interface NetworkgraphDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             format?: string;
             formatter?: NetworkgraphDataLabelsFormatterCallbackFunction;
@@ -121,7 +121,8 @@ declare global {
             public getDegree(): number;
             public getLinkAttributes(): SVGAttributes;
             public getLinkPath(): SVGPathArray;
-            public getMass(): Dictionary<number>
+            public getMass(): Dictionary<number>;
+            public getPointsCollection(): Array<NetworkgraphPoint>;
             public init(
                 series: NetworkgraphSeries,
                 options: NetworkgraphPointOptions,
@@ -186,7 +187,7 @@ declare global {
  *
  * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -197,7 +198,7 @@ declare global {
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  *//**
  * The color of the node.
@@ -218,10 +219,16 @@ declare global {
  * @since 7.0.0
  */
 
+''; // detach doclets above
+
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
+    addEvent,
+    css,
     defined,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../../parts/Options.js';
@@ -230,10 +237,7 @@ import './layouts.js';
 import './draggable-nodes.js';
 
 
-var addEvent = H.addEvent,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    Point = H.Point,
+var seriesTypes = H.seriesTypes,
     Series = H.Series,
     dragNodesMixin = H.dragNodesMixin;
 
@@ -366,7 +370,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
              */
             formatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.NetworkgraphDataLabelsFormatterContextObject
                 )
             ): string {
@@ -399,7 +403,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
              */
             linkFormatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.NetworkgraphDataLabelsFormatterContextObject
                 )
             ): string {
@@ -751,6 +755,17 @@ seriesType<Highcharts.NetworkgraphSeries>(
         },
 
         /**
+         * In networkgraph, series.points refers to links,
+         * but series.nodes refers to actual points.
+         * @private
+         */
+        getPointsCollection: function (
+            this: Highcharts.NetworkgraphSeries
+        ): Array<Highcharts.NetworkgraphPoint> {
+            return this.nodes || [];
+        },
+
+        /**
          * Set index for each node. Required for proper `node.update()`.
          * Note that links are indexated out of the box in `generatePoints()`.
          *
@@ -941,7 +956,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
             state?: string
         ): Highcharts.SVGAttributes {
             // By default, only `selected` state is passed on
-            var pointState = state || point.state || 'normal',
+            var pointState = state || point && point.state || 'normal',
                 attribs = Series.prototype.pointAttribs.call(
                     this,
                     point,
@@ -949,7 +964,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 ),
                 stateOptions = (this.options.states as any)[pointState];
 
-            if (!point.isNode) {
+            if (point && !point.isNode) {
                 attribs = point.getLinkAttributes();
                 // For link, get prefixed names:
                 if (stateOptions) {
@@ -1038,10 +1053,10 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 !this.series.chart.styledMode
             ) {
                 addEvent(this, 'mouseOver', function (): void {
-                    H.css(this.series.chart.container, { cursor: 'move' });
+                    css(this.series.chart.container, { cursor: 'move' });
                 });
                 addEvent(this, 'mouseOut', function (): void {
-                    H.css(
+                    css(
                         this.series.chart.container, { cursor: 'default' }
                     );
                 });

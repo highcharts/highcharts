@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber;
-var addEvent = H.addEvent, setOptions = H.setOptions, each = H.each;
+var addEvent = U.addEvent, isNumber = U.isNumber;
+var setOptions = H.setOptions, each = H.each;
 setOptions({
     /**
      * @optionparent chart

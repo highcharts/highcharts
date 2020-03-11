@@ -147,42 +147,42 @@ const browserStackBrowsers = {
     'Mac.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '76.0',
+        browser_version: '80.0',
         os: 'OS X',
         os_version: 'Mojave'
     },
     'Mac.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '68.0',
+        browser_version: '73.0',
         os: 'OS X',
         os_version: 'Mojave'
     },
     'Mac.Safari': {
         base: 'BrowserStack',
         browser: 'safari',
-        browser_version: '12.1',
+        browser_version: '13.0',
         os: 'OS X',
-        os_version: 'Mojave'
+        os_version: 'Catalina'
     },
     'Win.Chrome': {
         base: 'BrowserStack',
         browser: 'chrome',
-        browser_version: '76.0',
+        browser_version: '80.0',
         os: 'Windows',
         os_version: '10'
     },
     'Win.Edge': {
         base: 'BrowserStack',
         browser: 'edge',
-        browser_version: 'insider preview',
+        browser_version: '80.0',
         os: 'Windows',
         os_version: '10',
     },
     'Win.Firefox': {
         base: 'BrowserStack',
         browser: 'firefox',
-        browser_version: '68.0',
+        browser_version: '73.0',
         os: 'Windows',
         os_version: '10'
     },
@@ -397,6 +397,7 @@ module.exports = function (config) {
         autoWatch: false,
         singleRun: true, // Karma captures browsers, runs the tests and exits
         concurrency: Infinity,
+        reportSlowerThan: 3000,
         plugins: [
             'karma-*',
             require('./karma-imagecapture-reporter.js')
@@ -522,13 +523,8 @@ module.exports = function (config) {
                     if (argv.reference) {
                         assertion = `
                             let svg = getSVG(chart);
-
-                            if (svg) {
-                                __karma__.info({
-                                    filename: './samples/${path}/reference.svg',
-                                    data: svg
-                                });
-                            }
+                            saveSVGSnapshot(svg, '${path}/reference.svg');
+                            
                             assert.ok(
                                 svg,
                                 '${path}: SVG and reference.svg file should be generated'
@@ -604,7 +600,8 @@ module.exports = function (config) {
             localIdentifier: randomString, // to avoid instances interfering with each other.
             video: false,
             retryLimit: 1,
-            pollingTimeout: 5000 // to avoid rate limit errors with browserstack.
+            pollingTimeout: 5000, // to avoid rate limit errors with browserstack.
+            'browserstack.timezone': argv.timezone || 'UTC'
         };
         options.customLaunchers = argv.oldie ?
             {
@@ -647,7 +644,6 @@ module.exports = function (config) {
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
             `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}.`
         );
-
     }
 
     config.set(options);

@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel module
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -100,6 +100,7 @@ const {
 
 import '../parts/Options.js';
 import '../parts/Series.js';
+import H from '../parts/Globals.js';
 
 // create shortcuts
 var seriesType = Highcharts.seriesType,
@@ -625,10 +626,15 @@ addEvent(Highcharts.Chart, 'afterHideAllOverlappingLabels', function (
     this: Highcharts.Chart
 ): void {
     this.series.forEach(function (series): void {
+        let dataLabelsOptions = series.options && series.options.dataLabels;
+        if (H.isArray(dataLabelsOptions)) {
+            dataLabelsOptions = dataLabelsOptions[0];
+        }
         if (
-            series instanceof seriesTypes.pie &&
+            series.is('pie') &&
             series.placeDataLabels &&
-            !((series.options || {}).dataLabels || {}).inside
+            dataLabelsOptions &&
+            !dataLabelsOptions.inside
         ) {
             series.placeDataLabels();
         }

@@ -2,7 +2,7 @@
  *
  *  Money Flow Index indicator for Highstock
  *
- *  (c) 2010-2019 Grzegorz Blachliński
+ *  (c) 2010-2020 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -10,9 +10,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+var error = U.error, isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 // Utils:
 function sumArray(array) {
@@ -39,7 +38,7 @@ function calculateRawMoneyFlow(typicalPrice, volume) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('mfi', 'sma', 
+seriesType('mfi', 'sma', 
 /**
  * Money Flow Index. This series requires `linkedTo` option to be set and
  * should be loaded after the `stock/indicators/indicators.js` file.
@@ -83,7 +82,7 @@ H.seriesType('mfi', 'sma',
         // Cause we need to calculate change between two points
         range = 1, volumeSeries = series.chart.get(params.volumeSeriesID), yValVolume = (volumeSeries && volumeSeries.yData), MFI = [], isUp = false, xData = [], yData = [], positiveMoneyFlow = [], negativeMoneyFlow = [], newTypicalPrice, oldTypicalPrice, rawMoneyFlow, negativeMoneyFlowSum, positiveMoneyFlowSum, moneyFlowRatio, MFIPoint, i;
         if (!volumeSeries) {
-            H.error('Series ' +
+            error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, series.chart);
             return;

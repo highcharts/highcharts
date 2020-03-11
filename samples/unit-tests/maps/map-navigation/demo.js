@@ -87,3 +87,47 @@ QUnit.test('Zoom in - zoomout with padding, panning in both directions.', functi
     );
 
 });
+
+QUnit.test('Map navigation button alignment', assert => {
+    const chart = Highcharts.mapChart('container', {
+
+        chart: {
+            plotBorderWidth: 1,
+            width: 600
+        },
+
+        mapNavigation: {
+            enabled: true,
+            buttonOptions: {
+                verticalAlign: 'bottom'
+            }
+        },
+
+        series: [{
+            data: [{
+                path: 'M 0 0 L 100 0 L 0 100',
+                value: 1
+            }, {
+                path: 'M 100 0 L 100 100 L 0 100',
+                value: 2
+            }]
+        }]
+    });
+
+    assert.close(
+        chart.mapNavButtons[1].translateY + chart.mapNavButtons[1].element.getBBox().height,
+        chart.plotTop + chart.plotHeight,
+        1.5,
+        'The buttons should initially be bottom-aligned to the plot box (#12776)'
+    );
+
+    chart.setSize(undefined, 380);
+
+    assert.close(
+        chart.mapNavButtons[1].translateY + chart.mapNavButtons[1].element.getBBox().height,
+        chart.plotTop + chart.plotHeight,
+        1.5,
+        'The buttons should be bottom-aligned to the plot box after redraw (#12776)'
+    );
+
+});

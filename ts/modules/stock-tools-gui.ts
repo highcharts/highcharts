@@ -24,11 +24,7 @@ declare global {
             /** @requires modules/stock-tools */
             setStockTools(options?: StockToolsOptions): void;
         }
-        interface LangNavigationOptions {
-            popup?: Dictionary<string>;
-        }
         interface LangOptions {
-            navigation?: LangNavigationOptions;
             stockTools?: LangStockToolsOptions;
         }
         interface LangStockToolsOptions {
@@ -140,17 +136,19 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var extend = U.extend,
-    isArray = U.isArray,
-    pick = U.pick;
+const {
+    addEvent,
+    createElement,
+    css,
+    extend,
+    fireEvent,
+    getStyle,
+    isArray,
+    merge,
+    pick
+} = U;
 
-var addEvent = H.addEvent,
-    createElement = H.createElement,
-    fireEvent = H.fireEvent,
-    getStyle = H.getStyle,
-    merge = H.merge,
-    css = H.css,
-    win = H.win,
+var win = H.win,
     DIV = 'div',
     SPAN = 'span',
     UL = 'ul',
@@ -906,8 +904,8 @@ addEvent(H.Chart, 'getMargins', function (): void {
         offsetWidth = listWrapper && (
             (
                 (listWrapper as any).startWidth +
-                H.getStyle(listWrapper, 'padding-left') +
-                H.getStyle(listWrapper, 'padding-right')
+                getStyle(listWrapper, 'padding-left') +
+                getStyle(listWrapper, 'padding-right')
             ) || listWrapper.offsetWidth
         );
 
@@ -1117,7 +1115,7 @@ H.Toolbar.prototype = {
                     buttonWrapper.className += ' ' + PREFIX + 'current';
                     (menuWrapper as any).startWidth = wrapper.offsetWidth;
                     menuWrapper.style.width = (menuWrapper as any).startWidth +
-                        H.getStyle(menuWrapper, 'padding-left') +
+                        getStyle(menuWrapper, 'padding-left') +
                         (submenuWrapper as any).offsetWidth + 3 + 'px';
                 }
             })
@@ -1429,10 +1427,10 @@ H.Toolbar.prototype = {
             wrapper.style.height = showhideBtn.offsetHeight + 'px';
         } else {
             wrapper.style.height = '100%';
-            showhideBtn.style.top = H.getStyle(toolbar, 'padding-top') + 'px';
+            showhideBtn.style.top = getStyle(toolbar, 'padding-top') + 'px';
             showhideBtn.style.left = (
                 wrapper.offsetWidth +
-                (H.getStyle(toolbar, 'padding-left') as any)
+                (getStyle(toolbar, 'padding-left') as any)
             ) + 'px';
         }
 

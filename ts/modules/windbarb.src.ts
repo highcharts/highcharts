@@ -2,7 +2,7 @@
  *
  *  Wind barb series module
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -81,13 +81,13 @@ import U from '../parts/Utilities.js';
 const {
     animObject,
     isNumber,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import onSeriesMixin from '../mixins/on-series.js';
 
-var noop = H.noop,
-    seriesType = H.seriesType;
+var noop = H.noop;
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -484,8 +484,6 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
                 (this.markerGroup as any).animate({
                     opacity: 1
                 }, animObject(this.options.animation));
-
-                this.animate = null as any;
             }
         },
 
@@ -564,7 +562,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
 /**
  * The wind speed in meters per second.
  *
- * @type      {number}
+ * @type      {number|null}
  * @product   highcharts highstock
  * @apioption series.windbarb.data.value
  */

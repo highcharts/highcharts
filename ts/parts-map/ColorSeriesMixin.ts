@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -101,7 +101,7 @@ H.colorSeriesMixin = {
             colorKey = this.colorKey;
 
         points.forEach(function (point: Highcharts.ColorPoint): void {
-            var value = (point as any)[colorKey],
+            var value = point.getNestedProperty(colorKey) as number,
                 color;
 
             color = point.options.color ||

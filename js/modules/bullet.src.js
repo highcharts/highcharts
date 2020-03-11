@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Kacper Madej
+ *  (c) 2010-2020 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength;
-var seriesType = H.seriesType, columnProto = H.seriesTypes.column.prototype;
+var isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType;
+var columnProto = H.seriesTypes.column.prototype;
 /**
  * The bullet series type.
  *
@@ -118,7 +118,7 @@ seriesType('bullet', 'column'
         series.points.forEach(function (point) {
             var pointOptions = point.options, shapeArgs, targetGraphic = point.targetGraphic, targetShapeArgs, targetVal = point.target, pointVal = point.y, width, height, targetOptions, y;
             if (isNumber(targetVal) && targetVal !== null) {
-                targetOptions = H.merge(options.targetOptions, pointOptions.targetOptions);
+                targetOptions = merge(options.targetOptions, pointOptions.targetOptions);
                 height = targetOptions.height;
                 shapeArgs = point.shapeArgs;
                 width = relativeLength(targetOptions.width, shapeArgs.width);

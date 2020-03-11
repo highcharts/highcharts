@@ -608,3 +608,101 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Zero node is shown in sankey/dependency wheel #12453',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+            series: [{
+                keys: ['from', 'to', 'weight'],
+                data: [
+                    ['Spain', 'France', 5],
+                    ['Spain', 'Netherlands', 0],
+                    ['Spain', 'UK', 1],
+                    ['Poland', 'France', 0],
+                    ['Germany', 'France', 5],
+                    ['Poland', 'UK', 2]
+                ],
+                type: 'sankey'
+            }]
+        });
+
+        assert.strictEqual(
+            Highcharts.defined(chart.series[0].nodes[4].graphic),
+            false,
+            'This node should not have the graphic (#12453)'
+        );
+
+        assert.strictEqual(
+            Highcharts.defined(chart.series[0].nodes[4].dataLabel),
+            false,
+            'This node should not have the dataLabel (#12453)'
+        );
+
+        chart.series[0].update({
+            data: [
+                ['Spain', 'France', 5],
+                ['Spain', 'Netherlands', 2],
+                ['Spain', 'UK', 1],
+                ['Poland', 'France', 0],
+                ['Germany', 'France', 5],
+                ['Poland', 'UK', 2]
+            ]
+        });
+
+        assert.strictEqual(
+            Highcharts.defined(chart.series[0].nodes[4].graphic),
+            true,
+            'This node should have the graphic after the update (#12453)'
+        );
+
+        assert.strictEqual(
+            Highcharts.defined(chart.series[0].nodes[4].dataLabel),
+            true,
+            'This node should have the dataLabel after the update (#12453)'
+        );
+
+        assert.strictEqual(
+            chart.series[0].nodes[4].id,
+            'Netherlands',
+            'This node id(position) should not been have changed after the update (#12453)'
+        );
+    }
+);
+
+QUnit.test(
+    'Test null data in sankey #12666',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+            series: [{
+                keys: ['from', 'to', 'weight'],
+                data: [
+                    ['Coal', 'Transportation', 0],
+                    ['Renewable', 'Transportation', 0],
+                    ['Nuclear', 'Transportation', 2],
+
+                    ['Coal', 'Industrial', 7],
+                    ['Renewable', 'Industrial', 11],
+                    ['Nuclear', 'Industrial', 0],
+
+                    ['Coal', 'R&C', 1],
+                    ['Renewable', 'R&C', 7],
+                    ['Nuclear', 'R&C', 5],
+
+                    ['Coal', 'Electric Power', 48],
+                    ['Renewable', 'Electric Power', 11],
+                    ['Nuclear', null, 52]
+                ],
+                type: 'sankey'
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].nodes[2].sum,
+            59,
+            'For this node value from the point with linkTo null should be added to sum (#12666)'
+        );
+    }
+);

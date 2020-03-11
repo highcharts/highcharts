@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Extensions to the SVGRenderer class to enable 3D shapes
  *
@@ -12,11 +12,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
+var animObject = U.animObject, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Color.js';
 import '../parts/SvgRenderer.js';
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var charts = H.charts, color = H.color, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
+var charts = H.charts, color = H.color, deg2rad = H.deg2rad, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
 // internal:
 dFactor, element3dMethods, cuboidMethods;
 /*
@@ -210,6 +210,13 @@ element3dMethods = {
             optionsToApply[0] = newAttr;
         }
         else {
+            // It is needed to deal with the whole group zIndexing
+            // in case of graph rotation
+            if (hasZIndexes && hasZIndexes.group) {
+                this.attr({
+                    zIndex: hasZIndexes.group
+                });
+            }
             objectEach(values, function (partVal, part) {
                 newAttr[part] = {};
                 newAttr[part][prop] = partVal;
@@ -250,7 +257,7 @@ element3dMethods = {
     }
 };
 // CUBOID
-cuboidMethods = H.merge(element3dMethods, {
+cuboidMethods = merge(element3dMethods, {
     parts: ['front', 'top', 'side'],
     pathType: 'cuboid',
     attr: function (args, val, complete, continueAnimation) {
@@ -315,10 +322,14 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 };
 // Generates a cuboid path and zIndexes
 H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
-    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z, h = shapeArgs.height, w = shapeArgs.width, d = shapeArgs.depth, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
+    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z, 
+    // For side calculation (right/left)
+    // there is a need for height (and other shapeArgs arguments)
+    // to be at least 1px
+    h = shapeArgs.height, w = shapeArgs.width, d = shapeArgs.depth, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
     // Priority for x axis is the biggest,
     // because of x direction has biggest influence on zIndex
-    incrementX = 10000, 
+    incrementX = 1000000, 
     // y axis has the smallest priority in case of our charts
     // (needs to be set because of stacking)
     incrementY = 10, incrementZ = 100, zIndex = 0, 
@@ -362,25 +373,49 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      * helper method to decide which side is visible
      * @private
      */
+    function mapSidePath(i) {
+        // Added support for 0 value in columns, where height is 0
+        // but the shape is rendered.
+        // Height is used from 1st to 6th element of pArr
+        if (h === 0 && i > 1 && i < 6) {
+            return {
+                x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y + 10,
+                z: pArr[i].z
+            };
+        }
+        return pArr[i];
+    }
+    /**
+     * method creating the final side
+     * @private
+     */
     function mapPath(i) {
         return pArr[i];
     }
     /**
-     * First value - path with specific side
+     * First value - path with specific face
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
      * @private
      */
-    pickShape = function (path1, path2) {
-        var ret = [[], -1];
-        path1 = path1.map(mapPath);
-        path2 = path2.map(mapPath);
-        if (H.shapeArea(path1) < 0) {
-            ret = [path1, 0];
+    pickShape = function (verticesIndex1, verticesIndex2) {
+        var ret = [[], -1], 
+        // An array of vertices for cuboid face
+        face1 = verticesIndex1.map(mapPath), face2 = verticesIndex2.map(mapPath), 
+        // dummy face is calculated the same way as standard face,
+        // but if cuboid height is 0 additional height is added so it is
+        // possible to use this vertices array for visible face calculation
+        dummyFace1 = verticesIndex1.map(mapSidePath), dummyFace2 = verticesIndex2.map(mapSidePath);
+        if (H.shapeArea(dummyFace1) < 0) {
+            ret = [face1, 0];
         }
-        else if (H.shapeArea(path2) < 0) {
-            ret = [path2, 1];
+        else if (H.shapeArea(dummyFace2) < 0) {
+            ret = [face2, 1];
         }
         return ret;
     };
@@ -411,7 +446,9 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
        even for big changes in Y and Z parameters all columns will be drawn
        correctly. */
     if (isRight === 1) {
-        zIndex += incrementX * (1000 - x);
+        // It is needed to connect value with current chart width
+        // for big chart size.
+        zIndex += incrementX * (chart.plotWidth - x);
     }
     else if (!isRight) {
         zIndex += incrementX * x;
@@ -440,7 +477,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
 };
 // SECTORS //
 H.SVGRenderer.prototype.arc3d = function (attribs) {
-    var wrapper = this.g(), renderer = wrapper.renderer, customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end'];
+    var wrapper = this.g(), renderer = wrapper.renderer, customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
     /**
      * Get custom attributes. Don't mutate the original object and return an
      * object with only custom attr.
@@ -556,7 +593,6 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         // in the attribs collection in the first place.
         delete params.center;
         delete params.z;
-        delete params.depth;
         delete params.alpha;
         delete params.beta;
         anim = animObject(pick(animation, this.renderer.globalAnimation));
@@ -584,7 +620,8 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                             r: interpolate('r'),
                             innerR: interpolate('innerR'),
                             start: interpolate('start'),
-                            end: interpolate('end')
+                            end: interpolate('end'),
+                            depth: interpolate('depth')
                         }));
                     }
                 };

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Utility functions for accessibility module.
  *
@@ -10,8 +10,10 @@
  *
  * */
 'use strict';
+import U from '../../../parts/Utilities.js';
+var merge = U.merge;
 import H from '../../../parts/Globals.js';
-var merge = H.merge, win = H.win, doc = win.document;
+var win = H.win, doc = win.document;
 /* eslint-disable valid-jsdoc */
 /**
  * @private
@@ -148,6 +150,9 @@ function visuallyHideElement(element) {
         width: '1px',
         height: '1px',
         overflow: 'hidden',
+        whiteSpace: 'nowrap',
+        clip: 'rect(1px, 1px, 1px, 1px)',
+        marginTop: '-3px',
         '-ms-filter': 'progid:DXImageTransform.Microsoft.Alpha(Opacity=1)',
         filter: 'alpha(opacity=1)',
         opacity: '0.01'

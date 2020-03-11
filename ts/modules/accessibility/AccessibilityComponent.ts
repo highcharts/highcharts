@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Accessibility component class definition
  *
@@ -15,11 +15,13 @@
 import H from '../../parts/Globals.js';
 var win = H.win,
     doc = win.document,
-    merge = H.merge,
     fireEvent = H.fireEvent;
 
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    extend,
+    merge
+} = U;
 
 import HTMLUtilities from './utils/htmlUtilities.js';
 var removeElement = HTMLUtilities.removeElement,

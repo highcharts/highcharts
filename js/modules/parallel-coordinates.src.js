@@ -2,7 +2,7 @@
  *
  *  Parallel coordinates module
  *
- *  (c) 2010-2019 Pawel Fus
+ *  (c) 2010-2020 Pawel Fus
  *
  *  License: www.highcharts.com/license
  *
@@ -12,13 +12,12 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, format = U.format, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 // Extensions for parallel coordinates plot.
 var Axis = H.Axis, Chart = H.Chart, ChartProto = Chart.prototype, AxisProto = H.Axis.prototype;
-var addEvent = H.addEvent, merge = H.merge;
 var defaultXAxisOptions = {
     lineWidth: 0,
     tickLength: 0,
@@ -325,7 +324,7 @@ addEvent(H.Series, 'afterTranslate', function () {
     }
 }, { order: 1 });
 // On destroy, we need to remove series from each axis.series
-H.addEvent(H.Series, 'destroy', function () {
+addEvent(H.Series, 'destroy', function () {
     if (this.chart.hasParallelCoordinates) {
         (this.chart.axes || []).forEach(function (axis) {
             if (axis && axis.series) {
@@ -376,7 +375,7 @@ function addFormattedValue(proceed) {
          */
         yAxisOptions.tooltipValueFormat, yAxisOptions.labels.format);
         if (labelFormat) {
-            formattedValue = H.format(labelFormat, extend(this, { value: this.y }), chart);
+            formattedValue = format(labelFormat, extend(this, { value: this.y }), chart);
         }
         else if (yAxis.isDatetimeAxis) {
             formattedValue = chart.time.dateFormat(chart.time.resolveDTLFormat(yAxisOptions.dateTimeLabelFormats[yAxis.tickPositions.info.unitName]).main, this.y);

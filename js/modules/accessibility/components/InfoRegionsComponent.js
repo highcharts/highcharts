@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Accessibility component for chart info region and table.
  *
@@ -11,10 +11,13 @@
  * */
 'use strict';
 import H from '../../../parts/Globals.js';
-var doc = H.win.document, format = H.format;
+var doc = H.win.document;
 import U from '../../../parts/Utilities.js';
-var extend = U.extend, pick = U.pick;
+var extend = U.extend, format = U.format, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import Announcer from '../utils/Announcer.js';
+import AnnotationsA11y from './AnnotationsA11y.js';
+var getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 import ChartUtilities from '../utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT, getChartTitle = ChartUtilities.getChartTitle, getAxisDescription = ChartUtilities.getAxisDescription;
 import HTMLUtilities from '../utils/htmlUtilities.js';
@@ -65,8 +68,8 @@ function stripEmptyHTMLTags(str) {
  */
 function enableSimpleHTML(str) {
     return str
-        .replace(/&lt;(h[1-7]|p|div)&gt;/g, '<$1>')
-        .replace(/&lt;&#x2F;(h[1-7]|p|div|a|button)&gt;/g, '</$1>')
+        .replace(/&lt;(h[1-7]|p|div|ul|ol|li)&gt;/g, '<$1>')
+        .replace(/&lt;&#x2F;(h[1-7]|p|div|ul|ol|li|a|button)&gt;/g, '</$1>')
         .replace(/&lt;(div|a|button) id=&quot;([a-zA-Z\-0-9#]*?)&quot;&gt;/g, '<$1 id="$2">');
 }
 /**
@@ -117,7 +120,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @private
      */
     init: function () {
-        var chart = this.chart, component = this;
+        var chart = this.chart;
+        var component = this;
         this.initRegionsDefinitions();
         this.addEvent(chart, 'afterGetTable', function (e) {
             component.onDataTableCreated(e);
@@ -129,6 +133,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 component.focusDataTable();
             }, 300);
         });
+        this.announcer = new Announcer(chart, 'assertive');
     },
     /**
      * @private
@@ -148,6 +153,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart.renderTo.insertBefore(el, chart.renderTo.firstChild);
                 },
                 afterInserted: function () {
+                    if (typeof component.sonifyButtonId !== 'undefined') {
+                        component.initSonifyButton(component.sonifyButtonId);
+                    }
                     if (typeof component.dataTableButtonId !== 'undefined') {
                         component.initDataTableButton(component.dataTableButtonId);
                     }
@@ -168,9 +176,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         };
     },
     /**
-     * Called on first render/updates to the chart, including options changes.
+     * Called on chart render. Have to update the sections on render, in order
+     * to get a11y info from series.
      */
-    onChartUpdate: function () {
+    onChartRender: function () {
         var component = this;
         this.linkedDescriptionElement = this.getLinkedDescriptionElement();
         this.setLinkedDescriptionAttrs();
@@ -246,18 +255,24 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      */
     defaultBeforeChartFormatter: function () {
         var chart = this.chart, format = chart.options.accessibility
-            .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
-            chart.index, context = {
+            .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
+            chart.index, dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
+            chart.index, annotationsList = getAnnotationsInfoHTML(chart), annotationsTitleStr = chart.langFormat('accessibility.screenReaderSection.annotations.heading', { chart: chart }), context = {
             chartTitle: getChartTitle(chart),
             typeDescription: this.getTypeDescriptionText(),
             chartSubtitle: this.getSubtitleText(),
             chartLongdesc: this.getLongdescText(),
             xAxisDescription: axesDesc.xAxis,
             yAxisDescription: axesDesc.yAxis,
+            playAsSoundButton: chart.sonify ?
+                this.getSonifyButtonText(sonifyButtonId) : '',
             viewTableButton: chart.getCSV ?
-                this.getDataTableButtonText(dataTableButtonId) : ''
+                this.getDataTableButtonText(dataTableButtonId) : '',
+            annotationsTitle: annotationsList ? annotationsTitleStr : '',
+            annotationsList: annotationsList
         }, formattedString = H.i18nFormat(format, context, chart);
         this.dataTableButtonId = dataTableButtonId;
+        this.sonifyButtonId = sonifyButtonId;
         return stringToSimpleHTML(formattedString);
     },
     /**
@@ -311,6 +326,20 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     },
     /**
      * @private
+     * @param {string} buttonId
+     * @return {string}
+     */
+    getSonifyButtonText: function (buttonId) {
+        var _a;
+        var chart = this.chart;
+        if (((_a = chart.options.sonification) === null || _a === void 0 ? void 0 : _a.enabled) === false) {
+            return '';
+        }
+        var buttonText = chart.langFormat('accessibility.sonification.playAsSoundButtonText', { chart: chart, chartTitle: getChartTitle(chart) });
+        return '<button id="' + buttonId + '">' + buttonText + '</button>';
+    },
+    /**
+     * @private
      * @return {string}
      */
     getSubtitleText: function () {
@@ -345,6 +374,40 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         var tableDiv = this.dataTableDiv, table = tableDiv && tableDiv.getElementsByTagName('table')[0];
         if (table && table.focus) {
             table.focus();
+        }
+    },
+    /**
+     * @private
+     * @param {string} sonifyButtonId
+     */
+    initSonifyButton: function (sonifyButtonId) {
+        var _this = this;
+        var el = this.sonifyButton = getElement(sonifyButtonId);
+        var chart = this.chart;
+        var defaultHandler = function (e) {
+            el === null || el === void 0 ? void 0 : el.setAttribute('aria-hidden', 'true');
+            el === null || el === void 0 ? void 0 : el.setAttribute('aria-label', '');
+            e.preventDefault();
+            e.stopPropagation();
+            var announceMsg = chart.langFormat('accessibility.sonification.playAsSoundClickAnnouncement', { chart: chart });
+            _this.announcer.announce(announceMsg);
+            setTimeout(function () {
+                el === null || el === void 0 ? void 0 : el.removeAttribute('aria-hidden');
+                el === null || el === void 0 ? void 0 : el.removeAttribute('aria-label');
+                if (chart.sonify) {
+                    chart.sonify();
+                }
+            }, 1000); // Delay to let screen reader speak the button press
+        };
+        if (el && chart) {
+            setElAttrs(el, {
+                tabindex: '-1'
+            });
+            el.onclick = function (e) {
+                var _a;
+                var onPlayAsSoundClick = (_a = chart.options.accessibility) === null || _a === void 0 ? void 0 : _a.screenReaderSection.onPlayAsSoundClick;
+                (onPlayAsSoundClick || defaultHandler).call(this, e, chart);
+            };
         }
     },
     /**
@@ -489,6 +552,13 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             rangeFrom: format('min'),
             rangeTo: format('max')
         });
+    },
+    /**
+     * Remove component traces
+     */
+    destroy: function () {
+        var _a;
+        (_a = this.announcer) === null || _a === void 0 ? void 0 : _a.destroy();
     }
 });
 export default InfoRegionsComponent;

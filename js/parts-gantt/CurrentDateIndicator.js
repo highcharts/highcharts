@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -12,8 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var wrap = U.wrap;
-var addEvent = H.addEvent, Axis = H.Axis, PlotLineOrBand = H.PlotLineOrBand, merge = H.merge;
+var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
+import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+var Axis = H.Axis;
 var defaultConfig = {
     /**
      * Show an indicator on the axis for the current date and time. Can be a

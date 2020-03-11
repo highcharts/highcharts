@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Sebastian Bochan
+ *  (c) 2010-2020 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -43,11 +43,11 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     clamp,
-    pick
+    pick,
+    seriesType
 } = U;
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 var colProto = seriesTypes.column.prototype;
 
@@ -198,9 +198,10 @@ seriesType<Highcharts.ColumnPyramidSeries>(
 
                 // topXwidth and bottomXwidth = width of lines from the center
                 // calculated from tanges proportion.
-                topXwidth = (barW * (barY - topPointY)) / stackHeight;
+                // Can not be a NaN #12514
+                topXwidth = stackHeight ? (barW * (barY - topPointY)) / stackHeight : 0;
                 // like topXwidth, but with height of point
-                bottomXwidth = (barW * (barY + barH - topPointY)) / stackHeight;
+                bottomXwidth = stackHeight ? (barW * (barY + barH - topPointY)) / stackHeight : 0;
 
                 /*
                         /\

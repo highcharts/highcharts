@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2020 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var clamp = U.clamp;
+var clamp = U.clamp, error = U.error;
 var pick = H.pick;
 /* eslint-disable valid-jsdoc */
 /**
@@ -228,7 +228,7 @@ function GLShader(gl) {
      */
     function handleErrors() {
         if (errors.length) {
-            H.error('[highcharts boost] shader error - ' + errors.join('\n'));
+            error('[highcharts boost] shader error - ' + errors.join('\n'));
         }
     }
     /**

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Kacper Madej
+ *  (c) 2010-2020 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -61,12 +61,13 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     isNumber,
+    merge,
     pick,
-    relativeLength
+    relativeLength,
+    seriesType
 } = U;
 
-var seriesType = H.seriesType,
-    columnProto = H.seriesTypes.column.prototype;
+var columnProto = H.seriesTypes.column.prototype;
 
 /**
  * The bullet series type.
@@ -199,7 +200,7 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
                     y;
 
                 if (isNumber(targetVal) && targetVal !== null) {
-                    targetOptions = H.merge(
+                    targetOptions = merge(
                         options.targetOptions,
                         pointOptions.targetOptions
                     );

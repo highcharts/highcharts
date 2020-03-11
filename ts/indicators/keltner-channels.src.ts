@@ -12,7 +12,9 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    merge,
+    seriesType
 } = U;
 
 import multipleLinesMixin from '../mixins/multipe-lines.js';
@@ -76,8 +78,7 @@ declare global {
 
 var SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema,
-    ATR = H.seriesTypes.atr,
-    merge = H.merge;
+    ATR = H.seriesTypes.atr;
 
 /**
  * The Keltner Channels series type.
@@ -88,7 +89,7 @@ var SMA = H.seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.KeltnerChannelsIndicator>(
+seriesType<Highcharts.KeltnerChannelsIndicator>(
     'keltnerchannels',
     'sma',
     /**

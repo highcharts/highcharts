@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Torstein Honsi
+ *  (c) 2009-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -103,6 +103,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     animObject,
     extend,
     isNumber,
@@ -114,7 +115,6 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 
 var labelDistance = 3,
-    addEvent = H.addEvent,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
     Chart = H.Chart;
@@ -1095,7 +1095,7 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
     chart.labelSeries = [];
     chart.labelSeriesMaxSum = 0;
 
-    H.clearTimeout(chart.seriesLabelTimer as any);
+    U.clearTimeout(chart.seriesLabelTimer as any);
 
     // Which series should have labels
     chart.series.forEach(function (series: Highcharts.Series): void {

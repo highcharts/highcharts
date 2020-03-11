@@ -1,6 +1,6 @@
 /* *
  *
- *  Copyright (c) 2019-2019 Highsoft AS
+ *  Copyright (c) 2019-2020 Highsoft AS
  *
  *  Boost module: stripped-down renderer for higher performance
  *
@@ -107,17 +107,18 @@ declare global {
 
 import GLShader from './wgl-shader.js';
 import GLVertexBuffer from './wgl-vbuffer.js';
+import Color from '../../parts/Color.js';
+const color = Color.parse;
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber,
-    objEach = U.objectEach;
-
-import '../../parts/Color.js';
+const {
+    isNumber,
+    merge,
+    objectEach
+} = U;
 
 var win = H.win,
     doc = win.document,
-    merge = H.merge,
     some = H.some,
-    Color = H.Color,
     pick = H.pick;
 
 /* eslint-disable valid-jsdoc */
@@ -362,7 +363,7 @@ function GLRenderer(
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
-            color: Highcharts.ColorRGBA,
+            pcolor: Highcharts.ColorRGBA,
             scolor: Highcharts.ColorRGBA,
             sdata = isStacked ? series.data : (xData || rawData),
             closestLeft = { x: Number.MAX_VALUE, y: 0 },
@@ -410,7 +411,7 @@ function GLRenderer(
                 zone: Highcharts.SeriesZonesOptions
             ): (boolean|undefined) {
                 if (typeof zone.value === 'undefined') {
-                    zoneDefColor = new H.Color(zone.color);
+                    zoneDefColor = new Color(zone.color);
                     return true;
                 }
             });
@@ -420,7 +421,7 @@ function GLRenderer(
                     (series.pointAttribs && series.pointAttribs().fill) ||
                     series.color
                 ) as any;
-                zoneDefColor = new H.Color(zoneDefColor as any);
+                zoneDefColor = new Color(zoneDefColor as any);
             }
         }
 
@@ -582,10 +583,10 @@ function GLRenderer(
                     swidth = pointAttr['stroke-width'] || 0;
 
                     // Handle point colors
-                    color = H.color(pointAttr.fill).rgba as any;
-                    color[0] /= 255.0;
-                    color[1] /= 255.0;
-                    color[2] /= 255.0;
+                    pcolor = color(pointAttr.fill).rgba as any;
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
 
                     // So there are two ways of doing this. Either we can
                     // create a rectangle of two triangles, or we can do a
@@ -597,7 +598,7 @@ function GLRenderer(
                     // If there's stroking, we do an additional rect
                     if (series.type === 'treemap') {
                         swidth = swidth || 1;
-                        scolor = H.color(pointAttr.stroke).rgba as any;
+                        scolor = color(pointAttr.stroke).rgba as any;
 
                         scolor[0] /= 255.0;
                         scolor[1] /= 255.0;
@@ -634,7 +635,7 @@ function GLRenderer(
                         shapeArgs.y + swidth,
                         shapeArgs.width - (swidth * 2),
                         shapeArgs.height - (swidth * 2),
-                        color
+                        pcolor
                     );
                 }
             });
@@ -809,7 +810,7 @@ function GLRenderer(
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
                         if (!last || y >= (last.value as any)) {
-                            pcolor = H.color(zone.color).rgba as any;
+                            pcolor = color(zone.color).rgba as any;
 
                         }
 
@@ -944,7 +945,7 @@ function GLRenderer(
 
             // Uncomment this to support color axis.
             // if (caxis) {
-            //     color = H.color(caxis.toColor(y)).rgba;
+            //     pcolor = color(caxis.toColor(y)).rgba;
 
             //     inst.colorData.push(color[0] / 255.0);
             //     inst.colorData.push(color[1] / 255.0);
@@ -1213,7 +1214,7 @@ function GLRenderer(
                     (shapeOptions && shapeOptions.symbol) ||
                     (s.series.symbol as any)
                 ] || textureHandles.circle,
-                color;
+                scolor = [];
 
             if (
                 s.segments.length === 0 ||
@@ -1252,19 +1253,19 @@ function GLRenderer(
                 ).get();
             }
 
-            color = H.color(fillColor).rgba;
+            scolor = color(fillColor).rgba;
 
             if (!settings.useAlpha) {
-                color[3] = 1.0;
+                scolor[3] = 1.0;
             }
 
             // This is very much temporary
             if (
                 s.drawMode === 'lines' &&
                 settings.useAlpha &&
-                (color as any)[3] < 1
+                (scolor[3] as any) < 1
             ) {
-                (color as any)[3] /= 10;
+                (scolor[3] as any) /= 10;
             }
 
             // Blending
@@ -1303,7 +1304,7 @@ function GLRenderer(
             }
 
             // Set series specific uniforms
-            shader.setColor(color);
+            shader.setColor(scolor);
             setXAxis(s.series.xAxis);
             setYAxis(s.series.yAxis);
             setThreshold(hasThreshold, translatedThreshold as any);
@@ -1634,7 +1635,7 @@ function GLRenderer(
         shader.destroy();
         if (gl) {
 
-            objEach(textureHandles, function (key: string): void {
+            objectEach(textureHandles, function (key: string): void {
                 if (textureHandles[key].handle) {
                     gl.deleteTexture(textureHandles[key].handle);
                 }

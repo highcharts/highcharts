@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -61,11 +61,11 @@
 
 'use strict';
 
-import H from '../../../parts/Globals.js';
-var error = H.error;
-
 import U from '../../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    error,
+    pick
+} = U;
 
 /**
  * Internal types.

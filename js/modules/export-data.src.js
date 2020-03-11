@@ -2,7 +2,7 @@
  *
  *  Experimental data export module for Highcharts
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -234,13 +234,6 @@ Highcharts.setOptions({
          * @requires modules/export-data
          */
         downloadXLS: 'Download XLS',
-        /**
-         * The text for the menu item.
-         *
-         * @since    6.1.0
-         * @requires modules/export-data
-         */
-        openInCloud: 'Open in Highcharts Cloud',
         /**
          * The text for the menu item.
          *
@@ -771,75 +764,6 @@ Highcharts.Chart.prototype.viewData = function () {
     this.dataTableDiv.innerHTML = this.getTable();
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
-/**
- * Experimental function to send a chart's config to the Cloud for editing.
- *
- * Limitations
- * - All functions (formatters and callbacks) are removed since they're not
- *   JSON.
- *
- * @function Highcharts.Chart#openInCloud
- * @return {void}
- *
- * @todo
- * - Let the Cloud throw a friendly warning about unsupported structures like
- *   formatters.
- * - Dynamically updated charts probably fail, we need a generic
- *   Chart.getOptions function that returns all non-default options. Should also
- *   be used by the export module.
- */
-Highcharts.Chart.prototype.openInCloud = function () {
-    var options, paramObj, params;
-    /**
-     * Recursively remove function callbacks.
-     * @private
-     * @param {*} obj
-     *        Container of function callbacks
-     * @return {void}
-     */
-    function removeFunctions(obj) {
-        Object.keys(obj).forEach(function (key) {
-            if (typeof obj[key] === 'function') {
-                delete obj[key];
-            }
-            if (isObject(obj[key])) { // object and not an array
-                removeFunctions(obj[key]);
-            }
-        });
-    }
-    /**
-     * @private
-     * @return {void}
-     */
-    function openInCloud() {
-        var form = doc.createElement('form');
-        doc.body.appendChild(form);
-        form.method = 'post';
-        form.action = 'https://cloud-api.highcharts.com/openincloud';
-        form.target = '_blank';
-        var input = doc.createElement('input');
-        input.type = 'hidden';
-        input.name = 'chart';
-        input.value = params;
-        form.appendChild(input);
-        form.submit();
-        doc.body.removeChild(form);
-    }
-    options = Highcharts.merge(this.userOptions);
-    removeFunctions(options);
-    paramObj = {
-        name: (options.title && options.title.text) || 'Chart title',
-        options: options,
-        settings: {
-            constructor: 'Chart',
-            dataProvider: {
-                csv: this.getCSV()
-            }
-        }
-    };
-    params = JSON.stringify(paramObj);
-    openInCloud();
-};
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = Highcharts.getOptions().exporting;
 if (exportingOptions) {
@@ -861,16 +785,10 @@ if (exportingOptions) {
             onclick: function () {
                 this.viewData();
             }
-        },
-        openInCloud: {
-            textKey: 'openInCloud',
-            onclick: function () {
-                this.openInCloud();
-            }
         }
     });
     if (exportingOptions.buttons) {
-        exportingOptions.buttons.contextButton.menuItems.push('separator', 'downloadCSV', 'downloadXLS', 'viewData', 'openInCloud');
+        exportingOptions.buttons.contextButton.menuItems.push('separator', 'downloadCSV', 'downloadXLS', 'viewData');
     }
 }
 // Series specific

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -315,8 +315,13 @@ declare global {
     }
 }
 
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
+    createElement,
+    css,
     defined,
     discardElement,
     erase,
@@ -325,9 +330,11 @@ const {
     isArray,
     isNumber,
     isObject,
+    merge,
     offset,
     pick,
-    pInt
+    pInt,
+    uniqueKey
 } = U;
 
 import '../parts/SvgRenderer.js';
@@ -336,11 +343,8 @@ var VMLRenderer,
     VMLRendererExtension,
     VMLElement: typeof Highcharts.VMLElement,
     Chart = H.Chart,
-    createElement = H.createElement,
-    css = H.css,
     deg2rad = H.deg2rad,
     doc = H.doc,
-    merge = H.merge,
     noop = H.noop,
     svg = H.svg,
     SVGElement = H.SVGElement,
@@ -364,7 +368,7 @@ var VMLRenderer,
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = function (
+    H.getStyle = U.getStyle = function (
         el: Highcharts.HTMLDOMElement,
         prop: string
     ): number {
@@ -385,7 +389,7 @@ if (doc && !doc.defaultView) {
         if (alias) {
             el.style.zoom = 1 as any;
             return Math.max(
-                (el as any)[alias] - 2 * (H.getStyle(el, 'padding') as number),
+                (el as any)[alias] - 2 * (U.getStyle(el, 'padding') as number),
                 0
             );
         }
@@ -417,7 +421,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement, 'afterInit', function (
+    addEvent(SVGElement, 'afterInit', function (
         this: Highcharts.SVGElement
     ): void {
         if (this.element.nodeName === 'text') {
@@ -440,7 +444,7 @@ if (!svg) {
     H.Pointer.prototype.normalize = function<
         T extends Highcharts.PointerEventObject
     > (
-        e: (T|PointerEvent),
+        e: (T|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
 
@@ -457,8 +461,8 @@ if (!svg) {
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
-            chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),
-            chartY: Math.round(e.y)
+            chartX: Math.round(Math.max((e as any).x, (e as any).clientX - chartPosition.left)),
+            chartY: Math.round((e as any).y)
         }) as T;
     };
 
@@ -558,7 +562,7 @@ if (!svg) {
 
             // unique function string (#6746)
             if (!fn.hcKey) {
-                fn.hcKey = H.uniqueKey();
+                fn.hcKey = uniqueKey();
             }
 
             // Link wrapped fn with original fn, so we can get this in
@@ -1509,7 +1513,7 @@ if (!svg) {
             Highcharts.PatternObject
         )> (
             this: Highcharts.VMLRenderer,
-            color: T,
+            colorOption: T,
             elem: Highcharts.VMLDOMElement,
             prop: string,
             wrapper: Highcharts.VMLElement
@@ -1523,13 +1527,13 @@ if (!svg) {
 
             // Check for linear or radial gradient
             if (
-                color &&
-                (color as Highcharts.GradientColorObject).linearGradient
+                colorOption &&
+                (colorOption as Highcharts.GradientColorObject).linearGradient
             ) {
                 fillType = 'gradient';
             } else if (
-                color &&
-                (color as Highcharts.GradientColorObject).radialGradient
+                colorOption &&
+                (colorOption as Highcharts.GradientColorObject).radialGradient
             ) {
                 fillType = 'pattern';
             }
@@ -1544,10 +1548,10 @@ if (!svg) {
                         Highcharts.RadialGradientColorObject
                     ) = (
                         (
-                            color as Highcharts.GradientColorObject
+                            colorOption as Highcharts.GradientColorObject
                         ).linearGradient ||
                         (
-                            color as Highcharts.GradientColorObject
+                            colorOption as Highcharts.GradientColorObject
                         ).radialGradient
                     ) as any,
                     x1,
@@ -1559,7 +1563,7 @@ if (!svg) {
                     color1: (Highcharts.ColorString|undefined),
                     color2: (Highcharts.ColorString|undefined),
                     fillAttr = '',
-                    stops = (color as Highcharts.GradientColorObject).stops,
+                    stops = (colorOption as Highcharts.GradientColorObject).stops,
                     firstStop,
                     lastStop,
                     colors = [] as Array<Highcharts.ColorString>,
@@ -1600,7 +1604,7 @@ if (!svg) {
                     i: number
                 ): void {
                     if (regexRgba.test(stop[1])) {
-                        colorObject = H.color(stop[1]);
+                        colorObject = color(stop[1]);
                         stopColor = colorObject.get('rgb') as any;
                         stopOpacity = colorObject.get('a') as any;
                     } else {
@@ -1694,9 +1698,9 @@ if (!svg) {
 
             // If the color is an rgba color, split it and add a fill node
             // to hold the opacity component
-            } else if (regexRgba.test(color as any) && elem.tagName !== 'IMG') {
+            } else if (regexRgba.test(colorOption as any) && elem.tagName !== 'IMG') {
 
-                colorObject = H.color(color);
+                colorObject = color(colorOption);
 
                 (wrapper as any)[prop + '-opacitySetter'](
                     colorObject.get('a'),
@@ -1715,7 +1719,7 @@ if (!svg) {
                     propNodes[0].opacity = 1;
                     propNodes[0].type = 'solid';
                 }
-                ret = color;
+                ret = colorOption;
             }
 
             return ret;

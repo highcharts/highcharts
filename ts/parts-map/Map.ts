@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -29,6 +29,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     extend,
+    merge,
     pick
 } = U;
 
@@ -38,7 +39,6 @@ import '../parts/SvgRenderer.js';
 
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
-    merge = H.merge,
     Renderer = H.Renderer,
     SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;
@@ -174,7 +174,7 @@ defaultOptions.mapNavigation = {
              * @type    {Function}
              * @default function () { this.mapZoom(0.5); }
              */
-            onclick: function (this: Highcharts.MapPointer): void {
+            onclick: function (this: Highcharts.MapNavigationChart): void {
                 this.mapZoom(0.5);
             },
 
@@ -209,7 +209,7 @@ defaultOptions.mapNavigation = {
              * @type    {Function}
              * @default function () { this.mapZoom(2); }
              */
-            onclick: function (this: Highcharts.MapPointer): void {
+            onclick: function (this: Highcharts.MapNavigationChart): void {
                 this.mapZoom(2);
             },
 

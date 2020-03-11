@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  3D pie series
  *
@@ -135,8 +135,6 @@ wrap(seriesTypes.pie.prototype, 'animate', function (proceed) {
                 if (markerGroup) {
                     markerGroup.animate(attribs, animation);
                 }
-                // Delete this function to allow it only once
-                this.animate = null;
             }
         }
     }

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -55,12 +55,12 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    getMagnitude,
+    normalizeTickInterval,
     timeUnits
 } = U;
 
-var Axis = H.Axis,
-    getMagnitude = H.getMagnitude,
-    normalizeTickInterval = H.normalizeTickInterval;
+var Axis = H.Axis;
 
 /* eslint-disable valid-jsdoc */
 

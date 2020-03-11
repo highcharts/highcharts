@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -16,59 +16,14 @@ import H from './Globals.js';
  *
  * @callback Highcharts.DataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject} this
- *        Data label context to format
+ * @param {Highcharts.PointLabelObject} this
+ * Data label context to format
+ *
+ * @param {Highcharts.DataLabelsOptions} options
+ * [API options](/highcharts/plotOptions.series.dataLabels) of the data label
  *
  * @return {number|string|null|undefined}
- *         Formatted data label text
- */
-/**
- * Context for the callback function to format the data label.
- *
- * @interface Highcharts.DataLabelsFormatterContextObject
- */ /**
-* Stacked series and pies only. The point's percentage of the total.
-* @name Highcharts.DataLabelsFormatterContextObject#percentage
-* @type {number|undefined}
-*/ /**
-* The point object. The point name, if defined, is available through
-* `this.point.name`.
-* @name Highcharts.DataLabelsFormatterContextObject#point
-* @type {Highcharts.Point}
-*/ /**
-* The series object. The series name is available through `this.series.name`.
-* @name Highcharts.DataLabelsFormatterContextObject#series
-* @type {Highcharts.Series}
-*/ /**
-* Stacked series only. The total value at this point's x value.
-* @name Highcharts.DataLabelsFormatterContextObject#total
-* @type {number|undefined}
-*/ /**
-* The x value.
-* @name Highcharts.DataLabelsFormatterContextObject#x
-* @type {number}
-*/ /**
-* The y value.
-* @name Highcharts.DataLabelsFormatterContextObject#y
-* @type {number|null}
-*/
-/**
- * Options for the series data labels, appearing next to each data point.
- *
- * Since v6.2.0, multiple data labels can be applied to each single point by
- * defining them as an array of configs.
- *
- * In styled mode, the data labels can be styled with the
- * `.highcharts-data-label-box` and `.highcharts-data-label` class names.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-enabled|Highcharts-Demo:}
- *      Data labels enabled
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple|Highcharts-Demo:}
- *      Multiple data labels on a bar series
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
- *      Style mode example
- *
- * @interface Highcharts.DataLabelsOptionsObject
+ * Formatted data label text
  */
 /**
  * Values for handling data labels that flow outside the plot area.
@@ -76,9 +31,9 @@ import H from './Globals.js';
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
-var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -396,7 +351,7 @@ Series.prototype.drawDataLabels = function () {
                         point.dataLabels = point.dataLabels || [];
                         dataLabel = point.dataLabels[i] = rotation ?
                             // Labels don't rotate, use text element
-                            renderer.text(labelText, 0, -9999)
+                            renderer.text(labelText, 0, -9999, labelOptions.useHTML)
                                 .addClass('highcharts-data-label') :
                             // We can use label
                             renderer.label(labelText, 0, -9999, labelOptions.shape, null, null, labelOptions.useHTML, null, 'data-label');
@@ -451,7 +406,7 @@ Series.prototype.drawDataLabels = function () {
  * @function Highcharts.Series#alignDataLabel
  * @param {Highcharts.Point} point
  * @param {Highcharts.SVGElement} dataLabel
- * @param {Highcharts.DataLabelsOptionsObject} options
+ * @param {Highcharts.DataLabelsOptions} options
  * @param {Highcharts.BBoxObject} alignTo
  * @param {boolean} [isNew]
  * @return {void}
@@ -463,10 +418,15 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
     // labels (#2700)
     alignAttr, // the final position;
     justify = pick(options.overflow, (enabledDataSorting ? 'none' : 'justify')) === 'justify', visible = this.visible &&
+        point.visible !== false &&
         (point.series.forceDL ||
             (enabledDataSorting && !justify) ||
             isInsidePlot ||
-            (alignTo && chart.isInsidePlot(plotX, inverted ?
+            (
+            // If the data label is inside the align box, it is enough
+            // that parts of the align box is inside the plot area
+            // (#12370)
+            options.inside && alignTo && chart.isInsidePlot(plotX, inverted ?
                 alignTo.x + 1 :
                 alignTo.y + alignTo.height - 1, inverted))), setStartPos = function (alignOptions) {
         if (enabledDataSorting && series.xAxis && !justify) {
@@ -617,7 +577,7 @@ Series.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isIns
  * @private
  * @function Highcharts.Series#justifyDataLabel
  * @param {Highcharts.SVGElement} dataLabel
- * @param {Highcharts.DataLabelsOptionsObject} options
+ * @param {Highcharts.DataLabelsOptions} options
  * @param {Highcharts.SVGAttributes} alignAttr
  * @param {Highcharts.BBoxObject} bBox
  * @param {Highcharts.BBoxObject} [alignTo]
@@ -733,7 +693,7 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.drawDataLabels = function () {
-        var series = this, data = series.data, point, chart = series.chart, options = series.options.dataLabels, connectorPadding = options.connectorPadding, connectorWidth, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotLeft = chart.plotLeft, maxWidth = Math.round(chart.chartWidth / 3), connector, seriesCenter = series.center, radius = seriesCenter[2] / 2, centerY = seriesCenter[1], dataLabel, dataLabelWidth, 
+        var series = this, data = series.data, point, chart = series.chart, options = series.options.dataLabels || {}, connectorPadding = options.connectorPadding, connectorWidth, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotLeft = chart.plotLeft, maxWidth = Math.round(chart.chartWidth / 3), connector, seriesCenter = series.center, radius = seriesCenter[2] / 2, centerY = seriesCenter[1], dataLabel, dataLabelWidth, 
         // labelPos,
         labelPosition, labelHeight, 
         // divide the points into right and left halves for anti collision
@@ -879,15 +839,18 @@ if (seriesTypes.pie) {
                     visibility: visibility,
                     align: labelPosition.alignment
                 };
+                pointDataLabelsOptions = point.options.dataLabels || {};
                 dataLabel._pos = {
                     x: (x +
-                        options.x +
+                        pick(pointDataLabelsOptions.x, options.x) + // (#12985)
                         ({
                             left: connectorPadding,
                             right: -connectorPadding
                         }[labelPosition.alignment] || 0)),
                     // 10 is for the baseline (label vs text)
-                    y: y + options.y - 10
+                    y: (y +
+                        pick(pointDataLabelsOptions.y, options.y) - // (#12985)
+                        10)
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
@@ -1122,7 +1085,7 @@ if (seriesTypes.column) {
      * @function Highcharts.seriesTypes.column#alignDataLabel
      * @param {Highcharts.Point} point
      * @param {Highcharts.SVGElement} dataLabel
-     * @param {Highcharts.DataLabelsOptionsObject} options
+     * @param {Highcharts.DataLabelsOptions} options
      * @param {Highcharts.BBoxObject} alignTo
      * @param {boolean} [isNew]
      * @return {void}
@@ -1142,8 +1105,10 @@ if (seriesTypes.column) {
                 alignTo.height += alignTo.y;
                 alignTo.y = 0;
             }
+            // If parts of the box overshoots outside the plot area, modify the
+            // box to center the label inside
             overshoot = alignTo.y + alignTo.height - series.yAxis.len;
-            if (overshoot > 0) {
+            if (overshoot > 0 && overshoot < alignTo.height) {
                 alignTo.height -= overshoot;
             }
             if (inverted) {
@@ -1172,13 +1137,6 @@ if (seriesTypes.column) {
         options.verticalAlign = pick(options.verticalAlign, inverted || inside ? 'middle' : below ? 'top' : 'bottom');
         // Call the parent method
         Series.prototype.alignDataLabel.call(this, point, dataLabel, options, alignTo, isNew);
-        // Hide dataLabel when column is outside plotArea (#12370).
-        if (alignTo &&
-            ((alignTo.height <= 0 && alignTo.y === this.chart.plotHeight) ||
-                (alignTo.width <= 0 && alignTo.x === 0))) {
-            dataLabel.hide(true);
-            dataLabel.placed = false; // don't animate back in
-        }
         // If label was justified and we have contrast, set it:
         if (options.inside && point.contrastColor) {
             dataLabel.css({

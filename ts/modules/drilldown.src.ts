@@ -292,10 +292,17 @@ declare global {
  * @type {"drillup"}
  */
 
+import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     animObject,
     extend,
+    fireEvent,
+    format,
+    merge,
     objectEach,
     pick,
     syncTimeout
@@ -305,19 +312,13 @@ import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
-import '../parts/Tick.js';
 
-var addEvent = H.addEvent,
-    noop = H.noop,
-    color = H.color,
+var noop = H.noop,
     defaultOptions = H.defaultOptions,
-    format = H.format,
     Chart = H.Chart,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
     ColumnSeries = seriesTypes.column,
-    Tick = H.Tick,
-    fireEvent = H.fireEvent,
     ddSeriesId = 1;
 
 // Add language
@@ -624,9 +625,7 @@ defaultOptions.drilldown = {
  * @function Highcharts.SVGElement#fadeIn
  *
  * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
- *        The animation options for the element fade.
- *
- * @return {void}
+ * The animation options for the element fade.
  */
 H.SVGRenderer.prototype.Element.prototype.fadeIn = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
@@ -657,12 +656,10 @@ H.SVGRenderer.prototype.Element.prototype.fadeIn = function (
  * @function Highcharts.Chart#addSeriesAsDrilldown
  *
  * @param {Highcharts.Point} point
- *        The point from which the drilldown will start.
+ * The point from which the drilldown will start.
  *
  * @param {Highcharts.SeriesOptionsType} options
- *        The series options for the new, detailed series.
- *
- * @return {void}
+ * The series options for the new, detailed series.
  */
 Chart.prototype.addSeriesAsDrilldown = function (
     point: Highcharts.Point,
@@ -725,7 +722,7 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
                 levelSeries.push(series);
 
                 // (#10597)
-                series.purgedOptions = H.merge({
+                series.purgedOptions = merge({
                     _ddSeriesId: series.options._ddSeriesId,
                     _levelNumber: series.options._levelNumber,
                     selected: series.options.selected
@@ -747,8 +744,8 @@ Chart.prototype.addSingleSeriesAsDrilldown = function (
         // no graphic in line series with markers disabled
         bBox: point.graphic ? point.graphic.getBBox() : {},
         color: point.isNull ?
-            new H.Color(color as any).setOpacity(0).get() :
-            color,
+            new Color(colorProp.color).setOpacity(0).get() :
+            colorProp.color,
         lowerSeriesOptions: ddOptions,
         pointOptions: (oldSeries.options.data as any)[pointIndex],
         pointIndex: pointIndex,
@@ -879,11 +876,9 @@ Chart.prototype.showDrillUpButton = function (): void {
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
  * will drill up to the parent series.
  *
- * @function Highcharts.Chart#drillUp
- *
- * @return {void}
- *
  * @requires  modules/drilldown
+ *
+ * @function Highcharts.Chart#drillUp
  */
 Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
@@ -948,7 +943,10 @@ Chart.prototype.drillUp = function (): void {
 
             level.levelSeriesOptions.forEach(addSeries);
 
-            fireEvent(chart, 'drillup', { seriesOptions: level.seriesOptions });
+            fireEvent(chart, 'drillup', {
+                seriesOptions: level.seriesPurgedOptions ||
+                    level.seriesOptions
+            });
 
             if ((newSeries as any).type === oldSeries.type) {
                 (newSeries as any).drilldownLevel = level;
@@ -1006,8 +1004,9 @@ Chart.prototype.drillUp = function (): void {
 
 /* eslint-disable no-invalid-this */
 
-// Add update function to be called internally from Chart.update (#7600)
-Chart.prototype.callbacks.push(function (): void {
+// Add update function to be called internally from Chart.update
+// (#7600, #12855)
+addEvent(Chart, 'afterInit', function (): void {
     var chart = this;
 
     chart.drilldown = {
@@ -1015,7 +1014,7 @@ Chart.prototype.callbacks.push(function (): void {
             options: Highcharts.DrilldownOptions,
             redraw?: boolean
         ): void {
-            H.merge(true, chart.options.drilldown, options);
+            merge(true, chart.options.drilldown, options);
             if (pick(redraw, true)) {
                 chart.redraw();
             }
@@ -1075,8 +1074,7 @@ addEvent(Chart, 'render', function (): void {
  * @private
  * @function Highcharts.ColumnSeries#animateDrillupTo
  * @param {boolean} [init=false]
- *        Whether to initialize animation
- * @return {void}
+ * Whether to initialize animation
  */
 ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
     if (!init) {
@@ -1136,8 +1134,8 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
             (this.chart.options.drilldown as any).animation.duration - 50, 0
         ));
 
-        // Reset
-        this.animate = noop as any;
+        // Reset to prototype
+        delete this.animate;
     }
 
 };
@@ -1193,7 +1191,9 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
                 point.dataLabel.fadeIn(animationOptions);
             }
         });
-        this.animate = null as any;
+
+        // Reset to prototype
+        delete this.animate;
     }
 
 };
@@ -1251,7 +1251,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
             if (animationOptions.duration) {
                 graphic.animate(
                     animateTo as any,
-                    H.merge(animationOptions, { complete: complete })
+                    merge(animationOptions, { complete: complete })
                 );
             } else {
                 graphic.attr(animateTo);
@@ -1296,7 +1296,7 @@ if (PieSeries) {
 
                     if (point.graphic) {
                         point.graphic
-                            .attr(H.merge(animateFrom, {
+                            .attr(merge(animateFrom, {
                                 start: start + i * startAngle,
                                 end: start + (i + 1) * startAngle
                             }))[animationOptions ? 'animate' : 'attr'](
@@ -1305,13 +1305,15 @@ if (PieSeries) {
                             );
                     }
                 });
-                this.animate = null as any;
+
+                // Reset to prototype
+                delete this.animate;
             }
         }
     });
 }
 
-H.Point.prototype.doDrilldown = function (
+Point.prototype.doDrilldown = function (
     _holdRedraw: (boolean|undefined),
     category: (number|undefined),
     originalEvent: Event
@@ -1429,7 +1431,7 @@ Tick.prototype.drillable = function (): void {
             label.drillable = true;
 
             if (!label.basicStyles && !styledMode) {
-                label.basicStyles = H.merge(label.styles);
+                label.basicStyles = merge(label.styles);
             }
 
             label.addClass('highcharts-drilldown-axis-label');
@@ -1462,7 +1464,7 @@ Tick.prototype.drillable = function (): void {
 
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
-addEvent(H.Point, 'afterInit', function (): Highcharts.Point {
+addEvent(Point, 'afterInit', function (): Highcharts.Point {
     var point = this,
         series = point.series;
 
@@ -1553,7 +1555,7 @@ addEvent(H.Series, 'afterDrawTracker', function (): void {
 });
 
 
-addEvent(H.Point, 'afterSetState', function (): void {
+addEvent(Point, 'afterSetState', function (): void {
     var styledMode = this.series.chart.styledMode;
 
     if (this.drilldown && this.series.halo && this.state === 'hover') {

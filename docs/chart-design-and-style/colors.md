@@ -81,5 +81,5 @@ Then, to define a color as a pattern, we can do as follows with any color option
 
 Further reading:
 
-*   [Pattern fills tutorial](https://www.highcharts.com/docs/chart-design-and-style/pattern-fills/)
-*   [PatternOptions](https://api.highcharts.com/class-reference/global.html#PatternOptions) in the API for options details.
+*   [Pattern fills tutorial](https://www.highcharts.com/docs/chart-design-and-style/pattern-fills)
+*   [PatternOptions](https://api.highcharts.com/class-reference/Highcharts.PatternOptionsObject) in the API for options details.

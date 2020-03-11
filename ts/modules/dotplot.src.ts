@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Torstein Honsi
+ *  (c) 2009-2020 Torstein Honsi
  *
  *  Dot plot series type for Highcharts
  *
@@ -54,12 +54,11 @@ import U from '../parts/Utilities.js';
 const {
     extend,
     objectEach,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Series.js';
-
-var seriesType = H.seriesType;
 
 /**
  * @private
@@ -78,6 +77,7 @@ seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
         }
     }
 }, {
+    markerAttribs: void 0,
     drawPoints: function (this: Highcharts.DotplotSeries): void {
         var series = this,
             renderer = series.chart.renderer,

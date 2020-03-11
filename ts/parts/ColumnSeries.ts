@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -109,6 +109,13 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
 const {
     animObject,
@@ -116,20 +123,16 @@ const {
     defined,
     extend,
     isNumber,
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
 
-import './Color.js';
-import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var color = H.color,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     svg = H.svg;
 
 /**
@@ -154,8 +157,8 @@ seriesType<Highcharts.ColumnSeries>(
      *         Column chart
      *
      * @extends      plotOptions.line
-     * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
-     *               lineWidth, marker, connectEnds, step, useOhlcData
+     * @excluding    connectEnds, connectNulls, gapSize, gapUnit, linecap,
+     *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
@@ -506,6 +509,7 @@ seriesType<Highcharts.ColumnSeries>(
          * distinguishing between values above and below a threshold. If `null`,
          * the columns extend from the padding Y axis minimum.
          *
+         * @type    {number|null}
          * @since   2.0
          * @product highcharts
          *
@@ -772,6 +776,7 @@ seriesType<Highcharts.ColumnSeries>(
                     options.borderWidth,
                     dense ? 0 : 1 // #3635
                 ),
+                xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 threshold = options.threshold,
                 translatedThreshold = series.translatedThreshold =
@@ -807,6 +812,7 @@ seriesType<Highcharts.ColumnSeries>(
                 var yBottom = pick(point.yBottom, translatedThreshold as any),
                     safeDistance = 999 + Math.abs(yBottom),
                     pointWidth = seriesPointWidth,
+                    plotX = point.plotX,
                     // Don't draw too far outside plot area (#1303, #2241,
                     // #4264)
                     plotY = clamp(
@@ -869,8 +875,9 @@ seriesType<Highcharts.ColumnSeries>(
                 // #3648)
                 point.tooltipPos = chart.inverted ?
                     [
-                        yAxis.len + (yAxis.pos as any) - chart.plotLeft - plotY,
-                        series.xAxis.len - barX - barW / 2, barH
+                        yAxis.len + yAxis.pos - chart.plotLeft - plotY,
+                        xAxis.len + xAxis.pos - chart.plotTop - (plotX || 0) - seriesXOffset - barW / 2,
+                        barH
                     ] :
                     [barX + barW / 2, plotY + (yAxis.pos as any) -
                     chart.plotTop, barH];
@@ -1133,48 +1140,43 @@ seriesType<Highcharts.ColumnSeries>(
                 translateStart: number,
                 translatedThreshold;
 
-            if (svg) { // VML is too slow anyway
-                if (init) {
-                    attr.scaleY = 0.001;
-                    translatedThreshold = clamp(
-                        yAxis.toPixels(options.threshold as any),
-                        yAxis.pos,
-                        yAxis.pos + yAxis.len
-                    );
-                    if (inverted) {
-                        attr.translateX = translatedThreshold - yAxis.len;
-                    } else {
-                        attr.translateY = translatedThreshold;
-                    }
-
-                    // apply finnal clipping (used in Highstock) (#7083)
-                    // animation is done by scaleY, so cliping is for panes
-                    if (series.clipBox) {
-                        series.setClip();
-                    }
-
-                    series.group.attr(attr);
-
-                } else { // run the animation
-                    translateStart = series.group.attr(translateProp) as any;
-                    series.group.animate(
-                        { scaleY: 1 },
-                        extend(animObject(series.options.animation), {
-                            // Do the scale synchronously to ensure smooth
-                            // updating (#5030, #7228)
-                            step: function (val: any, fx: any): void {
-
-                                attr[translateProp] =
-                            translateStart +
-                            fx.pos * ((yAxis.pos as any) - translateStart);
-                                series.group.attr(attr);
-                            }
-                        })
-                    );
-
-                    // delete this function to allow it only once
-                    series.animate = null as any;
+            if (init) {
+                attr.scaleY = 0.001;
+                translatedThreshold = clamp(
+                    yAxis.toPixels(options.threshold as any),
+                    yAxis.pos,
+                    yAxis.pos + yAxis.len
+                );
+                if (inverted) {
+                    attr.translateX = translatedThreshold - yAxis.len;
+                } else {
+                    attr.translateY = translatedThreshold;
                 }
+
+                // apply finnal clipping (used in Highstock) (#7083)
+                // animation is done by scaleY, so cliping is for panes
+                if (series.clipBox) {
+                    series.setClip();
+                }
+
+                series.group.attr(attr);
+
+            } else { // run the animation
+                translateStart = series.group.attr(translateProp) as any;
+                series.group.animate(
+                    { scaleY: 1 },
+                    extend(animObject(series.options.animation), {
+                        // Do the scale synchronously to ensure smooth
+                        // updating (#5030, #7228)
+                        step: function (val: any, fx: any): void {
+
+                            attr[translateProp] =
+                        translateStart +
+                        fx.pos * ((yAxis.pos as any) - translateStart);
+                            series.group.attr(attr);
+                        }
+                    })
+                );
             }
         },
 

@@ -2,7 +2,7 @@
  *
  *  This module implements sunburst charts in Highcharts.
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *
  *  Authors: Jon Arild Nygard
  *
@@ -14,7 +14,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, splat = U.splat;
+var correctFloat = U.correctFloat, error = U.error, extend = U.extend, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType, splat = U.splat;
 import '../mixins/centered-series.js';
 import drawPoint from '../mixins/draw-point.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
@@ -22,7 +22,7 @@ import '../parts/Series.js';
 import './treemap.src.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin, Series = H.Series, getCenter = CenteredSeriesMixin.getCenter, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, isBoolean = function (x) {
     return typeof x === 'boolean';
-}, merge = H.merge, noop = H.noop, rad2deg = 180 / Math.PI, seriesType = H.seriesType, seriesTypes = H.seriesTypes, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = mixinTreeSeries.updateRootId;
+}, noop = H.noop, rad2deg = 180 / Math.PI, seriesTypes = H.seriesTypes, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = mixinTreeSeries.updateRootId;
 // TODO introduce step, which should default to 1.
 var range = function range(from, to) {
     var result = [], i;
@@ -508,14 +508,19 @@ var sunburstOptions = {
         defer: true,
         /**
          * Decides how the data label will be rotated relative to the perimeter
-         * of the sunburst. Valid values are `auto`, `parallel` and
-         * `perpendicular`. When `auto`, the best fit will be computed for the
-         * point.
+         * of the sunburst. Valid values are `auto`, `circular`, `parallel` and
+         * `perpendicular`. When `auto`, the best fit will be
+         * computed for the point. The `circular` option works similiar
+         * to `auto`, but uses the `textPath` feature - labels are curved,
+         * resulting in a better layout, however multiple lines and
+         * `textOutline` are not supported.
          *
          * The `series.rotation` option takes precedence over `rotationMode`.
          *
          * @type       {string}
-         * @validvalue ["auto", "perpendicular", "parallel"]
+         * @sample {highcharts} highcharts/plotoptions/sunburst-datalabels-rotationmode-circular/
+         *         Circular rotation mode
+         * @validvalue ["auto", "perpendicular", "parallel", "circular"]
          * @since      6.0.0
          */
         rotationMode: 'auto',
@@ -784,7 +789,7 @@ var sunburstSeries = {
         // #10669 - verify if all nodes have unique ids
         series.data.forEach(function (child) {
             if (nodeIds[child.id]) {
-                H.error(31, false, series.chart);
+                error(31, false, series.chart);
             }
             // map
             nodeIds[child.id] = true;
@@ -829,8 +834,6 @@ var sunburstSeries = {
                 opacity: 1
             };
             group.animate(attribs, this.options.animation);
-            // Delete this function to allow it only once
-            this.animate = null;
         }
     },
     utils: {

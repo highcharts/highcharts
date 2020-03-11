@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -163,11 +163,10 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    merge,
     objectEach,
     pick
 } = U;
-
-var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -181,20 +180,24 @@ var merge = H.merge;
  *
  * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} [options]
  */
-H.PlotLineOrBand = function (
-    this: Highcharts.PlotLineOrBand,
-    axis: Highcharts.Axis,
-    options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions)
-): void {
-    this.axis = axis;
-
-    if (options) {
-        this.options = options;
-        this.id = options.id;
+class PlotLineOrBand {
+    public constructor(
+        axis: Highcharts.Axis,
+        options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions)
+    ) {
+        this.axis = axis;
+        if (options) {
+            this.options = options;
+            this.id = options.id;
+        }
     }
-} as any;
 
-H.PlotLineOrBand.prototype = {
+    public axis: Highcharts.Axis;
+    public id?: string;
+    public isActive?: boolean;
+    public label?: Highcharts.SVGElement;
+    public options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions);
+    public svgElem?: Highcharts.SVGElement;
 
     /**
      * Render the plot line or plot band. If it is already existing,
@@ -204,10 +207,7 @@ H.PlotLineOrBand.prototype = {
      * @function Highcharts.PlotLineOrBand#render
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
-    render: function (
-        this: Highcharts.PlotLineOrBand
-    ): (Highcharts.PlotLineOrBand|undefined) {
-
+    public render(): (Highcharts.PlotLineOrBand|undefined) {
         H.fireEvent(this, 'render');
 
         var plotLine = this,
@@ -248,7 +248,7 @@ H.PlotLineOrBand.prototype = {
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
             if (isLine) {
-                attribs.stroke = (color as any) || '${palette.neutralColor40}';
+                attribs.stroke = color || '${palette.neutralColor40}';
                 attribs['stroke-width'] = pick(
                     (options as Highcharts.AxisPlotLinesOptions).width,
                     1
@@ -259,7 +259,7 @@ H.PlotLineOrBand.prototype = {
                 }
 
             } else if (isBand) { // plot band
-                attribs.fill = (color as any) || '${palette.highlightColor10}';
+                attribs.fill = color || '${palette.highlightColor10}';
                 if ((options as Highcharts.AxisPlotBandsOptions).borderWidth) {
                     attribs.stroke = (
                         options as Highcharts.AxisPlotBandsOptions
@@ -361,8 +361,8 @@ H.PlotLineOrBand.prototype = {
         }
 
         // chainable
-        return plotLine;
-    },
+        return plotLine as any;
+    }
 
     /**
      * Render and align label for plot line or band.
@@ -375,8 +375,7 @@ H.PlotLineOrBand.prototype = {
      * @param {number} [zIndex]
      * @return {void}
      */
-    renderLabel: function (
-        this: Highcharts.PlotLineOrBand,
+    public renderLabel(
         optionsLabel: (
             Highcharts.AxisPlotLinesLabelOptions|
             Highcharts.AxisPlotBandsLabelOptions
@@ -445,7 +444,7 @@ H.PlotLineOrBand.prototype = {
             height: arrayMax(yBounds) - y
         });
         label.show(true);
-    },
+    }
 
     /**
      * Get label's text content.
@@ -455,16 +454,16 @@ H.PlotLineOrBand.prototype = {
      * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
      * @return {string}
      */
-    getLabelText: function (this: Highcharts.PlotLineOrBand, optionsLabel: (
+    public getLabelText(optionsLabel: (
         Highcharts.AxisPlotLinesLabelOptions|
         Highcharts.AxisPlotBandsLabelOptions
     )): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
               Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>)
-                .call(this) :
+                .call(this as any) :
             optionsLabel.text;
-    },
+    }
 
     /**
      * Remove the plot line or band.
@@ -472,14 +471,14 @@ H.PlotLineOrBand.prototype = {
      * @function Highcharts.PlotLineOrBand#destroy
      * @return {void}
      */
-    destroy: function (this: Highcharts.PlotLineOrBand): void {
+    public destroy(): void {
         // remove it from the lookup
         erase(this.axis.plotLinesAndBands, this);
 
         delete this.axis;
         destroyObjectProperties(this);
     }
-} as any;
+}
 
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
@@ -778,6 +777,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      *
      * @type      {Array<*>}
      * @product   highcharts highstock gantt
+     * @sample {highcharts} highcharts/xaxis/plotlines-color/
+     *         Basic plot line
+     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
+     *         Solid gauge plot line
      * @apioption xAxis.plotLines
      */
 
@@ -1053,7 +1056,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     * An array of objects defining plot bands on the Y axis.
      *
      * @type      {Array<*>}
      * @extends   xAxis.plotBands
@@ -1109,13 +1111,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      */
 
     /**
-     * An array of objects representing plot lines on the X axis
-     *
      * @type      {Array<*>}
-     * @sample {highcharts} highcharts/xaxis/plotlines-color/
-     *      Basic plot line
-     * @sample {highcharts} highcharts/series-solidgauge/labels-auto-aligned/
-     *      Solid gauge plot line
      * @extends   xAxis.plotLines
      * @apioption yAxis.plotLines
      */
@@ -1273,7 +1269,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj = new H.PlotLineOrBand(this, options).render(),
+        var obj = new PlotLineOrBand(this, options).render(),
             userOptions = this.userOptions;
 
         if (obj) { // #2189
@@ -1368,3 +1364,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         this.removePlotBandOrLine(id);
     }
 });
+
+H.PlotLineOrBand = PlotLineOrBand as any;
+export default H.PlotLineOrBand;

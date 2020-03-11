@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Keyboard navigation handler base class definition
  *
@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
-var find = H.find;
+import U from '../../parts/Utilities.js';
+var find = U.find;
 /**
  * Options for the keyboard navigation handler.
  *
@@ -92,13 +92,6 @@ KeyboardNavigationHandler.prototype = {
         else if (keyCode === 9) {
             // Default tab handler, move to next/prev module
             response = this.response[e.shiftKey ? 'prev' : 'next'];
-        }
-        else if (keyCode === 27) {
-            // Default esc handler, hide tooltip
-            if (this.chart && this.chart.tooltip) {
-                this.chart.tooltip.hide(0);
-            }
-            response = this.response.success;
         }
         return response;
     }

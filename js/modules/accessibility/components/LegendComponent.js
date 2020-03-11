@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Accessibility component for chart legend.
  *
@@ -11,8 +11,9 @@
  * */
 'use strict';
 import H from '../../../parts/Globals.js';
+import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
-var extend = U.extend;
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent;
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import HTMLUtilities from '../utils/htmlUtilities.js';
@@ -50,17 +51,17 @@ H.Chart.prototype.highlightLegendItem = function (ix) {
     var items = this.legend.allItems, oldIx = this.highlightedLegendItemIx;
     if (items[ix]) {
         if (items[oldIx]) {
-            H.fireEvent(items[oldIx].legendGroup.element, 'mouseout');
+            fireEvent(items[oldIx].legendGroup.element, 'mouseout');
         }
         scrollLegendToItem(this.legend, ix);
         this.setFocusToElement(items[ix].legendItem, items[ix].a11yProxyElement);
-        H.fireEvent(items[ix].legendGroup.element, 'mouseover');
+        fireEvent(items[ix].legendGroup.element, 'mouseover');
         return true;
     }
     return false;
 };
 // Keep track of pressed state for legend items
-H.addEvent(H.Legend, 'afterColorizeItem', function (e) {
+addEvent(Legend, 'afterColorizeItem', function (e) {
     var chart = this.chart, a11yOptions = chart.options.accessibility, legendItem = e.item;
     if (a11yOptions.enabled && legendItem && legendItem.a11yProxyElement) {
         legendItem.a11yProxyElement.setAttribute('aria-pressed', e.visible ? 'false' : 'true');
@@ -82,7 +83,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      */
     init: function () {
         var component = this;
-        this.addEvent(H.Legend, 'afterScroll', function () {
+        this.addEvent(Legend, 'afterScroll', function () {
             if (this.chart === component.chart) {
                 component.updateProxies();
             }
@@ -231,7 +232,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     onKbdClick: function (keyboardNavigationHandler) {
         var legendItem = this.chart.legend.allItems[this.highlightedLegendItemIx];
         if (legendItem && legendItem.a11yProxyElement) {
-            H.fireEvent(legendItem.a11yProxyElement, 'click');
+            fireEvent(legendItem.a11yProxyElement, 'click');
         }
         return keyboardNavigationHandler.response.success;
     },

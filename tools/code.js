@@ -42,7 +42,10 @@ function processVariables(content) {
                 prefix + indent + statement +
                 variables.split(/\n/g).map(function (line) {
 
-                    if (variables.match(/(['"])[^\1\n]*,[^\1\n]*\1/g)) {
+                    if (
+                        variables.match(/\/\*\* @class \*\//g) ||
+                        variables.match(/(['"])[^\1\n]*,[^\1\n]*\1/g)
+                    ) {
                         // skip lines with complex strings
                         return line;
                     }

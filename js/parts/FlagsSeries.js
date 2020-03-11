@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -13,11 +13,11 @@ import H from './Globals.js';
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 import U from './Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, objectEach = U.objectEach, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType, wrap = U.wrap;
 import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
-var addEvent = H.addEvent, merge = H.merge, noop = H.noop, Renderer = H.Renderer, Series = H.Series, seriesType = H.seriesType, SVGRenderer = H.SVGRenderer, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
+var noop = H.noop, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
 /**
  * The Flags series.
  *
@@ -47,7 +47,7 @@ seriesType('flags', 'column'
      * In case the flag is placed on a series, on what point key to place
      * it. Line and columns have one key, `y`. In range or OHLC-type series,
      * however, the flag can optionally be placed on the `open`, `high`,
-     *  `low` or `close` key.
+     * `low` or `close` key.
      *
      * @sample {highstock} stock/plotoptions/flags-onkey/
      *         Range series, flag on high
@@ -476,9 +476,6 @@ seriesType('flags', 'column'
         if (init) {
             this.setClip();
         }
-        else {
-            this.animate = null;
-        }
     },
     /**
      * @private
@@ -577,7 +574,10 @@ if (Renderer === VMLRenderer) {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.flags
- * @excluding dataParser, dataURL
+ * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
+ *            connectNulls, dashStyle, dataGrouping, dataParser, dataURL,
+ *            gapSize, gapUnit, linecap, lineWidth, marker, pointPadding,
+ *            pointWidth, step, turboThreshold, useOhlcData
  * @product   highstock
  * @apioption series.flags
  */

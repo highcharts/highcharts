@@ -11,20 +11,21 @@
 /* eslint no-console: 0 */
 'use strict';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, isString = U.isString, pick = U.pick, wrap = U.wrap;
-import './GridAxis.js';
-import Tree from './Tree.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
+import Tick from '../parts/Tick.js';
+import Tree from './Tree.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, fireEvent = U.fireEvent, extend = U.extend, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
+import './GridAxis.js';
 import '../modules/broken-axis.src.js';
-var addEvent = H.addEvent, argsToArray = function (args) {
+var argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
-}, find = H.find, fireEvent = H.fireEvent, getLevelOptions = mixinTreeSeries.getLevelOptions, merge = H.merge, isBoolean = function (x) {
+}, find = U.find, getLevelOptions = mixinTreeSeries.getLevelOptions, isBoolean = function (x) {
     return typeof x === 'boolean';
 }, isObject = function (x) {
     // Always use strict mode.
     return U.isObject(x, true);
-}, GridAxis = H.Axis, GridAxisTick = H.Tick;
+}, GridAxis = H.Axis, GridAxisTick = Tick;
 var override = function (obj, methods) {
     var method, func;
     for (method in methods) {
@@ -434,7 +435,7 @@ var onBeforeRender = function (e) {
             // its dependency on axis.max.
             if (e.type === 'beforeRender') {
                 removeFoundExtremesEvent =
-                    H.addEvent(axis, 'foundExtremes', function () {
+                    addEvent(axis, 'foundExtremes', function () {
                         treeGrid.collapsedNodes.forEach(function (node) {
                             var breaks = collapse(axis, node);
                             axis.setBreaks(breaks, false);
@@ -694,14 +695,14 @@ override(GridAxisTick.prototype, {
             [label, tick.labelIcon].forEach(function (object) {
                 if (!object.attachedTreeGridEvents) {
                     // On hover
-                    H.addEvent(object.element, 'mouseover', function () {
+                    addEvent(object.element, 'mouseover', function () {
                         onTickHover(label);
                     });
                     // On hover out
-                    H.addEvent(object.element, 'mouseout', function () {
+                    addEvent(object.element, 'mouseout', function () {
                         onTickHoverExit(label, labelOptions);
                     });
-                    H.addEvent(object.element, 'click', function () {
+                    addEvent(object.element, 'click', function () {
                         tick.toggleCollapse();
                     });
                     object.attachedTreeGridEvents = true;

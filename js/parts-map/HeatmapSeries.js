@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -21,14 +21,13 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PointOptionsObject#value
 * @type {number|null|undefined}
 */
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, extend = U.extend, pick = U.pick;
+var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
-import '../parts/Legend.js';
 import './ColorMapSeriesMixin.js';
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -186,12 +185,21 @@ seriesType('heatmap', 'scatter',
      * @return {void}
      */
     translate: function () {
-        var series = this, options = series.options, xAxis = series.xAxis, yAxis = series.yAxis, seriesPointPadding = options.pointPadding || 0, pointPlacement = series.pointPlacementToXValue(); // #7860
+        var series = this;
         series.generatePoints();
-        series.points.forEach(function (point) {
-            var xPad = (options.colsize || 1) / 2, yPad = (options.rowsize || 1) / 2, x1 = clamp(Math.round(xAxis.len -
-                xAxis.translate(point.x - xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), x2 = clamp(Math.round(xAxis.len -
-                xAxis.translate(point.x + xPad, 0, 1, 0, 1, -pointPlacement)), -xAxis.len, 2 * xAxis.len), y1 = clamp(Math.round(yAxis.translate(point.y - yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), y2 = clamp(Math.round(yAxis.translate(point.y + yPad, 0, 1, 0, 1)), -yAxis.len, 2 * yAxis.len), pointPadding = pick(point.pointPadding, seriesPointPadding);
+        var _a = series.options, _b = _a.colsize, colsize = _b === void 0 ? 1 : _b, _c = _a.pointPadding, seriesPointPadding = _c === void 0 ? 0 : _c, _d = _a.rowsize, rowsize = _d === void 0 ? 1 : _d, points = series.points, xAxis = series.xAxis, yAxis = series.yAxis;
+        var xPad = colsize / 2;
+        var yPad = rowsize / 2;
+        // Translate point values functionality
+        var pointPlacement = series.pointPlacementToXValue(); // #7860
+        var translateX = function (value) { return Math.round(clamp(xAxis.translate(value, false, false, false, true, pointPlacement), 0, xAxis.len)); };
+        var translateY = function (value) { return Math.round(clamp(yAxis.translate(value, false, true, false, true), 0, yAxis.len)); };
+        points.forEach(function (point) {
+            var x1 = translateX(point.x - xPad);
+            var x2 = translateX(point.x + xPad);
+            var y1 = translateY(point.y - yPad);
+            var y2 = translateY(point.y + yPad);
+            var pointPadding = pick(point.pointPadding, seriesPointPadding);
             // Set plotX and plotY for use in K-D-Tree and more
             point.plotX = point.clientX = (x1 + x2) / 2;
             point.plotY = (y1 + y2) / 2;

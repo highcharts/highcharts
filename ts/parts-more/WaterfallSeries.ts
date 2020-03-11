@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -102,27 +102,26 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     arrayMax,
     arrayMin,
     correctFloat,
     isNumber,
     objectEach,
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
-import '../parts/Point.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     Chart = H.Chart,
-    Point = H.Point,
     Series = H.Series,
     StackItem = H.StackItem,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

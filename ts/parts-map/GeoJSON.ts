@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -53,6 +53,10 @@ declare global {
                 transform: any
             ): (MapLatLonObject|undefined);
         }
+        interface ChartOptions {
+            /** @requires modules/map */
+            proj4?: any;
+        }
         /** @requires modules/maps */
         function geojson(
             geojson: any,
@@ -95,7 +99,10 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    error,
     extend,
+    format,
+    merge,
     wrap
 } = U;
 
@@ -103,8 +110,6 @@ import '../parts/Options.js';
 import '../parts/Chart.js';
 
 var Chart = H.Chart,
-    format = H.format,
-    merge = H.merge,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -170,15 +175,28 @@ Chart.prototype.transformFromLatLon = function (
     latLon: Highcharts.MapLatLonObject,
     transform: any
 ): Highcharts.MapCoordinateObject {
-    if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+
+    /**
+     * Allows to manually load the proj4 library from Highcharts options
+     * instead of the `window`.
+     * In case of loading the library from a `script` tag,
+     * this option is not needed, it will be loaded from there by default.
+     *
+     * @type       {function}
+     * @product    highmaps
+     * @apioption  chart.proj4
+     */
+
+    const proj4 = (this.userOptions.chart?.proj4 || win.proj4);
+    if (!proj4) {
+        error(21, false, this);
         return {
             x: 0,
             y: null
         };
     }
 
-    var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]),
+    var projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
         sinAngle = transform.sinAngle ||
@@ -230,7 +248,7 @@ Chart.prototype.transformToLatLon = function (
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
     if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+        error(21, false, this);
         return;
     }
 
@@ -290,7 +308,7 @@ Chart.prototype.fromPointToLatLon = function (
         transform;
 
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return;
     }
 
@@ -339,7 +357,7 @@ Chart.prototype.fromLatLonToPoint = function (
         coords;
 
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return {
             x: 0,
             y: null

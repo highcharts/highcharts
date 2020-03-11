@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Kacper Madej
+ *  (c) 2010-2020 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -8,10 +8,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-var seriesType = H.seriesType;
+var isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable valid-jsdoc */
 // Utils:
 /**

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -82,7 +82,7 @@ declare global {
             alignment: AlignValue;
         }
         interface PieSeriesDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             alignTo?: string;
             connectorColor?: (ColorString|GradientColorObject|PatternObject);
@@ -120,34 +120,32 @@ declare global {
     }
 }
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
+    addEvent,
     clamp,
     defined,
+    fireEvent,
     isNumber,
+    merge,
     pick,
     relativeLength,
+    seriesType,
     setAnimation
 } = U;
 
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
-import './Legend.js';
 import './Options.js';
-import './Point.js';
 import './Series.js';
 
-var addEvent = H.addEvent,
-    CenteredSeriesMixin = H.CenteredSeriesMixin,
+var CenteredSeriesMixin = H.CenteredSeriesMixin,
     getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
-    Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    fireEvent = H.fireEvent;
+    seriesTypes = H.seriesTypes;
 
 /**
  * Pie series type.
@@ -434,7 +432,7 @@ seriesType<Highcharts.PieSeries>(
             enabled: true,
 
             formatter: function (
-                this: Highcharts.DataLabelsFormatterContextObject
+                this: Highcharts.PointLabelObject
             ): (string|undefined) { // #2945
                 return this.point.isNull ? void 0 : this.point.name;
             },
@@ -455,9 +453,9 @@ seriesType<Highcharts.PieSeries>(
             softConnector: true,
 
             /**
-             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow
              *         Long labels truncated with an ellipsis
-             * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
+             * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap
              *         Long labels are wrapped
              *
              * @type      {Highcharts.CSSObject}
@@ -774,9 +772,6 @@ seriesType<Highcharts.PieSeries>(
                         }, series.options.animation);
                     }
                 });
-
-                // delete this function to allow it only once
-                series.animate = null as any;
             }
         },
 
@@ -1078,7 +1073,7 @@ seriesType<Highcharts.PieSeries>(
                     fill: (options.fillColor as any) || 'none',
                     stroke: (options.color as any) ||
                         '${palette.neutralColor20}'
-                });
+                }, this.options.animation);
 
             } else if (this.graph) { // Destroy the graph object.
                 this.graph = this.graph.destroy();
@@ -1190,6 +1185,12 @@ seriesType<Highcharts.PieSeries>(
             var renderer = this.chart.renderer;
 
             this.points.forEach(function (point: Highcharts.PiePoint): void {
+                // When updating a series between 2d and 3d or cartesian and
+                // polar, the shape type changes.
+                if (point.graphic && point.hasNewShapeType()) {
+                    point.graphic = point.graphic.destroy();
+                }
+
                 if (!point.graphic) {
                     point.graphic = (renderer as any)[point.shapeType as any](
                         point.shapeArgs
@@ -1605,7 +1606,7 @@ seriesType<Highcharts.PieSeries>(
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting, step
  * @product   highcharts
  * @apioption series.pie
  */

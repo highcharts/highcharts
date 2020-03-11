@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -94,27 +94,25 @@ declare global {
  * @type {number|null|undefined}
  */
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 const {
     clamp,
     extend,
-    pick
+    fireEvent,
+    merge,
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
-import '../parts/Legend.js';
 import './ColorMapSeriesMixin.js';
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
-    fireEvent = H.fireEvent,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**
@@ -301,68 +299,43 @@ seriesType<Highcharts.HeatmapSeries>(
          * @return {void}
          */
         translate: function (this: Highcharts.HeatmapSeries): void {
-            var series = this,
-                options = series.options,
-                xAxis = series.xAxis,
-                yAxis = series.yAxis,
-                seriesPointPadding = options.pointPadding || 0,
-                pointPlacement = series.pointPlacementToXValue(); // #7860
+            const series = this;
 
             series.generatePoints();
 
-            series.points.forEach(function (
-                point: Highcharts.HeatmapPoint
-            ): void {
-                var xPad = (options.colsize || 1) / 2,
-                    yPad = (options.rowsize || 1) / 2,
-                    x1 = clamp(
-                        Math.round(
-                            xAxis.len -
-                            (xAxis.translate(
-                                point.x - xPad,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                1 as any,
-                                -pointPlacement
-                            ) as any)
-                        ),
-                        -xAxis.len, 2 * xAxis.len
-                    ),
-                    x2 = clamp(
-                        Math.round(
-                            xAxis.len -
-                            (xAxis.translate(point.x + xPad,
-                                0 as any,
-                                1 as any,
-                                0 as any,
-                                1 as any,
-                                -pointPlacement
-                            ) as any)
-                        ),
-                        -xAxis.len, 2 * xAxis.len
-                    ),
-                    y1 = clamp(
-                        Math.round(yAxis.translate(
-                            point.y - yPad,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            1 as any
-                        ) as any),
-                        -yAxis.len, 2 * yAxis.len
-                    ),
-                    y2 = clamp(
-                        Math.round(yAxis.translate(
-                            point.y + yPad,
-                            0 as any,
-                            1 as any,
-                            0 as any,
-                            1 as any
-                        ) as any),
-                        -yAxis.len, 2 * yAxis.len
-                    ),
-                    pointPadding = pick(point.pointPadding, seriesPointPadding);
+            const {
+                options: {
+                    colsize = 1,
+                    pointPadding: seriesPointPadding = 0,
+                    rowsize = 1
+                },
+                points,
+                xAxis,
+                yAxis
+            } = series;
+
+            const xPad = colsize / 2;
+            const yPad = rowsize / 2;
+
+            // Translate point values functionality
+            const pointPlacement = series.pointPlacementToXValue(); // #7860
+            const translateX = (value: number): number => Math.round(clamp(
+                xAxis.translate(
+                    value, false, false, false, true, pointPlacement
+                ) as any, 0, xAxis.len)
+            );
+            const translateY = (value: number): number => Math.round(clamp(
+                yAxis.translate(value, false, true, false, true) as any,
+                0, yAxis.len)
+            );
+
+            points.forEach((point: Highcharts.HeatmapPoint): void => {
+                const x1 = translateX(point.x - xPad);
+                const x2 = translateX(point.x + xPad);
+                const y1 = translateY(point.y - yPad);
+                const y2 = translateY(point.y + yPad);
+                const pointPadding =
+                    pick(point.pointPadding, seriesPointPadding);
 
                 // Set plotX and plotY for use in K-D-Tree and more
                 point.plotX = point.clientX = (x1 + x2) / 2;

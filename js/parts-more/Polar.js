@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,13 +10,14 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, find = U.find, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
+import Pane from '../parts-more/Pane.js';
 import '../parts/Pointer.js';
 import '../parts/Series.js';
 import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
-var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto;
+var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto, arearangeProto;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -106,7 +107,7 @@ seriesProto.getConnectors = function (segment, index, calculateNeighbours, conne
  * @private
  */
 seriesProto.toXY = function (point) {
-    var xy, chart = this.chart, xAxis = this.xAxis, yAxis = this.yAxis, plotX = point.plotX, plotY = point.plotY, series = point.series, inverted = chart.inverted, pointY = point.y, clientX;
+    var xy, chart = this.chart, xAxis = this.xAxis, yAxis = this.yAxis, plotX = point.plotX, plotY = point.plotY, series = point.series, inverted = chart.inverted, pointY = point.y, radius = inverted ? plotX : yAxis.len - plotY, clientX;
     // Corrected y position of inverted series other than column
     if (inverted && series && !series.isRadialBar) {
         point.plotY = plotY =
@@ -115,9 +116,12 @@ seriesProto.toXY = function (point) {
     // Save rectangular plotX, plotY for later computation
     point.rectPlotX = plotX;
     point.rectPlotY = plotY;
+    if (yAxis.center) {
+        radius += yAxis.center[3] / 2;
+    }
     // Find the polar plotX and plotY
-    xy = inverted ? xAxis.postTranslate(plotY, plotX) :
-        xAxis.postTranslate(plotX, yAxis.len - plotY);
+    xy = inverted ? yAxis.postTranslate(plotY, radius) :
+        xAxis.postTranslate(plotX, radius);
     point.plotX = point.polarPlotX = xy.x - chart.plotLeft;
     point.plotY = point.polarPlotY = xy.y - chart.plotTop;
     // If shared tooltip, record the angle in degrees in order to align X
@@ -178,7 +182,7 @@ if (seriesTypes.spline) {
  * and (yAxis.len - plotY) is the pixel distance from center.
  * @private
  */
-H.addEvent(Series, 'afterTranslate', function () {
+addEvent(Series, 'afterTranslate', function () {
     var series = this;
     var chart = series.chart;
     if (chart.polar && series.xAxis) {
@@ -210,18 +214,21 @@ H.addEvent(Series, 'afterTranslate', function () {
         }
         // Perform clip after render
         if (!this.hasClipCircleSetter) {
-            this.hasClipCircleSetter = !!series.eventsToUnbind.push(H.addEvent(series, 'afterRender', function () {
+            this.hasClipCircleSetter = !!series.eventsToUnbind.push(addEvent(series, 'afterRender', function () {
                 var circ;
                 if (chart.polar) {
-                    circ = this.yAxis.center;
+                    // For clipping purposes there is a need for
+                    // coordinates from the absolute center
+                    circ = this.yAxis.pane.center;
                     if (!this.clipCircle) {
-                        this.clipCircle = chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2);
+                        this.clipCircle = chart.renderer.clipCircle(circ[0], circ[1], circ[2] / 2, circ[3] / 2);
                     }
                     else {
                         this.clipCircle.animate({
                             x: circ[0],
                             y: circ[1],
-                            r: circ[2] / 2
+                            r: circ[2] / 2,
+                            innerR: circ[3] / 2
                         });
                     }
                     this.group.clip(this.clipCircle);
@@ -286,14 +293,14 @@ wrap(seriesProto, 'getGraphPath', function (proceed, points) {
     return ret;
 });
 var polarAnimate = function (proceed, init) {
-    var chart = this.chart, animation = this.options.animation, group = this.group, markerGroup = this.markerGroup, center = this.xAxis.center, plotLeft = chart.plotLeft, plotTop = chart.plotTop, attribs;
+    var series = this, chart = this.chart, animation = this.options.animation, group = this.group, markerGroup = this.markerGroup, center = this.xAxis.center, plotLeft = chart.plotLeft, plotTop = chart.plotTop, attribs, paneInnerR, graphic, shapeArgs, r, innerR;
     // Specific animation for polar charts
     if (chart.polar) {
-        if (this.isRadialBar) {
+        if (series.isRadialBar) {
             if (!init) {
                 // Run the pie animation for radial bars
-                this.startAngleRad = pick(this.translatedThreshold, this.xAxis.startAngleRad);
-                H.seriesTypes.pie.prototype.animate.call(this, init);
+                series.startAngleRad = pick(series.translatedThreshold, series.xAxis.startAngleRad);
+                H.seriesTypes.pie.prototype.animate.call(series, init);
             }
         }
         else {
@@ -301,34 +308,58 @@ var polarAnimate = function (proceed, init) {
             // is different, plus animation would be so slow it would't matter.
             if (chart.renderer.isSVG) {
                 animation = H.animObject(animation);
-                // Initialize the animation
-                if (init) {
-                    // Scale down the group and place it in the center
-                    attribs = {
-                        translateX: center[0] + plotLeft,
-                        translateY: center[1] + plotTop,
-                        scaleX: 0.001,
-                        scaleY: 0.001
-                    };
-                    group.attr(attribs);
-                    if (markerGroup) {
-                        markerGroup.attr(attribs);
+                // A different animation needed for column like series
+                if (series.is('column')) {
+                    if (!init) {
+                        paneInnerR = center[3] / 2;
+                        series.points.forEach(function (point) {
+                            graphic = point.graphic;
+                            shapeArgs = point.shapeArgs;
+                            r = shapeArgs && shapeArgs.r;
+                            innerR = shapeArgs && shapeArgs.innerR;
+                            if (graphic && shapeArgs) {
+                                // start values
+                                graphic.attr({
+                                    r: paneInnerR,
+                                    innerR: paneInnerR
+                                });
+                                // animate
+                                graphic.animate({
+                                    r: r,
+                                    innerR: innerR
+                                }, series.options.animation);
+                            }
+                        });
                     }
-                    // Run the animation
                 }
                 else {
-                    attribs = {
-                        translateX: plotLeft,
-                        translateY: plotTop,
-                        scaleX: 1,
-                        scaleY: 1
-                    };
-                    group.animate(attribs, animation);
-                    if (markerGroup) {
-                        markerGroup.animate(attribs, animation);
+                    // Initialize the animation
+                    if (init) {
+                        // Scale down the group and place it in the center
+                        attribs = {
+                            translateX: center[0] + plotLeft,
+                            translateY: center[1] + plotTop,
+                            scaleX: 0.001,
+                            scaleY: 0.001
+                        };
+                        group.attr(attribs);
+                        if (markerGroup) {
+                            markerGroup.attr(attribs);
+                        }
+                        // Run the animation
                     }
-                    // Delete this function to allow it only once
-                    this.animate = null;
+                    else {
+                        attribs = {
+                            translateX: plotLeft,
+                            translateY: plotTop,
+                            scaleX: 1,
+                            scaleY: 1
+                        };
+                        group.animate(attribs, animation);
+                        if (markerGroup) {
+                            markerGroup.animate(attribs, animation);
+                        }
+                    }
                 }
             }
         }
@@ -341,14 +372,28 @@ var polarAnimate = function (proceed, init) {
 // Define the animate method for regular series
 wrap(seriesProto, 'animate', polarAnimate);
 if (seriesTypes.column) {
+    arearangeProto = seriesTypes.arearange.prototype;
     colProto = seriesTypes.column.prototype;
     colProto.polarArc = function (low, high, start, end) {
-        var center = this.xAxis.center, len = this.yAxis.len;
-        return this.chart.renderer.symbols.arc(center[0], center[1], len - high, null, {
+        var center = this.xAxis.center, len = this.yAxis.len, paneInnerR = center[3] / 2, r = len - high + paneInnerR, innerR = len - pick(low, len) + paneInnerR;
+        // Prevent columns from shooting through the pane's center
+        if (this.yAxis.reversed) {
+            if (r < 0) {
+                r = paneInnerR;
+            }
+            if (innerR < 0) {
+                innerR = paneInnerR;
+            }
+        }
+        // Return a new shapeArgs
+        return {
+            x: center[0],
+            y: center[1],
+            r: r,
+            innerR: innerR,
             start: start,
-            end: end,
-            innerR: len - pick(low, len)
-        });
+            end: end
+        };
     };
     /**
      * Define the animate method for columnseries
@@ -360,7 +405,7 @@ if (seriesTypes.column) {
      * @private
      */
     wrap(colProto, 'translate', function (proceed) {
-        var series = this, options = series.options, threshold = options.threshold, stacking = options.stacking, chart = series.chart, xAxis = series.xAxis, yAxis = series.yAxis, reversed = yAxis.reversed, center = xAxis.center, startAngleRad = xAxis.startAngleRad, endAngleRad = xAxis.endAngleRad, visibleRange = endAngleRad - startAngleRad, thresholdAngleRad, points, point, i, yMin, yMax, start, end, tooltipPos, pointX, pointY, stackValues, stack, barX, innerR, r;
+        var series = this, options = series.options, threshold = options.threshold, stacking = options.stacking, chart = series.chart, xAxis = series.xAxis, yAxis = series.yAxis, reversed = yAxis.reversed, center = yAxis.center, startAngleRad = xAxis.startAngleRad, endAngleRad = xAxis.endAngleRad, visibleRange = endAngleRad - startAngleRad, thresholdAngleRad, points, point, i, yMin, yMax, start, end, tooltipPos, pointX, pointY, stackValues, stack, barX, innerR, r;
         series.preventPostTranslate = true;
         // Run uber method
         proceed.call(series);
@@ -394,8 +439,8 @@ if (seriesTypes.column) {
                 barX = point.barX;
                 pointX = point.x;
                 pointY = point.y;
+                point.shapeType = 'arc';
                 if (chart.inverted) {
-                    point.shapeType = 'arc';
                     point.plotY = yAxis.translate(pointY);
                     if (stacking) {
                         stack = yAxis.stacks[(pointY < 0 ? '-' : '') +
@@ -452,14 +497,17 @@ if (seriesTypes.column) {
                     }
                     start += startAngleRad;
                     end += startAngleRad;
+                    if (center) {
+                        point.barX = barX += center[3] / 2;
+                    }
                     // In case when radius, inner radius or both are
                     // negative, a point is rendered but partially or as
                     // a center point
                     innerR = Math.max(barX, 0);
                     r = Math.max(barX + point.pointWidth, 0);
                     point.shapeArgs = {
-                        x: center[0],
-                        y: center[1],
+                        x: center && center[0],
+                        y: center && center[1],
                         r: r,
                         innerR: innerR,
                         start: start,
@@ -474,16 +522,19 @@ if (seriesTypes.column) {
                         startAngleRad;
                 }
                 else {
-                    point.shapeType = 'path';
                     start = barX + startAngleRad;
-                    point.shapeArgs = {
-                        d: series.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth)
-                    };
+                    // Changed the way polar columns are drawn in order to make
+                    // it more consistent with the drawing of inverted columns
+                    // (they are using the same function now). Also, it was
+                    // essential to make the animation work correctly (the
+                    // scaling of the group) is replaced by animating each
+                    // element separately.
+                    point.shapeArgs = series.polarArc(point.yBottom, point.plotY, start, start + point.pointWidth);
                 }
                 // Provided a correct coordinates for the tooltip
                 series.toXY(point);
                 if (chart.inverted) {
-                    tooltipPos = xAxis.postTranslate(point.rectPlotY, point.barX + point.pointWidth / 2);
+                    tooltipPos = yAxis.postTranslate(point.rectPlotY, barX + point.pointWidth / 2);
                     point.tooltipPos = [
                         tooltipPos.x - chart.plotLeft,
                         tooltipPos.y - chart.plotTop
@@ -492,7 +543,9 @@ if (seriesTypes.column) {
                 else {
                     point.tooltipPos = [point.plotX, point.plotY];
                 }
-                point.ttBelow = point.plotY > center[1];
+                if (center) {
+                    point.ttBelow = point.plotY > center[1];
+                }
             }
         }
     });
@@ -528,20 +581,22 @@ if (seriesTypes.column) {
         }
         return options;
     };
+    if (arearangeProto) {
+        arearangeProto.findAlignments = colProto.findAlignments;
+    }
     /**
      * Align column data labels outside the columns. #1199.
      * @private
      */
     wrap(colProto, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo, isNew) {
-        var chart = this.chart, inside = pick(options.inside, !!this.options.stacking), angle, 
-        // align: Highcharts.AlignValue,
-        // verticalAlign: Highcharts.VerticalAlignValue,
-        shapeArgs, labelPos;
+        var chart = this.chart, inside = pick(options.inside, !!this.options.stacking), angle, shapeArgs, labelPos;
         if (chart.polar) {
             angle = point.rectPlotX / Math.PI * 180;
             if (!chart.inverted) {
                 // Align nicely outside the perimeter of the columns
-                options = this.findAlignments(angle, options);
+                if (this.findAlignments) {
+                    options = this.findAlignments(angle, options);
+                }
             }
             else { // Required corrections for data labels of inverted bars
                 // The plotX and plotY are correctly set therefore they
@@ -553,7 +608,7 @@ if (seriesTypes.column) {
                     // Calculates pixel positions for a data label to be
                     // inside
                     labelPos =
-                        this.xAxis.postTranslate(
+                        this.yAxis.postTranslate(
                         // angle
                         (shapeArgs.start + shapeArgs.end) / 2 -
                             this
@@ -621,35 +676,37 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
     }
     return ret;
 });
-H.SVGRenderer.prototype.clipCircle = function (x, y, r) {
-    var wrapper, id = H.uniqueKey(), clipPath = this.createElement('clipPath').attr({
+H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
+    var wrapper, id = uniqueKey(), clipPath = this.createElement('clipPath').attr({
         id: id
     }).add(this.defs);
-    wrapper = this.circle(x, y, r).add(clipPath);
+    wrapper = innerR ?
+        this.arc(x, y, r, innerR, 0, 2 * Math.PI).add(clipPath) :
+        this.circle(x, y, r).add(clipPath);
     wrapper.id = id;
     wrapper.clipPath = clipPath;
     return wrapper;
 };
-H.addEvent(H.Chart, 'getAxes', function () {
+addEvent(H.Chart, 'getAxes', function () {
     if (!this.pane) {
         this.pane = [];
     }
     splat(this.options.pane).forEach(function (paneOptions) {
-        new H.Pane(// eslint-disable-line no-new
+        new Pane(// eslint-disable-line no-new
         paneOptions, this);
     }, this);
 });
-H.addEvent(H.Chart, 'afterDrawChartBox', function () {
+addEvent(H.Chart, 'afterDrawChartBox', function () {
     this.pane.forEach(function (pane) {
         pane.render();
     });
 });
-H.addEvent(H.Series, 'afterInit', function () {
+addEvent(H.Series, 'afterInit', function () {
     var chart = this.chart;
     // Add flags that identifies radial inverted series
     if (chart.inverted && chart.polar) {
         this.isRadialSeries = true;
-        if (this instanceof seriesTypes.column) {
+        if (this.is('column')) {
             this.isRadialBar = true;
         }
     }
@@ -660,7 +717,7 @@ H.addEvent(H.Series, 'afterInit', function () {
  * @private
  */
 wrap(H.Chart.prototype, 'get', function (proceed, id) {
-    return H.find(this.pane, function (pane) {
+    return find(this.pane, function (pane) {
         return pane.options.id === id;
     }) || proceed.call(this, id);
 });

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2019 Torstein Honsi, Lars Cabrera
+ *  (c) 2016-2020 Torstein Honsi, Lars Cabrera
  *
  *  License: www.highcharts.com/license
  *
@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, pick = U.pick;
+var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, pick = U.pick;
 var Chart = H.Chart;
 /* eslint-disable no-invalid-this */
 /**
@@ -29,7 +29,7 @@ var Chart = H.Chart;
  * @product   gantt
  * @apioption yAxis.staticScale
  */
-H.addEvent(H.Axis, 'afterSetOptions', function () {
+addEvent(H.Axis, 'afterSetOptions', function () {
     var chartOptions = this.chart.options && this.chart.options.chart;
     if (!this.horiz &&
         isNumber(this.options.staticScale) &&
@@ -71,4 +71,4 @@ Chart.prototype.adjustHeight = function () {
     }
     this.redrawTrigger = null;
 };
-H.addEvent(Chart, 'render', Chart.prototype.adjustHeight);
+addEvent(Chart, 'render', Chart.prototype.adjustHeight);

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Sebastian Bochan
+ *  (c) 2010-2020 Sebastian Bochan
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, pick = U.pick;
-var seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var clamp = U.clamp, pick = U.pick, seriesType = U.seriesType;
+var seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;
 /**
  * The ColumnPyramidSeries class
@@ -110,9 +110,10 @@ seriesType('columnpyramid', 'column',
                     (chart.plotHeight - translatedThreshold);
             // topXwidth and bottomXwidth = width of lines from the center
             // calculated from tanges proportion.
-            topXwidth = (barW * (barY - topPointY)) / stackHeight;
+            // Can not be a NaN #12514
+            topXwidth = stackHeight ? (barW * (barY - topPointY)) / stackHeight : 0;
             // like topXwidth, but with height of point
-            bottomXwidth = (barW * (barY + barH - topPointY)) / stackHeight;
+            bottomXwidth = stackHeight ? (barW * (barY + barH - topPointY)) / stackHeight : 0;
             /*
                     /\
                    /  \

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -87,13 +87,13 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    pick
+    pick,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
 
 var noop = H.noop,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**
@@ -215,6 +215,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      * @sample {highcharts} highcharts/css/boxplot/
      *         Box plot in styled mode
      *
+     * @type    {number|null}
      * @since   3.0
      * @product highcharts
      */
@@ -373,6 +374,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     );
                 }
             });
+            point.plotHigh = point.highPlot; // For data label validation
         });
     },
 

@@ -6,12 +6,7 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var ix = point.index + 1,
-                    x = point.name,
-                    y = point.y;
-                return ix + '. ' + x + ', ' + y + '.';
-            }
+            valueDescriptionFormat: '{index}. {xDescription}, {point.y}.'
         }
     },
 

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  TimelineEvent class definition.
  *
@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var splat = U.splat;
+var merge = U.merge, splat = U.splat, uniqueKey = U.uniqueKey;
 /**
  * A set of options for the TimelineEvent class.
  *
@@ -66,7 +66,7 @@ function TimelineEvent(options) {
 TimelineEvent.prototype.init = function (options) {
     this.options = options;
     this.time = options.time || 0;
-    this.id = this.options.id = options.id || H.uniqueKey();
+    this.id = this.options.id = options.id || uniqueKey();
 };
 /**
  * Play the event. Does not take the TimelineEvent.time option into account,
@@ -81,7 +81,7 @@ TimelineEvent.prototype.init = function (options) {
  */
 TimelineEvent.prototype.play = function (options) {
     var eventObject = this.options.eventObject, masterOnEnd = this.options.onEnd, playOnEnd = options && options.onEnd, playOptionsOnEnd = this.options.playOptions &&
-        this.options.playOptions.onEnd, playOptions = H.merge(this.options.playOptions, options);
+        this.options.playOptions.onEnd, playOptions = merge(this.options.playOptions, options);
     if (eventObject && eventObject.sonify) {
         // If we have multiple onEnds defined, use all
         playOptions.onEnd = masterOnEnd || playOnEnd || playOptionsOnEnd ?
@@ -172,7 +172,7 @@ function TimelinePath(options) {
 }
 TimelinePath.prototype.init = function (options) {
     this.options = options;
-    this.id = this.options.id = options.id || H.uniqueKey();
+    this.id = this.options.id = options.id || uniqueKey();
     this.cursor = 0;
     this.eventsPlaying = {};
     // Handle silent wait, otherwise use events from options
@@ -188,7 +188,7 @@ TimelinePath.prototype.init = function (options) {
     this.updateEventIdMap();
     // Signal events to fire
     this.signalHandler = new utilities.SignalHandler(['playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd']);
-    this.signalHandler.registerSignalCallbacks(H.merge(options, { masterOnEnd: options.onEnd }));
+    this.signalHandler.registerSignalCallbacks(merge(options, { masterOnEnd: options.onEnd }));
 };
 /**
  * Sort the internal event list by time.
@@ -414,7 +414,7 @@ Timeline.prototype.init = function (options) {
     this.paths = options.paths;
     this.pathsPlaying = {};
     this.signalHandler = new utilities.SignalHandler(['playOnEnd', 'masterOnEnd', 'onPathStart', 'onPathEnd']);
-    this.signalHandler.registerSignalCallbacks(H.merge(options, { masterOnEnd: options.onEnd }));
+    this.signalHandler.registerSignalCallbacks(merge(options, { masterOnEnd: options.onEnd }));
 };
 /**
  * Play the timeline forwards from cursor.

@@ -2,7 +2,7 @@
  *
  *  Highcharts funnel3d series module
  *
- *  (c) 2010-2019 Highsoft AS
+ *  (c) 2010-2020 Highsoft AS
  *
  *  Author: Kacper Madej
  *
@@ -13,11 +13,13 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
-var extend = U.extend, pick = U.pick, relativeLength = U.relativeLength;
+var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
-var charts = H.charts, color = H.color, error = H.error, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes, 
+var charts = H.charts, seriesTypes = H.seriesTypes, 
 // Use H.Renderer instead of H.SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, 
 //
@@ -379,7 +381,7 @@ seriesType('funnel3d', 'column',
  * @product   highcharts
  * @apioption series.funnel3d.data.gradientForSides
  */
-funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
+funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
     parts: [
         'top', 'bottom',
         'frontUpper', 'backUpper',
@@ -622,16 +624,16 @@ RendererProto.funnel3dPath = function (shapeArgs) {
     alphaCorrection = shapeArgs.alphaCorrection = 90 -
         Math.abs((chart.options.chart.options3d.alpha % 180) - 90), 
     // set zIndexes of parts based on cubiod logic, for consistency
-    cuboidData = cuboidPath.call(renderer, H.merge(shapeArgs, {
+    cuboidData = cuboidPath.call(renderer, merge(shapeArgs, {
         depth: shapeArgs.width,
         width: (shapeArgs.width + shapeArgs.bottom.width) / 2
     })), isTopFirst = cuboidData.isTop, isFrontFirst = !cuboidData.isFront, hasMiddle = !!shapeArgs.middle, 
     //
-    top = renderer.getCylinderEnd(chart, H.merge(shapeArgs, {
+    top = renderer.getCylinderEnd(chart, merge(shapeArgs, {
         x: shapeArgs.x - shapeArgs.width / 2,
         z: shapeArgs.z - shapeArgs.width / 2,
         alphaCorrection: alphaCorrection
-    })), bottomWidth = shapeArgs.bottom.width, bottomArgs = H.merge(shapeArgs, {
+    })), bottomWidth = shapeArgs.bottom.width, bottomArgs = merge(shapeArgs, {
         width: bottomWidth,
         x: shapeArgs.x - bottomWidth / 2,
         z: shapeArgs.z - bottomWidth / 2,
@@ -643,7 +645,7 @@ RendererProto.funnel3dPath = function (shapeArgs) {
     useAlphaCorrection;
     if (hasMiddle) {
         middleWidth = shapeArgs.middle.width;
-        middleTopArgs = H.merge(shapeArgs, {
+        middleTopArgs = merge(shapeArgs, {
             y: shapeArgs.y + shapeArgs.middle.fraction * shapeArgs.height,
             width: middleWidth,
             x: shapeArgs.x - middleWidth / 2,
@@ -668,23 +670,23 @@ RendererProto.funnel3dPath = function (shapeArgs) {
     ret.backUpper = renderer.getCylinderBack(top, middleTop);
     useAlphaCorrection = (Math.min(middleWidth, shapeArgs.width) /
         Math.max(middleWidth, shapeArgs.width)) !== 1;
-    ret.rightUpper = renderer.getCylinderFront(renderer.getCylinderEnd(chart, H.merge(shapeArgs, {
+    ret.rightUpper = renderer.getCylinderFront(renderer.getCylinderEnd(chart, merge(shapeArgs, {
         x: shapeArgs.x - shapeArgs.width / 2,
         z: shapeArgs.z - shapeArgs.width / 2,
         alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
-    }), false), renderer.getCylinderEnd(chart, H.merge(middleTopArgs, {
+    }), false), renderer.getCylinderEnd(chart, merge(middleTopArgs, {
         alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
     }), !hasMiddle));
     if (hasMiddle) {
         useAlphaCorrection = (Math.min(middleWidth, bottomWidth) /
             Math.max(middleWidth, bottomWidth)) !== 1;
-        H.merge(true, ret, {
+        merge(true, ret, {
             frontLower: renderer.getCylinderFront(middleBottom, bottom),
             backLower: renderer.getCylinderBack(middleBottom, bottom),
-            rightLower: renderer.getCylinderFront(renderer.getCylinderEnd(chart, H.merge(bottomArgs, {
+            rightLower: renderer.getCylinderFront(renderer.getCylinderEnd(chart, merge(bottomArgs, {
                 alphaCorrection: useAlphaCorrection ?
                     -alphaCorrection : 0
-            }), true), renderer.getCylinderEnd(chart, H.merge(middleTopArgs, {
+            }), true), renderer.getCylinderEnd(chart, merge(middleTopArgs, {
                 alphaCorrection: useAlphaCorrection ?
                     -alphaCorrection : 0
             }), false)),

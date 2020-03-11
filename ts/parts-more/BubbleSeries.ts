@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -99,6 +99,11 @@ declare global {
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     arrayMax,
@@ -107,22 +112,18 @@ const {
     extend,
     isNumber,
     pick,
-    pInt
+    pInt,
+    seriesType
 } = U;
 
 import '../parts/Axis.js';
-import '../parts/Color.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';
 
 var Axis = H.Axis,
-    color = H.color,
     noop = H.noop,
-    Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 
@@ -145,7 +146,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     dataLabels: {
         formatter: function (
-            this: Highcharts.DataLabelsFormatterContextObject
+            this: Highcharts.PointLabelObject
         ): (number|null|undefined) { // #2945
             return (this.point as Highcharts.BubblePoint).z;
         },
@@ -541,9 +542,6 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
                     graphic.animate(animationTarget, this.options.animation);
                 }
             }, this);
-
-            // delete this function to allow it only once
-            this.animate = null as any;
         }
     },
 

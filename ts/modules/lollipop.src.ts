@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Sebastian Bochan, Rafal Sebestjanski
+ *  (c) 2010-2020 Sebastian Bochan, Rafal Sebestjanski
  *
  *  License: www.highcharts.com/license
  *
@@ -41,8 +41,12 @@ declare global {
     }
 }
 
-var seriesType = H.seriesType,
-    areaProto = H.seriesTypes.area.prototype,
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
+
+var areaProto = H.seriesTypes.area.prototype,
     colProto = H.seriesTypes.column.prototype;
 
 /**

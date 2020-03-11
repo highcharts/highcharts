@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,9 +10,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';
-var addEvent = H.addEvent, perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;
+var perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg;
 /**
  * Depth of the columns in a 3D column chart.
  *
@@ -59,12 +59,6 @@ wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
         this.translate3dShapes();
     }
 });
-// In 3D we need to pass point.outsidePlot option to the justifyDataLabel
-// method for disabling justifying dataLabels in columns outside plot
-wrap(H.Series.prototype, 'alignDataLabel', function (proceed) {
-    arguments[3].outside3dPlot = arguments[1].outside3dPlot;
-    proceed.apply(this, [].slice.call(arguments, 1));
-});
 // Don't use justifyDataLabel when point is outsidePlot
 wrap(H.Series.prototype, 'justifyDataLabel', function (proceed) {
     return !(arguments[2].outside3dPlot) ?
@@ -73,10 +67,10 @@ wrap(H.Series.prototype, 'justifyDataLabel', function (proceed) {
 });
 seriesTypes.column.prototype.translate3dPoints = function () { };
 seriesTypes.column.prototype.translate3dShapes = function () {
-    var series = this, chart = series.chart, seriesOptions = series.options, depth = seriesOptions.depth || 25, stack = seriesOptions.stacking ?
+    var series = this, chart = series.chart, seriesOptions = series.options, depth = seriesOptions.depth, stack = seriesOptions.stacking ?
         (seriesOptions.stack || 0) :
         series.index, // #4743
-    z = stack * (depth + (seriesOptions.groupZPadding || 1)), borderCrisp = series.borderWidth % 2 ? 0.5 : 0;
+    z = stack * (depth + (seriesOptions.groupZPadding || 1)), borderCrisp = series.borderWidth % 2 ? 0.5 : 0, point2dPos; // Position of point in 2D, used for 3D position calculation.
     if (chart.inverted && !series.yAxis.reversed) {
         borderCrisp *= -1;
     }
@@ -135,12 +129,26 @@ seriesTypes.column.prototype.translate3dShapes = function () {
             shapeArgs.z = z;
             shapeArgs.depth = depth;
             shapeArgs.insidePlotArea = true;
+            // Point's position in 2D
+            point2dPos = {
+                x: shapeArgs.x + shapeArgs.width / 2,
+                y: shapeArgs.y,
+                z: z + depth / 2 // The center of column in Z dimension
+            };
+            // Recalculate point positions for inverted graphs
+            if (chart.inverted) {
+                point2dPos.x = shapeArgs.height;
+                point2dPos.y = point.clientX;
+            }
+            // Calculate and store point's position in 3D,
+            // using perspective method.
+            point.plot3d = perspective([point2dPos], chart, true, false)[0];
             // Translate the tooltip position in 3d space
             tooltipPos = perspective([{
                     x: tooltipPos[0],
                     y: tooltipPos[1],
-                    z: z
-                }], chart, true)[0];
+                    z: z + depth / 2 // The center of column in Z dimension
+                }], chart, true, false)[0];
             point.tooltipPos = [tooltipPos.x, tooltipPos.y];
         }
     });
@@ -190,8 +198,6 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 });
                 // redraw datalabels to the correct position
                 this.drawDataLabels();
-                // delete this function to allow it only once
-                series.animate = null;
             }
         }
     }
@@ -248,7 +254,7 @@ seriesTypes.column.prototype
 addEvent(Series, 'afterInit', function () {
     if (this.chart.is3d() &&
         this.handle3dGrouping) {
-        var seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
+        var series = this, seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
             var stacks = this.chart.retrieveStacks(stacking), stack = seriesOptions.stack || 0, i; // position within the stack
@@ -265,6 +271,8 @@ addEvent(Series, 'afterInit', function () {
                 z = (stacks.totalStacks * 10) - z;
             }
         }
+        seriesOptions.depth = seriesOptions.depth || 25;
+        series.z = series.z || 0;
         seriesOptions.zIndex = z;
     }
 });
@@ -324,33 +332,77 @@ if (seriesTypes.columnrange) {
     seriesTypes.columnrange.prototype.setVisible =
         seriesTypes.column.prototype.setVisible;
 }
-wrap(Series.prototype, 'alignDataLabel', function (proceed) {
+wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, options, alignTo) {
+    var chart = this.chart;
+    // In 3D we need to pass point.outsidePlot option to the justifyDataLabel
+    // method for disabling justifying dataLabels in columns outside plot
+    options.outside3dPlot = point.outside3dPlot;
     // Only do this for 3D columns and it's derived series
-    if (this.chart.is3d() &&
-        this instanceof seriesTypes.column) {
-        var series = this, chart = series.chart;
-        var args = arguments, alignTo = args[4], point = args[1];
-        var pos = ({ x: alignTo.x, y: alignTo.y, z: series.z });
-        pos = perspective([pos], chart, true)[0];
-        alignTo.x = pos.x;
+    if (chart.is3d() &&
+        this.is('column')) {
+        var series = this, seriesOptions = series.options, inside = pick(options.inside, !!series.options.stacking), options3d = chart.options.chart.options3d, xOffset = point.pointWidth / 2 || 0;
+        var dLPosition = {
+            x: alignTo.x + xOffset,
+            y: alignTo.y,
+            z: series.z + seriesOptions.depth / 2
+        };
+        if (chart.inverted) {
+            // Inside dataLabels are positioned according to above
+            // logic and there is no need to position them using
+            // non-3D algorighm (that use alignTo.width)
+            if (inside) {
+                alignTo.width = 0;
+                dLPosition.x += point.shapeArgs.height / 2;
+            }
+            // When chart is upside down
+            // (alpha angle between 180 and 360 degrees)
+            // it is needed to add column width to calculated value.
+            if (options3d.alpha >= 90 && options3d.alpha <= 270) {
+                dLPosition.y += point.shapeArgs.width;
+            }
+        }
+        // dLPosition is recalculated for 3D graphs
+        dLPosition = perspective([dLPosition], chart, true, false)[0];
+        alignTo.x = dLPosition.x - xOffset;
         // #7103 If point is outside of plotArea, hide data label.
-        alignTo.y = point.outside3dPlot ? -9e9 : pos.y;
+        alignTo.y = point.outside3dPlot ? -9e9 : dLPosition.y;
     }
     proceed.apply(this, [].slice.call(arguments, 1));
 });
 // Added stackLabels position calculation for 3D charts.
-wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart) {
+wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x, y, xWidth, h, axis) {
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
-    // Only do this for 3D chart.
-    if (chart.is3d()) {
-        var pos = ({
-            x: stackBox.x,
-            y: stackBox.y,
-            z: 0
-        });
-        pos = H.perspective([pos], chart, true)[0];
-        stackBox.x = pos.x;
-        stackBox.y = pos.y;
+    // Only do this for 3D graph
+    if (chart.is3d() && stackItem.base) {
+        // First element of stackItem.base is an index of base series.
+        var baseSeriesInd = +(stackItem.base).split(',')[0];
+        var columnSeries = chart.series[baseSeriesInd];
+        var options3d = chart.options.chart.options3d;
+        // Only do this if base series is a column or inherited type,
+        // use its barW, z and depth parameters
+        // for correct stackLabels position calculation
+        if (columnSeries &&
+            columnSeries instanceof seriesTypes.column) {
+            var dLPosition = {
+                x: stackBox.x + (chart.inverted ? h : xWidth / 2),
+                y: stackBox.y,
+                z: columnSeries.options.depth / 2
+            };
+            if (chart.inverted) {
+                // Do not use default offset calculation logic
+                // for 3D inverted stackLabels.
+                stackBox.width = 0;
+                // When chart is upside down
+                // (alpha angle between 180 and 360 degrees)
+                // it is needed to add column width to calculated value.
+                if (options3d.alpha >= 90 && options3d.alpha <= 270) {
+                    dLPosition.y += xWidth;
+                }
+            }
+            dLPosition = perspective([dLPosition], chart, true, false)[0];
+            stackBox.x = dLPosition.x - xWidth / 2;
+            stackBox.y = dLPosition.y;
+        }
     }
     return stackBox;
 });

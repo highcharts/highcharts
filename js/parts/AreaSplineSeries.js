@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,11 +9,12 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
-import './Legend.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import U from './Utilities.js';
+var seriesType = U.seriesType;
 import './AreaSeries.js';
 import './SplineSeries.js';
-var areaProto = H.seriesTypes.area.prototype, defaultPlotOptions = H.defaultPlotOptions, LegendSymbolMixin = H.LegendSymbolMixin, seriesType = H.seriesType;
+var areaProto = H.seriesTypes.area.prototype, defaultPlotOptions = H.defaultPlotOptions;
 /**
  * AreaSpline series type.
  *
@@ -50,7 +51,7 @@ defaultPlotOptions.area, {
  *
  *
  * @extends   series,plotOptions.areaspline
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, step
  * @product   highcharts highstock
  * @apioption series.areaspline
  */

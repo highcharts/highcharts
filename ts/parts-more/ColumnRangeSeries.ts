@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -55,13 +55,13 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     clamp,
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
-    merge = H.merge,
     noop = H.noop,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
@@ -188,15 +188,13 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
             if (isRadial) {
 
                 start = (point.barX as any) + startAngleRad;
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: series.polarArc(
-                        y + height,
-                        y,
-                        start,
-                        start + point.pointWidth
-                    )
-                };
+                point.shapeType = 'arc';
+                point.shapeArgs = series.polarArc(
+                    y + height,
+                    y,
+                    start,
+                    start + point.pointWidth
+                );
             } else {
 
                 shapeArgs.height = height;

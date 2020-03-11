@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -50,18 +50,17 @@ declare global {
             r: number;
         }
         class Color {
+            public static names: Record<string, ColorString>;
+            public static parse(input: (ColorType|undefined)): Color;
             public constructor(
                 input: (ColorString|GradientColorObject|PatternObject|undefined)
             );
             public input?: ColorType;
             public parsers: Array<ColorParser>;
             public rgba: (ColorNone|ColorRGBA);
-            public stops: Array<Color>;
+            public stops?: Array<Color>;
             public brighten(alpha: number): Color;
             public get(format?: ('a'|'rgb'|'rgba')): Color['input'];
-            public init(
-                input: (ColorString|GradientColorObject|PatternObject|undefined)
-            ): void;
             public setOpacity(alpha: number): Color;
             public tweenTo(to: Color, alpha: number): ColorString;
         }
@@ -183,10 +182,9 @@ declare global {
 import U from './Utilities.js';
 const {
     isNumber,
+    merge,
     pInt
 } = U;
-
-var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -197,27 +195,71 @@ var merge = H.merge;
  * @name Highcharts.Color
  *
  * @param {Highcharts.ColorType} input
- *        The input color in either rbga or hex format
+ * The input color in either rbga or hex format
  */
-H.Color = function (
-    this: Highcharts.Color,
-    input: (
-        Highcharts.ColorString|Highcharts.GradientColorObject|
-        Highcharts.PatternObject|undefined
-    )
-): any {
-    // Backwards compatibility, allow instanciation without new
-    if (!(this instanceof H.Color)) {
-        return new H.Color(input);
+class Color {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    // Collection of named colors. Can be extended from the outside by adding
+    // colors to Highcharts.Color.names.
+    public static names: Record<string, Highcharts.ColorString> = {
+        white: '#ffffff',
+        black: '#000000'
+    };
+
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Creates a color instance out of a color string or object.
+     *
+     * @function Highcharts.Color.parse
+     *
+     * @param {Highcharts.ColorType} input
+     * The input color in either rbga or hex format.
+     *
+     * @return {Highcharts.Color}
+     * Color instance.
+     */
+    public static parse(input: (Highcharts.ColorType|undefined)): Highcharts.Color {
+        return new Color(input);
     }
-    // Initialize
-    this.init(input);
-} as any;
-H.Color.prototype = {
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
+    public constructor(
+        input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
+    ) {
+        // Backwards compatibility, allow instanciation without new (#13053)
+        if (!(this instanceof Color)) {
+            return new Color(input);
+        }
+        this.init(input);
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
 
     // Collection of parsers. This can be extended from the outside by pushing
     // parsers to Highcharts.Color.prototype.parsers.
-    parsers: [{
+    public parsers = [{
         // RGBA color
         // eslint-disable-next-line max-len
         regex: /rgba\(\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]{1,3})\s*,\s*([0-9]?(?:\.[0-9]+)?)\s*\)/,
@@ -236,14 +278,16 @@ H.Color.prototype = {
         parse: function (result: RegExpExecArray): Highcharts.ColorRGBA {
             return [pInt(result[1]), pInt(result[2]), pInt(result[3]), 1];
         }
-    }],
+    }];
 
-    // Collection of named colors. Can be extended from the outside by adding
-    // colors to Highcharts.Color.prototype.names.
-    names: {
-        white: '#ffffff',
-        black: '#000000'
-    },
+    public rgba: (Highcharts.ColorNone|Highcharts.ColorRGBA) = [];
+    public stops?: Array<Color>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Parse the input color to rgba array
@@ -256,12 +300,8 @@ H.Color.prototype = {
      *
      * @return {void}
      */
-    init: function (
-        this: Highcharts.Color,
-        input: (
-            Highcharts.ColorString|Highcharts.GradientColorObject|
-            Highcharts.PatternObject|undefined
-        )
+    private init(
+        input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
     ): void {
         var result: (RegExpExecArray|null),
             rgba: any,
@@ -269,7 +309,7 @@ H.Color.prototype = {
             parser: Highcharts.ColorParser,
             len: number;
 
-        this.input = input = this.names[
+        this.input = input = Color.names[
             input && (input as any).toLowerCase ?
                 (input as any).toLowerCase() :
                 ''
@@ -280,7 +320,7 @@ H.Color.prototype = {
             this.stops = (input as any).stops.map(function (
                 stop: [number, Highcharts.ColorString]
             ): Highcharts.Color {
-                return new H.Color(stop[1]);
+                return new Color(stop[1]);
             });
 
         // Solid colors
@@ -338,7 +378,7 @@ H.Color.prototype = {
             }
         }
         this.rgba = rgba || [];
-    },
+    }
 
     /**
      * Return the color or gradient stops in the specified format
@@ -351,21 +391,15 @@ H.Color.prototype = {
      * @return {Highcharts.ColorType}
      *         This color as a string or gradient stops.
      */
-    get: function (
-        this: Highcharts.Color,
-        format?: ('a'|'rgb'|'rgba')
-    ): Highcharts.Color['input'] {
+    public get(format?: ('a'|'rgb'|'rgba')): Color['input'] {
         var input = this.input,
             rgba = this.rgba,
             ret: Highcharts.Color['input'];
 
-        if (this.stops) {
+        if (typeof this.stops !== 'undefined') {
             ret = merge(input as any);
             (ret as any).stops = [].concat((ret as any).stops);
-            this.stops.forEach(function (
-                stop: Highcharts.Color,
-                i: number
-            ): void {
+            this.stops.forEach((stop: Color, i: number): void => {
                 (ret as any).stops[i] = [
                     (ret as any).stops[i][0],
                     stop.get(format)
@@ -385,7 +419,7 @@ H.Color.prototype = {
             ret = input;
         }
         return ret as any;
-    },
+    }
 
     /**
      * Brighten the color instance.
@@ -398,15 +432,12 @@ H.Color.prototype = {
      * @return {Highcharts.Color}
      *         This color with modifications.
      */
-    brighten: function (
-        this: Highcharts.Color,
-        alpha: number
-    ): Highcharts.Color {
-        var i,
+    public brighten(alpha: number): this {
+        var i: number,
             rgba = this.rgba;
 
         if (this.stops) {
-            this.stops.forEach(function (stop: Highcharts.Color): void {
+            this.stops.forEach(function (stop: Color): void {
                 stop.brighten(alpha);
             });
 
@@ -423,7 +454,7 @@ H.Color.prototype = {
             }
         }
         return this;
-    },
+    }
 
     /**
      * Set the color's opacity to a given alpha value.
@@ -436,13 +467,10 @@ H.Color.prototype = {
      * @return {Highcharts.Color}
      *         Color with modifications.
      */
-    setOpacity: function (
-        this: Highcharts.Color,
-        alpha: number
-    ): Highcharts.Color {
+    public setOpacity(alpha: number): this {
         this.rgba[3] = alpha;
         return this;
-    },
+    }
 
     /**
      * Return an intermediate color between two colors.
@@ -459,11 +487,7 @@ H.Color.prototype = {
      * @return {Highcharts.ColorString}
      *         The intermediate color in rgba notation.
      */
-    tweenTo: function (
-        this: Highcharts.Color,
-        to: Highcharts.Color,
-        pos: number
-    ): Highcharts.ColorString {
+    public tweenTo(to: Color, pos: number): Highcharts.ColorString {
         // Check for has alpha, because rgba colors perform worse due to lack of
         // support in WebKit.
         var fromRgba = this.rgba,
@@ -496,7 +520,9 @@ H.Color.prototype = {
         }
         return ret;
     }
-} as any;
+}
+
+H.Color = Color;
 
 /**
  * Creates a color instance out of a color string.
@@ -509,11 +535,6 @@ H.Color.prototype = {
  * @return {Highcharts.Color}
  *         Color instance
  */
-H.color = function (
-    input: (
-        Highcharts.ColorString|Highcharts.GradientColorObject|
-        Highcharts.PatternObject|undefined
-    )
-): Highcharts.Color {
-    return new H.Color(input);
-};
+H.color = Color.parse;
+
+export default H.Color;

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Extend SVG and Chart classes with focus border capabilities.
  *
@@ -11,9 +11,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-var addEvent = H.addEvent;
 import U from '../../parts/Utilities.js';
-var extend = U.extend, pick = U.pick;
+var addEvent = U.addEvent, extend = U.extend, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /*
  * Add focus border functionality to SVGElements. Draws a new rect on top of

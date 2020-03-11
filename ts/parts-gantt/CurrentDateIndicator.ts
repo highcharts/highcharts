@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2016-2019 Highsoft AS
+ *  (c) 2016-2020 Highsoft AS
  *
  *  Author: Lars A. V. Cabrera
  *
@@ -56,13 +56,14 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
+    merge,
     wrap
 } = U;
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
-    PlotLineOrBand = H.PlotLineOrBand,
-    merge = H.merge;
+import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+
+var Axis = H.Axis;
 
 
 var defaultConfig: (

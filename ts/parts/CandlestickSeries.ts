@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -45,11 +45,13 @@ declare global {
     }
 }
 
-import './Utilities.js';
+import U from './Utilities.js';
+const {
+    merge,
+    seriesType
+} = U;
 
 var defaultPlotOptions = H.defaultPlotOptions,
-    merge = H.merge,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

@@ -14,6 +14,7 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 const {
+    merge,
     objectEach
 } = U;
 
@@ -94,7 +95,7 @@ declare global {
 H.ajax = function (
     attr: Partial<Highcharts.AjaxSettingsObject>
 ): (false|undefined) {
-    var options = H.merge(true, {
+    var options = merge(true, {
             url: false as any,
             type: 'get',
             dataType: 'json',

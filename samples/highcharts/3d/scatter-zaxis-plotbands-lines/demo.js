@@ -38,7 +38,7 @@ Highcharts.chart('container', {
         plotBands: [{
             from: 4,
             to: 6,
-            color: Highcharts.Color(Highcharts.getOptions().colors[2]).setOpacity(0.5).get()
+            color: Highcharts.color(Highcharts.getOptions().colors[2]).setOpacity(0.5).get()
         }],
         tickInterval: 2,
         min: 0,

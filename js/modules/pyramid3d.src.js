@@ -2,7 +2,7 @@
  *
  *  Highcharts pyramid3d series module
  *
- *  (c) 2010-2019 Highsoft AS
+ *  (c) 2010-2020 Highsoft AS
  *  Author: Kacper Madej
  *
  *  License: www.highcharts.com/license
@@ -11,11 +11,10 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
 import '../parts/ColumnSeries.js';
 import '../parts/SvgRenderer.js';
-var seriesType = H.seriesType;
 /**
  * The pyramid3d series type.
  *

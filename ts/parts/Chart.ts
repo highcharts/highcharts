@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -83,6 +83,7 @@ declare global {
             public credits?: SVGElement;
             public caption?: SVGElement;
             public hasCartesianSeries?: boolean;
+            public hasLoaded?: boolean;
             public hasRendered?: boolean;
             public index: number;
             public isDirtyBox?: boolean;
@@ -288,18 +289,32 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
+import Legend from './Legend.js';
+import MSPointer from './MSPointer.js';
+import Pointer from './Pointer.js';
+import Time from './Time.js';
 import U from './Utilities.js';
 const {
+    addEvent,
+    animate,
     animObject,
     attr,
+    createElement,
+    css,
     defined,
     discardElement,
     erase,
+    error,
     extend,
+    find,
+    fireEvent,
+    getStyle,
     isArray,
+    isFunction,
     isNumber,
     isObject,
     isString,
+    merge,
     numberFormat,
     objectEach,
     pick,
@@ -308,28 +323,19 @@ const {
     removeEvent,
     setAnimation,
     splat,
-    syncTimeout
+    syncTimeout,
+    uniqueKey
 } = U;
 
 import './Axis.js';
-import './Legend.js';
 import './Options.js';
 import './Pointer.js';
 
-var addEvent = H.addEvent,
-    animate = H.animate,
-    doc = H.doc,
+var doc = H.doc,
     Axis = H.Axis, // @todo add as requirement
-    createElement = H.createElement,
     defaultOptions = H.defaultOptions,
     charts = H.charts,
-    css = H.css,
-    find = H.find,
-    fireEvent = H.fireEvent,
-    Legend = H.Legend, // @todo add as requirement
     marginNames = H.marginNames,
-    merge = H.merge,
-    Pointer = H.Pointer, // @todo add as requirement
     seriesTypes = H.seriesTypes,
     win = H.win;
 
@@ -569,7 +575,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              */
             this.time =
                 userOptions.time && Object.keys(userOptions.time).length ?
-                    new H.Time(userOptions.time) :
+                    new Time(userOptions.time) :
                     H.time;
 
             /**
@@ -613,7 +619,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     event: Highcharts.EventCallbackFunction<Highcharts.Chart>,
                     eventType: string
                 ): void {
-                    if (H.isFunction(event)) {
+                    if (isFunction(event)) {
                         addEvent(chart, eventType, event);
                     }
                 });
@@ -674,7 +680,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart, { missingModuleFor: type });
+            error(17, true, chart, { missingModuleFor: type });
         }
 
         series = new Constr();
@@ -782,12 +788,19 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         inverted?: boolean
     ): boolean {
         var x = inverted ? plotY : plotX,
-            y = inverted ? plotX : plotY;
+            y = inverted ? plotX : plotY,
+            e = {
+                x,
+                y,
+                isInsidePlot: x >= 0 &&
+                    x <= this.plotWidth &&
+                    y >= 0 &&
+                    y <= this.plotHeight
+            };
 
-        return x >= 0 &&
-            x <= this.plotWidth &&
-            y >= 0 &&
-            y <= this.plotHeight;
+        fireEvent(this, 'afterIsInsidePlot', e);
+
+        return e.isInsidePlot;
     },
 
     /**
@@ -842,7 +855,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive(false);
         }
 
-        setAnimation(animation as any, chart);
+        // Set the global animation. When chart.hasRendered is not true, the
+        // redraw call comes from a responsive rule and animation should not
+        // occur.
+        setAnimation(chart.hasRendered ? animation : false, chart);
 
         if (isHiddenChart) {
             chart.temporaryDisplay();
@@ -1114,7 +1130,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // points outside the visible range (#6445). For grouped data,
             // inspect the generated series.points.
             points = points.concat(
-                (serie[serie.hasGroupedData ? 'points' : 'data'] || []).filter(
+                serie.getPointsCollection().filter(
                     function (point: Highcharts.Point): boolean {
                         return pick(
                             point.selectedStaging, point.selected as any
@@ -1415,10 +1431,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Get inner width and height
         if (!defined(widthOption)) {
-            chart.containerWidth = H.getStyle(renderTo, 'width') as any;
+            chart.containerWidth = getStyle(renderTo, 'width') as any;
         }
         if (!defined(heightOption)) {
-            chart.containerHeight = H.getStyle(renderTo, 'height') as any;
+            chart.containerHeight = getStyle(renderTo, 'height') as any;
         }
 
         /**
@@ -1483,7 +1499,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     doc.body.appendChild(node);
                 }
                 if (
-                    H.getStyle(node, 'display', false) === 'none' ||
+                    getStyle(node, 'display', false) === 'none' ||
                     (node as any).hcOricDetached
                 ) {
                     (node as any).hcOrigStyle = {
@@ -1499,7 +1515,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                         tempStyle.height = 0;
                     }
 
-                    H.css(node, tempStyle);
+                    css(node, tempStyle);
 
                     // If it still doesn't have an offset width after setting
                     // display to block, it probably has an !important priority
@@ -1517,7 +1533,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else {
             while (node && node.style) {
                 if ((node as any).hcOrigStyle) {
-                    H.css(node, (node as any).hcOrigStyle);
+                    css(node, (node as any).hcOrigStyle);
                     delete (node as any).hcOrigStyle;
                 }
                 if ((node as any).hcOrigDetached) {
@@ -1565,7 +1581,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             indexAttrName = 'data-highcharts-chart',
             oldChartIndex,
             Ren,
-            containerId = H.uniqueKey(),
+            containerId = uniqueKey(),
             containerStyle,
             key;
 
@@ -1581,7 +1597,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Display an error if the renderTo is wrong
         if (!renderTo) {
-            H.error(13, true, chart);
+            error(13, true, chart);
         }
 
         // If the container already holds a chart, destroy it. The check for
@@ -1678,6 +1694,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             options.exporting && options.exporting.allowHTML,
             chart.styledMode
         );
+        // Set the initial animation from the options
+        setAnimation(void 0, chart);
 
 
         chart.setClassName(optionsChart.className);
@@ -1686,7 +1704,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         } else {
             // Initialize definitions
             for (key in options.defs) { // eslint-disable-line guard-for-in
-                this.renderer.definition(options.defs[key]);
+                this.renderer.definition((options.defs as any)[key]);
             }
         }
 
@@ -1805,8 +1823,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 defined(optionsChart.width) &&
                 defined(optionsChart.height)
             ),
-            width = optionsChart.width || H.getStyle(renderTo, 'width'),
-            height = optionsChart.height || H.getStyle(renderTo, 'height'),
+            width = optionsChart.width || getStyle(renderTo, 'width'),
+            height = optionsChart.height || getStyle(renderTo, 'height'),
             target = e ? e.target : win;
 
         // Width and height checks for display:none. Target is doc in IE8 and
@@ -1822,7 +1840,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 width !== chart.containerWidth ||
                 height !== chart.containerHeight
             ) {
-                H.clearTimeout(chart.reflowTimeout as any);
+                U.clearTimeout(chart.reflowTimeout as any);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function (): void {
@@ -2826,22 +2844,25 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // depends on inverted and on margins being set
         if (Pointer) {
-
-            /**
-             * The Pointer that keeps track of mouse and touch interaction.
-             *
-             * @memberof Highcharts.Chart
-             * @name pointer
-             * @type {Highcharts.Pointer}
-             * @instance
-             */
-            chart.pointer = new Pointer(chart, options);
+            if (!H.hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
+                chart.pointer = new MSPointer(chart, options);
+            } else {
+                /**
+                 * The Pointer that keeps track of mouse and touch interaction.
+                 *
+                 * @memberof Highcharts.Chart
+                 * @name pointer
+                 * @type {Highcharts.Pointer}
+                 * @instance
+                 */
+                chart.pointer = new Pointer(chart, options);
+            }
         }
 
         chart.render();
 
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && chart.onload) {
+        if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
         }
 
@@ -2884,7 +2905,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
 
         // Don't run again
-        this.onload = null as any;
+        this.hasLoaded = true;
     }
 
 }); // end Chart

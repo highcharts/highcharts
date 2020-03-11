@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -185,10 +185,12 @@ import H from './Globals.js';
 * @name Highcharts.ChartSelectionAxisContextObject#min
 * @type {number}
 */
-import './Color.js';
-import './Utilities.js';
-import './Time.js';
-var color = H.color, isTouchDevice = H.isTouchDevice, merge = H.merge, svg = H.svg;
+import Time from './Time.js';
+import Color from './Color.js';
+var color = Color.parse;
+import U from './Utilities.js';
+var merge = U.merge;
+var isTouchDevice = H.isTouchDevice, svg = H.svg;
 /* ************************************************************************** *
  * Handle the options                                                         *
  * ************************************************************************** */
@@ -359,7 +361,7 @@ H.defaultOptions = {
          */
         decimalPoint: '.',
         /**
-         * [Metric prefixes](http://en.wikipedia.org/wiki/Metric_prefix) used
+         * [Metric prefixes](https://en.wikipedia.org/wiki/Metric_prefix) used
          * to shorten high numbers in axis labels. Replacing any of the
          * positions with `null` causes the full number to be written. Setting
          * `numericSymbols` to `null` disables shortening altogether.
@@ -430,7 +432,7 @@ H.defaultOptions = {
      *
      * The URL to the additional file to lazy load for Android 2.x devices.
      * These devices don't support SVG, so we download a helper file that
-     * contains [canvg](http://code.google.com/p/canvg/), its dependency
+     * contains [canvg](https://github.com/canvg/canvg), its dependency
      * rbcolor, and our own CanVG Renderer class. To avoid hotlinking to
      * our site, you can install canvas-tools.js on your own server and
      * change this option accordingly.
@@ -438,7 +440,7 @@ H.defaultOptions = {
      * @deprecated
      *
      * @type      {string}
-     * @default   http://code.highcharts.com/{version}/modules/canvas-tools.js
+     * @default   https://code.highcharts.com/{version}/modules/canvas-tools.js
      * @product   highcharts highmaps
      * @apioption global.canvasToolsURL
      */
@@ -497,7 +499,7 @@ H.defaultOptions = {
      * @apioption global.timezoneOffset
      */
     global: {},
-    time: H.Time.prototype.defaultOptions,
+    time: Time.defaultOptions,
     /**
      * General options for the chart.
      */
@@ -575,6 +577,10 @@ H.defaultOptions = {
          *   `Math` object. See
          *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
          *
+         * When zooming on a series with less than 100 points, the chart redraw
+         * will be done with animation, but in case of more data points, it is
+         * necessary to set this option to ensure animation on zoom.
+         *
          * @sample {highcharts} highcharts/chart/animation-none/
          *         Updating with no animation
          * @sample {highcharts} highcharts/chart/animation-duration/
@@ -587,7 +593,7 @@ H.defaultOptions = {
          *         With a longer duration
          *
          * @type      {boolean|Highcharts.AnimationOptionsObject}
-         * @default   true
+         * @default   undefined
          * @apioption chart.animation
          */
         /**
@@ -3002,6 +3008,8 @@ H.defaultOptions = {
          *         A fixed tooltip position
          * @sample {highstock} stock/tooltip/split-positioner/
          *         Split tooltip with fixed positions
+         * @sample {highstock} stock/tooltip/positioner-scrollable-plotarea/
+         *         Scrollable plot area combined with tooltip positioner
          *
          * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
@@ -3092,6 +3100,17 @@ H.defaultOptions = {
          * @since     5.0.0
          * @product   highcharts highstock
          * @apioption tooltip.split
+         */
+        /**
+         * Prevents the tooltip from switching or closing, when touched or
+         * pointed.
+         *
+         * @sample highcharts/tooltip/stickoncontact/
+         *         Tooltip sticks on pointer contact
+         *
+         * @type      {boolean}
+         * @since     8.0.1
+         * @apioption tooltip.stickOnContact
          */
         /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using
@@ -3401,8 +3420,6 @@ H.defaultOptions = {
             /** @internal */
             fontSize: '12px',
             /** @internal */
-            pointerEvents: 'none',
-            /** @internal */
             whiteSpace: 'nowrap'
         }
     },
@@ -3562,17 +3579,38 @@ H.defaultPlotOptions = H.defaultOptions.plotOptions;
  * @name Highcharts.time
  * @type {Highcharts.Time}
  */
-H.time = new H.Time(merge(H.defaultOptions.global, H.defaultOptions.time));
+H.time = new Time(merge(H.defaultOptions.global, H.defaultOptions.time));
 /**
  * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970) into a
  * human readable date string. The format is a subset of the formats for PHP's
- * [strftime](http://www.php.net/manual/en/function.strftime.php) function.
+ * [strftime](https://www.php.net/manual/en/function.strftime.php) function.
  * Additional formats can be given in the {@link Highcharts.dateFormats} hook.
  *
  * Since v6.0.5, all internal dates are formatted through the
  * {@link Highcharts.Chart#time} instance to respect chart-level time settings.
  * The `Highcharts.dateFormat` function only reflects global time settings set
  * with `setOptions`.
+ *
+ * Supported format keys:
+ * - `%a`: Short weekday, like 'Mon'
+ * - `%A`: Long weekday, like 'Monday'
+ * - `%d`: Two digit day of the month, 01 to 31
+ * - `%e`: Day of the month, 1 through 31
+ * - `%w`: Day of the week, 0 through 6
+ * - `%b`: Short month, like 'Jan'
+ * - `%B`: Long month, like 'January'
+ * - `%m`: Two digit month number, 01 through 12
+ * - `%y`: Two digits year, like 09 for 2009
+ * - `%Y`: Four digits year, like 2009
+ * - `%H`: Two digits hours in 24h format, 00 through 23
+ * - `%k`: Hours in 24h format, 0 through 23
+ * - `%I`: Two digits hours in 12h format, 00 through 11
+ * - `%l`: Hours in 12h format, 1 through 12
+ * - `%M`: Two digits minutes, 00 through 59
+ * - `%p`: Upper case AM or PM
+ * - `%P`: Lower case AM or PM
+ * - `%S`: Two digits seconds, 00 through 59
+ * - `%L`: Milliseconds (naming from Ruby)
  *
  * @function Highcharts.dateFormat
  *

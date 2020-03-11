@@ -20,16 +20,7 @@ Highcharts.chart('container', {
 
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var index = point.index + 1,
-                    country = point.name,
-                    fatIntake = point.x,
-                    sugarIntake = point.y,
-                    obesity = point.z;
-
-                return index + ', ' + country + ', fat: ' + fatIntake +
-                    'g, sugar: ' + sugarIntake + 'g, obesity: ' + obesity + '%.';
-            }
+            valueDescriptionFormat: '{index}. {point.name}, fat: {point.x}g, sugar: {point.y}g, obesity: {point.z}%.'
         }
     },
 

@@ -24,7 +24,7 @@ import H from '../parts/Globals.js';
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  */ /**
 * The color of the node.
@@ -44,15 +44,16 @@ import H from '../parts/Globals.js';
 * @type {string}
 * @since 7.0.0
 */
+import Color from '../parts/Color.js';
+var color = Color.parse;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Axis.js';
-import '../parts/Color.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
-var seriesType = H.seriesType, Series = H.Series, Point = H.Point, addEvent = H.addEvent, fireEvent = H.fireEvent, Chart = H.Chart, color = H.Color, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
+var Series = H.Series, Chart = H.Chart, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
 H.networkgraphIntegrations.packedbubble = {
     repulsiveForceFunction: function (d, k, node, repNode) {
         return Math.min(d, (node.marker.radius + repNode.marker.radius) / 2);
@@ -569,7 +570,12 @@ seriesType('packedbubble', 'bubble',
                     });
                 }
             });
-            series.chart.hideOverlappingLabels(dataLabels);
+            // Only hide overlapping dataLabels for layouts that
+            // use simulation. Spiral packedbubble don't need
+            // additional dataLabel hiding on every simulation step
+            if (series.options.useSimulation) {
+                series.chart.hideOverlappingLabels(dataLabels);
+            }
         }
     },
     // Needed because of z-indexing issue if point is added in series.group
@@ -675,8 +681,7 @@ seriesType('packedbubble', 'bubble',
             return;
         }
         var series = this, chart = series.chart, parentAttribs = {}, nodeMarker = this.layout.options.parentNodeOptions.marker, parentOptions = {
-            fill: nodeMarker.fillColor ||
-                color(series.color).brighten(0.4).get(),
+            fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
             opacity: nodeMarker.fillOpacity,
             stroke: nodeMarker.lineColor || series.color,
             'stroke-width': nodeMarker.lineWidth
@@ -689,7 +694,7 @@ seriesType('packedbubble', 'bubble',
             });
         }
         this.calculateParentRadius();
-        parentAttribs = H.merge({
+        parentAttribs = merge({
             x: series.parentNode.plotX -
                 series.parentNodeRadius,
             y: series.parentNode.plotY -
@@ -753,7 +758,7 @@ seriesType('packedbubble', 'bubble',
      * @private
      */
     addSeriesLayout: function () {
-        var series = this, layoutOptions = series.options.layoutAlgorithm, graphLayoutsStorage = series.chart.graphLayoutsStorage, graphLayoutsLookup = series.chart.graphLayoutsLookup, parentNodeOptions = H.merge(layoutOptions, layoutOptions.parentNodeOptions, {
+        var series = this, layoutOptions = series.options.layoutAlgorithm, graphLayoutsStorage = series.chart.graphLayoutsStorage, graphLayoutsLookup = series.chart.graphLayoutsLookup, parentNodeOptions = merge(layoutOptions, layoutOptions.parentNodeOptions, {
             enableSimulation: series.layout.options.enableSimulation
         }), parentNodeLayout;
         parentNodeLayout = graphLayoutsStorage[layoutOptions.type + '-series'];
@@ -1155,7 +1160,7 @@ seriesType('packedbubble', 'bubble',
                             node.marker.radius -
                             point.marker.radius);
                         if (distanceR < 0) {
-                            node.series.addPoint(H.merge(point.options, {
+                            node.series.addPoint(merge(point.options, {
                                 plotX: point.plotX,
                                 plotY: point.plotY
                             }), false);
@@ -1213,8 +1218,8 @@ addEvent(Chart, 'beforeRedraw', function () {
  *
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
- * @excluding dataParser,dataURL,stack,dataSorting
- * @product   highcharts highstock
+ * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
+ * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble
  */

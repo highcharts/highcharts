@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -110,7 +110,8 @@ declare global {
             getLinePath(
                 this: RadialAxis,
                 lineWidth: number,
-                radius?: number
+                radius?: number,
+                innerRadius?: number
             ): SVGPathArray;
             getOffset(this: RadialAxis): void;
             getPlotBandPath(
@@ -148,11 +149,14 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     correctFloat,
     defined,
     extend,
+    merge,
     pick,
     pInt,
     relativeLength,
@@ -160,15 +164,10 @@ const {
 } = U;
 
 import '../parts/Axis.js';
-import '../parts/Tick.js';
 import './Pane.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
-    merge = H.merge,
+var Axis = H.Axis,
     noop = H.noop,
-    Tick = H.Tick,
-
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,
     // @todo Extract this to a new file
@@ -342,13 +341,23 @@ radialAxisMixin = {
     getLinePath: function (
         this: Highcharts.RadialAxis,
         lineWidth: number,
-        radius?: number
+        radius?: number,
+        innerRadius?: number
     ): Highcharts.RadialAxisPath {
-        var center = this.center,
+        var center = this.pane.center,
             end,
             chart = this.chart,
             r = pick(radius, center[2] / 2 - this.offset),
             path: Highcharts.RadialAxisPath;
+
+        if (typeof innerRadius === 'undefined') {
+            innerRadius = this.horiz ? 0 : this.center && -this.center[3] / 2;
+        }
+
+        // In case when innerSize of pane is set, it must be included
+        if (innerRadius) {
+            r += innerRadius;
+        }
 
         if (this.isCircular || typeof radius !== 'undefined') {
             path = this.chart.renderer.symbols.arc(
@@ -373,8 +382,8 @@ radialAxisMixin = {
             end = this.postTranslate(this.angleRad, r);
             path = [
                 'M',
-                center[0] + chart.plotLeft,
-                center[1] + chart.plotTop,
+                this.center[0] + chart.plotLeft,
+                this.center[1] + chart.plotTop,
                 'L',
                 end.x,
                 end.y
@@ -403,10 +412,10 @@ radialAxisMixin = {
 
 
             } else {
-                this.transA = (
-                    (this.center[2] / 2) /
-                    ((this.max - this.min) || 1)
-                );
+                // The transA here is the length of the axis, so in case
+                // of inner radius, the length must be decreased by it
+                this.transA = ((this.center[2] - this.center[3]) / 2) /
+                ((this.max - this.min) || 1);
             }
 
             if (this.isXAxis) {
@@ -459,6 +468,8 @@ radialAxisMixin = {
      * @private
      */
     setAxisSize: function (this: Highcharts.RadialAxis): void {
+        var center: number[],
+            start;
 
         axisProto.setAxisSize.call(this);
 
@@ -467,16 +478,25 @@ radialAxisMixin = {
             // Set the center array
             this.pane.updateCenter(this);
 
+            // In case when the innerSize is set in a polar chart, the axis'
+            // center cannot be a reference to pane's center
+            center = this.center = extend([], this.pane.center);
+
             // The sector is used in Axis.translate to compute the
             // translation of reversed axis points (#2570)
             if (this.isCircular) {
                 this.sector = this.endAngleRad - this.startAngleRad;
+            } else {
+                // When the pane's startAngle or the axis' angle is set then new
+                // x and y values for vertical axis' center must be calulated
+                start = this.postTranslate(this.angleRad, center[3] / 2);
+                center[0] = start.x - this.chart.plotLeft;
+                center[1] = start.y - this.chart.plotTop;
             }
 
             // Axis len is used to lay out the ticks
             this.len = this.width = this.height =
-                this.center[2] * pick(this.sector, 1) / 2;
-
+                (center[2] - center[3]) * pick(this.sector, 1) / 2;
         }
     },
 
@@ -656,6 +676,7 @@ radialAxisMixin = {
     ): [(number | undefined), number, number] {
         var axis = this,
             value = options.value,
+            center = axis.pane.center,
             shapeArgs,
             end,
             x2,
@@ -677,8 +698,9 @@ radialAxisMixin = {
                 if (shapeArgs.start) {
                     // Find a true value of the point based on the
                     // angle
-                    value = axis.translate(
-                        (options.point.rectPlotY as any), true);
+                    value = axis.chart.inverted ?
+                        axis.translate(options.point.rectPlotY as any, true) :
+                        options.point.x as any;
                 }
             }
             end = axis.getPosition(value as any);
@@ -692,11 +714,11 @@ radialAxisMixin = {
 
             if (defined(x2) && defined(y2)) {
                 // Calculate radius of non-circular axis' crosshair
+                y1 = center[1] + axis.chart.plotTop;
                 value = axis.translate(Math.min(
                     Math.sqrt(
                         Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)
-                    ), axis.len
-                ), true);
+                    ), center[2] / 2) - center[3] / 2, true);
             }
         }
 
@@ -711,7 +733,7 @@ radialAxisMixin = {
         options: Highcharts.AxisPlotLinesOptions
     ): Highcharts.SVGPathArray {
         var axis = this,
-            center = axis.center,
+            center = axis.pane.center,
             chart = axis.chart,
             inverted = chart.inverted,
             value = options.value,
@@ -727,6 +749,11 @@ radialAxisMixin = {
             y1 = center[1] + chart.plotTop,
             x2 = end.x,
             y2 = end.y,
+            height = axis.height,
+            isCrosshair = options.isCrosshair,
+            paneInnerR = center[3] / 2,
+            innerRatio,
+            distance,
             a,
             b,
             otherAxis: (Highcharts.RadialAxis|undefined),
@@ -736,7 +763,7 @@ radialAxisMixin = {
             ret: Highcharts.SVGPathArray;
 
         // Crosshair logic
-        if (options.isCrosshair) {
+        if (isCrosshair) {
             // Find crosshair's position and perform destructuring assignment
             crossPos = this.getCrosshairPosition(options, x1, y1);
             value = crossPos[0];
@@ -746,17 +773,26 @@ radialAxisMixin = {
 
         // Spokes
         if (axis.isCircular) {
-            a = (typeof innerRadius === 'string') ?
-                relativeLength(innerRadius, 1) : (
-                    innerRadius /
-                    Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-                );
+            distance =
+                Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
 
+            a = (typeof innerRadius === 'string') ?
+                relativeLength(innerRadius, 1) : (innerRadius / distance);
             b = (typeof outerRadius === 'string') ?
-                relativeLength(outerRadius, 1) : (
-                    outerRadius /
-                    Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2))
-                );
+                relativeLength(outerRadius, 1) : (outerRadius / distance);
+
+            // To ensure that gridlines won't be displayed in area
+            // defined by innerSize in case of custom radiuses of pane's
+            // background
+            if (center && paneInnerR) {
+                innerRatio = paneInnerR / distance;
+                if (a < innerRatio) {
+                    a = innerRatio;
+                }
+                if (b < innerRatio) {
+                    b = innerRatio;
+                }
+            }
 
             ret = [
                 'M',
@@ -776,16 +812,17 @@ radialAxisMixin = {
             // prevent grid lines (or crosshairs, if enabled) from
             // rendering above the center after they supposed to be
             // displayed below the center point
-            if (!options.isCrosshair &&
-                (value as any < 0 || value as any > axis.height) && inverted) {
-                value = 0;
+            if (value) {
+                if (value < 0 || value > height) {
+                    value = 0;
+                }
             }
 
             if (axis.options.gridLineInterpolation === 'circle') {
                 // A value of 0 is in the center, so it won't be
                 // visible, but draw it anyway for update and animation
                 // (#2366)
-                ret = axis.getLinePath(0, value);
+                ret = axis.getLinePath(0, value, paneInnerR);
                 // Concentric polygons
             } else {
                 // Find the other axis (a circular one) in the same pane
@@ -810,6 +847,9 @@ radialAxisMixin = {
                     tickPositions = [].concat(tickPositions).reverse();
                 }
 
+                if (value) {
+                    value += paneInnerR;
+                }
                 tickPositions.forEach(function (pos: number, i: number): void {
                     xy = (otherAxis as any).getPosition(pos, value);
                     ret.push(i ? 'L' : 'M', xy.x, xy.y);

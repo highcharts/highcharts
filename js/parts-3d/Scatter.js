@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Scatter 3D series.
  *
@@ -11,8 +11,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var Point = H.Point, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
+var seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class

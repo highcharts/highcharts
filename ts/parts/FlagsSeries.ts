@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -99,9 +99,12 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    addEvent,
     defined,
     isNumber,
+    merge,
     objectEach,
+    seriesType,
     wrap
 } = U;
 
@@ -109,12 +112,9 @@ import './Series.js';
 import './SvgRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
-var addEvent = H.addEvent,
-    merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     Renderer = H.Renderer,
     Series = H.Series,
-    seriesType = H.seriesType,
     SVGRenderer = H.SVGRenderer,
     TrackerMixin = H.TrackerMixin,
     VMLRenderer = H.VMLRenderer,
@@ -153,7 +153,7 @@ seriesType<Highcharts.FlagsSeries>(
          * In case the flag is placed on a series, on what point key to place
          * it. Line and columns have one key, `y`. In range or OHLC-type series,
          * however, the flag can optionally be placed on the `open`, `high`,
-         *  `low` or `close` key.
+         * `low` or `close` key.
          *
          * @sample {highstock} stock/plotoptions/flags-onkey/
          *         Range series, flag on high
@@ -694,8 +694,6 @@ seriesType<Highcharts.FlagsSeries>(
         animate: function (this: Highcharts.FlagsSeries, init?: boolean): void {
             if (init) {
                 this.setClip();
-            } else {
-                this.animate = null as any;
             }
         },
 
@@ -839,7 +837,10 @@ if ((Renderer as unknown) === VMLRenderer) {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.flags
- * @excluding dataParser, dataURL
+ * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
+ *            connectNulls, dashStyle, dataGrouping, dataParser, dataURL,
+ *            gapSize, gapUnit, linecap, lineWidth, marker, pointPadding,
+ *            pointWidth, step, turboThreshold, useOhlcData
  * @product   highstock
  * @apioption series.flags
  */

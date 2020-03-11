@@ -1,9 +1,60 @@
+QUnit.test('Mapping of color key with custom sub option', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        colorAxis: [{}, {
+            minColor: '#F00',
+            maxColor: '#F0F'
+        }],
+        plotOptions: {
+            series: {
+                colorAxis: 1,
+                colorKey: 'custom.background-color'
+            }
+        },
+        series: [{
+            data: [{
+                y: 0,
+                custom: {
+                    'background-color': 0
+                }
+            }, {
+                y: 1,
+                custom: {
+                    'background-color': 0.5
+                }
+            }, {
+                y: 0,
+                custom: {
+                    'background-color': 1
+                }
+            }]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.series[0].points[0].color,
+        'rgb(255,0,0)',
+        'Color of first point should be red'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[1].color,
+        'rgb(255,0,128)',
+        'Color of second point should be mixed'
+    );
+
+    assert.strictEqual(
+        chart.series[0].points[2].color,
+        'rgb(255,0,255)',
+        'Color of third point should be pink'
+    );
+
+});
+
 QUnit.test('Point color presedence (#4397)', function (assert) {
 
-    var chart;
-
     // Initiate the chart
-    $('#container').highcharts('Map', {
+    var chart = Highcharts.mapChart('container', {
 
         title: {
             text: 'Map with inline point paths'
@@ -74,8 +125,6 @@ QUnit.test('Point color presedence (#4397)', function (assert) {
         }]
     });
 
-    chart = $('#container').highcharts();
-
     assert.strictEqual(
         chart.series[0].points[0].graphic.attr('fill'),
         'blue',
@@ -89,6 +138,4 @@ QUnit.test('Point color presedence (#4397)', function (assert) {
         'blue',
         'Point color takes precedence after redraw'
     );
-
-
 });

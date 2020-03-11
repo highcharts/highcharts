@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -185,6 +185,7 @@ const {
     correctFloat,
     defined,
     destroyObjectProperties,
+    format,
     objectEach,
     pick
 } = U;
@@ -195,7 +196,6 @@ import './Series.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    format = H.format,
     Series = H.Series;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -259,9 +259,8 @@ H.StackItem = function (
         y: options.y,
         x: options.x
     };
-
     this.textAlign = options.textAlign ||
-        (inverted ? (isNegative ? 'right' : 'left') : 'center');
+    (inverted ? (isNegative ? 'right' : 'left') : 'center');
 } as any;
 
 H.StackItem.prototype = {
@@ -316,9 +315,8 @@ H.StackItem.prototype = {
 
             attr = {
                 text: str,
-                align: this.textAlign,
                 rotation: (options as any).rotation,
-                padding: pick((options as any).padding, 0),
+                padding: pick((options as any).padding, 5), // set default padding to 5 as it is in datalabels #12308
                 visibility: 'hidden' // hidden until setOffset is called
             };
             this.label.attr(attr);
@@ -389,43 +387,74 @@ H.StackItem.prototype = {
             isNegative = stackItem.isNegative,
             isJustify = pick(stackItem.options.overflow,
                 'justify') === 'justify',
-            visible,
-            alignAttr;
+            textAlign = stackItem.textAlign,
+            visible;
 
         if (label && stackBox) {
             var bBox = label.getBBox(),
-                boxOffsetX = chart.inverted ?
-                    (isNegative ? bBox.width : 0) : bBox.width / 2,
-                boxOffsetY = chart.inverted ?
-                    bBox.height / 2 : (isNegative ? -4 : bBox.height + 4);
+                padding = label.padding,
+                boxOffsetX,
+                boxOffsetY;
 
+            if (textAlign === 'left') {
+                boxOffsetX = chart.inverted ? -padding : padding;
+            } else if (textAlign === 'right') {
+                boxOffsetX = bBox.width;
+            } else {
+                if (chart.inverted && textAlign === 'center') {
+                    boxOffsetX = bBox.width / 2;
+                } else {
+                    boxOffsetX = chart.inverted ?
+                        (isNegative ? bBox.width + padding : -padding) : bBox.width / 2;
+                }
+            }
+
+            boxOffsetY = chart.inverted ?
+                bBox.height / 2 : (isNegative ? -padding : bBox.height);
+
+            // Reset alignOptions property after justify #12337
             stackItem.alignOptions.x = pick(stackItem.options.x, 0);
+            stackItem.alignOptions.y = pick(stackItem.options.y, 0);
+
+            // Set the stackBox position
+            stackBox.x -= boxOffsetX;
+            stackBox.y -= boxOffsetY;
+
             // Align the label to the box
             label.align(stackItem.alignOptions, null as any, stackBox);
-            // Set visibility (#678)
-            alignAttr = label.alignAttr;
-            label.show();
-            // Set label above/under stackBox
-            alignAttr.y -= boxOffsetY;
-            if (isJustify) {
-                // Set label x position for justifyDataLabel function
-                alignAttr.x -= boxOffsetX;
-                Series.prototype.justifyDataLabel.call(this.axis,
-                    label, stackItem.alignOptions, alignAttr, bBox, stackBox);
-                alignAttr.x += boxOffsetX;
+
+            // Check if label is inside the plotArea #12294
+            if (chart.isInsidePlot(
+                label.alignAttr.x + boxOffsetX - stackItem.alignOptions.x,
+                label.alignAttr.y + boxOffsetY - stackItem.alignOptions.y
+            )) {
+                label.show();
+            } else {
+                // Move label away to avoid the overlapping issues
+                label.alignAttr.y = -9999;
+                isJustify = false;
             }
-            alignAttr.x = label.alignAttr.x;
+
+            if (isJustify) {
+                // Justify stackLabel into the stackBox
+                Series.prototype.justifyDataLabel.call(
+                    this.axis,
+                    label,
+                    stackItem.alignOptions,
+                    label.alignAttr,
+                    bBox,
+                    stackBox
+                );
+            }
             label.attr({
-                x: alignAttr.x,
-                y: alignAttr.y
+                x: label.alignAttr.x,
+                y: label.alignAttr.y
             });
 
             if (pick(!isJustify && stackItem.options.crop, true)) {
-                visible = chart.isInsidePlot(label.x +
-                    (chart.inverted ? 0 : -bBox.width / 2), label.y) &&
-                    chart.isInsidePlot(label.x + (chart.inverted ?
-                        (isNegative ? -bBox.width : bBox.width) :
-                        bBox.width / 2), label.y + bBox.height);
+                visible = chart.isInsidePlot(label.x - padding + label.width, label.y) &&
+                    chart.isInsidePlot(label.x + padding, label.y);
+
                 if (!visible) {
                     label.hide();
                 }

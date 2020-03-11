@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2019 Wojciech Chmiel
+ *  (c) 2010-2020 Wojciech Chmiel
  *
  *  License: www.highcharts.com/license
  *
@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
-var each = H.each, merge = H.merge, error = H.error, SMA = H.seriesTypes.sma;
+var defined = U.defined, error = U.error, merge = U.merge;
+var each = H.each, SMA = H.seriesTypes.sma;
 /**
  * Mixin useful for all indicators that have more than one line.
  * Merge it with your implementation where you will provide

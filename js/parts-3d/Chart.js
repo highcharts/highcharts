@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Extension for 3D charts
  *
@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import '../parts/Chart.js';
-var addEvent = H.addEvent, Chart = H.Chart, merge = H.merge, perspective = H.perspective;
+var Chart = H.Chart, perspective = H.perspective;
 /**
  * Shorthand to check the is3d flag.
  * @private
@@ -150,7 +150,7 @@ var extendedOptions = {
         /**
          * Options to render charts in 3 dimensions. This feature requires
          * `highcharts-3d.js`, found in the download package or online at
-         * [code.highcharts.com/highcharts-3d.js](http://code.highcharts.com/highcharts-3d.js).
+         * [code.highcharts.com/highcharts-3d.js](https://code.highcharts.com/highcharts-3d.js).
          *
          * @since    4.0
          * @product  highcharts
@@ -360,6 +360,11 @@ wrap(Chart.prototype, 'setClassName', function (proceed) {
 addEvent(H.Chart, 'afterSetChartSize', function () {
     var chart = this, options3d = chart.options.chart.options3d;
     if (chart.is3d()) {
+        // Add a 0-360 normalisation for alfa and beta angles in 3d graph
+        if (options3d) {
+            options3d.alpha = options3d.alpha % 360 + (options3d.alpha >= 0 ? 0 : 360);
+            options3d.beta = options3d.beta % 360 + (options3d.beta >= 0 ? 0 : 360);
+        }
         var inverted = chart.inverted, clipBox = chart.clipBox, margin = chart.margin, x = inverted ? 'y' : 'x', y = inverted ? 'x' : 'y', w = inverted ? 'height' : 'width', h = inverted ? 'width' : 'height';
         clipBox[x] = -(margin[3] || 0);
         clipBox[y] = -(margin[0] || 0);

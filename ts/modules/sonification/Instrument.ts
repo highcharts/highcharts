@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Instrument class for sonification module.
  *
@@ -13,7 +13,12 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    error,
+    merge,
+    pick,
+    uniqueKey
+} = U;
 
 /**
  * Internal types.
@@ -221,11 +226,11 @@ Instrument.prototype.init = function (
     options: Highcharts.InstrumentOptionsObject
 ): void {
     if (!this.initAudioContext()) {
-        H.error(29);
+        error(29);
         return;
     }
-    this.options = H.merge(defaultOptions, options);
-    this.id = this.options.id = options && options.id || H.uniqueKey();
+    this.options = merge(defaultOptions, options);
+    this.id = this.options.id = options && options.id || uniqueKey();
 
     // Init the audio nodes
     var ctx = H.audioContext;
@@ -270,7 +275,7 @@ Instrument.prototype.copy = function (
     options?: Highcharts.InstrumentOptionsObject
 ): Highcharts.Instrument {
     return new (Instrument as any)(
-        H.merge(this.options, { id: null }, options)
+        merge(this.options, { id: null }, options)
     );
 };
 

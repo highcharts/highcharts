@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,11 +9,12 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var merge = U.merge, seriesType = U.seriesType;
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts-more/BubbleSeries.js';
-var merge = H.merge, Point = H.Point, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 // The mapbubble series type
 if (seriesTypes.bubble) {
     /**

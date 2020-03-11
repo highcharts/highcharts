@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Extension to the VML Renderer
  *
@@ -44,12 +44,15 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent
+} = U;
+
 import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
+var Axis = H.Axis,
     SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;
 

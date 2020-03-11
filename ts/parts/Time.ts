@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -12,18 +12,6 @@
 
 import Highcharts from './Globals.js';
 
-import U from './Utilities.js';
-const {
-    defined,
-    extend,
-    isObject,
-    objectEach,
-    pad,
-    pick,
-    splat,
-    timeUnits
-} = U;
-
 /**
  * Internal types
  * @private
@@ -34,6 +22,16 @@ declare global {
         Date: any;
     }
     namespace Highcharts {
+        type TimeUnitValue = (
+            'Date'|
+            'Day'|
+            'FullYear'|
+            'Hours'|
+            'Milliseconds'|
+            'Minutes'|
+            'Month'|
+            'Seconds'
+        );
         interface AxisTickPositionsArray {
             info?: TimeTicksInfoObject;
         }
@@ -56,20 +54,19 @@ declare global {
             totalRange: number;
         }
         class Time {
+            public static defaultOptions: TimeOptions;
             public constructor(options: TimeOptions);
             public Date: DateConstructor;
-            public defaultOptions: TimeOptions;
             public options: TimeOptions;
             public timezoneOffset?: number;
             public useUTC: boolean;
             public variableTimezone: boolean;
-            public dateFormat(timestamp: number, capitalize?: boolean): string;
             public dateFormat(
                 format: string,
                 timestamp: number,
                 capitalize?: boolean
             ): string;
-            public get(unit: string, date: Date): number;
+            public get(unit: TimeUnitValue, date: Date): number;
             public getTimeTicks(
                 normalizedInterval: TimeNormalizedObject,
                 min?: number,
@@ -88,11 +85,7 @@ declare global {
             public resolveDTLFormat<T>(
                 f: (string|Array<T>|Dictionary<T>)
             ): Dictionary<T>;
-            public set(
-                unit: string,
-                date: Date,
-                value: number
-            ): (number|undefined);
+            public set(unit: TimeUnitValue, date: Date, value: number): (number|undefined);
             public timezoneOffsetFunction(): Time['getTimezoneOffset']
             public update(options: TimeOptions): void;
         }
@@ -131,7 +124,7 @@ declare global {
  * Additonal time tick information.
  *
  * @interface Highcharts.TimeTicksInfoObject
- * @augments Highcharts.TimeNormalizedObject
+ * @extends Highcharts.TimeNormalizedObject
  *//**
  * @name Highcharts.TimeTicksInfoObject#higherRanks
  * @type {Array<string>}
@@ -144,13 +137,43 @@ declare global {
  * Time ticks.
  *
  * @interface Highcharts.AxisTickPositionsArray
+ * @extends global.Array<number>
  *//**
  * @name Highcharts.AxisTickPositionsArray#info
- * @type {Highcharts.TimeTicksInfoObject}
+ * @type {Highcharts.TimeTicksInfoObject|undefined}
  */
 
+/**
+ * A callback to return the time zone offset for a given datetime. It
+ * takes the timestamp in terms of milliseconds since January 1 1970,
+ * and returns the timezone offset in minutes. This provides a hook
+ * for drawing time based charts in specific time zones using their
+ * local DST crossover dates, with the help of external libraries.
+ *
+ * @callback Highcharts.TimezoneOffsetCallbackFunction
+ *
+ * @param {number} timestamp
+ * Timestamp in terms of milliseconds since January 1 1970.
+ *
+ * @return {number}
+ * Timezone offset in minutes.
+ */
+
+import U from './Utilities.js';
+const {
+    defined,
+    error,
+    extend,
+    isObject,
+    merge,
+    objectEach,
+    pad,
+    pick,
+    splat,
+    timeUnits
+} = U;
+
 var H = Highcharts,
-    merge = H.merge,
     win = H.win;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -188,22 +211,21 @@ var H = Highcharts,
  *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
  * );
  *
+ * @since 6.0.5
+ *
  * @class
  * @name Highcharts.Time
  *
  * @param {Highcharts.TimeOptions} options
- *        Time options as defined in [chart.options.time](/highcharts/time).
- *
- * @since 6.0.5
+ * Time options as defined in [chart.options.time](/highcharts/time).
  */
-Highcharts.Time = function (
-    this: Highcharts.Time,
-    options: Highcharts.TimeOptions
-): any {
-    (this.update as any)(options, false);
-} as any;
+class Time {
 
-Highcharts.Time.prototype = {
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
 
     /**
      * Time options that can apply globally or to individual charts. These
@@ -256,7 +278,7 @@ Highcharts.Time.prototype = {
      * @since     6.0.5
      * @optionparent time
      */
-    defaultOptions: {
+    public static defaultOptions: Highcharts.TimeOptions = {
         /**
          * A custom `Date` class for advanced date handling. For example,
          * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
@@ -279,13 +301,14 @@ Highcharts.Time.prototype = {
          * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
          *         Use moment.js to draw Oslo time regardless of browser locale
          *
+         * @type      {Highcharts.TimezoneOffsetCallbackFunction}
          * @since     4.1.0
          * @product   highcharts highstock gantt
          */
         getTimezoneOffset: void 0,
 
         /**
-         * Requires [moment.js](http://momentjs.com/). If the timezone option
+         * Requires [moment.js](https://momentjs.com/). If the timezone option
          * is specified, it creates a default
          * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
          * up the specified timezone in moment.js. If moment.js is not included,
@@ -332,35 +355,17 @@ Highcharts.Time.prototype = {
          *         False
          */
         useUTC: true
-    } as Highcharts.TimeOptions,
+    };
 
-    /**
-     * Update the Time object with current options. It is called internally on
-     * initializing Highcharts, after running `Highcharts.setOptions` and on
-     * `Chart.update`.
+    /* *
      *
-     * @private
-     * @function Highcharts.Time#update
+     *  Constructors
      *
-     * @param {Highcharts.TimeOptions} options
-     *
-     * @return {void}
-     */
-    update: function (
-        this: Highcharts.Time,
+     * */
+
+    public constructor(
         options: Highcharts.TimeOptions
-    ): void {
-        var useUTC = pick(options && options.useUTC, true) as boolean,
-            time = this;
-
-        this.options = options = merge(true, this.options || {}, options);
-
-        // Allow using a different Date class
-        this.Date = options.Date || win.Date || Date;
-
-        this.useUTC = useUTC;
-        this.timezoneOffset = (useUTC && options.timezoneOffset) as any;
-
+    ) {
         /**
          * Get the time zone offset based on the current timezone information as
          * set in the global options.
@@ -375,6 +380,153 @@ Highcharts.Time.prototype = {
          */
         this.getTimezoneOffset = this.timezoneOffsetFunction();
 
+        this.update(options);
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public options: Highcharts.TimeOptions = {};
+
+    public timezoneOffset?: number;
+
+    public useUTC: boolean = false;
+
+    public variableTimezone: boolean = false;
+
+    public Date: typeof Date = win.Date;
+
+    public getTimezoneOffset: ReturnType<Time['timezoneOffsetFunction']>;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Time units used in `Time.get` and `Time.set`
+     *
+     * @typedef {"Date"|"Day"|"FullYear"|"Hours"|"Milliseconds"|"Minutes"|"Month"|"Seconds"} Highcharts.TimeUnitValue
+     */
+
+    /**
+     * Get the value of a date object in given units, and subject to the Time
+     * object's current timezone settings. This function corresponds directly to
+     * JavaScripts `Date.getXXX / Date.getUTCXXX`, so instead of calling
+     * `date.getHours()` or `date.getUTCHours()` we will call
+     * `time.get('Hours')`.
+     *
+     * @function Highcharts.Time#get
+     *
+     * @param {Highcharts.TimeUnitValue} unit
+     * @param {Date} date
+     *
+     * @return {number}
+     *        The given time unit
+     */
+    public get(unit: Highcharts.TimeUnitValue, date: Date): number {
+        if (this.variableTimezone || this.timezoneOffset) {
+            const realMs = date.getTime();
+            const ms = realMs - this.getTimezoneOffset(date);
+
+            date.setTime(ms); // Temporary adjust to timezone
+            const ret = (date as any)['getUTC' + unit]();
+            date.setTime(realMs); // Reset
+            return ret;
+        }
+
+        // UTC time with no timezone handling
+        if (this.useUTC) {
+            return (date as any)['getUTC' + unit]();
+        }
+
+        // Else, local time
+        return (date as any)['get' + unit]();
+    }
+
+    /**
+     * Set the value of a date object in given units, and subject to the Time
+     * object's current timezone settings. This function corresponds directly to
+     * JavaScripts `Date.setXXX / Date.setUTCXXX`, so instead of calling
+     * `date.setHours(0)` or `date.setUTCHours(0)` we will call
+     * `time.set('Hours', 0)`.
+     *
+     * @function Highcharts.Time#set
+     *
+     * @param {Highcharts.TimeUnitValue} unit
+     * @param {Date} date
+     * @param {number} value
+     *
+     * @return {number}
+     *        The epoch milliseconds of the updated date
+     */
+    public set(unit: Highcharts.TimeUnitValue, date: Date, value: number): number {
+        // UTC time with timezone handling
+        if (this.variableTimezone || this.timezoneOffset) {
+            // For lower order time units, just set it directly using UTC
+            // time
+            if (
+                unit === 'Milliseconds' ||
+                unit === 'Seconds' ||
+                unit === 'Minutes'
+            ) {
+                return (date as any)['setUTC' + unit](value);
+            }
+
+            // Higher order time units need to take the time zone into
+            // account
+
+            // Adjust by timezone
+            const offset = this.getTimezoneOffset(date);
+            let ms = date.getTime() - offset;
+            date.setTime(ms);
+
+            (date as any)['setUTC' + unit](value);
+            const newOffset = this.getTimezoneOffset(date);
+
+            ms = date.getTime() + newOffset;
+            return date.setTime(ms);
+        }
+
+        // UTC time with no timezone handling
+        if (this.useUTC) {
+            return (date as any)['setUTC' + unit](value);
+        }
+
+        // Else, local time
+        return (date as any)['set' + unit](value);
+    }
+
+    /**
+     * Update the Time object with current options. It is called internally on
+     * initializing Highcharts, after running `Highcharts.setOptions` and on
+     * `Chart.update`.
+     *
+     * @private
+     * @function Highcharts.Time#update
+     *
+     * @param {Highcharts.TimeOptions} options
+     *
+     * @return {void}
+     */
+    public update(options: Highcharts.TimeOptions): void {
+        var useUTC = pick(options && options.useUTC, true) as boolean,
+            time = this;
+
+        this.options = options = merge(true, this.options || {}, options);
+
+        // Allow using a different Date class
+        this.Date = options.Date || win.Date || Date;
+
+        this.useUTC = useUTC;
+        this.timezoneOffset = (useUTC && options.timezoneOffset) as any;
+
+        this.getTimezoneOffset = this.timezoneOffsetFunction();
+
         /*
          * The time object has options allowing for variable time zones, meaning
          * the axis ticks or series data needs to consider this.
@@ -384,81 +536,7 @@ Highcharts.Time.prototype = {
             options.getTimezoneOffset ||
             options.timezone
         );
-
-        // UTC time with timezone handling
-        if (this.variableTimezone || this.timezoneOffset) {
-            this.get = function (unit: string, date: Date): number {
-                var realMs = date.getTime(),
-                    ms = realMs - time.getTimezoneOffset(date),
-                    ret;
-
-                date.setTime(ms); // Temporary adjust to timezone
-                ret = (date as any)['getUTC' + unit]();
-                date.setTime(realMs); // Reset
-                return ret;
-            };
-            this.set = function (
-                unit: string,
-                date: Date,
-                value: number
-            ): any {
-                var ms, offset, newOffset;
-
-                // For lower order time units, just set it directly using UTC
-                // time
-                if (
-                    unit === 'Milliseconds' ||
-                    unit === 'Seconds' ||
-                    unit === 'Minutes'
-                ) {
-                    (date as any)['setUTC' + unit](value);
-
-                // Higher order time units need to take the time zone into
-                // account
-                } else {
-
-                    // Adjust by timezone
-                    offset = time.getTimezoneOffset(date);
-                    ms = date.getTime() - offset;
-                    date.setTime(ms);
-
-                    (date as any)['setUTC' + unit](value);
-                    newOffset = time.getTimezoneOffset(date);
-
-                    ms = date.getTime() + newOffset;
-                    date.setTime(ms);
-                }
-
-            };
-
-        // UTC time with no timezone handling
-        } else if (useUTC) {
-            this.get = function (unit: string, date: Date): number {
-                return (date as any)['getUTC' + unit]();
-            };
-            this.set = function (
-                unit: string,
-                date: Date,
-                value: number
-            ): number {
-                return (date as any)['setUTC' + unit](value);
-            };
-
-        // Local time
-        } else {
-            this.get = function (unit: string, date: Date): number {
-                return (date as any)['get' + unit]();
-            };
-            this.set = function (
-                unit: string,
-                date: Date,
-                value: number
-            ): number {
-                return (date as any)['set' + unit](value);
-            };
-        }
-
-    },
+    }
 
     /**
      * Make a time and returns milliseconds. Interprets the inputs as UTC time,
@@ -488,8 +566,7 @@ Highcharts.Time.prototype = {
      * @return {number}
      *         The time in milliseconds since January 1st 1970.
      */
-    makeTime: function (
-        this: Highcharts.Time,
+    public makeTime(
         year: number,
         month: number,
         date?: number,
@@ -500,7 +577,7 @@ Highcharts.Time.prototype = {
         var d, offset, newOffset;
 
         if (this.useUTC) {
-            d = this.Date.UTC.apply(0, arguments as any);
+            d = this.Date.UTC.apply(0, arguments);
             offset = this.getTimezoneOffset(d);
             d += offset;
             newOffset = this.getTimezoneOffset(d);
@@ -530,7 +607,7 @@ Highcharts.Time.prototype = {
             ).getTime();
         }
         return d;
-    },
+    }
 
     /**
      * Sets the getTimezoneOffset function. If the `timezone` option is set, a
@@ -545,14 +622,14 @@ Highcharts.Time.prototype = {
      * @return {Function}
      *         A getTimezoneOffset function
      */
-    timezoneOffsetFunction: function (this: Highcharts.Time): Function {
+    public timezoneOffsetFunction(): (timestamp: (number|Date)) => number {
         var time = this,
             options = this.options,
             moment = win.moment;
 
         if (!this.useUTC) {
-            return function (timestamp: number): number {
-                return new Date(timestamp).getTimezoneOffset() * 60000;
+            return function (timestamp: (number|Date)): number {
+                return new Date(timestamp.toString()).getTimezoneOffset() * 60000;
             };
         }
 
@@ -560,10 +637,10 @@ Highcharts.Time.prototype = {
             if (!moment) {
                 // getTimezoneOffset-function stays undefined because it depends
                 // on Moment.js
-                H.error(25);
+                error(25);
 
             } else {
-                return function (timestamp: number): number {
+                return function (timestamp: (number|Date)): number {
                     return -moment.tz(
                         timestamp,
                         options.timezone
@@ -574,8 +651,8 @@ Highcharts.Time.prototype = {
 
         // If not timezone is set, look for the getTimezoneOffset callback
         if (this.useUTC && options.getTimezoneOffset) {
-            return function (timestamp: number): number {
-                return (options.getTimezoneOffset as any)(timestamp) * 60000;
+            return function (timestamp: (number|Date)): number {
+                return (options.getTimezoneOffset as any)(timestamp.valueOf()) * 60000;
             };
         }
 
@@ -583,7 +660,7 @@ Highcharts.Time.prototype = {
         return function (): number {
             return (time.timezoneOffset || 0) * 60000;
         };
-    },
+    }
 
     /**
      * Formats a JavaScript date timestamp (milliseconds since Jan 1st 1970)
@@ -619,7 +696,7 @@ Highcharts.Time.prototype = {
      *
      * @function Highcharts.Time#dateFormat
      *
-     * @param {string} [format]
+     * @param {string} format
      *        The desired format where various time representations are
      *        prefixed with %.
      *
@@ -632,14 +709,13 @@ Highcharts.Time.prototype = {
      * @return {string}
      *         The formatted date.
      */
-    dateFormat: function (
-        this: Highcharts.Time,
-        format: (number|string),
-        timestamp?: (boolean|number),
+    public dateFormat(
+        format: string,
+        timestamp: number,
         capitalize?: boolean
     ): string {
-        if (!defined(timestamp) || isNaN(timestamp as any)) {
-            return (H.defaultOptions.lang as any).invalidDate || '';
+        if (!defined(timestamp) || isNaN(timestamp)) {
+            return H.defaultOptions.lang?.invalidDate || '';
         }
         format = pick(format, '%Y-%m-%d %H:%M:%S');
 
@@ -652,8 +728,8 @@ Highcharts.Time.prototype = {
             month = this.get('Month', date),
             fullYear = this.get('FullYear', date),
             lang = H.defaultOptions.lang,
-            langWeekdays = (lang as any).weekdays,
-            shortWeekdays = (lang as any).shortWeekdays,
+            langWeekdays = (lang?.weekdays as any),
+            shortWeekdays = lang?.shortWeekdays,
 
             // List all format keys. Custom formats can be added from the
             // outside.
@@ -703,7 +779,7 @@ Highcharts.Time.prototype = {
                     // Hours in 12h format, 1 through 12
                     l: (hours % 12) || 12,
                     // Two digits minutes, 00 through 59
-                    M: pad(time.get('Minutes', date)),
+                    M: pad(this.get('Minutes', date)),
                     // Upper case AM or PM
                     p: hours < 12 ? 'AM' : 'PM',
                     // Lower case AM or PM
@@ -717,15 +793,14 @@ Highcharts.Time.prototype = {
                 H.dateFormats
             );
 
-
         // Do the replaces
         objectEach(replacements, function (
             val: (string|Function),
             key: string
         ): void {
             // Regex would do it in one line, but this is faster
-            while ((format as any).indexOf('%' + key) !== -1) {
-                format = (format as any).replace(
+            while (format.indexOf('%' + key) !== -1) {
+                format = format.replace(
                     '%' + key,
                     typeof val === 'function' ? val.call(time, timestamp) : val
                 );
@@ -736,11 +811,11 @@ Highcharts.Time.prototype = {
         // Optionally capitalize the string and return
         return capitalize ?
             (
-                (format as any).substr(0, 1).toUpperCase() +
-                (format as any).substr(1)
+                format.substr(0, 1).toUpperCase() +
+                format.substr(1)
             ) :
             format;
-    },
+    }
 
     /**
      * Resolve legacy formats of dateTimeLabelFormats (strings and arrays) into
@@ -749,8 +824,7 @@ Highcharts.Time.prototype = {
      * @param {string|Array<T>|Highcharts.Dictionary<T>} f - General format description
      * @return {Highcharts.Dictionary<T>} - The object definition
      */
-    resolveDTLFormat: function<T> (
-        this: Highcharts.Time,
+    public resolveDTLFormat<T>(
         f: (string|Array<T>|Highcharts.Dictionary<T>)
     ): Highcharts.Dictionary<T> {
         if (!isObject(f, true)) { // check for string or array
@@ -762,7 +836,7 @@ Highcharts.Time.prototype = {
             };
         }
         return f as any;
-    },
+    }
 
     /**
      * Return an array with time positions distributed on round time values
@@ -784,8 +858,7 @@ Highcharts.Time.prototype = {
      *
      * @return {Highcharts.AxisTickPositionsArray}
      */
-    getTimeTicks: function (
-        this: Highcharts.Time,
+    public getTimeTicks(
         normalizedInterval: Highcharts.TimeNormalizedObject,
         min?: number,
         max?: number,
@@ -998,7 +1071,7 @@ Highcharts.Time.prototype = {
 
 
         // record information on the chosen unit - for dynamic label formatter
-        tickPositions.info = extend(normalizedInterval as any, {
+        tickPositions.info = extend(normalizedInterval, {
             higherRanks: higherRanks,
             totalRange: interval * count
         }) as Highcharts.TimeTicksInfoObject;
@@ -1006,4 +1079,8 @@ Highcharts.Time.prototype = {
         return tickPositions;
     }
 
-} as any; // end of Time
+}
+
+H.Time = Time;
+
+export default H.Time;

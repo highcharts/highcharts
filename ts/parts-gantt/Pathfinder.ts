@@ -186,12 +186,16 @@ declare global {
  * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
  */
 
-import '../parts/Point.js';
+''; // detach doclets above
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
+    error,
     extend,
+    merge,
     objectEach,
     pick,
     splat
@@ -201,8 +205,6 @@ import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import './ArrowSymbols.js';
 
 var deg2rad = H.deg2rad,
-    addEvent = H.addEvent,
-    merge = H.merge,
     max = Math.max,
     min = Math.min;
 
@@ -871,7 +873,7 @@ Connection.prototype = {
             chartObstacles = pathfinder.chartObstacles;
 
         if (typeof algorithm !== 'function') {
-            H.error(
+            error(
                 '"' + options.type + '" is not a Pathfinder algorithm.'
             );
             return;
@@ -1096,7 +1098,7 @@ Pathfinder.prototype = {
                                     connect : connect.to
                             );
                             if (
-                                to instanceof H.Point &&
+                                to instanceof Point &&
                                 to.series.visible &&
                                 to.visible &&
                                 to.isInside !== false
@@ -1355,7 +1357,7 @@ H.Pathfinder = Pathfinder as any;
 
 
 // Add pathfinding capabilities to Points
-extend(H.Point.prototype, /** @lends Point.prototype */ {
+extend(Point.prototype, /** @lends Point.prototype */ {
 
     /**
      * Get coordinates of anchor point for pathfinder connection.
@@ -1558,7 +1560,7 @@ function warnLegacy(chart: Highcharts.Chart): void {
             (chart.options.connectors = chart.options.connectors || {}),
             (chart.options as any).pathfinder
         );
-        H.error('WARNING: Pathfinder options have been renamed. ' +
+        error('WARNING: Pathfinder options have been renamed. ' +
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }

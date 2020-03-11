@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Handle announcing new data for a chart.
  *
@@ -13,16 +13,14 @@
 import H from '../../../../parts/Globals.js';
 import U from '../../../../parts/Utilities.js';
 var extend = U.extend, defined = U.defined;
-import HTMLUtilities from '../../utils/htmlUtilities.js';
-var visuallyHideElement = HTMLUtilities.visuallyHideElement;
 import ChartUtilities from '../../utils/chartUtilities.js';
 var getChartTitle = ChartUtilities.getChartTitle;
 import SeriesDescriber from './SeriesDescriber.js';
 var defaultPointDescriptionFormatter = SeriesDescriber
     .defaultPointDescriptionFormatter, defaultSeriesDescriptionFormatter = SeriesDescriber
     .defaultSeriesDescriptionFormatter;
+import Announcer from '../../utils/Announcer.js';
 import EventProvider from '../../utils/EventProvider.js';
-import DOMElementProvider from '../../utils/DOMElementProvider.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -63,35 +61,27 @@ var NewDataAnnouncer = function (chart) {
 extend(NewDataAnnouncer.prototype, {
     /**
      * Initialize the new data announcer.
+     * @private
      */
     init: function () {
+        var chart = this.chart;
+        var announceOptions = chart.options.accessibility.announceNewData;
+        var announceType = announceOptions.interruptUser ? 'assertive' : 'polite';
         this.lastAnnouncementTime = 0;
         this.dirty = {
             allSeries: {}
         };
         this.eventProvider = new EventProvider();
-        this.domElementProvider = new DOMElementProvider();
-        this.announceRegion = this.addAnnounceRegion();
+        this.announcer = new Announcer(chart, announceType);
         this.addEventListeners();
     },
     /**
      * Remove traces of announcer.
+     * @private
      */
     destroy: function () {
         this.eventProvider.removeAddedEvents();
-        this.domElementProvider.destroyCreatedElements();
-    },
-    /**
-     * Add the announcement live region to the DOM.
-     * @private
-     */
-    addAnnounceRegion: function () {
-        var chart = this.chart, div = this.domElementProvider.createElement('div'), announceOptions = (chart.options.accessibility.announceNewData);
-        div.setAttribute('aria-hidden', false);
-        div.setAttribute('aria-live', announceOptions.interruptUser ? 'assertive' : 'polite');
-        visuallyHideElement(div);
-        chart.renderTo.insertBefore(div, chart.renderTo.firstChild);
-        return div;
+        this.announcer.destroy();
     },
     /**
      * Add event listeners for the announcer
@@ -189,11 +179,15 @@ extend(NewDataAnnouncer.prototype, {
      *          If a single point was added, a reference to this point.
      */
     queueAnnouncement: function (dirtySeries, newSeries, newPoint) {
-        var chart = this.chart, annOptions = (chart.options.accessibility.announceNewData);
+        var _this = this;
+        var chart = this.chart;
+        var annOptions = chart.options.accessibility.announceNewData;
         if (annOptions.enabled) {
-            var announcer = this, now = +new Date(), dTime = now - this.lastAnnouncementTime, time = Math.max(0, annOptions.minAnnounceInterval - dTime), 
+            var now = +new Date();
+            var dTime = now - this.lastAnnouncementTime;
+            var time = Math.max(0, annOptions.minAnnounceInterval - dTime);
             // Add series from previously queued announcement.
-            allSeries = getUniqueSeries(this.queuedAnnouncement && this.queuedAnnouncement.series, dirtySeries);
+            var allSeries = getUniqueSeries(this.queuedAnnouncement && this.queuedAnnouncement.series, dirtySeries);
             // Build message and announce
             var message = this.buildAnnouncementMessage(allSeries, newSeries, newPoint);
             if (message) {
@@ -208,34 +202,16 @@ extend(NewDataAnnouncer.prototype, {
                     series: allSeries
                 };
                 // Queue the announcement
-                announcer.queuedAnnouncementTimer = setTimeout(function () {
-                    if (announcer && announcer.announceRegion) {
-                        announcer.lastAnnouncementTime = +new Date();
-                        announcer.liveRegionSpeak(announcer.queuedAnnouncement.message);
-                        delete announcer.queuedAnnouncement;
-                        delete announcer.queuedAnnouncementTimer;
+                this.queuedAnnouncementTimer = setTimeout(function () {
+                    if (_this && _this.announcer) {
+                        _this.lastAnnouncementTime = +new Date();
+                        _this.announcer.announce(_this.queuedAnnouncement.message);
+                        delete _this.queuedAnnouncement;
+                        delete _this.queuedAnnouncementTimer;
                     }
                 }, time);
             }
         }
-    },
-    /**
-     * Speak a message using the announcer live region.
-     * @private
-     * @param {string} message
-     */
-    liveRegionSpeak: function (message) {
-        var announcer = this;
-        this.announceRegion.innerHTML = message;
-        // Delete contents after a little while to avoid user finding the live
-        // region in the DOM.
-        if (this.clearAnnouncementContainerTimer) {
-            clearTimeout(this.clearAnnouncementContainerTimer);
-        }
-        this.clearAnnouncementContainerTimer = setTimeout(function () {
-            announcer.announceRegion.innerHTML = '';
-            delete announcer.clearAnnouncementContainerTimer;
-        }, 1000);
     },
     /**
      * Get announcement message for new data.

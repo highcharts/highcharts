@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Default options for accessibility.
  *
@@ -76,7 +76,7 @@ var options = {
      * [accessibility module](https://code.highcharts.com/modules/accessibility.js)
      * to be loaded. For a description of the module and information
      * on its features, see
-     * [Highcharts Accessibility](http://www.highcharts.com/docs/chart-concepts/accessibility).
+     * [Highcharts Accessibility](https://www.highcharts.com/docs/chart-concepts/accessibility).
      *
      * @since        5.0.0
      * @requires     modules/accessibility
@@ -108,6 +108,16 @@ var options = {
              * @apioption accessibility.screenReaderSection.onViewDataTableClick
              */
             /**
+             * Function to run upon clicking the "Play as sound" button in
+             * the screen reader region.
+             *
+             * By default Highcharts will call the `chart.sonify` function.
+             *
+             * @type      {Highcharts.ScreenReaderClickCallbackFunction}
+             * @since 8.0.1
+             * @apioption accessibility.screenReaderSection.onPlayAsSoundClick
+             */
+            /**
              * A formatter function to create the HTML contents of the hidden
              * screen reader information region before the chart. Receives one
              * argument, `chart`, referring to the chart object. Should return a
@@ -121,11 +131,12 @@ var options = {
              */
             /**
              * Format for the screen reader information region before the chart.
-             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, and
-             * `<button>`. Attributes are not supported, except for id on
-             * `<div>`, `<a>`, and `<button>`. Id is required on `<a>` and
-             * `<button>` in the format `<tag id="abcd">`. Numbers, lower- and
-             * uppercase letters, "-" and "#" are valid characters in IDs.
+             * Supported HTML tags are `<h1-7>`, `<p>`, `<div>`, `<a>`, `<ul>`,
+             * `<ol>`, `<li>`, and `<button>`. Attributes are not supported,
+             * except for id on `<div>`, `<a>`, and `<button>`. Id is required
+             * on `<a>` and `<button>` in the format `<tag id="abcd">`. Numbers,
+             * lower- and uppercase letters, "-" and "#" are valid characters in
+             * IDs.
              *
              * @since 8.0.0
              */
@@ -133,9 +144,11 @@ var options = {
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +
+                '<div>{playAsSoundButton}</div>' +
+                '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
-                '<div>{viewTableButton}</div>',
+                '<div>{annotationsTitle}{annotationsList}</div>',
             /**
              * A formatter function to create the HTML contents of the hidden
              * screen reader information region after the chart. Analogous to
@@ -202,6 +215,103 @@ var options = {
              * @since 8.0.0
              */
             pointDescriptionEnabledThreshold: 200
+        },
+        /**
+         * Options for descriptions of individual data points.
+         *
+         * @since 8.0.0
+         */
+        point: {
+            /**
+             * Format to use for describing the values of data points
+             * to assistive technology - including screen readers.
+             * The point context is available as `{point}`.
+             *
+             * Additionally, the series name, annotation info, and
+             * description added in `point.accessibility.description`
+             * is added by default if relevant. To override this, use the
+             * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+             * option.
+             *
+             * @see [point.accessibility.description](#series.line.data.accessibility.description)
+             * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+             *
+             * @type      {string}
+             * @since 8.0.1
+             */
+            valueDescriptionFormat: '{index}. {xDescription}{separator}{value}.'
+            /**
+             * Date format to use for points on datetime axes when describing
+             * them to screen reader users.
+             *
+             * Defaults to the same format as in tooltip.
+             *
+             * For an overview of the replacement codes, see
+             * [dateFormat](/class-reference/Highcharts#dateFormat).
+             *
+             * @see [dateFormatter](#accessibility.point.dateFormatter)
+             *
+             * @type      {string}
+             * @since 8.0.0
+             * @apioption accessibility.point.dateFormat
+             */
+            /**
+             * Formatter function to determine the date/time format used with
+             * points on datetime axes when describing them to screen reader
+             * users. Receives one argument, `point`, referring to the point
+             * to describe. Should return a date format string compatible with
+             * [dateFormat](/class-reference/Highcharts#dateFormat).
+             *
+             * @see [dateFormat](#accessibility.point.dateFormat)
+             *
+             * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
+             * @since 8.0.0
+             * @apioption accessibility.point.dateFormatter
+             */
+            /**
+             * Prefix to add to the values in the point descriptions. Uses
+             * [tooltip.valuePrefix](#tooltip.valuePrefix) if not defined.
+             *
+             * @type        {string}
+             * @since 8.0.0
+             * @apioption   accessibility.point.valuePrefix
+             */
+            /**
+             * Suffix to add to the values in the point descriptions. Uses
+             * [tooltip.valueSuffix](#tooltip.valueSuffix) if not defined.
+             *
+             * @type        {string}
+             * @since 8.0.0
+             * @apioption   accessibility.point.valueSuffix
+             */
+            /**
+             * Decimals to use for the values in the point descriptions. Uses
+             * [tooltip.valueDecimals](#tooltip.valueDecimals) if not defined.
+             *
+             * @type        {number}
+             * @since 8.0.0
+             * @apioption   accessibility.point.valueDecimals
+             */
+            /**
+             * Formatter function to use instead of the default for point
+             * descriptions.
+             *
+             * Receives one argument, `point`, referring to the point to
+             * describe. Should return a string with the description of the
+             * point for a screen reader user. If `false` is returned, the
+             * default formatter will be used for that point.
+             *
+             * Note: Prefer using [accessibility.point.valueDescriptionFormat](#accessibility.point.valueDescriptionFormat)
+             * instead if possible, as default functionality such as describing
+             * annotations will be preserved.
+             *
+             * @see [accessibility.point.valueDescriptionFormat](#accessibility.point.valueDescriptionFormat)
+             * @see [point.accessibility.description](#series.line.data.accessibility.description)
+             *
+             * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
+             * @since 8.0.0
+             * @apioption accessibility.point.descriptionFormatter
+             */
         },
         /**
          * Amount of landmarks/regions to create for screen reader users. More
@@ -319,78 +429,6 @@ var options = {
          * @type      {string}
          * @since     5.0.0
          * @apioption accessibility.typeDescription
-         */
-        /**
-         * Options for descriptions of individual data points.
-         *
-         * @since 8.0.0
-         * @apioption accessibility.point
-         */
-        /**
-         * Date format to use for points on datetime axes when describing them
-         * to screen reader users.
-         *
-         * Defaults to the same format as in tooltip.
-         *
-         * For an overview of the replacement codes, see
-         * [dateFormat](/class-reference/Highcharts#dateFormat).
-         *
-         * @see [dateFormatter](#accessibility.point.dateFormatter)
-         *
-         * @type      {string}
-         * @since 8.0.0
-         * @apioption accessibility.point.dateFormat
-         */
-        /**
-         * Formatter function to determine the date/time format used with
-         * points on datetime axes when describing them to screen reader users.
-         * Receives one argument, `point`, referring to the point to describe.
-         * Should return a date format string compatible with
-         * [dateFormat](/class-reference/Highcharts#dateFormat).
-         *
-         * @see [dateFormat](#accessibility.point.dateFormat)
-         *
-         * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-         * @since 8.0.0
-         * @apioption accessibility.point.dateFormatter
-         */
-        /**
-         * Prefix to add to the values in the point descriptions. Uses
-         * [tooltip.valuePrefix](#tooltip.valuePrefix) if not defined.
-         *
-         * @type        {string}
-         * @since 8.0.0
-         * @apioption   accessibility.point.valuePrefix
-         */
-        /**
-         * Suffix to add to the values in the point descriptions. Uses
-         * [tooltip.valueSuffix](#tooltip.valueSuffix) if not defined.
-         *
-         * @type        {string}
-         * @since 8.0.0
-         * @apioption   accessibility.point.valueSuffix
-         */
-        /**
-         * Decimals to use for the values in the point descriptions. Uses
-         * [tooltip.valueDecimals](#tooltip.valueDecimals) if not defined.
-         *
-         * @type        {number}
-         * @since 8.0.0
-         * @apioption   accessibility.point.valueDecimals
-         */
-        /**
-         * Formatter function to use instead of the default for point
-         * descriptions.
-         * Receives one argument, `point`, referring to the point to describe.
-         * Should return a string with the description of the point for a screen
-         * reader user. If `false` is returned, the default formatter will be
-         * used for that point.
-         *
-         * @see [point.accessibility.description](#series.line.data.accessibility.description)
-         *
-         * @type      {Highcharts.ScreenReaderFormatterCallbackFunction<Highcharts.Point>}
-         * @since 8.0.0
-         * @apioption accessibility.point.descriptionFormatter
          */
         /**
          * Options for keyboard navigation.
@@ -647,6 +685,22 @@ var options = {
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
      */
     /**
+     * Accessibility options for an annotation label.
+     *
+     * @declare    Highcharts.AnnotationLabelAccessibilityOptionsObject
+     * @since 8.0.1
+     * @requires   modules/accessibility
+     * @apioption  annotations.labelOptions.accessibility
+     */
+    /**
+     * Description of an annotation label for screen readers and other assistive
+     * technology.
+     *
+     * @type       {string}
+     * @since 8.0.1
+     * @apioption  annotations.labelOptions.accessibility.description
+     */
+    /**
      * Accessibility options for an axis. Requires the accessibility module.
      *
      * @declare    Highcharts.AxisAccessibilityOptionsObject
@@ -679,6 +733,9 @@ var options = {
      * @since      7.1.0
      * @apioption  xAxis.accessibility.rangeDescription
      */
+    /**
+     * @optionparent legend
+     */
     legend: {
         /**
          * Accessibility options for the legend. Requires the Accessibility
@@ -686,14 +743,12 @@ var options = {
          *
          * @since     7.1.0
          * @requires  modules/accessibility
-         * @apioption legend.accessibility
          */
         accessibility: {
             /**
              * Enable accessibility support for the legend.
              *
-             * @since     7.1.0
-             * @apioption legend.accessibility.enabled
+             * @since  7.1.0
              */
             enabled: true,
             /**
@@ -701,7 +756,6 @@ var options = {
              *
              * @since     7.1.0
              * @requires  modules/accessibility
-             * @apioption legend.accessibility.keyboardNavigation
              */
             keyboardNavigation: {
                 /**
@@ -709,28 +763,28 @@ var options = {
                  *
                  * @see [accessibility.keyboardNavigation](#accessibility.keyboardNavigation.enabled)
                  *
-                 * @since     7.1.0
-                 * @apioption legend.accessibility.keyboardNavigation.enabled
+                 * @since  7.1.0
                  */
                 enabled: true
             }
         }
     },
+    /**
+     * @optionparent exporting
+     */
     exporting: {
         /**
          * Accessibility options for the exporting menu. Requires the
          * Accessibility module.
          *
-         * @since     7.1.0
-         * @requires  modules/accessibility
-         * @apioption exporting.accessibility
+         * @since    7.1.0
+         * @requires modules/accessibility
          */
         accessibility: {
             /**
              * Enable accessibility support for the export menu.
              *
-             * @since     7.1.0
-             * @apioption exporting.accessibility.enabled
+             * @since 7.1.0
              */
             enabled: true
         }

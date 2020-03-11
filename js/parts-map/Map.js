@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -10,11 +10,11 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, pick = U.pick;
+var extend = U.extend, merge = U.merge, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/SvgRenderer.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, merge = H.merge, Renderer = H.Renderer, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
+var Chart = H.Chart, defaultOptions = H.defaultOptions, Renderer = H.Renderer, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {
     zoomIn: 'Zoom in',

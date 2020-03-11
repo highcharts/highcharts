@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -43,16 +43,18 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import '../parts/ScatterSeries.js';
 
-var LegendSymbolMixin = H.LegendSymbolMixin,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**

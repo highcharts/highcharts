@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Extension to the Series object in 3D charts.
  *
@@ -33,11 +33,11 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     pick
 } = U;
 
-var addEvent = H.addEvent,
-    perspective = H.perspective;
+var perspective = H.perspective;
 
 /* eslint-disable no-invalid-this */
 

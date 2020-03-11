@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Accessibility component for series and points.
  *
@@ -26,6 +26,8 @@ var hideSeriesFromAT = ChartUtilities.hideSeriesFromAT;
 
 import SeriesDescriber from './SeriesDescriber.js';
 var describeSeries = SeriesDescriber.describeSeries;
+
+import Tooltip from '../../../../parts/Tooltip.js';
 
 /**
  * Internal types.
@@ -93,7 +95,7 @@ extend(SeriesComponent.prototype, /** @lends Highcharts.SeriesComponent */ {
     ): void {
         var component = this;
 
-        this.addEvent(H.Tooltip, 'refresh', function (): void {
+        this.addEvent(Tooltip, 'refresh', function (): void {
             if (
                 this.chart === component.chart &&
                 this.label &&

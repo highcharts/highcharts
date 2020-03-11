@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -9,16 +9,15 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Color.js';
-import '../parts/Legend.js';
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -435,7 +434,7 @@ seriesType('map', 'scatter',
                         if (pointArrayMap[j] &&
                             typeof val[ix] !== 'undefined') {
                             if (pointArrayMap[j].indexOf('.') > 0) {
-                                H.Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
+                                Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
                             }
                             else {
                                 data[i][pointArrayMap[j]] =
@@ -484,9 +483,11 @@ seriesType('map', 'scatter',
             this.mapMap = mapMap;
             // Registered the point codes that actually hold data
             if (data && joinBy[1]) {
-                data.forEach(function (point) {
-                    if (mapMap[point[joinBy[1]]]) {
-                        dataUsed.push(mapMap[point[joinBy[1]]]);
+                var joinKey_1 = joinBy[1];
+                data.forEach(function (pointOptions) {
+                    var mapKey = getNestedProperty(joinKey_1, pointOptions);
+                    if (mapMap[mapKey]) {
+                        dataUsed.push(mapMap[mapKey]);
                     }
                 });
             }
@@ -495,8 +496,9 @@ seriesType('map', 'scatter',
                 data = data || [];
                 // Registered the point codes that actually hold data
                 if (joinBy[1]) {
-                    data.forEach(function (point) {
-                        dataUsed.push(point[joinBy[1]]);
+                    var joinKey_2 = joinBy[1];
+                    data.forEach(function (pointOptions) {
+                        dataUsed.push(getNestedProperty(joinKey_2, pointOptions));
                     });
                 }
                 // Add those map points that don't correspond to data, which
@@ -770,8 +772,6 @@ seriesType('map', 'scatter',
                     scaleX: 1,
                     scaleY: 1
                 }, animation);
-                // Delete this function to allow it only once
-                this.animate = null;
             }
         }
     },
@@ -799,7 +799,6 @@ seriesType('map', 'scatter',
                     }, animationOptions);
                 }
             });
-            this.animate = null;
         }
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
@@ -821,9 +820,11 @@ seriesType('map', 'scatter',
     // Extend the Point object to split paths
     applyOptions: function (options, x) {
         var series = this.series, point = Point.prototype.applyOptions.call(this, options, x), joinBy = series.joinBy, mapPoint;
-        if (series.mapData) {
-            mapPoint = typeof point[joinBy[1]] !== 'undefined' &&
-                series.mapMap[point[joinBy[1]]];
+        if (series.mapData && series.mapMap) {
+            var joinKey = joinBy[1];
+            var mapKey = Point.prototype.getNestedProperty.call(point, joinKey);
+            mapPoint = typeof mapKey !== 'undefined' &&
+                series.mapMap[mapKey];
             if (mapPoint) {
                 // This applies only to bubbles
                 if (series.xyFromShape) {
@@ -840,7 +841,7 @@ seriesType('map', 'scatter',
     },
     // Stop the fade-out
     onMouseOver: function (e) {
-        H.clearTimeout(this.colorInterval);
+        U.clearTimeout(this.colorInterval);
         if (this.value !== null || this.series.options.nullInteraction) {
             Point.prototype.onMouseOver.call(this, e);
         }
@@ -945,7 +946,7 @@ seriesType('map', 'scatter',
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type      {Highcharts.DataLabelsOptionsObject}
+ * @type      {Highcharts.DataLabelsOptions}
  * @product   highmaps
  * @apioption series.map.data.dataLabels
  */

@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  TimelineEvent class definition.
  *
@@ -13,7 +13,11 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var splat = U.splat;
+const {
+    merge,
+    splat,
+    uniqueKey
+} = U;
 
 /**
  * Internal types.
@@ -178,7 +182,7 @@ TimelineEvent.prototype.init = function (
 ): void {
     this.options = options;
     this.time = options.time || 0;
-    this.id = this.options.id = options.id || H.uniqueKey();
+    this.id = this.options.id = options.id || uniqueKey();
 };
 
 
@@ -202,7 +206,7 @@ TimelineEvent.prototype.play = function (
         playOnEnd = options && options.onEnd,
         playOptionsOnEnd = this.options.playOptions &&
             this.options.playOptions.onEnd,
-        playOptions = H.merge(this.options.playOptions, options);
+        playOptions = merge(this.options.playOptions, options);
 
     if (eventObject && eventObject.sonify) {
         // If we have multiple onEnds defined, use all
@@ -309,7 +313,7 @@ TimelinePath.prototype.init = function (
     options: Highcharts.TimelinePathOptionsObject
 ): void {
     this.options = options;
-    this.id = this.options.id = options.id || H.uniqueKey();
+    this.id = this.options.id = options.id || uniqueKey();
     this.cursor = 0;
     this.eventsPlaying = {};
 
@@ -332,7 +336,7 @@ TimelinePath.prototype.init = function (
         ['playOnEnd', 'masterOnEnd', 'onStart', 'onEventStart', 'onEventEnd']
     );
     this.signalHandler.registerSignalCallbacks(
-        H.merge(options as any, { masterOnEnd: options.onEnd })
+        merge(options as any, { masterOnEnd: options.onEnd })
     );
 };
 
@@ -648,7 +652,7 @@ Timeline.prototype.init = function (
         ['playOnEnd', 'masterOnEnd', 'onPathStart', 'onPathEnd']
     );
     this.signalHandler.registerSignalCallbacks(
-        H.merge(options as any, { masterOnEnd: options.onEnd })
+        merge(options as any, { masterOnEnd: options.onEnd })
     );
 };
 

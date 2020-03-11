@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Kacper Madej
+ *  (c) 2010-2020 Kacper Madej
  *
  *  License: www.highcharts.com/license
  *
@@ -51,10 +51,12 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 
-var seriesType = H.seriesType,
-    UNDEFINED: undefined;
+var UNDEFINED: undefined;
 
 /**
  * The Zig Zag series type.

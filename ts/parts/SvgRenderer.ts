@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  License: www.highcharts.com/license
  *
@@ -86,7 +86,7 @@ declare global {
             zIndex?: number;
         }
         interface SVGDefinitionObject {
-            [key: string]: (number|string|Array<SVGDefinitionObject>|undefined);
+            [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
             children?: Array<SVGDefinitionObject>;
             tagName?: string;
             textContent?: string;
@@ -157,7 +157,7 @@ declare global {
             ): (number|string)
             public attr(
                 hash?: (string|SVGAttributes),
-                val?: string,
+                val?: (number|string|SVGPathArray),
                 complete?: Function,
                 continueAnimation?: boolean
             ): SVGElement;
@@ -322,6 +322,7 @@ declare global {
             ): SVGElement;
             public circle(attribs: SVGAttributes): SVGElement;
             public circle(x?: number, y?: number, r?: number): SVGElement;
+            public clipRect(attribs: SVGAttributes): ClipRectElement;
             public clipRect(
                 x?: number,
                 y?: number,
@@ -687,7 +688,7 @@ declare global {
  * @interface Highcharts.SVGDefinitionObject
  *//**
  * @name Highcharts.SVGDefinitionObject#[key:string]
- * @type {number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+ * @type {boolean|number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
  *//**
  * @name Highcharts.SVGDefinitionObject#children
  * @type {Array<Highcharts.SVGDefinitionObject>|undefined}
@@ -806,45 +807,45 @@ declare global {
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
+import Color from './Color.js';
+const color = Color.parse;
 import U from './Utilities.js';
 const {
+    addEvent,
+    animate,
     animObject,
     attr,
+    createElement,
+    css,
     defined,
     destroyObjectProperties,
     erase,
     extend,
+    inArray,
     isArray,
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
     pInt,
     removeEvent,
-    splat
+    splat,
+    stop,
+    uniqueKey
 } = U;
-
-import './Color.js';
 
 var SVGElement: Highcharts.SVGElement,
     SVGRenderer,
-
-    addEvent = H.addEvent,
-    animate = H.animate,
     charts = H.charts,
-    color = H.color,
-    css = H.css,
-    createElement = H.createElement,
     deg2rad = H.deg2rad,
     doc = H.doc,
     hasTouch = H.hasTouch,
     isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
-    merge = H.merge,
     noop = H.noop,
-    stop = H.stop,
     svg = H.svg,
     SVG_NS = H.SVG_NS,
     symbolSizes = H.symbolSizes,
@@ -996,7 +997,7 @@ extend((
      * @private
      * @function Highcharts.SVGElement#complexColor
      *
-     * @param {Highcharts.GradientColorObject} color
+     * @param {Highcharts.GradientColorObject} colorOptions
      *        The gradient options structure.
      *
      * @param {string} prop
@@ -1009,7 +1010,7 @@ extend((
      */
     complexColor: function (
         this: Highcharts.SVGElement,
-        color: Highcharts.GradientColorObject,
+        colorOptions: Highcharts.GradientColorObject,
         prop: string,
         elem: Highcharts.SVGDOMElement
     ): void {
@@ -1032,21 +1033,21 @@ extend((
             args: arguments
         }, function (): void {
             // Apply linear or radial gradients
-            if (color.radialGradient) {
+            if (colorOptions.radialGradient) {
                 gradName = 'radialGradient';
-            } else if (color.linearGradient) {
+            } else if (colorOptions.linearGradient) {
                 gradName = 'linearGradient';
             }
 
             if (gradName) {
-                gradAttr = color[gradName] as any;
+                gradAttr = colorOptions[gradName] as any;
                 gradients = renderer.gradients;
-                stops = color.stops;
+                stops = colorOptions.stops;
                 radialReference = (elem as any).radialReference;
 
                 // Keep < 2.2 kompatibility
                 if (isArray(gradAttr)) {
-                    (color as any)[gradName] = gradAttr = {
+                    (colorOptions as any)[gradName] = gradAttr = {
                         x1: gradAttr[0],
                         y1: gradAttr[1],
                         x2: gradAttr[2],
@@ -1090,7 +1091,7 @@ extend((
                 } else {
 
                     // Set the id and create the element
-                    gradAttr.id = id = H.uniqueKey();
+                    gradAttr.id = id = uniqueKey();
                     gradients[key as any] = gradientObject =
                         renderer.createElement(gradName)
                             .attr(gradAttr)
@@ -1107,7 +1108,7 @@ extend((
                         var stopObject;
 
                         if (stop[1].indexOf('rgba') === 0) {
-                            colorObject = H.color(stop[1]);
+                            colorObject = color(stop[1]);
                             stopColor = colorObject.get('rgb') as any;
                             stopOpacity = colorObject.get('a');
                         } else {
@@ -1132,7 +1133,7 @@ extend((
 
                 // Allow the color to be concatenated into tooltips formatters
                 // etc. (#2995)
-                color.toString = function (): string {
+                colorOptions.toString = function (): string {
                     return value;
                 };
             }
@@ -1212,6 +1213,13 @@ extend((
             // Remove shadows from previous runs.
             this.removeTextOutline(tspans);
 
+            // Check if the element contains RTL characters.
+            // Comparing against Hebrew and Arabic characters,
+            // excluding Arabic digits. Source:
+            // https://www.unicode.org/Public/UNIDATA/extracted/DerivedBidiClass.txt
+            const isRTL = elem.textContent ?
+                /^[\u0591-\u065F\u066A-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/
+                    .test(elem.textContent) : false;
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild as any;
             tspans.forEach(function (
@@ -1224,15 +1232,18 @@ extend((
                 if (y === 0) {
                     tspan.setAttribute('x', elem.getAttribute('x') as any);
                     y = elem.getAttribute('y') as any;
-                    tspan.setAttribute('y', y as any || 0);
+                    tspan.setAttribute('y', y || 0);
                     if (y === null) {
-                        elem.setAttribute('y', 0 as any);
+                        elem.setAttribute('y', 0);
                     }
                 }
 
-                // Create the clone and apply outline properties
-                clone = tspan.cloneNode(1 as any);
-                attr(clone, {
+                // Create the clone and apply outline properties.
+                // For RTL elements apply outline properties for orginal element
+                // to prevent outline from overlapping the text.
+                // For RTL in Firefox keep the orginal order (#10162).
+                clone = tspan.cloneNode(true);
+                attr((isRTL && !isFirefox) ? tspan : clone, {
                     'class': 'highcharts-text-outline',
                     fill: color,
                     stroke: color,
@@ -1241,6 +1252,14 @@ extend((
                 });
                 elem.insertBefore(clone, firstRealChild);
             });
+
+            // Create a whitespace between tspan and clone,
+            // to fix the display of Arabic characters in Firefox.
+            if (isRTL && isFirefox && tspans[0]) {
+                const whitespace = tspans[0].cloneNode(true);
+                whitespace.textContent = ' ';
+                elem.insertBefore(whitespace, firstRealChild);
+            }
         }
     },
 
@@ -1321,7 +1340,7 @@ extend((
      * @param {string|Highcharts.SVGAttributes} [hash]
      *        The native and custom SVG attributes.
      *
-     * @param {string} [val]
+     * @param {number|string|Highcharts.SVGPathArray} [val]
      *        If the type of the first argument is `string`, the second can be a
      *        value, which will serve as a single attribute setter. If the first
      *        argument is a string and the second is undefined, the function
@@ -1346,7 +1365,7 @@ extend((
     attr: function (
         this: Highcharts.SVGElement,
         hash?: (string|Highcharts.SVGAttributes),
-        val?: string,
+        val?: (number|string|Highcharts.SVGPathArray),
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|Highcharts.SVGElement) {
@@ -1391,7 +1410,7 @@ extend((
                 // Special handling of symbol attributes
                 if (
                     this.symbolName &&
-                    H.inArray(key, symbolCustomAttribs) !== -1
+                    inArray(key, symbolCustomAttribs) !== -1
                 ) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash as any);
@@ -1915,18 +1934,50 @@ extend((
         handler: Function
     ): Highcharts.SVGElement {
         var svgElement = this,
-            element = svgElement.element;
+            element = svgElement.element,
+            touchStartPos: Highcharts.Dictionary<number>,
+            touchEventFired: boolean;
 
         // touch
         if (hasTouch && eventType === 'click') {
-            element.ontouchstart = function (e: Event): void {
-                svgElement.touchEventFired = Date.now(); // #2269
-                e.preventDefault();
-                handler.call(element, e);
+            element.ontouchstart = function (e: TouchEvent): void {
+                // save touch position for later calculation
+                touchStartPos = {
+                    clientX: e.touches[0].clientX,
+                    clientY: e.touches[0].clientY
+                };
             };
+
+            // Instead of ontouchstart, event handlers should be called
+            // on touchend - similar to how current mouseup events are called
+            element.ontouchend = function (e: TouchEvent): void {
+
+                // hasMoved is a boolean variable containing logic if page
+                // was scrolled, so if touch position changed more than
+                // ~4px (value borrowed from general touch handler)
+                const hasMoved = touchStartPos.clientX ? Math.sqrt(
+                    Math.pow(
+                        touchStartPos.clientX - e.changedTouches[0].clientX,
+                        2
+                    ) +
+                    Math.pow(
+                        touchStartPos.clientY - e.changedTouches[0].clientY,
+                        2
+                    )
+                ) >= 4 : false;
+
+                if (!hasMoved) { // only call handlers if page was not scrolled
+                    handler.call(element, e);
+                }
+
+                touchEventFired = true;
+                // prevent other events from being fired. #9682
+                e.preventDefault();
+            };
+
             element.onclick = function (e: Event): void {
-                if (win.navigator.userAgent.indexOf('Android') === -1 ||
-                        Date.now() - (svgElement.touchEventFired || 0) > 1100) {
+                // Do not call onclick handler if touch event was fired already.
+                if (!touchEventFired) {
                     handler.call(element, e);
                 }
             };
@@ -3082,7 +3133,7 @@ extend((
             // Set ID for the path
             textPathId = path.element.getAttribute('id');
             if (!textPathId) {
-                path.element.setAttribute('id', textPathId = H.uniqueKey());
+                path.element.setAttribute('id', textPathId = uniqueKey());
             }
 
             // Change DOM structure, by placing <textPath> tag in <text>
@@ -3718,7 +3769,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 item: Highcharts.SVGDefinitionObject
             ): void {
                 var node = ren.createElement(item.tagName as any),
-                    attr = {} as Highcharts.SVGAttributes;
+                    attr: Highcharts.SVGAttributes = {};
 
                 // Set attributes
                 objectEach(item, function (val: string, key: string): void {
@@ -5400,7 +5451,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // Fire the load event when all external images are
                         // loaded
                         ren.imgCount--;
-                        if (!ren.imgCount && chart && chart.onload) {
+                        if (!ren.imgCount && chart && !chart.hasLoaded) {
                             chart.onload();
                         }
                     },
@@ -5715,7 +5766,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var wrapper,
             // Add a hyphen at the end to avoid confusion in testing indexes
             // -1 and -10, -11 etc (#6550)
-            id = H.uniqueKey() + '-',
+            id = uniqueKey() + '-',
 
             clipPath = (this.createElement('clipPath').attr({
                 id: id

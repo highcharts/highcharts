@@ -1,6 +1,6 @@
 /**
  *
- *  (c) 2010-2019 Kamil Kulig
+ *  (c) 2010-2020 Kamil Kulig
  *
  *  License: www.highcharts.com/license
  *
@@ -143,9 +143,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-
-var seriesType = H.seriesType;
+const {
+    isArray,
+    seriesType
+} = U;
 
 /**
  * Linear regression series type.
@@ -204,9 +205,9 @@ seriesType<Highcharts.LinearRegressionIndicator>(
              * // base series:
              *
              * data: [
-             *   [Date.UTC(2019, 0, 1), 1],
-             *   [Date.UTC(2019, 0, 2), 3],
-             *   [Date.UTC(2019, 0, 3), 5]
+             *   [Date.UTC(2020, 0, 1), 1],
+             *   [Date.UTC(2020, 0, 2), 3],
+             *   [Date.UTC(2020, 0, 3), 5]
              * ]
              *
              * // This will produce one point in the indicator series that has a

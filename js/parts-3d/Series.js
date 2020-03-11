@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2010-2019 Torstein Honsi
+ *  (c) 2010-2020 Torstein Honsi
  *
  *  Extension to the Series object in 3D charts.
  *
@@ -12,8 +12,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var pick = U.pick;
-var addEvent = H.addEvent, perspective = H.perspective;
+var addEvent = U.addEvent, pick = U.pick;
+var perspective = H.perspective;
 /* eslint-disable no-invalid-this */
 // Wrap the translate method to post-translate points into 3D perspective
 addEvent(H.Series, 'afterTranslate', function () {

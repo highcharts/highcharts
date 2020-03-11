@@ -1,6 +1,6 @@
 /* *
  *
- *  (c) 2009-2019 Øystein Moseng
+ *  (c) 2009-2020 Øystein Moseng
  *
  *  Instrument class for sonification module.
  *
@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var pick = U.pick;
+var error = U.error, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
 /**
  * A set of options for the Instrument class.
  *
@@ -137,11 +137,11 @@ function Instrument(options) {
 }
 Instrument.prototype.init = function (options) {
     if (!this.initAudioContext()) {
-        H.error(29);
+        error(29);
         return;
     }
-    this.options = H.merge(defaultOptions, options);
-    this.id = this.options.id = options && options.id || H.uniqueKey();
+    this.options = merge(defaultOptions, options);
+    this.id = this.options.id = options && options.id || uniqueKey();
     // Init the audio nodes
     var ctx = H.audioContext;
     this.gainNode = ctx.createGain();
@@ -177,7 +177,7 @@ Instrument.prototype.init = function (options) {
  *         A new Instrument instance with the same options.
  */
 Instrument.prototype.copy = function (options) {
-    return new Instrument(H.merge(this.options, { id: null }, options));
+    return new Instrument(merge(this.options, { id: null }, options));
 };
 /**
  * Init the audio context, if we do not have one.
