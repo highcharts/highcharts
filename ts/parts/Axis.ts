@@ -5381,12 +5381,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */{
             tickPositioner = options.tickPositioner,
             hasVerticalPanning = this.hasVerticalPanning(),
             isColorAxis = this.coll === 'colorAxis',
-            startOnTick = isColorAxis ?
-                options.startOnTick :
-                !hasVerticalPanning && options.startOnTick,
-            endOnTick = isColorAxis ?
-                options.endOnTick :
-                !hasVerticalPanning && options.endOnTick;
+            startOnTick = !hasVerticalPanning && !isColorAxis && options.startOnTick,
+            endOnTick = !hasVerticalPanning && !isColorAxis && options.endOnTick;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
