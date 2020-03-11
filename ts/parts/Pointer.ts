@@ -2027,12 +2027,17 @@ class Pointer {
         chart.axes.forEach(function drawAxisCrosshair(
             axis: Highcharts.Axis
         ): void {
-            var snap = pick((axis.crosshair as any).snap, true),
-                point = !snap ?
-                    void 0 :
-                    find(points, function (p: Highcharts.Point): boolean {
-                        return (p.series as any)[axis.coll] === axis;
-                    });
+            const snap = pick((axis.crosshair || {}).snap, true);
+
+            let point: Highcharts.Point|undefined;
+            if (snap) {
+                point = chart.hoverPoint; // #13002
+                if (!point || (point.series as any)[axis.coll] !== axis) {
+                    point = find(points, (p: Highcharts.Point): boolean =>
+                        (p.series as any)[axis.coll] === axis
+                    );
+                }
+            }
 
             // Axis has snapping crosshairs, and one of the hover points belongs
             // to axis. Always call drawCrosshair when it is not snap.

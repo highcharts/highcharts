@@ -78,11 +78,12 @@ declare global {
 }
 import U from '../parts/Utilities.js';
 const {
+    extend,
+    pick,
     seriesType
 } = U;
 
-var pick = H.pick,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     seriesProto = H.Series.prototype,
     areaRangeProto = seriesTypes.arearange.prototype,
     columnRangeProto = seriesTypes.columnrange.prototype,
@@ -291,7 +292,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                 point.zone ? point.zone.color : void 0,
                 point.color as any
             );
-            H.extend(point, origProps);
+            extend(point, origProps);
         }
 
         attribs = {
@@ -571,7 +572,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });
-                    H.extend(point, origProps);
+                    extend(point, origProps);
                 }
             }
         }

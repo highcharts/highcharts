@@ -1314,11 +1314,16 @@ var Pointer = /** @class */ (function () {
         }
         // Issues related to crosshair #4927, #5269 #5066, #5658
         chart.axes.forEach(function drawAxisCrosshair(axis) {
-            var snap = pick(axis.crosshair.snap, true), point = !snap ?
-                void 0 :
-                find(points, function (p) {
-                    return p.series[axis.coll] === axis;
-                });
+            var snap = pick((axis.crosshair || {}).snap, true);
+            var point;
+            if (snap) {
+                point = chart.hoverPoint; // #13002
+                if (!point || point.series[axis.coll] !== axis) {
+                    point = find(points, function (p) {
+                        return p.series[axis.coll] === axis;
+                    });
+                }
+            }
             // Axis has snapping crosshairs, and one of the hover points belongs
             // to axis. Always call drawCrosshair when it is not snap.
             if (point || !snap) {

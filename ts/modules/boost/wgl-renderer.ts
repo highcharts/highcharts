@@ -113,13 +113,12 @@ import U from '../../parts/Utilities.js';
 const {
     isNumber,
     merge,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 var win = H.win,
-    doc = win.document,
-    some = H.some,
-    pick = H.pick;
+    doc = win.document;
 
 /* eslint-disable valid-jsdoc */
 
@@ -407,13 +406,12 @@ function GLRenderer(
         }
 
         if (zones) {
-            some(zones, function (
-                zone: Highcharts.SeriesZonesOptions
-            ): (boolean|undefined) {
+            zones.some(function (zone: Highcharts.SeriesZonesOptions): (boolean) {
                 if (typeof zone.value === 'undefined') {
                     zoneDefColor = new Color(zone.color);
                     return true;
                 }
+                return false;
             });
 
             if (!zoneDefColor) {
@@ -801,10 +799,10 @@ function GLRenderer(
             // Note: Boost requires that zones are sorted!
             if (zones) {
                 pcolor = (zoneDefColor as any).rgba;
-                some(zones, function ( // eslint-disable-line no-loop-func
+                zones.some(function ( // eslint-disable-line no-loop-func
                     zone: Highcharts.SeriesZonesOptions,
                     i: number
-                ): (boolean|undefined) {
+                ): boolean {
                     var last: Highcharts.SeriesZonesOptions =
                             (zones as any)[i - 1];
 
@@ -813,9 +811,9 @@ function GLRenderer(
                             pcolor = color(zone.color).rgba as any;
 
                         }
-
                         return true;
                     }
+                    return false;
                 });
 
                 (pcolor as any)[0] /= 255.0;

@@ -367,3 +367,69 @@ QUnit.test('Positioning labels according to mock points - inverted chart', funct
     assert.strictEqual(Math.round(label4.x), x4, 'x position - positioner');
     assert.strictEqual(Math.round(label4.y), y4, 'y position - positioner');
 });
+
+
+QUnit.test('Visibility of labels - point.isInsidePlot() - polar chart', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+            chart: {
+                polar: true
+            },
+
+            annotations: [{
+                labels: [{
+                    point: 'id1'
+                }, {
+                    point: 'id2'
+                }, {
+                    point: 'id3'
+                }, {
+                    point: 'id4'
+                }, {
+                    point: 'id5'
+                }, {
+                    point: 'id6'
+                }]
+            }],
+
+            yAxis: {
+                max: 10,
+                labels: {
+                    enabled: false
+                }
+            },
+
+            series: [{
+                data: [
+                    { y: 3, id: 'id1' },
+                    { y: 4, id: 'id2' },
+                    { y: 3, id: 'id3' },
+                    { y: 4, id: 'id4' },
+                    { y: 5, id: 'id5' },
+                    { y: 12, id: 'id6' }
+                ]
+            }]
+        }),
+        annotations = chart.annotations[0],
+        points = chart.series[0].points;
+
+    assert.strictEqual(
+        points[5].isInside,
+        false,
+        'Point should not be displayed - (out of plot area)'
+    );
+
+    for (var i = 0; i < annotations.labels.length - 1; i++) {
+        assert.strictEqual(
+            points[i].isInside,
+            true,
+            'All labels inside plot area should be displayed'
+        );
+        assert.notStrictEqual(
+            annotations.labels[i].graphic.y,
+            annotations.labels[5].graphic.y,
+            'All labels inside plot area should be displayed'
+        );
+    }
+
+});

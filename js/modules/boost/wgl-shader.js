@@ -10,10 +10,8 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var clamp = U.clamp, error = U.error;
-var pick = H.pick;
+var clamp = U.clamp, error = U.error, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * A static shader mimicing axis translation functions found in parts/Axis

@@ -21,7 +21,7 @@ import Point from '../parts/Point.js';
 import Legend from '../parts/Legend.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, erase = U.erase, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, erase = U.erase, extend = U.extend, Fx = U.Fx, isNumber = U.isNumber, merge = U.merge, pick = U.pick, splat = U.splat;
 import '../parts/Axis.js';
 import '../parts/Chart.js';
 import './ColorSeriesMixin.js';
@@ -1035,7 +1035,7 @@ extend(ColorAxis.prototype, {
 * @function Highcharts.Fx#strokeSetter
 */
 ['fill', 'stroke'].forEach(function (prop) {
-    H.Fx.prototype[prop + 'Setter'] = function () {
+    Fx.prototype[prop + 'Setter'] = function () {
         this.elem.attr(prop, color(this.start).tweenTo(color(this.end), this.pos), null, true);
     };
 });

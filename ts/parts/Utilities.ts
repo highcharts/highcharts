@@ -132,11 +132,13 @@ declare global {
                 options: AnimationOptionsObject,
                 prop: string
             );
-            [key: string]: any;
             public elem: (HTMLElement|SVGElement);
+            public end?: any;
             public options: AnimationOptionsObject;
             public paths?: [SVGPathArray, SVGPathArray];
+            public pos?: any;
             public prop: string;
+            public start?: any;
             public dSetter(): void;
             public fillSetter(): void;
             public initPath(
@@ -197,8 +199,6 @@ declare global {
         function defined<T>(obj: T): obj is NonNullable<T>;
         function destroyObjectProperties(obj: any, except?: any): void;
         function discardElement(element: Highcharts.HTMLDOMElement): void;
-        /** @deprecated */
-        function each<T>(arr: Array<T>, fn: Function, ctx?: any): void;
         function erase(arr: Array<unknown>, item: unknown): void;
         function error(
             code: (number|string),
@@ -226,8 +226,6 @@ declare global {
             prop: string,
             toInt?: boolean
         ): (number|string);
-        /** @deprecated */
-        function grep<T>(arr: Array<T>, fn: Function): Array<T>;
         function inArray(
             item: any,
             arr: Array<any>,
@@ -245,8 +243,6 @@ declare global {
         function isString(s: unknown): s is string;
         /** @deprecated */
         function keys(obj: any): Array<string>;
-        /** @deprecated */
-        function map<T>(arr: Array<T>, fn: Function): Array<T>;
         function merge<T1, T2 = object>(
             extend: boolean,
             a?: T1,
@@ -314,8 +310,6 @@ declare global {
         function pick<T1>(...args: [T1]): T1 extends Nullable ? undefined : T1;
         function pick<T>(...args: Array<T|null|undefined>): T|undefined;
         function pInt(s: any, mag?: number): number;
-        /** @deprecated */
-        function reduce<T>(arr: Array<T>, fn: Function, initialValue: any): any;
         function relativeLength(
             value: RelativeSize,
             base: number,
@@ -337,8 +331,6 @@ declare global {
             animation: (boolean|AnimationOptionsObject|undefined),
             chart: Chart
         ): void
-        /** @deprecated */
-        function some<T>(arr: Array<T>, fn: Function, ctx?: any): boolean;
         function splat(obj: any): Array<any>;
         function stableSort(arr: Array<any>, sortFunction: Function): void;
         function stop(el: SVGElement, prop?: string): void;
@@ -743,7 +735,7 @@ const error = H.error = function (
         if (isCode) {
             message += '?';
         }
-        H.objectEach(params, function (value: string, key: string): void {
+        objectEach(params, function (value: string, key: string): void {
             additionalMessages += ('\n' + key + ': ' + value);
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
@@ -753,7 +745,7 @@ const error = H.error = function (
     }
 
     if (chart) {
-        H.fireEvent(
+        fireEvent(
             chart,
             'displayError',
             { code, message, params } as Highcharts.ErrorMessageEventObject,
@@ -1249,7 +1241,7 @@ class Fx {
      * @return {void}
      */
     public fillSetter(): void {
-        H.Fx.prototype.strokeSetter.apply(this, arguments as any);
+        Fx.prototype.strokeSetter.apply(this, arguments as any);
     }
 
     /**
@@ -1742,6 +1734,7 @@ T1 extends Nullable ?
     T2 extends Nullable ? undefined : T2 : T1;
 function pick<T1>(...args: [T1]):
 T1 extends Nullable ? undefined : T1;
+function pick<T>(...args: Array<T|null|undefined>): T|undefined;
 /* eslint-disable valid-jsdoc */
 /**
  * Return the first value that is not null or undefined.
@@ -3452,7 +3445,7 @@ if ((win as any).jQuery) {
 
 // TODO use named exports when supported.
 const utilitiesModule = {
-    Fx,
+    Fx: H.Fx as unknown as typeof Highcharts.Fx,
     addEvent,
     animate,
     animObject,

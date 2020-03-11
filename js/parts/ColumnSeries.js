@@ -824,10 +824,11 @@ seriesType('column', 'line',
                 // Do the scale synchronously to ensure smooth
                 // updating (#5030, #7228)
                 step: function (val, fx) {
-                    attr[translateProp] =
-                        translateStart +
+                    if (series.group) {
+                        attr[translateProp] = translateStart +
                             fx.pos * (yAxis.pos - translateStart);
-                    series.group.attr(attr);
+                        series.group.attr(attr);
+                    }
                 }
             }));
         }

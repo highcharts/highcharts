@@ -467,7 +467,7 @@ class Pane {
      * @function Highcharts.Pane#destroy
      * /
     destroy: function () {
-        H.erase(this.chart.pane, this);
+        erase(this.chart.pane, this);
         this.background.forEach(function (background) {
             background.destroy();
         });

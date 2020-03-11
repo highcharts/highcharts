@@ -12,9 +12,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
+var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Series.js';
-var fireEvent = H.fireEvent, piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
+var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 /**
  * The item series type.
  *
