@@ -85,7 +85,6 @@ const {
 
 import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
-import eventEmitterMixin from './../eventEmitterMixin.js';
 import MockPoint from './../MockPoint.js';
 import Tooltip from '../../parts/Tooltip.js';
 
@@ -266,7 +265,6 @@ merge(
     true,
     ControllableLabel.prototype,
     controllableMixin,
-    eventEmitterMixin,
     /** @lends Annotation.ControllableLabel# */ {
         /**
          * Translate the point of the label by deltaX and deltaY translations.
@@ -348,29 +346,6 @@ merge(
 
             if (options.className) {
                 this.graphic.addClass(options.className);
-            }
-
-            // Mousedown event bound to HTML element (#13070).
-            if (options.useHTML) {
-                H.addEvent(
-                    this.graphic.text.element,
-                    'mousedown',
-                    (e: Highcharts.AnnotationEventObject): void => {
-                        this.annotation.onMouseDown(e);
-                    }
-                );
-
-                if (!this.annotation.graphic.renderer.styledMode) {
-                    this.graphic.text.css({
-                        cursor: ({
-                            x: 'ew-resize',
-                            y: 'ns-resize',
-                            xy: 'move'
-                        } as Highcharts.Dictionary<Highcharts.CursorValue>)[
-                            this.annotation.options.draggable
-                        ]
-                    });
-                }
             }
 
             this.graphic.labelrank = (options as any).labelrank;

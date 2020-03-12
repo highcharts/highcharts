@@ -198,14 +198,14 @@ QUnit.test('Draggable annotation - exporting', function (assert) {
     assert.close(
         labelGraphic.x,
         chart.xAxis[0].toPixels(0.5) - offset,
-        0.1,
+        0.5,
         'An annotation with HTML label should be X draggable (#13070).'
     );
 
     assert.close(
         labelGraphic.y,
         chart.yAxis[0].toPixels(170) - offset,
-        0.1,
+        0.5,
         'An annotation with HTML label should be Y draggable (#13070).'
     );
 });
