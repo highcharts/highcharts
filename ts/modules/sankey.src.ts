@@ -1034,7 +1034,7 @@ seriesType<Highcharts.SankeySeries>(
                 nodeW = this.nodeWidth,
                 right = (toNode.column as any) * this.colDistance,
                 outgoing = point.outgoing,
-                straight = right > nodeLeft;
+                straight = right > nodeLeft + nodeW;
 
             if (chart.inverted) {
                 fromY = (chart.plotSizeY as any) - fromY;

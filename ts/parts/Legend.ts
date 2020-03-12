@@ -184,6 +184,7 @@ declare global {
 import U from './Utilities.js';
 const {
     addEvent,
+    animObject,
     css,
     defined,
     discardElement,
@@ -1632,7 +1633,7 @@ class Legend {
             this.positionCheckboxes();
 
             // Fire event after scroll animation is complete
-            const animOptions = H.animObject(
+            const animOptions = animObject(
                 pick(animation, chart.renderer.globalAnimation, true)
             );
             syncTimeout((): void => {

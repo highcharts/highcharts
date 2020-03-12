@@ -75,14 +75,14 @@ const {
     correctFloat,
     defined,
     extend,
+    fireEvent,
     isNumber,
     merge,
     pick,
     uniqueKey
 } = U;
 
-var fireEvent = H.fireEvent,
-    bindingsUtils = H.NavigationBindings.prototype.utils,
+var bindingsUtils = H.NavigationBindings.prototype.utils,
     PREFIX = 'highcharts-';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

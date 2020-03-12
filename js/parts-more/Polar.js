@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, find = U.find, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, find = U.find, isNumber = U.isNumber, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
 import Pane from '../parts-more/Pane.js';
 import '../parts/Pointer.js';
 import '../parts/Series.js';
@@ -307,7 +307,7 @@ var polarAnimate = function (proceed, init) {
             // Enable animation on polar charts only in SVG. In VML, the scaling
             // is different, plus animation would be so slow it would't matter.
             if (chart.renderer.isSVG) {
-                animation = H.animObject(animation);
+                animation = animObject(animation);
                 // A different animation needed for column like series
                 if (series.is('column')) {
                     if (!init) {
@@ -418,7 +418,7 @@ if (seriesTypes.column) {
             threshold = options.threshold || 0;
             if (chart.inverted) {
                 // Finding a correct threshold
-                if (H.isNumber(threshold)) {
+                if (isNumber(threshold)) {
                     thresholdAngleRad = yAxis.translate(threshold);
                     // Checks if threshold is outside the visible range
                     if (defined(thresholdAngleRad)) {

@@ -53,6 +53,7 @@ import U from '../../parts/Utilities.js';
 const {
     addEvent,
     error,
+    isArray,
     isNumber,
     pick,
     wrap
@@ -399,7 +400,7 @@ wrap(Series.prototype, 'processData', function (
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
             firstPoint = this.getFirstValidPoint(this.options.data as any);
-            if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
+            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
                 error(12, false, this.chart);
             }
             this.enterBoost();

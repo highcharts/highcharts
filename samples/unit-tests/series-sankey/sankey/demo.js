@@ -491,8 +491,11 @@ QUnit.test(
     'Sankey and circular data',
     function (assert) {
 
-        Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
 
+            chart: {
+                width: 489
+            },
             title: {
                 text: 'Highcharts Sankey Diagram'
             },
@@ -512,6 +515,24 @@ QUnit.test(
             true,
             'No errors with circular data (#10658).'
         );
+
+        chart.series[0].setData([
+            ['a', 'c', 5],
+            ['a', 'b', 5],
+            ['b', 'd', 5],
+            ['b', 'c', 5]
+        ]);
+
+        const numberOfCurves = chart.series[0].points[3].graphic
+            .attr('d')
+            .split(' ')
+            .filter(item => item === 'C')
+            .length;
+        assert.ok(
+            numberOfCurves > 4,
+            'The link should have a complex, circular structure, not direct (#12882)'
+        );
+
     }
 );
 
