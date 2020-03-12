@@ -40,8 +40,8 @@ function prepareRelease() {
 
         if (argv.cleanup) {
             const stagedChanges = ChildProcess.execSync('git diff --cached --name-only').toString();
-            ChildProcess.execSync(`sed -i'.bak' -e s/${buildPropsVersion}.*/${packageJsonVersion}-modified/g build.properties`);
-            ChildProcess.execSync('sed -i\'.bak\' -e s/date=.*/date=/ build.properties');
+            ChildProcess.execSync(`sed -i'.bak' -e 's/${buildPropsVersion}.*/${packageJsonVersion}-modified/g' build.properties`);
+            ChildProcess.execSync('sed -i\'.bak\' -e "s/date=.*/date=/" build.properties');
 
             if (argv.commit) {
                 if (stagedChanges) {
@@ -63,7 +63,6 @@ function prepareRelease() {
             reject(new Error('Please provide either --version x.y.z or --cleanup when starting the command.'));
             return;
         }
-
         /*
             Replace version in relevant files (ideally all current versions should be equal, but since they
             sometimes have proven not to be, we make sure to replace the existing version in the exact file
@@ -71,10 +70,10 @@ function prepareRelease() {
         */
         ChildProcess.execSync(`sed -i'.bak' -e '/version/s/"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
         ChildProcess.execSync(`sed -i'.bak' -e '/version/s/"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
-        ChildProcess.execSync(`sed -i'.bak' -e s/${buildPropsVersion}/${nextVersion}/ build.properties`);
+        ChildProcess.execSync(`sed -i'.bak' -e 's/${buildPropsVersion}/${nextVersion}/' build.properties`);
 
         // replace/fill in date in build.properties
-        ChildProcess.execSync('sed -i\'.bak\' -e s/date=.*/date=$(date +%Y-%m-%d)/ build.properties');
+        ChildProcess.execSync('sed -i\'.bak\' -e "s/date=.*/date=$(date +%Y-%m-%d)/" build.properties');
 
         // replace occurences of @ since next in docs with @since x.y.z, first checking if xargs is on gnu (linux) or bsd (osx).
         const isGNU = ChildProcess.execSync('xargs --version 2>&1 |grep -s GNU >/dev/null && echo true || echo false').toString().replace('\n', '') === 'true';
