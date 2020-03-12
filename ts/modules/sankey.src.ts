@@ -610,6 +610,7 @@ seriesType<Highcharts.SankeySeries>(
         // Create a single node that holds information on incoming and outgoing
         // links.
         createNode: H.NodesMixin.createNode,
+        searchPoint: H.noop as any,
         setData: H.NodesMixin.setData,
         destroy: H.NodesMixin.destroy,
 

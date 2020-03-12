@@ -5,8 +5,7 @@
  * */
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, inArray = U.inArray, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
-var fireEvent = H.fireEvent;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, inArray = U.inArray, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
 /* eslint-disable valid-jsdoc */
 /**
  * It provides methods for:

@@ -4212,7 +4212,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * instead.
          *
          * @name Highcharts.Axis#tickPositions
-         * @type {Array<number>|undefined}
+         * @type {Highcharts.AxisTickPositionsArray|undefined}
          */
         this.tickPositions =
             // Find the tick positions. Work on a copy (#1565)

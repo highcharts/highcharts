@@ -11,7 +11,7 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, isNumber = U.isNumber;
-var setOptions = H.setOptions, each = H.each;
+var setOptions = H.setOptions;
 setOptions({
     /**
      * @optionparent chart
@@ -34,7 +34,7 @@ setOptions({
 addEvent(H.Chart, 'displayError', function (e) {
     var chart = this, code = e.code, msg, options = chart.options.chart, renderer = chart.renderer, chartWidth, chartHeight;
     if (chart.errorElements) {
-        each(chart.errorElements, function (el) {
+        (chart.errorElements).forEach(function (el) {
             if (el) {
                 el.destroy();
             }
@@ -77,7 +77,7 @@ addEvent(H.Chart, 'displayError', function (e) {
 addEvent(H.Chart, 'beforeRedraw', function () {
     var errorElements = this.errorElements;
     if (errorElements && errorElements.length) {
-        each(errorElements, function (el) {
+        errorElements.forEach(function (el) {
             el.destroy();
         });
     }

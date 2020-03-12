@@ -27,13 +27,12 @@ declare global {
     }
 }
 
-var numberFormat = H.numberFormat,
-    format = H.format;
-
 import U from '../../../../parts/Utilities.js';
 const {
     find,
+    format,
     isNumber,
+    numberFormat,
     pick,
     defined
 } = U;

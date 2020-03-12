@@ -8,9 +8,12 @@
 
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent
+} = U;
 
-const addEvent = H.addEvent,
-    Chart = H.Chart;
+const Chart = H.Chart;
 
 /**
  * Internal types
@@ -206,7 +209,7 @@ class Fullscreen {
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
-            fullscreen.unbindFullscreenEvent = H.addEvent(
+            fullscreen.unbindFullscreenEvent = addEvent(
                 chart.container.ownerDocument, // chart's document
                 fullscreen.browserProps.fullscreenChange,
                 function (): void {
@@ -235,7 +238,7 @@ class Fullscreen {
                 }
             }
 
-            H.addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
+            addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
         }
     }
     /**

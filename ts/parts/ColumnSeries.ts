@@ -109,6 +109,8 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
 import Color from './Color.js';
 const {
     parse: color
@@ -155,8 +157,8 @@ seriesType<Highcharts.ColumnSeries>(
      *         Column chart
      *
      * @extends      plotOptions.line
-     * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
-     *               lineWidth, marker, connectEnds, step, useOhlcData
+     * @excluding    connectEnds, connectNulls, gapSize, gapUnit, linecap,
+     *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
@@ -1167,11 +1169,11 @@ seriesType<Highcharts.ColumnSeries>(
                         // Do the scale synchronously to ensure smooth
                         // updating (#5030, #7228)
                         step: function (val: any, fx: any): void {
-
-                            attr[translateProp] =
-                        translateStart +
-                        fx.pos * ((yAxis.pos as any) - translateStart);
-                            series.group.attr(attr);
+                            if (series.group) {
+                                attr[translateProp] = translateStart +
+                                    fx.pos * (yAxis.pos - translateStart);
+                                series.group.attr(attr);
+                            }
                         }
                     })
                 );
