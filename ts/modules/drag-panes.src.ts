@@ -252,7 +252,7 @@ var hasTouch = H.hasTouch,
         }
     };
 
-merge(true, Axis.prototype.defaultYAxisOptions, resizerOptions);
+merge(true, Axis.defaultYAxisOptions, resizerOptions);
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

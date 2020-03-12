@@ -168,7 +168,7 @@ resizerOptions = {
         y: 0
     }
 };
-merge(true, Axis.prototype.defaultYAxisOptions, resizerOptions);
+merge(true, Axis.defaultYAxisOptions, resizerOptions);
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The AxisResizer class.
