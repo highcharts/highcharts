@@ -32,8 +32,8 @@ function prepareRelease() {
         `);
 
         if (packageJsonVersion !== bowerJsonVersion ||
-            packageJsonVersion !== buildPropsVersion ||
-            buildPropsVersion !== bowerJsonVersion) {
+            packageJsonVersion !== buildPropsVersion.replace('-modified', '') ||
+            buildPropsVersion.replace('-modified', '') !== bowerJsonVersion) {
             LogLib.warn('The current versions declared in files package.json, ' +
                                 'bower.json and build.properties does not match!');
         }
