@@ -11,7 +11,22 @@
 
 'use strict';
 
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import Tick from '../parts/axes/Tick.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    erase,
+    find,
+    isArray,
+    isNumber,
+    merge,
+    pick,
+    timeUnits,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -42,21 +57,6 @@ declare global {
     }
 }
 
-import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    erase,
-    find,
-    isArray,
-    isNumber,
-    merge,
-    pick,
-    timeUnits,
-    wrap
-} = U;
-
 var argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
@@ -65,8 +65,7 @@ var argsToArray = function (args: IArguments): Array<any> {
         // Always use strict mode
         return U.isObject(x, true);
     },
-    Chart = H.Chart,
-    Axis = H.Axis;
+    Chart = H.Chart;
 
 var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     var options = axis.options;

@@ -10,7 +10,12 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import Axis from '../parts/axes/Axis.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -30,16 +35,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    pick
-} = U;
-
-import '../parts/Axis.js';
-
-var Axis = H.Axis;
 
 /* eslint-disable no-invalid-this */
 

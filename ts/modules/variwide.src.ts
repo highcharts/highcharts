@@ -11,7 +11,18 @@
  * */
 
 'use strict';
+
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import Tick from '../parts/axes/Tick.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    isNumber,
+    pick,
+    seriesType,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -69,15 +80,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    isNumber,
-    pick,
-    seriesType,
-    wrap
-} = U;
 
 import '../parts/AreaSeries.js';
 
@@ -338,7 +340,7 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
         }
     });
 
-H.Tick.prototype.postTranslate = function (
+Tick.prototype.postTranslate = function (
     xy: Highcharts.PositionObject,
     xOrY: keyof Highcharts.PositionObject,
     index: number
@@ -360,7 +362,7 @@ H.Tick.prototype.postTranslate = function (
 /* eslint-disable no-invalid-this */
 
 // Same width as the category (#8083)
-addEvent(H.Axis, 'afterDrawCrosshair', function (
+addEvent(Axis, 'afterDrawCrosshair', function (
     e: {
         point: Highcharts.VariwidePoint;
     }
@@ -374,7 +376,7 @@ addEvent(H.Axis, 'afterDrawCrosshair', function (
 });
 
 // On a vertical axis, apply anti-collision logic to the labels.
-addEvent(H.Axis, 'afterRender', function (): void {
+addEvent(Axis, 'afterRender', function (): void {
     var axis = this;
 
     if (!this.horiz && this.variwide) {
@@ -399,7 +401,7 @@ addEvent(H.Axis, 'afterRender', function (): void {
     }
 });
 
-addEvent(H.Tick, 'afterGetPosition', function (
+addEvent(Tick, 'afterGetPosition', function (
     e: {
         pos: Highcharts.PositionObject;
         xOrY: keyof Highcharts.PositionObject;
@@ -414,7 +416,7 @@ addEvent(H.Tick, 'afterGetPosition', function (
     }
 });
 
-wrap(H.Tick.prototype, 'getLabelPosition', function (
+wrap(Tick.prototype, 'getLabelPosition', function (
     this: Highcharts.Tick,
     proceed: Function,
     x: number,

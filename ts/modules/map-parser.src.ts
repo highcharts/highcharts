@@ -14,7 +14,14 @@
 
 'use strict';
 
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    wrap
+} = U;
+
 
 /**
  * Internal types
@@ -41,12 +48,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    wrap
-} = U;
 
 import './data.src.js';
 
@@ -263,12 +264,12 @@ extend(H.Data.prototype, {
 
         fakeSeries = {
             xAxis: {
-                translate: H.Axis.prototype.translate,
+                translate: Axis.prototype.translate,
                 options: {},
                 minPixelPadding: 0
             },
             yAxis: {
-                translate: H.Axis.prototype.translate,
+                translate: Axis.prototype.translate,
                 options: {},
                 minPixelPadding: 0
             }

@@ -10,7 +10,28 @@
 
 'use strict';
 
+import Axis from './axes/Axis.js';
+import Color from './Color.js';
+const color = Color.parse;
 import H from './Globals.js';
+import Scrollbar from './Scrollbar.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    clamp,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    find,
+    isArray,
+    isNumber,
+    merge,
+    pick,
+    removeEvent,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -186,36 +207,11 @@ declare global {
     }
 }
 
-import Color from './Color.js';
-const {
-    parse: color
-} = Color;
-import Scrollbar from './Scrollbar.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    clamp,
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    erase,
-    extend,
-    find,
-    isArray,
-    isNumber,
-    merge,
-    pick,
-    removeEvent,
-    splat
-} = U;
-
-import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,

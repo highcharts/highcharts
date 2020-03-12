@@ -28,7 +28,11 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /**
  * Function callback when a cluster is clicked.
  *
@@ -41,11 +45,7 @@ import H from '../parts/Globals.js';
  *          Event arguments.
  */
 ''; // detach doclets from following code
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /* eslint-disable no-invalid-this */
-import '../parts/Axis.js';
 import '../parts/Series.js';
 import '../parts/SvgRenderer.js';
 var Series = H.Series, Scatter = H.seriesTypes.scatter, SvgRenderer = H.SVGRenderer, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
@@ -1506,7 +1506,7 @@ addEvent(Point, 'drillToCluster', function (event) {
     }
 });
 // Destroy the old tooltip after zoom.
-addEvent(H.Axis, 'setExtremes', function () {
+addEvent(Axis, 'setExtremes', function () {
     var chart = this.chart, animationDuration = 0, animation;
     chart.series.forEach(function (series) {
         if (series.markerClusterInfo) {

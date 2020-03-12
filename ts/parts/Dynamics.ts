@@ -10,7 +10,32 @@
 
 'use strict';
 
+import Axis from './axes/Axis.js';
 import H from './Globals.js';
+import Point from './Point.js';
+import Time from './Time.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    animate,
+    createElement,
+    css,
+    defined,
+    erase,
+    error,
+    extend,
+    fireEvent,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    relativeLength,
+    setAnimation,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -118,37 +143,10 @@ declare global {
     }
 }
 
-import Point from './Point.js';
-import Time from './Time.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    animate,
-    createElement,
-    css,
-    defined,
-    erase,
-    error,
-    extend,
-    fireEvent,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    relativeLength,
-    setAnimation,
-    splat
-} = U;
-
-import './Axis.js';
 import './Chart.js';
 import './Series.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 

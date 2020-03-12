@@ -10,9 +10,9 @@
  * */
 /* eslint no-console: 0 */
 'use strict';
-import H from '../parts/Globals.js';
+import Axis from '../parts/axes/Axis.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
-import Tick from '../parts/Tick.js';
+import Tick from '../parts/axes/Tick.js';
 import Tree from './Tree.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, fireEvent = U.fireEvent, extend = U.extend, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
@@ -25,7 +25,7 @@ var argsToArray = function (args) {
 }, isObject = function (x) {
     // Always use strict mode.
     return U.isObject(x, true);
-}, GridAxis = H.Axis, GridAxisTick = Tick;
+}, GridAxis = Axis, GridAxisTick = Tick;
 var override = function (obj, methods) {
     var method, func;
     for (method in methods) {

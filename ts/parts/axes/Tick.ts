@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from './Globals.js';
+import H from '../Globals.js';
 
 /**
  * Internal types
@@ -135,7 +135,7 @@ declare global {
  */
 
 
-import U from './Utilities.js';
+import U from '../Utilities.js';
 const {
     clamp,
     correctFloat,

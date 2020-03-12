@@ -11,6 +11,7 @@
  * */
 /* global document, jQuery, $ */
 'use strict';
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var extend = U.extend, wrap = U.wrap;
@@ -172,12 +173,12 @@ extend(H.Data.prototype, {
         var mapProto = H.seriesTypes.map.prototype, fakeSeries, origSize, transA;
         fakeSeries = {
             xAxis: {
-                translate: H.Axis.prototype.translate,
+                translate: Axis.prototype.translate,
                 options: {},
                 minPixelPadding: 0
             },
             yAxis: {
-                translate: H.Axis.prototype.translate,
+                translate: Axis.prototype.translate,
                 options: {},
                 minPixelPadding: 0
             }

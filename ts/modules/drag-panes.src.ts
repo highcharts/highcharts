@@ -14,7 +14,19 @@
 
 'use strict';
 
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    isNumber,
+    merge,
+    objectEach,
+    relativeLength,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -71,24 +83,7 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    wrap
-} = U;
-
-import '../parts/Axis.js';
-import '../parts/Pointer.js';
-
 var hasTouch = H.hasTouch,
-    Axis = H.Axis,
-    Pointer = H.Pointer,
-
     // Default options for AxisResizer.
     resizerOptions: Highcharts.YAxisOptions = {
         /**

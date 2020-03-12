@@ -8,11 +8,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import Axis from '../parts/axes/Axis.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick;
-import '../parts/Axis.js';
-var Axis = H.Axis;
 /* eslint-disable no-invalid-this */
 // Override to use the extreme coordinates from the SVG shape, not the data
 // values

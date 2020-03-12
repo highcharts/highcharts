@@ -10,7 +10,17 @@
 
 'use strict';
 
-import H from './Globals.js';
+import Axis from './Axis.js';
+import H from '../Globals.js';
+import U from '../Utilities.js';
+const {
+    addEvent,
+    css,
+    defined,
+    extend,
+    pick,
+    timeUnits
+} = U;
 
 /**
  * Internal types
@@ -56,25 +66,12 @@ declare global {
     }
 }
 
-import './Axis.js';
-
-import U from './Utilities.js';
-const {
-    addEvent,
-    css,
-    defined,
-    extend,
-    pick,
-    timeUnits
-} = U;
-
-import './Chart.js';
-import './Series.js';
+import '../Chart.js';
+import '../Series.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
-import './Navigator.js';
+import '../Navigator.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     noop = H.noop,
     Series = H.Series;
 

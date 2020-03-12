@@ -8,10 +8,10 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
-import Color from './Color.js';
+import H from '../Globals.js';
+import Color from '../Color.js';
 import Tick from './Tick.js';
-import U from './Utilities.js';
+import U from '../Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, error = U.error, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getMagnitude = U.getMagnitude, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, normalizeTickInterval = U.normalizeTickInterval, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * Options for the path on the Axis to be calculated.
@@ -208,7 +208,7 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  *
  * @return {string}
  */
-import './Options.js';
+import '../Options.js';
 var defaultOptions = H.defaultOptions, deg2rad = H.deg2rad;
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -2182,8 +2182,8 @@ var Axis = /** @class */ (function () {
             attr.rotation = labelOptions.rotation || 0;
         }
         // Get the longest label length
-        tickPositions.forEach(function (tick) {
-            tick = ticks[tick];
+        tickPositions.forEach(function (pos) {
+            var tick = ticks[pos];
             // Replace label - sorting animation
             if (tick.movedLabel) {
                 tick.replaceMovedLabel();
@@ -5816,4 +5816,4 @@ extend(Axis.prototype, {
     keepProps: ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin']
 });
 H.Axis = Axis;
-export default Axis;
+export default H.Axis;

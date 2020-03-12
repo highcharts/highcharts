@@ -10,7 +10,9 @@
  *
  * */
 'use strict';
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import Tick from '../parts/axes/Tick.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType, wrap = U.wrap;
 import '../parts/AreaSeries.js';
@@ -179,7 +181,7 @@ seriesType('variwide', 'column'
         return isNumber(this.y) && isNumber(this.z);
     }
 });
-H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
+Tick.prototype.postTranslate = function (xy, xOrY, index) {
     var axis = this.axis, pos = xy[xOrY] - axis.pos;
     if (!axis.horiz) {
         pos = axis.len - pos;
@@ -192,13 +194,13 @@ H.Tick.prototype.postTranslate = function (xy, xOrY, index) {
 };
 /* eslint-disable no-invalid-this */
 // Same width as the category (#8083)
-addEvent(H.Axis, 'afterDrawCrosshair', function (e) {
+addEvent(Axis, 'afterDrawCrosshair', function (e) {
     if (this.variwide && this.cross) {
         this.cross.attr('stroke-width', (e.point && e.point.crosshairWidth));
     }
 });
 // On a vertical axis, apply anti-collision logic to the labels.
-addEvent(H.Axis, 'afterRender', function () {
+addEvent(Axis, 'afterRender', function () {
     var axis = this;
     if (!this.horiz && this.variwide) {
         this.chart.labelCollectors.push(function () {
@@ -214,14 +216,14 @@ addEvent(H.Axis, 'afterRender', function () {
         });
     }
 });
-addEvent(H.Tick, 'afterGetPosition', function (e) {
+addEvent(Tick, 'afterGetPosition', function (e) {
     var axis = this.axis, xOrY = axis.horiz ? 'x' : 'y';
     if (axis.variwide) {
         this[xOrY + 'Orig'] = e.pos[xOrY];
         this.postTranslate(e.pos, xOrY, this.pos);
     }
 });
-wrap(H.Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
+wrap(Tick.prototype, 'getLabelPosition', function (proceed, x, y, label, horiz, labelOptions, tickmarkOffset, index) {
     var args = Array.prototype.slice.call(arguments, 1), xy, xOrY = horiz ? 'x' : 'y';
     // Replace the x with the original x
     if (this.axis.variwide &&

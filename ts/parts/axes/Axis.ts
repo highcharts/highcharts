@@ -10,10 +10,10 @@
 
 'use strict';
 
-import H from './Globals.js';
-import Color from './Color.js';
+import H from '../Globals.js';
+import Color from '../Color.js';
 import Tick from './Tick.js';
-import U from './Utilities.js';
+import U from '../Utilities.js';
 const {
     addEvent,
     animObject,
@@ -715,7 +715,7 @@ declare global {
  * @return {string}
  */
 
-import './Options.js';
+import '../Options.js';
 
 var defaultOptions = H.defaultOptions,
     deg2rad = H.deg2rad;
@@ -6433,7 +6433,7 @@ class Axis {
      * @return {number}
      * The pixel width allocated to each axis label.
      */
-    public getSlotWidth(tick?: Highcharts.Tick): number {
+    public getSlotWidth(tick?: Tick): number {
         // #5086, #1580, #1931
         var chart = this.chart,
             horiz = this.horiz,
@@ -6507,8 +6507,8 @@ class Axis {
         }
 
         // Get the longest label length
-        tickPositions.forEach(function (tick: (number|Highcharts.Tick)): void {
-            tick = ticks[tick as any];
+        tickPositions.forEach(function (pos: number): void {
+            const tick = ticks[pos];
 
             // Replace label - sorting animation
             if (tick.movedLabel) {
@@ -6517,8 +6517,8 @@ class Axis {
 
             if (
                 tick &&
-                (tick as any).label &&
-                (tick as any).label.textPxLength > maxLabelLength
+                tick.label &&
+                tick.label.textPxLength > maxLabelLength
             ) {
                 maxLabelLength = (tick as any).label.textPxLength;
             }
@@ -6878,10 +6878,7 @@ class Axis {
             axis.labelOffset = labelOffset * (axis.opposite ? -1 : 1);
 
         } else { // doesn't have data
-            objectEach(ticks, function (
-                tick: Highcharts.Tick,
-                n: string
-            ): void {
+            objectEach(ticks, function (tick: Tick, n: string): void {
                 tick.destroy();
                 delete ticks[n];
             });
@@ -7211,12 +7208,9 @@ class Axis {
 
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
-            coll: (
-                Highcharts.Dictionary<Highcharts.Tick>|
-                Highcharts.Dictionary<Highcharts.PlotLineOrBand>
-            )
+            coll: (Record<string, Tick>|Record<string, Highcharts.PlotLineOrBand>)
         ): void {
-            objectEach(coll, function (tick: Highcharts.Tick): void {
+            objectEach(coll, function (tick: Tick): void {
                 tick.isActive = false;
             });
         });
@@ -7300,10 +7294,7 @@ class Axis {
 
         // Remove inactive ticks
         [ticks, minorTicks, alternateBands].forEach(function (
-            coll: (
-                Highcharts.Dictionary<Highcharts.Tick>|
-                Highcharts.Dictionary<Highcharts.PlotLineOrBand>
-            )
+            coll: (Record<string, Tick>|Record<string, Highcharts.PlotLineOrBand>)
         ): void {
             var i,
                 forDestruction = [] as Array<number>,
@@ -7325,10 +7316,7 @@ class Axis {
 
                 };
 
-            objectEach(coll, function (
-                tick: Highcharts.Tick,
-                pos: string
-            ): void {
+            objectEach(coll, function (tick: Tick, pos: string): void {
                 if (!tick.isActive) {
                     // Render to zero opacity
                     tick.render(pos as any, false, 0);
@@ -7396,11 +7384,11 @@ class Axis {
             this.render();
 
             // move plot lines and bands
-            this.plotLinesAndBands.forEach(function (
-                plotLine: Highcharts.PlotLineOrBand
-            ): void {
-                plotLine.render();
-            });
+            this.plotLinesAndBands.forEach(
+                function (plotLine: Highcharts.PlotLineOrBand): void {
+                    plotLine.render();
+                }
+            );
         }
 
         // mark associated series as dirty and ready for redraw
@@ -7447,10 +7435,7 @@ class Axis {
         // Destroy collections
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
             function (
-                coll: (
-                    Highcharts.Dictionary<Highcharts.PlotLineOrBand>|
-                    Highcharts.Dictionary<Highcharts.Tick>
-                )
+                coll: (Record<string, Highcharts.PlotLineOrBand>|Record<string, Tick>)
             ): void {
                 destroyObjectProperties(coll);
             }
@@ -7660,4 +7645,4 @@ extend(Axis.prototype, {
 
 H.Axis = Axis as any;
 
-export default Axis;
+export default H.Axis;

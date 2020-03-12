@@ -8,15 +8,15 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
-import './Axis.js';
-import U from './Utilities.js';
+import Axis from './Axis.js';
+import H from '../Globals.js';
+import U from '../Utilities.js';
 var addEvent = U.addEvent, css = U.css, defined = U.defined, extend = U.extend, pick = U.pick, timeUnits = U.timeUnits;
-import './Chart.js';
-import './Series.js';
+import '../Chart.js';
+import '../Series.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
-import './Navigator.js';
-var Axis = H.Axis, Chart = H.Chart, noop = H.noop, Series = H.Series;
+import '../Navigator.js';
+var Chart = H.Chart, noop = H.noop, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /* ************************************************************************** *
  * Start ordinal axis logic                                                   *

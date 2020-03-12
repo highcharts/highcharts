@@ -10,7 +10,19 @@
 
 'use strict';
 
+import Axis from './axes/Axis.js';
 import H from './Globals.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    fireEvent,
+    merge,
+    pick,
+    removeEvent
+} = U;
 
 /**
  * Internal types
@@ -139,23 +151,9 @@ interface ScrollbarEventCallbackFunction {
     (e: Highcharts.PointerEventObject): void;
 }
 
-import U from './Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    fireEvent,
-    merge,
-    pick,
-    removeEvent
-} = U;
-
-import './Axis.js';
 import './Options.js';
 
-var Axis = H.Axis,
-    defaultOptions = H.defaultOptions,
+var defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     swapXY: (

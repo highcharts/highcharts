@@ -9,7 +9,17 @@
  * */
 
 'use strict';
+
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    isNumber,
+    pick
+} = U;
+
 
 /**
  * Internal types
@@ -28,14 +38,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    isNumber,
-    pick
-} = U;
 
 var Chart = H.Chart;
 
@@ -58,7 +60,7 @@ var Chart = H.Chart;
  * @apioption yAxis.staticScale
  */
 
-addEvent(H.Axis, 'afterSetOptions', function (): void {
+addEvent(Axis, 'afterSetOptions', function (): void {
     var chartOptions = this.chart.options && this.chart.options.chart;
     if (
         !this.horiz &&

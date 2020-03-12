@@ -3,7 +3,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
 /**
  * @private
  * @interface Highcharts.AnnotationMockLabelOptionsObject
@@ -41,9 +44,6 @@ import H from '../parts/Globals.js';
  * @name Highcharts.Point#mock
  * @type {boolean|undefined}
  */
-import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent;
-import '../parts/Axis.js';
 import '../parts/Series.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -246,7 +246,7 @@ extend(MockPoint.prototype, /** @lends Highcharts.AnnotationMockPoint# */ {
     setAxis: function (options, xOrY) {
         var axisName = (xOrY + 'Axis'), axisOptions = options[axisName], chart = this.series.chart;
         this.series[axisName] =
-            axisOptions instanceof H.Axis ?
+            axisOptions instanceof Axis ?
                 axisOptions :
                 defined(axisOptions) ?
                     (chart[axisName][axisOptions] ||

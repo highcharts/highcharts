@@ -12,7 +12,12 @@
 
 'use strict';
 
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent
+} = U;
 
 /**
  * Internal types
@@ -44,16 +49,9 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent
-} = U;
-
-import '../parts/Axis.js';
 import '../parts/SvgRenderer.js';
 
-var Axis = H.Axis,
-    SVGRenderer = H.SVGRenderer,
+var SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;
 
 if (VMLRenderer) {

@@ -10,7 +10,24 @@
 
 'use strict';
 
+import Axis from './axes/Axis.js';
 import H from './Globals.js';
+import Point from './Point.js';
+import Tooltip from './Tooltip.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    defined,
+    error,
+    extend,
+    format,
+    isNumber,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -147,30 +164,11 @@ declare global {
  * @type {number}
  */
 
-''; // detach doclets above
+''; // detaches doclets above
 
-import Point from './Point.js';
-import Tooltip from './Tooltip.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    defined,
-    error,
-    extend,
-    format,
-    isNumber,
-    merge,
-    pick
-} = U;
-
-import './Axis.js';
 import './Series.js';
 
-var Axis = H.Axis,
-    defaultPlotOptions = H.defaultPlotOptions,
+var defaultPlotOptions = H.defaultPlotOptions,
     Series = H.Series;
 
 /* ************************************************************************** *

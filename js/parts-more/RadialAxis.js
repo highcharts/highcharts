@@ -8,13 +8,13 @@
  *
  * */
 'use strict';
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import Tick from '../parts/Tick.js';
+import Tick from '../parts/axes/Tick.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
-import '../parts/Axis.js';
 import './Pane.js';
-var Axis = H.Axis, noop = H.noop, 
+var noop = H.noop, 
 // @todo Extract this to a new file:
 hiddenAxisMixin, 
 // @todo Extract this to a new file

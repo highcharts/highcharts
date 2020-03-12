@@ -10,7 +10,13 @@
 
 'use strict';
 
-import H from './Globals.js';
+import Axis from './Axis.js';
+import U from '../Utilities.js';
+const {
+    getMagnitude,
+    normalizeTickInterval,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -31,15 +37,6 @@ declare global {
         }
     }
 }
-
-import U from './Utilities.js';
-const {
-    getMagnitude,
-    normalizeTickInterval,
-    pick
-} = U;
-
-var Axis = H.Axis;
 
 /* ************************************************************************** *
  * Methods defined on the Axis prototype

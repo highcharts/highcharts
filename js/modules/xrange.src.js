@@ -10,7 +10,12 @@
  *
  * */
 'use strict';
+import Axis from '../parts/axes/Axis.js';
+import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
@@ -19,12 +24,8 @@ import H from '../parts/Globals.js';
 * @type {number|undefined}
 * @requires modules/xrange
 */
-import Color from '../parts/Color.js';
-var color = Color.parse;
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, find = U.find, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
-var columnType = H.seriesTypes.column, seriesTypes = H.seriesTypes, Axis = H.Axis, Series = H.Series;
+''; // detaches doclets aboves
+var columnType = H.seriesTypes.column, seriesTypes = H.seriesTypes, Series = H.Series;
 /**
  * Return color of a point based on its category.
  *
@@ -397,9 +398,8 @@ seriesType('xrange', 'column'
                         pfOptions = merge(pfOptions, seriesOpts.partialFill);
                     }
                     fill = (pfOptions.fill ||
-                        color(pointAttr.fill).brighten(-0.3).get() ||
-                        color(point.color || series.color)
-                            .brighten(-0.3).get());
+                        Color.parse(pointAttr.fill).brighten(-0.3).get() ||
+                        Color.parse(point.color || series.color).brighten(-0.3).get());
                     pointAttr.fill = fill;
                     graphic
                         .partRect[pointStateVerb](pointAttr, animation)

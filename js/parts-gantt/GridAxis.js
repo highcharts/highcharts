@@ -9,8 +9,9 @@
  *
  * */
 'use strict';
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import Tick from '../parts/Tick.js';
+import Tick from '../parts/axes/Tick.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, erase = U.erase, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
 var argsToArray = function (args) {
@@ -18,7 +19,7 @@ var argsToArray = function (args) {
 }, dateFormat = H.dateFormat, isObject = function (x) {
     // Always use strict mode
     return U.isObject(x, true);
-}, Chart = H.Chart, Axis = H.Axis;
+}, Chart = H.Chart;
 var applyGridOptions = function applyGridOptions(axis) {
     var options = axis.options;
     // Center-align by default

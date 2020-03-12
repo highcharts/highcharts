@@ -4,7 +4,14 @@
  *
  * */
 
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    defined,
+    extend,
+    fireEvent
+} = U;
 
 /**
  * Internal types.
@@ -109,12 +116,6 @@ declare global {
  * @type {boolean|undefined}
  */
 
-import U from '../parts/Utilities.js';
-var defined = U.defined,
-    extend = U.extend,
-    fireEvent = U.fireEvent;
-
-import '../parts/Axis.js';
 import '../parts/Series.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -363,7 +364,7 @@ extend(MockPoint.prototype, /** @lends Highcharts.AnnotationMockPoint# */ {
             chart = this.series.chart;
 
         this.series[axisName] =
-            axisOptions instanceof H.Axis ?
+            axisOptions instanceof Axis ?
                 axisOptions :
                 defined(axisOptions) ?
                     (

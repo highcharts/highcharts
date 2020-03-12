@@ -11,7 +11,23 @@
  * */
 
 'use strict';
+
+import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    defined,
+    erase,
+    extend,
+    format,
+    merge,
+    pick,
+    splat,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -55,30 +71,13 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    defined,
-    erase,
-    extend,
-    format,
-    merge,
-    pick,
-    splat,
-    wrap
-} = U;
-
-import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 
 // Extensions for parallel coordinates plot.
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     ChartProto = Chart.prototype,
-    AxisProto = H.Axis.prototype;
+    AxisProto = Axis.prototype;
 
 var defaultXAxisOptions = {
     lineWidth: 0,

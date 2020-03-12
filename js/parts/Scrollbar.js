@@ -8,12 +8,12 @@
  *
  * */
 'use strict';
+import Axis from './axes/Axis.js';
 import H from './Globals.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent;
-import './Axis.js';
 import './Options.js';
-var Axis = H.Axis, defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, swapXY;
+var defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, swapXY;
 /**
  *
  * The scrollbar is a means of panning over the X axis of a stock chart.
