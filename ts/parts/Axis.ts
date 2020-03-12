@@ -319,7 +319,6 @@ declare global {
             public static defaultRightAxisOptions: AxisOptions;
             public static defaultTopAxisOptions: AxisOptions;
             public static defaultYAxisOptions: YAxisOptions;
-            public static defaultLabelFormatter(): void;
             public constructor(chart: Chart, userOptions: AxisOptions);
             public _addedPlotLB?: boolean;
             public allowZoomOutside?: boolean;
@@ -433,6 +432,7 @@ declare global {
             public adjustTickAmount(): void;
             public alignToOthers(): (boolean|undefined);
             public autoLabelAlign(rotation: number): AlignValue;
+            public defaultLabelFormatter(): void;
             public destroy(keepEvents?: boolean): void;
             public drawCrosshair(e?: PointerEventObject, point?: Point): void;
             public generateTick(pos: number, i?: number): void;
@@ -3763,92 +3763,6 @@ class Axis {
 
     /* *
      *
-     *  Static Functions
-     *
-     * */
-
-    /**
-     * The default label formatter. The context is a special config object for
-     * the label. In apps, use the
-     * [labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter)
-     * instead, except when a modification is needed.
-     *
-     * @function Highcharts.Axis#defaultLabelFormatter
-     *
-     * @param {Highcharts.AxisLabelsFormatterContextObject} this
-     * Formatter context of axis label.
-     *
-     * @return {string}
-     * The formatted label content.
-     */
-    public static defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
-        var axis = this.axis,
-            value = this.value,
-            time = axis.chart.time,
-            categories = axis.categories,
-            dateTimeLabelFormat = this.dateTimeLabelFormat,
-            lang = defaultOptions.lang,
-            numericSymbols = (lang as any).numericSymbols,
-            numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
-            i = numericSymbols && numericSymbols.length,
-            multi,
-            ret: (string|undefined),
-            formatOption = (axis.options.labels as any).format,
-
-            // make sure the same symbol is added for all labels on a linear
-            // axis
-            numericSymbolDetector = axis.isLog ?
-                Math.abs(value) :
-                axis.tickInterval;
-        const chart = this.chart;
-        const { numberFormatter } = chart;
-
-        if (formatOption) {
-            ret = format(formatOption, this, chart);
-
-        } else if (categories) {
-            ret = value as any;
-
-        } else if (dateTimeLabelFormat) { // datetime axis
-            ret = time.dateFormat(dateTimeLabelFormat, value);
-
-        } else if (i && numericSymbolDetector >= 1000) {
-            // Decide whether we should add a numeric symbol like k (thousands)
-            // or M (millions). If we are to enable this in tooltip or other
-            // places as well, we can move this logic to the numberFormatter and
-            // enable it by a parameter.
-            while (i-- && typeof ret === 'undefined') {
-                multi = Math.pow(numSymMagnitude, i + 1);
-                if (
-                    // Only accept a numeric symbol when the distance is more
-                    // than a full unit. So for example if the symbol is k, we
-                    // don't accept numbers like 0.5k.
-                    numericSymbolDetector >= multi &&
-                    // Accept one decimal before the symbol. Accepts 0.5k but
-                    // not 0.25k. How does this work with the previous?
-                    (value * 10) % multi === 0 &&
-                    numericSymbols[i] !== null &&
-                    value !== 0
-                ) { // #5480
-                    ret = numberFormatter(value / multi, -1) +
-                        numericSymbols[i];
-                }
-            }
-        }
-
-        if (typeof ret === 'undefined') {
-            if (Math.abs(value) >= 10000) { // add thousands separators
-                ret = numberFormatter(value, -1);
-            } else { // small numbers
-                ret = numberFormatter(value, -1, void 0, ''); // #2466
-            }
-        }
-
-        return ret;
-    }
-
-    /* *
-     *
      *  Constructors
      *
      * */
@@ -4063,7 +3977,7 @@ class Axis {
         axis.labelFormatter = (
             (options.labels as any).formatter ||
             // can be overwritten by dynamic format
-            Axis.defaultLabelFormatter
+            axis.defaultLabelFormatter
         );
 
 
@@ -4274,6 +4188,86 @@ class Axis {
         );
 
         fireEvent(this, 'afterSetOptions', { userOptions: userOptions });
+    }
+
+    /**
+     * The default label formatter. The context is a special config object for
+     * the label. In apps, use the
+     * [labels.formatter](https://api.highcharts.com/highcharts/xAxis.labels.formatter)
+     * instead, except when a modification is needed.
+     *
+     * @function Highcharts.Axis#defaultLabelFormatter
+     *
+     * @param {Highcharts.AxisLabelsFormatterContextObject} this
+     * Formatter context of axis label.
+     *
+     * @return {string}
+     * The formatted label content.
+     */
+    public defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject): string {
+        var axis = this.axis,
+            value = this.value,
+            time = axis.chart.time,
+            categories = axis.categories,
+            dateTimeLabelFormat = this.dateTimeLabelFormat,
+            lang = defaultOptions.lang,
+            numericSymbols = (lang as any).numericSymbols,
+            numSymMagnitude = (lang as any).numericSymbolMagnitude || 1000,
+            i = numericSymbols && numericSymbols.length,
+            multi,
+            ret: (string|undefined),
+            formatOption = (axis.options.labels as any).format,
+
+            // make sure the same symbol is added for all labels on a linear
+            // axis
+            numericSymbolDetector = axis.isLog ?
+                Math.abs(value) :
+                axis.tickInterval;
+        const chart = this.chart;
+        const { numberFormatter } = chart;
+
+        if (formatOption) {
+            ret = format(formatOption, this, chart);
+
+        } else if (categories) {
+            ret = value as any;
+
+        } else if (dateTimeLabelFormat) { // datetime axis
+            ret = time.dateFormat(dateTimeLabelFormat, value);
+
+        } else if (i && numericSymbolDetector >= 1000) {
+            // Decide whether we should add a numeric symbol like k (thousands)
+            // or M (millions). If we are to enable this in tooltip or other
+            // places as well, we can move this logic to the numberFormatter and
+            // enable it by a parameter.
+            while (i-- && typeof ret === 'undefined') {
+                multi = Math.pow(numSymMagnitude, i + 1);
+                if (
+                    // Only accept a numeric symbol when the distance is more
+                    // than a full unit. So for example if the symbol is k, we
+                    // don't accept numbers like 0.5k.
+                    numericSymbolDetector >= multi &&
+                    // Accept one decimal before the symbol. Accepts 0.5k but
+                    // not 0.25k. How does this work with the previous?
+                    (value * 10) % multi === 0 &&
+                    numericSymbols[i] !== null &&
+                    value !== 0
+                ) { // #5480
+                    ret = numberFormatter(value / multi, -1) +
+                        numericSymbols[i];
+                }
+            }
+        }
+
+        if (typeof ret === 'undefined') {
+            if (Math.abs(value) >= 10000) { // add thousands separators
+                ret = numberFormatter(value, -1);
+            } else { // small numbers
+                ret = numberFormatter(value, -1, void 0, ''); // #2466
+            }
+        }
+
+        return ret;
     }
 
     /**
