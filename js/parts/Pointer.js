@@ -814,9 +814,9 @@ var Pointer = /** @class */ (function () {
             pEvt.button !== 0) {
             this.onContainerMouseMove(pEvt);
         }
+        // #11635, limiting to primary button (incl. IE 8 support)
         if (typeof pEvt.button === 'undefined' ||
-            pEvt.button === 0 // #11635, limiting to primary button
-        ) {
+            ((pEvt.buttons || pEvt.button) & 1) === 1) {
             this.zoomOption(pEvt);
             this.dragStart(pEvt);
         }
