@@ -55,7 +55,7 @@
     "colors": "^1.4.0",
     "cross-env": "^7.0.0",
     "dtslint": "^2.0.6",
-    "eslint": "^6.8.0",
+    "eslint": "^4.18.2",
     "eslint-config-eslint": "^5.0.1",
     "eslint-plugin-highcharts": "github:highcharts/eslint-plugin-highcharts",
     "eslint-plugin-node": "^11.0.0",
