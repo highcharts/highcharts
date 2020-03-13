@@ -1067,7 +1067,6 @@ class Pointer {
         const chart = this.chart;
         const relatedTarget = e.relatedTarget || e.toElement;
         const series = chart.hoverSeries;
-        const tooltip = chart.tooltip;
 
         this.isDirectTouch = false;
 
@@ -1075,10 +1074,6 @@ class Pointer {
             series &&
             relatedTarget &&
             !series.stickyTracking &&
-            (
-                !tooltip ||
-                !tooltip.isStickyOnContact()
-            ) &&
             !this.inClass(relatedTarget as any, 'highcharts-tooltip') &&
             (
                 !this.inClass(
