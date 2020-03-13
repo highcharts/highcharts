@@ -93,9 +93,9 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @private
      */
     updateLegendItemProxyVisibility: function () {
-        var legend = this.chart.legend, items = legend.allItems || [], curPage = legend.currentPage || 1;
+        var legend = this.chart.legend, items = legend.allItems || [], curPage = legend.currentPage || 1, clipHeight = legend.clipHeight || 0;
         items.forEach(function (item) {
-            var itemPage = item.pageIx || 0, hide = itemPage !== curPage - 1;
+            var itemPage = item.pageIx || 0, y = item._legendItemPos ? item._legendItemPos[1] : 0, h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0, hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
             if (item.a11yProxyElement) {
                 item.a11yProxyElement.style.visibility = hide ?
                     'hidden' : 'visible';
