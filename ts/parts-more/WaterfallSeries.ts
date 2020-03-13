@@ -10,21 +10,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    isNumber,
-    objectEach,
-    pick,
-    seriesType
-} = U;
-
 
 /**
  * Internal types
@@ -116,10 +102,24 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    isNumber,
+    objectEach,
+    pick,
+    seriesType
+} = U;
+
 import '../parts/Options.js';
 import '../parts/Series.js';
 
-var Chart = H.Chart,
+var Axis = H.Axis,
+    Chart = H.Chart,
     Series = H.Series,
     StackItem = H.StackItem,
     seriesTypes = H.seriesTypes;

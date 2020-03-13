@@ -14,24 +14,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    defined,
-    error,
-    isArray,
-    isFunction,
-    isObject,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    syncTimeout
-} = U;
 
 /**
  * Internal types
@@ -255,8 +238,26 @@ declare global {
 
 ''; // detach doclets from following code
 
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    defined,
+    error,
+    isArray,
+    isFunction,
+    isObject,
+    isNumber,
+    merge,
+    objectEach,
+    relativeLength,
+    syncTimeout
+} = U;
+
 /* eslint-disable no-invalid-this */
 
+import '../parts/Axis.js';
 import '../parts/Series.js';
 import '../parts/SvgRenderer.js';
 
@@ -2392,7 +2393,7 @@ addEvent(Point, 'drillToCluster', function (
 });
 
 // Destroy the old tooltip after zoom.
-addEvent(Axis, 'setExtremes', function (
+addEvent(H.Axis, 'setExtremes', function (
     this: Highcharts.Axis
 ): void {
     var chart = this.chart,

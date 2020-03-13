@@ -11,14 +11,13 @@
  *
  * */
 'use strict';
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick, seriesType = U.seriesType;
 /**
  * @typedef {"circle"|"diamond"|"hexagon"|"square"} Highcharts.TilemapShapeValue
  */
 ''; // detach doclets above
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, extend = U.extend, pick = U.pick, seriesType = U.seriesType;
 import '../parts-map/HeatmapSeries.js';
 /**
  * Utility func to get padding definition from tile size division
@@ -274,7 +273,7 @@ H.tileShapeTypes = {
 // Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
 // series and adds the largest padding required. If no series has this function
 // defined, we add nothing.
-addEvent(Axis, 'afterSetAxisTranslation', function () {
+addEvent(H.Axis, 'afterSetAxisTranslation', function () {
     if (this.recomputingForTilemap || this.coll === 'colorAxis') {
         return;
     }

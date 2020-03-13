@@ -13,22 +13,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
-import mixinTreeSeries from '../mixins/tree-series.js';
-import Tick from '../parts/axes/Tick.js';
-import Tree from './Tree.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    fireEvent,
-    extend,
-    isNumber,
-    isString,
-    merge,
-    pick,
-    wrap
-} = U;
+import H from '../parts/Globals.js';
 
 /**
  * Internal types
@@ -86,6 +71,22 @@ declare global {
     }
 }
 
+import mixinTreeSeries from '../mixins/tree-series.js';
+import Tick from '../parts/Tick.js';
+import Tree from './Tree.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    fireEvent,
+    extend,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    wrap
+} = U;
+
 import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 
@@ -101,7 +102,7 @@ var argsToArray = function (args: IArguments): Array<any> {
         // Always use strict mode.
         return U.isObject(x, true);
     },
-    GridAxis: Highcharts.TreeGridAxis = Axis as any,
+    GridAxis: Highcharts.TreeGridAxis = H.Axis as any,
     GridAxisTick: Highcharts.TreeGridTick = Tick as any;
 
 var override = function<T> (

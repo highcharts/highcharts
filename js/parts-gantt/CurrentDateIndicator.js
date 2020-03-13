@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import PlotLineOrBand from '../parts/axes/PlotLineOrBand.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
+import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+var Axis = H.Axis;
 var defaultConfig = {
     /**
      * Show an indicator on the axis for the current date and time. Can be a

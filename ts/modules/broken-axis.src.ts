@@ -10,17 +10,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    extend,
-    find,
-    fireEvent,
-    isArray,
-    pick
-} = U;
 
 /**
  * Internal types
@@ -71,9 +61,21 @@ declare global {
     }
 }
 
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    extend,
+    find,
+    fireEvent,
+    isArray,
+    pick
+} = U;
+
+import '../parts/Axis.js';
 import '../parts/Series.js';
 
-var Series = H.Series;
+var Axis = H.Axis,
+    Series = H.Series;
 
 /**
  * Returns the first break found where the x is larger then break.from and

@@ -10,25 +10,7 @@
 
 'use strict';
 
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    createElement,
-    css,
-    defined,
-    destroyObjectProperties,
-    discardElement,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    pInt,
-    splat
-} = U;
 
 /**
  * Internal types
@@ -191,11 +173,29 @@ declare global {
  *         Parsed JavaScript time value.
  */
 
-''; // detaches doclets above
+import U from './Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    destroyObjectProperties,
+    discardElement,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    pInt,
+    splat
+} = U;
 
+import './Axis.js';
 import './Chart.js';
 
-var Chart = H.Chart,
+var Axis = H.Axis,
+    Chart = H.Chart,
     defaultOptions = H.defaultOptions;
 
 /* ************************************************************************** *

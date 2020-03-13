@@ -10,19 +10,7 @@
 
 'use strict';
 
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
-import U from './Utilities.js';
-const {
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    fireEvent,
-    format,
-    objectEach,
-    pick
-} = U;
-
 
 /**
  * Internal types
@@ -192,10 +180,23 @@ declare global {
  * @type {number}
  */
 
+import U from './Utilities.js';
+const {
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    fireEvent,
+    format,
+    objectEach,
+    pick
+} = U;
+
+import './Axis.js';
 import './Chart.js';
 import './Series.js';
 
-var Chart = H.Chart,
+var Axis = H.Axis,
+    Chart = H.Chart,
     Series = H.Series;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */

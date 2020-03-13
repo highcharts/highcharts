@@ -12,23 +12,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
-import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import Tick from '../parts/axes/Tick.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    extend,
-    fireEvent,
-    format,
-    merge,
-    objectEach,
-    pick,
-    syncTimeout
-} = U;
 
 /**
  * Internal types
@@ -307,6 +291,22 @@ declare global {
  * @name Highcharts.DrillupEventObject#type
  * @type {"drillup"}
  */
+
+import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
+import Tick from '../parts/Tick.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    extend,
+    fireEvent,
+    format,
+    merge,
+    objectEach,
+    pick,
+    syncTimeout
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -1377,7 +1377,7 @@ Point.prototype.doDrilldown = function (
  *        Click event
  * @return {void}
  */
-Axis.prototype.drilldownCategory = function (
+H.Axis.prototype.drilldownCategory = function (
     x: number,
     e: MouseEvent
 ): void {
@@ -1404,7 +1404,7 @@ Axis.prototype.drilldownCategory = function (
  * @return {Array<(boolean|Highcharts.Point)>|undefined}
  *         Drillable points
  */
-Axis.prototype.getDDPoints = function (
+H.Axis.prototype.getDDPoints = function (
     x: number
 ): (Array<(boolean|Highcharts.Point)>|undefined) {
     return this.ddPoints && this.ddPoints[x];

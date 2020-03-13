@@ -10,13 +10,7 @@
  *
  * */
 'use strict';
-import Axis from '../parts/axes/Axis.js';
-import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import Tick from '../parts/axes/Tick.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 /**
  * Gets fired when a drilldown point is clicked, before the new series is added.
  * Note that when clicking a category label to trigger multiple series
@@ -130,6 +124,11 @@ var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEve
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
+import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
+import Tick from '../parts/Tick.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -939,7 +938,7 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
  *        Click event
  * @return {void}
  */
-Axis.prototype.drilldownCategory = function (x, e) {
+H.Axis.prototype.drilldownCategory = function (x, e) {
     objectEach(this.getDDPoints(x), function (point) {
         if (point &&
             point.series &&
@@ -960,7 +959,7 @@ Axis.prototype.drilldownCategory = function (x, e) {
  * @return {Array<(boolean|Highcharts.Point)>|undefined}
  *         Drillable points
  */
-Axis.prototype.getDDPoints = function (x) {
+H.Axis.prototype.getDDPoints = function (x) {
     return this.ddPoints && this.ddPoints[x];
 };
 /**

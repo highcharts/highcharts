@@ -10,45 +10,7 @@
 
 'use strict';
 
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
-import Legend from './Legend.js';
-import MSPointer from './MSPointer.js';
-import Pointer from './Pointer.js';
-import Time from './Time.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    animate,
-    animObject,
-    attr,
-    createElement,
-    css,
-    defined,
-    discardElement,
-    erase,
-    error,
-    extend,
-    find,
-    fireEvent,
-    getStyle,
-    isArray,
-    isFunction,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    numberFormat,
-    objectEach,
-    pick,
-    pInt,
-    relativeLength,
-    removeEvent,
-    setAnimation,
-    splat,
-    syncTimeout,
-    uniqueKey
-} = U;
 
 /**
  * Internal types
@@ -327,12 +289,50 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-''; // detaches doclets above
+import Legend from './Legend.js';
+import MSPointer from './MSPointer.js';
+import Pointer from './Pointer.js';
+import Time from './Time.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    animate,
+    animObject,
+    attr,
+    createElement,
+    css,
+    defined,
+    discardElement,
+    erase,
+    error,
+    extend,
+    find,
+    fireEvent,
+    getStyle,
+    isArray,
+    isFunction,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    numberFormat,
+    objectEach,
+    pick,
+    pInt,
+    relativeLength,
+    removeEvent,
+    setAnimation,
+    splat,
+    syncTimeout,
+    uniqueKey
+} = U;
 
+import './Axis.js';
 import './Options.js';
 import './Pointer.js';
 
-var doc = H.doc, // @todo add as requirement
+var doc = H.doc,
+    Axis = H.Axis, // @todo add as requirement
     defaultOptions = H.defaultOptions,
     charts = H.charts,
     marginNames = H.marginNames,

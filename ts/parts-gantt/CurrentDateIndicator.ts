@@ -12,15 +12,8 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import PlotLineOrBand from '../parts/axes/PlotLineOrBand.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    merge,
-    wrap
-} = U;
+
 
 /**
  * Internal types
@@ -60,6 +53,18 @@ declare global {
         }
     }
 }
+
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    merge,
+    wrap
+} = U;
+
+import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+
+var Axis = H.Axis;
+
 
 var defaultConfig: (
     Highcharts.CurrentDateIndicatorOptions &

@@ -12,23 +12,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
-import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    correctFloat,
-    defined,
-    find,
-    isNumber,
-    isObject,
-    merge,
-    pick,
-    seriesType
-} = U;
 
 /**
  * Internal types
@@ -118,10 +102,28 @@ declare global {
  * @requires modules/xrange
  */
 
-''; // detaches doclets aboves
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    correctFloat,
+    defined,
+    find,
+    isNumber,
+    isObject,
+    merge,
+    pick,
+    seriesType
+} = U;
 
 var columnType = H.seriesTypes.column,
     seriesTypes = H.seriesTypes,
+    Axis = H.Axis,
     Series = H.Series;
 
 /**
@@ -680,8 +682,9 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
 
                         fill = (
                             (pfOptions as any).fill ||
-                            Color.parse(pointAttr.fill).brighten(-0.3).get() ||
-                            Color.parse(point.color || series.color).brighten(-0.3).get()
+                            color(pointAttr.fill).brighten(-0.3).get() ||
+                            color(point.color || series.color)
+                                .brighten(-0.3).get()
                         );
 
                         pointAttr.fill = fill;

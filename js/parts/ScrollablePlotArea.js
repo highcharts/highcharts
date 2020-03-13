@@ -17,7 +17,6 @@ WIP on vertical scrollable plot area (#9378). To do:
 - API and demos
  */
 'use strict';
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick, stop = U.stop;
@@ -140,7 +139,7 @@ addEvent(Chart, 'afterSetChartSize', function (e) {
                         margin = this[marginName], path;
                         // Temporarily adjust
                         this[marginName] = margin - correctionValue;
-                        path = Axis.prototype.getPlotLinePath.apply(this, arguments);
+                        path = H.Axis.prototype.getPlotLinePath.apply(this, arguments);
                         // Reset
                         this[marginName] = margin;
                         return path;

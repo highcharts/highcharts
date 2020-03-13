@@ -8,10 +8,7 @@
  *
  * */
 'use strict';
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
-import U from './Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, format = U.format, objectEach = U.objectEach, pick = U.pick;
 /**
  * Stack of data points
  *
@@ -51,9 +48,12 @@ var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties 
 * @name Highcharts.StackItemObject#x
 * @type {number}
 */
+import U from './Utilities.js';
+var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, format = U.format, objectEach = U.objectEach, pick = U.pick;
+import './Axis.js';
 import './Chart.js';
 import './Series.js';
-var Chart = H.Chart, Series = H.Series;
+var Axis = H.Axis, Chart = H.Chart, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative

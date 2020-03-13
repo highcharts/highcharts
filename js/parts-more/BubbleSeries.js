@@ -8,21 +8,20 @@
  *
  * */
 'use strict';
-import Axis from '../parts/axes/Axis.js';
-import Color from '../parts/Color.js';
-var color = Color.parse;
 import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType;
 /**
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
-''; // detaches doclets above
+import Color from '../parts/Color.js';
+var color = Color.parse;
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType;
+import '../parts/Axis.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';
-var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+var Axis = H.Axis, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * A bubble series is a three dimensional series type where each point renders
  * an X, Y and Z value. Each points is drawn as a bubble where the position

@@ -10,25 +10,7 @@
 
 'use strict';
 
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
-import Point from './Point.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    clamp,
-    defined,
-    extend,
-    find,
-    format,
-    isNumber,
-    isString,
-    merge,
-    pick,
-    splat
-} = U;
 
 /**
  * Internal types
@@ -77,7 +59,26 @@ declare global {
     }
 }
 
+import Point from './Point.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    clamp,
+    defined,
+    extend,
+    find,
+    format,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    splat
+} = U;
+
 import './Chart.js';
+import './Axis.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -91,7 +92,8 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var Chart = H.Chart,
+var Axis = H.Axis,
+    Chart = H.Chart,
     Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,

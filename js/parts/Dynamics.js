@@ -8,15 +8,15 @@
  *
  * */
 'use strict';
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
 import Point from './Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
+import './Axis.js';
 import './Chart.js';
 import './Series.js';
-var Chart = H.Chart, Series = H.Series, seriesTypes = H.seriesTypes;
+var Axis = H.Axis, Chart = H.Chart, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or

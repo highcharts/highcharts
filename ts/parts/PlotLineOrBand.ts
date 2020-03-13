@@ -10,21 +10,8 @@
 
 'use strict';
 
+import H from './Globals.js';
 import Axis from './Axis.js';
-import H from '../Globals.js';
-import U from '../Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    defined,
-    destroyObjectProperties,
-    erase,
-    extend,
-    fireEvent,
-    merge,
-    objectEach,
-    pick
-} = U;
 
 /**
  * Internal types
@@ -168,7 +155,19 @@ declare global {
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 
-''; // detaches doclets above
+import U from './Utilities.js';
+const {
+    arrayMax,
+    arrayMin,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    fireEvent,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -210,7 +209,7 @@ class PlotLineOrBand {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     public render(): (Highcharts.PlotLineOrBand|undefined) {
-        fireEvent(this, 'render');
+        H.fireEvent(this, 'render');
 
         var plotLine = this,
             axis = plotLine.axis,

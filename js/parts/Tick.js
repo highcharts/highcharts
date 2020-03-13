@@ -8,7 +8,7 @@
  *
  * */
 'use strict';
-import H from '../Globals.js';
+import H from './Globals.js';
 /**
  * Optional parameters for the tick.
  * @private
@@ -25,7 +25,7 @@ import H from '../Globals.js';
 * @name Highcharts.TickParametersObject#tickmarkOffset
 * @type {number|undefined}
 */
-import U from '../Utilities.js';
+import U from './Utilities.js';
 var clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 var deg2rad = H.deg2rad;
 /* eslint-disable no-invalid-this, valid-jsdoc */

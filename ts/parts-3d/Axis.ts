@@ -12,18 +12,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import Tick from '../parts/axes/Tick.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick,
-    splat,
-    wrap
-} = U;
 
 /**
  * Internal types
@@ -73,9 +62,22 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    extend,
+    merge,
+    pick,
+    splat,
+    wrap
+} = U;
+
+import '../parts/Axis.js';
 import '../parts/Chart.js';
 
 var ZAxis: typeof Highcharts.Axis,
+    Axis = H.Axis,
     Chart = H.Chart,
     deg2rad = H.deg2rad,
     perspective = H.perspective,

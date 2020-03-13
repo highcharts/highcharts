@@ -12,17 +12,7 @@
  * */
 
 'use strict';
-
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    extend,
-    pick,
-    seriesType
-} = U;
 
 /**
  * Internal types
@@ -99,6 +89,15 @@ declare global {
  */
 
 ''; // detach doclets above
+
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    extend,
+    pick,
+    seriesType
+} = U;
 
 import '../parts-map/HeatmapSeries.js';
 
@@ -654,7 +653,7 @@ H.tileShapeTypes = {
 // Extension to add pixel padding for series. Uses getSeriesPixelPadding on each
 // series and adds the largest padding required. If no series has this function
 // defined, we add nothing.
-addEvent(Axis, 'afterSetAxisTranslation', function (): void {
+addEvent(H.Axis, 'afterSetAxisTranslation', function (): void {
 
     if (this.recomputingForTilemap || this.coll === 'colorAxis') {
         return;

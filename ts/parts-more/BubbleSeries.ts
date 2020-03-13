@@ -10,22 +10,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
-import Color from '../parts/Color.js';
-const color = Color.parse;
 import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    clamp,
-    extend,
-    isNumber,
-    pick,
-    pInt,
-    seriesType
-} = U;
 
 /**
  * Internal types
@@ -114,13 +99,30 @@ declare global {
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 
-''; // detaches doclets above
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    arrayMax,
+    arrayMin,
+    clamp,
+    extend,
+    isNumber,
+    pick,
+    pInt,
+    seriesType
+} = U;
 
+import '../parts/Axis.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';
 
-var noop = H.noop,
+var Axis = H.Axis,
+    noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 

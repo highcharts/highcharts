@@ -10,7 +10,7 @@
  *
  * */
 'use strict';
-import Axis from '../../../parts/axes/Axis.js';
+import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
 var extend = U.extend, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';
@@ -38,7 +38,7 @@ function chartHasMapZoom(chart) {
  * @param {number} direction
  * @param {number} [granularity]
  */
-Axis.prototype.panStep = function (direction, granularity) {
+H.Axis.prototype.panStep = function (direction, granularity) {
     var gran = granularity || 3, extremes = this.getExtremes(), step = (extremes.max - extremes.min) / gran * direction, newMax = extremes.max + step, newMin = extremes.min + step, size = newMax - newMin;
     if (direction < 0 && newMin < extremes.dataMin) {
         newMin = extremes.dataMin;

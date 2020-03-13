@@ -12,12 +12,10 @@
 
 'use strict';
 
-import Axis from '../../../parts/axes/Axis.js';
+import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
-const {
-    extend,
-    pick
-} = U;
+var extend = U.extend,
+    pick = U.pick;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -110,7 +108,7 @@ function chartHasMapZoom(
  * @param {number} direction
  * @param {number} [granularity]
  */
-Axis.prototype.panStep = function (
+H.Axis.prototype.panStep = function (
     direction: number,
     granularity?: number
 ): void {

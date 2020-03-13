@@ -8,14 +8,7 @@
  *
  * */
 'use strict';
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
-import Legend from './Legend.js';
-import MSPointer from './MSPointer.js';
-import Pointer from './Pointer.js';
-import Time from './Time.js';
-import U from './Utilities.js';
-var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
 /**
  * Callback for chart constructors.
  *
@@ -105,10 +98,16 @@ var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr 
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-''; // detaches doclets above
+import Legend from './Legend.js';
+import MSPointer from './MSPointer.js';
+import Pointer from './Pointer.js';
+import Time from './Time.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
+import './Axis.js';
 import './Options.js';
 import './Pointer.js';
-var doc = H.doc, // @todo add as requirement
+var doc = H.doc, Axis = H.Axis, // @todo add as requirement
 defaultOptions = H.defaultOptions, charts = H.charts, marginNames = H.marginNames, seriesTypes = H.seriesTypes, win = H.win;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

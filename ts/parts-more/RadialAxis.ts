@@ -10,23 +10,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
-import Tick from '../parts/axes/Tick.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    defined,
-    extend,
-    fireEvent,
-    merge,
-    pick,
-    pInt,
-    relativeLength,
-    wrap
-} = U;
-
 
 /**
  * Internal types
@@ -165,9 +149,26 @@ declare global {
     }
 }
 
+import Tick from '../parts/Tick.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    correctFloat,
+    defined,
+    extend,
+    fireEvent,
+    merge,
+    pick,
+    pInt,
+    relativeLength,
+    wrap
+} = U;
+
+import '../parts/Axis.js';
 import './Pane.js';
 
-var noop = H.noop,
+var Axis = H.Axis,
+    noop = H.noop,
     // @todo Extract this to a new file:
     hiddenAxisMixin: Highcharts.HiddenAxisMixin,
     // @todo Extract this to a new file

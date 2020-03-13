@@ -10,24 +10,7 @@
 
 'use strict';
 
-import Axis from '../parts/axes/Axis.js';
-import Color from '../parts/Color.js';
-const color = Color.parse;
 import H from '../parts/Globals.js';
-import Legend from '../parts/Legend.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    erase,
-    extend,
-    Fx,
-    isNumber,
-    merge,
-    pick,
-    splat
-} = U;
 
 /**
  * Internal types
@@ -154,10 +137,31 @@ declare global {
 
 ''; // detach doclet above
 
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
+import Legend from '../parts/Legend.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    erase,
+    extend,
+    Fx,
+    isNumber,
+    merge,
+    pick,
+    splat
+} = U;
+
+import '../parts/Axis.js';
 import '../parts/Chart.js';
 import './ColorSeriesMixin.js';
 
-var Chart = H.Chart,
+var Axis = H.Axis,
+    Chart = H.Chart,
     Series = H.Series,
     ColorAxis: Highcharts.ColorAxis,
     colorPointMixin = H.colorPointMixin,

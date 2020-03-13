@@ -8,7 +8,6 @@
  *
  * */
 'use strict';
-import Axis from '../parts/axes/Axis.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, pick = U.pick;
@@ -30,7 +29,7 @@ var Chart = H.Chart;
  * @product   gantt
  * @apioption yAxis.staticScale
  */
-addEvent(Axis, 'afterSetOptions', function () {
+addEvent(H.Axis, 'afterSetOptions', function () {
     var chartOptions = this.chart.options && this.chart.options.chart;
     if (!this.horiz &&
         isNumber(this.options.staticScale) &&

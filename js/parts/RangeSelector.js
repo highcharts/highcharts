@@ -8,10 +8,7 @@
  *
  * */
 'use strict';
-import Axis from './axes/Axis.js';
 import H from './Globals.js';
-import U from './Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
 /**
  * Define the time span for the button
  *
@@ -40,9 +37,11 @@ var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined
  * @return {number}
  *         Parsed JavaScript time value.
  */
-''; // detaches doclets above
+import U from './Utilities.js';
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, splat = U.splat;
+import './Axis.js';
 import './Chart.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions;
+var Axis = H.Axis, Chart = H.Chart, defaultOptions = H.defaultOptions;
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
  * ************************************************************************** */
