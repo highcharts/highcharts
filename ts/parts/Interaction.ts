@@ -291,20 +291,10 @@ TrackerMixin = H.TrackerMixin = {
             pointer = chart.pointer,
             renderer = chart.renderer,
             snap = (chart.options.tooltip as any).snap,
-            tooltip = chart.tooltip,
             tracker = series.tracker,
             i: number,
             onMouseOver = function (e: Highcharts.PointerEventObject): void {
-
-                pointer.normalize(e);
-
-                if (
-                    chart.hoverSeries !== series &&
-                    (
-                        !tooltip ||
-                        !tooltip.isStickyOnContact()
-                    )
-                ) {
+                if (chart.hoverSeries !== series) {
                     series.onMouseOver();
                 }
             },
