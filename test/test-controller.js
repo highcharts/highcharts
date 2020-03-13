@@ -164,6 +164,9 @@ var TestController = /** @class */ (function () {
                 extra.cancelable = false;
                 break;
         }
+        if (typeof extra.buttons === 'undefined') {
+            extra.buttons = (TestController.MouseButtonsBitMap[extra.button] || 0);
+        }
         Object.keys(extra).forEach(function (key) {
             evt[key] = extra[key];
         });
@@ -969,4 +972,11 @@ var TestController = /** @class */ (function () {
         MouseButtons[MouseButtons["middle"] = 1] = "middle";
         MouseButtons[MouseButtons["right"] = 2] = "right";
     })(MouseButtons = TestController.MouseButtons || (TestController.MouseButtons = {}));
+    TestController.MouseButtonsBitMap = {
+        0: 1,
+        1: 4,
+        2: 2,
+        3: 8,
+        4: 16,
+    };
 })(TestController || (TestController = {}));
