@@ -303,7 +303,7 @@ radialAxisMixin = {
     ): void {
 
         var options = this.options = merge(
-            this.defaultOptions,
+            Axis.defaultOptions,
             this.defaultPolarOptions,
             userOptions
         );
@@ -971,15 +971,14 @@ addEvent(Axis as any, 'init', function (
 
         this.defaultPolarOptions = isCircular ?
             this.defaultCircularOptions :
-            merge(coll === 'xAxis' ?
-                this.defaultOptions : this.defaultYAxisOptions,
-            this.defaultRadialOptions
+            merge(
+                coll === 'xAxis' ? Axis.defaultOptions : Axis.defaultYAxisOptions,
+                this.defaultRadialOptions
             );
 
         // Apply the stack labels for yAxis in case of inverted chart
         if (inverted && coll === 'yAxis') {
-            this.defaultPolarOptions.stackLabels =
-                this.defaultYAxisOptions.stackLabels;
+            this.defaultPolarOptions.stackLabels = Axis.defaultYAxisOptions.stackLabels;
         }
     }
 
