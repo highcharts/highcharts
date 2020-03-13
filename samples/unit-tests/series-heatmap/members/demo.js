@@ -198,6 +198,13 @@ QUnit.test('seriesTypes.heatmap.pointClass.setState', function (assert) {
             series: {
                 type: 'heatmap',
                 options: {
+                    marker: {
+                        states: {
+                            normal: {},
+                            hover: {},
+                            select: {}
+                        }
+                    },
                     states: {
                         hover: {},
                         select: {}

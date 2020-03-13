@@ -56,7 +56,7 @@ H.colorSeriesMixin = {
         points.forEach(function (point) {
             var value = point.getNestedProperty(colorKey), color;
             color = point.options.color ||
-                (point.isNull ?
+                (point.isNull || point.value === null ?
                     nullColor :
                     (colorAxis && typeof value !== 'undefined') ?
                         colorAxis.toColor(value, point) :

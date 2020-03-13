@@ -872,7 +872,7 @@ function GLRenderer(postRenderCallback) {
             setYAxis(s.series.yAxis);
             setThreshold(hasThreshold, translatedThreshold);
             if (s.drawMode === 'points') {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 }
                 else {
@@ -896,7 +896,7 @@ function GLRenderer(postRenderCallback) {
                 }
             }
             if (s.hasMarkers && showMarkers) {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 }
                 else {
