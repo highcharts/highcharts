@@ -643,13 +643,10 @@ var Pointer = /** @class */ (function () {
         var chart = this.chart;
         var relatedTarget = e.relatedTarget || e.toElement;
         var series = chart.hoverSeries;
-        var tooltip = chart.tooltip;
         this.isDirectTouch = false;
         if (series &&
             relatedTarget &&
             !series.stickyTracking &&
-            (!tooltip ||
-                !tooltip.isStickyOnContact()) &&
             !this.inClass(relatedTarget, 'highcharts-tooltip') &&
             (!this.inClass(relatedTarget, 'highcharts-series-' + series.index) || // #2499, #4465, #5553
                 !this.inClass(relatedTarget, 'highcharts-tracker'))) {
