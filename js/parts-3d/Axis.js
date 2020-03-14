@@ -123,7 +123,7 @@ var extendedOptions = {
     }
 };
 /* eslint-disable no-invalid-this */
-merge(true, Axis.prototype.defaultOptions, extendedOptions);
+merge(true, Axis.defaultOptions, extendedOptions);
 addEvent(Axis, 'afterSetOptions', function () {
     var options;
     if (this.chart.is3d && this.chart.is3d() && this.coll !== 'colorAxis') {

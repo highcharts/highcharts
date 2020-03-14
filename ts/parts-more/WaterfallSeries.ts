@@ -117,11 +117,11 @@ const {
 
 import '../parts/Options.js';
 import '../parts/Series.js';
+import StackItem from '../parts/Stacking.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
     Series = H.Series,
-    StackItem = H.StackItem,
     seriesTypes = H.seriesTypes;
 
 /**

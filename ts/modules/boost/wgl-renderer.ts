@@ -1308,7 +1308,7 @@ function GLRenderer(
             setThreshold(hasThreshold, translatedThreshold as any);
 
             if (s.drawMode === 'points') {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 } else {
                     shader.setPointSize(1);
@@ -1342,7 +1342,7 @@ function GLRenderer(
             }
 
             if (s.hasMarkers && showMarkers) {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 } else {
                     shader.setPointSize(10);
