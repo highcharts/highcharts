@@ -60,7 +60,7 @@ function prepareRelease() {
 
         const nextVersion = argv.nextversion;
         if (!argv.cleanup && !nextVersion) {
-            reject(new Error('Please provide either --version x.y.z or --cleanup when starting the command.'));
+            reject(new Error('Please provide either --nextversion x.y.z or --cleanup when starting the command.'));
             return;
         }
         /*
