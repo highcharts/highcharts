@@ -40,7 +40,7 @@ import H from '../parts/Globals.js';
  * https://jsfiddle.net/highcharts/y5A37/
  */
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, getDeferTime = U.getDeferTime, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Chart.js';
 import '../parts/Series.js';
 var labelDistance = 3, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
@@ -74,11 +74,6 @@ H.setOptions({
              * @requires modules/series-label
              */
             label: {
-                animation: {
-                    /** @internal */
-                    duration: 1000,
-                    defer: true
-                },
                 /**
                  * Enable the series label per series.
                  */
@@ -681,7 +676,7 @@ function drawLabels(e) {
     U.clearTimeout(chart.seriesLabelTimer);
     // Which series should have labels
     chart.series.forEach(function (series) {
-        var options = series.options.label, label = series.labelBySeries, closest = label && label.closest, defer = animObject(series.options.animation).defer;
+        var options = series.options.label, label = series.labelBySeries, closest = label && label.closest, defer = animObject(series.options.animation).defer, duration = animObject(series.options.animation).duration;
         if (options.enabled &&
             series.visible &&
             (series.graph || series.area) &&
@@ -695,11 +690,11 @@ function drawLabels(e) {
             }
             // The labels are processing heavy, wait until the animation is done
             if (e.type === 'load') {
-                if (defined(options.animation.defer)) {
-                    delay = getDeferTime(chart, options.animation.defer);
+                if (defer) {
+                    delay = defer + duration;
                 }
                 else {
-                    delay = Math.max(delay, animObject(series.options.animation).duration);
+                    delay = Math.max(delay, duration);
                 }
             }
             // Keep the position updated to the axis while redrawing

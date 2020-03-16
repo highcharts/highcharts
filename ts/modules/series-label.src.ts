@@ -54,7 +54,6 @@ declare global {
             labelFontSize(minFontSize: number, maxFontSize: number): string;
         }
         interface SeriesLabelOptionsObject {
-            animation: AnimationOptionsObject;
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
             connectorAllowed?: boolean;
             connectorNeighbourDistance?: number;
@@ -106,10 +105,8 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     animObject,
-    defined,
     extend,
     fireEvent,
-    getDeferTime,
     isNumber,
     pick,
     syncTimeout
@@ -155,12 +152,6 @@ H.setOptions({
              * @requires modules/series-label
              */
             label: {
-
-                animation: {
-                    /** @internal */
-                    duration: 1000,
-                    defer: true
-                },
 
                 /**
                  * Enable the series label per series.
@@ -1113,7 +1104,8 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
                 series.options.label as any,
             label: Highcharts.SVGElement = series.labelBySeries as any,
             closest = label && label.closest,
-            defer = animObject(series.options.animation).defer;
+            defer = animObject(series.options.animation).defer,
+            duration = animObject(series.options.animation).duration;
 
         if (
             options.enabled &&
@@ -1138,13 +1130,10 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
 
             // The labels are processing heavy, wait until the animation is done
             if (e.type === 'load') {
-                if (defined(options.animation.defer)) {
-                    delay = getDeferTime(chart, options.animation.defer);
+                if (defer) {
+                    delay = defer + duration;
                 } else {
-                    delay = Math.max(
-                        delay as any,
-                        animObject(series.options.animation).duration as any
-                    );
+                    delay = Math.max(delay, duration);
                 }
             }
 
