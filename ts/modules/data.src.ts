@@ -260,12 +260,13 @@ const {
 } = U;
 
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import '../mixins/ajax.js';
 import '../parts/Chart.js';
 
 // Utilities
-var Chart = Highcharts.Chart,
-    win = Highcharts.win,
+var Chart = H.Chart,
+    win = H.win,
     doc = win.document;
 
 /**
@@ -806,7 +807,7 @@ class Data {
             xColumns: Array<number> = [],
             getValueCount = function (type: string): number {
                 return (
-                    Highcharts.seriesTypes[type || 'line'].prototype
+                    H.seriesTypes[type || 'line'].prototype
                         .pointArrayMap ||
                     [0]
                 ).length;
@@ -814,7 +815,7 @@ class Data {
             getPointArrayMap = function (
                 type: string
             ): (Array<string>|undefined) {
-                return Highcharts.seriesTypes[type || 'line']
+                return H.seriesTypes[type || 'line']
                     .prototype.pointArrayMap;
             },
             globalType: string = (
@@ -2225,7 +2226,7 @@ class Data {
      *
      * @param {Array<Array<Highcharts.DataValueType>>} rows
      *
-     * @return {Array<Array<Highcharts.DataValueType>>}
+     * @return {Array<Array<Highcharts.DataValueType>>|undefined}
      */
     public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)
     ): (Array<Array<Highcharts.DataValueType>>|undefined) {
@@ -2586,7 +2587,7 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new (H.Data as any)(extend(userOptions.data, {
+            chart.data = new H.Data(extend(userOptions.data, {
 
                 afterComplete: function (
                     dataOptions: Highcharts.Options
@@ -2730,7 +2731,7 @@ class SeriesBuilder {
             } else {
                 if (reader.configName.indexOf('.') > 0) {
                     // Handle nested property names
-                    Highcharts.Point.prototype.setNestedProperty(
+                    Point.prototype.setNestedProperty(
                         point, value, reader.configName
                     );
                 } else {

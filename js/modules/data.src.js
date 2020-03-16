@@ -86,10 +86,11 @@ import Highcharts from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import '../mixins/ajax.js';
 import '../parts/Chart.js';
 // Utilities
-var Chart = Highcharts.Chart, win = Highcharts.win, doc = win.document;
+var Chart = H.Chart, win = H.win, doc = win.document;
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
@@ -612,11 +613,11 @@ var Data = /** @class */ (function () {
      */
     Data.prototype.getColumnDistribution = function () {
         var chartOptions = this.chartOptions, options = this.options, xColumns = [], getValueCount = function (type) {
-            return (Highcharts.seriesTypes[type || 'line'].prototype
+            return (H.seriesTypes[type || 'line'].prototype
                 .pointArrayMap ||
                 [0]).length;
         }, getPointArrayMap = function (type) {
-            return Highcharts.seriesTypes[type || 'line']
+            return H.seriesTypes[type || 'line']
                 .prototype.pointArrayMap;
         }, globalType = (chartOptions &&
             chartOptions.chart &&
@@ -1614,7 +1615,7 @@ var Data = /** @class */ (function () {
      *
      * @param {Array<Array<Highcharts.DataValueType>>} rows
      *
-     * @return {Array<Array<Highcharts.DataValueType>>}
+     * @return {Array<Array<Highcharts.DataValueType>>|undefined}
      */
     Data.prototype.rowsToColumns = function (rows) {
         var row, rowsLength, col, colsLength, columns;
@@ -1976,7 +1977,7 @@ var SeriesBuilder = /** @class */ (function () {
             else {
                 if (reader.configName.indexOf('.') > 0) {
                     // Handle nested property names
-                    Highcharts.Point.prototype.setNestedProperty(point, value, reader.configName);
+                    Point.prototype.setNestedProperty(point, value, reader.configName);
                 }
                 else {
                     point[reader.configName] = value;
