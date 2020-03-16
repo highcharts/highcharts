@@ -8,8 +8,9 @@
  *
  * */
 
-import Axis from './Axis.js';
+import type Axis from './Axis.js';
 import H from './Globals.js';
+import type Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -17,10 +18,11 @@ const {
     pick
 } = U;
 
-/* eslint-disable no-invalid-this */
+/* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
  * Creates scrollbars if enabled.
+ *
  * @private
  */
 class ScrollbarAxis {
@@ -30,14 +32,17 @@ class ScrollbarAxis {
      *
      * @private
      *
-     * @param {Highcharts.Scrollbar} ScrollbarClass
-     * The scrollbar class to use.
+     * @param AxisClass
+     * Axis class to extend.
+     *
+     * @param ScrollbarClass
+     * Scrollbar class to use.
      */
-    public static init(ScrollbarClass: typeof Highcharts.Scrollbar): void {
+    public static init(AxisClass: typeof Axis, ScrollbarClass: typeof Scrollbar): void {
 
         // Wrap axis initialization and create scrollbar if enabled:
-        addEvent(Axis, 'afterInit', function (): void {
-            var axis = this;
+        addEvent(AxisClass, 'afterInit', function (): void {
+            var axis: ScrollbarAxis = this;
 
             if (
                 axis.options &&
@@ -112,8 +117,8 @@ class ScrollbarAxis {
         });
 
         // Wrap rendering axis, and update scrollbar if one is created:
-        addEvent(Axis, 'afterRender', function (this: Highcharts.Axis): void {
-            var axis = this,
+        addEvent(AxisClass, 'afterRender', function (): void {
+            var axis: ScrollbarAxis = this,
                 scrollMin = Math.min(
                     pick(axis.options.min, axis.min as any),
                     axis.min as any,
@@ -212,8 +217,8 @@ class ScrollbarAxis {
         });
 
         // Make space for a scrollbar:
-        addEvent(Axis, 'afterGetOffset', function (this: Highcharts.Axis): void {
-            var axis = this,
+        addEvent(AxisClass, 'afterGetOffset', function (): void {
+            var axis: ScrollbarAxis = this,
                 index = axis.horiz ? 2 : 1,
                 scrollbar = axis.scrollbar;
 
@@ -225,6 +230,10 @@ class ScrollbarAxis {
         });
 
     }
+}
+
+interface ScrollbarAxis extends Axis {
+    scrollbar?: Scrollbar;
 }
 
 export default ScrollbarAxis;
