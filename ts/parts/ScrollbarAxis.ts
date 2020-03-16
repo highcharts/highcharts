@@ -21,6 +21,7 @@ const {
 
 /**
  * Creates scrollbars if enabled.
+ * @private
  */
 class ScrollbarAxis {
 

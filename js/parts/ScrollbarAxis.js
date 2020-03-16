@@ -14,6 +14,7 @@ var addEvent = U.addEvent, defined = U.defined, pick = U.pick;
 /* eslint-disable no-invalid-this */
 /**
  * Creates scrollbars if enabled.
+ * @private
  */
 var ScrollbarAxis = /** @class */ (function () {
     function ScrollbarAxis() {
