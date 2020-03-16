@@ -14,9 +14,9 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var extend = U.extend, wrap = U.wrap;
-import './data.src.js';
+import Data from './data.src.js';
 /* eslint-disable no-invalid-this */
-wrap(H.Data.prototype, 'init', function (proceed, options) {
+wrap(Data.prototype, 'init', function (proceed, options) {
     proceed.call(this, options);
     if (options.svg) {
         this.loadSVG();
