@@ -94,14 +94,14 @@ class OrdinalAxis {
         SeriesClass: typeof Series
     ): void {
 
-        const OrdinalAxisClass = AxisClass as unknown as typeof OrdinalAxis;
+        const axisPrototype = AxisClass.prototype as OrdinalAxis;
 
         /**
          * Calculate the ordinal positions before tick positions are calculated.
          *
          * @private
          */
-        OrdinalAxisClass.prototype.beforeSetTickPositions = function (): void {
+        axisPrototype.beforeSetTickPositions = function (): void {
             var axis = this,
                 len,
                 ordinalPositions = [] as Array<number>,
@@ -311,7 +311,7 @@ class OrdinalAxis {
          *
          * @private
          */
-        OrdinalAxisClass.prototype.getExtendedPositions = function (): Array<number> {
+        axisPrototype.getExtendedPositions = function (): Array<number> {
             var axis = this,
                 chart = axis.chart,
                 grouping = axis.series[0].currentDataGrouping,
@@ -348,8 +348,8 @@ class OrdinalAxis {
                     options: {
                         ordinal: true
                     },
-                    val2lin: OrdinalAxisClass.prototype.val2lin, // #2590
-                    ordinal2lin: OrdinalAxisClass.prototype.ordinal2lin // #6276
+                    val2lin: axisPrototype.val2lin, // #2590
+                    ordinal2lin: axisPrototype.ordinal2lin // #6276
                 } as any;
 
                 // Add the fake series to hold the full data, then apply
@@ -419,7 +419,7 @@ class OrdinalAxis {
          *
          * @private
          */
-        OrdinalAxisClass.prototype.getGroupIntervalFactor = function (
+        axisPrototype.getGroupIntervalFactor = function (
             xMin: number,
             xMax: number,
             series: Highcharts.Series
@@ -470,7 +470,7 @@ class OrdinalAxis {
          *
          * @private
          */
-        OrdinalAxisClass.prototype.getOverscrollPositions = function (): Array<number> {
+        axisPrototype.getOverscrollPositions = function (): Array<number> {
             var axis = this,
                 extraRange = axis.options.overscroll,
                 distance = axis.overscrollPointsRange,
@@ -723,7 +723,7 @@ class OrdinalAxis {
          *
          * @return {number}
          */
-        OrdinalAxisClass.prototype.lin2val = function (
+        axisPrototype.lin2val = function (
             val: number,
             fromIndex?: boolean
         ): number {
@@ -802,7 +802,7 @@ class OrdinalAxis {
          *
          * @private
          */
-        OrdinalAxisClass.prototype.postProcessTickInterval = function (
+        axisPrototype.postProcessTickInterval = function (
             tickInterval: number
         ): number {
             // Problem: https://jsfiddle.net/highcharts/FQm4E/1/
@@ -844,7 +844,7 @@ class OrdinalAxis {
          *
          * @return {number}
          */
-        OrdinalAxisClass.prototype.val2lin = function (
+        axisPrototype.val2lin = function (
             val: number,
             toIndex?: boolean
         ): number {
@@ -892,10 +892,10 @@ class OrdinalAxis {
             return ret;
         };
         // Record this to prevent overwriting by broken-axis module (#5979)
-        OrdinalAxisClass.prototype.ordinal2lin = OrdinalAxisClass.prototype.val2lin;
+        axisPrototype.ordinal2lin = axisPrototype.val2lin;
 
-        addEvent(OrdinalAxisClass, 'foundExtremes', function (): void {
-            var axis = this;
+        addEvent(AxisClass, 'foundExtremes', function (): void {
+            var axis = this as OrdinalAxis;
 
             if (
                 axis.isXAxis &&
@@ -924,7 +924,7 @@ class OrdinalAxis {
         // For ordinal axis, that loads data async, redraw axis after data is
         // loaded. If we don't do that, axis will have the same extremes as
         // previously, but ordinal positions won't be calculated. See #10290
-        addEvent(OrdinalAxisClass, 'afterSetScale', function (): void {
+        addEvent(AxisClass, 'afterSetScale', function (): void {
             var axis = this;
 
             if (axis.horiz && !axis.isDirty) {
@@ -937,7 +937,7 @@ class OrdinalAxis {
         // Extending the Chart.pan method for ordinal axes
         addEvent(ChartClass, 'pan', function (e: Event): void {
             var chart = this,
-                xAxis = chart.xAxis[0] as unknown as OrdinalAxis,
+                xAxis = chart.xAxis[0] as OrdinalAxis,
                 overscroll = xAxis.options.overscroll,
                 chartX = (e as any).originalEvent.chartX,
                 panning = chart.options.chart &&
@@ -1059,7 +1059,7 @@ class OrdinalAxis {
         });
 
         addEvent(SeriesClass, 'updatedData', function (): void {
-            var xAxis = this.xAxis as unknown as OrdinalAxis;
+            var xAxis = this.xAxis as OrdinalAxis;
 
             // Destroy the extended ordinal index on updated data
             if (xAxis && xAxis.options.ordinal) {
@@ -1102,4 +1102,4 @@ interface OrdinalAxis extends Axis {
 
 export default OrdinalAxis;
 
-OrdinalAxis.init(Axis, Chart, Series);
+OrdinalAxis.init(Axis, Chart, Series); // @todo move to StockChart, remove from master
