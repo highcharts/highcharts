@@ -258,6 +258,7 @@ const {
 
 import '../parts/Chart.js';
 import '../mixins/ajax.js';
+import H from '../parts/Globals.js';
 
 // Utilities
 var addEvent = Highcharts.addEvent,
@@ -265,8 +266,7 @@ var addEvent = Highcharts.addEvent,
     win = Highcharts.win,
     doc = win.document,
     merge = Highcharts.merge,
-    fireEvent = Highcharts.fireEvent,
-    SeriesBuilder: typeof Highcharts.SeriesBuilder;
+    fireEvent = Highcharts.fireEvent;
 
 /**
  * The Data module provides a simplified interface for adding data to
@@ -675,17 +675,26 @@ var addEvent = Highcharts.addEvent,
  *
  * @param {Highcharts.Chart} [chart]
  */
-var Data = function (
-    this: Highcharts.Data,
-    dataOptions: Highcharts.DataOptions,
-    chartOptions?: Highcharts.Options,
-    chart?: Highcharts.Chart
-): void {
-    this.init(dataOptions, chartOptions, chart);
-};
+class Data {
+    public constructor(
+        dataOptions: Highcharts.DataOptions,
+        chartOptions?: Highcharts.Options,
+        chart?: Highcharts.Chart
+    ) {
+        this.init(dataOptions, chartOptions, chart);
+    }
 
-// Set the prototype properties
-extend(Data.prototype, {
+    public alternativeFormat?: string;
+    public chart: Highcharts.Chart = void 0 as any;
+    public chartOptions: Highcharts.Options = void 0 as any;
+    public columns?: Array<Array<Highcharts.DataValueType>>;
+    public dateFormat?: string;
+    public decimalRegex?: RegExp;
+    public firstRowAsNames: boolean = void 0 as any;
+    public liveDataTimeout?: number;
+    public rawColumns: Array<Array<string>> = void 0 as any;
+    public options: Highcharts.DataOptions= void 0 as any;
+    public valueCount?: Highcharts.DataValueCountObject;
 
     /**
      * Initialize the Data object with the given options
@@ -696,8 +705,7 @@ extend(Data.prototype, {
      * @param {Highcharts.Options} [chartOptions]
      * @param {Highcharts.Chart} [chart]
      */
-    init: function (
-        this: Highcharts.Data,
+    public init(
         options: Highcharts.DataOptions,
         chartOptions?: Highcharts.Options,
         chart?: Highcharts.Chart
@@ -720,7 +728,7 @@ extend(Data.prototype, {
         this.options = options;
         this.columns = (
             options.columns ||
-            this.rowsToColumns(options.rows) ||
+            this.rowsToColumns((options.rows as any)) ||
             []
         );
 
@@ -742,7 +750,7 @@ extend(Data.prototype, {
         this.rawColumns = [];
 
         // No need to parse or interpret anything
-        if (this.columns.length) {
+        if ((this.columns as any).length) {
             this.dataFound();
             hasData = true;
         }
@@ -776,17 +784,14 @@ extend(Data.prototype, {
         if (!hasData && options.afterComplete) {
             options.afterComplete();
         }
-    },
+    }
 
-    hasURLOption: function (
-        this: Highcharts.Data,
-        options: Highcharts.DataOptions
-    ): boolean {
+    public hasURLOption(options: Highcharts.DataOptions): boolean {
         return Boolean(
             options &&
             (options.rowsURL || options.csvURL || options.columnsURL)
         );
-    },
+    }
 
     /**
      * Get the column distribution. For example, a line series takes a single
@@ -795,7 +800,7 @@ extend(Data.prototype, {
      *
      * @function Highcharts.Data#getColumnDistribution
      */
-    getColumnDistribution: function (this: Highcharts.Data): void {
+    public getColumnDistribution(): void {
         var chartOptions = this.chartOptions,
             options = this.options,
             xColumns: Array<number> = [],
@@ -918,7 +923,7 @@ extend(Data.prototype, {
             seriesBuilders: seriesBuilders,
             globalPointArrayMap: globalPointArrayMap
         };
-    },
+    }
 
     /**
      * When the data is parsed into columns, either by CSV, table, GS or direct
@@ -927,7 +932,7 @@ extend(Data.prototype, {
      * @private
      * @function Highcharts.Data#dataFound
      */
-    dataFound: function (this: Highcharts.Data): void {
+    public dataFound(): void {
         if (this.options.switchRowsAndColumns) {
             this.columns = this.rowsToColumns(this.columns);
         }
@@ -945,7 +950,7 @@ extend(Data.prototype, {
             this.complete();
         }
 
-    },
+    }
 
     /**
      * Parse a CSV input string
@@ -956,10 +961,7 @@ extend(Data.prototype, {
      *
      * @return {Array<Array<Highcharts.DataValueType>>}
      */
-    parseCSV: function (
-        this: Highcharts.Data,
-        inOptions?: Highcharts.DataOptions
-    ): Array<Array<Highcharts.DataValueType>> {
+    public parseCSV(inOptions?: Highcharts.DataOptions): Array<Array<Highcharts.DataValueType>> {
         var self = this,
             options = inOptions || this.options,
             csv = options.csv,
@@ -1499,21 +1501,19 @@ extend(Data.prototype, {
         }
 
         return columns;
-    },
+    }
 
     /**
      * Parse a HTML table
      *
      * @function Highcharts.Data#parseTable
      *
-     * @return {Array<Array<Highcharts.DataValueType>>|undefined}
+     * @return {Array<Array<Highcharts.DataValueType>>}
      */
-    parseTable: function (
-        this: Highcharts.Data
-    ): (Array<Array<Highcharts.DataValueType>>|undefined) {
+    public parseTable(): Array<Array<Highcharts.DataValueType>> {
         var options = this.options,
             table: HTMLElement = options.table as any,
-            columns = this.columns,
+            columns = this.columns || [],
             startRow = options.startRow || 0,
             endRow = options.endRow || Number.MAX_VALUE,
             startColumn = options.startColumn || 0,
@@ -1570,7 +1570,7 @@ extend(Data.prototype, {
             this.dataFound(); // continue
         }
         return columns;
-    },
+    }
 
 
     /**
@@ -1581,7 +1581,7 @@ extend(Data.prototype, {
      * @return {boolean}
      *         The URLs that were tried can be found in the options
      */
-    fetchLiveData: function (this: Highcharts.Data): boolean {
+    public fetchLiveData(): boolean {
         var data = this,
             chart = this.chart,
             options = this.options,
@@ -1708,7 +1708,7 @@ extend(Data.prototype, {
         performFetch(true);
 
         return this.hasURLOption(options);
-    },
+    }
 
 
     /**
@@ -1719,7 +1719,7 @@ extend(Data.prototype, {
      * @return {boolean}
      *         Always returns false, because it is an intermediate fetch.
      */
-    parseGoogleSpreadsheet: function (this: Highcharts.Data): boolean {
+    public parseGoogleSpreadsheet(): boolean {
         var data = this,
             options = this.options,
             googleSpreadsheetKey = options.googleSpreadsheetKey,
@@ -1876,7 +1876,7 @@ extend(Data.prototype, {
 
         // This is an intermediate fetch, so always return false.
         return false;
-    },
+    }
 
     /**
      * Trim a string from whitespaces.
@@ -1892,8 +1892,7 @@ extend(Data.prototype, {
      * @return {string}
      *         Trimed string
      */
-    trim: function (
-        this: Highcharts.Data,
+    public trim(
         str: string,
         inside?: boolean
     ): string {
@@ -1910,14 +1909,14 @@ extend(Data.prototype, {
             }
         }
         return str;
-    },
+    }
 
     /**
      * Parse numeric cells in to number types and date types in to true dates.
      *
      * @function Highcharts.Data#parseTypes
      */
-    parseTypes: function (this: Highcharts.Data): void {
+    public parseTypes(): void {
         var columns = this.columns,
             col = (columns as any).length;
 
@@ -1925,7 +1924,7 @@ extend(Data.prototype, {
             this.parseColumn((columns as any)[col], col);
         }
 
-    },
+    }
 
     /**
      * Parse a single column. Set properties like .isDatetime and .isNumeric.
@@ -1938,8 +1937,7 @@ extend(Data.prototype, {
      * @param {number} col
      *        Column index
      */
-    parseColumn: function (
-        this: Highcharts.Data,
+    public parseColumn(
         column: Array<Highcharts.DataValueType>,
         col: number
     ): void {
@@ -2073,7 +2071,7 @@ extend(Data.prototype, {
                 }
             }
         }
-    },
+    }
 
     /**
      * A collection of available date formats, extendable from the outside to
@@ -2082,29 +2080,44 @@ extend(Data.prototype, {
      * @name Highcharts.Data#dateFormats
      * @type {Highcharts.Dictionary<Highcharts.DataDateFormatObject>}
      */
-    dateFormats: {
+    public dateFormats: Highcharts.Dictionary<Highcharts.DataDateFormatObject> = {
         'YYYY/mm/dd': {
             regex: /^([0-9]{4})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{1,2})$/,
-            parser: function (match: RegExpMatchArray): number {
-                return Date.UTC(+match[1], (match[2] as any) - 1, +match[3]);
+            parser: function (match: (RegExpMatchArray|null)): number {
+                return (
+                    match ?
+                        Date.UTC(+match[1], (match[2] as any) - 1, +match[3]) :
+                        NaN
+                );
             }
         },
         'dd/mm/YYYY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
-            parser: function (match: RegExpMatchArray): number {
-                return Date.UTC(+match[3], (match[2] as any) - 1, +match[1]);
+            parser: function (match: (RegExpMatchArray|null)): number {
+                return (
+                    match ?
+                        Date.UTC(+match[3], (match[2] as any) - 1, +match[1]) :
+                        NaN
+                );
             },
             alternative: 'mm/dd/YYYY' // different format with the same regex
         },
         'mm/dd/YYYY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{4})$/,
-            parser: function (match: RegExpMatchArray): number {
-                return Date.UTC(+match[3], (match[1] as any) - 1, +match[2]);
+            parser: function (match: (RegExpMatchArray|null)): number {
+                return (
+                    match ?
+                        Date.UTC(+match[3], (match[1] as any) - 1, +match[2]) :
+                        NaN
+                );
             }
         },
         'dd/mm/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
-            parser: function (match: RegExpMatchArray): number {
+            parser: function (match: (RegExpMatchArray|null)): number {
+                if (!match) {
+                    return NaN;
+                }
                 var year = +match[3],
                     d = new Date();
 
@@ -2120,15 +2133,15 @@ extend(Data.prototype, {
         },
         'mm/dd/YY': {
             regex: /^([0-9]{1,2})[\-\/\.]([0-9]{1,2})[\-\/\.]([0-9]{2})$/,
-            parser: function (match: RegExpMatchArray): number {
-                return Date.UTC(
-                    +match[3] + 2000,
-                    (match[1] as any) - 1,
-                    +match[2]
+            parser: function (match: (RegExpMatchArray|null)): number {
+                return (
+                    match ?
+                        Date.UTC(+match[3] + 2000, (match[1] as any) - 1, +match[2]) :
+                        NaN
                 );
             }
         }
-    } as Highcharts.Dictionary<Highcharts.DataDateFormatObject>,
+    };
 
     /**
      * Parse a date and return it as a number. Overridable through
@@ -2140,7 +2153,7 @@ extend(Data.prototype, {
      *
      * @return {number}
      */
-    parseDate: function (this: Highcharts.Data, val: string): number {
+    public parseDate(val: string): number {
         var parseDate = this.options.parseDate,
             ret,
             key,
@@ -2203,26 +2216,24 @@ extend(Data.prototype, {
             }
         }
         return ret as any;
-    },
+    }
 
     /**
      * Reorganize rows into columns.
      *
      * @function Highcharts.Data#rowsToColumns
      *
-     * @param {Array<Array<(number|string)>>} rows
+     * @param {Array<Array<Highcharts.DataValueType>>} rows
      *
-     * @return {Array<Array<(number|string)>>}
+     * @return {Array<Array<Highcharts.DataValueType>>}
      */
-    rowsToColumns: function (
-        this: Highcharts.Data,
-        rows: (Array<Array<(number|string)>>|undefined)
-    ): (Array<Array<(number|string)>>|undefined) {
+    public rowsToColumns(rows: (Array<Array<Highcharts.DataValueType>>|undefined)
+    ): (Array<Array<Highcharts.DataValueType>>|undefined) {
         var row,
             rowsLength,
             col,
             colsLength,
-            columns: (Array<Array<(number|string)>>|undefined);
+            columns: (Array<Array<Highcharts.DataValueType>>|undefined);
 
         if (rows) {
             columns = [];
@@ -2238,7 +2249,7 @@ extend(Data.prototype, {
             }
         }
         return columns;
-    },
+    }
 
     /**
      * Get the parsed data in a form that we can apply directly to the
@@ -2254,13 +2265,11 @@ extend(Data.prototype, {
      *
      * @return {Array<Array<(number|string)>>|undefined} Data rows
      */
-    getData: function (
-        this: Highcharts.Data
-    ): (Array<Array<(number|string)>>|undefined) {
+    public getData(): (Array<Array<(number|string)>>|undefined) {
         if (this.columns) {
             return (this.rowsToColumns(this.columns) as any).slice(1);
         }
-    },
+    }
 
     /**
      * A hook for working directly on the parsed columns
@@ -2269,18 +2278,17 @@ extend(Data.prototype, {
      *
      * @return {boolean|undefined}
      */
-    parsed: function (this: Highcharts.Data): (boolean|undefined) {
+    public parsed(): (boolean|undefined) {
         if (this.options.parsed) {
             return this.options.parsed.call(this, this.columns as any);
         }
-    },
+    }
 
     /**
      * @private
      * @function Highcharts.Data#getFreeIndexes
      */
-    getFreeIndexes: function (
-        this: Highcharts.Data,
+    public getFreeIndexes(
         numberOfColumns: number,
         seriesBuilders: Array<Highcharts.SeriesBuilder>
     ): Array<number> {
@@ -2312,7 +2320,7 @@ extend(Data.prototype, {
         }
 
         return freeIndexValues;
-    },
+    }
 
     /**
      * If a complete callback function is provided in the options, interpret the
@@ -2320,7 +2328,7 @@ extend(Data.prototype, {
      *
      * @function Highcharts.Data#complete
      */
-    complete: function (this: Highcharts.Data): void {
+    public complete(): void {
 
         var columns = this.columns,
             xColumns = [],
@@ -2483,7 +2491,7 @@ extend(Data.prototype, {
             }
         }
 
-    },
+    }
 
     /**
      * Updates the chart with new data options.
@@ -2494,8 +2502,7 @@ extend(Data.prototype, {
      *
      * @param {boolean} [redraw=true]
      */
-    update: function (
-        this: Highcharts.Data,
+    public update(
         options: Highcharts.DataOptions,
         redraw?: boolean
     ): void {
@@ -2528,10 +2535,10 @@ extend(Data.prototype, {
             this.init(chart.options.data as any);
         }
     }
-});
+}
 
 // Register the Data prototype and data function on Highcharts
-Highcharts.Data = Data as any;
+// Highcharts.Data = Data as any;
 
 /**
  * Creates a data object to parse data for a chart.
@@ -2546,12 +2553,12 @@ Highcharts.Data = Data as any;
  *
  * @return {Highcharts.Data}
  */
-Highcharts.data = function (
+H.data = function (
     dataOptions: Highcharts.DataOptions,
     chartOptions?: Highcharts.Options,
     chart?: Highcharts.Chart
 ): Highcharts.Data {
-    return new (Data as any)(dataOptions, chartOptions, chart);
+    return new H.Data(dataOptions, chartOptions, chart);
 };
 
 // Extend Chart.init so that the Chart constructor accepts a new configuration
@@ -2579,7 +2586,7 @@ addEvent(
              * @name Highcharts.Chart#data
              * @type {Highcharts.Data|undefined}
              */
-            chart.data = new (Data as any)(extend(userOptions.data, {
+            chart.data = new (H.Data as any)(extend(userOptions.data, {
 
                 afterComplete: function (
                     dataOptions: Highcharts.Options
@@ -2641,195 +2648,190 @@ addEvent(
  * @class
  * @name SeriesBuilder
  */
-SeriesBuilder = function (this: Highcharts.SeriesBuilder): void {
+class SeriesBuilder {
     /* eslint-disable no-invalid-this */
-    this.readers = [];
-    this.pointIsArray = true;
+    public readers: Array<Highcharts.SeriesBuilderReaderObject> = [];
+    public pointIsArray: boolean = true;
     /* eslint-enable no-invalid-this */
-} as any;
 
-/**
- * Populates readers with column indexes. A reader can be added without
- * a specific index and for those readers the index is taken sequentially
- * from the free columns (this is handled by the ColumnCursor instance).
- *
- * @function SeriesBuilder#populateColumns
- *
- * @param {Array<number>} freeIndexes
- *
- * @returns {boolean}
- */
-SeriesBuilder.prototype.populateColumns = function (
-    this: Highcharts.SeriesBuilder,
-    freeIndexes: Array<number>
-): boolean {
-    var builder = this,
-        enoughColumns = true;
+    public name?: string = void 0 as any;
 
-    // Loop each reader and give it an index if its missing.
-    // The freeIndexes.shift() will return undefined if there
-    // are no more columns.
-    builder.readers.forEach(function (
-        reader: Highcharts.SeriesBuilderReaderObject
-    ): void {
-        if (typeof reader.columnIndex === 'undefined') {
-            reader.columnIndex = freeIndexes.shift() as any;
-        }
-    });
+    /**
+     * Populates readers with column indexes. A reader can be added without
+     * a specific index and for those readers the index is taken sequentially
+     * from the free columns (this is handled by the ColumnCursor instance).
+     *
+     * @function SeriesBuilder#populateColumns
+     *
+     * @param {Array<number>} freeIndexes
+     *
+     * @returns {boolean}
+     */
+    public populateColumns(freeIndexes: Array<number>): boolean {
+        var builder = this,
+            enoughColumns = true;
 
-    // Now, all readers should have columns mapped. If not
-    // then return false to signal that this series should
-    // not be added.
-    builder.readers.forEach(function (
-        reader: Highcharts.SeriesBuilderReaderObject
-    ): void {
-        if (typeof reader.columnIndex === 'undefined') {
-            enoughColumns = false;
-        }
-    });
+        // Loop each reader and give it an index if its missing.
+        // The freeIndexes.shift() will return undefined if there
+        // are no more columns.
+        builder.readers.forEach(function (
+            reader: Highcharts.SeriesBuilderReaderObject
+        ): void {
+            if (typeof reader.columnIndex === 'undefined') {
+                reader.columnIndex = freeIndexes.shift() as any;
+            }
+        });
 
-    return enoughColumns;
-};
+        // Now, all readers should have columns mapped. If not
+        // then return false to signal that this series should
+        // not be added.
+        builder.readers.forEach(function (
+            reader: Highcharts.SeriesBuilderReaderObject
+        ): void {
+            if (typeof reader.columnIndex === 'undefined') {
+                enoughColumns = false;
+            }
+        });
 
-/**
- * Reads a row from the dataset and returns a point or array depending
- * on the names of the readers.
- *
- * @function SeriesBuilder#read<T>
- *
- * @param {Array<Array<T>>} columns
- *
- * @param {number} rowIndex
- *
- * @returns {Array<T>|Highcharts.Dictionary<T>}
- */
-SeriesBuilder.prototype.read = function <T> (
-    this: Highcharts.SeriesBuilder,
-    columns: Array<Array<T>>,
-    rowIndex: number
-): (Array<T>|Highcharts.Dictionary<T>) {
-    var builder = this,
-        pointIsArray = builder.pointIsArray,
-        point =
-            pointIsArray ? [] as Array<T> : {} as Highcharts.Dictionary<T>,
-        columnIndexes;
+        return enoughColumns;
+    }
 
-    // Loop each reader and ask it to read its value.
-    // Then, build an array or point based on the readers names.
-    builder.readers.forEach(function (
-        reader: Highcharts.SeriesBuilderReaderObject
-    ): void {
-        var value = columns[reader.columnIndex as any][rowIndex];
+    /**
+     * Reads a row from the dataset and returns a point or array depending
+     * on the names of the readers.
+     *
+     * @function SeriesBuilder#read<T>
+     *
+     * @param {Array<Array<T>>} columns
+     *
+     * @param {number} rowIndex
+     *
+     * @returns {Array<T>|Highcharts.Dictionary<T>}
+     */
+    public read <T>(
+        columns: Array<Array<T>>,
+        rowIndex: number
+    ): (Array<T>|Highcharts.Dictionary<T>) {
+        var builder = this,
+            pointIsArray = builder.pointIsArray,
+            point =
+                pointIsArray ? [] as Array<T> : {} as Highcharts.Dictionary<T>,
+            columnIndexes;
 
-        if (pointIsArray) {
-            (point as any).push(value);
-        } else {
-            if (reader.configName.indexOf('.') > 0) {
-                // Handle nested property names
-                Highcharts.Point.prototype.setNestedProperty(
-                    point, value, reader.configName
-                );
+        // Loop each reader and ask it to read its value.
+        // Then, build an array or point based on the readers names.
+        builder.readers.forEach(function (
+            reader: Highcharts.SeriesBuilderReaderObject
+        ): void {
+            var value = columns[reader.columnIndex as any][rowIndex];
+
+            if (pointIsArray) {
+                (point as any).push(value);
             } else {
-                (point as any)[reader.configName] = value;
+                if (reader.configName.indexOf('.') > 0) {
+                    // Handle nested property names
+                    Highcharts.Point.prototype.setNestedProperty(
+                        point, value, reader.configName
+                    );
+                } else {
+                    (point as any)[reader.configName] = value;
+                }
+            }
+        });
+
+        // The name comes from the first column (excluding the x column)
+        if (typeof this.name === 'undefined' && builder.readers.length >= 2) {
+            columnIndexes = builder.getReferencedColumnIndexes();
+            if (columnIndexes.length >= 2) {
+                // remove the first one (x col)
+                columnIndexes.shift();
+
+                // Sort the remaining
+                columnIndexes.sort(function (a: number, b: number): number {
+                    return a - b;
+                });
+
+                // Now use the lowest index as name column
+                this.name = (columns[columnIndexes.shift() as any] as any).name;
             }
         }
-    });
 
-    // The name comes from the first column (excluding the x column)
-    if (typeof this.name === 'undefined' && builder.readers.length >= 2) {
-        columnIndexes = builder.getReferencedColumnIndexes();
-        if (columnIndexes.length >= 2) {
-            // remove the first one (x col)
-            columnIndexes.shift();
+        return point;
+    }
 
-            // Sort the remaining
-            columnIndexes.sort(function (a: number, b: number): number {
-                return a - b;
-            });
+    /**
+     * Creates and adds ColumnReader from the given columnIndex and configName.
+     * ColumnIndex can be undefined and in that case the reader will be given
+     * an index when columns are populated.
+     *
+     * @function SeriesBuilder#addColumnReader
+     *
+     * @param {number} columnIndex
+     *
+     * @param {string} configName
+     */
+    public addColumnReader(
+        columnIndex: (number|undefined),
+        configName: string
+    ): void {
+        this.readers.push({
+            columnIndex: columnIndex,
+            configName: configName
+        });
 
-            // Now use the lowest index as name column
-            this.name = (columns[columnIndexes.shift() as any] as any).name;
+        if (!(
+            configName === 'x' ||
+            configName === 'y' ||
+            typeof configName === 'undefined'
+        )) {
+            this.pointIsArray = false;
         }
     }
 
-    return point;
-};
+    /**
+     * Returns an array of column indexes that the builder will use when
+     * reading data.
+     *
+     * @function SeriesBuilder#getReferencedColumnIndexes
+     *
+     * @returns {Array<number>}
+     */
+    public getReferencedColumnIndexes(): Array<number> {
+        var i,
+            referencedColumnIndexes = [],
+            columnReader;
 
-/**
- * Creates and adds ColumnReader from the given columnIndex and configName.
- * ColumnIndex can be undefined and in that case the reader will be given
- * an index when columns are populated.
- *
- * @function SeriesBuilder#addColumnReader
- *
- * @param {number} columnIndex
- *
- * @param {string} configName
- */
-SeriesBuilder.prototype.addColumnReader = function (
-    this: Highcharts.SeriesBuilder,
-    columnIndex: (number|undefined),
-    configName: string
-): void {
-    this.readers.push({
-        columnIndex: columnIndex,
-        configName: configName
-    });
-
-    if (!(
-        configName === 'x' ||
-        configName === 'y' ||
-        typeof configName === 'undefined'
-    )) {
-        this.pointIsArray = false;
-    }
-};
-
-/**
- * Returns an array of column indexes that the builder will use when
- * reading data.
- *
- * @function SeriesBuilder#getReferencedColumnIndexes
- *
- * @returns {Array<number>}
- */
-SeriesBuilder.prototype.getReferencedColumnIndexes = function (
-    this: Highcharts.SeriesBuilder
-): Array<number> {
-    var i,
-        referencedColumnIndexes = [],
-        columnReader;
-
-    for (i = 0; i < this.readers.length; i = i + 1) {
-        columnReader = this.readers[i];
-        if (typeof columnReader.columnIndex !== 'undefined') {
-            referencedColumnIndexes.push(columnReader.columnIndex);
+        for (i = 0; i < this.readers.length; i = i + 1) {
+            columnReader = this.readers[i];
+            if (typeof columnReader.columnIndex !== 'undefined') {
+                referencedColumnIndexes.push(columnReader.columnIndex);
+            }
         }
+
+        return referencedColumnIndexes;
     }
 
-    return referencedColumnIndexes;
-};
+    /**
+     * Returns true if the builder has a reader for the given configName.
+     *
+     * @function SeriesBuider#hasReader
+     *
+     * @param {string} configName
+     *
+     * @returns {boolean|undefined}
+     */
+    public hasReader(configName: string): (boolean|undefined) {
+        var i, columnReader;
 
-/**
- * Returns true if the builder has a reader for the given configName.
- *
- * @function SeriesBuider#hasReader
- *
- * @param {string} configName
- *
- * @returns {boolean|undefined}
- */
-SeriesBuilder.prototype.hasReader = function (
-    this: Highcharts.SeriesBuilder,
-    configName: string
-): (boolean|undefined) {
-    var i, columnReader;
-
-    for (i = 0; i < this.readers.length; i = i + 1) {
-        columnReader = this.readers[i];
-        if (columnReader.configName === configName) {
-            return true;
+        for (i = 0; i < this.readers.length; i = i + 1) {
+            columnReader = this.readers[i];
+            if (columnReader.configName === configName) {
+                return true;
+            }
         }
+        // Else return undefined
     }
-    // Else return undefined
-};
+}
+
+H.Data = Data as any;
+export default H.Data;
