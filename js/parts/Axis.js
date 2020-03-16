@@ -5816,4 +5816,4 @@ extend(Axis.prototype, {
     keepProps: ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin']
 });
 H.Axis = Axis;
-export default Axis;
+export default H.Axis;
