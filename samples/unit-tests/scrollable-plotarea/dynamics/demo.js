@@ -37,9 +37,6 @@ QUnit.test('Responsive scrollable plot area (#12991)', function (assert) {
 
     chart.setSize(null, 500);
 
-    var scrolling = document.getElementsByClassName('highcharts-scrolling')[0];
-    console.log('Test: ' + (scrolling.clientHeight > 300));
-
     assert.ok(
         document.getElementsByClassName('highcharts-scrolling')[0].clientHeight > 300,
         'The scrollbar should disasppear after increasing the height of the chart (#12991)'
