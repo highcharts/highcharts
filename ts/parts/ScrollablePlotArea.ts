@@ -417,9 +417,7 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
         height: scrollableHeight
     });
 
-    if (this.scrollablePixelsY) {
-        (this.scrollingContainer as any).style.height = this.chartHeight + 'px';
-    }
+    (this.scrollingContainer as any).style.height = this.chartHeight + 'px';
 
     // Set scroll position
     if (firstTime) {
