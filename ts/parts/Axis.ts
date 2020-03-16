@@ -7660,4 +7660,4 @@ extend(Axis.prototype, {
 
 H.Axis = Axis as any;
 
-export default Axis;
+export default H.Axis;
