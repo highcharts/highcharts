@@ -46,10 +46,17 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.repulsiveForce = pick(options.repulsiveForce, this.integration.repulsiveForceFunction);
         this.approximation = options.approximation;
     },
+    update: function (options, redraw) {
+        this.options = H.merge(this.options, options);
+        if (pick(redraw, true) && this.chart) {
+            this.chart.redraw();
+        }
+    },
     start: function () {
         var layout = this, series = this.series, options = this.options;
         layout.currentStep = 0;
         layout.forces = series[0] && series[0].forces || [];
+        layout.chart = series[0] && series[0].chart;
         if (layout.initialRendering) {
             layout.initPositions();
             // Render elements in initial positions:

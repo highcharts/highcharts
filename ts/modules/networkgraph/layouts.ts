@@ -70,6 +70,7 @@ declare global {
             public enableSimulation?: boolean;
             public forcedStop?: boolean;
             public forces?: Array<string>;
+            public chart?: Chart;
             public initialRendering: boolean;
             public integration: NetworkgraphIntegrationObject;
             public k?: number;
@@ -206,6 +207,16 @@ extend(
 
             this.approximation = options.approximation;
         },
+        update: function (
+            this: Highcharts.NetworkgraphLayout,
+            options: Highcharts.NetworkgraphLayoutAlgorithmOptions,
+            redraw?: boolean
+        ): void {
+            this.options = H.merge(this.options, options);
+            if (pick(redraw, true) && this.chart) {
+                this.chart.redraw();
+            }
+        },
         start: function (this: Highcharts.NetworkgraphLayout): void {
             var layout = this,
                 series = this.series,
@@ -214,6 +225,7 @@ extend(
 
             layout.currentStep = 0;
             layout.forces = series[0] && series[0].forces || [];
+            layout.chart = series[0] && series[0].chart;
 
             if (layout.initialRendering) {
                 layout.initPositions();
