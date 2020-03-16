@@ -41,12 +41,13 @@ var OrdinalAxis = /** @class */ (function () {
      * Series class to use.
      */
     OrdinalAxis.init = function (AxisClass, ChartClass, SeriesClass) {
+        var OrdinalAxisClass = AxisClass;
         /**
          * Calculate the ordinal positions before tick positions are calculated.
          *
          * @private
          */
-        AxisClass.prototype.beforeSetTickPositions = function () {
+        OrdinalAxisClass.prototype.beforeSetTickPositions = function () {
             var axis = this, len, ordinalPositions = [], uniqueOrdinalPositions, useOrdinal = false, dist, extremes = axis.getExtremes(), min = extremes.min, max = extremes.max, minIndex, maxIndex, slope, hasBreaks = axis.isXAxis && !!axis.options.breaks, isOrdinal = axis.options.ordinal, overscrollPointsRange = Number.MAX_VALUE, ignoreHiddenSeries = axis.chart.options.chart.ignoreHiddenSeries, i, hasBoostedSeries;
             // Apply the ordinal logic
             if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
@@ -173,7 +174,7 @@ var OrdinalAxis = /** @class */ (function () {
          *
          * @private
          */
-        AxisClass.prototype.getExtendedPositions = function () {
+        OrdinalAxisClass.prototype.getExtendedPositions = function () {
             var axis = this, chart = axis.chart, grouping = axis.series[0].currentDataGrouping, ordinalIndex = axis.ordinalIndex, key = grouping ?
                 grouping.count + grouping.unitName :
                 'raw', overscroll = axis.options.overscroll, extremes = axis.getExtremes(), fakeAxis, fakeSeries;
@@ -198,8 +199,8 @@ var OrdinalAxis = /** @class */ (function () {
                     options: {
                         ordinal: true
                     },
-                    val2lin: AxisClass.prototype.val2lin,
-                    ordinal2lin: AxisClass.prototype.ordinal2lin // #6276
+                    val2lin: OrdinalAxisClass.prototype.val2lin,
+                    ordinal2lin: OrdinalAxisClass.prototype.ordinal2lin // #6276
                 };
                 // Add the fake series to hold the full data, then apply
                 // processData to it
@@ -259,7 +260,7 @@ var OrdinalAxis = /** @class */ (function () {
          *
          * @private
          */
-        AxisClass.prototype.getGroupIntervalFactor = function (xMin, xMax, series) {
+        OrdinalAxisClass.prototype.getGroupIntervalFactor = function (xMin, xMax, series) {
             var i, processedXData = series.processedXData, len = processedXData.length, distances = [], median, groupIntervalFactor = this.groupIntervalFactor;
             // Only do this computation for the first series, let the other
             // inherit it (#2416)
@@ -294,7 +295,7 @@ var OrdinalAxis = /** @class */ (function () {
          *
          * @private
          */
-        AxisClass.prototype.getOverscrollPositions = function () {
+        OrdinalAxisClass.prototype.getOverscrollPositions = function () {
             var axis = this, extraRange = axis.options.overscroll, distance = axis.overscrollPointsRange, positions = [], max = axis.dataMax;
             if (defined(distance)) {
                 // Max + pointRange because we need to scroll to the last
@@ -466,7 +467,7 @@ var OrdinalAxis = /** @class */ (function () {
          *
          * @return {number}
          */
-        AxisClass.prototype.lin2val = function (val, fromIndex) {
+        OrdinalAxisClass.prototype.lin2val = function (val, fromIndex) {
             var axis = this, ordinalPositions = axis.ordinalPositions, ret;
             // the visible range contains only equally spaced values
             if (!ordinalPositions) {
@@ -526,7 +527,7 @@ var OrdinalAxis = /** @class */ (function () {
          *
          * @private
          */
-        AxisClass.prototype.postProcessTickInterval = function (tickInterval) {
+        OrdinalAxisClass.prototype.postProcessTickInterval = function (tickInterval) {
             // Problem: https://jsfiddle.net/highcharts/FQm4E/1/
             // This is a case where this algorithm doesn't work optimally. In
             // this case, the tick labels are spread out per week, but all the
@@ -564,7 +565,7 @@ var OrdinalAxis = /** @class */ (function () {
          *
          * @return {number}
          */
-        AxisClass.prototype.val2lin = function (val, toIndex) {
+        OrdinalAxisClass.prototype.val2lin = function (val, toIndex) {
             var axis = this, ordinalPositions = axis.ordinalPositions, ret;
             if (!ordinalPositions) {
                 ret = val;
@@ -600,8 +601,8 @@ var OrdinalAxis = /** @class */ (function () {
             return ret;
         };
         // Record this to prevent overwriting by broken-axis module (#5979)
-        AxisClass.prototype.ordinal2lin = AxisClass.prototype.val2lin;
-        addEvent(AxisClass, 'foundExtremes', function () {
+        OrdinalAxisClass.prototype.ordinal2lin = OrdinalAxisClass.prototype.val2lin;
+        addEvent(OrdinalAxisClass, 'foundExtremes', function () {
             var axis = this;
             if (axis.isXAxis &&
                 defined(axis.options.overscroll) &&
@@ -624,7 +625,7 @@ var OrdinalAxis = /** @class */ (function () {
         // For ordinal axis, that loads data async, redraw axis after data is
         // loaded. If we don't do that, axis will have the same extremes as
         // previously, but ordinal positions won't be calculated. See #10290
-        addEvent(AxisClass, 'afterSetScale', function () {
+        addEvent(OrdinalAxisClass, 'afterSetScale', function () {
             var axis = this;
             if (axis.horiz && !axis.isDirty) {
                 axis.isDirty = axis.isOrdinal &&
