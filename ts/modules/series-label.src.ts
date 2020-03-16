@@ -54,10 +54,10 @@ declare global {
             labelFontSize(minFontSize: number, maxFontSize: number): string;
         }
         interface SeriesLabelOptionsObject {
+            animation: AnimationOptionsObject;
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
             connectorAllowed?: boolean;
             connectorNeighbourDistance?: number;
-            defer?: (number|boolean);
             enabled?: boolean;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
@@ -106,8 +106,10 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     animObject,
+    defined,
     extend,
     fireEvent,
+    getDeferTime,
     isNumber,
     pick,
     syncTimeout
@@ -154,20 +156,11 @@ H.setOptions({
              */
             label: {
 
-                /**
-                 * Whether to defer displaying the series label until the set
-                 * time in milliseconds has finished. Setting to `false` renders
-                 * the series label immediately. If set to `true` inherits
-                 * the defer time set in [series.animation](#series.animation).
-                 *
-                 * @sample highcharts/plotoptions/animation-defer
-                 *         Set defer time
-                 *
-                 * @since        8.0.3
-                 *
-                 * @type {boolean|number}
-                 */
-                defer: true,
+                animation: {
+                    /** @internal */
+                    duration: 1000,
+                    defer: true
+                },
 
                 /**
                  * Enable the series label per series.
@@ -1145,17 +1138,16 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
 
             // The labels are processing heavy, wait until the animation is done
             if (e.type === 'load') {
-                delay = Math.min(
-                    delay as any,
-                    animObject(series.options.animation).duration as any
-                );
+                if (defined(options.animation.defer)) {
+                    delay = getDeferTime(chart, options.animation.defer);
+                } else {
+                    delay = Math.max(
+                        delay as any,
+                        animObject(series.options.animation).duration as any
+                    );
+                }
             }
-            // Add the label or the series defer time
-            if (options.defer || defer) {
-                isNumber(options.defer) ?
-                    (delay as any) += options.defer :
-                    delay += defer;
-            }
+
             // Keep the position updated to the axis while redrawing
             if (closest) {
                 if (typeof closest[0].plotX !== 'undefined') {

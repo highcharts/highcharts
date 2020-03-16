@@ -80,6 +80,7 @@ declare global {
             stackLabels?: YAxisStackLabelsOptions;
         }
         interface YAxisStackLabelsOptions {
+            animation?: AnimationOptionsObject;
             align?: AlignValue;
             allowOverlap?: boolean;
             crop?: boolean;
@@ -599,7 +600,7 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
         deferTime,
         deferDiff,
         durationTime,
-        defer = axis.userOptions.stackLabels.defer,
+        defer = axis.options.stackLabels.animation.defer,
         stackTotalGroup = axis.stackTotalGroup as Highcharts.SVGElement;
 
     // Create a separate group for the stack total labels

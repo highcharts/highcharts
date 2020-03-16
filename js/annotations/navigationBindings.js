@@ -1107,7 +1107,9 @@ H.setOptions({
          * @apioption navigation.annotationsOptions
          */
         annotationsOptions: {
-            defer: false
+            animation: {
+                defer: 0
+            }
         }
     }
 });

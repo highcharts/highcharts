@@ -19,19 +19,25 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
         }],
 
         annotations: [{
-            defer: true, //duration value is inherited from plotOptions
+            animation: {
+                defer: true  //duration value is inherited from plotOptions
+            },
             labels: [{
                 point: 'max',
                 text: 'Max'
             }]
         }, {
-            defer: false,
+            animation: {
+                defer: false
+            },
             labels: [{
                 point: 'min',
                 text: 'Min'
             }]
         }, {
-            defer: 500,
+            animation: {
+                defer: 500
+            },
             shapes: [{
                 type: 'circle',
                 point: {
@@ -57,7 +63,7 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
 
     assert.strictEqual(
         chart.annotations[2].deferTime,
-        chart.annotations[2].options.defer,
+        chart.annotations[2].options.animation.defer,
         'Duration time should be same as set in the options.'
     );
 });

@@ -2896,6 +2896,17 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
          * @product highcharts
          */
         stackLabels: {
+            animation: {
+                /** @internal */
+                duration: 1000,
+                defer: true
+            },
+            /**
+             * @default   true
+             * @type      {boolean|number}
+             * @since     next
+             * @apioption yAxis.stackLabels.animation.defer
+             */
             /**
              * Allow the stack labels to overlap.
              *
@@ -2929,19 +2940,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
              * @since 7.1.3
              */
             crop: true,
-            /**
-             * Whether to defer displaying the stack labels until the set
-             * time in milliseconds has finished. Setting to `false` renders
-             * stack labels immediately. If set to `true` inherits the defer
-             * time set in [plotOptions.series.animation](#plotOptions.series.animation).
-             *
-             * @sample highcharts/plotoptions/animation-defer
-             *         Set defer time
-             *
-             * @type {boolean|number}
-             * @since 8.0.3
-             */
-            defer: true,
             /**
              * How to handle stack total labels that flow outside the plot area.
              * The default is set to `"justify"`,

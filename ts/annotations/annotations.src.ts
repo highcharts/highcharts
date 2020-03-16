@@ -185,8 +185,9 @@ declare global {
             itemType?: string;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
+            animation: AnimationObject;
+
             controlPointOptions: AnnotationControlPointOptionsObject;
-            defer: boolean | number;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -500,20 +501,11 @@ merge(
              */
             visible: true,
 
-            /**
-             * Whether to defer displaying the annotations until the set
-             * time in milliseconds has finished. Setting to `false` renders
-             * annotation immediately. If set to `true` inherits the duration
-             * time set in [plotOptions.series.animation](#plotOptions.series.animation).
-             *
-             * @sample highcharts/annotations/defer
-             *         Set defer time
-             *
-             * @since        8.0.3
-             *
-             * @type {boolean | number}
-             */
-            defer: true,
+            animation: {
+                /** @internal */
+                duration: 1000,
+                defer: true
+            },
 
             /**
              * Allow an annotation to be draggable by a user. Possible
@@ -1076,7 +1068,7 @@ merge(
          */
         init: function (this: Highcharts.Annotation): void {
             const chart = this.chart,
-                defer = this.options.defer;
+                defer = this.options.animation.defer;
 
             this.linkPoints();
             this.addControlPoints();
