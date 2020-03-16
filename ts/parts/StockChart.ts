@@ -10,7 +10,25 @@
 
 'use strict';
 
+import Axis from './Axis.js';
 import H from './Globals.js';
+import Point from './Point.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    clamp,
+    defined,
+    extend,
+    find,
+    format,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -59,26 +77,7 @@ declare global {
     }
 }
 
-import Point from './Point.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    clamp,
-    defined,
-    extend,
-    find,
-    format,
-    isNumber,
-    isString,
-    merge,
-    pick,
-    splat
-} = U;
-
 import './Chart.js';
-import './Axis.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -92,8 +91,7 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
@@ -103,7 +101,6 @@ var Axis = H.Axis,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
     pointTooltipFormatter = Point.prototype.tooltipFormatter;
-
 
 /**
  * Compare the values of the series against the first non-null, non-
