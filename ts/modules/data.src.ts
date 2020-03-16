@@ -248,25 +248,25 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
     extend,
+    fireEvent,
     isNumber,
+    merge,
     objectEach,
     pick,
     splat
 } = U;
 
-import '../parts/Chart.js';
-import '../mixins/ajax.js';
 import H from '../parts/Globals.js';
+import '../mixins/ajax.js';
+import '../parts/Chart.js';
 
 // Utilities
-var addEvent = Highcharts.addEvent,
-    Chart = Highcharts.Chart,
+var Chart = Highcharts.Chart,
     win = Highcharts.win,
-    doc = win.document,
-    merge = Highcharts.merge,
-    fireEvent = Highcharts.fireEvent;
+    doc = win.document;
 
 /**
  * The Data module provides a simplified interface for adding data to
@@ -728,7 +728,7 @@ class Data {
         this.options = options;
         this.columns = (
             options.columns ||
-            this.rowsToColumns((options.rows as any)) ||
+            this.rowsToColumns(options.rows) ||
             []
         );
 
@@ -750,7 +750,7 @@ class Data {
         this.rawColumns = [];
 
         // No need to parse or interpret anything
-        if ((this.columns as any).length) {
+        if (this.columns.length) {
             this.dataFound();
             hasData = true;
         }
@@ -2412,7 +2412,7 @@ class Data {
                 allSeriesBuilders[0].readers.length > 0
             ) {
                 typeCol = (columns as any)[
-                    allSeriesBuilders[0].readers[0].columnIndex as any
+                    allSeriesBuilders[0].readers[0].columnIndex
                 ];
                 if (typeof typeCol !== 'undefined') {
                     if (typeCol.isDatetime) {
@@ -2678,7 +2678,7 @@ class SeriesBuilder {
             reader: Highcharts.SeriesBuilderReaderObject
         ): void {
             if (typeof reader.columnIndex === 'undefined') {
-                reader.columnIndex = freeIndexes.shift() as any;
+                reader.columnIndex = freeIndexes.shift();
             }
         });
 

@@ -84,12 +84,12 @@ import Highcharts from '../parts/Globals.js';
  *         continue async.
  */
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
-import '../parts/Chart.js';
-import '../mixins/ajax.js';
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import H from '../parts/Globals.js';
+import '../mixins/ajax.js';
+import '../parts/Chart.js';
 // Utilities
-var addEvent = Highcharts.addEvent, Chart = Highcharts.Chart, win = Highcharts.win, doc = win.document, merge = Highcharts.merge, fireEvent = Highcharts.fireEvent;
+var Chart = Highcharts.Chart, win = Highcharts.win, doc = win.document;
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also
