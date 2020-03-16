@@ -10,6 +10,7 @@
 
 'use strict';
 
+import Axis from './Axis.js';
 import H from './Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
 import U from './Utilities.js';
@@ -30,9 +31,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            scrollbar?: Scrollbar;
-        }
         interface Chart {
             scrollbarsOffsets?: [number, number];
         }
@@ -1204,8 +1202,8 @@ if (!H.Scrollbar) {
         Scrollbar.defaultOptions,
         defaultOptions.scrollbar
     );
-    H.Scrollbar = Scrollbar as any;
-    ScrollbarAxis.init(H.Scrollbar);
+    H.Scrollbar = Scrollbar;
+    ScrollbarAxis.init(Axis, Scrollbar);
 }
 
 export default H.Scrollbar;
