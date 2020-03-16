@@ -12,7 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
+var addEvent = U.addEvent, merge = U.merge, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
 var Chart = H.Chart;
@@ -47,7 +47,7 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.approximation = options.approximation;
     },
     update: function (options, redraw) {
-        this.options = H.merge(this.options, options);
+        this.options = merge(this.options, options);
         if (pick(redraw, true) && this.chart) {
             this.chart.redraw();
         }

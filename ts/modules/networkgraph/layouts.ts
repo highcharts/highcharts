@@ -145,6 +145,7 @@ declare global {
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
+    merge,
     clamp,
     defined,
     extend,
@@ -212,7 +213,7 @@ extend(
             options: Highcharts.NetworkgraphLayoutAlgorithmOptions,
             redraw?: boolean
         ): void {
-            this.options = H.merge(this.options, options);
+            this.options = merge(this.options, options);
             if (pick(redraw, true) && this.chart) {
                 this.chart.redraw();
             }
