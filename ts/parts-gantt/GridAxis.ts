@@ -424,8 +424,8 @@ addEvent(Axis, 'afterTickSize', function (
         tickSize?: Array<number>;
     }
 ): void {
+    const defaultLeftAxisOptions = Axis.defaultLeftAxisOptions;
     const {
-        defaultLeftAxisOptions,
         horiz,
         options: {
             grid: gridOptions = {}

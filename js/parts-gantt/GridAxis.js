@@ -271,7 +271,8 @@ function (e) {
 // Draw vertical axis ticks extra long to create cell floors and roofs.
 // Overrides the tickLength for vertical axes.
 addEvent(Axis, 'afterTickSize', function (e) {
-    var _a = this, defaultLeftAxisOptions = _a.defaultLeftAxisOptions, horiz = _a.horiz, _b = _a.options.grid, gridOptions = _b === void 0 ? {} : _b;
+    var defaultLeftAxisOptions = Axis.defaultLeftAxisOptions;
+    var _a = this, horiz = _a.horiz, _b = _a.options.grid, gridOptions = _b === void 0 ? {} : _b;
     var dimensions = this.maxLabelDimensions;
     if (gridOptions.enabled) {
         var labelPadding = (Math.abs(defaultLeftAxisOptions.labels.x) * 2);

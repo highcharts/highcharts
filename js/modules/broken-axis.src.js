@@ -13,6 +13,7 @@ import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
 import '../parts/Axis.js';
 import '../parts/Series.js';
+import StackItem from '../parts/Stacking.js';
 var Axis = H.Axis, Series = H.Series;
 /**
  * Returns the first break found where the x is larger then break.from and
@@ -434,7 +435,7 @@ H.Series.prototype.gappedPath = function () {
                 // For stacked chart generate empty stack items, #6546
                 if (this.options.stacking) {
                     stack = yAxis.stacks[this.stackKey][xRange] =
-                        new H.StackItem(yAxis, yAxis.options
+                        new StackItem(yAxis, yAxis.options
                             .stackLabels, false, xRange, this.stack);
                     stack.total = 0;
                 }

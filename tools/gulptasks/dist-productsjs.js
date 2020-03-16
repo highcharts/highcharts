@@ -71,8 +71,8 @@ function distProductsJS() {
             (
                 'var products = ' + JSON.stringify({
                     Highcharts: { date, nr },
-                    Highstock: { date, nr },
-                    Highmaps: { date, nr },
+                    'Highcharts Stock': { date, nr },
+                    'Highcharts Maps': { date, nr },
                     'Highcharts Gantt': { date, nr }
                 }, undefined, '    ') + '\n'
             )

@@ -297,9 +297,7 @@ Chart.prototype.applyFixed = function () {
         width: scrollableWidth,
         height: scrollableHeight
     });
-    if (this.scrollablePixelsY) {
-        this.scrollingContainer.style.height = this.chartHeight + 'px';
-    }
+    this.scrollingContainer.style.height = this.chartHeight + 'px';
     // Set scroll position
     if (firstTime) {
         if (scrollableOptions.scrollPositionX) {

@@ -7,7 +7,7 @@ resources:
   - 'https://netdna.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.css'
 requiresManualTesting: true
 tags:
-  - Gantt demo
+  - Highcharts Gantt demo
 categories:
   - Highcharts Gantt
 ...
