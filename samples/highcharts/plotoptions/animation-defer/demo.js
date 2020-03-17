@@ -12,9 +12,15 @@ Highcharts.chart('container', {
             }
         },
         series: {
-        //series labels will be shown after defer set in animation
+        //series labels will be shown after defer set in series.animation
             animation: {
                 defer: 4000
+            },
+            dataLabels: {
+                enabled: true,
+                animation: {
+                    defer: 6000
+                }
             }
         }
     },
@@ -35,16 +41,8 @@ Highcharts.chart('container', {
         type: 'column',
         data: [24916, 24064, 29742, 29851, 32490, 30282, 38121, 40434]
     }, {
-        data: [11744, 17722, 16005, 59771, 60185, 74377, 82147, 99387],
-        dataLabels: {
-            enabled: true,
-            defer: 6000
-        }
+        data: [11744, 17722, 16005, 59771, 60185, 74377, 82147, 99387]
     }, {
-        data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111],
-        dataLabels: {
-            enabled: true,
-            defer: 6000
-        }
+        data: [12908, 5948, 8105, 11248, 8989, 11816, 18274, 18111]
     }]
 });
