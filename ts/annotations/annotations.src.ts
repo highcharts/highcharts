@@ -87,6 +87,7 @@ declare global {
             public redraw(animation?: boolean): void;
             public redrawItem(item: AnnotationControllable, animation?: boolean): void;
             public redrawItems(items: Array<AnnotationControllable>, animation?: boolean): void;
+            public renderItems(items: Array<AnnotationControllable>): void;
             public remove(): void;
             public render(): void;
             public renderItem(item: AnnotationControllable): void;
@@ -1231,6 +1232,21 @@ merge(
             }
         },
 
+        /**
+         * @private
+         * @param {Array<Highcharts.AnnotationControllable>} items
+         */
+        renderItems: function (
+            this: Highcharts.Annotation,
+            items: Array<Highcharts.AnnotationControllable>
+        ): void {
+            var i = items.length;
+
+            while (i--) {
+                this.renderItem(items[i]);
+            }
+        },
+
         render: function (this: Highcharts.Annotation): void {
             var renderer = this.chart.renderer;
 
@@ -1261,6 +1277,10 @@ merge(
             if (this.clipRect) {
                 this.graphic.clip(this.clipRect);
             }
+
+            // Render shapes and labels before adding events (#13070).
+            this.renderItems(this.shapes);
+            this.renderItems(this.labels);
 
             this.addEvents();
 

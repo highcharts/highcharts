@@ -398,6 +398,18 @@ seriesType('tilemap', 'heatmap'
      */
     tileShape: 'hexagon'
 }, {
+    // Use drawPoints method from old heatmap implementation
+    // Consider standarizing heatmap and tilemap into more consistent form.
+    drawPoints: function () {
+        var _this = this;
+        // In styled mode, use CSS, otherwise the fill used in the style
+        // sheet will take precedence over the fill attribute.
+        H.seriesTypes.column.prototype.drawPoints.call(this);
+        this.points.forEach(function (point) {
+            point.graphic &&
+                point.graphic[_this.chart.styledMode ? 'css' : 'animate'](_this.colorAttribs(point));
+        });
+    },
     // Set tile shape object on series
     setOptions: function () {
         // Call original function

@@ -32,17 +32,16 @@ function prepareRelease() {
         `);
 
         if (packageJsonVersion !== bowerJsonVersion ||
-            packageJsonVersion !== buildPropsVersion ||
-            buildPropsVersion !== bowerJsonVersion) {
+            packageJsonVersion !== buildPropsVersion.replace('-modified', '') ||
+            buildPropsVersion.replace('-modified', '') !== bowerJsonVersion) {
             LogLib.warn('The current versions declared in files package.json, ' +
                                 'bower.json and build.properties does not match!');
         }
 
         if (argv.cleanup) {
             const stagedChanges = ChildProcess.execSync('git diff --cached --name-only').toString();
-            ChildProcess.execSync('mkdir -p tmp');
-            ChildProcess.execSync(`sed -i'tmp/*.bak' -e s/${buildPropsVersion}.*/${packageJsonVersion}-modified/g build.properties`);
-            ChildProcess.execSync('sed -i\'tmp/*.bak\' -e s/date=.*/date=/ build.properties');
+            ChildProcess.execSync(`sed -i'.bak' -e 's/${buildPropsVersion}.*/${packageJsonVersion}-modified/g' build.properties`);
+            ChildProcess.execSync('sed -i\'.bak\' -e "s/date=.*/date=/" build.properties');
 
             if (argv.commit) {
                 if (stagedChanges) {
@@ -61,26 +60,24 @@ function prepareRelease() {
 
         const nextVersion = argv.nextversion;
         if (!argv.cleanup && !nextVersion) {
-            reject(new Error('Please provide either --version x.y.z or --cleanup when starting the command.'));
+            reject(new Error('Please provide either --nextversion x.y.z or --cleanup when starting the command.'));
             return;
         }
-
         /*
             Replace version in relevant files (ideally all current versions should be equal, but since they
             sometimes have proven not to be, we make sure to replace the existing version in the exact file
             with the next version
         */
-        ChildProcess.execSync('mkdir -p tmp');
-        ChildProcess.execSync(`sed -i'tmp/*.bak' -e '/version/s/"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
-        ChildProcess.execSync(`sed -i'tmp/*.bak' -e '/version/s/"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
-        ChildProcess.execSync(`sed -i'tmp/*.bak' -e s/${buildPropsVersion}/${nextVersion}/ build.properties`);
+        ChildProcess.execSync(`sed -i'.bak' -e '/version/s/"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
+        ChildProcess.execSync(`sed -i'.bak' -e '/version/s/"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
+        ChildProcess.execSync(`sed -i'.bak' -e 's/${buildPropsVersion}/${nextVersion}/' build.properties`);
 
         // replace/fill in date in build.properties
-        ChildProcess.execSync('sed -i\'tmp/*.bak\' -e s/date=.*/date=$(date +%Y-%m-%d)/ build.properties');
+        ChildProcess.execSync('sed -i\'.bak\' -e "s/date=.*/date=$(date +%Y-%m-%d)/" build.properties');
 
         // replace occurences of @ since next in docs with @since x.y.z, first checking if xargs is on gnu (linux) or bsd (osx).
         const isGNU = ChildProcess.execSync('xargs --version 2>&1 |grep -s GNU >/dev/null && echo true || echo false').toString().replace('\n', '') === 'true';
-        ChildProcess.execSync(`grep -Rl --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+\\next" . | xargs ${isGNU ? '-r' : ''} sed -i'tmp/*.bak' -e 's/@since *next/@since ${nextVersion}/'`);
+        ChildProcess.execSync(`grep -Rl --exclude=*.bak --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+next" . | xargs ${isGNU ? '-r' : ''} sed -i'.bak' -e 's/@since *next/@since ${nextVersion}/'`);
 
         LogLib.success('Updated version in package.json, bower.json, build.properties and replaced @ since next' +
                         ' in the docs. Please review changes and commit & push when ready.');
