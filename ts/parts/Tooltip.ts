@@ -728,7 +728,7 @@ class Tooltip {
                     container,
                     0,
                     0,
-                    {},
+                    { ...this.chart.options.chart?.style },
                     void 0,
                     void 0,
                     renderer.styledMode
