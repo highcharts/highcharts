@@ -42,6 +42,7 @@ declare global {
             );
         }
         interface DataLabelsOptions {
+            animation?: AnimationOptionsObject;
             align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
@@ -51,7 +52,7 @@ declare global {
             className?: string;
             color?: (ColorString|GradientColorObject|PatternObject);
             crop?: boolean;
-            defer?: (boolean|number);
+            defer?: boolean;
             enabled?: boolean;
             filter?: DataLabelsFilterOptionsObject;
             format?: string;
@@ -196,7 +197,6 @@ const {
     fireEvent,
     format,
     isArray,
-    isNumber,
     merge,
     objectEach,
     pick,
@@ -531,16 +531,20 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
 
         if (defer) {
             var deferTime,
-                seriesDefer = animObject(seriesOptions.animation).defer;
+                seriesDefer = animObject(seriesOptions.animation).defer,
+                dataLabelDefer = animObject((seriesDlOptions as any).animation).defer;
 
             // Get a sum of the series duration and the defer if it is defined
             if (seriesAnimDuration && seriesDefer) {
                 seriesAnimDuration += seriesDefer;
             }
-            // Defer difned in the dataLabel object has higher priority
+            // Defer defined in the dataLabel object has higher priority
             // than series defer
-            deferTime = isNumber(defer) ? defer : seriesAnimDuration;
-
+            if (dataLabelDefer) {
+                deferTime = dataLabelDefer;
+            } else {
+                deferTime = seriesAnimDuration;
+            }
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
             if (!hasRendered && deferTime) {
                 var group = series.dataLabelsGroup;

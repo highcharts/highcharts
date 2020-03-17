@@ -22,8 +22,11 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                         duration: 100
                     },
                     dataLabels: {
+                        defer: true,
                         enabled: true,
-                        defer: 400
+                        animation: {
+                            defer: 400
+                        }
                     }
                 }, {
                     data: [43934, 52503, 57177, 69658].reverse(),
@@ -62,7 +65,6 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
                 );
                 //check second series with fixed defer time
                 dlOpacity = chart.series[1].dataLabelsGroup.attr('opacity');
-                // animation finished
                 assert.strictEqual(
                     dlOpacity === 0,
                     true,

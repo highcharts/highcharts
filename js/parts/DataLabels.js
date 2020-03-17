@@ -31,7 +31,7 @@ import H from './Globals.js';
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
 var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
@@ -236,14 +236,19 @@ Series.prototype.drawDataLabels = function () {
         dataLabelsGroup = series.plotGroup('dataLabelsGroup', 'data-labels', defer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
         seriesDlOptions.zIndex || 6);
         if (defer) {
-            var deferTime, seriesDefer = animObject(seriesOptions.animation).defer;
+            var deferTime, seriesDefer = animObject(seriesOptions.animation).defer, dataLabelDefer = animObject(seriesDlOptions.animation).defer;
             // Get a sum of the series duration and the defer if it is defined
             if (seriesAnimDuration && seriesDefer) {
                 seriesAnimDuration += seriesDefer;
             }
-            // Defer difned in the dataLabel object has higher priority
+            // Defer defined in the dataLabel object has higher priority
             // than series defer
-            deferTime = isNumber(defer) ? defer : seriesAnimDuration;
+            if (dataLabelDefer) {
+                deferTime = dataLabelDefer;
+            }
+            else {
+                deferTime = seriesAnimDuration;
+            }
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
             if (!hasRendered && deferTime) {
                 var group = series.dataLabelsGroup;

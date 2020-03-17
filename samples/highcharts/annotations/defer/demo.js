@@ -23,19 +23,25 @@ Highcharts.chart('container', {
     }],
 
     annotations: [{
-        defer: true, //duration value is inherited from plotOptions
+        animation: {
+            defer: true //duration value is inherited from plotOptions
+        },
         labels: [{
             point: 'max',
             text: 'Max'
         }]
     }, {
-        defer: false,
+        animation: {
+            defer: false
+        },
         labels: [{
             point: 'min',
             text: 'Min'
         }]
     }, {
-        defer: 1000,
+        animation: {
+            defer: 1000
+        },
         shapes: [{
             type: 'circle',
             point: {

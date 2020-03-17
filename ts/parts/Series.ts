@@ -1080,7 +1080,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
         /**
          * @default   0
          * @type      {number}
-         * @since     8.0.3
+         * @since     next
          * @apioption plotOptions.series.animation.defer
          */
 
@@ -2301,7 +2301,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @private
          */
         dataLabels: {
-
+            animation: {
+                defer: 0
+            },
             /**
              * The alignment of the data label compared to the point. If
              * `right`, the right side of the label should be touching the
@@ -2441,7 +2443,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
              * @sample highcharts/plotoptions/animation-defer
              *         Set defer time
              *
-             * @type      {boolean|number}
+             * @type      {boolean}
              * @default   true
              * @since     4.0.0
              * @product   highcharts highstock gantt

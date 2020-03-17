@@ -22,7 +22,9 @@ Highcharts.chart('container', {
     yAxis: {
         stackLabels: {
             enabled: true,
-            defer: 4000
+            animation: {
+                defer: 4000
+            }
         }
     },
 
