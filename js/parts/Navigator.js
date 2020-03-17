@@ -1801,7 +1801,7 @@ var Navigator = /** @class */ (function () {
             var navigator = this.navigator, xAxis = navigator && (navigator.baseSeries &&
                 navigator.baseSeries[0] &&
                 navigator.baseSeries[0].xAxis ||
-                navigator.scrollbar && this.xAxis[0]); // #5709
+                this.xAxis[0]); // #5709, #13114
             if (xAxis) {
                 navigator.render(xAxis.min, xAxis.max);
             }
