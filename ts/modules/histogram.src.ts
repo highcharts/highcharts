@@ -231,8 +231,12 @@ seriesType<Highcharts.HistogramSeries>(
                     (
                         series.userOptions.binWidth ||
                         correctFloat(max - x) >= binWidth ||
+                        // #13069 - Every add and subtract operation should
+                        // be corrected, due to general problems with
+                        // operations on float numbers in JS.
                         correctFloat(
-                            min + (frequencies.length * binWidth) - x
+                            correctFloat(min + (frequencies.length * binWidth)) -
+                            x
                         ) <= 0
                     );
                 x = correctFloat(x + binWidth)

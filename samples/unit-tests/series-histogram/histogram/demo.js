@@ -237,4 +237,24 @@ QUnit.test('Histogram', function (assert) {
         'Histogram produces correct number of bins set by user.'
     );
 
+    chart.update({
+        series: [{
+            name: 'Data',
+            type: 'scatter',
+            data: [-12, -21, -27, -10, -10, -50, -17, -36, -34, -55, -38, -39, -37, -43, -50, -29, -67, -59, -68, -63, -53, -46, -70, -57, -56, -41, -76, -104],
+            id: 's1'
+        }, {
+            type: 'histogram',
+            baseSeries: 's1',
+            zIndex: -1,
+            binsNumber: void 0
+        }]
+    }, true, true);
+
+    assert.strictEqual(
+        chart.series[1].data.length,
+        chart.series[1].binsNumber(),
+        `Histogram produces correctnumber of bins on negative point values.`
+    );
+
 });
