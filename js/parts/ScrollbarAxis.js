@@ -7,13 +7,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import Axis from './Axis.js';
 import H from './Globals.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, pick = U.pick;
-/* eslint-disable no-invalid-this */
+/* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Creates scrollbars if enabled.
+ *
  * @private
  */
 var ScrollbarAxis = /** @class */ (function () {
@@ -24,12 +24,15 @@ var ScrollbarAxis = /** @class */ (function () {
      *
      * @private
      *
-     * @param {Highcharts.Scrollbar} ScrollbarClass
-     * The scrollbar class to use.
+     * @param AxisClass
+     * Axis class to extend.
+     *
+     * @param ScrollbarClass
+     * Scrollbar class to use.
      */
-    ScrollbarAxis.init = function (ScrollbarClass) {
+    ScrollbarAxis.init = function (AxisClass, ScrollbarClass) {
         // Wrap axis initialization and create scrollbar if enabled:
-        addEvent(Axis, 'afterInit', function () {
+        addEvent(AxisClass, 'afterInit', function () {
             var axis = this;
             if (axis.options &&
                 axis.options.scrollbar &&
@@ -67,7 +70,7 @@ var ScrollbarAxis = /** @class */ (function () {
             }
         });
         // Wrap rendering axis, and update scrollbar if one is created:
-        addEvent(Axis, 'afterRender', function () {
+        addEvent(AxisClass, 'afterRender', function () {
             var axis = this, scrollMin = Math.min(pick(axis.options.min, axis.min), axis.min, pick(axis.dataMin, axis.min) // #6930
             ), scrollMax = Math.max(pick(axis.options.max, axis.max), axis.max, pick(axis.dataMax, axis.max) // #6930
             ), scrollbar = axis.scrollbar, offset = axis.axisTitleMargin + (axis.titleOffset || 0), scrollbarsOffsets = axis.chart.scrollbarsOffsets, axisMargin = axis.options.margin || 0, offsetsIndex, from, to;
@@ -128,7 +131,7 @@ var ScrollbarAxis = /** @class */ (function () {
             }
         });
         // Make space for a scrollbar:
-        addEvent(Axis, 'afterGetOffset', function () {
+        addEvent(AxisClass, 'afterGetOffset', function () {
             var axis = this, index = axis.horiz ? 2 : 1, scrollbar = axis.scrollbar;
             if (scrollbar) {
                 axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
