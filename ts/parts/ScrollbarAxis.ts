@@ -42,7 +42,7 @@ class ScrollbarAxis {
 
         // Wrap axis initialization and create scrollbar if enabled:
         addEvent(AxisClass, 'afterInit', function (): void {
-            var axis: ScrollbarAxis = this;
+            var axis = this as ScrollbarAxis;
 
             if (
                 axis.options &&
@@ -118,7 +118,7 @@ class ScrollbarAxis {
 
         // Wrap rendering axis, and update scrollbar if one is created:
         addEvent(AxisClass, 'afterRender', function (): void {
-            var axis: ScrollbarAxis = this,
+            var axis = this as ScrollbarAxis,
                 scrollMin = Math.min(
                     pick(axis.options.min, axis.min as any),
                     axis.min as any,
@@ -218,7 +218,7 @@ class ScrollbarAxis {
 
         // Make space for a scrollbar:
         addEvent(AxisClass, 'afterGetOffset', function (): void {
-            var axis: ScrollbarAxis = this,
+            var axis = this as ScrollbarAxis,
                 index = axis.horiz ? 2 : 1,
                 scrollbar = axis.scrollbar;
 
@@ -233,7 +233,16 @@ class ScrollbarAxis {
 }
 
 interface ScrollbarAxis extends Axis {
-    scrollbar?: Scrollbar;
+    options: Axis['options'] & ScrollbarAxis.AxisOptions;
+    scrollbar: Scrollbar;
+}
+
+namespace ScrollbarAxis {
+
+    export interface AxisOptions {
+        scrollbar?: Highcharts.ScrollbarOptions;
+    }
+
 }
 
 export default ScrollbarAxis;

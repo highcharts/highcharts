@@ -12,6 +12,7 @@
 
 import H from './Globals.js';
 import Color from './Color.js';
+import type ScrollbarAxis from './ScrollbarAxis.js';
 import Tick from './Tick.js';
 import U from './Utilities.js';
 const {
@@ -7648,6 +7649,18 @@ class Axis {
 
 interface Axis {
     keepProps: Array<string>;
+}
+
+namespace Axis {
+
+    /**
+     * All possible axis types.
+     */
+    export type Type = (
+        Axis|
+        ScrollbarAxis
+    );
+
 }
 
 extend(Axis.prototype, {
