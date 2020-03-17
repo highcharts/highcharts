@@ -3590,9 +3590,23 @@ class Axis {
          */
         stackLabels: {
 
+            /**
+             * The animation configuration object for the stackLabels. Please
+             * note that this option only applies to the initial animation.
+             * For other animations, see [chart.animation](#chart.animation)]
+             * and the animation parameter under the API methods.
+             * The following properties are supported:
+             *
+             * - `defer`: The animation delay time in milliseconds.
+             *
+             * @sample {highcharts} highcharts/plotoptions/animation-ddefer/
+             *          Animation defer settings
+             *
+             * @type {Highcharts.AnimationOptionsObject}
+             */
+
             animation: {
                 /** @internal */
-                duration: 1000,
                 defer: true
             },
 

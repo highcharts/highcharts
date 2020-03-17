@@ -1702,8 +1702,23 @@ null,
      * @private
      */
     dataLabels: {
+        /**
+         * The animation configuration object for the dataLabels. Please
+         * note that this option only applies to the initial animation.
+         * For other animations, see [chart.animation](#chart.animation)]
+         * and the animation parameter under the API methods.
+         * The following properties are supported:
+         *
+         * - `defer`: The animation delay time in milliseconds.
+         *
+         * @sample {highcharts} highcharts/plotoptions/animation-ddefer/
+         *          Animation defer settings
+         *
+         * @type {Highcharts.AnimationOptionsObject}
+         */
         animation: {
-            defer: 0
+            /** @internal */
+            defer: true
         },
         /**
          * The alignment of the data label compared to the point. If

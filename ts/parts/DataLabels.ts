@@ -197,6 +197,7 @@ const {
     fireEvent,
     format,
     isArray,
+    isNumber,
     merge,
     objectEach,
     pick,
@@ -540,7 +541,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
             }
             // Defer defined in the dataLabel object has higher priority
             // than series defer
-            if (dataLabelDefer) {
+            if (isNumber(dataLabelDefer)) {
                 deferTime = dataLabelDefer;
             } else {
                 deferTime = seriesAnimDuration;

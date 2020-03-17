@@ -56,7 +56,7 @@ QUnit.test('Initial animation - defer test #12901', function (assert) {
             );
 
             setTimeout(function () {
-                dlOpacity = chart.series[0].dataLabelsGroup.opacity;
+                dlOpacity = chart.series[0].dataLabelsGroup.attr('opacity');
                 // animation finished
                 assert.strictEqual(
                     dlOpacity === 1,
