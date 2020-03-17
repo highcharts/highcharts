@@ -77,7 +77,8 @@ extend(H.SVGElement.prototype, {
             borderPosY = bb.y - pad;
 
         // For text elements, apply x and y offset, #11397.
-        if (this.element.nodeName === 'text') {
+        const isLegendItem = this.parentGroup && this.parentGroup.hasClass('highcharts-legend-item');
+        if (this.element.nodeName === 'text' && !isLegendItem) {
             const isRotated = !!this.rotation;
             borderPosX = +this.attr('x') - (bb.width * 0.5) - pad +
                 // Correct baseline position on Firefox.
