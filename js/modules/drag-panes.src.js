@@ -452,8 +452,6 @@ var AxisResizer = /** @class */ (function () {
     };
     return AxisResizer;
 }());
-H.AxisResizer = AxisResizer;
-export default H.AxisResizer;
 // Keep resizer reference on axis update
 Axis.prototype.keepProps.push('resizer');
 /* eslint-disable no-invalid-this */
@@ -503,3 +501,6 @@ wrap(Pointer.prototype, 'drag', function (proceed) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
+merge(true, Axis.defaultYAxisOptions, AxisResizer.resizerOptions);
+H.AxisResizer = AxisResizer;
+export default H.AxisResizer;

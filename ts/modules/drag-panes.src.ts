@@ -675,9 +675,6 @@ class AxisResizer {
     }
 }
 
-H.AxisResizer = AxisResizer as any;
-export default H.AxisResizer;
-
 // Keep resizer reference on axis update
 Axis.prototype.keepProps.push('resizer');
 
@@ -741,3 +738,8 @@ wrap(Pointer.prototype, 'drag', function (
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
+
+merge(true, Axis.defaultYAxisOptions, AxisResizer.resizerOptions);
+
+H.AxisResizer = AxisResizer as any;
+export default H.AxisResizer;
