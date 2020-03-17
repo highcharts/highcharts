@@ -1675,56 +1675,91 @@ chartProto.callbacks.push(function (
         chart.controlPointsGroup.destroy();
     });
     addEvent(chart, 'exportData', function (this: Highcharts.AnnotationChart, event: any): void {
-        const annotations = chart.annotations;
+        const annotations = chart.annotations,
+            csvColumnHeaderFormatter = ((
+                this.options.exporting &&
+                this.options.exporting.csv) ||
+                {}).columnHeaderFormatter,
+            // If second row doesn't have xValues
+            // then it is a title row thus multiple level header is in use.
+            multiLevelHeaders = !event.dataRows[1].xValues,
+            columnHeaderFormatter = function (index: any): any {
+                let s;
+                if (csvColumnHeaderFormatter) {
+                    s = csvColumnHeaderFormatter(index);
+                    if (s !== false) {
+                        return s;
+                    }
+                }
+
+                s = 'Annotations ' + index;
+
+                if (multiLevelHeaders) {
+                    return {
+                        columnTitle: s,
+                        topLevelColumnTitle: s
+                    };
+                }
+            };
 
         annotations.forEach((annotation): void => {
             annotation.labels.forEach((label): void => {
-                const annotationText = label.options.text;
 
-                label.points.forEach((points): void => {
-                    const annotationX = points.x,
-                        xAxisIndex = points.series.xAxis ? points.series.xAxis.options.index : -1;
-                    let wasAdded = false;
+                if (label.options.text) {
+                    const annotationText = label.options.text;
 
-                    if (xAxisIndex === -1) {
-                        const newRow: any = new Array(event.dataRows[0].length);
+                    label.points.forEach((points): void => {
+                        const annotationX = points.x,
+                            xAxisIndex = points.series.xAxis ?
+                                points.series.xAxis.options.index :
+                                -1;
+                        let wasAdded = false;
 
-                        newRow.fill('');
-                        newRow.push(annotationText);
-                        newRow.xValues = [];
-                        newRow.xValues[xAxisIndex] = annotationX;
-                        event.dataRows.push(newRow);
-                        wasAdded = true;
-                    }
+                        // Annotation not connected to any xAxis - add new row.
+                        if (xAxisIndex === -1) {
+                            const newRow: any = new Array(event.dataRows[0].length);
 
-                    if (!wasAdded) {
-                        event.dataRows.forEach((row: any, rowIndex: number): void => {
-                            if (
-                                !wasAdded &&
-                                rowIndex > 1 &&
-                                row.xValues &&
-                                xAxisIndex !== void 0 &&
-                                annotationX === row.xValues[xAxisIndex]
-                            ) {
-                                row.push(annotationText);
-                                wasAdded = true;
-                            }
-                        });
-                    }
-
-                    if (!wasAdded) {
-                        const newRow: any = new Array(event.dataRows[0].length);
-
-                        newRow.fill('');
-                        newRow[0] = annotationX;
-                        newRow.push(annotationText);
-                        newRow.xValues = [];
-                        if (xAxisIndex !== void 0) {
+                            newRow.fill('');
+                            newRow.push(annotationText);
+                            newRow.xValues = [];
                             newRow.xValues[xAxisIndex] = annotationX;
+                            event.dataRows.push(newRow);
+                            wasAdded = true;
                         }
-                        event.dataRows.push(newRow);
-                    }
-                });
+
+                        // Annotation placed on a exported data point
+                        // - add new column
+                        if (!wasAdded) {
+                            event.dataRows.forEach((row: any, rowIndex: number): void => {
+                                if (
+                                    !wasAdded &&
+                                    row.xValues &&
+                                    xAxisIndex !== void 0 &&
+                                    annotationX === row.xValues[xAxisIndex]
+                                ) {
+                                    row.push(annotationText);
+                                    wasAdded = true;
+                                }
+                            });
+                        }
+
+                        // Annotation not placed on any exported data point,
+                        // but connected to the xAxis - add new row
+                        if (!wasAdded) {
+                            const newRow: any = new Array(event.dataRows[0].length);
+
+                            newRow.fill('');
+                            newRow[0] = annotationX;
+                            newRow.push(annotationText);
+                            newRow.xValues = [];
+
+                            if (xAxisIndex !== void 0) {
+                                newRow.xValues[xAxisIndex] = annotationX;
+                            }
+                            event.dataRows.push(newRow);
+                        }
+                    });
+                }
             });
         });
 
@@ -1737,8 +1772,14 @@ chartProto.callbacks.push(function (
         const newRows = maxRowLen - event.dataRows[0].length;
 
         for (let i = 0; i < newRows; i++) {
-            event.dataRows[0].push(`Annotations ${i + 1}`);
-            event.dataRows[1].push(`Annotations ${i + 1}`);
+            const header = columnHeaderFormatter(i + 1);
+
+            if (multiLevelHeaders) {
+                event.dataRows[0].push(header.topLevelColumnTitle);
+                event.dataRows[1].push(header.columnTitle);
+            } else {
+                event.dataRows[0].push(header);
+            }
         }
     });
 } as any);

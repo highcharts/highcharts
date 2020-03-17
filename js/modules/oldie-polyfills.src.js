@@ -51,6 +51,19 @@ if (!Array.prototype.indexOf) {
         return -1;
     };
 }
+if (!Array.prototype.fill) {
+    Array.prototype.fill = function (value, start, end) {
+        start = start || 0;
+        end = end || this.length;
+        var len = this.length, final = end < 0 ? Math.max(len + end, 0) : Math.min(end, len);
+        var k = start < 0 ? Math.max(len + start, 0) : Math.min(start, len);
+        while (k < final) {
+            this[k] = value;
+            k++;
+        }
+        return this;
+    };
+}
 if (!Array.prototype.filter) {
     Array.prototype.filter = function (fn
     // @todo support optional ctx

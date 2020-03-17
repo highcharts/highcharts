@@ -1094,46 +1094,74 @@ chartProto.callbacks.push(function (chart) {
         chart.controlPointsGroup.destroy();
     });
     addEvent(chart, 'exportData', function (event) {
-        var annotations = chart.annotations;
+        var annotations = chart.annotations, csvColumnHeaderFormatter = ((this.options.exporting &&
+            this.options.exporting.csv) ||
+            {}).columnHeaderFormatter, 
+        // If second row doesn't have xValues
+        // then it is a title row thus multiple level header is in use.
+        multiLevelHeaders = !event.dataRows[1].xValues, columnHeaderFormatter = function (index) {
+            var s;
+            if (csvColumnHeaderFormatter) {
+                s = csvColumnHeaderFormatter(index);
+                if (s !== false) {
+                    return s;
+                }
+            }
+            s = 'Annotations ' + index;
+            if (multiLevelHeaders) {
+                return {
+                    columnTitle: s,
+                    topLevelColumnTitle: s
+                };
+            }
+        };
         annotations.forEach(function (annotation) {
             annotation.labels.forEach(function (label) {
-                var annotationText = label.options.text;
-                label.points.forEach(function (points) {
-                    var annotationX = points.x, xAxisIndex = points.series.xAxis ? points.series.xAxis.options.index : -1;
-                    var wasAdded = false;
-                    if (xAxisIndex === -1) {
-                        var newRow = new Array(event.dataRows[0].length);
-                        newRow.fill('');
-                        newRow.push(annotationText);
-                        newRow.xValues = [];
-                        newRow.xValues[xAxisIndex] = annotationX;
-                        event.dataRows.push(newRow);
-                        wasAdded = true;
-                    }
-                    if (!wasAdded) {
-                        event.dataRows.forEach(function (row, rowIndex) {
-                            if (!wasAdded &&
-                                rowIndex > 1 &&
-                                row.xValues &&
-                                xAxisIndex !== void 0 &&
-                                annotationX === row.xValues[xAxisIndex]) {
-                                row.push(annotationText);
-                                wasAdded = true;
-                            }
-                        });
-                    }
-                    if (!wasAdded) {
-                        var newRow = new Array(event.dataRows[0].length);
-                        newRow.fill('');
-                        newRow[0] = annotationX;
-                        newRow.push(annotationText);
-                        newRow.xValues = [];
-                        if (xAxisIndex !== void 0) {
+                if (label.options.text) {
+                    var annotationText_1 = label.options.text;
+                    label.points.forEach(function (points) {
+                        var annotationX = points.x, xAxisIndex = points.series.xAxis ?
+                            points.series.xAxis.options.index :
+                            -1;
+                        var wasAdded = false;
+                        // Annotation not connected to any xAxis - add new row.
+                        if (xAxisIndex === -1) {
+                            var newRow = new Array(event.dataRows[0].length);
+                            newRow.fill('');
+                            newRow.push(annotationText_1);
+                            newRow.xValues = [];
                             newRow.xValues[xAxisIndex] = annotationX;
+                            event.dataRows.push(newRow);
+                            wasAdded = true;
                         }
-                        event.dataRows.push(newRow);
-                    }
-                });
+                        // Annotation placed on a exported data point
+                        // - add new column
+                        if (!wasAdded) {
+                            event.dataRows.forEach(function (row, rowIndex) {
+                                if (!wasAdded &&
+                                    row.xValues &&
+                                    xAxisIndex !== void 0 &&
+                                    annotationX === row.xValues[xAxisIndex]) {
+                                    row.push(annotationText_1);
+                                    wasAdded = true;
+                                }
+                            });
+                        }
+                        // Annotation not placed on any exported data point,
+                        // but connected to the xAxis - add new row
+                        if (!wasAdded) {
+                            var newRow = new Array(event.dataRows[0].length);
+                            newRow.fill('');
+                            newRow[0] = annotationX;
+                            newRow.push(annotationText_1);
+                            newRow.xValues = [];
+                            if (xAxisIndex !== void 0) {
+                                newRow.xValues[xAxisIndex] = annotationX;
+                            }
+                            event.dataRows.push(newRow);
+                        }
+                    });
+                }
             });
         });
         var maxRowLen = 0;
@@ -1142,8 +1170,14 @@ chartProto.callbacks.push(function (chart) {
         });
         var newRows = maxRowLen - event.dataRows[0].length;
         for (var i = 0; i < newRows; i++) {
-            event.dataRows[0].push("Annotations " + (i + 1));
-            event.dataRows[1].push("Annotations " + (i + 1));
+            var header = columnHeaderFormatter(i + 1);
+            if (multiLevelHeaders) {
+                event.dataRows[0].push(header.topLevelColumnTitle);
+                event.dataRows[1].push(header.columnTitle);
+            }
+            else {
+                event.dataRows[0].push(header);
+            }
         }
     });
 });

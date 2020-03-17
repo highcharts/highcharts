@@ -31,6 +31,7 @@ interface Array<T> {
         callbackfn: ArrayMapCallbackFunction<T, TOutput>
     ): Array<TOutput>;
     reduce(callbackfn: ArrayReduceCallbackFunction<T>, initialValue?: T): T;
+    fill(value: T, start?: number, end?: number): Array<T>;
 }
 interface ArrayFilterCallbackFunction<T> {
     (value: T, index: number, array: Array<T>): boolean;
@@ -114,6 +115,27 @@ if (!Array.prototype.indexOf) {
         }
 
         return -1;
+    };
+}
+
+if (!Array.prototype.fill) {
+    Array.prototype.fill = function<T> (
+        this: Array<T>,
+        value: T,
+        start?: number,
+        end?: number
+    ): Array<T> {
+        start = start || 0;
+        end = end || this.length;
+
+        const len = this.length,
+            final = end < 0 ? Math.max(len + end, 0) : Math.min(end, len);
+        let k = start < 0 ? Math.max(len + start, 0) : Math.min(start, len);
+        while (k < final) {
+            this[k] = value;
+            k++;
+        }
+        return this;
     };
 }
 
