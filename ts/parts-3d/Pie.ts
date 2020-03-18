@@ -213,8 +213,8 @@ wrap(seriesTypes.pie.prototype, 'animate', function (
             if (init) {
 
                 // Scale down the group and place it in the center
-                (group as any).oldtranslateX = (group as any).translateX;
-                (group as any).oldtranslateY = (group as any).translateY;
+                (group as any).oldtranslateX = pick((group as any).oldtranslateX, (group as any).translateX);
+                (group as any).oldtranslateY = pick((group as any).oldtranslateY, (group as any).translateY);
                 attribs = {
                     translateX: center[0],
                     translateY: center[1],
