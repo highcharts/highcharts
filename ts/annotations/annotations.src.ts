@@ -1154,10 +1154,10 @@ merge(
 
         getClipBox: function (this: Highcharts.Annotation): Highcharts.BBoxObject {
             return {
-                x: (this.clipXAxis as any).left,
-                y: (this.clipYAxis as any).top,
-                width: (this.clipXAxis as any).width,
-                height: (this.clipYAxis as any).height
+                x: (this.clipXAxis as any).left || 0,
+                y: (this.clipYAxis as any).top || 0,
+                width: (this.clipXAxis as any).width || 0,
+                height: (this.clipYAxis as any).height || 0
             };
         },
 

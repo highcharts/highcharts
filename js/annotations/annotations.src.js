@@ -762,10 +762,10 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
     },
     getClipBox: function () {
         return {
-            x: this.clipXAxis.left,
-            y: this.clipYAxis.top,
-            width: this.clipXAxis.width,
-            height: this.clipYAxis.height
+            x: this.clipXAxis.left || 0,
+            y: this.clipYAxis.top || 0,
+            width: this.clipXAxis.width || 0,
+            height: this.clipYAxis.height || 0
         };
     },
     setLabelCollector: function () {
