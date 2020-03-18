@@ -4364,7 +4364,7 @@ class Axis implements AxisComposition {
                     } else {
 
                         // Get this particular series extremes
-                        const dataExtremes = series.getExtremes();
+                        const dataExtremes = series.applyExtremes();
 
                         // Get the dataMin and dataMax so far. If percentage is
                         // used, the min and max are always 0 and 100. If

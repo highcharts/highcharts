@@ -3813,6 +3813,20 @@ null,
             dataMin: arrayMin(activeYData),
             dataMax: arrayMax(activeYData)
         };
+        fireEvent(this, 'afterGetExtremes', { dataExtremes: dataExtremes });
+        return dataExtremes;
+    },
+    /**
+     * Set the current data extremes as `dataMin` and `dataMax` on the
+     * Series item. Use this only when the series properties should be
+     * updated.
+     *
+     * @private
+     * @function Highcharts.Series#applyExtremes
+     * @return {void}
+     */
+    applyExtremes: function () {
+        var dataExtremes = this.getExtremes();
         /**
          * Contains the minimum value of the series' data point.
          * @name Highcharts.Series#dataMin
@@ -3827,7 +3841,6 @@ null,
          * @readonly
          */
         this.dataMax = dataExtremes.dataMax;
-        fireEvent(this, 'afterGetExtremes', { dataExtremes: dataExtremes });
         return dataExtremes;
     },
     /**

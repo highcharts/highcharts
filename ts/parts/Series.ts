@@ -47,8 +47,8 @@ declare global {
             public cropped?: boolean;
             public cropShoulder: number;
             public data: Array<Point>;
-            public dataMax: number;
-            public dataMin: number;
+            public dataMax?: number;
+            public dataMin?: number;
             public directTouch: boolean;
             public drawLegendSymbol: (
                 LegendSymbolMixin['drawLineMarker']|
@@ -108,6 +108,7 @@ declare global {
             public zones: Array<SeriesZonesOptions>;
             public afterAnimate(): void;
             public animate(init?: boolean): void;
+            public applyExtremes(): DataExtremesObject;
             public applyZones(): void;
             public autoIncrement(): void;
             public bindAxes(): void;
@@ -4996,6 +4997,25 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 dataMax: arrayMax(activeYData)
             };
 
+            fireEvent(this, 'afterGetExtremes', { dataExtremes });
+
+            return dataExtremes;
+        },
+
+        /**
+         * Set the current data extremes as `dataMin` and `dataMax` on the
+         * Series item. Use this only when the series properties should be
+         * updated.
+         *
+         * @private
+         * @function Highcharts.Series#applyExtremes
+         * @return {void}
+         */
+        applyExtremes: function (
+            this: Highcharts.Series
+        ): Highcharts.DataExtremesObject {
+            const dataExtremes = this.getExtremes();
+
             /**
              * Contains the minimum value of the series' data point.
              * @name Highcharts.Series#dataMin
@@ -5011,8 +5031,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
              * @readonly
              */
             this.dataMax = dataExtremes.dataMax;
-
-            fireEvent(this, 'afterGetExtremes', { dataExtremes });
 
             return dataExtremes;
         },

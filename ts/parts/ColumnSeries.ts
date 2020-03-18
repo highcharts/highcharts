@@ -836,7 +836,7 @@ seriesType<Highcharts.ColumnSeries>(
                     // in visible range (#7046)
                     if (
                         point.y === threshold &&
-                        series.dataMax <= (threshold as any) &&
+                        (series.dataMax as any) <= (threshold as any) &&
                         // and if there's room for it (#7311)
                         (yAxis.min as any) < (threshold as any) &&
                         // if all points are the same value (i.e zero) not draw
