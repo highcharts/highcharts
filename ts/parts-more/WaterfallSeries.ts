@@ -1050,8 +1050,15 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                 dataMin: arrayMin(stackedYNeg),
                 dataMax: arrayMax(stackedYPos)
             };
+
         }
-        return Series.prototype.getExtremes.call(this);
+
+        // When not stacking, data extremes have already been computed in the
+        // processData function.
+        return {
+            dataMin: this.dataMin,
+            dataMax: this.dataMax
+        };
     }
 
 
@@ -1071,8 +1078,8 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
     isValid: function (this: Highcharts.WaterfallPoint): boolean {
         return (
             isNumber(this.y) ||
-            (this.isSum as any) ||
-            (this.isIntermediateSum as any)
+            this.isSum ||
+            Boolean(this.isIntermediateSum)
         );
     }
 
