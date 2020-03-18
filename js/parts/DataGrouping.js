@@ -426,7 +426,8 @@ seriesProto.processData = function () {
             series.isDirty = true;
             series.points = null; // #6709
             var extremes = xAxis.getExtremes(), xMin = extremes.min, xMax = extremes.max, groupIntervalFactor = (ordinal &&
-                xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1, interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) *
+                xAxis.ordinal &&
+                xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)) || 1, interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) *
                 groupIntervalFactor, groupPositions = xAxis.getTimeTicks(xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units ||
                 defaultDataGroupingUnits), 
             // Processed data may extend beyond axis (#4907)
@@ -655,6 +656,7 @@ Axis.prototype.getGroupPixelWidth = function () {
  * @return {void}
  */
 Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
+    var axis = this;
     var i;
     redraw = pick(redraw, true);
     if (!dataGrouping) {
@@ -679,7 +681,9 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
         }, false);
     }
     // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
-    this.ordinalSlope = null;
+    if (axis.ordinal) {
+        axis.ordinal.slope = void 0;
+    }
     if (redraw) {
         this.chart.redraw();
     }

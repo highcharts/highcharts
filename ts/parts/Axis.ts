@@ -10,9 +10,9 @@
 
 'use strict';
 
-import H from './Globals.js';
+import type { AxisComposition } from './axis/types';
 import Color from './Color.js';
-import type ScrollbarAxis from './ScrollbarAxis.js';
+import H from './Globals.js';
 import Tick from './Tick.js';
 import U from './Utilities.js';
 const {
@@ -331,6 +331,7 @@ declare global {
             public axisPointRange?: number;
             public axisTitle?: SVGElement;
             public axisTitleMargin?: number;
+            public beforeSetTickPositions?: Function;
             public bottom: number;
             public categories: (boolean|Array<string>);
             public chart: Chart;
@@ -389,7 +390,6 @@ declare global {
             public oldUserMin?: number;
             public opposite?: boolean;
             public options: AxisOptions;
-            public ordinalSlope?: number;
             public overlap: boolean;
             public paddedTicks: Array<number>;
             public plotLinesAndBands: Array<PlotLineOrBand>;
@@ -398,6 +398,7 @@ declare global {
             public pointRangePadding: number;
             public pos: number;
             public positiveValuesOnly: boolean;
+            public postProcessTickInterval?: Function;
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
             public right: number;
@@ -500,6 +501,8 @@ declare global {
             public unsquish(): number;
             public updateNames(): void;
             public zoom(newMin: number, newMax: number): boolean;
+        }
+        interface Axis extends AxisComposition {
         }
     }
 }
@@ -753,7 +756,7 @@ var defaultOptions = H.defaultOptions,
  * @param {Highcharts.AxisOptions} userOptions
  * Axis options.
  */
-class Axis {
+class Axis implements AxisComposition {
 
     /* *
      *
@@ -3845,7 +3848,7 @@ class Axis {
     public oldUserMin?: number;
     public opposite?: boolean;
     public options: Highcharts.AxisOptions = void 0 as any;
-    public ordinalSlope?: number;
+    public ordinal?: AxisComposition['ordinal'];
     public overlap: boolean = void 0 as any;
     public paddedTicks: Array<number> = void 0 as any;
     public plotLinesAndBands: Array<Highcharts.PlotLineOrBand> = void 0 as any;
@@ -3857,6 +3860,7 @@ class Axis {
     public reserveSpaceDefault?: boolean;
     public reversed?: boolean;
     public right: number = void 0 as any;
+    public scrollbar?: AxisComposition['scrollbar'];
     public series: Array<Highcharts.Series> = void 0 as any;
     public showAxis?: boolean;
     public side: number = void 0 as any;
@@ -5152,8 +5156,8 @@ class Axis {
             }
 
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = axis.ordinalSlope && closestPointRange ?
-                axis.ordinalSlope / closestPointRange :
+            ordinalCorrection = axis.ordinal && axis.ordinal.slope && closestPointRange ?
+                axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =
                 minPointOffset * ordinalCorrection;
@@ -5450,8 +5454,8 @@ class Axis {
         }
 
         // hook for extensions, used in Highstock ordinal axes
-        if (axis.postProcessTickInterval) {
-            axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
+        if (axis.ordinal) {
+            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
         }
 
         // In column-like charts, don't cramp in more ticks than there are
@@ -5572,7 +5576,7 @@ class Axis {
             // Too many ticks (#6405). Create a friendly warning and provide two
             // ticks so at least we can show the data series.
             if (
-                !axis.ordinalPositions &&
+                (!axis.ordinal || !axis.ordinal.positions) &&
                 (
                     ((this.max as any) - (this.min as any)) /
                     this.tickInterval >
@@ -5591,7 +5595,7 @@ class Axis {
                     this.min,
                     this.max,
                     options.startOfWeek,
-                    axis.ordinalPositions,
+                    axis.ordinal && axis.ordinal.positions,
                     this.closestPointRange,
                     true
                 );
@@ -7649,18 +7653,6 @@ class Axis {
 
 interface Axis {
     keepProps: Array<string>;
-}
-
-namespace Axis {
-
-    /**
-     * All possible axis types.
-     */
-    export type Type = (
-        Axis|
-        ScrollbarAxis
-    );
-
 }
 
 extend(Axis.prototype, {

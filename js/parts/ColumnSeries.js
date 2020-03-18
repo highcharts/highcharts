@@ -492,7 +492,7 @@ seriesType('column', 'line',
                 }
             });
         }
-        var categoryWidth = Math.min(Math.abs(xAxis.transA) * (xAxis.ordinalSlope ||
+        var categoryWidth = Math.min(Math.abs(xAxis.transA) * ((xAxis.ordinal && xAxis.ordinal.slope) ||
             options.pointRange ||
             xAxis.closestPointRange ||
             xAxis.tickInterval ||

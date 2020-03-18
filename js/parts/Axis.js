@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
 import Color from './Color.js';
+import H from './Globals.js';
 import Tick from './Tick.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, error = U.error, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getMagnitude = U.getMagnitude, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, normalizeTickInterval = U.normalizeTickInterval, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, removeEvent = U.removeEvent, splat = U.splat, syncTimeout = U.syncTimeout;
@@ -1229,8 +1229,8 @@ var Axis = /** @class */ (function () {
                 });
             }
             // Record minPointOffset and pointRangePadding
-            ordinalCorrection = axis.ordinalSlope && closestPointRange ?
-                axis.ordinalSlope / closestPointRange :
+            ordinalCorrection = axis.ordinal && axis.ordinal.slope && closestPointRange ?
+                axis.ordinal.slope / closestPointRange :
                 1; // #988, #1853
             axis.minPointOffset = minPointOffset =
                 minPointOffset * ordinalCorrection;
@@ -1446,8 +1446,8 @@ var Axis = /** @class */ (function () {
             axis.beforeSetTickPositions();
         }
         // hook for extensions, used in Highstock ordinal axes
-        if (axis.postProcessTickInterval) {
-            axis.tickInterval = axis.postProcessTickInterval(axis.tickInterval);
+        if (axis.ordinal) {
+            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
         }
         // In column-like charts, don't cramp in more ticks than there are
         // points (#1943, #4184)
@@ -1530,7 +1530,7 @@ var Axis = /** @class */ (function () {
         if (!tickPositions) {
             // Too many ticks (#6405). Create a friendly warning and provide two
             // ticks so at least we can show the data series.
-            if (!axis.ordinalPositions &&
+            if ((!axis.ordinal || !axis.ordinal.positions) &&
                 ((this.max - this.min) /
                     this.tickInterval >
                     Math.max(2 * this.len, 200))) {
@@ -1538,7 +1538,7 @@ var Axis = /** @class */ (function () {
                 error(19, false, this.chart);
             }
             else if (this.isDatetimeAxis) {
-                tickPositions = axis.getTimeTicks(axis.normalizeTimeTickInterval(this.tickInterval, options.units), this.min, this.max, options.startOfWeek, axis.ordinalPositions, this.closestPointRange, true);
+                tickPositions = axis.getTimeTicks(axis.normalizeTimeTickInterval(this.tickInterval, options.units), this.min, this.max, options.startOfWeek, axis.ordinal && axis.ordinal.positions, this.closestPointRange, true);
             }
             else if (this.isLog) {
                 tickPositions = axis.getLogTickPositions(this.tickInterval, this.min, this.max);
