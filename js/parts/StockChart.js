@@ -649,14 +649,15 @@ seriesProto.processData = function (force) {
     return;
 };
 // Modify series extremes
-addEvent(Series, 'afterGetExtremes', function () {
-    if (this.modifyValue) {
+addEvent(Series, 'afterGetExtremes', function (e) {
+    var dataExtremes = e.dataExtremes;
+    if (this.modifyValue && dataExtremes) {
         var extremes = [
-            this.modifyValue(this.dataMin),
-            this.modifyValue(this.dataMax)
+            this.modifyValue(dataExtremes.dataMin),
+            this.modifyValue(dataExtremes.dataMax)
         ];
-        this.dataMin = arrayMin(extremes);
-        this.dataMax = arrayMax(extremes);
+        dataExtremes.dataMin = arrayMin(extremes);
+        dataExtremes.dataMax = arrayMax(extremes);
     }
 });
 /**

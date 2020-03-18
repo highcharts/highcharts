@@ -1357,11 +1357,12 @@ seriesType('treemap', 'scatter'
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     getExtremes: function () {
         // Get the extremes from the value data
-        Series.prototype.getExtremes.call(this, this.colorValueData);
-        this.valueMin = this.dataMin;
-        this.valueMax = this.dataMax;
+        var _a = Series.prototype.getExtremes
+            .call(this, this.colorValueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
+        this.valueMin = dataMin;
+        this.valueMax = dataMax;
         // Get the extremes from the y data
-        Series.prototype.getExtremes.call(this);
+        return Series.prototype.getExtremes.call(this);
     },
     getExtremesFromAll: true,
     /**

@@ -3766,7 +3766,7 @@ null,
      * @param {Array<number>} [yData]
      *        The data to inspect. Defaults to the current data within the
      *        visible range.
-     * @return {void}
+     * @return {Highcharts.DataExtremesObject}
      */
     getExtremes: function (yData) {
         var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData || this.xData, yDataLength, activeYData = [], activeCounter = 0, 
@@ -3809,21 +3809,26 @@ null,
                 }
             }
         }
+        var dataExtremes = {
+            dataMin: arrayMin(activeYData),
+            dataMax: arrayMax(activeYData)
+        };
         /**
          * Contains the minimum value of the series' data point.
          * @name Highcharts.Series#dataMin
          * @type {number}
          * @readonly
          */
-        this.dataMin = arrayMin(activeYData);
-        /**
+        this.dataMin = dataExtremes.dataMin;
+        /* *
          * Contains the maximum value of the series' data point.
          * @name Highcharts.Series#dataMax
          * @type {number}
          * @readonly
          */
-        this.dataMax = arrayMax(activeYData);
-        fireEvent(this, 'afterGetExtremes');
+        this.dataMax = dataExtremes.dataMax;
+        fireEvent(this, 'afterGetExtremes', { dataExtremes: dataExtremes });
+        return dataExtremes;
     },
     /**
      * Find and return the first non null point in the data
