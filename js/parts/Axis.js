@@ -678,11 +678,11 @@ var Axis = /** @class */ (function () {
                         // used, the min and max are always 0 and 100. If
                         // seriesDataMin and seriesDataMax is null, then series
                         // doesn't have active y data, we continue with nulls
-                        if (typeof dataExtremes.dataMin === 'number') {
+                        if (isNumber(dataExtremes.dataMin)) {
                             seriesDataMin = dataExtremes.dataMin;
                             axis.dataMin = Math.min(pick(axis.dataMin, seriesDataMin), seriesDataMin);
                         }
-                        if (typeof dataExtremes.dataMax === 'number') {
+                        if (isNumber(dataExtremes.dataMax)) {
                             seriesDataMax = dataExtremes.dataMax;
                             axis.dataMax = Math.max(pick(axis.dataMax, seriesDataMax), seriesDataMax);
                         }
