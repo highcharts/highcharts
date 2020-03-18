@@ -120,6 +120,7 @@ const {
     clamp,
     extend,
     fireEvent,
+    isNumber,
     merge,
     pick,
     seriesType
@@ -756,10 +757,10 @@ seriesType<Highcharts.HeatmapSeries>(
             const { dataMin, dataMax } = Series.prototype.getExtremes
                 .call(this, this.valueData);
 
-            if (typeof dataMin === 'number') {
+            if (isNumber(dataMin)) {
                 this.valueMin = dataMin;
             }
-            if (typeof dataMax === 'number') {
+            if (isNumber(dataMax)) {
                 this.valueMax = dataMax;
             }
 

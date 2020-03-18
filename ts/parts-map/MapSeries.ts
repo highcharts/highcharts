@@ -612,10 +612,10 @@ seriesType<Highcharts.MapSeries>(
                 this.getBox(this.options.data as any);
             }
 
-            if (typeof dataMin === 'number') {
+            if (isNumber(dataMin)) {
                 this.valueMin = dataMin;
             }
-            if (typeof dataMax === 'number') {
+            if (isNumber(dataMax)) {
                 this.valueMax = dataMax;
             }
 

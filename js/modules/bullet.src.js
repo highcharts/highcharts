@@ -193,10 +193,10 @@ seriesType('bullet', 'column'
         var dataExtremes = columnProto.getExtremes.call(this, yData);
         if (targetData && targetData.length) {
             var targetExtremes = columnProto.getExtremes.call(this, targetData);
-            if (typeof targetExtremes.dataMin === 'number') {
+            if (isNumber(targetExtremes.dataMin)) {
                 dataExtremes.dataMin = Math.min(pick(dataExtremes.dataMin, Infinity), targetExtremes.dataMin);
             }
-            if (typeof targetExtremes.dataMax === 'number') {
+            if (isNumber(targetExtremes.dataMax)) {
                 dataExtremes.dataMax = Math.max(pick(dataExtremes.dataMax, -Infinity), targetExtremes.dataMax);
             }
         }

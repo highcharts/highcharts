@@ -369,10 +369,10 @@ seriesType('map', 'scatter',
         if (this.chart.hasRendered && this.isDirtyData) {
             this.getBox(this.options.data);
         }
-        if (typeof dataMin === 'number') {
+        if (isNumber(dataMin)) {
             this.valueMin = dataMin;
         }
-        if (typeof dataMax === 'number') {
+        if (isNumber(dataMax)) {
             this.valueMax = dataMax;
         }
         // Extremes for the mock Y axis
