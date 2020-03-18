@@ -120,6 +120,7 @@ declare global {
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
             public initPositions(): void;
             public isStable(): boolean;
+            public updateSimulation(force: boolean, enable?: boolean): void;
             public removeElementFromCollection<T>(
                 element: T, collection: Array<T>
             ): void
@@ -196,6 +197,8 @@ extend(
             this.integration =
                 H.networkgraphIntegrations[options.integration as any];
 
+            this.enableSimulation = options.enableSimulation;
+
             this.attractiveForce = pick(
                 options.attractiveForce,
                 this.integration.attractiveForceFunction
@@ -217,6 +220,13 @@ extend(
             if (pick(redraw, true) && this.chart) {
                 this.chart.redraw();
             }
+        },
+        updateSimulation: function (
+            this: Highcharts.NetworkgraphLayout,
+            forced: boolean,
+            enable?: boolean
+        ): void {
+            this.enableSimulation = forced ? enable : this.options.enableSimulation;
         },
         start: function (this: Highcharts.NetworkgraphLayout): void {
             var layout = this,
@@ -240,7 +250,7 @@ extend(
             layout.setK();
             (layout.resetSimulation as any)(options);
 
-            if (options.enableSimulation) {
+            if (layout.enableSimulation) {
                 layout.step();
             }
         },
@@ -273,7 +283,7 @@ extend(
 
             layout.prevSystemTemperature = layout.systemTemperature;
             layout.systemTemperature = layout.getSystemTemperature();
-            if (options.enableSimulation) {
+            if (layout.enableSimulation) {
                 series.forEach(function (s: Highcharts.Series): void {
                     // Chart could be destroyed during the simulation
                     if (s.chart) {
@@ -886,7 +896,7 @@ addEvent(Chart as any, 'render', function (
             (layout.maxIterations as any)-- &&
             isFinite(layout.temperature as any) &&
             !layout.isStable() &&
-            !layout.options.enableSimulation
+            !layout.enableSimulation
         ) {
             // Hook similar to build-in addEvent, but instead of
             // creating whole events logic, use just a function.
