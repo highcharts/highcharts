@@ -510,11 +510,16 @@ seriesType('heatmap', 'scatter',
      */
     getExtremes: function () {
         // Get the extremes from the value data
-        Series.prototype.getExtremes.call(this, this.valueData);
-        this.valueMin = this.dataMin;
-        this.valueMax = this.dataMax;
+        var _a = Series.prototype.getExtremes
+            .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
+        if (typeof dataMin === 'number') {
+            this.valueMin = dataMin;
+        }
+        if (typeof dataMax === 'number') {
+            this.valueMax = dataMax;
+        }
         // Get the extremes from the y data
-        Series.prototype.getExtremes.call(this);
+        return Series.prototype.getExtremes.call(this);
     }
     /* eslint-enable valid-jsdoc */
 }), merge(colorMapPointMixin, {

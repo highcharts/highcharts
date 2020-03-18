@@ -282,10 +282,11 @@ addEvent(Series, 'destroy', function (): void {
 wrap(Series.prototype, 'getExtremes', function (
     this: Highcharts.Series,
     proceed: Function
-): void {
+): Highcharts.DataExtremesObject {
     if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
         return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
+    return {};
 });
 
 /*

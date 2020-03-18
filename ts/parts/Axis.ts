@@ -4308,8 +4308,8 @@ class Axis {
                     var seriesOptions = series.options,
                         xData,
                         threshold = seriesOptions.threshold,
-                        seriesDataMin,
-                        seriesDataMax;
+                        seriesDataMin: number,
+                        seriesDataMax: number;
 
                     axis.hasVisibleSeries = true;
 
@@ -4360,19 +4360,21 @@ class Axis {
                     } else {
 
                         // Get this particular series extremes
-                        series.getExtremes();
-                        seriesDataMax = series.dataMax;
-                        seriesDataMin = series.dataMin;
+                        const dataExtremes = series.getExtremes();
 
                         // Get the dataMin and dataMax so far. If percentage is
                         // used, the min and max are always 0 and 100. If
                         // seriesDataMin and seriesDataMax is null, then series
                         // doesn't have active y data, we continue with nulls
-                        if (defined(seriesDataMin) && defined(seriesDataMax)) {
+                        if (typeof dataExtremes.dataMin === 'number') {
+                            seriesDataMin = dataExtremes.dataMin;
                             axis.dataMin = Math.min(
                                 pick(axis.dataMin, seriesDataMin),
                                 seriesDataMin
                             );
+                        }
+                        if (typeof dataExtremes.dataMax === 'number') {
+                            seriesDataMax = dataExtremes.dataMax;
                             axis.dataMax = Math.max(
                                 pick(axis.dataMax, seriesDataMax),
                                 seriesDataMax

@@ -122,7 +122,7 @@ declare global {
             public drillToByGroup(point: TreemapPoint): (boolean|string);
             public drillToNode(id: string, redraw?: boolean): void;
             public drillUp(): void;
-            public getExtremes(): void;
+            public getExtremes(): DataExtremesObject;
             public getListOfParents(
                 data?: Array<TreemapPoint>,
                 existingIds?: Array<string>
@@ -2133,14 +2133,17 @@ seriesType<Highcharts.TreemapSeries>(
         },
         buildKDTree: noop as any,
         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
-        getExtremes: function (this: Highcharts.TreemapSeries): void {
-        // Get the extremes from the value data
-            Series.prototype.getExtremes.call(this, this.colorValueData);
-            this.valueMin = this.dataMin;
-            this.valueMax = this.dataMax;
+        getExtremes: function (
+            this: Highcharts.TreemapSeries
+        ): Highcharts.DataExtremesObject {
+            // Get the extremes from the value data
+            const { dataMin, dataMax } = Series.prototype.getExtremes
+                .call(this, this.colorValueData);
+            this.valueMin = dataMin;
+            this.valueMax = dataMax;
 
             // Get the extremes from the y data
-            Series.prototype.getExtremes.call(this);
+            return Series.prototype.getExtremes.call(this);
         },
         getExtremesFromAll: true,
 

@@ -953,17 +953,22 @@ seriesProto.processData = function (
 };
 
 // Modify series extremes
-addEvent(Series, 'afterGetExtremes', function (this: Highcharts.Series): void {
-    if (this.modifyValue) {
-        var extremes = [
-            this.modifyValue(this.dataMin),
-            this.modifyValue(this.dataMax)
-        ];
+addEvent(
+    Series,
+    'afterGetExtremes',
+    function (this: Highcharts.Series, e): void {
+        const dataExtremes: Highcharts.DataExtremesObject = (e as any).dataExtremes;
+        if (this.modifyValue && dataExtremes) {
+            var extremes = [
+                this.modifyValue(dataExtremes.dataMin),
+                this.modifyValue(dataExtremes.dataMax)
+            ];
 
-        this.dataMin = arrayMin(extremes);
-        this.dataMax = arrayMax(extremes);
+            dataExtremes.dataMin = arrayMin(extremes);
+            dataExtremes.dataMax = arrayMax(extremes);
+        }
     }
-});
+);
 
 /**
  * Highstock only. Set the compare mode on all series belonging to an Y axis

@@ -363,16 +363,20 @@ seriesType('map', 'scatter',
     },
     getExtremes: function () {
         // Get the actual value extremes for colors
-        Series.prototype.getExtremes.call(this, this.valueData);
+        var _a = Series.prototype.getExtremes
+            .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
         // Recalculate box on updated data
         if (this.chart.hasRendered && this.isDirtyData) {
             this.getBox(this.options.data);
         }
-        this.valueMin = this.dataMin;
-        this.valueMax = this.dataMax;
+        if (typeof dataMin === 'number') {
+            this.valueMin = dataMin;
+        }
+        if (typeof dataMax === 'number') {
+            this.valueMax = dataMax;
+        }
         // Extremes for the mock Y axis
-        this.dataMin = this.minY;
-        this.dataMax = this.maxY;
+        return { dataMin: this.minY, dataMax: this.maxY };
     },
     // Translate the path, so it automatically fits into the plot area box
     translatePath: function (path) {

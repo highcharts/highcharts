@@ -603,9 +603,12 @@ seriesType('waterfall', 'column', {
                     stackedYPos.push(stackX.posTotal + stackX.threshold);
                 });
             }
-            this.dataMin = arrayMin(stackedYNeg);
-            this.dataMax = arrayMax(stackedYPos);
+            return {
+                dataMin: arrayMin(stackedYNeg),
+                dataMax: arrayMax(stackedYPos)
+            };
         }
+        return Series.prototype.getExtremes.call(this);
     }
     // Point members
 }, {

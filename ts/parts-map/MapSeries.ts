@@ -65,7 +65,7 @@ declare global {
             public drawMapDataLabels(): void;
             public drawPoints(): void;
             public getBox(paths: Array<MapPointOptions>): void;
-            public getExtremes(): void;
+            public getExtremes(): DataExtremesObject;
             public hasData(): boolean;
             public pointAttribs(point: MapPoint, state?: string): SVGAttributes;
             public render(): void;
@@ -600,21 +600,27 @@ seriesType<Highcharts.MapSeries>(
             return !!this.processedXData.length; // != 0
         },
 
-        getExtremes: function (this: Highcharts.MapSeries): void {
+        getExtremes: function (
+            this: Highcharts.MapSeries
+        ): Highcharts.DataExtremesObject {
             // Get the actual value extremes for colors
-            Series.prototype.getExtremes.call(this, this.valueData);
+            const { dataMin, dataMax } = Series.prototype.getExtremes
+                .call(this, this.valueData);
 
             // Recalculate box on updated data
             if (this.chart.hasRendered && this.isDirtyData) {
                 this.getBox(this.options.data as any);
             }
 
-            this.valueMin = this.dataMin;
-            this.valueMax = this.dataMax;
+            if (typeof dataMin === 'number') {
+                this.valueMin = dataMin;
+            }
+            if (typeof dataMax === 'number') {
+                this.valueMax = dataMax;
+            }
 
             // Extremes for the mock Y axis
-            this.dataMin = this.minY;
-            this.dataMax = this.maxY;
+            return { dataMin: this.minY, dataMax: this.maxY };
         },
 
         // Translate the path, so it automatically fits into the plot area box

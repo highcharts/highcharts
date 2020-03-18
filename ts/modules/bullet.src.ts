@@ -35,7 +35,7 @@ declare global {
             public points: Array<BulletPoint>;
             public targetData: Array<number>;
             public drawPoints(): void;
-            public getExtremes(yData?: Array<number>): void;
+            public getExtremes(yData?: Array<number>): DataExtremesObject;
         }
         interface BulletPointOptions extends ColumnPointOptions {
             borderColor?: ColorType;
@@ -304,21 +304,33 @@ seriesType<Highcharts.BulletSeries>('bullet', 'column'
         getExtremes: function (
             this: Highcharts.BulletSeries,
             yData?: Array<number>
-        ): void {
+        ): Highcharts.DataExtremesObject {
             var series = this,
                 targetData = series.targetData,
                 yMax,
                 yMin;
 
-            columnProto.getExtremes.call(this, yData);
+            const dataExtremes = columnProto.getExtremes.call(this, yData);
 
             if (targetData && targetData.length) {
-                yMax = series.dataMax;
-                yMin = series.dataMin;
-                columnProto.getExtremes.call(this, targetData);
-                series.dataMax = Math.max(series.dataMax, yMax);
-                series.dataMin = Math.min(series.dataMin, yMin);
+                const targetExtremes = columnProto.getExtremes.call(
+                    this,
+                    targetData
+                );
+                if (typeof targetExtremes.dataMin === 'number') {
+                    dataExtremes.dataMin = Math.min(
+                        pick(dataExtremes.dataMin, Infinity),
+                        targetExtremes.dataMin
+                    );
+                }
+                if (typeof targetExtremes.dataMax === 'number') {
+                    dataExtremes.dataMax = Math.max(
+                        pick(dataExtremes.dataMax, -Infinity),
+                        targetExtremes.dataMax
+                    );
+                }
             }
+            return dataExtremes;
         }
 
         /* eslint-enable valid-jsdoc */
