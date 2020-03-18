@@ -673,7 +673,7 @@ var Axis = /** @class */ (function () {
                     }
                     else {
                         // Get this particular series extremes
-                        var dataExtremes = series.getExtremes();
+                        var dataExtremes = series.applyExtremes();
                         // Get the dataMin and dataMax so far. If percentage is
                         // used, the min and max are always 0 and 100. If
                         // seriesDataMin and seriesDataMax is null, then series

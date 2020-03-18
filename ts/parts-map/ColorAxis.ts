@@ -1166,10 +1166,13 @@ extend(ColorAxis.prototype, {
                 cSeries.maxColorValue = (cSeries as any)[colorKey + 'Max'];
 
             } else {
-                Series.prototype.getExtremes.call(cSeries, colorValArray);
+                const cExtremes = Series.prototype.getExtremes.call(
+                    cSeries,
+                    colorValArray
+                );
 
-                cSeries.minColorValue = cSeries.dataMin;
-                cSeries.maxColorValue = cSeries.dataMax;
+                cSeries.minColorValue = cExtremes.dataMin;
+                cSeries.maxColorValue = cExtremes.dataMax;
             }
 
             if (typeof cSeries.minColorValue !== 'undefined') {
@@ -1180,7 +1183,7 @@ extend(ColorAxis.prototype, {
             }
 
             if (!calculatedExtremes) {
-                Series.prototype.getExtremes.call(cSeries);
+                Series.prototype.applyExtremes.call(cSeries);
             }
         }
     },
