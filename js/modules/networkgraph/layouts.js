@@ -42,6 +42,7 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.setInitialRendering(true);
         this.integration =
             H.networkgraphIntegrations[options.integration];
+        this.enableSimulation = options.enableSimulation;
         this.attractiveForce = pick(options.attractiveForce, this.integration.attractiveForceFunction);
         this.repulsiveForce = pick(options.repulsiveForce, this.integration.repulsiveForceFunction);
         this.approximation = options.approximation;
@@ -51,6 +52,9 @@ H.layouts['reingold-fruchterman'].prototype, {
         if (pick(redraw, true) && this.chart) {
             this.chart.redraw();
         }
+    },
+    updateSimulation: function (forced, enable) {
+        this.enableSimulation = forced ? enable : this.options.enableSimulation;
     },
     start: function () {
         var layout = this, series = this.series, options = this.options;
@@ -66,7 +70,7 @@ H.layouts['reingold-fruchterman'].prototype, {
         }
         layout.setK();
         layout.resetSimulation(options);
-        if (options.enableSimulation) {
+        if (layout.enableSimulation) {
             layout.step();
         }
     },
@@ -87,7 +91,7 @@ H.layouts['reingold-fruchterman'].prototype, {
         layout.temperature = layout.coolDown(layout.startTemperature, layout.diffTemperature, layout.currentStep);
         layout.prevSystemTemperature = layout.systemTemperature;
         layout.systemTemperature = layout.getSystemTemperature();
-        if (options.enableSimulation) {
+        if (layout.enableSimulation) {
             series.forEach(function (s) {
                 // Chart could be destroyed during the simulation
                 if (s.chart) {
@@ -474,7 +478,7 @@ addEvent(Chart, 'render', function () {
         if (layout.maxIterations-- &&
             isFinite(layout.temperature) &&
             !layout.isStable() &&
-            !layout.options.enableSimulation) {
+            !layout.enableSimulation) {
             // Hook similar to build-in addEvent, but instead of
             // creating whole events logic, use just a function.
             // It's faster which is important for rAF code.

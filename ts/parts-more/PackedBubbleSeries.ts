@@ -490,22 +490,6 @@ H.layouts.packedbubble = extendClass(
             }
 
             Reingold.prototype.applyLimitBox.apply(this, arguments as any);
-        },
-        isStable: function (this: Highcharts.PackedBubbleLayout): boolean {
-            return Math.abs(
-                (this.systemTemperature as any) -
-                (this.prevSystemTemperature as any)
-            ) < 0.00001 ||
-            (this.temperature as any) <= 0 ||
-            (
-                // In first iteration system does not move:
-                (this.systemTemperature as any) > 0 &&
-                (
-                    (this.systemTemperature as any) /
-                    this.nodes.length < 0.02 &&
-                    (this.enableSimulation as any)
-                ) // Use only when simulation is enabled
-            );
         }
     }
 );
@@ -1889,6 +1873,27 @@ addEvent(Chart as any, 'beforeRedraw', function (
     if (this.allDataPoints) {
         delete this.allDataPoints;
     }
+});
+
+
+// disable simulation before print if enabled
+addEvent(Chart as any, 'beforePrint', function (
+    this: Highcharts.PackedBubbleChart
+): void {
+    this.graphLayoutsLookup.forEach(function (layout): void {
+        layout.updateSimulation(true, false);
+    });
+    this.redraw();
+});
+
+// re-enable simulation after print
+addEvent(Chart as any, 'afterPrint', function (
+    this: Highcharts.PackedBubbleChart
+): void {
+    this.graphLayoutsLookup.forEach(function (layout): void {
+        layout.updateSimulation(false);
+    });
+    this.redraw();
 });
 
 /* eslint-enable no-invalid-this, valid-jsdoc */
