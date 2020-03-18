@@ -241,13 +241,13 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
      */
     virtualAxisTranslate: function (
         value: number,
-        DataExtremesObject: Highcharts.RangeObject,
+        dataExtremes: Highcharts.RangeObject,
         limits: Highcharts.RangeObject
     ): number {
-        var lenValueAxis = DataExtremesObject.max - DataExtremesObject.min,
+        var lenValueAxis = dataExtremes.max - dataExtremes.min,
             lenVirtualAxis = limits.max - limits.min,
             virtualAxisValue = limits.min +
-                lenVirtualAxis * (value - DataExtremesObject.min) / lenValueAxis;
+                lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
 
         return lenValueAxis > 0 ?
             clamp(virtualAxisValue, limits.min, limits.max) :

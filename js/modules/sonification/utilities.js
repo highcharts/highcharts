@@ -154,9 +154,9 @@ var utilities = {
      * @return {number}
      * The value mapped to the virtual axis.
      */
-    virtualAxisTranslate: function (value, DataExtremesObject, limits) {
-        var lenValueAxis = DataExtremesObject.max - DataExtremesObject.min, lenVirtualAxis = limits.max - limits.min, virtualAxisValue = limits.min +
-            lenVirtualAxis * (value - DataExtremesObject.min) / lenValueAxis;
+    virtualAxisTranslate: function (value, dataExtremes, limits) {
+        var lenValueAxis = dataExtremes.max - dataExtremes.min, lenVirtualAxis = limits.max - limits.min, virtualAxisValue = limits.min +
+            lenVirtualAxis * (value - dataExtremes.min) / lenValueAxis;
         return lenValueAxis > 0 ?
             clamp(virtualAxisValue, limits.min, limits.max) :
             limits.min;

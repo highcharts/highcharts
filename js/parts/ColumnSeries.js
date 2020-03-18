@@ -591,10 +591,12 @@ seriesType('column', 'line',
                     (yAxis.reversed && point.negative);
                 // Reverse zeros if there's no positive value in the series
                 // in visible range (#7046)
-                if (point.y === threshold &&
-                    series.dataMax <= threshold &&
+                if (isNumber(threshold) &&
+                    isNumber(dataMax) &&
+                    point.y === threshold &&
+                    dataMax <= threshold &&
                     // and if there's room for it (#7311)
-                    yAxis.min < threshold &&
+                    (yAxis.min || 0) < threshold &&
                     // if all points are the same value (i.e zero) not draw
                     // as negative points (#10646)
                     dataMin !== dataMax) {
