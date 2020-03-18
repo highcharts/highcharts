@@ -3758,8 +3758,8 @@ null,
         };
     },
     /**
-     * Calculate Y extremes for the visible data. The result is set as
-     * `dataMin` and `dataMax` on the Series item.
+     * Calculate Y extremes for the visible data. The result is returned
+     * as an object with `dataMin` and `dataMax` properties.
      *
      * @private
      * @function Highcharts.Series#getExtremes
