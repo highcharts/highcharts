@@ -660,7 +660,7 @@ seriesType<Highcharts.ColumnSeries>(
 
             var categoryWidth = Math.min(
                     Math.abs(xAxis.transA) * (
-                        xAxis.ordinalSlope ||
+                        (xAxis.ordinal && xAxis.ordinal.slope) ||
                     options.pointRange ||
                     xAxis.closestPointRange ||
                     xAxis.tickInterval ||

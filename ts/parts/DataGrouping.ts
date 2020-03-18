@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { AxisType } from './axis/types';
 import H from './Globals.js';
 
 /**
@@ -707,7 +708,8 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                 xMax = extremes.max,
                 groupIntervalFactor = (
                     ordinal &&
-                    xAxis.getGroupIntervalFactor(xMin, xMax, series)
+                    xAxis.ordinal &&
+                    xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)
                 ) || 1,
                 interval =
                     (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
@@ -1078,6 +1080,8 @@ Axis.prototype.setDataGrouping = function (
     dataGrouping?: (boolean|Highcharts.DataGroupingOptionsObject),
     redraw?: boolean
 ): void {
+    const axis = this as AxisType;
+
     var i;
 
     redraw = pick(redraw, true);
@@ -1108,7 +1112,9 @@ Axis.prototype.setDataGrouping = function (
     }
 
     // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
-    this.ordinalSlope = null as any;
+    if (axis.ordinal) {
+        axis.ordinal.slope = void 0;
+    }
 
     if (redraw) {
         this.chart.redraw();
