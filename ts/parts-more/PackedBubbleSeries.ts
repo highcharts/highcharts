@@ -1875,27 +1875,6 @@ addEvent(Chart as any, 'beforeRedraw', function (
     }
 });
 
-
-// disable simulation before print if enabled
-addEvent(Chart as any, 'beforePrint', function (
-    this: Highcharts.PackedBubbleChart
-): void {
-    this.graphLayoutsLookup.forEach(function (layout): void {
-        layout.updateSimulation(true, false);
-    });
-    this.redraw();
-});
-
-// re-enable simulation after print
-addEvent(Chart as any, 'afterPrint', function (
-    this: Highcharts.PackedBubbleChart
-): void {
-    this.graphLayoutsLookup.forEach(function (layout): void {
-        layout.updateSimulation(false);
-    });
-    this.redraw();
-});
-
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
 /**
