@@ -47,14 +47,8 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.repulsiveForce = pick(options.repulsiveForce, this.integration.repulsiveForceFunction);
         this.approximation = options.approximation;
     },
-    update: function (options, redraw) {
-        this.options = merge(this.options, options);
-        if (pick(redraw, true) && this.chart) {
-            this.chart.redraw();
-        }
-    },
-    updateSimulation: function (forced, enable) {
-        this.enableSimulation = forced ? enable : this.options.enableSimulation;
+    updateSimulation: function (enable) {
+        this.enableSimulation = pick(enable, this.options.enableSimulation);
     },
     start: function () {
         var layout = this, series = this.series, options = this.options;
@@ -512,4 +506,19 @@ addEvent(Chart, 'render', function () {
             });
         }
     }
+});
+// disable simulation before print if enabled
+addEvent(Chart, 'beforePrint', function () {
+    this.graphLayoutsLookup.forEach(function (layout) {
+        layout.updateSimulation(false);
+    });
+    this.redraw();
+});
+// re-enable simulation after print
+addEvent(Chart, 'afterPrint', function () {
+    this.graphLayoutsLookup.forEach(function (layout) {
+        // return to default simulation
+        layout.updateSimulation();
+    });
+    this.redraw();
 });

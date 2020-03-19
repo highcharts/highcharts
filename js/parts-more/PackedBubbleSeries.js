@@ -1199,20 +1199,6 @@ addEvent(Chart, 'beforeRedraw', function () {
         delete this.allDataPoints;
     }
 });
-// disable simulation before print if enabled
-addEvent(Chart, 'beforePrint', function () {
-    this.graphLayoutsLookup.forEach(function (layout) {
-        layout.updateSimulation(true, false);
-    });
-    this.redraw();
-});
-// re-enable simulation after print
-addEvent(Chart, 'afterPrint', function () {
-    this.graphLayoutsLookup.forEach(function (layout) {
-        layout.updateSimulation(false);
-    });
-    this.redraw();
-});
 /* eslint-enable no-invalid-this, valid-jsdoc */
 /**
  * A `packedbubble` series. If the [type](#series.packedbubble.type) option is

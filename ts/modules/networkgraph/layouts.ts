@@ -120,7 +120,7 @@ declare global {
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
             public initPositions(): void;
             public isStable(): boolean;
-            public updateSimulation(force: boolean, enable?: boolean): void;
+            public updateSimulation(enable?: boolean): void;
             public removeElementFromCollection<T>(
                 element: T, collection: Array<T>
             ): void
@@ -211,22 +211,11 @@ extend(
 
             this.approximation = options.approximation;
         },
-        update: function (
-            this: Highcharts.NetworkgraphLayout,
-            options: Highcharts.NetworkgraphLayoutAlgorithmOptions,
-            redraw?: boolean
-        ): void {
-            this.options = merge(this.options, options);
-            if (pick(redraw, true) && this.chart) {
-                this.chart.redraw();
-            }
-        },
         updateSimulation: function (
             this: Highcharts.NetworkgraphLayout,
-            forced: boolean,
             enable?: boolean
         ): void {
-            this.enableSimulation = forced ? enable : this.options.enableSimulation;
+            this.enableSimulation = pick(enable, this.options.enableSimulation);
         },
         start: function (this: Highcharts.NetworkgraphLayout): void {
             var layout = this,
@@ -937,4 +926,25 @@ addEvent(Chart as any, 'render', function (
             });
         }
     }
+});
+
+// disable simulation before print if enabled
+addEvent(Chart as any, 'beforePrint', function (
+    this: Highcharts.PackedBubbleChart
+): void {
+    this.graphLayoutsLookup.forEach(function (layout): void {
+        layout.updateSimulation(false);
+    });
+    this.redraw();
+});
+
+// re-enable simulation after print
+addEvent(Chart as any, 'afterPrint', function (
+    this: Highcharts.PackedBubbleChart
+): void {
+    this.graphLayoutsLookup.forEach(function (layout): void {
+        // return to default simulation
+        layout.updateSimulation();
+    });
+    this.redraw();
 });
