@@ -493,6 +493,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             format = chart.options.accessibility
                 .screenReaderSection.beforeChartFormat,
             axesDesc = this.getAxesDescription(),
+            shouldHaveSonifyBtn = chart.sonify && chart.options.sonification?.enabled,
             sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
                 chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
@@ -509,7 +510,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 chartLongdesc: this.getLongdescText(),
                 xAxisDescription: axesDesc.xAxis,
                 yAxisDescription: axesDesc.yAxis,
-                playAsSoundButton: chart.sonify ?
+                playAsSoundButton: shouldHaveSonifyBtn ?
                     this.getSonifyButtonText(sonifyButtonId) : '',
                 viewTableButton: chart.getCSV ?
                     this.getDataTableButtonText(dataTableButtonId) : '',

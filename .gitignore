@@ -78,3 +78,5 @@ tmp/
 /package-lock.json
 /temp.*
 /env.file
+
+*.bak

@@ -23,7 +23,7 @@ import H from '../parts/Globals.js';
 */
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
+var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
@@ -510,11 +510,16 @@ seriesType('heatmap', 'scatter',
      */
     getExtremes: function () {
         // Get the extremes from the value data
-        Series.prototype.getExtremes.call(this, this.valueData);
-        this.valueMin = this.dataMin;
-        this.valueMax = this.dataMax;
+        var _a = Series.prototype.getExtremes
+            .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
+        if (isNumber(dataMin)) {
+            this.valueMin = dataMin;
+        }
+        if (isNumber(dataMax)) {
+            this.valueMax = dataMax;
+        }
         // Get the extremes from the y data
-        Series.prototype.getExtremes.call(this);
+        return Series.prototype.getExtremes.call(this);
     }
     /* eslint-enable valid-jsdoc */
 }), merge(colorMapPointMixin, {

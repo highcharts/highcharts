@@ -48,11 +48,11 @@ const {
     wrap
 } = U;
 
-import './data.src.js';
+import Data from './data.src.js';
 
 /* eslint-disable no-invalid-this */
 
-wrap(H.Data.prototype, 'init', function (
+wrap(Data.prototype, 'init', function (
     this: Highcharts.Data,
     proceed: Function,
     options: Highcharts.DataOptions

@@ -3758,15 +3758,15 @@ null,
         };
     },
     /**
-     * Calculate Y extremes for the visible data. The result is set as
-     * `dataMin` and `dataMax` on the Series item.
+     * Calculate Y extremes for the visible data. The result is returned
+     * as an object with `dataMin` and `dataMax` properties.
      *
      * @private
      * @function Highcharts.Series#getExtremes
      * @param {Array<number>} [yData]
      *        The data to inspect. Defaults to the current data within the
      *        visible range.
-     * @return {void}
+     * @return {Highcharts.DataExtremesObject}
      */
     getExtremes: function (yData) {
         var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData || this.xData, yDataLength, activeYData = [], activeCounter = 0, 
@@ -3809,21 +3809,39 @@ null,
                 }
             }
         }
+        var dataExtremes = {
+            dataMin: arrayMin(activeYData),
+            dataMax: arrayMax(activeYData)
+        };
+        fireEvent(this, 'afterGetExtremes', { dataExtremes: dataExtremes });
+        return dataExtremes;
+    },
+    /**
+     * Set the current data extremes as `dataMin` and `dataMax` on the
+     * Series item. Use this only when the series properties should be
+     * updated.
+     *
+     * @private
+     * @function Highcharts.Series#applyExtremes
+     * @return {void}
+     */
+    applyExtremes: function () {
+        var dataExtremes = this.getExtremes();
         /**
          * Contains the minimum value of the series' data point.
          * @name Highcharts.Series#dataMin
          * @type {number}
          * @readonly
          */
-        this.dataMin = arrayMin(activeYData);
-        /**
+        this.dataMin = dataExtremes.dataMin;
+        /* *
          * Contains the maximum value of the series' data point.
          * @name Highcharts.Series#dataMax
          * @type {number}
          * @readonly
          */
-        this.dataMax = arrayMax(activeYData);
-        fireEvent(this, 'afterGetExtremes');
+        this.dataMax = dataExtremes.dataMax;
+        return dataExtremes;
     },
     /**
      * Find and return the first non null point in the data

@@ -47,8 +47,8 @@ declare global {
             public cropped?: boolean;
             public cropShoulder: number;
             public data: Array<Point>;
-            public dataMax: number;
-            public dataMin: number;
+            public dataMax?: number;
+            public dataMin?: number;
             public directTouch: boolean;
             public drawLegendSymbol: (
                 LegendSymbolMixin['drawLineMarker']|
@@ -108,6 +108,7 @@ declare global {
             public zones: Array<SeriesZonesOptions>;
             public afterAnimate(): void;
             public animate(init?: boolean): void;
+            public applyExtremes(): DataExtremesObject;
             public applyZones(): void;
             public autoIncrement(): void;
             public bindAxes(): void;
@@ -141,7 +142,7 @@ declare global {
                 value?: any,
                 defaults?: Dictionary<any>
             ): void;
-            public getExtremes(yData?: Array<number>): void;
+            public getExtremes(yData?: Array<number>): DataExtremesObject;
             public getName(): string;
             public getGraphPath(
                 points: Array<Point>,
@@ -217,6 +218,10 @@ declare global {
         }
         interface Chart {
             runTrackerClick?: boolean;
+        }
+        interface DataExtremesObject {
+            dataMin?: number;
+            dataMax?: number;
         }
         interface DataSortingOptionsObject {
             enabled?: boolean;
@@ -4906,20 +4911,20 @@ H.Series = seriesType<Highcharts.LineSeries>(
         },
 
         /**
-         * Calculate Y extremes for the visible data. The result is set as
-         * `dataMin` and `dataMax` on the Series item.
+         * Calculate Y extremes for the visible data. The result is returned
+         * as an object with `dataMin` and `dataMax` properties.
          *
          * @private
          * @function Highcharts.Series#getExtremes
          * @param {Array<number>} [yData]
          *        The data to inspect. Defaults to the current data within the
          *        visible range.
-         * @return {void}
+         * @return {Highcharts.DataExtremesObject}
          */
         getExtremes: function (
             this: Highcharts.Series,
             yData?: (Array<number>|Array<Array<number>>)
-        ): void {
+        ): Highcharts.DataExtremesObject {
             var xAxis = this.xAxis,
                 yAxis = this.yAxis,
                 xData = this.processedXData || this.xData,
@@ -4987,23 +4992,47 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 }
             }
 
+            const dataExtremes = {
+                dataMin: arrayMin(activeYData),
+                dataMax: arrayMax(activeYData)
+            };
+
+            fireEvent(this, 'afterGetExtremes', { dataExtremes });
+
+            return dataExtremes;
+        },
+
+        /**
+         * Set the current data extremes as `dataMin` and `dataMax` on the
+         * Series item. Use this only when the series properties should be
+         * updated.
+         *
+         * @private
+         * @function Highcharts.Series#applyExtremes
+         * @return {void}
+         */
+        applyExtremes: function (
+            this: Highcharts.Series
+        ): Highcharts.DataExtremesObject {
+            const dataExtremes = this.getExtremes();
+
             /**
              * Contains the minimum value of the series' data point.
              * @name Highcharts.Series#dataMin
              * @type {number}
              * @readonly
              */
-            this.dataMin = arrayMin(activeYData);
+            this.dataMin = dataExtremes.dataMin;
 
-            /**
+            /* *
              * Contains the maximum value of the series' data point.
              * @name Highcharts.Series#dataMax
              * @type {number}
              * @readonly
              */
-            this.dataMax = arrayMax(activeYData);
+            this.dataMax = dataExtremes.dataMax;
 
-            fireEvent(this, 'afterGetExtremes');
+            return dataExtremes;
         },
 
         /**

@@ -157,6 +157,7 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
     if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
         return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
+    return {};
 });
 /*
  * Override a bunch of methods the same way. If the number of points is

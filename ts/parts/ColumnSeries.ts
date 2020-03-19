@@ -660,7 +660,7 @@ seriesType<Highcharts.ColumnSeries>(
 
             var categoryWidth = Math.min(
                     Math.abs(xAxis.transA) * (
-                        xAxis.ordinalSlope ||
+                        (xAxis.ordinal && xAxis.ordinal.slope) ||
                     options.pointRange ||
                     xAxis.closestPointRange ||
                     xAxis.tickInterval ||
@@ -835,10 +835,12 @@ seriesType<Highcharts.ColumnSeries>(
                     // Reverse zeros if there's no positive value in the series
                     // in visible range (#7046)
                     if (
+                        isNumber(threshold) &&
+                        isNumber(dataMax) &&
                         point.y === threshold &&
-                        series.dataMax <= (threshold as any) &&
+                        dataMax <= threshold &&
                         // and if there's room for it (#7311)
-                        (yAxis.min as any) < (threshold as any) &&
+                        (yAxis.min || 0) < threshold &&
                         // if all points are the same value (i.e zero) not draw
                         // as negative points (#10646)
                         dataMin !== dataMax
