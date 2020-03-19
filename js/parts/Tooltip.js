@@ -1245,11 +1245,11 @@ var Tooltip = /** @class */ (function () {
     Tooltip.prototype.tooltipFooterHeaderFormatter = function (labelConfig, isFooter) {
         var footOrHead = isFooter ? 'footer' : 'header', series = labelConfig.series, tooltipOptions = series.tooltipOptions, xDateFormat = tooltipOptions.xDateFormat, xAxis = series.xAxis, isDateTime = (xAxis &&
             xAxis.options.type === 'datetime' &&
-            isNumber(labelConfig.key)), formatString = tooltipOptions[footOrHead + 'Format'], evt = {
+            isNumber(labelConfig.key)), formatString = tooltipOptions[footOrHead + 'Format'], e = {
             isFooter: isFooter,
             labelConfig: labelConfig
         };
-        fireEvent(this, 'headerFormatter', evt, function (e) {
+        fireEvent(this, 'headerFormatter', e, function (e) {
             // Guess the best date format based on the closest point distance
             // (#568, #3418)
             if (isDateTime && !xDateFormat) {
@@ -1271,7 +1271,7 @@ var Tooltip = /** @class */ (function () {
                 series: series
             }, this.chart);
         });
-        return evt.text;
+        return e.text;
     };
     /**
      * Updates the tooltip with the provided tooltip options.
