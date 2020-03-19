@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -206,6 +206,20 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          */
         visible: true,
         /**
+         * Disable this option to allow annotation rendering
+         * in the whole plotting area.
+         *
+         * Notice, to allow annotation label rendering outside
+         * the plot area the `labels.overflow` property
+         * has to be set appropriately.
+         *
+         * @see [annotations.labels.overflow](annotations.labels.overflow)
+         *
+         * @type      {boolean}
+         * @since     next
+         */
+        clip: true,
+        /**
          * Allow an annotation to be draggable by a user. Possible
          * values are `'x'`, `'xy'`, `'y'` and `''` (disabled).
          *
@@ -341,8 +355,13 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
             },
             /**
              * How to handle the annotation's label that flow outside the
-             * plot area. The justify option aligns the label inside the
+             * plot area. The `justify` option aligns the label inside the
              * plot area.
+             *
+             * To allow annotation rendering in the whole plotting area use
+             * `allow` option and disable `annotations.clip`.
+             *
+             * @see [annotations.clip](annotations.clip)
              *
              * @sample highcharts/annotations/label-crop-overflow/
              *         Crop or justify labels
@@ -739,22 +758,36 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         }, this);
     },
     addClipPaths: function () {
-        this.setClipAxes();
-        if (this.clipXAxis && this.clipYAxis) {
-            this.clipRect = this.chart.renderer.clipRect(this.getClipBox());
+        if (this.options.clip) { // (#12897)
+            this.setClipAxes();
+            if (this.clipXAxis && this.clipYAxis) {
+                this.clipRect = this.chart.renderer.clipRect(this.getClipBox());
+            }
         }
     },
     setClipAxes: function () {
-        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = (this.options.labels || [])
+        var chart = this.chart, xAxes = chart.xAxis, yAxes = chart.yAxis, linkedAxes = (this.options.labels || [])
             .concat(this.options.shapes || [])
             .reduce(function (axes, labelOrShape) {
+            var point = (labelOrShape || {}).point, tempPoint;
+            // Should work also when the point is referenced
+            // by its id (#12897).
+            if (isString(point)) {
+                tempPoint = chart.get(point);
+                if (tempPoint instanceof H.Point) {
+                    point = {
+                        x: tempPoint.x || 0,
+                        y: tempPoint.y || 0,
+                        xAxis: ((tempPoint.series.xAxis || {}).options || {}).index,
+                        yAxis: ((tempPoint.series.yAxis || {}).options || {}).index
+                    };
+                }
+            }
             return [
-                xAxes[labelOrShape &&
-                    labelOrShape.point &&
-                    labelOrShape.point.xAxis] || axes[0],
-                yAxes[labelOrShape &&
-                    labelOrShape.point &&
-                    labelOrShape.point.yAxis] || axes[1]
+                xAxes[point &&
+                    point.xAxis] || axes[0],
+                yAxes[point &&
+                    point.yAxis] || axes[1]
             ];
         }, []);
         this.clipXAxis = linkedAxes[0];

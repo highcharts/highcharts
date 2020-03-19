@@ -185,6 +185,7 @@ declare global {
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
             controlPointOptions: AnnotationControlPointOptionsObject;
+            clip?: boolean;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
             id?: (number|string);
@@ -257,6 +258,7 @@ const {
     extend,
     find,
     fireEvent,
+    isString,
     merge,
     pick,
     splat,
@@ -498,6 +500,21 @@ merge(
             visible: true,
 
             /**
+             * Disable this option to allow annotation rendering
+             * in the whole plotting area.
+             *
+             * Notice, to allow annotation label rendering outside
+             * the plot area the `labels.overflow` property
+             * has to be set appropriately.
+             *
+             * @see [annotations.labels.overflow](annotations.labels.overflow)
+             *
+             * @type      {boolean}
+             * @since     next
+             */
+            clip: true,
+
+            /**
              * Allow an annotation to be draggable by a user. Possible
              * values are `'x'`, `'xy'`, `'y'` and `''` (disabled).
              *
@@ -647,8 +664,13 @@ merge(
 
                 /**
                  * How to handle the annotation's label that flow outside the
-                 * plot area. The justify option aligns the label inside the
+                 * plot area. The `justify` option aligns the label inside the
                  * plot area.
+                 *
+                 * To allow annotation rendering in the whole plotting area use
+                 * `allow` option and disable `annotations.clip`.
+                 *
+                 * @see [annotations.clip](annotations.clip)
                  *
                  * @sample highcharts/annotations/label-crop-overflow/
                  *         Crop or justify labels
@@ -1111,18 +1133,21 @@ merge(
         },
 
         addClipPaths: function (this: Highcharts.Annotation): void {
-            this.setClipAxes();
+            if (this.options.clip) { // (#12897)
+                this.setClipAxes();
 
-            if (this.clipXAxis && this.clipYAxis) {
-                this.clipRect = this.chart.renderer.clipRect(
-                    this.getClipBox()
-                );
+                if (this.clipXAxis && this.clipYAxis) {
+                    this.clipRect = this.chart.renderer.clipRect(
+                        this.getClipBox()
+                    );
+                }
             }
         },
 
         setClipAxes: function (this: Highcharts.Annotation): void {
-            var xAxes = this.chart.xAxis,
-                yAxes = this.chart.yAxis,
+            var chart = this.chart,
+                xAxes = chart.xAxis,
+                yAxes = chart.yAxis,
                 linkedAxes: Array<Highcharts.Axis> = ((
                     this.options.labels || []
                 ) as Array<(Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)>)
@@ -1132,16 +1157,32 @@ merge(
                             axes: Array<Highcharts.Axis>,
                             labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
                         ): Array<Highcharts.Axis> {
+                            var point = (labelOrShape || {}).point,
+                                tempPoint;
+
+                            // Should work also when the point is referenced
+                            // by its id (#12897).
+                            if (isString(point)) {
+                                tempPoint = chart.get(point);
+
+                                if (tempPoint instanceof H.Point) {
+                                    point = {
+                                        x: tempPoint.x || 0,
+                                        y: tempPoint.y || 0,
+                                        xAxis: ((tempPoint.series.xAxis || {}).options || {}).index,
+                                        yAxis: ((tempPoint.series.yAxis || {}).options || {}).index
+                                    };
+                                }
+                            }
+
                             return [
                                 xAxes[
-                                    labelOrShape &&
-                                    labelOrShape.point &&
-                                    (labelOrShape.point as any).xAxis
+                                    point &&
+                                    (point as any).xAxis
                                 ] || axes[0],
                                 yAxes[
-                                    labelOrShape &&
-                                    labelOrShape.point &&
-                                    (labelOrShape.point as any).yAxis
+                                    point &&
+                                    (point as any).yAxis
                                 ] || axes[1]
                             ];
                         },
