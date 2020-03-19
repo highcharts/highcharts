@@ -122,8 +122,8 @@ declare global {
                 e: (T|PointerEvent|TouchEvent),
                 chartPosition?: OffsetObject
             ): T;
-            public onContainerClick(evt: MouseEvent): void
-            public onContainerMouseDown(evt: MouseEvent): void;
+            public onContainerClick(e: MouseEvent): void
+            public onContainerMouseDown(e: MouseEvent): void;
             public onContainerMouseLeave(e: MouseEvent): void;
             public onContainerMouseMove(e: MouseEvent): void;
             public onContainerTouchMove(e: PointerEventObject): void;
@@ -623,16 +623,16 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#drop
      *
-     * @param {global.Event} evt
+     * @param {global.Event} e
      */
-    public drop(evt: Event): void {
+    public drop(e: Event): void {
         var pointer = this,
             chart = this.chart,
             hasPinched = this.hasPinched;
 
         if (this.selectionMarker) {
             var selectionData = {
-                    originalEvent: evt, // #4890
+                    originalEvent: e, // #4890
                     xAxis: [],
                     yAxis: []
                 },
@@ -671,7 +671,7 @@ class Pointer {
                         )
                     ) { // #859, #3569
                         var horiz = axis.horiz,
-                            minPixelPadding = evt.type === 'touchend' ?
+                            minPixelPadding = e.type === 'touchend' ?
                                 axis.minPixelPadding :
                                 0, // #1207, #3075
                             selectionMin = axis.toValue(
@@ -1226,14 +1226,14 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#onContainerClick
      *
-     * @param {global.MouseEvent} evt
+     * @param {global.MouseEvent} e
      *
      * @return {void}
      */
-    public onContainerClick(evt: MouseEvent): void {
+    public onContainerClick(e: MouseEvent): void {
         const chart = this.chart;
         const hoverPoint = chart.hoverPoint;
-        const pEvt = this.normalize(evt);
+        const pEvt = this.normalize(e);
         const plotLeft = chart.plotLeft;
         const plotTop = chart.plotTop;
 
@@ -1272,27 +1272,27 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#onContainerMouseDown
      *
-     * @param {global.MouseEvent} evt
+     * @param {global.MouseEvent} e
      */
-    public onContainerMouseDown(evt: MouseEvent): void {
+    public onContainerMouseDown(e: MouseEvent): void {
         // Normalize before the 'if' for the legacy IE (#7850)
-        const pEvt = this.normalize(evt);
+        e = this.normalize(e);
 
         // #11635, Firefox does not reliable fire move event after click scroll
         if (
             H.isFirefox &&
-            pEvt.button !== 0
+            e.button !== 0
         ) {
-            this.onContainerMouseMove(pEvt);
+            this.onContainerMouseMove(e);
         }
 
         // #11635, limiting to primary button (incl. IE 8 support)
         if (
-            typeof pEvt.button === 'undefined' ||
-            ((pEvt.buttons || pEvt.button) & 1) === 1
+            typeof e.button === 'undefined' ||
+            ((e.buttons || e.button) & 1) === 1
         ) {
-            this.zoomOption(pEvt);
-            this.dragStart(pEvt);
+            this.zoomOption(e);
+            this.dragStart(e as Highcharts.PointerEventObject);
         }
     }
 
@@ -1302,19 +1302,20 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#onContainerMouseLeave
      *
-     * @param {global.MouseEvent} evt
+     * @param {global.MouseEvent} e
      *
      * @return {void}
      */
-    public onContainerMouseLeave(evt: MouseEvent): void {
+    public onContainerMouseLeave(e: MouseEvent): void {
         const chart = charts[pick(H.hoverChartIndex, -1)];
-        const pEvt = this.normalize(evt);
         const tooltip = this.chart.tooltip;
+
+        e = this.normalize(e);
 
         // #4886, MS Touch end fires mouseleave but with no related target
         if (
             chart &&
-            (pEvt.relatedTarget || pEvt.toElement)
+            (e.relatedTarget || (e as Highcharts.PointerEventObject).toElement)
         ) {
             chart.pointer.reset();
             // Also reset the chart position, used in #149 fix
@@ -1335,13 +1336,13 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#onContainerMouseMove
      *
-     * @param {global.MouseEvent} evt
+     * @param {global.MouseEvent} e
      *
      * @return {void}
      */
-    public onContainerMouseMove(evt: MouseEvent): void {
+    public onContainerMouseMove(e: MouseEvent): void {
         const chart = this.chart;
-        const pEvt = this.normalize(evt);
+        const pEvt = this.normalize(e);
 
         this.setHoverChartIndex();
 
@@ -1420,14 +1421,14 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#onDocumentMouseMove
      *
-     * @param {global.MouseEvent} evt
+     * @param {global.MouseEvent} e
      *
      * @return {void}
      */
-    public onDocumentMouseMove(evt: MouseEvent): void {
+    public onDocumentMouseMove(e: MouseEvent): void {
         const chart = this.chart;
         const chartPosition = this.chartPosition;
-        const pEvt = this.normalize(evt, chartPosition);
+        const pEvt = this.normalize(e, chartPosition);
         const tooltip = chart.tooltip;
 
         // If we're outside, hide the tooltip
@@ -1451,14 +1452,14 @@ class Pointer {
      * @private
      * @function Highcharts.Pointer#onDocumentMouseUp
      *
-     * @param {global.MouseEvent} evt
+     * @param {global.MouseEvent} e
      *
      * @return {void}
      */
-    public onDocumentMouseUp(evt: MouseEvent): void {
+    public onDocumentMouseUp(e: MouseEvent): void {
         const chart = charts[pick(H.hoverChartIndex, -1)];
         if (chart) {
-            chart.pointer.drop(evt);
+            chart.pointer.drop(e);
         }
     }
 
