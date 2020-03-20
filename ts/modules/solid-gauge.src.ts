@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type RadialAxis from '../parts-more/RadialAxis';
 import H from '../parts/Globals.js';
 
 /**

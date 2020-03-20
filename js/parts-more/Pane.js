@@ -295,7 +295,7 @@ var Pane = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Pane#updateCenter
-     * @param {Highcharts.RadialAxis} [axis]
+     * @param {Highcharts.Axis} [axis]
      * @return {void}
      */
     Pane.prototype.updateCenter = function (axis) {

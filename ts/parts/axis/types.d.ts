@@ -8,9 +8,11 @@
  *
  * */
 
-import type Axis from '../Axis.js';
-import type OrdinalAxis from '../OrdinalAxis.js';
-import type ScrollbarAxis from '../ScrollbarAxis.js';
+import type Axis from '../Axis';
+import type HiddenAxis from '../../parts-more/HiddenAxis';
+import type OrdinalAxis from '../OrdinalAxis';
+import type RadialAxis from '../../parts-more/RadialAxis';
+import type ScrollbarAxis from '../ScrollbarAxis';
 
 export interface AxisComposition {
     ordinal?: OrdinalAxis['ordinal'];
@@ -22,6 +24,8 @@ export interface AxisComposition {
  */
 export type AxisType = (
     Axis|
+    HiddenAxis|
     OrdinalAxis|
+    RadialAxis|
     ScrollbarAxis
 );
