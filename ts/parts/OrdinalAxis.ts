@@ -347,7 +347,7 @@ class OrdinalAxis {
      * @param SeriesClass
      * Series class to use.
      */
-    public static init(
+    public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         SeriesClass: typeof Series
@@ -1136,6 +1136,6 @@ interface OrdinalAxisOptions {
     keepOrdinalPadding?: boolean;
 }
 
-export default OrdinalAxis;
+OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
 
-OrdinalAxis.init(Axis, Chart, Series); // @todo move to StockChart, remove from master
+export default OrdinalAxis;

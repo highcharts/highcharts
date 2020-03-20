@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { AxisType } from './axis/types';
 import H from './Globals.js';
 
 /**
@@ -125,8 +126,8 @@ declare global {
             public titleOffset: Array<number>;
             public unbindReflow?: Function;
             public userOptions: Options;
-            public xAxis: Array<Axis>;
-            public yAxis: Array<Axis>;
+            public xAxis: Array<AxisType>;
+            public yAxis: Array<AxisType>;
             public addCredits(credits?: CreditsOptions): void;
             public applyDescription(
                 name: ('title'|'subtitle'|'caption'),

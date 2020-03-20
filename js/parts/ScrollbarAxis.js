@@ -30,7 +30,7 @@ var ScrollbarAxis = /** @class */ (function () {
      * @param ScrollbarClass
      * Scrollbar class to use.
      */
-    ScrollbarAxis.init = function (AxisClass, ScrollbarClass) {
+    ScrollbarAxis.compose = function (AxisClass, ScrollbarClass) {
         // Wrap axis initialization and create scrollbar if enabled:
         addEvent(AxisClass, 'afterInit', function () {
             var axis = this;
