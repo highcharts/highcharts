@@ -103,7 +103,7 @@ class Fullscreen {
             return;
         }
 
-        const container = chart.container.parentNode;
+        const container = chart.renderTo;
 
         // Hold event and methods available only for a current browser.
         if (!this.browserProps) {
@@ -224,18 +224,16 @@ class Fullscreen {
                 }
             );
 
-            if (chart.container.parentNode instanceof Element) {
-                const promise = chart.renderTo[
-                    fullscreen.browserProps.requestFullscreen
-                ]();
+            const promise = chart.renderTo[
+                fullscreen.browserProps.requestFullscreen
+            ]();
 
-                if (promise) {
-                    promise['catch'](function (): void { // eslint-disable-line dot-notation
-                        alert( // eslint-disable-line no-alert
-                            'Full screen is not supported inside a frame.'
-                        );
-                    });
-                }
+            if (promise) {
+                promise['catch'](function (): void { // eslint-disable-line dot-notation
+                    alert( // eslint-disable-line no-alert
+                        'Full screen is not supported inside a frame.'
+                    );
+                });
             }
 
             addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
