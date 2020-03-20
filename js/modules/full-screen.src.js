@@ -47,9 +47,6 @@ var Fullscreen = /** @class */ (function () {
          * @since 8.0.1
          */
         this.isOpen = false;
-        if (!(chart.container.parentNode instanceof Element)) {
-            return;
-        }
         var container = chart.renderTo;
         // Hold event and methods available only for a current browser.
         if (!this.browserProps) {
