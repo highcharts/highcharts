@@ -225,7 +225,7 @@ class Fullscreen {
             );
 
             if (chart.container.parentNode instanceof Element) {
-                const promise = chart.container.parentNode[
+                const promise = chart.renderTo[
                     fullscreen.browserProps.requestFullscreen
                 ]();
 

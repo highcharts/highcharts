@@ -142,7 +142,7 @@ var Fullscreen = /** @class */ (function () {
                 }
             });
             if (chart.container.parentNode instanceof Element) {
-                var promise = chart.container.parentNode[fullscreen.browserProps.requestFullscreen]();
+                var promise = chart.renderTo[fullscreen.browserProps.requestFullscreen]();
                 if (promise) {
                     promise['catch'](function () {
                         alert(// eslint-disable-line no-alert
