@@ -179,30 +179,26 @@ QUnit.test('Hiding and showing annotations with linked points', function (assert
 
 QUnit.test('Annotation\'s update methods', function (assert) {
 
-    var clock = null;
+    var clock = TestUtilities.lolexInstall();
 
     try {
 
-        clock = TestUtilities.lolexInstall();
-
-        var chart = Highcharts.chart('container', {
-
-            annotations: [{
-                labels: [{
-                    point: {
-                        xAxis: 0,
-                        yAxis: 0,
-                        x: 0,
-                        y: 5
-                    }
+        var done = assert.async(),
+            chart = Highcharts.chart('container', {
+                annotations: [{
+                    labels: [{
+                        point: {
+                            xAxis: 0,
+                            yAxis: 0,
+                            x: 0,
+                            y: 5
+                        }
+                    }]
+                }],
+                series: [{
+                    data: [4, 3, 7, 8]
                 }]
-            }],
-
-            series: [{
-                data: [4, 3, 7, 8]
-            }]
-
-        });
+            });
 
         chart.update({
             annotations: [{
@@ -227,13 +223,11 @@ QUnit.test('Annotation\'s update methods', function (assert) {
                 'Annotation\'s clipRect cannot have a NaN for numerical attributes'
             );
 
-            assert.async();
+            done();
         }, 250);
 
         TestUtilities.lolexRunAndUninstall(clock);
-
     } finally {
-
         TestUtilities.lolexUninstall(clock);
     }
 });
