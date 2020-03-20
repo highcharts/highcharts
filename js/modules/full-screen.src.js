@@ -50,7 +50,7 @@ var Fullscreen = /** @class */ (function () {
         if (!(chart.container.parentNode instanceof Element)) {
             return;
         }
-        var container = chart.container.parentNode;
+        var container = chart.renderTo;
         // Hold event and methods available only for a current browser.
         if (!this.browserProps) {
             if (typeof container.requestFullscreen === 'function') {
@@ -141,14 +141,12 @@ var Fullscreen = /** @class */ (function () {
                     fullscreen.setButtonText();
                 }
             });
-            if (chart.container.parentNode instanceof Element) {
-                var promise = chart.renderTo[fullscreen.browserProps.requestFullscreen]();
-                if (promise) {
-                    promise['catch'](function () {
-                        alert(// eslint-disable-line no-alert
-                        'Full screen is not supported inside a frame.');
-                    });
-                }
+            var promise = chart.renderTo[fullscreen.browserProps.requestFullscreen]();
+            if (promise) {
+                promise['catch'](function () {
+                    alert(// eslint-disable-line no-alert
+                    'Full screen is not supported inside a frame.');
+                });
             }
             addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
         }
