@@ -99,10 +99,6 @@ class Fullscreen {
          */
         this.isOpen = false;
 
-        if (!(chart.container.parentNode instanceof Element)) {
-            return;
-        }
-
         const container = chart.renderTo;
 
         // Hold event and methods available only for a current browser.
