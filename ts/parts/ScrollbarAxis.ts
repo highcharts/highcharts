@@ -8,9 +8,9 @@
  *
  * */
 
-import type Axis from './Axis.js';
+import type Axis from './Axis';
+import type Scrollbar from './Scrollbar';
 import H from './Globals.js';
-import type Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -233,13 +233,13 @@ class ScrollbarAxis {
 }
 
 interface ScrollbarAxis extends Axis {
-    options: Axis['options'] & ScrollbarAxis.AxisOptions;
+    options: Axis['options'] & ScrollbarAxis.Options;
     scrollbar: Scrollbar;
 }
 
 namespace ScrollbarAxis {
 
-    export interface AxisOptions {
+    export interface Options {
         scrollbar?: Highcharts.ScrollbarOptions;
     }
 

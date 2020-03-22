@@ -8,11 +8,13 @@
  *
  * */
 
-import type Axis from '../Axis.js';
-import type OrdinalAxis from '../OrdinalAxis.js';
-import type ScrollbarAxis from '../ScrollbarAxis.js';
+import type Axis from '../Axis';
+import type LogarithmicAxis from '../LogarithmicAxis';
+import type OrdinalAxis from '../OrdinalAxis';
+import type ScrollbarAxis from '../ScrollbarAxis';
 
 export interface AxisComposition {
+    logarithmic?: LogarithmicAxis['logarithmic'];
     ordinal?: OrdinalAxis['ordinal'];
     scrollbar?: ScrollbarAxis['scrollbar'];
 }

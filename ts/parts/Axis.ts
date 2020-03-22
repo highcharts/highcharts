@@ -4154,13 +4154,6 @@ class Axis implements AxisComposition {
             }
         });
 
-        // extend logarithmic axis
-        axis.lin2log = options.linearToLogConverter || axis.lin2log;
-        if (axis.isLog) {
-            axis.val2lin = axis.log2lin;
-            axis.lin2val = axis.lin2log;
-        }
-
         fireEvent(this, 'afterInit');
     }
 
@@ -4898,8 +4891,8 @@ class Axis implements AxisComposition {
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
-                minArgs[2] = axis.isLog ?
-                    axis.log2lin(axis.dataMin as any) :
+                minArgs[2] = axis.isLog && axis.logarithmic ?
+                    axis.logarithmic.log2lin(axis.dataMin as any) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -4910,8 +4903,8 @@ class Axis implements AxisComposition {
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
-                maxArgs[2] = axis.isLog ?
-                    axis.log2lin(axis.dataMax as any) :
+                maxArgs[2] = axis.isLog && axis.logarithmic ?
+                    axis.logarithmic.log2lin(axis.dataMax as any) :
                     axis.dataMax;
             }
 
@@ -5288,7 +5281,10 @@ class Axis implements AxisComposition {
 
         }
 
-        if (isLog) {
+        if (
+            isLog &&
+            axis.logarithmic
+        ) {
             if (
                 axis.positiveValuesOnly &&
                 !secondPass &&
@@ -5302,8 +5298,8 @@ class Axis implements AxisComposition {
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min as any), 16);
-            axis.max = correctFloat(axis.log2lin(axis.max as any), 16);
+            axis.min = correctFloat(axis.logarithmic.log2lin(axis.min as any), 16);
+            axis.max = correctFloat(axis.logarithmic.log2lin(axis.max as any), 16);
         }
 
         // handle zoomed range

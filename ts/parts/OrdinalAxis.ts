@@ -1116,6 +1116,7 @@ class OrdinalAxis {
 
 interface OrdinalAxis extends Axis {
     isInternal?: boolean;
+    options: Axis['options'] & OrdinalAxis.Options;
     ordinal: OrdinalAxisAdditions;
     ordinal2lin: OrdinalAxis['val2lin'];
     beforeSetTickPositions(): void;
@@ -1132,10 +1133,14 @@ interface OrdinalAxis extends Axis {
     val2lin(val: number, toIndex?: boolean): number;
 }
 
-interface OrdinalAxisOptions {
-    keepOrdinalPadding?: boolean;
+namespace OrdinalAxis {
+
+    export interface Options {
+        keepOrdinalPadding?: boolean;
+    }
+
 }
 
-export default OrdinalAxis;
+OrdinalAxis.init(Axis, Chart, Series); // @todo move to factory
 
-OrdinalAxis.init(Axis, Chart, Series); // @todo move to StockChart, remove from master
+export default OrdinalAxis;

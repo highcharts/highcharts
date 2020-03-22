@@ -518,12 +518,6 @@ var Axis = /** @class */ (function () {
                 addEvent(axis, eventType, event);
             }
         });
-        // extend logarithmic axis
-        axis.lin2log = options.linearToLogConverter || axis.lin2log;
-        if (axis.isLog) {
-            axis.val2lin = axis.log2lin;
-            axis.lin2val = axis.lin2log;
-        }
         fireEvent(this, 'afterInit');
     };
     /**
@@ -1040,8 +1034,8 @@ var Axis = /** @class */ (function () {
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
-                minArgs[2] = axis.isLog ?
-                    axis.log2lin(axis.dataMin) :
+                minArgs[2] = axis.isLog && axis.logarithmic ?
+                    axis.logarithmic.log2lin(axis.dataMin) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -1051,8 +1045,8 @@ var Axis = /** @class */ (function () {
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
-                maxArgs[2] = axis.isLog ?
-                    axis.log2lin(axis.dataMax) :
+                maxArgs[2] = axis.isLog && axis.logarithmic ?
+                    axis.logarithmic.log2lin(axis.dataMax) :
                     axis.dataMax;
             }
             max = arrayMin(maxArgs);
@@ -1317,7 +1311,8 @@ var Axis = /** @class */ (function () {
             axis.min = pick(hardMin, thresholdMin, axis.dataMin);
             axis.max = pick(hardMax, thresholdMax, axis.dataMax);
         }
-        if (isLog) {
+        if (isLog &&
+            axis.logarithmic) {
             if (axis.positiveValuesOnly &&
                 !secondPass &&
                 Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
@@ -1327,8 +1322,8 @@ var Axis = /** @class */ (function () {
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min), 16);
-            axis.max = correctFloat(axis.log2lin(axis.max), 16);
+            axis.min = correctFloat(axis.logarithmic.log2lin(axis.min), 16);
+            axis.max = correctFloat(axis.logarithmic.log2lin(axis.max), 16);
         }
         // handle zoomed range
         if (axis.range && defined(axis.max)) {

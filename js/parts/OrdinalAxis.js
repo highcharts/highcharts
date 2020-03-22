@@ -748,5 +748,5 @@ var OrdinalAxis = /** @class */ (function () {
     };
     return OrdinalAxis;
 }());
+OrdinalAxis.init(Axis, Chart, Series); // @todo move to factory
 export default OrdinalAxis;
-OrdinalAxis.init(Axis, Chart, Series); // @todo move to StockChart, remove from master
