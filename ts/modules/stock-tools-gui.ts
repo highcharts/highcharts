@@ -121,7 +121,6 @@ declare global {
                 submenuItems?: NodeListOf<HTMLDOMElement>
             ): void;
             public getIconsURL(): string;
-            public inIframe(): boolean;
             public init(): void;
             public redraw(): void;
             public scrollButtons(): void;
@@ -1006,7 +1005,6 @@ H.Toolbar.prototype = {
             defs: Highcharts.StockToolsGuiDefinitionsOptions =
                 guiOptions.definitions as any,
             allButtons = toolbar.childNodes,
-            inIframe = this.inIframe(),
             button: (
                 Highcharts.Dictionary<Highcharts.HTMLDOMElement>|undefined
             );
@@ -1015,11 +1013,6 @@ H.Toolbar.prototype = {
         buttons.forEach(function (btnName: string): void {
 
             button = _self.addButton(toolbar, defs, btnName, lang);
-
-            if (inIframe && btnName === 'fullScreen') {
-                (button as any).buttonWrapper.className +=
-                    ' ' + PREFIX + 'disabled-btn';
-            }
 
             _self.eventsToUnbind.push(
                 addEvent(
@@ -1512,18 +1505,6 @@ H.Toolbar.prototype = {
                 activeBtn.classList.remove(activeClass);
             }
         });
-    },
-    /*
-     * Verify if chart is in iframe.
-     *
-     * @return {Object} - elements translations.
-     */
-    inIframe: function (): boolean {
-        try {
-            return win.self !== win.top;
-        } catch (e) {
-            return true;
-        }
     },
     /*
      * Update GUI with given options.

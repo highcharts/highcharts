@@ -808,14 +808,10 @@ H.Toolbar.prototype = {
      * @private
      */
     init: function () {
-        var _self = this, lang = this.lang, guiOptions = this.options, toolbar = this.toolbar, addSubmenu = _self.addSubmenu, buttons = guiOptions.buttons, defs = guiOptions.definitions, allButtons = toolbar.childNodes, inIframe = this.inIframe(), button;
+        var _self = this, lang = this.lang, guiOptions = this.options, toolbar = this.toolbar, addSubmenu = _self.addSubmenu, buttons = guiOptions.buttons, defs = guiOptions.definitions, allButtons = toolbar.childNodes, button;
         // create buttons
         buttons.forEach(function (btnName) {
             button = _self.addButton(toolbar, defs, btnName, lang);
-            if (inIframe && btnName === 'fullScreen') {
-                button.buttonWrapper.className +=
-                    ' ' + PREFIX + 'disabled-btn';
-            }
             _self.eventsToUnbind.push(addEvent(button.buttonWrapper, 'click', function () {
                 _self.eraseActiveButtons(allButtons, button.buttonWrapper);
             }));
@@ -1160,19 +1156,6 @@ H.Toolbar.prototype = {
                 activeBtn.classList.remove(activeClass);
             }
         });
-    },
-    /*
-     * Verify if chart is in iframe.
-     *
-     * @return {Object} - elements translations.
-     */
-    inIframe: function () {
-        try {
-            return win.self !== win.top;
-        }
-        catch (e) {
-            return true;
-        }
     },
     /*
      * Update GUI with given options.

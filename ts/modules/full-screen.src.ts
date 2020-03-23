@@ -230,7 +230,7 @@ class Fullscreen {
                 ]();
 
                 if (promise) {
-                    promise['catch'](function (): void { // eslint-disable-line dot-notation
+                    promise.catch(function (): void {
                         alert( // eslint-disable-line no-alert
                             'Full screen is not supported inside a frame.'
                         );
