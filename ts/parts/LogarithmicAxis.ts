@@ -215,13 +215,21 @@ class LogarithmicAxis {
 
             // extend logarithmic axis
             const logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis);
+            const lin2log = function (): number {
+                return logarithmic.lin2log.apply(logarithmic, arguments);
+            };
+            const log2lin = function (): number {
+                return logarithmic.log2lin.apply(logarithmic, arguments);
+            };
+
             axis.getLogTickPositions = function (): ReturnType<LogarithmicAxisAdditions['getTickPositions']> {
                 return logarithmic.getTickPositions.apply(logarithmic, arguments);
             };
-            axis.lin2log = options.linearToLogConverter || logarithmic.lin2log;
+            axis.lin2log = options.linearToLogConverter || lin2log;
+
             if (axis.isLog) {
-                axis.val2lin = logarithmic.log2lin;
-                axis.lin2val = logarithmic.lin2log;
+                axis.val2lin = log2lin;
+                axis.lin2val = lin2log;
             }
         }, { order: 0 });
 

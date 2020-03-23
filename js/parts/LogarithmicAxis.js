@@ -127,13 +127,19 @@ var LogarithmicAxis = /** @class */ (function () {
             var options = axis.options;
             // extend logarithmic axis
             var logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis);
+            var lin2log = function () {
+                return logarithmic.lin2log.apply(logarithmic, arguments);
+            };
+            var log2lin = function () {
+                return logarithmic.log2lin.apply(logarithmic, arguments);
+            };
             axis.getLogTickPositions = function () {
                 return logarithmic.getTickPositions.apply(logarithmic, arguments);
             };
-            axis.lin2log = options.linearToLogConverter || logarithmic.lin2log;
+            axis.lin2log = options.linearToLogConverter || lin2log;
             if (axis.isLog) {
-                axis.val2lin = logarithmic.log2lin;
-                axis.lin2val = logarithmic.lin2log;
+                axis.val2lin = log2lin;
+                axis.lin2val = lin2log;
             }
         }, { order: 0 });
         /* eslint-enable no-invalid-this */
