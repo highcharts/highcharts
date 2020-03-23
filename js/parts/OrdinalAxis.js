@@ -232,7 +232,7 @@ var OrdinalAxis = /** @class */ (function () {
      * @param SeriesClass
      * Series class to use.
      */
-    OrdinalAxis.init = function (AxisClass, ChartClass, SeriesClass) {
+    OrdinalAxis.compose = function (AxisClass, ChartClass, SeriesClass) {
         var axisPrototype = AxisClass.prototype;
         /**
          * Calculate the ordinal positions before tick positions are calculated.
@@ -748,5 +748,5 @@ var OrdinalAxis = /** @class */ (function () {
     };
     return OrdinalAxis;
 }());
-OrdinalAxis.init(Axis, Chart, Series); // @todo move to factory
+OrdinalAxis.compose(Axis, Chart, Series); // @todo move to factory
 export default OrdinalAxis;

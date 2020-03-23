@@ -347,7 +347,7 @@ class OrdinalAxis {
      * @param SeriesClass
      * Series class to use.
      */
-    public static init(
+    public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         SeriesClass: typeof Series
@@ -1141,6 +1141,6 @@ namespace OrdinalAxis {
 
 }
 
-OrdinalAxis.init(Axis, Chart, Series); // @todo move to factory
+OrdinalAxis.compose(Axis, Chart, Series); // @todo move to factory
 
 export default OrdinalAxis;

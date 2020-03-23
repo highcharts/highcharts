@@ -38,7 +38,7 @@ class ScrollbarAxis {
      * @param ScrollbarClass
      * Scrollbar class to use.
      */
-    public static init(AxisClass: typeof Axis, ScrollbarClass: typeof Scrollbar): void {
+    public static compose(AxisClass: typeof Axis, ScrollbarClass: typeof Scrollbar): void {
 
         // Wrap axis initialization and create scrollbar if enabled:
         addEvent(AxisClass, 'afterInit', function (): void {

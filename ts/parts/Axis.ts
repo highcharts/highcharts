@@ -353,6 +353,7 @@ declare global {
             public isBroken?: boolean;
             public isDatetimeAxis: boolean;
             public isDirty?: boolean;
+            public isHidden?: boolean;
             public isLinked: boolean;
             public isLog: boolean;
             public isOrdinal?: boolean;
@@ -402,6 +403,7 @@ declare global {
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
             public right: number;
+            public sector?: number;
             public series: Array<Series>;
             public showAxis?: boolean;
             public side: number;
