@@ -218,7 +218,7 @@ seriesType('dumbbell', 'arearange', {
      */
     getColumnMetrics: function () {
         var metrics = colProto.getColumnMetrics.apply(this, arguments);
-        metrics.offset = metrics.offset + metrics.width / 2;
+        metrics.offset += metrics.width / 2;
         return metrics;
     },
     translatePoint: areaRangeProto.translate,
@@ -247,6 +247,7 @@ seriesType('dumbbell', 'arearange', {
             shapeArgs.x = point.plotX - pointWidth / 2;
             point.tooltipPos = null;
         });
+        this.columnMetrics.offset -= this.columnMetrics.width / 2;
     },
     seriesDrawPoints: areaRangeProto.drawPoints,
     /**
