@@ -1104,8 +1104,7 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
                 series.options.label as any,
             label: Highcharts.SVGElement = series.labelBySeries as any,
             closest = label && label.closest,
-            defer = animObject(series.options.animation).defer,
-            duration = animObject(series.options.animation).duration;
+            { defer, duration } = animObject(series.options.animation);
 
         if (
             options.enabled &&

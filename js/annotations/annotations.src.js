@@ -206,7 +206,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          */
         visible: true,
         /**
-         * The animation configuration object for the annotations. Please
+         * The animation configuration object for the `annotations`. Please
          * note that this option only applies to the initial animation.
          * For other animations, see [chart.animation](#chart.animation)]
          * and the animation parameter under the API methods.
@@ -1097,12 +1097,11 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
     drawAnnotations: function () {
         this.plotBoxClip.attr(this.plotBox);
         this.annotations.forEach(function (annotation) {
-            var deferDiff = annotation.deferTime - annotation.durationTime;
             annotation.redraw();
             annotation.graphic.animate({
                 opacity: 1
             }, {
-                defer: deferDiff === 0 ? annotation.deferTime : deferDiff,
+                defer: annotation.deferTime - annotation.durationTime,
                 duration: annotation.durationTime
             });
         });

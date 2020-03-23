@@ -2302,7 +2302,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         dataLabels: {
             /**
-             * The animation configuration object for the dataLabels. Please
+             * The animation configuration object for the `dataLabels`. Please
              * note that this option only applies to the initial animation.
              * For other animations, see [chart.animation](#chart.animation)]
              * and the animation parameter under the API methods.
@@ -6638,12 +6638,13 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 chart = series.chart,
                 group,
                 options = series.options,
+                animOptions = animObject(options.animation),
                 // Animation doesn't work in IE8 quirks when the group div is
                 // hidden, and looks bad in other oldIE
                 animDuration = (
                     !series.finishedAnimating &&
                     chart.renderer.isSVG &&
-                    animObject(options.animation).duration
+                    animOptions.duration
                 ),
                 visibility = series.visible ? 'inherit' : 'hidden', // #2597
                 zIndex = options.zIndex,
@@ -6740,8 +6741,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
             if (!hasRendered) {
                 // Additional time if defer is defined before afterAnimate
                 // will be triggered
-                if (animDuration && animObject(options.animation).defer) {
-                    animDuration += animObject(options.animation).defer;
+                if (animDuration && animOptions.defer) {
+                    animDuration += animOptions.defer;
                 }
                 series.animationTimeout = syncTimeout(function (): void {
                     series.afterAnimate();

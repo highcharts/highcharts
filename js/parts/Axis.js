@@ -5651,7 +5651,7 @@ var Axis = /** @class */ (function () {
          */
         stackLabels: {
             /**
-             * The animation configuration object for the stackLabels. Please
+             * The animation configuration object for the `stackLabels`. Please
              * note that this option only applies to the initial animation.
              * For other animations, see [chart.animation](#chart.animation)]
              * and the animation parameter under the API methods.

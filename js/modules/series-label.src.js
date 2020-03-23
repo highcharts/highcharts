@@ -676,7 +676,7 @@ function drawLabels(e) {
     U.clearTimeout(chart.seriesLabelTimer);
     // Which series should have labels
     chart.series.forEach(function (series) {
-        var options = series.options.label, label = series.labelBySeries, closest = label && label.closest, defer = animObject(series.options.animation).defer, duration = animObject(series.options.animation).duration;
+        var options = series.options.label, label = series.labelBySeries, closest = label && label.closest, _a = animObject(series.options.animation), defer = _a.defer, duration = _a.duration;
         if (options.enabled &&
             series.visible &&
             (series.graph || series.area) &&

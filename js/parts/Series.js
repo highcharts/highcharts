@@ -1703,7 +1703,7 @@ null,
      */
     dataLabels: {
         /**
-         * The animation configuration object for the dataLabels. Please
+         * The animation configuration object for the `dataLabels`. Please
          * note that this option only applies to the initial animation.
          * For other animations, see [chart.animation](#chart.animation)]
          * and the animation parameter under the API methods.
@@ -4934,12 +4934,12 @@ null,
      * @fires Highcharts.Series#event:afterRender
      */
     render: function () {
-        var series = this, chart = series.chart, group, options = series.options, 
+        var series = this, chart = series.chart, group, options = series.options, animOptions = animObject(options.animation), 
         // Animation doesn't work in IE8 quirks when the group div is
         // hidden, and looks bad in other oldIE
         animDuration = (!series.finishedAnimating &&
             chart.renderer.isSVG &&
-            animObject(options.animation).duration), visibility = series.visible ? 'inherit' : 'hidden', // #2597
+            animOptions.duration), visibility = series.visible ? 'inherit' : 'hidden', // #2597
         zIndex = options.zIndex, hasRendered = series.hasRendered, chartSeriesGroup = chart.seriesGroup, inverted = chart.inverted;
         fireEvent(this, 'render');
         // the group
@@ -5000,8 +5000,8 @@ null,
         if (!hasRendered) {
             // Additional time if defer is defined before afterAnimate
             // will be triggered
-            if (animDuration && animObject(options.animation).defer) {
-                animDuration += animObject(options.animation).defer;
+            if (animDuration && animOptions.defer) {
+                animDuration += animOptions.defer;
             }
             series.animationTimeout = syncTimeout(function () {
                 series.afterAnimate();
