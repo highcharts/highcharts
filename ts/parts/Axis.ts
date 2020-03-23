@@ -203,6 +203,7 @@ declare global {
             accessibility?: XAxisAccessibilityOptions;
             alignTicks?: boolean;
             allowDecimals?: boolean;
+            allowNegativeLog?: boolean;
             alternateGridColor?: (
                 ColorString|GradientColorObject|PatternObject
             );
@@ -224,7 +225,6 @@ declare global {
             isX?: boolean;
             labels?: XAxisLabelsOptions;
             left?: (number|string);
-            linearToLogConverter?: undefined;
             lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             linkedTo?: number;
@@ -4042,7 +4042,7 @@ class Axis implements AxisComposition {
         // Shorthand types
         axis.isLog = type === 'logarithmic';
         axis.isDatetimeAxis = isDatetimeAxis;
-        axis.positiveValuesOnly = axis.isLog && !(axis as any).allowNegativeLog;
+        axis.positiveValuesOnly = axis.isLog && !axis.options.allowNegativeLog;
 
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
@@ -4770,10 +4770,14 @@ class Axis implements AxisComposition {
                     i: number,
                     paddedTicks: Array<number>
                 ): void {
-                    if (i) {
+                    const logarithmic = axis.logarithmic;
+                    if (
+                        i &&
+                        logarithmic
+                    ) {
                         minorTickPositions.push.apply(
                             minorTickPositions,
-                            axis.getLogTickPositions(
+                            logarithmic.getTickPositions(
                                 minorTickInterval,
                                 paddedTicks[i - 1],
                                 paddedTicks[i],
@@ -5514,40 +5518,41 @@ class Axis implements AxisComposition {
     public setTickPositions(): void {
 
         var axis: Highcharts.Axis = this as any,
-            options = this.options,
+            logarithmic = axis.logarithmic,
+            options = axis.options,
             tickPositions,
             tickPositionsOption = options.tickPositions,
-            minorTickIntervalOption = this.getMinorTickInterval(),
+            minorTickIntervalOption = axis.getMinorTickInterval(),
             tickPositioner = options.tickPositioner,
             startOnTick = options.startOnTick,
             endOnTick = options.endOnTick;
 
         // Set the tickmarkOffset
-        this.tickmarkOffset = (
-            this.categories &&
+        axis.tickmarkOffset = (
+            axis.categories &&
             options.tickmarkPlacement === 'between' &&
-            this.tickInterval === 1
+            axis.tickInterval === 1
         ) ? 0.5 : 0; // #3202
 
 
         // get minorTickInterval
-        this.minorTickInterval =
+        axis.minorTickInterval =
             minorTickIntervalOption === 'auto' &&
-            this.tickInterval ?
-                this.tickInterval / 5 :
+            axis.tickInterval ?
+                axis.tickInterval / 5 :
                 (minorTickIntervalOption as any);
 
         // When there is only one point, or all points have the same value on
         // this axis, then min and max are equal and tickPositions.length is 0
         // or 1. In this case, add some padding in order to center the point,
         // but leave it with one tick. #1337.
-        this.single =
-            this.min === this.max &&
-            defined(this.min) &&
-            !this.tickAmount &&
+        axis.single =
+            axis.min === axis.max &&
+            defined(axis.min) &&
+            !axis.tickAmount &&
             (
                 // Data is on integer (#6563)
-                parseInt(this.min as any, 10) === this.min ||
+                parseInt(axis.min as any, 10) === axis.min ||
 
                 // Between integers and decimals are not allowed (#6274)
                 options.allowDecimals !== false
@@ -5567,7 +5572,7 @@ class Axis implements AxisComposition {
          * @name Highcharts.Axis#tickPositions
          * @type {Highcharts.AxisTickPositionsArray|undefined}
          */
-        this.tickPositions =
+        axis.tickPositions =
             // Find the tick positions. Work on a copy (#1565)
             tickPositions =
             (tickPositionsOption && tickPositionsOption.slice()) as any;
@@ -5578,43 +5583,46 @@ class Axis implements AxisComposition {
             if (
                 (!axis.ordinal || !axis.ordinal.positions) &&
                 (
-                    ((this.max as any) - (this.min as any)) /
-                    this.tickInterval >
-                    Math.max(2 * this.len, 200)
+                    ((axis.max as any) - (axis.min as any)) /
+                    axis.tickInterval >
+                    Math.max(2 * axis.len, 200)
                 )
             ) {
-                tickPositions = [this.min, this.max];
-                error(19, false, this.chart);
+                tickPositions = [axis.min, axis.max];
+                error(19, false, axis.chart);
 
-            } else if (this.isDatetimeAxis) {
+            } else if (axis.isDatetimeAxis) {
                 tickPositions = (axis.getTimeTicks as any)(
                     axis.normalizeTimeTickInterval(
-                        this.tickInterval,
+                        axis.tickInterval,
                         options.units
                     ),
-                    this.min,
-                    this.max,
+                    axis.min,
+                    axis.max,
                     options.startOfWeek,
                     axis.ordinal && axis.ordinal.positions,
-                    this.closestPointRange,
+                    axis.closestPointRange,
                     true
                 );
-            } else if (this.isLog) {
-                tickPositions = axis.getLogTickPositions(
-                    this.tickInterval,
-                    this.min as any,
-                    this.max as any
+            } else if (
+                axis.isLog &&
+                logarithmic
+            ) {
+                tickPositions = logarithmic.getTickPositions(
+                    axis.tickInterval,
+                    axis.min as any,
+                    axis.max as any
                 );
             } else {
-                tickPositions = this.getLinearTickPositions(
-                    this.tickInterval,
-                    this.min as any,
-                    this.max as any
+                tickPositions = axis.getLinearTickPositions(
+                    axis.tickInterval,
+                    axis.min as any,
+                    axis.max as any
                 );
             }
 
             // Too dense ticks, keep only the first and last (#4477)
-            if (tickPositions.length > this.len) {
+            if (tickPositions.length > axis.len) {
                 tickPositions = [tickPositions[0], tickPositions.pop()];
                 // Reduce doubled value (#7339)
                 if (tickPositions[0] === tickPositions[1]) {
@@ -5622,46 +5630,46 @@ class Axis implements AxisComposition {
                 }
             }
 
-            this.tickPositions = tickPositions;
+            axis.tickPositions = tickPositions;
 
             // Run the tick positioner callback, that allows modifying auto tick
             // positions.
             if (tickPositioner) {
                 tickPositioner = tickPositioner.apply(
                     axis,
-                    [this.min, this.max] as any
+                    [axis.min, axis.max] as any
                 ) as any;
                 if (tickPositioner) {
-                    this.tickPositions = tickPositions = tickPositioner as any;
+                    axis.tickPositions = tickPositions = tickPositioner as any;
                 }
             }
 
         }
 
         // Reset min/max or remove extremes based on start/end on tick
-        this.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
-        this.trimTicks(tickPositions, startOnTick, endOnTick);
-        if (!this.isLinked) {
+        axis.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
+        axis.trimTicks(tickPositions, startOnTick, endOnTick);
+        if (!axis.isLinked) {
 
             // Substract half a unit (#2619, #2846, #2515, #3390),
             // but not in case of multiple ticks (#6897)
             if (
-                this.single &&
+                axis.single &&
                 tickPositions.length < 2 &&
-                !this.categories &&
-                !this.series.some((s: Highcharts.Series): boolean =>
+                !axis.categories &&
+                !axis.series.some((s: Highcharts.Series): boolean =>
                     (s.is('heatmap') && s.options.pointPlacement === 'between')
                 )
             ) {
-                (this.min as any) -= 0.5;
-                (this.max as any) += 0.5;
+                (axis.min as any) -= 0.5;
+                (axis.max as any) += 0.5;
             }
             if (!tickPositionsOption && !tickPositioner) {
-                this.adjustTickAmount();
+                axis.adjustTickAmount();
             }
         }
 
-        fireEvent(this, 'afterSetTickPositions');
+        fireEvent(axis, 'afterSetTickPositions');
     }
 
     /**
@@ -6186,14 +6194,15 @@ class Axis implements AxisComposition {
      */
     public getExtremes(): Highcharts.ExtremesObject {
         var axis: Highcharts.Axis = this as any,
-            isLog = axis.isLog;
+            isLog = axis.isLog,
+            logarithmic = axis.logarithmic;
 
         return {
-            min: isLog ?
-                correctFloat(axis.lin2log(axis.min as any)) :
+            min: isLog && logarithmic ?
+                correctFloat(logarithmic.lin2log(axis.min as any)) :
                 axis.min as any,
-            max: isLog ?
-                correctFloat(axis.lin2log(axis.max as any)) :
+            max: isLog && logarithmic ?
+                correctFloat(logarithmic.lin2log(axis.max as any)) :
                 axis.max as any,
             dataMin: axis.dataMin as any,
             dataMax: axis.dataMax as any,
@@ -6216,10 +6225,11 @@ class Axis implements AxisComposition {
      * stay within the axis bounds.
      */
     public getThreshold(threshold: number): (number|undefined) {
-        var axis: Highcharts.Axis = this as any,
+        var axis = this,
+            logarithmic = axis.logarithmic,
             isLog = axis.isLog,
-            realMin = isLog ? axis.lin2log(axis.min as any) : axis.min as any,
-            realMax = isLog ? axis.lin2log(axis.max as any) : axis.max as any;
+            realMin = isLog && logarithmic ? logarithmic.lin2log(axis.min as any) : axis.min as any,
+            realMax = isLog && logarithmic ? logarithmic.lin2log(axis.max as any) : axis.max as any;
 
         if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
@@ -7191,6 +7201,7 @@ class Axis implements AxisComposition {
     public render(): void {
         var axis: Highcharts.Axis = this as any,
             chart = axis.chart,
+            logarithmic = axis.logarithmic,
             renderer = chart.renderer,
             options = axis.options,
             isLog = axis.isLog,
@@ -7279,8 +7290,8 @@ class Axis implements AxisComposition {
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
-                            from: isLog ? axis.lin2log(from) : from,
-                            to: isLog ? axis.lin2log(to) : to,
+                            from: isLog && logarithmic ? logarithmic.lin2log(from) : from,
+                            to: isLog && logarithmic ? logarithmic.lin2log(to) : to,
                             color: alternateGridColor
                         };
                         alternateBands[pos].render();
@@ -7651,7 +7662,7 @@ class Axis implements AxisComposition {
     }
 }
 
-interface Axis {
+interface Axis extends AxisComposition {
     keepProps: Array<string>;
 }
 

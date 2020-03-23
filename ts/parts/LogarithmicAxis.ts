@@ -19,24 +19,6 @@ const {
     pick
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Axis {
-            getLogTickPositions(
-                interval: number,
-                min: number,
-                max: number,
-                minor?: boolean
-            ): Array<number>;
-            lin2log(num: number): number;
-        }
-    }
-}
-
 /* eslint-disable valid-jsdoc */
 
 class LogarithmicAxisAdditions {
@@ -58,7 +40,7 @@ class LogarithmicAxisAdditions {
      * */
 
     axis: LogarithmicAxis;
-    minorAutoInterval?: (null|number)
+    minorAutoInterval?: number;
 
     /* *
      *
@@ -88,7 +70,7 @@ class LogarithmicAxisAdditions {
 
         // Reset
         if (!minor) {
-            logarithmic.minorAutoInterval = null;
+            logarithmic.minorAutoInterval = void 0;
         }
 
         // First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
@@ -121,7 +103,7 @@ class LogarithmicAxisAdditions {
             for (i = roundedMin; i < max + 1 && !break2; i++) {
                 len = intermediate.length;
                 for (j = 0; j < len && !break2; j++) {
-                    pos = logarithmic.log2lin(axis.lin2log(i) * intermediate[j]);
+                    pos = logarithmic.log2lin(logarithmic.lin2log(i) * intermediate[j]);
                     // #1670, lastPos is #3113
                     if (
                         pos > min &&
@@ -142,8 +124,8 @@ class LogarithmicAxisAdditions {
         // we might as well handle the tick positions like a linear axis. For
         // example 1.01, 1.02, 1.03, 1.04.
         } else {
-            var realMin = axis.lin2log(min),
-                realMax = axis.lin2log(max),
+            var realMin = logarithmic.lin2log(min),
+                realMax = logarithmic.lin2log(max),
                 tickIntervalOption = minor ?
                     axis.getMinorTickInterval() :
                     options.tickInterval,
@@ -209,23 +191,35 @@ class LogarithmicAxis {
 
         /* eslint-disable no-invalid-this */
 
-        addEvent(AxisClass, 'afterInit', function (): void {
+        addEvent(AxisClass, 'init', function (): void {
             const axis = this as LogarithmicAxis;
-            const options = axis.options;
 
             // extend logarithmic axis
-            const logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis);
-            const lin2log = function (): number {
+            axis.logarithmic = new LogarithmicAxisAdditions(axis);
+        });
+
+        addEvent(AxisClass, 'afterInit', function (): void {
+            const axis = this as LogarithmicAxis;
+            const logarithmic = axis.logarithmic;
+
+            const lin2log = function (this: LogarithmicAxis): number {
+                const linearToLogConverter = axis.options.linearToLogConverter;
+
+                if (typeof linearToLogConverter === 'function') {
+                    return linearToLogConverter.apply(axis, arguments);
+                }
+
                 return logarithmic.lin2log.apply(logarithmic, arguments);
             };
-            const log2lin = function (): number {
+            const log2lin = function (this: LogarithmicAxis): number {
+                const logToLinearConverter = axis.options.logToLinearConverter;
+
+                if (typeof logToLinearConverter === 'function') {
+                    return logToLinearConverter.apply(axis, arguments);
+                }
+
                 return logarithmic.log2lin.apply(logarithmic, arguments);
             };
-
-            axis.getLogTickPositions = function (): ReturnType<LogarithmicAxisAdditions['getTickPositions']> {
-                return logarithmic.getTickPositions.apply(logarithmic, arguments);
-            };
-            axis.lin2log = options.linearToLogConverter || lin2log;
 
             if (axis.isLog) {
                 axis.val2lin = log2lin;
@@ -240,9 +234,13 @@ class LogarithmicAxis {
 }
 
 interface LogarithmicAxis extends Axis {
-    getLogTickPositions: LogarithmicAxisAdditions['getTickPositions'];
-    lin2log: LogarithmicAxisAdditions['lin2log'];
     logarithmic: LogarithmicAxisAdditions;
+    options: Axis['options'] & LogarithmicAxisOptions;
+}
+
+interface LogarithmicAxisOptions {
+    linearToLogConverter?: LogarithmicAxisAdditions['lin2log'];
+    logToLinearConverter?: LogarithmicAxisAdditions['log2lin'];
 }
 
 LogarithmicAxis.compose(Axis); // @todo move to factory

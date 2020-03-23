@@ -427,7 +427,7 @@ var Axis = /** @class */ (function () {
         // Shorthand types
         axis.isLog = type === 'logarithmic';
         axis.isDatetimeAxis = isDatetimeAxis;
-        axis.positiveValuesOnly = axis.isLog && !axis.allowNegativeLog;
+        axis.positiveValuesOnly = axis.isLog && !axis.options.allowNegativeLog;
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
         /**
@@ -959,8 +959,10 @@ var Axis = /** @class */ (function () {
                 // For each interval in the major ticks, compute the minor ticks
                 // separately.
                 this.paddedTicks.forEach(function (_pos, i, paddedTicks) {
-                    if (i) {
-                        minorTickPositions.push.apply(minorTickPositions, axis.getLogTickPositions(minorTickInterval, paddedTicks[i - 1], paddedTicks[i], true));
+                    var logarithmic = axis.logarithmic;
+                    if (i &&
+                        logarithmic) {
+                        minorTickPositions.push.apply(minorTickPositions, logarithmic.getTickPositions(minorTickInterval, paddedTicks[i - 1], paddedTicks[i], true));
                     }
                 });
             }
@@ -1482,28 +1484,28 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:afterSetTickPositions
      */
     Axis.prototype.setTickPositions = function () {
-        var axis = this, options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, startOnTick = options.startOnTick, endOnTick = options.endOnTick;
+        var axis = this, logarithmic = axis.logarithmic, options = axis.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = axis.getMinorTickInterval(), tickPositioner = options.tickPositioner, startOnTick = options.startOnTick, endOnTick = options.endOnTick;
         // Set the tickmarkOffset
-        this.tickmarkOffset = (this.categories &&
+        axis.tickmarkOffset = (axis.categories &&
             options.tickmarkPlacement === 'between' &&
-            this.tickInterval === 1) ? 0.5 : 0; // #3202
+            axis.tickInterval === 1) ? 0.5 : 0; // #3202
         // get minorTickInterval
-        this.minorTickInterval =
+        axis.minorTickInterval =
             minorTickIntervalOption === 'auto' &&
-                this.tickInterval ?
-                this.tickInterval / 5 :
+                axis.tickInterval ?
+                axis.tickInterval / 5 :
                 minorTickIntervalOption;
         // When there is only one point, or all points have the same value on
         // this axis, then min and max are equal and tickPositions.length is 0
         // or 1. In this case, add some padding in order to center the point,
         // but leave it with one tick. #1337.
-        this.single =
-            this.min === this.max &&
-                defined(this.min) &&
-                !this.tickAmount &&
+        axis.single =
+            axis.min === axis.max &&
+                defined(axis.min) &&
+                !axis.tickAmount &&
                 (
                 // Data is on integer (#6563)
-                parseInt(this.min, 10) === this.min ||
+                parseInt(axis.min, 10) === axis.min ||
                     // Between integers and decimals are not allowed (#6274)
                     options.allowDecimals !== false);
         /**
@@ -1520,7 +1522,7 @@ var Axis = /** @class */ (function () {
          * @name Highcharts.Axis#tickPositions
          * @type {Highcharts.AxisTickPositionsArray|undefined}
          */
-        this.tickPositions =
+        axis.tickPositions =
             // Find the tick positions. Work on a copy (#1565)
             tickPositions =
                 (tickPositionsOption && tickPositionsOption.slice());
@@ -1528,59 +1530,60 @@ var Axis = /** @class */ (function () {
             // Too many ticks (#6405). Create a friendly warning and provide two
             // ticks so at least we can show the data series.
             if ((!axis.ordinal || !axis.ordinal.positions) &&
-                ((this.max - this.min) /
-                    this.tickInterval >
-                    Math.max(2 * this.len, 200))) {
-                tickPositions = [this.min, this.max];
-                error(19, false, this.chart);
+                ((axis.max - axis.min) /
+                    axis.tickInterval >
+                    Math.max(2 * axis.len, 200))) {
+                tickPositions = [axis.min, axis.max];
+                error(19, false, axis.chart);
             }
-            else if (this.isDatetimeAxis) {
-                tickPositions = axis.getTimeTicks(axis.normalizeTimeTickInterval(this.tickInterval, options.units), this.min, this.max, options.startOfWeek, axis.ordinal && axis.ordinal.positions, this.closestPointRange, true);
+            else if (axis.isDatetimeAxis) {
+                tickPositions = axis.getTimeTicks(axis.normalizeTimeTickInterval(axis.tickInterval, options.units), axis.min, axis.max, options.startOfWeek, axis.ordinal && axis.ordinal.positions, axis.closestPointRange, true);
             }
-            else if (this.isLog) {
-                tickPositions = axis.getLogTickPositions(this.tickInterval, this.min, this.max);
+            else if (axis.isLog &&
+                logarithmic) {
+                tickPositions = logarithmic.getTickPositions(axis.tickInterval, axis.min, axis.max);
             }
             else {
-                tickPositions = this.getLinearTickPositions(this.tickInterval, this.min, this.max);
+                tickPositions = axis.getLinearTickPositions(axis.tickInterval, axis.min, axis.max);
             }
             // Too dense ticks, keep only the first and last (#4477)
-            if (tickPositions.length > this.len) {
+            if (tickPositions.length > axis.len) {
                 tickPositions = [tickPositions[0], tickPositions.pop()];
                 // Reduce doubled value (#7339)
                 if (tickPositions[0] === tickPositions[1]) {
                     tickPositions.length = 1;
                 }
             }
-            this.tickPositions = tickPositions;
+            axis.tickPositions = tickPositions;
             // Run the tick positioner callback, that allows modifying auto tick
             // positions.
             if (tickPositioner) {
-                tickPositioner = tickPositioner.apply(axis, [this.min, this.max]);
+                tickPositioner = tickPositioner.apply(axis, [axis.min, axis.max]);
                 if (tickPositioner) {
-                    this.tickPositions = tickPositions = tickPositioner;
+                    axis.tickPositions = tickPositions = tickPositioner;
                 }
             }
         }
         // Reset min/max or remove extremes based on start/end on tick
-        this.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
-        this.trimTicks(tickPositions, startOnTick, endOnTick);
-        if (!this.isLinked) {
+        axis.paddedTicks = tickPositions.slice(0); // Used for logarithmic minor
+        axis.trimTicks(tickPositions, startOnTick, endOnTick);
+        if (!axis.isLinked) {
             // Substract half a unit (#2619, #2846, #2515, #3390),
             // but not in case of multiple ticks (#6897)
-            if (this.single &&
+            if (axis.single &&
                 tickPositions.length < 2 &&
-                !this.categories &&
-                !this.series.some(function (s) {
+                !axis.categories &&
+                !axis.series.some(function (s) {
                     return (s.is('heatmap') && s.options.pointPlacement === 'between');
                 })) {
-                this.min -= 0.5;
-                this.max += 0.5;
+                axis.min -= 0.5;
+                axis.max += 0.5;
             }
             if (!tickPositionsOption && !tickPositioner) {
-                this.adjustTickAmount();
+                axis.adjustTickAmount();
             }
         }
-        fireEvent(this, 'afterSetTickPositions');
+        fireEvent(axis, 'afterSetTickPositions');
     };
     /**
      * Handle startOnTick and endOnTick by either adapting to padding min/max or
@@ -1961,13 +1964,13 @@ var Axis = /** @class */ (function () {
      * An object containing extremes information.
      */
     Axis.prototype.getExtremes = function () {
-        var axis = this, isLog = axis.isLog;
+        var axis = this, isLog = axis.isLog, logarithmic = axis.logarithmic;
         return {
-            min: isLog ?
-                correctFloat(axis.lin2log(axis.min)) :
+            min: isLog && logarithmic ?
+                correctFloat(logarithmic.lin2log(axis.min)) :
                 axis.min,
-            max: isLog ?
-                correctFloat(axis.lin2log(axis.max)) :
+            max: isLog && logarithmic ?
+                correctFloat(logarithmic.lin2log(axis.max)) :
                 axis.max,
             dataMin: axis.dataMin,
             dataMax: axis.dataMax,
@@ -1989,7 +1992,7 @@ var Axis = /** @class */ (function () {
      * stay within the axis bounds.
      */
     Axis.prototype.getThreshold = function (threshold) {
-        var axis = this, isLog = axis.isLog, realMin = isLog ? axis.lin2log(axis.min) : axis.min, realMax = isLog ? axis.lin2log(axis.max) : axis.max;
+        var axis = this, logarithmic = axis.logarithmic, isLog = axis.isLog, realMin = isLog && logarithmic ? logarithmic.lin2log(axis.min) : axis.min, realMax = isLog && logarithmic ? logarithmic.lin2log(axis.max) : axis.max;
         if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
         }
@@ -2667,7 +2670,7 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:afterRender
      */
     Axis.prototype.render = function () {
-        var axis = this, chart = axis.chart, renderer = chart.renderer, options = axis.options, isLog = axis.isLog, isLinked = axis.isLinked, tickPositions = axis.tickPositions, axisTitle = axis.axisTitle, ticks = axis.ticks, minorTicks = axis.minorTicks, alternateBands = axis.alternateBands, stackLabelOptions = options.stackLabels, alternateGridColor = options.alternateGridColor, tickmarkOffset = axis.tickmarkOffset, axisLine = axis.axisLine, showAxis = axis.showAxis, animation = animObject(renderer.globalAnimation), from, to;
+        var axis = this, chart = axis.chart, logarithmic = axis.logarithmic, renderer = chart.renderer, options = axis.options, isLog = axis.isLog, isLinked = axis.isLinked, tickPositions = axis.tickPositions, axisTitle = axis.axisTitle, ticks = axis.ticks, minorTicks = axis.minorTicks, alternateBands = axis.alternateBands, stackLabelOptions = options.stackLabels, alternateGridColor = options.alternateGridColor, tickmarkOffset = axis.tickmarkOffset, axisLine = axis.axisLine, showAxis = axis.showAxis, animation = animObject(renderer.globalAnimation), from, to;
         // Reset
         axis.labelEdge.length = 0;
         axis.overlap = false;
@@ -2719,8 +2722,8 @@ var Axis = /** @class */ (function () {
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
-                            from: isLog ? axis.lin2log(from) : from,
-                            to: isLog ? axis.lin2log(to) : to,
+                            from: isLog && logarithmic ? logarithmic.lin2log(from) : from,
+                            to: isLog && logarithmic ? logarithmic.lin2log(to) : to,
                             color: alternateGridColor
                         };
                         alternateBands[pos].render();

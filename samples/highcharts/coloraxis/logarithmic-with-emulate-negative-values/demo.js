@@ -4,14 +4,10 @@
  * logarithmic axis never reaches or crosses zero.
  */
 (function (H) {
-    // Pass error messages
-    H.addEvent(H.ColorAxis, 'init', function (e) {
-        this.allowNegativeLog = e.userOptions.allowNegativeLog;
-    });
 
     // Override conversions
-    H.wrap(H.ColorAxis.prototype, 'log2lin', function (proceed, num) {
-        if (!this.allowNegativeLog) {
+    H.wrap(H.ColorAxis.prototype, 'val2lin', function (proceed, num) {
+        if (!this.options.allowNegativeLog) {
             return proceed.call(this, num);
         }
 
@@ -24,8 +20,8 @@
         result = Math.log(adjustedNum) / Math.LN10;
         return isNegative ? -result : result;
     });
-    H.wrap(H.ColorAxis.prototype, 'lin2log', function (proceed, num) {
-        if (!this.allowNegativeLog) {
+    H.wrap(H.ColorAxis.prototype, 'lin2val', function (proceed, num) {
+        if (!this.options.allowNegativeLog) {
             return proceed.call(this, num);
         }
 

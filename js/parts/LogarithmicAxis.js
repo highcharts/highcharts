@@ -41,7 +41,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
         var positions = [];
         // Reset
         if (!minor) {
-            logarithmic.minorAutoInterval = null;
+            logarithmic.minorAutoInterval = void 0;
         }
         // First case: All ticks fall on whole logarithms: 1, 10, 100 etc.
         if (interval >= 0.5) {
@@ -65,7 +65,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
             for (i = roundedMin; i < max + 1 && !break2; i++) {
                 len = intermediate.length;
                 for (j = 0; j < len && !break2; j++) {
-                    pos = logarithmic.log2lin(axis.lin2log(i) * intermediate[j]);
+                    pos = logarithmic.log2lin(logarithmic.lin2log(i) * intermediate[j]);
                     // #1670, lastPos is #3113
                     if (pos > min &&
                         (!minor || lastPos <= max) &&
@@ -83,7 +83,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
             // example 1.01, 1.02, 1.03, 1.04.
         }
         else {
-            var realMin = axis.lin2log(min), realMax = axis.lin2log(max), tickIntervalOption = minor ?
+            var realMin = logarithmic.lin2log(min), realMax = logarithmic.lin2log(max), tickIntervalOption = minor ?
                 axis.getMinorTickInterval() :
                 options.tickInterval, filteredTickIntervalOption = tickIntervalOption === 'auto' ?
                 null :
@@ -122,21 +122,28 @@ var LogarithmicAxis = /** @class */ (function () {
      * */
     LogarithmicAxis.compose = function (AxisClass) {
         /* eslint-disable no-invalid-this */
+        addEvent(AxisClass, 'init', function () {
+            var axis = this;
+            // extend logarithmic axis
+            axis.logarithmic = new LogarithmicAxisAdditions(axis);
+        });
         addEvent(AxisClass, 'afterInit', function () {
             var axis = this;
-            var options = axis.options;
-            // extend logarithmic axis
-            var logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis);
+            var logarithmic = axis.logarithmic;
             var lin2log = function () {
+                var linearToLogConverter = axis.options.linearToLogConverter;
+                if (typeof linearToLogConverter === 'function') {
+                    return linearToLogConverter.apply(axis, arguments);
+                }
                 return logarithmic.lin2log.apply(logarithmic, arguments);
             };
             var log2lin = function () {
+                var logToLinearConverter = axis.options.logToLinearConverter;
+                if (typeof logToLinearConverter === 'function') {
+                    return logToLinearConverter.apply(axis, arguments);
+                }
                 return logarithmic.log2lin.apply(logarithmic, arguments);
             };
-            axis.getLogTickPositions = function () {
-                return logarithmic.getTickPositions.apply(logarithmic, arguments);
-            };
-            axis.lin2log = options.linearToLogConverter || lin2log;
             if (axis.isLog) {
                 axis.val2lin = log2lin;
                 axis.lin2val = lin2log;

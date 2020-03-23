@@ -285,6 +285,7 @@ class Tick {
     public addLabel(): void {
         var tick = this,
             axis = tick.axis,
+            logarithmic = axis.logarithmic,
             options = axis.options,
             chart = axis.chart,
             categories = axis.categories,
@@ -351,7 +352,7 @@ class Tick {
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
             tickPositionInfo: tickPositionInfo,
-            value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
+            value: axis.isLog && logarithmic ? correctFloat(logarithmic.lin2log(value)) : value,
             pos: pos
         };
         str = (axis.labelFormatter as any).call(tick.formatCtx, this.formatCtx);
