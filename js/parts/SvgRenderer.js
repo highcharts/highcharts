@@ -1814,13 +1814,20 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         // compensate for inverted plot area
         transform;
         // Update shadow when options change (#12091).
-        if (isObject(shadowOptions)) {
-            if (this.oldShadowOptions) {
+        if (shadowOptions) {
+            // New and old options are objects.
+            if (isObject(shadowOptions) &&
+                isObject(this.oldShadowOptions)) {
                 objectEach(shadowOptions, function (value, key) {
                     if (value !== _this.oldShadowOptions[key]) {
                         update = true;
                     }
                 });
+            }
+            else if ( // New or old options are boolean.
+            this.oldShadowOptions &&
+                shadowOptions !== this.oldShadowOptions) {
+                update = true;
             }
             if (update) {
                 this.destroyShadows();
