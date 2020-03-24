@@ -191,3 +191,78 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Individual dash styles for box, median, stem and whisker lines (#13065)',
+    function (assert) {
+        var chart = Highcharts.chart('container', {
+
+            chart: {
+                type: 'boxplot'
+            },
+
+            series: [{
+                dashStyle: 'DashDot',
+                medianDashStyle: 'ShortDash',
+                whiskerDashStyle: 'dot',
+                data: [
+                    {
+                        low: 760,
+                        q1: 801,
+                        median: 848,
+                        q3: 895,
+                        high: 965,
+                        boxDashStyle: 'dot',
+                        medianDashStyle: 'dot',
+                        stemDashStyle: 'dot',
+                        whiskerDashStyle: 'dot',
+                        whiskerWidth: 1,
+                        medianWidth: 1
+                    }, {
+                        low: 733,
+                        q1: 853,
+                        median: 939,
+                        q3: 980,
+                        high: 1080
+                    }
+                ]
+            }]
+        });
+
+        var series = chart.series[0],
+            firstPoint = series.points[0],
+            secondPoint = series.points[1];
+
+        ['box', 'medianShape', 'stem', 'whiskers'].forEach(function (elem) {
+            assert.strictEqual(
+                firstPoint[elem].attr('stroke-dasharray'),
+                '1,3',
+                'Point\'s ' + elem + 'DashStyle'
+            );
+        });
+
+        assert.strictEqual(
+            secondPoint.medianShape.attr('stroke-dasharray'),
+            '6,2',
+            'medianDashStyle'
+        );
+
+        assert.strictEqual(
+            secondPoint.whiskers.attr('stroke-dasharray'),
+            '2,6',
+            'whiskersDashStyle'
+        );
+
+        assert.strictEqual(
+            secondPoint.box.attr('stroke-dasharray'),
+            '4,3,1,3',
+            'boxDashStyle'
+        );
+
+        assert.strictEqual(
+            secondPoint.stem.attr('stroke-dasharray'),
+            '4,3,1,3',
+            'stemDashStyle'
+        );
+    }
+);
