@@ -83,7 +83,8 @@ var OrdinalAxisAdditions = /** @class */ (function () {
                     xAxis: fakeAxis,
                     xData: series.xData.slice(),
                     chart: chart,
-                    destroyGroupedData: H.noop
+                    destroyGroupedData: H.noop,
+                    getProcessedData: H.Series.prototype.getProcessedData
                 };
                 fakeSeries.xData = fakeSeries.xData.concat(ordinal.getOverscrollPositions());
                 fakeSeries.options = {

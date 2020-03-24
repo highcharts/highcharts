@@ -150,6 +150,7 @@ declare global {
                 connectCliffs?: boolean
             ): SVGPathArray;
             public getPlotBox(): SeriesPlotBoxObject;
+            public getProcessedData(): SeriesProcessedDataObject;
             public getSymbol(): void;
             public getValidPoints(
                 points?: Array<Point>,
@@ -405,6 +406,13 @@ declare global {
             scaleY: number;
             translateX: number;
             translateY: number;
+        }
+        interface SeriesProcessedDataObject {
+            xData: Array<number>;
+            yData: (Array<number>|Array<Array<number>>);
+            cropped: (boolean|undefined);
+            cropStart: number;
+            closestPointRange: (number|undefined);
         }
         interface SeriesShowCallbackFunction {
             (this: Series, event: Event): void;
@@ -4532,23 +4540,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
             return data;
         },
-
-        /**
-         * Internal function to process the data by cropping away unused data
-         * points if the series is longer than the crop threshold. This saves
-         * computing time for large series. In Highstock, this function is
-         * extended to provide data grouping.
-         *
-         * @private
-         * @function Highcharts.Series#processData
-         * @param {boolean} [force]
-         *        Force data grouping.
-         * @return {boolean|undefined}
-         */
-        processData: function (
-            this: Highcharts.Series,
-            force?: boolean
-        ): (boolean|undefined) {
+        getProcessedData: function (
+            this: Highcharts.Series
+        ): Highcharts.SeriesProcessedDataObject {
             var series = this,
                 // copied during slice operation:
                 processedXData: Array<number> = series.xData as any,
@@ -4575,18 +4569,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 throwOnUnsorted = series.requireSorting,
                 min,
                 max;
-
-            // If the series data or axes haven't changed, don't go through
-            // this. Return false to pass the message on to override methods
-            // like in data grouping.
-            if (isCartesian &&
-                !series.isDirty &&
-                !xAxis.isDirty &&
-                !series.yAxis.isDirty &&
-                !force
-            ) {
-                return false;
-            }
 
             if (xAxis) {
                 // corrected for log axis (#3053)
@@ -4662,14 +4644,56 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 }
             }
 
-            // Record the properties
-            series.cropped = cropped; // undefined or true
-            series.cropStart = cropStart;
-            series.processedXData = processedXData;
-            series.processedYData = processedYData;
+            return {
+                xData: processedXData,
+                yData: processedYData,
+                cropped: cropped,
+                cropStart: cropStart,
+                closestPointRange: closestPointRange
+            };
+        },
 
+        /**
+         * Internal function to process the data by cropping away unused data
+         * points if the series is longer than the crop threshold. This saves
+         * computing time for large series. In Highstock, this function is
+         * extended to provide data grouping.
+         *
+         * @private
+         * @function Highcharts.Series#processData
+         * @param {boolean} [force]
+         *        Force data grouping.
+         * @return {boolean|undefined}
+         */
+        processData: function (
+            this: Highcharts.Series,
+            force?: boolean
+        ): (boolean|undefined) {
+            var series = this,
+                xAxis = series.xAxis,
+                processedData;
+
+            // If the series data or axes haven't changed, don't go through
+            // this. Return false to pass the message on to override methods
+            // like in data grouping.
+            if (series.isCartesian &&
+                !series.isDirty &&
+                !xAxis.isDirty &&
+                !series.yAxis.isDirty &&
+                !force
+            ) {
+                return false;
+            }
+
+            processedData = series.getProcessedData();
+
+            // Record the properties
+            series.cropped = processedData.cropped; // undefined or true
+            series.cropStart = processedData.cropStart;
+            series.processedXData = processedData.xData;
+            series.processedYData = processedData.yData;
             series.closestPointRange =
-                series.basePointRange = closestPointRange;
+                series.basePointRange = processedData.closestPointRange;
 
         },
 

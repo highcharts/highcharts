@@ -3494,35 +3494,13 @@ null,
         }
         return data;
     },
-    /**
-     * Internal function to process the data by cropping away unused data
-     * points if the series is longer than the crop threshold. This saves
-     * computing time for large series. In Highstock, this function is
-     * extended to provide data grouping.
-     *
-     * @private
-     * @function Highcharts.Series#processData
-     * @param {boolean} [force]
-     *        Force data grouping.
-     * @return {boolean|undefined}
-     */
-    processData: function (force) {
+    getProcessedData: function () {
         var series = this, 
         // copied during slice operation:
         processedXData = series.xData, processedYData = series.yData, dataLength = processedXData.length, croppedData, cropStart = 0, cropped, distance, closestPointRange, xAxis = series.xAxis, i, // loop variable
         options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = series.getExtremesFromAll ||
             options.getExtremesFromAll, // #4599
         isCartesian = series.isCartesian, xExtremes, val2lin = xAxis && xAxis.val2lin, isLog = xAxis && xAxis.isLog, throwOnUnsorted = series.requireSorting, min, max;
-        // If the series data or axes haven't changed, don't go through
-        // this. Return false to pass the message on to override methods
-        // like in data grouping.
-        if (isCartesian &&
-            !series.isDirty &&
-            !xAxis.isDirty &&
-            !series.yAxis.isDirty &&
-            !force) {
-            return false;
-        }
         if (xAxis) {
             // corrected for log axis (#3053)
             xExtremes = xAxis.getExtremes();
@@ -3573,13 +3551,46 @@ null,
                 throwOnUnsorted = false; // Only once
             }
         }
+        return {
+            xData: processedXData,
+            yData: processedYData,
+            cropped: cropped,
+            cropStart: cropStart,
+            closestPointRange: closestPointRange
+        };
+    },
+    /**
+     * Internal function to process the data by cropping away unused data
+     * points if the series is longer than the crop threshold. This saves
+     * computing time for large series. In Highstock, this function is
+     * extended to provide data grouping.
+     *
+     * @private
+     * @function Highcharts.Series#processData
+     * @param {boolean} [force]
+     *        Force data grouping.
+     * @return {boolean|undefined}
+     */
+    processData: function (force) {
+        var series = this, xAxis = series.xAxis, processedData;
+        // If the series data or axes haven't changed, don't go through
+        // this. Return false to pass the message on to override methods
+        // like in data grouping.
+        if (series.isCartesian &&
+            !series.isDirty &&
+            !xAxis.isDirty &&
+            !series.yAxis.isDirty &&
+            !force) {
+            return false;
+        }
+        processedData = series.getProcessedData();
         // Record the properties
-        series.cropped = cropped; // undefined or true
-        series.cropStart = cropStart;
-        series.processedXData = processedXData;
-        series.processedYData = processedYData;
+        series.cropped = processedData.cropped; // undefined or true
+        series.cropStart = processedData.cropStart;
+        series.processedXData = processedData.xData;
+        series.processedYData = processedData.yData;
         series.closestPointRange =
-            series.basePointRange = closestPointRange;
+            series.basePointRange = processedData.closestPointRange;
     },
     /**
      * Iterate over xData and crop values between min and max. Returns
