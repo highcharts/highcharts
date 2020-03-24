@@ -2724,13 +2724,22 @@ extend((
             transform;
 
         // Update shadow when options change (#12091).
-        if (isObject(shadowOptions)) {
-            if (this.oldShadowOptions) {
+        if (shadowOptions) {
+            // New and old options are objects.
+            if (
+                isObject(shadowOptions) &&
+                isObject(this.oldShadowOptions)
+            ) {
                 objectEach((shadowOptions as any), (value, key): void => {
                     if (value !== (this.oldShadowOptions as any)[key]) {
                         update = true;
                     }
                 });
+            } else if ( // New or old options are boolean.
+                this.oldShadowOptions &&
+                shadowOptions !== this.oldShadowOptions
+            ) {
+                update = true;
             }
 
             if (update) {
