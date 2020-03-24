@@ -112,6 +112,7 @@ const color = Color.parse;
 import U from '../../parts/Utilities.js';
 const {
     isNumber,
+    isObject,
     merge,
     objectEach,
     pick
@@ -674,6 +675,17 @@ function GLRenderer(
             //     pcolor[1] /= 255.0;
             //     pcolor[2] /= 255.0;
             // }
+
+            // Handle the point.color option (#5999)
+            const pointOptions = rawData && rawData[i];
+            if (!useRaw && isObject(pointOptions, true)) {
+                if (pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba as any;
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
+                }
+            }
 
             if (useRaw) {
                 x = (d as any)[0];
