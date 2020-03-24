@@ -970,9 +970,10 @@ var Axis = /** @class */ (function () {
                     }
                 });
             }
-            else if (axis.isDatetimeAxis &&
+            else if (axis.dateTime &&
+                axis.isDatetimeAxis &&
                 this.getMinorTickInterval() === 'auto') { // #1314
-                minorTickPositions = minorTickPositions.concat(axis.getTimeTicks(axis.normalizeTimeTickInterval(minorTickInterval), min, max, options.startOfWeek));
+                minorTickPositions = minorTickPositions.concat(axis.getTimeTicks(axis.dateTime.normalizeTimeTickInterval(minorTickInterval), min, max, options.startOfWeek));
             }
             else {
                 for (pos = min + (tickPositions[0] - min) % minorTickInterval; pos <= max; pos += minorTickInterval) {
@@ -1539,8 +1540,9 @@ var Axis = /** @class */ (function () {
                 tickPositions = [this.min, this.max];
                 error(19, false, this.chart);
             }
-            else if (this.isDatetimeAxis) {
-                tickPositions = axis.getTimeTicks(axis.normalizeTimeTickInterval(this.tickInterval, options.units), this.min, this.max, options.startOfWeek, axis.ordinal && axis.ordinal.positions, this.closestPointRange, true);
+            else if (axis.dateTime &&
+                this.isDatetimeAxis) {
+                tickPositions = axis.getTimeTicks(axis.dateTime.normalizeTimeTickInterval(this.tickInterval, options.units), this.min, this.max, options.startOfWeek, axis.ordinal && axis.ordinal.positions, this.closestPointRange, true);
             }
             else if (this.isLog) {
                 tickPositions = axis.getLogTickPositions(this.tickInterval, this.min, this.max);
