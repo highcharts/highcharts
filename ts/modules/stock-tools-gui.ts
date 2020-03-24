@@ -969,18 +969,18 @@ class Toolbar {
     public arrowDown: Highcharts.HTMLDOMElement = void 0 as any;
     public arrowUp: Highcharts.HTMLDOMElement = void 0 as any;
     public arrowWrapper: Highcharts.HTMLDOMElement = void 0 as any;
-    public chart: Highcharts.Chart = void 0 as any;
-    public eventsToUnbind: Array<Function> = void 0 as any;
-    public guiEnabled: (boolean|undefined) = void 0 as any;
-    public iconsURL: string = void 0 as any;
-    public lang: (Highcharts.Dictionary<string>|undefined) = void 0 as any;
+    public chart: Highcharts.Chart;
+    public eventsToUnbind: Array<Function>;
+    public guiEnabled: (boolean|undefined);
+    public iconsURL: string;
+    public lang: (Highcharts.Dictionary<string>|undefined);
     public listWrapper: Highcharts.HTMLDOMElement = void 0 as any;
-    public options: Highcharts.StockToolsGuiOptions = void 0 as any;
-    public placed: boolean =void 0 as any;
+    public options: Highcharts.StockToolsGuiOptions;
+    public placed: boolean;
     public showhideBtn: Highcharts.HTMLDOMElement = void 0 as any;
     public submenu: Highcharts.HTMLDOMElement = void 0 as any;
-    public toolbar: Highcharts.HTMLDOMElement= void 0 as any;
-    public visible: boolean = void 0 as any;
+    public toolbar: Highcharts.HTMLDOMElement = void 0 as any;
+    public visible: boolean;
     public wrapper: Highcharts.HTMLDOMElement = void 0 as any;
 
     /**
