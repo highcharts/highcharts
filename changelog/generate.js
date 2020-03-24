@@ -125,8 +125,14 @@ const childProcess = require('child_process');
     }
 
     function washPRLog(name, log) {
-        const washed = log[name].features.concat(log[name].bugfixes);
-        washed.startFixes = log[name].features.length;
+        let washed = [];
+
+        washed.startFixes = 0;
+
+        if (log[name]) {
+            washed = log[name].features.concat(log[name].bugfixes);
+            washed.startFixes = log[name].features.length;
+        }
 
         return washed;
     }
