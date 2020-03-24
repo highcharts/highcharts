@@ -27,9 +27,11 @@ Highcharts.chart('container', {
 
     plotOptions: {
         boxplot: {
+            boxDashStyle: 'Dash',
             fillColor: '#F0F0E0',
             lineWidth: 2,
             medianColor: '#0C5DA5',
+            medianDashStyle: 'ShortDot',
             medianWidth: 3,
             stemColor: '#A63400',
             stemDashStyle: 'dot',
