@@ -12,22 +12,9 @@
 
 import H from './Globals.js';
 
-/** @private */
-type IsObjectConditionalType<TObject, TStrict> = (
-    TObject extends object ?
-        (TObject extends null ?
-            false :
-            (TStrict extends true ?
-                (TObject extends Array<any> ?
-                    false :
-                    true
-                ) :
-                true
-            )
-        ) :
-        false
-);
-type Nullable = null|undefined;
+type NonArray<T> = T extends Array<unknown> ? never : T;
+type NonFunction<T> = T extends Function ? never : T;
+type NullType = (null|undefined);
 
 /**
  * Internal types
@@ -231,15 +218,21 @@ declare global {
             arr: Array<any>,
             fromIndex?: number
         ): number;
+        /** USE IMPORT */
         function isArray(obj: unknown): obj is Array<unknown>;
+        /** USE IMPORT */
         function isClass(obj: (object|undefined)): obj is Class;
+        /** USE IMPORT */
         function isDOMElement(obj: unknown): obj is HTMLDOMElement;
+        /** USE IMPORT */
         function isFunction(obj: unknown): obj is Function;
+        /** USE IMPORT */
         function isNumber(n: unknown): n is number;
-        function isObject<T1, T2 extends boolean = false>(
-            obj: T1,
-            strict?: T2
-        ): IsObjectConditionalType<T1, T2>;
+        /** USE IMPORT */
+        function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+        /** USE IMPORT */
+        function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
+        /** USE IMPORT */
         function isString(s: unknown): s is string;
         /** @deprecated */
         function keys(obj: any): Array<string>;
@@ -290,24 +283,24 @@ declare global {
         function offset(el: Element): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
         function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
-        T1 extends Nullable ?
-            T2 extends Nullable ?
-                T3 extends Nullable ?
-                    T4 extends Nullable ?
-                        T5 extends Nullable ?
+        T1 extends NullType ?
+            T2 extends NullType ?
+                T3 extends NullType ?
+                    T4 extends NullType ?
+                        T5 extends NullType ?
                             undefined : T5 : T4 : T3 : T2 : T1;
         function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
-        T1 extends Nullable ?
-            T2 extends Nullable ?
-                T3 extends Nullable ?
-                    T4 extends Nullable ? undefined : T4 : T3 : T2 : T1;
+        T1 extends NullType ?
+            T2 extends NullType ?
+                T3 extends NullType ?
+                    T4 extends NullType ? undefined : T4 : T3 : T2 : T1;
         function pick<T1, T2, T3>(...args: [T1, T2, T3]):
-        T1 extends Nullable ?
-            T2 extends Nullable ?
-                T3 extends Nullable ? undefined : T3 : T2 : T1;
+        T1 extends NullType ?
+            T2 extends NullType ?
+                T3 extends NullType ? undefined : T3 : T2 : T1;
         function pick<T1, T2>(...args: [T1, T2]):
-        T1 extends Nullable ? T2 extends Nullable ? undefined : T2 : T1;
-        function pick<T1>(...args: [T1]): T1 extends Nullable ? undefined : T1;
+        T1 extends NullType ? T2 extends NullType ? undefined : T2 : T1;
+        function pick<T1>(...args: [T1]): T1 extends NullType ? undefined : T1;
         function pick<T>(...args: Array<T|null|undefined>): T|undefined;
         function pInt(s: any, mag?: number): number;
         function relativeLength(
@@ -1440,6 +1433,8 @@ const isArray = H.isArray = function isArray(obj: unknown): obj is Array<unknown
     return str === '[object Array]' || str === '[object Array Iterator]';
 };
 
+function isObject<T>(obj: T, strict: true): obj is object & NonArray<NonFunction<NonNullable<T>>>;
+function isObject<T>(obj: T, strict?: false): obj is object & NonFunction<NonNullable<T>>;
 /**
  * Utility function to check if an item is of type object.
  *
@@ -1454,16 +1449,17 @@ const isArray = H.isArray = function isArray(obj: unknown): obj is Array<unknown
  * @return {boolean}
  *         True if the argument is an object.
  */
-const isObject = H.isObject = function isObject<T1, T2 extends boolean = false>(
-    obj: T1,
-    strict?: T2
-): IsObjectConditionalType<T1, T2> {
+function isObject<T>(
+    obj: T,
+    strict?: boolean
+): boolean {
     return (
         !!obj &&
         typeof obj === 'object' &&
         (!strict || !isArray(obj))
     ) as any; // eslint-disable-line @typescript-eslint/no-explicit-any
-};
+}
+H.isObject = isObject;
 
 /**
  * Utility function to check if an Object is a HTML Element.
@@ -1715,25 +1711,25 @@ const extend = H.extend = function extend<T extends object>(a: (T|undefined), b:
 };
 
 function pick<T1, T2, T3, T4, T5>(...args: [T1, T2, T3, T4, T5]):
-T1 extends Nullable ?
-    T2 extends Nullable ?
-        T3 extends Nullable ?
-            T4 extends Nullable ?
-                T5 extends Nullable ? undefined : T5 : T4 : T3 : T2 : T1;
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ?
+            T4 extends NullType ?
+                T5 extends NullType ? undefined : T5 : T4 : T3 : T2 : T1;
 function pick<T1, T2, T3, T4>(...args: [T1, T2, T3, T4]):
-T1 extends Nullable ?
-    T2 extends Nullable ?
-        T3 extends Nullable ?
-            T4 extends Nullable ? undefined : T4 : T3 : T2 : T1;
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ?
+            T4 extends NullType ? undefined : T4 : T3 : T2 : T1;
 function pick<T1, T2, T3>(...args: [T1, T2, T3]):
-T1 extends Nullable ?
-    T2 extends Nullable ?
-        T3 extends Nullable ? undefined : T3 : T2 : T1;
+T1 extends NullType ?
+    T2 extends NullType ?
+        T3 extends NullType ? undefined : T3 : T2 : T1;
 function pick<T1, T2>(...args: [T1, T2]):
-T1 extends Nullable ?
-    T2 extends Nullable ? undefined : T2 : T1;
+T1 extends NullType ?
+    T2 extends NullType ? undefined : T2 : T1;
 function pick<T1>(...args: [T1]):
-T1 extends Nullable ? undefined : T1;
+T1 extends NullType ? undefined : T1;
 function pick<T>(...args: Array<T|null|undefined>): T|undefined;
 /* eslint-disable valid-jsdoc */
 /**
