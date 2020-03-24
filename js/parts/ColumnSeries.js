@@ -23,6 +23,7 @@ import H from './Globals.js';
 * @name Highcharts.ColumnMetricsObject#offset
 * @type {number}
 */
+''; // detach doclets above
 import Color from './Color.js';
 var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
@@ -50,8 +51,8 @@ seriesType('column', 'line',
  *         Column chart
  *
  * @extends      plotOptions.line
- * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
- *               lineWidth, marker, connectEnds, step, useOhlcData
+ * @excluding    connectEnds, connectNulls, gapSize, gapUnit, linecap,
+ *               lineWidth, marker, step, useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.column
  */
@@ -491,7 +492,7 @@ seriesType('column', 'line',
                 }
             });
         }
-        var categoryWidth = Math.min(Math.abs(xAxis.transA) * (xAxis.ordinalSlope ||
+        var categoryWidth = Math.min(Math.abs(xAxis.transA) * ((xAxis.ordinal && xAxis.ordinal.slope) ||
             options.pointRange ||
             xAxis.closestPointRange ||
             xAxis.tickInterval ||
@@ -590,10 +591,12 @@ seriesType('column', 'line',
                     (yAxis.reversed && point.negative);
                 // Reverse zeros if there's no positive value in the series
                 // in visible range (#7046)
-                if (point.y === threshold &&
-                    series.dataMax <= threshold &&
+                if (isNumber(threshold) &&
+                    isNumber(dataMax) &&
+                    point.y === threshold &&
+                    dataMax <= threshold &&
                     // and if there's room for it (#7311)
-                    yAxis.min < threshold &&
+                    (yAxis.min || 0) < threshold &&
                     // if all points are the same value (i.e zero) not draw
                     // as negative points (#10646)
                     dataMin !== dataMax) {
@@ -801,38 +804,35 @@ seriesType('column', 'line',
      */
     animate: function (init) {
         var series = this, yAxis = this.yAxis, options = series.options, inverted = this.chart.inverted, attr = {}, translateProp = inverted ? 'translateX' : 'translateY', translateStart, translatedThreshold;
-        if (svg) { // VML is too slow anyway
-            if (init) {
-                attr.scaleY = 0.001;
-                translatedThreshold = clamp(yAxis.toPixels(options.threshold), yAxis.pos, yAxis.pos + yAxis.len);
-                if (inverted) {
-                    attr.translateX = translatedThreshold - yAxis.len;
-                }
-                else {
-                    attr.translateY = translatedThreshold;
-                }
-                // apply finnal clipping (used in Highstock) (#7083)
-                // animation is done by scaleY, so cliping is for panes
-                if (series.clipBox) {
-                    series.setClip();
-                }
-                series.group.attr(attr);
+        if (init) {
+            attr.scaleY = 0.001;
+            translatedThreshold = clamp(yAxis.toPixels(options.threshold), yAxis.pos, yAxis.pos + yAxis.len);
+            if (inverted) {
+                attr.translateX = translatedThreshold - yAxis.len;
             }
-            else { // run the animation
-                translateStart = series.group.attr(translateProp);
-                series.group.animate({ scaleY: 1 }, extend(animObject(series.options.animation), {
-                    // Do the scale synchronously to ensure smooth
-                    // updating (#5030, #7228)
-                    step: function (val, fx) {
-                        attr[translateProp] =
-                            translateStart +
-                                fx.pos * (yAxis.pos - translateStart);
+            else {
+                attr.translateY = translatedThreshold;
+            }
+            // apply finnal clipping (used in Highstock) (#7083)
+            // animation is done by scaleY, so cliping is for panes
+            if (series.clipBox) {
+                series.setClip();
+            }
+            series.group.attr(attr);
+        }
+        else { // run the animation
+            translateStart = series.group.attr(translateProp);
+            series.group.animate({ scaleY: 1 }, extend(animObject(series.options.animation), {
+                // Do the scale synchronously to ensure smooth
+                // updating (#5030, #7228)
+                step: function (val, fx) {
+                    if (series.group) {
+                        attr[translateProp] = translateStart +
+                            fx.pos * (yAxis.pos - translateStart);
                         series.group.attr(attr);
                     }
-                }));
-                // delete this function to allow it only once
-                series.animate = null;
-            }
+                }
+            }));
         }
     },
     /**

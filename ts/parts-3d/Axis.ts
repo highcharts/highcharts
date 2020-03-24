@@ -194,7 +194,7 @@ var extendedOptions: Highcharts.AxisOptions = {
 
 /* eslint-disable no-invalid-this */
 
-merge(true, Axis.prototype.defaultOptions, extendedOptions);
+merge(true, Axis.defaultOptions, extendedOptions);
 
 
 addEvent(Axis, 'afterSetOptions', function (): void {

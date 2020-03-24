@@ -54,13 +54,12 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    fireEvent,
     inArray,
     objectEach,
     pick,
     removeEvent
 } = U;
-
-var fireEvent = H.fireEvent;
 
 /* eslint-disable valid-jsdoc */
 
@@ -80,15 +79,27 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      * Add emitter events.
      */
     addEvents: function (this: Highcharts.AnnotationEventEmitter): void {
-        var emitter = this;
+        var emitter = this,
+            addMouseDownEvent = function (
+                element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
+            ): void {
+                addEvent(
+                    element,
+                    'mousedown',
+                    (e: Highcharts.AnnotationEventObject): void => {
+                        emitter.onMouseDown(e);
+                    }
+                );
+            };
 
-        addEvent(
-            emitter.graphic.element,
-            'mousedown',
-            function (e: Highcharts.AnnotationEventObject): void {
-                emitter.onMouseDown(e);
+        addMouseDownEvent(this.graphic.element);
+
+        (emitter.labels || []).forEach((label): void => {
+            if (label.options.useHTML) {
+                // Mousedown event bound to HTML element (#13070).
+                addMouseDownEvent(label.graphic.text.element);
             }
-        );
+        });
 
         objectEach(emitter.options.events, function (
             event: Highcharts.EventCallbackFunction<Highcharts.Annotation>,
@@ -116,7 +127,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             addEvent(emitter, 'drag', emitter.onDrag);
 
             if (!emitter.graphic.renderer.styledMode) {
-                emitter.graphic.css({
+                const cssPointer = {
                     cursor: ({
                         x: 'ew-resize',
                         y: 'ns-resize',
@@ -124,6 +135,14 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                     } as Highcharts.Dictionary<Highcharts.CursorValue>)[
                         emitter.options.draggable
                     ]
+                };
+
+                emitter.graphic.css(cssPointer);
+
+                (emitter.labels || []).forEach((label): void => {
+                    if (label.options.useHTML) {
+                        label.graphic.text.css(cssPointer);
+                    }
                 });
             }
         }

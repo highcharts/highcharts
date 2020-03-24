@@ -13,7 +13,7 @@
 import H from '../../parts/Globals.js';
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, error = U.error, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, error = U.error, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../../parts/Series.js';
 import '../../parts/Options.js';
 import '../../parts/Interaction.js';
@@ -93,6 +93,7 @@ Series.prototype.getPoint = function (boostPoint) {
         point.plotX = boostPoint.plotX;
         point.plotY = boostPoint.plotY;
         point.index = boostPoint.i;
+        point.isInside = this.isPointInside(boostPoint);
     }
     return point;
 };
@@ -156,6 +157,7 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
     if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
         return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
+    return {};
 });
 /*
  * Override a bunch of methods the same way. If the number of points is
@@ -242,7 +244,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
             firstPoint = this.getFirstValidPoint(this.options.data);
-            if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
+            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
                 error(12, false, this.chart);
             }
             this.enterBoost();
@@ -283,9 +285,6 @@ Series.prototype.enterBoost = function () {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
-    // Once we've been in boost mode, we don't want animation when returning to
-    // vanilla mode.
-    this.animate = null;
     // Hide series label if any
     if (this.labelBySeries) {
         this.labelBySeries = this.labelBySeries.destroy();

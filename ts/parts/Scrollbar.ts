@@ -10,7 +10,20 @@
 
 'use strict';
 
+import Axis from './Axis.js';
 import H from './Globals.js';
+import ScrollbarAxis from './ScrollbarAxis.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    fireEvent,
+    merge,
+    pick,
+    removeEvent
+} = U;
 
 /**
  * Internal types
@@ -18,9 +31,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            scrollbar?: Scrollbar;
-        }
         interface Chart {
             scrollbarsOffsets?: [number, number];
         }
@@ -66,9 +76,6 @@ declare global {
             trackBorderWidth?: number;
             vertical?: boolean;
             zIndex?: number;
-        }
-        interface XAxisOptions {
-            scrollbar?: ScrollbarOptions;
         }
         class Scrollbar {
             public constructor(
@@ -139,249 +146,11 @@ interface ScrollbarEventCallbackFunction {
     (e: Highcharts.PointerEventObject): void;
 }
 
-import U from './Utilities.js';
-const {
-    addEvent,
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    fireEvent,
-    merge,
-    pick,
-    removeEvent
-} = U;
-
-import './Axis.js';
 import './Options.js';
 
-var Axis = H.Axis,
-    defaultOptions = H.defaultOptions,
+var defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
-    isTouchDevice = H.isTouchDevice,
-    swapXY: (
-        path: Highcharts.SVGPathArray,
-        vertical?: boolean
-    ) => Highcharts.SVGPathArray;
-
-/**
- *
- * The scrollbar is a means of panning over the X axis of a stock chart.
- * Scrollbars can  also be applied to other types of axes.
- *
- * Another approach to scrollable charts is the [chart.scrollablePlotArea](
- * https://api.highcharts.com/highcharts/chart.scrollablePlotArea) option that
- * is especially suitable for simpler cartesian charts on mobile.
- *
- * In styled mode, all the presentational options for the
- * scrollbar are replaced by the classes `.highcharts-scrollbar-thumb`,
- * `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`,
- * `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
- *
- * @sample stock/yaxis/inverted-bar-scrollbar/
- *         A scrollbar on a simple bar chart
- *
- * @product highstock gantt
- * @optionparent scrollbar
- */
-var defaultScrollbarOptions: Highcharts.ScrollbarOptions = {
-
-    /**
-     * The height of the scrollbar. The height also applies to the width
-     * of the scroll arrows so that they are always squares. Defaults to
-     * 20 for touch devices and 14 for mouse devices.
-     *
-     * @sample stock/scrollbar/height/
-     *         A 30px scrollbar
-     *
-     * @type    {number}
-     * @default 20/14
-     */
-    height: isTouchDevice ? 20 : 14,
-
-    /**
-     * The border rounding radius of the bar.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     */
-    barBorderRadius: 0,
-
-    /**
-     * The corner radius of the scrollbar buttons.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     */
-    buttonBorderRadius: 0,
-
-    /**
-     * Enable or disable the scrollbar.
-     *
-     * @sample stock/scrollbar/enabled/
-     *         Disable the scrollbar, only use navigator
-     *
-     * @type      {boolean}
-     * @default   true
-     * @apioption scrollbar.enabled
-     */
-
-    /**
-     * Whether to redraw the main chart as the scrollbar or the navigator
-     * zoomed window is moved. Defaults to `true` for modern browsers and
-     * `false` for legacy IE browsers as well as mobile devices.
-     *
-     * @sample stock/scrollbar/liveredraw
-     *         Setting live redraw to false
-     *
-     * @type  {boolean}
-     * @since 1.3
-     */
-    liveRedraw: void 0,
-
-    /**
-     * The margin between the scrollbar and its axis when the scrollbar is
-     * applied directly to an axis.
-     */
-    margin: 10,
-
-    /**
-     * The minimum width of the scrollbar.
-     *
-     * @since 1.2.5
-     */
-    minWidth: 6,
-
-    /**
-     * Whether to show or hide the scrollbar when the scrolled content is
-     * zoomed out to it full extent.
-     *
-     * @type      {boolean}
-     * @default   true
-     * @apioption scrollbar.showFull
-     */
-
-    step: 0.2,
-
-    /**
-     * The z index of the scrollbar group.
-     */
-    zIndex: 3,
-
-    /**
-     * The background color of the scrollbar itself.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    barBackgroundColor: '${palette.neutralColor20}',
-
-    /**
-     * The width of the bar's border.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     */
-    barBorderWidth: 1,
-
-    /**
-     * The color of the scrollbar's border.
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    barBorderColor: '${palette.neutralColor20}',
-
-    /**
-     * The color of the small arrow inside the scrollbar buttons.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    buttonArrowColor: '${palette.neutralColor80}',
-
-    /**
-     * The color of scrollbar buttons.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    buttonBackgroundColor: '${palette.neutralColor10}',
-
-    /**
-     * The color of the border of the scrollbar buttons.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    buttonBorderColor: '${palette.neutralColor20}',
-
-    /**
-     * The border width of the scrollbar buttons.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     */
-    buttonBorderWidth: 1,
-
-    /**
-     * The color of the small rifles in the middle of the scrollbar.
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    rifleColor: '${palette.neutralColor80}',
-
-    /**
-     * The color of the track background.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    trackBackgroundColor: '${palette.neutralColor5}',
-
-    /**
-     * The color of the border of the scrollbar track.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     *
-     * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-     */
-    trackBorderColor: '${palette.neutralColor5}',
-
-    /**
-     * The corner radius of the border of the scrollbar track.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     *
-     * @type      {number}
-     * @default   0
-     * @apioption scrollbar.trackBorderRadius
-     */
-
-    /**
-     * The width of the border of the scrollbar track.
-     *
-     * @sample stock/scrollbar/style/
-     *         Scrollbar styling
-     */
-    trackBorderWidth: 1
-};
-
-defaultOptions.scrollbar = merge(
-    true,
-    defaultScrollbarOptions,
-    defaultOptions.scrollbar
-);
+    isTouchDevice = H.isTouchDevice;
 
 /**
  * When we have vertical scrollbar, rifles and arrow in buttons should be
@@ -390,15 +159,17 @@ defaultOptions.scrollbar = merge(
  * @function Highcharts.swapXY
  *
  * @param {Highcharts.SVGPathArray} path
- *        Path to be rotated.
+ * Path to be rotated.
  *
  * @param {boolean} [vertical]
- *        If vertical scrollbar, swap x-y values.
+ * If vertical scrollbar, swap x-y values.
  *
  * @return {Highcharts.SVGPathArray}
- *         Rotated path.
+ * Rotated path.
+ *
+ * @requires modules/stock
  */
-H.swapXY = swapXY = function (
+const swapXY = H.swapXY = function (
     path: Highcharts.SVGPathArray,
     vertical?: boolean
 ): Highcharts.SVGPathArray {
@@ -431,6 +202,228 @@ H.swapXY = swapXY = function (
  * @param {Highcharts.Chart} chart
  */
 class Scrollbar {
+
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+
+    /**
+     *
+     * The scrollbar is a means of panning over the X axis of a stock chart.
+     * Scrollbars can  also be applied to other types of axes.
+     *
+     * Another approach to scrollable charts is the [chart.scrollablePlotArea](
+     * https://api.highcharts.com/highcharts/chart.scrollablePlotArea) option that
+     * is especially suitable for simpler cartesian charts on mobile.
+     *
+     * In styled mode, all the presentational options for the
+     * scrollbar are replaced by the classes `.highcharts-scrollbar-thumb`,
+     * `.highcharts-scrollbar-arrow`, `.highcharts-scrollbar-button`,
+     * `.highcharts-scrollbar-rifles` and `.highcharts-scrollbar-track`.
+     *
+     * @sample stock/yaxis/inverted-bar-scrollbar/
+     *         A scrollbar on a simple bar chart
+     *
+     * @product highstock gantt
+     * @optionparent scrollbar
+     *
+     * @private
+     */
+    public static defaultOptions: Highcharts.ScrollbarOptions = {
+
+        /**
+         * The height of the scrollbar. The height also applies to the width
+         * of the scroll arrows so that they are always squares. Defaults to
+         * 20 for touch devices and 14 for mouse devices.
+         *
+         * @sample stock/scrollbar/height/
+         *         A 30px scrollbar
+         *
+         * @type    {number}
+         * @default 20/14
+         */
+        height: isTouchDevice ? 20 : 14,
+
+        /**
+         * The border rounding radius of the bar.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         */
+        barBorderRadius: 0,
+
+        /**
+         * The corner radius of the scrollbar buttons.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         */
+        buttonBorderRadius: 0,
+
+        /**
+         * Enable or disable the scrollbar.
+         *
+         * @sample stock/scrollbar/enabled/
+         *         Disable the scrollbar, only use navigator
+         *
+         * @type      {boolean}
+         * @default   true
+         * @apioption scrollbar.enabled
+         */
+
+        /**
+         * Whether to redraw the main chart as the scrollbar or the navigator
+         * zoomed window is moved. Defaults to `true` for modern browsers and
+         * `false` for legacy IE browsers as well as mobile devices.
+         *
+         * @sample stock/scrollbar/liveredraw
+         *         Setting live redraw to false
+         *
+         * @type  {boolean}
+         * @since 1.3
+         */
+        liveRedraw: void 0,
+
+        /**
+         * The margin between the scrollbar and its axis when the scrollbar is
+         * applied directly to an axis.
+         */
+        margin: 10,
+
+        /**
+         * The minimum width of the scrollbar.
+         *
+         * @since 1.2.5
+         */
+        minWidth: 6,
+
+        /**
+         * Whether to show or hide the scrollbar when the scrolled content is
+         * zoomed out to it full extent.
+         *
+         * @type      {boolean}
+         * @default   true
+         * @apioption scrollbar.showFull
+         */
+
+        step: 0.2,
+
+        /**
+         * The z index of the scrollbar group.
+         */
+        zIndex: 3,
+
+        /**
+         * The background color of the scrollbar itself.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        barBackgroundColor: '${palette.neutralColor20}',
+
+        /**
+         * The width of the bar's border.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         */
+        barBorderWidth: 1,
+
+        /**
+         * The color of the scrollbar's border.
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        barBorderColor: '${palette.neutralColor20}',
+
+        /**
+         * The color of the small arrow inside the scrollbar buttons.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        buttonArrowColor: '${palette.neutralColor80}',
+
+        /**
+         * The color of scrollbar buttons.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        buttonBackgroundColor: '${palette.neutralColor10}',
+
+        /**
+         * The color of the border of the scrollbar buttons.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        buttonBorderColor: '${palette.neutralColor20}',
+
+        /**
+         * The border width of the scrollbar buttons.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         */
+        buttonBorderWidth: 1,
+
+        /**
+         * The color of the small rifles in the middle of the scrollbar.
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        rifleColor: '${palette.neutralColor80}',
+
+        /**
+         * The color of the track background.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        trackBackgroundColor: '${palette.neutralColor5}',
+
+        /**
+         * The color of the border of the scrollbar track.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         *
+         * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+         */
+        trackBorderColor: '${palette.neutralColor5}',
+
+        /**
+         * The corner radius of the border of the scrollbar track.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         *
+         * @type      {number}
+         * @default   0
+         * @apioption scrollbar.trackBorderRadius
+         */
+
+        /**
+         * The width of the border of the scrollbar track.
+         *
+         * @sample stock/scrollbar/style/
+         *         Scrollbar styling
+         */
+        trackBorderWidth: 1
+    }
 
     /* *
      *
@@ -762,7 +755,7 @@ class Scrollbar {
         this.renderer = renderer;
 
         this.userOptions = options;
-        this.options = merge(defaultScrollbarOptions, options);
+        this.options = merge(Scrollbar.defaultOptions, options);
 
         this.chart = chart;
 
@@ -1201,202 +1194,13 @@ class Scrollbar {
 }
 
 if (!H.Scrollbar) {
-    /* *
-     * Wrap axis initialization and create scrollbar if enabled:
-     */
-    addEvent(Axis, 'afterInit', function (this: Highcharts.Axis): void {
-        var axis = this;
-
-        if (
-            axis.options &&
-            axis.options.scrollbar &&
-            axis.options.scrollbar.enabled
-        ) {
-            // Predefined options:
-            axis.options.scrollbar.vertical = !axis.horiz;
-            axis.options.startOnTick = axis.options.endOnTick = false;
-
-            axis.scrollbar = new (Scrollbar as any)(
-                axis.chart.renderer,
-                axis.options.scrollbar,
-                axis.chart
-            );
-
-            addEvent(axis.scrollbar as any, 'changed', function (
-                this: Highcharts.Scrollbar,
-                e: Highcharts.ScrollbarChangedEventObject
-            ): void {
-                var unitedMin = Math.min(
-                        pick(axis.options.min, axis.min as any),
-                        axis.min as any,
-                        axis.dataMin as any
-                    ),
-                    unitedMax = Math.max(
-                        pick(axis.options.max, axis.max as any),
-                        axis.max as any,
-                        axis.dataMax as any
-                    ),
-                    range = unitedMax - unitedMin,
-                    to,
-                    from;
-
-                if (
-                    (axis.horiz && !axis.reversed) ||
-                    (!axis.horiz && axis.reversed)
-                ) {
-                    to = unitedMin + range * (this.to as any);
-                    from = unitedMin + range * (this.from as any);
-                } else {
-                    // y-values in browser are reversed, but this also applies
-                    // for reversed horizontal axis:
-                    to = unitedMin + range * (1 - (this.from as any));
-                    from = unitedMin + range * (1 - (this.to as any));
-                }
-
-                if (
-                    pick(
-                        this.options.liveRedraw,
-                        H.svg && !H.isTouchDevice && !this.chart.isBoosting
-                    ) ||
-                    // Mouseup always should change extremes
-                    e.DOMType === 'mouseup' ||
-                    // Internal events
-                    !defined(e.DOMType)
-                ) {
-                    axis.setExtremes(
-                        from,
-                        to,
-                        true,
-                        e.DOMType !== 'mousemove',
-                        e
-                    );
-                } else {
-                    // When live redraw is disabled, don't change extremes
-                    // Only change the position of the scollbar thumb
-                    this.setRange(this.from as any, this.to as any);
-                }
-            });
-        }
-    });
-
-    /* *
-     * Wrap rendering axis, and update scrollbar if one is created:
-     */
-    addEvent(Axis, 'afterRender', function (this: Highcharts.Axis): void {
-        var axis = this,
-            scrollMin = Math.min(
-                pick(axis.options.min, axis.min as any),
-                axis.min as any,
-                pick(axis.dataMin, axis.min as any) // #6930
-            ),
-            scrollMax = Math.max(
-                pick(axis.options.max, axis.max as any),
-                axis.max as any,
-                pick(axis.dataMax, axis.max as any) // #6930
-            ),
-            scrollbar = axis.scrollbar,
-            offset = (axis.axisTitleMargin as any) + (axis.titleOffset || 0),
-            scrollbarsOffsets = axis.chart.scrollbarsOffsets,
-            axisMargin = axis.options.margin || 0,
-            offsetsIndex,
-            from,
-            to;
-
-        if (scrollbar) {
-
-            if (axis.horiz) {
-
-                // Reserve space for labels/title
-                if (!axis.opposite) {
-                    (scrollbarsOffsets as any)[1] += offset;
-                }
-
-                scrollbar.position(
-                    axis.left,
-                    axis.top + axis.height + 2 + (scrollbarsOffsets as any)[1] -
-                        (axis.opposite ? axisMargin : 0),
-                    axis.width,
-                    axis.height
-                );
-
-                // Next scrollbar should reserve space for margin (if set)
-                if (!axis.opposite) {
-                    (scrollbarsOffsets as any)[1] += axisMargin;
-                }
-
-                offsetsIndex = 1;
-            } else {
-
-                // Reserve space for labels/title
-                if (axis.opposite) {
-                    (scrollbarsOffsets as any)[0] += offset;
-                }
-
-                scrollbar.position(
-                    axis.left + axis.width + 2 + (scrollbarsOffsets as any)[0] -
-                        (axis.opposite ? 0 : axisMargin),
-                    axis.top,
-                    axis.width,
-                    axis.height
-                );
-
-                // Next scrollbar should reserve space for margin (if set)
-                if (axis.opposite) {
-                    (scrollbarsOffsets as any)[0] += axisMargin;
-                }
-
-                offsetsIndex = 0;
-            }
-
-            (scrollbarsOffsets as any)[offsetsIndex] += scrollbar.size +
-                (scrollbar.options.margin as any);
-
-            if (
-                isNaN(scrollMin) ||
-                isNaN(scrollMax) ||
-                !defined(axis.min) ||
-                !defined(axis.max) ||
-                axis.min === axis.max // #10733
-            ) {
-                // default action: when extremes are the same or there is not
-                // extremes on the axis, but scrollbar exists, make it full size
-                scrollbar.setRange(0, 1);
-            } else {
-                from =
-                    ((axis.min as any) - scrollMin) / (scrollMax - scrollMin);
-                to =
-                    ((axis.max as any) - scrollMin) / (scrollMax - scrollMin);
-
-                if (
-                    (axis.horiz && !axis.reversed) ||
-                    (!axis.horiz && axis.reversed)
-                ) {
-                    scrollbar.setRange(from, to);
-                } else {
-                    // inverse vertical axis
-                    scrollbar.setRange(1 - to, 1 - from);
-                }
-            }
-        }
-    });
-
-    /* *
-     * Make space for a scrollbar
-     * @private
-     */
-    addEvent(Axis, 'afterGetOffset', function (this: Highcharts.Axis): void {
-        var axis = this,
-            index = axis.horiz ? 2 : 1,
-            scrollbar = axis.scrollbar;
-
-        if (scrollbar) {
-            axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
-            axis.chart.axisOffset[index] +=
-                scrollbar.size + (scrollbar.options.margin as any);
-        }
-    });
-
+    defaultOptions.scrollbar = merge(
+        true,
+        Scrollbar.defaultOptions,
+        defaultOptions.scrollbar
+    );
     H.Scrollbar = Scrollbar;
+    ScrollbarAxis.compose(Axis, Scrollbar);
 }
 
 export default H.Scrollbar;

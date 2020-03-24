@@ -14,7 +14,8 @@ import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../parts/Series.js';
-var Axis = H.Axis, Chart = H.Chart, Series = H.Series, StackItem = H.StackItem, seriesTypes = H.seriesTypes;
+import StackItem from '../parts/Stacking.js';
+var Axis = H.Axis, Chart = H.Chart, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -602,9 +603,17 @@ seriesType('waterfall', 'column', {
                     stackedYPos.push(stackX.posTotal + stackX.threshold);
                 });
             }
-            this.dataMin = arrayMin(stackedYNeg);
-            this.dataMax = arrayMax(stackedYPos);
+            return {
+                dataMin: arrayMin(stackedYNeg),
+                dataMax: arrayMax(stackedYPos)
+            };
         }
+        // When not stacking, data extremes have already been computed in the
+        // processData function.
+        return {
+            dataMin: this.dataMin,
+            dataMax: this.dataMax
+        };
     }
     // Point members
 }, {
@@ -622,7 +631,7 @@ seriesType('waterfall', 'column', {
     isValid: function () {
         return (isNumber(this.y) ||
             this.isSum ||
-            this.isIntermediateSum);
+            Boolean(this.isIntermediateSum));
     }
 });
 /**

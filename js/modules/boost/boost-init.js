@@ -69,7 +69,6 @@ function init() {
             }
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points || this.graph) {
-                this.animate = null;
                 this.destroyGraphics();
             }
             // If we're rendering per. series we should create the marker groups

@@ -437,7 +437,7 @@ merge(
 
                 showItem =
                     point.series.visible &&
-                    MockPoint.prototype.isInsidePane.call(point);
+                    MockPoint.prototype.isInsidePlot.call(point);
 
             if (showItem) {
 

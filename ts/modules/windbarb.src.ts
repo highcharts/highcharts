@@ -484,8 +484,6 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
                 (this.markerGroup as any).animate({
                     opacity: 1
                 }, animObject(this.options.animation));
-
-                this.animate = null as any;
             }
         },
 
@@ -493,7 +491,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
         invertGroups: noop as any,
 
         // No data extremes for the Y axis
-        getExtremes: noop as any
+        getExtremes: (): Highcharts.DataExtremesObject => ({})
     }, {
         isValid: function (this: Highcharts.WindbarbPoint): boolean {
             return isNumber(this.value) && this.value >= 0;

@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type RadialAxis from '../parts-more/RadialAxis';
 import H from '../parts/Globals.js';
 
 /**
@@ -455,7 +457,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
             point = points[i];
             if (defined(point.y)) {
                 if (chart.polar) {
-                    point.plotX = chart.yAxis[i].angleRad || 0;
+                    point.plotX = (chart.yAxis[i] as RadialAxis).angleRad || 0;
                 } else if (chart.inverted) {
                     point.plotX = (
                         chart.plotHeight -

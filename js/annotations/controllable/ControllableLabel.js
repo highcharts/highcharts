@@ -256,7 +256,7 @@ merge(true, ControllableLabel.prototype, controllableMixin,
      */
     position: function (anchor) {
         var item = this.graphic, chart = this.annotation.chart, point = this.points[0], itemOptions = this.options, anchorAbsolutePosition = anchor.absolutePosition, anchorRelativePosition = anchor.relativePosition, itemPosition, alignTo, itemPosRelativeX, itemPosRelativeY, showItem = point.series.visible &&
-            MockPoint.prototype.isInsidePane.call(point);
+            MockPoint.prototype.isInsidePlot.call(point);
         if (showItem) {
             if (itemOptions.distance) {
                 itemPosition = Tooltip.prototype.getPosition.call({

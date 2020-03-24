@@ -383,6 +383,7 @@ seriesType('sankey', 'column',
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: H.NodesMixin.createNode,
+    searchPoint: H.noop,
     setData: H.NodesMixin.setData,
     destroy: H.NodesMixin.destroy,
     /* eslint-disable valid-jsdoc */
@@ -647,7 +648,7 @@ seriesType('sankey', 'column',
             return y;
         };
         var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart, translationFactor = this.translationFactor, linkHeight = Math.max(point.weight * translationFactor, this.options.minLinkWidth), options = this.options, curvy = ((chart.inverted ? -this.colDistance : this.colDistance) *
-            options.curveFactor), fromY = getY(fromNode, 'linksFrom'), toY = getY(toNode, 'linksTo'), nodeLeft = fromNode.nodeX, nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft;
+            options.curveFactor), fromY = getY(fromNode, 'linksFrom'), toY = getY(toNode, 'linksTo'), nodeLeft = fromNode.nodeX, nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft + nodeW;
         if (chart.inverted) {
             fromY = chart.plotSizeY - fromY;
             toY = chart.plotSizeY - toY;

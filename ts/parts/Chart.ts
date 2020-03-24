@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { AxisType } from './axis/types';
 import H from './Globals.js';
 
 /**
@@ -125,8 +126,8 @@ declare global {
             public titleOffset: Array<number>;
             public unbindReflow?: Function;
             public userOptions: Options;
-            public xAxis: Array<Axis>;
-            public yAxis: Array<Axis>;
+            public xAxis: Array<AxisType>;
+            public yAxis: Array<AxisType>;
             public addCredits(credits?: CreditsOptions): void;
             public applyDescription(
                 name: ('title'|'subtitle'|'caption'),
@@ -855,7 +856,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.setResponsive(false);
         }
 
-        setAnimation(animation as any, chart);
+        // Set the global animation. When chart.hasRendered is not true, the
+        // redraw call comes from a responsive rule and animation should not
+        // occur.
+        setAnimation(chart.hasRendered ? animation : false, chart);
 
         if (isHiddenChart) {
             chart.temporaryDisplay();
@@ -1944,6 +1948,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // set the animation for the current process
         setAnimation(animation, chart);
+        globalAnimation = renderer.globalAnimation;
 
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
@@ -1958,7 +1963,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Resize the container with the global animation applied if enabled
         // (#2503)
         if (!chart.styledMode) {
-            globalAnimation = renderer.globalAnimation;
             (globalAnimation ? animate : css)(chart.container, {
                 width: chart.chartWidth + 'px',
                 height: chart.chartHeight + 'px'
@@ -1969,7 +1973,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         renderer.setSize(
             (chart.chartWidth as any),
             (chart.chartHeight as any),
-            animation
+            globalAnimation
         );
 
         // handle axes
@@ -1984,7 +1988,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.layOutTitles(); // #2857
         chart.getMargins();
 
-        chart.redraw(animation);
+        chart.redraw(globalAnimation);
 
 
         chart.oldChartHeight = null as any;

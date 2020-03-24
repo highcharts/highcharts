@@ -1,9 +1,15 @@
+#scrollable-container {
+    width: 100%;
+    overflow: scroll;
+    padding: 5px 0;
+}
+
 #container {
     height: 500px; 
 }
 
 .highcharts-figure, .highcharts-data-table table {
-    min-width: 455px; 
+    min-width: 490px; 
     max-width: 920px;
     margin: 1em auto;
 }

@@ -10,7 +10,25 @@
 
 'use strict';
 
+import Axis from './Axis.js';
 import H from './Globals.js';
+import Point from './Point.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    clamp,
+    defined,
+    extend,
+    find,
+    format,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -59,26 +77,7 @@ declare global {
     }
 }
 
-import Point from './Point.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    clamp,
-    defined,
-    extend,
-    find,
-    format,
-    isNumber,
-    isString,
-    merge,
-    pick,
-    splat
-} = U;
-
 import './Chart.js';
-import './Axis.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -92,8 +91,7 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
@@ -103,7 +101,6 @@ var Axis = H.Axis,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
     pointTooltipFormatter = Point.prototype.tooltipFormatter;
-
 
 /**
  * Compare the values of the series against the first non-null, non-
@@ -953,17 +950,22 @@ seriesProto.processData = function (
 };
 
 // Modify series extremes
-addEvent(Series, 'afterGetExtremes', function (this: Highcharts.Series): void {
-    if (this.modifyValue) {
-        var extremes = [
-            this.modifyValue(this.dataMin),
-            this.modifyValue(this.dataMax)
-        ];
+addEvent(
+    Series,
+    'afterGetExtremes',
+    function (this: Highcharts.Series, e): void {
+        const dataExtremes: Highcharts.DataExtremesObject = (e as any).dataExtremes;
+        if (this.modifyValue && dataExtremes) {
+            var extremes = [
+                this.modifyValue(dataExtremes.dataMin),
+                this.modifyValue(dataExtremes.dataMax)
+            ];
 
-        this.dataMin = arrayMin(extremes);
-        this.dataMax = arrayMax(extremes);
+            dataExtremes.dataMin = arrayMin(extremes);
+            dataExtremes.dataMax = arrayMax(extremes);
+        }
     }
-});
+);
 
 /**
  * Highstock only. Set the compare mode on all series belonging to an Y axis
@@ -1126,9 +1128,9 @@ addEvent(Axis, 'afterSetScale', function (
             max = Number.MIN_VALUE;
 
         axis.series.forEach(function (series): void {
-            min = Math.min(H.arrayMin(series.yData as any), min) -
+            min = Math.min(arrayMin(series.yData as any), min) -
                 (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(H.arrayMax(series.yData as any), max) +
+            max = Math.max(arrayMax(series.yData as any), max) +
                 (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
         });
 

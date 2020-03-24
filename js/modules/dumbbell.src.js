@@ -10,8 +10,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var seriesType = U.seriesType;
-var pick = H.pick, seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype;
+var extend = U.extend, pick = U.pick, seriesType = U.seriesType;
+var seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype;
 /**
  * The dumbbell series is a cartesian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.
@@ -160,7 +160,7 @@ seriesType('dumbbell', 'arearange', {
             point.y = point.high;
             point.zone = point.zone ? point.getZone() : void 0;
             connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : void 0, point.color);
-            H.extend(point, origProps);
+            extend(point, origProps);
         }
         attribs = {
             d: series.crispConnector([
@@ -361,7 +361,7 @@ seriesType('dumbbell', 'arearange', {
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });
-                    H.extend(point, origProps);
+                    extend(point, origProps);
                 }
             }
         }

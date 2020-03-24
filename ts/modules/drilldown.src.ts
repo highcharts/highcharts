@@ -625,9 +625,7 @@ defaultOptions.drilldown = {
  * @function Highcharts.SVGElement#fadeIn
  *
  * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
- *        The animation options for the element fade.
- *
- * @return {void}
+ * The animation options for the element fade.
  */
 H.SVGRenderer.prototype.Element.prototype.fadeIn = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
@@ -658,12 +656,10 @@ H.SVGRenderer.prototype.Element.prototype.fadeIn = function (
  * @function Highcharts.Chart#addSeriesAsDrilldown
  *
  * @param {Highcharts.Point} point
- *        The point from which the drilldown will start.
+ * The point from which the drilldown will start.
  *
  * @param {Highcharts.SeriesOptionsType} options
- *        The series options for the new, detailed series.
- *
- * @return {void}
+ * The series options for the new, detailed series.
  */
 Chart.prototype.addSeriesAsDrilldown = function (
     point: Highcharts.Point,
@@ -880,11 +876,9 @@ Chart.prototype.showDrillUpButton = function (): void {
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
  * will drill up to the parent series.
  *
- * @function Highcharts.Chart#drillUp
- *
- * @return {void}
- *
  * @requires  modules/drilldown
+ *
+ * @function Highcharts.Chart#drillUp
  */
 Chart.prototype.drillUp = function (): void {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
@@ -1080,8 +1074,7 @@ addEvent(Chart, 'render', function (): void {
  * @private
  * @function Highcharts.ColumnSeries#animateDrillupTo
  * @param {boolean} [init=false]
- *        Whether to initialize animation
- * @return {void}
+ * Whether to initialize animation
  */
 ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
     if (!init) {
@@ -1141,8 +1134,8 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
             (this.chart.options.drilldown as any).animation.duration - 50, 0
         ));
 
-        // Reset
-        this.animate = noop as any;
+        // Reset to prototype
+        delete this.animate;
     }
 
 };
@@ -1198,7 +1191,9 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
                 point.dataLabel.fadeIn(animationOptions);
             }
         });
-        this.animate = null as any;
+
+        // Reset to prototype
+        delete this.animate;
     }
 
 };
@@ -1310,7 +1305,9 @@ if (PieSeries) {
                             );
                     }
                 });
-                this.animate = null as any;
+
+                // Reset to prototype
+                delete this.animate;
             }
         }
     });

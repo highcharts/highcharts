@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -21,7 +21,7 @@ import ControllableLabel from './controllable/ControllableLabel.js';
 import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var fireEvent = H.fireEvent, reduce = H.reduce, chartProto = H.Chart.prototype;
+var chartProto = H.Chart.prototype;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -598,6 +598,15 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              * @apioption annotations.shapeOptions.src
              */
             /**
+             * Name of the dash style to use for the shape's stroke.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+             *         Possible values demonstrated
+             *
+             * @type      {Highcharts.DashStyleValue}
+             * @apioption annotations.shapeOptions.dashStyle
+             */
+            /**
              * The color of the shape's stroke.
              *
              * @sample highcharts/annotations/shape/
@@ -736,7 +745,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         }
     },
     setClipAxes: function () {
-        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = reduce((this.options.labels || []).concat(this.options.shapes || []), function (axes, labelOrShape) {
+        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = (this.options.labels || [])
+            .concat(this.options.shapes || [])
+            .reduce(function (axes, labelOrShape) {
             return [
                 xAxes[labelOrShape &&
                     labelOrShape.point &&
@@ -803,6 +814,16 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
             this.redrawItem(items[i], animation);
         }
     },
+    /**
+     * @private
+     * @param {Array<Highcharts.AnnotationControllable>} items
+     */
+    renderItems: function (items) {
+        var i = items.length;
+        while (i--) {
+            this.renderItem(items[i]);
+        }
+    },
     render: function () {
         var renderer = this.chart.renderer;
         this.graphic = renderer
@@ -829,6 +850,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         if (this.clipRect) {
             this.graphic.clip(this.clipRect);
         }
+        // Render shapes and labels before adding events (#13070).
+        this.renderItems(this.shapes);
+        this.renderItems(this.labels);
         this.addEvents();
         controllableMixin.render.call(this);
     },

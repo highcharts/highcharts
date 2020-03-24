@@ -13,7 +13,7 @@
 import H from '../../parts/Globals.js';
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, extend = U.extend;
+var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
 import Instrument from './Instrument.js';
 import instruments from './instrumentDefinitions.js';
 import Earcon from './Earcon.js';
@@ -21,6 +21,7 @@ import pointSonifyFunctions from './pointSonify.js';
 import chartSonifyFunctions from './chartSonify.js';
 import utilities from './utilities.js';
 import TimelineClasses from './Timeline.js';
+import sonificationOptions from './options.js';
 // Expose on the Highcharts object
 /**
  * Global classes and objects related to sonification.
@@ -87,6 +88,8 @@ H.sonification = {
     TimelinePath: TimelineClasses.TimelinePath,
     Timeline: TimelineClasses.Timeline
 };
+// Add default options
+merge(true, H.defaultOptions, sonificationOptions);
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
@@ -106,4 +109,11 @@ extend(H.Chart.prototype, {
 // Prepare charts for sonification on init
 addEvent(H.Chart, 'init', function () {
     this.sonification = {};
+});
+// Update with chart/series/point updates
+addEvent(H.Chart, 'update', function (e) {
+    var newOptions = e.options.sonification;
+    if (newOptions) {
+        merge(true, this.options.sonification, newOptions);
+    }
 });

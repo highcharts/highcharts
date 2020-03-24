@@ -59,6 +59,7 @@ const {
 } = U;
 
 import '../parts/Series.js';
+import StackItem from '../parts/Stacking.js';
 
 var perspective = H.perspective,
     Series = H.Series,
@@ -312,9 +313,6 @@ wrap(seriesTypes.column.prototype, 'animate', function (
 
                 // redraw datalabels to the correct position
                 this.drawDataLabels();
-
-                // delete this function to allow it only once
-                series.animate = null as any;
             }
         }
     }
@@ -570,7 +568,7 @@ wrap(Series.prototype, 'alignDataLabel', function (
 });
 
 // Added stackLabels position calculation for 3D charts.
-wrap(H.StackItem.prototype, 'getStackBox', function (
+wrap(StackItem.prototype, 'getStackBox', function (
     this: Highcharts.StackItem,
     proceed: Function,
     chart: Highcharts.Chart,
@@ -634,7 +632,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
 var defaultOptions = H.getOptions();
 defaultOptions.plotOptions.cylinder =
     merge(defaultOptions.plotOptions.column);
-var CylinderSeries = H.extendClass(seriesTypes.column, {
+var CylinderSeries = extendClass(seriesTypes.column, {
     type: 'cylinder'
 });
 seriesTypes.cylinder = CylinderSeries;

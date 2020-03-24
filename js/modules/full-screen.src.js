@@ -7,7 +7,9 @@
  */
 'use strict';
 import H from '../parts/Globals.js';
-var addEvent = H.addEvent, Chart = H.Chart;
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent;
+var Chart = H.Chart;
 /**
  * The module allows user to enable display chart in full screen mode.
  * Used in StockTools too.
@@ -42,7 +44,7 @@ var Fullscreen = /** @class */ (function () {
          *
          * @name Highcharts.Fullscreen#isOpen
          * @type {boolean|undefined}
-         * @since next
+         * @since 8.0.1
          */
         this.isOpen = false;
         if (!(chart.container.parentNode instanceof Element)) {
@@ -90,7 +92,7 @@ var Fullscreen = /** @class */ (function () {
      * Stops displaying the chart in fullscreen mode.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function    Highcharts.Fullscreen#close
      * @return      {void}
@@ -117,7 +119,7 @@ var Fullscreen = /** @class */ (function () {
      * button's text will not be replaced - it's on the user side.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function Highcharts.Fullscreen#open
      * @return      {void}
@@ -127,7 +129,7 @@ var Fullscreen = /** @class */ (function () {
         var fullscreen = this, chart = fullscreen.chart;
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
-            fullscreen.unbindFullscreenEvent = H.addEvent(chart.container.ownerDocument, // chart's document
+            fullscreen.unbindFullscreenEvent = addEvent(chart.container.ownerDocument, // chart's document
             fullscreen.browserProps.fullscreenChange, function () {
                 // Handle lack of async of browser's fullScreenChange event.
                 if (fullscreen.isOpen) {
@@ -148,7 +150,7 @@ var Fullscreen = /** @class */ (function () {
                     });
                 }
             }
-            H.addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
+            addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
         }
     };
     /**
@@ -157,15 +159,15 @@ var Fullscreen = /** @class */ (function () {
      *
      * @private
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @requires modules/full-screen
      * @return {void}
      */
     Fullscreen.prototype.setButtonText = function () {
-        var _a, _b, _c, _d;
-        var chart = this.chart, exportDivElements = chart.exportDivElements, exportingOptions = chart.options.exporting, menuItems = (_b = (_a = exportingOptions) === null || _a === void 0 ? void 0 : _a.buttons) === null || _b === void 0 ? void 0 : _b.contextButton.menuItems, lang = chart.options.lang;
-        if (((_c = exportingOptions) === null || _c === void 0 ? void 0 : _c.menuItemDefinitions) && ((_d = lang) === null || _d === void 0 ? void 0 : _d.exitFullscreen) &&
+        var _a;
+        var chart = this.chart, exportDivElements = chart.exportDivElements, exportingOptions = chart.options.exporting, menuItems = (_a = exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.buttons) === null || _a === void 0 ? void 0 : _a.contextButton.menuItems, lang = chart.options.lang;
+        if ((exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.menuItemDefinitions) && (lang === null || lang === void 0 ? void 0 : lang.exitFullscreen) &&
             lang.viewFullscreen &&
             menuItems &&
             exportDivElements &&
@@ -182,7 +184,7 @@ var Fullscreen = /** @class */ (function () {
      * a drop down menu in the upper right corner accesses this function.
      * Exporting module required.
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @sample      highcharts/members/chart-togglefullscreen/
      *              Toggle fullscreen mode from a HTML button

@@ -149,6 +149,7 @@ const {
     addEvent,
     erase,
     extend,
+    Fx,
     isNumber,
     merge,
     pick,
@@ -1165,10 +1166,13 @@ extend(ColorAxis.prototype, {
                 cSeries.maxColorValue = (cSeries as any)[colorKey + 'Max'];
 
             } else {
-                Series.prototype.getExtremes.call(cSeries, colorValArray);
+                const cExtremes = Series.prototype.getExtremes.call(
+                    cSeries,
+                    colorValArray
+                );
 
-                cSeries.minColorValue = cSeries.dataMin;
-                cSeries.maxColorValue = cSeries.dataMax;
+                cSeries.minColorValue = cExtremes.dataMin;
+                cSeries.maxColorValue = cExtremes.dataMax;
             }
 
             if (typeof cSeries.minColorValue !== 'undefined') {
@@ -1179,7 +1183,7 @@ extend(ColorAxis.prototype, {
             }
 
             if (!calculatedExtremes) {
-                Series.prototype.getExtremes.call(cSeries);
+                Series.prototype.applyExtremes.call(cSeries);
             }
         }
     },
@@ -1460,14 +1464,14 @@ extend(ColorAxis.prototype, {
  * @function Highcharts.Fx#strokeSetter
  */
 ['fill', 'stroke'].forEach(function (prop: string): void {
-    H.Fx.prototype[prop + 'Setter'] = function (this: Highcharts.Fx): void {
-        (this.elem as any).attr(
+    (Fx.prototype as any)[prop + 'Setter'] = function (): void {
+        this.elem.attr(
             prop,
             color(this.start).tweenTo(
                 color(this.end),
                 this.pos
             ),
-            null,
+            null as any,
             true
         );
     };

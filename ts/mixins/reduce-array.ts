@@ -31,8 +31,6 @@ declare global {
 
 import '../parts/Utilities.js';
 
-var reduce = H.reduce;
-
 var reduceArrayMixin: Highcharts.ReduceArrayMixin = {
     /**
      * Get min value of array filled by OHLC data.
@@ -42,7 +40,7 @@ var reduceArrayMixin: Highcharts.ReduceArrayMixin = {
      * @return {number} Returns min value.
      */
     minInArray: function <T> (arr: Array<T>, index: keyof T): number {
-        return reduce(arr, function (min: number, target: T): number {
+        return arr.reduce(function (min: number, target: T): number {
             return Math.min(min, target[index] as any);
         }, Number.MAX_VALUE);
     },
@@ -54,7 +52,7 @@ var reduceArrayMixin: Highcharts.ReduceArrayMixin = {
      * @return {number} Returns max value.
      */
     maxInArray: function <T> (arr: Array<T>, index: keyof T): number {
-        return reduce(arr, function (max: number, target: T): number {
+        return arr.reduce(function (max: number, target: T): number {
             return Math.max(max, target[index] as any);
         }, -Number.MAX_VALUE);
     },
@@ -71,7 +69,7 @@ var reduceArrayMixin: Highcharts.ReduceArrayMixin = {
         minIndex: keyof T,
         maxIndex: keyof T
     ): [number, number] {
-        return reduce(arr, function (
+        return arr.reduce(function (
             prev: [number, number],
             target: T
         ): [number, number] {

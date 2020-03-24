@@ -38,7 +38,7 @@ declare global {
             public update(userOptions: Partial<AnnotationControlPointOptionsObject>): void;
         }
         interface AnnotationControlPointDragEventFunction {
-            (this: Annotation, evt: AnnotationEventObject, target: AnnotationControllable): void;
+            (this: Annotation, e: AnnotationEventObject, target: AnnotationControllable): void;
         }
         interface AnnotationControlPointPositionerFunction {
             (this: AnnotationControlPoint, target: AnnotationControllable): PositionObject;

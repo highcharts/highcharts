@@ -21,7 +21,7 @@ declare global {
         class Point {
             public constructor();
             public color?: ColorType;
-            public colorIndex: number;
+            public colorIndex?: number;
             public formatPrefix: string;
             public id: string;
             public isNew?: boolean;
@@ -95,7 +95,7 @@ declare global {
             x?: string;
             y?: (number|null);
             color?: ColorType;
-            colorIndex: number;
+            colorIndex?: number;
             key?: string;
             series: Series;
             point: Point;
@@ -362,6 +362,7 @@ const {
     defined,
     erase,
     extend,
+    fireEvent,
     format,
     getNestedProperty,
     isArray,
@@ -373,8 +374,7 @@ const {
     uniqueKey
 } = U;
 
-var H = Highcharts,
-    fireEvent = H.fireEvent;
+var H = Highcharts;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -413,7 +413,7 @@ class Point {
      * @name Highcharts.Point#colorIndex
      * @type {number}
      */
-    public colorIndex: number = 0;
+    public colorIndex?: number = void 0;
 
     public dataLabels?: Array<Highcharts.SVGElement>;
 

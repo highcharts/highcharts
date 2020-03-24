@@ -3005,6 +3005,8 @@ H.defaultOptions = {
          *         A fixed tooltip position
          * @sample {highstock} stock/tooltip/split-positioner/
          *         Split tooltip with fixed positions
+         * @sample {highstock} stock/tooltip/positioner-scrollable-plotarea/
+         *         Scrollable plot area combined with tooltip positioner
          *
          * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
@@ -3095,6 +3097,17 @@ H.defaultOptions = {
          * @since     5.0.0
          * @product   highcharts highstock
          * @apioption tooltip.split
+         */
+        /**
+         * Prevents the tooltip from switching or closing, when touched or
+         * pointed.
+         *
+         * @sample highcharts/tooltip/stickoncontact/
+         *         Tooltip sticks on pointer contact
+         *
+         * @type      {boolean}
+         * @since     8.0.1
+         * @apioption tooltip.stickOnContact
          */
         /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using
@@ -3403,8 +3416,6 @@ H.defaultOptions = {
             cursor: 'default',
             /** @internal */
             fontSize: '12px',
-            /** @internal */
-            pointerEvents: 'none',
             /** @internal */
             whiteSpace: 'nowrap'
         }
