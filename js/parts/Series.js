@@ -3494,6 +3494,16 @@ null,
         }
         return data;
     },
+    /**
+     * Internal function to process the data by cropping away unused data
+     * points if the series is longer than the crop threshold. This saves
+     * computing time for large series.
+     *
+     * @private
+     * @function Highcharts.Series#getProcessedData
+     *
+     * @return {Highcharts.SeriesProcessedDataObject}
+     */
     getProcessedData: function () {
         var series = this, 
         // copied during slice operation:
@@ -3560,10 +3570,8 @@ null,
         };
     },
     /**
-     * Internal function to process the data by cropping away unused data
-     * points if the series is longer than the crop threshold. This saves
-     * computing time for large series. In Highstock, this function is
-     * extended to provide data grouping.
+     * Internal function to apply processed data.
+     * In Highstock, this function is extended to provide data grouping.
      *
      * @private
      * @function Highcharts.Series#processData
