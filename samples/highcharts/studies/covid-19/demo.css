@@ -1,0 +1,54 @@
+* {
+    font-family: sans-serif;
+}
+#wrapper {
+    margin: 0 auto;
+    padding: 0;
+    overflow:visible;
+}
+#container {
+    height: 80vh;
+    min-height: 300px;
+    float: left;
+    width: 60%;
+    margin: 0;
+    max-height: 100vw;
+}
+#info {
+    float: left;
+    width: calc(40% - 21px);
+    padding-left: 20px;
+    margin: 50px 0 0 0;
+    border-left: 1px solid silver;
+}
+#info h2 {
+    display: inline;
+    font-size: 13pt;
+}
+#info .f32 .flag {
+    vertical-align: bottom !important;
+}
+
+#info h4 {
+    margin: 1em 0 0 0;
+}
+
+#country-chart {
+    height: calc(80vh - 200px);
+    min-height: 200px;
+    max-height: 100vw;
+}
+.clearfix {
+    clear: both;
+}
+
+@media screen and (max-width: 920px) {
+    #wrapper, #container,  #info {
+        float: none;
+        width: 100%;
+        height: auto;
+        margin: 0.5em 0;
+        padding: 0;
+        border: none;
+    }
+}
