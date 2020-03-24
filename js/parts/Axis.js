@@ -1816,9 +1816,8 @@ var Axis = /** @class */ (function () {
         else if (axis.cleanStacks) {
             axis.cleanStacks();
         }
-        // Extend the Axis to calculate start min/max values
-        // (including min/maxPadding). This is related to using vertical
-        // panning (#11315).
+        // Extend the Axis to calculate start min/max values. This is related to
+        // using vertical panning. (#11315).
         if (hasVerticalPanning &&
             !axis.isXAxis &&
             // Avoid adding panningState object to colorAxis
@@ -1827,20 +1826,17 @@ var Axis = /** @class */ (function () {
                 // Recalculate panning state object, when the data has changed.
                 isDirtyData) &&
             axis.series.length) {
-            var min_1, max_1;
+            var min_1 = Number.MAX_VALUE, max_1 = -Number.MAX_VALUE;
             axis.series.forEach(function (series) {
-                if (series.yData) {
-                    if (!(isNumber(min_1) && isNumber(max_1))) {
-                        min_1 = Number.MAX_VALUE;
-                        max_1 = Number.MIN_VALUE;
-                    }
-                    min_1 = Math.min(H.arrayMin(series.yData), min_1);
-                    max_1 = Math.max(H.arrayMax(series.yData), max_1 || 0);
+                var processedData = series.getProcessedData(true), dataExtremes = series.getExtremes(processedData.yData, true);
+                if (dataExtremes.dataMin && dataExtremes.dataMax) {
+                    min_1 = Math.min(dataExtremes.dataMin, min_1);
+                    max_1 = Math.max(dataExtremes.dataMax, max_1);
                 }
             });
             axis.panningState = {
-                startMin: (isNumber(min_1) ? min_1 : axis.min),
-                startMax: (isNumber(max_1) ? max_1 : axis.max)
+                startMin: min_1,
+                startMax: max_1
             };
         }
         fireEvent(this, 'afterSetScale');

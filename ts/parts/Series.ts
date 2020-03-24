@@ -142,7 +142,10 @@ declare global {
                 value?: any,
                 defaults?: Dictionary<any>
             ): void;
-            public getExtremes(yData?: Array<number>): DataExtremesObject;
+            public getExtremes(
+                yData?: (Array<number>|Array<Array<number>>),
+                forceExtremesFromAll?: boolean
+            ): DataExtremesObject;
             public getName(): string;
             public getGraphPath(
                 points: Array<Point>,
@@ -150,7 +153,9 @@ declare global {
                 connectCliffs?: boolean
             ): SVGPathArray;
             public getPlotBox(): SeriesPlotBoxObject;
-            public getProcessedData(): SeriesProcessedDataObject;
+            public getProcessedData(
+                forceExtremesFromAll?: boolean
+            ): SeriesProcessedDataObject;
             public getSymbol(): void;
             public getValidPoints(
                 points?: Array<Point>,
@@ -4548,11 +4553,13 @@ H.Series = seriesType<Highcharts.LineSeries>(
          *
          * @private
          * @function Highcharts.Series#getProcessedData
-         *
+         * @param {boolean} [forceExtremesFromAll]
+         *        Force getting extremes of a total series data range.
          * @return {Highcharts.SeriesProcessedDataObject}
          */
         getProcessedData: function (
-            this: Highcharts.Series
+            this: Highcharts.Series,
+            forceExtremesFromAll?: boolean
         ): Highcharts.SeriesProcessedDataObject {
             var series = this,
                 // copied during slice operation:
@@ -4571,6 +4578,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 options = series.options,
                 cropThreshold = options.cropThreshold,
                 getExtremesFromAll =
+                    forceExtremesFromAll ||
                     series.getExtremesFromAll ||
                     options.getExtremesFromAll, // #4599
                 isCartesian = series.isCartesian,
@@ -4952,11 +4960,14 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @param {Array<number>} [yData]
          *        The data to inspect. Defaults to the current data within the
          *        visible range.
+         * @param {boolean} [forceExtremesFromAll]
+         *        Force getting extremes of a total series data range.
          * @return {Highcharts.DataExtremesObject}
          */
         getExtremes: function (
             this: Highcharts.Series,
-            yData?: (Array<number>|Array<Array<number>>)
+            yData?: (Array<number>|Array<Array<number>>),
+            forceExtremesFromAll?: boolean
         ): Highcharts.DataExtremesObject {
             var xAxis = this.xAxis,
                 yAxis = this.yAxis,
@@ -5000,6 +5011,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     (((y as any).length || y > 0) || !positiveValuesOnly)
                 );
                 withinRange = (
+                    forceExtremesFromAll ||
                     this.getExtremesFromAll ||
                     this.options.getExtremesFromAll ||
                     this.cropped ||

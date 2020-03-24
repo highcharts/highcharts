@@ -5991,9 +5991,8 @@ class Axis implements AxisComposition {
             axis.cleanStacks();
         }
 
-        // Extend the Axis to calculate start min/max values
-        // (including min/maxPadding). This is related to using vertical
-        // panning (#11315).
+        // Extend the Axis to calculate start min/max values. This is related to
+        // using vertical panning. (#11315).
         if (
             hasVerticalPanning &&
             !axis.isXAxis &&
@@ -6006,23 +6005,22 @@ class Axis implements AxisComposition {
             ) &&
             axis.series.length
         ) {
-            let min: (number | undefined),
-                max: (number | undefined);
+            let min = Number.MAX_VALUE,
+                max = -Number.MAX_VALUE;
 
             axis.series.forEach(function (series): void {
-                if (series.yData) {
-                    if (!(isNumber(min) && isNumber(max))) {
-                        min = Number.MAX_VALUE;
-                        max = Number.MIN_VALUE;
-                    }
-                    min = Math.min(H.arrayMin(series.yData), min);
-                    max = Math.max(H.arrayMax(series.yData), max || 0);
+                const processedData = series.getProcessedData(true),
+                    dataExtremes = series.getExtremes(processedData.yData, true);
+
+                if (dataExtremes.dataMin && dataExtremes.dataMax) {
+                    min = Math.min(dataExtremes.dataMin, min);
+                    max = Math.max(dataExtremes.dataMax, max);
                 }
             });
 
             axis.panningState = {
-                startMin: (isNumber(min) ? min : axis.min),
-                startMax: (isNumber(max) ? max : axis.max)
+                startMin: min,
+                startMax: max
             };
         }
 

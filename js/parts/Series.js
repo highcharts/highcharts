@@ -3501,14 +3501,16 @@ null,
      *
      * @private
      * @function Highcharts.Series#getProcessedData
-     *
+     * @param {boolean} [forceExtremesFromAll]
+     *        Force getting extremes of a total series data range.
      * @return {Highcharts.SeriesProcessedDataObject}
      */
-    getProcessedData: function () {
+    getProcessedData: function (forceExtremesFromAll) {
         var series = this, 
         // copied during slice operation:
         processedXData = series.xData, processedYData = series.yData, dataLength = processedXData.length, croppedData, cropStart = 0, cropped, distance, closestPointRange, xAxis = series.xAxis, i, // loop variable
-        options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = series.getExtremesFromAll ||
+        options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = forceExtremesFromAll ||
+            series.getExtremesFromAll ||
             options.getExtremesFromAll, // #4599
         isCartesian = series.isCartesian, xExtremes, val2lin = xAxis && xAxis.val2lin, isLog = xAxis && xAxis.isLog, throwOnUnsorted = series.requireSorting, min, max;
         if (xAxis) {
@@ -3785,9 +3787,11 @@ null,
      * @param {Array<number>} [yData]
      *        The data to inspect. Defaults to the current data within the
      *        visible range.
+     * @param {boolean} [forceExtremesFromAll]
+     *        Force getting extremes of a total series data range.
      * @return {Highcharts.DataExtremesObject}
      */
-    getExtremes: function (yData) {
+    getExtremes: function (yData, forceExtremesFromAll) {
         var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData || this.xData, yDataLength, activeYData = [], activeCounter = 0, 
         // #2117, need to compensate for log X axis
         xExtremes, xMin = 0, xMax = 0, validValue, withinRange, 
@@ -3808,7 +3812,8 @@ null,
             // point outside the visible range (#7061), consider y extremes.
             validValue = ((isNumber(y) || isArray(y)) &&
                 ((y.length || y > 0) || !positiveValuesOnly));
-            withinRange = (this.getExtremesFromAll ||
+            withinRange = (forceExtremesFromAll ||
+                this.getExtremesFromAll ||
                 this.options.getExtremesFromAll ||
                 this.cropped ||
                 !xAxis || // for colorAxis support
