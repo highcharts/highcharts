@@ -696,7 +696,10 @@ seriesProto.processData = function (this: Highcharts.Series): any {
 
         // Execute grouping if the amount of points is greater than the limit
         // defined in groupPixelWidth
-        if (groupPixelWidth) {
+        if (
+            xAxis.dateTime &&
+            groupPixelWidth
+        ) {
             hasGroupedData = true;
 
             // Force recreation of point instances in series.translate, #5699
@@ -715,7 +718,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
-                    xAxis.normalizeTimeTickInterval(
+                    xAxis.dateTime.normalizeTimeTickInterval(
                         interval,
                         (dataGroupingOptions as any).units ||
                         defaultDataGroupingUnits

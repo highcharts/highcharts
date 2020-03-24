@@ -4791,12 +4791,13 @@ class Axis implements AxisComposition {
                 });
 
             } else if (
+                axis.dateTime &&
                 axis.isDatetimeAxis &&
                 this.getMinorTickInterval() === 'auto'
             ) { // #1314
                 minorTickPositions = minorTickPositions.concat(
                     axis.getTimeTicks(
-                        axis.normalizeTimeTickInterval(minorTickInterval),
+                        axis.dateTime.normalizeTimeTickInterval(minorTickInterval),
                         min,
                         max,
                         options.startOfWeek as any
@@ -5590,9 +5591,12 @@ class Axis implements AxisComposition {
                 tickPositions = [this.min, this.max];
                 error(19, false, this.chart);
 
-            } else if (this.isDatetimeAxis) {
+            } else if (
+                axis.dateTime &&
+                this.isDatetimeAxis
+            ) {
                 tickPositions = (axis.getTimeTicks as any)(
-                    axis.normalizeTimeTickInterval(
+                    axis.dateTime.normalizeTimeTickInterval(
                         this.tickInterval,
                         options.units
                     ),
