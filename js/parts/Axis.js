@@ -518,12 +518,6 @@ var Axis = /** @class */ (function () {
                 addEvent(axis, eventType, event);
             }
         });
-        // extend logarithmic axis
-        axis.lin2log = options.linearToLogConverter || axis.lin2log;
-        if (axis.isLog) {
-            axis.val2lin = axis.log2lin;
-            axis.lin2val = axis.lin2log;
-        }
         fireEvent(this, 'afterInit');
     };
     /**
@@ -965,8 +959,8 @@ var Axis = /** @class */ (function () {
                 // For each interval in the major ticks, compute the minor ticks
                 // separately.
                 this.paddedTicks.forEach(function (_pos, i, paddedTicks) {
-                    if (i) {
-                        minorTickPositions.push.apply(minorTickPositions, axis.getLogTickPositions(minorTickInterval, paddedTicks[i - 1], paddedTicks[i], true));
+                    if (i && axis.logarithmic) {
+                        minorTickPositions.push.apply(minorTickPositions, axis.logarithmic.getLogTickPositions(minorTickInterval, paddedTicks[i - 1], paddedTicks[i], true));
                     }
                 });
             }
@@ -1542,8 +1536,8 @@ var Axis = /** @class */ (function () {
             else if (this.isDatetimeAxis) {
                 tickPositions = axis.getTimeTicks(axis.normalizeTimeTickInterval(this.tickInterval, options.units), this.min, this.max, options.startOfWeek, axis.ordinal && axis.ordinal.positions, this.closestPointRange, true);
             }
-            else if (this.isLog) {
-                tickPositions = axis.getLogTickPositions(this.tickInterval, this.min, this.max);
+            else if (this.isLog && axis.logarithmic) {
+                tickPositions = axis.logarithmic.getLogTickPositions(this.tickInterval, this.min, this.max);
             }
             else {
                 tickPositions = this.getLinearTickPositions(this.tickInterval, this.min, this.max);
@@ -5812,10 +5806,8 @@ var Axis = /** @class */ (function () {
     };
     return Axis;
 }());
-extend(Axis.prototype, {
-    // Properties to survive after destroy, needed for Axis.update (#4317,
-    // #5773, #5881).
-    keepProps: ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin']
-});
+// Properties to survive after destroy, needed for Axis.update (#4317,
+// #5773, #5881).
+Axis.prototype.keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
 H.Axis = Axis;
 export default H.Axis;

@@ -4156,13 +4156,6 @@ class Axis implements AxisComposition {
             }
         });
 
-        // extend logarithmic axis
-        axis.lin2log = options.linearToLogConverter || axis.lin2log;
-        if (axis.isLog) {
-            axis.val2lin = axis.log2lin;
-            axis.lin2val = axis.lin2log;
-        }
-
         fireEvent(this, 'afterInit');
     }
 
@@ -4777,10 +4770,10 @@ class Axis implements AxisComposition {
                     i: number,
                     paddedTicks: Array<number>
                 ): void {
-                    if (i) {
+                    if (i && axis.logarithmic) {
                         minorTickPositions.push.apply(
                             minorTickPositions,
-                            axis.getLogTickPositions(
+                            axis.logarithmic.getLogTickPositions(
                                 minorTickInterval,
                                 paddedTicks[i - 1],
                                 paddedTicks[i],
@@ -5603,8 +5596,8 @@ class Axis implements AxisComposition {
                     this.closestPointRange,
                     true
                 );
-            } else if (this.isLog) {
-                tickPositions = axis.getLogTickPositions(
+            } else if (this.isLog && axis.logarithmic) {
+                tickPositions = axis.logarithmic.getLogTickPositions(
                     this.tickInterval,
                     this.min as any,
                     this.max as any
@@ -7659,13 +7652,9 @@ interface Axis {
     keepProps: Array<string>;
 }
 
-extend(Axis.prototype, {
-
-    // Properties to survive after destroy, needed for Axis.update (#4317,
-    // #5773, #5881).
-    keepProps: ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin']
-
-});
+// Properties to survive after destroy, needed for Axis.update (#4317,
+// #5773, #5881).
+Axis.prototype.keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
 
 H.Axis = Axis as any;
 
