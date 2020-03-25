@@ -9,14 +9,17 @@ Highcharts.chart('container', {
         }],
         events: {
             afterBreaks: function () {
-                if (this.breakArray.length === 0) {
+                if (
+                    !this.brokenAxis ||
+                    this.brokenAxis.breakArray.length === 0
+                ) {
                     return;
                 }
 
                 var axis = this,
                     chart = axis.chart,
                     breakLine = axis.breakLine,
-                    breakPoint = axis.breakArray[0],
+                    breakPoint = axis.brokenAxis.breakArray[0],
                     pos = breakPoint.to,
                     path = axis.getPlotLinePath({
                         value: pos,
