@@ -349,7 +349,9 @@ seriesType('boxplot', 'column', {
                     stemAttr.stroke =
                         point.stemColor || options.stemColor || color;
                     stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-                    stemAttr.dashstyle = pick(point.stemDashStyle, options.stemDashStyle, options.dashStyle);
+                    stemAttr.dashstyle = (point.stemDashStyle ||
+                        options.stemDashStyle ||
+                        options.dashStyle);
                     point.stem.attr(stemAttr);
                     // Whiskers attributes
                     if (whiskerLength) {
@@ -357,7 +359,9 @@ seriesType('boxplot', 'column', {
                             options.whiskerColor ||
                             color);
                         whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
-                        whiskersAttr.dashstyle = pick(point.whiskerDashStyle, options.whiskerDashStyle, options.dashStyle);
+                        whiskersAttr.dashstyle = (point.whiskerDashStyle ||
+                            options.whiskerDashStyle ||
+                            options.dashStyle);
                         point.whiskers.attr(whiskersAttr);
                     }
                     if (doQuartiles) {
@@ -366,7 +370,9 @@ seriesType('boxplot', 'column', {
                             color);
                         boxAttr.stroke = options.lineColor || color;
                         boxAttr['stroke-width'] = options.lineWidth || 0;
-                        boxAttr.dashstyle = pick(point.boxDashStyle, options.boxDashStyle, options.dashStyle);
+                        boxAttr.dashstyle = (point.boxDashStyle ||
+                            options.boxDashStyle ||
+                            options.dashStyle);
                         point.box.attr(boxAttr);
                     }
                     // Median attributes
@@ -374,7 +380,9 @@ seriesType('boxplot', 'column', {
                         options.medianColor ||
                         color);
                     medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
-                    medianAttr.dashstyle = pick(point.medianDashStyle, options.medianDashStyle, options.dashStyle);
+                    medianAttr.dashstyle = (point.medianDashStyle ||
+                        options.medianDashStyle ||
+                        options.dashStyle);
                     point.medianShape.attr(medianAttr);
                 }
                 // The stem

@@ -514,9 +514,9 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                         options.stemWidth,
                         options.lineWidth
                     );
-                    stemAttr.dashstyle = pick(
-                        point.stemDashStyle,
-                        options.stemDashStyle,
+                    stemAttr.dashstyle = (
+                        point.stemDashStyle ||
+                        options.stemDashStyle ||
                         options.dashStyle
                     );
                     point.stem.attr(stemAttr);
@@ -533,9 +533,9 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                             options.whiskerWidth,
                             options.lineWidth
                         );
-                        whiskersAttr.dashstyle = pick(
-                            point.whiskerDashStyle,
-                            options.whiskerDashStyle,
+                        whiskersAttr.dashstyle = (
+                            point.whiskerDashStyle ||
+                            options.whiskerDashStyle ||
                             options.dashStyle
                         );
                         point.whiskers.attr(whiskersAttr);
@@ -549,9 +549,9 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                         );
                         boxAttr.stroke = options.lineColor || color;
                         boxAttr['stroke-width'] = options.lineWidth || 0;
-                        boxAttr.dashstyle = pick(
-                            point.boxDashStyle,
-                            options.boxDashStyle,
+                        boxAttr.dashstyle = (
+                            point.boxDashStyle ||
+                            options.boxDashStyle ||
                             options.dashStyle
                         );
                         point.box.attr(boxAttr);
@@ -568,9 +568,9 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                         options.medianWidth,
                         options.lineWidth
                     );
-                    medianAttr.dashstyle = pick(
-                        point.medianDashStyle,
-                        options.medianDashStyle,
+                    medianAttr.dashstyle = (
+                        point.medianDashStyle ||
+                        options.medianDashStyle ||
                         options.dashStyle
                     );
                     point.medianShape.attr(medianAttr);
