@@ -2,7 +2,7 @@
 /* eslint valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
 /**
- * Usage: node changelog/generate-html
+ * Usage: node changelog/generate
  *
  * This node script is used to assemble the content for all markdown files
  * in each sub-directory of this directory into a new html output file.
