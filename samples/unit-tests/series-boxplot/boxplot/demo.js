@@ -237,32 +237,32 @@ QUnit.test(
             assert.strictEqual(
                 firstPoint[elem].attr('stroke-dasharray'),
                 '1,3',
-                'Point\'s ' + elem + 'DashStyle'
+                'Dot dashStyle should be applied to the first point\'s ' + elem + '.'
             );
         });
 
         assert.strictEqual(
             secondPoint.medianShape.attr('stroke-dasharray'),
             '6,2',
-            'medianDashStyle'
+            'ShortDash dashStyle should be applied to the second point\'s median.'
         );
 
         assert.strictEqual(
             secondPoint.whiskers.attr('stroke-dasharray'),
             '2,6',
-            'whiskersDashStyle'
+            'Dot dashStyle should be applied to the second point\'s whiskers.'
         );
 
         assert.strictEqual(
             secondPoint.box.attr('stroke-dasharray'),
             '4,3,1,3',
-            'boxDashStyle'
+            'DashDot dashStyle should be applied to the second point\'s box.'
         );
 
         assert.strictEqual(
             secondPoint.stem.attr('stroke-dasharray'),
             '4,3,1,3',
-            'stemDashStyle'
+            'DashDot dashStyle should be applied to the second point\'s stem.'
         );
     }
 );
