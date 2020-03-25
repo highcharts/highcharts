@@ -15,6 +15,18 @@ import type OrdinalAxis from '../OrdinalAxis';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
 
+export interface AxisBreakBorderObject {
+    move: string;
+    size?: number;
+    value: number;
+}
+
+export interface AxisBreakObject {
+    from: number;
+    len: number;
+    to: number;
+}
+
 export interface AxisComposition {
     brokenAxis?: BrokenAxis['brokenAxis'];
     ordinal?: OrdinalAxis['ordinal'];

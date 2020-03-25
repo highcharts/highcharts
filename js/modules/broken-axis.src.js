@@ -208,7 +208,7 @@ var BrokenAxisAdditions = /** @class */ (function () {
                 Axis.prototype.setAxisTranslation.call(this, saveOld);
                 brokenAxis.unitLength = null;
                 if (this.isBroken) {
-                    var breaks = axis.options.breaks, 
+                    var breaks = axis.options.breaks || [], 
                     // Temporary one:
                     breakArrayT = [], breakArray = [], length = 0, inBrk, repeat, min = axis.userMin || axis.min, max = axis.userMax || axis.max, pointRangePadding = pick(axis.pointRangePadding, 0), start, i;
                     // Min & max check (#4247)
@@ -270,7 +270,7 @@ var BrokenAxisAdditions = /** @class */ (function () {
                             length += brk.value - start - (brk.size || 0);
                         }
                     });
-                    brokenAxis.breakArray = breakArray;
+                    axis.breakArray = brokenAxis.breakArray = breakArray;
                     // Used with staticScale, and below the actual axis length,
                     // when breaks are substracted.
                     brokenAxis.unitLength = max - min - length + pointRangePadding;

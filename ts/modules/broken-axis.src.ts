@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { AxisBreakBorderObject, AxisBreakObject } from '../parts/axis/types';
 import type Point from '../parts/Point';
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
@@ -28,10 +29,8 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface AxisBreakObject {
-            from: number;
-            len: number;
-            to: number;
+        interface Axis {
+            breakArray: Array<AxisBreakObject>;
         }
         interface Series {
             /** @requires modules/broken-axis */
@@ -108,7 +107,7 @@ class BrokenAxisAdditions {
         }
 
         var nval = val,
-            brk: Highcharts.AxisBreakObject,
+            brk: AxisBreakObject,
             i: number;
 
         for (i = 0; i < breakArray.length; i++) {
@@ -141,7 +140,7 @@ class BrokenAxisAdditions {
         }
 
         var nval = val,
-            brk: Highcharts.AxisBreakObject,
+            brk: AxisBreakObject,
             i: number;
 
         for (i = 0; i < breakArray.length; i++) {
@@ -176,7 +175,7 @@ class BrokenAxisAdditions {
      * */
 
     public axis: Axis;
-    public breakArray?: Array<Highcharts.AxisBreakObject>;
+    public breakArray?: Array<AxisBreakObject>;
     public unitLength?: number;
 
     /* *
@@ -331,10 +330,10 @@ class BrokenAxisAdditions {
 
                 brokenAxis.unitLength = null as any;
                 if (this.isBroken) {
-                    var breaks = axis.options.breaks,
+                    var breaks = axis.options.breaks || [],
                         // Temporary one:
-                        breakArrayT = [] as Array<AxisBreakBorderObject>,
-                        breakArray = [] as Array<Highcharts.AxisBreakObject>,
+                        breakArrayT: Array<AxisBreakBorderObject> = [],
+                        breakArray: Array<AxisBreakObject> = [],
                         length = 0,
                         inBrk: number,
                         repeat: number,
@@ -345,9 +344,7 @@ class BrokenAxisAdditions {
                         i: number;
 
                     // Min & max check (#4247)
-                    (breaks as any).forEach(function (
-                        brk: Highcharts.XAxisBreaksOptions
-                    ): void {
+                    breaks.forEach(function (brk: Highcharts.XAxisBreaksOptions): void {
                         repeat = brk.repeat || Infinity;
                         if (BrokenAxisAdditions.isInBreak(brk, min)) {
                             (min as any) +=
@@ -362,9 +359,7 @@ class BrokenAxisAdditions {
                     });
 
                     // Construct an array holding all breaks in the axis
-                    (breaks as any).forEach(function (
-                        brk: Highcharts.XAxisBreaksOptions
-                    ): void {
+                    breaks.forEach(function (brk: Highcharts.XAxisBreaksOptions): void {
                         start = brk.from;
                         repeat = brk.repeat || Infinity;
 
@@ -422,7 +417,7 @@ class BrokenAxisAdditions {
                         }
                     });
 
-                    brokenAxis.breakArray = breakArray;
+                    axis.breakArray = brokenAxis.breakArray = breakArray;
 
                     // Used with staticScale, and below the actual axis length,
                     // when breaks are substracted.
@@ -480,7 +475,7 @@ class BrokenAxis {
         ): void {
             var series = this,
                 points = series.points,
-                breaks: Array<Highcharts.AxisBreakObject>,
+                breaks: Array<AxisBreakObject>,
                 threshold: (number|null|undefined),
                 eventName: string,
                 y: (number|null|undefined);
@@ -501,7 +496,7 @@ class BrokenAxis {
                         (point as any)['stack' + key.toUpperCase()],
                         (point as any)[key]
                     );
-                    breaks.forEach(function (brk: Highcharts.AxisBreakObject): void {
+                    breaks.forEach(function (brk: AxisBreakObject): void {
                         eventName = false as any;
 
                         if (
@@ -773,13 +768,12 @@ class BrokenAxis {
 
 }
 
-interface AxisBreakBorderObject {
-    move: string;
-    size?: number;
-    value: number;
-}
-
 interface BrokenAxis extends Axis {
+    /**
+     * @deprecated
+     * @requires modules/broken-axis
+     */
+    breakArray: Array<AxisBreakObject>;
     /** @requires modules/broken-axis */
     brokenAxis: BrokenAxisAdditions;
 }

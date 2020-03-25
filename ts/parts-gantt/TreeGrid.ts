@@ -13,6 +13,7 @@
 
 'use strict';
 
+import { AxisBreakObject } from '../parts/axis/types';
 import H from '../parts/Globals.js';
 
 /**
@@ -123,7 +124,7 @@ var override = function<T> (
 var getBreakFromNode = function (
     node: any,
     max: number
-): Highcharts.AxisBreakObject {
+): AxisBreakObject {
     var from = node.collapseStart,
         to = node.collapseEnd;
 
