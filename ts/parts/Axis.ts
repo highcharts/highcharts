@@ -6012,7 +6012,7 @@ class Axis implements AxisComposition {
                 const processedData = series.getProcessedData(true),
                     dataExtremes = series.getExtremes(processedData.yData, true);
 
-                if (dataExtremes.dataMin && dataExtremes.dataMax) {
+                if (isNumber(dataExtremes.dataMin) && isNumber(dataExtremes.dataMax)) {
                     min = Math.min(dataExtremes.dataMin, min);
                     max = Math.max(dataExtremes.dataMax, max);
                 }

@@ -1829,7 +1829,7 @@ var Axis = /** @class */ (function () {
             var min_1 = Number.MAX_VALUE, max_1 = -Number.MAX_VALUE;
             axis.series.forEach(function (series) {
                 var processedData = series.getProcessedData(true), dataExtremes = series.getExtremes(processedData.yData, true);
-                if (dataExtremes.dataMin && dataExtremes.dataMax) {
+                if (isNumber(dataExtremes.dataMin) && isNumber(dataExtremes.dataMax)) {
                     min_1 = Math.min(dataExtremes.dataMin, min_1);
                     max_1 = Math.max(dataExtremes.dataMax, max_1);
                 }
