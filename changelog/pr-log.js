@@ -1,7 +1,8 @@
 /* eslint-env node, es6 */
 /* eslint camelcase: 0, func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
-const octokit = require('@octokit/rest')({
+const { Octokit } = require('@octokit/rest');
+const octokit = new Octokit({
     auth: process.env.GITHUB_LIST_PRS_TOKEN
 });
 
