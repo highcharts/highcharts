@@ -320,6 +320,7 @@ declare global {
             public static defaultRightAxisOptions: AxisOptions;
             public static defaultTopAxisOptions: AxisOptions;
             public static defaultYAxisOptions: YAxisOptions;
+            public static keepProps: Array<string>;
             public constructor(chart: Chart, userOptions: AxisOptions);
             public _addedPlotLB?: boolean;
             public allowZoomOutside?: boolean;
@@ -360,7 +361,7 @@ declare global {
             public isRadial?: boolean;
             public isXAxis?: boolean;
             public isZAxis?: boolean;
-            public keepProps: Array<string>;
+            public keepProps?: Array<string>;
             public labelAlign?: AlignValue;
             public labelEdge: Array<null>;
             public labelFormatter: (
@@ -442,6 +443,7 @@ declare global {
             public generateTick(pos: number, i?: number): void;
             public getClosest(): number;
             public getExtremes(): ExtremesObject;
+            public getKeepProps(): Array<string>;
             public getLinePath(lineWidth: number): SVGPathArray;
             public getLinearTickPositions(
                 tickInterval: number,
@@ -3767,6 +3769,10 @@ class Axis implements AxisComposition {
         }
     };
 
+    // Properties to survive after destroy, needed for Axis.update (#4317,
+    // #5773, #5881).
+    public static keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
+
     /* *
      *
      *  Constructors
@@ -3820,6 +3826,7 @@ class Axis implements AxisComposition {
     public isRadial?: boolean;
     public isXAxis?: boolean;
     public isZAxis?: boolean;
+    public keepProps?: Array<string>;
     public labelAlign?: Highcharts.AlignValue;
     public labelEdge: Array<null> = void 0 as any; // @todo
     public labelFormatter: (
@@ -7413,6 +7420,19 @@ class Axis implements AxisComposition {
     }
 
     /**
+     * Returns an array of axis properties, that should be untouched during
+     * reinitialization.
+     *
+     * @private
+     * @function Highcharts.Axis#getKeepProps
+     *
+     * @return {Array<string>}
+     */
+    public getKeepProps(): Array<string> {
+        return (this.keepProps || Axis.keepProps);
+    }
+
+    /**
      * Destroys an Axis instance. See {@link Axis#remove} for the API endpoint
      * to fully remove the axis.
      *
@@ -7482,7 +7502,7 @@ class Axis implements AxisComposition {
 
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (val: any, key: string): void {
-            if (axis.keepProps.indexOf(key) === -1) {
+            if (axis.getKeepProps().indexOf(key) === -1) {
                 delete (axis as any)[key];
             }
         });
@@ -7647,14 +7667,6 @@ class Axis implements AxisComposition {
         fireEvent(this, 'afterHideCrosshair');
     }
 }
-
-interface Axis {
-    keepProps: Array<string>;
-}
-
-// Properties to survive after destroy, needed for Axis.update (#4317,
-// #5773, #5881).
-Axis.prototype.keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
 
 H.Axis = Axis as any;
 

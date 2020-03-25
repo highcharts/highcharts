@@ -470,7 +470,7 @@ extend(ColorAxis.prototype, {
         'legendItemWidth',
         'legendItem',
         'legendSymbol'
-    ].concat(Axis.prototype.keepProps),
+    ].concat(Axis.keepProps),
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Initializes the color axis.

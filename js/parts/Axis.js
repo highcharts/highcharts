@@ -2817,6 +2817,18 @@ var Axis = /** @class */ (function () {
         });
     };
     /**
+     * Returns an array of axis properties, that should be untouched during
+     * reinitialization.
+     *
+     * @private
+     * @function Highcharts.Axis#getKeepProps
+     *
+     * @return {Array<string>}
+     */
+    Axis.prototype.getKeepProps = function () {
+        return (this.keepProps || Axis.keepProps);
+    };
+    /**
      * Destroys an Axis instance. See {@link Axis#remove} for the API endpoint
      * to fully remove the axis.
      *
@@ -2862,7 +2874,7 @@ var Axis = /** @class */ (function () {
         }
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (val, key) {
-            if (axis.keepProps.indexOf(key) === -1) {
+            if (axis.getKeepProps().indexOf(key) === -1) {
                 delete axis[key];
             }
         });
@@ -5804,10 +5816,10 @@ var Axis = /** @class */ (function () {
             rotation: 0
         }
     };
+    // Properties to survive after destroy, needed for Axis.update (#4317,
+    // #5773, #5881).
+    Axis.keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
     return Axis;
 }());
-// Properties to survive after destroy, needed for Axis.update (#4317,
-// #5773, #5881).
-Axis.prototype.keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
 H.Axis = Axis;
 export default H.Axis;
