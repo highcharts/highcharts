@@ -1769,7 +1769,7 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:afterSetScale
      */
     Axis.prototype.setScale = function () {
-        var axis = this, hasVerticalPanning = axis.hasVerticalPanning(), isDirtyAxisLength, isDirtyData = false, isXAxisDirty = false;
+        var axis = this, isDirtyAxisLength, isDirtyData = false, isXAxisDirty = false;
         axis.series.forEach(function (series) {
             var _a;
             isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
@@ -1816,28 +1816,10 @@ var Axis = /** @class */ (function () {
         else if (axis.cleanStacks) {
             axis.cleanStacks();
         }
-        // Extend the Axis to calculate start min/max values. This is related to
-        // using vertical panning. (#11315).
-        if (hasVerticalPanning &&
-            !axis.isXAxis &&
-            // Avoid adding panningState object to colorAxis
-            axis.coll !== 'colorAxis' &&
-            (!defined(axis.panningState) ||
-                // Recalculate panning state object, when the data has changed.
-                isDirtyData) &&
-            axis.series.length) {
-            var min_1 = Number.MAX_VALUE, max_1 = -Number.MAX_VALUE;
-            axis.series.forEach(function (series) {
-                var processedData = series.getProcessedData(true), dataExtremes = series.getExtremes(processedData.yData, true);
-                if (isNumber(dataExtremes.dataMin) && isNumber(dataExtremes.dataMax)) {
-                    min_1 = Math.min(dataExtremes.dataMin, min_1);
-                    max_1 = Math.max(dataExtremes.dataMax, max_1);
-                }
-            });
-            axis.panningState = {
-                startMin: min_1,
-                startMax: max_1
-            };
+        // Recalculate panning state object, when the data
+        // has changed. It is required when vertical panning is enabled.
+        if (isDirtyData && axis.panningState) {
+            axis.panningState.isDirty = true;
         }
         fireEvent(this, 'afterSetScale');
     };

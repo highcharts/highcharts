@@ -60,7 +60,7 @@ import H from './Globals.js';
 import Legend from './Legend.js';
 import Point from './Point.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import './Chart.js';
 import './Options.js';
 import './Series.js';
@@ -507,13 +507,35 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     -1 :
                     1, extremes = axis.getExtremes(), panMin = axis.toValue(startPos - mousePos, true) +
                     halfPointRange * pointRangeDirection, panMax = axis.toValue(startPos + axis.len - mousePos, true) -
-                    halfPointRange * pointRangeDirection, flipped = panMax < panMin, newMin = flipped ? panMax : panMin, newMax = flipped ? panMin : panMax, panningState = axis.panningState, paddedMin = Math.min(H.pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
+                    halfPointRange * pointRangeDirection, flipped = panMax < panMin, newMin = flipped ? panMax : panMin, newMax = flipped ? panMin : panMax, hasVerticalPanning = axis.hasVerticalPanning(), paddedMin, paddedMax, spill, panningState = axis.panningState;
+                // General calculations of panning state.
+                // This is related to using vertical panning. (#11315).
+                axis.series.forEach(function (series) {
+                    if (hasVerticalPanning &&
+                        !isX && (!panningState || panningState.isDirty)) {
+                        var processedData = series.getProcessedData(true), dataExtremes = series.getExtremes(processedData.yData, true);
+                        if (!panningState) {
+                            panningState = {
+                                startMin: Number.MAX_VALUE,
+                                startMax: -Number.MAX_VALUE
+                            };
+                        }
+                        if (isNumber(dataExtremes.dataMin) &&
+                            isNumber(dataExtremes.dataMax)) {
+                            panningState.startMin = Math.min(dataExtremes.dataMin, panningState.startMin);
+                            panningState.startMax = Math.max(dataExtremes.dataMax, panningState.startMax);
+                        }
+                    }
+                });
+                paddedMin = Math.min(H.pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMin, extremes.dataMin), halfPointRange ?
                     extremes.min :
                     axis.toValue(axis.toPixels(extremes.min) -
-                        axis.minPixelPadding)), paddedMax = Math.max(H.pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMax, extremes.dataMax), halfPointRange ?
+                        axis.minPixelPadding));
+                paddedMax = Math.max(H.pick(panningState === null || panningState === void 0 ? void 0 : panningState.startMax, extremes.dataMax), halfPointRange ?
                     extremes.max :
                     axis.toValue(axis.toPixels(extremes.max) +
-                        axis.minPixelPadding)), spill;
+                        axis.minPixelPadding));
+                axis.panningState = panningState;
                 // It is not necessary to calculate extremes on ordinal axis,
                 // because the are already calculated, so we don't want to
                 // override them.

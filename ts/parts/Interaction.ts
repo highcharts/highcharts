@@ -37,8 +37,9 @@ declare global {
             ): void;
         }
         interface AxisPanningState {
-            startMin: (number|null|undefined);
-            startMax: (number|null|undefined);
+            startMin: (number);
+            startMax: (number);
+            isDirty?: boolean;
         }
         interface Point {
             className?: string;
@@ -168,6 +169,7 @@ const {
     fireEvent,
     isArray,
     isFunction,
+    isNumber,
     isObject,
     merge,
     objectEach,
@@ -845,26 +847,69 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     flipped = panMax < panMin,
                     newMin = flipped ? panMax : panMin,
                     newMax = flipped ? panMin : panMax,
-                    panningState = axis.panningState,
-                    paddedMin = Math.min(
-                        H.pick(panningState?.startMin, extremes.dataMin),
-                        halfPointRange ?
-                            extremes.min :
-                            axis.toValue(
-                                axis.toPixels(extremes.min) -
-                                axis.minPixelPadding
-                            )
-                    ),
-                    paddedMax = Math.max(
-                        H.pick(panningState?.startMax, extremes.dataMax),
-                        halfPointRange ?
-                            extremes.max :
-                            axis.toValue(
-                                axis.toPixels(extremes.max) +
-                                axis.minPixelPadding
-                            )
-                    ),
-                    spill;
+                    hasVerticalPanning = axis.hasVerticalPanning(),
+                    paddedMin,
+                    paddedMax,
+                    spill,
+                    panningState = axis.panningState;
+
+                // General calculations of panning state.
+                // This is related to using vertical panning. (#11315).
+                axis.series.forEach(function (
+                    series: Highcharts.Series
+                ): void {
+                    if (
+                        hasVerticalPanning &&
+                        !isX && (
+                            !panningState || panningState.isDirty
+                        )
+                    ) {
+                        const processedData = series.getProcessedData(true),
+                            dataExtremes = series.getExtremes(
+                                processedData.yData, true
+                            );
+
+                        if (!panningState) {
+                            panningState = {
+                                startMin: Number.MAX_VALUE,
+                                startMax: -Number.MAX_VALUE
+                            };
+                        }
+
+                        if (
+                            isNumber(dataExtremes.dataMin) &&
+                            isNumber(dataExtremes.dataMax)
+                        ) {
+                            panningState.startMin = Math.min(
+                                dataExtremes.dataMin, panningState.startMin
+                            );
+                            panningState.startMax = Math.max(
+                                dataExtremes.dataMax, panningState.startMax
+                            );
+                        }
+                    }
+                });
+
+                paddedMin = Math.min(
+                    H.pick(panningState?.startMin, extremes.dataMin),
+                    halfPointRange ?
+                        extremes.min :
+                        axis.toValue(
+                            axis.toPixels(extremes.min) -
+                            axis.minPixelPadding
+                        )
+                );
+                paddedMax = Math.max(
+                    H.pick(panningState?.startMax, extremes.dataMax),
+                    halfPointRange ?
+                        extremes.max :
+                        axis.toValue(
+                            axis.toPixels(extremes.max) +
+                            axis.minPixelPadding
+                        )
+                );
+
+                axis.panningState = panningState;
 
                 // It is not necessary to calculate extremes on ordinal axis,
                 // because the are already calculated, so we don't want to

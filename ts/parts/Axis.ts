@@ -5927,7 +5927,6 @@ class Axis implements AxisComposition {
      */
     public setScale(): void {
         var axis: Highcharts.Axis = this as any,
-            hasVerticalPanning = axis.hasVerticalPanning(),
             isDirtyAxisLength,
             isDirtyData = false,
             isXAxisDirty = false;
@@ -5991,37 +5990,10 @@ class Axis implements AxisComposition {
             axis.cleanStacks();
         }
 
-        // Extend the Axis to calculate start min/max values. This is related to
-        // using vertical panning. (#11315).
-        if (
-            hasVerticalPanning &&
-            !axis.isXAxis &&
-            // Avoid adding panningState object to colorAxis
-            axis.coll !== 'colorAxis' &&
-            (
-                !defined(axis.panningState) ||
-                // Recalculate panning state object, when the data has changed.
-                isDirtyData
-            ) &&
-            axis.series.length
-        ) {
-            let min = Number.MAX_VALUE,
-                max = -Number.MAX_VALUE;
-
-            axis.series.forEach(function (series): void {
-                const processedData = series.getProcessedData(true),
-                    dataExtremes = series.getExtremes(processedData.yData, true);
-
-                if (isNumber(dataExtremes.dataMin) && isNumber(dataExtremes.dataMax)) {
-                    min = Math.min(dataExtremes.dataMin, min);
-                    max = Math.max(dataExtremes.dataMax, max);
-                }
-            });
-
-            axis.panningState = {
-                startMin: min,
-                startMax: max
-            };
+        // Recalculate panning state object, when the data
+        // has changed. It is required when vertical panning is enabled.
+        if (isDirtyData && axis.panningState) {
+            axis.panningState.isDirty = true;
         }
 
         fireEvent(this, 'afterSetScale');
