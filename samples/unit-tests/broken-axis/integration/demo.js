@@ -13,11 +13,10 @@ QUnit.test('Axis.setBreaks', assert => {
         .filter(point => !point.visible)
         .map(point => point.x);
 
-    axis.setBreaks([{
+    axis.brokenAxis.setBreaks([{
         from: 3,
         to: 6
     }]);
-
     assert.deepEqual(
         getXValuesOfInvisiblePoints(points),
         [4, 5],
@@ -33,7 +32,7 @@ QUnit.test('Axis.setBreaks', assert => {
         'Should set point.visible to false for points with x-values above 3 and below 6, except for null points when series connectNulls is false.'
     );
 
-    axis.setBreaks([]);
+    axis.brokenAxis.setBreaks([]);
     assert.deepEqual(
         getXValuesOfInvisiblePoints(points),
         [],

@@ -88,7 +88,7 @@ Chart.prototype.adjustHeight = function (): void {
 
             if (axis.staticScale && defined(axis.min)) {
                 height = pick(
-                    axis.unitLength,
+                    axis.brokenAxis && axis.brokenAxis.unitLength,
                     (axis.max as any) + axis.tickInterval - axis.min
                 ) * (staticScale as any);
 

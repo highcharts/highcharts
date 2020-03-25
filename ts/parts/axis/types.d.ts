@@ -9,12 +9,14 @@
  * */
 
 import type Axis from '../Axis';
+import type BrokenAxis from '../../modules/broken-axis.src';
 import type HiddenAxis from '../../parts-more/HiddenAxis';
 import type OrdinalAxis from '../OrdinalAxis';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
 
 export interface AxisComposition {
+    brokenAxis?: BrokenAxis['brokenAxis'];
     ordinal?: OrdinalAxis['ordinal'];
     scrollbar?: ScrollbarAxis['scrollbar'];
 }
@@ -24,6 +26,7 @@ export interface AxisComposition {
  */
 export type AxisType = (
     Axis|
+    BrokenAxis|
     HiddenAxis|
     OrdinalAxis|
     RadialAxis|
