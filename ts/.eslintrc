@@ -86,6 +86,7 @@
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
         "@typescript-eslint/unbound-method": 0, // @todo
+        "jsdoc/check-tag-names": 0,
         "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-syntax": 0, // @todo
     }
