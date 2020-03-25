@@ -165,6 +165,8 @@ seriesType('xrange', 'column'
             });
         }
         swapAxes();
+        // #13161 - overwrite unsupported stacking option
+        //this.options = merge(this.options, { stacking: undefined });
         metrics = columnType.prototype.getColumnMetrics.call(this);
         swapAxes();
         return metrics;
