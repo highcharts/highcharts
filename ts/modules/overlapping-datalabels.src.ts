@@ -20,7 +20,8 @@ const {
     fireEvent,
     isArray,
     objectEach,
-    pick
+    pick,
+    isIntersectRect
 } = U;
 
 import '../parts/Chart.js';
@@ -125,17 +126,6 @@ Chart.prototype.hideOverlappingLabels = function (
         box1,
         box2,
         isLabelAffected = false,
-        isIntersectRect = function (
-            box1: Highcharts.BBoxObject,
-            box2: Highcharts.BBoxObject
-        ): boolean {
-            return !(
-                box2.x > box1.x + box1.width ||
-                box2.x + box2.width < box1.x ||
-                box2.y > box1.y + box1.height ||
-                box2.y + box2.height < box1.y
-            );
-        },
 
         // Get the box with its position inside the chart, as opposed to getBBox
         // that only reports the position relative to the parent.
