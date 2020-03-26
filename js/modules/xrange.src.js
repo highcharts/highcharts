@@ -142,6 +142,15 @@ seriesType('xrange', 'column'
     getExtremesFromAll: true,
     autoIncrement: H.noop,
     buildKDTree: H.noop,
+    /**
+     * @private
+     * @function Highcarts.seriesTypes.xrange#init
+     * @return {void}
+     */
+    init: function () {
+        seriesTypes.column.prototype.init.apply(this, arguments);
+        this.options.stacking = false; // #13161
+    },
     /* eslint-disable valid-jsdoc */
     /**
      * Borrow the column series metrics, but with swapped axes. This gives
@@ -165,8 +174,6 @@ seriesType('xrange', 'column'
             });
         }
         swapAxes();
-        // #13161 - overwrite unsupported stacking option
-        this.options = merge(this.options, { stacking: void 0 });
         metrics = columnType.prototype.getColumnMetrics.call(this);
         swapAxes();
         return metrics;

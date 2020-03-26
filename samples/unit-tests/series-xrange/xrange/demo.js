@@ -474,7 +474,7 @@ QUnit.test('Stacking', assert => {
 
     assert.strictEqual(
         chart.series[0].options.stacking,
-        undefined,
+        false,
         'Stacking should be disabled.'
     );
 
