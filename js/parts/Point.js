@@ -157,7 +157,7 @@ import Highcharts from './Globals.js';
 */
 ''; // detach doclet above
 import U from './Utilities.js';
-var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
+var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey, isIntersectRect = U.isIntersectRect;
 var H = Highcharts;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -532,6 +532,33 @@ var Point = /** @class */ (function () {
             }
         });
         return graphicalProps;
+    };
+    /**
+     * Check if point is visible inside plotArea
+     *
+     * @private
+     * @function Highcharts.Point#isVisibleInPlot
+     * @return {boolean} return if the point is visible inside plotArea
+     */
+    Point.prototype.isVisibleInPlot = function () {
+        var point = this, shapeArgs = point.shapeArgs, pointHeight = shapeArgs && shapeArgs.height || 0, pointWidth = shapeArgs && shapeArgs.width || 0, series = point.series, chart = series.chart, scrollCont = chart.scrollingContainer || { scrollLeft: 0, scrollTop: 0 };
+        return !series.isCartesian || chart.polar || isIntersectRect(chart.inverted ?
+            {
+                x: series.yAxis.len - pick(point.yBottom, point.plotY + pointHeight, 0),
+                y: series.xAxis.len - (point.plotX || 0) - pointWidth / 2,
+                width: pointHeight,
+                height: pointWidth
+            } : {
+            x: (point.plotX || 0) - pointWidth / 2,
+            y: pick(point.plotHigh, point.plotY, 0),
+            width: pointWidth,
+            height: pointHeight
+        }, {
+            x: scrollCont.scrollLeft,
+            y: scrollCont.scrollTop,
+            width: chart.plotWidth,
+            height: chart.plotHeight - (chart.scrollablePixelsY || 0)
+        });
     };
     /**
      * Return the configuration hash needed for the data label and tooltip

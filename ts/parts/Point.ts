@@ -54,6 +54,7 @@ declare global {
                 eventArgs?: (Dictionary<any>|Event),
                 defaultFunction?: (EventCallbackFunction<Point>|Function)
             ): void;
+            public isVisibleInPlot(this: Highcharts.Point): boolean;
             public getLabelConfig(): PointLabelObject;
             public getNestedProperty(key: string): unknown;
             public getZone(): SeriesZonesOptions;
@@ -371,7 +372,8 @@ const {
     syncTimeout,
     pick,
     removeEvent,
-    uniqueKey
+    uniqueKey,
+    isIntersectRect
 } = U;
 
 var H = Highcharts;
@@ -864,6 +866,43 @@ class Point {
         });
 
         return graphicalProps;
+    }
+
+    /**
+     * Check if point is visible inside plotArea
+     *
+     * @private
+     * @function Highcharts.Point#isVisibleInPlot
+     * @return {boolean} return if the point is visible inside plotArea
+     */
+    public isVisibleInPlot(this: Highcharts.Point): boolean {
+        const point = this,
+            shapeArgs = point.shapeArgs,
+            pointHeight = shapeArgs && shapeArgs.height || 0,
+            pointWidth = shapeArgs && shapeArgs.width || 0,
+            series = point.series,
+            chart = series.chart,
+            scrollCont = chart.scrollingContainer || { scrollLeft: 0, scrollTop: 0 };
+
+        return !series.isCartesian || chart.polar || isIntersectRect(
+            chart.inverted ?
+                {
+                    x: series.yAxis.len - pick(point.yBottom, point.plotY + pointHeight, 0),
+                    y: series.xAxis.len - (point.plotX || 0) - pointWidth / 2,
+                    width: pointHeight,
+                    height: pointWidth
+                } : {
+                    x: (point.plotX || 0) - pointWidth / 2,
+                    y: pick(point.plotHigh, point.plotY, 0),
+                    width: pointWidth,
+                    height: pointHeight
+                },
+            { // plotArea Box
+                x: scrollCont.scrollLeft,
+                y: scrollCont.scrollTop,
+                width: chart.plotWidth,
+                height: chart.plotHeight - (chart.scrollablePixelsY || 0)
+            });
     }
 
     /**

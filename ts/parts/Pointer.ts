@@ -1947,6 +1947,7 @@ class Pointer {
         // #3926, #4200
         if (
             hoverPoint &&
+            hoverPoint.isVisibleInPlot() && // only refresh tooltip for points inside plotArea
             // !(hoverSeries && hoverSeries.directTouch) &&
             (hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))
         ) {
