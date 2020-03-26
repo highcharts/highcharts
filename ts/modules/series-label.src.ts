@@ -1073,7 +1073,8 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     let animationOptions: Highcharts.AnimationOptionsObject|undefined;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
-                        (animationOptions.duration as number) *= 0.2;
+                        // @todo: Safely remove any cast after merging #13005
+                        (animationOptions.duration as any) *= 0.2;
                     }
 
                     series.labelBySeries
