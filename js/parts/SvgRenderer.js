@@ -1809,51 +1809,55 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Returns the SVGElement for chaining.
      */
     shadow: function (shadowOptions, group, cutOff) {
-        var _this = this;
-        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, update = false, 
+        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, update = false, oldShadowOptions = this.oldShadowOptions, 
         // compensate for inverted plot area
         transform;
+        var defaultShadowOptions = {
+            color: '${palette.neutralColor100}',
+            offsetX: 1,
+            offsetY: 1,
+            opacity: 0.15,
+            width: 3
+        };
+        var options;
+        if (shadowOptions === true) {
+            options = defaultShadowOptions;
+        }
+        else if (typeof shadowOptions === 'object') {
+            options = extend(defaultShadowOptions, shadowOptions);
+        }
         // Update shadow when options change (#12091).
-        if (shadowOptions) {
-            // New and old options are objects.
-            if (isObject(shadowOptions) &&
-                isObject(this.oldShadowOptions)) {
-                objectEach(shadowOptions, function (value, key) {
-                    if (value !== _this.oldShadowOptions[key]) {
+        if (options) {
+            // Go over each key to look for change
+            if (options && oldShadowOptions) {
+                objectEach(options, function (value, key) {
+                    if (value !== oldShadowOptions[key]) {
                         update = true;
                     }
                 });
             }
-            else if ( // New or old options are boolean.
-            this.oldShadowOptions &&
-                shadowOptions !== this.oldShadowOptions) {
-                update = true;
-            }
             if (update) {
                 this.destroyShadows();
             }
-            this.oldShadowOptions = shadowOptions;
+            this.oldShadowOptions = options;
         }
-        if (!shadowOptions) {
+        if (!options) {
             this.destroyShadows();
         }
         else if (!this.shadows) {
-            shadowWidth = pick(shadowOptions.width, 3);
-            shadowElementOpacity = (shadowOptions.opacity || 0.15) /
-                shadowWidth;
+            shadowElementOpacity = options.opacity / options.width;
             transform = this.parentInverted ?
-                '(-1,-1)' :
-                '(' + pick(shadowOptions.offsetX, 1) + ', ' +
-                    pick(shadowOptions.offsetY, 1) + ')';
-            for (i = 1; i <= shadowWidth; i++) {
-                shadow = element.cloneNode(0);
-                strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
+                'translate(-1,-1)' :
+                "translate(" + options.offsetX + ", " + options.offsetY + ")";
+            for (i = 1; i <= options.width; i++) {
+                shadow = element.cloneNode(false);
+                strokeWidth = (options.width * 2) + 1 - (2 * i);
                 attr(shadow, {
                     stroke: (shadowOptions.color ||
                         '${palette.neutralColor100}'),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
-                    transform: 'translate' + transform,
+                    transform: transform,
                     fill: 'none'
                 });
                 shadow.setAttribute('class', (shadow.getAttribute('class') || '') + ' highcharts-shadow');
