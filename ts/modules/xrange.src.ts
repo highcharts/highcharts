@@ -62,6 +62,7 @@ declare global {
             public getColumnMetrics(): ColumnMetricsObject;
             public translate(): void;
             public translatePoint(point: XRangePoint): void;
+            public init(): void;
         }
         interface SeriesTypesDictionary {
             xrange: typeof XRangeSeries;
@@ -270,6 +271,17 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
         /* eslint-disable valid-jsdoc */
 
         /**
+         * @private
+         * @function Highcarts.seriesTypes.xrange#init
+         * @return {void}
+         */
+        init: function (this: Highcharts.XRangeSeries): void {
+            seriesTypes.column.prototype.init.apply(this, arguments as any);
+
+            this.options.stacking = false as any; // #13161
+        },
+
+        /**
          * Borrow the column series metrics, but with swapped axes. This gives
          * free access to features like groupPadding, grouping, pointWidth etc.
          *
@@ -297,9 +309,6 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             }
 
             swapAxes();
-
-            // #13161 - overwrite unsupported stacking option
-            this.options = merge(this.options, { stacking: void 0 });
 
             metrics = columnType.prototype.getColumnMetrics.call(this);
 
