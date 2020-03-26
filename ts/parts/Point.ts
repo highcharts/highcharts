@@ -884,25 +884,29 @@ class Point {
             chart = series.chart,
             scrollCont = chart.scrollingContainer || { scrollLeft: 0, scrollTop: 0 };
 
-        return !series.isCartesian || chart.polar || isIntersectRect(
-            chart.inverted ?
-                {
-                    x: series.yAxis.len - pick(point.yBottom, point.plotY + pointHeight, 0),
-                    y: series.xAxis.len - (point.plotX || 0) - pointWidth / 2,
-                    width: pointHeight,
-                    height: pointWidth
-                } : {
-                    x: (point.plotX || 0) - pointWidth / 2,
-                    y: pick(point.plotHigh, point.plotY, 0),
-                    width: pointWidth,
-                    height: pointHeight
-                },
-            { // plotArea Box
-                x: scrollCont.scrollLeft,
-                y: scrollCont.scrollTop,
-                width: chart.plotWidth,
-                height: chart.plotHeight - (chart.scrollablePixelsY || 0)
-            });
+        return !series.isCartesian || chart.polar ||
+            // if series is using x or y offset, don't check visibility.
+            (series.options as any).xOffset ||
+            (series.options as any).yOffset ||
+            isIntersectRect(
+                chart.inverted ?
+                    {
+                        x: series.yAxis.len - pick(point.yBottom, point.plotY + pointHeight, 0),
+                        y: series.xAxis.len - (point.plotX || 0) - pointWidth / 2,
+                        width: pointHeight,
+                        height: pointWidth
+                    } : {
+                        x: (point.plotX || 0) - pointWidth / 2,
+                        y: pick(point.plotHigh, point.plotY, 0),
+                        width: pointWidth,
+                        height: pointHeight
+                    },
+                { // plotArea Box
+                    x: scrollCont.scrollLeft,
+                    y: scrollCont.scrollTop,
+                    width: chart.plotWidth,
+                    height: chart.plotHeight - (chart.scrollablePixelsY || 0)
+                });
     }
 
     /**
