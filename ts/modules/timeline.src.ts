@@ -671,7 +671,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
             // Call default markerAttribs method, when the xAxis type
             // is set to datetime.
-            if (series.xAxis.isDatetimeAxis) {
+            if (series.xAxis.dateTime) {
                 return seriesTypes.line.prototype.markerAttribs
                     .call(this, point, state);
             }

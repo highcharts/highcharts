@@ -258,7 +258,6 @@ var Axis = /** @class */ (function () {
         this.hasNames = void 0;
         this.hasVisibleSeries = void 0;
         this.height = void 0;
-        this.isDatetimeAxis = void 0;
         this.isLinked = void 0;
         this.isLog = void 0;
         this.labelEdge = void 0; // @todo
@@ -377,7 +376,7 @@ var Axis = /** @class */ (function () {
          * @type {Highcharts.AxisOptions}
          */
         axis.setOptions(userOptions);
-        var options = this.options, type = options.type, isDatetimeAxis = type === 'datetime';
+        var options = this.options, type = options.type;
         axis.labelFormatter = (options.labels.formatter ||
             // can be overwritten by dynamic format
             axis.defaultLabelFormatter);
@@ -426,7 +425,6 @@ var Axis = /** @class */ (function () {
         axis.plotLinesAndBandsGroups = {};
         // Shorthand types
         axis.isLog = type === 'logarithmic';
-        axis.isDatetimeAxis = isDatetimeAxis;
         axis.positiveValuesOnly = axis.isLog && !axis.allowNegativeLog;
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
@@ -971,7 +969,6 @@ var Axis = /** @class */ (function () {
                 });
             }
             else if (axis.dateTime &&
-                axis.isDatetimeAxis &&
                 this.getMinorTickInterval() === 'auto') { // #1314
                 minorTickPositions = minorTickPositions.concat(axis.getTimeTicks(axis.dateTime.normalizeTimeTickInterval(minorTickInterval), min, max, options.startOfWeek));
             }
@@ -1284,8 +1281,8 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:foundExtremes
      */
     Axis.prototype.setTickInterval = function (secondPass) {
-        var axis = this, chart = axis.chart, options = axis.options, isLog = axis.isLog, isDatetimeAxis = axis.isDatetimeAxis, isXAxis = axis.isXAxis, isLinked = axis.isLinked, maxPadding = options.maxPadding, minPadding = options.minPadding, length, linkedParentExtremes, tickIntervalOption = options.tickInterval, minTickInterval, tickPixelIntervalOption = options.tickPixelInterval, categories = axis.categories, threshold = isNumber(axis.threshold) ? axis.threshold : null, softThreshold = axis.softThreshold, thresholdMin, thresholdMax, hardMin, hardMax;
-        if (!isDatetimeAxis && !categories && !isLinked) {
+        var axis = this, chart = axis.chart, options = axis.options, isLog = axis.isLog, isXAxis = axis.isXAxis, isLinked = axis.isLinked, maxPadding = options.maxPadding, minPadding = options.minPadding, length, linkedParentExtremes, tickIntervalOption = options.tickInterval, minTickInterval, tickPixelIntervalOption = options.tickPixelInterval, categories = axis.categories, threshold = isNumber(axis.threshold) ? axis.threshold : null, softThreshold = axis.softThreshold, thresholdMin, thresholdMax, hardMin, hardMax;
+        if (!axis.dateTime && !categories && !isLinked) {
             this.getTickAmount();
         }
         // Min or max set either by zooming/setExtremes or initial options
@@ -1459,12 +1456,12 @@ var Axis = /** @class */ (function () {
         }
         // Before normalizing the tick interval, handle minimum tick interval.
         // This applies only if tickInterval is not defined.
-        minTickInterval = pick(options.minTickInterval, (axis.isDatetimeAxis && axis.closestPointRange));
+        minTickInterval = pick(options.minTickInterval, (axis.dateTime && axis.closestPointRange));
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }
         // for linear axes, get magnitude and normalize the interval
-        if (!isDatetimeAxis && !isLog && !tickIntervalOption) {
+        if (!axis.dateTime && !isLog && !tickIntervalOption) {
             axis.tickInterval = normalizeTickInterval(axis.tickInterval, null, getMagnitude(axis.tickInterval), 
             // If the tick interval is between 0.5 and 5 and the axis max is
             // in the order of thousands, chances are we are dealing with
@@ -1540,8 +1537,7 @@ var Axis = /** @class */ (function () {
                 tickPositions = [this.min, this.max];
                 error(19, false, this.chart);
             }
-            else if (axis.dateTime &&
-                this.isDatetimeAxis) {
+            else if (axis.dateTime) {
                 tickPositions = axis.getTimeTicks(axis.dateTime.normalizeTimeTickInterval(this.tickInterval, options.units), this.min, this.max, options.startOfWeek, axis.ordinal && axis.ordinal.positions, this.closestPointRange, true);
             }
             else if (this.isLog) {

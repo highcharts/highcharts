@@ -734,7 +734,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     if (!formatOption && !options.formatter) {
-        if (this.isDatetimeAxis) {
+        if (this.dateTime) {
             formatFormat = '%b %d, %Y';
         }
         formatOption =
