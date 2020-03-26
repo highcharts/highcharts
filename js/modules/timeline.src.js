@@ -384,7 +384,7 @@ seriesType('timeline', 'line',
         var series = this, seriesMarkerOptions = series.options.marker, seriesStateOptions, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol || seriesMarkerOptions.symbol), pointStateOptions, width = pick(pointMarkerOptions.width, seriesMarkerOptions.width, series.closestPointRangePx), height = pick(pointMarkerOptions.height, seriesMarkerOptions.height), radius = 0, attribs;
         // Call default markerAttribs method, when the xAxis type
         // is set to datetime.
-        if (series.xAxis.isDatetimeAxis) {
+        if (series.xAxis.dateTime) {
             return seriesTypes.line.prototype.markerAttribs
                 .call(this, point, state);
         }

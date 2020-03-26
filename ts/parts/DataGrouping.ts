@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisType } from './axis/types';
+import DateTimeAxis from './DateTimeAxis.js';
 import H from './Globals.js';
 
 /**
@@ -696,10 +697,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
 
         // Execute grouping if the amount of points is greater than the limit
         // defined in groupPixelWidth
-        if (
-            xAxis.dateTime &&
-            groupPixelWidth
-        ) {
+        if (groupPixelWidth) {
             hasGroupedData = true;
 
             // Force recreation of point instances in series.translate, #5699
@@ -718,7 +716,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
-                    xAxis.dateTime.normalizeTimeTickInterval(
+                    DateTimeAxis.normalizeTimeTickInterval(
                         interval,
                         (dataGroupingOptions as any).units ||
                         defaultDataGroupingUnits

@@ -314,7 +314,7 @@ class Tick {
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
-        if (axis.isDatetimeAxis && tickPositionInfo) {
+        if (axis.dateTime && tickPositionInfo) {
             dateTimeLabelFormats = chart.time.resolveDTLFormat(
                 (options.dateTimeLabelFormats as any)[
                     (
