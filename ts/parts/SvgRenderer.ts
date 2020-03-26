@@ -6062,8 +6062,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         updateBoxSize = function (): void {
             var style = (text as any).element.style as Highcharts.CSSObject,
                 crispAdjust,
-                attribs = {} as Highcharts.SVGAttributes,
-                fontWeight = text.getStyle('font-weight');
+                attribs = {} as Highcharts.SVGAttributes;
 
             bBox = ((
                 typeof width === 'undefined' ||

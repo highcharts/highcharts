@@ -4203,7 +4203,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
            updated to detect the new bounding box and reflect it in the border
            box. */
         updateBoxSize = function () {
-            var style = text.element.style, crispAdjust, attribs = {}, fontWeight = text.getStyle('font-weight');
+            var style = text.element.style, crispAdjust, attribs = {};
             bBox = ((typeof width === 'undefined' ||
                 typeof height === 'undefined' ||
                 // #12165 error when width is null (auto)
