@@ -32,6 +32,10 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
      *  Functions
      *
      * */
+    LogarithmicAxisAdditions.prototype.destroy = function () {
+        this.axis = void 0;
+        this.minorAutoInterval = void 0;
+    };
     /**
      * Set the tick positions of a logarithmic axis.
      */
@@ -109,6 +113,11 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
         return positions;
     };
     LogarithmicAxisAdditions.prototype.lin2log = function (num) {
+        var axis = this.axis;
+        var lin2log = axis.options.linearToLogConverter;
+        if (typeof lin2log === 'function') {
+            return lin2log.apply(axis, arguments);
+        }
         return Math.pow(10, num);
     };
     LogarithmicAxisAdditions.prototype.log2lin = function (num) {
@@ -136,6 +145,11 @@ var LogarithmicAxis = /** @class */ (function () {
          * @return {number}
          */
         axisProto.lin2log = function (num) {
+            var axis = this;
+            var lin2log = axis.options.linearToLogConverter;
+            if (typeof lin2log === 'function') {
+                return lin2log.apply(axis, arguments);
+            }
             return Math.pow(10, num);
         };
         /**
@@ -157,7 +171,8 @@ var LogarithmicAxis = /** @class */ (function () {
             if (options.type === 'logarithmic') {
                 axis.logarithmic = new LogarithmicAxisAdditions(axis);
             }
-            else {
+            else if (axis.logarithmic) {
+                axis.logarithmic.destroy();
                 axis.logarithmic = void 0;
             }
         });
@@ -165,7 +180,6 @@ var LogarithmicAxis = /** @class */ (function () {
             var axis = this;
             var options = axis.options;
             // extend logarithmic axis
-            axis.lin2log = options.linearToLogConverter || axis.lin2log;
             if (axis.logarithmic) {
                 axis.val2lin = axis.log2lin;
                 axis.lin2val = axis.lin2log;

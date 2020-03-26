@@ -69,6 +69,11 @@ class LogarithmicAxisAdditions {
      *
      * */
 
+    public destroy(): void {
+        this.axis = void 0 as any;
+        this.minorAutoInterval = void 0;
+    }
+
     /**
      * Set the tick positions of a logarithmic axis.
      */
@@ -189,6 +194,13 @@ class LogarithmicAxisAdditions {
     }
 
     public lin2log(num: number): number {
+        const axis = this.axis;
+        const lin2log = axis.options.linearToLogConverter;
+
+        if (typeof lin2log === 'function') {
+            return lin2log.apply(axis, arguments);
+        }
+
         return Math.pow(10, num);
     }
 
@@ -219,6 +231,13 @@ class LogarithmicAxis {
          * @return {number}
          */
         axisProto.lin2log = function (this: Highcharts.Axis, num: number): number {
+            const axis = this;
+            const lin2log = axis.options.linearToLogConverter;
+
+            if (typeof lin2log === 'function') {
+                return lin2log.apply(axis, arguments);
+            }
+
             return Math.pow(10, num);
         };
 
@@ -243,7 +262,8 @@ class LogarithmicAxis {
 
             if (options.type === 'logarithmic') {
                 axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
-            } else {
+            } else if (axis.logarithmic) {
+                axis.logarithmic.destroy();
                 axis.logarithmic = void 0;
             }
         });
@@ -252,7 +272,6 @@ class LogarithmicAxis {
             const axis = this as LogarithmicAxis;
             const options = axis.options;
             // extend logarithmic axis
-            axis.lin2log = options.linearToLogConverter || axis.lin2log;
             if (axis.logarithmic) {
                 axis.val2lin = axis.log2lin;
                 axis.lin2val = axis.lin2log;

@@ -1596,7 +1596,9 @@ var discardElement = H.discardElement = function discardElement(element) {
  *         The corrected float number.
  */
 var correctFloat = H.correctFloat = function correctFloat(num, prec) {
-    return parseFloat(num.toPrecision(prec || 14));
+    var v = parseFloat(num.toPrecision(prec || 14));
+    console.log(num, v);
+    return v;
 };
 /**
  * Set the global animation to either a given value, or fall back to the given
