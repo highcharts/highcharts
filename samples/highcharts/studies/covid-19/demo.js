@@ -1,4 +1,4 @@
-(async function () {
+document.addEventListener('DOMContentLoaded', async function () {
     const countriesResp = await fetch("https://pomber.github.io/covid19/timeseries.json");
     const countries = await countriesResp.json();
     const populationResp = await fetch('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population.json');
@@ -21,17 +21,18 @@
 
     // Names used in Highcharts Map Collection
     countries['United States of America'] = countries.US;
+    countries['South Korea'] = countries['Korea, South'];
 
     let maxValue = 0;
     const data = Object.keys(countries).map(name => {
         const country = countries[name];
-        const confirmed = country[country.length - 1].confirmed;
+        const total = country[country.length - 1].confirmed;
         if (populationByName[name]) {
-            const value = confirmed / populationByName[name];
+            const value = total / populationByName[name];
             if (populationByName[name] > 1000) {
                 maxValue = Math.max(value, maxValue);
             }
-            return { name, value };
+            return { name, value, total };
         }
         return { name, value: null };
     });
@@ -40,12 +41,13 @@
     // Initiate the map chart
     const mapChart = Highcharts.mapChart('container', {
 
-        title: {
-            text: 'Confirmed Covid-19 Cases'
+        chart: {
+            spacingLeft: 1,
+            spacingRight: 1
         },
 
-        subtitle: {
-            text: 'Source: <a href="https://github.com/pomber/covid19">pomber/covid19</a>'
+        title: {
+            text: null
         },
 
         mapNavigation: {
@@ -62,9 +64,10 @@
         },
 
         tooltip: {
-            footerFormat: '<span style="font-size: 10px">(Click for details)</span>',
-            valueDecimals: 2,
-            valueSuffix: ' per 1000 inhabitants'
+            headerFormat: '<b>{point.point.name}</b><br>',
+            pointFormat: '<b>{point.total}</b> confirmed cases<br>' +
+                '<b>{point.value:.2f}</b> per 1000 inhabitants<br>',
+            footerFormat: '<span style="font-size: 10px">(Click for details)</span>'
         },
 
         legend: {
@@ -77,53 +80,74 @@
         },
 
         series: [{
+            id: 'map',
             data: data,
             mapData: mapData,
             joinBy: ['name', 'name'],
             name: 'Confirmed cases',
-            allowPointSelect: true,
             cursor: 'pointer',
             states: {
                 select: {
                     color: undefined,
-                    borderColor: 'black',
-                    dashStyle: 'shortdot'
+                    borderColor: '#333'
                 }
             },
-            borderWidth: 0.5
+            borderWidth: 1,
+            borderColor: 'rgba(0, 0, 0, 0.05)'
         }]
     });
 
     // Wrap point.select to get to the total selected points
-    Highcharts.wrap(Highcharts.Point.prototype, 'select', function (proceed) {
+    const onCountryClick = e => {
 
-        proceed.apply(this, Array.prototype.slice.call(arguments, 1));
+        // Accumulate using modifier keys, or on touch
+        if (e && e.target && e.target.point) {
+            e.preventDefault();
+            e.target.point.select(
+                null,
+                e.ctrlKey || e.metaKey || e.shiftKey || e.type === 'touchstart'
+            );
+            if (e.target.point.selected) {
+                e.target.point.graphic.toFront();
+            }
+        }
 
-        var points = mapChart.getSelectedPoints();
+        const points = mapChart.getSelectedPoints();
         if (points.length) {
+            if (e && e.type === 'touchstart') {
+                //document.querySelector('#reset').style.display = 'block';
+            }
+
             if (points.length === 1) {
+
+                document.querySelector('#info #flag').style.display = 'block';
                 document.querySelector('#info #flag')
                     .className = 'flag ' + points[0].flag;
-                document.querySelector('#info #flag').style.display = '';
-                document.querySelector('#info h2').innerHTML = points[0].name;
+                document.querySelector('#info .header-text').style.paddingLeft = '40px';
+                document.querySelector('#info .header-text').innerHTML = points[0].name;
                 document.querySelector('#info .subheader')
-                    .innerHTML = '<h5>Confirmed cases, starting the day before the 200th case</h5>' +
-                        '<small><em>Shift + Click on map to compare countries</em></small>';
+                    .innerHTML = 'Confirmed cases, starting the day before the 200th case<br>';
+
+                if (e && e.type === 'touchstart') {
+                    document.querySelector('#info .subheader')
+                        .innerHTML += '<small><em>Tap on map to compare multiple countries</em></small>';
+                } else {
+                    document.querySelector('#info .subheader')
+                        .innerHTML += '<small><em>Shift+Click on map to compare multiple countries</em></small>';
+                }
 
             } else {
                 document.querySelector('#info #flag').style.display = 'none';
-                document.querySelector('#info h2').innerHTML = 'Comparing countries';
+                document.querySelector('#info .header-text').style.paddingLeft = 0;
+                document.querySelector('#info .header-text').innerHTML = 'Comparing countries';
                 document.querySelector('#info .subheader')
-                    .innerHTML = '<h5>Confirmed cases, starting the day before the 200th case</h5>';
+                    .innerHTML = 'Confirmed cases, starting the day before the 200th case<br>';
             }
 
             if (!countryChart) {
                 countryChart = Highcharts.chart('country-chart', {
                     chart: {
-                        spacingLeft: 0,
-                        animation: {
-                            duration: 250
-                        }
+                        spacingLeft: 0
                     },
                     credits: {
                         enabled: false
@@ -146,8 +170,8 @@
                         opposite: true
                     },
                     tooltip: {
-                        headerFormat: '<small>Day {point.x}</small><br>',
-                        pointFormat: '<b>{point.date:%b %e, %Y}</b><br>{point.y} confirmed cases'
+                        headerFormat: '<small>{series.name}</small><br>',
+                        pointFormat: '<b>Day {point.x}: {point.date:%b %e, %Y}</b><br>{point.y} confirmed cases'
                     },
                     legend: {
                         enabled: false
@@ -170,49 +194,88 @@
             }
 
             countryChart.series.slice(0).forEach(function (s) {
-                s.remove(false);
+                if (
+                    !points.find(p => s.options.id === p.id) ||
+                    s.type === 'area'
+                ) {
+                    s.remove(false);
+                }
             });
             const store = [];
             points.forEach(function (p) {
-                const firstDayAbove200 = countries[p.name].findIndex(
-                    point => point.confirmed >= 200
-                );
-                const data = countries[p.name]
-                    .slice(Math.max(firstDayAbove200 - 1, 0))
-                    .map((point, x) => {
-                        const [year, month, date] = point.date.split('-');
-                        const d = Date.UTC(year, month - 1, date);
-                        return {
-                            date: d,
-                            x,
-                            y: point.confirmed
-                        };
-                    });
-                countryChart.addSeries({
-                    name: p.name,
-                    data,
-                    type: points.length > 1 ? 'line' : 'area',
-                    color: points.length > 1 ? undefined : '#aa0000',
-                    fillColor: points.length > 1 ? undefined : p.color
-                }, false);
-                store.push(p.id);
+                if (countries[p.name]) {
+                    if (!countryChart.get(p.id)) {
+                        const firstDayAbove200 = countries[p.name].findIndex(
+                            point => point.confirmed >= 200
+                        );
+                        const data = countries[p.name]
+                            .slice(Math.max(firstDayAbove200 - 1, 0))
+                            .map((point, x) => {
+                                const [year, month, date] = point.date.split('-');
+                                const d = Date.UTC(year, month - 1, date);
+                                return {
+                                    date: d,
+                                    x,
+                                    y: point.confirmed
+                                };
+                            });
+                        countryChart.addSeries({
+                            id: p.id,
+                            name: p.name,
+                            data,
+                            type: points.length > 1 ? 'line' : 'area',
+                            color: points.length > 1 ? undefined : '#aa0000',
+                            fillColor: points.length > 1 ? undefined : p.color
+                        }, false);
+                    }
+                    store.push(p.id);
+                }
             });
-            localStorage.setItem('selected', store.join(','));
+            location.hash = store.join(',');
             countryChart.redraw();
 
+        // No selected points
         } else {
+            //document.querySelector('#reset').style.display = 'none';
             document.querySelector('#info #flag').className = '';
-            document.querySelector('#info h2').innerHTML = '';
+            document.querySelector('#info .header-text').innerHTML = '';
             document.querySelector('#info .subheader').innerHTML = '';
             if (countryChart) {
                 countryChart = countryChart.destroy();
             }
         }
-    });
+    };
+    mapChart.container.querySelectorAll('.highcharts-point').forEach(
+        graphic => {
+            graphic.addEventListener('click', onCountryClick);
+            graphic.addEventListener('touchstart', onCountryClick);
+        }
+    );
 
     // Pre-select countries
-    const selected = localStorage.getItem('selected') || 'cn,it,us';
+    let selected = 'cn,it,us';
+    if (location.hash) {
+        selected = location.hash.replace('#', '');
+    }
     selected.split(',').forEach(id => {
-        mapChart.get(id).select(true, true);
+        if (/^[a-z]{2}$/.test(id)) {
+            const country = mapChart.get(id);
+            if (country) {
+                mapChart.get(id).select(true, true);
+            }
+        }
     });
-}());
+    onCountryClick();
+
+    // Activate button
+    /*
+    const resetMap = () => {
+        mapChart.getSelectedPoints().forEach(p => {
+            p.select(false);
+        });
+        onCountryClick();
+    };
+    document.getElementById('reset').addEventListener('click', resetMap);
+    document.getElementById('reset').addEventListener('touchstart', resetMap);
+    */
+});
