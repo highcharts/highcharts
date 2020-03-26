@@ -4768,7 +4768,8 @@ class Axis implements AxisComposition {
         // long running script. So we don't draw them.
         if (range && range / minorTickInterval < axis.len / 3) { // #3875
 
-            if (axis.logarithmic) {
+            const logarithmic = axis.logarithmic;
+            if (logarithmic) {
                 // For each interval in the major ticks, compute the minor ticks
                 // separately.
                 this.paddedTicks.forEach(function (
@@ -4776,10 +4777,10 @@ class Axis implements AxisComposition {
                     i: number,
                     paddedTicks: Array<number>
                 ): void {
-                    if (i && axis.logarithmic) {
+                    if (i) {
                         minorTickPositions.push.apply(
                             minorTickPositions,
-                            axis.logarithmic.getLogTickPositions(
+                            logarithmic.getLogTickPositions(
                                 minorTickInterval,
                                 paddedTicks[i - 1],
                                 paddedTicks[i],

@@ -953,12 +953,13 @@ var Axis = /** @class */ (function () {
         // If minor ticks get too dense, they are hard to read, and may cause
         // long running script. So we don't draw them.
         if (range && range / minorTickInterval < axis.len / 3) { // #3875
-            if (axis.logarithmic) {
+            var logarithmic_1 = axis.logarithmic;
+            if (logarithmic_1) {
                 // For each interval in the major ticks, compute the minor ticks
                 // separately.
                 this.paddedTicks.forEach(function (_pos, i, paddedTicks) {
-                    if (i && axis.logarithmic) {
-                        minorTickPositions.push.apply(minorTickPositions, axis.logarithmic.getLogTickPositions(minorTickInterval, paddedTicks[i - 1], paddedTicks[i], true));
+                    if (i) {
+                        minorTickPositions.push.apply(minorTickPositions, logarithmic_1.getLogTickPositions(minorTickInterval, paddedTicks[i - 1], paddedTicks[i], true));
                     }
                 });
             }
