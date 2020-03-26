@@ -11,6 +11,7 @@ QUnit.test('Series label', function (assert) {
         }, {
             data: [1, 3, 2, 4],
             label: {
+                enabled: true,
                 format: 'Format {name}',
                 formatter: function () {
                     return 'Formatter ' + this.name;
@@ -19,6 +20,7 @@ QUnit.test('Series label', function (assert) {
         }, {
             data: [1, 3, 2, 4],
             label: {
+                enabled: true,
                 formatter: function () {
                     return 'Formatter ' + this.name;
                 }
