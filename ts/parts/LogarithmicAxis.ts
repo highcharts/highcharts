@@ -237,9 +237,15 @@ class LogarithmicAxis {
 
         /* eslint-disable no-invalid-this */
 
-        addEvent(AxisClass, 'init', function (): void {
-            const axis = this as LogarithmicAxis;
-            axis.logarithmic = new LogarithmicAxisAdditions(axis);
+        addEvent(AxisClass, 'init', function (e: { userOptions: Axis['options'] }): void {
+            const axis = this;
+            const options = e.userOptions;
+
+            if (options.type === 'logarithmic') {
+                axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
+            } else {
+                axis.logarithmic = void 0;
+            }
         });
 
         addEvent(AxisClass, 'afterInit', function (): void {
@@ -247,7 +253,7 @@ class LogarithmicAxis {
             const options = axis.options;
             // extend logarithmic axis
             axis.lin2log = options.linearToLogConverter || axis.lin2log;
-            if (axis.isLog) {
+            if (axis.logarithmic) {
                 axis.val2lin = axis.log2lin;
                 axis.lin2val = axis.lin2log;
             }

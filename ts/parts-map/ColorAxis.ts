@@ -892,7 +892,7 @@ extend(ColorAxis.prototype, {
         this: Highcharts.ColorAxis,
         value: number
     ): number {
-        if (this.isLog) {
+        if (this.logarithmic) {
             value = this.val2lin(value);
         }
         return 1 - (

@@ -431,8 +431,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     crossLabel = this.crossLabel, // the svgElement
     posx, posy, crossBox, formatOption = options.format, formatFormat = '', limit, align, tickInside = this.options.tickPosition === 'inside', snap = this.crosshair.snap !== false, value, offset = 0, 
     // Use last available event (#5287)
-    e = event.e || (this.cross && this.cross.e), point = event.point, lin2log = this.lin2log, min, max;
-    if (this.isLog) {
+    e = event.e || (this.cross && this.cross.e), point = event.point, min, max;
+    if (this.logarithmic) {
+        var lin2log = this.logarithmic.lin2log;
         min = lin2log(this.min);
         max = lin2log(this.max);
     }

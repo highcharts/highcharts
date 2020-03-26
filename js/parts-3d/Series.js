@@ -27,7 +27,7 @@ H.Series.prototype.translate3dPoints = function () {
     for (i = 0; i < series.data.length; i++) {
         rawPoint = series.data[i];
         if (zAxis && zAxis.translate) {
-            zValue = zAxis.isLog && zAxis.val2lin ?
+            zValue = zAxis.logarithmic && zAxis.val2lin ?
                 zAxis.val2lin(rawPoint.z) :
                 rawPoint.z; // #4562
             rawPoint.plotZ = zAxis.translate(zValue);

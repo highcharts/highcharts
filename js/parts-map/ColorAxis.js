@@ -636,7 +636,7 @@ extend(ColorAxis.prototype, {
      * @private
      */
     normalizedValue: function (value) {
-        if (this.isLog) {
+        if (this.logarithmic) {
             value = this.val2lin(value);
         }
         return 1 - ((this.max - value) /

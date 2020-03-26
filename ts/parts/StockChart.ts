@@ -667,11 +667,11 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         // Use last available event (#5287)
         e = event.e || (this.cross && this.cross.e),
         point = event.point,
-        lin2log = this.lin2log,
         min,
         max;
 
-    if (this.isLog) {
+    if (this.logarithmic) {
+        const lin2log = this.logarithmic.lin2log;
         min = lin2log(this.min as any);
         max = lin2log(this.max as any);
     } else {

@@ -151,16 +151,22 @@ var LogarithmicAxis = /** @class */ (function () {
             return Math.log(num) / Math.LN10;
         };
         /* eslint-disable no-invalid-this */
-        addEvent(AxisClass, 'init', function () {
+        addEvent(AxisClass, 'init', function (e) {
             var axis = this;
-            axis.logarithmic = new LogarithmicAxisAdditions(axis);
+            var options = e.userOptions;
+            if (options.type === 'logarithmic') {
+                axis.logarithmic = new LogarithmicAxisAdditions(axis);
+            }
+            else {
+                axis.logarithmic = void 0;
+            }
         });
         addEvent(AxisClass, 'afterInit', function () {
             var axis = this;
             var options = axis.options;
             // extend logarithmic axis
             axis.lin2log = options.linearToLogConverter || axis.lin2log;
-            if (axis.isLog) {
+            if (axis.logarithmic) {
                 axis.val2lin = axis.log2lin;
                 axis.lin2val = axis.lin2log;
             }
