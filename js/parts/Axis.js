@@ -993,11 +993,11 @@ var Axis = /** @class */ (function () {
      * @function Highcharts.Axis#adjustForMinRange
      */
     Axis.prototype.adjustForMinRange = function () {
-        var axis = this, options = axis.options, min = axis.min, max = axis.max, zoomOffset, spaceAvailable, closestDataRange, i, distance, xData, loopLength, minArgs, maxArgs, minRange;
+        var axis = this, options = axis.options, min = axis.min, max = axis.max, log = axis.logarithmic, zoomOffset, spaceAvailable, closestDataRange, i, distance, xData, loopLength, minArgs, maxArgs, minRange;
         // Set the automatic minimum range based on the closest point distance
         if (axis.isXAxis &&
             typeof axis.minRange === 'undefined' &&
-            !axis.logarithmic) {
+            !log) {
             if (defined(options.min) || defined(options.max)) {
                 axis.minRange = null; // don't do this again
             }
@@ -1034,7 +1034,7 @@ var Axis = /** @class */ (function () {
             // If space is available, stay within the data range
             if (spaceAvailable) {
                 minArgs[2] = axis.logarithmic ?
-                    axis.log2lin(axis.dataMin) :
+                    axis.logarithmic.log2lin(axis.dataMin) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -1044,8 +1044,8 @@ var Axis = /** @class */ (function () {
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
-                maxArgs[2] = axis.logarithmic ?
-                    axis.log2lin(axis.dataMax) :
+                maxArgs[2] = log ?
+                    log.log2lin(axis.dataMax) :
                     axis.dataMax;
             }
             max = arrayMin(maxArgs);
@@ -1276,7 +1276,7 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:foundExtremes
      */
     Axis.prototype.setTickInterval = function (secondPass) {
-        var axis = this, chart = axis.chart, options = axis.options, isDatetimeAxis = axis.isDatetimeAxis, isXAxis = axis.isXAxis, isLinked = axis.isLinked, maxPadding = options.maxPadding, minPadding = options.minPadding, length, linkedParentExtremes, tickIntervalOption = options.tickInterval, minTickInterval, tickPixelIntervalOption = options.tickPixelInterval, categories = axis.categories, threshold = isNumber(axis.threshold) ? axis.threshold : null, softThreshold = axis.softThreshold, thresholdMin, thresholdMax, hardMin, hardMax;
+        var axis = this, chart = axis.chart, log = axis.logarithmic, options = axis.options, isDatetimeAxis = axis.isDatetimeAxis, isXAxis = axis.isXAxis, isLinked = axis.isLinked, maxPadding = options.maxPadding, minPadding = options.minPadding, length, linkedParentExtremes, tickIntervalOption = options.tickInterval, minTickInterval, tickPixelIntervalOption = options.tickPixelInterval, categories = axis.categories, threshold = isNumber(axis.threshold) ? axis.threshold : null, softThreshold = axis.softThreshold, thresholdMin, thresholdMax, hardMin, hardMax;
         if (!isDatetimeAxis && !categories && !isLinked) {
             this.getTickAmount();
         }
@@ -1310,7 +1310,7 @@ var Axis = /** @class */ (function () {
             axis.min = pick(hardMin, thresholdMin, axis.dataMin);
             axis.max = pick(hardMax, thresholdMax, axis.dataMax);
         }
-        if (axis.logarithmic) {
+        if (log) {
             if (axis.positiveValuesOnly &&
                 !secondPass &&
                 Math.min(axis.min, pick(axis.dataMin, axis.min)) <= 0) { // #978
@@ -1320,8 +1320,8 @@ var Axis = /** @class */ (function () {
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min), 16);
-            axis.max = correctFloat(axis.log2lin(axis.max), 16);
+            axis.min = correctFloat(log.log2lin(axis.min), 16);
+            axis.max = correctFloat(log.log2lin(axis.max), 16);
         }
         // handle zoomed range
         if (axis.range && defined(axis.max)) {
@@ -1960,12 +1960,13 @@ var Axis = /** @class */ (function () {
      */
     Axis.prototype.getExtremes = function () {
         var axis = this;
+        var log = axis.logarithmic;
         return {
-            min: axis.logarithmic ?
-                correctFloat(axis.lin2log(axis.min)) :
+            min: log ?
+                correctFloat(log.lin2log(axis.min)) :
                 axis.min,
-            max: axis.logarithmic ?
-                correctFloat(axis.lin2log(axis.max)) :
+            max: log ?
+                correctFloat(log.lin2log(axis.max)) :
                 axis.max,
             dataMin: axis.dataMin,
             dataMax: axis.dataMax,
@@ -1987,7 +1988,7 @@ var Axis = /** @class */ (function () {
      * stay within the axis bounds.
      */
     Axis.prototype.getThreshold = function (threshold) {
-        var axis = this, realMin = axis.logarithmic ? axis.lin2log(axis.min) : axis.min, realMax = axis.logarithmic ? axis.lin2log(axis.max) : axis.max;
+        var axis = this, log = axis.logarithmic, realMin = log ? log.lin2log(axis.min) : axis.min, realMax = log ? log.lin2log(axis.max) : axis.max;
         if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
         }
@@ -2665,7 +2666,7 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:afterRender
      */
     Axis.prototype.render = function () {
-        var axis = this, chart = axis.chart, renderer = chart.renderer, options = axis.options, isLinked = axis.isLinked, tickPositions = axis.tickPositions, axisTitle = axis.axisTitle, ticks = axis.ticks, minorTicks = axis.minorTicks, alternateBands = axis.alternateBands, stackLabelOptions = options.stackLabels, alternateGridColor = options.alternateGridColor, tickmarkOffset = axis.tickmarkOffset, axisLine = axis.axisLine, showAxis = axis.showAxis, animation = animObject(renderer.globalAnimation), from, to;
+        var axis = this, chart = axis.chart, log = axis.logarithmic, renderer = chart.renderer, options = axis.options, isLinked = axis.isLinked, tickPositions = axis.tickPositions, axisTitle = axis.axisTitle, ticks = axis.ticks, minorTicks = axis.minorTicks, alternateBands = axis.alternateBands, stackLabelOptions = options.stackLabels, alternateGridColor = options.alternateGridColor, tickmarkOffset = axis.tickmarkOffset, axisLine = axis.axisLine, showAxis = axis.showAxis, animation = animObject(renderer.globalAnimation), from, to;
         // Reset
         axis.labelEdge.length = 0;
         axis.overlap = false;
@@ -2717,8 +2718,8 @@ var Axis = /** @class */ (function () {
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
-                            from: axis.logarithmic ? axis.lin2log(from) : from,
-                            to: axis.logarithmic ? axis.lin2log(to) : to,
+                            from: log ? log.lin2log(from) : from,
+                            to: log ? log.lin2log(to) : to,
                             color: alternateGridColor
                         };
                         alternateBands[pos].render();

@@ -19,21 +19,6 @@ const {
     pick
 } = U;
 
-/**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface Axis {
-            /** @deprecated */
-            lin2log(num: number): number;
-            /** @deprecated */
-            log2lin(num: number): number;
-        }
-    }
-}
-
 /* eslint-disable valid-jsdoc */
 
 /**
@@ -127,7 +112,7 @@ class LogarithmicAxisAdditions {
             for (i = roundedMin; i < max + 1 && !break2; i++) {
                 len = intermediate.length;
                 for (j = 0; j < len && !break2; j++) {
-                    pos = axis.log2lin(axis.lin2log(i) * intermediate[j]);
+                    pos = log.log2lin(log.lin2log(i) * intermediate[j]);
                     // #1670, lastPos is #3113
                     if (
                         pos > min &&
@@ -148,8 +133,8 @@ class LogarithmicAxisAdditions {
         // we might as well handle the tick positions like a linear axis. For
         // example 1.01, 1.02, 1.03, 1.04.
         } else {
-            var realMin = axis.lin2log(min),
-                realMax = axis.lin2log(max),
+            var realMin = log.lin2log(min),
+                realMax = log.lin2log(max),
                 tickIntervalOption = minor ?
                     axis.getMinorTickInterval() :
                     options.tickInterval,
@@ -179,7 +164,7 @@ class LogarithmicAxisAdditions {
                 interval,
                 realMin,
                 realMax
-            ).map(axis.log2lin);
+            ).map(log.log2lin);
 
             if (!minor) {
                 log.minorAutoInterval = interval / 5;
@@ -194,13 +179,6 @@ class LogarithmicAxisAdditions {
     }
 
     public lin2log(num: number): number {
-        const axis = this.axis;
-        const lin2log = axis.options.linearToLogConverter;
-
-        if (typeof lin2log === 'function') {
-            return lin2log.apply(axis, arguments);
-        }
-
         return Math.pow(10, num);
     }
 
@@ -219,61 +197,34 @@ class LogarithmicAxis {
      */
     public static compose(AxisClass: typeof Axis): void {
 
-        const axisProto = AxisClass.prototype as LogarithmicAxis;
-
-        /**
-         * @deprecated
-         * @private
-         * @function Highcharts.Axis#lin2log
-         *
-         * @param {number} num
-         *
-         * @return {number}
-         */
-        axisProto.lin2log = function (this: Highcharts.Axis, num: number): number {
-            const axis = this;
-            const lin2log = axis.options.linearToLogConverter;
-
-            if (typeof lin2log === 'function') {
-                return lin2log.apply(axis, arguments);
-            }
-
-            return Math.pow(10, num);
-        };
-
-        /**
-         * @deprecated
-         * @private
-         * @function Highcharts.Axis#log2lin
-         *
-         * @param {number} num
-         *
-         * @return {number}
-         */
-        axisProto.log2lin = function (this: Highcharts.Axis, num: number): number {
-            return Math.log(num) / Math.LN10;
-        };
-
         /* eslint-disable no-invalid-this */
 
         addEvent(AxisClass, 'init', function (e: { userOptions: Axis['options'] }): void {
             const axis = this;
+            const log = axis.logarithmic;
             const options = e.userOptions;
 
             if (options.type === 'logarithmic') {
-                axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
-            } else if (axis.logarithmic) {
-                axis.logarithmic.destroy();
+                if (!log) {
+                    axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
+                }
+            } else if (log) {
+                log.destroy();
                 axis.logarithmic = void 0;
             }
         });
 
         addEvent(AxisClass, 'afterInit', function (): void {
             const axis = this as LogarithmicAxis;
+            const log = axis.logarithmic;
             // extend logarithmic axis
-            if (axis.logarithmic) {
-                axis.val2lin = axis.log2lin;
-                axis.lin2val = axis.lin2log;
+            if (log) {
+                axis.lin2val = function (num: number): number {
+                    return log.lin2log(num);
+                };
+                axis.val2lin = function (num: number): number {
+                    return log.log2lin(num);
+                };
             }
         });
     }
@@ -281,10 +232,6 @@ class LogarithmicAxis {
 
 interface LogarithmicAxis extends Axis {
     logarithmic: LogarithmicAxisAdditions;
-    /** @deprecated */
-    lin2log(num: number): number;
-    /** @deprecated */
-    log2lin(num: number): number;
 }
 
 LogarithmicAxis.compose(Axis); // @todo move to factory functions

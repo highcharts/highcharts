@@ -288,6 +288,7 @@ class Tick {
             options = axis.options,
             chart = axis.chart,
             categories = axis.categories,
+            log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
             labelOptions = pick(
@@ -351,7 +352,7 @@ class Tick {
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
             tickPositionInfo: tickPositionInfo,
-            value: axis.logarithmic ? correctFloat(axis.lin2log(value)) : value,
+            value: log ? correctFloat(log.lin2log(value)) : value,
             pos: pos
         };
         str = (axis.labelFormatter as any).call(tick.formatCtx, this.formatCtx);

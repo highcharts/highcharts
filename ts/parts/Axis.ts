@@ -4838,6 +4838,7 @@ class Axis implements AxisComposition {
             options = axis.options,
             min = axis.min,
             max = axis.max,
+            log = axis.logarithmic,
             zoomOffset,
             spaceAvailable: boolean,
             closestDataRange: (number|undefined),
@@ -4853,7 +4854,7 @@ class Axis implements AxisComposition {
         if (
             axis.isXAxis &&
             typeof axis.minRange === 'undefined' &&
-            !axis.logarithmic
+            !log
         ) {
 
             if (defined(options.min) || defined(options.max)) {
@@ -4901,7 +4902,7 @@ class Axis implements AxisComposition {
             // If space is available, stay within the data range
             if (spaceAvailable) {
                 minArgs[2] = axis.logarithmic ?
-                    axis.log2lin(axis.dataMin as any) :
+                    axis.logarithmic.log2lin(axis.dataMin as any) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -4912,8 +4913,8 @@ class Axis implements AxisComposition {
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
-                maxArgs[2] = axis.logarithmic ?
-                    axis.log2lin(axis.dataMax as any) :
+                maxArgs[2] = log ?
+                    log.log2lin(axis.dataMax as any) :
                     axis.dataMax;
             }
 
@@ -5224,6 +5225,7 @@ class Axis implements AxisComposition {
     public setTickInterval(secondPass?: boolean): void {
         var axis: Highcharts.Axis = this as any,
             chart = axis.chart,
+            log = axis.logarithmic,
             options = axis.options,
             isDatetimeAxis = axis.isDatetimeAxis,
             isXAxis = axis.isXAxis,
@@ -5289,7 +5291,7 @@ class Axis implements AxisComposition {
 
         }
 
-        if (axis.logarithmic) {
+        if (log) {
             if (
                 axis.positiveValuesOnly &&
                 !secondPass &&
@@ -5303,8 +5305,8 @@ class Axis implements AxisComposition {
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min as any), 16);
-            axis.max = correctFloat(axis.log2lin(axis.max as any), 16);
+            axis.min = correctFloat(log.log2lin(axis.min as any), 16);
+            axis.max = correctFloat(log.log2lin(axis.max as any), 16);
         }
 
         // handle zoomed range
@@ -6190,14 +6192,15 @@ class Axis implements AxisComposition {
      * An object containing extremes information.
      */
     public getExtremes(): Highcharts.ExtremesObject {
-        var axis: Highcharts.Axis = this as any;
+        const axis: Highcharts.Axis = this as any;
+        const log = axis.logarithmic;
 
         return {
-            min: axis.logarithmic ?
-                correctFloat(axis.lin2log(axis.min as any)) :
+            min: log ?
+                correctFloat(log.lin2log(axis.min as any)) :
                 axis.min as any,
-            max: axis.logarithmic ?
-                correctFloat(axis.lin2log(axis.max as any)) :
+            max: log ?
+                correctFloat(log.lin2log(axis.max as any)) :
                 axis.max as any,
             dataMin: axis.dataMin as any,
             dataMax: axis.dataMax as any,
@@ -6221,8 +6224,9 @@ class Axis implements AxisComposition {
      */
     public getThreshold(threshold: number): (number|undefined) {
         var axis: Highcharts.Axis = this as any,
-            realMin = axis.logarithmic ? axis.lin2log(axis.min as any) : axis.min as any,
-            realMax = axis.logarithmic ? axis.lin2log(axis.max as any) : axis.max as any;
+            log = axis.logarithmic,
+            realMin = log ? log.lin2log(axis.min as any) : axis.min as any,
+            realMax = log ? log.lin2log(axis.max as any) : axis.max as any;
 
         if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
@@ -7194,6 +7198,7 @@ class Axis implements AxisComposition {
     public render(): void {
         var axis: Highcharts.Axis = this as any,
             chart = axis.chart,
+            log = axis.logarithmic,
             renderer = chart.renderer,
             options = axis.options,
             isLinked = axis.isLinked,
@@ -7281,8 +7286,8 @@ class Axis implements AxisComposition {
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
-                            from: axis.logarithmic ? axis.lin2log(from) : from,
-                            to: axis.logarithmic ? axis.lin2log(to) : to,
+                            from: log ? log.lin2log(from) : from,
+                            to: log ? log.lin2log(to) : to,
                             color: alternateGridColor
                         };
                         alternateBands[pos].render();

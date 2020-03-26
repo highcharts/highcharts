@@ -893,7 +893,7 @@ extend(ColorAxis.prototype, {
         value: number
     ): number {
         if (this.logarithmic) {
-            value = this.log2lin(value);
+            value = this.logarithmic.log2lin(value);
         }
         return 1 - (
             ((this.max as any) - value) /

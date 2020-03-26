@@ -73,7 +73,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
             for (i = roundedMin; i < max + 1 && !break2; i++) {
                 len = intermediate.length;
                 for (j = 0; j < len && !break2; j++) {
-                    pos = axis.log2lin(axis.lin2log(i) * intermediate[j]);
+                    pos = log.log2lin(log.lin2log(i) * intermediate[j]);
                     // #1670, lastPos is #3113
                     if (pos > min &&
                         (!minor || lastPos <= max) &&
@@ -91,7 +91,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
             // example 1.01, 1.02, 1.03, 1.04.
         }
         else {
-            var realMin = axis.lin2log(min), realMax = axis.lin2log(max), tickIntervalOption = minor ?
+            var realMin = log.lin2log(min), realMax = log.lin2log(max), tickIntervalOption = minor ?
                 axis.getMinorTickInterval() :
                 options.tickInterval, filteredTickIntervalOption = tickIntervalOption === 'auto' ?
                 null :
@@ -101,7 +101,7 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
             interval = pick(filteredTickIntervalOption, log.minorAutoInterval, (realMax - realMin) *
                 tickPixelIntervalOption / (totalPixelLength || 1));
             interval = normalizeTickInterval(interval, void 0, getMagnitude(interval));
-            positions = axis.getLinearTickPositions(interval, realMin, realMax).map(axis.log2lin);
+            positions = axis.getLinearTickPositions(interval, realMin, realMax).map(log.log2lin);
             if (!minor) {
                 log.minorAutoInterval = interval / 5;
             }
@@ -113,11 +113,6 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
         return positions;
     };
     LogarithmicAxisAdditions.prototype.lin2log = function (num) {
-        var axis = this.axis;
-        var lin2log = axis.options.linearToLogConverter;
-        if (typeof lin2log === 'function') {
-            return lin2log.apply(axis, arguments);
-        }
         return Math.pow(10, num);
     };
     LogarithmicAxisAdditions.prototype.log2lin = function (num) {
@@ -134,54 +129,32 @@ var LogarithmicAxis = /** @class */ (function () {
      * @private
      */
     LogarithmicAxis.compose = function (AxisClass) {
-        var axisProto = AxisClass.prototype;
-        /**
-         * @deprecated
-         * @private
-         * @function Highcharts.Axis#lin2log
-         *
-         * @param {number} num
-         *
-         * @return {number}
-         */
-        axisProto.lin2log = function (num) {
-            var axis = this;
-            var lin2log = axis.options.linearToLogConverter;
-            if (typeof lin2log === 'function') {
-                return lin2log.apply(axis, arguments);
-            }
-            return Math.pow(10, num);
-        };
-        /**
-         * @deprecated
-         * @private
-         * @function Highcharts.Axis#log2lin
-         *
-         * @param {number} num
-         *
-         * @return {number}
-         */
-        axisProto.log2lin = function (num) {
-            return Math.log(num) / Math.LN10;
-        };
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function (e) {
             var axis = this;
+            var log = axis.logarithmic;
             var options = e.userOptions;
             if (options.type === 'logarithmic') {
-                axis.logarithmic = new LogarithmicAxisAdditions(axis);
+                if (!log) {
+                    axis.logarithmic = new LogarithmicAxisAdditions(axis);
+                }
             }
-            else if (axis.logarithmic) {
-                axis.logarithmic.destroy();
+            else if (log) {
+                log.destroy();
                 axis.logarithmic = void 0;
             }
         });
         addEvent(AxisClass, 'afterInit', function () {
             var axis = this;
+            var log = axis.logarithmic;
             // extend logarithmic axis
-            if (axis.logarithmic) {
-                axis.val2lin = axis.log2lin;
-                axis.lin2val = axis.lin2log;
+            if (log) {
+                axis.lin2val = function (num) {
+                    return log.lin2log(num);
+                };
+                axis.val2lin = function (num) {
+                    return log.log2lin(num);
+                };
             }
         });
     };

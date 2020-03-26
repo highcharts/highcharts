@@ -647,6 +647,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     var chart = this.chart,
+        log = this.logarithmic,
         options = (this.options.crosshair as any).label, // the label's options
         horiz = this.horiz, // axis orientation
         opposite = this.opposite, // axis position
@@ -670,9 +671,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         min = this.min,
         max = this.max;
 
-    if (this.logarithmic) {
-        min = this.lin2log(min as any);
-        max = this.lin2log(max as any);
+    if (log) {
+        min = log.lin2log(min as any);
+        max = log.lin2log(max as any);
     }
 
     align = (horiz ? 'center' : opposite ?

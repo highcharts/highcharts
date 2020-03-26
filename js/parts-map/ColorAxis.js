@@ -637,7 +637,7 @@ extend(ColorAxis.prototype, {
      */
     normalizedValue: function (value) {
         if (this.logarithmic) {
-            value = this.log2lin(value);
+            value = this.logarithmic.log2lin(value);
         }
         return 1 - ((this.max - value) /
             ((this.max - this.min) || 1));

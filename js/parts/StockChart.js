@@ -423,7 +423,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         !this.cross) {
         return;
     }
-    var chart = this.chart, options = this.options.crosshair.label, // the label's options
+    var chart = this.chart, log = this.logarithmic, options = this.options.crosshair.label, // the label's options
     horiz = this.horiz, // axis orientation
     opposite = this.opposite, // axis position
     left = this.left, // left position
@@ -432,9 +432,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     posx, posy, crossBox, formatOption = options.format, formatFormat = '', limit, align, tickInside = this.options.tickPosition === 'inside', snap = this.crosshair.snap !== false, value, offset = 0, 
     // Use last available event (#5287)
     e = event.e || (this.cross && this.cross.e), point = event.point, min = this.min, max = this.max;
-    if (this.logarithmic) {
-        min = this.lin2log(min);
-        max = this.lin2log(max);
+    if (log) {
+        min = log.lin2log(min);
+        max = log.lin2log(max);
     }
     align = (horiz ? 'center' : opposite ?
         (this.labelAlign === 'right' ? 'right' : 'left') :
