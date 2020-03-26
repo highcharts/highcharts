@@ -658,6 +658,7 @@ Chart.prototype.drawSeriesLabels = function () {
                     var animationOptions = void 0;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
+                        // @todo: Safely remove any cast after merging #13005
                         animationOptions.duration *= 0.2;
                     }
                     series.labelBySeries
