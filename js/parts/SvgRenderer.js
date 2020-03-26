@@ -1496,7 +1496,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 rotation,
                 fontSize,
                 wrapper.textWidth,
-                styles && styles.textOverflow // #5968
+                styles && styles.textOverflow,
+                styles && styles.fontWeight // #12163
             ].join(',');
         }
         if (cacheKey && !reload) {
@@ -4202,12 +4203,17 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
            updated to detect the new bounding box and reflect it in the border
            box. */
         updateBoxSize = function () {
-            var style = text.element.style, crispAdjust, attribs = {};
+            var style = text.element.style, crispAdjust, attribs = {}, fontWeight = text.getStyle('font-weight');
             bBox = ((typeof width === 'undefined' ||
                 typeof height === 'undefined' ||
+                // #12165 error when width is null (auto)
+                width === null ||
+                height === null ||
                 textAlign) &&
                 defined(text.textStr) &&
-                text.getBBox()); // #3295 && 3514 box failure when string equals 0
+                text.getBBox()
+            // #12163 when fontweight: bold, recalculate bBox withot cache
+            ); // #3295 && 3514 box failure when string equals 0
             wrapper.width = ((width || bBox.width || 0) +
                 2 * padding +
                 paddingLeft);
@@ -4431,6 +4437,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     }
                     // Keep updated (#9400)
                     if ('fontSize' in textStyles) {
+                        updateBoxSize();
+                        updateTextPadding();
+                    }
+                    // Keep updated (#12163)
+                    if ('fontWeight' in textStyles) {
                         updateBoxSize();
                         updateTextPadding();
                     }

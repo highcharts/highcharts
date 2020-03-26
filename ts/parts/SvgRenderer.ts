@@ -2332,7 +2332,8 @@ extend((
                 rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
-                styles && styles.textOverflow // #5968
+                styles && styles.textOverflow, // #5968
+                styles && styles.fontWeight // #12163
             ].join(',');
 
         }
@@ -6061,14 +6062,19 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         updateBoxSize = function (): void {
             var style = (text as any).element.style as Highcharts.CSSObject,
                 crispAdjust,
-                attribs = {} as Highcharts.SVGAttributes;
+                attribs = {} as Highcharts.SVGAttributes,
+                fontWeight = text.getStyle('font-weight');
 
             bBox = ((
                 typeof width === 'undefined' ||
                 typeof height === 'undefined' ||
+                // #12165 error when width is null (auto)
+                width === null ||
+                height === null ||
                 textAlign) &&
                 defined(text.textStr) &&
                 text.getBBox()
+                // #12163 when fontweight: bold, recalculate bBox withot cache
             ); // #3295 && 3514 box failure when string equals 0
 
             wrapper.width = (
@@ -6332,7 +6338,6 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         }
                     });
                     text.css(textStyles);
-
                     // Update existing text and box
                     if ('width' in textStyles) {
                         updateBoxSize();
@@ -6343,6 +6348,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         updateBoxSize();
                         updateTextPadding();
                     }
+
+                    // Keep updated (#12163)
+                    if ('fontWeight' in textStyles) {
+                        updateBoxSize();
+                        updateTextPadding();
+                    }
+
                 }
                 return baseCss.call(wrapper, styles);
             },
