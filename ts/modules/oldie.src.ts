@@ -176,7 +176,7 @@ declare global {
             public setAttr(key: string, value: string): void;
             public setSpanRotation(): void;
             public shadow(
-                shadowOptions: ShadowOptionsObject,
+                shadowOptions: Partial<ShadowOptionsObject>,
                 group: VMLElement,
                 cutOff: boolean
             ): VMLElement;
@@ -981,7 +981,7 @@ if (!svg) {
          */
         shadow: function (
             this: Highcharts.VMLElement,
-            shadowOptions: Highcharts.ShadowOptionsObject,
+            shadowOptions: Partial<Highcharts.ShadowOptionsObject>,
             group: Highcharts.VMLElement,
             cutOff: boolean
         ): Highcharts.VMLElement {
