@@ -377,7 +377,7 @@ declare global {
             pointStart?: number;
             pointValKey?: string;
             selected?: boolean;
-            shadow?: (boolean|ShadowOptionsObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             showCheckbox?: boolean;
             showInLegend?: boolean;
             showInNavigator?: boolean;
