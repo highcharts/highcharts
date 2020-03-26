@@ -335,7 +335,7 @@ declare global {
             pointFormat?: string;
             pointFormatter?: FormatterCallbackFunction<Point>;
             positioner?: TooltipPositionerCallbackFunction;
-            shadow?: (boolean|ShadowOptionsObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             shape?: TooltipShapeValue;
             shared?: boolean;
             snap?: number;

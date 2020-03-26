@@ -169,7 +169,7 @@ declare global {
             formatter: FormatterCallbackFunction<Point>;
             overflow: DataLabelsOverflowValue;
             padding: number;
-            shadow: (boolean|ShadowOptionsObject);
+            shadow: (boolean|Partial<ShadowOptionsObject>);
             shape: SymbolKeyValue;
             style: CSSObject;
             text?: string;
