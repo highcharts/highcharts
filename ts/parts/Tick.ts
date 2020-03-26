@@ -351,7 +351,7 @@ class Tick {
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
             tickPositionInfo: tickPositionInfo,
-            value: axis.logarithmic ? correctFloat(axis.logarithmic.lin2log(value)) : value,
+            value: axis.logarithmic ? correctFloat(axis.lin2log(value)) : value,
             pos: pos
         };
         str = (axis.labelFormatter as any).call(tick.formatCtx, this.formatCtx);

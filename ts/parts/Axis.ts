@@ -203,6 +203,7 @@ declare global {
             accessibility?: XAxisAccessibilityOptions;
             alignTicks?: boolean;
             allowDecimals?: boolean;
+            allowNegativeLog?: boolean;
             alternateGridColor?: (
                 ColorString|GradientColorObject|PatternObject
             );
@@ -4047,7 +4048,7 @@ class Axis implements AxisComposition {
 
         // Shorthand types
         axis.isDatetimeAxis = isDatetimeAxis;
-        axis.positiveValuesOnly = !!(axis.logarithmic && !(axis as any).allowNegativeLog);
+        axis.positiveValuesOnly = !!(axis.logarithmic && !options.allowNegativeLog);
 
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
@@ -4899,7 +4900,7 @@ class Axis implements AxisComposition {
             // If space is available, stay within the data range
             if (spaceAvailable) {
                 minArgs[2] = axis.logarithmic ?
-                    axis.logarithmic.log2lin(axis.dataMin as any) :
+                    axis.log2lin(axis.dataMin as any) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -4911,7 +4912,7 @@ class Axis implements AxisComposition {
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
                 maxArgs[2] = axis.logarithmic ?
-                    axis.logarithmic.log2lin(axis.dataMax as any) :
+                    axis.log2lin(axis.dataMax as any) :
                     axis.dataMax;
             }
 
@@ -6192,10 +6193,10 @@ class Axis implements AxisComposition {
 
         return {
             min: axis.logarithmic ?
-                correctFloat(axis.logarithmic.lin2log(axis.min as any)) :
+                correctFloat(axis.lin2log(axis.min as any)) :
                 axis.min as any,
             max: axis.logarithmic ?
-                correctFloat(axis.logarithmic.lin2log(axis.max as any)) :
+                correctFloat(axis.lin2log(axis.max as any)) :
                 axis.max as any,
             dataMin: axis.dataMin as any,
             dataMax: axis.dataMax as any,
@@ -6219,8 +6220,8 @@ class Axis implements AxisComposition {
      */
     public getThreshold(threshold: number): (number|undefined) {
         var axis: Highcharts.Axis = this as any,
-            realMin = axis.logarithmic ? axis.logarithmic.lin2log(axis.min as any) : axis.min as any,
-            realMax = axis.logarithmic ? axis.logarithmic.lin2log(axis.max as any) : axis.max as any;
+            realMin = axis.logarithmic ? axis.lin2log(axis.min as any) : axis.min as any,
+            realMax = axis.logarithmic ? axis.lin2log(axis.max as any) : axis.max as any;
 
         if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
@@ -7279,8 +7280,8 @@ class Axis implements AxisComposition {
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
-                            from: axis.logarithmic ? axis.logarithmic.lin2log(from) : from,
-                            to: axis.logarithmic ? axis.logarithmic.lin2log(to) : to,
+                            from: axis.logarithmic ? axis.lin2log(from) : from,
+                            to: axis.logarithmic ? axis.lin2log(to) : to,
                             color: alternateGridColor
                         };
                         alternateBands[pos].render();

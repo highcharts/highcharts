@@ -178,7 +178,6 @@ var LogarithmicAxis = /** @class */ (function () {
         });
         addEvent(AxisClass, 'afterInit', function () {
             var axis = this;
-            var options = axis.options;
             // extend logarithmic axis
             if (axis.logarithmic) {
                 axis.val2lin = axis.log2lin;

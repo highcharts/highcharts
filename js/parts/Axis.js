@@ -425,7 +425,7 @@ var Axis = /** @class */ (function () {
         axis.plotLinesAndBandsGroups = {};
         // Shorthand types
         axis.isDatetimeAxis = isDatetimeAxis;
-        axis.positiveValuesOnly = !!(axis.logarithmic && !axis.allowNegativeLog);
+        axis.positiveValuesOnly = !!(axis.logarithmic && !options.allowNegativeLog);
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
         /**
@@ -1033,7 +1033,7 @@ var Axis = /** @class */ (function () {
             // If space is available, stay within the data range
             if (spaceAvailable) {
                 minArgs[2] = axis.logarithmic ?
-                    axis.logarithmic.log2lin(axis.dataMin) :
+                    axis.log2lin(axis.dataMin) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -1044,7 +1044,7 @@ var Axis = /** @class */ (function () {
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
                 maxArgs[2] = axis.logarithmic ?
-                    axis.logarithmic.log2lin(axis.dataMax) :
+                    axis.log2lin(axis.dataMax) :
                     axis.dataMax;
             }
             max = arrayMin(maxArgs);
@@ -1961,10 +1961,10 @@ var Axis = /** @class */ (function () {
         var axis = this;
         return {
             min: axis.logarithmic ?
-                correctFloat(axis.logarithmic.lin2log(axis.min)) :
+                correctFloat(axis.lin2log(axis.min)) :
                 axis.min,
             max: axis.logarithmic ?
-                correctFloat(axis.logarithmic.lin2log(axis.max)) :
+                correctFloat(axis.lin2log(axis.max)) :
                 axis.max,
             dataMin: axis.dataMin,
             dataMax: axis.dataMax,
@@ -1986,7 +1986,7 @@ var Axis = /** @class */ (function () {
      * stay within the axis bounds.
      */
     Axis.prototype.getThreshold = function (threshold) {
-        var axis = this, realMin = axis.logarithmic ? axis.logarithmic.lin2log(axis.min) : axis.min, realMax = axis.logarithmic ? axis.logarithmic.lin2log(axis.max) : axis.max;
+        var axis = this, realMin = axis.logarithmic ? axis.lin2log(axis.min) : axis.min, realMax = axis.logarithmic ? axis.lin2log(axis.max) : axis.max;
         if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
         }
@@ -2716,8 +2716,8 @@ var Axis = /** @class */ (function () {
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
-                            from: axis.logarithmic ? axis.logarithmic.lin2log(from) : from,
-                            to: axis.logarithmic ? axis.logarithmic.lin2log(to) : to,
+                            from: axis.logarithmic ? axis.lin2log(from) : from,
+                            to: axis.logarithmic ? axis.lin2log(to) : to,
                             color: alternateGridColor
                         };
                         alternateBands[pos].render();

@@ -138,7 +138,7 @@ var Tick = /** @class */ (function () {
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat,
             tickPositionInfo: tickPositionInfo,
-            value: axis.logarithmic ? correctFloat(axis.logarithmic.lin2log(value)) : value,
+            value: axis.logarithmic ? correctFloat(axis.lin2log(value)) : value,
             pos: pos
         };
         str = axis.labelFormatter.call(tick.formatCtx, this.formatCtx);

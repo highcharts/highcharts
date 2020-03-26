@@ -67,9 +67,9 @@ var PlotLineOrBand = /** @class */ (function () {
         }, groupAttribs = {}, renderer = axis.chart.renderer, groupName = isBand ? 'bands' : 'lines', group;
         // logarithmic conversion
         if (axis.logarithmic) {
-            from = axis.logarithmic.log2lin(from);
-            to = axis.logarithmic.log2lin(to);
-            value = axis.logarithmic.log2lin(value);
+            from = axis.log2lin(from);
+            to = axis.log2lin(to);
+            value = axis.log2lin(value);
         }
         // Set the presentational attributes
         if (!axis.chart.styledMode) {

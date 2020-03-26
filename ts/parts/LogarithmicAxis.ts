@@ -270,7 +270,6 @@ class LogarithmicAxis {
 
         addEvent(AxisClass, 'afterInit', function (): void {
             const axis = this as LogarithmicAxis;
-            const options = axis.options;
             // extend logarithmic axis
             if (axis.logarithmic) {
                 axis.val2lin = axis.log2lin;
@@ -282,7 +281,9 @@ class LogarithmicAxis {
 
 interface LogarithmicAxis extends Axis {
     logarithmic: LogarithmicAxisAdditions;
+    /** @deprecated */
     lin2log(num: number): number;
+    /** @deprecated */
     log2lin(num: number): number;
 }
 

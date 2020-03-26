@@ -659,7 +659,6 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         formatOption = options.format,
         formatFormat = '',
         limit,
-        logarithmic = this.logarithmic,
         align,
         tickInside = this.options.tickPosition === 'inside',
         snap = (this.crosshair as any).snap !== false,
@@ -671,9 +670,9 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         min = this.min,
         max = this.max;
 
-    if (logarithmic) {
-        min = logarithmic.lin2log(min as any);
-        max = logarithmic.lin2log(max as any);
+    if (this.logarithmic) {
+        min = this.lin2log(min as any);
+        max = this.lin2log(max as any);
     }
 
     align = (horiz ? 'center' : opposite ?
