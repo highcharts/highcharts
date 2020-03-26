@@ -142,6 +142,7 @@ seriesType('xrange', 'column'
     getExtremesFromAll: true,
     autoIncrement: H.noop,
     buildKDTree: H.noop,
+    /* eslint-disable valid-jsdoc */
     /**
      * @private
      * @function Highcarts.seriesTypes.xrange#init
@@ -151,7 +152,6 @@ seriesType('xrange', 'column'
         seriesTypes.column.prototype.init.apply(this, arguments);
         this.options.stacking = false; // #13161
     },
-    /* eslint-disable valid-jsdoc */
     /**
      * Borrow the column series metrics, but with swapped axes. This gives
      * free access to features like groupPadding, grouping, pointWidth etc.
