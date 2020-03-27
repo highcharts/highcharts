@@ -272,8 +272,10 @@ var BrokenAxisAdditions = /** @class */ (function () {
                         }
                     });
                     /**
+                     * HC <= 8 backwards compatibility, used by demo samples.
                      * @deprecated
                      * @private
+                     * @requires modules/broken-axis
                      */
                     axis.breakArray = brokenAxis.breakArray = breakArray;
                     // Used with staticScale, and below the actual axis length,

@@ -29,9 +29,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            breakArray: Array<AxisBreakObject>;
-        }
         interface Series {
             /** @requires modules/broken-axis */
             drawBreaks(axis: Axis, keys: Array<string>): void;
@@ -419,10 +416,12 @@ class BrokenAxisAdditions {
                     });
 
                     /**
+                     * HC <= 8 backwards compatibility, used by demo samples.
                      * @deprecated
                      * @private
+                     * @requires modules/broken-axis
                      */
-                    axis.breakArray = brokenAxis.breakArray = breakArray;
+                    (axis as BrokenAxis).breakArray = brokenAxis.breakArray = breakArray;
 
                     // Used with staticScale, and below the actual axis length,
                     // when breaks are substracted.
@@ -774,7 +773,9 @@ class BrokenAxis {
 
 interface BrokenAxis extends Axis {
     /**
+     * HC <= 8 backwards compatibility, used by demo samples.
      * @deprecated
+     * @private
      * @requires modules/broken-axis
      */
     breakArray: Array<AxisBreakObject>;
