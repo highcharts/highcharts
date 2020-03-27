@@ -1,4 +1,4 @@
-Range selector (Highstock only)
+Range selector (Highcharts Stock only)
 ================
 
 The range selector is a tool for selecting ranges to display within the chart. It provides buttons to select pre-configured ranges in the chart, like 1 day, 1 week, 1 month, etc. It also provides input boxes where min and max dates can be manually input.
