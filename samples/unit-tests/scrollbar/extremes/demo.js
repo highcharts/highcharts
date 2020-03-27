@@ -221,3 +221,37 @@ QUnit.test('#12834 - scrollbar had wrong extremes when series was hidden.', func
     );
 
 });
+
+QUnit.test('#12834 - xAxis had wrong extremes after scroll .', function (assert) {
+    var isNumber = Highcharts.isNumber,
+        chart = Highcharts.chart('container', {
+            xAxis: {
+                scrollbar: {
+                    enabled: true
+                }
+            },
+            series: [{
+                visible: true,
+                data: [
+                    [100, 1],
+                    [200, 3]
+                ]
+            }]
+        }),
+        scrollbar = chart.xAxis[0].scrollbar;
+
+    chart.series[0].setVisible(false);
+
+    scrollbar.buttonToMinClick({
+        trigger: 'scrollbar'
+    });
+
+    chart.series[0].setVisible(true);
+
+    assert.strictEqual(
+        isNumber(chart.xAxis[0].min) && isNumber(chart.xAxis[0].max),
+        true,
+        'xAxis should have extremes after scrolling.'
+    );
+
+});
