@@ -172,7 +172,7 @@ const childProcess = require('child_process');
         while ((match = reg.exec(str)) !== null) {
 
             const shortKey = match[1];
-            let replacements = [];
+            const replacements = [];
 
             optionKeys.forEach(longKey => {
                 if (longKey.indexOf(shortKey) !== -1) {

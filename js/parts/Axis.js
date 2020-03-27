@@ -722,7 +722,7 @@ var Axis = /** @class */ (function () {
     Axis.prototype.translate = function (val, backwards, cvsCoord, old, handleLog, pointPlacement) {
         var axis = this.linkedParent || this, // #1417
         sign = 1, cvsOffset = 0, localA = old ? axis.oldTransA : axis.transA, localMin = old ? axis.oldMin : axis.min, returnValue = 0, minPixelPadding = axis.minPixelPadding, doPostTranslate = (axis.isOrdinal ||
-            axis.isBroken ||
+            axis.brokenAxis && axis.brokenAxis.hasBreaks ||
             (axis.logarithmic && handleLog)) && axis.lin2val;
         if (!localA) {
             localA = axis.transA;
