@@ -15,6 +15,7 @@ For live examples see our demo pages:
 *   [Highcharts demo](https://highcharts.com/demo/)
 *   [Highcharts Stock demo](https://highcharts.com/stock/demo/)
 *   [Highcharts Maps demo](https://highcharts.com/maps/demo/)
+*   [Highcharts Gantt demo](https://highcharts.com/gantt/demo/)
 
 API
 ---
@@ -24,4 +25,4 @@ For more specific information on Highcharts and Highcharts Stock options and fun
 *   [Highcharts API reference](https://api.highcharts.com/highcharts)
 *   [Highcharts Stock API reference](https://api.highcharts.com/highstock)
 *   [Highcharts Maps API reference](https://api.highcharts.com/highmaps)
-
+*   [Highcharts Gantt API reference](https://api.highcharts.com/gantt)
