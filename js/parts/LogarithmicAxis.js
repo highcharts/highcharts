@@ -130,6 +130,13 @@ var LogarithmicAxis = /** @class */ (function () {
      */
     LogarithmicAxis.compose = function (AxisClass) {
         /* eslint-disable no-invalid-this */
+        // HC <= 8 backwards compatibility, allow wrapping
+        // Axis.prototype.lin2log and log2lin
+        // @todo Remove this in next major
+        var axisProto = AxisClass.prototype;
+        var logAxisProto = LogarithmicAxisAdditions.prototype;
+        axisProto.log2lin = logAxisProto.log2lin;
+        axisProto.lin2log = logAxisProto.lin2log;
         addEvent(AxisClass, 'init', function (e) {
             var axis = this;
             var log = axis.logarithmic;
@@ -142,6 +149,18 @@ var LogarithmicAxis = /** @class */ (function () {
             else if (log) {
                 log.destroy();
                 axis.logarithmic = void 0;
+            }
+            // HC <= 8 backwards compatibility, allow wrapping
+            // Axis.prototype.lin2log and log2lin
+            // @todo Remove this in next major
+            var logarithmic = axis.logarithmic;
+            if (logarithmic) {
+                if (axis.log2lin !== logarithmic.log2lin) {
+                    logarithmic.log2lin = axis.log2lin.bind(axis);
+                }
+                if (axis.lin2log !== logarithmic.lin2log) {
+                    logarithmic.lin2log = axis.lin2log.bind(axis);
+                }
             }
         });
         addEvent(AxisClass, 'afterInit', function () {
