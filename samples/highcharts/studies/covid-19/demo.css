@@ -1,54 +1,32 @@
-* {
-    font-family: sans-serif;
-}
-#wrapper {
-    margin: 0 auto;
-    padding: 0;
-    overflow:visible;
-}
-#container {
-    height: 80vh;
-    min-height: 300px;
-    float: left;
-    width: 60%;
-    margin: 0;
-    max-height: 100vw;
-}
-#info {
-    float: left;
-    width: calc(40% - 21px);
-    padding-left: 20px;
-    margin: 50px 0 0 0;
-    border-left: 1px solid silver;
-}
-#info h2 {
-    display: inline;
-    font-size: 13pt;
+.container-fluid {
+    margin-top: 10px;
 }
 #info .f32 .flag {
-    vertical-align: bottom !important;
+    position: absolute;
+    top: 8px;
 }
 
-#info h4 {
-    margin: 1em 0 0 0;
-}
-
-#country-chart {
-    height: calc(80vh - 200px);
-    min-height: 200px;
-    max-height: 100vw;
-}
 .clearfix {
     clear: both;
 }
+.card-header.subheader {
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.75);
+    background-color: transparent;
+    border-bottom: none;
+}
+.card {
+    height: 80vh;
+    min-height: 400px;
+    margin-bottom: 1em;
+}
 
-@media screen and (max-width: 920px) {
-    #wrapper, #container,  #info {
-        float: none;
-        width: 100%;
-        height: auto;
-        margin: 0.5em 0;
-        padding: 0;
-        border: none;
+@media screen and (max-width: 780px) {
+    .card {
+        max-height: 400px;
+    }
+    .col-12 {
+        padding-left: 2px !important;
+        padding-right: 2px !important;
     }
 }

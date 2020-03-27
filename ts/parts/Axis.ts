@@ -351,7 +351,6 @@ declare global {
             public height: number;
             public horiz?: boolean;
             public isBroken?: boolean;
-            public isDatetimeAxis: boolean;
             public isDirty?: boolean;
             public isHidden?: boolean;
             public isLinked: boolean;
@@ -3812,7 +3811,6 @@ class Axis implements AxisComposition {
     public height: number = void 0 as any;
     public horiz?: boolean;
     public isBroken?: boolean;
-    public isDatetimeAxis: boolean = void 0 as any;
     public isDirty?: boolean;
     public isLinked: boolean = void 0 as any;
     public isLog: boolean = void 0 as any;
@@ -3978,8 +3976,7 @@ class Axis implements AxisComposition {
 
 
         var options = this.options,
-            type = options.type,
-            isDatetimeAxis = type === 'datetime';
+            type = options.type;
 
         axis.labelFormatter = (
             (options.labels as any).formatter ||
@@ -4041,7 +4038,6 @@ class Axis implements AxisComposition {
 
         // Shorthand types
         axis.isLog = type === 'logarithmic';
-        axis.isDatetimeAxis = isDatetimeAxis;
         axis.positiveValuesOnly = axis.isLog && !(axis as any).allowNegativeLog;
 
         // Flag, if axis is linked to another axis
@@ -4791,12 +4787,12 @@ class Axis implements AxisComposition {
                 });
 
             } else if (
-                axis.isDatetimeAxis &&
+                axis.dateTime &&
                 this.getMinorTickInterval() === 'auto'
             ) { // #1314
                 minorTickPositions = minorTickPositions.concat(
                     axis.getTimeTicks(
-                        axis.normalizeTimeTickInterval(minorTickInterval),
+                        axis.dateTime.normalizeTimeTickInterval(minorTickInterval),
                         min,
                         max,
                         options.startOfWeek as any
@@ -5226,7 +5222,6 @@ class Axis implements AxisComposition {
             chart = axis.chart,
             options = axis.options,
             isLog = axis.isLog,
-            isDatetimeAxis = axis.isDatetimeAxis,
             isXAxis = axis.isXAxis,
             isLinked = axis.isLinked,
             maxPadding = options.maxPadding,
@@ -5244,7 +5239,7 @@ class Axis implements AxisComposition {
             hardMin,
             hardMax;
 
-        if (!isDatetimeAxis && !categories && !isLinked) {
+        if (!axis.dateTime && !categories && !isLinked) {
             this.getTickAmount();
         }
 
@@ -5472,14 +5467,14 @@ class Axis implements AxisComposition {
         // This applies only if tickInterval is not defined.
         minTickInterval = pick(
             options.minTickInterval,
-            (axis.isDatetimeAxis && axis.closestPointRange) as number
+            (axis.dateTime && axis.closestPointRange) as number
         );
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }
 
         // for linear axes, get magnitude and normalize the interval
-        if (!isDatetimeAxis && !isLog && !tickIntervalOption) {
+        if (!axis.dateTime && !isLog && !tickIntervalOption) {
             axis.tickInterval = normalizeTickInterval(
                 axis.tickInterval,
                 null as any,
@@ -5590,9 +5585,9 @@ class Axis implements AxisComposition {
                 tickPositions = [this.min, this.max];
                 error(19, false, this.chart);
 
-            } else if (this.isDatetimeAxis) {
+            } else if (axis.dateTime) {
                 tickPositions = (axis.getTimeTicks as any)(
-                    axis.normalizeTimeTickInterval(
+                    axis.dateTime.normalizeTimeTickInterval(
                         this.tickInterval,
                         options.units
                     ),

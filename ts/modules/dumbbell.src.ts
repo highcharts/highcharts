@@ -59,6 +59,7 @@ declare global {
             public seriesDrawPoints: AreaRangeSeries['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
+            public columnMetrics: ColumnMetricsObject;
             public crispConnector(
                 points: SVGPathArray,
                 width: number
@@ -363,7 +364,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     ): Highcharts.ColumnMetricsObject {
         var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
-        metrics.offset = metrics.offset + metrics.width / 2;
+        metrics.offset += metrics.width / 2;
 
         return metrics;
     },
@@ -399,6 +400,8 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
             (shapeArgs as any).x = point.plotX - pointWidth / 2;
             (point.tooltipPos as any) = null;
         });
+
+        this.columnMetrics.offset -= this.columnMetrics.width / 2;
     },
     seriesDrawPoints: areaRangeProto.drawPoints,
     /**

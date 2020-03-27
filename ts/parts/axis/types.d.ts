@@ -10,6 +10,7 @@
 
 import type Axis from '../Axis';
 import type BrokenAxis from '../../modules/broken-axis.src';
+import type DateTimeAxis from '../DateTimeAxis';
 import type HiddenAxis from '../../parts-more/HiddenAxis';
 import type OrdinalAxis from '../OrdinalAxis';
 import type RadialAxis from '../../parts-more/RadialAxis';
@@ -29,6 +30,7 @@ export interface AxisBreakObject {
 
 export interface AxisComposition {
     brokenAxis?: BrokenAxis['brokenAxis'];
+    dateTime?: DateTimeAxis['dateTime'];
     ordinal?: OrdinalAxis['ordinal'];
     scrollbar?: ScrollbarAxis['scrollbar'];
 }
