@@ -28,9 +28,9 @@ and
 [endOnTick](https://api.highcharts.com/highcharts/yAxis.endOnTick)
 are set to `false`.
 
-### Highstock
+### Highcharts Stock
 
-In Highstock, we also have the Navigator, Range Selector, and Scrollbar to ease
+In Highcharts Stock, we also have the Navigator, Range Selector, and Scrollbar to ease
 navigation, so zooming is disabled by default. Instead, panning is enabled so
 that moving the zoomed area is easier. 
 

@@ -1,7 +1,7 @@
 Optional dependencies
 ---------------------
 
-Highcharts by default is self-contained, but in some situations Highcharts, Highstock and Highmaps require external dependencies to enable certain features. The following is an overview of these dependencies, along with the required license and security information. The loading of the dependencies is always configurable in such a way that you can load the files from your own servers if this is a security requirement. Note that even when loading these files, your chart data is never sent to our servers.
+Highcharts by default is self-contained, but in some situations Highcharts, Highcharts Stock and Highmaps require external dependencies to enable certain features. The following is an overview of these dependencies, along with the required license and security information. The loading of the dependencies is always configurable in such a way that you can load the files from your own servers if this is a security requirement. Note that even when loading these files, your chart data is never sent to our servers.
 
 |File with source link|License|Loading|Usage
 |---|---|---|---|

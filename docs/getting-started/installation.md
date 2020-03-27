@@ -23,9 +23,9 @@ In the example above the JavaScript files are loaded from ajax.googleapis.com an
 <script src="/js/highcharts.js"></script>
 ```
 
-### C. Load Highstock or Highmaps
+### C. Load Highcharts Stock or Highmaps
 
-Highcharts is already included in Highstock, so it is not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. Highstock and Highmaps can be loaded separate files like this:
+Highcharts is already included in Highcharts Stock, so it is not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. Highcharts Stock and Highmaps can be loaded separate files like this:
 
 ```html
 <script src="/js/highstock.js"></script>
@@ -44,4 +44,4 @@ But the separate files can't run in the same page along with each other or with 
 
 You are now ready to use Highcharts, see [Your first chart](https://highcharts.com/docs/getting-started/your-first-chart) to get started.
 
-*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highstock versions) IE VML rendering is built into the library.
+*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highcharts Stock versions) IE VML rendering is built into the library.

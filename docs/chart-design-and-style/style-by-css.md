@@ -67,7 +67,7 @@ The various graphic items for box plot series. The box, median, stem and whisker
     
     .highcharts-button
 
-Used for the wrapping group of the exporting button, range selector buttons in Highstock etc.
+Used for the wrapping group of the exporting button, range selector buttons in Highcharts Stock etc.
 
     
     .highcharts-button-symbol
@@ -80,7 +80,7 @@ The symbol for the exporting button, can be used to set stroke and fill etc. 
     .highcharts-candlestick-series .highcharts-point-up  
     .highcharts-candlestick-series .highcharts-point-down
 
-Rules to differentiate between up or down points in Highstock candlesticks.
+Rules to differentiate between up or down points in Highcharts Stock candlesticks.
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/candlestick/).
 
@@ -115,7 +115,7 @@ Styles for the crosshair extending from the axis to the currently highlighted po
     
     .highcharts-crosshair-label
 
-The label next to the crosshair in Highstock. 
+The label next to the crosshair in Highcharts Stock. 
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/crosshair-label/).
 
@@ -239,7 +239,7 @@ Replaces [axis.minorGridLineColor](https://api.highcharts.com/highcharts/xAxis.
     .highcharts-navigator-handle-left  
     .highcharts-navigator-handle-left
 
-Fills and strokes for the navigator handles in Highstock. Replaces [navigator.handles.backgroundColor](https://api.highcharts.com/highstock#navigator.handles.backgroundColor) and [navigator.handles.borderColor](https://api.highcharts.com/highstock#navigator.handles.borderColor).
+Fills and strokes for the navigator handles in Highcharts Stock. Replaces [navigator.handles.backgroundColor](https://api.highcharts.com/highstock#navigator.handles.backgroundColor) and [navigator.handles.borderColor](https://api.highcharts.com/highstock#navigator.handles.borderColor).
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
@@ -247,21 +247,21 @@ Fills and strokes for the navigator handles in Highstock. Replaces [navigator.h
     .highcharts-navigator-mask-outside  
     .highcharts-navigator-mask-inside
 
-Styles for the navigator mask in Highstock, the shaded element that shows the selected area. Replaces [navigator.maskFill](https://api.highcharts.com/highstock#navigator.maskFill).
+Styles for the navigator mask in Highcharts Stock, the shaded element that shows the selected area. Replaces [navigator.maskFill](https://api.highcharts.com/highstock#navigator.maskFill).
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
     
     .highcharts-navigator-outline
 
-Styles for the Highstock navigator outline, a path element that highlights the zoomed area. Replaces [navigator.outlineColor](https://api.highcharts.com/highstock#navigator.outlineColor) and [navigator.outlineWidth](https://api.highcharts.com/highstock#navigator.outlineWidth).
+Styles for the Highcharts Stock navigator outline, a path element that highlights the zoomed area. Replaces [navigator.outlineColor](https://api.highcharts.com/highstock#navigator.outlineColor) and [navigator.outlineWidth](https://api.highcharts.com/highstock#navigator.outlineWidth).
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
     
     .highcharts-navigator-series
 
-Styles for the navigator series in Highstock. Replaces options like lineWidth, fillOpacity and color for the navigator series.
+Styles for the navigator series in Highcharts Stock. Replaces options like lineWidth, fillOpacity and color for the navigator series.
 
     
     .highcharts-negative
@@ -284,7 +284,7 @@ Styles for null points in maps or heat maps. Replaces [plotOptions.map.nullColo
     .highcharts-ohlc-series .highcharts-point-up  
     .highcharts-ohlc-series .highcharts-point-down
 
-Rules to differentiate between up or down points in Highstock OHLC series.
+Rules to differentiate between up or down points in Highcharts Stock OHLC series.
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/ohlc/).
 
@@ -358,21 +358,21 @@ Style the plot line labels. Use the _className_ option on each line to disting
     
     .highcharts-range-input text
 
-Text styling for the range selector input boxes in Highstock. Use _input.highcharts-range-selector_ for the HTML input (when the boxes are active). Replaces [rangeSelector.inputStyle](https://api.highcharts.com/highstock#rangeSelector.inputStyle).
+Text styling for the range selector input boxes in Highcharts Stock. Use _input.highcharts-range-selector_ for the HTML input (when the boxes are active). Replaces [rangeSelector.inputStyle](https://api.highcharts.com/highstock#rangeSelector.inputStyle).
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
     
     .highcharts-range-label
 
-Styles for the Highstock range selector labels saying "Zoom", "From" and "To". Replaces [rangeSelector.labelStyle](https://api.highcharts.com/highstock#rangeSelector.labelStyle).
+Styles for the Highcharts Stock range selector labels saying "Zoom", "From" and "To". Replaces [rangeSelector.labelStyle](https://api.highcharts.com/highstock#rangeSelector.labelStyle).
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
     
     .highcharts-range-selector-buttons
 
-Top level group for the Highstock range selector buttons. Replaces [rangeSelector.buttonTheme](https://api.highcharts.com/highstock#rangeSelector.buttonTheme).
+Top level group for the Highcharts Stock range selector buttons. Replaces [rangeSelector.buttonTheme](https://api.highcharts.com/highstock#rangeSelector.buttonTheme).
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/stock-navigator/).
 
@@ -391,7 +391,7 @@ Matches the root _svg_ element of the chart. Use this to set styles that shoul
     .highcharts-scrollbar-thumb  
     .highcharts-scrollbar-track
 
-Styles for the Highstock scrollbar. The thumb is the actual bar. The buttons are in each end, and each has an arrow inside it. The rifles are the small strokes on the center of the bar.
+Styles for the Highcharts Stock scrollbar. The thumb is the actual bar. The buttons are in each end, and each has an arrow inside it. The rifles are the small strokes on the center of the bar.
 
 [View live demo](https://jsfiddle.net/gh/get/jquery/1.7.2/highcharts/highcharts/tree/master/samples/highcharts/css/chart/).
 

@@ -1,9 +1,9 @@
 Server-side data grouping
 ===
 
-Since Highcharts version 7.1 it is possible to perform data grouping on the server side in a node environment. Client-side data grouping has been a part of Highstock since its beginning, but there are cases where it is beneficial to move the grouping to the server.
+Since Highcharts version 7.1 it is possible to perform data grouping on the server side in a node environment. Client-side data grouping has been a part of Highcharts Stock since its beginning, but there are cases where it is beneficial to move the grouping to the server.
 
-Server-side grouping means less data has to be pushed over the network, and less processing has to be performed in the client browser. On the downside, if the chart has to poll the server for new data every time a user zooms in or out, it may be perceived as non-performant. The Highstock [lazy-loading demo](https://www.highcharts.com/stock/demo/lazy-loading), although it doesn't use our node server-side grouping, shows the concept of separate loading data for different resolutions.
+Server-side grouping means less data has to be pushed over the network, and less processing has to be performed in the client browser. On the downside, if the chart has to poll the server for new data every time a user zooms in or out, it may be perceived as non-performant. The Highcharts Stock [lazy-loading demo](https://www.highcharts.com/stock/demo/lazy-loading), although it doesn't use our node server-side grouping, shows the concept of separate loading data for different resolutions.
 
 Setting it up in node
 ---------------------

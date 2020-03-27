@@ -13,9 +13,9 @@ These scrollbars are applied by setting a [scrollablePlotArea with a minWidth](h
 2. Axis scrollbars through an API option
 -----------------------------------------
 
-These scrollbars are enabled per axis and appear next to the axis. Scrollbars can be applied to any axis in Highstock.
+These scrollbars are enabled per axis and appear next to the axis. Scrollbars can be applied to any axis in Highcharts Stock.
 
-The full documentation and available options can be seen in our [API docs](https://api.highcharts.com/highstock#yAxis.scrollbar) for Highstock.
+The full documentation and available options can be seen in our [API docs](https://api.highcharts.com/highstock#yAxis.scrollbar) for Highcharts Stock.
 
 Scrollbars are not limited to stock charts or Y axis. Using the _highstock.js_ file, it can be applied to regular Highcharts axes too. See examples of:
 
