@@ -429,7 +429,7 @@ seriesProto.processData = function () {
             var extremes = xAxis.getExtremes(), xMin = extremes.min, xMax = extremes.max, groupIntervalFactor = (ordinal &&
                 xAxis.ordinal &&
                 xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)) || 1, interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) *
-                groupIntervalFactor, groupPositions = xAxis.getTimeTicks(DateTimeAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units ||
+                groupIntervalFactor, groupPositions = xAxis.getTimeTicks(DateTimeAxis.AdditionsClass.prototype.normalizeTimeTickInterval(interval, dataGroupingOptions.units ||
                 defaultDataGroupingUnits), 
             // Processed data may extend beyond axis (#4907)
             Math.min(xMin, processedXData[0]), Math.max(xMax, processedXData[processedXData.length - 1]), xAxis.options.startOfWeek, processedXData, series.closestPointRange), groupedData = seriesProto.groupData.apply(series, [

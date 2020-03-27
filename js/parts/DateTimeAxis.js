@@ -41,69 +41,6 @@ var DateTimeAxisAdditions = /** @class */ (function () {
      * each segment having the same interval. #662, #697.
      * @private
      */
-    DateTimeAxisAdditions.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
-        return DateTimeAxis.normalizeTimeTickInterval(tickInterval, unitsOption);
-    };
-    return DateTimeAxisAdditions;
-}());
-/**
- * Date and time support for axes.
- *
- * @private
- * @class
- */
-var DateTimeAxis = /** @class */ (function () {
-    function DateTimeAxis() {
-    }
-    /**
-     * Extends axis class with date and time support.
-     * @private
-     */
-    DateTimeAxis.compose = function (AxisClass) {
-        var axisProto = AxisClass.prototype;
-        /**
-         * Set the tick positions to a time unit that makes sense, for example
-         * on the first of each month or on every Monday. Return an array with
-         * the time positions. Used in datetime axes as well as for grouping
-         * data on a datetime axis.
-         *
-         * @private
-         * @function Highcharts.Axis#getTimeTicks
-         *
-         * @param {Highcharts.TimeNormalizeObject} normalizedInterval
-         * The interval in axis values (ms) and thecount.
-         *
-         * @param {number} min
-         * The minimum in axis values.
-         *
-         * @param {number} max
-         * The maximum in axis values.
-         *
-         * @param {number} startOfWeek
-         *
-         * @return {Highcharts.AxisTickPositionsArray}
-         */
-        axisProto.getTimeTicks = function () {
-            return this.chart.time.getTimeTicks.apply(this.chart.time, arguments);
-        };
-        /* eslint-disable no-invalid-this */
-        addEvent(AxisClass, 'init', function (e) {
-            var axis = this;
-            var dateTime = axis.dateTime;
-            var options = e.userOptions;
-            if (options.type !== 'datetime') {
-                if (dateTime) {
-                    dateTime.destroy();
-                    axis.dateTime = void 0;
-                }
-                return;
-            }
-            if (!dateTime) {
-                axis.dateTime = new DateTimeAxisAdditions(axis);
-            }
-        });
-        /* eslint-enable no-invalid-this */
-    };
     /**
      * Get a normalized tick interval for dates. Returns a configuration object
      * with unit range (interval), count and name. Used to prepare data for
@@ -113,7 +50,7 @@ var DateTimeAxis = /** @class */ (function () {
      * each segment having the same interval. #662, #697.
      * @private
      */
-    DateTimeAxis.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
+    DateTimeAxisAdditions.prototype.normalizeTimeTickInterval = function (tickInterval, unitsOption) {
         var units = unitsOption || [[
                 'millisecond',
                 [1, 2, 5, 10, 20, 25, 50, 100, 200, 500] // allowed multiples
@@ -172,6 +109,77 @@ var DateTimeAxis = /** @class */ (function () {
             unitName: unit[0]
         };
     };
+    return DateTimeAxisAdditions;
+}());
+/**
+ * Date and time support for axes.
+ *
+ * @private
+ * @class
+ */
+var DateTimeAxis = /** @class */ (function () {
+    function DateTimeAxis() {
+    }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    /**
+     * Extends axis class with date and time support.
+     * @private
+     */
+    DateTimeAxis.compose = function (AxisClass) {
+        var axisProto = AxisClass.prototype;
+        /**
+         * Set the tick positions to a time unit that makes sense, for example
+         * on the first of each month or on every Monday. Return an array with
+         * the time positions. Used in datetime axes as well as for grouping
+         * data on a datetime axis.
+         *
+         * @private
+         * @function Highcharts.Axis#getTimeTicks
+         *
+         * @param {Highcharts.TimeNormalizeObject} normalizedInterval
+         * The interval in axis values (ms) and thecount.
+         *
+         * @param {number} min
+         * The minimum in axis values.
+         *
+         * @param {number} max
+         * The maximum in axis values.
+         *
+         * @param {number} startOfWeek
+         *
+         * @return {Highcharts.AxisTickPositionsArray}
+         */
+        axisProto.getTimeTicks = function () {
+            return this.chart.time.getTimeTicks.apply(this.chart.time, arguments);
+        };
+        /* eslint-disable no-invalid-this */
+        addEvent(AxisClass, 'init', function (e) {
+            var axis = this;
+            var dateTime = axis.dateTime;
+            var options = e.userOptions;
+            if (options.type !== 'datetime') {
+                if (dateTime) {
+                    dateTime.destroy();
+                    axis.dateTime = void 0;
+                }
+                return;
+            }
+            if (!dateTime) {
+                axis.dateTime = new DateTimeAxisAdditions(axis);
+            }
+        });
+        /* eslint-enable no-invalid-this */
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    DateTimeAxis.AdditionsClass = DateTimeAxisAdditions;
     return DateTimeAxis;
 }());
 DateTimeAxis.compose(Axis);
