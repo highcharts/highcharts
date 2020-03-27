@@ -450,7 +450,7 @@ Highcharts.Chart.prototype.getDataRows = function (
 
             if (item instanceof Highcharts.Axis) {
                 return (item.options.title && item.options.title.text) ||
-                    (item.isDatetimeAxis ? 'DateTime' : 'Category');
+                    (item.dateTime ? 'DateTime' : 'Category');
             }
 
             if (multiLevelHeaders) {
@@ -488,7 +488,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     axis && axis.categories
                 ) || [];
                 dateTimeValueAxisMap[prop] = (
-                    axis && axis.isDatetimeAxis
+                    axis && axis.dateTime
                 );
             });
 
@@ -684,7 +684,7 @@ Highcharts.Chart.prototype.getDataRows = function (
             var category = row.name;
 
             if (xAxis && !defined(category)) {
-                if (xAxis.isDatetimeAxis) {
+                if (xAxis.dateTime) {
                     if (row.x instanceof Date) {
                         row.x = row.x.getTime();
                     }

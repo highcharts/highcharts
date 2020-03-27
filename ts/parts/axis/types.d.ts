@@ -9,13 +9,31 @@
  * */
 
 import type Axis from '../Axis';
+import type BrokenAxis from '../../modules/broken-axis.src';
+import type DateTimeAxis from '../DateTimeAxis';
 import type HiddenAxis from '../../parts-more/HiddenAxis';
+import type LogarithmicAxis from '../LogarithmicAxis';
 import type NavigatorAxis from '../NavigatorAxis';
 import type OrdinalAxis from '../OrdinalAxis';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
 
+export interface AxisBreakBorderObject {
+    move: string;
+    size?: number;
+    value: number;
+}
+
+export interface AxisBreakObject {
+    from: number;
+    len: number;
+    to: number;
+}
+
 export interface AxisComposition {
+    brokenAxis?: BrokenAxis['brokenAxis'];
+    dateTime?: DateTimeAxis['dateTime'];
+    logarithmic?: LogarithmicAxis['logarithmic'];
     navigatorAxis?: NavigatorAxis['navigatorAxis'];
     ordinal?: OrdinalAxis['ordinal'];
     scrollbar?: ScrollbarAxis['scrollbar'];
@@ -26,7 +44,9 @@ export interface AxisComposition {
  */
 export type AxisType = (
     Axis|
+    BrokenAxis|
     HiddenAxis|
+    LogarithmicAxis|
     NavigatorAxis|
     OrdinalAxis|
     RadialAxis|

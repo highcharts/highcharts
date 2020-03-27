@@ -32,7 +32,7 @@ function getAxisDescription(axis) {
         axis.axisTitle && axis.axisTitle.textStr ||
         axis.options.id ||
         axis.categories && 'categories' ||
-        axis.isDatetimeAxis && 'Time' ||
+        axis.dateTime && 'Time' ||
         'values'));
 }
 /**

@@ -27,6 +27,34 @@ const childProcess = require('child_process');
         path = require('path'),
         tree = require('../tree.json');
 
+    /*
+     * Return a list of options so that we can auto-link option references in
+     * the changelog.
+     */
+    function getOptionKeys() {
+        const keys = [];
+
+        function recurse(subtree, optionPath) {
+            Object.keys(subtree).forEach(key => {
+                if (optionPath + key !== '') {
+                    // Push only the second level, we don't want auto linking of
+                    // general words like chart, series, legend, tooltip etc.
+                    if (optionPath.indexOf('.') !== -1) {
+                        keys.push(optionPath + key);
+                    }
+                    if (subtree[key].children) {
+                        recurse(subtree[key].children, `${optionPath}${key}.`);
+                    }
+                }
+            });
+        }
+
+        recurse(tree, '');
+        return keys;
+    }
+
+    const optionKeys = getOptionKeys();
+
     /**
      * Get the log from Git
      */
@@ -137,10 +165,47 @@ const childProcess = require('child_process');
         return washed;
     }
 
+    function addAPILinks(str, apiFolder) {
+        let match;
+        const reg = /`([a-zA-Z0-9\.\[\]]+)`/g;
+
+        while ((match = reg.exec(str)) !== null) {
+
+            const shortKey = match[1];
+            const replacements = [];
+
+            optionKeys.forEach(longKey => {
+                if (longKey.indexOf(shortKey) !== -1) {
+                    replacements.push(longKey);
+                }
+            });
+
+            // If more than one match, see if we can rule out children of
+            // objects
+            /*
+            if (replacements.length > 1) {
+                replacements = replacements.filter(
+                    longKey => longKey.lastIndexOf(shortKey) === longKey.length - shortKey.length
+                );
+            }
+            */
+
+            // If more than one match, we may be dealing with ambiguous keys
+            // like `formatter`, `lineWidth` etch.
+            if (replacements.length === 1) {
+                str = str.replace(
+                    `\`${shortKey}\``,
+                    `[${shortKey}](https://api.highcharts.com/${apiFolder}/${replacements[0]})`
+                );
+            }
+        }
+        return str;
+    }
+
     /**
      * Build the output
      */
-    function buildMarkdown(name, version, date, log, products, optionKeys) {
+    function buildMarkdown(name, version, date, log, products) {
         var outputString,
             filename = path.join(
                 __dirname,
@@ -160,6 +225,11 @@ const childProcess = require('child_process');
             log = washLog(name, log);
         }
 
+        const upgradeNotes = log
+            .filter(change => typeof change.upgradeNote === 'string')
+            .map(change => addAPILinks(`- ${change.upgradeNote}`, apiFolder))
+            .join('\n');
+
         // Start the output string
         outputString = '# Changelog for ' + name + ' v' + version + ' (' + date + ')\n\n';
 
@@ -168,33 +238,16 @@ const childProcess = require('child_process');
         }
         log.forEach((change, i) => {
 
-            let desc = change.description || change;
-            let match;
-            const reg = /`([a-zA-Z0-9\.\[\]]+)`/g;
+            const desc = addAPILinks(change.description || change, apiFolder);
 
-            while ((match = reg.exec(desc)) !== null) {
-
-                const shortKey = match[1];
-                const replacements = [];
-
-                optionKeys.forEach(longKey => {
-                    if (longKey.indexOf(shortKey) !== -1) {
-                        replacements.push(longKey);
-                    }
-                });
-
-                // If more than one match, we may be dealing with ambiguous keys
-                // like `formatter`, `lineWidth` etch.
-                if (replacements.length === 1) {
-                    desc = desc.replace(
-                        `\`${shortKey}\``,
-                        `[${shortKey}](https://api.highcharts.com/${apiFolder}/${replacements[0]})`
-                    );
-                }
-            }
 
             // Start fixes
             if (i === log.startFixes) {
+
+                if (upgradeNotes) {
+                    outputString += `\n## Upgrade notes\n${upgradeNotes}\n`;
+                }
+
                 outputString += '\n## Bug fixes\n';
             }
 
@@ -216,31 +269,6 @@ const childProcess = require('child_process');
         return outputString;
     }
 
-    /*
-     * Return a list of options so that we can auto-link option references in
-     * the changelog.
-     */
-    function getOptionKeys(treeroot) {
-        const keys = [];
-
-        function recurse(subtree, optionPath) {
-            Object.keys(subtree).forEach(key => {
-                if (optionPath + key !== '') {
-                    // Push only the second level, we don't want auto linking of
-                    // general words like chart, series, legend, tooltip etc.
-                    if (optionPath.indexOf('.') !== -1) {
-                        keys.push(optionPath + key);
-                    }
-                    if (subtree[key].children) {
-                        recurse(subtree[key].children, `${optionPath}${key}.`);
-                    }
-                }
-            });
-        }
-
-        recurse(treeroot, '');
-        return keys;
-    }
 
     function pad(number, length, padder) {
         return new Array(
@@ -272,7 +300,6 @@ const childProcess = require('child_process');
     // Get the Git log
     getLog(function (log) {
 
-        const optionKeys = getOptionKeys(tree);
         const pack = require(path.join(__dirname, '/../package.json'));
         const d = new Date();
         const review = [];

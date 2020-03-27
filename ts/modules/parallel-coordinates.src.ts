@@ -316,7 +316,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 
 
 // On update, keep parallelPosition.
-AxisProto.keepProps.push('parallelPosition');
+Axis.keepProps.push('parallelPosition');
 
 // Update default options with predefined for a parallel coords.
 addEvent(Axis, 'afterSetOptions', function (
@@ -568,7 +568,7 @@ function addFormattedValue(
                 ),
                 chart
             );
-        } else if (yAxis.isDatetimeAxis) {
+        } else if (yAxis.dateTime) {
             formattedValue = chart.time.dateFormat(
                 chart.time.resolveDTLFormat(
                     (yAxisOptions.dateTimeLabelFormats as any)[

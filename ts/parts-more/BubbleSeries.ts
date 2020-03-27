@@ -725,7 +725,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
     });
 
     // Apply the padding to the min and max properties
-    if (activeSeries.length && range > 0 && !this.isLog) {
+    if (activeSeries.length && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
         transA *= (
             axisLength +
