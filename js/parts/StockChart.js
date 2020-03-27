@@ -8,12 +8,12 @@
  *
  * */
 'use strict';
+import Axis from './Axis.js';
 import H from './Globals.js';
 import Point from './Point.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
 import './Chart.js';
-import './Axis.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -26,7 +26,7 @@ import './Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
-var Axis = H.Axis, Chart = H.Chart, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
+var Chart = H.Chart, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * Compare the values of the series against the first non-null, non-
  * zero value in the visible range. The y axis will show percentage
@@ -423,7 +423,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         !this.cross) {
         return;
     }
-    var chart = this.chart, options = this.options.crosshair.label, // the label's options
+    var chart = this.chart, log = this.logarithmic, options = this.options.crosshair.label, // the label's options
     horiz = this.horiz, // axis orientation
     opposite = this.opposite, // axis position
     left = this.left, // left position
@@ -431,14 +431,10 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     crossLabel = this.crossLabel, // the svgElement
     posx, posy, crossBox, formatOption = options.format, formatFormat = '', limit, align, tickInside = this.options.tickPosition === 'inside', snap = this.crosshair.snap !== false, value, offset = 0, 
     // Use last available event (#5287)
-    e = event.e || (this.cross && this.cross.e), point = event.point, lin2log = this.lin2log, min, max;
-    if (this.isLog) {
-        min = lin2log(this.min);
-        max = lin2log(this.max);
-    }
-    else {
-        min = this.min;
-        max = this.max;
+    e = event.e || (this.cross && this.cross.e), point = event.point, min = this.min, max = this.max;
+    if (log) {
+        min = log.lin2log(min);
+        max = log.lin2log(max);
     }
     align = (horiz ? 'center' : opposite ?
         (this.labelAlign === 'right' ? 'right' : 'left') :
@@ -483,7 +479,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         posy = snap ? point.plotY + top : e.chartY;
     }
     if (!formatOption && !options.formatter) {
-        if (this.isDatetimeAxis) {
+        if (this.dateTime) {
             formatFormat = '%b %d, %Y';
         }
         formatOption =
@@ -649,14 +645,15 @@ seriesProto.processData = function (force) {
     return;
 };
 // Modify series extremes
-addEvent(Series, 'afterGetExtremes', function () {
-    if (this.modifyValue) {
+addEvent(Series, 'afterGetExtremes', function (e) {
+    var dataExtremes = e.dataExtremes;
+    if (this.modifyValue && dataExtremes) {
         var extremes = [
-            this.modifyValue(this.dataMin),
-            this.modifyValue(this.dataMax)
+            this.modifyValue(dataExtremes.dataMin),
+            this.modifyValue(dataExtremes.dataMax)
         ];
-        this.dataMin = arrayMin(extremes);
-        this.dataMax = arrayMax(extremes);
+        dataExtremes.dataMin = arrayMin(extremes);
+        dataExtremes.dataMax = arrayMax(extremes);
     }
 });
 /**

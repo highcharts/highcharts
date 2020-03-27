@@ -175,7 +175,7 @@ function getSeriesAxisDescriptionText(series, axisCollection) {
  * The description as string.
  */
 function getPointA11yTimeDescription(point) {
-    var series = point.series, chart = series.chart, a11yOptions = chart.options.accessibility.point || {}, hasDateXAxis = series.xAxis && series.xAxis.isDatetimeAxis;
+    var series = point.series, chart = series.chart, a11yOptions = chart.options.accessibility.point || {}, hasDateXAxis = series.xAxis && series.xAxis.dateTime;
     if (hasDateXAxis) {
         var tooltipDateFormat = Tooltip.prototype.getXDateFormat.call({
             getDateFormat: Tooltip.prototype.getDateFormat,

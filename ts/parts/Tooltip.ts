@@ -728,7 +728,7 @@ class Tooltip {
                     container,
                     0,
                     0,
-                    {},
+                    this.chart.options.chart?.style,
                     void 0,
                     void 0,
                     renderer.styledMode
@@ -1059,7 +1059,10 @@ class Tooltip {
         delay = pick(delay, this.options.hideDelay, 500);
         if (!this.isHidden) {
             this.hideTimer = syncTimeout(function (): void {
-                tooltip.getLabel()[delay ? 'fadeOut' : 'hide']();
+                // If there is a delay, do fadeOut with the default duration. If
+                // the hideDelay is 0, we assume no animation is wanted, so we
+                // pass 0 duration. #12994.
+                tooltip.getLabel().fadeOut(delay ? void 0 : delay);
                 tooltip.isHidden = true;
             }, delay);
         }
@@ -1835,12 +1838,12 @@ class Tooltip {
                 isNumber(labelConfig.key)
             ),
             formatString = (tooltipOptions as any)[footOrHead + 'Format'],
-            evt = {
+            e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as Highcharts.Dictionary<any>;
 
-        fireEvent(this, 'headerFormatter', evt, function (
+        fireEvent(this, 'headerFormatter', e, function (
             this: Highcharts.Tooltip,
             e: Highcharts.Dictionary<any>
         ): void {
@@ -1879,7 +1882,7 @@ class Tooltip {
             }, this.chart);
 
         });
-        return evt.text;
+        return e.text;
     }
 
     /**

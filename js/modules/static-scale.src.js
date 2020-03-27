@@ -45,7 +45,7 @@ Chart.prototype.adjustHeight = function () {
             var chart = axis.chart, animate = !!chart.initiatedScale &&
                 chart.options.animation, staticScale = axis.options.staticScale, height, diff;
             if (axis.staticScale && defined(axis.min)) {
-                height = pick(axis.unitLength, axis.max + axis.tickInterval - axis.min) * staticScale;
+                height = pick(axis.brokenAxis && axis.brokenAxis.unitLength, axis.max + axis.tickInterval - axis.min) * staticScale;
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale);
                 diff = height - chart.plotHeight;

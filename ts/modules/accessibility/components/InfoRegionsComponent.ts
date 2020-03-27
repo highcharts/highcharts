@@ -493,6 +493,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             format = chart.options.accessibility
                 .screenReaderSection.beforeChartFormat,
             axesDesc = this.getAxesDescription(),
+            shouldHaveSonifyBtn = chart.sonify && chart.options.sonification?.enabled,
             sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
                 chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
@@ -509,7 +510,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 chartLongdesc: this.getLongdescText(),
                 xAxisDescription: axesDesc.xAxis,
                 yAxisDescription: axesDesc.yAxis,
-                playAsSoundButton: chart.sonify ?
+                playAsSoundButton: shouldHaveSonifyBtn ?
                     this.getSonifyButtonText(sonifyButtonId) : '',
                 viewTableButton: chart.getCSV ?
                     this.getDataTableButtonText(dataTableButtonId) : '',
@@ -883,7 +884,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         }
 
         // Use time range, not from-to?
-        if (axis.isDatetimeAxis && (axis.min === 0 || axis.dataMin === 0)) {
+        if (axis.dateTime && (axis.min === 0 || axis.dataMin === 0)) {
             return this.getAxisTimeLengthDesc(axis);
         }
 
@@ -973,7 +974,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             dateRangeFormat = chart.options.accessibility
                 .screenReaderSection.axisRangeDateFormat,
             format = function (axisKey: string): string {
-                return axis.isDatetimeAxis ? chart.time.dateFormat(
+                return axis.dateTime ? chart.time.dateFormat(
                     dateRangeFormat, (axis as any)[axisKey]
                 ) : (axis as any)[axisKey];
             };

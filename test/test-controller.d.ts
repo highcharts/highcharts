@@ -489,4 +489,5 @@ declare namespace TestController {
         middle = 1,
         right = 2
     }
+    const MouseButtonsBitMap: Record<number, number>;
 }

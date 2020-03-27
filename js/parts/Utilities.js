@@ -905,11 +905,12 @@ var isArray = H.isArray = function isArray(obj) {
  * @return {boolean}
  *         True if the argument is an object.
  */
-var isObject = H.isObject = function isObject(obj, strict) {
+function isObject(obj, strict) {
     return (!!obj &&
         typeof obj === 'object' &&
         (!strict || !isArray(obj))); // eslint-disable-line @typescript-eslint/no-explicit-any
-};
+}
+H.isObject = isObject;
 /**
  * Utility function to check if an Object is a HTML Element.
  *

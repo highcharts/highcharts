@@ -655,7 +655,7 @@ extend(ColorAxis.prototype, {
         'legendItemWidth',
         'legendItem',
         'legendSymbol'
-    ].concat(Axis.prototype.keepProps),
+    ].concat(Axis.keepProps),
 
     /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -892,8 +892,8 @@ extend(ColorAxis.prototype, {
         this: Highcharts.ColorAxis,
         value: number
     ): number {
-        if (this.isLog) {
-            value = this.val2lin(value);
+        if (this.logarithmic) {
+            value = this.logarithmic.log2lin(value);
         }
         return 1 - (
             ((this.max as any) - value) /
@@ -1166,10 +1166,13 @@ extend(ColorAxis.prototype, {
                 cSeries.maxColorValue = (cSeries as any)[colorKey + 'Max'];
 
             } else {
-                Series.prototype.getExtremes.call(cSeries, colorValArray);
+                const cExtremes = Series.prototype.getExtremes.call(
+                    cSeries,
+                    colorValArray
+                );
 
-                cSeries.minColorValue = cSeries.dataMin;
-                cSeries.maxColorValue = cSeries.dataMax;
+                cSeries.minColorValue = cExtremes.dataMin;
+                cSeries.maxColorValue = cExtremes.dataMax;
             }
 
             if (typeof cSeries.minColorValue !== 'undefined') {
@@ -1180,7 +1183,7 @@ extend(ColorAxis.prototype, {
             }
 
             if (!calculatedExtremes) {
-                Series.prototype.getExtremes.call(cSeries);
+                Series.prototype.applyExtremes.call(cSeries);
             }
         }
     },

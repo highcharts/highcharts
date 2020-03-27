@@ -659,6 +659,10 @@ seriesType<Highcharts.OrganizationSeries>(
                         height: height
                     } as any;
                 };
+
+                // Overwrite dataLabel dimensions (#13100).
+                dataLabel.width = width;
+                dataLabel.height = height;
             }
 
             H.seriesTypes.column.prototype.alignDataLabel.apply(

@@ -8,6 +8,7 @@
  *
  * */
 'use strict';
+import Axis from './Axis.js';
 import H from './Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
 import U from './Utilities.js';
@@ -805,6 +806,6 @@ var Scrollbar = /** @class */ (function () {
 if (!H.Scrollbar) {
     defaultOptions.scrollbar = merge(true, Scrollbar.defaultOptions, defaultOptions.scrollbar);
     H.Scrollbar = Scrollbar;
-    ScrollbarAxis.init(H.Scrollbar);
+    ScrollbarAxis.compose(Axis, Scrollbar);
 }
 export default H.Scrollbar;

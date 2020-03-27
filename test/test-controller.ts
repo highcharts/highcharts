@@ -274,6 +274,10 @@ class TestController {
                 break;
         }
 
+        if (typeof extra.buttons === 'undefined') {
+            extra.buttons = (TestController.MouseButtonsBitMap[extra.button] || 0);
+        }
+
         Object.keys(extra).forEach(function (key) {
             (evt as any)[key] = extra[key];
         });
@@ -1242,13 +1246,21 @@ namespace TestController {
     export enum DebugMarkTypes {
         activation,
         movement,
-        normal
+        normal,
     }
 
     export enum MouseButtons {
         left = 0,
         middle = 1,
-        right = 2
+        right = 2,
+    }
+
+    export const MouseButtonsBitMap: Record<number, number> = {
+        0: 1,
+        1: 4,
+        2: 2,
+        3: 8,
+        4: 16,
     }
 
 }

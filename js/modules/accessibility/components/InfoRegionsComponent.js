@@ -254,8 +254,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @return {string}
      */
     defaultBeforeChartFormatter: function () {
+        var _a;
         var chart = this.chart, format = chart.options.accessibility
-            .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
+            .screenReaderSection.beforeChartFormat, axesDesc = this.getAxesDescription(), shouldHaveSonifyBtn = chart.sonify && ((_a = chart.options.sonification) === null || _a === void 0 ? void 0 : _a.enabled), sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
             chart.index, dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
             chart.index, annotationsList = getAnnotationsInfoHTML(chart), annotationsTitleStr = chart.langFormat('accessibility.screenReaderSection.annotations.heading', { chart: chart }), context = {
             chartTitle: getChartTitle(chart),
@@ -264,7 +265,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             chartLongdesc: this.getLongdescText(),
             xAxisDescription: axesDesc.xAxis,
             yAxisDescription: axesDesc.yAxis,
-            playAsSoundButton: chart.sonify ?
+            playAsSoundButton: shouldHaveSonifyBtn ?
                 this.getSonifyButtonText(sonifyButtonId) : '',
             viewTableButton: chart.getCSV ?
                 this.getDataTableButtonText(dataTableButtonId) : '',
@@ -487,7 +488,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             return this.getCategoryAxisRangeDesc(axis);
         }
         // Use time range, not from-to?
-        if (axis.isDatetimeAxis && (axis.min === 0 || axis.dataMin === 0)) {
+        if (axis.dateTime && (axis.min === 0 || axis.dataMin === 0)) {
             return this.getAxisTimeLengthDesc(axis);
         }
         // Just use from and to.
@@ -544,7 +545,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getAxisFromToDescription: function (axis) {
         var chart = this.chart, dateRangeFormat = chart.options.accessibility
             .screenReaderSection.axisRangeDateFormat, format = function (axisKey) {
-            return axis.isDatetimeAxis ? chart.time.dateFormat(dateRangeFormat, axis[axisKey]) : axis[axisKey];
+            return axis.dateTime ? chart.time.dateFormat(dateRangeFormat, axis[axisKey]) : axis[axisKey];
         };
         return chart.langFormat('accessibility.axis.rangeFromTo', {
             chart: chart,

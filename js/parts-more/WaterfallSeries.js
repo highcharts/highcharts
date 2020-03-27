@@ -603,9 +603,17 @@ seriesType('waterfall', 'column', {
                     stackedYPos.push(stackX.posTotal + stackX.threshold);
                 });
             }
-            this.dataMin = arrayMin(stackedYNeg);
-            this.dataMax = arrayMax(stackedYPos);
+            return {
+                dataMin: arrayMin(stackedYNeg),
+                dataMax: arrayMax(stackedYPos)
+            };
         }
+        // When not stacking, data extremes have already been computed in the
+        // processData function.
+        return {
+            dataMin: this.dataMin,
+            dataMax: this.dataMax
+        };
     }
     // Point members
 }, {
@@ -623,7 +631,7 @@ seriesType('waterfall', 'column', {
     isValid: function () {
         return (isNumber(this.y) ||
             this.isSum ||
-            this.isIntermediateSum);
+            Boolean(this.isIntermediateSum));
     }
 });
 /**

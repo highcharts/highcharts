@@ -146,7 +146,7 @@ TrackerMixin = H.TrackerMixin = {
     drawTrackerGraph: function () {
         var series = this, options = series.options, trackByArea = options.trackByArea, trackerPath = [].concat(trackByArea ?
             series.areaPath :
-            series.graphPath), trackerPathLength = trackerPath.length, chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function () {
+            series.graphPath), trackerPathLength = trackerPath.length, chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
             if (chart.hoverSeries !== series) {
                 series.onMouseOver();
             }
@@ -868,7 +868,8 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
      * @fires Highcharts.Series#event:mouseOver
      */
     onMouseOver: function () {
-        var series = this, chart = series.chart, hoverSeries = chart.hoverSeries;
+        var series = this, chart = series.chart, hoverSeries = chart.hoverSeries, pointer = chart.pointer;
+        pointer.setHoverChartIndex();
         // set normal state to previous series
         if (hoverSeries && hoverSeries !== series) {
             hoverSeries.onMouseOut();

@@ -835,6 +835,16 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
             this.redrawItem(items[i], animation);
         }
     },
+    /**
+     * @private
+     * @param {Array<Highcharts.AnnotationControllable>} items
+     */
+    renderItems: function (items) {
+        var i = items.length;
+        while (i--) {
+            this.renderItem(items[i]);
+        }
+    },
     render: function () {
         var renderer = this.chart.renderer;
         this.graphic = renderer
@@ -862,6 +872,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         if (this.clipRect) {
             this.graphic.clip(this.clipRect);
         }
+        // Render shapes and labels before adding events (#13070).
+        this.renderItems(this.shapes);
+        this.renderItems(this.labels);
         this.addEvents();
         controllableMixin.render.call(this);
     },

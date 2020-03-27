@@ -10,7 +10,25 @@
 
 'use strict';
 
+import Axis from './Axis.js';
 import H from './Globals.js';
+import Point from './Point.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    clamp,
+    defined,
+    extend,
+    find,
+    format,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -59,26 +77,7 @@ declare global {
     }
 }
 
-import Point from './Point.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    clamp,
-    defined,
-    extend,
-    find,
-    format,
-    isNumber,
-    isString,
-    merge,
-    pick,
-    splat
-} = U;
-
 import './Chart.js';
-import './Axis.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -92,8 +91,7 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
@@ -103,7 +101,6 @@ var Axis = H.Axis,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
     pointTooltipFormatter = Point.prototype.tooltipFormatter;
-
 
 /**
  * Compare the values of the series against the first non-null, non-
@@ -650,6 +647,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     var chart = this.chart,
+        log = this.logarithmic,
         options = (this.options.crosshair as any).label, // the label's options
         horiz = this.horiz, // axis orientation
         opposite = this.opposite, // axis position
@@ -670,16 +668,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         // Use last available event (#5287)
         e = event.e || (this.cross && this.cross.e),
         point = event.point,
-        lin2log = this.lin2log,
-        min,
-        max;
-
-    if (this.isLog) {
-        min = lin2log(this.min as any);
-        max = lin2log(this.max as any);
-    } else {
-        min = this.min;
+        min = this.min,
         max = this.max;
+
+    if (log) {
+        min = log.lin2log(min as any);
+        max = log.lin2log(max as any);
     }
 
     align = (horiz ? 'center' : opposite ?
@@ -737,7 +731,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     if (!formatOption && !options.formatter) {
-        if (this.isDatetimeAxis) {
+        if (this.dateTime) {
             formatFormat = '%b %d, %Y';
         }
         formatOption =
@@ -953,17 +947,22 @@ seriesProto.processData = function (
 };
 
 // Modify series extremes
-addEvent(Series, 'afterGetExtremes', function (this: Highcharts.Series): void {
-    if (this.modifyValue) {
-        var extremes = [
-            this.modifyValue(this.dataMin),
-            this.modifyValue(this.dataMax)
-        ];
+addEvent(
+    Series,
+    'afterGetExtremes',
+    function (this: Highcharts.Series, e): void {
+        const dataExtremes: Highcharts.DataExtremesObject = (e as any).dataExtremes;
+        if (this.modifyValue && dataExtremes) {
+            var extremes = [
+                this.modifyValue(dataExtremes.dataMin),
+                this.modifyValue(dataExtremes.dataMax)
+            ];
 
-        this.dataMin = arrayMin(extremes);
-        this.dataMax = arrayMax(extremes);
+            dataExtremes.dataMin = arrayMin(extremes);
+            dataExtremes.dataMax = arrayMax(extremes);
+        }
     }
-});
+);
 
 /**
  * Highstock only. Set the compare mode on all series belonging to an Y axis

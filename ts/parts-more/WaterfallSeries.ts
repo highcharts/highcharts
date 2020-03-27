@@ -46,7 +46,7 @@ declare global {
             public drawGraph(): void;
             public generatePoints(): void;
             public getCrispPath(): SVGPathArray;
-            public getExtremes(): void;
+            public getExtremes(): DataExtremesObject;
             public getGraphPath(): SVGPathArray;
             public pointAttribs(
                 point: WaterfallPoint,
@@ -1013,7 +1013,9 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
 
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
-    getExtremes: function (this: Highcharts.WaterfallSeries): void {
+    getExtremes: function (
+        this: Highcharts.WaterfallSeries
+    ): Highcharts.DataExtremesObject {
         var stacking = this.options.stacking,
             yAxis,
             waterfallStacks,
@@ -1044,9 +1046,19 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                 });
             }
 
-            this.dataMin = arrayMin(stackedYNeg);
-            this.dataMax = arrayMax(stackedYPos);
+            return {
+                dataMin: arrayMin(stackedYNeg),
+                dataMax: arrayMax(stackedYPos)
+            };
+
         }
+
+        // When not stacking, data extremes have already been computed in the
+        // processData function.
+        return {
+            dataMin: this.dataMin,
+            dataMax: this.dataMax
+        };
     }
 
 
@@ -1066,8 +1078,8 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
     isValid: function (this: Highcharts.WaterfallPoint): boolean {
         return (
             isNumber(this.y) ||
-            (this.isSum as any) ||
-            (this.isIntermediateSum as any)
+            this.isSum ||
+            Boolean(this.isIntermediateSum)
         );
     }
 

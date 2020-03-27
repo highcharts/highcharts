@@ -470,7 +470,7 @@ extend(ColorAxis.prototype, {
         'legendItemWidth',
         'legendItem',
         'legendSymbol'
-    ].concat(Axis.prototype.keepProps),
+    ].concat(Axis.keepProps),
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Initializes the color axis.
@@ -636,8 +636,8 @@ extend(ColorAxis.prototype, {
      * @private
      */
     normalizedValue: function (value) {
-        if (this.isLog) {
-            value = this.val2lin(value);
+        if (this.logarithmic) {
+            value = this.logarithmic.log2lin(value);
         }
         return 1 - ((this.max - value) /
             ((this.max - this.min) || 1));
@@ -806,9 +806,9 @@ extend(ColorAxis.prototype, {
                 cSeries.maxColorValue = cSeries[colorKey + 'Max'];
             }
             else {
-                Series.prototype.getExtremes.call(cSeries, colorValArray);
-                cSeries.minColorValue = cSeries.dataMin;
-                cSeries.maxColorValue = cSeries.dataMax;
+                var cExtremes = Series.prototype.getExtremes.call(cSeries, colorValArray);
+                cSeries.minColorValue = cExtremes.dataMin;
+                cSeries.maxColorValue = cExtremes.dataMax;
             }
             if (typeof cSeries.minColorValue !== 'undefined') {
                 this.dataMin =
@@ -817,7 +817,7 @@ extend(ColorAxis.prototype, {
                     Math.max(this.dataMax, cSeries.maxColorValue);
             }
             if (!calculatedExtremes) {
-                Series.prototype.getExtremes.call(cSeries);
+                Series.prototype.applyExtremes.call(cSeries);
             }
         }
     },

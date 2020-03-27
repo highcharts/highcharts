@@ -250,6 +250,7 @@ Chart.prototype.moveFixedElements = function () {
  * @return {void}
  */
 Chart.prototype.applyFixed = function () {
+    var _a;
     var fixedRenderer, scrollableWidth, scrollableHeight, firstTime = !this.fixedDiv, scrollableOptions = this.options.chart.scrollablePlotArea;
     // First render
     if (firstTime) {
@@ -263,7 +264,7 @@ Chart.prototype.applyFixed = function () {
         }, null, true);
         this.renderTo.insertBefore(this.fixedDiv, this.renderTo.firstChild);
         this.renderTo.style.overflow = 'visible';
-        this.fixedRenderer = fixedRenderer = new H.Renderer(this.fixedDiv, this.chartWidth, this.chartHeight);
+        this.fixedRenderer = fixedRenderer = new H.Renderer(this.fixedDiv, this.chartWidth, this.chartHeight, (_a = this.options.chart) === null || _a === void 0 ? void 0 : _a.style);
         // Mask
         this.scrollableMask = fixedRenderer
             .path()

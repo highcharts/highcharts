@@ -117,7 +117,7 @@ colorAxisMethods = {
             }
         }
         else {
-            if (this.isLog) {
+            if (this.logarithmic) {
                 value = this.val2lin(value);
             }
             pos = 1 - ((this.max - value) / (this.max - this.min));

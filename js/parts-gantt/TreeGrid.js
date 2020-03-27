@@ -69,7 +69,7 @@ var getTickPositions = function (axis) {
         var pos = +key;
         if (axis.min <= pos &&
             axis.max >= pos &&
-            !axis.isInAnyBreak(pos)) {
+            !(axis.brokenAxis && axis.brokenAxis.isInAnyBreak(pos))) {
             arr.push(pos);
         }
         return arr;
@@ -438,7 +438,9 @@ var onBeforeRender = function (e) {
                     addEvent(axis, 'foundExtremes', function () {
                         treeGrid.collapsedNodes.forEach(function (node) {
                             var breaks = collapse(axis, node);
-                            axis.setBreaks(breaks, false);
+                            if (axis.brokenAxis) {
+                                axis.brokenAxis.setBreaks(breaks, false);
+                            }
                         });
                         removeFoundExtremesEvent();
                     });
@@ -725,8 +727,10 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */ {
      *        {@link Highcharts.Chart#redraw}
      */
     collapse: function (redraw) {
-        var tick = this, axis = tick.axis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = collapse(axis, node);
-        axis.setBreaks(breaks, pick(redraw, true));
+        var tick = this, axis = tick.axis, brokenAxis = axis.brokenAxis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = collapse(axis, node);
+        if (brokenAxis) {
+            brokenAxis.setBreaks(breaks, pick(redraw, true));
+        }
     },
     /**
      * Expand the grid cell. Used when axis is of type treegrid.
@@ -741,8 +745,10 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */ {
      *        {@link Highcharts.Chart#redraw}
      */
     expand: function (redraw) {
-        var tick = this, axis = tick.axis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = expand(axis, node);
-        axis.setBreaks(breaks, pick(redraw, true));
+        var tick = this, axis = tick.axis, brokenAxis = axis.brokenAxis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = expand(axis, node);
+        if (brokenAxis) {
+            brokenAxis.setBreaks(breaks, pick(redraw, true));
+        }
     },
     /**
      * Toggle the collapse/expand state of the grid cell. Used when axis is of
@@ -758,8 +764,10 @@ extend(GridAxisTick.prototype, /** @lends Highcharts.Tick.prototype */ {
      *        {@link Highcharts.Chart#redraw}
      */
     toggleCollapse: function (redraw) {
-        var tick = this, axis = tick.axis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = toggleCollapse(axis, node);
-        axis.setBreaks(breaks, pick(redraw, true));
+        var tick = this, axis = tick.axis, brokenAxis = axis.brokenAxis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = toggleCollapse(axis, node);
+        if (brokenAxis) {
+            brokenAxis.setBreaks(breaks, pick(redraw, true));
+        }
     }
 });
 // Make utility functions available for testing.

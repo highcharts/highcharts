@@ -490,22 +490,6 @@ H.layouts.packedbubble = extendClass(
             }
 
             Reingold.prototype.applyLimitBox.apply(this, arguments as any);
-        },
-        isStable: function (this: Highcharts.PackedBubbleLayout): boolean {
-            return Math.abs(
-                (this.systemTemperature as any) -
-                (this.prevSystemTemperature as any)
-            ) < 0.00001 ||
-            (this.temperature as any) <= 0 ||
-            (
-                // In first iteration system does not move:
-                (this.systemTemperature as any) > 0 &&
-                (
-                    (this.systemTemperature as any) /
-                    this.nodes.length < 0.02 &&
-                    (this.enableSimulation as any)
-                ) // Use only when simulation is enabled
-            );
         }
     }
 );

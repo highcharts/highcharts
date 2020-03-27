@@ -1,5 +1,6 @@
-$.ajax({
+Highcharts.ajax({
     url: 'https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/samples/data/world-population-history.csv',
+    dataType: 'csv',
     success: function (csv) {
 
         // Parse the CSV Data
@@ -29,11 +30,11 @@ $.ajax({
             categories = CSVtoArray(csv[2]).slice(4);
 
         // Parse the CSV into arrays, one array each country
-        $.each(csv.slice(3), function (j, line) {
+        csv.slice(3).forEach(function (line) {
             var row = CSVtoArray(line),
                 data = row.slice(4);
 
-            $.each(data, function (i, val) {
+            data.forEach(function (val, i) {
                 val = val.replace(quoteRegex, '');
                 if (numRegex.test(val)) {
                     val = parseInt(val, 10);
@@ -53,7 +54,7 @@ $.ajax({
         // For each country, use the latest value for current population
         var data = [];
         for (var code3 in countries) {
-            if (countries.hasOwnProperty(code3)) {
+            if (Object.hasOwnProperty.call(countries, code3)) {
                 var value = null,
                     year,
                     itemData = countries[code3].data,
@@ -77,9 +78,9 @@ $.ajax({
 
         // Add lower case codes to the data set for inclusion in the tooltip.pointFormat
         var mapData = Highcharts.geojson(Highcharts.maps['custom/world']);
-        $.each(mapData, function () {
-            this.id = this.properties['hc-key']; // for Chart.get()
-            this.flag = this.id.replace('UK', 'GB').toLowerCase();
+        mapData.forEach(function (country) {
+            country.id = country.properties['hc-key']; // for Chart.get()
+            country.flag = country.id.replace('UK', 'GB').toLowerCase();
         });
 
         // Wrap point.select to get to the total selected points
@@ -90,14 +91,17 @@ $.ajax({
             var points = mapChart.getSelectedPoints();
             if (points.length) {
                 if (points.length === 1) {
-                    $('#info #flag').attr('class', 'flag ' + points[0].flag);
-                    $('#info h2').html(points[0].name);
+                    document.querySelector('#info #flag')
+                        .className = 'flag ' + points[0].flag;
+                    document.querySelector('#info h2').innerHTML = points[0].name;
                 } else {
-                    $('#info #flag').attr('class', 'flag');
-                    $('#info h2').html('Comparing countries');
+                    document.querySelector('#info #flag')
+                        .className = 'flag';
+                    document.querySelector('#info h2').innerHTML = 'Comparing countries';
 
                 }
-                $('#info .subheader').html('<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>');
+                document.querySelector('#info .subheader')
+                    .innerHTML = '<h4>Historical population</h4><small><em>Shift + Click on map to compare countries</em></small>';
 
                 if (!countryChart) {
                     countryChart = Highcharts.chart('country-chart', {
@@ -153,9 +157,9 @@ $.ajax({
                 countryChart.redraw();
 
             } else {
-                $('#info #flag').attr('class', '');
-                $('#info h2').html('');
-                $('#info .subheader').html('');
+                document.querySelector('#info #flag').className = '';
+                document.querySelector('#info h2').innerHTML = '';
+                document.querySelector('#info .subheader').innerHTML = '';
                 if (countryChart) {
                     countryChart = countryChart.destroy();
                 }
@@ -204,7 +208,8 @@ $.ajax({
                         borderColor: 'black',
                         dashStyle: 'shortdot'
                     }
-                }
+                },
+                borderWidth: 0.5
             }]
         });
 

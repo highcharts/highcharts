@@ -292,8 +292,8 @@ TrackerMixin = H.TrackerMixin = {
             renderer = chart.renderer,
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
-            i,
-            onMouseOver = function (): void {
+            i: number,
+            onMouseOver = function (e: Highcharts.PointerEventObject): void {
                 if (chart.hoverSeries !== series) {
                     series.onMouseOver();
                 }
@@ -1386,7 +1386,10 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
     onMouseOver: function (this: Highcharts.Series): void {
         var series = this,
             chart = series.chart,
-            hoverSeries = chart.hoverSeries;
+            hoverSeries = chart.hoverSeries,
+            pointer = chart.pointer;
+
+        pointer.setHoverChartIndex();
 
         // set normal state to previous series
         if (hoverSeries && hoverSeries !== series) {
