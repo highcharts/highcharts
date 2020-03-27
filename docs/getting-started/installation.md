@@ -23,9 +23,9 @@ In the example above the JavaScript files are loaded from ajax.googleapis.com an
 <script src="/js/highcharts.js"></script>
 ```
 
-### C. Load Highcharts Stock or Highmaps
+### C. Load Highcharts Stock or Highcharts Maps
 
-Highcharts is already included in Highcharts Stock, so it is not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. Highcharts Stock and Highmaps can be loaded separate files like this:
+Highcharts is already included in Highcharts Stock, so it is not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. Highcharts Stock and Highcharts Maps can be loaded separate files like this:
 
 ```html
 <script src="/js/highstock.js"></script>
