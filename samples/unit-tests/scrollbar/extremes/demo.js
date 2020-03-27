@@ -248,9 +248,8 @@ QUnit.test('#12834 - xAxis had wrong extremes after scroll .', function (assert)
 
     chart.series[0].setVisible(true);
 
-    assert.strictEqual(
+    assert.ok(
         isNumber(chart.xAxis[0].min) && isNumber(chart.xAxis[0].max),
-        true,
         'xAxis should have extremes after scrolling.'
     );
 

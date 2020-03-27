@@ -138,7 +138,7 @@ var ScrollbarAxis = /** @class */ (function () {
         });
         // Make space for a scrollbar:
         addEvent(AxisClass, 'afterGetOffset', function () {
-            var axis = this, index = axis.horiz ? 2 : 1, scrollbar = axis.scrollbar, axisMin = pick(axis.options.min, axis.min), axisMax = pick(axis.options.max, axis.max);
+            var axis = this, index = axis.horiz ? 2 : 1, scrollbar = axis.scrollbar;
             if (scrollbar) {
                 axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
                 axis.chart.axisOffset[index] +=
