@@ -176,6 +176,7 @@ class BrokenAxisAdditions {
 
     public axis: Axis;
     public breakArray?: Array<AxisBreakObject>;
+    public hasBreaks: boolean = false;
     public unitLength?: number;
 
     /* *
@@ -267,10 +268,10 @@ class BrokenAxisAdditions {
     ): void {
         const brokenAxis = this;
         const axis = brokenAxis.axis;
-        const isBroken = (isArray(breaks) && !!breaks.length);
+        const hasBreaks = (isArray(breaks) && !!breaks.length);
 
-        axis.isDirty = axis.isBroken !== isBroken;
-        axis.isBroken = isBroken;
+        axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
+        brokenAxis.hasBreaks = hasBreaks;
         axis.options.breaks = axis.userOptions.breaks = breaks;
         axis.forceRedraw = true; // Force recalculation in setScale
 
@@ -279,13 +280,13 @@ class BrokenAxisAdditions {
             series.isDirty = true;
         });
 
-        if (!isBroken && axis.val2lin === BrokenAxisAdditions.val2Lin) {
+        if (!hasBreaks && axis.val2lin === BrokenAxisAdditions.val2Lin) {
             // Revert to prototype functions
             delete axis.val2lin;
             delete axis.lin2val;
         }
 
-        if (isBroken) {
+        if (hasBreaks) {
             axis.userOptions.ordinal = false;
             axis.lin2val = BrokenAxisAdditions.lin2Val as any;
             axis.val2lin = BrokenAxisAdditions.val2Lin as any;
@@ -299,7 +300,7 @@ class BrokenAxisAdditions {
             ): void {
                 // If trying to set extremes inside a break, extend min to
                 // after, and max to before the break ( #3857 )
-                if (this.isBroken) {
+                if (brokenAxis.hasBreaks) {
                     var axisBreak,
                         breaks = this.options.breaks;
 
@@ -329,7 +330,7 @@ class BrokenAxisAdditions {
                 Axis.prototype.setAxisTranslation.call(this, saveOld);
 
                 brokenAxis.unitLength = null as any;
-                if (this.isBroken) {
+                if (brokenAxis.hasBreaks) {
                     var breaks = axis.options.breaks || [],
                         // Temporary one:
                         breakArrayT: Array<AxisBreakBorderObject> = [],
@@ -417,6 +418,10 @@ class BrokenAxisAdditions {
                         }
                     });
 
+                    /**
+                     * @deprecated
+                     * @private
+                     */
                     axis.breakArray = brokenAxis.breakArray = breakArray;
 
                     // Used with staticScale, and below the actual axis length,
@@ -690,11 +695,10 @@ class BrokenAxis {
         addEvent(AxisClass, 'afterSetTickPositions', function (): void {
             const axis = this;
             const brokenAxis = axis.brokenAxis;
-            const isBroken = axis.isBroken;
 
             if (
-                isBroken &&
-                brokenAxis
+                brokenAxis &&
+                brokenAxis.hasBreaks
             ) {
                 var tickPositions = this.tickPositions,
                     info = this.tickPositions.info,
@@ -714,7 +718,7 @@ class BrokenAxis {
 
         // Force Axis to be not-ordinal when breaks are defined
         addEvent(AxisClass, 'afterSetOptions', function (): void {
-            if (this.isBroken) {
+            if (this.brokenAxis && this.brokenAxis.hasBreaks) {
                 this.options.ordinal = false;
             }
         });

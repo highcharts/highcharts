@@ -28,6 +28,7 @@ var BrokenAxisAdditions = /** @class */ (function () {
      *
      * */
     function BrokenAxisAdditions(axis) {
+        this.hasBreaks = false;
         this.axis = axis;
     }
     /* *
@@ -168,28 +169,28 @@ var BrokenAxisAdditions = /** @class */ (function () {
     BrokenAxisAdditions.prototype.setBreaks = function (breaks, redraw) {
         var brokenAxis = this;
         var axis = brokenAxis.axis;
-        var isBroken = (isArray(breaks) && !!breaks.length);
-        axis.isDirty = axis.isBroken !== isBroken;
-        axis.isBroken = isBroken;
+        var hasBreaks = (isArray(breaks) && !!breaks.length);
+        axis.isDirty = brokenAxis.hasBreaks !== hasBreaks;
+        brokenAxis.hasBreaks = hasBreaks;
         axis.options.breaks = axis.userOptions.breaks = breaks;
         axis.forceRedraw = true; // Force recalculation in setScale
         // Recalculate series related to the axis.
         axis.series.forEach(function (series) {
             series.isDirty = true;
         });
-        if (!isBroken && axis.val2lin === BrokenAxisAdditions.val2Lin) {
+        if (!hasBreaks && axis.val2lin === BrokenAxisAdditions.val2Lin) {
             // Revert to prototype functions
             delete axis.val2lin;
             delete axis.lin2val;
         }
-        if (isBroken) {
+        if (hasBreaks) {
             axis.userOptions.ordinal = false;
             axis.lin2val = BrokenAxisAdditions.lin2Val;
             axis.val2lin = BrokenAxisAdditions.val2Lin;
             axis.setExtremes = function (newMin, newMax, redraw, animation, eventArguments) {
                 // If trying to set extremes inside a break, extend min to
                 // after, and max to before the break ( #3857 )
-                if (this.isBroken) {
+                if (brokenAxis.hasBreaks) {
                     var axisBreak, breaks = this.options.breaks;
                     while ((axisBreak = brokenAxis.findBreakAt(newMin, breaks))) {
                         newMin = axisBreak.to;
@@ -207,7 +208,7 @@ var BrokenAxisAdditions = /** @class */ (function () {
             axis.setAxisTranslation = function (saveOld) {
                 Axis.prototype.setAxisTranslation.call(this, saveOld);
                 brokenAxis.unitLength = null;
-                if (this.isBroken) {
+                if (brokenAxis.hasBreaks) {
                     var breaks = axis.options.breaks || [], 
                     // Temporary one:
                     breakArrayT = [], breakArray = [], length = 0, inBrk, repeat, min = axis.userMin || axis.min, max = axis.userMax || axis.max, pointRangePadding = pick(axis.pointRangePadding, 0), start, i;
@@ -270,6 +271,10 @@ var BrokenAxisAdditions = /** @class */ (function () {
                             length += brk.value - start - (brk.size || 0);
                         }
                     });
+                    /**
+                     * @deprecated
+                     * @private
+                     */
                     axis.breakArray = brokenAxis.breakArray = breakArray;
                     // Used with staticScale, and below the actual axis length,
                     // when breaks are substracted.
@@ -475,9 +480,8 @@ var BrokenAxis = /** @class */ (function () {
         addEvent(AxisClass, 'afterSetTickPositions', function () {
             var axis = this;
             var brokenAxis = axis.brokenAxis;
-            var isBroken = axis.isBroken;
-            if (isBroken &&
-                brokenAxis) {
+            if (brokenAxis &&
+                brokenAxis.hasBreaks) {
                 var tickPositions = this.tickPositions, info = this.tickPositions.info, newPositions = [], i;
                 for (i = 0; i < tickPositions.length; i++) {
                     if (!brokenAxis.isInAnyBreak(tickPositions[i])) {
@@ -490,7 +494,7 @@ var BrokenAxis = /** @class */ (function () {
         });
         // Force Axis to be not-ordinal when breaks are defined
         addEvent(AxisClass, 'afterSetOptions', function () {
-            if (this.isBroken) {
+            if (this.brokenAxis && this.brokenAxis.hasBreaks) {
                 this.options.ordinal = false;
             }
         });

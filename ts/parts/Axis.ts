@@ -350,7 +350,6 @@ declare global {
             public hasVisibleSeries: boolean;
             public height: number;
             public horiz?: boolean;
-            public isBroken?: boolean;
             public isDirty?: boolean;
             public isHidden?: boolean;
             public isLinked: boolean;
@@ -3810,7 +3809,6 @@ class Axis implements AxisComposition {
     public hasVisibleSeries: boolean = void 0 as any;
     public height: number = void 0 as any;
     public horiz?: boolean;
-    public isBroken?: boolean;
     public isDirty?: boolean;
     public isLinked: boolean = void 0 as any;
     public isLog: boolean = void 0 as any;
@@ -4447,8 +4445,8 @@ class Axis implements AxisComposition {
             minPixelPadding = axis.minPixelPadding,
             doPostTranslate = (
                 axis.isOrdinal ||
-                axis.isBroken ||
-                (axis.isLog && handleLog)
+                axis.brokenAxis && axis.brokenAxis.hasBreaks ||
+                axis.isLog && handleLog
             ) && axis.lin2val;
 
         if (!localA) {
