@@ -709,7 +709,7 @@ var OrdinalAxis = /** @class */ (function () {
                     // range, else it happens on the current x axis which is
                     // smaller and faster.
                     chart.fixedRange = max - min;
-                    trimmedRange = xAxis.toFixedRange(null, null, lin2val.apply(searchAxisLeft, [
+                    trimmedRange = xAxis.navigatorAxis.toFixedRange(null, null, lin2val.apply(searchAxisLeft, [
                         val2lin.apply(searchAxisLeft, [min, true]) + movedUnits,
                         true // translate from index
                     ]), lin2val.apply(searchAxisRight, [
