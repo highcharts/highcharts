@@ -225,8 +225,6 @@ declare global {
             isX?: boolean;
             labels?: XAxisLabelsOptions;
             left?: (number|string);
-            /** @deprecated */
-            linearToLogConverter?: (num: number) => number;
             lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             linkedTo?: number;
