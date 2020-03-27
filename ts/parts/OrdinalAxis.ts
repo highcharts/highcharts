@@ -107,7 +107,7 @@ class OrdinalAxisAdditions {
     public getExtendedPositions(): Array<number> {
         var ordinal = this,
             axis = ordinal.axis,
-            axisPrototype = axis.constructor.prototype,
+            axisProto = axis.constructor.prototype,
             chart = axis.chart,
             grouping = axis.series[0].currentDataGrouping,
             ordinalIndex = ordinal.index,
@@ -144,8 +144,8 @@ class OrdinalAxisAdditions {
                     ordinal: true
                 },
                 ordinal: {},
-                ordinal2lin: axisPrototype.ordinal2lin, // #6276
-                val2lin: axisPrototype.val2lin // #2590
+                ordinal2lin: axisProto.ordinal2lin, // #6276
+                val2lin: axisProto.val2lin // #2590
             } as any;
             fakeAxis.ordinal.axis = fakeAxis;
 
@@ -348,20 +348,20 @@ class OrdinalAxis {
      * @param SeriesClass
      * Series class to use.
      */
-    public static init(
+    public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         SeriesClass: typeof Series
     ): void {
 
-        const axisPrototype = AxisClass.prototype as OrdinalAxis;
+        const axisProto = AxisClass.prototype as OrdinalAxis;
 
         /**
          * Calculate the ordinal positions before tick positions are calculated.
          *
          * @private
          */
-        axisPrototype.beforeSetTickPositions = function (): void {
+        axisProto.beforeSetTickPositions = function (): void {
             var axis = this,
                 ordinal = axis.ordinal,
                 len,
@@ -791,7 +791,7 @@ class OrdinalAxis {
          *
          * @return {number}
          */
-        axisPrototype.lin2val = function (
+        axisProto.lin2val = function (
             val: number,
             fromIndex?: boolean
         ): number {
@@ -882,7 +882,7 @@ class OrdinalAxis {
          *
          * @return {number}
          */
-        axisPrototype.val2lin = function (
+        axisProto.val2lin = function (
             val: number,
             toIndex?: boolean
         ): number {
@@ -931,7 +931,7 @@ class OrdinalAxis {
             return ret;
         };
         // Record this to prevent overwriting by broken-axis module (#5979)
-        axisPrototype.ordinal2lin = axisPrototype.val2lin;
+        axisProto.ordinal2lin = axisProto.val2lin;
 
         addEvent(AxisClass, 'afterInit', function (): void {
             this.ordinal = new OrdinalAxisAdditions(this as OrdinalAxis);
@@ -1137,6 +1137,6 @@ interface OrdinalAxisOptions {
     keepOrdinalPadding?: boolean;
 }
 
-export default OrdinalAxis;
+OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
 
-OrdinalAxis.init(Axis, Chart, Series); // @todo move to StockChart, remove from master
+export default OrdinalAxis;

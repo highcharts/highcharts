@@ -16,7 +16,7 @@ import GLVertexBuffer from './wgl-vbuffer.js';
 import Color from '../../parts/Color.js';
 var color = Color.parse;
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 var win = H.win, doc = win.document;
 /* eslint-disable valid-jsdoc */
 /**
@@ -411,6 +411,16 @@ function GLRenderer(postRenderCallback) {
             //     pcolor[1] /= 255.0;
             //     pcolor[2] /= 255.0;
             // }
+            // Handle the point.color option (#5999)
+            var pointOptions = rawData && rawData[i];
+            if (!useRaw && isObject(pointOptions, true)) {
+                if (pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba;
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
+                }
+            }
             if (useRaw) {
                 x = d[0];
                 y = d[1];
@@ -732,7 +742,7 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
         shader.setUniform('xAxisCVSCoord', (!axis.horiz));
-        shader.setUniform('xAxisIsLog', axis.isLog);
+        shader.setUniform('xAxisIsLog', (!!axis.logarithmic));
         shader.setUniform('xAxisReversed', (!!axis.reversed));
     }
     /**
@@ -751,7 +761,7 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
         shader.setUniform('yAxisCVSCoord', (!axis.horiz));
-        shader.setUniform('yAxisIsLog', axis.isLog);
+        shader.setUniform('yAxisIsLog', (!!axis.logarithmic));
         shader.setUniform('yAxisReversed', (!!axis.reversed));
     }
     /**

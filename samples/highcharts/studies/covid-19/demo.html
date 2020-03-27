@@ -1,0 +1,40 @@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+<script src="https://code.highcharts.com/mapdata/custom/world.js"></script>
+
+<!-- Flag sprites service provided by Martijn Lafeber, https://github.com/lafeber/world-flags-sprite/blob/master/LICENSE -->
+<link rel="stylesheet" type="text/css" href="//github.com/downloads/lafeber/world-flags-sprite/flags32.css" />
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    Confirmed Covid-19 Cases
+                </div>
+                <div class="card-body" id="container"></div>
+            </div>
+        </div>
+        <div class="col-12 col-md-6" id="info">
+            <div class="card">
+                <div class="card-header">
+                    <span class="f32"><span id="flag"></span></span>
+                    <span class="header-text"></span>
+                </div>
+                <div class="card-header subheader">
+                    Click countries to view history
+                </div>
+                <div class="card-body" id="country-chart">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <small>This visualization is created by the Highcharts team using <a href="https://www.highcharts.com" target="_top">
+        Highcharts</a> and data from  <a href="https://github.com/pomber/covid19" target="_top">pomber/covid19</a>.</small>
+</div>

@@ -79,7 +79,7 @@ function getAxisDescription(axis: Highcharts.Axis): string {
             axis.axisTitle && axis.axisTitle.textStr ||
             axis.options.id ||
             axis.categories && 'categories' ||
-            axis.isDatetimeAxis && 'Time' ||
+            axis.dateTime && 'Time' ||
             'values'
         )
     );

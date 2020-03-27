@@ -214,6 +214,7 @@ class PlotLineOrBand {
         var plotLine = this,
             axis = plotLine.axis,
             horiz = axis.horiz,
+            log = axis.logarithmic,
             options = plotLine.options as (
                 Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions
             ),
@@ -240,10 +241,10 @@ class PlotLineOrBand {
             group;
 
         // logarithmic conversion
-        if (axis.isLog) {
-            from = axis.log2lin(from);
-            to = axis.log2lin(to);
-            value = axis.log2lin(value);
+        if (log) {
+            from = log.log2lin(from);
+            to = log.log2lin(to);
+            value = log.log2lin(value);
         }
 
         // Set the presentational attributes

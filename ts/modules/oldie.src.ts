@@ -176,7 +176,7 @@ declare global {
             public setAttr(key: string, value: string): void;
             public setSpanRotation(): void;
             public shadow(
-                shadowOptions: ShadowOptionsObject,
+                shadowOptions: Partial<ShadowOptionsObject>,
                 group: VMLElement,
                 cutOff: boolean
             ): VMLElement;
@@ -933,10 +933,10 @@ if (!svg) {
         ): Highcharts.VMLElement {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function (): void {
-                var evt = win.event as Event;
+                var e = win.event as Event;
 
-                (evt.target as any) = evt.srcElement;
-                handler(evt);
+                (e.target as any) = e.srcElement;
+                handler(e);
             };
             return this;
         },
@@ -981,7 +981,7 @@ if (!svg) {
          */
         shadow: function (
             this: Highcharts.VMLElement,
-            shadowOptions: Highcharts.ShadowOptionsObject,
+            shadowOptions: Partial<Highcharts.ShadowOptionsObject>,
             group: Highcharts.VMLElement,
             cutOff: boolean
         ): Highcharts.VMLElement {

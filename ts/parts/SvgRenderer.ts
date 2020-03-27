@@ -58,11 +58,11 @@ declare global {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {
-            color?: ColorString;
-            offsetX?: number;
-            offsetY?: number;
-            opacity?: number;
-            width?: number;
+            color: ColorString;
+            offsetX: number;
+            offsetY: number;
+            opacity: number;
+            width: number;
         }
         interface SizeObject {
             height: number;
@@ -130,6 +130,7 @@ declare global {
             public renderer: SVGRenderer;
             public rotation?: number;
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
+            public oldShadowOptions?: Highcharts.ShadowOptionsObject;
             public styles?: CSSObject;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
@@ -221,7 +222,7 @@ declare global {
                 textPathOptions: object
             ): SVGElement;
             public shadow(
-                shadowOptions?: (boolean|ShadowOptionsObject),
+                shadowOptions?: (boolean|Partial<ShadowOptionsObject>),
                 group?: SVGElement,
                 cutOff?: boolean
             ): SVGElement;
@@ -2739,7 +2740,7 @@ extend((
      */
     shadow: function (
         this: Highcharts.SVGElement,
-        shadowOptions?: (boolean|Highcharts.ShadowOptionsObject),
+        shadowOptions?: (boolean|Partial<Highcharts.ShadowOptionsObject>),
         group?: Highcharts.SVGElement,
         cutOff?: boolean
     ): Highcharts.SVGElement {
@@ -2750,24 +2751,55 @@ extend((
             strokeWidth,
             shadowWidth,
             shadowElementOpacity,
+            update = false,
+            oldShadowOptions = this.oldShadowOptions,
 
             // compensate for inverted plot area
             transform;
 
-        if (!shadowOptions) {
+        const defaultShadowOptions: Highcharts.ShadowOptionsObject = {
+            color: '${palette.neutralColor100}',
+            offsetX: 1,
+            offsetY: 1,
+            opacity: 0.15,
+            width: 3
+        };
+        let options: Highcharts.ShadowOptionsObject|undefined;
+        if (shadowOptions === true) {
+            options = defaultShadowOptions;
+        } else if (typeof shadowOptions === 'object') {
+            options = extend(defaultShadowOptions, shadowOptions);
+        }
+
+        // Update shadow when options change (#12091).
+        if (options) {
+            // Go over each key to look for change
+            if (options && oldShadowOptions) {
+                objectEach(options, (value, key): void => {
+                    if (value !== (oldShadowOptions as any)[key]) {
+                        update = true;
+                    }
+                });
+            }
+
+            if (update) {
+                this.destroyShadows();
+            }
+
+            this.oldShadowOptions = options;
+        }
+
+        if (!options) {
             this.destroyShadows();
 
         } else if (!this.shadows) {
-            shadowWidth = pick((shadowOptions as any).width, 3);
-            shadowElementOpacity = ((shadowOptions as any).opacity || 0.15) /
-                shadowWidth;
+            shadowElementOpacity = options.opacity / options.width;
             transform = this.parentInverted ?
-                '(-1,-1)' :
-                '(' + pick((shadowOptions as any).offsetX, 1) + ', ' +
-                pick((shadowOptions as any).offsetY, 1) + ')';
-            for (i = 1; i <= shadowWidth; i++) {
-                shadow = element.cloneNode(0 as any) as any;
-                strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
+                'translate(-1,-1)' :
+                `translate(${options.offsetX}, ${options.offsetY})`;
+            for (i = 1; i <= options.width; i++) {
+                shadow = element.cloneNode(false) as any;
+                strokeWidth = (options.width * 2) + 1 - (2 * i);
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
@@ -2775,7 +2807,7 @@ extend((
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
-                    transform: 'translate' + transform,
+                    transform,
                     fill: 'none'
                 });
                 shadow.setAttribute(

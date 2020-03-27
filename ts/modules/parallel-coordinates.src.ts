@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type RadialAxis from '../parts-more/RadialAxis';
 import H from '../parts/Globals.js';
 
 /**
@@ -314,7 +316,7 @@ extend(ChartProto, /** @lends Highcharts.Chart.prototype */ {
 
 
 // On update, keep parallelPosition.
-AxisProto.keepProps.push('parallelPosition');
+Axis.keepProps.push('parallelPosition');
 
 // Update default options with predefined for a parallel coords.
 addEvent(Axis, 'afterSetOptions', function (
@@ -455,7 +457,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
             point = points[i];
             if (defined(point.y)) {
                 if (chart.polar) {
-                    point.plotX = chart.yAxis[i].angleRad || 0;
+                    point.plotX = (chart.yAxis[i] as RadialAxis).angleRad || 0;
                 } else if (chart.inverted) {
                     point.plotX = (
                         chart.plotHeight -
@@ -566,7 +568,7 @@ function addFormattedValue(
                 ),
                 chart
             );
-        } else if (yAxis.isDatetimeAxis) {
+        } else if (yAxis.dateTime) {
             formattedValue = chart.time.dateFormat(
                 chart.time.resolveDTLFormat(
                     (yAxisOptions.dateTimeLabelFormats as any)[

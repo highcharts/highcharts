@@ -288,6 +288,7 @@ class Tick {
             options = axis.options,
             chart = axis.chart,
             categories = axis.categories,
+            log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
             labelOptions = pick(
@@ -314,7 +315,7 @@ class Tick {
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
-        if (axis.isDatetimeAxis && tickPositionInfo) {
+        if (axis.dateTime && tickPositionInfo) {
             dateTimeLabelFormats = chart.time.resolveDTLFormat(
                 (options.dateTimeLabelFormats as any)[
                     (
@@ -351,7 +352,7 @@ class Tick {
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
             tickPositionInfo: tickPositionInfo,
-            value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
+            value: log ? correctFloat(log.lin2log(value)) : value,
             pos: pos
         };
         str = (axis.labelFormatter as any).call(tick.formatCtx, this.formatCtx);
