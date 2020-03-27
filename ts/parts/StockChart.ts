@@ -647,6 +647,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     var chart = this.chart,
+        log = this.logarithmic,
         options = (this.options.crosshair as any).label, // the label's options
         horiz = this.horiz, // axis orientation
         opposite = this.opposite, // axis position
@@ -667,16 +668,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         // Use last available event (#5287)
         e = event.e || (this.cross && this.cross.e),
         point = event.point,
-        lin2log = this.lin2log,
-        min,
-        max;
-
-    if (this.isLog) {
-        min = lin2log(this.min as any);
-        max = lin2log(this.max as any);
-    } else {
-        min = this.min;
+        min = this.min,
         max = this.max;
+
+    if (log) {
+        min = log.lin2log(min as any);
+        max = log.lin2log(max as any);
     }
 
     align = (horiz ? 'center' : opposite ?

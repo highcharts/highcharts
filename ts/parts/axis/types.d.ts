@@ -11,12 +11,14 @@
 import type Axis from '../Axis';
 import type DateTimeAxis from '../DateTimeAxis';
 import type HiddenAxis from '../../parts-more/HiddenAxis';
+import type LogarithmicAxis from '../LogarithmicAxis';
 import type OrdinalAxis from '../OrdinalAxis';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
 
 export interface AxisComposition {
     dateTime?: DateTimeAxis['dateTime'];
+    logarithmic?: LogarithmicAxis['logarithmic'];
     ordinal?: OrdinalAxis['ordinal'];
     scrollbar?: ScrollbarAxis['scrollbar'];
 }
@@ -27,6 +29,7 @@ export interface AxisComposition {
 export type AxisType = (
     Axis|
     HiddenAxis|
+    LogarithmicAxis|
     OrdinalAxis|
     RadialAxis|
     ScrollbarAxis

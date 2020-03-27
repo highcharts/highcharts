@@ -676,7 +676,7 @@ class AxisResizer {
 }
 
 // Keep resizer reference on axis update
-Axis.prototype.keepProps.push('resizer');
+Axis.keepProps.push('resizer');
 
 /* eslint-disable no-invalid-this */
 // Add new AxisResizer, update or remove it
