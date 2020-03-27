@@ -109,7 +109,7 @@ var Tick = /** @class */ (function () {
             axis.tickInterval === 1, tickPositionInfo = tickPositions.info, dateTimeLabelFormat, dateTimeLabelFormats, i, list;
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
-        if (axis.isDatetimeAxis && tickPositionInfo) {
+        if (axis.dateTime && tickPositionInfo) {
             dateTimeLabelFormats = chart.time.resolveDTLFormat(options.dateTimeLabelFormats[(!options.grid &&
                 tickPositionInfo.higherRanks[pos]) ||
                 tickPositionInfo.unitName]);

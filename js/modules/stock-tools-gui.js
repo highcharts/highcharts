@@ -768,46 +768,40 @@ addEvent(H.Chart, 'redraw', function () {
  * @param {Object} - options of toolbar
  * @param {Chart} - Reference to chart
  */
-H.Toolbar = function (options, langOptions, chart) {
-    this.chart = chart;
-    this.options = options;
-    this.lang = langOptions;
-    // set url for icons.
-    this.iconsURL = this.getIconsURL();
-    this.guiEnabled = options.enabled;
-    this.visible = pick(options.visible, true);
-    this.placed = pick(options.placed, false);
-    // General events collection which should be removed upon destroy/update:
-    this.eventsToUnbind = [];
-    if (this.guiEnabled) {
-        this.createHTML();
-        this.init();
-        this.showHideNavigatorion();
-    }
-    fireEvent(this, 'afterInit');
-};
-extend(H.Chart.prototype, {
-    /**
-     * Verify if Toolbar should be added.
-     * @private
-     * @param {Highcharts.StockToolsOptions} - chart options
-     * @return {void}
-     */
-    setStockTools: function (options) {
-        var chartOptions = this.options, lang = chartOptions.lang, guiOptions = merge(chartOptions.stockTools && chartOptions.stockTools.gui, options && options.gui), langOptions = lang.stockTools && lang.stockTools.gui;
-        this.stockTools = new H.Toolbar(guiOptions, langOptions, this);
-        if (this.stockTools.guiEnabled) {
-            this.isDirtyBox = true;
+var Toolbar = /** @class */ (function () {
+    function Toolbar(options, langOptions, chart) {
+        this.arrowDown = void 0;
+        this.arrowUp = void 0;
+        this.arrowWrapper = void 0;
+        this.listWrapper = void 0;
+        this.showhideBtn = void 0;
+        this.submenu = void 0;
+        this.toolbar = void 0;
+        this.wrapper = void 0;
+        this.chart = chart;
+        this.options = options;
+        this.lang = langOptions;
+        // set url for icons.
+        this.iconsURL = this.getIconsURL();
+        this.guiEnabled = options.enabled;
+        this.visible = pick(options.visible, true);
+        this.placed = pick(options.placed, false);
+        // General events collection which should be removed upon
+        // destroy/update:
+        this.eventsToUnbind = [];
+        if (this.guiEnabled) {
+            this.createHTML();
+            this.init();
+            this.showHideNavigatorion();
         }
+        fireEvent(this, 'afterInit');
     }
-});
-H.Toolbar.prototype = {
     /**
      * Initialize the toolbar. Create buttons and submenu for each option
      * defined in `stockTools.gui`.
      * @private
      */
-    init: function () {
+    Toolbar.prototype.init = function () {
         var _self = this, lang = this.lang, guiOptions = this.options, toolbar = this.toolbar, addSubmenu = _self.addSubmenu, buttons = guiOptions.buttons, defs = guiOptions.definitions, allButtons = toolbar.childNodes, inIframe = this.inIframe(), button;
         // create buttons
         buttons.forEach(function (btnName) {
@@ -824,7 +818,7 @@ H.Toolbar.prototype = {
                 addSubmenu.call(_self, button, defs[btnName]);
             }
         });
-    },
+    };
     /**
      * Create submenu (list of buttons) for the option. In example main button
      * is Line, in submenu will be buttons with types of lines.
@@ -834,7 +828,7 @@ H.Toolbar.prototype = {
      * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions}
      * list of all buttons
      */
-    addSubmenu: function (parentBtn, button) {
+    Toolbar.prototype.addSubmenu = function (parentBtn, button) {
         var _self = this, submenuArrow = parentBtn.submenuArrow, buttonWrapper = parentBtn.buttonWrapper, buttonWidth = getStyle(buttonWrapper, 'width'), wrapper = this.wrapper, menuWrapper = this.listWrapper, allButtons = this.toolbar.childNodes, topMargin = 0, submenuWrapper;
         // create submenu container
         this.submenu = submenuWrapper = createElement(UL, {
@@ -883,7 +877,7 @@ H.Toolbar.prototype = {
                     submenuWrapper.offsetWidth + 3 + 'px';
             }
         }));
-    },
+    };
     /**
      * Create buttons in submenu
      * @private
@@ -893,7 +887,7 @@ H.Toolbar.prototype = {
      * list of all buttons options
      *
      */
-    addSubmenuItems: function (buttonWrapper, button) {
+    Toolbar.prototype.addSubmenuItems = function (buttonWrapper, button) {
         var _self = this, submenuWrapper = this.submenu, lang = this.lang, menuWrapper = this.listWrapper, items = button.items, firstSubmenuItem, submenuBtn;
         // add items to submenu
         items.forEach(function (btnName) {
@@ -911,7 +905,7 @@ H.Toolbar.prototype = {
             .querySelectorAll('li > .' + PREFIX + 'menu-item-btn')[0];
         // replace current symbol, in main button, with submenu's button style
         _self.switchSymbol(firstSubmenuItem, false);
-    },
+    };
     /*
      * Erase active class on all other buttons.
      *
@@ -919,7 +913,7 @@ H.Toolbar.prototype = {
      * @param {HTMLDOMElement} - Current HTML button
      *
      */
-    eraseActiveButtons: function (buttons, currentButton, submenuItems) {
+    Toolbar.prototype.eraseActiveButtons = function (buttons, currentButton, submenuItems) {
         [].forEach.call(buttons, function (btn) {
             if (btn !== currentButton) {
                 btn.classList.remove(PREFIX + 'current');
@@ -932,19 +926,24 @@ H.Toolbar.prototype = {
                 }
             }
         });
-    },
+    };
     /**
      * Create single button. Consist of HTML elements `li`, `span`, and (if
      * exists) submenu container.
      * @private
-     * @param {HTMLDOMElement} - HTML reference, where button should be added
-     * @param {Object} - all options, by btnName refer to particular button
-     * @param {String} - name of functionality mapped for specific class
-     * @param {Object} - All titles, by btnName refer to particular button
+     * @param {Highcharts.HTMLDOMElement} target
+     * HTML reference, where button should be added
+     * @param {Highcharts.StockToolsGuiDefinitionsButtonsOptions|Highcharts.StockToolsGuiDefinitionsOptions} options
+     * All options, by btnName refer to particular button
+     * @param {string} btnName
+     * of functionality mapped for specific class
+     * @param {Highcharts.Dictionary<string>} lang
+     * All titles, by btnName refer to particular button
      * @return {Object} - references to all created HTML elements
      */
-    addButton: function (target, options, btnName, lang) {
-        var btnOptions = options[btnName], items = btnOptions.items, classMapping = H.Toolbar.prototype.classMapping, userClassName = btnOptions.className || '', mainButton, submenuArrow, buttonWrapper;
+    Toolbar.prototype.addButton = function (target, options, btnName, lang) {
+        if (lang === void 0) { lang = {}; }
+        var btnOptions = options[btnName], items = btnOptions.items, classMapping = Toolbar.prototype.classMapping, userClassName = btnOptions.className || '', mainButton, submenuArrow, buttonWrapper;
         // main button wrapper
         buttonWrapper = createElement(LI, {
             className: pick(classMapping[btnName], '') + ' ' + userClassName,
@@ -973,12 +972,12 @@ H.Toolbar.prototype = {
             mainButton: mainButton,
             submenuArrow: submenuArrow
         };
-    },
+    };
     /*
      * Create navigation's HTML elements: container and arrows.
      *
      */
-    addNavigation: function () {
+    Toolbar.prototype.addNavigation = function () {
         var stockToolbar = this, wrapper = stockToolbar.wrapper;
         // arrow wrapper
         stockToolbar.arrowWrapper = createElement(DIV, {
@@ -997,13 +996,13 @@ H.Toolbar.prototype = {
         wrapper.insertBefore(stockToolbar.arrowWrapper, wrapper.childNodes[0]);
         // attach scroll events
         stockToolbar.scrollButtons();
-    },
+    };
     /*
      * Add events to navigation (two arrows) which allows user to scroll
      * top/down GUI buttons, if container's height is not enough.
      *
      */
-    scrollButtons: function () {
+    Toolbar.prototype.scrollButtons = function () {
         var targetY = 0, _self = this, wrapper = _self.wrapper, toolbar = _self.toolbar, step = 0.1 * wrapper.offsetHeight; // 0.1 = 10%
         _self.eventsToUnbind.push(addEvent(_self.arrowUp, 'click', function () {
             if (targetY > 0) {
@@ -1018,12 +1017,12 @@ H.Toolbar.prototype = {
                 toolbar.style['margin-top'] = -targetY + 'px';
             }
         }));
-    },
+    };
     /*
      * Create stockTools HTML main elements.
      *
      */
-    createHTML: function () {
+    Toolbar.prototype.createHTML = function () {
         var stockToolbar = this, chart = stockToolbar.chart, guiOptions = stockToolbar.options, container = chart.container, navigation = chart.options.navigation, bindingsClassName = navigation && navigation.bindingsClassName, listWrapper, toolbar, wrapper;
         // create main container
         stockToolbar.wrapper = wrapper = createElement(DIV, {
@@ -1045,12 +1044,12 @@ H.Toolbar.prototype = {
         stockToolbar.showHideToolbar();
         // add navigation which allows user to scroll down / top GUI buttons
         stockToolbar.addNavigation();
-    },
+    };
     /**
      * Function called in redraw verifies if the navigation should be visible.
      * @private
      */
-    showHideNavigatorion: function () {
+    Toolbar.prototype.showHideNavigatorion = function () {
         // arrows
         // 50px space for arrows
         if (this.visible &&
@@ -1063,12 +1062,12 @@ H.Toolbar.prototype = {
             // hide arrows
             this.arrowWrapper.style.display = 'none';
         }
-    },
+    };
     /**
      * Create button which shows or hides GUI toolbar.
      * @private
      */
-    showHideToolbar: function () {
+    Toolbar.prototype.showHideToolbar = function () {
         var stockToolbar = this, chart = this.chart, wrapper = stockToolbar.wrapper, toolbar = this.listWrapper, submenu = this.submenu, visible = this.visible, showhideBtn;
         // Show hide toolbar
         this.showhideBtn = showhideBtn = createElement(DIV, {
@@ -1104,7 +1103,7 @@ H.Toolbar.prototype = {
                 }
             });
         }));
-    },
+    };
     /*
      * In main GUI button, replace icon and class with submenu button's
      * class / symbol.
@@ -1113,7 +1112,7 @@ H.Toolbar.prototype = {
      * @param {Boolean} - true or false
      *
      */
-    switchSymbol: function (button, redraw) {
+    Toolbar.prototype.switchSymbol = function (button, redraw) {
         var buttonWrapper = button.parentNode, buttonWrapperClass = buttonWrapper.classList.value, 
         // main button in first level og GUI
         mainNavButton = buttonWrapper.parentNode.parentNode;
@@ -1131,28 +1130,28 @@ H.Toolbar.prototype = {
         if (redraw) {
             this.selectButton(mainNavButton);
         }
-    },
+    };
     /*
      * Set select state (active class) on button.
      *
      * @param {HTMLDOMElement} - button
      *
      */
-    selectButton: function (button) {
+    Toolbar.prototype.selectButton = function (button) {
         if (button.className.indexOf(activeClass) >= 0) {
             button.classList.remove(activeClass);
         }
         else {
             button.classList.add(activeClass);
         }
-    },
+    };
     /*
      * Remove active class from all buttons except defined.
      *
      * @param {HTMLDOMElement} - button which should not be deactivated
      *
      */
-    unselectAllButtons: function (button) {
+    Toolbar.prototype.unselectAllButtons = function (button) {
         var activeButtons = button.parentNode
             .querySelectorAll('.' + activeClass);
         [].forEach.call(activeButtons, function (activeBtn) {
@@ -1160,26 +1159,26 @@ H.Toolbar.prototype = {
                 activeBtn.classList.remove(activeClass);
             }
         });
-    },
+    };
     /*
      * Verify if chart is in iframe.
      *
      * @return {Object} - elements translations.
      */
-    inIframe: function () {
+    Toolbar.prototype.inIframe = function () {
         try {
             return win.self !== win.top;
         }
         catch (e) {
             return true;
         }
-    },
+    };
     /*
      * Update GUI with given options.
      *
      * @param {Object} - general options for Stock Tools
      */
-    update: function (options) {
+    Toolbar.prototype.update = function (options) {
         merge(true, this.chart.options.stockTools, options);
         this.destroy();
         this.chart.setStockTools(options);
@@ -1187,12 +1186,12 @@ H.Toolbar.prototype = {
         if (this.chart.navigationBindings) {
             this.chart.navigationBindings.update();
         }
-    },
+    };
     /**
      * Destroy all HTML GUI elements.
      * @private
      */
-    destroy: function () {
+    Toolbar.prototype.destroy = function () {
         var stockToolsDiv = this.wrapper, parent = stockToolsDiv && stockToolsDiv.parentNode;
         this.eventsToUnbind.forEach(function (unbinder) {
             unbinder();
@@ -1204,66 +1203,82 @@ H.Toolbar.prototype = {
         // redraw
         this.chart.isDirtyBox = true;
         this.chart.redraw();
-    },
+    };
     /**
      * Redraw, GUI requires to verify if the navigation should be visible.
      * @private
      */
-    redraw: function () {
+    Toolbar.prototype.redraw = function () {
         this.showHideNavigatorion();
-    },
-    getIconsURL: function () {
+    };
+    Toolbar.prototype.getIconsURL = function () {
         return this.chart.options.navigation.iconsURL ||
             this.options.iconsURL ||
             'https://code.highcharts.com/@product.version@/gfx/stock-icons/';
-    },
-    /**
-     * Mapping JSON fields to CSS classes.
-     * @private
-     */
-    classMapping: {
-        circle: PREFIX + 'circle-annotation',
-        rectangle: PREFIX + 'rectangle-annotation',
-        label: PREFIX + 'label-annotation',
-        segment: PREFIX + 'segment',
-        arrowSegment: PREFIX + 'arrow-segment',
-        ray: PREFIX + 'ray',
-        arrowRay: PREFIX + 'arrow-ray',
-        line: PREFIX + 'infinity-line',
-        arrowLine: PREFIX + 'arrow-infinity-line',
-        verticalLine: PREFIX + 'vertical-line',
-        horizontalLine: PREFIX + 'horizontal-line',
-        crooked3: PREFIX + 'crooked3',
-        crooked5: PREFIX + 'crooked5',
-        elliott3: PREFIX + 'elliott3',
-        elliott5: PREFIX + 'elliott5',
-        pitchfork: PREFIX + 'pitchfork',
-        fibonacci: PREFIX + 'fibonacci',
-        parallelChannel: PREFIX + 'parallel-channel',
-        measureX: PREFIX + 'measure-x',
-        measureY: PREFIX + 'measure-y',
-        measureXY: PREFIX + 'measure-xy',
-        verticalCounter: PREFIX + 'vertical-counter',
-        verticalLabel: PREFIX + 'vertical-label',
-        verticalArrow: PREFIX + 'vertical-arrow',
-        currentPriceIndicator: PREFIX + 'current-price-indicator',
-        indicators: PREFIX + 'indicators',
-        flagCirclepin: PREFIX + 'flag-circlepin',
-        flagDiamondpin: PREFIX + 'flag-diamondpin',
-        flagSquarepin: PREFIX + 'flag-squarepin',
-        flagSimplepin: PREFIX + 'flag-simplepin',
-        zoomX: PREFIX + 'zoom-x',
-        zoomY: PREFIX + 'zoom-y',
-        zoomXY: PREFIX + 'zoom-xy',
-        typeLine: PREFIX + 'series-type-line',
-        typeOHLC: PREFIX + 'series-type-ohlc',
-        typeCandlestick: PREFIX + 'series-type-candlestick',
-        fullScreen: PREFIX + 'full-screen',
-        toggleAnnotations: PREFIX + 'toggle-annotations',
-        saveChart: PREFIX + 'save-chart',
-        separator: PREFIX + 'separator'
-    }
+    };
+    return Toolbar;
+}());
+/**
+ * Mapping JSON fields to CSS classes.
+ * @private
+ */
+Toolbar.prototype.classMapping = {
+    circle: PREFIX + 'circle-annotation',
+    rectangle: PREFIX + 'rectangle-annotation',
+    label: PREFIX + 'label-annotation',
+    segment: PREFIX + 'segment',
+    arrowSegment: PREFIX + 'arrow-segment',
+    ray: PREFIX + 'ray',
+    arrowRay: PREFIX + 'arrow-ray',
+    line: PREFIX + 'infinity-line',
+    arrowLine: PREFIX + 'arrow-infinity-line',
+    verticalLine: PREFIX + 'vertical-line',
+    horizontalLine: PREFIX + 'horizontal-line',
+    crooked3: PREFIX + 'crooked3',
+    crooked5: PREFIX + 'crooked5',
+    elliott3: PREFIX + 'elliott3',
+    elliott5: PREFIX + 'elliott5',
+    pitchfork: PREFIX + 'pitchfork',
+    fibonacci: PREFIX + 'fibonacci',
+    parallelChannel: PREFIX + 'parallel-channel',
+    measureX: PREFIX + 'measure-x',
+    measureY: PREFIX + 'measure-y',
+    measureXY: PREFIX + 'measure-xy',
+    verticalCounter: PREFIX + 'vertical-counter',
+    verticalLabel: PREFIX + 'vertical-label',
+    verticalArrow: PREFIX + 'vertical-arrow',
+    currentPriceIndicator: PREFIX + 'current-price-indicator',
+    indicators: PREFIX + 'indicators',
+    flagCirclepin: PREFIX + 'flag-circlepin',
+    flagDiamondpin: PREFIX + 'flag-diamondpin',
+    flagSquarepin: PREFIX + 'flag-squarepin',
+    flagSimplepin: PREFIX + 'flag-simplepin',
+    zoomX: PREFIX + 'zoom-x',
+    zoomY: PREFIX + 'zoom-y',
+    zoomXY: PREFIX + 'zoom-xy',
+    typeLine: PREFIX + 'series-type-line',
+    typeOHLC: PREFIX + 'series-type-ohlc',
+    typeCandlestick: PREFIX + 'series-type-candlestick',
+    fullScreen: PREFIX + 'full-screen',
+    toggleAnnotations: PREFIX + 'toggle-annotations',
+    saveChart: PREFIX + 'save-chart',
+    separator: PREFIX + 'separator'
 };
+extend(H.Chart.prototype, {
+    /**
+     * Verify if Toolbar should be added.
+     * @private
+     * @param {Highcharts.StockToolsOptions} - chart options
+     * @return {void}
+     */
+    setStockTools: function (options) {
+        var chartOptions = this.options, lang = chartOptions.lang, guiOptions = merge(chartOptions.stockTools && chartOptions.stockTools.gui, options && options.gui), langOptions = lang.stockTools && lang.stockTools.gui;
+        this.stockTools = new H.Toolbar(guiOptions, langOptions, this);
+        if (this.stockTools.guiEnabled) {
+            this.isDirtyBox = true;
+        }
+    }
+});
 // Comunication with bindings:
 addEvent(H.NavigationBindings, 'selectButton', function (event) {
     var button = event.button, className = PREFIX + 'submenu-wrapper', gui = this.chart.stockTools;
@@ -1288,3 +1303,5 @@ addEvent(H.NavigationBindings, 'deselectButton', function (event) {
         gui.selectButton(button);
     }
 });
+H.Toolbar = Toolbar;
+export default H.Toolbar;

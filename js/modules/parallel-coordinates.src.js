@@ -377,7 +377,7 @@ function addFormattedValue(proceed) {
         if (labelFormat) {
             formattedValue = format(labelFormat, extend(this, { value: this.y }), chart);
         }
-        else if (yAxis.isDatetimeAxis) {
+        else if (yAxis.dateTime) {
             formattedValue = chart.time.dateFormat(chart.time.resolveDTLFormat(yAxisOptions.dateTimeLabelFormats[yAxis.tickPositions.info.unitName]).main, this.y);
         }
         else if (yAxisOptions.categories) {

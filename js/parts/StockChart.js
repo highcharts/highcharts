@@ -479,7 +479,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         posy = snap ? point.plotY + top : e.chartY;
     }
     if (!formatOption && !options.formatter) {
-        if (this.isDatetimeAxis) {
+        if (this.dateTime) {
             formatFormat = '%b %d, %Y';
         }
         formatOption =

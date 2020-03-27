@@ -568,7 +568,7 @@ function addFormattedValue(
                 ),
                 chart
             );
-        } else if (yAxis.isDatetimeAxis) {
+        } else if (yAxis.dateTime) {
             formattedValue = chart.time.dateFormat(
                 chart.time.resolveDTLFormat(
                     (yAxisOptions.dateTimeLabelFormats as any)[
