@@ -235,9 +235,7 @@ class ScrollbarAxis {
         addEvent(AxisClass, 'afterGetOffset', function (): void {
             var axis = this as ScrollbarAxis,
                 index = axis.horiz ? 2 : 1,
-                scrollbar = axis.scrollbar,
-                axisMin = pick(axis.options.min, axis.min as any),
-                axisMax = pick(axis.options.max, axis.max as any);
+                scrollbar = axis.scrollbar;
 
             if (scrollbar) {
                 axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
