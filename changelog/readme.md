@@ -5,7 +5,9 @@ The changelog is generated from PR descriptions. The following rules apply:
 * Label the PR with `Product: Highstock`, `Product: Highmaps` etc. for specific
 products. PRs with no product tags go into the Highcharts changelog.
 * Only the first paragraph of the description is used. Anything below the first
-line break `\n` is removed.
+line break `\n` is removed (except upgrade notes).
+* Upgrade notes are marked with `#### Upgrade note`, then the _next paragraph_ after
+this will be parsed as an upgrade note into the changelog.
 * For consistency, bug fixes should start with "Fixed #xxxx".
 * Since the changelog refers to changes that were done by a past release, write
 in past tense.

@@ -18,6 +18,18 @@ const log = {
     'Highcharts Gantt': {}
 };
 
+// Whenever the string 'Upgrade note' appears, the next paragraph is interpreted
+// as the not
+const parseUpgradeNote = p => {
+    const paragraphs = p.body.split('\n');
+    for (let i = 0; i < paragraphs.length; i++) {
+        if (/upgrade note/i.test(paragraphs[i])) {
+            return (paragraphs[i + 1] ? paragraphs[i + 1].trim() : void 0);
+        }
+    }
+    return void 0;
+};
+
 module.exports = async since => {
 
     const included = [];
@@ -83,6 +95,7 @@ module.exports = async since => {
     // Simplify
     pulls = pulls.map(p => ({
         description: p.body.split('\n')[0].trim(),
+        upgradeNote: parseUpgradeNote(p),
         labels: p.labels,
         number: p.number
     }));
