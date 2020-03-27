@@ -63,8 +63,14 @@ class ScrollbarAxis {
                     this: Highcharts.Scrollbar,
                     e: Highcharts.ScrollbarChangedEventObject
                 ): void {
-                    var axisMin = pick(axis.options.min, axis.min as any),
-                        axisMax = pick(axis.options.max, axis.max as any),
+                    var axisMin = pick(
+                            axis.options && axis.options.min,
+                            axis.min as any
+                        ),
+                        axisMax = pick(
+                            axis.options && axis.options.max,
+                            axis.max as any
+                        ),
                         unitedMin = defined(axis.dataMin as any) ?
                             Math.min(
                                 axisMin,
@@ -80,6 +86,11 @@ class ScrollbarAxis {
                         range = unitedMax - unitedMin,
                         to,
                         from;
+
+                    // #12834, scroll when show/hide series, wrong extremes
+                    if (!defined(axisMin) || !defined(axisMax)) {
+                        return;
+                    }
 
                     if (
                         (axis.horiz && !axis.reversed) ||
@@ -224,7 +235,9 @@ class ScrollbarAxis {
         addEvent(AxisClass, 'afterGetOffset', function (): void {
             var axis = this as ScrollbarAxis,
                 index = axis.horiz ? 2 : 1,
-                scrollbar = axis.scrollbar;
+                scrollbar = axis.scrollbar,
+                axisMin = pick(axis.options.min, axis.min as any),
+                axisMax = pick(axis.options.max, axis.max as any);
 
             if (scrollbar) {
                 axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets

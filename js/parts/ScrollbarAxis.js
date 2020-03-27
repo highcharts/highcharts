@@ -42,9 +42,13 @@ var ScrollbarAxis = /** @class */ (function () {
                 axis.options.startOnTick = axis.options.endOnTick = false;
                 axis.scrollbar = new ScrollbarClass(axis.chart.renderer, axis.options.scrollbar, axis.chart);
                 addEvent(axis.scrollbar, 'changed', function (e) {
-                    var axisMin = pick(axis.options.min, axis.min), axisMax = pick(axis.options.max, axis.max), unitedMin = defined(axis.dataMin) ?
+                    var axisMin = pick(axis.options && axis.options.min, axis.min), axisMax = pick(axis.options && axis.options.max, axis.max), unitedMin = defined(axis.dataMin) ?
                         Math.min(axisMin, axis.min, axis.dataMin) : axisMin, unitedMax = defined(axis.dataMax) ?
                         Math.max(axisMax, axis.max, axis.dataMax) : axisMax, range = unitedMax - unitedMin, to, from;
+                    // #12834, scroll when show/hide series, wrong extremes 
+                    if (!defined(axisMin) || !defined(axisMax)) {
+                        return;
+                    }
                     if ((axis.horiz && !axis.reversed) ||
                         (!axis.horiz && axis.reversed)) {
                         to = unitedMin + range * this.to;
@@ -134,7 +138,7 @@ var ScrollbarAxis = /** @class */ (function () {
         });
         // Make space for a scrollbar:
         addEvent(AxisClass, 'afterGetOffset', function () {
-            var axis = this, index = axis.horiz ? 2 : 1, scrollbar = axis.scrollbar;
+            var axis = this, index = axis.horiz ? 2 : 1, scrollbar = axis.scrollbar, axisMin = pick(axis.options.min, axis.min), axisMax = pick(axis.options.max, axis.max);
             if (scrollbar) {
                 axis.chart.scrollbarsOffsets = [0, 0]; // reset scrollbars offsets
                 axis.chart.axisOffset[index] +=
