@@ -716,7 +716,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
-                    DateTimeAxis.normalizeTimeTickInterval(
+                    DateTimeAxis.AdditionsClass.prototype.normalizeTimeTickInterval(
                         interval,
                         (dataGroupingOptions as any).units ||
                         defaultDataGroupingUnits
