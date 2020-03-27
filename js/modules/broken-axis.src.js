@@ -11,7 +11,7 @@
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
+var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import '../parts/Series.js';
 import StackItem from '../parts/Stacking.js';
 var Series = H.Series;
@@ -324,39 +324,36 @@ var BrokenAxis = /** @class */ (function () {
          */
         seriesProto.drawBreaks = function (axis, keys) {
             var series = this, points = series.points, breaks, threshold, eventName, y;
-            if (!axis) {
-                return; // #5950
-            }
-            var brokenAxis = axis.brokenAxis;
-            keys.forEach(function (key) {
-                breaks = brokenAxis && brokenAxis.breakArray || [];
-                threshold = axis.isXAxis ?
-                    axis.min :
-                    pick(series.options.threshold, axis.min);
-                points.forEach(function (point) {
-                    y = pick(point['stack' + key.toUpperCase()], point[key]);
-                    breaks.forEach(function (brk) {
-                        eventName = false;
-                        if ((threshold < brk.from &&
-                            y > brk.to) ||
-                            (threshold > brk.from &&
-                                y < brk.from)) {
-                            eventName = 'pointBreak';
-                        }
-                        else if ((threshold < brk.from &&
-                            y > brk.from &&
-                            y < brk.to) ||
-                            (threshold > brk.from &&
-                                y > brk.to &&
-                                y < brk.from)) {
-                            eventName = 'pointInBreak';
-                        }
-                        if (eventName) {
-                            fireEvent(axis, eventName, { point: point, brk: brk });
-                        }
+            if (axis && // #5950
+                axis.brokenAxis &&
+                axis.brokenAxis.hasBreaks) {
+                var brokenAxis_1 = axis.brokenAxis;
+                keys.forEach(function (key) {
+                    breaks = brokenAxis_1 && brokenAxis_1.breakArray || [];
+                    threshold = axis.isXAxis ?
+                        axis.min :
+                        pick(series.options.threshold, axis.min);
+                    points.forEach(function (point) {
+                        y = pick(point['stack' + key.toUpperCase()], point[key]);
+                        breaks.forEach(function (brk) {
+                            if (isNumber(threshold) && isNumber(y)) {
+                                eventName = false;
+                                if ((threshold < brk.from && y > brk.to) ||
+                                    (threshold > brk.from && y < brk.from)) {
+                                    eventName = 'pointBreak';
+                                }
+                                else if ((threshold < brk.from && y > brk.from && y < brk.to) ||
+                                    (threshold > brk.from && y > brk.to && y < brk.from)) {
+                                    eventName = 'pointInBreak';
+                                }
+                                if (eventName) {
+                                    fireEvent(axis, eventName, { point: point, brk: brk });
+                                }
+                            }
+                        });
                     });
                 });
-            });
+            }
         };
         /**
          * Extend getGraphPath by identifying gaps in the data so that we can

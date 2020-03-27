@@ -20,6 +20,7 @@ const {
     find,
     fireEvent,
     isArray,
+    isNumber,
     pick
 } = U;
 
@@ -484,57 +485,48 @@ class BrokenAxis {
                 eventName: string,
                 y: (number|null|undefined);
 
-            if (!axis) {
-                return; // #5950
-            }
+            if (
+                axis && // #5950
+                axis.brokenAxis &&
+                axis.brokenAxis.hasBreaks
+            ) {
+                const brokenAxis = axis.brokenAxis;
 
-            const brokenAxis = axis.brokenAxis;
+                keys.forEach(function (key: string): void {
+                    breaks = brokenAxis && brokenAxis.breakArray || [];
+                    threshold = axis.isXAxis ?
+                        axis.min :
+                        pick(series.options.threshold, axis.min);
+                    points.forEach(function (point: Point): void {
+                        y = pick(
+                            (point as any)['stack' + key.toUpperCase()],
+                            (point as any)[key]
+                        );
+                        breaks.forEach(function (brk: AxisBreakObject): void {
+                            if (isNumber(threshold) && isNumber(y)) {
 
-            keys.forEach(function (key: string): void {
-                breaks = brokenAxis && brokenAxis.breakArray || [];
-                threshold = axis.isXAxis ?
-                    axis.min :
-                    pick(series.options.threshold, axis.min);
-                points.forEach(function (point: Point): void {
-                    y = pick(
-                        (point as any)['stack' + key.toUpperCase()],
-                        (point as any)[key]
-                    );
-                    breaks.forEach(function (brk: AxisBreakObject): void {
-                        eventName = false as any;
+                                eventName = false as any;
 
-                        if (
-                            (
-                                (threshold as any) < brk.from &&
-                                (y as any) > brk.to
-                            ) ||
-                            (
-                                (threshold as any) > brk.from &&
-                                (y as any) < brk.from
-                            )
-                        ) {
-                            eventName = 'pointBreak';
+                                if (
+                                    (threshold < brk.from && y > brk.to) ||
+                                    (threshold > brk.from && y < brk.from)
+                                ) {
+                                    eventName = 'pointBreak';
 
-                        } else if (
-                            (
-                                (threshold as any) < brk.from &&
-                                (y as any) > brk.from &&
-                                (y as any) < brk.to
-                            ) ||
-                            (
-                                (threshold as any) > brk.from &&
-                                (y as any) > brk.to &&
-                                (y as any) < brk.from
-                            )
-                        ) {
-                            eventName = 'pointInBreak';
-                        }
-                        if (eventName) {
-                            fireEvent(axis, eventName, { point: point, brk: brk });
-                        }
+                                } else if (
+                                    (threshold < brk.from && y > brk.from && y < brk.to) ||
+                                    (threshold > brk.from && y > brk.to && y < brk.from)
+                                ) {
+                                    eventName = 'pointInBreak';
+                                }
+                                if (eventName) {
+                                    fireEvent(axis, eventName, { point: point, brk: brk });
+                                }
+                            }
+                        });
                     });
                 });
-            });
+            }
         };
 
         /**
