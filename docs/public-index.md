@@ -20,7 +20,7 @@ For live examples see our demo pages:
 API
 ---
 
-For more specific information on Highcharts and Highcharts Stock options and functions, visit our API sites which also include several live and customizeable examples.
+For more specific information on Highcharts options and functions, visit our API sites which also include several live and customizeable examples.
 
 *   [Highcharts API reference](https://api.highcharts.com/highcharts)
 *   [Highcharts Stock API reference](https://api.highcharts.com/highstock)

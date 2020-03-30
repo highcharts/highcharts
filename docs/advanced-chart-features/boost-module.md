@@ -1,7 +1,7 @@
 Boost module
 ===
 
-Boost is a stripped-down renderer-in-a-module for Highcharts and Highcharts Stock. It bypasses some of the standard Highcharts features (such as animation), and focuses on pushing as many points as possible as quickly as possible.
+Boost is a stripped-down renderer-in-a-module for Highcharts. It bypasses some of the standard Highcharts features (such as animation), and focuses on pushing as many points as possible as quickly as possible.
 
 This document will guide you through your first steps with the Highcharts boost module.
 
