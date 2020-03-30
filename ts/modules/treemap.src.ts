@@ -298,6 +298,7 @@ const {
     addEvent,
     correctFloat,
     defined,
+    deprecate,
     error,
     extend,
     fireEvent,
@@ -1993,10 +1994,7 @@ seriesType<Highcharts.TreemapSeries>(
             id: string,
             redraw?: boolean
         ): void {
-            error(
-                'WARNING: treemap.drillToNode has been renamed to treemap.' +
-                'setRootNode, and will be removed in the next major version.'
-            );
+            deprecate('treemap.drillToNode', 'treemap.setRootNode');
             this.setRootNode(id, redraw);
         },
         /**

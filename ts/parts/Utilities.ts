@@ -2661,6 +2661,7 @@ const getStyle = H.getStyle = function (
  *         The index within the array, or -1 if not found.
  */
 const inArray = H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
+    deprecate('Highcharts.inArray', 'Array.indexOf');
     return arr.indexOf(item, fromIndex);
 };
 
@@ -2699,6 +2700,44 @@ const find = H.find = (Array.prototype as any).find ?
     };
 
 /**
+ * Creates a deprecation warning in the console, ones for each context.
+ *
+ * @private
+ *
+ * @param {string} [fnName]
+ * Given function name. This skips stack analysis.
+ *
+ * @param {string} [newFnName]
+ * New function name to use.
+ */
+function deprecate(fnName?: string, newFnName?: string): void {
+    if (!fnName) {
+        try {
+            throw new Error();
+        } catch (err) {
+            if (err instanceof Error) {
+                fnName = (err.stack || '').split('\n')[1];
+            }
+        }
+    }
+    if (
+        fnName &&
+        deprecateFnNames.indexOf(fnName) === -1
+    ) {
+        deprecateFnNames.push(fnName);
+        // eslint-disable-next-line no-console
+        console.log(
+            `Highcharts warning: ${fnName} is deprecated! ` + (
+                newFnName ?
+                    `Please use ${newFnName} instead.` :
+                    'Please consult https://api.highcharts.com for details.'
+            )
+        );
+    }
+}
+const deprecateFnNames: Array<string> = [];
+
+/**
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
@@ -2710,7 +2749,10 @@ const find = H.find = (Array.prototype as any).find ?
  * @return {Array<string>}
  *         An array of strings that represents all the properties.
  */
-H.keys = Object.keys;
+H.keys = function (): Array<string> {
+    deprecate('Highcharts.keys', 'Object.keys');
+    return Object.keys.apply(arguments);
+};
 
 /**
  * Get the element's offset position, corrected for `overflow: auto`.
@@ -2906,6 +2948,7 @@ objectEach({
     some: 'some'
 }, function (val: any, key: string): void {
     (H as any)[key] = function (arr: Array<any>): any {
+        deprecate(`Highcharts.${key}`, `Array.${val}`);
         return Array.prototype[val].apply(
             arr,
             [].slice.call(arguments, 1)
@@ -3454,6 +3497,7 @@ const utilitiesModule = {
     createElement,
     css,
     defined,
+    deprecate,
     destroyObjectProperties,
     discardElement,
     erase,

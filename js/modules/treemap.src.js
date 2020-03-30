@@ -18,7 +18,7 @@ var color = Color.parse;
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, stableSort = U.stableSort;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, deprecate = U.deprecate, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../parts/Series.js';
 /* eslint-disable no-invalid-this */
@@ -1259,8 +1259,7 @@ seriesType('treemap', 'scatter'
     },
     // TODO remove this function at a suitable version.
     drillToNode: function (id, redraw) {
-        error('WARNING: treemap.drillToNode has been renamed to treemap.' +
-            'setRootNode, and will be removed in the next major version.');
+        deprecate('treemap.drillToNode', 'treemap.setRootNode');
         this.setRootNode(id, redraw);
     },
     /**
