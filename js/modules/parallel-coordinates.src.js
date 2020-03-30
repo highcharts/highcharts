@@ -145,7 +145,7 @@ var ParallelAxisAdditions = /** @class */ (function () {
         var parallel = this;
         var axis = parallel.axis;
         var chart = axis.chart;
-        var fraction = ((parallel.position || NaN) + 0.5) /
+        var fraction = (pick(parallel.position, NaN) + 0.5) /
             (chart.parallelInfo.counter + 1);
         if (chart.polar) {
             options.angle = 360 * fraction;

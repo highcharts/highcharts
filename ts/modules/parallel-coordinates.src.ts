@@ -216,7 +216,7 @@ class ParallelAxisAdditions {
         const axis = parallel.axis;
         const chart = axis.chart;
 
-        var fraction = ((parallel.position || NaN) + 0.5) /
+        var fraction = (pick(parallel.position, NaN) + 0.5) /
             (chart.parallelInfo.counter + 1);
 
         if (chart.polar) {
