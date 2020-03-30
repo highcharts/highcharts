@@ -278,7 +278,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
         init: function (this: Highcharts.XRangeSeries): void {
             seriesTypes.column.prototype.init.apply(this, arguments as any);
 
-            this.options.stacking = false as any; // #13161
+            this.options.stacking = void 0; // #13161
         },
 
         /**

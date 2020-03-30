@@ -24,10 +24,10 @@ QUnit.test('Disabled options', function (assert) {
         }]
     });
 
-    Highcharts.each(chart.series, function (series) {
-        assert.strictEqual(
-            series.options.stacking,
-            false,
+    Highcharts.each(chart.series, function (series, i) {
+        console.log(i, series, series.options.stacking);
+        assert.ok(
+            series.options.stacking === undefined,
             'Stacking should be disabled (#8817)'
         );
     });

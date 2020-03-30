@@ -1485,7 +1485,7 @@ var Navigator = /** @class */ (function () {
             xAxis: 'navigator-x-axis',
             yAxis: 'navigator-y-axis',
             showInLegend: false,
-            stacking: false,
+            stacking: void 0,
             isInternal: true,
             states: {
                 inactive: {

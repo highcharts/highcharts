@@ -216,7 +216,7 @@ seriesType<Highcharts.OHLCSeries>(
         init: function (this: Highcharts.OHLCSeries): void {
             seriesTypes.column.prototype.init.apply(this, arguments as any);
 
-            this.options.stacking = false as any; // #8817
+            this.options.stacking = void 0; // #8817
         },
 
         /**

@@ -150,7 +150,7 @@ seriesType('xrange', 'column'
      */
     init: function () {
         seriesTypes.column.prototype.init.apply(this, arguments);
-        this.options.stacking = false; // #13161
+        this.options.stacking = void 0; // #13161
     },
     /**
      * Borrow the column series metrics, but with swapped axes. This gives
