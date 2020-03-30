@@ -18,6 +18,9 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Axis {
+            panningState?: AxisPanningState;
+        }
         interface Chart {
             resetZoomButton?: SVGElement;
             pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
@@ -32,6 +35,11 @@ declare global {
                 legendItem: SVGElement,
                 useHTML?: boolean
             ): void;
+        }
+        interface AxisPanningState {
+            startMin: (number);
+            startMax: (number);
+            isDirty?: boolean;
         }
         interface Point {
             className?: string;
@@ -64,7 +72,7 @@ declare global {
             (this: Point, event: PointInteractionEventObject): void;
         }
         interface PanningOptions {
-            type: string;
+            type: ('x'|'y'|'xy');
             enabled: boolean;
         }
         interface Series {
@@ -161,6 +169,7 @@ const {
     fireEvent,
     isArray,
     isFunction,
+    isNumber,
     isObject,
     merge,
     objectEach,
@@ -773,6 +782,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             hoverPoints = chart.hoverPoints,
             panningOptions: Highcharts.PanningOptions,
             chartOptions = chart.options.chart,
+            hasMapNavigation = chart.options.mapNavigation &&
+                chart.options.mapNavigation.enabled,
             doRedraw: boolean,
             type: string;
 
@@ -836,25 +847,69 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     flipped = panMax < panMin,
                     newMin = flipped ? panMax : panMin,
                     newMax = flipped ? panMin : panMax,
-                    paddedMin = Math.min(
-                        extremes.dataMin,
-                        halfPointRange ?
-                            extremes.min :
-                            axis.toValue(
-                                axis.toPixels(extremes.min) -
-                                axis.minPixelPadding
-                            )
-                    ),
-                    paddedMax = Math.max(
-                        extremes.dataMax,
-                        halfPointRange ?
-                            extremes.max :
-                            axis.toValue(
-                                axis.toPixels(extremes.max) +
-                                axis.minPixelPadding
-                            )
-                    ),
-                    spill;
+                    hasVerticalPanning = axis.hasVerticalPanning(),
+                    paddedMin,
+                    paddedMax,
+                    spill,
+                    panningState = axis.panningState;
+
+                // General calculations of panning state.
+                // This is related to using vertical panning. (#11315).
+                axis.series.forEach(function (
+                    series: Highcharts.Series
+                ): void {
+                    if (
+                        hasVerticalPanning &&
+                        !isX && (
+                            !panningState || panningState.isDirty
+                        )
+                    ) {
+                        const processedData = series.getProcessedData(true),
+                            dataExtremes = series.getExtremes(
+                                processedData.yData, true
+                            );
+
+                        if (!panningState) {
+                            panningState = {
+                                startMin: Number.MAX_VALUE,
+                                startMax: -Number.MAX_VALUE
+                            };
+                        }
+
+                        if (
+                            isNumber(dataExtremes.dataMin) &&
+                            isNumber(dataExtremes.dataMax)
+                        ) {
+                            panningState.startMin = Math.min(
+                                dataExtremes.dataMin, panningState.startMin
+                            );
+                            panningState.startMax = Math.max(
+                                dataExtremes.dataMax, panningState.startMax
+                            );
+                        }
+                    }
+                });
+
+                paddedMin = Math.min(
+                    H.pick(panningState?.startMin, extremes.dataMin),
+                    halfPointRange ?
+                        extremes.min :
+                        axis.toValue(
+                            axis.toPixels(extremes.min) -
+                            axis.minPixelPadding
+                        )
+                );
+                paddedMax = Math.max(
+                    H.pick(panningState?.startMax, extremes.dataMax),
+                    halfPointRange ?
+                        extremes.max :
+                        axis.toValue(
+                            axis.toPixels(extremes.max) +
+                            axis.minPixelPadding
+                        )
+                );
+
+                axis.panningState = panningState;
 
                 // It is not necessary to calculate extremes on ordinal axis,
                 // because the are already calculated, so we don't want to
@@ -862,17 +917,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 if (!axisOpt.ordinal) {
                     // If the new range spills over, either to the min or max,
                     // adjust the new range.
-                    if (isX) {
-                        spill = paddedMin - newMin;
-                        if (spill > 0) {
-                            newMax += spill;
-                            newMin = paddedMin;
-                        }
-                        spill = newMax - paddedMax;
-                        if (spill > 0) {
-                            newMax = paddedMax;
-                            newMin -= spill;
-                        }
+                    spill = paddedMin - newMin;
+                    if (spill > 0) {
+                        newMax += spill;
+                        newMin = paddedMin;
+                    }
+
+                    spill = newMax - paddedMax;
+                    if (spill > 0) {
+                        newMax = paddedMax;
+                        newMin -= spill;
                     }
 
                     // Set new extremes if they are actually new
@@ -881,11 +935,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             newMin !== extremes.min &&
                             newMax !== extremes.max &&
                             isX ? true : (
-                                axis.panningState &&
-                                newMin >= axis.panningState
-                                    .startMin &&
-                                newMax <= axis.panningState
-                                    .startMax //
+                                panningState &&
+                                newMin >= paddedMin &&
+                                newMax <= paddedMax
                             )
                     ) {
                         axis.setExtremes(
@@ -895,6 +947,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             false,
                             { trigger: 'pan' }
                         );
+
+                        if (
+                            !chart.resetZoomButton &&
+                            !hasMapNavigation &&
+                            type.match('y')
+                        ) {
+                            chart.showResetZoom();
+                            axis.displayBtn = false;
+                        }
+
                         doRedraw = true;
                     }
 

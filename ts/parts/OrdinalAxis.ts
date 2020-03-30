@@ -157,7 +157,8 @@ class OrdinalAxisAdditions {
                     xAxis: fakeAxis,
                     xData: (series.xData as any).slice(),
                     chart: chart,
-                    destroyGroupedData: H.noop
+                    destroyGroupedData: H.noop,
+                    getProcessedData: H.Series.prototype.getProcessedData
                 } as any;
 
                 fakeSeries.xData = (fakeSeries.xData as any).concat(

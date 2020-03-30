@@ -1478,7 +1478,7 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:afterSetTickPositions
      */
     Axis.prototype.setTickPositions = function () {
-        var axis = this, options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, startOnTick = options.startOnTick, endOnTick = options.endOnTick;
+        var axis = this, options = this.options, tickPositions, tickPositionsOption = options.tickPositions, minorTickIntervalOption = this.getMinorTickInterval(), tickPositioner = options.tickPositioner, hasVerticalPanning = this.hasVerticalPanning(), isColorAxis = this.coll === 'colorAxis', startOnTick = (isColorAxis || !hasVerticalPanning) && options.startOnTick, endOnTick = (isColorAxis || !hasVerticalPanning) && options.endOnTick;
         // Set the tickmarkOffset
         this.tickmarkOffset = (this.categories &&
             options.tickmarkPlacement === 'between' &&
@@ -1760,13 +1760,14 @@ var Axis = /** @class */ (function () {
      * @fires Highcharts.Axis#event:afterSetScale
      */
     Axis.prototype.setScale = function () {
-        var axis = this, isDirtyData = axis.series.some(function (series) {
-            return (series.isDirtyData ||
-                series.isDirty ||
-                // When x axis is dirty, we need new data extremes for y as
-                // well:
-                series.xAxis && series.xAxis.isDirty);
-        }), isDirtyAxisLength;
+        var axis = this, isDirtyAxisLength, isDirtyData = false, isXAxisDirty = false;
+        axis.series.forEach(function (series) {
+            var _a;
+            isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
+            // When x axis is dirty, we need new data extremes for y as
+            // well:
+            isXAxisDirty = isXAxisDirty || ((_a = series.xAxis) === null || _a === void 0 ? void 0 : _a.isDirty) || false;
+        });
         axis.oldMin = axis.min;
         axis.oldMax = axis.max;
         axis.oldAxisLength = axis.len;
@@ -1776,6 +1777,7 @@ var Axis = /** @class */ (function () {
         // do we really need to go through all this?
         if (isDirtyAxisLength ||
             isDirtyData ||
+            isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
             axis.userMin !== axis.oldUserMin ||
@@ -1804,6 +1806,11 @@ var Axis = /** @class */ (function () {
         }
         else if (axis.cleanStacks) {
             axis.cleanStacks();
+        }
+        // Recalculate panning state object, when the data
+        // has changed. It is required when vertical panning is enabled.
+        if (isDirtyData && axis.panningState) {
+            axis.panningState.isDirty = true;
         }
         fireEvent(this, 'afterSetScale');
     };
@@ -3004,6 +3011,18 @@ var Axis = /** @class */ (function () {
         }
         fireEvent(this, 'afterHideCrosshair');
     };
+    /**
+    * Check whether the chart has vertical panning ('y' or 'xy' type).
+    *
+    * @private
+    * @function Highcharts.Axis#hasVerticalPanning
+    * @return {boolean}
+    *
+    */
+    Axis.prototype.hasVerticalPanning = function () {
+        var _a, _b;
+        return /y/.test(((_b = (_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.panning) === null || _b === void 0 ? void 0 : _b.type) || '');
+    };
     /* *
      *
      *  Static Properties
@@ -3504,8 +3523,8 @@ var Axis = /** @class */ (function () {
          * the `maxPadding` option to control the axis end.
          *
          * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when the navigator or
-         * vertical panning is enabled, to prevent jumpy scrolling.
+         * In Highstock, `endOnTick` is always `false` when the navigator
+         * is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/chart/reflow-true/
          *         True by default
@@ -4453,16 +4472,13 @@ var Axis = /** @class */ (function () {
          * the `minPadding` option to control the axis start.
          *
          * @productdesc {highstock}
-         * In Highstock, `startOnTick` is always false when either the
-         * navigator or vertical panning is enabled, to prevent jumpy
-         * scrolling.
+         * In Highstock, `startOnTick` is always `false` when the navigator
+         * is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default
          * @sample {highcharts} highcharts/xaxis/startontick-true/
          *         True
-         * @sample {highstock} stock/xaxis/endontick/
-         *         False for Y axis
          *
          * @since 1.2.0
          */
@@ -5232,10 +5248,25 @@ var Axis = /** @class */ (function () {
          * @apioption yAxis.labels.y
          */
         /**
-         * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when either the
-         * navigator or vertical panning is enabled, to prevent jumpy
-         * scrolling.
+         * Whether to force the axis to end on a tick. Use this option with
+         * the `maxPadding` option to control the axis end.
+         *
+         * This option is always disabled, when panning type is
+         * either `y` or `xy`.
+         *
+         * @see [type](#chart.panning.type)
+         *
+         *
+         * @sample {highcharts} highcharts/chart/reflow-true/
+         *         True by default
+         * @sample {highcharts} highcharts/yaxis/endontick/
+         *         False
+         * @sample {highstock} stock/demo/basic-line/
+         *         True by default
+         * @sample {highstock} stock/xaxis/endontick/
+         *         False for Y axis
+         *
+         * @since 1.2.0
          */
         endOnTick: true,
         /**
@@ -5582,6 +5613,11 @@ var Axis = /** @class */ (function () {
         /**
          * Whether to force the axis to start on a tick. Use this option with
          * the `maxPadding` option to control the axis start.
+         *
+         * This option is always disabled, when panning type is
+         * either `y` or `xy`.
+         *
+         * @see [type](#chart.panning.type)
          *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default

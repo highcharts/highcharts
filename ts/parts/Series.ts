@@ -142,7 +142,10 @@ declare global {
                 value?: any,
                 defaults?: Dictionary<any>
             ): void;
-            public getExtremes(yData?: Array<number>): DataExtremesObject;
+            public getExtremes(
+                yData?: (Array<number>|Array<Array<number>>),
+                forceExtremesFromAll?: boolean
+            ): DataExtremesObject;
             public getName(): string;
             public getGraphPath(
                 points: Array<Point>,
@@ -150,6 +153,9 @@ declare global {
                 connectCliffs?: boolean
             ): SVGPathArray;
             public getPlotBox(): SeriesPlotBoxObject;
+            public getProcessedData(
+                forceExtremesFromAll?: boolean
+            ): SeriesProcessedDataObject;
             public getSymbol(): void;
             public getValidPoints(
                 points?: Array<Point>,
@@ -405,6 +411,13 @@ declare global {
             scaleY: number;
             translateX: number;
             translateY: number;
+        }
+        interface SeriesProcessedDataObject {
+            xData: Array<number>;
+            yData: (Array<number>|Array<Array<number>>);
+            cropped: (boolean|undefined);
+            cropStart: number;
+            closestPointRange: (number|undefined);
         }
         interface SeriesShowCallbackFunction {
             (this: Series, event: Event): void;
@@ -4536,19 +4549,18 @@ H.Series = seriesType<Highcharts.LineSeries>(
         /**
          * Internal function to process the data by cropping away unused data
          * points if the series is longer than the crop threshold. This saves
-         * computing time for large series. In Highstock, this function is
-         * extended to provide data grouping.
+         * computing time for large series.
          *
          * @private
-         * @function Highcharts.Series#processData
-         * @param {boolean} [force]
-         *        Force data grouping.
-         * @return {boolean|undefined}
+         * @function Highcharts.Series#getProcessedData
+         * @param {boolean} [forceExtremesFromAll]
+         *        Force getting extremes of a total series data range.
+         * @return {Highcharts.SeriesProcessedDataObject}
          */
-        processData: function (
+        getProcessedData: function (
             this: Highcharts.Series,
-            force?: boolean
-        ): (boolean|undefined) {
+            forceExtremesFromAll?: boolean
+        ): Highcharts.SeriesProcessedDataObject {
             var series = this,
                 // copied during slice operation:
                 processedXData: Array<number> = series.xData as any,
@@ -4566,6 +4578,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 options = series.options,
                 cropThreshold = options.cropThreshold,
                 getExtremesFromAll =
+                    forceExtremesFromAll ||
                     series.getExtremesFromAll ||
                     options.getExtremesFromAll, // #4599
                 isCartesian = series.isCartesian,
@@ -4575,18 +4588,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 throwOnUnsorted = series.requireSorting,
                 min,
                 max;
-
-            // If the series data or axes haven't changed, don't go through
-            // this. Return false to pass the message on to override methods
-            // like in data grouping.
-            if (isCartesian &&
-                !series.isDirty &&
-                !xAxis.isDirty &&
-                !series.yAxis.isDirty &&
-                !force
-            ) {
-                return false;
-            }
 
             if (xAxis) {
                 // corrected for log axis (#3053)
@@ -4662,14 +4663,54 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 }
             }
 
-            // Record the properties
-            series.cropped = cropped; // undefined or true
-            series.cropStart = cropStart;
-            series.processedXData = processedXData;
-            series.processedYData = processedYData;
+            return {
+                xData: processedXData,
+                yData: processedYData,
+                cropped: cropped,
+                cropStart: cropStart,
+                closestPointRange: closestPointRange
+            };
+        },
 
+        /**
+         * Internal function to apply processed data.
+         * In Highstock, this function is extended to provide data grouping.
+         *
+         * @private
+         * @function Highcharts.Series#processData
+         * @param {boolean} [force]
+         *        Force data grouping.
+         * @return {boolean|undefined}
+         */
+        processData: function (
+            this: Highcharts.Series,
+            force?: boolean
+        ): (boolean|undefined) {
+            var series = this,
+                xAxis = series.xAxis,
+                processedData;
+
+            // If the series data or axes haven't changed, don't go through
+            // this. Return false to pass the message on to override methods
+            // like in data grouping.
+            if (series.isCartesian &&
+                !series.isDirty &&
+                !xAxis.isDirty &&
+                !series.yAxis.isDirty &&
+                !force
+            ) {
+                return false;
+            }
+
+            processedData = series.getProcessedData();
+
+            // Record the properties
+            series.cropped = processedData.cropped; // undefined or true
+            series.cropStart = processedData.cropStart;
+            series.processedXData = processedData.xData;
+            series.processedYData = processedData.yData;
             series.closestPointRange =
-                series.basePointRange = closestPointRange;
+                series.basePointRange = processedData.closestPointRange;
 
         },
 
@@ -4919,11 +4960,14 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @param {Array<number>} [yData]
          *        The data to inspect. Defaults to the current data within the
          *        visible range.
+         * @param {boolean} [forceExtremesFromAll]
+         *        Force getting extremes of a total series data range.
          * @return {Highcharts.DataExtremesObject}
          */
         getExtremes: function (
             this: Highcharts.Series,
-            yData?: (Array<number>|Array<Array<number>>)
+            yData?: (Array<number>|Array<Array<number>>),
+            forceExtremesFromAll?: boolean
         ): Highcharts.DataExtremesObject {
             var xAxis = this.xAxis,
                 yAxis = this.yAxis,
@@ -4967,6 +5011,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     (((y as any).length || y > 0) || !positiveValuesOnly)
                 );
                 withinRange = (
+                    forceExtremesFromAll ||
                     this.getExtremesFromAll ||
                     this.options.getExtremesFromAll ||
                     this.cropped ||

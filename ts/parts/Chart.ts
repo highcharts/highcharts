@@ -471,7 +471,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     ): void {
 
         // Handle regular options
-        var options,
+        var options: Highcharts.Options,
             // skip merging data points to increase performance
             seriesOptions = userOptions.series,
             userPlotOptions =
@@ -484,6 +484,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
             userOptions.series = null as any;
             options = merge(defaultOptions, userOptions); // do the merge
+
+            const optionsChart: Highcharts.ChartOptions = options.chart || {};
 
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
@@ -518,8 +520,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @type {Highcharts.Options}
              */
             this.userOptions = userOptions;
-
-            var optionsChart = options.chart as Highcharts.ChartOptions;
 
             var chartEvents = optionsChart.events;
 

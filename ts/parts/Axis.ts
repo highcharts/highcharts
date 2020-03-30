@@ -459,6 +459,7 @@ declare global {
             public getTickAmount(): void;
             public getTitlePosition(): PositionObject;
             public hasData(): boolean;
+            public hasVerticalPanning(): boolean;
             public hideCrosshair(): void;
             public init(chart: Chart, userOptions: AxisOptions): void;
             public labelMetrics(): FontMetricsObject;
@@ -1293,8 +1294,8 @@ class Axis implements AxisComposition {
          * the `maxPadding` option to control the axis end.
          *
          * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when the navigator or
-         * vertical panning is enabled, to prevent jumpy scrolling.
+         * In Highstock, `endOnTick` is always `false` when the navigator
+         * is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/chart/reflow-true/
          *         True by default
@@ -2306,16 +2307,13 @@ class Axis implements AxisComposition {
          * the `minPadding` option to control the axis start.
          *
          * @productdesc {highstock}
-         * In Highstock, `startOnTick` is always false when either the
-         * navigator or vertical panning is enabled, to prevent jumpy
-         * scrolling.
+         * In Highstock, `startOnTick` is always `false` when the navigator
+         * is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default
          * @sample {highcharts} highcharts/xaxis/startontick-true/
          *         True
-         * @sample {highstock} stock/xaxis/endontick/
-         *         False for Y axis
          *
          * @since 1.2.0
          */
@@ -3137,10 +3135,25 @@ class Axis implements AxisComposition {
          */
 
         /**
-         * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when either the
-         * navigator or vertical panning is enabled, to prevent jumpy
-         * scrolling.
+         * Whether to force the axis to end on a tick. Use this option with
+         * the `maxPadding` option to control the axis end.
+         *
+         * This option is always disabled, when panning type is
+         * either `y` or `xy`.
+         *
+         * @see [type](#chart.panning.type)
+         *
+         *
+         * @sample {highcharts} highcharts/chart/reflow-true/
+         *         True by default
+         * @sample {highcharts} highcharts/yaxis/endontick/
+         *         False
+         * @sample {highstock} stock/demo/basic-line/
+         *         True by default
+         * @sample {highstock} stock/xaxis/endontick/
+         *         False for Y axis
+         *
+         * @since 1.2.0
          */
         endOnTick: true,
 
@@ -3514,6 +3527,11 @@ class Axis implements AxisComposition {
         /**
          * Whether to force the axis to start on a tick. Use this option with
          * the `maxPadding` option to control the axis start.
+         *
+         * This option is always disabled, when panning type is
+         * either `y` or `xy`.
+         *
+         * @see [type](#chart.panning.type)
          *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default
@@ -5515,8 +5533,10 @@ class Axis implements AxisComposition {
             tickPositionsOption = options.tickPositions,
             minorTickIntervalOption = this.getMinorTickInterval(),
             tickPositioner = options.tickPositioner,
-            startOnTick = options.startOnTick,
-            endOnTick = options.endOnTick;
+            hasVerticalPanning = this.hasVerticalPanning(),
+            isColorAxis = this.coll === 'colorAxis',
+            startOnTick = (isColorAxis || !hasVerticalPanning) && options.startOnTick,
+            endOnTick = (isColorAxis || !hasVerticalPanning) && options.endOnTick;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
@@ -5903,18 +5923,19 @@ class Axis implements AxisComposition {
      */
     public setScale(): void {
         var axis: Highcharts.Axis = this as any,
-            isDirtyData = axis.series.some(function (
-                series: Highcharts.Series
-            ): boolean {
-                return (
-                    series.isDirtyData ||
-                    series.isDirty ||
-                    // When x axis is dirty, we need new data extremes for y as
-                    // well:
-                    series.xAxis && (series.xAxis.isDirty as any)
-                );
-            }),
-            isDirtyAxisLength;
+            isDirtyAxisLength,
+            isDirtyData = false,
+            isXAxisDirty = false;
+
+        axis.series.forEach(function (
+            series: Highcharts.Series
+        ): void {
+            isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
+
+            // When x axis is dirty, we need new data extremes for y as
+            // well:
+            isXAxisDirty = isXAxisDirty || series.xAxis?.isDirty || false;
+        });
 
         axis.oldMin = axis.min;
         axis.oldMax = axis.max;
@@ -5928,6 +5949,7 @@ class Axis implements AxisComposition {
         if (
             isDirtyAxisLength ||
             isDirtyData ||
+            isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
             axis.userMin !== axis.oldUserMin ||
@@ -5962,6 +5984,12 @@ class Axis implements AxisComposition {
             }
         } else if (axis.cleanStacks) {
             axis.cleanStacks();
+        }
+
+        // Recalculate panning state object, when the data
+        // has changed. It is required when vertical panning is enabled.
+        if (isDirtyData && axis.panningState) {
+            axis.panningState.isDirty = true;
         }
 
         fireEvent(this, 'afterSetScale');
@@ -7659,6 +7687,18 @@ class Axis implements AxisComposition {
             this.cross.hide();
         }
         fireEvent(this, 'afterHideCrosshair');
+    }
+
+    /**
+    * Check whether the chart has vertical panning ('y' or 'xy' type).
+    *
+    * @private
+    * @function Highcharts.Axis#hasVerticalPanning
+    * @return {boolean}
+    *
+    */
+    public hasVerticalPanning(): boolean {
+        return /y/.test(this.chart.options.chart?.panning?.type || '');
     }
 }
 
