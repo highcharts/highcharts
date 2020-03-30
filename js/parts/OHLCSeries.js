@@ -139,7 +139,7 @@ seriesType('ohlc', 'column'
      */
     init: function () {
         seriesTypes.column.prototype.init.apply(this, arguments);
-        this.options.stacking = false; // #8817
+        this.options.stacking = void 0; // #8817
     },
     /**
      * Postprocess mapping between options and SVG attributes

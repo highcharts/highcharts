@@ -2258,7 +2258,7 @@ class Navigator {
                 xAxis: 'navigator-x-axis',
                 yAxis: 'navigator-y-axis',
                 showInLegend: false,
-                stacking: false, // #4823
+                stacking: void 0, // #4823
                 isInternal: true,
                 states: {
                     inactive: {
