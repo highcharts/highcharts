@@ -6097,11 +6097,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 attribs = {} as Highcharts.SVGAttributes;
 
             bBox = ((
-                typeof width === 'undefined' ||
-                typeof height === 'undefined' ||
                 // #12165 error when width is null (auto)
-                width === null ||
-                height === null ||
+                !isNumber(width) ||
+                !isNumber(height) ||
                 textAlign) &&
                 defined(text.textStr) &&
                 text.getBBox()
@@ -6355,7 +6353,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 styles: Highcharts.CSSObject
             ): Highcharts.SVGElement {
                 if (styles) {
-                    var textStyles = {} as Highcharts.CSSObject;
+                    var textStyles = {} as Highcharts.CSSObject,
+                        isWidth: boolean,
+                        isFontStyle: boolean;
 
                     // Create a copy to avoid altering the original object
                     // (#537)
@@ -6369,21 +6369,19 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         }
                     });
                     text.css(textStyles);
-                    // Update existing text and box
-                    if ('width' in textStyles) {
-                        updateBoxSize();
-                    }
 
-                    // Keep updated (#9400)
-                    if ('fontSize' in textStyles) {
-                        updateBoxSize();
-                        updateTextPadding();
-                    }
+                    isWidth = 'width' in textStyles;
+                    isFontStyle = 'fontSize' in textStyles ||
+                        'fontWeight' in textStyles;
 
-                    // Keep updated (#12163)
-                    if ('fontWeight' in textStyles) {
+                    // Update existing text, box (#9400, #12163)
+                    if (isWidth || isFontStyle) {
                         updateBoxSize();
-                        updateTextPadding();
+
+                        // Keep updated (#9400, #12163)
+                        if (isFontStyle) {
+                            updateTextPadding();
+                        }
                     }
 
                 }
