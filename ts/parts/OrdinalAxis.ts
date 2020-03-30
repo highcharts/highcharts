@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from './Globals.js';
 import U from './Utilities.js';
@@ -1058,7 +1059,7 @@ class OrdinalAxis {
                     // range, else it happens on the current x axis which is
                     // smaller and faster.
                     chart.fixedRange = max - min;
-                    trimmedRange = xAxis.toFixedRange(
+                    trimmedRange = (xAxis as NavigatorAxis).navigatorAxis.toFixedRange(
                         null as any,
                         null as any,
                         lin2val.apply(searchAxisLeft, [
