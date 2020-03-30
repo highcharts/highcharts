@@ -24,8 +24,7 @@ QUnit.test('Disabled options', function (assert) {
         }]
     });
 
-    Highcharts.each(chart.series, function (series, i) {
-        console.log(i, series, series.options.stacking);
+    Highcharts.each(chart.series, function (series) {
         assert.ok(
             series.options.stacking === undefined,
             'Stacking should be disabled (#8817)'
