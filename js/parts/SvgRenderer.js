@@ -4204,11 +4204,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
            box. */
         updateBoxSize = function () {
             var style = text.element.style, crispAdjust, attribs = {};
-            bBox = ((typeof width === 'undefined' ||
-                typeof height === 'undefined' ||
-                // #12165 error when width is null (auto)
-                width === null ||
-                height === null ||
+            bBox = ((
+            // #12165 error when width is null (auto)
+            !isNumber(width) ||
+                !isNumber(height) ||
                 textAlign) &&
                 defined(text.textStr) &&
                 text.getBBox()
@@ -4420,7 +4419,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
              */
             css: function (styles) {
                 if (styles) {
-                    var textStyles = {};
+                    var textStyles = {}, isWidth, isFontStyle;
                     // Create a copy to avoid altering the original object
                     // (#537)
                     styles = merge(styles);
@@ -4431,19 +4430,16 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         }
                     });
                     text.css(textStyles);
-                    // Update existing text and box
-                    if ('width' in textStyles) {
+                    isWidth = 'width' in textStyles;
+                    isFontStyle = 'fontSize' in textStyles ||
+                        'fontWeight' in textStyles;
+                    // Update existing text, box (#9400, #12163)
+                    if (isWidth || isFontStyle) {
                         updateBoxSize();
-                    }
-                    // Keep updated (#9400)
-                    if ('fontSize' in textStyles) {
-                        updateBoxSize();
-                        updateTextPadding();
-                    }
-                    // Keep updated (#12163)
-                    if ('fontWeight' in textStyles) {
-                        updateBoxSize();
-                        updateTextPadding();
+                        // Keep updated (#9400, #12163)
+                        if (isFontStyle) {
+                            updateTextPadding();
+                        }
                     }
                 }
                 return baseCss.call(wrapper, styles);
