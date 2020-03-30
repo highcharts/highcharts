@@ -1,7 +1,7 @@
 Installing with NPM
 ===
 
-The official npm package contains Highcharts, Highcharts Stock and Highcharts Maps plus all modules. Start by installing Highcharts as a node module and save it as a dependency in your package.json:
+The official npm package contains Highcharts, including the Stock, Maps and Gantt packages, plus all modules. Start by installing Highcharts as a node module and save it as a dependency in your package.json:
 
 `npm install highcharts --save`
 
