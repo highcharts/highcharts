@@ -229,22 +229,22 @@ class LogarithmicAxis {
 
         addEvent(AxisClass, 'init', function (e: { userOptions: Axis['options'] }): void {
             const axis = this;
-            const logarithmic = axis.logarithmic;
             const options = e.userOptions;
 
-            if (options.type === 'logarithmic') {
-                if (!logarithmic) {
-                    axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
-                }
-            } else if (logarithmic) {
-                logarithmic.destroy();
-                axis.logarithmic = void 0;
-            }
+            let logarithmic = axis.logarithmic;
 
-            // HC <= 8 backwards compatibility, allow wrapping
-            // Axis.prototype.lin2log and log2lin
-            // @todo Remove this in next major
-            if (logarithmic) {
+            if (options.type !== 'logarithmic') {
+                if (logarithmic) {
+                    logarithmic.destroy();
+                    axis.logarithmic = void 0;
+                }
+            } else {
+                if (!logarithmic) {
+                    logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
+                }
+                // HC <= 8 backwards compatibility, allow wrapping
+                // Axis.prototype.lin2log and log2lin
+                // @todo Remove this in next major
                 if (axis.log2lin !== logarithmic.log2lin) {
                     logarithmic.log2lin = axis.log2lin.bind(axis);
                 }

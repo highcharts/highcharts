@@ -140,21 +140,21 @@ var LogarithmicAxis = /** @class */ (function () {
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function (e) {
             var axis = this;
-            var logarithmic = axis.logarithmic;
             var options = e.userOptions;
-            if (options.type === 'logarithmic') {
-                if (!logarithmic) {
-                    axis.logarithmic = new LogarithmicAxisAdditions(axis);
+            var logarithmic = axis.logarithmic;
+            if (options.type !== 'logarithmic') {
+                if (logarithmic) {
+                    logarithmic.destroy();
+                    axis.logarithmic = void 0;
                 }
             }
-            else if (logarithmic) {
-                logarithmic.destroy();
-                axis.logarithmic = void 0;
-            }
-            // HC <= 8 backwards compatibility, allow wrapping
-            // Axis.prototype.lin2log and log2lin
-            // @todo Remove this in next major
-            if (logarithmic) {
+            else {
+                if (!logarithmic) {
+                    logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis);
+                }
+                // HC <= 8 backwards compatibility, allow wrapping
+                // Axis.prototype.lin2log and log2lin
+                // @todo Remove this in next major
                 if (axis.log2lin !== logarithmic.log2lin) {
                     logarithmic.log2lin = axis.log2lin.bind(axis);
                 }
