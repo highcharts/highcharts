@@ -234,10 +234,10 @@ var OrdinalAxis = /** @class */ (function () {
      * Series class to use.
      */
     OrdinalAxis.compose = function (AxisClass, ChartClass, SeriesClass) {
+        AxisClass.keepProps.push('ordinal');
         var axisProto = AxisClass.prototype;
         /**
          * Calculate the ordinal positions before tick positions are calculated.
-         *
          * @private
          */
         axisProto.beforeSetTickPositions = function () {

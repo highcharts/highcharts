@@ -469,6 +469,8 @@ class BrokenAxis {
      */
     public static compose(AxisClass: typeof Axis, SeriesClass: typeof Series): void {
 
+        AxisClass.keepProps.push('brokenAxis');
+
         const seriesProto = Series.prototype;
 
         /**
@@ -674,7 +676,10 @@ class BrokenAxis {
 
         addEvent(AxisClass, 'init', function (): void {
             const axis = this as BrokenAxis;
-            axis.brokenAxis = new BrokenAxisAdditions(axis);
+
+            if (!axis.brokenAxis) {
+                axis.brokenAxis = new BrokenAxisAdditions(axis);
+            }
         });
 
         addEvent(AxisClass, 'afterInit', function (): void {

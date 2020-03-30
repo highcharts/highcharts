@@ -355,11 +355,12 @@ class OrdinalAxis {
         SeriesClass: typeof Series
     ): void {
 
+        AxisClass.keepProps.push('ordinal');
+
         const axisProto = AxisClass.prototype as OrdinalAxis;
 
         /**
          * Calculate the ordinal positions before tick positions are calculated.
-         *
          * @private
          */
         axisProto.beforeSetTickPositions = function (): void {

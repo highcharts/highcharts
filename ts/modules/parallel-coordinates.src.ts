@@ -251,6 +251,9 @@ class ParallelAxis {
 
         /* eslint-disable no-invalid-this */
 
+        // On update, keep parallel additions.
+        Axis.keepProps.push('parallel');
+
         // Add parallel addition
         addEvent(AxisClass, 'init', function (): void {
             const axis = this;

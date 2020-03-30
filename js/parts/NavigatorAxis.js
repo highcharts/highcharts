@@ -98,10 +98,13 @@ var NavigatorAxis = /** @class */ (function () {
      * @private
      */
     NavigatorAxis.compose = function (AxisClass) {
+        AxisClass.keepProps.push('navigatorAxis');
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function () {
             var axis = this;
-            axis.navigatorAxis = new NavigatorAxisAdditions(axis);
+            if (!axis.navigatorAxis) {
+                axis.navigatorAxis = new NavigatorAxisAdditions(axis);
+            }
         });
         // For Stock charts, override selection zooming with some special
         // features because X axis zooming is already allowed by the Navigator

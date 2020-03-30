@@ -130,6 +130,7 @@ var DateTimeAxis = /** @class */ (function () {
      * @private
      */
     DateTimeAxis.compose = function (AxisClass) {
+        AxisClass.keepProps.push('dateTime');
         var axisProto = AxisClass.prototype;
         /**
          * Set the tick positions to a time unit that makes sense, for example

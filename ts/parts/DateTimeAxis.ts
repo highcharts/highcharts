@@ -211,6 +211,8 @@ class DateTimeAxis {
      */
     public static compose(AxisClass: typeof Axis): void {
 
+        AxisClass.keepProps.push('dateTime');
+
         const axisProto = AxisClass.prototype as DateTimeAxis;
 
         /**

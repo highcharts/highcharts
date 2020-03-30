@@ -177,6 +177,8 @@ var ParallelAxis = /** @class */ (function () {
      */
     ParallelAxis.compose = function (AxisClass) {
         /* eslint-disable no-invalid-this */
+        // On update, keep parallel additions.
+        Axis.keepProps.push('parallel');
         // Add parallel addition
         addEvent(AxisClass, 'init', function () {
             var axis = this;
