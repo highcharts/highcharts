@@ -5471,20 +5471,11 @@ class Axis implements AxisComposition, AxisLike {
         if (!axis.dateTime && !axis.logarithmic && !tickIntervalOption) {
             axis.tickInterval = normalizeTickInterval(
                 axis.tickInterval,
-                null as any,
+                void 0,
                 getMagnitude(axis.tickInterval),
-                // If the tick interval is between 0.5 and 5 and the axis max is
-                // in the order of thousands, chances are we are dealing with
-                // years. Don't allow decimals. #3363.
-                pick(
-                    options.allowDecimals,
-                    !(
-                        axis.tickInterval > 0.5 &&
-                        axis.tickInterval < 5 &&
-                        (axis.max as any) > 1000 &&
-                        (axis.max as any) < 9999
-                    )
-                ),
+                // If the tick interval is greather than 0.5, avoid decimals, as
+                // linear axes are often used to render discrete values. #3363.
+                pick(options.allowDecimals, axis.tickInterval < 0.5),
                 !!this.tickAmount
             );
         }
