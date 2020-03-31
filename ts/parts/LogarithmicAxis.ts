@@ -72,11 +72,6 @@ class LogarithmicAxisAdditions {
      *
      * */
 
-    public destroy(): void {
-        this.axis = void 0 as any;
-        this.minorAutoInterval = void 0;
-    }
-
     /**
      * Set the tick positions of a logarithmic axis.
      */
@@ -215,7 +210,7 @@ class LogarithmicAxis {
      */
     public static compose(AxisClass: typeof Axis): void {
 
-        /* eslint-disable no-invalid-this */
+        AxisClass.keepProps.push('logarithmic');
 
         // HC <= 8 backwards compatibility, allow wrapping
         // Axis.prototype.lin2log and log2lin
@@ -225,25 +220,23 @@ class LogarithmicAxis {
         axisProto.log2lin = logAxisProto.log2lin;
         axisProto.lin2log = logAxisProto.lin2log;
 
+        /* eslint-disable no-invalid-this */
+
         addEvent(AxisClass, 'init', function (e: { userOptions: Axis['options'] }): void {
             const axis = this;
-            const log = axis.logarithmic;
             const options = e.userOptions;
 
-            if (options.type === 'logarithmic') {
-                if (!log) {
-                    axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
-                }
-            } else if (log) {
-                log.destroy();
-                axis.logarithmic = void 0;
-            }
+            let logarithmic = axis.logarithmic;
 
-            // HC <= 8 backwards compatibility, allow wrapping
-            // Axis.prototype.lin2log and log2lin
-            // @todo Remove this in next major
-            const logarithmic = axis.logarithmic;
-            if (logarithmic) {
+            if (options.type !== 'logarithmic') {
+                axis.logarithmic = void 0;
+            } else {
+                if (!logarithmic) {
+                    logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);
+                }
+                // HC <= 8 backwards compatibility, allow wrapping
+                // Axis.prototype.lin2log and log2lin
+                // @todo Remove this in next major
                 if (axis.log2lin !== logarithmic.log2lin) {
                     logarithmic.log2lin = axis.log2lin.bind(axis);
                 }
@@ -256,6 +249,7 @@ class LogarithmicAxis {
         addEvent(AxisClass, 'afterInit', function (): void {
             const axis = this as LogarithmicAxis;
             const log = axis.logarithmic;
+
             // extend logarithmic axis
             if (log) {
                 axis.lin2val = function (num: number): number {

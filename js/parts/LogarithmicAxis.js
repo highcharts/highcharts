@@ -32,10 +32,6 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
      *  Functions
      *
      * */
-    LogarithmicAxisAdditions.prototype.destroy = function () {
-        this.axis = void 0;
-        this.minorAutoInterval = void 0;
-    };
     /**
      * Set the tick positions of a logarithmic axis.
      */
@@ -129,7 +125,7 @@ var LogarithmicAxis = /** @class */ (function () {
      * @private
      */
     LogarithmicAxis.compose = function (AxisClass) {
-        /* eslint-disable no-invalid-this */
+        AxisClass.keepProps.push('logarithmic');
         // HC <= 8 backwards compatibility, allow wrapping
         // Axis.prototype.lin2log and log2lin
         // @todo Remove this in next major
@@ -137,24 +133,21 @@ var LogarithmicAxis = /** @class */ (function () {
         var logAxisProto = LogarithmicAxisAdditions.prototype;
         axisProto.log2lin = logAxisProto.log2lin;
         axisProto.lin2log = logAxisProto.lin2log;
+        /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function (e) {
             var axis = this;
-            var log = axis.logarithmic;
             var options = e.userOptions;
-            if (options.type === 'logarithmic') {
-                if (!log) {
-                    axis.logarithmic = new LogarithmicAxisAdditions(axis);
-                }
-            }
-            else if (log) {
-                log.destroy();
+            var logarithmic = axis.logarithmic;
+            if (options.type !== 'logarithmic') {
                 axis.logarithmic = void 0;
             }
-            // HC <= 8 backwards compatibility, allow wrapping
-            // Axis.prototype.lin2log and log2lin
-            // @todo Remove this in next major
-            var logarithmic = axis.logarithmic;
-            if (logarithmic) {
+            else {
+                if (!logarithmic) {
+                    logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis);
+                }
+                // HC <= 8 backwards compatibility, allow wrapping
+                // Axis.prototype.lin2log and log2lin
+                // @todo Remove this in next major
                 if (axis.log2lin !== logarithmic.log2lin) {
                     logarithmic.log2lin = axis.log2lin.bind(axis);
                 }

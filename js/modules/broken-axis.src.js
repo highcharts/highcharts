@@ -318,6 +318,7 @@ var BrokenAxis = /** @class */ (function () {
      * @private
      */
     BrokenAxis.compose = function (AxisClass, SeriesClass) {
+        AxisClass.keepProps.push('brokenAxis');
         var seriesProto = Series.prototype;
         /**
          * @private
@@ -469,7 +470,9 @@ var BrokenAxis = /** @class */ (function () {
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function () {
             var axis = this;
-            axis.brokenAxis = new BrokenAxisAdditions(axis);
+            if (!axis.brokenAxis) {
+                axis.brokenAxis = new BrokenAxisAdditions(axis);
+            }
         });
         addEvent(AxisClass, 'afterInit', function () {
             if (typeof this.brokenAxis !== 'undefined') {
