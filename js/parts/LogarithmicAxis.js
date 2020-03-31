@@ -32,10 +32,6 @@ var LogarithmicAxisAdditions = /** @class */ (function () {
      *  Functions
      *
      * */
-    LogarithmicAxisAdditions.prototype.destroy = function () {
-        this.axis = void 0;
-        this.minorAutoInterval = void 0;
-    };
     /**
      * Set the tick positions of a logarithmic axis.
      */
@@ -143,10 +139,7 @@ var LogarithmicAxis = /** @class */ (function () {
             var options = e.userOptions;
             var logarithmic = axis.logarithmic;
             if (options.type !== 'logarithmic') {
-                if (logarithmic) {
-                    logarithmic.destroy();
-                    axis.logarithmic = void 0;
-                }
+                axis.logarithmic = void 0;
             }
             else {
                 if (!logarithmic) {

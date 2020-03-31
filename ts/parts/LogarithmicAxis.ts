@@ -72,11 +72,6 @@ class LogarithmicAxisAdditions {
      *
      * */
 
-    public destroy(): void {
-        this.axis = void 0 as any;
-        this.minorAutoInterval = void 0;
-    }
-
     /**
      * Set the tick positions of a logarithmic axis.
      */
@@ -234,10 +229,7 @@ class LogarithmicAxis {
             let logarithmic = axis.logarithmic;
 
             if (options.type !== 'logarithmic') {
-                if (logarithmic) {
-                    logarithmic.destroy();
-                    axis.logarithmic = void 0;
-                }
+                axis.logarithmic = void 0;
             } else {
                 if (!logarithmic) {
                     logarithmic = axis.logarithmic = new LogarithmicAxisAdditions(axis as LogarithmicAxis);

@@ -77,13 +77,6 @@ class DateTimeAxisAdditions {
      * */
 
     /**
-     * @private
-     */
-    public destroy(): void {
-        this.axis = void 0 as any;
-    }
-
-    /**
      * Get a normalized tick interval for dates. Returns a configuration object
      * with unit range (interval), count and name. Used to prepare data for
      * `getTimeTicks`. Previously this logic was part of getTimeTicks, but as
@@ -247,18 +240,14 @@ class DateTimeAxis {
 
         addEvent(AxisClass, 'init', function (e: { userOptions: Axis['userOptions'] }): void {
             const axis = this;
-            const dateTime = axis.dateTime;
             const options = e.userOptions;
 
             if (options.type !== 'datetime') {
-                if (dateTime) {
-                    dateTime.destroy();
-                    axis.dateTime = void 0;
-                }
+                axis.dateTime = void 0;
                 return;
             }
 
-            if (!dateTime) {
+            if (!axis.dateTime) {
                 axis.dateTime = new DateTimeAxisAdditions(axis as DateTimeAxis);
             }
         });

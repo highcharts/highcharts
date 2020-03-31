@@ -27,12 +27,6 @@ var DateTimeAxisAdditions = /** @class */ (function () {
      *
      * */
     /**
-     * @private
-     */
-    DateTimeAxisAdditions.prototype.destroy = function () {
-        this.axis = void 0;
-    };
-    /**
      * Get a normalized tick interval for dates. Returns a configuration object
      * with unit range (interval), count and name. Used to prepare data for
      * `getTimeTicks`. Previously this logic was part of getTimeTicks, but as
@@ -160,16 +154,12 @@ var DateTimeAxis = /** @class */ (function () {
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function (e) {
             var axis = this;
-            var dateTime = axis.dateTime;
             var options = e.userOptions;
             if (options.type !== 'datetime') {
-                if (dateTime) {
-                    dateTime.destroy();
-                    axis.dateTime = void 0;
-                }
+                axis.dateTime = void 0;
                 return;
             }
-            if (!dateTime) {
+            if (!axis.dateTime) {
                 axis.dateTime = new DateTimeAxisAdditions(axis);
             }
         });
