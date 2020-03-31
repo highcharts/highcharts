@@ -626,7 +626,10 @@ var OrdinalAxis = /** @class */ (function () {
         // Record this to prevent overwriting by broken-axis module (#5979)
         axisProto.ordinal2lin = axisProto.val2lin;
         addEvent(AxisClass, 'afterInit', function () {
-            this.ordinal = new OrdinalAxisAdditions(this);
+            var axis = this;
+            if (!axis.ordinal) {
+                axis.ordinal = new OrdinalAxisAdditions(axis);
+            }
         });
         addEvent(AxisClass, 'foundExtremes', function () {
             var axis = this;

@@ -936,7 +936,11 @@ class OrdinalAxis {
         axisProto.ordinal2lin = axisProto.val2lin;
 
         addEvent(AxisClass, 'afterInit', function (): void {
-            this.ordinal = new OrdinalAxisAdditions(this as OrdinalAxis);
+            const axis = this;
+
+            if (!axis.ordinal) {
+                axis.ordinal = new OrdinalAxisAdditions(axis as OrdinalAxis);
+            }
         });
 
         addEvent(AxisClass, 'foundExtremes', function (): void {
