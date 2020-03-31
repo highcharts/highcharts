@@ -725,14 +725,16 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
      *
      * @extends      plotOptions.heatmap
      * @since        6.0.0
-     * @excluding    jitter, joinBy, shadow, allAreas, mapData, data,
+     * @excluding    jitter, joinBy, shadow, allAreas, mapData, marker, data,
      *               dataSorting
      * @product      highcharts highmaps
      * @requires     modules/tilemap.js
      * @optionparent plotOptions.tilemap
      */
     , { // Default options
-
+        // Remove marker from tilemap default options, as it was before
+        // heatmap refactoring.
+        marker: null as any,
         states: {
 
             hover: {
@@ -805,8 +807,14 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
         tileShape: 'hexagon'
 
     }, { // Prototype functions
-        // Use drawPoints method from old heatmap implementation
-        // Consider standarizing heatmap and tilemap into more consistent form.
+        // Use drawPoints, markerAttribs, pointAttribs methods from the old
+        // heatmap implementation.
+        // TODO: Consider standarizing heatmap and tilemap into more
+        // consistent form.
+        markerAttribs: H.seriesTypes.scatter.prototype.markerAttribs,
+        pointAttribs: H.seriesTypes.column.prototype.pointAttribs,
+        // Revert the noop on getSymbol.
+        getSymbol: H.noop as any,
         drawPoints: function (
             this: Highcharts.TilemapSeries
         ): void {
