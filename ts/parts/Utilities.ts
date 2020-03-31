@@ -2722,6 +2722,7 @@ function deprecate(fnName?: string, newFnName?: string): void {
     }
     if (
         fnName &&
+        win.console &&
         deprecateFnNames.indexOf(fnName) === -1
     ) {
         deprecateFnNames.push(fnName);

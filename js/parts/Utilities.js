@@ -1928,6 +1928,7 @@ function deprecate(fnName, newFnName) {
         }
     }
     if (fnName &&
+        win.console &&
         deprecateFnNames.indexOf(fnName) === -1) {
         deprecateFnNames.push(fnName);
         // eslint-disable-next-line no-console
