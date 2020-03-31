@@ -252,11 +252,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             newExt.y <= yAxis.dataMin &&
             newExt.height >= yAxis.dataMax - yAxis.dataMin);
         // When mousewheel zooming, fix the point under the mouse
-        if (mouseX) {
-            xAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
+        if (mouseX && xAxis.mapAxis) {
+            xAxis.mapAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
         }
-        if (mouseY) {
-            yAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
+        if (mouseY && yAxis.mapAxis) {
+            yAxis.mapAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
         }
         // Zoom
         if (typeof howMuch !== 'undefined' && !zoomOut) {
