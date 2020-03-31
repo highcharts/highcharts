@@ -11,11 +11,19 @@
 
 
 <div class="container-fluid">
+
+    <div class="btn-group btn-group-toggle" style="margin-bottom: 1rem">
+        <label class="btn btn-outline-primary active">
+            <input type="radio" name="source" id="confirmed" autocomplete="off"> Confirmed
+        </label>
+        <label class="btn btn-outline-primary">
+            <input type="radio" name="source" id="deaths" autocomplete="off" checked> Deaths
+        </label>
+    </div>
     <div class="row">
         <div class="col-12 col-md-6">
             <div class="card">
-                <div class="card-header">
-                    Confirmed Covid-19 Cases
+                <div class="card-header" id="map-header">
                 </div>
                 <div class="card-body" id="container"></div>
             </div>
