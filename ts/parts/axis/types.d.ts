@@ -16,6 +16,7 @@ import type LogarithmicAxis from '../LogarithmicAxis';
 import type MapAxis from '../../parts-map/MapAxis';
 import type NavigatorAxis from '../NavigatorAxis';
 import type OrdinalAxis from '../OrdinalAxis';
+import type ParallelAxis from '../../modules/parallel-coordinates.src';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
 
@@ -38,6 +39,7 @@ export interface AxisComposition {
     navigatorAxis?: NavigatorAxis['navigatorAxis'];
     mapAxis?: MapAxis['mapAxis'];
     ordinal?: OrdinalAxis['ordinal'];
+    parallel?: ParallelAxis['parallel'];
     scrollbar?: ScrollbarAxis['scrollbar'];
 }
 
@@ -52,6 +54,7 @@ export type AxisType = (
     MapAxis|
     NavigatorAxis|
     OrdinalAxis|
+    ParallelAxis|
     RadialAxis|
     ScrollbarAxis
 );
