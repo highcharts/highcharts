@@ -19,16 +19,14 @@ QUnit.test('Annotations defer option test #12901', function (assert) {
         }],
 
         annotations: [{
-            animation: {
-                defer: true  //duration value is inherited from plotOptions
-            },
+            //animation object is not defined - defer value is inherited from series.animation
             labels: [{
                 point: 'max',
                 text: 'Max'
             }]
         }, {
             animation: {
-                defer: false
+                defer: 0
             },
             labels: [{
                 point: 'min',

@@ -23,16 +23,14 @@ Highcharts.chart('container', {
     }],
 
     annotations: [{
-        animation: {
-            defer: true //duration value is inherited from plotOptions
-        },
+        //undefined - delayed value is inherited from plotOptions
         labels: [{
             point: 'max',
             text: 'Max'
         }]
     }, {
         animation: {
-            defer: false
+            defer: 0
         },
         labels: [{
             point: 'min',

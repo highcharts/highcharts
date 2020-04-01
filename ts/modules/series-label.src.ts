@@ -1140,9 +1140,7 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
             var options: Highcharts.SeriesLabelOptionsObject =
                     series.options.label as any,
                 label: Highcharts.SVGElement = series.labelBySeries as any,
-                closest = label && label.closest,
-                { defer, duration } = animObject(series.options.animation);
-
+                closest = label && label.closest;
 
             if (
                 options.enabled &&
