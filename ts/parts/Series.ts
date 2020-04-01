@@ -2309,22 +2309,29 @@ H.Series = seriesType<Highcharts.LineSeries>(
             /**
              * The animation configuration object for the `dataLabels`. Please
              * note that this option only applies to the initial animation.
-             * For other animations, see [chart.animation](#chart.animation)]
+             * For other animations, see [chart.animation](#chart.animation)
              * and the animation parameter under the API methods.
              * The following properties are supported:
              *
              * - `defer`: The animation delay time in milliseconds.
              *
-             * @sample {highcharts} highcharts/plotoptions/animation-ddefer/
+             * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
-             *
              * @type {Highcharts.AnimationOptionsObject}
+             * @since next
+             * @apioption plotOptions.series.dataLabels.animation
              */
 
-            animation: {
-                /** @internal */
-                defer: true
-            },
+            /**
+             * The animation delay time in milliseconds.
+             * Set to `0` renders dataLabel immediately.
+             * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+             *
+             * @type      {number}
+             * @since     next
+             * @apioption plotOptions.series.dataLabels.animation.defer
+             */
+
             /**
              * The alignment of the data label compared to the point. If
              * `right`, the right side of the label should be touching the

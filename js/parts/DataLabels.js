@@ -170,7 +170,9 @@ H.distribute = function (boxes, len, maxDistance) {
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
-    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnimDuration = animObject(seriesOptions.animation).duration, fadeInDuration = Math.min(seriesAnimDuration, 200), defer = !chart.renderer.forExport && pick(seriesDlOptions.defer, fadeInDuration > 0), dataLabelDefer = animObject(seriesDlOptions.animation).defer, renderer = chart.renderer;
+    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnim = animObject(seriesOptions.animation), seriesAnimDuration = seriesAnim.duration, seriesDefer = seriesAnim.defer, fadeInDuration = Math.min(seriesAnimDuration, 200), dataLabelDefer = animObject(seriesDlOptions.animation).defer, defer = !chart.renderer.forExport && pick(
+    // The animation.defer has higher priority than dataLabels.defer
+    dataLabelDefer, seriesDlOptions.defer, fadeInDuration > 0), renderer = chart.renderer;
     /**
      * Handle the dataLabels.filter option.
      * @private
@@ -233,25 +235,15 @@ Series.prototype.drawDataLabels = function () {
         seriesDlOptions.enabled ||
         series._hasPointLabels) {
         // Create a separate group for the data labels to avoid rotation
-        dataLabelsGroup = series.plotGroup('dataLabelsGroup', 'data-labels', defer && dataLabelDefer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
+        dataLabelsGroup = series.plotGroup('dataLabelsGroup', 'data-labels', defer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
         seriesDlOptions.zIndex || 6);
-        if (defer && dataLabelDefer) {
-            var deferTime, seriesDefer = animObject(seriesOptions.animation).defer;
-            // Defer defined as an number in the dataLabel.animation object
-            // has higher priority than series defer
-            if (isNumber(dataLabelDefer)) {
-                deferTime = dataLabelDefer;
-            }
-            else {
-                // Get a sum of the series duration and
-                // the defer if it is defined
-                if (seriesAnimDuration && seriesDefer) {
-                    seriesAnimDuration += seriesDefer;
-                }
-                deferTime = seriesAnimDuration;
+        if (defer) {
+            // If defer as true - get the value from the series.anim object
+            if (!isNumber(defer) && defined(seriesAnimDuration)) {
+                defer = seriesDefer ? seriesAnimDuration + seriesDefer : seriesAnimDuration;
             }
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
-            if (!hasRendered && deferTime) {
+            if (!hasRendered) {
                 var group = series.dataLabelsGroup;
                 if (group) {
                     if (series.visible) { // #2597, #3023, #3024
@@ -259,7 +251,7 @@ Series.prototype.drawDataLabels = function () {
                     }
                     group[seriesOptions.animation ? 'animate' : 'attr']({ opacity: 1 }, {
                         duration: fadeInDuration,
-                        defer: deferTime - fadeInDuration
+                        defer: defer - fadeInDuration
                     });
                 }
             }
