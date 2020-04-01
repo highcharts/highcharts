@@ -61,7 +61,7 @@ declare global {
             overflow?: DataLabelsOverflowValue;
             padding?: number;
             rotation?: number;
-            shadow?: (boolean|ShadowOptionsObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             shape?: string;
             style?: CSSObject;
             textPath?: DataLabelsTextPathOptionsObject;

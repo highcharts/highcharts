@@ -5,6 +5,7 @@
 }
 .highcharts-boxplot-box {
 	fill: #F0F0E0;
+	stroke-dasharray: 4, 2;
 }
 .highcharts-boxplot-median {
 	stroke: #0C5DA5;

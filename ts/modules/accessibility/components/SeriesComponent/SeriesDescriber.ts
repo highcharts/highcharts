@@ -342,7 +342,7 @@ function getPointA11yTimeDescription(
     var series = point.series,
         chart = series.chart,
         a11yOptions = chart.options.accessibility.point || {},
-        hasDateXAxis = series.xAxis && series.xAxis.isDatetimeAxis;
+        hasDateXAxis = series.xAxis && series.xAxis.dateTime;
 
     if (hasDateXAxis) {
         var tooltipDateFormat = Tooltip.prototype.getXDateFormat.call(

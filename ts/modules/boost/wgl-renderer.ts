@@ -112,6 +112,7 @@ const color = Color.parse;
 import U from '../../parts/Utilities.js';
 const {
     isNumber,
+    isObject,
     merge,
     objectEach,
     pick
@@ -675,6 +676,17 @@ function GLRenderer(
             //     pcolor[2] /= 255.0;
             // }
 
+            // Handle the point.color option (#5999)
+            const pointOptions = rawData && rawData[i];
+            if (!useRaw && isObject(pointOptions, true)) {
+                if (pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba as any;
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
+                }
+            }
+
             if (useRaw) {
                 x = (d as any)[0];
                 y = (d as any)[1];
@@ -1100,7 +1112,7 @@ function GLRenderer(
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
         shader.setUniform('xAxisCVSCoord', (!axis.horiz) as any);
-        shader.setUniform('xAxisIsLog', axis.isLog as any);
+        shader.setUniform('xAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('xAxisReversed', (!!axis.reversed) as any);
     }
 
@@ -1121,7 +1133,7 @@ function GLRenderer(
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
         shader.setUniform('yAxisCVSCoord', (!axis.horiz) as any);
-        shader.setUniform('yAxisIsLog', axis.isLog as any);
+        shader.setUniform('yAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('yAxisReversed', (!!axis.reversed) as any);
     }
 

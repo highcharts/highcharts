@@ -806,6 +806,6 @@ var Scrollbar = /** @class */ (function () {
 if (!H.Scrollbar) {
     defaultOptions.scrollbar = merge(true, Scrollbar.defaultOptions, defaultOptions.scrollbar);
     H.Scrollbar = Scrollbar;
-    ScrollbarAxis.init(Axis, Scrollbar);
+    ScrollbarAxis.compose(Axis, Scrollbar);
 }
 export default H.Scrollbar;

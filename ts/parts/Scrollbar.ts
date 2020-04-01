@@ -1200,7 +1200,7 @@ if (!H.Scrollbar) {
         defaultOptions.scrollbar
     );
     H.Scrollbar = Scrollbar;
-    ScrollbarAxis.init(Axis, Scrollbar);
+    ScrollbarAxis.compose(Axis, Scrollbar);
 }
 
 export default H.Scrollbar;

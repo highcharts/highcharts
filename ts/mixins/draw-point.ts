@@ -21,7 +21,7 @@ declare global {
             onComplete?: Function;
             isNew?: boolean;
             renderer: Renderer;
-            shadow?: (boolean|ShadowOptionsObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             shapeArgs?: SVGAttributes;
             shapeType: string;
         }

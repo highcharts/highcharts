@@ -10,7 +10,31 @@
 
 'use strict';
 
+import Axis from './Axis.js';
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
 import H from './Globals.js';
+import NavigatorAxis from './NavigatorAxis.js';
+import Scrollbar from './Scrollbar.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    clamp,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    find,
+    isArray,
+    isNumber,
+    merge,
+    pick,
+    removeEvent,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -18,16 +42,6 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            fake?: boolean;
-            previousZoom?: [(null|number), (null|number)];
-            toFixedRange(
-                pxMin?: number,
-                pxMax?: number,
-                fixedMin?: number,
-                fixedMax?: number
-            ): RangeObject;
-        }
         interface Chart {
             navigator?: Navigator;
             scrollbar?: Scrollbar;
@@ -126,8 +140,8 @@ declare global {
             public stickToMin?: boolean;
             public top: number;
             public unbindRedraw?: Function;
-            public xAxis: Axis;
-            public yAxis: Axis;
+            public xAxis: NavigatorAxis;
+            public yAxis: NavigatorAxis;
             public zoomedMax: number;
             public zoomedMin: number;
             public addBaseSeriesEvents(): void;
@@ -186,36 +200,11 @@ declare global {
     }
 }
 
-import Color from './Color.js';
-const {
-    parse: color
-} = Color;
-import Scrollbar from './Scrollbar.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    clamp,
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    erase,
-    extend,
-    find,
-    isArray,
-    isNumber,
-    merge,
-    pick,
-    removeEvent,
-    splat
-} = U;
-
-import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
@@ -800,63 +789,6 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
 };
 
 /**
- * Add logic to normalize the zoomed range in order to preserve the pressed
- * state of range selector buttons
- *
- * @private
- * @function Highcharts.Axis#toFixedRange
- * @param {number} [pxMin]
- * @param {number} [pxMax]
- * @param {number} [fixedMin]
- * @param {number} [fixedMax]
- * @return {*}
- */
-Axis.prototype.toFixedRange = function (
-    this: Highcharts.Axis,
-    pxMin?: number,
-    pxMax?: number,
-    fixedMin?: number,
-    fixedMax?: number
-): Highcharts.RangeObject {
-    var fixedRange = this.chart && this.chart.fixedRange,
-        halfPointRange = (this.pointRange || 0) / 2,
-        newMin = pick<number|undefined, number>(
-            fixedMin, this.translate(pxMin as any, true, !this.horiz) as any
-        ),
-        newMax = pick<number|undefined, number>(
-            fixedMax, this.translate(pxMax as any, true, !this.horiz) as any
-        ),
-        changeRatio = fixedRange && (newMax - newMin) / fixedRange;
-
-    // Add/remove half point range to/from the extremes (#1172)
-    if (!defined(fixedMin)) {
-        newMin = correctFloat(newMin + halfPointRange);
-    }
-    if (!defined(fixedMax)) {
-        newMax = correctFloat(newMax - halfPointRange);
-    }
-
-    // If the difference between the fixed range and the actual requested range
-    // is too great, the user is dragging across an ordinal gap, and we need to
-    // release the range selector button.
-    if ((changeRatio as any) > 0.7 && (changeRatio as any) < 1.3) {
-        if (fixedMax) {
-            newMin = newMax - (fixedRange as any);
-        } else {
-            newMax = newMin + (fixedRange as any);
-        }
-    }
-    if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = void 0 as any;
-    }
-
-    return {
-        min: newMin,
-        max: newMax
-    };
-};
-
-/**
  * The Navigator class
  *
  * @private
@@ -910,8 +842,8 @@ class Navigator {
     public size: number = void 0 as any;
     public top: number = void 0 as any;
     public unbindRedraw?: Function;
-    public xAxis: Highcharts.Axis = void 0 as any;
-    public yAxis: Highcharts.Axis = void 0 as any;
+    public xAxis: NavigatorAxis = void 0 as any;
+    public yAxis: NavigatorAxis = void 0 as any;
     public zoomedMax: number = void 0 as any;
     public zoomedMin: number = void 0 as any;
 
@@ -1291,7 +1223,7 @@ class Navigator {
             navigatorSize,
             xAxis = navigator.xAxis,
             pointRange = xAxis.pointRange || 0,
-            scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis,
+            scrollbarXAxis = xAxis.navigatorAxis.fake ? chart.xAxis[0] : xAxis,
             navigatorEnabled = navigator.navigatorEnabled,
             zoomedMin,
             zoomedMax,
@@ -1623,7 +1555,7 @@ class Navigator {
             if (left !== zoomedMin) { // it has actually moved
                 navigator.fixedWidth = range; // #1370
 
-                ext = xAxis.toFixedRange(
+                ext = xAxis.navigatorAxis.toFixedRange(
                     left,
                     left + range,
                     fixedMin,
@@ -1825,7 +1757,7 @@ class Navigator {
                     (unionExtremes as any).dataMin;
             }
 
-            ext = xAxis.toFixedRange(
+            ext = xAxis.navigatorAxis.toFixedRange(
                 navigator.zoomedMin,
                 navigator.zoomedMax,
                 fixedMin,
@@ -1999,7 +1931,7 @@ class Navigator {
             } : {
                 offsets: [0, -scrollbarHeight, 0, scrollbarHeight],
                 height: height
-            }));
+            })) as NavigatorAxis;
 
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis as Highcharts.YAxisOptions,
@@ -2015,7 +1947,7 @@ class Navigator {
                 } : {
                     height: height
                 }
-            ));
+            )) as NavigatorAxis;
 
             // If we have a base series, initialize the navigator series
             if (baseSeries || (navigatorOptions.series as any).data) {
@@ -2051,6 +1983,10 @@ class Navigator {
         // in case of scrollbar only, fake an x axis to get translation
         } else {
             navigator.xAxis = {
+                chart,
+                navigatorAxis: {
+                    fake: true
+                },
                 translate: function (value: number, reverse?: boolean): void {
                     var axis = chart.xAxis[0],
                         ext = axis.getExtremes(),
@@ -2072,15 +2008,24 @@ class Navigator {
                         // from value to pixel
                         scrollTrackWidth * (value - (min as any)) / valueRange;
                 },
-                toPixels: function (value: number): number {
+                toPixels: function (
+                    this: NavigatorAxis,
+                    value: number
+                ): number {
                     return this.translate(value) as any;
                 },
-                toValue: function (value: number): number {
+                toValue: function (
+                    this: NavigatorAxis,
+                    value: number
+                ): number {
                     return this.translate(value, true) as any;
-                },
-                toFixedRange: Axis.prototype.toFixedRange,
-                fake: true
-            } as Highcharts.Axis;
+                }
+            } as unknown as NavigatorAxis;
+
+            navigator.xAxis.navigatorAxis.axis = navigator.xAxis;
+            navigator.xAxis.navigatorAxis.toFixedRange = (
+                NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(navigator.xAxis.navigatorAxis)
+            );
         }
 
 
@@ -2223,7 +2168,7 @@ class Navigator {
         });
 
         // When run after render, this.xAxis already exists
-        if (this.xAxis && !this.xAxis.fake) {
+        if (this.xAxis && !this.xAxis.navigatorAxis.fake) {
             this.updateNavigatorSeries(true, redraw);
         }
     }
@@ -2258,7 +2203,7 @@ class Navigator {
                 xAxis: 'navigator-x-axis',
                 yAxis: 'navigator-y-axis',
                 showInLegend: false,
-                stacking: false, // #4823
+                stacking: void 0, // #4823
                 isInternal: true,
                 states: {
                     inactive: {
@@ -2740,55 +2685,7 @@ class Navigator {
 if (!H.Navigator) {
     H.Navigator = Navigator as any;
 
-    // For Stock charts, override selection zooming with some special features
-    // because X axis zooming is already allowed by the Navigator and Range
-    // selector.
-    addEvent(Axis, 'zoom', function (
-        this: Highcharts.Axis,
-        e: Highcharts.Dictionary<any>
-    ): void {
-        var chart = this.chart,
-            chartOptions = chart.options,
-            zoomType = (chartOptions.chart as any).zoomType,
-            pinchType = (chartOptions.chart as any).pinchType,
-            previousZoom,
-            navigator = chartOptions.navigator,
-            rangeSelector = chartOptions.rangeSelector;
-
-        if (this.isXAxis && ((navigator && navigator.enabled) ||
-                (rangeSelector && rangeSelector.enabled))) {
-
-            // For y only zooming, ignore the X axis completely
-            if (zoomType === 'y') {
-                e.zoomed = false;
-
-            // For xy zooming, record the state of the zoom before zoom
-            // selection, then when the reset button is pressed, revert to this
-            // state. This should apply only if the chart is initialized with a
-            // range (#6612), otherwise zoom all the way out.
-            } else if (
-                (
-                    (!isTouchDevice && zoomType === 'xy') ||
-                    (isTouchDevice && pinchType === 'xy')
-                ) &&
-                this.options.range
-            ) {
-
-                previousZoom = this.previousZoom;
-                if (defined(e.newMin)) {
-                    this.previousZoom = [this.min, this.max];
-                } else if (previousZoom) {
-                    e.newMin = previousZoom[0];
-                    e.newMax = previousZoom[1];
-                    delete this.previousZoom;
-                }
-            }
-
-        }
-        if (typeof e.zoomed !== 'undefined') {
-            e.preventDefault();
-        }
-    });
+    NavigatorAxis.compose(Axis);
 
     // For Stock charts. For x only zooming, do not to create the zoom button
     // because X axis zooming is already allowed by the Navigator and Range
@@ -2957,4 +2854,5 @@ if (!H.Navigator) {
 }
 
 H.Navigator = Navigator;
+
 export default H.Navigator;

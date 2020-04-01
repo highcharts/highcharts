@@ -8,17 +8,18 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import Axis from './Axis.js';
 import Color from './Color.js';
 var color = Color.parse;
+import H from './Globals.js';
+import NavigatorAxis from './NavigatorAxis.js';
 import Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
-import './Axis.js';
 import './Chart.js';
 import './Series.js';
 import './Options.js';
-var Axis = H.Axis, Chart = H.Chart, defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+var Chart = H.Chart, defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.
@@ -517,46 +518,6 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options
     ];
 };
 /**
- * Add logic to normalize the zoomed range in order to preserve the pressed
- * state of range selector buttons
- *
- * @private
- * @function Highcharts.Axis#toFixedRange
- * @param {number} [pxMin]
- * @param {number} [pxMax]
- * @param {number} [fixedMin]
- * @param {number} [fixedMax]
- * @return {*}
- */
-Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
-    var fixedRange = this.chart && this.chart.fixedRange, halfPointRange = (this.pointRange || 0) / 2, newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)), newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)), changeRatio = fixedRange && (newMax - newMin) / fixedRange;
-    // Add/remove half point range to/from the extremes (#1172)
-    if (!defined(fixedMin)) {
-        newMin = correctFloat(newMin + halfPointRange);
-    }
-    if (!defined(fixedMax)) {
-        newMax = correctFloat(newMax - halfPointRange);
-    }
-    // If the difference between the fixed range and the actual requested range
-    // is too great, the user is dragging across an ordinal gap, and we need to
-    // release the range selector button.
-    if (changeRatio > 0.7 && changeRatio < 1.3) {
-        if (fixedMax) {
-            newMin = newMax - fixedRange;
-        }
-        else {
-            newMax = newMin + fixedRange;
-        }
-    }
-    if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = void 0;
-    }
-    return {
-        min: newMin,
-        max: newMax
-    };
-};
-/**
  * The Navigator class
  *
  * @private
@@ -880,7 +841,7 @@ var Navigator = /** @class */ (function () {
      * @return {void}
      */
     Navigator.prototype.render = function (min, max, pxMin, pxMax) {
-        var navigator = this, chart = navigator.chart, navigatorWidth, scrollbarLeft, scrollbarTop, scrollbarHeight = navigator.scrollbarHeight, navigatorSize, xAxis = navigator.xAxis, pointRange = xAxis.pointRange || 0, scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis, navigatorEnabled = navigator.navigatorEnabled, zoomedMin, zoomedMax, rendered = navigator.rendered, inverted = chart.inverted, verb, newMin, newMax, currentRange, minRange = chart.xAxis[0].minRange, maxRange = chart.xAxis[0].options.maxRange;
+        var navigator = this, chart = navigator.chart, navigatorWidth, scrollbarLeft, scrollbarTop, scrollbarHeight = navigator.scrollbarHeight, navigatorSize, xAxis = navigator.xAxis, pointRange = xAxis.pointRange || 0, scrollbarXAxis = xAxis.navigatorAxis.fake ? chart.xAxis[0] : xAxis, navigatorEnabled = navigator.navigatorEnabled, zoomedMin, zoomedMax, rendered = navigator.rendered, inverted = chart.inverted, verb, newMin, newMax, currentRange, minRange = chart.xAxis[0].minRange, maxRange = chart.xAxis[0].options.maxRange;
         // Don't redraw while moving the handles (#4703).
         if (this.hasDragged && !defined(pxMin)) {
             return;
@@ -1099,7 +1060,7 @@ var Navigator = /** @class */ (function () {
             }
             if (left !== zoomedMin) { // it has actually moved
                 navigator.fixedWidth = range; // #1370
-                ext = xAxis.toFixedRange(left, left + range, fixedMin, fixedMax);
+                ext = xAxis.navigatorAxis.toFixedRange(left, left + range, fixedMin, fixedMax);
                 if (defined(ext.min)) { // #7411
                     chart.xAxis[0].setExtremes(Math.min(ext.min, ext.max), Math.max(ext.min, ext.max), true, null, // auto animation
                     { trigger: 'navigator' });
@@ -1235,7 +1196,7 @@ var Navigator = /** @class */ (function () {
                     unionExtremes.dataMax :
                     unionExtremes.dataMin;
             }
-            ext = xAxis.toFixedRange(navigator.zoomedMin, navigator.zoomedMax, fixedMin, fixedMax);
+            ext = xAxis.navigatorAxis.toFixedRange(navigator.zoomedMin, navigator.zoomedMax, fixedMin, fixedMax);
             if (defined(ext.min)) {
                 chart.xAxis[0].setExtremes(Math.min(ext.min, ext.max), Math.max(ext.min, ext.max), true, 
                 // Run animation when clicking buttons, scrollbar track etc,
@@ -1396,6 +1357,10 @@ var Navigator = /** @class */ (function () {
         }
         else {
             navigator.xAxis = {
+                chart: chart,
+                navigatorAxis: {
+                    fake: true
+                },
                 translate: function (value, reverse) {
                     var axis = chart.xAxis[0], ext = axis.getExtremes(), scrollTrackWidth = axis.len - 2 * scrollbarHeight, min = numExt('min', axis.options.min, ext.dataMin), valueRange = numExt('max', axis.options.max, ext.dataMax) - min;
                     return reverse ?
@@ -1409,10 +1374,10 @@ var Navigator = /** @class */ (function () {
                 },
                 toValue: function (value) {
                     return this.translate(value, true);
-                },
-                toFixedRange: Axis.prototype.toFixedRange,
-                fake: true
+                }
             };
+            navigator.xAxis.navigatorAxis.axis = navigator.xAxis;
+            navigator.xAxis.navigatorAxis.toFixedRange = (NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(navigator.xAxis.navigatorAxis));
         }
         // Initialize the scrollbar
         if (chart.options.scrollbar.enabled) {
@@ -1496,7 +1461,7 @@ var Navigator = /** @class */ (function () {
             }
         });
         // When run after render, this.xAxis already exists
-        if (this.xAxis && !this.xAxis.fake) {
+        if (this.xAxis && !this.xAxis.navigatorAxis.fake) {
             this.updateNavigatorSeries(true, redraw);
         }
     };
@@ -1520,7 +1485,7 @@ var Navigator = /** @class */ (function () {
             xAxis: 'navigator-x-axis',
             yAxis: 'navigator-y-axis',
             showInLegend: false,
-            stacking: false,
+            stacking: void 0,
             isInternal: true,
             states: {
                 inactive: {
@@ -1864,39 +1829,7 @@ var Navigator = /** @class */ (function () {
 // End of prototype
 if (!H.Navigator) {
     H.Navigator = Navigator;
-    // For Stock charts, override selection zooming with some special features
-    // because X axis zooming is already allowed by the Navigator and Range
-    // selector.
-    addEvent(Axis, 'zoom', function (e) {
-        var chart = this.chart, chartOptions = chart.options, zoomType = chartOptions.chart.zoomType, pinchType = chartOptions.chart.pinchType, previousZoom, navigator = chartOptions.navigator, rangeSelector = chartOptions.rangeSelector;
-        if (this.isXAxis && ((navigator && navigator.enabled) ||
-            (rangeSelector && rangeSelector.enabled))) {
-            // For y only zooming, ignore the X axis completely
-            if (zoomType === 'y') {
-                e.zoomed = false;
-                // For xy zooming, record the state of the zoom before zoom
-                // selection, then when the reset button is pressed, revert to this
-                // state. This should apply only if the chart is initialized with a
-                // range (#6612), otherwise zoom all the way out.
-            }
-            else if (((!isTouchDevice && zoomType === 'xy') ||
-                (isTouchDevice && pinchType === 'xy')) &&
-                this.options.range) {
-                previousZoom = this.previousZoom;
-                if (defined(e.newMin)) {
-                    this.previousZoom = [this.min, this.max];
-                }
-                else if (previousZoom) {
-                    e.newMin = previousZoom[0];
-                    e.newMax = previousZoom[1];
-                    delete this.previousZoom;
-                }
-            }
-        }
-        if (typeof e.zoomed !== 'undefined') {
-            e.preventDefault();
-        }
-    });
+    NavigatorAxis.compose(Axis);
     // For Stock charts. For x only zooming, do not to create the zoom button
     // because X axis zooming is already allowed by the Navigator and Range
     // selector. (#9285)

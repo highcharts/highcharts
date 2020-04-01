@@ -470,7 +470,7 @@ extend(ColorAxis.prototype, {
         'legendItemWidth',
         'legendItem',
         'legendSymbol'
-    ].concat(Axis.prototype.keepProps),
+    ].concat(Axis.keepProps),
     /* eslint-disable no-invalid-this, valid-jsdoc */
     /**
      * Initializes the color axis.
@@ -636,8 +636,8 @@ extend(ColorAxis.prototype, {
      * @private
      */
     normalizedValue: function (value) {
-        if (this.isLog) {
-            value = this.val2lin(value);
+        if (this.logarithmic) {
+            value = this.logarithmic.log2lin(value);
         }
         return 1 - ((this.max - value) /
             ((this.max - this.min) || 1));

@@ -888,6 +888,9 @@ H.defaultOptions = {
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
          *
+         * @sample {highcharts} highcharts/chart/panning-type
+         *         Zooming and xy panning
+         *
          * @type    {string}
          * @validvalue ["x", "y", "xy"]
          * @default x

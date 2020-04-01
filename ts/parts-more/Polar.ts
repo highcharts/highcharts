@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type RadialAxis from './RadialAxis';
 import H from '../parts/Globals.js';
 
 /**

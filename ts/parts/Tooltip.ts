@@ -1838,12 +1838,12 @@ class Tooltip {
                 isNumber(labelConfig.key)
             ),
             formatString = (tooltipOptions as any)[footOrHead + 'Format'],
-            evt = {
+            e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as Highcharts.Dictionary<any>;
 
-        fireEvent(this, 'headerFormatter', evt, function (
+        fireEvent(this, 'headerFormatter', e, function (
             this: Highcharts.Tooltip,
             e: Highcharts.Dictionary<any>
         ): void {
@@ -1882,7 +1882,7 @@ class Tooltip {
             }, this.chart);
 
         });
-        return evt.text;
+        return e.text;
     }
 
     /**

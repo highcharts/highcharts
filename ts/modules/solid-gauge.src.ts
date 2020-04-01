@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type RadialAxis from '../parts-more/RadialAxis';
 import H from '../parts/Globals.js';
 
 /**
@@ -257,7 +259,7 @@ colorAxisMethods = {
 
         } else {
 
-            if (this.isLog) {
+            if (this.logarithmic) {
                 value = this.val2lin(value);
             }
             pos = 1 - ((this.max - value) / (this.max - this.min));

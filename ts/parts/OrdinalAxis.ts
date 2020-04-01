@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from './Globals.js';
 import U from './Utilities.js';
@@ -57,7 +58,7 @@ import './Series.js';
 var Chart = H.Chart,
     Series = H.Series;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 class OrdinalAxisAdditions {
 
@@ -107,7 +108,7 @@ class OrdinalAxisAdditions {
     public getExtendedPositions(): Array<number> {
         var ordinal = this,
             axis = ordinal.axis,
-            axisPrototype = axis.constructor.prototype,
+            axisProto = axis.constructor.prototype,
             chart = axis.chart,
             grouping = axis.series[0].currentDataGrouping,
             ordinalIndex = ordinal.index,
@@ -144,8 +145,8 @@ class OrdinalAxisAdditions {
                     ordinal: true
                 },
                 ordinal: {},
-                ordinal2lin: axisPrototype.ordinal2lin, // #6276
-                val2lin: axisPrototype.val2lin // #2590
+                ordinal2lin: axisProto.ordinal2lin, // #6276
+                val2lin: axisProto.val2lin // #2590
             } as any;
             fakeAxis.ordinal.axis = fakeAxis;
 
@@ -156,7 +157,8 @@ class OrdinalAxisAdditions {
                     xAxis: fakeAxis,
                     xData: (series.xData as any).slice(),
                     chart: chart,
-                    destroyGroupedData: H.noop
+                    destroyGroupedData: H.noop,
+                    getProcessedData: H.Series.prototype.getProcessedData
                 } as any;
 
                 fakeSeries.xData = (fakeSeries.xData as any).concat(
@@ -347,20 +349,22 @@ class OrdinalAxis {
      * @param SeriesClass
      * Series class to use.
      */
-    public static init(
+    public static compose(
         AxisClass: typeof Axis,
         ChartClass: typeof Chart,
         SeriesClass: typeof Series
     ): void {
 
-        const axisPrototype = AxisClass.prototype as OrdinalAxis;
+        AxisClass.keepProps.push('ordinal');
+
+        const axisProto = AxisClass.prototype as OrdinalAxis;
 
         /**
          * Calculate the ordinal positions before tick positions are calculated.
          *
          * @private
          */
-        axisPrototype.beforeSetTickPositions = function (): void {
+        axisProto.beforeSetTickPositions = function (): void {
             var axis = this,
                 ordinal = axis.ordinal,
                 len,
@@ -790,7 +794,7 @@ class OrdinalAxis {
          *
          * @return {number}
          */
-        axisPrototype.lin2val = function (
+        axisProto.lin2val = function (
             val: number,
             fromIndex?: boolean
         ): number {
@@ -881,7 +885,7 @@ class OrdinalAxis {
          *
          * @return {number}
          */
-        axisPrototype.val2lin = function (
+        axisProto.val2lin = function (
             val: number,
             toIndex?: boolean
         ): number {
@@ -930,10 +934,16 @@ class OrdinalAxis {
             return ret;
         };
         // Record this to prevent overwriting by broken-axis module (#5979)
-        axisPrototype.ordinal2lin = axisPrototype.val2lin;
+        axisProto.ordinal2lin = axisProto.val2lin;
+
+        /* eslint-disable no-invalid-this */
 
         addEvent(AxisClass, 'afterInit', function (): void {
-            this.ordinal = new OrdinalAxisAdditions(this as OrdinalAxis);
+            const axis = this;
+
+            if (!axis.ordinal) {
+                axis.ordinal = new OrdinalAxisAdditions(axis as OrdinalAxis);
+            }
         });
 
         addEvent(AxisClass, 'foundExtremes', function (): void {
@@ -1058,7 +1068,7 @@ class OrdinalAxis {
                     // range, else it happens on the current x axis which is
                     // smaller and faster.
                     chart.fixedRange = max - min;
-                    trimmedRange = xAxis.toFixedRange(
+                    trimmedRange = (xAxis as NavigatorAxis).navigatorAxis.toFixedRange(
                         null as any,
                         null as any,
                         lin2val.apply(searchAxisLeft, [
@@ -1111,6 +1121,8 @@ class OrdinalAxis {
             }
         });
 
+        /* eslint-enable no-invalid-this */
+
     }
 }
 
@@ -1136,6 +1148,6 @@ interface OrdinalAxisOptions {
     keepOrdinalPadding?: boolean;
 }
 
-export default OrdinalAxis;
+OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
 
-OrdinalAxis.init(Axis, Chart, Series); // @todo move to StockChart, remove from master
+export default OrdinalAxis;

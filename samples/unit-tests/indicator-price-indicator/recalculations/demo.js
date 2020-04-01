@@ -94,3 +94,51 @@ QUnit.test('Datagrouping and setExtremes.', function (assert) {
         'Indicator should show the close value of the last non-grouped point.'
     );
 });
+
+
+QUnit.test('CurrentPriceIndicator && yAxis crosshair label #11480.', function (assert) {
+
+    var chart = Highcharts.stockChart('container', {
+        xAxis: {
+            crosshair: {
+                snap: false,
+                label: {
+                    enabled: true
+                }
+            }
+        },
+        yAxis: {
+            crosshair: {
+                snap: false,
+                label: {
+                    enabled: true
+                }
+            }
+        },
+        series: [{
+            lastVisiblePrice: {
+                enabled: true,
+                label: {
+                    enabled: true
+                }
+            },
+            data: getData()
+        }]
+    });
+
+    var min = chart.xAxis[0].min,
+        max = min + 100 * 3600,
+        max1 = min + 200 * 3600,
+        controller = new TestController(chart);
+
+    controller.moveTo(300, 200);
+
+    chart.xAxis[0].setExtremes(min, max);
+    chart.xAxis[0].setExtremes(min, max1);
+
+    assert.strictEqual(
+        chart.series[0].crossLabel.added,
+        true,
+        'Label shouldn\t be deleted #11480'
+    );
+});

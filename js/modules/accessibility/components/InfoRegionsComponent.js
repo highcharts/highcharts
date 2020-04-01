@@ -488,7 +488,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             return this.getCategoryAxisRangeDesc(axis);
         }
         // Use time range, not from-to?
-        if (axis.isDatetimeAxis && (axis.min === 0 || axis.dataMin === 0)) {
+        if (axis.dateTime && (axis.min === 0 || axis.dataMin === 0)) {
             return this.getAxisTimeLengthDesc(axis);
         }
         // Just use from and to.
@@ -545,7 +545,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     getAxisFromToDescription: function (axis) {
         var chart = this.chart, dateRangeFormat = chart.options.accessibility
             .screenReaderSection.axisRangeDateFormat, format = function (axisKey) {
-            return axis.isDatetimeAxis ? chart.time.dateFormat(dateRangeFormat, axis[axisKey]) : axis[axisKey];
+            return axis.dateTime ? chart.time.dateFormat(dateRangeFormat, axis[axisKey]) : axis[axisKey];
         };
         return chart.langFormat('accessibility.axis.rangeFromTo', {
             chart: chart,

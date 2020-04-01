@@ -331,13 +331,16 @@ seriesType('tilemap', 'heatmap'
  *
  * @extends      plotOptions.heatmap
  * @since        6.0.0
- * @excluding    jitter, joinBy, shadow, allAreas, mapData, data,
+ * @excluding    jitter, joinBy, shadow, allAreas, mapData, marker, data,
  *               dataSorting
  * @product      highcharts highmaps
  * @requires     modules/tilemap.js
  * @optionparent plotOptions.tilemap
  */
 , {
+    // Remove marker from tilemap default options, as it was before
+    // heatmap refactoring.
+    marker: null,
     states: {
         hover: {
             halo: {
@@ -398,8 +401,14 @@ seriesType('tilemap', 'heatmap'
      */
     tileShape: 'hexagon'
 }, {
-    // Use drawPoints method from old heatmap implementation
-    // Consider standarizing heatmap and tilemap into more consistent form.
+    // Use drawPoints, markerAttribs, pointAttribs methods from the old
+    // heatmap implementation.
+    // TODO: Consider standarizing heatmap and tilemap into more
+    // consistent form.
+    markerAttribs: H.seriesTypes.scatter.prototype.markerAttribs,
+    pointAttribs: H.seriesTypes.column.prototype.pointAttribs,
+    // Revert the noop on getSymbol.
+    getSymbol: H.noop,
     drawPoints: function () {
         var _this = this;
         // In styled mode, use CSS, otherwise the fill used in the style

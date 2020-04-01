@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisType } from './axis/types';
+import DateTimeAxis from './DateTimeAxis.js';
 import H from './Globals.js';
 
 /**
@@ -715,7 +716,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
-                    xAxis.normalizeTimeTickInterval(
+                    DateTimeAxis.AdditionsClass.prototype.normalizeTimeTickInterval(
                         interval,
                         (dataGroupingOptions as any).units ||
                         defaultDataGroupingUnits

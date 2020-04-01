@@ -119,13 +119,10 @@ var Chart = H.Chart, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.S
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, 
     // to increase performance, don't merge the data
-    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, panning = options.chart && options.chart.panning, 
+    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
-    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true), verticalPanningEnabled = panning && /y/.test(panning.type), disableStartOnTick = {
-        startOnTick: false,
-        endOnTick: false
-    };
+    navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true);
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (xAxisOptions, i) {
         return merge({
@@ -146,7 +143,10 @@ H.StockChart = H.stockChart = function (a, b, c) {
         {
             type: 'datetime',
             categories: null
-        }, (navigatorEnabled ? disableStartOnTick : null));
+        }, (navigatorEnabled ? {
+            startOnTick: false,
+            endOnTick: false
+        } : null));
     });
     // apply Y axis options to both single and multi y axes
     options.yAxis = splat(options.yAxis || {}).map(function (yAxisOptions, i) {
@@ -172,8 +172,8 @@ H.StockChart = H.stockChart = function (a, b, c) {
             }
         }, defaultOptions.yAxis, // #3802
         defaultOptions.yAxis && defaultOptions.yAxis[i], // #7690
-        yAxisOptions, // user options
-        (verticalPanningEnabled ? disableStartOnTick : null));
+        yAxisOptions // user options
+        );
     });
     options.series = null;
     options = merge({
@@ -423,7 +423,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         !this.cross) {
         return;
     }
-    var chart = this.chart, options = this.options.crosshair.label, // the label's options
+    var chart = this.chart, log = this.logarithmic, options = this.options.crosshair.label, // the label's options
     horiz = this.horiz, // axis orientation
     opposite = this.opposite, // axis position
     left = this.left, // left position
@@ -431,14 +431,10 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     crossLabel = this.crossLabel, // the svgElement
     posx, posy, crossBox, formatOption = options.format, formatFormat = '', limit, align, tickInside = this.options.tickPosition === 'inside', snap = this.crosshair.snap !== false, value, offset = 0, 
     // Use last available event (#5287)
-    e = event.e || (this.cross && this.cross.e), point = event.point, lin2log = this.lin2log, min, max;
-    if (this.isLog) {
-        min = lin2log(this.min);
-        max = lin2log(this.max);
-    }
-    else {
-        min = this.min;
-        max = this.max;
+    e = event.e || (this.cross && this.cross.e), point = event.point, min = this.min, max = this.max;
+    if (log) {
+        min = log.lin2log(min);
+        max = log.lin2log(max);
     }
     align = (horiz ? 'center' : opposite ?
         (this.labelAlign === 'right' ? 'right' : 'left') :
@@ -483,7 +479,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
         posy = snap ? point.plotY + top : e.chartY;
     }
     if (!formatOption && !options.formatter) {
-        if (this.isDatetimeAxis) {
+        if (this.dateTime) {
             formatFormat = '%b %d, %Y';
         }
         formatOption =
@@ -761,29 +757,5 @@ addEvent(Chart, 'update', function (e) {
         merge(true, this.options.scrollbar, options.scrollbar);
         this.navigator.update({}, false);
         delete options.scrollbar;
-    }
-});
-// Extend the Axis prototype to calculate start min/max values
-// (including min/maxPadding). This is related to using vertical panning
-// (#11315).
-addEvent(Axis, 'afterSetScale', function () {
-    var axis = this, panning = axis.chart.options.chart &&
-        axis.chart.options.chart.panning;
-    if (panning &&
-        (panning.type === 'y' ||
-            panning.type === 'xy') &&
-        !axis.isXAxis &&
-        !defined(axis.panningState)) {
-        var min = Number.MAX_VALUE, max = Number.MIN_VALUE;
-        axis.series.forEach(function (series) {
-            min = Math.min(arrayMin(series.yData), min) -
-                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(arrayMax(series.yData), max) +
-                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
-        });
-        axis.panningState = {
-            startMin: min,
-            startMax: max
-        };
     }
 });
