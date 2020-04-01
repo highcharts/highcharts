@@ -711,7 +711,7 @@ function drawLabels(e) {
         U.clearTimeout(chart.seriesLabelTimer);
         // Which series should have labels
         chart.series.forEach(function (series) {
-            var options = series.options.label, label = series.labelBySeries, closest = label && label.closest, _a = animObject(series.options.animation), defer = _a.defer, duration = _a.duration;
+            var options = series.options.label, label = series.labelBySeries, closest = label && label.closest;
             if (options.enabled &&
                 series.visible &&
                 (series.graph || series.area) &&
@@ -723,15 +723,10 @@ function drawLabels(e) {
                     }, 0);
                     chart.labelSeriesMaxSum = Math.max(chart.labelSeriesMaxSum, series.sum);
                 }
-                // The labels are processing heavy,
-                // wait until the animation is done
+                // The labels are processing heavy, wait until the animation is
+                // done
                 if (e.type === 'load') {
-                    if (defer) {
-                        delay = defer + duration;
-                    }
-                    else {
-                        delay = Math.max(delay, duration);
-                    }
+                    delay = Math.max(delay, animObject(series.options.animation).duration);
                 }
                 // Keep the position updated to the axis while redrawing
                 if (closest) {

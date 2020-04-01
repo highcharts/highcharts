@@ -1163,14 +1163,13 @@ function drawLabels(this: Highcharts.Chart, e: Event): void {
                     );
                 }
 
-                // The labels are processing heavy,
-                // wait until the animation is done
+                // The labels are processing heavy, wait until the animation is
+                // done
                 if (e.type === 'load') {
-                    if (defer) {
-                        delay = defer + duration;
-                    } else {
-                        delay = Math.max(delay, duration);
-                    }
+                    delay = Math.max(
+                        delay as any,
+                        animObject(series.options.animation).duration as any
+                    );
                 }
 
                 // Keep the position updated to the axis while redrawing
