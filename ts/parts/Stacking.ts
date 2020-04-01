@@ -183,6 +183,7 @@ declare global {
 
 import U from './Utilities.js';
 const {
+    animObject,
     correctFloat,
     defined,
     destroyObjectProperties,
@@ -604,7 +605,8 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
         stacks = axis.stacks,
         deferTime,
         durationTime,
-        defer = axis.options.stackLabels.animation.defer,
+        stackLabelsAnim = animObject(axis.options.stackLabels.animation),
+        defer = stackLabelsAnim.defer,
         stackTotalGroup = axis.stackTotalGroup as Highcharts.SVGElement;
 
     // Create a separate group for the stack total labels
@@ -632,8 +634,11 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
             stack.render(stackTotalGroup);
         });
     });
-
-    deferTime = getDeferTime(chart, defer);
+    if (defined(defer)) {
+        deferTime = defer;
+    } else {
+        deferTime = getDeferTime(chart);
+    }
     durationTime = Math.min(deferTime, 200);
 
     stackTotalGroup.animate({

@@ -3598,26 +3598,25 @@ class Axis implements AxisComposition {
             /**
              * The animation configuration object for the `stackLabels`. Please
              * note that this option only applies to the initial animation.
-             * For other animations, see [chart.animation](#chart.animation)]
+             * For other animations, see [chart.animation](#chart.animation)
              * and the animation parameter under the API methods.
              * The following properties are supported:
              *
              * - `defer`: The animation delay time in milliseconds.
              *
-             * @sample {highcharts} highcharts/plotoptions/animation-ddefer/
+             * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
-             *
              * @type {Highcharts.AnimationOptionsObject}
+             * @since next
+             * @apioption yAxis.stackLabels.animation
              */
 
-            animation: {
-                /** @internal */
-                defer: true
-            },
-
             /**
-             * @default   true
-             * @type      {boolean|number}
+             * The animation delay time in milliseconds.
+             * Set to `0` renders stackLabel immediately.
+             * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+             *
+             * @type      {number}
              * @since     next
              * @apioption yAxis.stackLabels.animation.defer
              */
