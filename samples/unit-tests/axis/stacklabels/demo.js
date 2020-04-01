@@ -48,6 +48,10 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             height: 260
         },
 
+        xAxis: {
+            allowDecimals: true
+        },
+
         yAxis: {
             stackLabels: {
                 enabled: true,
