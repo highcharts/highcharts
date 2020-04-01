@@ -732,19 +732,14 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @private
      */
     init: function () {
-        var chart = this.chart, animOptions = animObject(this.options.animation), defer = animOptions.defer;
+        var chart = this.chart, defer = animObject(this.options.animation).defer;
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
         this.addClipPaths();
         this.setLabelCollector();
-        if (defined(defer)) {
-            this.deferTime = defer;
-        }
-        else {
-            this.deferTime = getDeferTime(chart);
-        }
+        this.deferTime = defined(defer) ? defer : getDeferTime(chart);
         this.durationTime = Math.min(this.deferTime, 200);
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {

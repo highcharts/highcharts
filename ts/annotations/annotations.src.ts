@@ -1089,8 +1089,7 @@ merge(
          */
         init: function (this: Highcharts.Annotation): void {
             const chart = this.chart,
-                animOptions = animObject(this.options.animation),
-                defer = animOptions.defer;
+                defer = animObject(this.options.animation).defer;
 
             this.linkPoints();
             this.addControlPoints();
@@ -1098,11 +1097,7 @@ merge(
             this.addLabels();
             this.addClipPaths();
             this.setLabelCollector();
-            if (defined(defer)) {
-                this.deferTime = defer;
-            } else {
-                this.deferTime = getDeferTime(chart);
-            }
+            this.deferTime = defined(defer) ? defer : getDeferTime(chart);
             this.durationTime = Math.min(this.deferTime, 200);
         },
 
