@@ -380,63 +380,94 @@ QUnit.test('Focus border', function (assert) {
         .add();
     labelRotatedText.addFocusBorder(2, style);
 
-    assert.strictEqual(
-        regularText.focusBorder.getBBox().x + regularText.focusBorder.getBBox().width / 2,
-        regularText.attr('x') + regularText.getBBox().width / 2,
+    // Comparing the midpoint of the border with the midpoint of the text.
+    assert.close(
+        regularText.focusBorder.getBBox().x +
+        regularText.focusBorder.getBBox().width / 2,
+        regularText.attr('x') +
+        regularText.getBBox().width / 2,
+        0.1,
         'should be correctly applied for text horizontally.'
     );
 
-    assert.strictEqual(
-        regularText.focusBorder.getBBox().y + regularText.focusBorder.getBBox().height / 2,
-        regularText.attr('y') - regularText.getBBox().height / 2 * 0.5,
+    assert.close(
+        regularText.focusBorder.getBBox().y +
+        regularText.focusBorder.getBBox().height / 2,
+        regularText.attr('y') -
+        regularText.getBBox().height / 2 * 0.5,
+        0.1,
         'should be correctly applied for text vertically.'
     );
 
-    assert.strictEqual(
-        regularRotatedText.focusBorder.getBBox().x + regularRotatedText.focusBorder.getBBox().width / 2,
-        regularRotatedText.attr('x') + regularRotatedText.getBBox().width / 2 * 0.5,
+    assert.close(
+        regularRotatedText.focusBorder.getBBox().x +
+        regularRotatedText.focusBorder.getBBox().width / 2,
+        regularRotatedText.attr('x') +
+        regularRotatedText.getBBox().width / 2 * 0.5,
+        0.1,
         'should be correctly applied for rotated text horizontally.'
     );
 
-    assert.strictEqual(
-        regularRotatedText.focusBorder.getBBox().y + regularRotatedText.focusBorder.getBBox().height / 2,
-        regularRotatedText.attr('y') + regularRotatedText.getBBox().height / 2,
+    assert.close(
+        regularRotatedText.focusBorder.getBBox().y +
+        regularRotatedText.focusBorder.getBBox().height / 2,
+        regularRotatedText.attr('y') +
+        regularRotatedText.getBBox().height / 2,
+        0.1,
         'should be correctly applied for rotated text element vertically.'
     );
 
-    assert.strictEqual(
-        wordcloudText.focusBorder.getBBox().x + wordcloudText.focusBorder.getBBox().width / 2,
-        wordcloudText.attr('x') + (wordcloudText.getBBox().width * (H.isFirefox && wordcloudText.rotation ? 0.25 : 0)),
+    assert.close(
+        wordcloudText.focusBorder.getBBox().x +
+        wordcloudText.focusBorder.getBBox().width / 2,
+        wordcloudText.attr('x') +
+        wordcloudText.getBBox().width * (H.isFirefox && wordcloudText.rotation ? 0.25 : 0),
+        0.1,
         'should be correctly applied for wordcloud text element horizontally.'
     );
 
-    assert.strictEqual(
-        wordcloudRotatedText.focusBorder.getBBox().y + wordcloudRotatedText.focusBorder.getBBox().height / 2,
-        wordcloudRotatedText.attr('y') + (wordcloudRotatedText.getBBox().height * (H.isFirefox && !wordcloudRotatedText.rotation ? -0.25 : 0)),
+    assert.close(
+        wordcloudRotatedText.focusBorder.getBBox().y +
+        wordcloudRotatedText.focusBorder.getBBox().height / 2,
+        wordcloudRotatedText.attr('y') +
+        wordcloudRotatedText.getBBox().height * (H.isFirefox && !wordcloudRotatedText.rotation ? -0.25 : 0),
+        0.1,
         'should be correctly for wordcloud text element vertically.'
     );
 
-    assert.strictEqual(
-        labelText.focusBorder.getBBox().x + labelText.focusBorder.getBBox().width / 2,
-        labelText.attr('x') + labelText.getBBox().width / 2,
+    assert.close(
+        labelText.focusBorder.getBBox().x +
+        labelText.focusBorder.getBBox().width / 2,
+        labelText.attr('x') +
+        labelText.getBBox().width / 2,
+        0.1,
         'should be correctly for labels horizontally.'
     );
 
-    assert.strictEqual(
-        labelText.focusBorder.getBBox().x + labelText.focusBorder.getBBox().height / 2,
-        labelText.attr('y') + labelText.getBBox().height / 2,
+    assert.close(
+        labelText.focusBorder.getBBox().x +
+        labelText.focusBorder.getBBox().height / 2,
+        labelText.attr('y') +
+        labelText.getBBox().height / 2,
+        0.1,
         'should be correctly for labels vertically.'
     );
 
-    assert.strictEqual(
-        labelRotatedText.focusBorder.getBBox().x + labelRotatedText.focusBorder.getBBox().width / 2,
-        labelRotatedText.attr('x') - labelRotatedText.getBBox().height / 2,
+    assert.close(
+        labelRotatedText.focusBorder.getBBox().x +
+        labelRotatedText.focusBorder.getBBox().width / 2,
+        labelRotatedText.attr('x') -
+        labelRotatedText.getBBox().height / 2,
+        0.1,
         'should be correctly for rotated labels horizontally.'
     );
 
-    assert.strictEqual(
-        labelRotatedText.focusBorder.getBBox().y + labelRotatedText.focusBorder.getBBox().height / 2,
-        labelRotatedText.attr('y') + labelRotatedText.getBBox().width / 2,
+    assert.close(
+        labelRotatedText.focusBorder.getBBox().y +
+        labelRotatedText.focusBorder.getBBox().height / 2,
+        labelRotatedText.attr('y') +
+        labelRotatedText.getBBox().width / 2,
+        0.1,
         'should be correctly for rotated labels vertically.'
     );
 
