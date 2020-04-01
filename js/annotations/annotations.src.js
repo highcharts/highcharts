@@ -712,7 +712,6 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
-        this.addClipPaths();
         this.setLabelCollector();
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {
@@ -761,12 +760,14 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         this.clipYAxis = linkedAxes[1];
     },
     getClipBox: function () {
-        return {
-            x: this.clipXAxis.left || 0,
-            y: this.clipYAxis.top || 0,
-            width: this.clipXAxis.width || 0,
-            height: this.clipYAxis.height || 0
-        };
+        if (this.clipXAxis && this.clipYAxis) {
+            return {
+                x: this.clipXAxis.left,
+                y: this.clipYAxis.top,
+                width: this.clipXAxis.width,
+                height: this.clipYAxis.height
+            };
+        }
     },
     setLabelCollector: function () {
         var annotation = this;
@@ -847,6 +848,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
             translateY: 0
         })
             .add(this.graphic);
+        this.addClipPaths();
         if (this.clipRect) {
             this.graphic.clip(this.clipRect);
         }
@@ -917,7 +919,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      *
      * @return {void}
      */
-    update: function (userOptions) {
+    update: function (userOptions, redraw) {
         var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = merge(true, this.userOptions, userOptions);
         options.labels = labelsAndShapes.labels;
         options.shapes = labelsAndShapes.shapes;
@@ -926,9 +928,11 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         // Update options in chart options, used in exporting (#9767):
         chart.options.annotations[userOptionsIndex] = options;
         this.isUpdating = true;
-        this.redraw();
-        this.isUpdating = false;
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
         fireEvent(this, 'afterUpdate');
+        this.isUpdating = false;
     },
     /* *************************************************************
      * ITEM SECTION
