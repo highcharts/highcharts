@@ -10,6 +10,22 @@
  *
  * */
 'use strict';
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, pick = U.pick;
@@ -28,6 +44,7 @@ extend(H.SVGElement.prototype, {
      * @param {Highcharts.CSSObject} style
      */
     addFocusBorder: function (margin, style) {
+        var _a;
         // Allow updating by just adding new border
         if (this.focusBorder) {
             this.removeFocusBorder();
@@ -36,18 +53,49 @@ extend(H.SVGElement.prototype, {
         var bb = this.getBBox(), pad = pick(margin, 3);
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
-        var borderPosX = bb.x - pad, borderPosY = bb.y - pad;
+        var borderPosX = bb.x - pad, borderPosY = bb.y - pad, borderWidth = bb.width + 2 * pad, borderHeight = bb.height + 2 * pad;
         // For text elements, apply x and y offset, #11397.
-        var isLegendItem = this.parentGroup && this.parentGroup.hasClass('highcharts-legend-item');
-        if (this.element.nodeName === 'text' && !isLegendItem) {
-            var isRotated = !!this.rotation;
-            borderPosX = +this.attr('x') - (bb.width * 0.5) - pad +
-                // Correct baseline position on Firefox.
-                (isRotated ? bb.width * (H.isFirefox ? 0.25 : 0) : 0);
-            borderPosY = +this.attr('y') - (bb.height * 0.5) - pad +
-                (isRotated ? 0 : -bb.height * (H.isFirefox ? 0.25 : 0));
+        /**
+         * @private
+         * @function
+         *
+         * @param {Highcharts.SVGElement} text
+         *
+         * @return {TextAnchorCorrectionObject}
+         */
+        function getTextCorrection(text) {
+            var posXCorrection = 0, posYCorrection = 0;
+            if (text.attr('text-anchor') === 'middle') {
+                posXCorrection = H.isFirefox && text.rotation ? 0.25 : 0.5;
+                posYCorrection = H.isFirefox && !text.rotation ? 0.75 : 0.5;
+            }
+            else if (!text.rotation) {
+                posYCorrection = 0.75;
+            }
+            else {
+                posXCorrection = 0.25;
+                posYCorrection *= (H.isFirefox ? 2 : 0);
+            }
+            return {
+                x: posXCorrection,
+                y: posYCorrection
+            };
         }
-        this.focusBorder = this.renderer.rect(borderPosX, borderPosY, bb.width + 2 * pad, bb.height + 2 * pad, parseInt((style && style.borderRadius || 0).toString(), 10))
+        if (this.element.nodeName === 'text' || this.element.nodeName === 'g') {
+            var isLabel = this.element.nodeName === 'g', isRotated = !!this.rotation, correction = !isLabel ? getTextCorrection(this) :
+                {
+                    x: isRotated ? 1 : 0,
+                    y: 0
+                };
+            borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
+            borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
+            if (isLabel && isRotated) {
+                _a = __read([borderHeight, borderWidth], 2), borderWidth = _a[0], borderHeight = _a[1];
+                borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
+                borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
+            }
+        }
+        this.focusBorder = this.renderer.rect(borderPosX, borderPosY, borderWidth, borderHeight, parseInt((style && style.borderRadius || 0).toString(), 10))
             .addClass('highcharts-focus-border')
             .attr({
             zIndex: 99
