@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, getDeferTime = U.getDeferTime, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, getDeferTime = U.getDeferTime, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -208,7 +208,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         /**
          * The animation configuration object for the `annotations`. Please
          * note that this option only applies to the initial animation.
-         * For other animations, see [chart.animation](#chart.animation)]
+         * For other animations, see [chart.animation](#chart.animation)
          * and the animation parameter under the API methods.
          * The following properties are supported:
          *
@@ -216,13 +216,19 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          *
          * @sample {highcharts} highcharts/annotations/defer/
          *          Animation defer settings
-         *
          * @type {Highcharts.AnimationOptionsObject}
+         * @since next
+         * @apioption annotations.animation
          */
-        animation: {
-            /** @internal */
-            defer: true
-        },
+        /**
+         * The animation delay time in milliseconds.
+         * Set to `0` renders annotation immediately.
+         * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+         *
+         * @type      {number}
+         * @since     next
+         * @apioption annotations.animation.defer
+         */
         /**
          * Allow an annotation to be draggable by a user. Possible
          * values are `'x'`, `'xy'`, `'y'` and `''` (disabled).
@@ -726,14 +732,19 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @private
      */
     init: function () {
-        var chart = this.chart, defer = this.options.animation.defer;
+        var chart = this.chart, animOptions = animObject(this.options.animation), defer = animOptions.defer;
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
         this.addClipPaths();
         this.setLabelCollector();
-        this.deferTime = getDeferTime(chart, defer);
+        if (defined(defer)) {
+            this.deferTime = defer;
+        }
+        else {
+            this.deferTime = getDeferTime(chart);
+        }
         this.durationTime = Math.min(this.deferTime, 200);
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {

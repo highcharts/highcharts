@@ -186,8 +186,7 @@ declare global {
             itemType?: string;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
-            animation: AnimationObject;
-
+            animation: Partial<AnimationOptionsObject>;
             controlPointOptions: AnnotationControlPointOptionsObject;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
@@ -255,6 +254,7 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    animObject,
     defined,
     destroyObjectProperties,
     erase,
@@ -501,10 +501,11 @@ merge(
              *         Set annotation visibility
              */
             visible: true,
+
             /**
              * The animation configuration object for the `annotations`. Please
              * note that this option only applies to the initial animation.
-             * For other animations, see [chart.animation](#chart.animation)]
+             * For other animations, see [chart.animation](#chart.animation)
              * and the animation parameter under the API methods.
              * The following properties are supported:
              *
@@ -512,14 +513,20 @@ merge(
              *
              * @sample {highcharts} highcharts/annotations/defer/
              *          Animation defer settings
-             *
              * @type {Highcharts.AnimationOptionsObject}
+             * @since next
+             * @apioption annotations.animation
              */
 
-            animation: {
-                /** @internal */
-                defer: true
-            },
+            /**
+             * The animation delay time in milliseconds.
+             * Set to `0` renders annotation immediately.
+             * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+             *
+             * @type      {number}
+             * @since     next
+             * @apioption annotations.animation.defer
+             */
 
             /**
              * Allow an annotation to be draggable by a user. Possible
@@ -1082,7 +1089,8 @@ merge(
          */
         init: function (this: Highcharts.Annotation): void {
             const chart = this.chart,
-                defer = this.options.animation.defer;
+                animOptions = animObject(this.options.animation),
+                defer = animOptions.defer;
 
             this.linkPoints();
             this.addControlPoints();
@@ -1090,7 +1098,11 @@ merge(
             this.addLabels();
             this.addClipPaths();
             this.setLabelCollector();
-            this.deferTime = getDeferTime(chart, defer);
+            if (defined(defer)) {
+                this.deferTime = defer;
+            } else {
+                this.deferTime = getDeferTime(chart);
+            }
             this.durationTime = Math.min(this.deferTime, 200);
         },
 
