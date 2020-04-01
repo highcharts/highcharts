@@ -182,13 +182,16 @@ var ParallelAxis = /** @class */ (function () {
         // Add parallel addition
         addEvent(AxisClass, 'init', function () {
             var axis = this;
-            if (!axis.parallel) {
-                axis.parallel = new ParallelAxisAdditions(axis);
+            if (!axis.parallelCoordinates) {
+                axis.parallelCoordinates = new ParallelAxisAdditions(axis);
             }
         });
         // Update default options with predefined for a parallel coords.
         addEvent(AxisClass, 'afterSetOptions', function (e) {
-            var axis = this, chart = axis.chart, parallel = axis.parallel, axisPosition = ['left', 'width', 'height', 'top'];
+            var axis = this;
+            var chart = axis.chart;
+            var parallelCoordinates = axis.parallelCoordinates;
+            var axisPosition = ['left', 'width', 'height', 'top'];
             if (chart.hasParallelCoordinates) {
                 if (chart.inverted) {
                     axisPosition = axisPosition.reverse();
@@ -198,8 +201,8 @@ var ParallelAxis = /** @class */ (function () {
                 }
                 else {
                     axis.options = merge(axis.options, axis.chart.options.chart.parallelAxes, e.userOptions);
-                    parallel.position = pick(parallel.position, chart.yAxis.length);
-                    parallel.setPosition(axisPosition, axis.options);
+                    parallelCoordinates.position = pick(parallelCoordinates.position, chart.yAxis.length);
+                    parallelCoordinates.setPosition(axisPosition, axis.options);
                 }
             }
         });
@@ -209,21 +212,22 @@ var ParallelAxis = /** @class */ (function () {
         // series.yData.
         addEvent(AxisClass, 'getSeriesExtremes', function (e) {
             var axis = this;
-            var parallel = axis.parallel;
-            if (!parallel) {
+            var chart = axis.chart;
+            var parallelCoordinates = axis.parallelCoordinates;
+            if (!parallelCoordinates) {
                 return;
             }
-            if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
-                var index = parallel.position, currentPoints = [];
-                this.series.forEach(function (series) {
+            if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
+                var index = parallelCoordinates.position, currentPoints = [];
+                axis.series.forEach(function (series) {
                     if (series.visible &&
                         defined(series.yData[index])) {
                         // We need to use push() beacause of null points
                         currentPoints.push(series.yData[index]);
                     }
                 });
-                this.dataMin = arrayMin(currentPoints);
-                this.dataMax = arrayMax(currentPoints);
+                axis.dataMin = arrayMin(currentPoints);
+                axis.dataMax = arrayMax(currentPoints);
                 e.preventDefault();
             }
         });

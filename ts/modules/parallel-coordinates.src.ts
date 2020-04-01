@@ -258,8 +258,8 @@ class ParallelAxis {
         addEvent(AxisClass, 'init', function (): void {
             const axis = this;
 
-            if (!axis.parallel) {
-                axis.parallel = new ParallelAxisAdditions(axis as ParallelAxis);
+            if (!axis.parallelCoordinates) {
+                axis.parallelCoordinates = new ParallelAxisAdditions(axis as ParallelAxis);
             }
         });
 
@@ -269,10 +269,11 @@ class ParallelAxis {
                 userOptions: Highcharts.XAxisOptions;
             }
         ): void {
-            var axis = this,
-                chart = axis.chart,
-                parallel = axis.parallel as ParallelAxisAdditions,
-                axisPosition = ['left', 'width', 'height', 'top'];
+            const axis = this;
+            const chart = axis.chart;
+            const parallelCoordinates = axis.parallelCoordinates as ParallelAxisAdditions;
+
+            let axisPosition = ['left', 'width', 'height', 'top'];
 
             if (chart.hasParallelCoordinates) {
                 if (chart.inverted) {
@@ -291,11 +292,11 @@ class ParallelAxis {
                         (axis.chart.options.chart as any).parallelAxes,
                         e.userOptions
                     );
-                    parallel.position = pick(
-                        parallel.position,
+                    parallelCoordinates.position = pick(
+                        parallelCoordinates.position,
                         chart.yAxis.length
                     );
-                    parallel.setPosition(axisPosition, axis.options);
+                    parallelCoordinates.setPosition(axisPosition, axis.options);
                 }
             }
         });
@@ -307,17 +308,18 @@ class ParallelAxis {
         // series.yData.
         addEvent(AxisClass, 'getSeriesExtremes', function (e: Event): void {
             const axis = this;
-            const parallel = axis.parallel;
+            const chart = axis.chart;
+            const parallelCoordinates = axis.parallelCoordinates;
 
-            if (!parallel) {
+            if (!parallelCoordinates) {
                 return;
             }
 
-            if (this.chart && this.chart.hasParallelCoordinates && !this.isXAxis) {
-                var index = parallel.position,
+            if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
+                var index = parallelCoordinates.position,
                     currentPoints: Array<Highcharts.Point> = [];
 
-                this.series.forEach(function (series: Highcharts.Series): void {
+                axis.series.forEach(function (series: Highcharts.Series): void {
                     if (
                         series.visible &&
                         defined((series.yData as any)[index as any])
@@ -326,8 +328,8 @@ class ParallelAxis {
                         currentPoints.push((series.yData as any)[index as any]);
                     }
                 });
-                this.dataMin = arrayMin(currentPoints);
-                this.dataMax = arrayMax(currentPoints);
+                axis.dataMin = arrayMin(currentPoints);
+                axis.dataMax = arrayMax(currentPoints);
 
                 e.preventDefault();
             }
@@ -340,7 +342,7 @@ class ParallelAxis {
 
 interface ParallelAxis extends Axis {
     chart: Highcharts.ParallelChart;
-    parallel: ParallelAxisAdditions;
+    parallelCoordinates: ParallelAxisAdditions;
 }
 
 ParallelAxis.compose(Axis);

@@ -39,7 +39,7 @@ export interface AxisComposition {
     navigatorAxis?: NavigatorAxis['navigatorAxis'];
     mapAxis?: MapAxis['mapAxis'];
     ordinal?: OrdinalAxis['ordinal'];
-    parallel?: ParallelAxis['parallel'];
+    parallelCoordinates?: ParallelAxis['parallelCoordinates'];
     scrollbar?: ScrollbarAxis['scrollbar'];
 }
 
