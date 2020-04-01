@@ -58,7 +58,7 @@ import './Series.js';
 var Chart = H.Chart,
     Series = H.Series;
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 
 class OrdinalAxisAdditions {
 
@@ -354,6 +354,8 @@ class OrdinalAxis {
         ChartClass: typeof Chart,
         SeriesClass: typeof Series
     ): void {
+
+        AxisClass.keepProps.push('ordinal');
 
         const axisProto = AxisClass.prototype as OrdinalAxis;
 
@@ -934,8 +936,14 @@ class OrdinalAxis {
         // Record this to prevent overwriting by broken-axis module (#5979)
         axisProto.ordinal2lin = axisProto.val2lin;
 
+        /* eslint-disable no-invalid-this */
+
         addEvent(AxisClass, 'afterInit', function (): void {
-            this.ordinal = new OrdinalAxisAdditions(this as OrdinalAxis);
+            const axis = this;
+
+            if (!axis.ordinal) {
+                axis.ordinal = new OrdinalAxisAdditions(axis as OrdinalAxis);
+            }
         });
 
         addEvent(AxisClass, 'foundExtremes', function (): void {
@@ -1112,6 +1120,8 @@ class OrdinalAxis {
                 delete xAxis.ordinal.index;
             }
         });
+
+        /* eslint-enable no-invalid-this */
 
     }
 }

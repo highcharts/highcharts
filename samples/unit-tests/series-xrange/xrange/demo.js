@@ -434,3 +434,47 @@ QUnit.test('X-range data labels', function (assert) {
     );
 
 });
+
+QUnit.test('Stacking', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        yAxis: {
+            categories: ["First", "Second"],
+            reversed: true
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        series: [{
+            data: [{
+                x: 0,
+                x2: 5,
+                y: 0
+            }, {
+                x: 5,
+                x2: 10,
+                y: 1
+            }]
+        }, {
+            data: [{
+                x: 5,
+                x2: 10,
+                y: 0
+            }, {
+                x: 0,
+                x2: 5,
+                y: 1
+            }]
+        }]
+    });
+
+    assert.ok(
+        chart.series[0].options.stacking === undefined,
+        'Stacking should be disabled.'
+    );
+
+});

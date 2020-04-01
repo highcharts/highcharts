@@ -62,6 +62,7 @@ declare global {
             public getColumnMetrics(): ColumnMetricsObject;
             public translate(): void;
             public translatePoint(point: XRangePoint): void;
+            public init(): void;
         }
         interface SeriesTypesDictionary {
             xrange: typeof XRangeSeries;
@@ -268,6 +269,17 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
         buildKDTree: H.noop as any,
 
         /* eslint-disable valid-jsdoc */
+
+        /**
+         * @private
+         * @function Highcarts.seriesTypes.xrange#init
+         * @return {void}
+         */
+        init: function (this: Highcharts.XRangeSeries): void {
+            seriesTypes.column.prototype.init.apply(this, arguments as any);
+
+            this.options.stacking = void 0; // #13161
+        },
 
         /**
          * Borrow the column series metrics, but with swapped axes. This gives

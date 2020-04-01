@@ -13,6 +13,7 @@ import type BrokenAxis from '../../modules/broken-axis.src';
 import type DateTimeAxis from '../DateTimeAxis';
 import type HiddenAxis from '../../parts-more/HiddenAxis';
 import type LogarithmicAxis from '../LogarithmicAxis';
+import type MapAxis from '../../parts-map/MapAxis';
 import type NavigatorAxis from '../NavigatorAxis';
 import type OrdinalAxis from '../OrdinalAxis';
 import type ParallelAxis from '../../modules/parallel-coordinates.src';
@@ -36,6 +37,7 @@ export interface AxisComposition {
     dateTime?: DateTimeAxis['dateTime'];
     logarithmic?: LogarithmicAxis['logarithmic'];
     navigatorAxis?: NavigatorAxis['navigatorAxis'];
+    mapAxis?: MapAxis['mapAxis'];
     ordinal?: OrdinalAxis['ordinal'];
     parallel?: ParallelAxis['parallel'];
     scrollbar?: ScrollbarAxis['scrollbar'];
@@ -49,6 +51,7 @@ export type AxisType = (
     BrokenAxis|
     HiddenAxis|
     LogarithmicAxis|
+    MapAxis|
     NavigatorAxis|
     OrdinalAxis|
     ParallelAxis|

@@ -155,11 +155,16 @@ class NavigatorAxis {
      */
     public static compose(AxisClass: typeof Axis): void {
 
+        AxisClass.keepProps.push('navigatorAxis');
+
         /* eslint-disable no-invalid-this */
 
         addEvent(AxisClass, 'init', function (): void {
             const axis = this;
-            axis.navigatorAxis = new NavigatorAxisAdditions(axis as NavigatorAxis);
+
+            if (!axis.navigatorAxis) {
+                axis.navigatorAxis = new NavigatorAxisAdditions(axis as NavigatorAxis);
+            }
         });
 
         // For Stock charts, override selection zooming with some special
