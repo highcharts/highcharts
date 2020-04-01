@@ -40,6 +40,10 @@ declare global {
     }
 }
 
+interface TextAnchorCorrectionObject {
+    x: number;
+    y: number;
+}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -67,31 +71,70 @@ extend(H.SVGElement.prototype, {
             this.removeFocusBorder();
         }
         // Add the border rect
-        var bb = this.getBBox(),
+        const bb = this.getBBox(),
             pad = pick(margin, 3);
 
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
 
         let borderPosX = bb.x - pad,
-            borderPosY = bb.y - pad;
+            borderPosY = bb.y - pad,
+            borderWidth = bb.width + 2 * pad,
+            borderHeight = bb.height + 2 * pad;
 
         // For text elements, apply x and y offset, #11397.
-        const isLegendItem = this.parentGroup && this.parentGroup.hasClass('highcharts-legend-item');
-        if (this.element.nodeName === 'text' && !isLegendItem) {
-            const isRotated = !!this.rotation;
-            borderPosX = +this.attr('x') - (bb.width * 0.5) - pad +
-                // Correct baseline position on Firefox.
-                (isRotated ? bb.width * (H.isFirefox ? 0.25 : 0) : 0);
-            borderPosY = +this.attr('y') - (bb.height * 0.5) - pad +
-                (isRotated ? 0 : -bb.height * (H.isFirefox ? 0.25 : 0));
+        /**
+         * @private
+         * @function
+         *
+         * @param {Highcharts.SVGElement} text
+         *
+         * @return {TextAnchorCorrectionObject}
+         */
+        function getTextCorrection(text: Highcharts.SVGElement): TextAnchorCorrectionObject {
+            let posXCorrection = 0,
+                posYCorrection = 0;
+
+            if (text.attr('text-anchor') === 'middle') {
+                posXCorrection = H.isFirefox && text.rotation ? 0.25 : 0.5;
+                posYCorrection = H.isFirefox && !text.rotation ? 0.75 : 0.5;
+            } else if (!text.rotation) {
+                posYCorrection = 0.75;
+            } else {
+                posXCorrection = 0.25;
+                posYCorrection *= (H.isFirefox ? 2 : 0);
+            }
+
+            return {
+                x: posXCorrection,
+                y: posYCorrection
+            };
+        }
+
+        if (this.element.nodeName === 'text' || this.element.nodeName === 'g') {
+            const isLabel = this.element.nodeName === 'g',
+                isRotated = !!this.rotation,
+                correction = !isLabel ? getTextCorrection(this) :
+                    {
+                        x: isRotated ? 1 : 0,
+                        y: 0
+                    };
+
+            borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
+            borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
+
+            if (isLabel && isRotated) {
+                [borderWidth, borderHeight] = [borderHeight, borderWidth];
+                borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
+                borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
+            }
         }
 
         this.focusBorder = this.renderer.rect(
             borderPosX,
             borderPosY,
-            bb.width + 2 * pad,
-            bb.height + 2 * pad,
+            borderWidth,
+            borderHeight,
             parseInt((style && style.borderRadius || 0).toString(), 10)
         )
             .addClass('highcharts-focus-border')
