@@ -331,6 +331,7 @@ QUnit.test('Focus border', function (assert) {
     const regularText = ren.text('regular text', 50, 50)
         .add();
     regularText.addFocusBorder(2, style);
+
     const wordcloudText = ren.text('wordcloud text', 100, 100)
         .attr({
             "alignment-baseline": "middle",
