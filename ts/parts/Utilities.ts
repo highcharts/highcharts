@@ -50,14 +50,10 @@ declare global {
         interface AnimationOptionsObject {
             complete?: Function;
             curAnim?: Dictionary<boolean>;
-            defer?: number|boolean;
+            defer?: number;
             duration?: number;
             easing?: (string|Function);
             step?: AnimationStepCallbackFunction;
-        }
-        interface AnimationObject extends AnimationOptionsObject {
-            defer: number;
-            duration: number;
         }
         interface AnimationStepCallbackFunction {
             (this: SVGElement, ...args: Array<any>): void;
@@ -212,7 +208,7 @@ declare global {
         ): void;
         function format(str: string, ctx: any, chart?: Chart): string;
         function formatSingle(format: string, val: any, chart?: Chart): string;
-        function getDeferTime(chart: Chart, defer: boolean | number): number;
+        function getDeferTime(chart: Chart): number;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -2372,14 +2368,14 @@ const setAnimation = H.setAnimation = function setAnimation(
  *         An object with at least a duration property.
  */
 const animObject = H.animObject = function animObject(
-    animation?: (boolean|Highcharts.AnimationOptionsObject)
-): Highcharts.AnimationObject {
+    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
+): Partial<Highcharts.AnimationOptionsObject> {
     return isObject(animation) ?
         H.merge(
             { duration: 500, defer: 0 },
             animation as Highcharts.AnimationOptionsObject
         ) as any :
-        { duration: animation as boolean ? 500 : 0, defer: 0 };
+        { duration: animation as boolean ? 500 : 0, defer: animation ? 0 : animation };
 };
 
 /**
@@ -2655,52 +2651,30 @@ const getStyle = H.getStyle = function (
 };
 
 /**
- * Get the defer as a number value from options set in the annotations or
- * in the stackLabels object. If not defined inherit from the plotOptions.series
+ * Get the defer as a number value from series animation options.
  *
  * @function Highcharts.getDeferTime
  *
  * @param {Highcharts.Chart} chart
  *        The chart instance.
  *
- * @param {number | boolean} defer
- *        Defer defined in the stackLabels/annotations options
- *
  * @return {number}
- *         The numeric value.
+ *        The numeric value.
  */
-const getDeferTime = H.getDeferTime = function (
-    chart: Highcharts.Chart,
-    defer: boolean | number
-): number {
-    var plotOptions = chart.options.plotOptions as any,
-        deferTime;
-    if (
-        defer === false || chart.renderer.forExport ||
-        (plotOptions.series && plotOptions.series.animation === false)
-    ) {
-        // If defer or animation is disabled deferTime is set to 0
-        // (invoke immediately)
-        deferTime = 0;
-    } else if (isNumber(defer)) {
-        // If defer is a number - animate defer will be set to this value
-        deferTime = defer;
-    } else if (plotOptions.series && defined(plotOptions.series.animation)) {
-        if (plotOptions.series.animation.defer && plotOptions.series.animation.duration) {
-            //  If defer and duration are set, the animation will be
-            // triggered after their sum value
-            deferTime = plotOptions.series.animation.defer + plotOptions.series.animation.duration;
-        } else {
-            deferTime = plotOptions.series.animation.defer ? plotOptions.series.animation.defer :
-                plotOptions.series.animation.duration;
+const getDeferTime = H.getDeferTime = function (chart): number {
+
+    const seriesDelay = chart.series.map(function (series): number {
+        var seriesAnim = series.options.animation as any,
+            seriesDuration = seriesAnim.duration;
+
+        if (seriesAnim) {
+            return seriesAnim.defer ? seriesDuration + seriesAnim.defer : seriesDuration;
         }
-    } else {
-        deferTime = plotOptions.line.animation.duration;
-    }
-
-    return deferTime;
+        // If seriesAnim doesn't exist - return 0;
+        return 0;
+    });
+    return Math.max(...seriesDelay);
 };
-
 
 /**
  * Search for an item in an array.

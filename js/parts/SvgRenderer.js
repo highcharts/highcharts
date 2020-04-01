@@ -473,7 +473,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {
             animOptions.duration = 0;
         }
-        if (animOptions.duration !== 0) {
+        if (animOptions.duration !== 0 && defined(deferTime)) {
             // allows using a callback with the global animation without
             // overwriting it
             if (complete) {

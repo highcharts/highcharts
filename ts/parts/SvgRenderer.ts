@@ -960,7 +960,7 @@ extend((
     animate: function (
         this: Highcharts.SVGElement,
         params: Highcharts.SVGAttributes,
-        options?: (boolean|Highcharts.AnimationOptionsObject),
+        options?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
         complete?: Function
     ): Highcharts.SVGElement {
         var animOptions = animObject(
@@ -975,7 +975,7 @@ extend((
             animOptions.duration = 0;
         }
 
-        if (animOptions.duration !== 0) {
+        if (animOptions.duration !== 0 && defined(deferTime)) {
             // allows using a callback with the global animation without
             // overwriting it
             if (complete) {

@@ -8,6 +8,26 @@
  *
  * */
 'use strict';
+var __read = (this && this.__read) || function (o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+};
+var __spread = (this && this.__spread) || function () {
+    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
+    return ar;
+};
 import H from './Globals.js';
 /**
  * An animation configuration. Animation configurations can also be defined as
@@ -1639,7 +1659,7 @@ var setAnimation = H.setAnimation = function setAnimation(animation, chart) {
 var animObject = H.animObject = function animObject(animation) {
     return isObject(animation) ?
         H.merge({ duration: 500, defer: 0 }, animation) :
-        { duration: animation ? 500 : 0, defer: 0 };
+        { duration: animation ? 500 : 0, defer: animation ? 0 : animation };
 };
 /**
  * The time unit lookup
@@ -1856,47 +1876,26 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
     return style;
 };
 /**
- * Get the defer as a number value from options set in the annotations or
- * in the stackLabels object. If not defined inherit from the plotOptions.series
+ * Get the defer as a number value from series animation options.
  *
  * @function Highcharts.getDeferTime
  *
  * @param {Highcharts.Chart} chart
  *        The chart instance.
  *
- * @param {number | boolean} defer
- *        Defer defined in the stackLabels/annotations options
- *
  * @return {number}
- *         The numeric value.
+ *        The numeric value.
  */
-var getDeferTime = H.getDeferTime = function (chart, defer) {
-    var plotOptions = chart.options.plotOptions, deferTime;
-    if (defer === false || chart.renderer.forExport ||
-        (plotOptions.series && plotOptions.series.animation === false)) {
-        // If defer or animation is disabled deferTime is set to 0
-        // (invoke immediately)
-        deferTime = 0;
-    }
-    else if (isNumber(defer)) {
-        // If defer is a number - animate defer will be set to this value
-        deferTime = defer;
-    }
-    else if (plotOptions.series && defined(plotOptions.series.animation)) {
-        if (plotOptions.series.animation.defer && plotOptions.series.animation.duration) {
-            //  If defer and duration are set, the animation will be
-            // triggered after their sum value
-            deferTime = plotOptions.series.animation.defer + plotOptions.series.animation.duration;
+var getDeferTime = H.getDeferTime = function (chart) {
+    var seriesDelay = chart.series.map(function (series) {
+        var seriesAnim = series.options.animation, seriesDuration = seriesAnim.duration;
+        if (seriesAnim) {
+            return seriesAnim.defer ? seriesDuration + seriesAnim.defer : seriesDuration;
         }
-        else {
-            deferTime = plotOptions.series.animation.defer ? plotOptions.series.animation.defer :
-                plotOptions.series.animation.duration;
-        }
-    }
-    else {
-        deferTime = plotOptions.line.animation.duration;
-    }
-    return deferTime;
+        // If seriesAnim doesn't exist - return 0;
+        return 0;
+    });
+    return Math.max.apply(Math, __spread(seriesDelay));
 };
 /**
  * Search for an item in an array.
