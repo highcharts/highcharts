@@ -95,7 +95,10 @@ declare global {
             public setLabelCollector(): void;
             public setOptions(userOptions: AnnotationsOptions): void;
             public setVisibility(visible?: boolean): void;
-            public update(userOptions: DeepPartial<AnnotationsOptions>): void;
+            public update(
+                userOptions: DeepPartial<AnnotationsOptions>,
+                redraw?: boolean
+            ): void;
         }
         interface AnnotationChart extends Chart {
             annotations: Array<Annotation>;
@@ -1051,7 +1054,6 @@ merge(
             this.addControlPoints();
             this.addShapes();
             this.addLabels();
-            this.addClipPaths();
             this.setLabelCollector();
         },
 
@@ -1141,13 +1143,15 @@ merge(
             this.clipYAxis = linkedAxes[1];
         },
 
-        getClipBox: function (this: Highcharts.Annotation): Highcharts.BBoxObject {
-            return {
-                x: (this.clipXAxis as any).left || 0,
-                y: (this.clipYAxis as any).top || 0,
-                width: (this.clipXAxis as any).width || 0,
-                height: (this.clipYAxis as any).height || 0
-            };
+        getClipBox: function (this: Highcharts.Annotation): (Highcharts.BBoxObject|void) {
+            if (this.clipXAxis && this.clipYAxis) {
+                return {
+                    x: this.clipXAxis.left,
+                    y: this.clipYAxis.top,
+                    width: this.clipXAxis.width,
+                    height: this.clipYAxis.height
+                };
+            }
         },
 
         setLabelCollector: function (this: Highcharts.Annotation): void {
@@ -1248,6 +1252,8 @@ merge(
                 })
                 .add(this.graphic);
 
+            this.addClipPaths();
+
             if (this.clipRect) {
                 this.graphic.clip(this.clipRect);
             }
@@ -1344,7 +1350,11 @@ merge(
          *
          * @return {void}
          */
-        update: function (this: Highcharts.Annotation, userOptions: Partial<Highcharts.AnnotationsOptions>): void {
+        update: function (
+            this: Highcharts.Annotation,
+            userOptions: Partial<Highcharts.AnnotationsOptions>,
+            redraw? : boolean
+        ): void {
             var chart = this.chart,
                 labelsAndShapes = this.getLabelsAndShapesOptions(
                     this.userOptions,
@@ -1363,9 +1373,12 @@ merge(
             chart.options.annotations[userOptionsIndex] = options;
 
             this.isUpdating = true;
-            this.redraw();
-            this.isUpdating = false;
+            if (pick(redraw, true)) {
+                chart.redraw();
+            }
+
             fireEvent(this, 'afterUpdate');
+            this.isUpdating = false;
         },
 
         /* *************************************************************
