@@ -10,22 +10,6 @@
  *
  * */
 'use strict';
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, pick = U.pick;
@@ -44,7 +28,6 @@ extend(H.SVGElement.prototype, {
      * @param {Highcharts.CSSObject} style
      */
     addFocusBorder: function (margin, style) {
-        var _a;
         // Allow updating by just adding new border
         if (this.focusBorder) {
             this.removeFocusBorder();
@@ -63,7 +46,7 @@ extend(H.SVGElement.prototype, {
          *
          * @return {TextAnchorCorrectionObject}
          */
-        function getTextCorrection(text) {
+        function getTextAnchorCorrection(text) {
             var posXCorrection = 0, posYCorrection = 0;
             if (text.attr('text-anchor') === 'middle') {
                 posXCorrection = H.isFirefox && text.rotation ? 0.25 : 0.5;
@@ -82,7 +65,7 @@ extend(H.SVGElement.prototype, {
             };
         }
         if (this.element.nodeName === 'text' || this.element.nodeName === 'g') {
-            var isLabel = this.element.nodeName === 'g', isRotated = !!this.rotation, correction = !isLabel ? getTextCorrection(this) :
+            var isLabel = this.element.nodeName === 'g', isRotated = !!this.rotation, correction = !isLabel ? getTextAnchorCorrection(this) :
                 {
                     x: isRotated ? 1 : 0,
                     y: 0
@@ -90,7 +73,9 @@ extend(H.SVGElement.prototype, {
             borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
             borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
             if (isLabel && isRotated) {
-                _a = __read([borderHeight, borderWidth], 2), borderWidth = _a[0], borderHeight = _a[1];
+                var temp = borderWidth;
+                borderWidth = borderHeight;
+                borderHeight = temp;
                 borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
                 borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
             }

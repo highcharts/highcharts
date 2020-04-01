@@ -91,7 +91,7 @@ extend(H.SVGElement.prototype, {
          *
          * @return {TextAnchorCorrectionObject}
          */
-        function getTextCorrection(text: Highcharts.SVGElement): TextAnchorCorrectionObject {
+        function getTextAnchorCorrection(text: Highcharts.SVGElement): TextAnchorCorrectionObject {
             let posXCorrection = 0,
                 posYCorrection = 0;
 
@@ -114,7 +114,7 @@ extend(H.SVGElement.prototype, {
         if (this.element.nodeName === 'text' || this.element.nodeName === 'g') {
             const isLabel = this.element.nodeName === 'g',
                 isRotated = !!this.rotation,
-                correction = !isLabel ? getTextCorrection(this) :
+                correction = !isLabel ? getTextAnchorCorrection(this) :
                     {
                         x: isRotated ? 1 : 0,
                         y: 0
@@ -124,7 +124,9 @@ extend(H.SVGElement.prototype, {
             borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
 
             if (isLabel && isRotated) {
-                [borderWidth, borderHeight] = [borderHeight, borderWidth];
+                const temp = borderWidth;
+                borderWidth = borderHeight;
+                borderHeight = temp;
                 borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
                 borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
             }
