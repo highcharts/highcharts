@@ -2152,20 +2152,36 @@ var Axis = /** @class */ (function () {
      * The pixel width allocated to each axis label.
      */
     Axis.prototype.getSlotWidth = function (tick) {
+        var _a;
         // #5086, #1580, #1931
         var chart = this.chart, horiz = this.horiz, labelOptions = this.options.labels, slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1), marginLeft = chart.margin[3];
-        return (tick &&
-            tick.slotWidth // Used by grid axis
-        ) || (horiz &&
-            (labelOptions.step || 0) < 2 &&
-            !labelOptions.rotation && // #4415
-            ((this.staggerLines || 1) * this.len) / slotCount) || (!horiz && (
-        // #7028
-        (labelOptions.style &&
-            parseInt(labelOptions.style.width, 10)) ||
-            (marginLeft &&
-                (marginLeft - chart.spacing[3])) ||
-            chart.chartWidth * 0.33));
+        // Used by grid axis
+        if (tick && isNumber(tick.slotWidth)) { // #13221, can be 0
+            return tick.slotWidth;
+        }
+        if (horiz &&
+            labelOptions &&
+            (labelOptions.step || 0) < 2) {
+            if (labelOptions.rotation) { // #4415
+                return 0;
+            }
+            return ((this.staggerLines || 1) * this.len) / slotCount;
+        }
+        if (!horiz) {
+            // #7028
+            var cssWidth = (_a = labelOptions === null || labelOptions === void 0 ? void 0 : labelOptions.style) === null || _a === void 0 ? void 0 : _a.width;
+            if (isString(cssWidth)) {
+                return parseInt(cssWidth, 10);
+            }
+            if (isNumber(cssWidth)) {
+                return cssWidth;
+            }
+            if (marginLeft) {
+                return marginLeft - chart.spacing[3];
+            }
+        }
+        // Last resort, a fraction of the available size
+        return chart.chartWidth * 0.33;
     };
     /**
      * Render the axis labels and determine whether ellipsis or rotation need to
@@ -2355,7 +2371,7 @@ var Axis = /** @class */ (function () {
             !axisTitleOptions.style.width &&
             !axis.isRadial) {
             axis.axisTitle.css({
-                width: axis.len
+                width: axis.len + 'px'
             });
         }
         // hide or show the title depending on whether showEmpty is set

@@ -1620,3 +1620,35 @@ QUnit.test(
 
     }
 );
+
+QUnit.test('Zero-width slot', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data: [{
+                start: 1580688000000,
+                end: 1583107200000,
+                y: 1
+            }]
+        }],
+        xAxis: [{
+            min: 1582934399999 - 24 * 36e5,
+            max: 1582934399999
+        },
+        {}
+        ]
+    });
+
+    const labels = chart.xAxis[1].tickPositions.map(
+        pos => chart.xAxis[1].ticks[pos].label
+    );
+
+    assert.ok(
+        // As of implementation, the textStr is ''. But it may be refactored to
+        // disable the legend in general, without that being an error.
+        !labels[0] || !labels[0].textStr,
+        'The first label has a 0px slot and should not render (#13221)'
+    );
+});
