@@ -33,7 +33,7 @@ declare global {
                 normalizedInterval: DateTimeAxisNormalizedObject,
                 min: number,
                 max: number,
-                startOfWeek: number,
+                startOfWeek?: number,
                 positions?: Array<number>,
                 closestDistance?: number,
                 findHigherRanks?: boolean
@@ -580,7 +580,7 @@ class OrdinalAxis {
             normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
             min: number,
             max: number,
-            startOfWeek: number,
+            startOfWeek?: number,
             positions: Array<number> = [],
             closestDistance: number = 0,
             findHigherRanks?: boolean

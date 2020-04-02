@@ -11,6 +11,7 @@
 import type Axis from '../Axis';
 import type BrokenAxis from '../../modules/broken-axis.src';
 import type DateTimeAxis from '../DateTimeAxis';
+import type GridAxis from '../../parts-gantt/GridAxis';
 import type HiddenAxis from '../../parts-more/HiddenAxis';
 import type LogarithmicAxis from '../LogarithmicAxis';
 import type MapAxis from '../../parts-map/MapAxis';
@@ -34,6 +35,7 @@ export interface AxisBreakObject {
 export interface AxisComposition {
     brokenAxis?: BrokenAxis['brokenAxis'];
     dateTime?: DateTimeAxis['dateTime'];
+    grid?: GridAxis['grid'];
     logarithmic?: LogarithmicAxis['logarithmic'];
     navigatorAxis?: NavigatorAxis['navigatorAxis'];
     mapAxis?: MapAxis['mapAxis'];
@@ -47,6 +49,7 @@ export interface AxisComposition {
 export type AxisType = (
     Axis|
     BrokenAxis|
+    GridAxis|
     HiddenAxis|
     LogarithmicAxis|
     MapAxis|
