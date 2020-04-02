@@ -168,13 +168,6 @@ declare global {
             pointInBreak?: AxisPointBreakEventCallbackFunction;
             setExtremes?: AxisSetExtremesEventCallbackFunction;
         }
-        interface XAxisGridOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            cellHeight?: number;
-            columns?: Array<XAxisOptions>;
-            enabled?: boolean;
-        }
         interface XAxisLabelsOptions {
             align?: AlignValue;
             autoRotation?: (false|Array<number>);
@@ -215,7 +208,6 @@ declare global {
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
-            grid?: XAxisGridOptions;
             gridLineColor?: (ColorString|GradientColorObject|PatternObject);
             gridLineDashStyle?: DashStyleValue;
             gridLineWidth?: number;
@@ -425,7 +417,7 @@ declare global {
             public userMax?: number;
             public userMin?: number;
             public userMinRange?: number;
-            public userOptions: AxisOptions;
+            public userOptions: DeepPartial<AxisOptions>;
             public visible: boolean;
             public width: number;
             public zoomEnabled: boolean;
@@ -480,7 +472,7 @@ declare global {
                 animation?: (boolean|AnimationOptionsObject),
                 eventArguments?: any
             ): void;
-            public setOptions(userOptions: AxisOptions): void;
+            public setOptions(userOptions: DeepPartial<AxisOptions>): void;
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
@@ -3794,7 +3786,7 @@ class Axis implements AxisComposition {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart, userOptions: Highcharts.AxisOptions) {
+    public constructor(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
         this.init(chart, userOptions);
     }
 
@@ -3932,7 +3924,7 @@ class Axis implements AxisComposition {
      * @fires Highcharts.Axis#event:afterInit
      * @fires Highcharts.Axis#event:init
      */
-    public init(chart: Highcharts.Chart, userOptions: Highcharts.AxisOptions): void {
+    public init(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
         var isXAxis = userOptions.isX,
             axis: Highcharts.Axis = this as any;
@@ -6979,8 +6971,8 @@ class Axis implements AxisComposition {
 
         axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
-        if (axis.getMaxLabelDimensions) {
-            axis.maxLabelDimensions = axis.getMaxLabelDimensions(
+        if (axis.grid) {
+            axis.maxLabelDimensions = axis.grid.getMaxLabelDimensions(
                 ticks,
                 tickPositions
             );

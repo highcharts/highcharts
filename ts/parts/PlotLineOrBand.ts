@@ -1313,15 +1313,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             userOptions.plotLines || [],
             options.plotBands || [],
             userOptions.plotBands || []
-        ]).forEach(function (
-            arr: Array<(
-                Highcharts.AxisPlotBandsOptions|
-                Highcharts.AxisPlotLinesOptions
-            )>
-        ): void {
+        ]).forEach(function (arr): void {
             i = arr.length;
             while (i--) {
-                if (arr[i].id === id) {
+                if ((arr[i] || {}).id === id) {
                     erase(arr, arr[i]);
                 }
             }
