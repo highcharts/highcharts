@@ -57,7 +57,6 @@ extend(H.SVGElement.prototype, {
             }
             else {
                 posXCorrection = 0.25;
-                posYCorrection *= (H.isFirefox ? 2 : 0);
             }
             return {
                 x: posXCorrection,
