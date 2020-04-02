@@ -868,11 +868,11 @@ class Legend {
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !(itemStyle as any).width) {
             li.css({
-                width: (
+                width: ((
                     options.itemWidth ||
                     legend.widthOption ||
                     (chart.spacingBox as any).width
-                ) - itemExtraWidth
+                ) - itemExtraWidth) + 'px'
             });
         }
 

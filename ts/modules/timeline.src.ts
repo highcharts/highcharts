@@ -503,7 +503,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                         (distance - pad) * 2 - ((point.itemHeight as any) / 2)
                     );
                     styles = {
-                        width: targetDLWidth,
+                        width: targetDLWidth + 'px',
                         // Apply ellipsis when data label height is exceeded.
                         textOverflow: dataLabel.width / targetDLWidth *
                             dataLabel.height / 2 > availableSpace * multiplier ?
@@ -511,9 +511,11 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     };
                 } else {
                     styles = {
-                        width: userDLOptions.width ||
+                        width: (
+                            userDLOptions.width ||
                             dataLabelsOptions.width ||
                             availableSpace * multiplier - (pad * 2)
+                        ) + 'px'
                     };
                 }
                 dataLabel.css(styles);

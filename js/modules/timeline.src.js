@@ -297,7 +297,7 @@ seriesType('timeline', 'line',
             if (isInverted) {
                 targetDLWidth = ((distance - pad) * 2 - (point.itemHeight / 2));
                 styles = {
-                    width: targetDLWidth,
+                    width: targetDLWidth + 'px',
                     // Apply ellipsis when data label height is exceeded.
                     textOverflow: dataLabel.width / targetDLWidth *
                         dataLabel.height / 2 > availableSpace * multiplier ?
@@ -306,9 +306,9 @@ seriesType('timeline', 'line',
             }
             else {
                 styles = {
-                    width: userDLOptions.width ||
+                    width: (userDLOptions.width ||
                         dataLabelsOptions.width ||
-                        availableSpace * multiplier - (pad * 2)
+                        availableSpace * multiplier - (pad * 2)) + 'px'
                 };
             }
             dataLabel.css(styles);

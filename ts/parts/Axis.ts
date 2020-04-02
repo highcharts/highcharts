@@ -6494,11 +6494,8 @@ class Axis implements AxisComposition {
         if (!horiz) {
             // #7028
             const cssWidth = labelOptions?.style?.width;
-            if (isString(cssWidth)) {
+            if (cssWidth !== void 0) {
                 return parseInt(cssWidth, 10);
-            }
-            if (isNumber(cssWidth)) {
-                return cssWidth;
             }
 
             if (marginLeft) {
@@ -6670,7 +6667,7 @@ class Axis implements AxisComposition {
                         label.element.tagName === 'SPAN'
                     )
                 ) {
-                    css.width = commonWidth;
+                    css.width = commonWidth + 'px';
                     if (!textOverflowOption) {
                         css.textOverflow = (
                             label.specificTextOverflow ||

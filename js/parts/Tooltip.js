@@ -892,7 +892,7 @@ var Tooltip = /** @class */ (function () {
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!options.style.width || styledMode) {
                     label.css({
-                        width: this.chart.spacingBox.width
+                        width: this.chart.spacingBox.width + 'px'
                     });
                 }
                 label.attr({

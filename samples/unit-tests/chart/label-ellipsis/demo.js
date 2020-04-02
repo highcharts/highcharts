@@ -31,8 +31,8 @@ QUnit.test('Squished text with Chart.addSeries (#5086)', function (assert) {
 
     assert.strictEqual(
         typeof chart2.xAxis[0].ticks['0'].label.styles.width,
-        'number',
-        'Width is set'
+        'string',
+        'Label CSS width should be set'
     );
     assert.strictEqual(
         chart2.xAxis[0].ticks['0'].label.styles.width,
