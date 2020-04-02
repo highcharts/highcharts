@@ -179,6 +179,7 @@ declare global {
             mass?: number;
         }
         interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
+            allowParentSelect?: boolean;
             dataLabels?: PackedBubbleDataLabelsOptionsObject;
             draggable?: boolean;
             layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
@@ -1120,6 +1121,13 @@ seriesType<Highcharts.PackedBubbleSeries>(
                         .add(series.parentNodesGroup);
             }
             (series.parentNode as any).graphic.attr(parentAttribs);
+
+            if (series.options.allowParentSelect) {
+              series.parentNode?.graphic?.on('click', (event: any): void => {
+                  series?.parentNode?.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+              });
+            }
+
         },
         /**
          * Creating parent nodes for split series, in which all the bubbles
