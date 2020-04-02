@@ -52,7 +52,7 @@ declare global {
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
-            select(selected?: boolean, accumulate?: boolean): void;
+            select(selected?: boolean | null, accumulate?: boolean): void;
             setState(
                 state?: string,
                 move?: boolean
