@@ -782,7 +782,7 @@ class Tick {
             if (tick.shortenLabel) {
                 tick.shortenLabel();
             } else {
-                css.width = Math.floor(textWidth);
+                css.width = Math.floor(textWidth) + 'px';
                 if (!((labelOptions as any).style || {}).textOverflow) {
                     css.textOverflow = 'ellipsis';
                 }

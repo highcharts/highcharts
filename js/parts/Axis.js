@@ -2170,11 +2170,8 @@ var Axis = /** @class */ (function () {
         if (!horiz) {
             // #7028
             var cssWidth = (_a = labelOptions === null || labelOptions === void 0 ? void 0 : labelOptions.style) === null || _a === void 0 ? void 0 : _a.width;
-            if (isString(cssWidth)) {
+            if (cssWidth !== void 0) {
                 return parseInt(cssWidth, 10);
-            }
-            if (isNumber(cssWidth)) {
-                return cssWidth;
             }
             if (marginLeft) {
                 return marginLeft - chart.spacing[3];
@@ -2290,7 +2287,7 @@ var Axis = /** @class */ (function () {
                     commonWidth < label.textPxLength ||
                         // Resetting CSS, #4928
                         label.element.tagName === 'SPAN')) {
-                    css.width = commonWidth;
+                    css.width = commonWidth + 'px';
                     if (!textOverflowOption) {
                         css.textOverflow = (label.specificTextOverflow ||
                             commonTextOverflow);
