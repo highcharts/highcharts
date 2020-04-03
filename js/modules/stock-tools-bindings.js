@@ -1555,6 +1555,7 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
+            this.chart.fullscreen.toggle();
             fireEvent(this, 'deselectButton', { button: button });
         }
     },
