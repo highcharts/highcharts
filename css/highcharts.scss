@@ -823,3 +823,13 @@ text.highcharts-drilldown-data-label,
 .highcharts-grid-axis .highcharts-axis-line {
     stroke-width: 1px;
 }
+
+/* NetworkGraph and Packed Bubble */
+.highcharts-simulation-dataLabels-fadeout {
+    opacity: 0;
+    transition: opacity 250ms
+}
+.highcharts-simulation-dataLabels {
+    opacity: 1;
+    transition: opacity 250ms
+}

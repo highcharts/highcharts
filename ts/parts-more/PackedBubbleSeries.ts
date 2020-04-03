@@ -79,6 +79,7 @@ declare global {
             public drawDataLabels(): void;
             public drawGraph(): void;
             public getPointRadius(): void;
+            public hideOverlappingLabels: LayoutAnimationMixin['hideOverlappingLabels'];
             public init(): PackedBubbleSeries;
             public onMouseUp(point: DragNodesPoint): void;
             public placeBubbles(
@@ -261,12 +262,15 @@ import '../parts/Axis.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
+import '../modules/networkgraph/node-animation.js';
+
 
 var Series = H.Series,
     Chart = H.Chart,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
-    dragNodesMixin = H.dragNodesMixin;
+    dragNodesMixin = H.dragNodesMixin,
+    layoutAnimationMixin = H.layoutAnimationMixin;
 
 
 (H.networkgraphIntegrations as any).packedbubble = {
@@ -931,10 +935,11 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 // use simulation. Spiral packedbubble don't need
                 // additional dataLabel hiding on every simulation step
                 if (series.options.useSimulation) {
-                    series.chart.hideOverlappingLabels(dataLabels);
+                    series.hideOverlappingLabels(dataLabels);
                 }
             }
         },
+        hideOverlappingLabels: layoutAnimationMixin.hideOverlappingLabels,
         // Needed because of z-indexing issue if point is added in series.group
         setVisible: function (this: Highcharts.PackedBubbleSeries): void {
             var series = this;

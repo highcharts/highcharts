@@ -54,7 +54,8 @@ import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
-var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
+import './node-animation.js';
+var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin, layoutAnimationMixin = H.layoutAnimationMixin;
 /**
  * @private
  * @class
@@ -537,6 +538,7 @@ seriesType('networkgraph', 'line',
         attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
         return attribs;
     },
+    hideOverlappingLabels: layoutAnimationMixin.hideOverlappingLabels,
     /**
      * Run pre-translation and register nodes&links to the deffered layout.
      * @private
@@ -600,28 +602,28 @@ seriesType('networkgraph', 'line',
      * @private
      */
     render: function () {
-        var points = this.points, hoverPoint = this.chart.hoverPoint, dataLabels = [];
+        var series = this, points = series.points, hoverPoint = series.chart.hoverPoint, dataLabels = [];
         // Render markers:
-        this.points = this.nodes;
+        series.points = series.nodes;
         seriesTypes.line.prototype.render.call(this);
-        this.points = points;
+        series.points = points;
         points.forEach(function (point) {
             if (point.fromNode && point.toNode) {
                 point.renderLink();
                 point.redrawLink();
             }
         });
-        if (hoverPoint && hoverPoint.series === this) {
-            this.redrawHalo(hoverPoint);
+        if (hoverPoint && hoverPoint.series === series) {
+            series.redrawHalo(hoverPoint);
         }
-        if (this.chart.hasRendered &&
-            !this.options.dataLabels.allowOverlap) {
-            this.nodes.concat(this.points).forEach(function (node) {
+        if (series.chart.hasRendered &&
+            !series.options.dataLabels.allowOverlap) {
+            series.nodes.concat(series.points).forEach(function (node) {
                 if (node.dataLabel) {
                     dataLabels.push(node.dataLabel);
                 }
             });
-            this.chart.hideOverlappingLabels(dataLabels);
+            series.hideOverlappingLabels(dataLabels);
         }
     },
     // Networkgraph has two separate collecions of nodes and lines, render

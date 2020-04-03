@@ -176,6 +176,7 @@ declare global {
                 state?: string
             ): SVGAttributes;
             public render(): void;
+            public hideOverlappingLabels: LayoutAnimationMixin['hideOverlappingLabels'];
             public setState(state: string, inherit?: boolean): void;
             public translate(): void;
         }
@@ -235,11 +236,13 @@ import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
+import './node-animation.js';
 
 
 var seriesTypes = H.seriesTypes,
     Series = H.Series,
-    dragNodesMixin = H.dragNodesMixin;
+    dragNodesMixin = H.dragNodesMixin,
+    layoutAnimationMixin = H.layoutAnimationMixin;
 
 /**
  * @private
@@ -804,6 +807,8 @@ seriesType<Highcharts.NetworkgraphSeries>(
             return attribs;
         },
 
+        hideOverlappingLabels: layoutAnimationMixin.hideOverlappingLabels,
+
         /**
          * Run pre-translation and register nodes&links to the deffered layout.
          * @private
@@ -893,14 +898,15 @@ seriesType<Highcharts.NetworkgraphSeries>(
          * @private
          */
         render: function (this: Highcharts.NetworkgraphSeries): void {
-            var points = this.points,
-                hoverPoint = this.chart.hoverPoint,
+            var series = this,
+                points = series.points,
+                hoverPoint = series.chart.hoverPoint,
                 dataLabels = [] as Array<Highcharts.SVGElement>;
 
             // Render markers:
-            this.points = this.nodes;
+            series.points = series.nodes;
             seriesTypes.line.prototype.render.call(this);
-            this.points = points;
+            series.points = points;
 
             points.forEach(function (
                 point: Highcharts.NetworkgraphPoint
@@ -911,14 +917,14 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 }
             });
 
-            if (hoverPoint && hoverPoint.series === this) {
-                this.redrawHalo(hoverPoint as Highcharts.NetworkgraphPoint);
+            if (hoverPoint && hoverPoint.series === series) {
+                series.redrawHalo(hoverPoint as Highcharts.NetworkgraphPoint);
             }
 
-            if (this.chart.hasRendered &&
-                !(this.options.dataLabels as any).allowOverlap
+            if (series.chart.hasRendered &&
+                !(series.options.dataLabels as any).allowOverlap
             ) {
-                this.nodes.concat(this.points).forEach(function (
+                series.nodes.concat(series.points).forEach(function (
                     node: Highcharts.NetworkgraphPoint
                 ): void {
                     if (node.dataLabel) {
@@ -926,7 +932,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                     }
                 });
 
-                this.chart.hideOverlappingLabels(dataLabels);
+                series.hideOverlappingLabels(dataLabels);
             }
         },
 
