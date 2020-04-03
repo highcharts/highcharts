@@ -1597,3 +1597,62 @@ QUnit.test('Solidgauge two data labels auto alignment (#10635)', function (asser
         'Labels are aligned correctly.'
     );
 });
+
+// Highcharts 8.0.4, Issue #12894
+QUnit.test('Overlapping of xAxis labels in polar chart (#12894)', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                polar: true
+            },
+            xAxis: {
+                tickmarkPlacement: 'on',
+                categories: [
+                    'CATEGORY11',
+                    'CATEGORY2',
+                    'CATEGORY 333333 33333',
+                    'CATEGORY4',
+                    'CATEGORY5',
+                    'CATEGORY6',
+                    'CATEGORY7777',
+                    'CATEGORY888888888',
+                    'CATEGORY9',
+                    'CATEGORY10',
+                    'CATEGORY11',
+                    'CATEGORY12'
+                ]
+            },
+            series: [{
+                pointPlacement: 'on',
+                data: (numberOfPoints => {
+                    var data = [];
+                    while (numberOfPoints) {
+                        data.push(100);
+                        numberOfPoints--;
+                    }
+                    return data;
+                })(12)
+            }]
+        }),
+        ticks = chart.xAxis[0].ticks,
+        secondLabel = ticks[1].label,
+        thirdLabel = ticks[2].label,
+        seventhLabel = ticks[6].label;
+
+    assert.strictEqual(
+        secondLabel.newOpacity,
+        1,
+        'The second category is visible'
+    );
+
+    assert.strictEqual(
+        secondLabel.newOpacity,
+        secondLabel.oldOpacity,
+        'The visiblility of the second category has not changed'
+    );
+
+    assert.strictEqual(
+        thirdLabel.newOpacity === 0,
+        seventhLabel.newOpacity === 0,
+        'The third and seventh categories are both hidden'
+    );
+});
