@@ -13,6 +13,9 @@
 
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+const {
+    dateFormat
+} = H;
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
@@ -34,6 +37,12 @@ const {
  */
 declare global {
     namespace Highcharts {
+        interface Axis {
+            getMaxLabelDimensions(
+                ticks: Dictionary<Tick>,
+                tickPositions: Array<(number|string)>
+            ): SizeObject;
+        }
         interface AxisLabelsFormatterContextObject {
             point?: Point;
         }
@@ -47,15 +56,27 @@ declare global {
     }
 }
 
-var argsToArray = function (args: IArguments): Array<any> {
-        return Array.prototype.slice.call(args, 1);
-    },
-    dateFormat = H.dateFormat,
-    isObject = function (x: unknown): x is object {
-        // Always use strict mode
-        return U.isObject(x, true);
-    },
-    Chart = H.Chart;
+import '../parts/Chart.js';
+const Chart = H.Chart;
+
+/* eslint-disable valid-jsdoc */
+
+/**
+ * @private
+ */
+function argsToArray(args: IArguments): Array<any> {
+    return Array.prototype.slice.call(args, 1);
+}
+
+/**
+ * @private
+ */
+function isObject(x: unknown): x is object {
+    // Always use strict mode
+    return U.isObject(x, true);
+}
+
+/* eslint-enable valid-jsdoc */
 
 var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
     var options = axis.options;
@@ -198,11 +219,9 @@ addEvent(
             reversed = axis.reversed,
             chart = axis.chart,
             options = axis.options,
-            gridOptions: GridAxis.Options = (
-                (options && isObject(options.grid)) ? (options.grid as any) : {}
-            ),
+            gridOptions = options.grid || {},
             labelOpts = axis.options.labels,
-            align = (labelOpts as any).align,
+            align = labelOpts && labelOpts.align,
             // verticalAlign is currently not supported for axis.labels.
             verticalAlign = 'middle', // labelOpts.verticalAlign,
             side = GridAxis.Side[axis.side],
@@ -349,58 +368,6 @@ class GridAxisAdditions {
      * */
 
     /**
-     * Get the largest label width and height.
-     *
-     * @private
-     * @function Highcharts.Axis#getMaxLabelDimensions
-     *
-     * @param {Highcharts.Dictionary<Highcharts.Tick>} ticks
-     *        All the ticks on one axis.
-     *
-     * @param {Array<number|string>} tickPositions
-     *        All the tick positions on one axis.
-     *
-     * @return {Highcharts.SizeObject}
-     *         object containing the properties height and width.
-     */
-    public getMaxLabelDimensions(
-        ticks: Highcharts.Dictionary<Highcharts.Tick>,
-        tickPositions: Array<(number|string)>
-    ): Highcharts.SizeObject {
-        var dimensions: Highcharts.SizeObject = {
-            width: 0,
-            height: 0
-        };
-
-        tickPositions.forEach(function (pos: (number|string)): void {
-            var tick = ticks[pos],
-                tickHeight = 0,
-                tickWidth = 0,
-                label: Highcharts.SVGElement;
-
-            if (isObject(tick)) {
-                label = isObject(tick.label) ? tick.label : ({} as any);
-
-                // Find width and height of tick
-                tickHeight = label.getBBox ? label.getBBox().height : 0;
-                if (label.textStr && !isNumber(label.textPxLength)) {
-                    label.textPxLength = label.getBBox().width;
-                }
-                tickWidth = isNumber(label.textPxLength) ?
-                    // Math.round ensures crisp lines
-                    Math.round(label.textPxLength) :
-                    0;
-
-                // Update the result if width and/or height are larger
-                dimensions.height = Math.max(tickHeight, dimensions.height);
-                dimensions.width = Math.max(tickWidth, dimensions.width);
-            }
-        });
-
-        return dimensions;
-    }
-
-    /**
      * Checks if an axis is the outer axis in its dimension. Since
      * axes are placed outwards in order, the axis with the highest
      * index is the outermost axis.
@@ -482,6 +449,58 @@ class GridAxis {
 
         const axisProto = AxisClass.prototype;
 
+        /**
+         * Get the largest label width and height.
+         *
+         * @private
+         * @function Highcharts.Axis#getMaxLabelDimensions
+         *
+         * @param {Highcharts.Dictionary<Highcharts.Tick>} ticks
+         *        All the ticks on one axis.
+         *
+         * @param {Array<number|string>} tickPositions
+         *        All the tick positions on one axis.
+         *
+         * @return {Highcharts.SizeObject}
+         *         object containing the properties height and width.
+         */
+        axisProto.getMaxLabelDimensions = function (
+            ticks: Highcharts.Dictionary<Highcharts.Tick>,
+            tickPositions: Array<(number|string)>
+        ): Highcharts.SizeObject {
+            var dimensions: Highcharts.SizeObject = {
+                width: 0,
+                height: 0
+            };
+
+            tickPositions.forEach(function (pos: (number|string)): void {
+                var tick = ticks[pos],
+                    tickHeight = 0,
+                    tickWidth = 0,
+                    label: Highcharts.SVGElement;
+
+                if (isObject(tick)) {
+                    label = isObject(tick.label) ? tick.label : ({} as any);
+
+                    // Find width and height of tick
+                    tickHeight = label.getBBox ? label.getBBox().height : 0;
+                    if (label.textStr && !isNumber(label.textPxLength)) {
+                        label.textPxLength = label.getBBox().width;
+                    }
+                    tickWidth = isNumber(label.textPxLength) ?
+                        // Math.round ensures crisp lines
+                        Math.round(label.textPxLength) :
+                        0;
+
+                    // Update the result if width and/or height are larger
+                    dimensions.height = Math.max(tickHeight, dimensions.height);
+                    dimensions.width = Math.max(tickWidth, dimensions.width);
+                }
+            });
+
+            return dimensions;
+        };
+
         // Avoid altering tickInterval when reserving space.
         wrap(axisProto, 'unsquish', function (
             this: Highcharts.Axis,
@@ -535,17 +554,17 @@ class GridAxis {
                 axisTop = axis.top,
                 axisWidth = axis.width,
                 axisHeight = axis.height,
-                axisTitleOptions = options.title,
+                axisTitleOptions = options.title || {},
                 opposite = axis.opposite,
                 offset = axis.offset,
                 tickSize: Array<number> = axis.tickSize() || [0],
-                xOption = (axisTitleOptions as any).x || 0,
-                yOption = (axisTitleOptions as any).y || 0,
+                xOption = axisTitleOptions.x || 0,
+                yOption = axisTitleOptions.y || 0,
                 titleMargin =
-                    pick((axisTitleOptions as any).margin, horiz ? 5 : 10),
+                    pick(axisTitleOptions.margin, horiz ? 5 : 10),
                 titleFontSize = axis.chart.renderer.fontMetrics(
-                    (axisTitleOptions as any).style &&
-                    (axisTitleOptions as any).style.fontSize,
+                    axisTitleOptions.style &&
+                    axisTitleOptions.style.fontSize,
                     title
                 ).f,
                 // TODO account for alignment
@@ -683,7 +702,7 @@ class GridAxis {
         if (grid && gridOptions.enabled === true) {
 
             // @todo acutual label padding (top, bottom, left, right)
-            axis.maxLabelDimensions = grid.getMaxLabelDimensions(
+            axis.maxLabelDimensions = axis.getMaxLabelDimensions(
                 axis.ticks,
                 axis.tickPositions
             );
