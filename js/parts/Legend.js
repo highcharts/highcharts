@@ -526,9 +526,9 @@ var Legend = /** @class */ (function () {
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !itemStyle.width) {
             li.css({
-                width: (options.itemWidth ||
+                width: ((options.itemWidth ||
                     legend.widthOption ||
-                    chart.spacingBox.width) - itemExtraWidth
+                    chart.spacingBox.width) - itemExtraWidth) + 'px'
             });
         }
         // Always update the text

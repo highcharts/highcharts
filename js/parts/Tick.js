@@ -411,7 +411,7 @@ var Tick = /** @class */ (function () {
                 tick.shortenLabel();
             }
             else {
-                css.width = Math.floor(textWidth);
+                css.width = Math.floor(textWidth) + 'px';
                 if (!(labelOptions.style || {}).textOverflow) {
                     css.textOverflow = 'ellipsis';
                 }

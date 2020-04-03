@@ -6467,28 +6467,36 @@ class Axis implements AxisComposition {
             ),
             marginLeft = chart.margin[3];
 
-        return (
-            tick &&
-            tick.slotWidth as any // Used by grid axis
-        ) || (
+        // Used by grid axis
+        if (tick && isNumber(tick.slotWidth)) { // #13221, can be 0
+            return tick.slotWidth;
+        }
+
+        if (
             horiz &&
-            ((labelOptions as any).step || 0) < 2 &&
-            !(labelOptions as any).rotation && // #4415
-            ((this.staggerLines || 1) * this.len) / slotCount
-        ) || (
-            !horiz && (
-                // #7028
-                (
-                    (labelOptions as any).style &&
-                    parseInt((labelOptions as any).style.width, 10)
-                ) ||
-                (
-                    marginLeft &&
-                    (marginLeft - chart.spacing[3])
-                ) ||
-                (chart.chartWidth as any) * 0.33
-            )
-        );
+            labelOptions &&
+            (labelOptions.step || 0) < 2
+        ) {
+            if (labelOptions.rotation) { // #4415
+                return 0;
+            }
+            return ((this.staggerLines || 1) * this.len) / slotCount;
+        }
+
+        if (!horiz) {
+            // #7028
+            const cssWidth = labelOptions?.style?.width;
+            if (cssWidth !== void 0) {
+                return parseInt(cssWidth, 10);
+            }
+
+            if (marginLeft) {
+                return marginLeft - chart.spacing[3];
+            }
+        }
+
+        // Last resort, a fraction of the available size
+        return chart.chartWidth * 0.33;
 
     }
 
@@ -6651,7 +6659,7 @@ class Axis implements AxisComposition {
                         label.element.tagName === 'SPAN'
                     )
                 ) {
-                    css.width = commonWidth;
+                    css.width = commonWidth + 'px';
                     if (!textOverflowOption) {
                         css.textOverflow = (
                             label.specificTextOverflow ||
@@ -6763,7 +6771,7 @@ class Axis implements AxisComposition {
             !axis.isRadial
         ) {
             axis.axisTitle.css({
-                width: axis.len
+                width: axis.len + 'px'
             });
         }
 

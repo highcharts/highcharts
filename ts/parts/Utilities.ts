@@ -71,6 +71,7 @@ declare global {
             pointerEvents?: string;
             stroke?: ColorString;
             strokeWidth?: (number|string);
+            width?: string;
         }
         interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;

@@ -1325,7 +1325,7 @@ class Tooltip {
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!(options.style as any).width || styledMode) {
                     label.css({
-                        width: this.chart.spacingBox.width
+                        width: this.chart.spacingBox.width + 'px'
                     });
                 }
 
