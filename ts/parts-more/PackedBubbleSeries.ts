@@ -1122,10 +1122,13 @@ seriesType<Highcharts.PackedBubbleSeries>(
             }
             (series.parentNode as any).graphic.attr(parentAttribs);
 
-            if (series.options.allowParentSelect) {
-              series.parentNode?.graphic?.on('click', (event: any): void => {
-                  series?.parentNode?.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
-              });
+            if (series.options.allowParentSelect &&
+                series.parentNode &&
+                series.parentNode.graphic) {
+                series.parentNode.graphic.on('click', (event: any): void => {
+                    (series.parentNode as any).select(
+                        null, event.ctrlKey || event.metaKey || event.shiftKey);
+                });
             }
 
         },

@@ -664,7 +664,6 @@ seriesType('packedbubble', 'bubble',
     },
     // Create Background/Parent Nodes for split series.
     drawGraph: function () {
-        var _a, _b;
         // if the series is not using layout, don't add parent nodes
         if (!this.layout || !this.layout.options.splitSeries) {
             return;
@@ -697,10 +696,11 @@ seriesType('packedbubble', 'bubble',
                     .add(series.parentNodesGroup);
         }
         series.parentNode.graphic.attr(parentAttribs);
-        if (series.options.allowParentSelect) {
-            (_b = (_a = series.parentNode) === null || _a === void 0 ? void 0 : _a.graphic) === null || _b === void 0 ? void 0 : _b.on('click', function (event) {
-                var _a;
-                (_a = series === null || series === void 0 ? void 0 : series.parentNode) === null || _a === void 0 ? void 0 : _a.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+        if (series.options.allowParentSelect &&
+            series.parentNode &&
+            series.parentNode.graphic) {
+            series.parentNode.graphic.on('click', function (event) {
+                series.parentNode.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
             });
         }
     },
