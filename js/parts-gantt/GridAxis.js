@@ -783,6 +783,7 @@ var GridAxis = /** @class */ (function () {
 (function (GridAxis) {
     /**
      * Enum for which side the axis is on. Maps to axis.side.
+     * @private
      */
     var Side;
     (function (Side) {
