@@ -178,20 +178,20 @@ H.layoutAnimationMixin = {
                             label.removeClass('highcharts-simulation-dataLabels');
                             label.addClass('highcharts-simulation-dataLabels-fadeout');
                             if (!styledMode) { // <--- !styledMode :
-                               label.css({
-                                   opacity: 1,
-                                   transition: 'opacity 2000ms'
-                               });
+                                label.css({
+                                    opacity: 1,
+                                    transition: 'opacity 2000ms'
+                                });
                             }
                         } else {
                             complete = function (): void {
                                 label.removeClass('highcharts-simulation-dataLabels-fadeout');
                                 label.addClass('highcharts-simulation-dataLabels');
                                 if (!styledMode) { // <--- !styledMode :
-                                   label.css({
-                                       opacity: 0,
-                                       transition: 'opacity 2000ms'
-                                   });
+                                    label.css({
+                                        opacity: 0,
+                                        transition: 'opacity 2000ms'
+                                    });
                                 }
                                 label.placed = false; // avoid animation from top
                             };
