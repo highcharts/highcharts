@@ -835,6 +835,10 @@ class RadialAxis {
                         .filter(function (
                             label: (Highcharts.SVGElement|undefined)
                         ): boolean {
+                            if (label) {
+                                // Indicates a label of a circular axis
+                                label.isCircular = axis.isCircular;
+                            }
                             return Boolean(label);
                         });
                 }

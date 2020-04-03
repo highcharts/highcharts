@@ -13,7 +13,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Chart.js';
 var Chart = H.Chart;
 /* eslint-disable no-invalid-this */
@@ -70,7 +70,7 @@ addEvent(Chart, 'render', function collectAndHide() {
  * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
-    var chart = this, len = labels.length, ren = chart.renderer, label, i, j, label1, label2, box1, box2, isLabelAffected = false, isIntersectRect = function (box1, box2) {
+    var chart = this, len = labels.length, ren = chart.renderer, label, i, j, label1, label2, box1, box2, isIntersect, isLabelAffected = false, isIntersectRect = function (box1, box2) {
         return !(box2.x > box1.x + box1.width ||
             box2.x + box2.width < box1.x ||
             box2.y > box1.y + box1.height ||
@@ -134,7 +134,22 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                 label1 !== label2 && // #6465, polar chart with connectEnds
                 label1.newOpacity !== 0 &&
                 label2.newOpacity !== 0) {
-                if (isIntersectRect(box1, box2)) {
+                isIntersect = chart.polar ?
+                    (function (lab1, lab2) {
+                        var box1 = lab1 && extend({}, lab1.absoluteBox), box2 = lab2 && extend({}, lab2.absoluteBox), alignValues;
+                        if (lab1.isCircular && lab2.isCircular) {
+                            alignValues = {
+                                left: 0,
+                                center: 0.5,
+                                right: 1
+                            };
+                            box1.x -= alignValues[lab1.alignValue] * box1.width;
+                            box2.x -= alignValues[lab2.alignValue] * box2.width;
+                        }
+                        return isIntersectRect(box1, box2);
+                    }(label1, label2)) :
+                    isIntersectRect(box1, box2);
+                if (isIntersect) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
                         .newOpacity = 0;
                 }

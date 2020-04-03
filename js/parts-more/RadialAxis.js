@@ -487,6 +487,10 @@ var RadialAxis = /** @class */ (function () {
                         return axis.ticks[pos] && axis.ticks[pos].label;
                     })
                         .filter(function (label) {
+                        if (label) {
+                            // Indicates a label of a circular axis
+                            label.isCircular = axis.isCircular;
+                        }
                         return Boolean(label);
                     });
                 }
