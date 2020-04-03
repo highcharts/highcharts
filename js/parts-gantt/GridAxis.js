@@ -11,15 +11,27 @@
 'use strict';
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+var dateFormat = H.dateFormat;
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, erase = U.erase, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
-var argsToArray = function (args) {
+import '../parts/Chart.js';
+var Chart = H.Chart;
+/* eslint-disable valid-jsdoc */
+/**
+ * @private
+ */
+function argsToArray(args) {
     return Array.prototype.slice.call(args, 1);
-}, dateFormat = H.dateFormat, isObject = function (x) {
+}
+/**
+ * @private
+ */
+function isObject(x) {
     // Always use strict mode
     return U.isObject(x, true);
-}, Chart = H.Chart;
+}
+/* eslint-enable valid-jsdoc */
 var applyGridOptions = function applyGridOptions(axis) {
     var options = axis.options;
     // Center-align by default
@@ -120,7 +132,7 @@ addEvent(Chart, 'afterSetChartSize', function () {
 });
 // Center tick labels in cells.
 addEvent(Tick, 'afterGetLabelPosition', function (e) {
-    var tick = this, label = tick.label, axis = tick.axis, reversed = axis.reversed, chart = axis.chart, options = axis.options, gridOptions = ((options && isObject(options.grid)) ? options.grid : {}), labelOpts = axis.options.labels, align = labelOpts.align, 
+    var tick = this, label = tick.label, axis = tick.axis, reversed = axis.reversed, chart = axis.chart, options = axis.options, gridOptions = options.grid || {}, labelOpts = axis.options.labels, align = labelOpts && labelOpts.align, 
     // verticalAlign is currently not supported for axis.labels.
     verticalAlign = 'middle', // labelOpts.verticalAlign,
     side = GridAxis.Side[axis.side], tickmarkOffset = e.tickmarkOffset, tickPositions = axis.tickPositions, tickPos = tick.pos - tickmarkOffset, nextTickPos = (isNumber(tickPositions[e.index + 1]) ?
@@ -213,46 +225,6 @@ var GridAxisAdditions = /** @class */ (function () {
      *
      * */
     /**
-     * Get the largest label width and height.
-     *
-     * @private
-     * @function Highcharts.Axis#getMaxLabelDimensions
-     *
-     * @param {Highcharts.Dictionary<Highcharts.Tick>} ticks
-     *        All the ticks on one axis.
-     *
-     * @param {Array<number|string>} tickPositions
-     *        All the tick positions on one axis.
-     *
-     * @return {Highcharts.SizeObject}
-     *         object containing the properties height and width.
-     */
-    GridAxisAdditions.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
-        var dimensions = {
-            width: 0,
-            height: 0
-        };
-        tickPositions.forEach(function (pos) {
-            var tick = ticks[pos], tickHeight = 0, tickWidth = 0, label;
-            if (isObject(tick)) {
-                label = isObject(tick.label) ? tick.label : {};
-                // Find width and height of tick
-                tickHeight = label.getBBox ? label.getBBox().height : 0;
-                if (label.textStr && !isNumber(label.textPxLength)) {
-                    label.textPxLength = label.getBBox().width;
-                }
-                tickWidth = isNumber(label.textPxLength) ?
-                    // Math.round ensures crisp lines
-                    Math.round(label.textPxLength) :
-                    0;
-                // Update the result if width and/or height are larger
-                dimensions.height = Math.max(tickHeight, dimensions.height);
-                dimensions.width = Math.max(tickWidth, dimensions.width);
-            }
-        });
-        return dimensions;
-    };
-    /**
      * Checks if an axis is the outer axis in its dimension. Since
      * axes are placed outwards in order, the axis with the highest
      * index is the outermost axis.
@@ -313,6 +285,46 @@ var GridAxis = /** @class */ (function () {
         addEvent(AxisClass, 'destroy', GridAxis.onDestroy);
         /* eslint-disable no-invalid-this */
         var axisProto = AxisClass.prototype;
+        /**
+         * Get the largest label width and height.
+         *
+         * @private
+         * @function Highcharts.Axis#getMaxLabelDimensions
+         *
+         * @param {Highcharts.Dictionary<Highcharts.Tick>} ticks
+         *        All the ticks on one axis.
+         *
+         * @param {Array<number|string>} tickPositions
+         *        All the tick positions on one axis.
+         *
+         * @return {Highcharts.SizeObject}
+         *         object containing the properties height and width.
+         */
+        axisProto.getMaxLabelDimensions = function (ticks, tickPositions) {
+            var dimensions = {
+                width: 0,
+                height: 0
+            };
+            tickPositions.forEach(function (pos) {
+                var tick = ticks[pos], tickHeight = 0, tickWidth = 0, label;
+                if (isObject(tick)) {
+                    label = isObject(tick.label) ? tick.label : {};
+                    // Find width and height of tick
+                    tickHeight = label.getBBox ? label.getBBox().height : 0;
+                    if (label.textStr && !isNumber(label.textPxLength)) {
+                        label.textPxLength = label.getBBox().width;
+                    }
+                    tickWidth = isNumber(label.textPxLength) ?
+                        // Math.round ensures crisp lines
+                        Math.round(label.textPxLength) :
+                        0;
+                    // Update the result if width and/or height are larger
+                    dimensions.height = Math.max(tickHeight, dimensions.height);
+                    dimensions.width = Math.max(tickWidth, dimensions.width);
+                }
+            });
+            return dimensions;
+        };
         // Avoid altering tickInterval when reserving space.
         wrap(axisProto, 'unsquish', function (proceed) {
             var axis = this, options = axis.options, gridOptions = options.grid || {};
@@ -339,7 +351,7 @@ var GridAxis = /** @class */ (function () {
         var axis = this, options = axis.options, gridOptions = (options && isObject(options.grid)) ? options.grid : {};
         if (gridOptions.enabled === true) {
             // compute anchor points for each of the title align options
-            var title = axis.axisTitle, titleWidth = title && title.getBBox().width, horiz = axis.horiz, axisLeft = axis.left, axisTop = axis.top, axisWidth = axis.width, axisHeight = axis.height, axisTitleOptions = options.title, opposite = axis.opposite, offset = axis.offset, tickSize = axis.tickSize() || [0], xOption = axisTitleOptions.x || 0, yOption = axisTitleOptions.y || 0, titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10), titleFontSize = axis.chart.renderer.fontMetrics(axisTitleOptions.style &&
+            var title = axis.axisTitle, titleWidth = title && title.getBBox().width, horiz = axis.horiz, axisLeft = axis.left, axisTop = axis.top, axisWidth = axis.width, axisHeight = axis.height, axisTitleOptions = options.title || {}, opposite = axis.opposite, offset = axis.offset, tickSize = axis.tickSize() || [0], xOption = axisTitleOptions.x || 0, yOption = axisTitleOptions.y || 0, titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10), titleFontSize = axis.chart.renderer.fontMetrics(axisTitleOptions.style &&
                 axisTitleOptions.style.fontSize, title).f, 
             // TODO account for alignment
             // the position in the perpendicular direction of the axis
@@ -423,7 +435,7 @@ var GridAxis = /** @class */ (function () {
         var axis = this, grid = axis.grid, options = axis.options, gridOptions = options.grid || {}, yStartIndex, yEndIndex, xStartIndex, xEndIndex, renderer = axis.chart.renderer;
         if (grid && gridOptions.enabled === true) {
             // @todo acutual label padding (top, bottom, left, right)
-            axis.maxLabelDimensions = grid.getMaxLabelDimensions(axis.ticks, axis.tickPositions);
+            axis.maxLabelDimensions = axis.getMaxLabelDimensions(axis.ticks, axis.tickPositions);
             // Remove right wall before rendering if updating
             if (axis.rightWall) {
                 axis.rightWall.destroy();

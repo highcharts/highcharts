@@ -2484,8 +2484,8 @@ var Axis = /** @class */ (function () {
                 labelOptions.x);
         }
         axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
-        if (axis.grid) {
-            axis.maxLabelDimensions = axis.grid.getMaxLabelDimensions(ticks, tickPositions);
+        if (axis.getMaxLabelDimensions) {
+            axis.maxLabelDimensions = axis.getMaxLabelDimensions(ticks, tickPositions);
         }
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.

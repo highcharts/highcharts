@@ -6963,8 +6963,8 @@ class Axis implements AxisComposition {
 
         axis.axisTitleMargin = pick(titleOffsetOption, labelOffsetPadded);
 
-        if (axis.grid) {
-            axis.maxLabelDimensions = axis.grid.getMaxLabelDimensions(
+        if (axis.getMaxLabelDimensions) {
+            axis.maxLabelDimensions = axis.getMaxLabelDimensions(
                 ticks,
                 tickPositions
             );
