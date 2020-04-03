@@ -1194,6 +1194,7 @@ namespace GridAxis {
 
     /**
      * Enum for which side the axis is on. Maps to axis.side.
+     * @private
      */
     export enum Side {
         top = 0,
