@@ -322,6 +322,8 @@ Available arguments for 'gulp test':
     'Mac.Chrome, Mac.Firefox, Mac.Safari, Win.Chrome, Win.Edge, Win.Firefox,
     Win.IE'.
 
+    For debugging in Visual Studio Code, use 'ChromeHeadless.Debugging'.
+
     A shorthand option, '--browsers all', runs all BrowserStack machines.
 
 --browsercount
@@ -344,6 +346,13 @@ Available arguments for 'gulp test':
     Example: 'gulp test --tests unit-tests/chart/*' runs all tests in the chart
     directory.
 
+--testsAbsolutePath
+    Comma separated list of tests to run. By default runs all tests
+    in the 'samples/' directory.
+    Example:
+    'gulp test --testsAbsolutePath /User/{userName}/{path}/{to}/highcharts/samples/unit-tests/3d/axis/demo.js'
+    runs all tests in the file.
+
 --visualcompare
     Performs a visual comparison of the output and creates a reference.svg and candidate.svg
     when doing so. A JSON file with the results is produced in the location
@@ -359,7 +368,7 @@ Available arguments for 'gulp test':
         checkSamplesConsistency();
         checkJSWrap();
 
-        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests);
+        const forceRun = !!(argv.browsers || argv.browsercount || argv.force || argv.tests || argv.testsAbsolutePath);
 
         if (forceRun || shouldRun()) {
 
