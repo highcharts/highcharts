@@ -70,7 +70,7 @@ commands:
         type: string
         default: ""
     steps:
-      run: "node ./tools/write-filesizes.js --filename << parameters.filename >>"
+      - run: "node ./tools/write-filesizes.js --filename << parameters.filename >>"
 jobs:
   checkout_and_install:
     <<: *defaults
@@ -229,7 +229,7 @@ jobs:
       - run: npx karma start test/karma-conf.js --tests maps/*/* --single-run --browsercount 2 --visualcompare || true
       - run: npx karma start test/karma-conf.js --tests gantt/*/* --single-run --browsercount 2 --visualcompare || true
       - get_file_sizes:
-        filename: ${CIRCLE_PULL_REQUEST}.json
+          filename: ${CIRCLE_PULL_REQUEST}.json
       - run:
           name: Comment on PR and upload visual test images if any produced
           command: echo ${CIRCLE_PULL_REQUEST##*/} | xargs -I{} npx gulp update-pr-testresults --fail-silently --user circleci-mu --pr {}
