@@ -1070,7 +1070,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Default initial animation to a fraction of the series
                     // animation (#9396)
-                    let animationOptions: Highcharts.AnimationOptionsObject|undefined;
+                    let animationOptions: Partial<Highcharts.AnimationOptionsObject>|undefined;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
                         // @todo: Safely remove any cast after merging #13005

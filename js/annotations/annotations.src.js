@@ -206,8 +206,10 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          */
         visible: true,
         /**
-         * The animation configuration object for the `annotations`. Please
-         * note that this option only applies to the initial animation.
+         * Enable or disable the initial animation when a series is
+         * displayed for the `annotation`. The animation can also be set as
+         * a configuration object. Please note that this option only
+         * applies to the initial animation.
          * For other animations, see [chart.animation](#chart.animation)
          * and the animation parameter under the API methods.
          * The following properties are supported:
@@ -216,10 +218,11 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          *
          * @sample {highcharts} highcharts/annotations/defer/
          *          Animation defer settings
-         * @type {Highcharts.AnimationOptionsObject}
+         * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @since next
          * @apioption annotations.animation
          */
+        animation: {},
         /**
          * The animation delay time in milliseconds.
          * Set to `0` renders annotation immediately.
@@ -732,14 +735,15 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      * @private
      */
     init: function () {
-        var chart = this.chart, defer = animObject(this.options.animation).defer;
+        var chart = this.chart, animOptions = this.options.animation;
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
         this.addClipPaths();
         this.setLabelCollector();
-        this.deferTime = defined(defer) ? defer : getDeferTime(chart);
+        this.deferTime = animOptions && typeof animOptions.defer === 'undefined' ?
+            getDeferTime(chart) : animObject(animOptions).defer;
         this.durationTime = Math.min(this.deferTime, 200);
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {

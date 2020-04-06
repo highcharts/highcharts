@@ -161,7 +161,7 @@ declare global {
             public onload(): void;
             public orderSeries(fromIndex?: number): void;
             public propFromSeries(): void;
-            public redraw(animation?: (boolean|AnimationOptionsObject)): void;
+            public redraw(animation?: (boolean|Partial<AnimationOptionsObject>)): void;
             public reflow(e?: Event): void;
             public render(): void;
             public renderLabels(): void;
@@ -174,7 +174,7 @@ declare global {
             public setSize(
                 width?: (null|number),
                 height?: (null|number),
-                animation?: (boolean|AnimationOptionsObject)
+                animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
             public setTitle(
                 titleOptions?: TitleOptions,
@@ -815,7 +815,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#redraw
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        If or how to apply animation to the redraw.
      *
      * @return {void}
@@ -829,7 +829,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     redraw: function (
         this: Highcharts.Chart,
-        animation?: (boolean|Highcharts.AnimationOptionsObject)
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): void {
 
         fireEvent(this, 'beforeRedraw');
@@ -1925,7 +1925,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        be `undefined` in order to preserve the current value, or `null`
      *        in order to adapt to the height of the containing element.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation.
      *
      * @return {void}
@@ -1937,7 +1937,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         this: Highcharts.Chart,
         width?: (number|null),
         height?: (number|null),
-        animation?: (boolean|Highcharts.AnimationOptionsObject)
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): void {
         var chart = this,
             renderer = chart.renderer,

@@ -52,7 +52,7 @@ declare global {
             allowOverlap?: boolean;
             minimumClusterSize?: number;
             drillToCluster?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             layoutAlgorithm: MarkerClusterLayoutAlgorithmOptions;
             marker?: PointMarkerOptionsObject;
             dataLabels?: DataLabelsOptions;
@@ -316,7 +316,7 @@ var clusterDefaultOptions = {
     allowOverlap: true,
     /**
      * Options for the cluster marker animation.
-     * @type    {boolean|Highcharts.AnimationOptionsObject}
+     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
      * @default { "duration": 500 }
      */
     animation: {
@@ -644,7 +644,7 @@ function getDataState(
 function fadeInElement(
     elem: Highcharts.SVGElement,
     opacity?: number,
-    animation?: (boolean|Highcharts.AnimationOptionsObject)
+    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
 ): void {
     elem
         .attr({
@@ -658,7 +658,7 @@ function fadeInElement(
 function fadeInStatePoint(
     stateObj: Highcharts.MarkerClusterPointsState,
     opacity?: number,
-    animation?: (boolean|Highcharts.AnimationOptionsObject),
+    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
     fadeinGraphic?: boolean,
     fadeinDataLabel?: boolean
 ): void {
@@ -707,7 +707,7 @@ function destroyOldPoints(
 function fadeInNewPointAndDestoryOld(
     newPointObj: Highcharts.MarkerClusterPointsState,
     oldPoints: Array<Highcharts.MarkerClusterPointsState>,
-    animation: (boolean|Highcharts.AnimationOptionsObject),
+    animation: (boolean|Partial<Highcharts.AnimationOptionsObject>),
     opacity: number
 ): void {
     // Fade in new point.

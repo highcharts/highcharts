@@ -135,7 +135,7 @@ declare global {
             public renderPath(
                 path: SVGPathArray,
                 attribs?: SVGAttributes,
-                animation?: (boolean|AnimationOptionsObject)
+                animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
         }
         class Pathfinder {
@@ -673,14 +673,14 @@ Connection.prototype = {
      * @param {Highcharts.SVGAttributes} [attribs]
      *        SVG attributes for the path.
      *
-     * @param {Highcharts.AnimationOptionsObject} [animation]
+     * @param {Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Animation options for the rendering.
      */
     renderPath: function (
         this: Highcharts.Connection,
         path: Highcharts.SVGPathArray,
         attribs?: Highcharts.SVGAttributes,
-        animation?: (boolean|Highcharts.AnimationOptionsObject)
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): void {
         var connection = this,
             chart = this.chart,

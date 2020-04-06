@@ -184,7 +184,7 @@ declare global {
             resetParams?: [
                 (number|null)?,
                 (number|null)?,
-                (boolean|AnimationOptionsObject)?
+                (boolean|Partial<AnimationOptionsObject>)?
             ];
         }
         interface SVGRenderer {

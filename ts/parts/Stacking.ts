@@ -80,7 +80,7 @@ declare global {
             stackLabels?: YAxisStackLabelsOptions;
         }
         interface YAxisStackLabelsOptions {
-            animation?: AnimationOptionsObject;
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: AlignValue;
             allowOverlap?: boolean;
             crop?: boolean;
@@ -603,10 +603,10 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
         chart = axis.chart,
         renderer = chart.renderer,
         stacks = axis.stacks,
-        deferTime,
-        durationTime,
-        stackLabelsAnim = animObject(axis.options.stackLabels.animation),
-        defer = stackLabelsAnim.defer,
+        stackLabelsAnim = axis.options.stackLabels.animation,
+        deferTime = stackLabelsAnim && typeof stackLabelsAnim.defer === 'undefined' ?
+            getDeferTime(chart) : animObject(stackLabelsAnim).defer,
+        durationTime = Math.min(deferTime, 200),
         stackTotalGroup = axis.stackTotalGroup as Highcharts.SVGElement;
 
     // Create a separate group for the stack total labels
@@ -634,12 +634,6 @@ Axis.prototype.renderStackTotals = function (this: Highcharts.Axis): void {
             stack.render(stackTotalGroup);
         });
     });
-    if (defined(defer)) {
-        deferTime = defer;
-    } else {
-        deferTime = getDeferTime(chart);
-    }
-    durationTime = Math.min(deferTime, 200);
 
     stackTotalGroup.animate({
         opacity: 1

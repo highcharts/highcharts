@@ -594,7 +594,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/animation-duration/
          *         With a longer duration
          *
-         * @type      {boolean|Highcharts.AnimationOptionsObject}
+         * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @default   undefined
          * @apioption chart.animation
          */
@@ -2252,7 +2252,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type      {boolean|Highcharts.AnimationOptionsObject}
+             * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @default   true
              * @since     2.2.4
              * @apioption legend.navigation.animation

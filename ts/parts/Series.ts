@@ -132,7 +132,7 @@ declare global {
             ): (number|undefined);
             public generatePoints(): void;
             public getClipBox(
-                animation?: (boolean|AnimationOptionsObject),
+                animation?: (boolean|Partial<AnimationOptionsObject>),
                 finalBox?: boolean
             ): Dictionary<number>;
             public getColor(): void;
@@ -198,7 +198,7 @@ declare global {
             public setData(
                 data: Array<PointOptionsType>,
                 redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject),
+                animation?: (boolean|Partial<AnimationOptionsObject>),
                 updatePoints?: boolean
             ): void;
             public setDataSortingOptions(): void;
@@ -212,7 +212,7 @@ declare global {
             public translate(): void;
             public updateData(
                 data: Array<PointOptionsType>,
-                animation?: (boolean|AnimationOptionsObject)
+                animation?: (boolean|Partial<AnimationOptionsObject>)
             ): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
         }
@@ -321,7 +321,7 @@ declare global {
         interface SeriesOptions {
             allAreas?: boolean;
             allowPointSelect?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             animationLimit?: number;
             boostThreshold?: number;
             borderColor?: ColorType;
@@ -415,7 +415,7 @@ declare global {
             size?: number;
         }
         interface SeriesStatesHoverOptionsObject {
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             enabled?: boolean;
             halo?: (boolean|SeriesStatesHoverHaloOptions);
             lineWidth?: SeriesOptions['lineWidth'];
@@ -1070,7 +1070,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @sample {highmaps} maps/plotoptions/mapbubble-animation-false/
          *         Disabled on mapbubble series
          *
-         * @type    {boolean|Highcharts.AnimationOptionsObject}
+         * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @default {highcharts} true
          * @default {highstock} true
          * @default {highmaps} false
@@ -1988,7 +1988,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     /**
                      * Animation when returning to normal state after hovering.
                      *
-                     * @type {boolean|Highcharts.AnimationOptionsObject}
+                     * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                      */
                     animation: true
                 },
@@ -2003,7 +2003,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     /**
                      * Animation when hovering over the marker.
                      *
-                     * @type {boolean|Highcharts.AnimationOptionsObject}
+                     * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                      */
                     animation: {
                         /** @internal */
@@ -2307,8 +2307,10 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         dataLabels: {
             /**
-             * The animation configuration object for the `dataLabels`. Please
-             * note that this option only applies to the initial animation.
+             * Enable or disable the initial animation when a series is
+             * displayed for the `dataLabels`. The animation can also be set as
+             * a configuration object. Please note that this option only
+             * applies to the initial animation.
              * For other animations, see [chart.animation](#chart.animation)
              * and the animation parameter under the API methods.
              * The following properties are supported:
@@ -2317,11 +2319,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
              *
              * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
-             * @type {Highcharts.AnimationOptionsObject}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @since next
              * @apioption plotOptions.series.dataLabels.animation
              */
-
+            animation: {},
             /**
              * The animation delay time in milliseconds.
              * Set to `0` renders dataLabel immediately.
@@ -2893,7 +2895,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 /**
                  * Animation when returning to normal state after hovering.
                  *
-                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: true
             },
@@ -2927,7 +2929,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 /**
                  * Animation setting for hovering the graph in line-type series.
                  *
-                 * @type    {boolean|Highcharts.AnimationOptionsObject}
+                 * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  * @since   5.0.8
                  * @product highcharts highstock
                  */
@@ -3089,7 +3091,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 /**
                  * The animation for entering the inactive state.
                  *
-                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
                     /** @internal */
@@ -4117,7 +4119,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
         updateData: function (
             this: Highcharts.Series,
             data: Array<Highcharts.PointOptionsType>,
-            animation?: (boolean|Highcharts.AnimationOptionsObject)
+            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
         ): boolean {
             var options = this.options,
                 dataSorting = options.dataSorting,
@@ -4301,7 +4303,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          *        doing more operations on the chart, it is a good idea to set
          *        redraw to false and call {@link Chart#redraw} after.
          *
-         * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+         * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
          *        When the updated data is the same length as the existing data,
          *        points will be updated by default, and animation visualizes
          *        how the points are changed. Set false to disable animation, or
@@ -4322,7 +4324,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             this: Highcharts.Series,
             data: Array<Highcharts.PointOptionsType>,
             redraw?: boolean,
-            animation?: (boolean|Highcharts.AnimationOptionsObject),
+            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
             updatePoints?: boolean
         ): void {
             var series = this,

@@ -42,7 +42,7 @@ declare global {
             );
         }
         interface DataLabelsOptions {
-            animation?: AnimationOptionsObject;
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: (AlignValue|null);
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
@@ -409,14 +409,12 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         hasRendered = series.hasRendered || 0,
         dataLabelsGroup: Highcharts.SVGElement,
         seriesAnim = animObject(seriesOptions.animation),
-        seriesAnimDuration = seriesAnim.duration,
-        seriesDefer = seriesAnim.defer,
-        fadeInDuration = Math.min(seriesAnimDuration as any, 200),
-        dataLabelDefer = animObject((seriesDlOptions as any).animation).defer,
+        fadeInDuration = Math.min(seriesAnim.duration, 200),
+        dataLabelAnim = (seriesDlOptions as any).animation,
         defer = !chart.renderer.forExport && pick(
-            // The animation.defer has higher priority than dataLabels.defer
-            dataLabelDefer,
-            (seriesDlOptions as any).defer,
+            (seriesDlOptions as any).defer &&
+            dataLabelAnim && typeof dataLabelAnim.defer === 'undefined' ?
+                true : animObject(dataLabelAnim).defer,
             fadeInDuration > 0
         ),
         renderer = chart.renderer;
@@ -536,9 +534,9 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         );
 
         if (defer) {
-            // If defer as true - get the value from the series.anim object
-            if (!isNumber(defer) && defined(seriesAnimDuration)) {
-                defer = seriesDefer ? seriesAnimDuration + seriesDefer : seriesAnimDuration;
+            // If defer as true - get the value from the series.animation object
+            if (!isNumber(defer)) {
+                defer = seriesAnim.duration + seriesAnim.defer;
             }
 
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300

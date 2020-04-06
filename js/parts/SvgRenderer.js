@@ -456,7 +456,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @param {Highcharts.SVGAttributes} params
      *        SVG attributes or CSS to animate.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [options]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [options]
      *        Animation options.
      *
      * @param {Function} [complete]
@@ -473,7 +473,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         if (pick(doc.hidden, doc.msHidden, doc.webkitHidden, false)) {
             animOptions.duration = 0;
         }
-        if (animOptions.duration !== 0 && defined(deferTime)) {
+        if (animOptions.duration !== 0) {
             // allows using a callback with the global animation without
             // overwriting it
             if (complete) {
@@ -3574,7 +3574,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} height
      *        The new pixel height.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animate=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animate=true]
      *        Whether and how to animate.
      *
      * @return {void}

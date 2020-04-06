@@ -1024,7 +1024,7 @@ seriesType('pie', 'line',
      *        When undefined, the slice state is toggled.
      * @param {boolean} redraw
      *        Whether to redraw the chart. True by default.
-     * @param {boolean|Highcharts.AnimationOptionsObject}
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>}
      *        Animation options.
      * @return {void}
      */

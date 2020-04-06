@@ -2088,7 +2088,7 @@ function getNewPoints(
  */
 function updatePoints(
     chart: Highcharts.Chart,
-    animate?: (boolean|Highcharts.AnimationOptionsObject)
+    animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
 ): void {
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
             (chart.dragDropData as any).newPoints,

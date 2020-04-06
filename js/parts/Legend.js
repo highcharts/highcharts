@@ -996,7 +996,7 @@ var Legend = /** @class */ (function () {
      * @param {number} scrollBy
      *        The number of pages to scroll.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and how to apply animation.
      *
      * @return {void}

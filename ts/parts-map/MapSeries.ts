@@ -72,7 +72,7 @@ declare global {
             public setData(
                 data: Array<(MapPointOptions|PointOptionsType)>,
                 redraw?: boolean,
-                animation?: (boolean|AnimationOptionsObject),
+                animation?: (boolean|Partial<AnimationOptionsObject>),
                 updatePoints?: boolean
             ): void;
             public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions;
@@ -671,7 +671,7 @@ seriesType<Highcharts.MapSeries>(
                 Array<(Highcharts.MapPointOptions|Highcharts.PointOptionsType)>
             ),
             redraw?: boolean,
-            animation?: (boolean|Highcharts.AnimationOptionsObject),
+            animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>),
             updatePoints?: boolean
         ): void {
             var options = this.options,
@@ -1227,7 +1227,7 @@ seriesType<Highcharts.MapSeries>(
                         (this.chart.drilldownLevels as any).length - 1
                     ],
                 fromBox = level.bBox,
-                animationOptions: (boolean|Highcharts.AnimationOptionsObject) =
+                animationOptions: (boolean|Partial<Highcharts.AnimationOptionsObject>) =
                     (this.chart.options.drilldown as any).animation,
                 scale;
 

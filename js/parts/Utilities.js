@@ -8,26 +8,6 @@
  *
  * */
 'use strict';
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
-var __spread = (this && this.__spread) || function () {
-    for (var ar = [], i = 0; i < arguments.length; i++) ar = ar.concat(__read(arguments[i]));
-    return ar;
-};
 import H from './Globals.js';
 /**
  * An animation configuration. Animation configurations can also be defined as
@@ -429,7 +409,7 @@ var Fx = /** @class */ (function () {
      * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
      *        The element to animate.
      *
-     * @param {Highcharts.AnimationOptionsObject} options
+     * @param {Partial<Highcharts.AnimationOptionsObject>} options
      *        Animation options.
      *
      * @param {string} prop
@@ -1628,7 +1608,7 @@ var correctFloat = H.correctFloat = function correctFloat(num, prec) {
  *
  * @function Highcharts.setAnimation
  *
- * @param {boolean|Highcharts.AnimationOptionsObject|undefined} animation
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined} animation
  *        The animation object.
  *
  * @param {Highcharts.Chart} chart
@@ -1659,7 +1639,7 @@ var setAnimation = H.setAnimation = function setAnimation(animation, chart) {
 var animObject = H.animObject = function animObject(animation) {
     return isObject(animation) ?
         H.merge({ duration: 500, defer: 0 }, animation) :
-        { duration: animation ? 500 : 0, defer: animation ? 0 : animation };
+        { duration: animation ? 500 : 0, defer: 0 };
 };
 /**
  * The time unit lookup
@@ -1887,15 +1867,12 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
  *        The numeric value.
  */
 var getDeferTime = H.getDeferTime = function (chart) {
-    var seriesDelay = chart.series.map(function (series) {
-        var seriesAnim = series.options.animation, seriesDuration = seriesAnim.duration;
-        if (seriesAnim) {
-            return seriesAnim.defer ? seriesDuration + seriesAnim.defer : seriesDuration;
-        }
-        // If seriesAnim doesn't exist - return 0;
-        return 0;
+    var maxDefer = 0;
+    chart.series.forEach(function (series) {
+        var seriesAnim = animObject(series.options.animation);
+        maxDefer = Math.max(seriesAnim.duration + seriesAnim.defer);
     });
-    return Math.max.apply(Math, __spread(seriesDelay));
+    return maxDefer;
 };
 /**
  * Search for an item in an array.
@@ -2392,7 +2369,7 @@ var fireEvent = H.fireEvent = function (el, type, eventArguments, defaultFunctio
  *        Supports numeric as pixel-based CSS properties for HTML objects and
  *        attributes for SVGElements.
  *
- * @param {Highcharts.AnimationOptionsObject} [opt]
+ * @param {Partial<Highcharts.AnimationOptionsObject>} [opt]
  *        Animation options.
  *
  * @return {void}

@@ -105,7 +105,7 @@ seriesType('networkgraph', 'line',
                 /**
                  * Animation when not hovering over the node.
                  *
-                 * @type {boolean|Highcharts.AnimationOptionsObject}
+                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  */
                 animation: {
                     /** @internal */
@@ -129,7 +129,7 @@ seriesType('networkgraph', 'line',
             /**
              * Animation when not hovering over the node.
              *
-             * @type {boolean|Highcharts.AnimationOptionsObject}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              */
             animation: {
                 /** @internal */
@@ -865,7 +865,7 @@ seriesType('networkgraph', 'line',
      *        doing more operations on the chart, for example running
      *        `point.remove()` in a loop, it is best practice to set
      *        `redraw` to false and call `chart.redraw()` after.
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=false]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=false]
      *        Whether to apply animation, and optionally animation
      *        configuration.
      * @return {void}

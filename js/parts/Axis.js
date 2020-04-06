@@ -1838,7 +1838,7 @@ var Axis = /** @class */ (function () {
      *        Whether to redraw the chart or wait for an explicit call to
      *        {@link Highcharts.Chart#redraw}
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Enable or modify animations.
      *
      * @param {*} [eventArguments]
@@ -5657,8 +5657,10 @@ var Axis = /** @class */ (function () {
          */
         stackLabels: {
             /**
-             * The animation configuration object for the `stackLabels`. Please
-             * note that this option only applies to the initial animation.
+             * Enable or disable the initial animation when a series is
+             * displayed for the `stackLabels`. The animation can also be set as
+             * a configuration object. Please note that this option only
+             * applies to the initial animation.
              * For other animations, see [chart.animation](#chart.animation)
              * and the animation parameter under the API methods.
              * The following properties are supported:
@@ -5667,10 +5669,11 @@ var Axis = /** @class */ (function () {
              *
              * @sample {highcharts} highcharts/plotoptions/animation-defer/
              *          Animation defer settings
-             * @type {Highcharts.AnimationOptionsObject}
+             * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @since next
              * @apioption yAxis.stackLabels.animation
              */
+            animation: {},
             /**
              * The animation delay time in milliseconds.
              * Set to `0` renders stackLabel immediately.

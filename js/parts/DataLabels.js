@@ -170,9 +170,9 @@ H.distribute = function (boxes, len, maxDistance) {
  * @fires Highcharts.Series#event:afterDrawDataLabels
  */
 Series.prototype.drawDataLabels = function () {
-    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnim = animObject(seriesOptions.animation), seriesAnimDuration = seriesAnim.duration, seriesDefer = seriesAnim.defer, fadeInDuration = Math.min(seriesAnimDuration, 200), dataLabelDefer = animObject(seriesDlOptions.animation).defer, defer = !chart.renderer.forExport && pick(
-    // The animation.defer has higher priority than dataLabels.defer
-    dataLabelDefer, seriesDlOptions.defer, fadeInDuration > 0), renderer = chart.renderer;
+    var series = this, chart = series.chart, seriesOptions = series.options, seriesDlOptions = seriesOptions.dataLabels, points = series.points, pointOptions, hasRendered = series.hasRendered || 0, dataLabelsGroup, seriesAnim = animObject(seriesOptions.animation), fadeInDuration = Math.min(seriesAnim.duration, 200), dataLabelAnim = seriesDlOptions.animation, defer = !chart.renderer.forExport && pick(seriesDlOptions.defer &&
+        dataLabelAnim && typeof dataLabelAnim.defer === 'undefined' ?
+        true : animObject(dataLabelAnim).defer, fadeInDuration > 0), renderer = chart.renderer;
     /**
      * Handle the dataLabels.filter option.
      * @private
@@ -238,9 +238,9 @@ Series.prototype.drawDataLabels = function () {
         dataLabelsGroup = series.plotGroup('dataLabelsGroup', 'data-labels', defer && !hasRendered ? 'hidden' : 'inherit', // #5133, #10220
         seriesDlOptions.zIndex || 6);
         if (defer) {
-            // If defer as true - get the value from the series.anim object
-            if (!isNumber(defer) && defined(seriesAnimDuration)) {
-                defer = seriesDefer ? seriesAnimDuration + seriesDefer : seriesAnimDuration;
+            // If defer as true - get the value from the series.animation object
+            if (!isNumber(defer)) {
+                defer = seriesAnim.duration + seriesAnim.defer;
             }
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
             if (!hasRendered) {

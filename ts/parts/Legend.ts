@@ -100,7 +100,7 @@ declare global {
             public renderTitle(): void;
             public scroll(
                 scrollBy: number,
-                animation?: (boolean|AnimationOptionsObject)
+                animation?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
             public setOptions(options: LegendOptions): void;
             public setText(item: (BubbleLegend|Point|Series)): void;
@@ -1544,12 +1544,12 @@ class Legend {
      * @param {number} scrollBy
      *        The number of pages to scroll.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Whether and how to apply animation.
      *
      * @return {void}
      */
-    public scroll(scrollBy: number, animation?: (boolean|Highcharts.AnimationOptionsObject)): void {
+    public scroll(scrollBy: number, animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)): void {
         var chart = this.chart,
             pages = this.pages,
             pageCount = pages.length,

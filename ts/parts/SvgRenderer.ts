@@ -149,7 +149,7 @@ declare global {
             public alignSetter(value: ('start'|'middle'|'end')): void;
             public animate(
                 params: SVGAttributes,
-                options?: (boolean|AnimationOptionsObject),
+                options?: (boolean|Partial<AnimationOptionsObject>),
                 complete?: Function
             ): SVGElement;
             public applyTextOutline(textOutline: string): void;
@@ -288,7 +288,7 @@ declare global {
             public defs: SVGElement;
             public escapes: Dictionary<string>;
             public forExport?: boolean;
-            public globalAnimation: AnimationOptionsObject;
+            public globalAnimation: Partial<AnimationOptionsObject>;
             public gradients: Dictionary<SVGElement>;
             public height: number;
             public imgCount: number;
@@ -395,7 +395,7 @@ declare global {
             public setSize(
                 width: number,
                 height: number,
-                animate?: (boolean|AnimationOptionsObject)
+                animate?: (boolean|Partial<AnimationOptionsObject>)
             ): void;
             public setStyle(style: CSSObject): void;
             public symbol(
@@ -948,7 +948,7 @@ extend((
      * @param {Highcharts.SVGAttributes} params
      *        SVG attributes or CSS to animate.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [options]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [options]
      *        Animation options.
      *
      * @param {Function} [complete]
@@ -975,7 +975,7 @@ extend((
             animOptions.duration = 0;
         }
 
-        if (animOptions.duration !== 0 && defined(deferTime)) {
+        if (animOptions.duration !== 0) {
             // allows using a callback with the global animation without
             // overwriting it
             if (complete) {
@@ -5125,7 +5125,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} height
      *        The new pixel height.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animate=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animate=true]
      *        Whether and how to animate.
      *
      * @return {void}
@@ -5134,7 +5134,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         this: Highcharts.SVGRenderer,
         width: number,
         height: number,
-        animate?: (boolean|Highcharts.AnimationOptionsObject)
+        animate?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): void {
         var renderer = this,
             alignedObjects = renderer.alignedObjects,

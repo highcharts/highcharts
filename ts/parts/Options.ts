@@ -63,7 +63,7 @@ declare global {
         }
         interface ChartOptions {
             alignTicks?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;
@@ -201,7 +201,7 @@ declare global {
         }
         interface LegendNavigationOptions {
             activeColor?: (ColorString|GradientColorObject|PatternObject);
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             arrowSize?: number;
             enabled?: boolean;
             inactiveColor?: (ColorString|GradientColorObject|PatternObject);
@@ -1002,7 +1002,7 @@ H.defaultOptions = {
          * @sample {highmaps} maps/chart/animation-duration/
          *         With a longer duration
          *
-         * @type      {boolean|Highcharts.AnimationOptionsObject}
+         * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
          * @default   undefined
          * @apioption chart.animation
          */
@@ -2783,7 +2783,7 @@ H.defaultOptions = {
              * @sample {highstock} highcharts/legend/navigation/
              *         Legend page navigation demonstrated
              *
-             * @type      {boolean|Highcharts.AnimationOptionsObject}
+             * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @default   true
              * @since     2.2.4
              * @apioption legend.navigation.animation

@@ -319,7 +319,8 @@ Axis.prototype.buildStacks = function () {
  * @return {vopid}
  */
 Axis.prototype.renderStackTotals = function () {
-    var axis = this, chart = axis.chart, renderer = chart.renderer, stacks = axis.stacks, deferTime, durationTime, stackLabelsAnim = animObject(axis.options.stackLabels.animation), defer = stackLabelsAnim.defer, stackTotalGroup = axis.stackTotalGroup;
+    var axis = this, chart = axis.chart, renderer = chart.renderer, stacks = axis.stacks, stackLabelsAnim = axis.options.stackLabels.animation, deferTime = stackLabelsAnim && typeof stackLabelsAnim.defer === 'undefined' ?
+        getDeferTime(chart) : animObject(stackLabelsAnim).defer, durationTime = Math.min(deferTime, 200), stackTotalGroup = axis.stackTotalGroup;
     // Create a separate group for the stack total labels
     if (!stackTotalGroup) {
         axis.stackTotalGroup = stackTotalGroup =
@@ -341,13 +342,6 @@ Axis.prototype.renderStackTotals = function () {
             stack.render(stackTotalGroup);
         });
     });
-    if (defined(defer)) {
-        deferTime = defer;
-    }
-    else {
-        deferTime = getDeferTime(chart);
-    }
-    durationTime = Math.min(deferTime, 200);
     stackTotalGroup.animate({
         opacity: 1
     }, {
