@@ -70,7 +70,7 @@ commands:
         type: string
         default: ""
     steps:
-      - run: "node ./tools/write-filesizes.js --filename << parameters.filename >>"
+      - run: "npx gulp write-file-sizes --filename << parameters.filename >>"
 jobs:
   checkout_and_install:
     <<: *defaults
