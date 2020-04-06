@@ -2528,10 +2528,7 @@ extend((
             duration: pick(duration, 150),
             complete: function (): void {
                 // #3088, assuming we're only using this for tooltips
-                elemWrapper.attr({
-                    y: -9999,
-                    visibility: 'hidden' // #13226
-                });
+                elemWrapper.attr({ y: -9999 }).hide();
             }
         });
     },
