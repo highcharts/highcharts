@@ -20,7 +20,8 @@ const {
     fireEvent,
     isArray,
     objectEach,
-    pick
+    pick,
+    isIntersectRect
 } = U;
 
 import '../parts/Chart.js';
@@ -114,31 +115,34 @@ Chart.prototype.hideOverlappingLabels = function (
     labels: Array<Highcharts.SVGElement>
 ): void {
 
-    var chart = this,
-        len = labels.length,
-        ren = chart.renderer,
+    var chart = this;
+    if (
+        chart.hideOrShowLabels(
+            chart.getLabelBoxes(labels)
+        )
+    ) {
+        fireEvent(chart, 'afterHideAllOverlappingLabels');
+    }
+};
+
+/**
+ * Get the label box with its position inside the chart, as opposed to getBBox
+ * that only reports the position relative to the parent.
+ *
+ * @private
+ * @function Highcharts.Chart#getLabelBoxes
+ * @param {Array<Highcharts.SVGElement>} labels
+ * Rendered data labels
+ * @return {Array<Highcharts.SVGElement>} labels
+ * labels with absolute boxes
+ * @requires modules/overlapping-datalabels
+ */
+Chart.prototype.getLabelBoxes = function (
+    labels: Array<Highcharts.SVGElement>
+): Array<Highcharts.SVGElement> {
+    var ren = this.renderer,
         label,
         i,
-        j,
-        label1,
-        label2,
-        box1,
-        box2,
-        isLabelAffected = false,
-        isIntersectRect = function (
-            box1: Highcharts.BBoxObject,
-            box2: Highcharts.BBoxObject
-        ): boolean {
-            return !(
-                box2.x > box1.x + box1.width ||
-                box2.x + box2.width < box1.x ||
-                box2.y > box1.y + box1.height ||
-                box2.y + box2.height < box1.y
-            );
-        },
-
-        // Get the box with its position inside the chart, as opposed to getBBox
-        // that only reports the position relative to the parent.
         getAbsoluteBox = function (
             label: Highcharts.SVGElement
         ): (Highcharts.BBoxObject|undefined) {
@@ -181,7 +185,7 @@ Chart.prototype.hideOverlappingLabels = function (
             }
         };
 
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < labels.length; i++) {
         label = labels[i];
         if (label) {
 
@@ -204,6 +208,33 @@ Chart.prototype.hideOverlappingLabels = function (
             return (b.labelrank || 0) - (a.labelrank || 0);
         }
     );
+
+    return labels;
+};
+
+/**
+ * Hide or Show dataLabels depending on their opacity.
+ *
+ * @private
+ * @function Highcharts.Chart#hideOrShowLabels
+ * @param {Array<Highcharts.SVGElement>} labels
+ * Rendered data labels
+ * @return {Boolean} isLabelAffected
+ * boolean value if any label was hidden/shown.
+ * @requires modules/overlapping-datalabels
+ */
+Chart.prototype.hideOrShowLabels = function (
+    labels: Array<Highcharts.SVGElement>
+): boolean {
+    var chart = this,
+        len = labels.length,
+        label1,
+        label2,
+        box1,
+        box2,
+        isLabelAffected = false,
+        i,
+        j;
 
     // Detect overlapping labels
     for (i = 0; i < len; i++) {
@@ -273,7 +304,5 @@ Chart.prototype.hideOverlappingLabels = function (
         }
     });
 
-    if (isLabelAffected) {
-        fireEvent(chart, 'afterHideAllOverlappingLabels');
-    }
+    return isLabelAffected;
 };

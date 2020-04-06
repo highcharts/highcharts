@@ -31,6 +31,8 @@ declare global {
             frameShapes?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
             hideOverlappingLabels: Function; // @todo overlapping module
+            getLabelBoxes: Function; // @todo overlapping module
+            hideOrShowLabels: Function; // @todo overlapping module
         }
         interface ChartOptions {
             forExport?: any; // @todo
