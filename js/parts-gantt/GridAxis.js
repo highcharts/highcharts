@@ -109,13 +109,15 @@ var axisSide = {
  * @function Highcharts.Axis#getMaxLabelDimensions
  *
  * @param {Highcharts.Dictionary<Highcharts.Tick>} ticks
- *        All the ticks on one axis.
+ * All the ticks on one axis.
  *
  * @param {Array<number|string>} tickPositions
- *        All the tick positions on one axis.
+ * All the tick positions on one axis.
  *
  * @return {Highcharts.SizeObject}
- *         object containing the properties height and width.
+ * Object containing the properties height and width.
+ *
+ * @todo Move this to the generic axis implementation, as it is used there.
  */
 Axis.prototype.getMaxLabelDimensions = function (ticks, tickPositions) {
     var dimensions = {
@@ -160,12 +162,67 @@ H.dateFormats.W = function (timestamp) {
 H.dateFormats.E = function (timestamp) {
     return dateFormat('%a', timestamp, true).charAt(0);
 };
+/**
+ * Additions for grid axes.
+ * @private
+ * @class
+ */
 var GridAxisAdditions = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
     function GridAxisAdditions(axis) {
         this.axis = axis;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /**
+     * Checks if an axis is the outer axis in its dimension. Since
+     * axes are placed outwards in order, the axis with the highest
+     * index is the outermost axis.
+     *
+     * Example: If there are multiple x-axes at the top of the chart,
+     * this function returns true if the axis supplied is the last
+     * of the x-axes.
+     *
+     * @private
+     *
+     * @return {boolean}
+     * True if the axis is the outermost axis in its dimension; false if
+     * not.
+     */
+    GridAxisAdditions.prototype.isOuterAxis = function () {
+        var axis = this.axis;
+        var chart = axis.chart;
+        var columnIndex = axis.grid.columnIndex;
+        var columns = (axis.linkedParent && axis.linkedParent.grid.columns ||
+            axis.grid.columns);
+        var parentAxis = columnIndex ? axis.linkedParent : axis;
+        var thisIndex = -1, lastIndex = 0;
+        chart[axis.coll].forEach(function (otherAxis, index) {
+            if (otherAxis.side === axis.side && !otherAxis.options.isInternal) {
+                lastIndex = index;
+                if (otherAxis === parentAxis) {
+                    // Get the index of the axis in question
+                    thisIndex = index;
+                }
+            }
+        });
+        return (lastIndex === thisIndex &&
+            (isNumber(columnIndex) ? columns.length === columnIndex : true));
+    };
     return GridAxisAdditions;
 }());
+/**
+ * Axis with grid support.
+ * @private
+ * @class
+ */
 var GridAxis = /** @class */ (function () {
     function GridAxis() {
     }
@@ -173,37 +230,6 @@ var GridAxis = /** @class */ (function () {
         Axis.keepProps.push('grid');
         var axisProto = AxisClass.prototype;
         /* eslint-disable no-invalid-this, valid-jsdoc */
-        /**
-         * Checks if an axis is the outer axis in its dimension. Since
-         * axes are placed outwards in order, the axis with the highest
-         * index is the outermost axis.
-         *
-         * Example: If there are multiple x-axes at the top of the chart,
-         * this function returns true if the axis supplied is the last
-         * of the x-axes.
-         *
-         * @private
-         * @function Highcharts.Axis#isOuterAxis
-         *
-         * @return {boolean}
-         * True if the axis is the outermost axis in its dimension; false if
-         * not.
-         */
-        axisProto.isOuterAxis = function () {
-            var axis = this, chart = axis.chart, columnIndex = axis.grid.columnIndex, columns = axis.linkedParent && axis.linkedParent.grid.columns ||
-                axis.grid.columns, parentAxis = columnIndex ? axis.linkedParent : axis, thisIndex = -1, lastIndex = 0;
-            chart[axis.coll].forEach(function (otherAxis, index) {
-                if (otherAxis.side === axis.side && !otherAxis.options.isInternal) {
-                    lastIndex = index;
-                    if (otherAxis === parentAxis) {
-                        // Get the index of the axis in question
-                        thisIndex = index;
-                    }
-                }
-            });
-            return (lastIndex === thisIndex &&
-                (isNumber(columnIndex) ? columns.length === columnIndex : true));
-        };
         // Avoid altering tickInterval when reserving space.
         wrap(axisProto, 'unsquish', function (proceed) {
             var axis = this, options = axis.options, gridOptions = (options && isObject(options.grid)) ? options.grid : {};
@@ -502,7 +528,7 @@ var GridAxis = /** @class */ (function () {
                             > _________________________
                 Into this:    |______|______|______|__|
                                                         */
-                if (axis.isOuterAxis() && axis.axisLine) {
+                if (axis.grid && axis.grid.isOuterAxis() && axis.axisLine) {
                     var lineWidth = options.lineWidth;
                     if (lineWidth) {
                         var linePath = axis.getLinePath(lineWidth);
