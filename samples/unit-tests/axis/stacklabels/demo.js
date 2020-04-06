@@ -361,36 +361,36 @@ QUnit.test('StackLabels Initial animation - defer test #12901', function (assert
                 }]
             }),
             done = assert.async(),
-            slOpacity;
+            labelOpacity;
 
         setTimeout(function () {
-            // animation started
-            slOpacity = chart.yAxis[0].stackTotalGroup.opacity;
+            // Animation started
+            labelOpacity = chart.yAxis[0].stackTotalGroup.opacity;
             assert.strictEqual(
-                slOpacity === 0,
-                true,
+                labelOpacity,
+                0,
                 'Animate should not be started - stackLabels should be invisible'
             );
 
             setTimeout(function () {
-                slOpacity = chart.yAxis[0].stackTotalGroup.opacity;
-                // animation finished
+                labelOpacity = chart.yAxis[0].stackTotalGroup.opacity;
+                // Animation started but not finished
                 assert.strictEqual(
-                    slOpacity > 0 && slOpacity < 1,
+                    labelOpacity > 0 && labelOpacity < 1,
                     true,
                     'Animation should be started but not finished'
                 );
             }, 200);
 
             setTimeout(function () {
-                slOpacity = chart.yAxis[0].stackTotalGroup.opacity;
-                // animation finished
+                labelOpacity = chart.yAxis[0].stackTotalGroup.opacity;
+                // Animation finished
                 assert.strictEqual(
-                    slOpacity === 1,
-                    true,
+                    labelOpacity,
+                    1,
                     'Animate should be finished - stackLabels should be visible'
                 );
-                // all tests are done
+                // All tests are done
                 done();
             }, 400);
         }, 200);
