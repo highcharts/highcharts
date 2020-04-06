@@ -79,6 +79,7 @@ declare global {
                 margin: Array<number>,
                 spacing: Array<number>
             ): void;
+            public align(alignTo?: BBoxObject): void;
             public colorizeItem(
                 item: (BubbleLegend|Point|Series),
                 visible?: boolean
@@ -1306,33 +1307,7 @@ class Legend {
         legend.legendHeight = legendHeight;
 
         if (display) {
-            // If aligning to the top and the layout is horizontal, adjust for
-            // the title (#7428)
-            let alignTo = chart.spacingBox;
-            let y = alignTo.y;
-
-            if (
-                /(lth|ct|rth)/.test(legend.getAlignment()) &&
-                chart.titleOffset[0] > 0
-            ) {
-                y += chart.titleOffset[0];
-
-            } else if (
-                /(lbh|cb|rbh)/.test(legend.getAlignment()) &&
-                chart.titleOffset[2] > 0
-            ) {
-                y -= chart.titleOffset[2];
-            }
-
-            if (y !== alignTo.y) {
-                alignTo = merge(alignTo, { y });
-            }
-
-            legendGroup.align(merge(options, {
-                width: legendWidth,
-                height: legendHeight,
-                verticalAlign: this.proximate ? 'top' : options.verticalAlign
-            }), true, alignTo);
+            legend.align();
         }
 
         if (!this.proximate) {
@@ -1340,6 +1315,47 @@ class Legend {
         }
 
         fireEvent(this, 'afterRender');
+    }
+
+    /**
+     * Align the legend to chart's box.
+     *
+     * @private
+     * @function Highcharts.align
+     * @param {Highcharts.BBoxObject} alignTo
+     * @return {void}
+     */
+    public align(
+        alignTo: Highcharts.BBoxObject = this.chart.spacingBox
+    ): void {
+        var chart = this.chart,
+            options = this.options;
+        // If aligning to the top and the layout is horizontal, adjust for
+        // the title (#7428)
+        let y = alignTo.y;
+
+        if (
+            /(lth|ct|rth)/.test(this.getAlignment()) &&
+            chart.titleOffset[0] > 0
+        ) {
+            y += chart.titleOffset[0];
+
+        } else if (
+            /(lbh|cb|rbh)/.test(this.getAlignment()) &&
+            chart.titleOffset[2] > 0
+        ) {
+            y -= chart.titleOffset[2];
+        }
+
+        if (y !== alignTo.y) {
+            alignTo = merge(alignTo, { y });
+        }
+
+        this.group.align(merge(options, {
+            width: this.legendWidth,
+            height: this.legendHeight,
+            verticalAlign: this.proximate ? 'top' : options.verticalAlign
+        }), true, alignTo);
     }
 
     /**

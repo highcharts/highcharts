@@ -1548,14 +1548,26 @@ if (!H.RangeSelector) {
         }
     });
     Chart.prototype.callbacks.push(function (chart) {
-        var extremes, rangeSelector = chart.rangeSelector, unbindRender, unbindSetExtremes;
+        var extremes, rangeSelector = chart.rangeSelector, unbindRender, unbindSetExtremes, legend, alignTo, verticalAlign;
         /**
          * @private
          */
         function renderRangeSelector() {
             extremes = chart.xAxis[0].getExtremes();
+            legend = chart.legend;
+            verticalAlign = rangeSelector === null || rangeSelector === void 0 ? void 0 : rangeSelector.options.verticalAlign;
             if (isNumber(extremes.min)) {
                 rangeSelector.render(extremes.min, extremes.max);
+            }
+            // Re-align the legend so that it's below the rangeselector
+            if (rangeSelector && legend.display &&
+                verticalAlign === 'top' &&
+                verticalAlign === legend.options.verticalAlign) {
+                // Create and use a new alignment box for the legend.
+                alignTo = merge(chart.spacingBox);
+                alignTo.y += rangeSelector.getHeight();
+                legend.group.placed = false; // Don't animate the alignment.
+                legend.align(alignTo);
             }
         }
         if (rangeSelector) {
