@@ -1702,9 +1702,10 @@ var Navigator = /** @class */ (function () {
             // as new data comes in
             if (stickToMax) {
                 newMax = baseDataMax + overscroll;
-                // if stickToMin is true, the new min value is set above
+                // If stickToMin is true, the new min value is set above
                 if (!stickToMin) {
-                    newMin = Math.max(newMax - range, navigator.getBaseSeriesMin(navigatorSeries && navigatorSeries.xData ?
+                    newMin = Math.max(baseDataMin, // don't go below data extremes (#13184)
+                    newMax - range, navigator.getBaseSeriesMin(navigatorSeries && navigatorSeries.xData ?
                         navigatorSeries.xData[0] :
                         -Number.MAX_VALUE));
                 }
