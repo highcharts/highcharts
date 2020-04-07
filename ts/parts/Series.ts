@@ -5158,7 +5158,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     xValue = point.x,
                     yValue = point.y,
                     yBottom = point.low,
-                    stack = stacking && yAxis.stacks[(
+                    stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(
                         series.negStacks &&
                         (yValue as any) <
                         (stackThreshold ? 0 : (threshold as any)) ?

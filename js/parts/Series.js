@@ -3913,7 +3913,7 @@ null,
         }
         // Translate each point
         for (i = 0; i < dataLength; i++) {
-            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacks[(series.negStacks &&
+            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(series.negStacks &&
                 yValue <
                     (stackThreshold ? 0 : threshold) ?
                 '-' :

@@ -1,0 +1,230 @@
+/* *
+ *
+ *  (c) 2010-2020 Torstein Honsi
+ *
+ *  License: www.highcharts.com/license
+ *
+ *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
+ *
+ * */
+
+import type StackItem from './Stacking.js';
+import Axis from './Axis.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    destroyObjectProperties,
+    fireEvent,
+    objectEach,
+    pick
+} = U;
+
+/* eslint-disable valid-jsdoc */
+
+class StackingAxisAdditions {
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
+    public constructor(axis: StackingAxis) {
+        this.axis = axis;
+    }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    axis: StackingAxis;
+    oldStacks: Record<string, Record<string, StackItem>> = {};
+    stacks: Record<string, Record<string, StackItem>> = {};
+    stacksTouched: number = 0;
+    stackTotalGroup?: Highcharts.SVGElement;
+    usePercentage?: boolean;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * Build the stacks from top down
+     * @private
+     */
+    public buildStacks(): void {
+        const stacking = this;
+        const axis = stacking.axis;
+        const axisSeries = axis.series;
+        const reversedStacks = pick(axis.options.reversedStacks, true);
+        const len = axisSeries.length;
+
+        let actualSeries: Highcharts.Series,
+            i: number;
+
+        if (!axis.isXAxis) {
+            stacking.usePercentage = false;
+            i = len;
+            while (i--) {
+                actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
+                actualSeries.setStackedPoints();
+            }
+
+            // Loop up again to compute percent and stream stack
+            for (i = 0; i < len; i++) {
+                axisSeries[i].modifyStacks();
+            }
+            fireEvent(axis, 'afterBuildStacks');
+        }
+    }
+
+    /**
+     * @private
+     */
+    public cleanStacks(): void {
+        const stacking = this;
+        const axis = stacking.axis;
+
+        let stacks;
+
+        if (!axis.isXAxis) {
+            if (stacking.oldStacks) {
+                stacks = stacking.stacks = stacking.oldStacks;
+            }
+
+            // reset stacks
+            objectEach(stacks, function (
+                type: Record<string, StackItem>
+            ): void {
+                objectEach(type, function (stack: StackItem): void {
+                    stack.cumulative = stack.total;
+                });
+            });
+        }
+    }
+
+    /**
+     * Set all the stacks to initial states and destroy unused ones.
+     * @private
+     */
+    public resetStacks(): void {
+        const stacking = this;
+        const axis = stacking.axis;
+        const stacks = stacking.stacks;
+
+        if (!axis.isXAxis) {
+            objectEach(stacks, function (
+                type: Highcharts.Dictionary<Highcharts.StackItem>
+            ): void {
+                objectEach(type, function (
+                    stack: Highcharts.StackItem,
+                    key: string
+                ): void {
+                    // Clean up memory after point deletion (#1044, #4320)
+                    if ((stack.touched as any) < stacking.stacksTouched) {
+                        stack.destroy();
+                        delete type[key];
+
+                    // Reset stacks
+                    } else {
+                        stack.total = null;
+                        stack.cumulative = null;
+                    }
+                });
+            });
+        }
+    }
+
+    /**
+     * @private
+     */
+    public renderStackTotals(): void {
+        const stacking = this;
+        const axis = stacking.axis;
+        const chart = axis.chart;
+        const renderer = chart.renderer;
+        const stacks = stacking.stacks;
+        const stackTotalGroup = stacking.stackTotalGroup = (
+            stacking.stackTotalGroup ||
+            renderer
+                .g('stack-labels')
+                .attr({
+                    visibility: 'visible',
+                    zIndex: 6
+                })
+                .add()
+        );
+
+        // plotLeft/Top will change when y axis gets wider so we need to
+        // translate the stackTotalGroup at every render call. See bug #506
+        // and #516
+        stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
+
+        // Render each stack total
+        objectEach(stacks, function (
+            type: Highcharts.Dictionary<Highcharts.StackItem>
+        ): void {
+            objectEach(type, function (stack: Highcharts.StackItem): void {
+                stack.render(stackTotalGroup);
+            });
+        });
+    }
+
+}
+
+class StackingAxis {
+
+    public static compose(AxisClass: typeof Axis): void {
+
+        const axisProto = AxisClass.prototype;
+
+        /* eslint-disable no-invalid-this */
+
+        addEvent(AxisClass, 'init', function (): void {
+            if (!this.stacking) {
+                this.stacking = new StackingAxisAdditions(this as StackingAxis);
+            }
+        });
+
+        addEvent(AxisClass, 'destroy', function (): void {
+            const stacking = this.stacking;
+
+            if (!stacking) {
+                return;
+            }
+
+            const stacks = stacking.stacks;
+
+            // Destroy each stack total
+            objectEach(stacks, function (
+                stack: Highcharts.Dictionary<Highcharts.StackItem>,
+                stackKey: string
+            ): void {
+                destroyObjectProperties(stack);
+
+                stacks[stackKey] = null as any;
+            });
+
+            if (
+                stacking &&
+                stacking.stackTotalGroup
+            ) {
+                stacking.stackTotalGroup.destroy();
+            }
+        });
+
+        /* eslint-enable no-invalid-this */
+
+    }
+
+}
+
+interface StackingAxis extends Axis {
+    stacking: StackingAxisAdditions;
+}
+
+export default StackingAxis;

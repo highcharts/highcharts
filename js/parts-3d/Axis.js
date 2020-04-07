@@ -474,8 +474,8 @@ extend(ZAxis.prototype, {
             axis.dataMax =
                 axis.ignoreMinPadding =
                     axis.ignoreMaxPadding = null;
-        if (axis.buildStacks) {
-            axis.buildStacks();
+        if (axis.stacking) {
+            axis.stacking.buildStacks();
         }
         // loop through this axis' series
         axis.series.forEach(function (series) {

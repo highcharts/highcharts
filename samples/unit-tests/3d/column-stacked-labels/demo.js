@@ -33,7 +33,7 @@ QUnit.test('3D columns stackLabels render', function (assert) {
 
     var series = chart.series[0],
         dataLabel = series.data[0].dataLabel,
-        stackLabel = chart.yAxis[0].stacks[series.stackKey][0].label;
+        stackLabel = chart.yAxis[0].stacking.stacks[series.stackKey][0].label;
 
     dataLabel.x = dataLabel.translateX + dataLabel.element.getBBox().x;
     dataLabel.y = dataLabel.translateY + dataLabel.element.getBBox().y;

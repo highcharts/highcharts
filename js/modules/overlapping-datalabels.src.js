@@ -27,9 +27,10 @@ addEvent(Chart, 'render', function collectAndHide() {
         labels = labels.concat(collector());
     });
     (this.yAxis || []).forEach(function (yAxis) {
-        if (yAxis.options.stackLabels &&
+        if (yAxis.stacking &&
+            yAxis.options.stackLabels &&
             !yAxis.options.stackLabels.allowOverlap) {
-            objectEach(yAxis.stacks, function (stack) {
+            objectEach(yAxis.stacking.stacks, function (stack) {
                 objectEach(stack, function (stackItem) {
                     labels.push(stackItem.label);
                 });
