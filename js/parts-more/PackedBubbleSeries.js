@@ -267,6 +267,18 @@ seriesType('packedbubble', 'bubble',
      */
     useSimulation: true,
     /**
+    /**
+     * Allow this series' parent nodes to be selected
+     * by clicking on the graph.
+     *
+     * @since 8.0.4
+     *
+     * @private
+     */
+    allowParentSelect: false,
+    /**
+    /**
+     *
      * @declare Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
      *
      * @private
@@ -664,6 +676,7 @@ seriesType('packedbubble', 'bubble',
     },
     // Create Background/Parent Nodes for split series.
     drawGraph: function () {
+        var _this = this;
         // if the series is not using layout, don't add parent nodes
         if (!this.layout || !this.layout.options.splitSeries) {
             return;
@@ -700,9 +713,35 @@ seriesType('packedbubble', 'bubble',
             series.parentNode &&
             series.parentNode.graphic) {
             series.parentNode.graphic.on('click', function (event) {
-                series.parentNode.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+                var selectedParents = _this.getSelectedParents();
+                if (selectedParents.length === 0) {
+                    series.parentNode.select(true);
+                }
+                else if (!event.shiftKey && !event.metaKey && !event.shiftKey) {
+                    var isActualParent_1;
+                    series.parentNode.select(true);
+                    selectedParents.forEach(function (parent) {
+                        isActualParent_1 = parent.id === series.parentNode.id;
+                        parent.select(false);
+                    });
+                }
+                else if (event.shiftKey) {
+                    series.parentNode.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+                }
             });
         }
+    },
+    getSelectedParents: function () {
+        var chart = this.chart;
+        var series = chart.series;
+        var selectedParentsNodes = [];
+        chart.series.forEach(function (series) {
+            var _a;
+            if ((_a = series.parentNode) === null || _a === void 0 ? void 0 : _a.selected) {
+                selectedParentsNodes.push(series.parentNode);
+            }
+        });
+        return selectedParentsNodes;
     },
     /**
      * Creating parent nodes for split series, in which all the bubbles

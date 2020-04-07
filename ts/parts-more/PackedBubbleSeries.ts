@@ -79,6 +79,7 @@ declare global {
             public drawDataLabels(): void;
             public drawGraph(): void;
             public getPointRadius(): void;
+            public getSelectedParents(): Array<PackedBubblePoint>;
             public init(): PackedBubbleSeries;
             public onMouseUp(point: DragNodesPoint): void;
             public placeBubbles(
@@ -587,6 +588,18 @@ seriesType<Highcharts.PackedBubbleSeries>(
          */
         useSimulation: true,
         /**
+        /**
+         * Allow this series' parent nodes to be selected
+         * by clicking on the graph.
+         *
+         * @since 8.0.4
+         *
+         * @private
+         */
+        allowParentSelect: false,
+        /**
+        /**
+         *
          * @declare Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
          *
          * @private
@@ -1121,16 +1134,42 @@ seriesType<Highcharts.PackedBubbleSeries>(
                         .add(series.parentNodesGroup);
             }
             (series.parentNode as any).graphic.attr(parentAttribs);
-
             if (series.options.allowParentSelect &&
                 series.parentNode &&
                 series.parentNode.graphic) {
                 series.parentNode.graphic.on('click', (event: any): void => {
-                    (series.parentNode as any).select(
-                        null, event.ctrlKey || event.metaKey || event.shiftKey);
+                    const selectedParents = this.getSelectedParents();
+                    if (selectedParents.length === 0) {
+                        (series.parentNode as any).select(true);
+
+                    } else if (!event.shiftKey && !event.metaKey && !event.shiftKey) {
+                        let isActualParent;
+                        (series.parentNode as any).select(true);
+
+                        selectedParents.forEach((parent): void => {
+                            isActualParent = parent.id === (series.parentNode as any).id;
+                            parent.select(false);
+                        });
+                        
+                    } else if (event.shiftKey) {
+                        (series.parentNode as any).select(
+                            null, event.ctrlKey || event.metaKey || event.shiftKey
+                        );
+                    }
                 });
             }
 
+        },
+        getSelectedParents: function (this: Highcharts.PackedBubbleSeries): any {
+            const chart = this.chart;
+            const series = (chart as any).series as Array<Highcharts.PackedBubbleSeries>;
+            const selectedParentsNodes: any[] = [];
+            chart.series.forEach((series): void => {
+                if ((series as any).parentNode?.selected) {
+                    selectedParentsNodes.push((series as any).parentNode);
+                }
+            });
+            return selectedParentsNodes;
         },
         /**
          * Creating parent nodes for split series, in which all the bubbles
