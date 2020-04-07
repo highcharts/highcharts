@@ -102,7 +102,7 @@ H.ganttChart = function (renderTo, options, callback) {
         isGantt: true
     });
     options.series = userOptions.series = seriesOptions;
-    options.series.forEach(function (series) {
+    (options.series || []).forEach(function (series) {
         series.data.forEach(function (point) {
             H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
         });
