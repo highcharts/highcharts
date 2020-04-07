@@ -37,7 +37,8 @@ declare global {
 import U from '../../parts/Utilities.js';
 const {
     fireEvent,
-    isIntersectRect
+    isIntersectRect,
+    merge
 } = U;
 
 var Chart = H.Chart;
@@ -69,6 +70,7 @@ H.layoutAnimationMixin = {
             box1,
             box2,
             isLabelAffected = false,
+            cssOptions: Highcharts.CSSObject,
             i,
             j;
 
@@ -96,6 +98,9 @@ H.layoutAnimationMixin = {
                 }
             }
         }
+        cssOptions = merge({
+            transition: 'opacity 2000ms'
+        }, labels[0].options.style);
         // Hide or show
         labels.forEach(function (label: Highcharts.SVGElement): void {
             var complete: (Function|undefined),
@@ -110,20 +115,16 @@ H.layoutAnimationMixin = {
                             label.removeClass('highcharts-simulation-dataLabels');
                             label.addClass('highcharts-simulation-dataLabels-fadeout');
                             if (!styledMode) { // <--- !styledMode :
-                                label.css({
-                                    opacity: 1,
-                                    transition: 'opacity 2000ms'
-                                });
+                                cssOptions.opacity = 1;
+                                label.css(cssOptions);
                             }
                         } else {
                             complete = function (): void {
                                 label.removeClass('highcharts-simulation-dataLabels-fadeout');
                                 label.addClass('highcharts-simulation-dataLabels');
                                 if (!styledMode) { // <--- !styledMode :
-                                    label.css({
-                                        opacity: 0,
-                                        transition: 'opacity 2000ms'
-                                    });
+                                    cssOptions.opacity = 0;
+                                    label.css(cssOptions);
                                 }
                                 label.placed = false; // avoid animation from top
                             };
@@ -159,14 +160,18 @@ H.layoutAnimationMixin = {
         this: Highcharts.NodeAnimSeries,
         labels: Array<Highcharts.SVGElement>
     ): void {
-        var chart = this.chart;
-        if (
-            H.layoutAnimationMixin.hideOrShowLabels.call(
-                this,
-                chart.getLabelBoxes(labels)
-            )
-        ) {
-            fireEvent(chart, 'afterHideAllOverlappingLabels');
+        if (this.layout && this.layout.enableSimulation) {
+            var chart = this.chart;
+            if (
+                H.layoutAnimationMixin.hideOrShowLabels.call(
+                    this,
+                    chart.getLabelBoxes(labels)
+                )
+            ) {
+                fireEvent(chart, 'afterHideAllOverlappingLabels');
+            }
+        } else {
+            this.chart.hideOverlappingLabels(labels);
         }
     }
 };

@@ -11,12 +11,23 @@
  * */
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var fireEvent = U.fireEvent, isIntersectRect = U.isIntersectRect;
+var fireEvent = U.fireEvent, isIntersectRect = U.isIntersectRect, merge = U.merge;
 var Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.layoutAnimationMixin = {
+    /**
+     * Hide or Show dataLabels depending on their opacity.
+     *
+     * @private
+     * @function Highcharts.Chart#hideOrShowLabels
+     * @param {Array<Highcharts.SVGElement>} labels
+     * Rendered data labels
+     * @return {Boolean} isLabelAffected
+     * boolean value if any label was hidden/shown.
+     * @requires modules/overlapping-datalabels
+     */
     hideOrShowLabels: function (labels) {
-        var chart = this.chart, styledMode = chart.styledMode, len = labels.length, label1, label2, box1, box2, isLabelAffected = false, i, j;
+        var chart = this.chart, styledMode = chart.styledMode, len = labels.length, label1, label2, box1, box2, isLabelAffected = false, cssOptions, i, j;
         // Detect overlapping labels
         for (i = 0; i < len; i++) {
             label1 = labels[i];
@@ -36,6 +47,9 @@ H.layoutAnimationMixin = {
                 }
             }
         }
+        cssOptions = merge({
+            transition: 'opacity 2000ms'
+        }, labels[0].options.style);
         // Hide or show
         labels.forEach(function (label) {
             var complete, newOpacity;
@@ -49,10 +63,8 @@ H.layoutAnimationMixin = {
                             label.removeClass('highcharts-simulation-dataLabels');
                             label.addClass('highcharts-simulation-dataLabels-fadeout');
                             if (!styledMode) { // <--- !styledMode :
-                                label.css({
-                                    opacity: 1,
-                                    transition: 'opacity 2000ms'
-                                });
+                                cssOptions.opacity = 1;
+                                label.css(cssOptions);
                             }
                         }
                         else {
@@ -60,10 +72,8 @@ H.layoutAnimationMixin = {
                                 label.removeClass('highcharts-simulation-dataLabels-fadeout');
                                 label.addClass('highcharts-simulation-dataLabels');
                                 if (!styledMode) { // <--- !styledMode :
-                                    label.css({
-                                        opacity: 0,
-                                        transition: 'opacity 2000ms'
-                                    });
+                                    cssOptions.opacity = 0;
+                                    label.css(cssOptions);
                                 }
                                 label.placed = false; // avoid animation from top
                             };
@@ -92,9 +102,14 @@ H.layoutAnimationMixin = {
      * @return {undefined}
      */
     hideOverlappingLabels: function (labels) {
-        var chart = this.chart;
-        if (H.layoutAnimationMixin.hideOrShowLabels.call(this, chart.getLabelBoxes(labels))) {
-            fireEvent(chart, 'afterHideAllOverlappingLabels');
+        if (this.layout && this.layout.enableSimulation) {
+            var chart = this.chart;
+            if (H.layoutAnimationMixin.hideOrShowLabels.call(this, chart.getLabelBoxes(labels))) {
+                fireEvent(chart, 'afterHideAllOverlappingLabels');
+            }
+        }
+        else {
+            this.chart.hideOverlappingLabels(labels);
         }
     }
 };
