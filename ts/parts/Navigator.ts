@@ -2510,9 +2510,10 @@ class Navigator {
             if (stickToMax) {
                 newMax = baseDataMax + overscroll;
 
-                // if stickToMin is true, the new min value is set above
+                // If stickToMin is true, the new min value is set above
                 if (!stickToMin) {
                     newMin = Math.max(
+                        baseDataMin, // don't go below data extremes (#13184)
                         newMax - range,
                         (navigator as any).getBaseSeriesMin(
                             navigatorSeries && navigatorSeries.xData ?
