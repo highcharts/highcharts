@@ -90,18 +90,7 @@ var applyGridOptions = function applyGridOptions(axis) {
  * @type      {number}
  * @apioption xAxis.grid.cellHeight
  */
-// Enum for which side the axis is on.
-// Maps to axis.side
-var axisSide = {
-    top: 0,
-    right: 1,
-    bottom: 2,
-    left: 3,
-    0: 'top',
-    1: 'right',
-    2: 'bottom',
-    3: 'left'
-};
+''; // detach doclets above
 /**
  * Get the largest label width and height.
  *
@@ -226,18 +215,22 @@ var GridAxisAdditions = /** @class */ (function () {
 var GridAxis = /** @class */ (function () {
     function GridAxis() {
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    /* eslint-disable valid-jsdoc */
+    /**
+     * Extends axis class with grid support.
+     * @private
+     */
     GridAxis.compose = function (AxisClass) {
         Axis.keepProps.push('grid');
-        var axisProto = AxisClass.prototype;
-        /* eslint-disable no-invalid-this, valid-jsdoc */
-        // Avoid altering tickInterval when reserving space.
-        wrap(axisProto, 'unsquish', function (proceed) {
-            var axis = this, options = axis.options, gridOptions = (options && isObject(options.grid)) ? options.grid : {};
-            if (gridOptions.enabled === true && this.categories) {
-                return this.tickInterval;
-            }
-            return proceed.apply(this, argsToArray(arguments));
-        });
+        wrap(AxisClass.prototype, 'unsquish', GridAxis.wrapUnsquish);
+        addEvent(AxisClass, 'init', GridAxis.onInit);
+        addEvent(AxisClass, 'destroy', GridAxis.onDestroy);
+        /* eslint-disable no-invalid-this */
         // Draw vertical axis ticks extra long to create cell floors and roofs.
         // Overrides the tickLength for vertical axes.
         addEvent(AxisClass, 'afterTickSize', function (e) {
@@ -269,7 +262,7 @@ var GridAxis = /** @class */ (function () {
                     (horiz ? 1 : -1) * // horizontal axis reverses the margin
                         (opposite ? -1 : 1) * // so does opposite axes
                         (tickSize[0] / 2) +
-                    (axis.side === axisSide.bottom ? titleFontSize : 0);
+                    (axis.side === GridAxis.Side.bottom ? titleFontSize : 0);
                 e.titlePosition.x = horiz ?
                     axisLeft - titleWidth / 2 - titleMargin + xOption :
                     offAxis + (opposite ? axisWidth : 0) + offset + xOption;
@@ -538,8 +531,8 @@ var GridAxis = /** @class */ (function () {
                         yEndIndex = linePath.indexOf('L') + 2;
                         // Negate distance if top or left axis. Subtract 1px
                         // to draw the line at the end of the tick.
-                        var distance = (axis.tickSize('tick')[0] - 1) * ((axis.side === axisSide.top ||
-                            axis.side === axisSide.left) ? -1 : 1);
+                        var distance = (axis.tickSize('tick')[0] - 1) * ((axis.side === GridAxis.Side.top ||
+                            axis.side === GridAxis.Side.left) ? -1 : 1);
                         // If axis is horizontal, reposition line path
                         // vertically
                         if (axis.horiz) {
@@ -639,22 +632,6 @@ var GridAxis = /** @class */ (function () {
                 column.setScale();
             });
         };
-        var onGridAxisDestroy = function onGridAxisDestroy(e) {
-            (this.grid.columns || []).forEach(function (column) {
-                column.destroy(e.keepEvents);
-            });
-            // this.grid.columns = void 0;
-        };
-        // Wraps axis init to draw cell walls on vertical axes.
-        var onGridAxisInit = function onGridAxisInit(e) {
-            var userOptions = e.userOptions || {}, gridOptions = userOptions.grid || {};
-            if (gridOptions.enabled && defined(gridOptions.borderColor)) {
-                userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
-            }
-            if (!this.grid) {
-                this.grid = new GridAxisAdditions(this);
-            }
-        };
         var onGridAxisAfterSetOptions = function onGridAxisAfterSetOptions(e) {
             var axis = this, userOptions = e.userOptions, gridOptions = userOptions && userOptions.grid || {}, columns = gridOptions.columns;
             // Add column options to the parent axis. Children has their column
@@ -667,9 +644,7 @@ var GridAxis = /** @class */ (function () {
             afterGetOffset: onGridAxisAfterGetOffset,
             afterInit: onGridAxisAfterInit,
             afterSetOptions: onGridAxisAfterSetOptions,
-            afterSetScale: onGridAxisAfterSetScale,
-            destroy: onGridAxisDestroy,
-            init: onGridAxisInit
+            afterSetScale: onGridAxisAfterSetScale
         };
         // Add event handlers
         Object.keys(axisEvents).forEach(function (event) {
@@ -693,7 +668,7 @@ var GridAxis = /** @class */ (function () {
             var tick = this, label = tick.label, axis = tick.axis, reversed = axis.reversed, chart = axis.chart, options = axis.options, gridOptions = options.grid || {}, labelOpts = axis.options.labels, align = labelOpts.align, 
             // verticalAlign is currently not supported for axis.labels.
             verticalAlign = 'middle', // labelOpts.verticalAlign,
-            side = axisSide[axis.side], tickmarkOffset = e.tickmarkOffset, tickPositions = axis.tickPositions, tickPos = tick.pos - tickmarkOffset, nextTickPos = (isNumber(tickPositions[e.index + 1]) ?
+            side = GridAxis.Side[axis.side], tickmarkOffset = e.tickmarkOffset, tickPositions = axis.tickPositions, tickPos = tick.pos - tickmarkOffset, nextTickPos = (isNumber(tickPositions[e.index + 1]) ?
                 tickPositions[e.index + 1] - tickmarkOffset :
                 axis.max + tickmarkOffset), tickSize = axis.tickSize('tick', true), tickWidth = isArray(tickSize) ? tickSize[0] : 0, crispCorr = tickSize && tickSize[1] / 2, labelHeight, lblMetrics, lines, bottom, top, left, right;
             // Only center tick labels in grid axes
@@ -762,6 +737,45 @@ var GridAxis = /** @class */ (function () {
                 e.pos.x += (axis.horiz && labelOpts.x || 0);
             }
         });
+    };
+    /**
+     * @private
+     */
+    GridAxis.onDestroy = function (e) {
+        var axis = this;
+        var grid = axis.grid;
+        (grid.columns || []).forEach(function (column) {
+            column.destroy(e.keepEvents);
+        });
+        grid.columns = void 0;
+    };
+    /**
+     * Wraps axis init to draw cell walls on vertical axes.
+     * @private
+     */
+    GridAxis.onInit = function (e) {
+        var axis = this;
+        var userOptions = e.userOptions || {};
+        var gridOptions = userOptions.grid || {};
+        if (gridOptions.enabled && defined(gridOptions.borderColor)) {
+            userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
+        }
+        if (!axis.grid) {
+            axis.grid = new GridAxisAdditions(axis);
+        }
+    };
+    /**
+     * Avoid altering tickInterval when reserving space.
+     * @private
+     */
+    GridAxis.wrapUnsquish = function (proceed) {
+        var axis = this;
+        var options = axis.options;
+        var gridOptions = options.grid || {};
+        if (gridOptions.enabled === true && axis.categories) {
+            return axis.tickInterval;
+        }
+        return proceed.apply(axis, argsToArray(arguments));
     };
     return GridAxis;
 }());
