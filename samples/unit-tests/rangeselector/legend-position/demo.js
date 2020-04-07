@@ -1,5 +1,5 @@
 QUnit.test('Legend should be rendered below the range selector', function (assert) {
-    Highcharts.stockChart('container', {
+    var chart = Highcharts.stockChart('container', {
         rangeSelector: {
             enabled: true,
             inputEnabled: false,
@@ -17,8 +17,8 @@ QUnit.test('Legend should be rendered below the range selector', function (asser
         }]
     });
     assert.ok(
-        document.getElementsByClassName('highcharts-legend')[0].getBoundingClientRect().top >=
-        document.getElementsByClassName('highcharts-range-selector-group')[0].getBoundingClientRect().bottom,
+        chart.legend.group.element.getBoundingClientRect().top >=
+            chart.rangeSelector.group.element.getBoundingClientRect().bottom,
         'The legend is rendered below the range selector.'
     );
 });
