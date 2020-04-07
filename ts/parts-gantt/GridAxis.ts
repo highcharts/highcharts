@@ -144,19 +144,7 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
  * @apioption xAxis.grid.cellHeight
  */
 
-
-// Enum for which side the axis is on.
-// Maps to axis.side
-var axisSide: Highcharts.Dictionary<(number|string)> = {
-    top: 0,
-    right: 1,
-    bottom: 2,
-    left: 3,
-    0: 'top',
-    1: 'right',
-    2: 'bottom',
-    3: 'left'
-};
+''; // detach doclets above
 
 /**
  * Get the largest label width and height.
@@ -327,30 +315,28 @@ class GridAxisAdditions {
  */
 class GridAxis {
 
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Extends axis class with grid support.
+     * @private
+     */
     public static compose(AxisClass: typeof Axis): void {
 
         Axis.keepProps.push('grid');
 
-        const axisProto = AxisClass.prototype as GridAxis;
+        wrap(AxisClass.prototype, 'unsquish', GridAxis.wrapUnsquish);
 
-        /* eslint-disable no-invalid-this, valid-jsdoc */
+        addEvent(AxisClass, 'init', GridAxis.onInit);
+        addEvent(AxisClass, 'destroy', GridAxis.onDestroy);
 
-        // Avoid altering tickInterval when reserving space.
-        wrap(axisProto, 'unsquish', function (
-            this: Axis,
-            proceed: Function
-        ): number {
-            var axis = this,
-                options = axis.options,
-                gridOptions: GridAxis.Options =
-                    (options && isObject(options.grid)) ? (options.grid as any) : {};
-
-            if (gridOptions.enabled === true && this.categories) {
-                return this.tickInterval;
-            }
-
-            return proceed.apply(this, argsToArray(arguments));
-        });
+        /* eslint-disable no-invalid-this */
 
         // Draw vertical axis ticks extra long to create cell floors and roofs.
         // Overrides the tickLength for vertical axes.
@@ -420,7 +406,7 @@ class GridAxis {
                         (horiz ? 1 : -1) * // horizontal axis reverses the margin
                         (opposite ? -1 : 1) * // so does opposite axes
                         (tickSize[0] / 2) +
-                        (axis.side === axisSide.bottom ? titleFontSize : 0);
+                        (axis.side === GridAxis.Side.bottom ? titleFontSize : 0);
 
                 e.titlePosition.x = horiz ?
                     axisLeft - (titleWidth as any) / 2 - titleMargin + xOption :
@@ -821,8 +807,8 @@ class GridAxis {
                             // Negate distance if top or left axis. Subtract 1px
                             // to draw the line at the end of the tick.
                             const distance = (axis.tickSize('tick')[0] - 1) * ((
-                                axis.side === axisSide.top ||
-                                axis.side === axisSide.left
+                                axis.side === GridAxis.Side.top ||
+                                axis.side === GridAxis.Side.left
                             ) ? -1 : 1);
 
                             // If axis is horizontal, reposition line path
@@ -974,35 +960,6 @@ class GridAxis {
             });
         };
 
-        var onGridAxisDestroy = function onGridAxisDestroy(
-            this: GridAxis,
-            e: {
-                keepEvents: boolean;
-            }
-        ): void {
-            (this.grid.columns || []).forEach(function (column): void {
-                column.destroy(e.keepEvents);
-            });
-            // this.grid.columns = void 0;
-        };
-
-        // Wraps axis init to draw cell walls on vertical axes.
-        var onGridAxisInit = function onGridAxisInit(
-            this: Axis,
-            e: { userOptions?: Highcharts.AxisOptions }
-        ): void {
-            var userOptions = e.userOptions || {},
-                gridOptions = userOptions.grid || {};
-
-            if (gridOptions.enabled && defined(gridOptions.borderColor)) {
-                userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
-            }
-
-            if (!this.grid) {
-                this.grid = new GridAxisAdditions(this as GridAxis);
-            }
-        };
-
         var onGridAxisAfterSetOptions = function onGridAxisAfterSetOptions(
             this: Axis,
             e: { userOptions?: Highcharts.AxisOptions }
@@ -1023,9 +980,7 @@ class GridAxis {
             afterGetOffset: onGridAxisAfterGetOffset,
             afterInit: onGridAxisAfterInit,
             afterSetOptions: onGridAxisAfterSetOptions,
-            afterSetScale: onGridAxisAfterSetScale,
-            destroy: onGridAxisDestroy,
-            init: onGridAxisInit
+            afterSetScale: onGridAxisAfterSetScale
         };
 
         // Add event handlers
@@ -1072,7 +1027,7 @@ class GridAxis {
                     align = (labelOpts as any).align,
                     // verticalAlign is currently not supported for axis.labels.
                     verticalAlign = 'middle', // labelOpts.verticalAlign,
-                    side = axisSide[axis.side],
+                    side = GridAxis.Side[axis.side],
                     tickmarkOffset = e.tickmarkOffset,
                     tickPositions = axis.tickPositions,
                     tickPos = tick.pos - tickmarkOffset,
@@ -1177,7 +1132,62 @@ class GridAxis {
             }
         );
 
+    }
 
+    /**
+     * @private
+     */
+    public static onDestroy(
+        this: Axis,
+        e: { keepEvents: boolean }
+    ): void {
+        const axis = this as GridAxis;
+        const grid = axis.grid;
+
+        (grid.columns || []).forEach(function (column): void {
+            column.destroy(e.keepEvents);
+        });
+        grid.columns = void 0;
+    }
+
+    /**
+     * Wraps axis init to draw cell walls on vertical axes.
+     * @private
+     */
+    public static onInit(
+        this: Axis,
+        e: { userOptions?: Highcharts.AxisOptions }
+    ): void {
+        const axis = this;
+        const userOptions = e.userOptions || {};
+        const gridOptions = userOptions.grid || {};
+
+        if (gridOptions.enabled && defined(gridOptions.borderColor)) {
+            userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
+        }
+
+        if (!axis.grid) {
+            axis.grid = new GridAxisAdditions(axis as GridAxis);
+        }
+    }
+
+    /**
+     * Avoid altering tickInterval when reserving space.
+     * @private
+     */
+    public static wrapUnsquish(
+        this: Axis,
+        proceed: Function
+    ): number {
+        const axis = this;
+        const options = axis.options;
+        const gridOptions = options.grid || {};
+
+        if (gridOptions.enabled === true && axis.categories) {
+            return axis.tickInterval;
+        }
+
+        return proceed.apply(axis, argsToArray(arguments));
     }
 
 }
