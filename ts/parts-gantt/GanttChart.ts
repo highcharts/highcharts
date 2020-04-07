@@ -165,7 +165,7 @@ H.ganttChart = function (
 
     options.series = userOptions.series = seriesOptions;
 
-    (options.series as any).forEach(function (series: Highcharts.Series): void {
+    (options.series as any || []).forEach(function (series: Highcharts.Series): void {
         series.data.forEach(function (point: Highcharts.Point): void {
             H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
         });
