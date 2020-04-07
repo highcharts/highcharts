@@ -271,7 +271,6 @@ declare global {
             top?: (number|string);
             type?: AxisTypeValue;
             uniqueNames?: boolean;
-            units?: Array<[string, (Array<number>|null)]>;
             visible?: boolean;
             width?: (number|string);
             zIndex?: number;
