@@ -1,12 +1,13 @@
 const mkdirp = require('mkdirp');
 const { join } = require('path');
-const yargs = require('yargs').argv;
+const argv = require('yargs').argv;
 const fs = require('fs');
 const gulp = require('gulp');
 const { getFileSizes } = require('../compareFilesize');
 const log = require('./lib/log');
+const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
 
-const files = ['highcharts.src.js'];
+const files = argv.files ? argv.files.split(',') : ['highcharts.src.js'];
 
 /**
  * @param {string} outputFolder output path
@@ -30,7 +31,8 @@ async function writeFileSize(outputFolder, outputFileName) {
  * @return {string} Markdown table
  */
 function makeTable(master, proposed) {
-    let table = '| | master | candidate | difference |' +
+    let table = '### File size comparison table' +
+        '\n| | master | candidate | difference |' +
         '\n|-------------|-------------|-------------|-------------|';
 
     try {
@@ -50,7 +52,8 @@ function makeTable(master, proposed) {
         return table;
 
     } catch (error) {
-        return error;
+        log.failure(error);
+        return null;
     }
 }
 
@@ -59,23 +62,62 @@ function makeTable(master, proposed) {
  * @return {void}
  */
 async function writeFileSizes() {
-    const filename = yargs.filename || 'master.json';
+    const filename = argv.filename || 'master.json';
     await writeFileSize('./tmp/filesizes/', filename);
 }
+
 /**
  * Task that writes a markdown table that compares filesizes
  * of master and PR
  * @return {void}
  */
 async function writeTable() {
-    const { master, proposed } = yargs;
-    if (master && proposed) {
-        fs.writeFileSync('./tmp/filesizes/comparison.md', makeTable(master, proposed));
-        log.message(makeTable(master, proposed));
-    } else {
-        log.failure('Please provide all required arguments');
+    try {
+        const { master, proposed } = argv;
+        if (master && proposed) {
+            fs.writeFileSync('./tmp/filesizes/comparison.md', makeTable(master, proposed));
+        } else {
+            log.failure('Please provide all required arguments');
+        }
+    } catch (error) {
+        log.failure(error);
     }
 }
 
-gulp.task('file-size-table', writeTable);
+/**
+ * Adds or updates a comment to a pull request containing
+ * a file comparison table. Pull request id is specified with `--pr <id>`.
+ * Updates are limited to the user specified with `--user <username>`
+ * @return {void}
+ */
+async function comment() {
+    try {
+        const { pr, user } = argv;
+        if (pr) {
+            const existingComment = await fetchPRComments(pr, user || '', '### File size comparison table');
+            const commentBody = fs.readFileSync('./tmp/filesizes/comparison.md').toString();
+            if (existingComment.length) {
+                await updatePRComment(existingComment[0].id, commentBody);
+            } else if (commentBody) {
+                await createPRComment(pr, commentBody);
+            }
+        } else {
+            log.error('Please specify a a PR id with \'--pr\' and a user with \'--user\' ');
+        }
+    } catch (error) {
+        log.failure(error);
+    }
+}
+
+comment.description = 'Updates/creates file size comparison for pull requests';
+comment.flags = {
+    '--pr': 'Pull request number',
+    '--user': 'Github user',
+    '--token': 'Github token (can also be specified with GITHUB_TOKEN env var)',
+    '--fail-silently': 'Will always return exitCode 0 (success)',
+    '--dryrun': 'Just runs through the task for testing purposes without doing external requests. '
+};
+
+gulp.task('write-size-table', writeTable);
 gulp.task('write-file-sizes', writeFileSizes);
+gulp.task('pr-comment-sizes', comment);

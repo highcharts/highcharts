@@ -79,7 +79,7 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/upload-api',
     'unsorted/upload-files',
     'update-pr-testresults',
-    'file-size-table'
+    'pr-size-table'
 ]));
 
 /* *
