@@ -1413,7 +1413,7 @@ seriesType<Highcharts.PieSeries>(
                 point.options;
 
             if (point.graphic) {
-                (point.graphic as any).animate(this.getTranslate());
+                point.graphic.animate(this.getTranslate());
             }
 
             if (point.shadowGroup) {
