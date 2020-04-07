@@ -1045,7 +1045,9 @@ seriesType('pie', 'line',
         // update userOptions.data
         series.options.data[series.data.indexOf(point)] =
             point.options;
-        point.graphic.animate(this.getTranslate());
+        if (point.graphic) {
+            point.graphic.animate(this.getTranslate());
+        }
         if (point.shadowGroup) {
             point.shadowGroup.animate(this.getTranslate());
         }
