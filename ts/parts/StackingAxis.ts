@@ -21,6 +21,11 @@ const {
 
 /* eslint-disable valid-jsdoc */
 
+/**
+ * Adds stacking support to axes.
+ * @private
+ * @class
+ */
 class StackingAxisAdditions {
 
     /* *
@@ -176,51 +181,71 @@ class StackingAxisAdditions {
 
 }
 
+/**
+ * Axis with stacking support.
+ * @private
+ * @class
+ */
 class StackingAxis {
 
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /**
+     * Extends axis with stacking support.
+     * @private
+     */
     public static compose(AxisClass: typeof Axis): void {
 
         const axisProto = AxisClass.prototype;
 
-        /* eslint-disable no-invalid-this */
-
-        addEvent(AxisClass, 'init', function (): void {
-            if (!this.stacking) {
-                this.stacking = new StackingAxisAdditions(this as StackingAxis);
-            }
-        });
-
-        addEvent(AxisClass, 'destroy', function (): void {
-            const stacking = this.stacking;
-
-            if (!stacking) {
-                return;
-            }
-
-            const stacks = stacking.stacks;
-
-            // Destroy each stack total
-            objectEach(stacks, function (
-                stack: Highcharts.Dictionary<Highcharts.StackItem>,
-                stackKey: string
-            ): void {
-                destroyObjectProperties(stack);
-
-                stacks[stackKey] = null as any;
-            });
-
-            if (
-                stacking &&
-                stacking.stackTotalGroup
-            ) {
-                stacking.stackTotalGroup.destroy();
-            }
-        });
-
-        /* eslint-enable no-invalid-this */
+        addEvent(AxisClass, 'init', StackingAxis.onInit);
+        addEvent(AxisClass, 'destroy', StackingAxis.onDestroy);
 
     }
 
+    /**
+     * @private
+     */
+    public static onDestroy(this: Axis): void {
+        const stacking = this.stacking;
+
+        if (!stacking) {
+            return;
+        }
+
+        const stacks = stacking.stacks;
+
+        // Destroy each stack total
+        objectEach(stacks, function (
+            stack: Record<string, StackItem>,
+            stackKey: string
+        ): void {
+            destroyObjectProperties(stack);
+
+            stacks[stackKey] = null as any;
+        });
+
+        if (
+            stacking &&
+            stacking.stackTotalGroup
+        ) {
+            stacking.stackTotalGroup.destroy();
+        }
+    }
+
+    /**
+     * @private
+     */
+    public static onInit(this: Axis): void {
+        const axis = this;
+        if (!axis.stacking) {
+            axis.stacking = new StackingAxisAdditions(axis as StackingAxis);
+        }
+    }
 }
 
 interface StackingAxis extends Axis {

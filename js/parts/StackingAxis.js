@@ -10,6 +10,11 @@
 import U from './Utilities.js';
 var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
+/**
+ * Adds stacking support to axes.
+ * @private
+ * @class
+ */
 var StackingAxisAdditions = /** @class */ (function () {
     /* *
      *
@@ -126,34 +131,55 @@ var StackingAxisAdditions = /** @class */ (function () {
     };
     return StackingAxisAdditions;
 }());
+/**
+ * Axis with stacking support.
+ * @private
+ * @class
+ */
 var StackingAxis = /** @class */ (function () {
     function StackingAxis() {
     }
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+    /**
+     * Extends axis with stacking support.
+     * @private
+     */
     StackingAxis.compose = function (AxisClass) {
         var axisProto = AxisClass.prototype;
-        /* eslint-disable no-invalid-this */
-        addEvent(AxisClass, 'init', function () {
-            if (!this.stacking) {
-                this.stacking = new StackingAxisAdditions(this);
-            }
+        addEvent(AxisClass, 'init', StackingAxis.onInit);
+        addEvent(AxisClass, 'destroy', StackingAxis.onDestroy);
+    };
+    /**
+     * @private
+     */
+    StackingAxis.onDestroy = function () {
+        var stacking = this.stacking;
+        if (!stacking) {
+            return;
+        }
+        var stacks = stacking.stacks;
+        // Destroy each stack total
+        objectEach(stacks, function (stack, stackKey) {
+            destroyObjectProperties(stack);
+            stacks[stackKey] = null;
         });
-        addEvent(AxisClass, 'destroy', function () {
-            var stacking = this.stacking;
-            if (!stacking) {
-                return;
-            }
-            var stacks = stacking.stacks;
-            // Destroy each stack total
-            objectEach(stacks, function (stack, stackKey) {
-                destroyObjectProperties(stack);
-                stacks[stackKey] = null;
-            });
-            if (stacking &&
-                stacking.stackTotalGroup) {
-                stacking.stackTotalGroup.destroy();
-            }
-        });
-        /* eslint-enable no-invalid-this */
+        if (stacking &&
+            stacking.stackTotalGroup) {
+            stacking.stackTotalGroup.destroy();
+        }
+    };
+    /**
+     * @private
+     */
+    StackingAxis.onInit = function () {
+        var axis = this;
+        if (!axis.stacking) {
+            axis.stacking = new StackingAxisAdditions(axis);
+        }
     };
     return StackingAxis;
 }());
