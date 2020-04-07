@@ -1150,7 +1150,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                             isActualParent = parent.id === (series.parentNode as any).id;
                             parent.select(false);
                         });
-                        
+
                     } else if (event.shiftKey) {
                         (series.parentNode as any).select(
                             null, event.ctrlKey || event.metaKey || event.shiftKey
