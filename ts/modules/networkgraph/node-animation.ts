@@ -22,6 +22,13 @@ declare global {
             hideOverlappingLabels(
                 labels: Array<SVGElement>
             ): void;
+            hideOrShowLabels(
+                labels: Array<SVGElement>
+            ): boolean;
+        }
+        interface NodeAnimSeries extends Series {
+            hideOrShowLabels: LayoutAnimationMixin['hideOrShowLabels'];
+            hideOverlappingLabels: LayoutAnimationMixin['hideOverlappingLabels'];
         }
         let layoutAnimationMixin: LayoutAnimationMixin;
     }
@@ -29,7 +36,8 @@ declare global {
 
 import U from '../../parts/Utilities.js';
 const {
-    fireEvent
+    fireEvent,
+    isIntersectRect
 } = U;
 
 var Chart = H.Chart;
@@ -37,107 +45,32 @@ var Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 H.layoutAnimationMixin = {
+
     /**
-     * Method dealing with overlapping dataLabels
-     * in series using layout simulation
-     * @param {Array<Highcharts.SVGElement>} labels Array of all series labels
-     * @return {undefined}
+     * Hide or Show dataLabels depending on their opacity.
+     *
+     * @private
+     * @function Highcharts.Chart#hideOrShowLabels
+     * @param {Array<Highcharts.SVGElement>} labels
+     * Rendered data labels
+     * @return {Boolean} isLabelAffected
+     * boolean value if any label was hidden/shown.
+     * @requires modules/overlapping-datalabels
      */
-    hideOverlappingLabels: function (
-        this: Highcharts.Series,
+    hideOrShowLabels: function (
+        this: Highcharts.NodeAnimSeries,
         labels: Array<Highcharts.SVGElement>
-    ): void {
+    ): boolean {
         var chart = this.chart,
             styledMode = chart.styledMode,
             len = labels.length,
-            ren = chart.renderer,
-            label,
-            i,
-            j,
             label1,
             label2,
             box1,
             box2,
-            isIntersectRect = function (
-                box1: Highcharts.BBoxObject,
-                box2: Highcharts.BBoxObject
-            ): boolean {
-                return !(
-                    box2.x > box1.x + box1.width ||
-                    box2.x + box2.width < box1.x ||
-                    box2.y > box1.y + box1.height ||
-                    box2.y + box2.height < box1.y
-                );
-            },
-
-            // Get the box with its position inside the chart,
-            // as opposed to getBBox that only reports
-            // the position relative to the parent.
-            getAbsoluteBox = function (
-                label: Highcharts.SVGElement
-            ): (Highcharts.BBoxObject|undefined) {
-                var pos: Highcharts.PositionObject,
-                    parent: Highcharts.SVGElement,
-                    bBox: Highcharts.BBoxObject,
-                    // Substract the padding if no background or border (#4333)
-                    padding = label.box ? 0 : (label.padding || 0),
-                    lineHeightCorrection = 0;
-
-                if (
-                    label &&
-                    (!label.alignAttr || label.placed)
-                ) {
-                    pos = label.alignAttr || {
-                        x: label.attr('x'),
-                        y: label.attr('y')
-                    };
-                    parent = label.parentGroup as any;
-
-                    // Get width and height if pure text nodes (stack labels)
-                    if (!label.width) {
-                        bBox = label.getBBox();
-                        label.width = bBox.width;
-                        label.height = bBox.height;
-
-                        // Labels positions are computed from top left corner,
-                        // so we need to substract the text
-                        // height from text nodes too.
-                        lineHeightCorrection = ren
-                            .fontMetrics(null as any, label.element).h;
-                    }
-                    return {
-                        x: pos.x + (parent.translateX || 0) + padding,
-                        y: pos.y + (parent.translateY || 0) + padding -
-                            lineHeightCorrection,
-                        width: label.width - 2 * padding,
-                        height: label.height - 2 * padding
-                    };
-
-                }
-            };
-
-        for (i = 0; i < len; i++) {
-            label = labels[i];
-            if (label) {
-                // Mark with initial opacity
-                label.oldOpacity = label.opacity;
-                label.newOpacity = 1;
-
-                label.absoluteBox = getAbsoluteBox(label);
-
-            }
-        }
-
-        // Prevent a situation in a gradually rising slope, that each label will
-        // hide the previous one because the previous one always has lower rank.
-        labels.sort(
-            function (
-                a: Highcharts.SVGElement,
-                b: Highcharts.SVGElement
-            ): number {
-                return (b.labelrank || 0) - (a.labelrank || 0);
-            }
-        );
+            isLabelAffected = false,
+            i,
+            j;
 
         // Detect overlapping labels
         for (i = 0; i < len; i++) {
@@ -163,7 +96,6 @@ H.layoutAnimationMixin = {
                 }
             }
         }
-        let isLabelAffected = false;
         // Hide or show
         labels.forEach(function (label: Highcharts.SVGElement): void {
             var complete: (Function|undefined),
@@ -214,7 +146,26 @@ H.layoutAnimationMixin = {
                 label.isOld = true;
             }
         });
-        if (isLabelAffected) {
+
+        return isLabelAffected;
+    },
+    /**
+     * Method dealing with overlapping dataLabels
+     * in series using layout simulation
+     * @param {Array<Highcharts.SVGElement>} labels Array of all series labels
+     * @return {undefined}
+     */
+    hideOverlappingLabels: function (
+        this: Highcharts.NodeAnimSeries,
+        labels: Array<Highcharts.SVGElement>
+    ): void {
+        var chart = this.chart;
+        if (
+            H.layoutAnimationMixin.hideOrShowLabels.call(
+                this,
+                chart.getLabelBoxes(labels)
+            )
+        ) {
             fireEvent(chart, 'afterHideAllOverlappingLabels');
         }
     }
