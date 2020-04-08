@@ -19,26 +19,14 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         },
         series: [{
             allowParentSelect: true,
-            data: [{
-                value: 20
-            }, {
-                value: 20
-            }]
+            data: []
         }, {
             allowParentSelect: true,
-            data: [{
-                value: 20
-            }, {
-                value: 20
-            }]
+            data: []
         }, {
-            data: {
-                value: 20
-            }
+            data: []
         }, {
-            data: {
-                value: 20
-            }
+            data: []
         }]
     });
 
@@ -100,14 +88,13 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         'It shouldn\'t be possible to select more than one parent node without using key modifier.'
     );
 
-    
     controller.click(
         (chart.series[0].parentNode.plotX) + chart.plotLeft,
         (chart.series[0].parentNode.plotY) + chart.plotTop,
         { shiftKey: true },
         false
-        );
-        
+    );
+
     assert.strictEqual(
         chart.series[0].getSelectedParents().length,
         2,
