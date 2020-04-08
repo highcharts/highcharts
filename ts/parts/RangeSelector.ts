@@ -2250,9 +2250,13 @@ if (!H.RangeSelector) {
                 verticalAlign === 'top' &&
                 verticalAlign === legend.options.verticalAlign
             ) {
-                // Create and use a new alignment box for the legend.
+                // Create a new alignment box for the legend.
                 alignTo = merge(chart.spacingBox);
-                alignTo.y += rangeSelector.getHeight();
+                if (legend.options.layout === 'vertical') {
+                    alignTo.y = chart.plotTop;
+                } else {
+                    alignTo.y += rangeSelector.getHeight();
+                }
                 legend.group.placed = false; // Don't animate the alignment.
                 legend.align(alignTo);
             }
