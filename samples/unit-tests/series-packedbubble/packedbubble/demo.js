@@ -101,4 +101,17 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         'It should be possible to select more than one parent node using key modifier.'
     );
 
+    controller.click(
+        (chart.series[0].parentNode.plotX) + chart.plotLeft,
+        (chart.series[0].parentNode.plotY) + chart.plotTop,
+        { shiftKey: false },
+        false
+    );
+
+    assert.strictEqual(
+        chart.series[0].getSelectedParents().length,
+        0,
+        'After clicking on the selected parent, all selected parents should be deselected.'
+    );
+
 });
