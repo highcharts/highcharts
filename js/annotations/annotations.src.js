@@ -340,6 +340,18 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
                 return defined(this.y) ? this.y : 'Annotation label';
             },
             /**
+             * Whether the annotation is visible in the exported data table.
+             *
+             * @sample highcharts/annotations/include-in-data-export/
+             *         Do not include in the data export
+             *
+             * @type    {boolean}
+             * @since   8.0.4
+             * @requires modules/export-data
+             * @default true
+             */
+            includeInDataExport: true,
+            /**
              * How to handle the annotation's label that flow outside the
              * plot area. The justify option aligns the label inside the
              * plot area.
@@ -1116,53 +1128,56 @@ chartProto.callbacks.push(function (chart) {
             }
         };
         annotations.forEach(function (annotation) {
-            annotation.labels.forEach(function (label) {
-                if (label.options.text) {
-                    var annotationText_1 = label.options.text;
-                    label.points.forEach(function (points) {
-                        var annotationX = points.x, xAxisIndex = points.series.xAxis ?
-                            points.series.xAxis.options.index :
-                            -1;
-                        var wasAdded = false;
-                        // Annotation not connected to any xAxis - add new row.
-                        if (xAxisIndex === -1) {
-                            var newRow = new Array(event.dataRows[0].length);
-                            newRow.fill('');
-                            newRow.push(annotationText_1);
-                            newRow.xValues = [];
-                            newRow.xValues[xAxisIndex] = annotationX;
-                            event.dataRows.push(newRow);
-                            wasAdded = true;
-                        }
-                        // Annotation placed on a exported data point
-                        // - add new column
-                        if (!wasAdded) {
-                            event.dataRows.forEach(function (row, rowIndex) {
-                                if (!wasAdded &&
-                                    row.xValues &&
-                                    xAxisIndex !== void 0 &&
-                                    annotationX === row.xValues[xAxisIndex]) {
-                                    row.push(annotationText_1);
-                                    wasAdded = true;
-                                }
-                            });
-                        }
-                        // Annotation not placed on any exported data point,
-                        // but connected to the xAxis - add new row
-                        if (!wasAdded) {
-                            var newRow = new Array(event.dataRows[0].length);
-                            newRow.fill('');
-                            newRow[0] = annotationX;
-                            newRow.push(annotationText_1);
-                            newRow.xValues = [];
-                            if (xAxisIndex !== void 0) {
+            if (annotation.options.labelOptions.includeInDataExport) {
+                annotation.labels.forEach(function (label) {
+                    if (label.options.text) {
+                        var annotationText_1 = label.options.text;
+                        label.points.forEach(function (points) {
+                            var annotationX = points.x, xAxisIndex = points.series.xAxis ?
+                                points.series.xAxis.options.index :
+                                -1;
+                            var wasAdded = false;
+                            // Annotation not connected to any xAxis -
+                            // add new row.
+                            if (xAxisIndex === -1) {
+                                var newRow = new Array(event.dataRows[0].length);
+                                newRow.fill('');
+                                newRow.push(annotationText_1);
+                                newRow.xValues = [];
                                 newRow.xValues[xAxisIndex] = annotationX;
+                                event.dataRows.push(newRow);
+                                wasAdded = true;
                             }
-                            event.dataRows.push(newRow);
-                        }
-                    });
-                }
-            });
+                            // Annotation placed on a exported data point
+                            // - add new column
+                            if (!wasAdded) {
+                                event.dataRows.forEach(function (row, rowIndex) {
+                                    if (!wasAdded &&
+                                        row.xValues &&
+                                        xAxisIndex !== void 0 &&
+                                        annotationX === row.xValues[xAxisIndex]) {
+                                        row.push(annotationText_1);
+                                        wasAdded = true;
+                                    }
+                                });
+                            }
+                            // Annotation not placed on any exported data point,
+                            // but connected to the xAxis - add new row
+                            if (!wasAdded) {
+                                var newRow = new Array(event.dataRows[0].length);
+                                newRow.fill('');
+                                newRow[0] = annotationX;
+                                newRow.push(annotationText_1);
+                                newRow.xValues = [];
+                                if (xAxisIndex !== void 0) {
+                                    newRow.xValues[xAxisIndex] = annotationX;
+                                }
+                                event.dataRows.push(newRow);
+                            }
+                        });
+                    }
+                });
+            }
         });
         var maxRowLen = 0;
         event.dataRows.forEach(function (row) {

@@ -166,6 +166,7 @@ declare global {
             distance?: number;
             format?: string;
             formatter: FormatterCallbackFunction<Point>;
+            includeInDataExport: boolean;
             overflow: DataLabelsOverflowValue;
             padding: number;
             shadow: (boolean|ShadowOptionsObject);
@@ -644,6 +645,19 @@ merge(
                 formatter: function (this: Highcharts.AnnotationPoint): (number|string) {
                     return defined(this.y) ? this.y : 'Annotation label';
                 },
+
+                /**
+                 * Whether the annotation is visible in the exported data table.
+                 *
+                 * @sample highcharts/annotations/include-in-data-export/
+                 *         Do not include in the data export
+                 *
+                 * @type    {boolean}
+                 * @since   8.0.4
+                 * @requires modules/export-data
+                 * @default true
+                 */
+                includeInDataExport: true,
 
                 /**
                  * How to handle the annotation's label that flow outside the
@@ -1703,64 +1717,68 @@ chartProto.callbacks.push(function (
             };
 
         annotations.forEach((annotation): void => {
-            annotation.labels.forEach((label): void => {
 
-                if (label.options.text) {
-                    const annotationText = label.options.text;
+            if (annotation.options.labelOptions.includeInDataExport) {
 
-                    label.points.forEach((points): void => {
-                        const annotationX = points.x,
-                            xAxisIndex = points.series.xAxis ?
-                                points.series.xAxis.options.index :
-                                -1;
-                        let wasAdded = false;
+                annotation.labels.forEach((label): void => {
+                    if (label.options.text) {
+                        const annotationText = label.options.text;
 
-                        // Annotation not connected to any xAxis - add new row.
-                        if (xAxisIndex === -1) {
-                            const newRow: any = new Array(event.dataRows[0].length);
+                        label.points.forEach((points): void => {
+                            const annotationX = points.x,
+                                xAxisIndex = points.series.xAxis ?
+                                    points.series.xAxis.options.index :
+                                    -1;
+                            let wasAdded = false;
 
-                            newRow.fill('');
-                            newRow.push(annotationText);
-                            newRow.xValues = [];
-                            newRow.xValues[xAxisIndex] = annotationX;
-                            event.dataRows.push(newRow);
-                            wasAdded = true;
-                        }
+                            // Annotation not connected to any xAxis -
+                            // add new row.
+                            if (xAxisIndex === -1) {
+                                const newRow: any = new Array(event.dataRows[0].length);
 
-                        // Annotation placed on a exported data point
-                        // - add new column
-                        if (!wasAdded) {
-                            event.dataRows.forEach((row: any, rowIndex: number): void => {
-                                if (
-                                    !wasAdded &&
-                                    row.xValues &&
-                                    xAxisIndex !== void 0 &&
-                                    annotationX === row.xValues[xAxisIndex]
-                                ) {
-                                    row.push(annotationText);
-                                    wasAdded = true;
-                                }
-                            });
-                        }
-
-                        // Annotation not placed on any exported data point,
-                        // but connected to the xAxis - add new row
-                        if (!wasAdded) {
-                            const newRow: any = new Array(event.dataRows[0].length);
-
-                            newRow.fill('');
-                            newRow[0] = annotationX;
-                            newRow.push(annotationText);
-                            newRow.xValues = [];
-
-                            if (xAxisIndex !== void 0) {
+                                newRow.fill('');
+                                newRow.push(annotationText);
+                                newRow.xValues = [];
                                 newRow.xValues[xAxisIndex] = annotationX;
+                                event.dataRows.push(newRow);
+                                wasAdded = true;
                             }
-                            event.dataRows.push(newRow);
-                        }
-                    });
-                }
-            });
+
+                            // Annotation placed on a exported data point
+                            // - add new column
+                            if (!wasAdded) {
+                                event.dataRows.forEach((row: any, rowIndex: number): void => {
+                                    if (
+                                        !wasAdded &&
+                                        row.xValues &&
+                                        xAxisIndex !== void 0 &&
+                                        annotationX === row.xValues[xAxisIndex]
+                                    ) {
+                                        row.push(annotationText);
+                                        wasAdded = true;
+                                    }
+                                });
+                            }
+
+                            // Annotation not placed on any exported data point,
+                            // but connected to the xAxis - add new row
+                            if (!wasAdded) {
+                                const newRow: any = new Array(event.dataRows[0].length);
+
+                                newRow.fill('');
+                                newRow[0] = annotationX;
+                                newRow.push(annotationText);
+                                newRow.xValues = [];
+
+                                if (xAxisIndex !== void 0) {
+                                    newRow.xValues[xAxisIndex] = annotationX;
+                                }
+                                event.dataRows.push(newRow);
+                            }
+                        });
+                    }
+                });
+            }
         });
 
         let maxRowLen = 0;
