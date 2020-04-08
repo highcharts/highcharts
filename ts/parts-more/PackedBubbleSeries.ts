@@ -1136,25 +1136,22 @@ seriesType<Highcharts.PackedBubbleSeries>(
             (series.parentNode as any).graphic.attr(parentAttribs);
             if (series.options.allowParentSelect &&
                 series.parentNode &&
-                series.parentNode.graphic) {
+                series.parentNode.graphic
+            ) {
                 series.parentNode.graphic.on('click', (event: any): void => {
                     const selectedParents = this.getSelectedParents();
                     if (selectedParents.length === 0) {
-                        (series.parentNode as any).select(true);
+                        (series.parentNode as any).select(null);
 
-                    } else if (!event.shiftKey && !event.metaKey && !event.shiftKey) {
-                        let isActualParent;
+                    } else if (!event.ctrlKey && !event.metaKey && !event.shiftKey) {
                         (series.parentNode as any).select(true);
 
                         selectedParents.forEach((parent): void => {
-                            isActualParent = parent.id === (series.parentNode as any).id;
                             parent.select(false);
                         });
 
-                    } else if (event.shiftKey) {
-                        (series.parentNode as any).select(
-                            null, event.ctrlKey || event.metaKey || event.shiftKey
-                        );
+                    } else if (event.ctrlKey || event.metaKey || event.shiftKey) {
+                        (series.parentNode as any).select(null);
                     }
                 });
             }
@@ -1165,7 +1162,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             const series = (chart as any).series as Array<Highcharts.PackedBubbleSeries>;
             const selectedParentsNodes: any[] = [];
             chart.series.forEach((series): void => {
-                if ((series as any).parentNode?.selected) {
+                if ((series as any).parentNode.selected) {
                     selectedParentsNodes.push((series as any).parentNode);
                 }
             });
