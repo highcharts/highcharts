@@ -25,9 +25,9 @@ const {
  */
 declare global {
     namespace Highcharts {
-        type DateTimeLabelFormatsKeys = keyof XAxisDateTimeLabelFormatsOptions;
+        type DateTimeLabelFormatsKey = keyof XAxisDateTimeLabelFormatsOptions;
         interface DateTimeAxisNormalizedObject extends TimeNormalizedObject {
-            unitName: DateTimeLabelFormatsKeys;
+            unitName: DateTimeLabelFormatsKey;
         }
         interface DateTimeLabelFormatOptionsObject {
             main?: string;
@@ -45,7 +45,7 @@ declare global {
         }
         interface XAxisOptions {
             dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
-            units?: Array<[DateTimeLabelFormatsKeys, (Array<number>|null)]>;
+            units?: Array<[DateTimeLabelFormatsKey, (Array<number>|null)]>;
         }
     }
 }
@@ -98,7 +98,7 @@ class DateTimeAxisAdditions {
      */
     public normalizeTimeTickInterval(
         tickInterval: number,
-        unitsOption?: Array<[Highcharts.DateTimeLabelFormatsKeys, (Array<number>|null)]>
+        unitsOption?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>
     ): Highcharts.DateTimeAxisNormalizedObject {
         var units = unitsOption || [[
                 'millisecond', // unit name
@@ -124,7 +124,7 @@ class DateTimeAxisAdditions {
             ], [
                 'year',
                 null
-            ]] as Array<[Highcharts.DateTimeLabelFormatsKeys, (Array<number>|null)]>,
+            ]] as Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>,
             unit = units[units.length - 1], // default unit is years
             interval = timeUnits[unit[0]],
             multiples = unit[1],
