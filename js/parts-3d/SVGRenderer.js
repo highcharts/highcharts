@@ -377,7 +377,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         // Added support for 0 value in columns, where height is 0
         // but the shape is rendered.
         // Height is used from 1st to 6th element of pArr
-        if (h === 0 && i > 1 && i < 6) {
+        if (h === 0 && [2, 3, 4, 5].indexOf(i) > 0) {
             return {
                 x: pArr[i].x,
                 // when height is 0 instead of cuboid we render plane
@@ -385,6 +385,30 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
                 // for side calculation
                 y: pArr[i].y + 10,
                 z: pArr[i].z
+            };
+        }
+        // It is needed to calculate dummy sides (front/back) for breaking
+        // points in case of x and depth values. If column has side,
+        // it means that x values of front and back side are different.
+        if (pArr[0].x === pArr[7].x && [4, 5, 6, 7].indexOf(i) > 0) {
+            return {
+                x: pArr[i].x + 10,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y,
+                z: pArr[i].z
+            };
+        }
+        // Added dummy depth
+        if (d === 0 && [4, 5, 6, 7].indexOf(i) > 0) {
+            return {
+                x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y,
+                z: pArr[i].z + 10
             };
         }
         return pArr[i];
@@ -401,9 +425,11 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
+     * Third value - boolean checking if pickShape needs to choose one side,
+     * so its path array won't be empty.
      * @private
      */
-    pickShape = function (verticesIndex1, verticesIndex2) {
+    pickShape = function (verticesIndex1, verticesIndex2, force) {
         var ret = [[], -1], 
         // An array of vertices for cuboid face
         face1 = verticesIndex1.map(mapPath), face2 = verticesIndex2.map(mapPath), 
@@ -411,11 +437,17 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         // but if cuboid height is 0 additional height is added so it is
         // possible to use this vertices array for visible face calculation
         dummyFace1 = verticesIndex1.map(mapSidePath), dummyFace2 = verticesIndex2.map(mapSidePath);
-        if (H.shapeArea(dummyFace1) < 0) {
+        if (H.shapeArea(face1) < 0) {
             ret = [face1, 0];
         }
-        else if (H.shapeArea(dummyFace2) < 0) {
+        else if (H.shapeArea(face2) < 0) {
             ret = [face2, 1];
+        }
+        else if (H.shapeArea(dummyFace1) < 0) {
+            ret = [force ? face1 : ret[0], 0];
+        }
+        else if (H.shapeArea(dummyFace2) < 0) {
+            ret = [force ? face2 : ret[0], 1];
         }
         return ret;
     };
@@ -428,7 +460,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     // top or bottom
     top = [1, 6, 7, 0];
     bottom = [4, 5, 2, 3];
-    shape = pickShape(top, bottom);
+    shape = pickShape(top, bottom, true);
     path2 = shape[0];
     isTop = shape[1];
     // side
