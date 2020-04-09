@@ -10,7 +10,6 @@
  *
  * */
 'use strict';
-import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
 import Tick from '../parts/Tick.js';
 import Tick3D from './Tick3D.js';
@@ -18,120 +17,6 @@ import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import '../parts/Chart.js';
 var deg2rad = H.deg2rad, perspective = H.perspective, perspective3D = H.perspective3D, shapeArea = H.shapeArea;
-/* eslint-disable no-invalid-this */
-addEvent(Axis, 'afterSetOptions', function () {
-    var options;
-    if (this.chart.is3d && this.chart.is3d() && this.coll !== 'colorAxis') {
-        options = this.options;
-        options.tickWidth = pick(options.tickWidth, 0);
-        options.gridLineWidth = pick(options.gridLineWidth, 1);
-    }
-});
-wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
-    var path = proceed.apply(this, [].slice.call(arguments, 1));
-    // Do not do this if the chart is not 3D
-    if (!this.chart.is3d() || this.coll === 'colorAxis') {
-        return path;
-    }
-    if (path === null) {
-        return path;
-    }
-    var chart = this.chart, options3d = chart.options.chart.options3d, d = this.isZAxis ? chart.plotWidth : options3d.depth, frame = chart.frame3d;
-    var pArr = [
-        this.axis3D.swapZ({ x: path[1], y: path[2], z: 0 }),
-        this.axis3D.swapZ({ x: path[1], y: path[2], z: d }),
-        this.axis3D.swapZ({ x: path[4], y: path[5], z: 0 }),
-        this.axis3D.swapZ({ x: path[4], y: path[5], z: d })
-    ];
-    var pathSegments = [];
-    if (!this.horiz) { // Y-Axis
-        if (frame.front.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
-        }
-        if (frame.back.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
-        }
-        if (frame.left.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
-        }
-        if (frame.right.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
-    }
-    else if (this.isZAxis) { // Z-Axis
-        if (frame.left.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
-        }
-        if (frame.right.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
-        }
-        if (frame.top.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
-        }
-        if (frame.bottom.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
-    }
-    else { // X-Axis
-        if (frame.front.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
-        }
-        if (frame.back.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
-        }
-        if (frame.top.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
-        }
-        if (frame.bottom.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
-    }
-    pathSegments = perspective(pathSegments, this.chart, false);
-    return this.chart.renderer.toLineSegments(pathSegments);
-});
-// Do not draw axislines in 3D
-wrap(Axis.prototype, 'getLinePath', function (proceed) {
-    // Do not do this if the chart is not 3D
-    if (!this.chart.is3d() || this.coll === 'colorAxis') {
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    }
-    return [];
-});
-wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
-    // Do not do this if the chart is not 3D
-    if (!this.chart.is3d() || this.coll === 'colorAxis') {
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    }
-    var args = arguments, from = args[1], to = args[2], path = [], fromPath = this.getPlotLinePath({ value: from }), toPath = this.getPlotLinePath({ value: to });
-    if (fromPath && toPath) {
-        for (var i = 0; i < fromPath.length; i += 6) {
-            path.push('M', fromPath[i + 1], fromPath[i + 2], 'L', fromPath[i + 4], fromPath[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2], 'Z');
-        }
-    }
-    return path;
-});
-wrap(Axis.prototype, 'getTitlePosition', function (proceed) {
-    var pos = proceed.apply(this, [].slice.call(arguments, 1));
-    return this.axis3D ?
-        this.axis3D.fix3dPosition(pos, true) :
-        pos;
-});
-addEvent(Axis, 'drawCrosshair', function (e) {
-    if (this.chart.is3d() && this.coll !== 'colorAxis') {
-        if (e.point) {
-            e.point.crosshairPos = this.isXAxis ?
-                e.point.axisXpos :
-                this.len - e.point.axisYpos;
-        }
-    }
-});
-addEvent(Axis, 'destroy', function () {
-    ['backFrame', 'bottomFrame', 'sideFrame'].forEach(function (prop) {
-        if (this[prop]) {
-            this[prop] = this[prop].destroy();
-        }
-    }, this);
-});
 /* eslint-disable valid-jsdoc */
 /**
  * Adds 3D support to axes.
@@ -373,14 +258,55 @@ var Axis3D = /** @class */ (function () {
      * @private
      */
     Axis3D.compose = function (AxisClass) {
-        merge(true, Axis.defaultOptions, Axis3D.defaultOptions);
+        merge(true, AxisClass.defaultOptions, Axis3D.defaultOptions);
         AxisClass.keepProps.push('axis3D');
         addEvent(AxisClass, 'init', Axis3D.onInit);
+        addEvent(AxisClass, 'afterSetOptions', Axis3D.onAfterSetOptions);
+        addEvent(AxisClass, 'drawCrosshair', Axis3D.onDrawCrosshair);
+        addEvent(AxisClass, 'destroy', Axis3D.onDestroy);
         var axisProto = AxisClass.prototype;
-        // Wrap getSlotWidth function to calculate individual width value for
-        // each slot (#8042).
+        wrap(axisProto, 'getLinePath', Axis3D.wrapGetLinePath);
+        wrap(axisProto, 'getPlotBandPath', Axis3D.wrapGetPlotBandPath);
+        wrap(axisProto, 'getPlotLinePath', Axis3D.wrapGetPlotLinePath);
         wrap(axisProto, 'getSlotWidth', Axis3D.wrapGetSlotWidth);
+        wrap(axisProto, 'getTitlePosition', Axis3D.wrapGetTitlePosition);
         Tick3D.compose(Tick);
+    };
+    /**
+     * @private
+     */
+    Axis3D.onAfterSetOptions = function () {
+        var axis = this;
+        var chart = axis.chart;
+        var options = axis.options;
+        if (chart.is3d && chart.is3d() && axis.coll !== 'colorAxis') {
+            options.tickWidth = pick(options.tickWidth, 0);
+            options.gridLineWidth = pick(options.gridLineWidth, 1);
+        }
+    };
+    /**
+     * @private
+     */
+    Axis3D.onDestroy = function () {
+        ['backFrame', 'bottomFrame', 'sideFrame'].forEach(function (prop) {
+            if (this[prop]) {
+                this[prop] = this[prop].destroy();
+            }
+        }, this);
+    };
+    /**
+     * @private
+     */
+    Axis3D.onDrawCrosshair = function (e) {
+        var axis = this;
+        if (axis.chart.is3d() &&
+            axis.coll !== 'colorAxis') {
+            if (e.point) {
+                e.point.crosshairPos = axis.isXAxis ?
+                    e.point.axisXpos :
+                    axis.len - e.point.axisYpos;
+            }
+        }
     };
     /**
      * @private
@@ -392,6 +318,104 @@ var Axis3D = /** @class */ (function () {
         }
     };
     /**
+     * Do not draw axislines in 3D.
+     * @private
+     */
+    Axis3D.wrapGetLinePath = function (proceed) {
+        var axis = this;
+        // Do not do this if the chart is not 3D
+        if (!axis.chart.is3d() || axis.coll === 'colorAxis') {
+            return proceed.apply(axis, [].slice.call(arguments, 1));
+        }
+        return [];
+    };
+    /**
+     * @private
+     */
+    Axis3D.wrapGetPlotBandPath = function (proceed) {
+        // Do not do this if the chart is not 3D
+        if (!this.chart.is3d() || this.coll === 'colorAxis') {
+            return proceed.apply(this, [].slice.call(arguments, 1));
+        }
+        var args = arguments, from = args[1], to = args[2], path = [], fromPath = this.getPlotLinePath({ value: from }), toPath = this.getPlotLinePath({ value: to });
+        if (fromPath && toPath) {
+            for (var i = 0; i < fromPath.length; i += 6) {
+                path.push('M', fromPath[i + 1], fromPath[i + 2], 'L', fromPath[i + 4], fromPath[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2], 'Z');
+            }
+        }
+        return path;
+    };
+    /**
+     * @private
+     */
+    Axis3D.wrapGetPlotLinePath = function (proceed) {
+        var axis = this;
+        var axis3D = axis.axis3D;
+        var chart = axis.chart;
+        var path = proceed.apply(axis, [].slice.call(arguments, 1));
+        // Do not do this if the chart is not 3D
+        if (!chart.is3d() || axis.coll === 'colorAxis') {
+            return path;
+        }
+        if (path === null) {
+            return path;
+        }
+        var options3d = chart.options.chart.options3d, d = axis.isZAxis ? chart.plotWidth : options3d.depth, frame = chart.frame3d;
+        var pArr = [
+            axis3D.swapZ({ x: path[1], y: path[2], z: 0 }),
+            axis3D.swapZ({ x: path[1], y: path[2], z: d }),
+            axis3D.swapZ({ x: path[4], y: path[5], z: 0 }),
+            axis3D.swapZ({ x: path[4], y: path[5], z: d })
+        ];
+        var pathSegments = [];
+        if (!axis.horiz) { // Y-Axis
+            if (frame.front.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.back.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.left.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.right.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
+        }
+        else if (axis.isZAxis) { // Z-Axis
+            if (frame.left.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.right.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.top.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.bottom.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
+        }
+        else { // X-Axis
+            if (frame.front.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.back.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.top.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.bottom.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
+        }
+        pathSegments = perspective(pathSegments, chart, false);
+        return chart.renderer.toLineSegments(pathSegments);
+    };
+    /**
+     * Wrap getSlotWidth function to calculate individual width value for each
+     * slot (#8042).
      * @private
      */
     Axis3D.wrapGetSlotWidth = function (proceed, tick) {
@@ -447,6 +471,15 @@ var Axis3D = /** @class */ (function () {
             return slotWidth;
         }
         return proceed.apply(axis, [].slice.call(arguments, 1));
+    };
+    /**
+     * @private
+     */
+    Axis3D.wrapGetTitlePosition = function (proceed) {
+        var pos = proceed.apply(this, [].slice.call(arguments, 1));
+        return this.axis3D ?
+            this.axis3D.fix3dPosition(pos, true) :
+            pos;
     };
     /* *
      *

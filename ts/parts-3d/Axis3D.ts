@@ -12,7 +12,7 @@
 
 'use strict';
 
-import Axis from '../parts/Axis.js';
+import type Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
 import Tick from '../parts/Tick.js';
 import Tick3D from './Tick3D.js';
@@ -56,174 +56,6 @@ var deg2rad = H.deg2rad,
     perspective = H.perspective,
     perspective3D = H.perspective3D,
     shapeArea = H.shapeArea;
-
-/* eslint-disable no-invalid-this */
-
-addEvent(Axis, 'afterSetOptions', function (): void {
-    var options;
-
-    if (this.chart.is3d && this.chart.is3d() && this.coll !== 'colorAxis') {
-        options = this.options;
-        options.tickWidth = pick(options.tickWidth, 0);
-        options.gridLineWidth = pick(options.gridLineWidth, 1);
-    }
-});
-
-wrap(Axis.prototype, 'getPlotLinePath', function (
-    this: Axis3D,
-    proceed: Function
-): Highcharts.SVGPathArray {
-    var path = proceed.apply(this, [].slice.call(arguments, 1));
-
-    // Do not do this if the chart is not 3D
-    if (!this.chart.is3d() || this.coll === 'colorAxis') {
-        return path;
-    }
-
-    if (path === null) {
-        return path;
-    }
-
-    var chart = this.chart,
-        options3d = (chart.options.chart as any).options3d,
-        d = this.isZAxis ? chart.plotWidth : options3d.depth,
-        frame = chart.frame3d;
-
-    var pArr = [
-        this.axis3D.swapZ({ x: path[1], y: path[2], z: 0 }),
-        this.axis3D.swapZ({ x: path[1], y: path[2], z: d }),
-        this.axis3D.swapZ({ x: path[4], y: path[5], z: 0 }),
-        this.axis3D.swapZ({ x: path[4], y: path[5], z: d })
-    ];
-
-    var pathSegments = [];
-
-    if (!this.horiz) { // Y-Axis
-        if (frame.front.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
-        }
-        if (frame.back.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
-        }
-        if (frame.left.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
-        }
-        if (frame.right.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
-    } else if (this.isZAxis) { // Z-Axis
-        if (frame.left.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
-        }
-        if (frame.right.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
-        }
-        if (frame.top.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
-        }
-        if (frame.bottom.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
-    } else { // X-Axis
-        if (frame.front.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
-        }
-        if (frame.back.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
-        }
-        if (frame.top.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
-        }
-        if (frame.bottom.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
-    }
-
-    pathSegments = perspective(pathSegments, this.chart, false);
-
-    return this.chart.renderer.toLineSegments(pathSegments);
-});
-
-// Do not draw axislines in 3D
-wrap(Axis.prototype, 'getLinePath', function (
-    this: Axis,
-    proceed: Function
-): Highcharts.SVGPathArray {
-    // Do not do this if the chart is not 3D
-    if (!this.chart.is3d() || this.coll === 'colorAxis') {
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    }
-
-    return [];
-});
-
-wrap(Axis.prototype, 'getPlotBandPath', function (
-    this: Axis,
-    proceed: Function
-): Highcharts.SVGPathArray {
-    // Do not do this if the chart is not 3D
-    if (!this.chart.is3d() || this.coll === 'colorAxis') {
-        return proceed.apply(this, [].slice.call(arguments, 1));
-    }
-
-    var args = arguments,
-        from = args[1],
-        to = args[2],
-        path = [] as Highcharts.SVGPathArray,
-        fromPath = this.getPlotLinePath({ value: from }),
-        toPath = this.getPlotLinePath({ value: to });
-
-    if (fromPath && toPath) {
-        for (var i = 0; i < fromPath.length; i += 6) {
-            path.push(
-                'M', fromPath[i + 1], fromPath[i + 2],
-                'L', fromPath[i + 4], fromPath[i + 5],
-                'L', toPath[i + 4], toPath[i + 5],
-                'L', toPath[i + 1], toPath[i + 2],
-                'Z'
-            );
-        }
-    }
-
-    return path;
-});
-
-wrap(Axis.prototype, 'getTitlePosition', function (
-    this: Highcharts.Axis,
-    proceed: Function
-): Highcharts.Position3dObject {
-    var pos: Highcharts.Position3dObject =
-        proceed.apply(this, [].slice.call(arguments, 1));
-
-    return this.axis3D ?
-        this.axis3D.fix3dPosition(pos, true) :
-        pos;
-});
-
-addEvent(Axis, 'drawCrosshair', function (
-    e: {
-        e: Highcharts.PointerEventObject;
-        point: Highcharts.Point;
-    }
-): void {
-    if (this.chart.is3d() && this.coll !== 'colorAxis') {
-        if (e.point) {
-            e.point.crosshairPos = this.isXAxis ?
-                e.point.axisXpos :
-                this.len - (e.point.axisYpos as any);
-        }
-    }
-});
-
-addEvent(Axis, 'destroy', function (): void {
-    ['backFrame', 'bottomFrame', 'sideFrame'].forEach(function (
-        prop: string
-    ): void {
-        if ((this as any)[prop]) {
-            (this as any)[prop] = (this as any)[prop].destroy();
-        }
-    }, this);
-});
 
 /* eslint-disable valid-jsdoc */
 
@@ -632,19 +464,75 @@ class Axis3D {
      */
     public static compose(AxisClass: typeof Axis): void {
 
-        merge(true, Axis.defaultOptions, Axis3D.defaultOptions);
+        merge(true, AxisClass.defaultOptions, Axis3D.defaultOptions);
         AxisClass.keepProps.push('axis3D');
 
         addEvent(AxisClass, 'init', Axis3D.onInit);
+        addEvent(AxisClass, 'afterSetOptions', Axis3D.onAfterSetOptions);
+        addEvent(AxisClass, 'drawCrosshair', Axis3D.onDrawCrosshair);
+        addEvent(AxisClass, 'destroy', Axis3D.onDestroy);
 
         const axisProto = AxisClass.prototype as Axis3D;
 
-        // Wrap getSlotWidth function to calculate individual width value for
-        // each slot (#8042).
+        wrap(axisProto, 'getLinePath', Axis3D.wrapGetLinePath);
+        wrap(axisProto, 'getPlotBandPath', Axis3D.wrapGetPlotBandPath);
+        wrap(axisProto, 'getPlotLinePath', Axis3D.wrapGetPlotLinePath);
         wrap(axisProto, 'getSlotWidth', Axis3D.wrapGetSlotWidth);
+        wrap(axisProto, 'getTitlePosition', Axis3D.wrapGetTitlePosition);
 
         Tick3D.compose(Tick);
 
+    }
+
+    /**
+     * @private
+     */
+    public static onAfterSetOptions(this: Axis): void {
+        const axis = this;
+        const chart = axis.chart;
+        const options = axis.options;
+
+        if (chart.is3d && chart.is3d() && axis.coll !== 'colorAxis') {
+            options.tickWidth = pick(options.tickWidth, 0);
+            options.gridLineWidth = pick(options.gridLineWidth, 1);
+        }
+    }
+
+    /**
+     * @private
+     */
+    public static onDestroy(this: Axis): void {
+        ['backFrame', 'bottomFrame', 'sideFrame'].forEach(function (
+            prop: string
+        ): void {
+            if ((this as any)[prop]) {
+                (this as any)[prop] = (this as any)[prop].destroy();
+            }
+        }, this);
+    }
+
+    /**
+     * @private
+     */
+    public static onDrawCrosshair(
+        this: Axis,
+        e: {
+            e: Highcharts.PointerEventObject;
+            point: Highcharts.Point;
+        }
+    ): void {
+        const axis = this;
+
+        if (
+            axis.chart.is3d() &&
+            axis.coll !== 'colorAxis'
+        ) {
+            if (e.point) {
+                e.point.crosshairPos = axis.isXAxis ?
+                    e.point.axisXpos :
+                    axis.len - (e.point.axisYpos as any);
+            }
+        }
     }
 
     /**
@@ -659,6 +547,140 @@ class Axis3D {
     }
 
     /**
+     * Do not draw axislines in 3D.
+     * @private
+     */
+    public static wrapGetLinePath(
+        this: Axis3D,
+        proceed: Function
+    ): Highcharts.SVGPathArray {
+        const axis = this;
+
+        // Do not do this if the chart is not 3D
+        if (!axis.chart.is3d() || axis.coll === 'colorAxis') {
+            return proceed.apply(axis, [].slice.call(arguments, 1));
+        }
+
+        return [];
+    }
+
+    /**
+     * @private
+     */
+    public static wrapGetPlotBandPath(
+        this: Axis3D,
+        proceed: Function
+    ): Highcharts.SVGPathArray {
+        // Do not do this if the chart is not 3D
+        if (!this.chart.is3d() || this.coll === 'colorAxis') {
+            return proceed.apply(this, [].slice.call(arguments, 1));
+        }
+
+        var args = arguments,
+            from = args[1],
+            to = args[2],
+            path = [] as Highcharts.SVGPathArray,
+            fromPath = this.getPlotLinePath({ value: from }),
+            toPath = this.getPlotLinePath({ value: to });
+
+        if (fromPath && toPath) {
+            for (var i = 0; i < fromPath.length; i += 6) {
+                path.push(
+                    'M', fromPath[i + 1], fromPath[i + 2],
+                    'L', fromPath[i + 4], fromPath[i + 5],
+                    'L', toPath[i + 4], toPath[i + 5],
+                    'L', toPath[i + 1], toPath[i + 2],
+                    'Z'
+                );
+            }
+        }
+
+        return path;
+    }
+
+    /**
+     * @private
+     */
+    public static wrapGetPlotLinePath(
+        this: Axis3D,
+        proceed: Function
+    ): Highcharts.SVGPathArray {
+        const axis = this;
+        const axis3D = axis.axis3D;
+        const chart = axis.chart;
+        const path = proceed.apply(axis, [].slice.call(arguments, 1));
+
+        // Do not do this if the chart is not 3D
+        if (!chart.is3d() || axis.coll === 'colorAxis') {
+            return path;
+        }
+
+        if (path === null) {
+            return path;
+        }
+
+        var options3d = (chart.options.chart as any).options3d,
+            d = axis.isZAxis ? chart.plotWidth : options3d.depth,
+            frame = chart.frame3d;
+
+        var pArr = [
+            axis3D.swapZ({ x: path[1], y: path[2], z: 0 }),
+            axis3D.swapZ({ x: path[1], y: path[2], z: d }),
+            axis3D.swapZ({ x: path[4], y: path[5], z: 0 }),
+            axis3D.swapZ({ x: path[4], y: path[5], z: d })
+        ];
+
+        var pathSegments = [];
+
+        if (!axis.horiz) { // Y-Axis
+            if (frame.front.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.back.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.left.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.right.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
+        } else if (axis.isZAxis) { // Z-Axis
+            if (frame.left.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.right.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.top.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.bottom.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
+        } else { // X-Axis
+            if (frame.front.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.back.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.top.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.bottom.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
+        }
+
+        pathSegments = perspective(pathSegments, chart, false);
+
+        return chart.renderer.toLineSegments(pathSegments);
+    }
+
+    /**
+     * Wrap getSlotWidth function to calculate individual width value for each
+     * slot (#8042).
      * @private
      */
     public static wrapGetSlotWidth(
@@ -736,6 +758,21 @@ class Axis3D {
             return slotWidth;
         }
         return proceed.apply(axis, [].slice.call(arguments, 1));
+    }
+
+    /**
+     * @private
+     */
+    public static wrapGetTitlePosition(
+        this: Axis3D,
+        proceed: Function
+    ): Highcharts.Position3dObject {
+        var pos: Highcharts.Position3dObject =
+            proceed.apply(this, [].slice.call(arguments, 1));
+
+        return this.axis3D ?
+            this.axis3D.fix3dPosition(pos, true) :
+            pos;
     }
 
 }
