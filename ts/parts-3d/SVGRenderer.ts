@@ -714,7 +714,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
         // Added support for 0 value in columns, where height is 0
         // but the shape is rendered.
         // Height is used from 1st to 6th element of pArr
-        if (h === 0 && [2, 3, 4, 5].indexOf(i) > 0) {
+        if (h === 0 && i > 1 && i < 6) { // [2, 3, 4, 5]
             return {
                 x: pArr[i].x,
                 // when height is 0 instead of cuboid we render plane
@@ -727,7 +727,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
         // It is needed to calculate dummy sides (front/back) for breaking
         // points in case of x and depth values. If column has side,
         // it means that x values of front and back side are different.
-        if (pArr[0].x === pArr[7].x && [4, 5, 6, 7].indexOf(i) > 0) {
+        if (pArr[0].x === pArr[7].x && i >= 4) { // [4, 5, 6, 7]
             return {
                 x: pArr[i].x + 10,
                 // when height is 0 instead of cuboid we render plane
@@ -738,7 +738,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
             };
         }
         // Added dummy depth
-        if (d === 0 && [4, 5, 6, 7].indexOf(i) > 0) {
+        if (d === 0 && i >= 4) { // [4, 5, 6, 7]
             return {
                 x: pArr[i].x,
                 // when height is 0 instead of cuboid we render plane
@@ -801,7 +801,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
     // front or back
     front = [3, 2, 1, 0];
     back = [7, 6, 5, 4];
-    shape = pickShape(front, back);
+    shape = pickShape(front, back, true);
     path1 = shape[0] as any;
     isFront = shape[1] as any;
 
@@ -816,7 +816,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
     // side
     right = [1, 2, 5, 6];
     left = [0, 7, 4, 3];
-    shape = pickShape(right, left);
+    shape = pickShape(right, left, true);
     path3 = shape[0] as any;
     isRight = shape[1] as any;
 
