@@ -6590,15 +6590,25 @@ H.Series = seriesType<Highcharts.LineSeries>(
             parent?: Highcharts.SVGElement
         ): Highcharts.SVGElement {
             var group = (this as any)[prop],
-                isNew = !group;
+                isNew = !group,
+                newAttrs: Highcharts.SVGAttributes,
+                opacity;
 
             // Generate it on first call
             if (isNew) {
+                newAttrs = {
+                    zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+                };
+
+                if (
+                    !this.chart.styledMode &&
+                    (opacity = pick(this.options.opacity, 1)) !== 1
+                ) {
+                    newAttrs.opacity = opacity;
+                }
                 (this as any)[prop] = group = this.chart.renderer
                     .g()
-                    .attr({
-                        zIndex: zIndex || 0.1 // IE8 and pointer logic use this
-                    })
+                    .attr(newAttrs)
                     .add(parent);
 
             }

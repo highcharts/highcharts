@@ -4889,14 +4889,19 @@ null,
      * @return {Highcharts.SVGElement}
      */
     plotGroup: function (prop, name, visibility, zIndex, parent) {
-        var group = this[prop], isNew = !group;
+        var group = this[prop], isNew = !group, newAttrs, opacity;
         // Generate it on first call
         if (isNew) {
+            newAttrs = {
+                zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+            };
+            if (!this.chart.styledMode &&
+                (opacity = pick(this.options.opacity, 1)) !== 1) {
+                newAttrs.opacity = opacity;
+            }
             this[prop] = group = this.chart.renderer
                 .g()
-                .attr({
-                zIndex: zIndex || 0.1 // IE8 and pointer logic use this
-            })
+                .attr(newAttrs)
                 .add(parent);
         }
         // Add the class names, and replace existing ones as response to
