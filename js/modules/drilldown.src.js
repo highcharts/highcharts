@@ -995,7 +995,6 @@ Tick.prototype.drillable = function () {
                 label.styles = {}; // reset for full overwrite of styles
                 label.css(label.basicStyles);
             }
-            //label.on('click', null as any);
             label.removeOnDrillableClick(); // #3806
             label.removeClass('highcharts-drilldown-axis-label');
         }
