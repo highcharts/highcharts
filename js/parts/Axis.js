@@ -1465,9 +1465,7 @@ var Axis = /** @class */ (function () {
                 axis.max < 9999)), !!this.tickAmount);
         }
         // Prevent ticks from getting so close that we can't draw the labels
-        if (!this.tickAmount) {
-            axis.tickInterval = axis.unsquish();
-        }
+        axis.tickInterval = axis.unsquish();
         this.setTickPositions();
     };
     /**
