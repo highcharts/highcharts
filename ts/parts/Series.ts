@@ -6344,7 +6344,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 pxRange: number,
                 pxPosMin: number,
                 pxPosMax: number,
-                ignoreZones = false;
+                ignoreZones = false,
+                zoneArea: Highcharts.SVGElement,
+                zoneGraph: Highcharts.SVGElement;
 
             if (
                 zones.length &&
@@ -6455,12 +6457,15 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     // when no data, graph zone is not applied and after setData
                     // clip was ignored. As a result, it should be applied each
                     // time.
-                    if (graph) {
-                        (series as any)['zone-graph-' + i].clip(clips[i]);
+                    zoneArea = (series as any)['zone-area-' + i];
+                    zoneGraph = (series as any)['zone-graph-' + i];
+
+                    if (graph && zoneGraph) {
+                        zoneGraph.clip(clips[i]);
                     }
 
-                    if (area) {
-                        (series as any)['zone-area-' + i].clip(clips[i]);
+                    if (area && zoneArea) {
+                        zoneArea.clip(clips[i]);
                     }
 
                     // if this zone extends out of the axis, ignore the others
