@@ -17,7 +17,6 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
-    extend,
     fireEvent,
     isArray,
     objectEach,
@@ -125,7 +124,6 @@ Chart.prototype.hideOverlappingLabels = function (
         label2,
         box1,
         box2,
-        isIntersect,
         isLabelAffected = false,
         isIntersectRect = function (
             box1: Highcharts.BBoxObject,
@@ -149,7 +147,10 @@ Chart.prototype.hideOverlappingLabels = function (
                 bBox: Highcharts.BBoxObject,
                 // Substract the padding if no background or border (#4333)
                 padding = label.box ? 0 : (label.padding || 0),
-                lineHeightCorrection = 0;
+                lineHeightCorrection = 0,
+                xOffset = 0,
+                boxWidth,
+                alignValue;
 
             if (
                 label &&
@@ -172,8 +173,22 @@ Chart.prototype.hideOverlappingLabels = function (
                     lineHeightCorrection = ren
                         .fontMetrics(null as any, label.element).h;
                 }
+
+                boxWidth = label.width - 2 * padding;
+                alignValue = {
+                    left: '0',
+                    center: '0.5',
+                    right: '1'
+                }[label.alignValue as Highcharts.AlignValue];
+
+                if (alignValue) {
+                    xOffset = +alignValue * boxWidth;
+                } else if (Math.round(label.x) !== label.translateX) {
+                    xOffset = label.x - label.translateX;
+                }
+
                 return {
-                    x: pos.x + (parent.translateX || 0) + padding,
+                    x: pos.x + (parent.translateX || 0) + padding - xOffset,
                     y: pos.y + (parent.translateY || 0) + padding -
                         lineHeightCorrection,
                     width: label.width - 2 * padding,
@@ -223,34 +238,7 @@ Chart.prototype.hideOverlappingLabels = function (
                 label1.newOpacity !== 0 &&
                 label2.newOpacity !== 0
             ) {
-                isIntersect = chart.polar ?
-                    (function (
-                        lab1: Highcharts.SVGElement,
-                        lab2: Highcharts.SVGElement
-                    ): boolean {
-                        var box1 = lab1 && extend(
-                                {} as Highcharts.BBoxObject,
-                                lab1.absoluteBox
-                            ),
-                            box2 = lab2 && extend(
-                                {} as Highcharts.BBoxObject,
-                                lab2.absoluteBox
-                            ),
-                            alignValues;
-
-                        if (lab1.isCircular && lab2.isCircular) {
-                            alignValues = {
-                                left: 0,
-                                center: 0.5,
-                                right: 1
-                            } as Highcharts.Dictionary<number>;
-                            box1.x -= alignValues[lab1.alignValue] * box1.width;
-                            box2.x -= alignValues[lab2.alignValue] * box2.width;
-                        }
-                        return isIntersectRect(box1, box2);
-                    }(label1, label2)) :
-                    isIntersectRect(box1, box2);
-                if (isIntersect) {
+                if (isIntersectRect(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
                         .newOpacity = 0;
                 }
