@@ -740,6 +740,11 @@ var vennSeries = {
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
+    init: function () {
+        seriesTypes.scatter.prototype.init.apply(this, arguments);
+        // Venn's opacity is a different option from other series
+        delete this.opacity;
+    },
     translate: function () {
         var chart = this.chart;
         this.processedXData = this.xData;

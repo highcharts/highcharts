@@ -44,6 +44,7 @@ declare global {
             public pointClass: typeof VennPoint;
             public points: Array<VennPoint>;
             public utils: VennUtilsObject;
+            public init(chart: Chart, options: VennSeriesOptions): void;
             public animate(init?: boolean): void;
             public drawPoints(): void;
             public translate(): void;
@@ -1146,6 +1147,12 @@ var vennSeries = {
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
+    init: function (this: Highcharts.VennSeries): void {
+        seriesTypes.scatter.prototype.init.apply(this, arguments);
+
+        // Venn's opacity is a different option from other series
+        delete this.opacity;
+    },
     translate: function (this: Highcharts.VennSeries): void {
 
         var chart = this.chart;

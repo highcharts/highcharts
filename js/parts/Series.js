@@ -2715,6 +2715,7 @@ null,
             lastSeries = chartSeries[chartSeries.length - 1];
         }
         series._i = pick(lastSeries && lastSeries._i, -1) + 1;
+        series.opacity = series.options.opacity;
         // Insert the series and re-order all series above the insertion
         // point.
         chart.orderSeries(this.insert(chartSeries));
@@ -4863,15 +4864,16 @@ null,
      * @return {Highcharts.SVGElement}
      */
     plotGroup: function (prop, name, visibility, zIndex, parent) {
-        var group = this[prop], isNew = !group, newAttrs, opacity;
+        var group = this[prop], isNew = !group, newAttrs;
         // Generate it on first call
         if (isNew) {
             newAttrs = {
                 zIndex: zIndex || 0.1 // IE8 and pointer logic use this
             };
             if (!this.chart.styledMode &&
-                (opacity = pick(this.options.opacity, 1)) !== 1) {
-                newAttrs.opacity = opacity;
+                this.opacity &&
+                this.opacity !== 1) {
+                newAttrs.opacity = this.opacity;
             }
             this[prop] = group = this.chart.renderer
                 .g()
