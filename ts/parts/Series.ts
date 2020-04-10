@@ -108,6 +108,7 @@ declare global {
             public linkedSeries: Array<Series>;
             public markerGroup?: SVGElement;
             public name: string;
+            public opacity?: number;
             public optionalAxis?: string;
             public options: SeriesOptionsType;
             public parallelArrays: Array<string>;
@@ -3455,6 +3456,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 lastSeries = chartSeries[chartSeries.length - 1];
             }
             series._i = pick(lastSeries && lastSeries._i, -1) + 1;
+            series.opacity = series.options.opacity;
 
             // Insert the series and re-order all series above the insertion
             // point.
@@ -6591,8 +6593,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
         ): Highcharts.SVGElement {
             var group = (this as any)[prop],
                 isNew = !group,
-                newAttrs: Highcharts.SVGAttributes,
-                opacity;
+                newAttrs: Highcharts.SVGAttributes;
 
             // Generate it on first call
             if (isNew) {
@@ -6602,9 +6603,10 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
                 if (
                     !this.chart.styledMode &&
-                    (opacity = pick(this.options.opacity, 1)) !== 1
+                    this.opacity &&
+                    this.opacity !== 1
                 ) {
-                    newAttrs.opacity = opacity;
+                    newAttrs.opacity = this.opacity;
                 }
                 (this as any)[prop] = group = this.chart.renderer
                     .g()
