@@ -1,8 +1,8 @@
 /* *
  *
- *  Networkgraph series
+ *  Layout Datalabels Animation
  *
- *  (c) 2010-2020 Paweł Fus
+ *  (c) 2010-2020 Grzegorz Blachliński
  *
  *  License: www.highcharts.com/license
  *
@@ -72,7 +72,26 @@ H.layoutAnimationMixin = {
             isLabelAffected = false,
             cssOptions: Highcharts.CSSObject,
             i,
-            j;
+            j,
+            // method changing single label opacity
+            changeLabelOpacity = function (
+                label: Highcharts.SVGElement,
+                newOpacity: number,
+                cssOptions: Highcharts.CSSObject
+            ): void {
+                label.removeClass(
+                    'highcharts-simulation-dataLabels' +
+                    (newOpacity ? '-fadeout' : '')
+                );
+                label.addClass(
+                    'highcharts-simulation-dataLabels' +
+                    (newOpacity ? '' : '-fadeout')
+                );
+                if (!styledMode) { // <--- !styledMode :
+                    cssOptions.opacity = newOpacity;
+                    label.css(cssOptions);
+                }
+            };
 
         // Detect overlapping labels
         for (i = 0; i < len; i++) {
@@ -104,7 +123,7 @@ H.layoutAnimationMixin = {
         // Hide or show
         labels.forEach(function (label: Highcharts.SVGElement): void {
             var complete: (Function|undefined),
-                newOpacity;
+                newOpacity: number;
             if (label) {
                 newOpacity = label.newOpacity;
                 if (label.oldOpacity !== newOpacity) {
@@ -112,20 +131,10 @@ H.layoutAnimationMixin = {
                     // to avoid catching clicks (#4362)
                     if (label.alignAttr && label.placed) { // data labels
                         if (newOpacity) {
-                            label.removeClass('highcharts-simulation-dataLabels');
-                            label.addClass('highcharts-simulation-dataLabels-fadeout');
-                            if (!styledMode) { // <--- !styledMode :
-                                cssOptions.opacity = 1;
-                                label.css(cssOptions);
-                            }
+                            changeLabelOpacity(label, newOpacity, cssOptions);
                         } else {
                             complete = function (): void {
-                                label.removeClass('highcharts-simulation-dataLabels-fadeout');
-                                label.addClass('highcharts-simulation-dataLabels');
-                                if (!styledMode) { // <--- !styledMode :
-                                    cssOptions.opacity = 0;
-                                    label.css(cssOptions);
-                                }
+                                changeLabelOpacity(label, newOpacity, cssOptions);
                                 label.placed = false; // avoid animation from top
                             };
                         }
@@ -160,8 +169,8 @@ H.layoutAnimationMixin = {
         this: Highcharts.NodeAnimSeries,
         labels: Array<Highcharts.SVGElement>
     ): void {
+        var chart = this.chart;
         if (this.layout && this.layout.enableSimulation) {
-            var chart = this.chart;
             if (
                 H.layoutAnimationMixin.hideOrShowLabels.call(
                     this,
@@ -171,7 +180,7 @@ H.layoutAnimationMixin = {
                 fireEvent(chart, 'afterHideAllOverlappingLabels');
             }
         } else {
-            this.chart.hideOverlappingLabels(labels);
+            chart.hideOverlappingLabels(labels);
         }
     }
 };
