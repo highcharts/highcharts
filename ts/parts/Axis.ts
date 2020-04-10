@@ -4156,6 +4156,8 @@ class Axis implements AxisComposition, AxisLike {
             axis.reversed = true;
         }
 
+        axis.labelRotation = (axis.options as any).labels.rotation;
+
         // register event listeners
         objectEach(events, function (event: any, eventType: string): void {
             if (isFunction(event)) {
@@ -5502,7 +5504,9 @@ class Axis implements AxisComposition, AxisLike {
         }
 
         // Prevent ticks from getting so close that we can't draw the labels
-        axis.tickInterval = axis.unsquish();
+        if (!this.tickAmount) {
+            axis.tickInterval = axis.unsquish();
+        }
 
         this.setTickPositions();
     }
