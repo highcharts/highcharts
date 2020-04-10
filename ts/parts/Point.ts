@@ -187,6 +187,7 @@ declare global {
             data?: Array<PointOptionsType>;
             marker?: PointMarkerOptionsObject;
             point?: PlotSeriesPointOptions;
+            cropTooltip?: boolean;
         }
         interface SeriesPointOptions {
             events?: PointEventsOptionsObject;
@@ -888,6 +889,7 @@ class Point {
             // if series is using x or y offset, don't check visibility.
             (series.options as any).xOffset ||
             (series.options as any).yOffset ||
+            !series.options.cropTooltip ||
             isIntersectRect(
                 chart.inverted ?
                     {

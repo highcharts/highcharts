@@ -546,6 +546,7 @@ var Point = /** @class */ (function () {
             // if series is using x or y offset, don't check visibility.
             series.options.xOffset ||
             series.options.yOffset ||
+            !series.options.cropTooltip ||
             isIntersectRect(chart.inverted ?
                 {
                     x: series.yAxis.len - pick(point.yBottom, point.plotY + pointHeight, 0),
