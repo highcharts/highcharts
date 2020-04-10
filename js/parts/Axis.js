@@ -508,6 +508,7 @@ var Axis = /** @class */ (function () {
             typeof axis.reversed === 'undefined') {
             axis.reversed = true;
         }
+        axis.labelRotation = axis.options.labels.rotation;
         // register event listeners
         objectEach(events, function (event, eventType) {
             if (isFunction(event)) {
@@ -1465,7 +1466,9 @@ var Axis = /** @class */ (function () {
                 axis.max < 9999)), !!this.tickAmount);
         }
         // Prevent ticks from getting so close that we can't draw the labels
-        axis.tickInterval = axis.unsquish();
+        if (!this.tickAmount) {
+            axis.tickInterval = axis.unsquish();
+        }
         this.setTickPositions();
     };
     /**
