@@ -103,9 +103,11 @@ H.ganttChart = function (renderTo, options, callback) {
     });
     options.series = userOptions.series = seriesOptions;
     (options.series || []).forEach(function (series) {
-        series.data.forEach(function (point) {
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
-        });
+        if (series.data) {
+            series.data.forEach(function (point) {
+                H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
+            });
+        }
     });
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :
