@@ -8,6 +8,7 @@
  *
  * */
 
+import type { AxisLike } from '../parts/axis/types';
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
@@ -110,7 +111,7 @@ interface ZChart extends Highcharts.Chart {
 /**
  * 3D axis for z coordinates.
  */
-class ZAxis extends Axis {
+class ZAxis extends Axis implements AxisLike {
 
     /* *
      *

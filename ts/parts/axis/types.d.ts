@@ -21,6 +21,7 @@ import type OrdinalAxis from '../OrdinalAxis';
 import type ParallelAxis from '../../modules/parallel-coordinates.src';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
+import type Tick from '../Tick';
 import type ZAxis from '../../parts-3d/ZAxis';
 
 export interface AxisBreakBorderObject {
@@ -46,6 +47,22 @@ export interface AxisComposition {
     ordinal?: OrdinalAxis['ordinal'];
     parallelCoordinates?: ParallelAxis['parallelCoordinates'];
     scrollbar?: ScrollbarAxis['scrollbar'];
+}
+
+export interface AxisLike {
+    categories?: Array<string>;
+    chart: Highcharts.Chart;
+    coll: string;
+    isXAxis?: boolean;
+    max: (null|number);
+    min: (null|number);
+    options: Highcharts.AxisOptions;
+    reversed?: boolean;
+    series: Array<Highcharts.Series>;
+    side: number;
+    ticks: Record<string, Tick>;
+    userOptions: DeepPartial<Highcharts.AxisOptions>;
+    visible: boolean;
 }
 
 /**

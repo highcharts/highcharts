@@ -714,7 +714,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
             ['xAxis', 'yAxis'].forEach(function (axis: string): void {
                 // Initially set the linked xAxis type to category.
                 if (axis === 'xAxis' && !series[axis].userOptions.type) {
-                    series[axis].categories = series[axis].hasNames = true;
+                    series[axis].categories = series[axis].hasNames = true as any;
                 }
             });
         }

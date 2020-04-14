@@ -10,7 +10,7 @@
 
 'use strict';
 
-import type { AxisComposition } from './axis/types';
+import type { AxisComposition, AxisLike } from './axis/types';
 import type ZAxis from '../parts-3d/ZAxis';
 import Color from './Color.js';
 import H from './Globals.js';
@@ -299,7 +299,7 @@ declare global {
             stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
         }
-        class Axis {
+        class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
             public static defaultLeftAxisOptions: AxisOptions;
             public static defaultOptions: XAxisOptions;
@@ -320,7 +320,7 @@ declare global {
             public axisTitleMargin?: number;
             public beforeSetTickPositions?: Function;
             public bottom: number;
-            public categories: (boolean|Array<string>);
+            public categories: Array<string>;
             public chart: Chart;
             public closestPointRange: number;
             public coll: string;
@@ -744,7 +744,7 @@ var defaultOptions = H.defaultOptions,
  * @param {Highcharts.AxisOptions} userOptions
  * Axis options.
  */
-class Axis implements AxisComposition {
+class Axis implements AxisComposition, AxisLike {
 
     /* *
      *
@@ -3801,7 +3801,7 @@ class Axis implements AxisComposition {
     public axisTitle?: Highcharts.SVGElement;
     public axisTitleMargin?: number;
     public bottom: number = void 0 as any;
-    public categories: (boolean|Array<string>) = void 0 as any;
+    public categories: Array<string> = void 0 as any;
     public chart: Highcharts.Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
