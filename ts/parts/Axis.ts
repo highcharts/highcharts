@@ -398,7 +398,6 @@ declare global {
             public side: number;
             public single?: boolean;
             public softThreshold?: boolean;
-            public stacksTouched: number;
             public staggerLines?: number;
             public staticScale?: number;
             public threshold?: number;
@@ -3878,7 +3877,6 @@ class Axis implements AxisComposition, AxisLike {
     public side: number = void 0 as any;
     public single?: boolean;
     public softThreshold?: boolean;
-    public stacksTouched: number = void 0 as any;
     public staggerLines?: number;
     public staticScale?: number;
     public threshold?: number;
@@ -4085,12 +4083,6 @@ class Axis implements AxisComposition, AxisLike {
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
         axis.offset = options.offset || 0;
-
-
-        // Dictionary for stacks
-        axis.stacks = {};
-        axis.oldStacks = {};
-        axis.stacksTouched = 0;
 
 
         /**
@@ -4302,8 +4294,8 @@ class Axis implements AxisComposition, AxisLike {
             axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
-            if (axis.buildStacks) {
-                axis.buildStacks();
+            if (axis.stacking) {
+                axis.stacking.buildStacks();
             }
 
             // loop through this axis' series
@@ -5338,7 +5330,7 @@ class Axis implements AxisComposition, AxisLike {
         if (
             !categories &&
             !axis.axisPointRange &&
-            !axis.usePercentage &&
+            !(axis.stacking && axis.stacking.usePercentage) &&
             !isLinked &&
             defined(axis.min) &&
             defined(axis.max)
@@ -5950,8 +5942,8 @@ class Axis implements AxisComposition, AxisLike {
             axis.alignToOthers()
         ) {
 
-            if (axis.resetStacks) {
-                axis.resetStacks();
+            if (axis.stacking) {
+                axis.stacking.resetStacks();
             }
 
             axis.forceRedraw = false;
@@ -5975,8 +5967,8 @@ class Axis implements AxisComposition, AxisLike {
                     axis.min !== axis.oldMin ||
                     axis.max !== axis.oldMax;
             }
-        } else if (axis.cleanStacks) {
-            axis.cleanStacks();
+        } else if (axis.stacking) {
+            axis.stacking.cleanStacks();
         }
 
         // Recalculate panning state object, when the data
@@ -7404,8 +7396,8 @@ class Axis implements AxisComposition, AxisLike {
         }
 
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled) {
-            axis.renderStackTotals();
+        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+            axis.stacking.renderStackTotals();
         }
         // End stacked totals
 
@@ -7467,7 +7459,6 @@ class Axis implements AxisComposition, AxisLike {
      */
     public destroy(keepEvents?: boolean): void {
         var axis: Highcharts.Axis = this as any,
-            stacks = axis.stacks,
             plotLinesAndBands = axis.plotLinesAndBands,
             plotGroup,
             i;
@@ -7478,16 +7469,6 @@ class Axis implements AxisComposition, AxisLike {
         if (!keepEvents) {
             removeEvent(axis);
         }
-
-        // Destroy each stack total
-        objectEach(stacks, function (
-            stack: Highcharts.Dictionary<Highcharts.StackItem>,
-            stackKey: string
-        ): void {
-            destroyObjectProperties(stack);
-
-            stacks[stackKey] = null as any;
-        });
 
         // Destroy collections
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
@@ -7508,7 +7489,7 @@ class Axis implements AxisComposition, AxisLike {
         }
 
         // Destroy elements
-        ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
+        ['axisLine', 'axisTitle', 'axisGroup',
             'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(
             function (prop: string): void {
                 if ((axis as any)[prop]) {

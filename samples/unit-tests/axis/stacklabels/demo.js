@@ -70,7 +70,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
     });
 
     const getFirstAndLast = () => {
-        const stacks = chart.yAxis[0].stacks,
+        const stacks = chart.yAxis[0].stacking.stacks,
             stackKey = Object.keys(stacks)[0];
 
         return [
@@ -232,7 +232,7 @@ QUnit.test('Stack labels overlapping issue #11982', function (assert) {
 
 
     assert.strictEqual(
-        chart.yAxis[0].stacks['column,,,'][2].label.y,
+        chart.yAxis[0].stacking.stacks['column,,,'][2].label.y,
         -9999,
         'This stack-label should be hidden because of overlapping #11982'
     );
@@ -269,7 +269,7 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         }]
     });
 
-    var testValue = chart.yAxis[0].stacks['column,,,'][4].label.alignAttr;
+    var testValue = chart.yAxis[0].stacking.stacks['column,,,'][4].label.alignAttr;
     // StackedLabel has incorrect position after resize chart container #12337
     chart.update({
         chart: {
@@ -283,7 +283,7 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         }
     });
 
-    var column = chart.yAxis[0].stacks['column,,,'],
+    var column = chart.yAxis[0].stacking.stacks['column,,,'],
         padding = chart.yAxis[0].options.stackLabels.padding;
 
     assert.strictEqual(
@@ -316,7 +316,7 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         }
     });
 
-    column = chart.yAxis[0].stacks['column,,,'];
+    column = chart.yAxis[0].stacking.stacks['column,,,'];
 
     assert.strictEqual(
         column[4].label.text.x,

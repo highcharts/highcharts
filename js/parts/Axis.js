@@ -285,7 +285,6 @@ var Axis = /** @class */ (function () {
         this.right = void 0;
         this.series = void 0;
         this.side = void 0;
-        this.stacksTouched = void 0;
         this.tickAmount = void 0;
         this.tickInterval = void 0;
         this.tickmarkOffset = void 0;
@@ -454,10 +453,6 @@ var Axis = /** @class */ (function () {
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
         axis.offset = options.offset || 0;
-        // Dictionary for stacks
-        axis.stacks = {};
-        axis.oldStacks = {};
-        axis.stacksTouched = 0;
         /**
          * The maximum value of the axis. In a logarithmic axis, this is the
          * logarithm of the real value, and the real value can be obtained from
@@ -620,8 +615,8 @@ var Axis = /** @class */ (function () {
             // Reset properties in case we're redrawing (#3353)
             axis.dataMin = axis.dataMax = axis.threshold = null;
             axis.softThreshold = !axis.isXAxis;
-            if (axis.buildStacks) {
-                axis.buildStacks();
+            if (axis.stacking) {
+                axis.stacking.buildStacks();
             }
             // loop through this axis' series
             axis.series.forEach(function (series) {
@@ -1343,7 +1338,7 @@ var Axis = /** @class */ (function () {
         // computing tick interval (#1337).
         if (!categories &&
             !axis.axisPointRange &&
-            !axis.usePercentage &&
+            !(axis.stacking && axis.stacking.usePercentage) &&
             !isLinked &&
             defined(axis.min) &&
             defined(axis.max)) {
@@ -1784,8 +1779,8 @@ var Axis = /** @class */ (function () {
             axis.userMin !== axis.oldUserMin ||
             axis.userMax !== axis.oldUserMax ||
             axis.alignToOthers()) {
-            if (axis.resetStacks) {
-                axis.resetStacks();
+            if (axis.stacking) {
+                axis.stacking.resetStacks();
             }
             axis.forceRedraw = false;
             // get data extremes if needed
@@ -1805,8 +1800,8 @@ var Axis = /** @class */ (function () {
                         axis.max !== axis.oldMax;
             }
         }
-        else if (axis.cleanStacks) {
-            axis.cleanStacks();
+        else if (axis.stacking) {
+            axis.stacking.cleanStacks();
         }
         // Recalculate panning state object, when the data
         // has changed. It is required when vertical panning is enabled.
@@ -2807,8 +2802,8 @@ var Axis = /** @class */ (function () {
             }
         }
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled) {
-            axis.renderStackTotals();
+        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+            axis.stacking.renderStackTotals();
         }
         // End stacked totals
         axis.isDirty = false;
@@ -2858,17 +2853,12 @@ var Axis = /** @class */ (function () {
      * Whether to preserve events, used internally in Axis.update.
      */
     Axis.prototype.destroy = function (keepEvents) {
-        var axis = this, stacks = axis.stacks, plotLinesAndBands = axis.plotLinesAndBands, plotGroup, i;
+        var axis = this, plotLinesAndBands = axis.plotLinesAndBands, plotGroup, i;
         fireEvent(this, 'destroy', { keepEvents: keepEvents });
         // Remove the events
         if (!keepEvents) {
             removeEvent(axis);
         }
-        // Destroy each stack total
-        objectEach(stacks, function (stack, stackKey) {
-            destroyObjectProperties(stack);
-            stacks[stackKey] = null;
-        });
         // Destroy collections
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(function (coll) {
             destroyObjectProperties(coll);
@@ -2880,7 +2870,7 @@ var Axis = /** @class */ (function () {
             }
         }
         // Destroy elements
-        ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
+        ['axisLine', 'axisTitle', 'axisGroup',
             'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(function (prop) {
             if (axis[prop]) {
                 axis[prop] = axis[prop].destroy();
