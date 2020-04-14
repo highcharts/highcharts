@@ -21,6 +21,7 @@ import type ParallelAxis from '../../modules/parallel-coordinates.src';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
 import type StackingAxis from '../StackingAxis';
+import type Tick from '../Tick';
 
 export interface AxisBreakBorderObject {
     move: string;
@@ -45,6 +46,22 @@ export interface AxisComposition {
     parallelCoordinates?: ParallelAxis['parallelCoordinates'];
     scrollbar?: ScrollbarAxis['scrollbar'];
     stacking?: StackingAxis['stacking'];
+}
+
+export interface AxisLike {
+    categories?: Array<string>;
+    chart: Highcharts.Chart;
+    coll: string;
+    isXAxis?: boolean;
+    max: (null|number);
+    min: (null|number);
+    options: Highcharts.AxisOptions;
+    reversed?: boolean;
+    series: Array<Highcharts.Series>;
+    side: number;
+    ticks: Record<string, Tick>;
+    userOptions: DeepPartial<Highcharts.AxisOptions>;
+    visible: boolean;
 }
 
 /**
