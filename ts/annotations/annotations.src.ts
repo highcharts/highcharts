@@ -652,10 +652,8 @@ merge(
                  * @sample highcharts/annotations/include-in-data-export/
                  *         Do not include in the data export
                  *
-                 * @type    {boolean}
-                 * @since   8.0.4
+                 * @since   next
                  * @requires modules/export-data
-                 * @default true
                  */
                 includeInDataExport: true,
 
