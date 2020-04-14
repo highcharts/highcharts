@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorAxisGlobal from '../parts-map/ColorAxis';
 import H from './Globals.js';
 
 /**
@@ -84,7 +85,7 @@ declare global {
             ): void;
             public destroy(): void;
             public destroyItem(
-                item: (BubbleLegend|ColorAxis|Point|Series)
+                item: (BubbleLegend|ColorAxisGlobal|Point|Series)
             ): void;
             public getAlignment(): string;
             public getAllItems(): Array<(BubbleLegend|Point|Series)>;

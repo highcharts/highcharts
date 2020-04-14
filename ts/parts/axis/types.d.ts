@@ -20,6 +20,7 @@ import type OrdinalAxis from '../OrdinalAxis';
 import type ParallelAxis from '../../modules/parallel-coordinates.src';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
+import type Tick from '../Tick';
 import type VMLAxis3D from '../../parts-3d/VMLAxis3D';
 
 export interface AxisBreakBorderObject {
@@ -45,6 +46,22 @@ export interface AxisComposition {
     parallelCoordinates?: ParallelAxis['parallelCoordinates'];
     scrollbar?: ScrollbarAxis['scrollbar'];
     vml?: VMLAxis3D['vml'];
+}
+
+export interface AxisLike {
+    categories?: Array<string>;
+    chart: Highcharts.Chart;
+    coll: string;
+    isXAxis?: boolean;
+    max: (null|number);
+    min: (null|number);
+    options: Highcharts.AxisOptions;
+    reversed?: boolean;
+    series: Array<Highcharts.Series>;
+    side: number;
+    ticks: Record<string, Tick>;
+    userOptions: DeepPartial<Highcharts.AxisOptions>;
+    visible: boolean;
 }
 
 /**
