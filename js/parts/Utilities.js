@@ -348,7 +348,7 @@ var charts = H.charts, doc = H.doc, win = H.win;
  *
  * @return {void}
  */
-var error = H.error = function (code, stop, chart, params) {
+function error(code, stop, chart, params) {
     var isCode = isNumber(code), message = isCode ?
         "Highcharts error #" + code + ": www.highcharts.com/errors/" + code + "/" :
         code.toString(), defaultHandler = function () {
@@ -356,7 +356,9 @@ var error = H.error = function (code, stop, chart, params) {
             throw new Error(message);
         }
         // else ...
-        if (win.console) {
+        if (win.console &&
+            error.messages.indexOf(message) === -1 // prevent console flooting
+        ) {
             console.log(message); // eslint-disable-line no-console
         }
     };
@@ -379,7 +381,12 @@ var error = H.error = function (code, stop, chart, params) {
     else {
         defaultHandler();
     }
-};
+    error.messages.push(message);
+}
+(function (error) {
+    error.messages = [];
+})(error || (error = {}));
+H.error = error;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * An animator object used internally. One instance applies to one property
@@ -1871,7 +1878,7 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
  *         The index within the array, or -1 if not found.
  */
 var inArray = H.inArray = function (item, arr, fromIndex) {
-    deprecate('Highcharts.inArray', 'Array.indexOf');
+    error(32, false, void 0, { 'Highcharts.inArray': 'Array.indexOf' });
     return arr.indexOf(item, fromIndex);
 };
 /* eslint-disable valid-jsdoc */
@@ -1906,39 +1913,6 @@ var find = H.find = Array.prototype.find ?
         }
     };
 /**
- * Creates a deprecation warning in the console, ones for each context.
- *
- * @private
- *
- * @param {string} [fnName]
- * Given function name. This skips stack analysis.
- *
- * @param {string} [newFnName]
- * New function name to use.
- */
-function deprecate(fnName, newFnName) {
-    if (!fnName) {
-        try {
-            throw new Error();
-        }
-        catch (err) {
-            if (err instanceof Error) {
-                fnName = (err.stack || '').split('\n')[1];
-            }
-        }
-    }
-    if (fnName &&
-        win.console &&
-        deprecateFnNames.indexOf(fnName) === -1) {
-        deprecateFnNames.push(fnName);
-        // eslint-disable-next-line no-console
-        console.log("Highcharts warning: " + fnName + " is deprecated! " + (newFnName ?
-            "Please use " + newFnName + " instead." :
-            'Please consult https://api.highcharts.com for details.'));
-    }
-}
-var deprecateFnNames = [];
-/**
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
@@ -1951,7 +1925,7 @@ var deprecateFnNames = [];
  *         An array of strings that represents all the properties.
  */
 H.keys = function () {
-    deprecate('Highcharts.keys', 'Object.keys');
+    error(32, false, void 0, { 'Highcharts.keys': 'Object.keys' });
     return Object.keys.apply(arguments);
 };
 /**
@@ -2133,7 +2107,8 @@ objectEach({
     some: 'some'
 }, function (val, key) {
     H[key] = function (arr) {
-        deprecate("Highcharts." + key, "Array." + val);
+        var _a;
+        error(32, false, void 0, (_a = {}, _a["Highcharts." + key] = "Array." + val, _a));
         return Array.prototype[val].apply(arr, [].slice.call(arguments, 1));
     };
 });
@@ -2567,7 +2542,6 @@ var utilitiesModule = {
     createElement: createElement,
     css: css,
     defined: defined,
-    deprecate: deprecate,
     destroyObjectProperties: destroyObjectProperties,
     discardElement: discardElement,
     erase: erase,

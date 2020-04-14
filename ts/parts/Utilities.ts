@@ -703,7 +703,7 @@ var charts = H.charts,
  *
  * @return {void}
  */
-const error = H.error = function (
+function error(
     code: (number|string),
     stop?: boolean,
     chart?: Highcharts.Chart,
@@ -718,7 +718,10 @@ const error = H.error = function (
                 throw new Error(message);
             }
             // else ...
-            if (win.console) {
+            if (
+                win.console &&
+                error.messages.indexOf(message) === -1 // prevent console flooting
+            ) {
                 console.log(message); // eslint-disable-line no-console
             }
         };
@@ -747,7 +750,14 @@ const error = H.error = function (
     } else {
         defaultHandler();
     }
-};
+
+    error.messages.push(message);
+}
+namespace error {
+    export const messages: Array<string> = [];
+}
+H.error = error;
+
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -2661,7 +2671,7 @@ const getStyle = H.getStyle = function (
  *         The index within the array, or -1 if not found.
  */
 const inArray = H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
-    deprecate('Highcharts.inArray', 'Array.indexOf');
+    error(32, false, void 0, { 'Highcharts.inArray': 'Array.indexOf' });
     return arr.indexOf(item, fromIndex);
 };
 
@@ -2700,45 +2710,6 @@ const find = H.find = (Array.prototype as any).find ?
     };
 
 /**
- * Creates a deprecation warning in the console, ones for each context.
- *
- * @private
- *
- * @param {string} [fnName]
- * Given function name. This skips stack analysis.
- *
- * @param {string} [newFnName]
- * New function name to use.
- */
-function deprecate(fnName?: string, newFnName?: string): void {
-    if (!fnName) {
-        try {
-            throw new Error();
-        } catch (err) {
-            if (err instanceof Error) {
-                fnName = (err.stack || '').split('\n')[1];
-            }
-        }
-    }
-    if (
-        fnName &&
-        win.console &&
-        deprecateFnNames.indexOf(fnName) === -1
-    ) {
-        deprecateFnNames.push(fnName);
-        // eslint-disable-next-line no-console
-        console.log(
-            `Highcharts warning: ${fnName} is deprecated! ` + (
-                newFnName ?
-                    `Please use ${newFnName} instead.` :
-                    'Please consult https://api.highcharts.com for details.'
-            )
-        );
-    }
-}
-const deprecateFnNames: Array<string> = [];
-
-/**
  * Returns an array of a given object's own properties.
  *
  * @function Highcharts.keys
@@ -2751,7 +2722,7 @@ const deprecateFnNames: Array<string> = [];
  *         An array of strings that represents all the properties.
  */
 H.keys = function (): Array<string> {
-    deprecate('Highcharts.keys', 'Object.keys');
+    error(32, false, void 0, { 'Highcharts.keys': 'Object.keys' });
     return Object.keys.apply(arguments);
 };
 
@@ -2949,7 +2920,7 @@ objectEach({
     some: 'some'
 }, function (val: any, key: string): void {
     (H as any)[key] = function (arr: Array<any>): any {
-        deprecate(`Highcharts.${key}`, `Array.${val}`);
+        error(32, false, void 0, { [`Highcharts.${key}`]: `Array.${val}` });
         return Array.prototype[val].apply(
             arr,
             [].slice.call(arguments, 1)
@@ -3498,7 +3469,6 @@ const utilitiesModule = {
     createElement,
     css,
     defined,
-    deprecate,
     destroyObjectProperties,
     discardElement,
     erase,

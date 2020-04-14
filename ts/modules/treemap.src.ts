@@ -298,7 +298,6 @@ const {
     addEvent,
     correctFloat,
     defined,
-    deprecate,
     error,
     extend,
     fireEvent,
@@ -1994,7 +1993,7 @@ seriesType<Highcharts.TreemapSeries>(
             id: string,
             redraw?: boolean
         ): void {
-            deprecate('treemap.drillToNode', 'treemap.setRootNode');
+            error(32, false, void 0, { 'treemap.drillToNode': 'treemap.setRootNode' });
             this.setRootNode(id, redraw);
         },
         /**
