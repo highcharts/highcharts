@@ -57,6 +57,7 @@ declare global {
             side: SVGPathArray;
             top: SVGPathArray;
             zIndexes: Dictionary<number>;
+            forcedSides?: Array<string>;
         }
         interface Element3dMethodsObject {
             processParts: Function;
@@ -434,6 +435,9 @@ element3dMethods = {
         // store original destroy
         elem3d.originalDestroy = elem3d.destroy;
         elem3d.destroy = elem3d.destroyParts;
+        // Store information if any side of element was rendered by force.
+        elem3d.forcedSides = (paths as any).forcedSides;
+
     },
 
     /**
@@ -559,8 +563,8 @@ cuboidMethods = merge(element3dMethods, {
         complete?: Function
     ): Highcharts.SVGElement {
         if (defined(args.x) && defined(args.y)) {
-            var paths = (this.renderer as any)[this.pathType + 'Path'](args);
-
+            var paths = (this.renderer as any)[this.pathType + 'Path'](args),
+                forcedSides = paths.forcedSides;
             this.singleSetterForParts(
                 'd', null, paths, 'animate', duration, complete
             );
@@ -568,6 +572,12 @@ cuboidMethods = merge(element3dMethods, {
             this.attr({
                 zIndex: paths.zIndexes.group
             });
+
+            // If sides that are forced to render changed, recalculate colors.
+            if (forcedSides !== this.forcedSides) {
+                this.forcedSides = forcedSides;
+                cuboidMethods.fillSetter.call(this, this.fill);
+            }
         } else {
             SVGElement.prototype.animate.call(this, args, duration, complete);
         }
@@ -577,16 +587,23 @@ cuboidMethods = merge(element3dMethods, {
         this: Highcharts.SVGElement,
         fill: Highcharts.ColorType
     ): Highcharts.SVGElement {
-        this.singleSetterForParts('fill', null, {
+        var elem3d = this;
+        elem3d.forcedSides = elem3d.forcedSides || [];
+        elem3d.singleSetterForParts('fill', null, {
             front: fill,
-            top: color(fill).brighten(0.1).get(),
-            side: color(fill).brighten(-0.1).get()
+            // Do not change color if side was forced to render.
+            top: color(fill).brighten(
+                elem3d.forcedSides.includes('top') ? 0 : 0.1
+            ).get(),
+            side: color(fill).brighten(
+                elem3d.forcedSides.includes('side') ? 0 : -0.1
+            ).get()
         });
 
         // fill for animation getter (#6776)
-        this.color = this.fill = fill;
+        elem3d.color = elem3d.fill = fill;
 
-        return this;
+        return elem3d;
     }
 });
 
@@ -701,6 +718,8 @@ H.SVGRenderer.prototype.cuboidPath = function (
             z: z + d
         }],
 
+        forcedSides: Array<string> = [],
+
         pickShape;
 
     // apply perspective
@@ -714,7 +733,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
         // Added support for 0 value in columns, where height is 0
         // but the shape is rendered.
         // Height is used from 1st to 6th element of pArr
-        if (h === 0 && i > 1 && i < 6) {
+        if (h === 0 && i > 1 && i < 6) { // [2, 3, 4, 5]
             return {
                 x: pArr[i].x,
                 // when height is 0 instead of cuboid we render plane
@@ -722,6 +741,31 @@ H.SVGRenderer.prototype.cuboidPath = function (
                 // for side calculation
                 y: pArr[i].y + 10,
                 z: pArr[i].z
+            };
+        }
+        // It is needed to calculate dummy sides (front/back) for breaking
+        // points in case of x and depth values. If column has side,
+        // it means that x values of front and back side are different.
+        if (pArr[0].x === pArr[7].x && i >= 4) { // [4, 5, 6, 7]
+            return {
+                x: pArr[i].x + 10,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y,
+                z: pArr[i].z
+            };
+        }
+        // Added dummy depth
+        if (d === 0 && i < 2 || i > 5) { // [0, 1, 6, 7]
+
+            return {
+                x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y,
+                z: pArr[i].z + 10
             };
         }
         return pArr[i];
@@ -740,11 +784,14 @@ H.SVGRenderer.prototype.cuboidPath = function (
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
+     * Third value - string containing information about current side
+     * of cuboid for forcing side rendering.
      * @private
      */
     pickShape = function (
         verticesIndex1: Array<number>,
-        verticesIndex2: Array<number>
+        verticesIndex2: Array<number>,
+        side?: string
     ): Array<number|Array<number>> {
         var ret = [[] as any, -1],
             // An array of vertices for cuboid face
@@ -759,10 +806,19 @@ H.SVGRenderer.prototype.cuboidPath = function (
                 verticesIndex1.map(mapSidePath),
             dummyFace2: Array<Highcharts.Position3dObject> =
                 verticesIndex2.map(mapSidePath);
-        if (H.shapeArea(dummyFace1) < 0) {
+        if (H.shapeArea(face1) < 0) {
             ret = [face1, 0];
-        } else if (H.shapeArea(dummyFace2) < 0) {
+        } else if (H.shapeArea(face2) < 0) {
             ret = [face2, 1];
+        } else if (side) {
+            forcedSides.push(side);
+            if (H.shapeArea(dummyFace1) < 0) {
+                ret = [face1, 0];
+            } else if (H.shapeArea(dummyFace2) < 0) {
+                ret = [face2, 1];
+            } else {
+                ret = [face1, 0]; // force side calculation.
+            }
         }
         return ret;
     };
@@ -770,7 +826,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
     // front or back
     front = [3, 2, 1, 0];
     back = [7, 6, 5, 4];
-    shape = pickShape(front, back);
+    shape = pickShape(front, back, 'front');
     path1 = shape[0] as any;
     isFront = shape[1] as any;
 
@@ -778,14 +834,14 @@ H.SVGRenderer.prototype.cuboidPath = function (
     // top or bottom
     top = [1, 6, 7, 0];
     bottom = [4, 5, 2, 3];
-    shape = pickShape(top, bottom);
+    shape = pickShape(top, bottom, 'top');
     path2 = shape[0] as any;
     isTop = shape[1] as any;
 
     // side
     right = [1, 2, 5, 6];
     left = [0, 7, 4, 3];
-    shape = pickShape(right, left);
+    shape = pickShape(right, left, 'side');
     path3 = shape[0] as any;
     isRight = shape[1] as any;
 
@@ -826,6 +882,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
         zIndexes: {
             group: Math.round(zIndex)
         },
+        forcedSides: forcedSides,
 
         // additional info about zIndexes
         isFront: isFront,

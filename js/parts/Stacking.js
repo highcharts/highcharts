@@ -8,7 +8,11 @@
  *
  * */
 'use strict';
+import Axis from './Axis.js';
 import H from './Globals.js';
+import StackingAxis from './StackingAxis.js';
+import U from './Utilities.js';
+var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, pick = U.pick;
 /**
  * Stack of data points
  *
@@ -48,12 +52,10 @@ import H from './Globals.js';
 * @name Highcharts.StackItemObject#x
 * @type {number}
 */
-import U from './Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, format = U.format, objectEach = U.objectEach, pick = U.pick;
-import './Axis.js';
+''; // detached doclets above
 import './Chart.js';
 import './Series.js';
-var Axis = H.Axis, Chart = H.Chart, Series = H.Series;
+var Chart = H.Chart, Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
@@ -161,7 +163,7 @@ var StackItem = /** @class */ (function () {
     StackItem.prototype.setOffset = function (xOffset, xWidth, boxBottom, boxTop, defaultX) {
         var stackItem = this, axis = stackItem.axis, chart = axis.chart, 
         // stack value translated mapped to chart coordinates
-        y = axis.translate(axis.usePercentage ?
+        y = axis.translate(axis.stacking.usePercentage ?
             100 :
             (boxTop ?
                 boxTop :
@@ -272,8 +274,8 @@ Chart.prototype.getStacks = function () {
     var chart = this, inverted = chart.inverted;
     // reset stacks for each yAxis
     chart.yAxis.forEach(function (axis) {
-        if (axis.stacks && axis.hasVisibleSeries) {
-            axis.oldStacks = axis.stacks;
+        if (axis.stacking && axis.stacking.stacks && axis.hasVisibleSeries) {
+            axis.stacking.oldStacks = axis.stacking.stacks;
         }
     });
     chart.series.forEach(function (series) {
@@ -291,99 +293,7 @@ Chart.prototype.getStacks = function () {
     });
 };
 // Stacking methods defined on the Axis prototype
-/**
- * Build the stacks from top down
- *
- * @private
- * @function Highcharts.Axis#buildStacks
- */
-Axis.prototype.buildStacks = function () {
-    var axisSeries = this.series, reversedStacks = pick(this.options.reversedStacks, true), len = axisSeries.length, actualSeries, i;
-    if (!this.isXAxis) {
-        this.usePercentage = false;
-        i = len;
-        while (i--) {
-            actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
-            actualSeries.setStackedPoints();
-        }
-        // Loop up again to compute percent and stream stack
-        for (i = 0; i < len; i++) {
-            axisSeries[i].modifyStacks();
-        }
-        fireEvent(this, 'afterBuildStacks');
-    }
-};
-/**
- * @private
- * @function Highcharts.Axis#renderStackTotals
- * @return {vopid}
- */
-Axis.prototype.renderStackTotals = function () {
-    var axis = this, chart = axis.chart, renderer = chart.renderer, stacks = axis.stacks, stackTotalGroup = axis.stackTotalGroup;
-    // Create a separate group for the stack total labels
-    if (!stackTotalGroup) {
-        axis.stackTotalGroup = stackTotalGroup =
-            renderer
-                .g('stack-labels')
-                .attr({
-                visibility: 'visible',
-                zIndex: 6
-            })
-                .add();
-    }
-    // plotLeft/Top will change when y axis gets wider so we need to translate
-    // the stackTotalGroup at every render call. See bug #506 and #516
-    stackTotalGroup.translate(chart.plotLeft, chart.plotTop);
-    // Render each stack total
-    objectEach(stacks, function (type) {
-        objectEach(type, function (stack) {
-            stack.render(stackTotalGroup);
-        });
-    });
-};
-/**
- * Set all the stacks to initial states and destroy unused ones.
- *
- * @private
- * @function Highcharts.Axis#resetStacks
- */
-Axis.prototype.resetStacks = function () {
-    var axis = this, stacks = axis.stacks;
-    if (!axis.isXAxis) {
-        objectEach(stacks, function (type) {
-            objectEach(type, function (stack, key) {
-                // Clean up memory after point deletion (#1044, #4320)
-                if (stack.touched < axis.stacksTouched) {
-                    stack.destroy();
-                    delete type[key];
-                    // Reset stacks
-                }
-                else {
-                    stack.total = null;
-                    stack.cumulative = null;
-                }
-            });
-        });
-    }
-};
-/**
- * @private
- * @function Highcharts.Axis#cleanStacks
- */
-Axis.prototype.cleanStacks = function () {
-    var stacks;
-    if (!this.isXAxis) {
-        if (this.oldStacks) {
-            stacks = this.stacks = this.oldStacks;
-        }
-        // reset stacks
-        objectEach(stacks, function (type) {
-            objectEach(type, function (stack) {
-                stack.cumulative = stack.total;
-            });
-        });
-    }
-};
+StackingAxis.compose(Axis);
 // Stacking methods defnied for Series prototype
 /**
  * Adds series' points value to corresponding stack
@@ -397,8 +307,8 @@ Series.prototype.setStackedPoints = function () {
             this.chart.options.chart.ignoreHiddenSeries !== false)) {
         return;
     }
-    var series = this, xData = series.processedXData, yData = series.processedYData, stackedYData = [], yDataLength = yData.length, seriesOptions = series.options, threshold = seriesOptions.threshold, stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0), stackOption = seriesOptions.stack, stacking = seriesOptions.stacking, stackKey = series.stackKey, negKey = '-' + stackKey, negStacks = series.negStacks, yAxis = series.yAxis, stacks = yAxis.stacks, oldStacks = yAxis.oldStacks, stackIndicator, isNegative, stack, other, key, pointKey, i, x, y;
-    yAxis.stacksTouched += 1;
+    var series = this, xData = series.processedXData, yData = series.processedYData, stackedYData = [], yDataLength = yData.length, seriesOptions = series.options, threshold = seriesOptions.threshold, stackThreshold = pick(seriesOptions.startFromThreshold && threshold, 0), stackOption = seriesOptions.stack, stacking = seriesOptions.stacking, stackKey = series.stackKey, negKey = '-' + stackKey, negStacks = series.negStacks, yAxis = series.yAxis, stacks = yAxis.stacking.stacks, oldStacks = yAxis.stacking.oldStacks, stackIndicator, isNegative, stack, other, key, pointKey, i, x, y;
+    yAxis.stacking.stacksTouched += 1;
     // loop over the non-null y values and read them into a local array
     for (i = 0; i < yDataLength; i++) {
         x = xData[i];
@@ -435,7 +345,7 @@ Series.prototype.setStackedPoints = function () {
             if (!defined(stack.cumulative)) {
                 stack.base = pointKey;
             }
-            stack.touched = yAxis.stacksTouched;
+            stack.touched = yAxis.stacking.stacksTouched;
             // In area charts, if there are multiple points on the same X value,
             // let the area fill the full span of those points
             if (stackIndicator.index > 0 && series.singleStacks === false) {
@@ -477,11 +387,11 @@ Series.prototype.setStackedPoints = function () {
         }
     }
     if (stacking === 'percent') {
-        yAxis.usePercentage = true;
+        yAxis.stacking.usePercentage = true;
     }
     this.stackedYData = stackedYData; // To be used in getExtremes
     // Reset old stacks
-    yAxis.oldStacks = {};
+    yAxis.stacking.oldStacks = {};
 };
 /**
  * Iterate over all stacks and compute the absolute values to percent
@@ -490,7 +400,7 @@ Series.prototype.setStackedPoints = function () {
  * @function Highcharts.Series#modifyStacks
  */
 Series.prototype.modifyStacks = function () {
-    var series = this, stackKey = series.stackKey, stacks = series.yAxis.stacks, processedXData = series.processedXData, stackIndicator, stacking = series.options.stacking;
+    var series = this, yAxis = series.yAxis, stackKey = series.stackKey, stacks = yAxis.stacking.stacks, processedXData = series.processedXData, stackIndicator, stacking = series.options.stacking;
     if (series[stacking + 'Stacker']) { // Modifier function exists
         [stackKey, '-' + stackKey].forEach(function (key) {
             var i = processedXData.length, x, stack, pointExtremes;
