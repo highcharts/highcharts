@@ -56,8 +56,8 @@ var Tick3D = /** @class */ (function () {
             { x: path[4], y: path[5], z: 0 }
         ];
         if (axis3D) {
-            axis3D.fix3dPosition(pArr[0]);
-            axis3D.fix3dPosition(pArr[1]);
+            pArr[0] = axis3D.fix3dPosition(pArr[0]);
+            pArr[1] = axis3D.fix3dPosition(pArr[1]);
         }
         return axis.chart.renderer.toLineSegments(pArr);
     };
