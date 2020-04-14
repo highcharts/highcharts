@@ -7,7 +7,7 @@ const { getFileSizes } = require('../compareFilesize');
 const log = require('./lib/log');
 const { createPRComment, updatePRComment, fetchPRComments } = require('./lib/github');
 
-const files = argv.files ? argv.files.split(',') : ['highcharts.src.js'];
+const files = argv.files ? argv.files.split(',') : ['highcharts.src.js', 'highstock.src.js', 'highmaps.src.js', 'highcharts-gantt.src.js'];
 
 /**
  * @param {string} outputFolder output path
@@ -33,7 +33,7 @@ async function writeFileSize(outputFolder, outputFileName) {
 function makeTable(master, proposed) {
     let table = '### File size comparison table' +
         '\n| | master | candidate | difference |' +
-        '\n|-------------|-------------|-------------|-------------|';
+        '\n|-------------|-------------:|-------------:|-------------:|';
 
     try {
         const masterSizes = JSON.parse(fs.readFileSync(master));
@@ -41,11 +41,20 @@ function makeTable(master, proposed) {
 
         Object.keys(masterSizes).forEach(key => {
             const package = key.replace('.src.js', '');
+
+            // eslint-disable-next-line require-jsdoc
+            function toFixedKiloBytes(bytes) {
+                if (typeof bytes === 'number') {
+                    return (bytes / 1024).toFixed(1);
+                }
+                return NaN;
+            }
+
             if (masterSizes[key] && proposedSizes[key]) {
-                table += `\n| ${package} | ${masterSizes[key].compiled} | ${proposedSizes[key].compiled} | ` +
-                    `${proposedSizes[key].compiled - masterSizes[key].compiled} |`;
-                table += `\n| ${package}, gzipped | ${masterSizes[key].gzip} | ${proposedSizes[key].gzip} | ` +
-                    `${proposedSizes[key].gzip - masterSizes[key].gzip} |`;
+                table += `\n| ${package} | ${toFixedKiloBytes(masterSizes[key].compiled)} kB | ${toFixedKiloBytes(proposedSizes[key].compiled)} kB | ` +
+                    `${proposedSizes[key].compiled - masterSizes[key].compiled} B |`;
+                table += `\n| ${package}, gzipped | ${toFixedKiloBytes(masterSizes[key].gzip)} kB | ${toFixedKiloBytes(proposedSizes[key].gzip)} kB | ` +
+                    `${proposedSizes[key].gzip - masterSizes[key].gzip} B|`;
             }
         });
 
