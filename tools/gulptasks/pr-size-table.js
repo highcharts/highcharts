@@ -31,14 +31,19 @@ async function writeFileSize(outputFolder, outputFileName) {
  * @return {string} Markdown table
  */
 function makeTable(master, proposed) {
-    let table = '### File size comparison table' +
+    // eslint-disable-next-line require-jsdoc
+    function tableTemplate(body) {
+        return '### File size comparison' +
         '\n| | master | candidate | difference |' +
-        '\n|-------------|-------------:|-------------:|-------------:|';
+        '\n|-------------|-------------:|-------------:|-------------:|' +
+        body;
+    }
 
     try {
         const masterSizes = JSON.parse(fs.readFileSync(master));
         const proposedSizes = JSON.parse(fs.readFileSync(proposed));
 
+        let tableBody = '';
         Object.keys(masterSizes).forEach(key => {
             const package = key.replace('.src.js', '');
 
@@ -51,14 +56,19 @@ function makeTable(master, proposed) {
             }
 
             if (masterSizes[key] && proposedSizes[key]) {
-                table += `\n| ${package} | ${toFixedKiloBytes(masterSizes[key].compiled)} kB | ${toFixedKiloBytes(proposedSizes[key].compiled)} kB | ` +
-                    `${proposedSizes[key].compiled - masterSizes[key].compiled} B |`;
-                table += `\n| ${package}, gzipped | ${toFixedKiloBytes(masterSizes[key].gzip)} kB | ${toFixedKiloBytes(proposedSizes[key].gzip)} kB | ` +
-                    `${proposedSizes[key].gzip - masterSizes[key].gzip} B|`;
+                const difference = proposedSizes[key].compiled - masterSizes[key].compiled,
+                    gzipDifference = proposedSizes[key].gzip - masterSizes[key].gzip;
+
+                if (difference) {
+                    tableBody += `\n| ${package} | ${toFixedKiloBytes(masterSizes[key].compiled)} kB | ${toFixedKiloBytes(proposedSizes[key].compiled)} kB | ` +
+                        `${difference} B |`;
+                    tableBody += `\n| ${package}, gzipped | ${toFixedKiloBytes(masterSizes[key].gzip)} kB | ${toFixedKiloBytes(proposedSizes[key].gzip)} kB | ` +
+                        `${gzipDifference} B|`;
+                }
             }
         });
 
-        return table;
+        return tableBody.length > 0 ? tableTemplate(tableBody) : '### File size comparison\nNo differences found';
 
     } catch (error) {
         log.failure(error);
@@ -103,7 +113,7 @@ async function comment() {
     try {
         const { pr, user } = argv;
         if (pr) {
-            const existingComment = await fetchPRComments(pr, user || '', '### File size comparison table');
+            const existingComment = await fetchPRComments(pr, user || '', '### File size comparison');
             const commentBody = fs.readFileSync('./tmp/filesizes/comparison.md').toString();
             if (existingComment.length) {
                 await updatePRComment(existingComment[0].id, commentBody);
