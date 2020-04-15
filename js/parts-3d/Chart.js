@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, Fx = U.Fx, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import '../parts/Chart.js';
 var Chart = H.Chart, perspective = H.perspective;
 /**
@@ -1522,7 +1522,7 @@ Chart.prototype.get3dFrame = function () {
     return ret;
 };
 // Animation setter for matrix property.
-H.Fx.prototype.matrixSetter = function () {
+Fx.prototype.matrixSetter = function () {
     var interpolated;
     if (this.pos < 1 &&
         (isArray(this.start) || isArray(this.end))) {

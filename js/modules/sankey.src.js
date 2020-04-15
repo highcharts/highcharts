@@ -72,7 +72,7 @@ import H from '../parts/Globals.js';
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string|undefined}
@@ -82,7 +82,7 @@ import H from '../parts/Globals.js';
  * Context for the node formatter function.
  *
  * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  */ /**
 * The node object. The node name, if defined, is available through
 * `this.point.name`.
@@ -90,13 +90,13 @@ import H from '../parts/Globals.js';
 * @type {Highcharts.SankeyNodeObject}
 */
 import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
-var Point = H.Point;
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -383,6 +383,7 @@ seriesType('sankey', 'column',
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: H.NodesMixin.createNode,
+    searchPoint: H.noop,
     setData: H.NodesMixin.setData,
     destroy: H.NodesMixin.destroy,
     /* eslint-disable valid-jsdoc */
@@ -647,7 +648,7 @@ seriesType('sankey', 'column',
             return y;
         };
         var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart, translationFactor = this.translationFactor, linkHeight = Math.max(point.weight * translationFactor, this.options.minLinkWidth), options = this.options, curvy = ((chart.inverted ? -this.colDistance : this.colDistance) *
-            options.curveFactor), fromY = getY(fromNode, 'linksFrom'), toY = getY(toNode, 'linksTo'), nodeLeft = fromNode.nodeX, nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft;
+            options.curveFactor), fromY = getY(fromNode, 'linksFrom'), toY = getY(toNode, 'linksTo'), nodeLeft = fromNode.nodeX, nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft + nodeW;
         if (chart.inverted) {
             fromY = chart.plotSizeY - fromY;
             toY = (chart.plotSizeY || 0) - toY;

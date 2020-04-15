@@ -365,7 +365,7 @@ var error = H.error = function (code, stop, chart, params) {
         if (isCode) {
             message += '?';
         }
-        H.objectEach(params, function (value, key) {
+        objectEach(params, function (value, key) {
             additionalMessages_1 += ('\n' + key + ': ' + value);
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
@@ -374,7 +374,7 @@ var error = H.error = function (code, stop, chart, params) {
         message += additionalMessages_1;
     }
     if (chart) {
-        H.fireEvent(chart, 'displayError', { code: code, message: message, params: params }, defaultHandler);
+        fireEvent(chart, 'displayError', { code: code, message: message, params: params }, defaultHandler);
     }
     else {
         defaultHandler();
@@ -727,7 +727,7 @@ var Fx = /** @class */ (function () {
      * @return {void}
      */
     Fx.prototype.fillSetter = function () {
-        H.Fx.prototype.strokeSetter.apply(this, arguments);
+        Fx.prototype.strokeSetter.apply(this, arguments);
     };
     /**
      * Handle animation of the color attributes directly.
@@ -891,11 +891,12 @@ var isArray = H.isArray = function isArray(obj) {
  * @return {boolean}
  *         True if the argument is an object.
  */
-var isObject = H.isObject = function isObject(obj, strict) {
+function isObject(obj, strict) {
     return (!!obj &&
         typeof obj === 'object' &&
         (!strict || !isArray(obj))); // eslint-disable-line @typescript-eslint/no-explicit-any
-};
+}
+H.isObject = isObject;
 /**
  * Utility function to check if an Object is a HTML Element.
  *
@@ -1292,62 +1293,6 @@ var wrap = H.wrap = function wrap(obj, method, func) {
     };
 };
 /**
- * Recursively converts all Date properties to timestamps.
- *
- * @private
- * @function Highcharts.datePropsToTimestamps
- *
- * @param {*} obj - any object to convert properties of
- *
- * @return {void}
- */
-H.datePropsToTimestamps = function (obj) {
-    objectEach(obj, function (val, key) {
-        if (isObject(val) && typeof val.getTime === 'function') {
-            obj[key] = val.getTime();
-        }
-        else if (isObject(val) || isArray(val)) {
-            H.datePropsToTimestamps(val);
-        }
-    });
-};
-/**
- * Format a single variable. Similar to sprintf, without the % prefix.
- *
- * @example
- * formatSingle('.2f', 5); // => '5.00'.
- *
- * @function Highcharts.formatSingle
- *
- * @param {string} format
- *        The format string.
- *
- * @param {*} val
- *        The value.
- *
- * @param {Highcharts.Chart} [chart]
- *        A `Chart` instance used to get numberFormatter and time.
- *
- * @return {string}
- *         The formatted representation of the value.
- */
-H.formatSingle = function (format, val, chart) {
-    var floatRegex = /f$/, decRegex = /\.([0-9])/, lang = H.defaultOptions.lang, decimals;
-    var time = chart && chart.time || H.time;
-    var numberFormatter = chart && chart.numberFormatter || numberFormat;
-    if (floatRegex.test(format)) { // float
-        decimals = format.match(decRegex);
-        decimals = decimals ? decimals[1] : -1;
-        if (val !== null) {
-            val = numberFormatter(val, decimals, lang.decimalPoint, format.indexOf(',') > -1 ? lang.thousandsSep : '');
-        }
-    }
-    else {
-        val = time.dateFormat(format, val);
-    }
-    return val;
-};
-/**
  * Format a string according to a subset of the rules of Python's String.format
  * method.
  *
@@ -1363,7 +1308,7 @@ H.formatSingle = function (format, val, chart) {
  * @param {string} str
  *        The string to format.
  *
- * @param {*} ctx
+ * @param {Record<string, *>} ctx
  *        The context, a collection of key-value pairs where each key is
  *        replaced by its value.
  *
@@ -1375,6 +1320,11 @@ H.formatSingle = function (format, val, chart) {
  */
 var format = H.format = function (str, ctx, chart) {
     var splitter = '{', isInside = false, segment, valueAndFormat, ret = [], val, index;
+    var floatRegex = /f$/;
+    var decRegex = /\.([0-9])/;
+    var lang = H.defaultOptions.lang;
+    var time = chart && chart.time || H.time;
+    var numberFormatter = chart && chart.numberFormatter || numberFormat;
     while (str) {
         index = str.indexOf(splitter);
         if (index === -1) {
@@ -1385,8 +1335,17 @@ var format = H.format = function (str, ctx, chart) {
             valueAndFormat = segment.split(':');
             val = getNestedProperty(valueAndFormat.shift() || '', ctx);
             // Format the replacement
-            if (valueAndFormat.length) {
-                val = H.formatSingle(valueAndFormat.join(':'), val, chart);
+            if (valueAndFormat.length && typeof val === 'number') {
+                segment = valueAndFormat.join(':');
+                if (floatRegex.test(segment)) { // float
+                    var decimals = parseInt((segment.match(decRegex) || ['', '-1'])[1], 10);
+                    if (val !== null) {
+                        val = numberFormatter(val, decimals, lang.decimalPoint, segment.indexOf(',') > -1 ? lang.thousandsSep : '');
+                    }
+                }
+                else {
+                    val = time.dateFormat(segment, val);
+                }
             }
             // Push the result and advance the cursor
             ret.push(val);
@@ -2547,7 +2506,7 @@ if (win.jQuery) {
 }
 // TODO use named exports when supported.
 var utilitiesModule = {
-    Fx: Fx,
+    Fx: H.Fx,
     addEvent: addEvent,
     animate: animate,
     animObject: animObject,

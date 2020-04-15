@@ -66,7 +66,7 @@ require.config({
 })
 ```
 
-For Highstock and other additions it is recommended to use the previous
+For Highcharts Stock and other additions it is recommended to use the previous
 configuration and load the module (`highcharts/modules/stock`) instead. For the
 package you have to change the configuration in the following way:
 

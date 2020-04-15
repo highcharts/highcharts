@@ -13,7 +13,8 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
-var Axis = H.Axis, PlotLineOrBand = H.PlotLineOrBand;
+import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+var Axis = H.Axis;
 var defaultConfig = {
     /**
      * Show an indicator on the axis for the current date and time. Can be a

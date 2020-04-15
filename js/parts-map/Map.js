@@ -380,7 +380,10 @@ H.Map = H.mapChart = function (a, b, c) {
     options.series = null;
     options = merge({
         chart: {
-            panning: 'xy',
+            panning: {
+                enabled: true,
+                type: 'xy'
+            },
             type: 'map'
         },
         credits: {

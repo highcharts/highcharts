@@ -12,8 +12,8 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
-var fireEvent = H.fireEvent, bindingsUtils = H.NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
+var bindingsUtils = H.NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Generates function which will add a flag series using modal in GUI.
@@ -1555,6 +1555,7 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
+            this.chart.fullscreen.toggle();
             fireEvent(this, 'deselectButton', { button: button });
         }
     },

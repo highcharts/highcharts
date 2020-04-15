@@ -75,14 +75,14 @@ const {
     correctFloat,
     defined,
     extend,
+    fireEvent,
     isNumber,
     merge,
     pick,
     uniqueKey
 } = U;
 
-var fireEvent = H.fireEvent,
-    bindingsUtils = H.NavigationBindings.prototype.utils,
+var bindingsUtils = H.NavigationBindings.prototype.utils,
     PREFIX = 'highcharts-';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -2000,6 +2000,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
         ): void {
+            this.chart.fullscreen.toggle();
             fireEvent(
                 this,
                 'deselectButton',

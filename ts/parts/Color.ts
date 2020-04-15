@@ -193,6 +193,9 @@ const {
  *
  * @class
  * @name Highcharts.Color
+ *
+ * @param {Highcharts.ColorType} input
+ * The input color in either rbga or hex format
  */
 class Color {
 
@@ -236,15 +239,13 @@ class Color {
      *
      * */
 
-    /**
-     * Handle color operations. Some object methods are chainable.
-     *
-     * @param {Highcharts.ColorType} input
-     *        The input color in either rbga or hex format
-     */
     public constructor(
         input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
     ) {
+        // Backwards compatibility, allow instanciation without new (#13053)
+        if (!(this instanceof Color)) {
+            return new Color(input);
+        }
         this.init(input);
     }
 

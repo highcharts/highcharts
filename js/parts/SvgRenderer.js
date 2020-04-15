@@ -375,7 +375,7 @@ import H from './Globals.js';
 import Color from './Color.js';
 var color = Color.parse;
 import U from './Utilities.js';
-var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, inArray = U.inArray, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, uniqueKey = U.uniqueKey;
+var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, inArray = U.inArray, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, uniqueKey = U.uniqueKey;
 var SVGElement, SVGRenderer, charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the
@@ -443,7 +443,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
          * @type {Highcharts.SVGRenderer}
          */
         this.renderer = renderer;
-        H.fireEvent(this, 'afterInit');
+        fireEvent(this, 'afterInit');
     },
     /**
      * Animate to given attributes or CSS properties.
@@ -512,7 +512,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      */
     complexColor: function (colorOptions, prop, elem) {
         var renderer = this.renderer, colorObject, gradName, gradAttr, radAttr, gradients, gradientObject, stops, stopColor, stopOpacity, radialReference, id, key = [], value;
-        H.fireEvent(this.renderer, 'complexColor', {
+        fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function () {
             // Apply linear or radial gradients
@@ -1210,17 +1210,34 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         The SVGElement for chaining.
      */
     on: function (eventType, handler) {
-        var svgElement = this, element = svgElement.element;
+        var svgElement = this, element = svgElement.element, touchStartPos, touchEventFired;
         // touch
         if (hasTouch && eventType === 'click') {
             element.ontouchstart = function (e) {
-                svgElement.touchEventFired = Date.now(); // #2269
+                // save touch position for later calculation
+                touchStartPos = {
+                    clientX: e.touches[0].clientX,
+                    clientY: e.touches[0].clientY
+                };
+            };
+            // Instead of ontouchstart, event handlers should be called
+            // on touchend - similar to how current mouseup events are called
+            element.ontouchend = function (e) {
+                // hasMoved is a boolean variable containing logic if page
+                // was scrolled, so if touch position changed more than
+                // ~4px (value borrowed from general touch handler)
+                var hasMoved = touchStartPos.clientX ? Math.sqrt(Math.pow(touchStartPos.clientX - e.changedTouches[0].clientX, 2) +
+                    Math.pow(touchStartPos.clientY - e.changedTouches[0].clientY, 2)) >= 4 : false;
+                if (!hasMoved) { // only call handlers if page was not scrolled
+                    handler.call(element, e);
+                }
+                touchEventFired = true;
+                // prevent other events from being fired. #9682
                 e.preventDefault();
-                handler.call(element, e);
             };
             element.onclick = function (e) {
-                if (win.navigator.userAgent.indexOf('Android') === -1 ||
-                    Date.now() - (svgElement.touchEventFired || 0) > 1100) {
+                // Do not call onclick handler if touch event was fired already.
+                if (!touchEventFired) {
                     handler.call(element, e);
                 }
             };
@@ -1479,7 +1496,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 rotation,
                 fontSize,
                 wrapper.textWidth,
-                styles && styles.textOverflow // #5968
+                styles && styles.textOverflow,
+                styles && styles.fontWeight // #12163
             ].join(',');
         }
         if (cacheKey && !reload) {
@@ -1628,10 +1646,10 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
         elemWrapper.animate({
             opacity: 0
         }, {
-            duration: duration || 150,
+            duration: pick(duration, 150),
             complete: function () {
                 // #3088, assuming we're only using this for tooltips
-                elemWrapper.attr({ y: -9999 });
+                elemWrapper.attr({ y: -9999 }).hide();
             }
         });
     },
@@ -1792,29 +1810,55 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Returns the SVGElement for chaining.
      */
     shadow: function (shadowOptions, group, cutOff) {
-        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, 
+        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, update = false, oldShadowOptions = this.oldShadowOptions, 
         // compensate for inverted plot area
         transform;
-        if (!shadowOptions) {
+        var defaultShadowOptions = {
+            color: '${palette.neutralColor100}',
+            offsetX: 1,
+            offsetY: 1,
+            opacity: 0.15,
+            width: 3
+        };
+        var options;
+        if (shadowOptions === true) {
+            options = defaultShadowOptions;
+        }
+        else if (typeof shadowOptions === 'object') {
+            options = extend(defaultShadowOptions, shadowOptions);
+        }
+        // Update shadow when options change (#12091).
+        if (options) {
+            // Go over each key to look for change
+            if (options && oldShadowOptions) {
+                objectEach(options, function (value, key) {
+                    if (value !== oldShadowOptions[key]) {
+                        update = true;
+                    }
+                });
+            }
+            if (update) {
+                this.destroyShadows();
+            }
+            this.oldShadowOptions = options;
+        }
+        if (!options) {
             this.destroyShadows();
         }
         else if (!this.shadows) {
-            shadowWidth = pick(shadowOptions.width, 3);
-            shadowElementOpacity = (shadowOptions.opacity || 0.15) /
-                shadowWidth;
+            shadowElementOpacity = options.opacity / options.width;
             transform = this.parentInverted ?
-                '(-1,-1)' :
-                '(' + pick(shadowOptions.offsetX, 1) + ', ' +
-                    pick(shadowOptions.offsetY, 1) + ')';
-            for (i = 1; i <= shadowWidth; i++) {
-                shadow = element.cloneNode(0);
-                strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
+                'translate(-1,-1)' :
+                "translate(" + options.offsetX + ", " + options.offsetY + ")";
+            for (i = 1; i <= options.width; i++) {
+                shadow = element.cloneNode(false);
+                strokeWidth = (options.width * 2) + 1 - (2 * i);
                 attr(shadow, {
                     stroke: (shadowOptions.color ||
                         '${palette.neutralColor100}'),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
-                    transform: 'translate' + transform,
+                    transform: transform,
                     fill: 'none'
                 });
                 shadow.setAttribute('class', (shadow.getAttribute('class') || '') + ' highcharts-shadow');
@@ -3814,7 +3858,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // Fire the load event when all external images are
                         // loaded
                         ren.imgCount--;
-                        if (!ren.imgCount && chart && chart.onload) {
+                        if (!ren.imgCount && chart && !chart.hasLoaded) {
                             chart.onload();
                         }
                     },
@@ -4353,11 +4397,15 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
            box. */
         updateBoxSize = function () {
             var style = text.element.style, crispAdjust, attribs = {};
-            bBox = ((typeof width === 'undefined' ||
-                typeof height === 'undefined' ||
+            bBox = ((
+            // #12165 error when width is null (auto)
+            !isNumber(width) ||
+                !isNumber(height) ||
                 textAlign) &&
                 defined(text.textStr) &&
-                text.getBBox()); // #3295 && 3514 box failure when string equals 0
+                text.getBBox()
+            // #12163 when fontweight: bold, recalculate bBox withot cache
+            ); // #3295 && 3514 box failure when string equals 0
             wrapper.width = ((width || bBox.width || 0) +
                 2 * padding +
                 paddingLeft);
@@ -4564,7 +4612,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
              */
             css: function (styles) {
                 if (styles) {
-                    var textStyles = {};
+                    var textStyles = {}, isWidth, isFontStyle;
                     // Create a copy to avoid altering the original object
                     // (#537)
                     styles = merge(styles);
@@ -4575,14 +4623,16 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         }
                     });
                     text.css(textStyles);
-                    // Update existing text and box
-                    if ('width' in textStyles) {
+                    isWidth = 'width' in textStyles;
+                    isFontStyle = 'fontSize' in textStyles ||
+                        'fontWeight' in textStyles;
+                    // Update existing text, box (#9400, #12163)
+                    if (isWidth || isFontStyle) {
                         updateBoxSize();
-                    }
-                    // Keep updated (#9400)
-                    if ('fontSize' in textStyles) {
-                        updateBoxSize();
-                        updateTextPadding();
+                        // Keep updated (#9400, #12163)
+                        if (isFontStyle) {
+                            updateTextPadding();
+                        }
                     }
                 }
                 return baseCss.call(wrapper, styles);

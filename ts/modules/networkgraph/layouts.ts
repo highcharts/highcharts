@@ -70,6 +70,7 @@ declare global {
             public enableSimulation?: boolean;
             public forcedStop?: boolean;
             public forces?: Array<string>;
+            public chart?: Chart;
             public initialRendering: boolean;
             public integration: NetworkgraphIntegrationObject;
             public k?: number;
@@ -119,6 +120,7 @@ declare global {
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
             public initPositions(): void;
             public isStable(): boolean;
+            public updateSimulation(enable?: boolean): void;
             public removeElementFromCollection<T>(
                 element: T, collection: Array<T>
             ): void
@@ -144,6 +146,7 @@ declare global {
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
+    merge,
     clamp,
     defined,
     extend,
@@ -194,6 +197,8 @@ extend(
             this.integration =
                 H.networkgraphIntegrations[options.integration as any];
 
+            this.enableSimulation = options.enableSimulation;
+
             this.attractiveForce = pick(
                 options.attractiveForce,
                 this.integration.attractiveForceFunction
@@ -206,6 +211,12 @@ extend(
 
             this.approximation = options.approximation;
         },
+        updateSimulation: function (
+            this: Highcharts.NetworkgraphLayout,
+            enable?: boolean
+        ): void {
+            this.enableSimulation = pick(enable, this.options.enableSimulation);
+        },
         start: function (this: Highcharts.NetworkgraphLayout): void {
             var layout = this,
                 series = this.series,
@@ -214,12 +225,14 @@ extend(
 
             layout.currentStep = 0;
             layout.forces = series[0] && series[0].forces || [];
+            layout.chart = series[0] && series[0].chart;
 
             if (layout.initialRendering) {
                 layout.initPositions();
 
                 // Render elements in initial positions:
                 series.forEach(function (s: Highcharts.Series): void {
+                    s.finishedAnimating = true; // #13169
                     s.render();
                 });
             }
@@ -227,7 +240,7 @@ extend(
             layout.setK();
             (layout.resetSimulation as any)(options);
 
-            if (options.enableSimulation) {
+            if (layout.enableSimulation) {
                 layout.step();
             }
         },
@@ -260,7 +273,7 @@ extend(
 
             layout.prevSystemTemperature = layout.systemTemperature;
             layout.systemTemperature = layout.getSystemTemperature();
-            if (options.enableSimulation) {
+            if (layout.enableSimulation) {
                 series.forEach(function (s: Highcharts.Series): void {
                     // Chart could be destroyed during the simulation
                     if (s.chart) {
@@ -873,7 +886,7 @@ addEvent(Chart as any, 'render', function (
             (layout.maxIterations as any)-- &&
             isFinite(layout.temperature as any) &&
             !layout.isStable() &&
-            !layout.options.enableSimulation
+            !layout.enableSimulation
         ) {
             // Hook similar to build-in addEvent, but instead of
             // creating whole events logic, use just a function.
@@ -914,4 +927,25 @@ addEvent(Chart as any, 'render', function (
             });
         }
     }
+});
+
+// disable simulation before print if enabled
+addEvent(Chart as any, 'beforePrint', function (
+    this: Highcharts.PackedBubbleChart
+): void {
+    this.graphLayoutsLookup.forEach(function (layout): void {
+        layout.updateSimulation(false);
+    });
+    this.redraw();
+});
+
+// re-enable simulation after print
+addEvent(Chart as any, 'afterPrint', function (
+    this: Highcharts.PackedBubbleChart
+): void {
+    this.graphLayoutsLookup.forEach(function (layout): void {
+        // return to default simulation
+        layout.updateSimulation();
+    });
+    this.redraw();
 });

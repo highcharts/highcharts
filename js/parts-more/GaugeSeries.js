@@ -406,8 +406,6 @@ seriesType('gauge', 'line', {
                     }, series.options.animation);
                 }
             });
-            // delete this function to allow it only once
-            series.animate = null;
         }
     },
     /**

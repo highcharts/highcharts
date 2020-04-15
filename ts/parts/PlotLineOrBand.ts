@@ -163,6 +163,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    fireEvent,
     merge,
     objectEach,
     pick
@@ -180,20 +181,24 @@ const {
  *
  * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} [options]
  */
-H.PlotLineOrBand = function (
-    this: Highcharts.PlotLineOrBand,
-    axis: Highcharts.Axis,
-    options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions)
-): void {
-    this.axis = axis;
-
-    if (options) {
-        this.options = options;
-        this.id = options.id;
+class PlotLineOrBand {
+    public constructor(
+        axis: Highcharts.Axis,
+        options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions)
+    ) {
+        this.axis = axis;
+        if (options) {
+            this.options = options;
+            this.id = options.id;
+        }
     }
-} as any;
 
-H.PlotLineOrBand.prototype = {
+    public axis: Highcharts.Axis;
+    public id?: string;
+    public isActive?: boolean;
+    public label?: Highcharts.SVGElement;
+    public options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions);
+    public svgElem?: Highcharts.SVGElement;
 
     /**
      * Render the plot line or plot band. If it is already existing,
@@ -203,15 +208,13 @@ H.PlotLineOrBand.prototype = {
      * @function Highcharts.PlotLineOrBand#render
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
-    render: function (
-        this: Highcharts.PlotLineOrBand
-    ): (Highcharts.PlotLineOrBand|undefined) {
-
+    public render(): (Highcharts.PlotLineOrBand|undefined) {
         H.fireEvent(this, 'render');
 
         var plotLine = this,
             axis = plotLine.axis,
             horiz = axis.horiz,
+            log = axis.logarithmic,
             options = plotLine.options as (
                 Highcharts.AxisPlotBandsOptions|Highcharts.AxisPlotLinesOptions
             ),
@@ -238,10 +241,10 @@ H.PlotLineOrBand.prototype = {
             group;
 
         // logarithmic conversion
-        if (axis.isLog) {
-            from = axis.log2lin(from);
-            to = axis.log2lin(to);
-            value = axis.log2lin(value);
+        if (log) {
+            from = log.log2lin(from);
+            to = log.log2lin(to);
+            value = log.log2lin(value);
         }
 
         // Set the presentational attributes
@@ -360,8 +363,8 @@ H.PlotLineOrBand.prototype = {
         }
 
         // chainable
-        return plotLine;
-    },
+        return plotLine as any;
+    }
 
     /**
      * Render and align label for plot line or band.
@@ -374,8 +377,7 @@ H.PlotLineOrBand.prototype = {
      * @param {number} [zIndex]
      * @return {void}
      */
-    renderLabel: function (
-        this: Highcharts.PlotLineOrBand,
+    public renderLabel(
         optionsLabel: (
             Highcharts.AxisPlotLinesLabelOptions|
             Highcharts.AxisPlotBandsLabelOptions
@@ -444,7 +446,7 @@ H.PlotLineOrBand.prototype = {
             height: arrayMax(yBounds) - y
         });
         label.show(true);
-    },
+    }
 
     /**
      * Get label's text content.
@@ -454,16 +456,16 @@ H.PlotLineOrBand.prototype = {
      * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
      * @return {string}
      */
-    getLabelText: function (this: Highcharts.PlotLineOrBand, optionsLabel: (
+    public getLabelText(optionsLabel: (
         Highcharts.AxisPlotLinesLabelOptions|
         Highcharts.AxisPlotBandsLabelOptions
     )): string | undefined {
         return defined(optionsLabel.formatter) ?
             (optionsLabel.formatter as
               Highcharts.FormatterCallbackFunction<Highcharts.PlotLineOrBand>)
-                .call(this) :
+                .call(this as any) :
             optionsLabel.text;
-    },
+    }
 
     /**
      * Remove the plot line or band.
@@ -471,14 +473,14 @@ H.PlotLineOrBand.prototype = {
      * @function Highcharts.PlotLineOrBand#destroy
      * @return {void}
      */
-    destroy: function (this: Highcharts.PlotLineOrBand): void {
+    public destroy(): void {
         // remove it from the lookup
         erase(this.axis.plotLinesAndBands, this);
 
         delete this.axis;
         destroyObjectProperties(this);
     }
-} as any;
+}
 
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
@@ -1276,7 +1278,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj = new H.PlotLineOrBand(this, options).render(),
+        var obj = new PlotLineOrBand(this, options).render(),
             userOptions = this.userOptions;
 
         if (obj) { // #2189
@@ -1318,15 +1320,10 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             userOptions.plotLines || [],
             options.plotBands || [],
             userOptions.plotBands || []
-        ]).forEach(function (
-            arr: Array<(
-                Highcharts.AxisPlotBandsOptions|
-                Highcharts.AxisPlotLinesOptions
-            )>
-        ): void {
+        ]).forEach(function (arr): void {
             i = arr.length;
             while (i--) {
-                if (arr[i].id === id) {
+                if ((arr[i] || {}).id === id) {
                     erase(arr, arr[i]);
                 }
             }
@@ -1371,3 +1368,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         this.removePlotBandOrLine(id);
     }
 });
+
+H.PlotLineOrBand = PlotLineOrBand as any;
+export default H.PlotLineOrBand;

@@ -399,6 +399,9 @@ seriesType('organization', 'sankey',
                     height: height
                 };
             };
+            // Overwrite dataLabel dimensions (#13100).
+            dataLabel.width = width;
+            dataLabel.height = height;
         }
         H.seriesTypes.column.prototype.alignDataLabel.apply(this, arguments);
     }

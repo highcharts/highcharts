@@ -78,7 +78,7 @@ declare global {
                 this: (
                     OrganizationDataLabelsFormatterContextObject|
                     SankeyDataLabelsFormatterContextObject|
-                    DataLabelsFormatterContextObject
+                    PointLabelObject
                 )
             ): (string|undefined);
         }
@@ -217,7 +217,7 @@ seriesType<Highcharts.OrganizationSeries>(
              */
             nodeFormatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.OrganizationDataLabelsFormatterContextObject|
                     Highcharts.SankeyDataLabelsFormatterContextObject
                 )
@@ -666,6 +666,10 @@ seriesType<Highcharts.OrganizationSeries>(
                         height: height
                     } as any;
                 };
+
+                // Overwrite dataLabel dimensions (#13100).
+                dataLabel.width = width;
+                dataLabel.height = height;
             }
 
             H.seriesTypes.column.prototype.alignDataLabel.apply(

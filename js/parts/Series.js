@@ -225,16 +225,14 @@ import H from './Globals.js';
  *
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
-import pointModule from './Point.js';
-var Point = pointModule.Point;
+''; // detach doclets above
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
 import './Options.js';
-import './Legend.js';
-import './Point.js';
 import './SvgRenderer.js';
-var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, LegendSymbolMixin = H.LegendSymbolMixin, // @todo add as a requirement
-seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
+var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -677,8 +675,8 @@ null,
      * @apioption plotOptions.series.custom
      */
     /**
-     * A name for the dash style to use for the graph, or for some series
-     * types the outline of each shape.
+     * Name of the dash style to use for the graph, or for some series types
+     * the outline of each shape.
      *
      * In styled mode, the
      * [stroke dash-array](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-dashstyle/)
@@ -1690,7 +1688,6 @@ null,
      * @sample {highcharts} highcharts/css/series-datalabels
      *         Style mode example
      *
-     * @declare Highcharts.DataLabelsOptionsObject
      * @type    {*|Array<*>}
      * @product highcharts highstock highmaps gantt
      *
@@ -1915,7 +1912,7 @@ null,
          */
         formatter: function () {
             var numberFormatter = this.series.chart.numberFormatter;
-            return this.y === null ? '' : numberFormatter(this.y, -1);
+            return typeof this.y !== 'number' ? '' : numberFormatter(this.y, -1);
         },
         /**
          * For points with an extent, like columns or map areas, whether to
@@ -3500,32 +3497,22 @@ null,
     /**
      * Internal function to process the data by cropping away unused data
      * points if the series is longer than the crop threshold. This saves
-     * computing time for large series. In Highstock, this function is
-     * extended to provide data grouping.
+     * computing time for large series.
      *
      * @private
-     * @function Highcharts.Series#processData
-     * @param {boolean} [force]
-     *        Force data grouping.
-     * @return {boolean|undefined}
+     * @function Highcharts.Series#getProcessedData
+     * @param {boolean} [forceExtremesFromAll]
+     *        Force getting extremes of a total series data range.
+     * @return {Highcharts.SeriesProcessedDataObject}
      */
-    processData: function (force) {
+    getProcessedData: function (forceExtremesFromAll) {
         var series = this, 
         // copied during slice operation:
         processedXData = series.xData, processedYData = series.yData, dataLength = processedXData.length, croppedData, cropStart = 0, cropped, distance, closestPointRange, xAxis = series.xAxis, i, // loop variable
-        options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = series.getExtremesFromAll ||
+        options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = forceExtremesFromAll ||
+            series.getExtremesFromAll ||
             options.getExtremesFromAll, // #4599
-        isCartesian = series.isCartesian, xExtremes, val2lin = xAxis && xAxis.val2lin, isLog = xAxis && xAxis.isLog, throwOnUnsorted = series.requireSorting, min, max;
-        // If the series data or axes haven't changed, don't go through
-        // this. Return false to pass the message on to override methods
-        // like in data grouping.
-        if (isCartesian &&
-            !series.isDirty &&
-            !xAxis.isDirty &&
-            !series.yAxis.isDirty &&
-            !force) {
-            return false;
-        }
+        isCartesian = series.isCartesian, xExtremes, val2lin = xAxis && xAxis.val2lin, isLog = !!(xAxis && xAxis.logarithmic), throwOnUnsorted = series.requireSorting, min, max;
         if (xAxis) {
             // corrected for log axis (#3053)
             xExtremes = xAxis.getExtremes();
@@ -3576,13 +3563,44 @@ null,
                 throwOnUnsorted = false; // Only once
             }
         }
+        return {
+            xData: processedXData,
+            yData: processedYData,
+            cropped: cropped,
+            cropStart: cropStart,
+            closestPointRange: closestPointRange
+        };
+    },
+    /**
+     * Internal function to apply processed data.
+     * In Highstock, this function is extended to provide data grouping.
+     *
+     * @private
+     * @function Highcharts.Series#processData
+     * @param {boolean} [force]
+     *        Force data grouping.
+     * @return {boolean|undefined}
+     */
+    processData: function (force) {
+        var series = this, xAxis = series.xAxis, processedData;
+        // If the series data or axes haven't changed, don't go through
+        // this. Return false to pass the message on to override methods
+        // like in data grouping.
+        if (series.isCartesian &&
+            !series.isDirty &&
+            !xAxis.isDirty &&
+            !series.yAxis.isDirty &&
+            !force) {
+            return false;
+        }
+        processedData = series.getProcessedData();
         // Record the properties
-        series.cropped = cropped; // undefined or true
-        series.cropStart = cropStart;
-        series.processedXData = processedXData;
-        series.processedYData = processedYData;
+        series.cropped = processedData.cropped; // undefined or true
+        series.cropStart = processedData.cropStart;
+        series.processedXData = processedData.xData;
+        series.processedYData = processedData.yData;
         series.closestPointRange =
-            series.basePointRange = closestPointRange;
+            series.basePointRange = processedData.closestPointRange;
     },
     /**
      * Iterate over xData and crop values between min and max. Returns
@@ -3761,17 +3779,19 @@ null,
         };
     },
     /**
-     * Calculate Y extremes for the visible data. The result is set as
-     * `dataMin` and `dataMax` on the Series item.
+     * Calculate Y extremes for the visible data. The result is returned
+     * as an object with `dataMin` and `dataMax` properties.
      *
      * @private
      * @function Highcharts.Series#getExtremes
      * @param {Array<number>} [yData]
      *        The data to inspect. Defaults to the current data within the
      *        visible range.
-     * @return {void}
+     * @param {boolean} [forceExtremesFromAll]
+     *        Force getting extremes of a total series data range.
+     * @return {Highcharts.DataExtremesObject}
      */
-    getExtremes: function (yData) {
+    getExtremes: function (yData, forceExtremesFromAll) {
         var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData || this.xData, yDataLength, activeYData = [], activeCounter = 0, 
         // #2117, need to compensate for log X axis
         xExtremes, xMin = 0, xMax = 0, validValue, withinRange, 
@@ -3792,7 +3812,8 @@ null,
             // point outside the visible range (#7061), consider y extremes.
             validValue = ((isNumber(y) || isArray(y)) &&
                 ((y.length || y > 0) || !positiveValuesOnly));
-            withinRange = (this.getExtremesFromAll ||
+            withinRange = (forceExtremesFromAll ||
+                this.getExtremesFromAll ||
                 this.options.getExtremesFromAll ||
                 this.cropped ||
                 !xAxis || // for colorAxis support
@@ -3812,21 +3833,39 @@ null,
                 }
             }
         }
+        var dataExtremes = {
+            dataMin: arrayMin(activeYData),
+            dataMax: arrayMax(activeYData)
+        };
+        fireEvent(this, 'afterGetExtremes', { dataExtremes: dataExtremes });
+        return dataExtremes;
+    },
+    /**
+     * Set the current data extremes as `dataMin` and `dataMax` on the
+     * Series item. Use this only when the series properties should be
+     * updated.
+     *
+     * @private
+     * @function Highcharts.Series#applyExtremes
+     * @return {void}
+     */
+    applyExtremes: function () {
+        var dataExtremes = this.getExtremes();
         /**
          * Contains the minimum value of the series' data point.
          * @name Highcharts.Series#dataMin
          * @type {number}
          * @readonly
          */
-        this.dataMin = arrayMin(activeYData);
-        /**
+        this.dataMin = dataExtremes.dataMin;
+        /* *
          * Contains the maximum value of the series' data point.
          * @name Highcharts.Series#dataMax
          * @type {number}
          * @readonly
          */
-        this.dataMax = arrayMax(activeYData);
-        fireEvent(this, 'afterGetExtremes');
+        this.dataMax = dataExtremes.dataMax;
+        return dataExtremes;
     },
     /**
      * Find and return the first non null point in the data
@@ -3862,7 +3901,7 @@ null,
         }
         this.generatePoints();
         var series = this, options = series.options, stacking = options.stacking, xAxis = series.xAxis, categories = xAxis.categories, enabledDataSorting = series.enabledDataSorting, yAxis = series.yAxis, points = series.points, dataLength = points.length, hasModifyValue = !!series.modifyValue, i, pointPlacement = series.pointPlacementToXValue(), // #7860
-        dynamicallyPlaced = Boolean(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, plotY, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
+        dynamicallyPlaced = Boolean(pointPlacement), threshold = options.threshold, stackThreshold = options.startFromThreshold ? threshold : 0, plotX, lastPlotX, stackIndicator, zoneAxis = this.zoneAxis || 'y', closestPointRangePx = Number.MAX_VALUE;
         /**
          * Plotted coordinates need to be within a limited range. Drawing
          * too far outside the viewport causes various rendering issues
@@ -3874,7 +3913,7 @@ null,
         }
         // Translate each point
         for (i = 0; i < dataLength; i++) {
-            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacks[(series.negStacks &&
+            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(series.negStacks &&
                 yValue <
                     (stackThreshold ? 0 : threshold) ?
                 '-' :
@@ -3939,15 +3978,10 @@ null,
             }
             // Set the the plotY value, reset it for redraws
             // #3201
-            point.plotY = plotY = ((typeof yValue === 'number' && yValue !== Infinity) ?
+            point.plotY = ((typeof yValue === 'number' && yValue !== Infinity) ?
                 limitedRange(yAxis.translate(yValue, 0, 1, 0, 1)) :
                 void 0);
-            point.isInside =
-                typeof plotY !== 'undefined' &&
-                    plotY >= 0 &&
-                    plotY <= yAxis.len && // #3519
-                    plotX >= 0 &&
-                    plotX <= xAxis.len;
+            point.isInside = this.isPointInside(point);
             // Set client related positions for mouse tracking
             point.clientX = dynamicallyPlaced ?
                 correctFloat(xAxis.translate(xValue, 0, 0, 0, 1, pointPlacement)) :
@@ -4072,25 +4106,31 @@ null,
                 options.yAxis
             ].join(','), // #4526
         clipRect = chart[sharedClipKey], markerClipRect = chart[sharedClipKey + 'm'];
+        if (animation) {
+            clipBox.width = 0;
+            if (inverted) {
+                clipBox.x = chart.plotHeight +
+                    (options.clip !== false ? 0 : chart.plotTop);
+            }
+        }
         // If a clipping rectangle with the same properties is currently
         // present in the chart, use that.
         if (!clipRect) {
             // When animation is set, prepare the initial positions
             if (animation) {
-                clipBox.width = 0;
-                if (inverted) {
-                    clipBox.x = chart.plotSizeX +
-                        (options.clip !== false ? 0 : chart.plotTop);
-                }
                 chart[sharedClipKey + 'm'] = markerClipRect =
                     renderer.clipRect(
                     // include the width of the first marker
                     inverted ? chart.plotSizeX + 99 : -99, inverted ? -chart.plotLeft : -chart.plotTop, 99, inverted ? chart.chartWidth : chart.chartHeight);
             }
-            chart[sharedClipKey] = clipRect =
-                renderer.clipRect(clipBox);
+            chart[sharedClipKey] = clipRect = renderer.clipRect(clipBox);
             // Create hashmap for series indexes
             clipRect.count = { length: 0 };
+            // When the series is rendered again before starting animating, in
+            // compliance to a responsive rule
+        }
+        else if (!chart.hasLoaded) {
+            clipRect.attr(clipBox);
         }
         if (animation) {
             if (!clipRect.count[this.index]) {
@@ -4140,25 +4180,25 @@ null,
     animate: function (init) {
         var series = this, chart = series.chart, animation = animObject(series.options.animation), clipRect, sharedClipKey, finalBox;
         // Initialize the animation. Set up the clipping rectangle.
-        if (init) {
-            series.setClip(animation);
-            // Run the animation
-        }
-        else {
-            sharedClipKey = this.sharedClipKey;
-            clipRect = chart[sharedClipKey];
-            finalBox = series.getClipBox(animation, true);
-            if (clipRect) {
-                clipRect.animate(finalBox, animation);
+        if (!chart.hasRendered) {
+            if (init) {
+                series.setClip(animation);
+                // Run the animation
             }
-            if (chart[sharedClipKey + 'm']) {
-                chart[sharedClipKey + 'm'].animate({
-                    width: finalBox.width + 99,
-                    x: finalBox.x - (chart.inverted ? 0 : 99)
-                }, animation);
+            else {
+                sharedClipKey = this.sharedClipKey;
+                clipRect = chart[sharedClipKey];
+                finalBox = series.getClipBox(animation, true);
+                if (clipRect) {
+                    clipRect.animate(finalBox, animation);
+                }
+                if (chart[sharedClipKey + 'm']) {
+                    chart[sharedClipKey + 'm'].animate({
+                        width: finalBox.width + 99,
+                        x: finalBox.x - (chart.inverted ? 0 : 99)
+                    }, animation);
+                }
             }
-            // Delete this function to allow it only once
-            series.animate = null;
         }
     },
     /**
@@ -4660,7 +4700,7 @@ null,
      * @return {void}
      */
     applyZones: function () {
-        var series = this, chart = this.chart, renderer = chart.renderer, zones = this.zones, translatedFrom, translatedTo, clips = (this.clips || []), clipAttr, graph = this.graph, area = this.area, chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight), axis = this[(this.zoneAxis || 'y') + 'Axis'], extremes, reversed, inverted = chart.inverted, horiz, pxRange, pxPosMin, pxPosMax, ignoreZones = false;
+        var series = this, chart = this.chart, renderer = chart.renderer, zones = this.zones, translatedFrom, translatedTo, clips = (this.clips || []), clipAttr, graph = this.graph, area = this.area, chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight), axis = this[(this.zoneAxis || 'y') + 'Axis'], extremes, reversed, inverted = chart.inverted, horiz, pxRange, pxPosMin, pxPosMax, ignoreZones = false, zoneArea, zoneGraph;
         if (zones.length &&
             (graph || area) &&
             axis &&
@@ -4745,11 +4785,13 @@ null,
                 // when no data, graph zone is not applied and after setData
                 // clip was ignored. As a result, it should be applied each
                 // time.
-                if (graph) {
-                    series['zone-graph-' + i].clip(clips[i]);
+                zoneArea = series['zone-area-' + i];
+                zoneGraph = series['zone-graph-' + i];
+                if (graph && zoneGraph) {
+                    zoneGraph.clip(clips[i]);
                 }
-                if (area) {
-                    series['zone-area-' + i].clip(clips[i]);
+                if (area && zoneArea) {
+                    zoneArea.clip(clips[i]);
                 }
                 // if this zone extends out of the axis, ignore the others
                 ignoreZones = threshold.value > extremes.max;
@@ -4913,7 +4955,7 @@ null,
         var series = this, chart = series.chart, group, options = series.options, 
         // Animation doesn't work in IE8 quirks when the group div is
         // hidden, and looks bad in other oldIE
-        animDuration = (!!series.animate &&
+        animDuration = (!series.finishedAnimating &&
             chart.renderer.isSVG &&
             animObject(options.animation).duration), visibility = series.visible ? 'inherit' : 'hidden', // #2597
         zIndex = options.zIndex, hasRendered = series.hasRendered, chartSeriesGroup = chart.seriesGroup, inverted = chart.inverted;
@@ -4922,7 +4964,7 @@ null,
         group = series.plotGroup('group', 'series', visibility, zIndex, chartSeriesGroup);
         series.markerGroup = series.plotGroup('markerGroup', 'markers', visibility, zIndex, chartSeriesGroup);
         // initiate the animation
-        if (animDuration) {
+        if (animDuration && series.animate) {
             series.animate(true);
         }
         // SVGRenderer needs to know this before drawing elements (#1089,
@@ -4967,7 +5009,7 @@ null,
             group.clip(chart.clipRect);
         }
         // Run the animation
-        if (animDuration) {
+        if (animDuration && series.animate) {
             series.animate();
         }
         // Call the afterAnimate function on animation complete (but don't
@@ -5171,6 +5213,21 @@ null,
         return isNumber(factor) ?
             factor * pick(pointRange, axis.pointRange) :
             0;
+    },
+    /**
+     * @private
+     * @function Highcharts.Series#isPointInside
+     * @param {Highcharts.Point} point
+     * @return {boolean}
+     */
+    isPointInside: function (point) {
+        var isInside = typeof point.plotY !== 'undefined' &&
+            typeof point.plotX !== 'undefined' &&
+            point.plotY >= 0 &&
+            point.plotY <= this.yAxis.len && // #3519
+            point.plotX >= 0 &&
+            point.plotX <= this.xAxis.len;
+        return isInside;
     }
 }); // end Series prototype
 /**
@@ -5327,7 +5384,7 @@ null,
  * @sample highcharts/point/datalabels/
  *         Show a label for the last value
  *
- * @declare   Highcharts.DataLabelsOptionsObject
+ * @declare   Highcharts.DataLabelsOptions
  * @extends   plotOptions.line.dataLabels
  * @product   highcharts highstock gantt
  * @apioption series.line.data.dataLabels

@@ -902,7 +902,6 @@ var vennSeries = {
                     }
                 }
             }, series);
-            series.animate = null;
         }
     },
     utils: {

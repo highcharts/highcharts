@@ -112,14 +112,14 @@ const color = Color.parse;
 import U from '../../parts/Utilities.js';
 const {
     isNumber,
+    isObject,
     merge,
-    objectEach
+    objectEach,
+    pick
 } = U;
 
 var win = H.win,
-    doc = win.document,
-    some = H.some,
-    pick = H.pick;
+    doc = win.document;
 
 /* eslint-disable valid-jsdoc */
 
@@ -407,13 +407,12 @@ function GLRenderer(
         }
 
         if (zones) {
-            some(zones, function (
-                zone: Highcharts.SeriesZonesOptions
-            ): (boolean|undefined) {
+            zones.some(function (zone: Highcharts.SeriesZonesOptions): (boolean) {
                 if (typeof zone.value === 'undefined') {
                     zoneDefColor = new Color(zone.color);
                     return true;
                 }
+                return false;
             });
 
             if (!zoneDefColor) {
@@ -677,6 +676,17 @@ function GLRenderer(
             //     pcolor[2] /= 255.0;
             // }
 
+            // Handle the point.color option (#5999)
+            const pointOptions = rawData && rawData[i];
+            if (!useRaw && isObject(pointOptions, true)) {
+                if (pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba as any;
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
+                }
+            }
+
             if (useRaw) {
                 x = (d as any)[0];
                 y = (d as any)[1];
@@ -801,10 +811,10 @@ function GLRenderer(
             // Note: Boost requires that zones are sorted!
             if (zones) {
                 pcolor = (zoneDefColor as any).rgba;
-                some(zones, function ( // eslint-disable-line no-loop-func
+                zones.some(function ( // eslint-disable-line no-loop-func
                     zone: Highcharts.SeriesZonesOptions,
                     i: number
-                ): (boolean|undefined) {
+                ): boolean {
                     var last: Highcharts.SeriesZonesOptions =
                             (zones as any)[i - 1];
 
@@ -813,9 +823,9 @@ function GLRenderer(
                             pcolor = color(zone.color).rgba as any;
 
                         }
-
                         return true;
                     }
+                    return false;
                 });
 
                 (pcolor as any)[0] /= 255.0;
@@ -1102,7 +1112,7 @@ function GLRenderer(
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
         shader.setUniform('xAxisCVSCoord', (!axis.horiz) as any);
-        shader.setUniform('xAxisIsLog', axis.isLog as any);
+        shader.setUniform('xAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('xAxisReversed', (!!axis.reversed) as any);
     }
 
@@ -1123,7 +1133,7 @@ function GLRenderer(
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
         shader.setUniform('yAxisCVSCoord', (!axis.horiz) as any);
-        shader.setUniform('yAxisIsLog', axis.isLog as any);
+        shader.setUniform('yAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('yAxisReversed', (!!axis.reversed) as any);
     }
 
@@ -1310,7 +1320,7 @@ function GLRenderer(
             setThreshold(hasThreshold, translatedThreshold as any);
 
             if (s.drawMode === 'points') {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 } else {
                     shader.setPointSize(1);
@@ -1344,7 +1354,7 @@ function GLRenderer(
             }
 
             if (s.hasMarkers && showMarkers) {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 } else {
                     shader.setPointSize(10);

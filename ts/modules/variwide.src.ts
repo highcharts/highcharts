@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type StackingAxis from '../parts/StackingAxis';
 import H from '../parts/Globals.js';
 
 /**
@@ -294,7 +296,7 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
         correctStackLabels: function (this: Highcharts.VariwideSeries): void {
             var series = this,
                 options = series.options,
-                yAxis = series.yAxis,
+                yAxis = series.yAxis as StackingAxis,
                 pointStack,
                 pointWidth,
                 stack,
@@ -305,7 +307,7 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
             ): void {
                 xValue = point.x;
                 pointWidth = (point.shapeArgs as any).width;
-                stack = yAxis.stacks[(
+                stack = yAxis.stacking.stacks[(
                     series.negStacks &&
                     (point.y as any) < (
                         options.startFromThreshold ?
@@ -421,7 +423,7 @@ wrap(H.Tick.prototype, 'getLabelPosition', function (
     y: number,
     label: Highcharts.SVGElement,
     horiz: boolean,
-    labelOptions: Highcharts.DataLabelsOptionsObject,
+    labelOptions: Highcharts.DataLabelsOptions,
     tickmarkOffset: number,
     index: number
 ): Highcharts.PositionObject {

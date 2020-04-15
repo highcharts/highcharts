@@ -93,12 +93,12 @@ declare global {
             plotBackgroundImage?: string;
             plotBorderColor?: (ColorString|GradientColorObject|PatternObject);
             plotBorderWidth?: number;
-            plotShadow?: (boolean|CSSObject);
+            plotShadow?: (boolean|Partial<ShadowOptionsObject>);
             polar?: boolean;
             reflow?: boolean;
             renderTo?: (string|HTMLDOMElement);
             resetZoomButton?: ChartResetZoomButtonOptions;
-            shadow?: (boolean|CSSObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             selectionMarkerFill?: (
                 ColorString|GradientColorObject|PatternObject
             );
@@ -235,7 +235,7 @@ declare global {
             padding?: number;
             reversed?: boolean;
             rtl?: boolean;
-            shadow?: (boolean|CSSObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             squareSymbol?: boolean;
             /** @deprecated */
             style?: CSSObject;
@@ -335,12 +335,12 @@ declare global {
             pointFormat?: string;
             pointFormatter?: FormatterCallbackFunction<Point>;
             positioner?: TooltipPositionerCallbackFunction;
-            shadow?: (boolean|ShadowOptionsObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             shape?: TooltipShapeValue;
             shared?: boolean;
             snap?: number;
             split?: boolean;
-            stickOnHover?: boolean;
+            stickOnContact?: boolean;
             style?: CSSObject;
             useHTML?: boolean;
             valueDecimals?: number;
@@ -1314,6 +1314,9 @@ H.defaultOptions = {
         /**
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
+         *
+         * @sample {highcharts} highcharts/chart/panning-type
+         *         Zooming and xy panning
          *
          * @type    {string}
          * @validvalue ["x", "y", "xy"]
@@ -3586,6 +3589,8 @@ H.defaultOptions = {
          *         A fixed tooltip position
          * @sample {highstock} stock/tooltip/split-positioner/
          *         Split tooltip with fixed positions
+         * @sample {highstock} stock/tooltip/positioner-scrollable-plotarea/
+         *         Scrollable plot area combined with tooltip positioner
          *
          * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
@@ -3686,12 +3691,12 @@ H.defaultOptions = {
          * Prevents the tooltip from switching or closing, when touched or
          * pointed.
          *
-         * @sample highcharts/tooltip/stickonhover/
-         *         Tooltip sticks on hover event
+         * @sample highcharts/tooltip/stickoncontact/
+         *         Tooltip sticks on pointer contact
          *
          * @type      {boolean}
          * @since     8.0.1
-         * @apioption tooltip.stickOnHover
+         * @apioption tooltip.stickOnContact
          */
 
         /**
@@ -4019,8 +4024,6 @@ H.defaultOptions = {
             cursor: 'default',
             /** @internal */
             fontSize: '12px',
-            /** @internal */
-            pointerEvents: 'none',
             /** @internal */
             whiteSpace: 'nowrap'
         }

@@ -46,7 +46,7 @@ declare global {
             public drawGraph(): void;
             public generatePoints(): void;
             public getCrispPath(): SVGPathArray;
-            public getExtremes(): void;
+            public getExtremes(): DataExtremesObject;
             public getGraphPath(): SVGPathArray;
             public pointAttribs(
                 point: WaterfallPoint,
@@ -102,6 +102,7 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -116,13 +117,11 @@ const {
 
 import '../parts/Options.js';
 import '../parts/Series.js';
-import '../parts/Point.js';
+import StackItem from '../parts/Stacking.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    Point = H.Point,
     Series = H.Series,
-    StackItem = H.StackItem,
     seriesTypes = H.seriesTypes;
 
 /**
@@ -198,9 +197,9 @@ Axis.prototype.renderWaterfallStackTotals = function (
 ): void {
     var yAxis = this,
         waterfallStacks = yAxis.waterfallStacks,
-        stackTotalGroup = yAxis.stackTotalGroup,
+        stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
         dummyStackItem = new StackItem(
-            yAxis,
+            yAxis as any,
             yAxis.options.stackLabels as any,
             false,
             0,
@@ -909,7 +908,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             );
         }
 
-        series.yAxis.usePercentage = false;
+        (series.yAxis as any).stacking.usePercentage = false;
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series
@@ -1016,7 +1015,9 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
 
     // Extremes for a non-stacked series are recorded in processData.
     // In case of stacking, use Series.stackedYData to calculate extremes.
-    getExtremes: function (this: Highcharts.WaterfallSeries): void {
+    getExtremes: function (
+        this: Highcharts.WaterfallSeries
+    ): Highcharts.DataExtremesObject {
         var stacking = this.options.stacking,
             yAxis,
             waterfallStacks,
@@ -1047,9 +1048,19 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                 });
             }
 
-            this.dataMin = arrayMin(stackedYNeg);
-            this.dataMax = arrayMax(stackedYPos);
+            return {
+                dataMin: arrayMin(stackedYNeg),
+                dataMax: arrayMax(stackedYPos)
+            };
+
         }
+
+        // When not stacking, data extremes have already been computed in the
+        // processData function.
+        return {
+            dataMin: this.dataMin,
+            dataMax: this.dataMax
+        };
     }
 
 
@@ -1069,8 +1080,8 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
     isValid: function (this: Highcharts.WaterfallPoint): boolean {
         return (
             isNumber(this.y) ||
-            (this.isSum as any) ||
-            (this.isIntermediateSum as any)
+            this.isSum ||
+            Boolean(this.isIntermediateSum)
         );
     }
 

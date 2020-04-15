@@ -95,6 +95,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    isArray,
     pick
 } = U;
 
@@ -625,7 +626,7 @@ addEvent(Highcharts.Chart, 'afterHideAllOverlappingLabels', function (
 ): void {
     this.series.forEach(function (series): void {
         let dataLabelsOptions = series.options && series.options.dataLabels;
-        if (H.isArray(dataLabelsOptions)) {
+        if (isArray(dataLabelsOptions)) {
             dataLabelsOptions = dataLabelsOptions[0];
         }
         if (

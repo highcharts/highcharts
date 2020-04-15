@@ -202,6 +202,84 @@ QUnit.test('X-Range', function (assert) {
         1,
         'The point should now be on the center of the plot area'
     );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange',
+            plotBorderWidth: 1,
+            plotBorderColor: 'red',
+            borderColor: 'red',
+            borderWidth: 1
+        },
+        title: {
+            text: ''
+        },
+        plotOptions: {
+            series: {
+                dragDrop: {
+                    draggableX: true
+                }
+            }
+        },
+        yAxis: {
+            min: 0,
+            max: 1,
+            categories: ['Prototyping', 'Development']
+        },
+        series: [{
+            data: [{
+                x: 2,
+                x2: 5,
+                y: 0
+            }, {
+                x: 2,
+                x2: 5,
+                y: 1
+            }]
+        }, {
+            data: [{
+                x: 3,
+                x2: 6,
+                y: 0
+            }]
+        }, {
+            data: [{
+                x: 2.5,
+                x2: 6,
+                y: 0
+            }]
+        }]
+    });
+
+    point = chart.series[0].points[0];
+    point.showDragHandles();
+
+    var leftHandleBBox = chart.dragHandles.left.getBBox(),
+        rightHandleBBox = chart.dragHandles.right.getBBox(),
+        leftHandleX = chart.dragHandles.left.translateX,
+        leftHandleY = chart.dragHandles.left.translateY +
+            leftHandleBBox.y + leftHandleBBox.height / 2,
+        rightHandleX = chart.dragHandles.right.translateX,
+        rightHandleY = chart.dragHandles.right.translateY +
+            rightHandleBBox.y + rightHandleBBox.height / 2,
+        plotX = point.plotX,
+        plotY = point.plotY + point.series.columnMetrics.offset +
+            point.series.columnMetrics.width / 2,
+        result = false;
+
+    if (
+        Math.abs(leftHandleX - plotX) <= 1 &&
+        Math.abs(leftHandleY - plotY) <= 1 &&
+        Math.abs(rightHandleX - point.shapeArgs.width - plotX) <= 1 &&
+        Math.abs(rightHandleY - plotY) <= 1
+    ) {
+        result = true;
+    }
+
+    assert.ok(
+        result,
+        'Drag handles should be in correct positions (#12872).'
+    );
 });
 
 QUnit.test('Partial fill reversed', assert => {
@@ -353,6 +431,50 @@ QUnit.test('X-range data labels', function (assert) {
         }),
         ['hidden', 'hidden', 'hidden', 'hidden', 'visible'],
         'Shown and hidden labels'
+    );
+
+});
+
+QUnit.test('Stacking', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'xrange'
+        },
+        yAxis: {
+            categories: ["First", "Second"],
+            reversed: true
+        },
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+        series: [{
+            data: [{
+                x: 0,
+                x2: 5,
+                y: 0
+            }, {
+                x: 5,
+                x2: 10,
+                y: 1
+            }]
+        }, {
+            data: [{
+                x: 5,
+                x2: 10,
+                y: 0
+            }, {
+                x: 0,
+                x2: 5,
+                y: 1
+            }]
+        }]
+    });
+
+    assert.ok(
+        chart.series[0].options.stacking === undefined,
+        'Stacking should be disabled.'
     );
 
 });

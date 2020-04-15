@@ -87,6 +87,7 @@ declare global {
             public redraw(animation?: boolean): void;
             public redrawItem(item: AnnotationControllable, animation?: boolean): void;
             public redrawItems(items: Array<AnnotationControllable>, animation?: boolean): void;
+            public renderItems(items: Array<AnnotationControllable>): void;
             public remove(): void;
             public render(): void;
             public renderItem(item: AnnotationControllable): void;
@@ -95,7 +96,10 @@ declare global {
             public setLabelCollector(): void;
             public setOptions(userOptions: AnnotationsOptions): void;
             public setVisibility(visible?: boolean): void;
-            public update(userOptions: DeepPartial<AnnotationsOptions>): void;
+            public update(
+                userOptions: DeepPartial<AnnotationsOptions>,
+                redraw?: boolean
+            ): void;
         }
         interface AnnotationChart extends Chart {
             annotations: Array<Annotation>;
@@ -168,7 +172,7 @@ declare global {
             formatter: FormatterCallbackFunction<Point>;
             overflow: DataLabelsOverflowValue;
             padding: number;
-            shadow: (boolean|ShadowOptionsObject);
+            shadow: (boolean|Partial<ShadowOptionsObject>);
             shape: SymbolKeyValue;
             style: CSSObject;
             text?: string;
@@ -255,6 +259,7 @@ const {
     erase,
     extend,
     find,
+    fireEvent,
     merge,
     pick,
     splat,
@@ -272,9 +277,7 @@ import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
 
-var fireEvent = H.fireEvent,
-    reduce = H.reduce,
-    chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
+var chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
 
 /* *********************************************************************
  *
@@ -932,6 +935,16 @@ merge(
                  */
 
                 /**
+                 * Name of the dash style to use for the shape's stroke.
+                 *
+                 * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+                 *         Possible values demonstrated
+                 *
+                 * @type      {Highcharts.DashStyleValue}
+                 * @apioption annotations.shapeOptions.dashStyle
+                 */
+
+                /**
                  * The color of the shape's stroke.
                  *
                  * @sample highcharts/annotations/shape/
@@ -1051,7 +1064,6 @@ merge(
             this.addControlPoints();
             this.addShapes();
             this.addLabels();
-            this.addClipPaths();
             this.setLabelCollector();
         },
 
@@ -1113,41 +1125,44 @@ merge(
         setClipAxes: function (this: Highcharts.Annotation): void {
             var xAxes = this.chart.xAxis,
                 yAxes = this.chart.yAxis,
-                linkedAxes: Array<Highcharts.Axis> = reduce(
-                    ((this.options.labels || []) as Array<(
-                        Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions
-                    )>).concat(this.options.shapes || []),
-                    function (
-                        axes: Array<Highcharts.Axis>,
-                        labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
-                    ): Array<Highcharts.Axis> {
-                        return [
-                            xAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).xAxis
-                            ] || axes[0],
-                            yAxes[
-                                labelOrShape &&
-                                labelOrShape.point &&
-                                (labelOrShape.point as any).yAxis
-                            ] || axes[1]
-                        ];
-                    },
-                    []
-                );
+                linkedAxes: Array<Highcharts.Axis> = ((
+                    this.options.labels || []
+                ) as Array<(Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)>)
+                    .concat(this.options.shapes || [])
+                    .reduce(
+                        function (
+                            axes: Array<Highcharts.Axis>,
+                            labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
+                        ): Array<Highcharts.Axis> {
+                            return [
+                                xAxes[
+                                    labelOrShape &&
+                                    labelOrShape.point &&
+                                    (labelOrShape.point as any).xAxis
+                                ] || axes[0],
+                                yAxes[
+                                    labelOrShape &&
+                                    labelOrShape.point &&
+                                    (labelOrShape.point as any).yAxis
+                                ] || axes[1]
+                            ];
+                        },
+                        []
+                    );
 
             this.clipXAxis = linkedAxes[0];
             this.clipYAxis = linkedAxes[1];
         },
 
-        getClipBox: function (this: Highcharts.Annotation): Highcharts.BBoxObject {
-            return {
-                x: (this.clipXAxis as any).left,
-                y: (this.clipYAxis as any).top,
-                width: (this.clipXAxis as any).width,
-                height: (this.clipYAxis as any).height
-            };
+        getClipBox: function (this: Highcharts.Annotation): (Highcharts.BBoxObject|void) {
+            if (this.clipXAxis && this.clipYAxis) {
+                return {
+                    x: this.clipXAxis.left,
+                    y: this.clipYAxis.top,
+                    width: this.clipXAxis.width,
+                    height: this.clipYAxis.height
+                };
+            }
         },
 
         setLabelCollector: function (this: Highcharts.Annotation): void {
@@ -1221,6 +1236,21 @@ merge(
             }
         },
 
+        /**
+         * @private
+         * @param {Array<Highcharts.AnnotationControllable>} items
+         */
+        renderItems: function (
+            this: Highcharts.Annotation,
+            items: Array<Highcharts.AnnotationControllable>
+        ): void {
+            var i = items.length;
+
+            while (i--) {
+                this.renderItem(items[i]);
+            }
+        },
+
         render: function (this: Highcharts.Annotation): void {
             var renderer = this.chart.renderer;
 
@@ -1248,9 +1278,15 @@ merge(
                 })
                 .add(this.graphic);
 
+            this.addClipPaths();
+
             if (this.clipRect) {
                 this.graphic.clip(this.clipRect);
             }
+
+            // Render shapes and labels before adding events (#13070).
+            this.renderItems(this.shapes);
+            this.renderItems(this.labels);
 
             this.addEvents();
 
@@ -1344,7 +1380,11 @@ merge(
          *
          * @return {void}
          */
-        update: function (this: Highcharts.Annotation, userOptions: Partial<Highcharts.AnnotationsOptions>): void {
+        update: function (
+            this: Highcharts.Annotation,
+            userOptions: Partial<Highcharts.AnnotationsOptions>,
+            redraw? : boolean
+        ): void {
             var chart = this.chart,
                 labelsAndShapes = this.getLabelsAndShapesOptions(
                     this.userOptions,
@@ -1363,9 +1403,12 @@ merge(
             chart.options.annotations[userOptionsIndex] = options;
 
             this.isUpdating = true;
-            this.redraw();
-            this.isUpdating = false;
+            if (pick(redraw, true)) {
+                chart.redraw();
+            }
+
             fireEvent(this, 'afterUpdate');
+            this.isUpdating = false;
         },
 
         /* *************************************************************

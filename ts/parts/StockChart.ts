@@ -10,7 +10,25 @@
 
 'use strict';
 
+import Axis from './Axis.js';
 import H from './Globals.js';
+import Point from './Point.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    clamp,
+    defined,
+    extend,
+    find,
+    format,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -21,7 +39,6 @@ declare global {
         interface Axis {
             crossLabel?: SVGElement;
             setCompare(compare?: string, redraw?: boolean): void;
-            panningState?: AxisPanningState;
         }
         interface Chart {
             _labelPanes?: Dictionary<Axis>;
@@ -46,9 +63,8 @@ declare global {
         interface SVGRenderer {
             crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
         }
-        interface AxisPanningState {
-            startMin: number;
-            startMax: number;
+        interface VMLRenderer {
+            crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
         }
         class StockChart extends Chart {
         }
@@ -56,26 +72,7 @@ declare global {
     }
 }
 
-import U from './Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    clamp,
-    defined,
-    extend,
-    find,
-    format,
-    isNumber,
-    isString,
-    merge,
-    pick,
-    splat
-} = U;
-
 import './Chart.js';
-import './Axis.js';
-import './Point.js';
 import './Pointer.js';
 import './Series.js';
 import './SvgRenderer.js';
@@ -89,9 +86,8 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
-    Point = H.Point,
+var Chart = H.Chart,
+    Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
 
@@ -99,7 +95,6 @@ var Axis = H.Axis,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
     pointTooltipFormatter = Point.prototype.tooltipFormatter;
-
 
 /**
  * Compare the values of the series against the first non-null, non-
@@ -206,19 +201,13 @@ H.StockChart = H.stockChart = function (
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
         opposite,
-        panning = options.chart && options.chart.panning,
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
         navigatorEnabled = pick(
             options.navigator && options.navigator.enabled,
             (defaultOptions.navigator as any).enabled,
             true
-        ),
-        verticalPanningEnabled = panning && /y/.test(panning.type),
-        disableStartOnTick = {
-            startOnTick: false,
-            endOnTick: false
-        };
+        );
 
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (
@@ -246,7 +235,10 @@ H.StockChart = H.stockChart = function (
                 type: 'datetime',
                 categories: null
             },
-            (navigatorEnabled ? disableStartOnTick : null) as any
+            (navigatorEnabled ? {
+                startOnTick: false,
+                endOnTick: false
+            } : null) as any
         );
     });
 
@@ -282,8 +274,7 @@ H.StockChart = H.stockChart = function (
             },
             defaultOptions.yAxis, // #3802
             defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
-            yAxisOptions, // user options
-            (verticalPanningEnabled ? disableStartOnTick : null) as any
+            yAxisOptions // user options
         );
     });
 
@@ -644,6 +635,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     var chart = this.chart,
+        log = this.logarithmic,
         options = (this.options.crosshair as any).label, // the label's options
         horiz = this.horiz, // axis orientation
         opposite = this.opposite, // axis position
@@ -664,16 +656,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         // Use last available event (#5287)
         e = event.e || (this.cross && this.cross.e),
         point = event.point,
-        lin2log = this.lin2log,
-        min,
-        max;
-
-    if (this.isLog) {
-        min = lin2log(this.min as any);
-        max = lin2log(this.max as any);
-    } else {
-        min = this.min;
+        min = this.min,
         max = this.max;
+
+    if (log) {
+        min = log.lin2log(min as any);
+        max = log.lin2log(max as any);
     }
 
     align = (horiz ? 'center' : opposite ?
@@ -731,7 +719,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     if (!formatOption && !options.formatter) {
-        if (this.isDatetimeAxis) {
+        if (this.dateTime) {
             formatFormat = '%b %d, %Y';
         }
         formatOption =
@@ -947,17 +935,22 @@ seriesProto.processData = function (
 };
 
 // Modify series extremes
-addEvent(Series, 'afterGetExtremes', function (this: Highcharts.Series): void {
-    if (this.modifyValue) {
-        var extremes = [
-            this.modifyValue(this.dataMin),
-            this.modifyValue(this.dataMax)
-        ];
+addEvent(
+    Series,
+    'afterGetExtremes',
+    function (this: Highcharts.Series, e): void {
+        const dataExtremes: Highcharts.DataExtremesObject = (e as any).dataExtremes;
+        if (this.modifyValue && dataExtremes) {
+            var extremes = [
+                this.modifyValue(dataExtremes.dataMin),
+                this.modifyValue(dataExtremes.dataMax)
+            ];
 
-        this.dataMin = arrayMin(extremes);
-        this.dataMax = arrayMax(extremes);
+            dataExtremes.dataMin = arrayMin(extremes);
+            dataExtremes.dataMax = arrayMax(extremes);
+        }
     }
-});
+);
 
 /**
  * Highstock only. Set the compare mode on all series belonging to an Y axis
@@ -1095,40 +1088,5 @@ addEvent(Chart, 'update', function (
         merge(true, this.options.scrollbar, options.scrollbar);
         (this.navigator.update as any)({}, false);
         delete options.scrollbar;
-    }
-});
-
-// Extend the Axis prototype to calculate start min/max values
-// (including min/maxPadding). This is related to using vertical panning
-// (#11315).
-addEvent(Axis, 'afterSetScale', function (
-    this: Highcharts.Axis
-): void {
-    var axis = this,
-        panning = axis.chart.options.chart &&
-            axis.chart.options.chart.panning;
-
-    if (
-        panning &&
-        (panning.type === 'y' ||
-        panning.type === 'xy') &&
-        !axis.isXAxis &&
-        !defined(axis.panningState)
-    ) {
-
-        var min = Number.MAX_VALUE,
-            max = Number.MIN_VALUE;
-
-        axis.series.forEach(function (series): void {
-            min = Math.min(H.arrayMin(series.yData as any), min) -
-                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(H.arrayMax(series.yData as any), max) +
-                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
-        });
-
-        axis.panningState = {
-            startMin: min,
-            startMax: max
-        };
     }
 });

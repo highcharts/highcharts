@@ -325,7 +325,7 @@ extend(defaultOptions.lang
          * Exporting module only. The text for the menu item to view the chart
          * in full screen.
          *
-         * @since next
+         * @since 8.0.1
          *
          * @private
          */
@@ -335,7 +335,7 @@ extend(defaultOptions.lang
          * Exporting module only. The text for the menu item to exit the chart
          * from full screen.
          *
-         * @since next
+         * @since 8.0.1
          *
          * @private
          */

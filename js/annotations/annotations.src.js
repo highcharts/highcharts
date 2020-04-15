@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import controllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
@@ -21,7 +21,7 @@ import ControllableLabel from './controllable/ControllableLabel.js';
 import eventEmitterMixin from './eventEmitterMixin.js';
 import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var fireEvent = H.fireEvent, reduce = H.reduce, chartProto = H.Chart.prototype;
+var chartProto = H.Chart.prototype;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -598,6 +598,15 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              * @apioption annotations.shapeOptions.src
              */
             /**
+             * Name of the dash style to use for the shape's stroke.
+             *
+             * @sample {highcharts} highcharts/plotoptions/series-dashstyle-all/
+             *         Possible values demonstrated
+             *
+             * @type      {Highcharts.DashStyleValue}
+             * @apioption annotations.shapeOptions.dashStyle
+             */
+            /**
              * The color of the shape's stroke.
              *
              * @sample highcharts/annotations/shape/
@@ -703,7 +712,6 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
-        this.addClipPaths();
         this.setLabelCollector();
     },
     getLabelsAndShapesOptions: function (baseOptions, newOptions) {
@@ -736,7 +744,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         }
     },
     setClipAxes: function () {
-        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = reduce((this.options.labels || []).concat(this.options.shapes || []), function (axes, labelOrShape) {
+        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = (this.options.labels || [])
+            .concat(this.options.shapes || [])
+            .reduce(function (axes, labelOrShape) {
             return [
                 xAxes[labelOrShape &&
                     labelOrShape.point &&
@@ -750,12 +760,14 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         this.clipYAxis = linkedAxes[1];
     },
     getClipBox: function () {
-        return {
-            x: this.clipXAxis.left,
-            y: this.clipYAxis.top,
-            width: this.clipXAxis.width,
-            height: this.clipYAxis.height
-        };
+        if (this.clipXAxis && this.clipYAxis) {
+            return {
+                x: this.clipXAxis.left,
+                y: this.clipYAxis.top,
+                width: this.clipXAxis.width,
+                height: this.clipYAxis.height
+            };
+        }
     },
     setLabelCollector: function () {
         var annotation = this;
@@ -803,6 +815,16 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
             this.redrawItem(items[i], animation);
         }
     },
+    /**
+     * @private
+     * @param {Array<Highcharts.AnnotationControllable>} items
+     */
+    renderItems: function (items) {
+        var i = items.length;
+        while (i--) {
+            this.renderItem(items[i]);
+        }
+    },
     render: function () {
         var renderer = this.chart.renderer;
         this.graphic = renderer
@@ -826,9 +848,13 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
             translateY: 0
         })
             .add(this.graphic);
+        this.addClipPaths();
         if (this.clipRect) {
             this.graphic.clip(this.clipRect);
         }
+        // Render shapes and labels before adding events (#13070).
+        this.renderItems(this.shapes);
+        this.renderItems(this.labels);
         this.addEvents();
         controllableMixin.render.call(this);
     },
@@ -893,7 +919,7 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      *
      * @return {void}
      */
-    update: function (userOptions) {
+    update: function (userOptions, redraw) {
         var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = merge(true, this.userOptions, userOptions);
         options.labels = labelsAndShapes.labels;
         options.shapes = labelsAndShapes.shapes;
@@ -902,9 +928,11 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         // Update options in chart options, used in exporting (#9767):
         chart.options.annotations[userOptionsIndex] = options;
         this.isUpdating = true;
-        this.redraw();
-        this.isUpdating = false;
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
         fireEvent(this, 'afterUpdate');
+        this.isUpdating = false;
     },
     /* *************************************************************
      * ITEM SECTION

@@ -12,15 +12,16 @@ import H from '../parts/Globals.js';
 /**
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
+import Color from '../parts/Color.js';
+var color = Color.parse;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType;
 import '../parts/Axis.js';
-import '../parts/Color.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';
-var Axis = H.Axis, color = H.color, noop = H.noop, Point = H.Point, Series = H.Series, seriesTypes = H.seriesTypes;
+var Axis = H.Axis, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * A bubble series is a three dimensional series type where each point renders
  * an X, Y and Z value. Each points is drawn as a bubble where the position
@@ -350,8 +351,6 @@ seriesType('bubble', 'scatter', {
                     graphic.animate(animationTarget, this.options.animation);
                 }
             }, this);
-            // delete this function to allow it only once
-            this.animate = null;
         }
     },
     /**
@@ -466,7 +465,7 @@ Axis.prototype.beforePadding = function () {
         }
     });
     // Apply the padding to the min and max properties
-    if (activeSeries.length && range > 0 && !this.isLog) {
+    if (activeSeries.length && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
         transA *= (axisLength +
             Math.max(0, pxMin) - // #8901

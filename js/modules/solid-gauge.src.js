@@ -22,6 +22,7 @@ import H from '../parts/Globals.js';
 */
 import Color from '../parts/Color.js';
 var color = Color.parse;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from '../parts/Utilities.js';
 var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
 import '../parts/Options.js';
@@ -118,7 +119,7 @@ colorAxisMethods = {
             }
         }
         else {
-            if (this.isLog) {
+            if (this.logarithmic) {
                 value = this.val2lin(value);
             }
             pos = 1 - ((this.max - value) / (this.max - this.min));
@@ -236,7 +237,7 @@ var solidGaugeOptions = {
 };
 // The solidgauge series type
 seriesType('solidgauge', 'gauge', solidGaugeOptions, {
-    drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+    drawLegendSymbol: LegendSymbolMixin.drawRectangle,
     // Extend the translate function to extend the Y axis with the necessary
     // decoration (#5895).
     translate: function () {

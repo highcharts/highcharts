@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type ColorAxis from '../parts-map/ColorAxis';
 import H from './Globals.js';
 
 /**
@@ -71,7 +72,7 @@ declare global {
         }
         interface CreateAxisOptionsObject {
             animation: undefined | boolean | AnimationOptionsObject;
-            axis: AxisOptions | ColorAxisOptions;
+            axis: AxisOptions | ColorAxis.Options;
             redraw: undefined | boolean;
         }
         interface Point {
@@ -118,6 +119,7 @@ declare global {
     }
 }
 
+import Point from './Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 const {
@@ -144,12 +146,10 @@ const {
 
 import './Axis.js';
 import './Chart.js';
-import './Point.js';
 import './Series.js';
 
 var Axis = H.Axis,
     Chart = H.Chart,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -330,7 +330,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      */
     addColorAxis: function (
         this: Highcharts.Chart,
-        options: Highcharts.ColorAxisOptions,
+        options: ColorAxis.Options,
         redraw?: boolean,
         animation?: boolean
     ): Highcharts.Axis {

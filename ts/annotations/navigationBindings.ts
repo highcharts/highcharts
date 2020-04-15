@@ -83,7 +83,7 @@ declare global {
             public initEvents(): void;
             public initUpdate(): void;
             public removeEvents(): void;
-            public update(options: NavigationOptions): void
+            public update(options?: NavigationOptions): void
         }
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
@@ -943,7 +943,7 @@ extend(H.NavigationBindings.prototype, {
      * @private
      * @function Highcharts.NavigationBindings#update
      */
-    update: function (this: Highcharts.NavigationBindings, options: Highcharts.NavigationOptions): void {
+    update: function (this: Highcharts.NavigationBindings, options?: Highcharts.NavigationOptions): void {
         this.options = merge(true, this.options, options);
         this.removeEvents();
         this.initEvents();

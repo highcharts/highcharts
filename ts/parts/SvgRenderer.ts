@@ -76,11 +76,11 @@ declare global {
             strokeWidth?: number;
         }
         interface ShadowOptionsObject {
-            color?: ColorString;
-            offsetX?: number;
-            offsetY?: number;
-            opacity?: number;
-            width?: number;
+            color: ColorString;
+            offsetX: number;
+            offsetY: number;
+            opacity: number;
+            width: number;
         }
         interface SizeObject {
             height: number;
@@ -155,6 +155,7 @@ declare global {
             public renderer: SVGRenderer;
             public rotation?: number;
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
+            public oldShadowOptions?: Highcharts.ShadowOptionsObject;
             public styles?: CSSObject;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
@@ -246,7 +247,7 @@ declare global {
                 textPathOptions: object
             ): SVGElement;
             public shadow(
-                shadowOptions?: (boolean|ShadowOptionsObject),
+                shadowOptions?: (boolean|Partial<ShadowOptionsObject>),
                 group?: SVGElement,
                 cutOff?: boolean
             ): SVGElement;
@@ -851,6 +852,7 @@ const {
     destroyObjectProperties,
     erase,
     extend,
+    fireEvent,
     inArray,
     isArray,
     isNumber,
@@ -961,7 +963,7 @@ extend((
          */
         this.renderer = renderer;
 
-        H.fireEvent(this, 'afterInit');
+        fireEvent(this, 'afterInit');
     },
 
     /**
@@ -1059,7 +1061,7 @@ extend((
             key = [] as (string|Array<string>),
             value: string;
 
-        H.fireEvent(this.renderer, 'complexColor', {
+        fireEvent(this.renderer, 'complexColor', {
             args: arguments
         }, function (): void {
             // Apply linear or radial gradients
@@ -1964,18 +1966,50 @@ extend((
         handler: Function
     ): Highcharts.SVGElement {
         var svgElement = this,
-            element = svgElement.element;
+            element = svgElement.element,
+            touchStartPos: Highcharts.Dictionary<number>,
+            touchEventFired: boolean;
 
         // touch
         if (hasTouch && eventType === 'click') {
-            element.ontouchstart = function (e: Event): void {
-                svgElement.touchEventFired = Date.now(); // #2269
-                e.preventDefault();
-                handler.call(element, e);
+            element.ontouchstart = function (e: TouchEvent): void {
+                // save touch position for later calculation
+                touchStartPos = {
+                    clientX: e.touches[0].clientX,
+                    clientY: e.touches[0].clientY
+                };
             };
+
+            // Instead of ontouchstart, event handlers should be called
+            // on touchend - similar to how current mouseup events are called
+            element.ontouchend = function (e: TouchEvent): void {
+
+                // hasMoved is a boolean variable containing logic if page
+                // was scrolled, so if touch position changed more than
+                // ~4px (value borrowed from general touch handler)
+                const hasMoved = touchStartPos.clientX ? Math.sqrt(
+                    Math.pow(
+                        touchStartPos.clientX - e.changedTouches[0].clientX,
+                        2
+                    ) +
+                    Math.pow(
+                        touchStartPos.clientY - e.changedTouches[0].clientY,
+                        2
+                    )
+                ) >= 4 : false;
+
+                if (!hasMoved) { // only call handlers if page was not scrolled
+                    handler.call(element, e);
+                }
+
+                touchEventFired = true;
+                // prevent other events from being fired. #9682
+                e.preventDefault();
+            };
+
             element.onclick = function (e: Event): void {
-                if (win.navigator.userAgent.indexOf('Android') === -1 ||
-                        Date.now() - (svgElement.touchEventFired || 0) > 1100) {
+                // Do not call onclick handler if touch event was fired already.
+                if (!touchEventFired) {
                     handler.call(element, e);
                 }
             };
@@ -2329,7 +2363,8 @@ extend((
                 rotation,
                 fontSize,
                 wrapper.textWidth, // #7874, also useHTML
-                styles && styles.textOverflow // #5968
+                styles && styles.textOverflow, // #5968
+                styles && styles.fontWeight // #12163
             ].join(',');
 
         }
@@ -2520,10 +2555,10 @@ extend((
         elemWrapper.animate({
             opacity: 0
         }, {
-            duration: duration || 150,
+            duration: pick(duration, 150),
             complete: function (): void {
                 // #3088, assuming we're only using this for tooltips
-                elemWrapper.attr({ y: -9999 });
+                elemWrapper.attr({ y: -9999 }).hide();
             }
         });
     },
@@ -2736,7 +2771,7 @@ extend((
      */
     shadow: function (
         this: Highcharts.SVGElement,
-        shadowOptions?: (boolean|Highcharts.ShadowOptionsObject),
+        shadowOptions?: (boolean|Partial<Highcharts.ShadowOptionsObject>),
         group?: Highcharts.SVGElement,
         cutOff?: boolean
     ): Highcharts.SVGElement {
@@ -2747,24 +2782,55 @@ extend((
             strokeWidth,
             shadowWidth,
             shadowElementOpacity,
+            update = false,
+            oldShadowOptions = this.oldShadowOptions,
 
             // compensate for inverted plot area
             transform;
 
-        if (!shadowOptions) {
+        const defaultShadowOptions: Highcharts.ShadowOptionsObject = {
+            color: '${palette.neutralColor100}',
+            offsetX: 1,
+            offsetY: 1,
+            opacity: 0.15,
+            width: 3
+        };
+        let options: Highcharts.ShadowOptionsObject|undefined;
+        if (shadowOptions === true) {
+            options = defaultShadowOptions;
+        } else if (typeof shadowOptions === 'object') {
+            options = extend(defaultShadowOptions, shadowOptions);
+        }
+
+        // Update shadow when options change (#12091).
+        if (options) {
+            // Go over each key to look for change
+            if (options && oldShadowOptions) {
+                objectEach(options, (value, key): void => {
+                    if (value !== (oldShadowOptions as any)[key]) {
+                        update = true;
+                    }
+                });
+            }
+
+            if (update) {
+                this.destroyShadows();
+            }
+
+            this.oldShadowOptions = options;
+        }
+
+        if (!options) {
             this.destroyShadows();
 
         } else if (!this.shadows) {
-            shadowWidth = pick((shadowOptions as any).width, 3);
-            shadowElementOpacity = ((shadowOptions as any).opacity || 0.15) /
-                shadowWidth;
+            shadowElementOpacity = options.opacity / options.width;
             transform = this.parentInverted ?
-                '(-1,-1)' :
-                '(' + pick((shadowOptions as any).offsetX, 1) + ', ' +
-                pick((shadowOptions as any).offsetY, 1) + ')';
-            for (i = 1; i <= shadowWidth; i++) {
-                shadow = element.cloneNode(0 as any) as any;
-                strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
+                'translate(-1,-1)' :
+                `translate(${options.offsetX}, ${options.offsetY})`;
+            for (i = 1; i <= options.width; i++) {
+                shadow = element.cloneNode(false) as any;
+                strokeWidth = (options.width * 2) + 1 - (2 * i);
                 attr(shadow, {
                     stroke: (
                         (shadowOptions as any).color ||
@@ -2772,7 +2838,7 @@ extend((
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
-                    transform: 'translate' + transform,
+                    transform,
                     fill: 'none'
                 });
                 shadow.setAttribute(
@@ -5474,7 +5540,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         // Fire the load event when all external images are
                         // loaded
                         ren.imgCount--;
-                        if (!ren.imgCount && chart && chart.onload) {
+                        if (!ren.imgCount && chart && !chart.hasLoaded) {
                             chart.onload();
                         }
                     },
@@ -6257,11 +6323,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 attribs = {} as Highcharts.SVGAttributes;
 
             bBox = ((
-                typeof width === 'undefined' ||
-                typeof height === 'undefined' ||
+                // #12165 error when width is null (auto)
+                !isNumber(width) ||
+                !isNumber(height) ||
                 textAlign) &&
                 defined(text.textStr) &&
                 text.getBBox()
+                // #12163 when fontweight: bold, recalculate bBox withot cache
             ); // #3295 && 3514 box failure when string equals 0
 
             wrapper.width = (
@@ -6511,7 +6579,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 styles: Highcharts.CSSObject
             ): Highcharts.SVGElement {
                 if (styles) {
-                    var textStyles = {} as Highcharts.CSSObject;
+                    var textStyles = {} as Highcharts.CSSObject,
+                        isWidth: boolean,
+                        isFontStyle: boolean;
 
                     // Create a copy to avoid altering the original object
                     // (#537)
@@ -6526,16 +6596,20 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                     });
                     text.css(textStyles);
 
-                    // Update existing text and box
-                    if ('width' in textStyles) {
+                    isWidth = 'width' in textStyles;
+                    isFontStyle = 'fontSize' in textStyles ||
+                        'fontWeight' in textStyles;
+
+                    // Update existing text, box (#9400, #12163)
+                    if (isWidth || isFontStyle) {
                         updateBoxSize();
+
+                        // Keep updated (#9400, #12163)
+                        if (isFontStyle) {
+                            updateTextPadding();
+                        }
                     }
 
-                    // Keep updated (#9400)
-                    if ('fontSize' in textStyles) {
-                        updateBoxSize();
-                        updateTextPadding();
-                    }
                 }
                 return baseCss.call(wrapper, styles);
             },

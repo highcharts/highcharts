@@ -396,7 +396,6 @@ seriesType<Highcharts.DependencyWheelSeries>(
                     }
                 }, this);
 
-                this.animate = null as any;
             }
         }
 

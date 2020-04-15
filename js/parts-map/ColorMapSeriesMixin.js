@@ -9,6 +9,7 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined;
 var noop = H.noop, seriesTypes = H.seriesTypes;
@@ -41,7 +42,7 @@ H.colorMapPointMixin = {
      * @return {void}
      */
     setState: function (state) {
-        H.Point.prototype.setState.call(this, state);
+        Point.prototype.setState.call(this, state);
         if (this.graphic) {
             this.graphic.attr({
                 zIndex: state === 'hover' ? 1 : 0

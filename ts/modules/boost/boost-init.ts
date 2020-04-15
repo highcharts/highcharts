@@ -159,8 +159,6 @@ function init(): void {
 
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points || this.graph) {
-
-                this.animate = null as any;
                 this.destroyGraphics();
             }
 

@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../../../parts/Globals.js';
+import Point from '../../../../parts/Point.js';
 import U from '../../../../parts/Utilities.js';
 var extend = U.extend, defined = U.defined;
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
@@ -141,7 +142,7 @@ function getClosestPoint(point, series, xWeight, yWeight) {
  * @return {Highcharts.Point}
  *         This highlighted point.
  */
-H.Point.prototype.highlight = function () {
+Point.prototype.highlight = function () {
     var chart = this.series.chart;
     if (!this.isNull) {
         this.onMouseOver(); // Show the hover marker and tooltip
@@ -519,10 +520,14 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      */
     onHandlerTerminate: function () {
         var chart = this.chart;
+        var curPoint = chart.highlightedPoint;
         if (chart.tooltip) {
             chart.tooltip.hide(0);
         }
-        delete chart.highlightedPoint;
+        if (curPoint) {
+            curPoint.onMouseOut();
+            delete chart.highlightedPoint;
+        }
     },
     /**
      * Function that attempts to highlight next/prev point. Handles wrap around.

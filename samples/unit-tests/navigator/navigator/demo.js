@@ -215,6 +215,44 @@ QUnit.test(
             'Navigator shades, outline and handles should be properly translated after ' +
             'yAxis label reserve more space (#12573).'
         );
+
+        chart = Highcharts.stockChart('container', {
+            navigator: {
+                series: {
+                    data: []
+                }
+            },
+            plotOptions: {
+                series: {
+                    showInNavigator: false
+                }
+            },
+            scrollbar: {
+                enabled: false
+            },
+            series: [{
+                data: [
+                    [1539264600000, 214.45],
+                    [1539351000000, 222.11],
+                    [1539610200000, 217.36],
+                    [1539696600000, 222.15],
+                    [1539783000000, 221.19],
+                    [1539869400000, 216.02],
+                    [1539955800000, 219.31],
+                    [1540215000000, 220.65],
+                    [1540301400000, 222.73],
+                    [1540387800000, 215.09]
+                ]
+            }]
+        });
+
+        chart.setSize(400, 500);
+        assert.strictEqual(
+            chart.navigator.xAxis.top,
+            chart.navigator.navigatorGroup.getBBox().y,
+            'Navigator position should be updated when scrollbar ' +
+                'disabled and navigator.baseSeries not set (#13114).'
+        );
     }
 );
 

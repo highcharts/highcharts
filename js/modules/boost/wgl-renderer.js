@@ -16,8 +16,8 @@ import GLVertexBuffer from './wgl-vbuffer.js';
 import Color from '../../parts/Color.js';
 var color = Color.parse;
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach;
-var win = H.win, doc = win.document, some = H.some, pick = H.pick;
+var isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+var win = H.win, doc = win.document;
 /* eslint-disable valid-jsdoc */
 /**
  * Main renderer. Used to render series.
@@ -217,11 +217,12 @@ function GLRenderer(postRenderCallback) {
                 options.gapSize;
         }
         if (zones) {
-            some(zones, function (zone) {
+            zones.some(function (zone) {
                 if (typeof zone.value === 'undefined') {
                     zoneDefColor = new Color(zone.color);
                     return true;
                 }
+                return false;
             });
             if (!zoneDefColor) {
                 zoneDefColor = ((series.pointAttribs && series.pointAttribs().fill) ||
@@ -410,6 +411,16 @@ function GLRenderer(postRenderCallback) {
             //     pcolor[1] /= 255.0;
             //     pcolor[2] /= 255.0;
             // }
+            // Handle the point.color option (#5999)
+            var pointOptions = rawData && rawData[i];
+            if (!useRaw && isObject(pointOptions, true)) {
+                if (pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba;
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
+                }
+            }
             if (useRaw) {
                 x = d[0];
                 y = d[1];
@@ -507,7 +518,7 @@ function GLRenderer(postRenderCallback) {
             // Note: Boost requires that zones are sorted!
             if (zones) {
                 pcolor = zoneDefColor.rgba;
-                some(zones, function (// eslint-disable-line no-loop-func
+                zones.some(function (// eslint-disable-line no-loop-func
                 zone, i) {
                     var last = zones[i - 1];
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
@@ -516,6 +527,7 @@ function GLRenderer(postRenderCallback) {
                         }
                         return true;
                     }
+                    return false;
                 });
                 pcolor[0] /= 255.0;
                 pcolor[1] /= 255.0;
@@ -730,7 +742,7 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
         shader.setUniform('xAxisCVSCoord', (!axis.horiz));
-        shader.setUniform('xAxisIsLog', axis.isLog);
+        shader.setUniform('xAxisIsLog', (!!axis.logarithmic));
         shader.setUniform('xAxisReversed', (!!axis.reversed));
     }
     /**
@@ -749,7 +761,7 @@ function GLRenderer(postRenderCallback) {
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
         shader.setUniform('yAxisCVSCoord', (!axis.horiz));
-        shader.setUniform('yAxisIsLog', axis.isLog);
+        shader.setUniform('yAxisIsLog', (!!axis.logarithmic));
         shader.setUniform('yAxisReversed', (!!axis.reversed));
     }
     /**
@@ -870,7 +882,7 @@ function GLRenderer(postRenderCallback) {
             setYAxis(s.series.yAxis);
             setThreshold(hasThreshold, translatedThreshold);
             if (s.drawMode === 'points') {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 }
                 else {
@@ -894,7 +906,7 @@ function GLRenderer(postRenderCallback) {
                 }
             }
             if (s.hasMarkers && showMarkers) {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 }
                 else {

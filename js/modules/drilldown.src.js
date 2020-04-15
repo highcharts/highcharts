@@ -125,9 +125,10 @@ import H from '../parts/Globals.js';
 * @type {"drillup"}
 */
 import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -416,9 +417,7 @@ defaultOptions.drilldown = {
  * @function Highcharts.SVGElement#fadeIn
  *
  * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
- *        The animation options for the element fade.
- *
- * @return {void}
+ * The animation options for the element fade.
  */
 H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {
     this
@@ -446,12 +445,10 @@ H.SVGRenderer.prototype.Element.prototype.fadeIn = function (animation) {
  * @function Highcharts.Chart#addSeriesAsDrilldown
  *
  * @param {Highcharts.Point} point
- *        The point from which the drilldown will start.
+ * The point from which the drilldown will start.
  *
  * @param {Highcharts.SeriesOptionsType} options
- *        The series options for the new, detailed series.
- *
- * @return {void}
+ * The series options for the new, detailed series.
  */
 Chart.prototype.addSeriesAsDrilldown = function (point, options) {
     this.addSingleSeriesAsDrilldown(point, options);
@@ -605,11 +602,9 @@ Chart.prototype.showDrillUpButton = function () {
  * When the chart is drilled down to a child series, calling `chart.drillUp()`
  * will drill up to the parent series.
  *
- * @function Highcharts.Chart#drillUp
- *
- * @return {void}
- *
  * @requires  modules/drilldown
+ *
+ * @function Highcharts.Chart#drillUp
  */
 Chart.prototype.drillUp = function () {
     if (!this.drilldownLevels || this.drilldownLevels.length === 0) {
@@ -694,8 +689,9 @@ Chart.prototype.drillUp = function () {
     fireEvent(chart, 'drillupall');
 };
 /* eslint-disable no-invalid-this */
-// Add update function to be called internally from Chart.update (#7600)
-Chart.prototype.callbacks.push(function () {
+// Add update function to be called internally from Chart.update
+// (#7600, #12855)
+addEvent(Chart, 'afterInit', function () {
     var chart = this;
     chart.drilldown = {
         update: function (options, redraw) {
@@ -746,8 +742,7 @@ addEvent(Chart, 'render', function () {
  * @private
  * @function Highcharts.ColumnSeries#animateDrillupTo
  * @param {boolean} [init=false]
- *        Whether to initialize animation
- * @return {void}
+ * Whether to initialize animation
  */
 ColumnSeries.prototype.animateDrillupTo = function (init) {
     if (!init) {
@@ -788,8 +783,8 @@ ColumnSeries.prototype.animateDrillupTo = function (init) {
                 });
             }
         }, Math.max(this.chart.options.drilldown.animation.duration - 50, 0));
-        // Reset
-        this.animate = noop;
+        // Reset to prototype
+        delete this.animate;
     }
 };
 ColumnSeries.prototype.animateDrilldown = function (init) {
@@ -821,7 +816,8 @@ ColumnSeries.prototype.animateDrilldown = function (init) {
                 point.dataLabel.fadeIn(animationOptions);
             }
         });
-        this.animate = null;
+        // Reset to prototype
+        delete this.animate;
     }
 };
 /**
@@ -891,12 +887,13 @@ if (PieSeries) {
                         }))[animationOptions ? 'animate' : 'attr'](animateTo, animationOptions);
                     }
                 });
-                this.animate = null;
+                // Reset to prototype
+                delete this.animate;
             }
         }
     });
 }
-H.Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
+Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
     var series = this.series, chart = series.chart, drilldown = chart.options.drilldown, i = (drilldown.series || []).length, seriesOptions;
     if (!chart.ddDupes) {
         chart.ddDupes = [];
@@ -981,14 +978,19 @@ Tick.prototype.drillable = function () {
                 label.basicStyles = merge(label.styles);
             }
             label.addClass('highcharts-drilldown-axis-label');
+            // #12656 - avoid duplicate of attach event
+            if (label.removeOnDrillableClick) {
+                removeEvent(label.element, 'click');
+            }
             label.removeOnDrillableClick = addEvent(label.element, 'click', function (e) {
+                e.preventDefault();
                 axis.drilldownCategory(pos, e);
             });
             if (!styledMode) {
                 label.css(axis.chart.options.drilldown.activeAxisLabelStyle);
             }
         }
-        else if (label && label.removeOnDrillableClick) {
+        else if (label && label.drillable && label.removeOnDrillableClick) {
             if (!styledMode) {
                 label.styles = {}; // reset for full overwrite of styles
                 label.css(label.basicStyles);
@@ -1000,7 +1002,7 @@ Tick.prototype.drillable = function () {
 };
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
-addEvent(H.Point, 'afterInit', function () {
+addEvent(Point, 'afterInit', function () {
     var point = this, series = point.series;
     if (point.drilldown) {
         // Add the click event to the point
@@ -1054,7 +1056,7 @@ addEvent(H.Series, 'afterDrawTracker', function () {
         }
     });
 });
-addEvent(H.Point, 'afterSetState', function () {
+addEvent(Point, 'afterSetState', function () {
     var styledMode = this.series.chart.styledMode;
     if (this.drilldown && this.series.halo && this.state === 'hover') {
         applyCursorCSS(this.series.halo, 'pointer', true, styledMode);

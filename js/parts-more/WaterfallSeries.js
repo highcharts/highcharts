@@ -9,12 +9,13 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../parts/Series.js';
-import '../parts/Point.js';
-var Axis = H.Axis, Chart = H.Chart, Point = H.Point, Series = H.Series, StackItem = H.StackItem, seriesTypes = H.seriesTypes;
+import StackItem from '../parts/Stacking.js';
+var Axis = H.Axis, Chart = H.Chart, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * Returns true if the key is a direct property of the object.
  * @private
@@ -66,7 +67,7 @@ addEvent(Axis, 'afterRender', function () {
  * @function Highcharts.Axis#renderWaterfallStackTotals
  */
 Axis.prototype.renderWaterfallStackTotals = function () {
-    var yAxis = this, waterfallStacks = yAxis.waterfallStacks, stackTotalGroup = yAxis.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, void 0);
+    var yAxis = this, waterfallStacks = yAxis.waterfallStacks, stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, void 0);
     yAxis.dummyStackItem = dummyStackItem;
     // Render each waterfall stack total
     objectEach(waterfallStacks, function (type) {
@@ -500,7 +501,7 @@ seriesType('waterfall', 'column', {
             }
             actualStackX.stackState.push(actualStackX.stackState[statesLen - 1] + nextS);
         }
-        series.yAxis.usePercentage = false;
+        series.yAxis.stacking.usePercentage = false;
         totalYVal = actualSum = prevSum = stackThreshold;
         // code responsible for creating stacks for waterfall series
         if (series.visible ||
@@ -604,9 +605,17 @@ seriesType('waterfall', 'column', {
                     stackedYPos.push(stackX.posTotal + stackX.threshold);
                 });
             }
-            this.dataMin = arrayMin(stackedYNeg);
-            this.dataMax = arrayMax(stackedYPos);
+            return {
+                dataMin: arrayMin(stackedYNeg),
+                dataMax: arrayMax(stackedYPos)
+            };
         }
+        // When not stacking, data extremes have already been computed in the
+        // processData function.
+        return {
+            dataMin: this.dataMin,
+            dataMax: this.dataMax
+        };
     }
     // Point members
 }, {
@@ -624,7 +633,7 @@ seriesType('waterfall', 'column', {
     isValid: function () {
         return (isNumber(this.y) ||
             this.isSum ||
-            this.isIntermediateSum);
+            Boolean(this.isIntermediateSum));
     }
 });
 /**

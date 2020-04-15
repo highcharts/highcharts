@@ -186,8 +186,9 @@ declare global {
  * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
  */
 
-import '../parts/Point.js';
+''; // detach doclets above
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -1098,7 +1099,7 @@ Pathfinder.prototype = {
                                     connect : connect.to
                             );
                             if (
-                                to instanceof H.Point &&
+                                to instanceof Point &&
                                 to.series.visible &&
                                 to.visible &&
                                 to.isInside !== false
@@ -1357,7 +1358,7 @@ H.Pathfinder = Pathfinder as any;
 
 
 // Add pathfinding capabilities to Points
-extend(H.Point.prototype, /** @lends Point.prototype */ {
+extend(Point.prototype, /** @lends Point.prototype */ {
 
     /**
      * Get coordinates of anchor point for pathfinder connection.

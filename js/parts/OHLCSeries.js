@@ -9,10 +9,10 @@
  * */
 'use strict';
 import H from './Globals.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 var seriesType = U.seriesType;
-import './Point.js';
-var Point = H.Point, seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 /**
  * The ohlc series type.
  *
@@ -139,7 +139,7 @@ seriesType('ohlc', 'column'
      */
     init: function () {
         seriesTypes.column.prototype.init.apply(this, arguments);
-        this.options.stacking = false; // #8817
+        this.options.stacking = void 0; // #8817
     },
     /**
      * Postprocess mapping between options and SVG attributes

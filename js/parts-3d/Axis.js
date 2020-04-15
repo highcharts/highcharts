@@ -123,7 +123,7 @@ var extendedOptions = {
     }
 };
 /* eslint-disable no-invalid-this */
-merge(true, Axis.prototype.defaultOptions, extendedOptions);
+merge(true, Axis.defaultOptions, extendedOptions);
 addEvent(Axis, 'afterSetOptions', function () {
     var options;
     if (this.chart.is3d && this.chart.is3d() && this.coll !== 'colorAxis') {
@@ -491,8 +491,8 @@ extend(ZAxis.prototype, {
             axis.dataMax =
                 axis.ignoreMinPadding =
                     axis.ignoreMaxPadding = null;
-        if (axis.buildStacks) {
-            axis.buildStacks();
+        if (axis.stacking) {
+            axis.stacking.buildStacks();
         }
         // loop through this axis' series
         axis.series.forEach(function (series) {

@@ -888,6 +888,9 @@ H.defaultOptions = {
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
          *
+         * @sample {highcharts} highcharts/chart/panning-type
+         *         Zooming and xy panning
+         *
          * @type    {string}
          * @validvalue ["x", "y", "xy"]
          * @default x
@@ -3005,6 +3008,8 @@ H.defaultOptions = {
          *         A fixed tooltip position
          * @sample {highstock} stock/tooltip/split-positioner/
          *         Split tooltip with fixed positions
+         * @sample {highstock} stock/tooltip/positioner-scrollable-plotarea/
+         *         Scrollable plot area combined with tooltip positioner
          *
          * @type      {Highcharts.TooltipPositionerCallbackFunction}
          * @since     2.2.4
@@ -3100,12 +3105,12 @@ H.defaultOptions = {
          * Prevents the tooltip from switching or closing, when touched or
          * pointed.
          *
-         * @sample highcharts/tooltip/stickonhover/
-         *         Tooltip sticks on hover event
+         * @sample highcharts/tooltip/stickoncontact/
+         *         Tooltip sticks on pointer contact
          *
          * @type      {boolean}
          * @since     8.0.1
-         * @apioption tooltip.stickOnHover
+         * @apioption tooltip.stickOnContact
          */
         /**
          * Use HTML to render the contents of the tooltip instead of SVG. Using
@@ -3414,8 +3419,6 @@ H.defaultOptions = {
             cursor: 'default',
             /** @internal */
             fontSize: '12px',
-            /** @internal */
-            pointerEvents: 'none',
             /** @internal */
             whiteSpace: 'nowrap'
         }

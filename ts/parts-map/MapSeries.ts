@@ -65,7 +65,7 @@ declare global {
             public drawMapDataLabels(): void;
             public drawPoints(): void;
             public getBox(paths: Array<MapPointOptions>): void;
-            public getExtremes(): void;
+            public getExtremes(): DataExtremesObject;
             public hasData(): boolean;
             public pointAttribs(point: MapPoint, state?: string): SVGAttributes;
             public render(): void;
@@ -99,7 +99,7 @@ declare global {
         }
         interface MapPointOptions extends ScatterPointOptions {
             color?: ColorType;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             drilldown?: string;
             id?: string;
             labelrank?: number;
@@ -137,17 +137,17 @@ declare global {
     }
 }
 
-import '../parts/Color.js';
-import '../parts/Legend.js';
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     extend,
+    fireEvent,
     getNestedProperty,
     isArray,
     isNumber,
@@ -160,10 +160,7 @@ const {
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    LegendSymbolMixin = H.LegendSymbolMixin,
     noop = H.noop,
-    fireEvent = H.fireEvent,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -601,21 +598,27 @@ seriesType<Highcharts.MapSeries>(
             return !!this.processedXData.length; // != 0
         },
 
-        getExtremes: function (this: Highcharts.MapSeries): void {
+        getExtremes: function (
+            this: Highcharts.MapSeries
+        ): Highcharts.DataExtremesObject {
             // Get the actual value extremes for colors
-            Series.prototype.getExtremes.call(this, this.valueData);
+            const { dataMin, dataMax } = Series.prototype.getExtremes
+                .call(this, this.valueData);
 
             // Recalculate box on updated data
             if (this.chart.hasRendered && this.isDirtyData) {
                 this.getBox(this.options.data as any);
             }
 
-            this.valueMin = this.dataMin;
-            this.valueMax = this.dataMax;
+            if (isNumber(dataMin)) {
+                this.valueMin = dataMin;
+            }
+            if (isNumber(dataMax)) {
+                this.valueMax = dataMax;
+            }
 
             // Extremes for the mock Y axis
-            this.dataMin = this.minY;
-            this.dataMax = this.maxY;
+            return { dataMin: this.minY, dataMax: this.maxY };
         },
 
         // Translate the path, so it automatically fits into the plot area box
@@ -744,7 +747,7 @@ seriesType<Highcharts.MapSeries>(
                                 typeof val[ix] !== 'undefined'
                             ) {
                                 if (pointArrayMap[j].indexOf('.') > 0) {
-                                    H.Point.prototype.setNestedProperty(
+                                    Point.prototype.setNestedProperty(
                                         data[i], val[ix], pointArrayMap[j]
                                     );
                                 } else {
@@ -1226,9 +1229,6 @@ seriesType<Highcharts.MapSeries>(
                         scaleX: 1,
                         scaleY: 1
                     }, animation);
-
-                    // Delete this function to allow it only once
-                    this.animate = null as any;
                 }
             }
         },
@@ -1276,8 +1276,6 @@ seriesType<Highcharts.MapSeries>(
                             }, animationOptions);
                     }
                 });
-
-                this.animate = null as any;
             }
 
         },
@@ -1472,7 +1470,7 @@ seriesType<Highcharts.MapSeries>(
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type      {Highcharts.DataLabelsOptionsObject}
+ * @type      {Highcharts.DataLabelsOptions}
  * @product   highmaps
  * @apioption series.map.data.dataLabels
  */

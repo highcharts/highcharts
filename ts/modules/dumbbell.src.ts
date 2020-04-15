@@ -62,6 +62,11 @@ declare global {
             public seriesDrawPoints: AreaRangeSeries['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
+            public columnMetrics: ColumnMetricsObject;
+            public crispConnector(
+                points: SVGPathArray,
+                width: number
+            ): SVGPathArray;
             public getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
             public drawConnector(point: DumbbellPoint): void;
             public getColumnMetrics(): ColumnMetricsObject;
@@ -77,11 +82,12 @@ declare global {
 }
 import U from '../parts/Utilities.js';
 const {
+    extend,
+    pick,
     seriesType
 } = U;
 
-var pick = H.pick,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     seriesProto = H.Series.prototype,
     areaRangeProto = seriesTypes.arearange.prototype,
     columnRangeProto = seriesTypes.columnrange.prototype,
@@ -254,7 +260,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                 point.zone ? point.zone.color : void 0,
                 point.color as any
             );
-            H.extend(point, origProps);
+            extend(point, origProps);
         }
 
         attribs = {
@@ -326,7 +332,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     ): Highcharts.ColumnMetricsObject {
         var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
-        metrics.offset = metrics.offset + metrics.width / 2;
+        metrics.offset += metrics.width / 2;
 
         return metrics;
     },
@@ -362,6 +368,8 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
             (shapeArgs as any).x = point.plotX - pointWidth / 2;
             (point.tooltipPos as any) = null;
         });
+
+        this.columnMetrics.offset -= this.columnMetrics.width / 2;
     },
     seriesDrawPoints: areaRangeProto.drawPoints,
     /**
@@ -535,7 +543,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });
-                    H.extend(point, origProps);
+                    extend(point, origProps);
                 }
             }
         }

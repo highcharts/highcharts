@@ -59,15 +59,13 @@ declare global {
     }
 }
 
-
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     seriesType
 } = U;
-import './Point.js';
 
-var Point = H.Point,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * The ohlc series type.
@@ -218,7 +216,7 @@ seriesType<Highcharts.OHLCSeries>(
         init: function (this: Highcharts.OHLCSeries): void {
             seriesTypes.column.prototype.init.apply(this, arguments as any);
 
-            this.options.stacking = false as any; // #8817
+            this.options.stacking = void 0; // #8817
         },
 
         /**

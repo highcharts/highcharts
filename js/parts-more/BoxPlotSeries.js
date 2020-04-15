@@ -157,6 +157,34 @@ seriesType('boxplot', 'column', {
      * @apioption plotOptions.boxplot.stemColor
      */
     /**
+     * The dash style of the box.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since     next
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.boxDashStyle
+     */
+    /**
+     * The dash style of the median.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since     next
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.medianDashStyle
+     */
+    /**
      * The dash style of the stem, the vertical line extending from the
      * box to the whiskers.
      *
@@ -172,6 +200,20 @@ seriesType('boxplot', 'column', {
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.stemDashStyle
+     */
+    /**
+     * The dash style of the whiskers.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since     next
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.whiskerDashStyle
      */
     /**
      * The width of the stem, the vertical line extending from the box to
@@ -258,6 +300,7 @@ seriesType('boxplot', 'column', {
                     point[key + 'Plot'] = yAxis.translate(point[key], 0, 1, 0, 1);
                 }
             });
+            point.plotHigh = point.highPlot; // For data label validation
         });
     },
     // eslint-disable-next-line valid-jsdoc
@@ -306,8 +349,9 @@ seriesType('boxplot', 'column', {
                     stemAttr.stroke =
                         point.stemColor || options.stemColor || color;
                     stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-                    stemAttr.dashstyle =
-                        point.stemDashStyle || options.stemDashStyle;
+                    stemAttr.dashstyle = (point.stemDashStyle ||
+                        options.stemDashStyle ||
+                        options.dashStyle);
                     point.stem.attr(stemAttr);
                     // Whiskers attributes
                     if (whiskerLength) {
@@ -315,6 +359,9 @@ seriesType('boxplot', 'column', {
                             options.whiskerColor ||
                             color);
                         whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
+                        whiskersAttr.dashstyle = (point.whiskerDashStyle ||
+                            options.whiskerDashStyle ||
+                            options.dashStyle);
                         point.whiskers.attr(whiskersAttr);
                     }
                     if (doQuartiles) {
@@ -323,6 +370,9 @@ seriesType('boxplot', 'column', {
                             color);
                         boxAttr.stroke = options.lineColor || color;
                         boxAttr['stroke-width'] = options.lineWidth || 0;
+                        boxAttr.dashstyle = (point.boxDashStyle ||
+                            options.boxDashStyle ||
+                            options.dashStyle);
                         point.box.attr(boxAttr);
                     }
                     // Median attributes
@@ -330,6 +380,9 @@ seriesType('boxplot', 'column', {
                         options.medianColor ||
                         color);
                     medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
+                    medianAttr.dashstyle = (point.medianDashStyle ||
+                        options.medianDashStyle ||
+                        options.dashStyle);
                     point.medianShape.attr(medianAttr);
                 }
                 var d = void 0;
@@ -503,5 +556,61 @@ seriesType('boxplot', 'column', {
  * @type      {number}
  * @product   highcharts
  * @apioption series.boxplot.data.q3
+ */
+/**
+ * The dash style of the box.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since     next
+ * @product   highcharts
+ * @apioption series.boxplot.data.boxDashStyle
+ */
+/**
+ * The dash style of the median.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since     next
+ * @product   highcharts
+ * @apioption series.boxplot.data.medianDashStyle
+ */
+/**
+ * The dash style of the stem.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since     next
+ * @product   highcharts
+ * @apioption series.boxplot.data.stemDashStyle
+ */
+/**
+ * The dash style of the whiskers.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since     next
+ * @product   highcharts
+ * @apioption series.boxplot.data.whiskerDashStyle
  */
 ''; // adds doclets above to transpiled file

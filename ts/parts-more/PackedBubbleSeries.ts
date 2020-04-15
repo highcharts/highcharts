@@ -129,17 +129,17 @@ declare global {
         }
         interface PackedBubbleDataLabelsFormatterCallbackFunction {
             (this: (
-                DataLabelsFormatterContextObject|
+                PointLabelObject|
                 PackedBubbleDataLabelsFormatterContextObject
             )): (number|string|null|undefined);
         }
         interface PackedBubbleDataLabelsFormatterContextObject
-            extends DataLabelsFormatterContextObject
+            extends PointLabelObject
         {
             point: PackedBubblePoint;
         }
         interface PackedBubbleDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             format?: string;
             formatter?: PackedBubbleDataLabelsFormatterCallbackFunction;
@@ -218,7 +218,7 @@ declare global {
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  *//**
  * The color of the node.
@@ -241,6 +241,7 @@ declare global {
 
 import Color from '../parts/Color.js';
 const color = Color.parse;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -257,14 +258,11 @@ const {
 } = U;
 
 import '../parts/Axis.js';
-import '../parts/Color.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
 
 var Series = H.Series,
-    Point = H.Point,
     Chart = H.Chart,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
@@ -492,22 +490,6 @@ H.layouts.packedbubble = extendClass(
             }
 
             Reingold.prototype.applyLimitBox.apply(this, arguments as any);
-        },
-        isStable: function (this: Highcharts.PackedBubbleLayout): boolean {
-            return Math.abs(
-                (this.systemTemperature as any) -
-                (this.prevSystemTemperature as any)
-            ) < 0.00001 ||
-            (this.temperature as any) <= 0 ||
-            (
-                // In first iteration system does not move:
-                (this.systemTemperature as any) > 0 &&
-                (
-                    (this.systemTemperature as any) /
-                    this.nodes.length < 0.02 &&
-                    (this.enableSimulation as any)
-                ) // Use only when simulation is enabled
-            );
         }
     }
 );
@@ -633,7 +615,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              */
             formatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): (number|null) {
@@ -657,7 +639,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              */
             parentNodeFormatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.PackedBubbleDataLabelsFormatterContextObject
                 )
             ): string {
@@ -945,7 +927,13 @@ seriesType<Highcharts.PackedBubbleSeries>(
                         });
                     }
                 });
-                series.chart.hideOverlappingLabels(dataLabels);
+
+                // Only hide overlapping dataLabels for layouts that
+                // use simulation. Spiral packedbubble don't need
+                // additional dataLabel hiding on every simulation step
+                if (series.options.useSimulation) {
+                    series.chart.hideOverlappingLabels(dataLabels);
+                }
             }
         },
         // Needed because of z-indexing issue if point is added in series.group
@@ -1896,7 +1884,7 @@ addEvent(Chart as any, 'beforeRedraw', function (
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
  * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
- * @product   highcharts highstock
+ * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble
  */

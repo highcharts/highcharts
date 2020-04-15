@@ -37,6 +37,7 @@ declare global {
             public points: Array<TilemapPoint>;
             public tileShape: TilemapShapeObject;
             public translateColors: ColorSeries['translateColors'];
+            public drawPoints(): void;
             public getSeriesPixelPadding(axis: Axis): Dictionary<number>;
             public setOptions(): TilemapSeriesOptions;
             public translate(): void;
@@ -68,7 +69,7 @@ declare global {
                 this: TilemapSeries,
                 point: Point,
                 dataLabel: SVGElement,
-                options: DataLabelsOptionsObject,
+                options: DataLabelsOptions,
                 alignTo: BBoxObject,
                 isNew?: boolean
             ): void;
@@ -720,14 +721,16 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
      *
      * @extends      plotOptions.heatmap
      * @since        6.0.0
-     * @excluding    jitter, joinBy, shadow, allAreas, mapData, data,
+     * @excluding    jitter, joinBy, shadow, allAreas, mapData, marker, data,
      *               dataSorting
      * @product      highcharts highmaps
      * @requires     modules/tilemap.js
      * @optionparent plotOptions.tilemap
      */
     , { // Default options
-
+        // Remove marker from tilemap default options, as it was before
+        // heatmap refactoring.
+        marker: null as any,
         states: {
 
             hover: {
@@ -800,7 +803,29 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
         tileShape: 'hexagon'
 
     }, { // Prototype functions
-
+        // Use drawPoints, markerAttribs, pointAttribs methods from the old
+        // heatmap implementation.
+        // TODO: Consider standarizing heatmap and tilemap into more
+        // consistent form.
+        markerAttribs: H.seriesTypes.scatter.prototype.markerAttribs,
+        pointAttribs: H.seriesTypes.column.prototype.pointAttribs,
+        // Revert the noop on getSymbol.
+        getSymbol: H.noop as any,
+        drawPoints: function (
+            this: Highcharts.TilemapSeries
+        ): void {
+            // In styled mode, use CSS, otherwise the fill used in the style
+            // sheet will take precedence over the fill attribute.
+            H.seriesTypes.column.prototype.drawPoints.call(this);
+            this.points.forEach(
+                (point: Highcharts.TilemapPoint): void => {
+                    point.graphic &&
+                        (point.graphic as any)[
+                            this.chart.styledMode ? 'css' : 'animate'
+                        ](this.colorAttribs(point));
+                }
+            );
+        },
         // Set tile shape object on series
         setOptions: function (
             this: Highcharts.TilemapSeries

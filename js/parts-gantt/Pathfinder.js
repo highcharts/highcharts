@@ -32,7 +32,8 @@ import H from '../parts/Globals.js';
  *
  * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
  */
-import '../parts/Point.js';
+''; // detach doclets above
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, error = U.error, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 import pathfinderAlgorithms from './PathfinderAlgorithms.js';
@@ -722,7 +723,7 @@ Pathfinder.prototype = {
                         connects.forEach(function (connect) {
                             to = chart.get(typeof connect === 'string' ?
                                 connect : connect.to);
-                            if (to instanceof H.Point &&
+                            if (to instanceof Point &&
                                 to.series.visible &&
                                 to.visible &&
                                 to.isInside !== false) {
@@ -915,7 +916,7 @@ Pathfinder.prototype = {
 H.Connection = Connection;
 H.Pathfinder = Pathfinder;
 // Add pathfinding capabilities to Points
-extend(H.Point.prototype, /** @lends Point.prototype */ {
+extend(Point.prototype, /** @lends Point.prototype */ {
     /**
      * Get coordinates of anchor point for pathfinder connection.
      *

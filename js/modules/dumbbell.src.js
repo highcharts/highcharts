@@ -11,8 +11,8 @@
 import H from '../parts/Globals.js';
 var SVGRenderer = H.SVGRenderer;
 import U from '../parts/Utilities.js';
-var seriesType = U.seriesType;
-var pick = H.pick, seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype;
+var extend = U.extend, pick = U.pick, seriesType = U.seriesType;
+var seriesTypes = H.seriesTypes, seriesProto = H.Series.prototype, areaRangeProto = seriesTypes.arearange.prototype, columnRangeProto = seriesTypes.columnrange.prototype, colProto = seriesTypes.column.prototype, areaRangePointProto = areaRangeProto.pointClass.prototype;
 /**
  * The dumbbell series is a cartesian series with higher and lower values for
  * each point along an X axis, connected with a line between the values.
@@ -128,7 +128,7 @@ seriesType('dumbbell', 'arearange', {
             point.y = point.high;
             point.zone = point.zone ? point.getZone() : void 0;
             connectorColor = pick(pointOptions.connectorColor, seriesOptions.connectorColor, pointOptions.color, point.zone ? point.zone.color : void 0, point.color);
-            H.extend(point, origProps);
+            extend(point, origProps);
         }
         attribs = {
             d: SVGRenderer.prototype.crispLine([[
@@ -187,7 +187,7 @@ seriesType('dumbbell', 'arearange', {
      */
     getColumnMetrics: function () {
         var metrics = colProto.getColumnMetrics.apply(this, arguments);
-        metrics.offset = metrics.offset + metrics.width / 2;
+        metrics.offset += metrics.width / 2;
         return metrics;
     },
     translatePoint: areaRangeProto.translate,
@@ -216,6 +216,7 @@ seriesType('dumbbell', 'arearange', {
             shapeArgs.x = point.plotX - pointWidth / 2;
             point.tooltipPos = null;
         });
+        this.columnMetrics.offset -= this.columnMetrics.width / 2;
     },
     seriesDrawPoints: areaRangeProto.drawPoints,
     /**
@@ -330,7 +331,7 @@ seriesType('dumbbell', 'arearange', {
                     point.upperGraphic.attr({
                         fill: upperGraphicColor
                     });
-                    H.extend(point, origProps);
+                    extend(point, origProps);
                 }
             }
         }

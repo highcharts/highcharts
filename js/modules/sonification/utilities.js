@@ -147,7 +147,7 @@ var utilities = {
      * @private
      * @param {number} value
      * The relative data value to translate.
-     * @param {Highcharts.RangeObject} dataExtremes
+     * @param {Highcharts.RangeObject} DataExtremesObject
      * The possible extremes for this value.
      * @param {object} limits
      * Limits for the virtual axis.

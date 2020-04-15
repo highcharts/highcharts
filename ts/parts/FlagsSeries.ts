@@ -694,8 +694,6 @@ seriesType<Highcharts.FlagsSeries>(
         animate: function (this: Highcharts.FlagsSeries, init?: boolean): void {
             if (init) {
                 this.setClip();
-            } else {
-                this.animate = null as any;
             }
         },
 

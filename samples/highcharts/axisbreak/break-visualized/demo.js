@@ -4,12 +4,13 @@
  */
 Highcharts.wrap(Highcharts.Axis.prototype, 'getLinePath', function (proceed, lineWidth) {
     var axis = this,
+        brokenAxis = axis.brokenAxis,
         path = proceed.call(this, lineWidth),
         start = path[0],
         x = start[1],
         y = start[2];
 
-    (this.breakArray || []).forEach(function (brk) {
+    (brokenAxis.breakArray || []).forEach(function (brk) {
         if (axis.horiz) {
             x = axis.toPixels(brk.from);
             path.splice(1, 0,

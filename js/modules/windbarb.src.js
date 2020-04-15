@@ -307,13 +307,12 @@ seriesType('windbarb', 'column'
             this.markerGroup.animate({
                 opacity: 1
             }, animObject(this.options.animation));
-            this.animate = null;
         }
     },
     // Don't invert the marker group (#4960)
     invertGroups: noop,
     // No data extremes for the Y axis
-    getExtremes: noop
+    getExtremes: function () { return ({}); }
 }, {
     isValid: function () {
         return isNumber(this.value) && this.value >= 0;

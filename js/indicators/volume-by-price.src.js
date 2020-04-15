@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
@@ -195,7 +196,7 @@ seriesType('vbp', 'sma',
     // Initial animation
     animate: function (init) {
         var series = this, attr = {};
-        if (H.svg && !init) {
+        if (!init) {
             attr.translateX = series.yAxis.pos;
             series.group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
@@ -204,8 +205,6 @@ seriesType('vbp', 'sma',
                     });
                 }
             }));
-            // Delete this function to allow it only once
-            series.animate = null;
         }
     },
     drawPoints: function () {
@@ -472,7 +471,7 @@ seriesType('vbp', 'sma',
         if (this.negativeGraphic) {
             this.negativeGraphic = this.negativeGraphic.destroy();
         }
-        return H.Point.prototype.destroy.apply(this, arguments);
+        return Point.prototype.destroy.apply(this, arguments);
     }
 });
 /**

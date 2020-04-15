@@ -44,10 +44,11 @@ addEvent(Chart, 'render', function collectAndHide(): void {
 
     (this.yAxis || []).forEach(function (yAxis: Highcharts.Axis): void {
         if (
+            yAxis.stacking &&
             yAxis.options.stackLabels &&
             !yAxis.options.stackLabels.allowOverlap
         ) {
-            objectEach(yAxis.stacks, function (
+            objectEach(yAxis.stacking.stacks, function (
                 stack: Highcharts.Dictionary<Highcharts.StackItem>
             ): void {
                 objectEach(stack, function (
@@ -60,7 +61,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
     });
 
     (this.series || []).forEach(function (series: Highcharts.Series): void {
-        var dlOptions: Highcharts.DataLabelsOptionsObject = (
+        var dlOptions: Highcharts.DataLabelsOptions = (
             series.options.dataLabels as any
         );
 
@@ -147,7 +148,10 @@ Chart.prototype.hideOverlappingLabels = function (
                 bBox: Highcharts.BBoxObject,
                 // Substract the padding if no background or border (#4333)
                 padding = label.box ? 0 : (label.padding || 0),
-                lineHeightCorrection = 0;
+                lineHeightCorrection = 0,
+                xOffset = 0,
+                boxWidth,
+                alignValue;
 
             if (
                 label &&
@@ -170,8 +174,22 @@ Chart.prototype.hideOverlappingLabels = function (
                     lineHeightCorrection = ren
                         .fontMetrics(null as any, label.element).h;
                 }
+
+                boxWidth = label.width - 2 * padding;
+                alignValue = {
+                    left: '0',
+                    center: '0.5',
+                    right: '1'
+                }[label.alignValue as Highcharts.AlignValue];
+
+                if (alignValue) {
+                    xOffset = +alignValue * boxWidth;
+                } else if (Math.round(label.x) !== label.translateX) {
+                    xOffset = label.x - label.translateX;
+                }
+
                 return {
-                    x: pos.x + (parent.translateX || 0) + padding,
+                    x: pos.x + (parent.translateX || 0) + padding - xOffset,
                     y: pos.y + (parent.translateY || 0) + padding -
                         lineHeightCorrection,
                     width: label.width - 2 * padding,
@@ -221,7 +239,6 @@ Chart.prototype.hideOverlappingLabels = function (
                 label1.newOpacity !== 0 &&
                 label2.newOpacity !== 0
             ) {
-
                 if (isIntersectRect(box1, box2)) {
                     (label1.labelrank < label2.labelrank ? label1 : label2)
                         .newOpacity = 0;

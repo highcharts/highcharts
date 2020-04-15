@@ -30,4 +30,23 @@ QUnit.test('Tilemap and ColorAxis', function (assert) {
         'ColorAxis.max should be the same as max value in points (#11644)'
     );
 
+    chart.series[0].update({
+        tileShape: 'circle'
+    });
+
+    var point = chart.series[0].points[1];
+    point.setState('hover');
+
+    assert.notEqual(
+        point.graphic.element.getAttribute('cx'),
+        "NaN",
+        "Circle shape of tilemap should not have cx attribute with NaN values on hover."
+    );
+
+    assert.notEqual(
+        point.graphic.element.getAttribute('cy'),
+        "NaN",
+        "Circle shape of tilemap should not have cy attribute with NaN values on hover."
+    );
+
 });

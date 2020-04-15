@@ -476,9 +476,6 @@ seriesType('flags', 'column'
         if (init) {
             this.setClip();
         }
-        else {
-            this.animate = null;
-        }
     },
     /**
      * @private

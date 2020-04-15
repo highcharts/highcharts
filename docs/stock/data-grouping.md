@@ -1,4 +1,4 @@
-Data grouping (Highstock)
+Data grouping (Highcharts Stock)
 ===========
 
 Data grouping replaces a sequence of data points in a series with one grouped point. The values of each grouped point is calculated from the original values of every point used. The [groupPixelWidth](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping.groupPixelWidth) option defines how large the groups should be.
@@ -12,4 +12,4 @@ By default, the grouping [approximation](https://api.highcharts.com/highstock/pl
 
 Grouping is activated when there are many data points in the chart. As well as increasing performance it makes it easier to spot trends in a chart.
 
-Data grouping is a Highstock feature and is enabled by default. To see dataGrouping options see the [API reference](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping).
+Data grouping is a Highcharts Stock feature and is enabled by default. To see dataGrouping options see the [API reference](https://api.highcharts.com/highstock/plotOptions.series.dataGrouping).

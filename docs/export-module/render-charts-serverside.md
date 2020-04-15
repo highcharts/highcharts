@@ -60,7 +60,7 @@ Set the exact pixel width of the exported image or pdf. This overrides the -scal
 
 \-constr
 
-The constructor name. Can be one of Chart or StockChart. This depends on whether you want to generate Highstock or basic Highcharts.
+The constructor name. Can be one of Chart or StockChart. This depends on whether you want to generate Highcharts Stock or basic Highcharts.
 
 \-callback
 

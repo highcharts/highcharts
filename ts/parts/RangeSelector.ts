@@ -1501,7 +1501,7 @@ RangeSelector.prototype = {
         var time = this.chart.time,
             min,
             now = new time.Date(dataMax),
-            year = (time.get as any)('FullYear', now),
+            year = time.get('FullYear', now),
             startOfYear = useUTC ?
                 time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
                 +new time.Date(year, 0, 1);
@@ -1573,7 +1573,7 @@ RangeSelector.prototype = {
             legendOptions = legend && legend.options,
             buttonPositionY = (buttonPosition as any).y,
             inputPositionY = (inputPosition as any).y,
-            animate = rendered || false,
+            animate = chart.hasLoaded,
             verb = animate ? 'animate' : 'attr',
             exportingX = 0,
             alignTranslateY,
@@ -1711,11 +1711,12 @@ RangeSelector.prototype = {
             exportingX = -40;
         }
 
-        if ((buttonPosition as any).align === 'left') {
-            translateX = (buttonPosition as any).x - chart.spacing[3];
-        } else if ((buttonPosition as any).align === 'right') {
-            translateX =
-                (buttonPosition as any).x + exportingX - chart.spacing[1];
+        translateX = (buttonPosition as any).x - chart.spacing[3];
+
+        if ((buttonPosition as any).align === 'right') {
+            translateX += exportingX - plotLeft; // (#13014)
+        } else if ((buttonPosition as any).align === 'center') {
+            translateX -= plotLeft / 2;
         }
 
         // align button group
@@ -2035,10 +2036,6 @@ Axis.prototype.minFromRange = function (
 ): (number|undefined) {
     var rangeOptions = this.range,
         type = (rangeOptions as any).type,
-        timeName = ({
-            month: 'Month',
-            year: 'FullYear'
-        } as Highcharts.Dictionary<string>)[type],
         min,
         max = this.max as any,
         dataMin,
@@ -2046,13 +2043,14 @@ Axis.prototype.minFromRange = function (
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            var date = new time.Date(base),
-                basePeriod = (time.get as any)(timeName, date);
+            const timeName: Highcharts.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
+            const date = new time.Date(base);
+            const basePeriod = time.get(timeName, date);
 
-            (time.set as any)(timeName, date, basePeriod + count);
+            time.set(timeName, date, basePeriod + count);
 
-            if (basePeriod === (time.get as any)(timeName, date)) {
-                (time.set as any)('Date', date, 0); // #6537
+            if (basePeriod === time.get(timeName, date)) {
+                time.set('Date', date, 0); // #6537
             }
 
             return date.getTime() - base;
@@ -2229,15 +2227,38 @@ if (!H.RangeSelector) {
         var extremes,
             rangeSelector = chart.rangeSelector,
             unbindRender: Function,
-            unbindSetExtremes: Function;
+            unbindSetExtremes: Function,
+            legend,
+            alignTo,
+            verticalAlign: Highcharts.VerticalAlignValue|undefined;
 
         /**
          * @private
          */
         function renderRangeSelector(): void {
             extremes = chart.xAxis[0].getExtremes();
+            legend = chart.legend;
+            verticalAlign = rangeSelector?.options.verticalAlign;
+
             if (isNumber(extremes.min)) {
                 (rangeSelector as any).render(extremes.min, extremes.max);
+            }
+
+            // Re-align the legend so that it's below the rangeselector
+            if (
+                rangeSelector && legend.display &&
+                verticalAlign === 'top' &&
+                verticalAlign === legend.options.verticalAlign
+            ) {
+                // Create a new alignment box for the legend.
+                alignTo = merge(chart.spacingBox);
+                if (legend.options.layout === 'vertical') {
+                    alignTo.y = chart.plotTop;
+                } else {
+                    alignTo.y += rangeSelector.getHeight();
+                }
+                legend.group.placed = false; // Don't animate the alignment.
+                legend.align(alignTo);
             }
         }
 

@@ -430,3 +430,35 @@ QUnit.test('Split tooltip, vertical scrollable plot area', assert => {
         'The tooltip is inside the visible area and should be visible'
     );
 });
+
+QUnit.test('Split tooltip, hideDelay set to 0 (#12994)', assert => {
+    const chart = Highcharts.chart('container', {
+            tooltip: {
+                hideDelay: 0,
+                split: true
+            },
+            series: [{
+                data: [1, 2]
+            }, {
+                data: [3, 4]
+            }]
+        }),
+        controller = new TestController(chart),
+        point = chart.series[0].points[0],
+        endTest = assert.async();
+
+    controller.moveTo(point.plotX + chart.plotLeft, point.plotY + chart.plotTop);
+    controller.moveTo(0, 0);
+
+    setTimeout(function () {
+        chart.series[0].show();
+        assert.strictEqual(
+            +document.getElementsByClassName('highcharts-tooltip')[0]
+                .getAttribute('opacity'),
+            0,
+            'The tooltip remains hidden after series[0].show()'
+        );
+        endTest();
+    }, 1000);
+
+});

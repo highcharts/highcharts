@@ -1245,7 +1245,7 @@ var vennSeries = {
                             width: dataLabelWidth
                         }
                     },
-                    isObject(dlOptions) && dlOptions
+                    isObject(dlOptions) && dlOptions as any
                 );
             }
 
@@ -1368,7 +1368,6 @@ var vennSeries = {
                     }
                 }
             }, series);
-            series.animate = null as any;
         }
     },
     utils: {

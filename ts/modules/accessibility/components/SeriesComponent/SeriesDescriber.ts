@@ -27,13 +27,12 @@ declare global {
     }
 }
 
-var numberFormat = H.numberFormat,
-    format = H.format;
-
 import U from '../../../../parts/Utilities.js';
 const {
     find,
+    format,
     isNumber,
+    numberFormat,
     pick,
     defined
 } = U;
@@ -343,7 +342,7 @@ function getPointA11yTimeDescription(
     var series = point.series,
         chart = series.chart,
         a11yOptions = chart.options.accessibility.point || {},
-        hasDateXAxis = series.xAxis && series.xAxis.isDatetimeAxis;
+        hasDateXAxis = series.xAxis && series.xAxis.dateTime;
 
     if (hasDateXAxis) {
         var tooltipDateFormat = Tooltip.prototype.getXDateFormat.call(

@@ -60,7 +60,7 @@ declare global {
             public alignDataLabel(
                 point: SunburstPoint,
                 dataLabel: SVGElement,
-                labelOptions: DataLabelsOptionsObject
+                labelOptions: DataLabelsOptions
             ): void;
         }
         interface SeriesTypesDictionary {
@@ -79,7 +79,7 @@ declare global {
             visible: boolean;
         }
         interface SunburstDataLabelsOptionsObject
-            extends DataLabelsOptionsObject {
+            extends DataLabelsOptions {
             allowOverlap?: boolean;
             rotationMode?: SunburstDataLabelsRotationValue;
         }
@@ -1245,7 +1245,7 @@ var sunburstSeries = {
         this: Highcharts.SunburstSeries,
         point: Highcharts.SunburstPoint,
         dataLabel: Highcharts.SVGElement,
-        labelOptions: Highcharts.DataLabelsOptionsObject): void {
+        labelOptions: Highcharts.DataLabelsOptions): void {
 
         if (labelOptions.textPath && labelOptions.textPath.enabled) {
             return;
@@ -1292,9 +1292,6 @@ var sunburstSeries = {
                 opacity: 1
             };
             group.animate(attribs, this.options.animation);
-
-            // Delete this function to allow it only once
-            this.animate = null as any;
         }
     },
     utils: {
