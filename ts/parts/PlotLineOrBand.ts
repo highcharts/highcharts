@@ -1168,11 +1168,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             }
 
             // Go over each subpath - for panes in Highstock
-            for (i = 0; i < path.length; i += 6) {
-                const pathStart = path[0],
-                    pathEnd = path[1],
-                    toPathStart = toPath[0],
-                    toPathEnd = toPath[1];
+            for (i = 0; i < path.length; i += 2) {
+                const pathStart = path[i],
+                    pathEnd = path[i + 1],
+                    toPathStart = toPath[i],
+                    toPathEnd = toPath[i + 1];
 
                 // Type checking all affected path segments. Consider something
                 // smarter.
@@ -1184,11 +1184,11 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 ) {
                     // Add 1 pixel when coordinates are the same
                     if (horiz && toPathStart[1] === pathStart[1]) {
-                        (toPathStart[1] as any) += plus;
-                        (toPathEnd[1] as any) += plus;
+                        toPathStart[1] += plus;
+                        toPathEnd[1] += plus;
                     } else if (!horiz && toPathStart[2] === pathStart[2]) {
-                        (toPathStart[2] as any) += plus;
-                        (toPathEnd[2] as any) += plus;
+                        toPathStart[2] += plus;
+                        toPathEnd[2] += plus;
                     }
 
                     result.push(

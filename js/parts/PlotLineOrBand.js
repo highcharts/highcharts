@@ -868,8 +868,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plus = 0;
             }
             // Go over each subpath - for panes in Highstock
-            for (i = 0; i < path.length; i += 6) {
-                var pathStart = path[0], pathEnd = path[1], toPathStart = toPath[0], toPathEnd = toPath[1];
+            for (i = 0; i < path.length; i += 2) {
+                var pathStart = path[i], pathEnd = path[i + 1], toPathStart = toPath[i], toPathEnd = toPath[i + 1];
                 // Type checking all affected path segments. Consider something
                 // smarter.
                 if ((pathStart[0] === 'M' || pathStart[0] === 'L') &&
