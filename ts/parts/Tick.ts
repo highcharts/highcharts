@@ -388,6 +388,11 @@ class Tick {
         }
         // First call
         if (!defined(label) && !tick.movedLabel) {
+            /**
+             * The rendered text label of the tick.
+             * @name Highcharts.Tick#label
+             * @type {Highcharts.SVGElement|undefined}
+             */
             tick.label = label = tick.createLabel(
                 { x: 0, y: 0 },
                 str,

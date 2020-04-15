@@ -44,10 +44,11 @@ addEvent(Chart, 'render', function collectAndHide(): void {
 
     (this.yAxis || []).forEach(function (yAxis: Highcharts.Axis): void {
         if (
+            yAxis.stacking &&
             yAxis.options.stackLabels &&
             !yAxis.options.stackLabels.allowOverlap
         ) {
-            objectEach(yAxis.stacks, function (
+            objectEach(yAxis.stacking.stacks, function (
                 stack: Highcharts.Dictionary<Highcharts.StackItem>
             ): void {
                 objectEach(stack, function (

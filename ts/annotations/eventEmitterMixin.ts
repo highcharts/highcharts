@@ -74,7 +74,7 @@ const {
  * @mixin
  * @memberOf Annotation
  */
-var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
+const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Add emitter events.
      */
@@ -369,5 +369,9 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         this.hcEvents = null;
     }
 };
+
+namespace eventEmitterMixin {
+    export type Type = Highcharts.AnnotationEventEmitter;
+}
 
 export default eventEmitterMixin;

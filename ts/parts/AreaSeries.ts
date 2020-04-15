@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type StackingAxis from './StackingAxis';
 import H from './Globals.js';
 
 /**
@@ -242,8 +243,8 @@ seriesType<Highcharts.AreaSeries>(
                 segment = [] as Array<Highcharts.AreaPoint>,
                 keys = [] as Array<string>,
                 xAxis = this.xAxis,
-                yAxis = this.yAxis,
-                stack = yAxis.stacks[this.stackKey as any],
+                yAxis = this.yAxis as StackingAxis,
+                stack = yAxis.stacking.stacks[this.stackKey as any],
                 pointMap = {} as Highcharts.Dictionary<Highcharts.AreaPoint>,
                 seriesIndex = series.index,
                 yAxisSeries = yAxis.series,
@@ -400,7 +401,7 @@ seriesType<Highcharts.AreaSeries>(
                 graphPath: Highcharts.SVGPathArray,
                 options = this.options,
                 stacking = options.stacking,
-                yAxis = this.yAxis,
+                yAxis = this.yAxis as StackingAxis,
                 topPath: Highcharts.AreaPathObject,
                 bottomPath,
                 bottomPoints: Array<Highcharts.AreaPoint> = [],
@@ -409,7 +410,7 @@ seriesType<Highcharts.AreaSeries>(
                 i,
                 areaPath: Highcharts.AreaPathObject,
                 plotX: number|undefined,
-                stacks = yAxis.stacks[this.stackKey as any],
+                stacks = yAxis.stacking.stacks[this.stackKey as any],
                 threshold = options.threshold,
                 translatedThreshold = Math.round( // #10909
                     yAxis.getThreshold(options.threshold as any) as any

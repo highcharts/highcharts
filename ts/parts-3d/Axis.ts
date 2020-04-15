@@ -662,8 +662,8 @@ extend(ZAxis.prototype, {
             axis.ignoreMinPadding =
             axis.ignoreMaxPadding = null;
 
-        if (axis.buildStacks) {
-            axis.buildStacks();
+        if (axis.stacking) {
+            axis.stacking.buildStacks();
         }
 
         // loop through this axis' series
