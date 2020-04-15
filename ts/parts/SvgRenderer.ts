@@ -80,7 +80,7 @@ declare global {
             scaleX?: number;
             scaleY?: number;
             stroke?: ColorType;
-            style?: (string|CSSObject);
+            style?: CSSObject;
             translateX?: number;
             translateY?: number;
             zIndex?: number;

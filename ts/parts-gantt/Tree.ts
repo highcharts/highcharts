@@ -21,8 +21,8 @@
 declare global {
     namespace Highcharts {
         interface TreeGetOptionsObject {
-            after?: TreeNodeCallbackFunction;
-            before?: TreeNodeCallbackFunction;
+            after?: Function;
+            before?: Function;
         }
         interface Tree {
             getListOfParents(
@@ -50,10 +50,7 @@ declare global {
             height: number;
             id: string;
             level: number;
-            parent: (string|null);
-        }
-        interface TreeNodeCallbackFunction {
-            (node: TreeNode, options?: TreeGetOptionsObject): void;
+            parent: string;
         }
         interface TreePointOptionsObject extends PointOptionsObject {
             end?: number;

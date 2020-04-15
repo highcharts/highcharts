@@ -49,7 +49,7 @@ declare global {
             public labelPos?: PositionObject;
             public mark?: SVGElement;
             public movedLabel?: SVGElement;
-            public options: (Dictionary<any>|undefined);
+            public options?: AxisOptions;
             public parameters: TickParametersObject;
             public prevLabel?: SVGElement;
             public pos: number;
@@ -253,7 +253,7 @@ class Tick {
 
     public movedLabel?: Highcharts.SVGElement;
 
-    public options?: Highcharts.Dictionary<any>;
+    public options?: Highcharts.AxisOptions;
 
     public parameters: Highcharts.TickParametersObject;
 
@@ -291,10 +291,10 @@ class Tick {
             log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
-            labelOptions = pick(
+            labelOptions: Highcharts.XAxisLabelsOptions = pick(
                 tick.options && tick.options.labels,
                 options.labels
-            ),
+            ) as any,
             str: string,
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
