@@ -220,7 +220,7 @@ jobs:
       # Running these in the background to save a few minutes
       - run:
           name: File size comparison
-          command: npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json && npx gulp write-size-table --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json && npx gulp pr-comment-sizes --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
+          command: (npx gulp write-file-sizes --filename ${CIRCLE_PULL_REQUEST##*/}.json && npx gulp write-size-table --master ./tmp/filesizes/master.json --proposed ./tmp/filesizes/${CIRCLE_PULL_REQUEST##*/}.json) || touch ./tmp/filesizes/comparsion.md
           background: true
       # we are forcing success on the below test runs to avoid failing the PR build
       - run: npx karma start test/karma-conf.js --tests highcharts/*/* --single-run --browsercount 2 --visualcompare || true
@@ -241,6 +241,10 @@ jobs:
           path: ../visual-test-results
       - store_artifacts:
           path: ../visual-test-results
+      - run:
+          name: Wait for file size comparison and comment on PR
+          command: while [ ! -f ./tmp/filesizes/comparison.md ]; do sleep 1; done && npx gulp pr-comment-sizes --pr ${CIRCLE_PULL_REQUEST##*/} --user circleci-mu
+          no_output_timeout: 2m #wait for max 2 minutes
 
   nightly_visual_diff:
     <<: *defaults
