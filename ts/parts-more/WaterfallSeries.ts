@@ -197,9 +197,9 @@ Axis.prototype.renderWaterfallStackTotals = function (
 ): void {
     var yAxis = this,
         waterfallStacks = yAxis.waterfallStacks,
-        stackTotalGroup = yAxis.stackTotalGroup,
+        stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
         dummyStackItem = new StackItem(
-            yAxis,
+            yAxis as any,
             yAxis.options.stackLabels as any,
             false,
             0,
@@ -906,7 +906,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             );
         }
 
-        series.yAxis.usePercentage = false;
+        (series.yAxis as any).stacking.usePercentage = false;
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series

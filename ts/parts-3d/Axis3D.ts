@@ -50,8 +50,6 @@ declare global {
     }
 }
 
-import '../parts/Chart.js';
-
 var deg2rad = H.deg2rad,
     perspective = H.perspective,
     perspective3D = H.perspective3D,

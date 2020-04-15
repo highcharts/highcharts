@@ -10,7 +10,6 @@
 
 import type { AxisLike } from '../parts/axis/types';
 import Axis from '../parts/Axis.js';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -34,8 +33,6 @@ declare global {
         }
     }
 }
-
-const Chart = H.Chart;
 
 /* eslint-disable valid-jsdoc */
 
@@ -156,8 +153,8 @@ class ZAxis extends Axis implements AxisLike {
         // Reset properties in case we're redrawing (#3353)
         axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = void 0;
 
-        if (axis.buildStacks) {
-            axis.buildStacks();
+        if (axis.stacking) {
+            axis.stacking.buildStacks();
         }
 
         // loop through this axis' series

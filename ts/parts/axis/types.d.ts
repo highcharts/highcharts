@@ -21,7 +21,9 @@ import type OrdinalAxis from '../OrdinalAxis';
 import type ParallelAxis from '../../modules/parallel-coordinates.src';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
+import type StackingAxis from '../StackingAxis';
 import type Tick from '../Tick';
+import type VMLAxis3D from '../../parts-3d/VMLAxis3D';
 import type ZAxis from '../../parts-3d/ZAxis';
 
 export interface AxisBreakBorderObject {
@@ -47,6 +49,8 @@ export interface AxisComposition {
     ordinal?: OrdinalAxis['ordinal'];
     parallelCoordinates?: ParallelAxis['parallelCoordinates'];
     scrollbar?: ScrollbarAxis['scrollbar'];
+    stacking?: StackingAxis['stacking'];
+    vml?: VMLAxis3D['vml'];
 }
 
 export interface AxisLike {
@@ -81,5 +85,7 @@ export type AxisType = (
     ParallelAxis|
     RadialAxis|
     ScrollbarAxis|
+    StackingAxis|
+    VMLAxis3D|
     ZAxis
 );

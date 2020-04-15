@@ -771,8 +771,8 @@ if (seriesTypes.column) {
                 if (chart.inverted) {
                     point.plotY = yAxis.translate(pointY);
 
-                    if (stacking) {
-                        stack = yAxis.stacks[(pointY < 0 ? '-' : '') +
+                    if (stacking && yAxis.stacking) {
+                        stack = yAxis.stacking.stacks[(pointY < 0 ? '-' : '') +
                             series.stackKey];
 
                         if (series.visible && stack && stack[pointX]) {

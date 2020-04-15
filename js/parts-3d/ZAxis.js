@@ -21,10 +21,8 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 import Axis from '../parts/Axis.js';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, pick = U.pick, splat = U.splat;
-var Chart = H.Chart;
 /* eslint-disable valid-jsdoc */
 /**
  * 3D chart with support of z coordinates.
@@ -101,8 +99,8 @@ var ZAxis = /** @class */ (function (_super) {
         axis.hasVisibleSeries = false;
         // Reset properties in case we're redrawing (#3353)
         axis.dataMin = axis.dataMax = axis.ignoreMinPadding = axis.ignoreMaxPadding = void 0;
-        if (axis.buildStacks) {
-            axis.buildStacks();
+        if (axis.stacking) {
+            axis.stacking.buildStacks();
         }
         // loop through this axis' series
         axis.series.forEach(function (series) {

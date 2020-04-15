@@ -1412,7 +1412,9 @@ seriesType<Highcharts.PieSeries>(
             (series.options.data as any)[series.data.indexOf(point)] =
                 point.options;
 
-            (point.graphic as any).animate(this.getTranslate());
+            if (point.graphic) {
+                point.graphic.animate(this.getTranslate());
+            }
 
             if (point.shadowGroup) {
                 point.shadowGroup.animate(this.getTranslate());

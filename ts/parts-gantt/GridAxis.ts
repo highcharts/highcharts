@@ -144,19 +144,7 @@ var applyGridOptions = function applyGridOptions(axis: Highcharts.Axis): void {
  * @apioption xAxis.grid.cellHeight
  */
 
-
-// Enum for which side the axis is on.
-// Maps to axis.side
-var axisSide: Highcharts.Dictionary<(number|string)> = {
-    top: 0,
-    right: 1,
-    bottom: 2,
-    left: 3,
-    0: 'top',
-    1: 'right',
-    2: 'bottom',
-    3: 'left'
-};
+''; // detach doclets above
 
 /**
  * Get the largest label width and height.
@@ -235,6 +223,151 @@ H.dateFormats.W = function (this: Highcharts.Time, timestamp: number): string {
 H.dateFormats.E = function (timestamp: number): string {
     return dateFormat('%a', timestamp, true).charAt(0);
 };
+
+/* eslint-disable no-invalid-this */
+
+addEvent(
+    Chart,
+    'afterSetChartSize',
+    function (this: Highcharts.Chart): void {
+        this.axes.forEach(function (axis: Axis): void {
+            (axis.grid && axis.grid.columns || []).forEach(function (column): void {
+                column.setAxisSize();
+                column.setAxisTranslation();
+            });
+        } as any);
+    }
+);
+
+// Center tick labels in cells.
+addEvent(
+    Tick,
+    'afterGetLabelPosition',
+    function (
+        this: Tick,
+        e: {
+            pos: Highcharts.PositionObject;
+            tickmarkOffset: number;
+            index: number;
+        }
+    ): void {
+        var tick = this,
+            label = tick.label,
+            axis = tick.axis,
+            reversed = axis.reversed,
+            chart = axis.chart,
+            options = axis.options,
+            gridOptions = options.grid || {},
+            labelOpts = axis.options.labels,
+            align = (labelOpts as any).align,
+            // verticalAlign is currently not supported for axis.labels.
+            verticalAlign = 'middle', // labelOpts.verticalAlign,
+            side = GridAxis.Side[axis.side],
+            tickmarkOffset = e.tickmarkOffset,
+            tickPositions = axis.tickPositions,
+            tickPos = tick.pos - tickmarkOffset,
+            nextTickPos = (
+                isNumber(tickPositions[e.index + 1]) ?
+                    tickPositions[e.index + 1] - tickmarkOffset :
+                    (axis.max as any) + tickmarkOffset
+            ),
+            tickSize: Array<number> = (axis.tickSize as any)('tick', true),
+            tickWidth = isArray(tickSize) ? tickSize[0] : 0,
+            crispCorr = tickSize && tickSize[1] / 2,
+            labelHeight: number,
+            lblMetrics: Highcharts.FontMetricsObject,
+            lines: number,
+            bottom: number,
+            top: number,
+            left: number,
+            right: number;
+
+        // Only center tick labels in grid axes
+        if (gridOptions.enabled === true) {
+
+            // Calculate top and bottom positions of the cell.
+            if (side === 'top') {
+                bottom = axis.top + axis.offset;
+                top = bottom - tickWidth;
+            } else if (side === 'bottom') {
+                top = chart.chartHeight - axis.bottom + axis.offset;
+                bottom = top + tickWidth;
+            } else {
+                bottom = axis.top + axis.len - (axis.translate(
+                    reversed ? nextTickPos : tickPos
+                ) as any);
+                top = axis.top + axis.len - (axis.translate(
+                    reversed ? tickPos : nextTickPos
+                ) as any);
+            }
+
+            // Calculate left and right positions of the cell.
+            if (side === 'right') {
+                left = chart.chartWidth - axis.right + axis.offset;
+                right = left + tickWidth;
+            } else if (side === 'left') {
+                right = axis.left + axis.offset;
+                left = right - tickWidth;
+            } else {
+                left = Math.round(axis.left + (axis.translate(
+                    reversed ? nextTickPos : tickPos
+                ) as any)) - crispCorr;
+                right = Math.round(axis.left + (axis.translate(
+                    reversed ? tickPos : nextTickPos
+                ) as any)) - crispCorr;
+            }
+
+            tick.slotWidth = right - left;
+
+            // Calculate the positioning of the label based on
+            // alignment.
+            e.pos.x = (
+                align === 'left' ?
+                    left :
+                    align === 'right' ?
+                        right :
+                        left + ((right - left) / 2) // default to center
+            );
+            e.pos.y = (
+                verticalAlign === 'top' ?
+                    top :
+                    verticalAlign === 'bottom' ?
+                        bottom :
+                        top + ((bottom - top) / 2) // default to middle
+            );
+
+            lblMetrics = chart.renderer.fontMetrics(
+                (labelOpts as any).style.fontSize,
+                (label as any).element
+            );
+            labelHeight = (label as any).getBBox().height;
+
+            // Adjustment to y position to align the label correctly.
+            // Would be better to have a setter or similar for this.
+            if (!(labelOpts as any).useHTML) {
+                lines = Math.round(labelHeight / lblMetrics.h);
+                e.pos.y += (
+                    // Center the label
+                    // TODO: why does this actually center the label?
+                    ((lblMetrics.b - (lblMetrics.h - lblMetrics.f)) / 2) +
+                    // Adjust for height of additional lines.
+                    -(((lines - 1) * lblMetrics.h) / 2)
+                );
+            } else {
+                e.pos.y += (
+                    // Readjust yCorr in htmlUpdateTransform
+                    lblMetrics.b +
+                    // Adjust for height of html label
+                    -(labelHeight / 2)
+                );
+            }
+
+            e.pos.x += (axis.horiz && (labelOpts as any).x || 0);
+        }
+    }
+);
+
+/* eslint-enable no-invalid-this */
 
 /**
  * Additions for grid axes.
@@ -327,857 +460,744 @@ class GridAxisAdditions {
  */
 class GridAxis {
 
+    /* *
+     *
+     *  Static Functions
+     *
+     * */
+
+    /* eslint-disable valid-jsdoc */
+
+    /**
+     * Extends axis class with grid support.
+     * @private
+     */
     public static compose(AxisClass: typeof Axis): void {
 
         Axis.keepProps.push('grid');
 
-        const axisProto = AxisClass.prototype as GridAxis;
+        wrap(AxisClass.prototype, 'unsquish', GridAxis.wrapUnsquish);
 
-        /* eslint-disable no-invalid-this, valid-jsdoc */
+        // Add event handlers
+        addEvent(AxisClass, 'init', GridAxis.onInit);
+        addEvent(AxisClass, 'afterGetOffset', GridAxis.onAfterGetOffset);
+        addEvent(AxisClass, 'afterGetTitlePosition', GridAxis.onAfterGetTitlePosition);
+        addEvent(AxisClass, 'afterInit', GridAxis.onAfterInit);
+        addEvent(AxisClass, 'afterRender', GridAxis.onAfterRender);
+        addEvent(AxisClass, 'afterSetAxisTranslation', GridAxis.onAfterSetAxisTranslation);
+        addEvent(AxisClass, 'afterSetOptions', GridAxis.onAfterSetOptions);
+        addEvent(AxisClass, 'afterSetOptions', GridAxis.onAfterSetOptions2);
+        addEvent(AxisClass, 'afterSetScale', GridAxis.onAfterSetScale);
+        addEvent(AxisClass, 'afterTickSize', GridAxis.onAfterTickSize);
+        addEvent(AxisClass, 'trimTicks', GridAxis.onTrimTicks);
+        addEvent(AxisClass, 'destroy', GridAxis.onDestroy);
 
-        // Avoid altering tickInterval when reserving space.
-        wrap(axisProto, 'unsquish', function (
-            this: Axis,
-            proceed: Function
-        ): number {
-            var axis = this,
-                options = axis.options,
-                gridOptions: GridAxis.Options =
-                    (options && isObject(options.grid)) ? (options.grid as any) : {};
+    }
 
-            if (gridOptions.enabled === true && this.categories) {
-                return this.tickInterval;
-            }
+    /**
+     * Handle columns and getOffset.
+     * @private
+     */
+    public static onAfterGetOffset(this: Axis): void {
+        const {
+            grid
+        } = this;
 
-            return proceed.apply(this, argsToArray(arguments));
+        (grid && grid.columns || []).forEach(function (column: Axis): void {
+            column.getOffset();
         });
+    }
 
-        // Draw vertical axis ticks extra long to create cell floors and roofs.
-        // Overrides the tickLength for vertical axes.
-        addEvent(AxisClass, 'afterTickSize', function (
-            e: {
-                tickSize?: Array<number>;
-            }
-        ): void {
-            const defaultLeftAxisOptions = Axis.defaultLeftAxisOptions;
+    /**
+     * @private
+     */
+    public static onAfterGetTitlePosition(
+        this: Axis,
+        e: { titlePosition: Highcharts.PositionObject }
+    ): void {
+        const axis = this;
+        const options = axis.options;
+        const gridOptions = options.grid || {};
+
+        if (gridOptions.enabled === true) {
+            // compute anchor points for each of the title align options
             const {
+                axisTitle: title,
+                height: axisHeight,
                 horiz,
+                left: axisLeft,
+                offset,
+                opposite,
                 options: {
-                    grid: gridOptions = {}
-                }
-            } = this;
-            const dimensions: Highcharts.SizeObject = this.maxLabelDimensions as any;
+                    title: axisTitleOptions = {}
+                },
+                top: axisTop,
+                width: axisWidth
+            } = axis;
+            const tickSize = axis.tickSize();
+            const titleWidth = title && title.getBBox().width;
+            const xOption = axisTitleOptions.x || 0;
+            const yOption = axisTitleOptions.y || 0;
+            const titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
+            const titleFontSize = axis.chart.renderer.fontMetrics(
+                axisTitleOptions.style &&
+                axisTitleOptions.style.fontSize,
+                title
+            ).f;
+            // TODO account for alignment
+            // the position in the perpendicular direction of the axis
+            const offAxis = (
+                (horiz ? axisTop + axisHeight : axisLeft) +
+                (horiz ? 1 : -1) * // horizontal axis reverses the margin
+                (opposite ? -1 : 1) * // so does opposite axes
+                (tickSize[0] / 2) +
+                (axis.side === GridAxis.Side.bottom ? titleFontSize : 0)
+            );
 
-            if (gridOptions.enabled) {
-                const labelPadding =
-                    (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
-                const distance = horiz ?
-                    gridOptions.cellHeight || labelPadding + dimensions.height :
-                    labelPadding + dimensions.width;
-                if (isArray(e.tickSize)) {
-                    e.tickSize[0] = distance;
-                } else {
-                    e.tickSize = [distance];
-                }
-            }
-        });
+            e.titlePosition.x = horiz ?
+                axisLeft - (titleWidth as any) / 2 - titleMargin + xOption :
+                offAxis + (opposite ? axisWidth : 0) + offset + xOption;
+            e.titlePosition.y = horiz ?
+                (
+                    offAxis -
+                    (opposite ? axisHeight : 0) +
+                    (opposite ? titleFontSize : -titleFontSize) / 2 +
+                    offset +
+                    yOption
+                ) :
+                axisTop - titleMargin + yOption;
+        }
+    }
 
-        addEvent(AxisClass, 'afterGetTitlePosition', function (
-            e: {
-                titlePosition: Highcharts.PositionObject;
-            }
-        ): void {
-            var axis = this,
-                options = axis.options,
-                gridOptions: GridAxis.Options =
-                    (options && isObject(options.grid)) ? (options.grid as any) : {};
+    /**
+     * @private
+     */
+    public static onAfterInit(this: Axis): void {
+        const axis = this as GridAxis;
+        const {
+            chart,
+            options: {
+                grid: gridOptions = {}
+            },
+            userOptions
+        } = axis;
 
-            if (gridOptions.enabled === true) {
-                // compute anchor points for each of the title align options
-                var title = axis.axisTitle,
-                    titleWidth = title && title.getBBox().width,
-                    horiz = axis.horiz,
-                    axisLeft = axis.left,
-                    axisTop = axis.top,
-                    axisWidth = axis.width,
-                    axisHeight = axis.height,
-                    axisTitleOptions = options.title,
-                    opposite = axis.opposite,
-                    offset = axis.offset,
-                    tickSize: Array<number> = axis.tickSize() || [0],
-                    xOption = (axisTitleOptions as any).x || 0,
-                    yOption = (axisTitleOptions as any).y || 0,
-                    titleMargin =
-                        pick((axisTitleOptions as any).margin, horiz ? 5 : 10),
-                    titleFontSize = axis.chart.renderer.fontMetrics(
-                        (axisTitleOptions as any).style &&
-                        (axisTitleOptions as any).style.fontSize,
-                        title
-                    ).f,
-                    // TODO account for alignment
-                    // the position in the perpendicular direction of the axis
-                    offAxis = (horiz ? axisTop + axisHeight : axisLeft) +
-                        (horiz ? 1 : -1) * // horizontal axis reverses the margin
-                        (opposite ? -1 : 1) * // so does opposite axes
-                        (tickSize[0] / 2) +
-                        (axis.side === axisSide.bottom ? titleFontSize : 0);
+        if (gridOptions.enabled) {
+            applyGridOptions(axis);
 
-                e.titlePosition.x = horiz ?
-                    axisLeft - (titleWidth as any) / 2 - titleMargin + xOption :
-                    offAxis + (opposite ? axisWidth : 0) + offset + xOption;
-                e.titlePosition.y = horiz ?
-                    (
-                        offAxis -
-                        (opposite ? axisHeight : 0) +
-                        (opposite ? titleFontSize : -titleFontSize) / 2 +
-                        offset +
-                        yOption
-                    ) :
-                    axisTop - titleMargin + yOption;
-            }
-        });
+            /* eslint-disable no-invalid-this */
 
-        addEvent(
-            AxisClass,
-            'afterSetOptions',
-            /**
-             * Creates a left and right wall on horizontal axes:
-             * - Places leftmost tick at the start of the axis, to create a left
-             *   wall
-             * - Ensures that the rightmost tick is at the end of the axis, to
-             *   create a right wall.
-             * @private
-             */
-            function (
-                e: {
-                    userOptions: Highcharts.AxisOptions;
-                }
+            // TODO: wrap the axis instead
+            wrap(axis, 'labelFormatter', function (
+                this: Highcharts.AxisLabelsFormatterContextObject,
+                proceed: Function
             ): void {
-                var options = this.options,
-                    userOptions = e.userOptions,
-                    gridAxisOptions: Highcharts.AxisOptions,
-                    gridOptions: GridAxis.Options = (
-                        (options && isObject(options.grid)) ? (options.grid as any) : {}
-                    );
+                const {
+                    axis,
+                    value
+                } = this;
+                const tickPos = axis.tickPositions;
+                const series: Highcharts.Series = (
+                    axis.isLinked ?
+                        (axis.linkedParent as any) :
+                        axis
+                ).series[0];
+                const isFirst = value === tickPos[0];
+                const isLast = value === tickPos[tickPos.length - 1];
+                const point: (Highcharts.Point|undefined) =
+                    series && find(series.options.data as any, function (
+                        p: Highcharts.PointOptionsType
+                    ): boolean {
+                        return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
+                    });
 
-                if (gridOptions.enabled === true) {
+                // Make additional properties available for the
+                // formatter
+                this.isFirst = isFirst;
+                this.isLast = isLast;
+                this.point = point;
 
-                    // Merge the user options into default grid axis options so
-                    // that when a user option is set, it takes presedence.
-                    gridAxisOptions = merge(true, {
+                // Call original labelFormatter
+                return proceed.call(this);
+            });
 
-                        className: (
-                            'highcharts-grid-axis ' + (userOptions.className || '')
-                        ),
+            /* eslint-enable no-invalid-this */
 
-                        dateTimeLabelFormats: {
-                            hour: {
-                                list: ['%H:%M', '%H']
-                            },
-                            day: {
-                                list: ['%A, %e. %B', '%a, %e. %b', '%E']
-                            },
-                            week: {
-                                list: ['Week %W', 'W%W']
-                            },
-                            month: {
-                                list: ['%B', '%b', '%o']
-                            }
-                        },
+        }
 
-                        grid: {
-                            borderWidth: 1
-                        },
+        if (gridOptions.columns) {
+            var columns = axis.grid.columns = [] as Array<GridAxis>,
+                columnIndex = axis.grid.columnIndex = 0;
 
-                        labels: {
-                            padding: 2,
-                            style: {
-                                fontSize: '13px'
-                            }
-                        },
-
-                        margin: 0,
-
-                        title: {
-                            text: null,
-                            reserveSpace: false,
-                            rotation: 0
-                        },
-
-                        // In a grid axis, only allow one unit of certain types,
-                        // for example we shouln't have one grid cell spanning
-                        // two days.
-                        units: [[
-                            'millisecond', // unit name
-                            [1, 10, 100]
-                        ], [
-                            'second',
-                            [1, 10]
-                        ], [
-                            'minute',
-                            [1, 5, 15]
-                        ], [
-                            'hour',
-                            [1, 6]
-                        ], [
-                            'day',
-                            [1]
-                        ], [
-                            'week',
-                            [1]
-                        ], [
-                            'month',
-                            [1]
-                        ], [
-                            'year',
-                            null
-                        ]]
-                    }, userOptions);
-
-                    // X-axis specific options
-                    if (this.coll === 'xAxis') {
-
-                        // For linked axes, tickPixelInterval is used only if
-                        // the tickPositioner below doesn't run or returns
-                        // undefined (like multiple years)
-                        if (
-                            defined(userOptions.linkedTo) &&
-                            !defined(userOptions.tickPixelInterval)
-                        ) {
-                            gridAxisOptions.tickPixelInterval = 350;
-                        }
-
-                        // For the secondary grid axis, use the primary axis'
-                        // tick intervals and return ticks one level higher.
-                        if (
-                            // Check for tick pixel interval in options
-                            !defined(userOptions.tickPixelInterval) &&
-
-                            // Only for linked axes
-                            defined(userOptions.linkedTo) &&
-
-                            !defined(userOptions.tickPositioner) &&
-                            !defined(userOptions.tickInterval)
-                        ) {
-                            gridAxisOptions.tickPositioner = function (
-                                this: Highcharts.Axis,
-                                min: number,
-                                max: number
-                            ): (Highcharts.AxisTickPositionsArray|undefined) {
-
-                                var parentInfo = (
-                                    this.linkedParent &&
-                                    this.linkedParent.tickPositions &&
-                                    this.linkedParent.tickPositions.info
-                                );
-
-                                if (parentInfo) {
-
-                                    var unitIdx: (number|undefined),
-                                        count,
-                                        unitName,
-                                        i,
-                                        units = gridAxisOptions.units,
-                                        unitRange;
-
-                                    for (i = 0; i < (units as any).length; i++) {
-                                        if (
-                                            (units as any)[i][0] ===
-                                            parentInfo.unitName
-                                        ) {
-                                            unitIdx = i;
-                                            break;
-                                        }
-                                    }
-
-                                    // Get the first allowed count on the next
-                                    // unit.
-                                    if ((units as any)[(unitIdx as any) + 1]) {
-                                        unitName = (units as any)[
-                                            (unitIdx as any) + 1
-                                        ][0];
-                                        count =
-                                            ((units as any)[
-                                                (unitIdx as any) + 1
-                                            ][1] || [1])[0];
-
-                                    // In case the base X axis shows years, make
-                                    // the secondary axis show ten times the
-                                    // years (#11427)
-                                    } else if (parentInfo.unitName === 'year') {
-                                        unitName = 'year';
-                                        count = parentInfo.count * 10;
-                                    }
-
-                                    unitRange = timeUnits[unitName];
-                                    this.tickInterval = unitRange * count;
-                                    return this.getTimeTicks(
-                                        {
-                                            unitRange: unitRange,
-                                            count: count,
-                                            unitName: unitName
-                                        },
-                                        min,
-                                        max,
-                                        this.options.startOfWeek as any
-                                    );
-                                }
-                            };
-                        }
-
+            // Handle columns, each column is a grid axis
+            while (++columnIndex < gridOptions.columns.length) {
+                var columnOptions = merge(
+                    userOptions,
+                    gridOptions.columns[
+                        gridOptions.columns.length - columnIndex - 1
+                    ],
+                    {
+                        linkedTo: 0,
+                        // Force to behave like category axis
+                        type: 'category'
                     }
+                );
 
-                    // Now merge the combined options into the axis options
-                    merge(true, this.options, gridAxisOptions);
+                delete (columnOptions.grid as any).columns; // Prevent recursion
 
-                    if (this.horiz) {
-                        /*               _________________________
-                        Make this:    ___|_____|_____|_____|__|
-                                        ^                     ^
-                                        _________________________
-                        Into this:    |_____|_____|_____|_____|
-                                            ^                 ^    */
-                        options.minPadding = pick(userOptions.minPadding, 0);
-                        options.maxPadding = pick(userOptions.maxPadding, 0);
-                    }
+                var column = new Axis(axis.chart, columnOptions) as GridAxis;
+                column.grid.isColumn = true;
+                column.grid.columnIndex = columnIndex;
 
-                    // If borderWidth is set, then use its value for tick and
-                    // line width.
-                    if (isNumber((options.grid as any).borderWidth)) {
-                        options.tickWidth = options.lineWidth = gridOptions.borderWidth;
-                    }
-
-                }
+                // Remove column axis from chart axes array, and place it
+                // in the columns array.
+                erase(chart.axes, column);
+                erase((chart as any)[axis.coll], column);
+                columns.push(column);
             }
-        );
+        }
+    }
 
-        addEvent(
-            AxisClass,
-            'afterSetAxisTranslation',
-            function (): void {
-                var axis = this,
-                    options = axis.options,
-                    gridOptions: GridAxis.Options = (
-                        (options && isObject(options.grid)) ? (options.grid as any) : {}
-                    ),
-                    tickInfo = this.tickPositions && this.tickPositions.info,
-                    userLabels = this.userOptions.labels || {};
+    /**
+     * Draw an extra line on the far side of the outermost axis,
+     * creating floor/roof/wall of a grid. And some padding.
+     * ```
+     * Make this:
+     *             (axis.min) __________________________ (axis.max)
+     *                           |    |    |    |    |
+     * Into this:
+     *             (axis.min) __________________________ (axis.max)
+     *                        ___|____|____|____|____|__
+     * ```
+     * @private
+     */
+    public static onAfterRender(this: Axis): void {
+        const axis = this;
+        const grid = axis.grid;
+        const options = axis.options;
+        const renderer = axis.chart.renderer;
+        const gridOptions = options.grid || {};
 
-                if (this.horiz) {
-                    if (gridOptions.enabled === true) {
-                        axis.series.forEach(function (series: Highcharts.Series): void {
-                            series.options.pointRange = 0;
+        let yStartIndex,
+            yEndIndex,
+            xStartIndex,
+            xEndIndex;
+
+        if (gridOptions.enabled === true) {
+
+            // @todo acutual label padding (top, bottom, left, right)
+            axis.maxLabelDimensions = axis.getMaxLabelDimensions(
+                axis.ticks,
+                axis.tickPositions
+            );
+
+            // Remove right wall before rendering if updating
+            if (axis.rightWall) {
+                axis.rightWall.destroy();
+            }
+
+            /*
+            Draw an extra axis line on outer axes
+                        >
+            Make this:    |______|______|______|___
+
+                        > _________________________
+            Into this:    |______|______|______|__|
+                                                    */
+            if (axis.grid && axis.grid.isOuterAxis() && axis.axisLine) {
+
+                const lineWidth = options.lineWidth;
+                if (lineWidth) {
+                    const linePath = axis.getLinePath(lineWidth);
+                    xStartIndex = linePath.indexOf('M') + 1;
+                    xEndIndex = linePath.indexOf('L') + 1;
+                    yStartIndex = linePath.indexOf('M') + 2;
+                    yEndIndex = linePath.indexOf('L') + 2;
+
+                    // Negate distance if top or left axis. Subtract 1px
+                    // to draw the line at the end of the tick.
+                    const distance = (axis.tickSize('tick')[0] - 1) * ((
+                        axis.side === GridAxis.Side.top ||
+                        axis.side === GridAxis.Side.left
+                    ) ? -1 : 1);
+
+                    // If axis is horizontal, reposition line path
+                    // vertically
+                    if (axis.horiz) {
+                        linePath[yStartIndex] =
+                            (linePath[yStartIndex] as any) + distance;
+                        linePath[yEndIndex] =
+                            (linePath[yEndIndex] as any) + distance;
+                    } else {
+                        // If axis is vertical, reposition line path
+                        // horizontally
+                        linePath[xStartIndex] =
+                            (linePath[xStartIndex] as any) + distance;
+                        linePath[xEndIndex] =
+                            (linePath[xEndIndex] as any) + distance;
+                    }
+
+                    if (!axis.grid.axisLineExtra) {
+                        axis.grid.axisLineExtra = renderer
+                            .path(linePath)
+                            .attr({
+                                zIndex: 7
+                            })
+                            .addClass('highcharts-axis-line')
+                            .add(axis.axisGroup);
+
+                        if (!renderer.styledMode) {
+                            axis.grid.axisLineExtra.attr({
+                                stroke: options.lineColor,
+                                'stroke-width': lineWidth
+                            });
+                        }
+                    } else {
+                        axis.grid.axisLineExtra.animate({
+                            d: linePath
                         });
                     }
 
-                    // Lower level time ticks, like hours or minutes, represent
-                    // points in time and not ranges. These should be aligned
-                    // left in the grid cell by default. The same applies to
-                    // years of higher order.
-                    if (
-                        tickInfo &&
-                        (
-                            (options.dateTimeLabelFormats as any)[tickInfo.unitName]
-                                .range === false ||
-                            tickInfo.count > 1 // years
-                        ) &&
-                        !defined(userLabels.align)
-                    ) {
-                        (options.labels as any).align = 'left';
-
-                        if (!defined(userLabels.x)) {
-                            (options.labels as any).x = 3;
-                        }
-                    }
+                    // show or hide the line depending on
+                    // options.showEmpty
+                    axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
                 }
             }
-        );
 
-        // @todo Does this function do what the drawing says? Seems to affect
-        //       ticks and not the labels directly?
-        addEvent(
-            AxisClass,
-            'trimTicks',
-            /**
-             * Makes tick labels which are usually ignored in a linked axis
-             * displayed if they are within range of linkedParent.min.
-             * ```
-             *                        _____________________________
-             *                        |   |       |       |       |
-             * Make this:             |   |   2   |   3   |   4   |
-             *                        |___|_______|_______|_______|
-             *                          ^
-             *                        _____________________________
-             *                        |   |       |       |       |
-             * Into this:             | 1 |   2   |   3   |   4   |
-             *                        |___|_______|_______|_______|
-             *                          ^
-             * ```
-             *
-             * @private
-             */
-            function (): void {
-                var axis = this,
-                    options = axis.options,
-                    gridOptions: GridAxis.Options = (
-                        (options && isObject(options.grid)) ? (options.grid as any) : {}
-                    ),
-                    categoryAxis = axis.categories,
-                    tickPositions = axis.tickPositions,
-                    firstPos = tickPositions[0],
-                    lastPos = tickPositions[tickPositions.length - 1],
-                    linkedMin = axis.linkedParent && axis.linkedParent.min,
-                    linkedMax = axis.linkedParent && axis.linkedParent.max,
-                    min = linkedMin || axis.min,
-                    max = linkedMax || axis.max,
-                    tickInterval = axis.tickInterval,
-                    endMoreThanMin = (
-                        firstPos < (min as any) &&
-                        firstPos + tickInterval > (min as any)
-                    ),
-                    startLessThanMax = (
-                        lastPos > (max as any) &&
-                        lastPos - tickInterval < (max as any)
-                    );
-
-                if (
-                    gridOptions.enabled === true &&
-                    !categoryAxis &&
-                    (axis.horiz || axis.isLinked)
-                ) {
-                    if (endMoreThanMin && !options.startOnTick) {
-                        tickPositions[0] = min as any;
-                    }
-
-                    if (startLessThanMax && !options.endOnTick) {
-                        tickPositions[tickPositions.length - 1] = max as any;
-                    }
-                }
-            }
-        );
-
-        addEvent(
-            AxisClass,
-            'afterRender',
-            /**
-             * Draw an extra line on the far side of the outermost axis,
-             * creating floor/roof/wall of a grid. And some padding.
-             * ```
-             * Make this:
-             *             (axis.min) __________________________ (axis.max)
-             *                           |    |    |    |    |
-             * Into this:
-             *             (axis.min) __________________________ (axis.max)
-             *                        ___|____|____|____|____|__
-             * ```
-             *
-             * @private
-             * @function
-             *
-             * @param {Function} proceed
-             *        the original function
-             */
-            function (): void {
-                var axis = this as GridAxis,
-                    options = axis.options,
-                    gridOptions = options.grid as any || {},
-                    yStartIndex,
-                    yEndIndex,
-                    xStartIndex,
-                    xEndIndex,
-                    renderer = axis.chart.renderer;
-
-                if (gridOptions.enabled === true) {
-
-                    // @todo acutual label padding (top, bottom, left, right)
-                    axis.maxLabelDimensions = axis.getMaxLabelDimensions(
-                        axis.ticks,
-                        axis.tickPositions
-                    );
-
-                    // Remove right wall before rendering if updating
-                    if (axis.rightWall) {
-                        axis.rightWall.destroy();
-                    }
-
-                    /*
-                    Draw an extra axis line on outer axes
-                                >
-                    Make this:    |______|______|______|___
-
-                                > _________________________
-                    Into this:    |______|______|______|__|
-                                                            */
-                    if (axis.grid && axis.grid.isOuterAxis() && axis.axisLine) {
-
-                        const lineWidth = options.lineWidth;
-                        if (lineWidth) {
-                            const linePath = axis.getLinePath(lineWidth);
-                            xStartIndex = linePath.indexOf('M') + 1;
-                            xEndIndex = linePath.indexOf('L') + 1;
-                            yStartIndex = linePath.indexOf('M') + 2;
-                            yEndIndex = linePath.indexOf('L') + 2;
-
-                            // Negate distance if top or left axis. Subtract 1px
-                            // to draw the line at the end of the tick.
-                            const distance = (axis.tickSize('tick')[0] - 1) * ((
-                                axis.side === axisSide.top ||
-                                axis.side === axisSide.left
-                            ) ? -1 : 1);
-
-                            // If axis is horizontal, reposition line path
-                            // vertically
-                            if (axis.horiz) {
-                                linePath[yStartIndex] =
-                                    (linePath[yStartIndex] as any) + distance;
-                                linePath[yEndIndex] =
-                                    (linePath[yEndIndex] as any) + distance;
-                            } else {
-                                // If axis is vertical, reposition line path
-                                // horizontally
-                                linePath[xStartIndex] =
-                                    (linePath[xStartIndex] as any) + distance;
-                                linePath[xEndIndex] =
-                                    (linePath[xEndIndex] as any) + distance;
-                            }
-
-                            if (!axis.grid.axisLineExtra) {
-                                axis.grid.axisLineExtra = renderer
-                                    .path(linePath)
-                                    .attr({
-                                        zIndex: 7
-                                    })
-                                    .addClass('highcharts-axis-line')
-                                    .add(axis.axisGroup);
-
-                                if (!renderer.styledMode) {
-                                    axis.grid.axisLineExtra.attr({
-                                        stroke: options.lineColor,
-                                        'stroke-width': lineWidth
-                                    });
-                                }
-                            } else {
-                                axis.grid.axisLineExtra.animate({
-                                    d: linePath
-                                });
-                            }
-
-                            // show or hide the line depending on
-                            // options.showEmpty
-                            axis.axisLine[axis.showAxis ? 'show' : 'hide'](true);
-                        }
-                    }
-
-                    (axis.grid.columns || []).forEach(function (
-                        column: Highcharts.Axis
-                    ): void {
-                        column.render();
-                    });
-                }
-            }
-        );
-
-        // Handle columns and getOffset
-        var onGridAxisAfterGetOffset = function onGridAxisAfterGetOffset(
-            this: GridAxis
-        ): void {
-            (this.grid.columns || []).forEach(function (column: Axis): void {
-                column.getOffset();
+            (grid && grid.columns || []).forEach(function (
+                column: Highcharts.Axis
+            ): void {
+                column.render();
             });
-        };
+        }
+    }
 
-        var onGridAxisAfterInit = function onGridAxisAfterInit(
-            this: Axis
-        ): void {
-            var axis = this as GridAxis,
-                chart = axis.chart,
-                userOptions = axis.userOptions,
-                options = axis.options,
-                gridOptions: GridAxis.Options =
-                    options && isObject(options.grid) ? (options.grid as any) : {};
+    /**
+     * @private
+     */
+    public static onAfterSetAxisTranslation(this: Axis): void {
+        const axis = this;
+        const tickInfo = axis.tickPositions && axis.tickPositions.info;
+        const options = axis.options;
+        const gridOptions = options.grid || {};
+        const userLabels = axis.userOptions.labels || {};
 
-            if (gridOptions.enabled) {
-                applyGridOptions(axis);
-
-                // TODO: wrap the axis instead
-                wrap(axis, 'labelFormatter', function (
-                    this: Highcharts.AxisLabelsFormatterContextObject,
-                    proceed: Function
-                ): void {
-                    var axis = this.axis,
-                        tickPos = axis.tickPositions,
-                        value = this.value,
-                        series: Highcharts.Series = (
-                            axis.isLinked ?
-                                (axis.linkedParent as any) :
-                                axis
-                        ).series[0],
-                        isFirst = value === tickPos[0],
-                        isLast = value === tickPos[tickPos.length - 1],
-                        point: (Highcharts.Point|undefined) =
-                            series && find(series.options.data as any, function (
-                                p: Highcharts.PointOptionsType
-                            ): boolean {
-                                return (p as any)[axis.isXAxis ? 'x' : 'y'] === value;
-                            });
-
-                    // Make additional properties available for the
-                    // formatter
-                    this.isFirst = isFirst;
-                    this.isLast = isLast;
-                    this.point = point;
-
-                    // Call original labelFormatter
-                    return proceed.call(this);
+        if (axis.horiz) {
+            if (gridOptions.enabled === true) {
+                axis.series.forEach(function (series: Highcharts.Series): void {
+                    series.options.pointRange = 0;
                 });
             }
 
-            if (gridOptions.columns) {
-                var columns = axis.grid.columns = [] as Array<GridAxis>,
-                    columnIndex = axis.grid.columnIndex = 0;
+            // Lower level time ticks, like hours or minutes, represent
+            // points in time and not ranges. These should be aligned
+            // left in the grid cell by default. The same applies to
+            // years of higher order.
+            if (
+                tickInfo &&
+                options.dateTimeLabelFormats &&
+                options.labels &&
+                !defined(userLabels.align) &&
+                (
+                    (options.dateTimeLabelFormats[tickInfo.unitName] as any).range === false ||
+                    tickInfo.count > 1 // years
+                )
+            ) {
+                options.labels.align = 'left';
 
-                // Handle columns, each column is a grid axis
-                while (++columnIndex < gridOptions.columns.length) {
-                    var columnOptions = merge(
-                        userOptions,
-                        gridOptions.columns[
-                            gridOptions.columns.length - columnIndex - 1
-                        ],
-                        {
-                            linkedTo: 0,
-                            // Force to behave like category axis
-                            type: 'category'
+                if (!defined(userLabels.x)) {
+                    options.labels.x = 3;
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates a left and right wall on horizontal axes:
+     * - Places leftmost tick at the start of the axis, to create a left
+     *   wall
+     * - Ensures that the rightmost tick is at the end of the axis, to
+     *   create a right wall.
+     * @private
+     */
+    public static onAfterSetOptions(
+        this: Axis,
+        e: { userOptions: Highcharts.AxisOptions }
+    ): void {
+        var options = this.options,
+            userOptions = e.userOptions,
+            gridAxisOptions: Highcharts.AxisOptions,
+            gridOptions: GridAxis.Options = (
+                (options && isObject(options.grid)) ? (options.grid as any) : {}
+            );
+
+        if (gridOptions.enabled === true) {
+
+            // Merge the user options into default grid axis options so
+            // that when a user option is set, it takes presedence.
+            gridAxisOptions = merge(true, {
+
+                className: (
+                    'highcharts-grid-axis ' + (userOptions.className || '')
+                ),
+
+                dateTimeLabelFormats: {
+                    hour: {
+                        list: ['%H:%M', '%H']
+                    },
+                    day: {
+                        list: ['%A, %e. %B', '%a, %e. %b', '%E']
+                    },
+                    week: {
+                        list: ['Week %W', 'W%W']
+                    },
+                    month: {
+                        list: ['%B', '%b', '%o']
+                    }
+                },
+
+                grid: {
+                    borderWidth: 1
+                },
+
+                labels: {
+                    padding: 2,
+                    style: {
+                        fontSize: '13px'
+                    }
+                },
+
+                margin: 0,
+
+                title: {
+                    text: null,
+                    reserveSpace: false,
+                    rotation: 0
+                },
+
+                // In a grid axis, only allow one unit of certain types,
+                // for example we shouln't have one grid cell spanning
+                // two days.
+                units: [[
+                    'millisecond', // unit name
+                    [1, 10, 100]
+                ], [
+                    'second',
+                    [1, 10]
+                ], [
+                    'minute',
+                    [1, 5, 15]
+                ], [
+                    'hour',
+                    [1, 6]
+                ], [
+                    'day',
+                    [1]
+                ], [
+                    'week',
+                    [1]
+                ], [
+                    'month',
+                    [1]
+                ], [
+                    'year',
+                    null
+                ]]
+            }, userOptions);
+
+            // X-axis specific options
+            if (this.coll === 'xAxis') {
+
+                // For linked axes, tickPixelInterval is used only if
+                // the tickPositioner below doesn't run or returns
+                // undefined (like multiple years)
+                if (
+                    defined(userOptions.linkedTo) &&
+                    !defined(userOptions.tickPixelInterval)
+                ) {
+                    gridAxisOptions.tickPixelInterval = 350;
+                }
+
+                // For the secondary grid axis, use the primary axis'
+                // tick intervals and return ticks one level higher.
+                if (
+                    // Check for tick pixel interval in options
+                    !defined(userOptions.tickPixelInterval) &&
+
+                    // Only for linked axes
+                    defined(userOptions.linkedTo) &&
+
+                    !defined(userOptions.tickPositioner) &&
+                    !defined(userOptions.tickInterval)
+                ) {
+                    gridAxisOptions.tickPositioner = function (
+                        this: Highcharts.Axis,
+                        min: number,
+                        max: number
+                    ): (Highcharts.AxisTickPositionsArray|undefined) {
+
+                        var parentInfo = (
+                            this.linkedParent &&
+                            this.linkedParent.tickPositions &&
+                            this.linkedParent.tickPositions.info
+                        );
+
+                        if (parentInfo) {
+
+                            var unitIdx: (number|undefined),
+                                count,
+                                unitName,
+                                i,
+                                units = gridAxisOptions.units,
+                                unitRange;
+
+                            for (i = 0; i < (units as any).length; i++) {
+                                if (
+                                    (units as any)[i][0] ===
+                                    parentInfo.unitName
+                                ) {
+                                    unitIdx = i;
+                                    break;
+                                }
+                            }
+
+                            // Get the first allowed count on the next
+                            // unit.
+                            if ((units as any)[(unitIdx as any) + 1]) {
+                                unitName = (units as any)[
+                                    (unitIdx as any) + 1
+                                ][0];
+                                count =
+                                    ((units as any)[
+                                        (unitIdx as any) + 1
+                                    ][1] || [1])[0];
+
+                            // In case the base X axis shows years, make
+                            // the secondary axis show ten times the
+                            // years (#11427)
+                            } else if (parentInfo.unitName === 'year') {
+                                unitName = 'year';
+                                count = parentInfo.count * 10;
+                            }
+
+                            unitRange = timeUnits[unitName];
+                            this.tickInterval = unitRange * count;
+                            return this.getTimeTicks(
+                                {
+                                    unitRange: unitRange,
+                                    count: count,
+                                    unitName: unitName
+                                },
+                                min,
+                                max,
+                                this.options.startOfWeek as any
+                            );
                         }
-                    );
-
-                    delete (columnOptions.grid as any).columns; // Prevent recursion
-
-                    var column = new Axis(axis.chart, columnOptions) as GridAxis;
-                    column.grid.isColumn = true;
-                    column.grid.columnIndex = columnIndex;
-
-                    // Remove column axis from chart axes array, and place it
-                    // in the columns array.
-                    erase(chart.axes, column);
-                    erase((chart as any)[axis.coll], column);
-                    columns.push(column);
+                    };
                 }
-            }
-        };
 
-        // Handle columns and setScale
-        var onGridAxisAfterSetScale = function onGridAxisAfterSetScale(
-            this: GridAxis
-        ): void {
-            (this.grid.columns || []).forEach(function (column): void {
-                column.setScale();
-            });
-        };
-
-        var onGridAxisDestroy = function onGridAxisDestroy(
-            this: GridAxis,
-            e: {
-                keepEvents: boolean;
-            }
-        ): void {
-            (this.grid.columns || []).forEach(function (column): void {
-                column.destroy(e.keepEvents);
-            });
-            // this.grid.columns = void 0;
-        };
-
-        // Wraps axis init to draw cell walls on vertical axes.
-        var onGridAxisInit = function onGridAxisInit(
-            this: Axis,
-            e: { userOptions?: Highcharts.AxisOptions }
-        ): void {
-            var userOptions = e.userOptions || {},
-                gridOptions = userOptions.grid || {};
-
-            if (gridOptions.enabled && defined(gridOptions.borderColor)) {
-                userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
             }
 
-            if (!this.grid) {
-                this.grid = new GridAxisAdditions(this as GridAxis);
+            // Now merge the combined options into the axis options
+            merge(true, this.options, gridAxisOptions);
+
+            if (this.horiz) {
+                /*               _________________________
+                Make this:    ___|_____|_____|_____|__|
+                                ^                     ^
+                                _________________________
+                Into this:    |_____|_____|_____|_____|
+                                    ^                 ^    */
+                options.minPadding = pick(userOptions.minPadding, 0);
+                options.maxPadding = pick(userOptions.maxPadding, 0);
             }
-        };
 
-        var onGridAxisAfterSetOptions = function onGridAxisAfterSetOptions(
-            this: Axis,
-            e: { userOptions?: Highcharts.AxisOptions }
-        ): void {
-            var axis = this,
-                userOptions = e.userOptions,
-                gridOptions = userOptions && userOptions.grid || {},
-                columns = gridOptions.columns;
-
-            // Add column options to the parent axis. Children has their column
-            // options set on init in onGridAxisAfterInit.
-            if (gridOptions.enabled && columns) {
-                merge(true, axis.options, columns[columns.length - 1]);
+            // If borderWidth is set, then use its value for tick and
+            // line width.
+            if (isNumber((options.grid as any).borderWidth)) {
+                options.tickWidth = options.lineWidth = gridOptions.borderWidth;
             }
-        };
 
-        var axisEvents: Highcharts.Dictionary<Function> = {
-            afterGetOffset: onGridAxisAfterGetOffset,
-            afterInit: onGridAxisAfterInit,
-            afterSetOptions: onGridAxisAfterSetOptions,
-            afterSetScale: onGridAxisAfterSetScale,
-            destroy: onGridAxisDestroy,
-            init: onGridAxisInit
-        };
+        }
+    }
 
-        // Add event handlers
-        Object.keys(axisEvents).forEach(function (event: string): void {
-            addEvent(Axis, event, axisEvents[event]);
+    /**
+     * @private
+     */
+    public static onAfterSetOptions2(
+        this: Axis,
+        e: { userOptions?: Highcharts.AxisOptions }
+    ): void {
+        const axis = this;
+        const userOptions = e.userOptions;
+        const gridOptions = userOptions && userOptions.grid || {};
+        const columns = gridOptions.columns;
+
+        // Add column options to the parent axis. Children has their column
+        // options set on init in onGridAxisAfterInit.
+        if (gridOptions.enabled && columns) {
+            merge(true, axis.options, columns[columns.length - 1]);
+        }
+    }
+
+    /**
+     * Handle columns and setScale.
+     * @private
+     */
+    public static onAfterSetScale(this: Axis): void {
+        const axis = this as GridAxis;
+
+        (axis.grid.columns || []).forEach(function (column): void {
+            column.setScale();
         });
+    }
 
-        addEvent(
-            Chart,
-            'afterSetChartSize',
-            function (): void {
-                this.axes.forEach(function (axis: GridAxis): void {
-                    (axis.grid.columns || []).forEach(function (column): void {
-                        column.setAxisSize();
-                        column.setAxisTranslation();
-                    });
-                } as any);
+    /**
+     * Draw vertical axis ticks extra long to create cell floors and roofs.
+     * Overrides the tickLength for vertical axes.
+     * @private
+     */
+    public static onAfterTickSize(
+        this: Axis,
+        e: { tickSize?: Array<number> }
+    ): void {
+        const defaultLeftAxisOptions = Axis.defaultLeftAxisOptions;
+        const {
+            horiz,
+            maxLabelDimensions,
+            options: {
+                grid: gridOptions = {}
             }
+        } = this;
+
+        if (gridOptions.enabled && maxLabelDimensions) {
+            const labelPadding =
+                (Math.abs((defaultLeftAxisOptions.labels as any).x) * 2);
+            const distance = horiz ?
+                gridOptions.cellHeight || labelPadding + maxLabelDimensions.height :
+                labelPadding + maxLabelDimensions.width;
+            if (isArray(e.tickSize)) {
+                e.tickSize[0] = distance;
+            } else {
+                e.tickSize = [distance];
+            }
+        }
+    }
+
+    /**
+     * @private
+     */
+    public static onDestroy(
+        this: Axis,
+        e: { keepEvents: boolean }
+    ): void {
+        const {
+            grid
+        } = this as GridAxis;
+
+        (grid.columns || []).forEach(function (column): void {
+            column.destroy(e.keepEvents);
+        });
+        grid.columns = void 0;
+    }
+
+    /**
+     * Wraps axis init to draw cell walls on vertical axes.
+     * @private
+     */
+    public static onInit(
+        this: Axis,
+        e: { userOptions?: Highcharts.AxisOptions }
+    ): void {
+        const axis = this;
+        const userOptions = e.userOptions || {};
+        const gridOptions = userOptions.grid || {};
+
+        if (gridOptions.enabled && defined(gridOptions.borderColor)) {
+            userOptions.tickColor = userOptions.lineColor = gridOptions.borderColor;
+        }
+
+        if (!axis.grid) {
+            axis.grid = new GridAxisAdditions(axis as GridAxis);
+        }
+    }
+
+    /**
+     * Makes tick labels which are usually ignored in a linked axis
+     * displayed if they are within range of linkedParent.min.
+     * ```
+     *                        _____________________________
+     *                        |   |       |       |       |
+     * Make this:             |   |   2   |   3   |   4   |
+     *                        |___|_______|_______|_______|
+     *                          ^
+     *                        _____________________________
+     *                        |   |       |       |       |
+     * Into this:             | 1 |   2   |   3   |   4   |
+     *                        |___|_______|_______|_______|
+     *                          ^
+     * ```
+     * @private
+     * @todo Does this function do what the drawing says? Seems to affect
+     *       ticks and not the labels directly?
+     */
+    public static onTrimTicks(this: Axis): void {
+        const axis = this;
+        const options = axis.options;
+        const gridOptions = options.grid || {};
+        const categoryAxis = axis.categories;
+        const tickPositions = axis.tickPositions;
+        const firstPos = tickPositions[0];
+        const lastPos = tickPositions[tickPositions.length - 1];
+        const linkedMin = axis.linkedParent && axis.linkedParent.min;
+        const linkedMax = axis.linkedParent && axis.linkedParent.max;
+        const min = linkedMin || axis.min;
+        const max = linkedMax || axis.max;
+        const tickInterval = axis.tickInterval;
+        const endMoreThanMin = (
+            firstPos < (min as any) &&
+            firstPos + tickInterval > (min as any)
+        );
+        const startLessThanMax = (
+            lastPos > (max as any) &&
+            lastPos - tickInterval < (max as any)
         );
 
-        addEvent(
-            Tick,
-            'afterGetLabelPosition',
-            /**
-             * Center tick labels in cells.
-             *
-             * @private
-             */
-            function (
-                e: {
-                    pos: Highcharts.PositionObject;
-                    tickmarkOffset: number;
-                    index: number;
-                }
-            ): void {
-                var tick = this,
-                    label = tick.label,
-                    axis = tick.axis,
-                    reversed = axis.reversed,
-                    chart = axis.chart,
-                    options = axis.options,
-                    gridOptions = options.grid || {},
-                    labelOpts = axis.options.labels,
-                    align = (labelOpts as any).align,
-                    // verticalAlign is currently not supported for axis.labels.
-                    verticalAlign = 'middle', // labelOpts.verticalAlign,
-                    side = axisSide[axis.side],
-                    tickmarkOffset = e.tickmarkOffset,
-                    tickPositions = axis.tickPositions,
-                    tickPos = tick.pos - tickmarkOffset,
-                    nextTickPos = (
-                        isNumber(tickPositions[e.index + 1]) ?
-                            tickPositions[e.index + 1] - tickmarkOffset :
-                            (axis.max as any) + tickmarkOffset
-                    ),
-                    tickSize: Array<number> = (axis.tickSize as any)('tick', true),
-                    tickWidth = isArray(tickSize) ? tickSize[0] : 0,
-                    crispCorr = tickSize && tickSize[1] / 2,
-                    labelHeight: number,
-                    lblMetrics: Highcharts.FontMetricsObject,
-                    lines: number,
-                    bottom: number,
-                    top: number,
-                    left: number,
-                    right: number;
-
-                // Only center tick labels in grid axes
-                if (gridOptions.enabled === true) {
-
-                    // Calculate top and bottom positions of the cell.
-                    if (side === 'top') {
-                        bottom = axis.top + axis.offset;
-                        top = bottom - tickWidth;
-                    } else if (side === 'bottom') {
-                        top = chart.chartHeight - axis.bottom + axis.offset;
-                        bottom = top + tickWidth;
-                    } else {
-                        bottom = axis.top + axis.len - (axis.translate(
-                            reversed ? nextTickPos : tickPos
-                        ) as any);
-                        top = axis.top + axis.len - (axis.translate(
-                            reversed ? tickPos : nextTickPos
-                        ) as any);
-                    }
-
-                    // Calculate left and right positions of the cell.
-                    if (side === 'right') {
-                        left = chart.chartWidth - axis.right + axis.offset;
-                        right = left + tickWidth;
-                    } else if (side === 'left') {
-                        right = axis.left + axis.offset;
-                        left = right - tickWidth;
-                    } else {
-                        left = Math.round(axis.left + (axis.translate(
-                            reversed ? nextTickPos : tickPos
-                        ) as any)) - crispCorr;
-                        right = Math.round(axis.left + (axis.translate(
-                            reversed ? tickPos : nextTickPos
-                        ) as any)) - crispCorr;
-                    }
-
-                    tick.slotWidth = right - left;
-
-                    // Calculate the positioning of the label based on
-                    // alignment.
-                    e.pos.x = (
-                        align === 'left' ?
-                            left :
-                            align === 'right' ?
-                                right :
-                                left + ((right - left) / 2) // default to center
-                    );
-                    e.pos.y = (
-                        verticalAlign === 'top' ?
-                            top :
-                            verticalAlign === 'bottom' ?
-                                bottom :
-                                top + ((bottom - top) / 2) // default to middle
-                    );
-
-                    lblMetrics = chart.renderer.fontMetrics(
-                        (labelOpts as any).style.fontSize,
-                        (label as any).element
-                    );
-                    labelHeight = (label as any).getBBox().height;
-
-                    // Adjustment to y position to align the label correctly.
-                    // Would be better to have a setter or similar for this.
-                    if (!(labelOpts as any).useHTML) {
-                        lines = Math.round(labelHeight / lblMetrics.h);
-                        e.pos.y += (
-                            // Center the label
-                            // TODO: why does this actually center the label?
-                            ((lblMetrics.b - (lblMetrics.h - lblMetrics.f)) / 2) +
-                            // Adjust for height of additional lines.
-                            -(((lines - 1) * lblMetrics.h) / 2)
-                        );
-                    } else {
-                        e.pos.y += (
-                            // Readjust yCorr in htmlUpdateTransform
-                            lblMetrics.b +
-                            // Adjust for height of html label
-                            -(labelHeight / 2)
-                        );
-                    }
-
-                    e.pos.x += (axis.horiz && (labelOpts as any).x || 0);
-                }
+        if (
+            gridOptions.enabled === true &&
+            !categoryAxis &&
+            (axis.horiz || axis.isLinked)
+        ) {
+            if (endMoreThanMin && !options.startOnTick) {
+                tickPositions[0] = min as any;
             }
-        );
 
+            if (startLessThanMax && !options.endOnTick) {
+                tickPositions[tickPositions.length - 1] = max as any;
+            }
+        }
+    }
 
+    /**
+     * Avoid altering tickInterval when reserving space.
+     * @private
+     */
+    public static wrapUnsquish(
+        this: Axis,
+        proceed: Function
+    ): number {
+        const axis = this;
+        const {
+            options: {
+                grid: gridOptions = {}
+            }
+        } = axis;
+
+        if (gridOptions.enabled === true && axis.categories) {
+            return axis.tickInterval;
+        }
+
+        return proceed.apply(axis, argsToArray(arguments));
     }
 
 }

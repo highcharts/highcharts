@@ -648,10 +648,10 @@ class BrokenAxis {
                         );
 
                         // For stacked chart generate empty stack items, #6546
-                        if (this.options.stacking) {
-                            stack = yAxis.stacks[this.stackKey as any][xRange] =
+                        if (yAxis.stacking && this.options.stacking) {
+                            stack = yAxis.stacking.stacks[this.stackKey as any][xRange] =
                                 new StackItem(
-                                    yAxis,
+                                    yAxis as any,
                                     (
                                         (yAxis.options as Highcharts.YAxisOptions)
                                             .stackLabels as any
