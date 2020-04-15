@@ -255,6 +255,19 @@ QUnit.test('Bindings general tests', function (assert) {
         true,
         'Chart saved in the local storage'
     );
+    // Restore basic annotations
+    JSON.parse(localStorage['highcharts-chart']).annotations.forEach(annotation => {
+        if (!annotation.typeOptions) {
+            chart.addAnnotation(annotation);
+
+            assert.ok(
+                1,
+                'No errors should be thrown after setting the basic annotations (#12054)'
+            );
+            ++annotationsCounter;
+        }
+    });
+
     localStorage.removeItem('highcharts-chart');
 
     // Test yAxis resizers and adding indicators:
