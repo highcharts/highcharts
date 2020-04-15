@@ -874,7 +874,7 @@ seriesType<Highcharts.IKHIndicator>(
 
                 spanAarr = spanA.slice(0, path.length);
 
-                for (let i = spanAarr.length - 1; i > 0; i--) {
+                for (let i = spanAarr.length - 1; i >= 0; i--) {
                     path.push(spanAarr[i]);
                 }
 
