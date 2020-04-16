@@ -5781,7 +5781,7 @@ class Axis implements AxisComposition, AxisLike {
         var axis: Highcharts.Axis = this as any,
             options = this.options,
             tickAmount = options.tickAmount,
-            tickPixelInterval = options.tickPixelInterval as number;
+            tickPixelInterval = options.tickPixelInterval as any;
 
         if (
             !defined(options.tickInterval) &&
