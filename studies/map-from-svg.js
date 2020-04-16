@@ -1,127 +1,123 @@
-
-
-
-
 var presets = [{
-	name: '',
-	url: ''
-}, { 
-	name: '----- Global ------'
+    name: '',
+    url: ''
 }, {
-	name: 'Africa',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/f/f9/BlankMap-Africa.svg'
+    name: '----- Global ------'
 }, {
-	name: 'Europe',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/2/25/BlankMap-Europe.svg'
-}, { 
-	name: 'World',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg'
+    name: 'Africa',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/f/f9/BlankMap-Africa.svg'
 }, {
-	name: '----- Countries ------'
+    name: 'Europe',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/2/25/BlankMap-Europe.svg'
 }, {
-	name: 'Australia',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/c/c2/Australia_states_blank.svg'
+    name: 'World',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/8/80/World_map_-_low_resolution.svg'
 }, {
-	name: 'Belgium',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/3/3d/Belgium_Provinces_map-blank.svg'
+    name: '----- Countries ------'
 }, {
-	name: 'Brazil',
-	url: 'http://www.clker.com/cliparts/O/m/Y/9/h/X/mapa-brasil-rio-de-janeiro.svg'
+    name: 'Australia',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Australia_states_blank.svg'
 }, {
-	name: 'Canada',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/3/38/Canada_blank_map.svg'
+    name: 'Belgium',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/3/3d/Belgium_Provinces_map-blank.svg'
 }, {
-	name: 'Germany',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/2/2c/Karte_Bundesrepublik_Deutschland.svg'
+    name: 'Brazil',
+    url: 'https://www.clker.com/cliparts/O/m/Y/9/h/X/mapa-brasil-rio-de-janeiro.svg'
 }, {
-	name: 'France',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/3/3c/Carte_vierge_d%C3%A9partements_fran%C3%A7ais_avec_DOM.svg'
+    name: 'Canada',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/3/38/Canada_blank_map.svg'
 }, {
-	name: 'Netherlands',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/b/bb/Carte_des_Pays-Bas_%28netherlands%29_without_names.svg'
+    name: 'Germany',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Karte_Bundesrepublik_Deutschland.svg'
 }, {
-	name: 'Norway',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/8/87/Norwegian_parliamentary_election_2009_map_KrF_reps.svg'
+    name: 'France',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/3/3c/Carte_vierge_d%C3%A9partements_fran%C3%A7ais_avec_DOM.svg'
 }, {
-	name: 'Poland',
-	url: 'http://www.highcharts.com/maps/maps/Poland.svg'
+    name: 'Netherlands',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/b/bb/Carte_des_Pays-Bas_%28netherlands%29_without_names.svg'
 }, {
-	name: 'South-America',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/b/b0/Southamerica_blank.svg'
+    name: 'Norway',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/8/87/Norwegian_parliamentary_election_2009_map_KrF_reps.svg'
 }, {
-	name: 'Spain',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/5/5a/Provinces_of_Spain.svg'
+    name: 'Poland',
+    url: 'https://www.highcharts.com/maps/maps/Poland.svg'
 }, {
-	name: 'Sweden',
-	url: 'http://www.highcharts.com/maps/maps/Sweden.svg'
+    name: 'South-America',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Southamerica_blank.svg'
 }, {
-	name: 'USA-states',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/3/32/Blank_US_Map.svg'
+    name: 'Spain',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/5/5a/Provinces_of_Spain.svg'
 }, {
-	name: 'USA-counties',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/5/5f/USA_Counties_with_FIPS_and_names.svg'
+    name: 'Sweden',
+    url: 'https://www.highcharts.com/maps/maps/Sweden.svg'
 }, {
-	name: '----- Regions ------'
+    name: 'USA-states',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/3/32/Blank_US_Map.svg'
 }, {
-	name: 'Sogn-og-Fjordane-Norway',
-	url: 'http://upload.wikimedia.org/wikipedia/commons/4/4f/NO_1417_Vik.svg'
+    name: 'USA-counties',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/5/5f/USA_Counties_with_FIPS_and_names.svg'
+}, {
+    name: '----- Regions ------'
+}, {
+    name: 'Sogn-og-Fjordane-Norway',
+    url: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/NO_1417_Vik.svg'
 }];
 
-$(function() {
-	$.getJSON('/maps/list.json.php', function (localFiles) {
+$(function () {
+    $.getJSON('/maps/list.json.php', function (localFiles) {
 
-		var $preset = $('#preset')
-			.change(function () {
-				runPreset($preset[0].selectedIndex);
-			});
+        var $preset = $('#preset')
+            .change(function () {
+                runPreset($preset[0].selectedIndex);
+            });
 
-		function runPreset(index) {
-			var preset = presets[index];
+        function runPreset(index) {
+            var preset = presets[index];
 
-			$preset[0].selectedIndex = index;
+            $preset[0].selectedIndex = index;
 
-			if (preset && preset.url) {
-				$('#load')[0].value = preset.url;
-				location.hash = '#' + preset.url;
-				runChart();
-			} else if (!preset) { // local files
-				
-				$('#load')[0].value = 'http://' + location.host + '/maps/' + $preset.children()[index].value;
-				runChart('Local file');
-			}
-		}
+            if (preset && preset.url) {
+                $('#load')[0].value = preset.url;
+                location.hash = '#' + preset.url;
+                runChart();
+            } else if (!preset) { // local files
 
-		function runChart() {
-			drawMap('Highcharts map from SVG', $('#load')[0].value);
-		}
-		
-		// Build the links
-		for (var i = 0; i < presets.length; i++) {
-			$('<option>' + presets[i].name + '</option>')
-				.appendTo($preset);
-		}
-		// Build the links
-		for (var i = 0; i < localFiles.length; i++) {
-			if (i === 0) {
-				$('<option>----- Local files ----</option>')
-					.appendTo($preset);
-			}
-			$('<option>' + localFiles[i] + '</option>')
-				.appendTo($preset);
-		}
-		
-		if (location.hash) {
-			for (var i = 0; i < presets.length; i++) {
-				if (location.hash === '#' + presets[i].url) {
-					runPreset(i);
-				}
-			}
-			if (i === presets.length) {
-				$('#load')[0].value = location.hash.replace(/^#/, '');
-				runChart('Online file');
-			}
-		}
-		
-		$('#load-submit').click(runChart);
-	});
+                $('#load')[0].value = 'https://' + location.host + '/maps/' + $preset.children()[index].value;
+                runChart('Local file');
+            }
+        }
+
+        function runChart() {
+            drawMap('Highcharts map from SVG', $('#load')[0].value);
+        }
+
+        // Build the links
+        for (var i = 0; i < presets.length; i++) {
+            $('<option>' + presets[i].name + '</option>')
+                .appendTo($preset);
+        }
+        // Build the links
+        for (var i = 0; i < localFiles.length; i++) {
+            if (i === 0) {
+                $('<option>----- Local files ----</option>')
+                    .appendTo($preset);
+            }
+            $('<option>' + localFiles[i] + '</option>')
+                .appendTo($preset);
+        }
+
+        if (location.hash) {
+            for (var i = 0; i < presets.length; i++) {
+                if (location.hash === '#' + presets[i].url) {
+                    runPreset(i);
+                }
+            }
+            if (i === presets.length) {
+                $('#load')[0].value = location.hash.replace(/^#/, '');
+                runChart('Online file');
+            }
+        }
+
+        $('#load-submit').click(runChart);
+    });
 });
