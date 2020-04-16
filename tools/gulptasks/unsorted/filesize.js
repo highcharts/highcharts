@@ -23,7 +23,7 @@ const commandLine = command => new Promise((resolve, reject) => {
 });
 const filesize = () => {
     const {
-        scripts
+        getBuildScripts
     } = require('../../build.js');
     const colors = require('colors');
     const {
@@ -70,8 +70,7 @@ const filesize = () => {
         ].join('\n'));
     };
 
-    const runFileSize = (obj, key) => Promise
-        .resolve(scripts({}))
+    const runFileSize = (obj, key) => getBuildScripts({ files }).fnFirstBuild()
         .then(() => compile(files, sourceFolder))
         .then(() => files.reduce(
             (o, n) => {
