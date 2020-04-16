@@ -5781,11 +5781,11 @@ class Axis implements AxisComposition, AxisLike {
         var axis: Highcharts.Axis = this as any,
             options = this.options,
             tickAmount = options.tickAmount,
-            tickPixelInterval = options.tickPixelInterval;
+            tickPixelInterval = options.tickPixelInterval as number;
 
         if (
             !defined(options.tickInterval) &&
-            this.len < (tickPixelInterval as any) &&
+            !tickAmount && this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
