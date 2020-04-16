@@ -671,10 +671,7 @@ class Tooltip {
                         ''
                 )
             ),
-            pointerEvents = (
-                options.style?.pointerEvents ||
-                (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
-            ),
+            sticky = !this.followPointer && options.stickOnContact,
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>,
             onMouseEnter = function (): void {
@@ -710,7 +707,7 @@ class Tooltip {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents,
+                    pointerEvents: 'auto',
                     zIndex: 3
                 });
 
@@ -765,7 +762,6 @@ class Tooltip {
                         })
                         // #2301, #2657
                         .css(options.style as any)
-                        .css({ pointerEvents })
                         .shadow(options.shadow);
                 }
             }
@@ -804,6 +800,16 @@ class Tooltip {
                 .on('mouseleave', onMouseLeave)
                 .attr({ zIndex: 8 })
                 .add();
+
+            if (sticky) { // #13310
+                this.label.element.style.pointerEvents = (
+                    options.style?.pointerEvents ||
+                    (sticky ? 'auto' : 'none')
+                );
+                if (this.label.div) {
+                    this.label.div.style.pointerEvents = 'none';
+                }
+            }
         }
 
         return this.label;

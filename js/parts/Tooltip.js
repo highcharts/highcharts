@@ -397,8 +397,7 @@ var Tooltip = /** @class */ (function () {
         var _a, _b;
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = ('tooltip' + (defined(options.className) ?
             ' ' + options.className :
-            '')), pointerEvents = (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) ||
-            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, set, onMouseEnter = function () {
+            '')), sticky = !this.followPointer && options.stickOnContact, container, set, onMouseEnter = function () {
             tooltip.inContact = true;
         }, onMouseLeave = function () {
             var series = tooltip.chart.hoverSeries;
@@ -423,7 +422,7 @@ var Tooltip = /** @class */ (function () {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: pointerEvents,
+                    pointerEvents: 'auto',
                     zIndex: 3
                 });
                 H.doc.body.appendChild(container);
@@ -435,7 +434,7 @@ var Tooltip = /** @class */ (function () {
                  * @name Highcharts.Tooltip#renderer
                  * @type {Highcharts.SVGRenderer|undefined}
                  */
-                this.renderer = renderer = new H.Renderer(container, 0, 0, (_b = this.chart.options.chart) === null || _b === void 0 ? void 0 : _b.style, void 0, void 0, renderer.styledMode);
+                this.renderer = renderer = new H.Renderer(container, 0, 0, (_a = this.chart.options.chart) === null || _a === void 0 ? void 0 : _a.style, void 0, void 0, renderer.styledMode);
             }
             // Create the label
             if (this.split) {
@@ -456,7 +455,6 @@ var Tooltip = /** @class */ (function () {
                     })
                         // #2301, #2657
                         .css(options.style)
-                        .css({ pointerEvents: pointerEvents })
                         .shadow(options.shadow);
                 }
             }
@@ -486,6 +484,13 @@ var Tooltip = /** @class */ (function () {
                 .on('mouseleave', onMouseLeave)
                 .attr({ zIndex: 8 })
                 .add();
+            if (sticky) { // #13310
+                this.label.element.style.pointerEvents = (((_b = options.style) === null || _b === void 0 ? void 0 : _b.pointerEvents) ||
+                    (sticky ? 'auto' : 'none'));
+                if (this.label.div) {
+                    this.label.div.style.pointerEvents = 'none';
+                }
+            }
         }
         return this.label;
     };
