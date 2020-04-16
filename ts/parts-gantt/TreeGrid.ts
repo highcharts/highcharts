@@ -38,7 +38,7 @@ declare global {
             dataMax: number;
             dataMin: number;
             mapOfPosToGridNode: Dictionary<GridNode>;
-            mapOptionsToLevel: (Dictionary<any>|null);
+            mapOptionsToLevel: (Dictionary<TreeGridAxisLabelsOptions>|null);
             max: number;
             min: number;
             options: TreeGridAxisOptions;
@@ -51,10 +51,11 @@ declare global {
             labels?: TreeGridAxisLabelsOptions;
         }
         interface TreeGridAxisLabelsOptions extends XAxisLabelsOptions {
+            levels?: number;
             symbol?: SVGAttributes;
         }
         interface TreeGridNode extends TreeNode {
-            data: TreeGridPointObject;
+            data: TreeGridPointOptionsObject;
             pos: number;
             seriesIndex: number;
         }
@@ -80,7 +81,7 @@ declare global {
             collapsedNodes: Array<GridNode>;
             tree: TreeNode;
         }
-        interface TreeGridPointObject extends TreePointOptionsObject {
+        interface TreeGridPointOptionsObject extends TreePointOptionsObject {
             collapsed?: boolean;
             seriesIndex?: number;
         }
@@ -115,7 +116,7 @@ const {
 import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 
-var argsToArray = function (args: IArguments): Array<any> {
+var argsToArray = function<T> (args: IArguments): Array<T> {
         return Array.prototype.slice.call(args, 1);
     },
     find = U.find,
@@ -184,8 +185,8 @@ var getTickPositions = function (axis: Highcharts.TreeGridAxis): Array<number> {
         function (arr: Array<number>, key: string): Array<number> {
             var pos = +key;
             if (
-                (axis.min as any) <= pos &&
-                (axis.max as any) >= pos &&
+                axis.min <= pos &&
+                axis.max >= pos &&
                 !(axis.brokenAxis && axis.brokenAxis.isInAnyBreak(pos))
             ) {
                 arr.push(pos);
@@ -215,11 +216,11 @@ var getTickPositions = function (axis: Highcharts.TreeGridAxis): Array<number> {
  *         Returns true if collapsed, false if expanded.
  */
 var isCollapsed = function (
-    axis: Highcharts.Axis,
+    axis: Highcharts.TreeGridAxis,
     node: Highcharts.GridNode
 ): boolean {
     var breaks = (axis.options.breaks || []),
-        obj = getBreakFromNode(node, axis.max as any);
+        obj = getBreakFromNode(node, axis.max);
 
     return breaks.some(function (b: Highcharts.XAxisBreaksOptions): boolean {
         return b.from === obj.from && b.to === obj.to;
@@ -233,23 +234,23 @@ var isCollapsed = function (
  * @function collapse
  *
  * @param {Highcharts.Axis} axis
- *        The axis to check against.
+ * The axis to check against.
  *
- * @param {object} node
- *        The node to collapse.
+ * @param {Highcharts.GridNode} node
+ * The node to collapse.
  *
  * @param {number} pos
- *        The tick position to collapse.
+ * The tick position to collapse.
  *
  * @return {Array<object>}
- *         Returns an array of the new breaks for the axis.
+ * Returns an array of the new breaks for the axis.
  */
 var collapse = function (
     axis: Highcharts.TreeGridAxis,
-    node: any
+    node: Highcharts.GridNode
 ): Array<Highcharts.XAxisBreaksOptions> {
     var breaks = (axis.options.breaks || []),
-        obj = getBreakFromNode(node, axis.max as any);
+        obj = getBreakFromNode(node, axis.max);
 
     breaks.push(obj);
     return breaks;
@@ -262,20 +263,20 @@ var collapse = function (
  * @function expand
  *
  * @param {Highcharts.Axis} axis
- *        The axis to check against.
+ * The axis to check against.
  *
- * @param {object} node
- *        The node to expand.
+ * @param {Highcharts.GridNode} node
+ * The node to expand.
  *
  * @param {number} pos
- *        The tick position to expand.
+ * The tick position to expand.
  *
  * @return {Array<object>}
- *         Returns an array of the new breaks for the axis.
+ * Returns an array of the new breaks for the axis.
  */
 var expand = function (
     axis: Highcharts.TreeGridAxis,
-    node: any
+    node: Highcharts.GridNode
 ): Array<Highcharts.XAxisBreaksOptions> {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
@@ -303,17 +304,17 @@ var expand = function (
  * @function toggleCollapse
  *
  * @param {Highcharts.Axis} axis
- *        The axis to check against.
+ * The axis to check against.
  *
- * @param {object} node
- *        The node to toggle.
+ * @param {Highcharts.GridNode} node
+ * The node to toggle.
  *
  * @return {Array<object>}
- *         Returns an array of the new breaks for the axis.
+ * Returns an array of the new breaks for the axis.
  */
 var toggleCollapse = function (
     axis: Highcharts.TreeGridAxis,
-    node: any
+    node: Highcharts.GridNode
 ): Array<Highcharts.XAxisBreaksOptions> {
     return (
         isCollapsed(axis, node) ?
@@ -435,21 +436,19 @@ var getTreeGridFromData = function (
         mapOfPosToGridNode: Record<string, Highcharts.GridNode> = {},
         posIterator = -1,
         uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : false,
-        tree: Highcharts.TreeNode,
-        treeParams: Highcharts.TreeGetOptionsObject,
-        updateYValuesAndTickPos;
+        tree: Highcharts.TreeNode;
 
     // Build the tree from the series data.
-    treeParams = {
+    const treeParams: Highcharts.TreeGetOptionsObject = {
         // After the children has been created.
-        after: function (node: Highcharts.TreeGridNode): void {
-            var gridNode = mapOfPosToGridNode[node.pos],
+        after: function (node: Highcharts.TreeNode): void {
+            var gridNode = mapOfPosToGridNode[(node as Highcharts.TreeGridNode).pos],
                 height = 0,
                 descendants = 0;
 
-            gridNode.children.forEach(function (child: any): void {
-                descendants += child.descendants + 1;
-                height = Math.max(child.height + 1, height);
+            gridNode.children.forEach(function (child: Highcharts.GridNode): void {
+                descendants += (child.descendants || 0) + 1;
+                height = Math.max((child.height || 0) + 1, height);
             });
             gridNode.descendants = descendants;
             gridNode.height = height;
@@ -458,8 +457,8 @@ var getTreeGridFromData = function (
             }
         },
         // Before the children has been created.
-        before: function (node: Highcharts.TreeGridNode): void {
-            var data = isObject(node.data) ? node.data : {},
+        before: function (node: Highcharts.TreeNode): void {
+            var data = isObject(node.data) ? (node as Highcharts.TreeGridNode).data : {},
                 name = isString(data.name) ? data.name : '',
                 parentNode = mapOfIdToNode[node.parent],
                 parentGridNode = (
@@ -467,8 +466,8 @@ var getTreeGridFromData = function (
                         mapOfPosToGridNode[parentNode.pos] :
                         null
                 ),
-                hasSameName = function (x: any): boolean {
-                    return (x as any).name === name;
+                hasSameName = function (x: Highcharts.GridNode): boolean {
+                    return x.name === name;
                 },
                 gridNode: (Highcharts.GridNode|undefined),
                 pos;
@@ -477,12 +476,12 @@ var getTreeGridFromData = function (
             if (
                 uniqueNamesEnabled &&
                 isObject(parentGridNode) &&
-                !!(gridNode = find(parentGridNode.children, hasSameName) as any)
+                !!(gridNode = find(parentGridNode.children, hasSameName))
             ) {
                 // If if there is a gridNode with the same name, reuse position.
                 pos = gridNode.pos;
                 // Add data node to list of nodes in the grid node.
-                gridNode.nodes.push(node);
+                gridNode.nodes.push(node as Highcharts.TreeGridNode);
             } else {
                 // If it is a new grid node, increment position.
                 pos = posIterator++;
@@ -493,7 +492,7 @@ var getTreeGridFromData = function (
                 mapOfPosToGridNode[pos] = gridNode = {
                     depth: parentGridNode ? parentGridNode.depth + 1 : 0,
                     name: name,
-                    nodes: [node],
+                    nodes: [node as Highcharts.TreeGridNode],
                     children: [],
                     pos: pos
                 };
@@ -511,7 +510,7 @@ var getTreeGridFromData = function (
 
             // Add data node to map
             if (isString(node.id)) {
-                mapOfIdToNode[node.id] = node;
+                mapOfIdToNode[node.id] = node as Highcharts.TreeGridNode;
             }
 
             // If one of the points are collapsed, then start the grid node in
@@ -524,14 +523,14 @@ var getTreeGridFromData = function (
             }
 
             // Assign pos to data node
-            node.pos = pos;
+            (node as Highcharts.TreeGridNode).pos = pos;
         }
     };
 
-    updateYValuesAndTickPos = function (
-        map: any,
+    const updateYValuesAndTickPos = function (
+        map: Highcharts.Dictionary<Highcharts.GridNode>,
         numberOfSeries: number
-    ): Highcharts.Dictionary<any> {
+    ): Highcharts.Dictionary<Highcharts.GridNode> {
         const setValues = function (
             gridNode: Highcharts.GridNode,
             start: number,
@@ -601,8 +600,13 @@ var getTreeGridFromData = function (
  * @param {object} e.target The chart instance which the event was fired on.
  * @param {object[]} e.target.axes The axes of the chart.
  */
-var onBeforeRender = function (e: Event): void {
-    var chart: Highcharts.Chart = e.target as any,
+var onBeforeRender = function (
+    e: {
+        target: Highcharts.Chart;
+        type: string;
+    }
+): void {
+    var chart = e.target,
         axes = chart.axes;
 
     (axes.filter(function (axis: Highcharts.Axis): boolean {
@@ -611,11 +615,11 @@ var onBeforeRender = function (e: Event): void {
         function (axis: Highcharts.TreeGridAxis): void {
             var options = axis.options || {},
                 labelOptions = options.labels,
-                removeFoundExtremesEvent: (Function|undefined),
+                removeFoundExtremesEvent: Function,
                 uniqueNames = options.uniqueNames,
                 numberOfSeries = 0,
                 isDirty: (boolean|undefined),
-                data: any,
+                data: Array<Highcharts.TreeGridPointOptionsObject>,
                 treeGrid: Highcharts.TreeGridObject;
             // Check whether any of series is rendering for the first time,
             // visibility has changed, or its data is dirty,
@@ -633,19 +637,17 @@ var onBeforeRender = function (e: Event): void {
             if (isDirty) {
                 // Concatenate data from all series assigned to this axis.
                 data = axis.series.reduce(function (
-                    arr: Array<Highcharts.PointOptionsType>,
+                    arr: Array<Highcharts.TreeGridPointOptionsObject>,
                     s: Highcharts.GanttSeries
-                ): Array<Highcharts.PointOptionsType> {
+                ): Array<Highcharts.TreeGridPointOptionsObject> {
                     if (s.visible) {
                         // Push all data to array
-                        (s.options.data as any).forEach(function (
-                            data: Highcharts.PointOptionsType
-                        ): void {
+                        (s.options.data || []).forEach(function (data): void {
                             if (isObject(data)) {
                                 // Set series index on data. Removed again after
                                 // use.
-                                (data as any).seriesIndex = numberOfSeries;
-                                arr.push(data);
+                                (data as Highcharts.TreeGridPointOptionsObject).seriesIndex = numberOfSeries;
+                                arr.push(data as Highcharts.TreeGridPointOptionsObject);
                             }
                         });
 
@@ -660,7 +662,7 @@ var onBeforeRender = function (e: Event): void {
                 // which is an ideal time to update the axis.categories.
                 treeGrid = getTreeGridFromData(
                     data,
-                    uniqueNames as any,
+                    uniqueNames || false,
                     (uniqueNames === true) ? numberOfSeries : 1
                 );
 
@@ -672,7 +674,7 @@ var onBeforeRender = function (e: Event): void {
 
                 // Update yData now that we have calculated the y values
                 axis.series.forEach(function (series: Highcharts.Series): void {
-                    var data = (series.options.data as any).map(function (
+                    var data = (series.options.data || []).map(function (
                         d: Highcharts.PointOptionsType
                     ): Highcharts.PointOptionsType {
                         return isObject(d) ? merge(d) : d;
@@ -689,7 +691,7 @@ var onBeforeRender = function (e: Event): void {
                     getLevelOptions({
                         defaults: labelOptions,
                         from: 1,
-                        levels: (labelOptions as any).levels,
+                        levels: labelOptions && labelOptions.levels,
                         to: (axis as Highcharts.TreeGridAxis).tree.height
                     });
 
@@ -701,7 +703,7 @@ var onBeforeRender = function (e: Event): void {
                     removeFoundExtremesEvent =
                         addEvent(axis, 'foundExtremes', function (): void {
                             treeGrid.collapsedNodes.forEach(function (
-                                node: any
+                                node: Highcharts.GridNode
                             ): void {
                                 var breaks = collapse(axis, node);
 
@@ -709,7 +711,7 @@ var onBeforeRender = function (e: Event): void {
                                     axis.brokenAxis.setBreaks(breaks, false);
                                 }
                             });
-                            (removeFoundExtremesEvent as any)();
+                            removeFoundExtremesEvent();
                         });
                 }
             }
@@ -850,7 +852,7 @@ override(Axis.prototype, {
             labelOptions = options && options.labels,
             indentation = (
                 labelOptions && isNumber(labelOptions.indentation) ?
-                    (options.labels as any).indentation :
+                    labelOptions.indentation :
                     0
             ),
             retVal = proceed.apply(axis, argsToArray(arguments)),
@@ -938,8 +940,8 @@ override(Axis.prototype, {
             isTreeGrid = options.type === 'treegrid';
 
         if (isTreeGrid) {
-            axis.min = pick(axis.userMin, options.min, axis.dataMin as any);
-            axis.max = pick(axis.userMax, options.max, axis.dataMax as any);
+            axis.min = pick(axis.userMin, options.min, axis.dataMin);
+            axis.max = pick(axis.userMax, options.max, axis.dataMax);
 
             fireEvent(axis, 'foundExtremes');
 
@@ -1064,7 +1066,7 @@ override(Tick.prototype, {
             renderLabelIcon(
                 tick,
                 {
-                    color: !styledMode && (label.styles as any).color,
+                    color: !styledMode && label.styles && label.styles.color || '',
                     collapsed: collapsed,
                     group: label.parentGroup,
                     options: symbolOptions,

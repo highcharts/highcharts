@@ -105,16 +105,16 @@ var isCollapsed = function (axis, node) {
  * @function collapse
  *
  * @param {Highcharts.Axis} axis
- *        The axis to check against.
+ * The axis to check against.
  *
- * @param {object} node
- *        The node to collapse.
+ * @param {Highcharts.GridNode} node
+ * The node to collapse.
  *
  * @param {number} pos
- *        The tick position to collapse.
+ * The tick position to collapse.
  *
  * @return {Array<object>}
- *         Returns an array of the new breaks for the axis.
+ * Returns an array of the new breaks for the axis.
  */
 var collapse = function (axis, node) {
     var breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
@@ -128,16 +128,16 @@ var collapse = function (axis, node) {
  * @function expand
  *
  * @param {Highcharts.Axis} axis
- *        The axis to check against.
+ * The axis to check against.
  *
- * @param {object} node
- *        The node to expand.
+ * @param {Highcharts.GridNode} node
+ * The node to expand.
  *
  * @param {number} pos
- *        The tick position to expand.
+ * The tick position to expand.
  *
  * @return {Array<object>}
- *         Returns an array of the new breaks for the axis.
+ * Returns an array of the new breaks for the axis.
  */
 var expand = function (axis, node) {
     var breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
@@ -159,13 +159,13 @@ var expand = function (axis, node) {
  * @function toggleCollapse
  *
  * @param {Highcharts.Axis} axis
- *        The axis to check against.
+ * The axis to check against.
  *
- * @param {object} node
- *        The node to toggle.
+ * @param {Highcharts.GridNode} node
+ * The node to toggle.
  *
  * @return {Array<object>}
- *         Returns an array of the new breaks for the axis.
+ * Returns an array of the new breaks for the axis.
  */
 var toggleCollapse = function (axis, node) {
     return (isCollapsed(axis, node) ?
@@ -247,15 +247,15 @@ var onTickHoverExit = function (label, options) {
  * @todo Add unit-tests.
  */
 var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
-    var categories = [], collapsedNodes = [], mapOfIdToNode = {}, mapOfPosToGridNode = {}, posIterator = -1, uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : false, tree, treeParams, updateYValuesAndTickPos;
+    var categories = [], collapsedNodes = [], mapOfIdToNode = {}, mapOfPosToGridNode = {}, posIterator = -1, uniqueNamesEnabled = isBoolean(uniqueNames) ? uniqueNames : false, tree;
     // Build the tree from the series data.
-    treeParams = {
+    var treeParams = {
         // After the children has been created.
         after: function (node) {
             var gridNode = mapOfPosToGridNode[node.pos], height = 0, descendants = 0;
             gridNode.children.forEach(function (child) {
-                descendants += child.descendants + 1;
-                height = Math.max(child.height + 1, height);
+                descendants += (child.descendants || 0) + 1;
+                height = Math.max((child.height || 0) + 1, height);
             });
             gridNode.descendants = descendants;
             gridNode.height = height;
@@ -315,7 +315,7 @@ var getTreeGridFromData = function (data, uniqueNames, numberOfSeries) {
             node.pos = pos;
         }
     };
-    updateYValuesAndTickPos = function (map, numberOfSeries) {
+    var updateYValuesAndTickPos = function (map, numberOfSeries) {
         var setValues = function (gridNode, start, result) {
             var nodes = gridNode.nodes, end = start + (start === -1 ? 0 : numberOfSeries - 1), diff = (end - start) / 2, padding = 0.5, pos = start + diff;
             nodes.forEach(function (node) {
@@ -383,7 +383,7 @@ var onBeforeRender = function (e) {
             data = axis.series.reduce(function (arr, s) {
                 if (s.visible) {
                     // Push all data to array
-                    s.options.data.forEach(function (data) {
+                    (s.options.data || []).forEach(function (data) {
                         if (isObject(data)) {
                             // Set series index on data. Removed again after
                             // use.
@@ -400,7 +400,7 @@ var onBeforeRender = function (e) {
             }, []);
             // setScale is fired after all the series is initialized,
             // which is an ideal time to update the axis.categories.
-            treeGrid = getTreeGridFromData(data, uniqueNames, (uniqueNames === true) ? numberOfSeries : 1);
+            treeGrid = getTreeGridFromData(data, uniqueNames || false, (uniqueNames === true) ? numberOfSeries : 1);
             // Assign values to the axis.
             axis.categories = treeGrid.categories;
             axis.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
@@ -408,7 +408,7 @@ var onBeforeRender = function (e) {
             axis.tree = treeGrid.tree;
             // Update yData now that we have calculated the y values
             axis.series.forEach(function (series) {
-                var data = series.options.data.map(function (d) {
+                var data = (series.options.data || []).map(function (d) {
                     return isObject(d) ? merge(d) : d;
                 });
                 // Avoid destroying points when series is not visible
@@ -421,7 +421,7 @@ var onBeforeRender = function (e) {
                 getLevelOptions({
                     defaults: labelOptions,
                     from: 1,
-                    levels: labelOptions.levels,
+                    levels: labelOptions && labelOptions.levels,
                     to: axis.tree.height
                 });
             // Collapse all the nodes belonging to a point where collapsed
@@ -554,7 +554,7 @@ override(Axis.prototype, {
      */
     getMaxLabelDimensions: function (proceed) {
         var axis = this, options = axis.options, labelOptions = options && options.labels, indentation = (labelOptions && isNumber(labelOptions.indentation) ?
-            options.labels.indentation :
+            labelOptions.indentation :
             0), retVal = proceed.apply(axis, argsToArray(arguments)), isTreeGrid = axis.options.type === 'treegrid', treeDepth;
         if (isTreeGrid && this.mapOfPosToGridNode) {
             treeDepth = axis.mapOfPosToGridNode[-1].height || 0;
@@ -671,7 +671,7 @@ override(Tick.prototype, {
             node.descendants > 0) {
             collapsed = isCollapsed(axis, node);
             renderLabelIcon(tick, {
-                color: !styledMode && label.styles.color,
+                color: !styledMode && label.styles && label.styles.color || '',
                 collapsed: collapsed,
                 group: label.parentGroup,
                 options: symbolOptions,
