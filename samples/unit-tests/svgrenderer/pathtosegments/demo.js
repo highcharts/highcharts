@@ -49,10 +49,20 @@ QUnit.test('SVGRenderer.pathToSegments', assert => {
         'Sequence'
     );
 
-    assert.deepEqual(
-        pathToSegments(['M', 0, 0, 1, 1, 2, 2]),
+    testUpperAndLower(
+        ['M', 0, 0, 1, 1, 2, 2],
         [['M', 0, 0], ['L', 1, 1], ['L', 2, 2]],
         'Anonymous sequence'
+    );
+
+    testUpperAndLower(
+        ['M', 10, 90, 'C', 30, 90, 25, 10, 50, 10, 40, 90, 60, 90, 50, 90],
+        [
+            ['M', 10, 90],
+            ['C', 30, 90, 25, 10, 50, 10],
+            ['C', 40, 90, 60, 90, 50, 90]
+        ],
+        'Anonymous sequence, higher order'
     );
 
     testUpperAndLower(

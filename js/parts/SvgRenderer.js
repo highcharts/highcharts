@@ -4218,18 +4218,27 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     pathToSegments: function (path) {
         var ret = [];
         var segment = [];
+        var commandLength = {
+            A: 8,
+            C: 7,
+            H: 2,
+            L: 3,
+            M: 3,
+            Q: 5,
+            S: 5,
+            T: 3,
+            V: 2
+        };
         // Short, non-typesafe parsing of the one-dimensional array. It splits
         // the path on any string. This is not type checked against the tuple
         // types, but is shorter, and doesn't require specific checks for any
         // command type in SVG.
         for (var i = 0; i < path.length; i++) {
-            // Command skipped after M or L, insert L
+            // Command skipped, repeat previous or insert L/l for M/m
             if (isString(segment[0]) &&
-                (segment[0].toUpperCase() === 'M' ||
-                    segment[0].toUpperCase() === 'L') &&
-                segment.length === 3 &&
-                isNumber(path[i])) {
-                path.splice(i, 0, 'L');
+                isNumber(path[i]) &&
+                segment.length === commandLength[(segment[0].toUpperCase())]) {
+                path.splice(i, 0, segment[0].replace('M', 'L').replace('m', 'l'));
             }
             // Split on string
             if (typeof path[i] === 'string') {
