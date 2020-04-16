@@ -4205,6 +4205,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * Compatibility function to convert the legacy one-dimensional path array
      * into an array of segments.
      *
+     * It is used in maps to parse the `path` option, and in SVGRenderer.dSetter
+     * to support legacy paths from demos.
+     *
      * @param path @private
      * @function Highcharts.SVGRenderer#pathToSegments
      *
@@ -4213,121 +4216,219 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @return {Highcharts.SVGPathArray}
      */
     pathToSegments: function (path) {
-        var ret = [], commands = {
-            A: 7,
-            C: 6,
-            H: 1,
-            L: 2,
-            M: 2,
-            Q: 4,
-            S: 4,
-            T: 2,
-            V: 1,
-            Z: 0
-        };
-        var i = 0, lastI = 0, lastCommand;
+        var ret = [];
+        var segment = [];
+        // Short, non-typesafe parsing of the one-dimensional array. It splits
+        // the path on any string. This is not type checked against the tuple
+        // types, but is shorter, and doesn't require specific checks for any
+        // command type in SVG.
+        for (var i = 0; i < path.length; i++) {
+            // Command skipped after M or L, insert L
+            if (isString(segment[0]) &&
+                (segment[0].toUpperCase() === 'M' ||
+                    segment[0].toUpperCase() === 'L') &&
+                segment.length === 3 &&
+                isNumber(path[i])) {
+                path.splice(i, 0, 'L');
+            }
+            // Split on string
+            if (typeof path[i] === 'string') {
+                if (segment.length) {
+                    ret.push(segment.slice(0));
+                }
+                segment.length = 0;
+            }
+            segment.push(path[i]);
+        }
+        ret.push(segment.slice(0));
+        return ret;
+        /*
+        // Fully type-safe version where each tuple type is checked. The
+        // downside is filesize and a lack of flexibility for unsupported
+        // commands
+        const ret: Highcharts.SVGPathArray = [],
+            commands = {
+                A: 7,
+                C: 6,
+                H: 1,
+                L: 2,
+                M: 2,
+                Q: 4,
+                S: 4,
+                T: 2,
+                V: 1,
+                Z: 0
+            };
+
+        let i = 0,
+            lastI = 0,
+            lastCommand;
+
         while (i < path.length) {
-            var item = path[i];
-            var command = void 0;
+            const item = path[i];
+
+            let command;
+
             if (typeof item === 'string') {
                 command = item;
                 i += 1;
-            }
-            else {
+            } else {
                 command = lastCommand || 'M';
             }
+
             // Upper case
-            var commandUC = command.toUpperCase();
+            const commandUC = command.toUpperCase();
+
             if (commandUC in commands) {
+
                 // No numeric parameters
                 if (command === 'Z' || command === 'z') {
                     ret.push([command]);
-                    // One numeric parameter
-                }
-                else {
-                    var val0 = path[i];
+
+                // One numeric parameter
+                } else {
+                    const val0 = path[i];
                     if (typeof val0 === 'number') {
+
                         // Horizontal line to
                         if (command === 'H' || command === 'h') {
                             ret.push([command, val0]);
                             i += 1;
-                            // Vertical line to
-                        }
-                        else if (command === 'V' || command === 'v') {
+
+                        // Vertical line to
+                        } else if (command === 'V' || command === 'v') {
                             ret.push([command, val0]);
                             i += 1;
-                            // Two numeric parameters
-                        }
-                        else {
-                            var val1 = path[i + 1];
+
+                        // Two numeric parameters
+                        } else {
+                            const val1 = path[i + 1];
                             if (typeof val1 === 'number') {
                                 // lineTo
                                 if (command === 'L' || command === 'l') {
                                     ret.push([command, val0, val1]);
                                     i += 2;
-                                    // moveTo
-                                }
-                                else if (command === 'M' || command === 'm') {
+
+                                // moveTo
+                                } else if (command === 'M' || command === 'm') {
                                     ret.push([command, val0, val1]);
                                     i += 2;
-                                    // Smooth quadratic bezier
-                                }
-                                else if (command === 'T' || command === 't') {
+
+                                // Smooth quadratic bezier
+                                } else if (command === 'T' || command === 't') {
                                     ret.push([command, val0, val1]);
                                     i += 2;
-                                    // Four numeric parameters
-                                }
-                                else {
-                                    var val2 = path[i + 2], val3 = path[i + 3];
-                                    if (typeof val2 === 'number' &&
-                                        typeof val3 === 'number') {
+
+                                // Four numeric parameters
+                                } else {
+                                    const val2 = path[i + 2],
+                                        val3 = path[i + 3];
+                                    if (
+                                        typeof val2 === 'number' &&
+                                        typeof val3 === 'number'
+                                    ) {
                                         // Quadratic bezier to
-                                        if (command === 'Q' || command === 'q') {
-                                            ret.push([command, val0, val1, val2, val3]);
+                                        if (
+                                            command === 'Q' ||
+                                            command === 'q'
+                                        ) {
+                                            ret.push([
+                                                command,
+                                                val0,
+                                                val1,
+                                                val2,
+                                                val3
+                                            ]);
                                             i += 4;
-                                            // Smooth cubic bezier to
-                                        }
-                                        else if (command === 'S' || command === 's') {
-                                            ret.push([command, val0, val1, val2, val3]);
+
+                                        // Smooth cubic bezier to
+                                        } else if (
+                                            command === 'S' ||
+                                            command === 's'
+                                        ) {
+                                            ret.push([
+                                                command,
+                                                val0,
+                                                val1,
+                                                val2,
+                                                val3
+                                            ]);
                                             i += 4;
-                                            // Six numeric parameters
-                                        }
-                                        else {
-                                            var val4 = path[i + 4], val5 = path[i + 5];
-                                            if (typeof val4 === 'number' &&
-                                                typeof val5 === 'number') {
+
+                                        // Six numeric parameters
+                                        } else {
+                                            const val4 = path[i + 4],
+                                                val5 = path[i + 5];
+
+                                            if (
+                                                typeof val4 === 'number' &&
+                                                typeof val5 === 'number'
+                                            ) {
                                                 // Curve to
-                                                if (command === 'C' || command === 'c') {
-                                                    ret.push([command, val0, val1, val2, val3, val4, val5]);
+                                                if (
+                                                    command === 'C' ||
+                                                    command === 'c'
+                                                ) {
+                                                    ret.push([
+                                                        command,
+                                                        val0,
+                                                        val1,
+                                                        val2,
+                                                        val3,
+                                                        val4,
+                                                        val5
+                                                    ]);
                                                     i += 6;
-                                                    // Seven numeric parameters
-                                                }
-                                                else {
-                                                    var val6 = path[i + 6];
+
+                                                // Seven numeric parameters
+                                                } else {
+                                                    const val6 = path[i + 6];
+
                                                     // Arc to
-                                                    if (typeof val6 === 'number' &&
-                                                        (command === 'A' || command === 'a')) {
-                                                        ret.push([command, val0, val1, val2, val3, val4, val5, val6]);
+                                                    if (
+                                                        typeof val6 ===
+                                                        'number' &&
+                                                        (
+                                                            command === 'A' ||
+                                                            command === 'a'
+                                                        )
+                                                    ) {
+                                                        ret.push([
+                                                            command,
+                                                            val0,
+                                                            val1,
+                                                            val2,
+                                                            val3,
+                                                            val4,
+                                                            val5,
+                                                            val6
+                                                        ]);
                                                         i += 7;
+
                                                     }
+
                                                 }
                                             }
                                         }
                                     }
                                 }
                             }
+
                         }
                     }
                 }
             }
+
             // An unmarked command following a moveTo is a lineTo
             lastCommand = command === 'M' ? 'L' : command;
+
             if (i === lastI) {
                 break;
             }
             lastI = i;
         }
         return ret;
+        */
     },
     /**
      * Draw a label, which is an extended text element with support for border

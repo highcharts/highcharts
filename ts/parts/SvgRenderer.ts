@@ -6063,6 +6063,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * Compatibility function to convert the legacy one-dimensional path array
      * into an array of segments.
      *
+     * It is used in maps to parse the `path` option, and in SVGRenderer.dSetter
+     * to support legacy paths from demos.
+     *
      * @param path @private
      * @function Highcharts.SVGRenderer#pathToSegments
      *
@@ -6073,6 +6076,45 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     pathToSegments: function (
         path: Array<string|number>
     ): Highcharts.SVGPathArray {
+
+        const ret: Highcharts.SVGPathArray = [];
+        const segment = [];
+
+        // Short, non-typesafe parsing of the one-dimensional array. It splits
+        // the path on any string. This is not type checked against the tuple
+        // types, but is shorter, and doesn't require specific checks for any
+        // command type in SVG.
+        for (let i = 0; i < path.length; i++) {
+            // Command skipped after M or L, insert L
+            if (
+                isString(segment[0]) &&
+                (
+                    segment[0].toUpperCase() === 'M' ||
+                    segment[0].toUpperCase() === 'L'
+                ) &&
+                segment.length === 3 &&
+                isNumber(path[i])
+            ) {
+                path.splice(i, 0, 'L');
+            }
+
+            // Split on string
+            if (typeof path[i] === 'string') {
+                if (segment.length) {
+                    ret.push(segment.slice(0) as any);
+                }
+                segment.length = 0;
+            }
+            segment.push(path[i]);
+        }
+        ret.push(segment.slice(0) as any);
+
+        return ret;
+
+        /*
+        // Fully type-safe version where each tuple type is checked. The
+        // downside is filesize and a lack of flexibility for unsupported
+        // commands
         const ret: Highcharts.SVGPathArray = [],
             commands = {
                 A: 7,
@@ -6155,13 +6197,31 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                         typeof val3 === 'number'
                                     ) {
                                         // Quadratic bezier to
-                                        if (command === 'Q' || command === 'q') {
-                                            ret.push([command, val0, val1, val2, val3]);
+                                        if (
+                                            command === 'Q' ||
+                                            command === 'q'
+                                        ) {
+                                            ret.push([
+                                                command,
+                                                val0,
+                                                val1,
+                                                val2,
+                                                val3
+                                            ]);
                                             i += 4;
 
                                         // Smooth cubic bezier to
-                                        } else if (command === 'S' || command === 's') {
-                                            ret.push([command, val0, val1, val2, val3]);
+                                        } else if (
+                                            command === 'S' ||
+                                            command === 's'
+                                        ) {
+                                            ret.push([
+                                                command,
+                                                val0,
+                                                val1,
+                                                val2,
+                                                val3
+                                            ]);
                                             i += 4;
 
                                         // Six numeric parameters
@@ -6174,8 +6234,19 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                                                 typeof val5 === 'number'
                                             ) {
                                                 // Curve to
-                                                if (command === 'C' || command === 'c') {
-                                                    ret.push([command, val0, val1, val2, val3, val4, val5]);
+                                                if (
+                                                    command === 'C' ||
+                                                    command === 'c'
+                                                ) {
+                                                    ret.push([
+                                                        command,
+                                                        val0,
+                                                        val1,
+                                                        val2,
+                                                        val3,
+                                                        val4,
+                                                        val5
+                                                    ]);
                                                     i += 6;
 
                                                 // Seven numeric parameters
@@ -6184,10 +6255,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
 
                                                     // Arc to
                                                     if (
-                                                        typeof val6 === 'number' &&
-                                                        (command === 'A' || command === 'a')
+                                                        typeof val6 ===
+                                                        'number' &&
+                                                        (
+                                                            command === 'A' ||
+                                                            command === 'a'
+                                                        )
                                                     ) {
-                                                        ret.push([command, val0, val1, val2, val3, val4, val5, val6]);
+                                                        ret.push([
+                                                            command,
+                                                            val0,
+                                                            val1,
+                                                            val2,
+                                                            val3,
+                                                            val4,
+                                                            val5,
+                                                            val6
+                                                        ]);
                                                         i += 7;
 
                                                     }
@@ -6213,6 +6297,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             lastI = i;
         }
         return ret;
+        */
     },
 
     /**
