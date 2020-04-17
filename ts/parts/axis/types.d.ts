@@ -9,6 +9,7 @@
  * */
 
 import type Axis from '../Axis';
+import type Axis3D from '../../parts-3d/Axis3D';
 import type BrokenAxis from '../../modules/broken-axis.src';
 import type DateTimeAxis from '../DateTimeAxis';
 import type GridAxis from '../../parts-gantt/GridAxis';
@@ -23,6 +24,7 @@ import type ScrollbarAxis from '../ScrollbarAxis';
 import type StackingAxis from '../StackingAxis';
 import type Tick from '../Tick';
 import type VMLAxis3D from '../../parts-3d/VMLAxis3D';
+import type ZAxis from '../../parts-3d/ZAxis';
 
 export interface AxisBreakBorderObject {
     move: string;
@@ -37,6 +39,7 @@ export interface AxisBreakObject {
 }
 
 export interface AxisComposition {
+    axis3D?: Axis3D['axis3D'];
     brokenAxis?: BrokenAxis['brokenAxis'];
     dateTime?: DateTimeAxis['dateTime'];
     grid?: GridAxis['grid'];
@@ -71,6 +74,7 @@ export interface AxisLike {
  */
 export type AxisType = (
     Axis|
+    Axis3D|
     BrokenAxis|
     GridAxis|
     HiddenAxis|
@@ -82,5 +86,6 @@ export type AxisType = (
     RadialAxis|
     ScrollbarAxis|
     StackingAxis|
-    VMLAxis3D
+    VMLAxis3D|
+    ZAxis
 );

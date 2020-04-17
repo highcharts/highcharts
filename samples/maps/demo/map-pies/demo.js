@@ -11,10 +11,20 @@ Highcharts.seriesType('mappie', 'pie', {
             }
         }
     },
+    linkedMap: null, //id of linked map
     dataLabels: {
         enabled: false
     }
 }, {
+    render: function () {
+        var series = this,
+            chart = series.chart,
+            linkedSeries = chart.get(series.options.linkedMap);
+        Highcharts.seriesTypes.pie.prototype.render.apply(series, arguments);
+        if (series.group && linkedSeries.is('map')) {
+            series.group.add(linkedSeries.group);
+        }
+    },
     getCenter: function () {
         var options = this.options,
             chart = this.chart,
@@ -26,8 +36,8 @@ Highcharts.seriesType('mappie', 'pie', {
         if (options.center.lat !== undefined) {
             var point = chart.fromLatLonToPoint(options.center);
             options.center = [
-                chart.xAxis[0].toPixels(point.x, true),
-                chart.yAxis[0].toPixels(point.y, true)
+                chart.xAxis[0].toPixels(point.x, true) - chart.plotLeft,
+                chart.yAxis[0].toPixels(point.y, true) - chart.plotTop
             ];
         }
         // Handle dynamic size
@@ -209,6 +219,7 @@ var chart = Highcharts.mapChart('container', {
         }
     }, {
         name: 'Separators',
+        id: 'us-all',
         type: 'mapline',
         data: Highcharts.geojson(Highcharts.maps['countries/us/us-all'], 'mapline'),
         color: '#707070',
@@ -263,6 +274,7 @@ Highcharts.each(chart.series[0].points, function (state) {
     chart.addSeries({
         type: 'mappie',
         name: state.id,
+        linkedMap: 'us-all',
         zIndex: 6, // Keep pies above connector lines
         sizeFormatter: function () {
             var yAxis = this.chart.yAxis[0],
