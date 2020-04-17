@@ -415,30 +415,32 @@ var RadialAxis = /** @class */ (function () {
                     // Concentric polygons
                 }
                 else {
+                    path = [];
                     // Find the other axis (a circular one) in the same pane
                     chart[inverted ? 'yAxis' : 'xAxis'].forEach(function (a) {
                         if (a.pane === axis.pane) {
                             otherAxis = a;
                         }
                     });
-                    path = [];
-                    tickPositions = otherAxis.tickPositions;
-                    if (otherAxis.autoConnect) {
-                        tickPositions =
-                            tickPositions.concat([tickPositions[0]]);
+                    if (otherAxis) {
+                        tickPositions = otherAxis.tickPositions;
+                        if (otherAxis.autoConnect) {
+                            tickPositions =
+                                tickPositions.concat([tickPositions[0]]);
+                        }
+                        // Reverse the positions for concatenation of polygonal
+                        // plot bands
+                        if (reverse) {
+                            tickPositions = tickPositions.slice().reverse();
+                        }
+                        if (value) {
+                            value += paneInnerR;
+                        }
+                        for (var i = 0; i < tickPositions.length; i++) {
+                            xy = otherAxis.getPosition(tickPositions[i], value);
+                            path.push(i ? ['L', xy.x, xy.y] : ['M', xy.x, xy.y]);
+                        }
                     }
-                    // Reverse the positions for concatenation of polygonal
-                    // plot bands
-                    if (reverse) {
-                        tickPositions = [].concat(tickPositions).reverse();
-                    }
-                    if (value) {
-                        value += paneInnerR;
-                    }
-                    tickPositions.forEach(function (pos, i) {
-                        xy = otherAxis.getPosition(pos, value);
-                        path.push([i ? 'L' : 'M', xy.x, xy.y]);
-                    });
                 }
             }
             return path;

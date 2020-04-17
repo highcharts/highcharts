@@ -671,8 +671,8 @@ class RadialAxis {
                 a,
                 b,
                 otherAxis: (RadialAxis|undefined),
-                xy,
-                tickPositions,
+                xy: Highcharts.PositionObject,
+                tickPositions: number[],
                 crossPos,
                 path: Highcharts.SVGPathArray;
 
@@ -736,6 +736,8 @@ class RadialAxis {
                     path = axis.getLinePath(0, value, paneInnerR);
                     // Concentric polygons
                 } else {
+                    path = [];
+
                     // Find the other axis (a circular one) in the same pane
                     chart[inverted ? 'yAxis' : 'xAxis'].forEach(
                         function (a): void {
@@ -744,27 +746,31 @@ class RadialAxis {
                             }
                         });
 
-                    path = [];
-                    tickPositions = (otherAxis as any).tickPositions;
+                    if (otherAxis) {
+                        tickPositions = otherAxis.tickPositions;
 
-                    if ((otherAxis as any).autoConnect) {
-                        tickPositions =
-                            tickPositions.concat([tickPositions[0]]);
-                    }
+                        if (otherAxis.autoConnect) {
+                            tickPositions =
+                                tickPositions.concat([tickPositions[0]]);
+                        }
 
-                    // Reverse the positions for concatenation of polygonal
-                    // plot bands
-                    if (reverse) {
-                        tickPositions = [].concat(tickPositions).reverse();
-                    }
+                        // Reverse the positions for concatenation of polygonal
+                        // plot bands
+                        if (reverse) {
+                            tickPositions = tickPositions.slice().reverse();
+                        }
 
-                    if (value) {
-                        value += paneInnerR;
+                        if (value) {
+                            value += paneInnerR;
+                        }
+
+                        for (let i = 0; i < tickPositions.length; i++) {
+                            xy = otherAxis.getPosition(tickPositions[i], value);
+                            path.push(
+                                i ? ['L', xy.x, xy.y] : ['M', xy.x, xy.y]
+                            );
+                        }
                     }
-                    tickPositions.forEach(function (pos: number, i: number): void {
-                        xy = (otherAxis as any).getPosition(pos, value);
-                        path.push([i ? 'L' : 'M', xy.x, xy.y]);
-                    });
                 }
             }
 
