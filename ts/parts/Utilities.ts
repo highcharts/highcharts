@@ -830,7 +830,7 @@ class Fx {
             start = paths && paths[0],
             end = paths && paths[1],
             path: Highcharts.SVGPathArray = [],
-            now = this.now || 1;
+            now = this.now || 0;
 
         // Land on the final path without adjustment points appended in the ends
         if (now === 1 || !start || !end) {
@@ -1034,7 +1034,7 @@ class Fx {
      * @param {Highcharts.SVGElement} elem
      *        The SVGElement item.
      *
-     * @param {string} fromD
+     * @param {Highcharts.SVGPathArray|undefined} fromD
      *        Starting path definition.
      *
      * @param {Highcharts.SVGPathArray} toD
@@ -1192,7 +1192,6 @@ class Fx {
                 append(end, start);
             }
         }
-
         return [start, end];
     }
 

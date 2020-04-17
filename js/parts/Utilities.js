@@ -429,7 +429,7 @@ var Fx = /** @class */ (function () {
      * @return {void}
      */
     Fx.prototype.dSetter = function () {
-        var paths = this.paths, start = paths && paths[0], end = paths && paths[1], path = [], now = this.now || 1;
+        var paths = this.paths, start = paths && paths[0], end = paths && paths[1], path = [], now = this.now || 0;
         // Land on the final path without adjustment points appended in the ends
         if (now === 1 || !start || !end) {
             path = this.toD || [];
@@ -594,7 +594,7 @@ var Fx = /** @class */ (function () {
      * @param {Highcharts.SVGElement} elem
      *        The SVGElement item.
      *
-     * @param {string} fromD
+     * @param {Highcharts.SVGPathArray|undefined} fromD
      *        Starting path definition.
      *
      * @param {Highcharts.SVGPathArray} toD
