@@ -593,10 +593,10 @@ cuboidMethods = merge(element3dMethods, {
             front: fill,
             // Do not change color if side was forced to render.
             top: color(fill).brighten(
-                elem3d.forcedSides.includes('top') ? 0 : 0.1
+                elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1
             ).get(),
             side: color(fill).brighten(
-                elem3d.forcedSides.includes('side') ? 0 : -0.1
+                elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1
             ).get()
         });
 

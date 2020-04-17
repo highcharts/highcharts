@@ -298,8 +298,8 @@ cuboidMethods = merge(element3dMethods, {
         elem3d.singleSetterForParts('fill', null, {
             front: fill,
             // Do not change color if side was forced to render.
-            top: color(fill).brighten(elem3d.forcedSides.includes('top') ? 0 : 0.1).get(),
-            side: color(fill).brighten(elem3d.forcedSides.includes('side') ? 0 : -0.1).get()
+            top: color(fill).brighten(elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1).get(),
+            side: color(fill).brighten(elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1).get()
         });
         // fill for animation getter (#6776)
         elem3d.color = elem3d.fill = fill;
