@@ -37,6 +37,7 @@ declare global {
             public drawPoint: AreaSeries['drawPoints'];
             public drawDataLabels: ColumnSeries['drawDataLabels'];
             public setShapeArgs: ColumnSeries['translate'];
+            public toYData(point: Highcharts.LollipopPoint): any;
         }
     }
 }
@@ -93,6 +94,11 @@ seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
         pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
     }
 }, {
+    pointArrayMap: ['y'],
+    pointValKey: 'y',
+    toYData: function (point): any {
+        return point.y;
+    },
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
@@ -171,8 +177,16 @@ seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
  *
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.dumbbell.data
- * @excluding lowColor
+ * @excluding high, low, lowColor
  * @product   highcharts highstock
  * @apioption series.lollipop.data
  */
+
+/**
+* The y value of the point.
+*
+* @type      {number|null}
+* @product   highcharts highstock
+* @apioption series.line.data.y
+*/
 ''; // adds doclets above to transpiled file
