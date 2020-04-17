@@ -637,3 +637,26 @@ QUnit.test('No ticks on short axis (#3195)', function (assert) {
         "Grid lines is not visible"
     );
 });
+
+QUnit.test('The ticks should be visible when specified tick amount and chart height <200px', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 170
+        },
+        yAxis: {
+            tickAmount: 5
+        },
+        series: [{
+            data: [3, 5, 6, 7, 9, 5]
+        }]
+    });
+
+    var yAxis = chart.yAxis[0],
+        tickAmount = yAxis.tickPositions.length;
+
+    assert.strictEqual(
+        tickAmount,
+        5,
+        "The amount of tick should be 5."
+    );
+});

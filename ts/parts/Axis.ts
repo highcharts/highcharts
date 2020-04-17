@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisComposition, AxisLike } from './axis/types';
+import type ZAxis from '../parts-3d/ZAxis';
 import Color from './Color.js';
 import H from './Globals.js';
 import Tick from './Tick.js';
@@ -56,7 +57,7 @@ declare global {
             'scrollbar'|'traverseUpButton'|'zoom'
         );
         type AxisMinorTickPositionValue = ('inside'|'outside');
-        type AxisOptions = (XAxisOptions|YAxisOptions|ZAxisOptions);
+        type AxisOptions = (XAxisOptions|YAxisOptions|ZAxis.Options);
         type AxisTickmarkPlacementValue = ('between'|'on');
         type AxisTickPositionValue = ('inside'|'outside');
         type AxisTitleAlignValue = ('high'|'low'|'middle');
@@ -296,13 +297,6 @@ declare global {
             staticScale?: number;
             stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
-        }
-        interface ZAxisOptions extends XAxisOptions {
-            breaks?: undefined;
-            crosshair?: undefined;
-            lineColor?: undefined;
-            lineWidth?: undefined;
-            showEmpty?: undefined;
         }
         class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
@@ -5787,11 +5781,11 @@ class Axis implements AxisComposition, AxisLike {
         var axis: Highcharts.Axis = this as any,
             options = this.options,
             tickAmount = options.tickAmount,
-            tickPixelInterval = options.tickPixelInterval;
+            tickPixelInterval = options.tickPixelInterval as any;
 
         if (
             !defined(options.tickInterval) &&
-            this.len < (tickPixelInterval as any) &&
+            !tickAmount && this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
