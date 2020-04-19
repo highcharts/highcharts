@@ -155,7 +155,20 @@ seriesType('windbarb', 'column'
      *
      * @since 6.1.0
      */
-    xOffset: 0
+    xOffset: 0,
+    /**
+     * Include directional arrow head.
+     */
+    arrowHead: true,
+    /**
+     * Wind barbs in the northen hemisphere have barbs and pennants drawn on
+     * the right of the stem.  Southern on the left.
+     */
+    hemisphere: 'northern',
+    /**
+     * True if data needs to be converted to knots.
+     */
+    convertToKnots: true
 }, {
     pointArrayMap: ['value', 'direction'],
     parallelArrays: ['x', 'value', 'direction'],
@@ -191,27 +204,37 @@ seriesType('windbarb', 'column'
     // Create a single wind arrow. It is later rotated around the zero
     // centerpoint.
     windArrow: function (point) {
-        var knots = point.value * 1.943844, level = point.beaufortLevel, path, barbs, u = this.options.vectorLength / 20, pos = -10;
+        var knots = point.value * (this.options.convertToKnots ? 1.943844 : 1), level = point.beaufortLevel, path, barbs, u = this.options.vectorLength / 20, pos = -10, hemi = this.options.hemisphere == 'northern' ? 1 : -1;
         if (point.isNull) {
             return [];
         }
         if (level === 0) {
             return this.chart.renderer.symbols.circle(-10 * u, -10 * u, 20 * u, 20 * u);
         }
-        // The stem and the arrow head
+        // The stem and (optional) arrow head
         path = [
             'M', 0, 7 * u,
-            'L', -1.5 * u, 7 * u,
+            'L'
+        ];
+        // Arrow head
+        if (this.options.arrowHead) {
+          path.push(
+            -1.5 * u, 7 * u,
             0, 10 * u,
             1.5 * u, 7 * u,
+          );
+        }
+        // Top of the stem
+        path.push(
             0, 7 * u,
-            0, -10 * u // top
-        ];
+            0, -10 * u
+        );
+
         // For each full 50 knots, add a pennant
         barbs = (knots - knots % 50) / 50; // pennants
         if (barbs > 0) {
             while (barbs--) {
-                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', 5 * u, pos * u + 2, 'L', 0, pos * u + 4);
+                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', hemi * 5 * u, pos * u + 2, 'L', 0, pos * u + 4);
                 // Substract from the rest and move position for next
                 knots -= 50;
                 pos += 7;
@@ -221,7 +244,7 @@ seriesType('windbarb', 'column'
         barbs = (knots - knots % 10) / 10;
         if (barbs > 0) {
             while (barbs--) {
-                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', 7 * u, pos * u);
+                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', hemi * 7 * u, pos * u);
                 knots -= 10;
                 pos += 3;
             }
@@ -230,7 +253,7 @@ seriesType('windbarb', 'column'
         barbs = (knots - knots % 5) / 5; // half barbs
         if (barbs > 0) {
             while (barbs--) {
-                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', 4 * u, pos * u);
+                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', hemi * 4 * u, pos * u);
                 knots -= 5;
                 pos += 3;
             }
