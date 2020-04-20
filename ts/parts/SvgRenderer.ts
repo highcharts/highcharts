@@ -3896,6 +3896,48 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             }
         };
 
+        // Event handling. In case of useHTML, we need to make sure that events
+        // are captured on the span as well, and that mouseenter/mouseleave
+        // between the SVG group and the HTML span are not treated as real
+        // enter/leave events. #13310.
+        wrapper.on = function (
+            eventType: string,
+            handler: Function
+        ): Highcharts.SVGElement {
+            const span: Highcharts.SVGElement|undefined =
+                // @todo: text has the wrong type. Should be SVGElement.
+                text && text.element.tagName === 'SPAN' ? text as any : void 0;
+
+            let selectiveHandler: Function|undefined;
+
+            if (span) {
+                selectiveHandler = function (e: MouseEvent): void {
+                    if (
+                        (
+                            eventType === 'mouseenter' ||
+                            eventType === 'mouseleave'
+                        ) &&
+                        e.relatedTarget instanceof Element &&
+                        (
+                            wrapper.element.contains(e.relatedTarget) ||
+                            span.element.contains(e.relatedTarget)
+                        )
+                    ) {
+                        return;
+                    }
+                    handler.call(wrapper.element, e);
+                };
+                span.on(eventType, selectiveHandler);
+            }
+            SVGElement.prototype.on.call(
+                wrapper,
+                eventType,
+                selectiveHandler || handler
+            );
+
+            return wrapper;
+        };
+
         if (!styledMode) {
             /**
              * Apply the shadow to the box.
