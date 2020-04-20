@@ -13,7 +13,28 @@
 
 import type { AxisBreakObject } from '../parts/axis/types';
 import Axis from '../parts/Axis.js';
+import mixinTreeSeries from '../mixins/tree-series.js';
 import Tick from '../parts/Tick.js';
+import Tree from './Tree.js';
+import TreeGridUtils from './TreeGridUtils.js';
+const {
+    collapse,
+    expand,
+    getBreakFromNode,
+    isCollapsed
+} = TreeGridUtils;
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    fireEvent,
+    extend,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -98,21 +119,6 @@ declare global {
     }
 }
 
-import mixinTreeSeries from '../mixins/tree-series.js';
-import Tree from './Tree.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    fireEvent,
-    extend,
-    isNumber,
-    isString,
-    merge,
-    pick,
-    wrap
-} = U;
-
 import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 
@@ -144,29 +150,6 @@ var override = function<T> (
     }
 };
 
-var getBreakFromNode = function (
-    node: Highcharts.GridNode,
-    max: number
-): Partial<Highcharts.TreeGridAxisBreakObject> {
-    var from = node.collapseStart || 0,
-        to = node.collapseEnd || 0;
-
-    // In broken-axis, the axis.max is minimized until it is not within a break.
-    // Therefore, if break.to is larger than axis.max, the axis.to should not
-    // add the 0.5 axis.tickMarkOffset, to avoid adding a break larger than
-    // axis.max
-    // TODO consider simplifying broken-axis and this might solve itself
-    if (to >= max) {
-        from -= 0.5;
-    }
-
-    return {
-        from: from,
-        to: to,
-        showPoints: false
-    };
-};
-
 /**
  * Creates a list of positions for the ticks on the axis. Filters out positions
  * that are outside min and max, or is inside an axis break.
@@ -195,102 +178,6 @@ var getTickPositions = function (axis: Highcharts.TreeGridAxis): Array<number> {
         },
         [] as Array<number>
     );
-};
-
-/**
- * Check if a node is collapsed.
- *
- * @private
- * @function isCollapsed
- *
- * @param {Highcharts.Axis} axis
- *        The axis to check against.
- *
- * @param {object} node
- *        The node to check if is collapsed.
- *
- * @param {number} pos
- *        The tick position to collapse.
- *
- * @return {boolean}
- *         Returns true if collapsed, false if expanded.
- */
-var isCollapsed = function (
-    axis: Highcharts.TreeGridAxis,
-    node: Highcharts.GridNode
-): boolean {
-    var breaks = (axis.options.breaks || []),
-        obj = getBreakFromNode(node, axis.max);
-
-    return breaks.some(function (b: Highcharts.XAxisBreaksOptions): boolean {
-        return b.from === obj.from && b.to === obj.to;
-    });
-};
-
-/**
- * Calculates the new axis breaks to collapse a node.
- *
- * @private
- * @function collapse
- *
- * @param {Highcharts.Axis} axis
- * The axis to check against.
- *
- * @param {Highcharts.GridNode} node
- * The node to collapse.
- *
- * @param {number} pos
- * The tick position to collapse.
- *
- * @return {Array<object>}
- * Returns an array of the new breaks for the axis.
- */
-var collapse = function (
-    axis: Highcharts.TreeGridAxis,
-    node: Highcharts.GridNode
-): Array<Highcharts.XAxisBreaksOptions> {
-    var breaks = (axis.options.breaks || []),
-        obj = getBreakFromNode(node, axis.max);
-
-    breaks.push(obj);
-    return breaks;
-};
-
-/**
- * Calculates the new axis breaks to expand a node.
- *
- * @private
- * @function expand
- *
- * @param {Highcharts.Axis} axis
- * The axis to check against.
- *
- * @param {Highcharts.GridNode} node
- * The node to expand.
- *
- * @param {number} pos
- * The tick position to expand.
- *
- * @return {Array<object>}
- * Returns an array of the new breaks for the axis.
- */
-var expand = function (
-    axis: Highcharts.TreeGridAxis,
-    node: Highcharts.GridNode
-): Array<Highcharts.XAxisBreaksOptions> {
-    var breaks = (axis.options.breaks || []),
-        obj = getBreakFromNode(node, axis.max);
-
-    // Remove the break from the axis breaks array.
-    return breaks.reduce(function (
-        arr: Array<Highcharts.XAxisBreaksOptions>,
-        b: Highcharts.XAxisBreaksOptions
-    ): Array<Highcharts.XAxisBreaksOptions> {
-        if (b.to !== obj.to || b.from !== obj.from) {
-            arr.push(b);
-        }
-        return arr;
-    }, [] as Array<Highcharts.XAxisBreaksOptions>);
 };
 
 /* eslint-disable valid-jsdoc */

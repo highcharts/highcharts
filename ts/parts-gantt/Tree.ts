@@ -14,6 +14,13 @@
 
 'use strict';
 
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    isNumber,
+    pick
+} = U;
+
 /**
  * Internal types
  * @private
@@ -61,17 +68,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    isNumber,
-    pick
-} = U;
-
-var isFunction = function (x: unknown): x is Function {
-    return typeof x === 'function';
-};
 
 /**
  * Creates an object map from parent id to childrens index.
@@ -151,7 +147,7 @@ var getNode = function (
         children: Array<Highcharts.TreeNode>;
 
     // Allow custom logic before the children has been created.
-    if (isFunction(before)) {
+    if (typeof before === 'function') {
         before(node, options);
     }
 
@@ -208,7 +204,7 @@ var getNode = function (
     });
 
     // Allow custom logic after the children has been created.
-    if (isFunction(after)) {
+    if (typeof after === 'function') {
         after(node, options);
     }
 
