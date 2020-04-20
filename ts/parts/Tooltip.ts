@@ -671,13 +671,16 @@ class Tooltip {
                         ''
                 )
             ),
-            sticky = !this.followPointer && options.stickOnContact,
+            pointerEvents = (
+                options.style?.pointerEvents ||
+                (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
+            ),
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>,
-            onMouseEnter = function (): void {
+            onMouseEnter = function (e: any): void {
                 tooltip.inContact = true;
             },
-            onMouseLeave = function (): void {
+            onMouseLeave = function (e: any): void {
                 const series = tooltip.chart.hoverSeries;
 
                 tooltip.inContact = false;
@@ -707,7 +710,7 @@ class Tooltip {
                 css(container, {
                     position: 'absolute',
                     top: '1px',
-                    pointerEvents: 'auto',
+                    pointerEvents,
                     zIndex: 3
                 });
 
@@ -762,6 +765,7 @@ class Tooltip {
                         })
                         // #2301, #2657
                         .css(options.style as any)
+                        .css({ pointerEvents })
                         .shadow(options.shadow);
                 }
             }
@@ -800,16 +804,6 @@ class Tooltip {
                 .on('mouseleave', onMouseLeave)
                 .attr({ zIndex: 8 })
                 .add();
-
-            if (sticky) { // #13310
-                this.label.element.style.pointerEvents = (
-                    options.style?.pointerEvents ||
-                    (sticky ? 'auto' : 'none')
-                );
-                if (this.label.div) {
-                    this.label.div.style.pointerEvents = 'none';
-                }
-            }
         }
 
         return this.label;
