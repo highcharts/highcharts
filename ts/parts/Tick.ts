@@ -218,6 +218,8 @@ class Tick {
 
         this.options = this.parameters.options;
 
+        fireEvent(this, 'init');
+
         if (!type && !noLabel) {
             this.addLabel();
         }

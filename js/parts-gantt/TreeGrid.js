@@ -13,10 +13,11 @@ import Axis from '../parts/Axis.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
+import TreeGridTick from './TreeGridTick.js';
 import TreeGridUtils from './TreeGridUtils.js';
-var collapse = TreeGridUtils.collapse, expand = TreeGridUtils.expand, getBreakFromNode = TreeGridUtils.getBreakFromNode, isCollapsed = TreeGridUtils.isCollapsed;
+var collapse = TreeGridUtils.collapse, isCollapsed = TreeGridUtils.isCollapsed;
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, fireEvent = U.fireEvent, extend = U.extend, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 var argsToArray = function (args) {
@@ -61,28 +62,6 @@ var getTickPositions = function (axis) {
     }, []);
 };
 /* eslint-disable valid-jsdoc */
-/**
- * Calculates the new axis breaks after toggling the collapse/expand state of a
- * node. If it is collapsed it will be expanded, and if it is exapended it will
- * be collapsed.
- *
- * @private
- * @function toggleCollapse
- *
- * @param {Highcharts.Axis} axis
- * The axis to check against.
- *
- * @param {Highcharts.GridNode} node
- * The node to toggle.
- *
- * @return {Array<object>}
- * Returns an array of the new breaks for the axis.
- */
-var toggleCollapse = function (axis, node) {
-    return (isCollapsed(axis, node) ?
-        expand(axis, node) :
-        collapse(axis, node));
-};
 var renderLabelIcon = function (tick, params) {
     var icon = tick.labelIcon, isNew = !icon, renderer = params.renderer, labelBox = params.xy, options = params.options, width = options.width, height = options.height, iconCenter = {
         x: labelBox.x - (width / 2) - options.padding,
@@ -615,7 +594,7 @@ override(Tick.prototype, {
                         onTickHoverExit(label, labelOptions);
                     });
                     addEvent(object.element, 'click', function () {
-                        tick.toggleCollapse();
+                        tick.treeGrid.toggleCollapse();
                     });
                     object.attachedTreeGridEvents = true;
                 }
@@ -623,63 +602,7 @@ override(Tick.prototype, {
         }
     }
 });
-extend(Tick.prototype, /** @lends Highcharts.Tick.prototype */ {
-    /**
-     * Collapse the grid cell. Used when axis is of type treegrid.
-     *
-     * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
-     *
-     * @private
-     * @function Highcharts.Tick#collapse
-     *
-     * @param {boolean} [redraw=true]
-     *        Whether to redraw the chart or wait for an explicit call to
-     *        {@link Highcharts.Chart#redraw}
-     */
-    collapse: function (redraw) {
-        var tick = this, axis = tick.axis, brokenAxis = axis.brokenAxis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = collapse(axis, node);
-        if (brokenAxis) {
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
-        }
-    },
-    /**
-     * Expand the grid cell. Used when axis is of type treegrid.
-     *
-     * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
-     *
-     * @private
-     * @function Highcharts.Tick#expand
-     *
-     * @param {boolean} [redraw=true]
-     *        Whether to redraw the chart or wait for an explicit call to
-     *        {@link Highcharts.Chart#redraw}
-     */
-    expand: function (redraw) {
-        var tick = this, axis = tick.axis, brokenAxis = axis.brokenAxis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = expand(axis, node);
-        if (brokenAxis) {
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
-        }
-    },
-    /**
-     * Toggle the collapse/expand state of the grid cell. Used when axis is of
-     * type treegrid.
-     *
-     * @see gantt/treegrid-axis/collapsed-dynamically/demo.js
-     *
-     * @private
-     * @function Highcharts.Tick#toggleCollapse
-     *
-     * @param {boolean} [redraw=true]
-     *        Whether to redraw the chart or wait for an explicit call to
-     *        {@link Highcharts.Chart#redraw}
-     */
-    toggleCollapse: function (redraw) {
-        var tick = this, axis = tick.axis, brokenAxis = axis.brokenAxis, pos = tick.pos, node = axis.mapOfPosToGridNode[pos], breaks = toggleCollapse(axis, node);
-        if (brokenAxis) {
-            brokenAxis.setBreaks(breaks, pick(redraw, true));
-        }
-    }
-});
+TreeGridTick.compose(Tick);
 // Make utility functions available for testing.
 Axis.prototype.utils = {
     getNode: Tree.getNode
