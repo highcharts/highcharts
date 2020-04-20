@@ -11,7 +11,11 @@
 
 'use strict';
 
-var getBreakFromNode = function (
+// eslint-disable-next-line valid-jsdoc
+/**
+ * @private
+ */
+function getBreakFromNode(
     node: Highcharts.GridNode,
     max: number
 ): Partial<Highcharts.TreeGridAxisBreakObject> {
@@ -32,7 +36,7 @@ var getBreakFromNode = function (
         to: to,
         showPoints: false
     };
-};
+}
 
 /**
  * Check if a node is collapsed.
@@ -52,7 +56,7 @@ var getBreakFromNode = function (
  * @return {boolean}
  *         Returns true if collapsed, false if expanded.
  */
-var isCollapsed = function (
+function isCollapsed(
     axis: Highcharts.TreeGridAxis,
     node: Highcharts.GridNode
 ): boolean {
@@ -62,7 +66,7 @@ var isCollapsed = function (
     return breaks.some(function (b: Highcharts.XAxisBreaksOptions): boolean {
         return b.from === obj.from && b.to === obj.to;
     });
-};
+}
 
 /**
  * Calculates the new axis breaks to collapse a node.
@@ -82,7 +86,7 @@ var isCollapsed = function (
  * @return {Array<object>}
  * Returns an array of the new breaks for the axis.
  */
-var collapse = function (
+function collapse(
     axis: Highcharts.TreeGridAxis,
     node: Highcharts.GridNode
 ): Array<Highcharts.XAxisBreaksOptions> {
@@ -91,7 +95,7 @@ var collapse = function (
 
     breaks.push(obj);
     return breaks;
-};
+}
 
 /**
  * Calculates the new axis breaks to expand a node.
@@ -111,7 +115,7 @@ var collapse = function (
  * @return {Array<object>}
  * Returns an array of the new breaks for the axis.
  */
-var expand = function (
+function expand(
     axis: Highcharts.TreeGridAxis,
     node: Highcharts.GridNode
 ): Array<Highcharts.XAxisBreaksOptions> {
@@ -128,13 +132,43 @@ var expand = function (
         }
         return arr;
     }, [] as Array<Highcharts.XAxisBreaksOptions>);
-};
+}
+
+
+/**
+ * Calculates the new axis breaks after toggling the collapse/expand state of a
+ * node. If it is collapsed it will be expanded, and if it is exapended it will
+ * be collapsed.
+ *
+ * @private
+ * @function toggleCollapse
+ *
+ * @param {Highcharts.Axis} axis
+ * The axis to check against.
+ *
+ * @param {Highcharts.GridNode} node
+ * The node to toggle.
+ *
+ * @return {Array<object>}
+ * Returns an array of the new breaks for the axis.
+ */
+function toggleCollapse(
+    axis: Highcharts.TreeGridAxis,
+    node: Highcharts.GridNode
+): Array<Highcharts.XAxisBreaksOptions> {
+    return (
+        isCollapsed(axis, node) ?
+            expand(axis, node) :
+            collapse(axis, node)
+    );
+}
 
 const exports = {
     collapse,
     expand,
     getBreakFromNode,
-    isCollapsed
+    isCollapsed,
+    toggleCollapse
 };
 
 export default exports;

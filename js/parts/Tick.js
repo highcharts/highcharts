@@ -86,6 +86,7 @@ var Tick = /** @class */ (function () {
          */
         this.tickmarkOffset = this.parameters.tickmarkOffset;
         this.options = this.parameters.options;
+        fireEvent(this, 'init');
         if (!type && !noLabel) {
             this.addLabel();
         }

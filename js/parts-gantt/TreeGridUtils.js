@@ -9,7 +9,11 @@
  *
  * */
 'use strict';
-var getBreakFromNode = function (node, max) {
+// eslint-disable-next-line valid-jsdoc
+/**
+ * @private
+ */
+function getBreakFromNode(node, max) {
     var from = node.collapseStart || 0, to = node.collapseEnd || 0;
     // In broken-axis, the axis.max is minimized until it is not within a break.
     // Therefore, if break.to is larger than axis.max, the axis.to should not
@@ -24,7 +28,7 @@ var getBreakFromNode = function (node, max) {
         to: to,
         showPoints: false
     };
-};
+}
 /**
  * Check if a node is collapsed.
  *
@@ -43,12 +47,12 @@ var getBreakFromNode = function (node, max) {
  * @return {boolean}
  *         Returns true if collapsed, false if expanded.
  */
-var isCollapsed = function (axis, node) {
+function isCollapsed(axis, node) {
     var breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
     return breaks.some(function (b) {
         return b.from === obj.from && b.to === obj.to;
     });
-};
+}
 /**
  * Calculates the new axis breaks to collapse a node.
  *
@@ -67,11 +71,11 @@ var isCollapsed = function (axis, node) {
  * @return {Array<object>}
  * Returns an array of the new breaks for the axis.
  */
-var collapse = function (axis, node) {
+function collapse(axis, node) {
     var breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
     breaks.push(obj);
     return breaks;
-};
+}
 /**
  * Calculates the new axis breaks to expand a node.
  *
@@ -90,7 +94,7 @@ var collapse = function (axis, node) {
  * @return {Array<object>}
  * Returns an array of the new breaks for the axis.
  */
-var expand = function (axis, node) {
+function expand(axis, node) {
     var breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
     // Remove the break from the axis breaks array.
     return breaks.reduce(function (arr, b) {
@@ -99,11 +103,34 @@ var expand = function (axis, node) {
         }
         return arr;
     }, []);
-};
+}
+/**
+ * Calculates the new axis breaks after toggling the collapse/expand state of a
+ * node. If it is collapsed it will be expanded, and if it is exapended it will
+ * be collapsed.
+ *
+ * @private
+ * @function toggleCollapse
+ *
+ * @param {Highcharts.Axis} axis
+ * The axis to check against.
+ *
+ * @param {Highcharts.GridNode} node
+ * The node to toggle.
+ *
+ * @return {Array<object>}
+ * Returns an array of the new breaks for the axis.
+ */
+function toggleCollapse(axis, node) {
+    return (isCollapsed(axis, node) ?
+        expand(axis, node) :
+        collapse(axis, node));
+}
 var exports = {
     collapse: collapse,
     expand: expand,
     getBreakFromNode: getBreakFromNode,
-    isCollapsed: isCollapsed
+    isCollapsed: isCollapsed,
+    toggleCollapse: toggleCollapse
 };
 export default exports;
