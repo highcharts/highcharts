@@ -803,14 +803,15 @@ seriesType<Highcharts.VBPIndicator>(
 
             zonesValues.forEach(function (value: number): void {
                 verticalLinePos = yAxis.toPixels(value) - verticalOffset;
-                zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([
+                zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([[
                     'M',
                     leftLinePos,
-                    verticalLinePos,
+                    verticalLinePos
+                ], [
                     'L',
                     rightLinePos,
                     verticalLinePos
-                ], (zonesStyles.lineWidth as any)));
+                ]], (zonesStyles.lineWidth as any)));
             });
 
             // Create zone lines one path or update it while animating

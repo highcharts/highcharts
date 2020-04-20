@@ -26,7 +26,7 @@ import './Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
-var Chart = H.Chart, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
+var Chart = H.Chart, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * Compare the values of the series against the first non-null, non-
  * zero value in the visible range. The y axis will show percentage
@@ -347,7 +347,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1, y1, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             }
@@ -368,7 +368,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1, y1, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             }
@@ -389,26 +389,23 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
  * @return {Highcharts.SVGPathArray}
  */
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-    // points format: ['M', 0, 0, 'L', 100, 0]
+    // points format: [['M', 0, 0], ['L', 100, 0]]
     // normalize to a crisp line
-    var i;
-    for (i = 0; i < points.length; i = i + 6) {
-        if (points[i + 1] === points[i + 4]) {
+    for (var i = 0; i < points.length; i = i + 2) {
+        var start = points[i], end = points[i + 1];
+        if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[i + 1] = points[i + 4] =
-                Math.round(points[i + 1]) - (width % 2 / 2);
+            start[1] = end[1] =
+                Math.round(start[1]) - (width % 2 / 2);
         }
-        if (points[i + 2] === points[i + 5]) {
-            points[i + 2] = points[i + 5] =
-                Math.round(points[i + 2]) + (width % 2 / 2);
+        if (start[2] === end[2]) {
+            start[2] = end[2] =
+                Math.round(start[2]) + (width % 2 / 2);
         }
     }
     return points;
 };
-if (Renderer === VMLRenderer) {
-    VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
-}
 // Wrapper to hide the label
 addEvent(Axis, 'afterHideCrosshair', function () {
     if (this.crossLabel) {

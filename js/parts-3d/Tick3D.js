@@ -47,19 +47,21 @@ var Tick3D = /** @class */ (function () {
      * @private
      */
     Tick3D.wrapGetMarkPath = function (proceed) {
-        var tick = this;
-        var axis = tick.axis;
-        var axis3D = axis.axis3D;
-        var path = proceed.apply(tick, [].slice.call(arguments, 1));
-        var pArr = [
-            { x: path[1], y: path[2], z: 0 },
-            { x: path[4], y: path[5], z: 0 }
-        ];
+        var chart = this.axis.chart;
+        var axis3D = this.axis.axis3D;
+        var path = proceed.apply(this, [].slice.call(arguments, 1));
         if (axis3D) {
-            pArr[0] = axis3D.fix3dPosition(pArr[0]);
-            pArr[1] = axis3D.fix3dPosition(pArr[1]);
+            var start = path[0];
+            var end = path[1];
+            if (start[0] === 'M' && end[0] === 'L') {
+                var pArr = [
+                    axis3D.fix3dPosition({ x: start[1], y: start[2], z: 0 }),
+                    axis3D.fix3dPosition({ x: end[1], y: end[2], z: 0 })
+                ];
+                return this.axis.chart.renderer.toLineSegments(pArr);
+            }
         }
-        return axis.chart.renderer.toLineSegments(pArr);
+        return path;
     };
     return Tick3D;
 }());

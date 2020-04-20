@@ -338,8 +338,16 @@ var Axis3D = /** @class */ (function () {
         }
         var args = arguments, from = args[1], to = args[2], path = [], fromPath = this.getPlotLinePath({ value: from }), toPath = this.getPlotLinePath({ value: to });
         if (fromPath && toPath) {
-            for (var i = 0; i < fromPath.length; i += 6) {
-                path.push('M', fromPath[i + 1], fromPath[i + 2], 'L', fromPath[i + 4], fromPath[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2], 'Z');
+            for (var i = 0; i < fromPath.length; i += 2) {
+                var fromStartSeg = fromPath[i], fromEndSeg = fromPath[i + 1], toStartSeg = toPath[i], toEndSeg = toPath[i + 1];
+                if (fromStartSeg[0] === 'M' &&
+                    fromEndSeg[0] === 'L' &&
+                    toStartSeg[0] === 'M' &&
+                    toEndSeg[0] === 'L') {
+                    path.push(fromStartSeg, fromEndSeg, toEndSeg, 
+                    // lineTo instead of moveTo
+                    ['L', toStartSeg[1], toStartSeg[2]], ['Z']);
+                }
             }
         }
         return path;
@@ -359,57 +367,58 @@ var Axis3D = /** @class */ (function () {
         if (path === null) {
             return path;
         }
-        var options3d = chart.options.chart.options3d, d = axis.isZAxis ? chart.plotWidth : options3d.depth, frame = chart.frame3d;
-        var pArr = [
-            axis3D.swapZ({ x: path[1], y: path[2], z: 0 }),
-            axis3D.swapZ({ x: path[1], y: path[2], z: d }),
-            axis3D.swapZ({ x: path[4], y: path[5], z: 0 }),
-            axis3D.swapZ({ x: path[4], y: path[5], z: d })
-        ];
-        var pathSegments = [];
-        if (!axis.horiz) { // Y-Axis
-            if (frame.front.visible) {
-                pathSegments.push(pArr[0], pArr[2]);
+        var options3d = chart.options.chart.options3d, d = axis.isZAxis ? chart.plotWidth : options3d.depth, frame = chart.frame3d, startSegment = path[0], endSegment = path[1], pArr, pathSegments = [];
+        if (startSegment[0] === 'M' && endSegment[0] === 'L') {
+            pArr = [
+                axis3D.swapZ({ x: startSegment[1], y: startSegment[2], z: 0 }),
+                axis3D.swapZ({ x: startSegment[1], y: startSegment[2], z: d }),
+                axis3D.swapZ({ x: endSegment[1], y: endSegment[2], z: 0 }),
+                axis3D.swapZ({ x: endSegment[1], y: endSegment[2], z: d })
+            ];
+            if (!this.horiz) { // Y-Axis
+                if (frame.front.visible) {
+                    pathSegments.push(pArr[0], pArr[2]);
+                }
+                if (frame.back.visible) {
+                    pathSegments.push(pArr[1], pArr[3]);
+                }
+                if (frame.left.visible) {
+                    pathSegments.push(pArr[0], pArr[1]);
+                }
+                if (frame.right.visible) {
+                    pathSegments.push(pArr[2], pArr[3]);
+                }
             }
-            if (frame.back.visible) {
-                pathSegments.push(pArr[1], pArr[3]);
+            else if (this.isZAxis) { // Z-Axis
+                if (frame.left.visible) {
+                    pathSegments.push(pArr[0], pArr[2]);
+                }
+                if (frame.right.visible) {
+                    pathSegments.push(pArr[1], pArr[3]);
+                }
+                if (frame.top.visible) {
+                    pathSegments.push(pArr[0], pArr[1]);
+                }
+                if (frame.bottom.visible) {
+                    pathSegments.push(pArr[2], pArr[3]);
+                }
             }
-            if (frame.left.visible) {
-                pathSegments.push(pArr[0], pArr[1]);
+            else { // X-Axis
+                if (frame.front.visible) {
+                    pathSegments.push(pArr[0], pArr[2]);
+                }
+                if (frame.back.visible) {
+                    pathSegments.push(pArr[1], pArr[3]);
+                }
+                if (frame.top.visible) {
+                    pathSegments.push(pArr[0], pArr[1]);
+                }
+                if (frame.bottom.visible) {
+                    pathSegments.push(pArr[2], pArr[3]);
+                }
             }
-            if (frame.right.visible) {
-                pathSegments.push(pArr[2], pArr[3]);
-            }
+            pathSegments = perspective(pathSegments, this.chart, false);
         }
-        else if (axis.isZAxis) { // Z-Axis
-            if (frame.left.visible) {
-                pathSegments.push(pArr[0], pArr[2]);
-            }
-            if (frame.right.visible) {
-                pathSegments.push(pArr[1], pArr[3]);
-            }
-            if (frame.top.visible) {
-                pathSegments.push(pArr[0], pArr[1]);
-            }
-            if (frame.bottom.visible) {
-                pathSegments.push(pArr[2], pArr[3]);
-            }
-        }
-        else { // X-Axis
-            if (frame.front.visible) {
-                pathSegments.push(pArr[0], pArr[2]);
-            }
-            if (frame.back.visible) {
-                pathSegments.push(pArr[1], pArr[3]);
-            }
-            if (frame.top.visible) {
-                pathSegments.push(pArr[0], pArr[1]);
-            }
-            if (frame.bottom.visible) {
-                pathSegments.push(pArr[2], pArr[3]);
-            }
-        }
-        pathSegments = perspective(pathSegments, chart, false);
         return chart.renderer.toLineSegments(pathSegments);
     };
     /**

@@ -463,29 +463,24 @@ var GridAxis = /** @class */ (function () {
                 var lineWidth = options.lineWidth;
                 if (lineWidth) {
                     var linePath = axis.getLinePath(lineWidth);
-                    xStartIndex = linePath.indexOf('M') + 1;
-                    xEndIndex = linePath.indexOf('L') + 1;
-                    yStartIndex = linePath.indexOf('M') + 2;
-                    yEndIndex = linePath.indexOf('L') + 2;
-                    // Negate distance if top or left axis. Subtract 1px
-                    // to draw the line at the end of the tick.
+                    var startPoint = linePath[0];
+                    var endPoint = linePath[1];
+                    // Negate distance if top or left axis
+                    // Subtract 1px to draw the line at the end of the tick
                     var distance = (axis.tickSize('tick')[0] - 1) * ((axis.side === GridAxis.Side.top ||
                         axis.side === GridAxis.Side.left) ? -1 : 1);
-                    // If axis is horizontal, reposition line path
-                    // vertically
-                    if (axis.horiz) {
-                        linePath[yStartIndex] =
-                            linePath[yStartIndex] + distance;
-                        linePath[yEndIndex] =
-                            linePath[yEndIndex] + distance;
-                    }
-                    else {
-                        // If axis is vertical, reposition line path
-                        // horizontally
-                        linePath[xStartIndex] =
-                            linePath[xStartIndex] + distance;
-                        linePath[xEndIndex] =
-                            linePath[xEndIndex] + distance;
+                    // If axis is horizontal, reposition line path vertically
+                    if (startPoint[0] === 'M' && endPoint[0] === 'L') {
+                        if (axis.horiz) {
+                            startPoint[2] += distance;
+                            endPoint[2] += distance;
+                        }
+                        else {
+                            // If axis is vertical, reposition line path
+                            // horizontally
+                            startPoint[1] += distance;
+                            endPoint[1] += distance;
+                        }
                     }
                     if (!axis.grid.axisLineExtra) {
                         axis.grid.axisLineExtra = renderer

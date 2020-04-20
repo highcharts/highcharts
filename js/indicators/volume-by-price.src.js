@@ -433,14 +433,15 @@ seriesType('vbp', 'sma',
         var indicator = this, renderer = chart.renderer, zoneLinesSVG = indicator.zoneLinesSVG, zoneLinesPath = [], leftLinePos = 0, rightLinePos = chart.plotWidth, verticalOffset = chart.plotTop, verticalLinePos;
         zonesValues.forEach(function (value) {
             verticalLinePos = yAxis.toPixels(value) - verticalOffset;
-            zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([
-                'M',
-                leftLinePos,
-                verticalLinePos,
-                'L',
-                rightLinePos,
-                verticalLinePos
-            ], zonesStyles.lineWidth));
+            zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([[
+                    'M',
+                    leftLinePos,
+                    verticalLinePos
+                ], [
+                    'L',
+                    rightLinePos,
+                    verticalLinePos
+                ]], zonesStyles.lineWidth));
         });
         // Create zone lines one path or update it while animating
         if (zoneLinesSVG) {

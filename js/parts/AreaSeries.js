@@ -359,8 +359,9 @@ seriesType('area', 'line',
         topPath = getGraphPath.call(this, graphPoints, true, true);
         bottomPoints.reversed = true;
         bottomPath = getGraphPath.call(this, bottomPoints, true, true);
-        if (bottomPath.length) {
-            bottomPath[0] = 'L';
+        var firstBottomPoint = bottomPath[0];
+        if (firstBottomPoint && firstBottomPoint[0] === 'M') {
+            bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
         }
         areaPath = topPath.concat(bottomPath);
         // TODO: don't set leftCliff and rightCliff when connectNulls?

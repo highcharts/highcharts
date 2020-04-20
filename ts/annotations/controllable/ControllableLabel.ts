@@ -531,7 +531,7 @@ H.SVGRenderer.prototype.symbols.connector = function (
 
     if (isNumber(anchorX) && isNumber(anchorY)) {
 
-        path = ['M', anchorX, anchorY];
+        path = [['M', anchorX, anchorY]];
 
         // Prefer 45 deg connectors
         yOffset = y - anchorY;
@@ -544,19 +544,19 @@ H.SVGRenderer.prototype.symbols.connector = function (
 
         // Anchor below label
         if (anchorY > y + h) {
-            path.push('L', x + lateral, y + h);
+            path.push(['L', x + lateral, y + h]);
 
             // Anchor above label
         } else if (anchorY < y) {
-            path.push('L', x + lateral, y);
+            path.push(['L', x + lateral, y]);
 
             // Anchor left of label
         } else if (anchorX < x) {
-            path.push('L', x, y + h / 2);
+            path.push(['L', x, y + h / 2]);
 
             // Anchor right of label
         } else if (anchorX > x + w) {
-            path.push('L', x + w, y + h / 2);
+            path.push(['L', x + w, y + h / 2]);
         }
     }
 

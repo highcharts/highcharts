@@ -66,12 +66,8 @@ var createPathDGenerator = function (retracementIndex: number, isBackground?: bo
                 (annotation.endRetracements as any)[retracementIndex]
             ).absolutePosition,
             d: Highcharts.SVGPathArray = [
-                'M',
-                Math.round(leftTop.x),
-                Math.round(leftTop.y),
-                'L',
-                Math.round(rightTop.x),
-                Math.round(rightTop.y)
+                ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
+                ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
             ],
             rightBottom: Highcharts.PositionObject,
             leftBottom: Highcharts.PositionObject;
@@ -86,12 +82,8 @@ var createPathDGenerator = function (retracementIndex: number, isBackground?: bo
             ).absolutePosition;
 
             d.push(
-                'L',
-                Math.round(rightBottom.x),
-                Math.round(rightBottom.y),
-                'L',
-                Math.round(leftBottom.x),
-                Math.round(leftBottom.y)
+                ['L', Math.round(rightBottom.x), Math.round(rightBottom.y)],
+                ['L', Math.round(leftBottom.x), Math.round(leftBottom.y)]
             );
         }
 

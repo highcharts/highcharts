@@ -797,9 +797,13 @@ seriesType('networkgraph', 'line',
                 });
             }
             this.graphic.animate(this.shapeArgs);
-            // Required for dataLabels:
-            this.plotX = (path[1] + path[4]) / 2;
-            this.plotY = (path[2] + path[5]) / 2;
+            // Required for dataLabels
+            var start = path[0];
+            var end = path[1];
+            if (start[0] === 'M' && end[0] === 'L') {
+                this.plotX = (start[1] + end[1]) / 2;
+                this.plotY = (start[2] + end[2]) / 2;
+            }
         }
     },
     /**
@@ -832,12 +836,8 @@ seriesType('networkgraph', 'line',
             right = this.fromNode;
         }
         return [
-            'M',
-            left.plotX,
-            left.plotY,
-            'L',
-            right.plotX,
-            right.plotY
+            ['M', left.plotX || 0, left.plotY || 0],
+            ['L', right.plotX || 0, right.plotY || 0]
         ];
         /*
         IDEA: different link shapes?

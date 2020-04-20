@@ -73,10 +73,10 @@ H.SVGRenderer.prototype.symbols.arrow = function (
     h: number
 ): Highcharts.SVGPathArray {
     return [
-        'M', x, y + h / 2,
-        'L', x + w, y,
-        'L', x, y + h / 2,
-        'L', x + w, y + h
+        ['M', x, y + h / 2],
+        ['L', x + w, y],
+        ['L', x, y + h / 2],
+        ['L', x + w, y + h]
     ];
 };
 
@@ -152,10 +152,10 @@ H.SVGRenderer.prototype.symbols['triangle-left'] = function (
     h: number
 ): Highcharts.SVGPathArray {
     return [
-        'M', x + w, y,
-        'L', x, y + h / 2,
-        'L', x + w, y + h,
-        'Z'
+        ['M', x + w, y],
+        ['L', x, y + h / 2],
+        ['L', x + w, y + h],
+        ['Z']
     ];
 };
 

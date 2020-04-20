@@ -72,22 +72,26 @@ class Tick3D {
         this: Tick,
         proceed: Function
     ): Highcharts.SVGPathArray {
-        const tick = this;
-        const axis = tick.axis;
-        const axis3D = axis.axis3D;
-        var path = proceed.apply(tick, [].slice.call(arguments, 1));
-
-        var pArr: Array<Highcharts.Position3dObject> = [
-            { x: path[1], y: path[2], z: 0 },
-            { x: path[4], y: path[5], z: 0 }
-        ];
+        const chart = this.axis.chart;
+        const axis3D = this.axis.axis3D;
+        const path: Highcharts.SVGPathArray = proceed.apply(
+            this,
+            [].slice.call(arguments, 1)
+        );
 
         if (axis3D) {
-            pArr[0] = axis3D.fix3dPosition(pArr[0]);
-            pArr[1] = axis3D.fix3dPosition(pArr[1]);
-        }
+            const start = path[0];
+            const end = path[1];
+            if (start[0] === 'M' && end[0] === 'L') {
+                const pArr: Array<Highcharts.Position3dObject> = [
+                    axis3D.fix3dPosition({ x: start[1], y: start[2], z: 0 }),
+                    axis3D.fix3dPosition({ x: end[1], y: end[2], z: 0 })
+                ];
 
-        return axis.chart.renderer.toLineSegments(pArr);
+                return this.axis.chart.renderer.toLineSegments(pArr);
+            }
+        }
+        return path;
     }
 
 }

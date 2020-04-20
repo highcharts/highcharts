@@ -147,22 +147,26 @@ wrap(
         options: Highcharts.SymbolOptionsObject
     ): Highcharts.SVGPathArray {
         var arc = proceed,
-            path = arc(x, y, w, h, options);
+            path: Highcharts.SVGPathArray = arc(x, y, w, h, options);
 
         if (options.rounded) {
             var r = options.r || w,
-                smallR = (r - (options.innerR as any)) / 2,
-                x1 = path[1],
-                y1 = path[2],
-                x2 = path[12],
-                y2 = path[13],
-                roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1],
-                roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+                smallR = (r - (options.innerR || 0)) / 2,
+                outerArcStart = path[0],
+                innerArcStart = path[2];
 
-            // Insert rounded edge on end, and remove line.
-            path.splice.apply(path, [path.length - 1, 0].concat(roundStart));
-            // Insert rounded edge on end, and remove line.
-            path.splice.apply(path, [11, 3].concat(roundEnd));
+            if (outerArcStart[0] === 'M' && innerArcStart[0] === 'L') {
+                const x1 = outerArcStart[1],
+                    y1 = outerArcStart[2],
+                    x2 = innerArcStart[1],
+                    y2 = innerArcStart[2],
+                    roundStart: Highcharts.SVGPathArc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+                    roundEnd: Highcharts.SVGPathArc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+
+                // Replace the line segment and the last close segment
+                path[2] = roundEnd;
+                path[4] = roundStart;
+            }
         }
 
         return path;
