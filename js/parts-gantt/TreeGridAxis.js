@@ -13,11 +13,13 @@ import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridData from './TreeGridData.js';
+import TreeGridTick from './TreeGridTick.js';
 import TreeGridUtils from './TreeGridUtils.js';
 var collapse = TreeGridUtils.collapse;
 import TreeSeriesMixin from '../mixins/tree-series.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick, wrap = U.wrap;
+import '../modules/broken-axis.src.js';
 /**
  * @private
  */
@@ -42,6 +44,7 @@ var TreeGridAxis;
         wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
         wrap(AxisClass.prototype, 'init', wrapInit);
         wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
+        TreeGridTick.compose(Tick);
     }
     TreeGridAxis.compose = compose;
     /**
