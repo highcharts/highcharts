@@ -3220,7 +3220,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *         The button element.
      */
     button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape, useHTML) {
-        var label = this.label(text, x, y, shape, null, null, useHTML, null, 'button'), curState = 0, styledMode = this.styledMode;
+        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode;
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
         if (!styledMode) {
@@ -4493,7 +4493,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var renderer = this, styledMode = renderer.styledMode, wrapper = renderer.g((className !== 'button' && 'label')), text = wrapper.text = renderer.text('', 0, 0, useHTML)
             .attr({
             zIndex: 1
-        }), box, bBox, alignFactor = 0, padding = 3, paddingLeft = 0, width, height, wrapperX, wrapperY, textAlign, deferredAttr = {}, strokeWidth, baselineOffset, hasBGImage = /^url\((.*?)\)$/.test(shape), needsBox = styledMode || hasBGImage, getCrispAdjust = function () {
+        }), box, emptyBBox = { width: 0, height: 0, x: 0, y: 0 }, bBox = emptyBBox, alignFactor = 0, padding = 3, paddingLeft = 0, width, height, wrapperX, wrapperY, textAlign, deferredAttr = {}, strokeWidth, baselineOffset, hasBGImage = /^url\((.*?)\)$/.test(shape), needsBox = styledMode || hasBGImage, getCrispAdjust = function () {
             return styledMode ?
                 box.strokeWidth() % 2 / 2 :
                 (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
@@ -4507,15 +4507,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
            box. */
         updateBoxSize = function () {
             var style = text.element.style, crispAdjust, attribs = {};
-            bBox = ((
             // #12165 error when width is null (auto)
-            !isNumber(width) ||
-                !isNumber(height) ||
-                textAlign) &&
-                defined(text.textStr) &&
-                text.getBBox()
             // #12163 when fontweight: bold, recalculate bBox withot cache
-            ); // #3295 && 3514 box failure when string equals 0
+            // #3295 && 3514 box failure when string equals 0
+            bBox = ((!isNumber(width) || !isNumber(height) || textAlign) &&
+                defined(text.textStr)) ?
+                text.getBBox() : emptyBBox;
             wrapper.width = ((width || bBox.width || 0) +
                 2 * padding +
                 paddingLeft);
@@ -4766,7 +4763,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 removeEvent(wrapper.element, 'mouseenter');
                 removeEvent(wrapper.element, 'mouseleave');
                 if (text) {
-                    text = text.destroy();
+                    text.destroy();
                 }
                 if (box) {
                     box = box.destroy();
@@ -4776,9 +4773,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Release local pointers (#1298)
                 wrapper =
                     renderer =
-                        updateBoxSize =
-                            updateTextPadding =
-                                boxAttr = null;
+                        text =
+                            updateBoxSize =
+                                updateTextPadding =
+                                    boxAttr = null;
             }
         };
         if (!styledMode) {

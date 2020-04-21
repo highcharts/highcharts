@@ -157,6 +157,7 @@ declare global {
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
             public oldShadowOptions?: Highcharts.ShadowOptionsObject;
             public styles?: CSSObject;
+            public text?: SVGElement;
             public _defaultGetter(key: string): (number|string);
             public _defaultSetter(
                 value: string,
@@ -4706,10 +4707,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 x,
                 y,
                 shape,
-                null as any,
-                null as any,
+                void 0,
+                void 0,
                 useHTML,
-                null as any,
+                void 0,
                 'button'
             ),
             curState = 0,
@@ -6380,9 +6381,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             text = wrapper.text = renderer.text('', 0, 0, useHTML)
                 .attr({
                     zIndex: 1
-                }) as Highcharts.SVGAttributes,
+                }),
             box: (Highcharts.SVGElement|undefined),
-            bBox: Highcharts.BBoxObject,
+            emptyBBox: Highcharts.BBoxObject = { width: 0, height: 0, x: 0, y: 0 },
+            bBox = emptyBBox,
             alignFactor = 0,
             padding = 3,
             paddingLeft = 0,
@@ -6418,15 +6420,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 crispAdjust,
                 attribs = {} as Highcharts.SVGAttributes;
 
-            bBox = ((
-                // #12165 error when width is null (auto)
-                !isNumber(width) ||
-                !isNumber(height) ||
-                textAlign) &&
-                defined(text.textStr) &&
-                text.getBBox()
-                // #12163 when fontweight: bold, recalculate bBox withot cache
-            ); // #3295 && 3514 box failure when string equals 0
+            // #12165 error when width is null (auto)
+            // #12163 when fontweight: bold, recalculate bBox withot cache
+            // #3295 && 3514 box failure when string equals 0
+            bBox = (
+                (!isNumber(width) || !isNumber(height) || textAlign) &&
+                defined(text.textStr)
+            ) ?
+                text.getBBox() : emptyBBox;
 
             wrapper.width = (
                 (width || bBox.width || 0) +
@@ -6730,7 +6731,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 removeEvent(wrapper.element, 'mouseleave');
 
                 if (text) {
-                    text = text.destroy();
+                    text.destroy();
                 }
                 if (box) {
                     box = box.destroy();
@@ -6741,6 +6742,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Release local pointers (#1298)
                 wrapper =
                 renderer =
+                text =
                 updateBoxSize =
                 updateTextPadding =
                 boxAttr = null as any;
