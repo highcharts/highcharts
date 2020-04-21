@@ -362,6 +362,7 @@ seriesType<Highcharts.VBPIndicator>(
         ): void {
             var series = this,
                 inverted = series.chart.inverted,
+                group = series.group as Highcharts.SVGElement,
                 attr: Highcharts.SVGAttributes = {},
                 translate,
                 position;
@@ -369,9 +370,9 @@ seriesType<Highcharts.VBPIndicator>(
             if (!init) {
                 translate = inverted ? 'translateY' : 'translateX';
                 position = inverted ? series.yAxis.top : series.xAxis.left;
-                (series.group as any)['forceAnimate:' + translate] = true;
+                group['forceAnimate:' + translate] = true;
                 attr[translate] = position;
-                (series.group as any).animate(
+                group.animate(
                     attr,
                     extend(animObject(series.options.animation), {
                         step: function (val: any, fx: any): void {
