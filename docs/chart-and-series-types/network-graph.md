@@ -12,7 +12,7 @@ _Example of loading both files in a webpage_
 
 ```html
 <script src="https://code.highcharts.com/highcharts.js"></script>
-<script src="https://code.highcharts.com/gantt/modules/networkgraph.js"></script> 
+<script src="https://code.highcharts.com/modules/networkgraph.js"></script> 
 ```
 
 Data format
