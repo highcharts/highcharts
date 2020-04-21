@@ -261,7 +261,6 @@ import '../parts/Axis.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
-import '../modules/networkgraph/layout-datalabels.js';
 
 
 var Series = H.Series,

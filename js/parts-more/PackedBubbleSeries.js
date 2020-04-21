@@ -53,7 +53,6 @@ import '../parts/Axis.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
-import '../modules/networkgraph/layout-datalabels.js';
 var Series = H.Series, Chart = H.Chart, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
 H.networkgraphIntegrations.packedbubble = {
     repulsiveForceFunction: function (d, k, node, repNode) {

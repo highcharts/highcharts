@@ -235,7 +235,6 @@ import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
-import './layout-datalabels.js';
 
 
 var seriesTypes = H.seriesTypes,
