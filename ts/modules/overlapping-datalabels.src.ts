@@ -115,34 +115,20 @@ Chart.prototype.hideOverlappingLabels = function (
     labels: Array<Highcharts.SVGElement>
 ): void {
 
-    var chart = this;
-    if (
-        chart.hideOrShowLabels(
-            chart.getLabelBoxes(labels)
-        )
-    ) {
-        fireEvent(chart, 'afterHideAllOverlappingLabels');
-    }
-};
-
-/**
- * Get the label box with its position inside the chart, as opposed to getBBox
- * that only reports the position relative to the parent.
- *
- * @private
- * @function Highcharts.Chart#getLabelBoxes
- * @param {Array<Highcharts.SVGElement>} labels
- * Rendered data labels
- * @return {Array<Highcharts.SVGElement>} labels
- * labels with absolute boxes
- * @requires modules/overlapping-datalabels
- */
-Chart.prototype.getLabelBoxes = function (
-    labels: Array<Highcharts.SVGElement>
-): Array<Highcharts.SVGElement> {
-    var ren = this.renderer,
+    var chart = this,
+        len = labels.length,
+        ren = chart.renderer,
         label,
         i,
+        j,
+        label1,
+        label2,
+        box1,
+        box2,
+        isLabelAffected = false,
+
+        // Get the box with its position inside the chart, as opposed to getBBox
+        // that only reports the position relative to the parent.
         getAbsoluteBox = function (
             label: Highcharts.SVGElement
         ): (Highcharts.BBoxObject|undefined) {
@@ -185,7 +171,7 @@ Chart.prototype.getLabelBoxes = function (
             }
         };
 
-    for (i = 0; i < labels.length; i++) {
+    for (i = 0; i < len; i++) {
         label = labels[i];
         if (label) {
 
@@ -208,33 +194,6 @@ Chart.prototype.getLabelBoxes = function (
             return (b.labelrank || 0) - (a.labelrank || 0);
         }
     );
-
-    return labels;
-};
-
-/**
- * Hide or Show dataLabels depending on their opacity.
- *
- * @private
- * @function Highcharts.Chart#hideOrShowLabels
- * @param {Array<Highcharts.SVGElement>} labels
- * Rendered data labels
- * @return {Boolean} isLabelAffected
- * boolean value if any label was hidden/shown.
- * @requires modules/overlapping-datalabels
- */
-Chart.prototype.hideOrShowLabels = function (
-    labels: Array<Highcharts.SVGElement>
-): boolean {
-    var chart = this,
-        len = labels.length,
-        label1,
-        label2,
-        box1,
-        box2,
-        isLabelAffected = false,
-        i,
-        j;
 
     // Detect overlapping labels
     for (i = 0; i < len; i++) {
@@ -260,6 +219,7 @@ Chart.prototype.hideOrShowLabels = function (
             }
         }
     }
+
     // Hide or show
     labels.forEach(function (label: Highcharts.SVGElement): void {
         var complete: (Function|undefined),
@@ -305,5 +265,7 @@ Chart.prototype.hideOrShowLabels = function (
         }
     });
 
-    return isLabelAffected;
+    if (isLabelAffected) {
+        fireEvent(chart, 'afterHideAllOverlappingLabels');
+    }
 };

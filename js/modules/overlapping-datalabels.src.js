@@ -70,25 +70,10 @@ addEvent(Chart, 'render', function collectAndHide() {
  * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
-    var chart = this;
-    if (chart.hideOrShowLabels(chart.getLabelBoxes(labels))) {
-        fireEvent(chart, 'afterHideAllOverlappingLabels');
-    }
-};
-/**
- * Get the label box with its position inside the chart, as opposed to getBBox
- * that only reports the position relative to the parent.
- *
- * @private
- * @function Highcharts.Chart#getLabelBoxes
- * @param {Array<Highcharts.SVGElement>} labels
- * Rendered data labels
- * @return {Array<Highcharts.SVGElement>} labels
- * labels with absolute boxes
- * @requires modules/overlapping-datalabels
- */
-Chart.prototype.getLabelBoxes = function (labels) {
-    var ren = this.renderer, label, i, getAbsoluteBox = function (label) {
+    var chart = this, len = labels.length, ren = chart.renderer, label, i, j, label1, label2, box1, box2, isLabelAffected = false, 
+    // Get the box with its position inside the chart, as opposed to getBBox
+    // that only reports the position relative to the parent.
+    getAbsoluteBox = function (label) {
         var pos, parent, bBox, 
         // Substract the padding if no background or border (#4333)
         padding = label.box ? 0 : (label.padding || 0), lineHeightCorrection = 0;
@@ -118,7 +103,7 @@ Chart.prototype.getLabelBoxes = function (labels) {
             };
         }
     };
-    for (i = 0; i < labels.length; i++) {
+    for (i = 0; i < len; i++) {
         label = labels[i];
         if (label) {
             // Mark with initial opacity
@@ -132,21 +117,6 @@ Chart.prototype.getLabelBoxes = function (labels) {
     labels.sort(function (a, b) {
         return (b.labelrank || 0) - (a.labelrank || 0);
     });
-    return labels;
-};
-/**
- * Hide or Show dataLabels depending on their opacity.
- *
- * @private
- * @function Highcharts.Chart#hideOrShowLabels
- * @param {Array<Highcharts.SVGElement>} labels
- * Rendered data labels
- * @return {Boolean} isLabelAffected
- * boolean value if any label was hidden/shown.
- * @requires modules/overlapping-datalabels
- */
-Chart.prototype.hideOrShowLabels = function (labels) {
-    var chart = this, len = labels.length, label1, label2, box1, box2, isLabelAffected = false, i, j;
     // Detect overlapping labels
     for (i = 0; i < len; i++) {
         label1 = labels[i];
@@ -199,5 +169,7 @@ Chart.prototype.hideOrShowLabels = function (labels) {
             label.isOld = true;
         }
     });
-    return isLabelAffected;
+    if (isLabelAffected) {
+        fireEvent(chart, 'afterHideAllOverlappingLabels');
+    }
 };
