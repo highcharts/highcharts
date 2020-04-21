@@ -260,11 +260,11 @@ Chart.prototype.hideOrShowLabels = function (
             }
         }
     }
-
     // Hide or show
     labels.forEach(function (label: Highcharts.SVGElement): void {
         var complete: (Function|undefined),
-            newOpacity;
+            newOpacity: number,
+            animOptions: Highcharts.AnimationOptionsObject;
 
         if (label) {
             newOpacity = label.newOpacity;
@@ -274,22 +274,23 @@ Chart.prototype.hideOrShowLabels = function (
                 // Make sure the label is completely hidden to avoid catching
                 // clicks (#4362)
                 if (label.alignAttr && label.placed) { // data labels
-                    if (newOpacity) {
-                        label.show(true);
-                    } else {
-                        complete = function (): void {
-                            label.hide(true);
-                            label.placed = false; // avoid animation from top
-                        };
-                    }
+                    label[newOpacity ? 'removeClass' : 'addClass']('highcharts-data-label-hidden');
+                    complete = function (): void {
+                        if (!chart.styledMode) {
+                            label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
+                        }
+                        label[newOpacity ? 'show' : 'hide'](true);
+                        label.placed = !!newOpacity;
+                    };
 
                     isLabelAffected = true;
 
                     // Animate or set the opacity
                     label.alignAttr.opacity = newOpacity;
+                    animOptions = label.options && label.options.animation || null;
                     label[label.isOld ? 'animate' : 'attr'](
                         label.alignAttr,
-                        null as any,
+                        animOptions,
                         complete
                     );
                     fireEvent(chart, 'afterHideOverlappingLabel');

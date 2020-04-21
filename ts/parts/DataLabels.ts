@@ -44,6 +44,7 @@ declare global {
         interface DataLabelsOptions {
             align?: (AlignValue|null);
             allowOverlap?: boolean;
+            animation?: boolean|AnimationOptionsObject;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
             borderColor?: (ColorString|GradientColorObject|PatternObject);
             borderRadius?: number;

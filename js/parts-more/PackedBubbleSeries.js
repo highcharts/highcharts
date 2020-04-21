@@ -54,7 +54,7 @@ import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
 import '../modules/networkgraph/layout-datalabels.js';
-var Series = H.Series, Chart = H.Chart, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin, layoutAnimationMixin = H.layoutAnimationMixin;
+var Series = H.Series, Chart = H.Chart, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
 H.networkgraphIntegrations.packedbubble = {
     repulsiveForceFunction: function (d, k, node, repNode) {
         return Math.min(d, (node.marker.radius + repNode.marker.radius) / 2);
@@ -563,11 +563,10 @@ seriesType('packedbubble', 'bubble',
             // use simulation. Spiral packedbubble don't need
             // additional dataLabel hiding on every simulation step
             if (series.options.useSimulation) {
-                series.hideOverlappingLabels(dataLabels);
+                series.chart.hideOverlappingLabels(dataLabels);
             }
         }
     },
-    hideOverlappingLabels: layoutAnimationMixin.hideOverlappingLabels,
     // Needed because of z-indexing issue if point is added in series.group
     setVisible: function () {
         var series = this;

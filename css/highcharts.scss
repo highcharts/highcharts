@@ -303,6 +303,9 @@ g.highcharts-series,
 .highcharts-data-label-connector {
     fill: none;
 }
+.highcharts-data-label-hidden {
+    pointer-events: none;
+}
 .highcharts-halo {
     fill-opacity: 0.25;
     stroke-width: 0;
@@ -824,12 +827,3 @@ text.highcharts-drilldown-data-label,
     stroke-width: 1px;
 }
 
-/* NetworkGraph and Packed Bubble */
-.highcharts-simulation-dataLabels-fadeout {
-    opacity: 0;
-    transition: opacity 250ms
-}
-.highcharts-simulation-dataLabels {
-    opacity: 1;
-    transition: opacity 250ms
-}

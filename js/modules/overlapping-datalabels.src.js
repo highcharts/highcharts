@@ -168,26 +168,26 @@ Chart.prototype.hideOrShowLabels = function (labels) {
     }
     // Hide or show
     labels.forEach(function (label) {
-        var complete, newOpacity;
+        var complete, newOpacity, animOptions;
         if (label) {
             newOpacity = label.newOpacity;
             if (label.oldOpacity !== newOpacity) {
                 // Make sure the label is completely hidden to avoid catching
                 // clicks (#4362)
                 if (label.alignAttr && label.placed) { // data labels
-                    if (newOpacity) {
-                        label.show(true);
-                    }
-                    else {
-                        complete = function () {
-                            label.hide(true);
-                            label.placed = false; // avoid animation from top
-                        };
-                    }
+                    label[newOpacity ? 'removeClass' : 'addClass']('highcharts-data-label-hidden');
+                    complete = function () {
+                        if (!chart.styledMode) {
+                            label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
+                        }
+                        label[newOpacity ? 'show' : 'hide'](true);
+                        label.placed = !!newOpacity;
+                    };
                     isLabelAffected = true;
                     // Animate or set the opacity
                     label.alignAttr.opacity = newOpacity;
-                    label[label.isOld ? 'animate' : 'attr'](label.alignAttr, null, complete);
+                    animOptions = label.options && label.options.animation || null;
+                    label[label.isOld ? 'animate' : 'attr'](label.alignAttr, animOptions, complete);
                     fireEvent(chart, 'afterHideOverlappingLabel');
                 }
                 else { // other labels, tick labels

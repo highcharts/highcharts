@@ -10,7 +10,12 @@
 
 'use strict';
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import H from './Globals.js';
+import './Options.js';
+import Point from './Point.js';
+import './SvgRenderer.js';
+import U from './Utilities.js';
 
 /**
  * Internal types
@@ -709,9 +714,6 @@ declare global {
 
 ''; // detach doclets above
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from './Point.js';
-import U from './Utilities.js';
 const {
     addEvent,
     animObject,
@@ -739,8 +741,6 @@ const {
     syncTimeout
 } = U;
 
-import './Options.js';
-import './SvgRenderer.js';
 
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
@@ -2788,7 +2788,16 @@ H.Series = seriesType<Highcharts.LineSeries>(
              * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
              *         Vertical and positioned
              */
-            y: 0
+            y: 0,
+
+            /**
+             * The animation for changing labels opacity.
+             *
+             * @since     next
+             * @default   false
+             * @type    {boolean|Highcharts.AnimationOptionsObject}
+             */
+            animation: false
 
         } as Highcharts.DataLabelsOptions,
 

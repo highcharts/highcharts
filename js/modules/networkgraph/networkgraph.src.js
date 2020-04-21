@@ -55,7 +55,7 @@ import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
 import './layout-datalabels.js';
-var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin, layoutAnimationMixin = H.layoutAnimationMixin;
+var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private
  * @class
@@ -538,7 +538,6 @@ seriesType('networkgraph', 'line',
         attribs.x = (point.plotX || 0) - (attribs.width / 2 || 0);
         return attribs;
     },
-    hideOverlappingLabels: layoutAnimationMixin.hideOverlappingLabels,
     /**
      * Run pre-translation and register nodes&links to the deffered layout.
      * @private
@@ -623,7 +622,7 @@ seriesType('networkgraph', 'line',
                     dataLabels.push(node.dataLabel);
                 }
             });
-            series.hideOverlappingLabels(dataLabels);
+            series.chart.hideOverlappingLabels(dataLabels);
         }
     },
     // Networkgraph has two separate collecions of nodes and lines, render

@@ -176,7 +176,6 @@ declare global {
                 state?: string
             ): SVGAttributes;
             public render(): void;
-            public hideOverlappingLabels: LayoutAnimationMixin['hideOverlappingLabels'];
             public setState(state: string, inherit?: boolean): void;
             public translate(): void;
         }
@@ -241,8 +240,7 @@ import './layout-datalabels.js';
 
 var seriesTypes = H.seriesTypes,
     Series = H.Series,
-    dragNodesMixin = H.dragNodesMixin,
-    layoutAnimationMixin = H.layoutAnimationMixin;
+    dragNodesMixin = H.dragNodesMixin;
 
 /**
  * @private
@@ -806,9 +804,6 @@ seriesType<Highcharts.NetworkgraphSeries>(
 
             return attribs;
         },
-
-        hideOverlappingLabels: layoutAnimationMixin.hideOverlappingLabels,
-
         /**
          * Run pre-translation and register nodes&links to the deffered layout.
          * @private
@@ -931,8 +926,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
                         dataLabels.push(node.dataLabel);
                     }
                 });
-
-                series.hideOverlappingLabels(dataLabels);
+                series.chart.hideOverlappingLabels(dataLabels);
             }
         },
 
