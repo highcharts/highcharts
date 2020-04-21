@@ -11,14 +11,17 @@
 
 'use strict';
 
+import type TreeGridAxis from './TreeGridAxis';
+import type TreeGridData from './TreeGridData';
+
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
  */
 function getBreakFromNode(
-    node: Highcharts.GridNode,
+    node: TreeGridData.GridNode,
     max: number
-): Partial<Highcharts.TreeGridAxisBreakObject> {
+): Partial<TreeGridData.AxisBreakObject> {
     var from = node.collapseStart || 0,
         to = node.collapseEnd || 0;
 
@@ -57,8 +60,8 @@ function getBreakFromNode(
  *         Returns true if collapsed, false if expanded.
  */
 function isCollapsed(
-    axis: Highcharts.TreeGridAxis,
-    node: Highcharts.GridNode
+    axis: TreeGridAxis,
+    node: TreeGridData.GridNode
 ): boolean {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
@@ -87,8 +90,8 @@ function isCollapsed(
  * Returns an array of the new breaks for the axis.
  */
 function collapse(
-    axis: Highcharts.TreeGridAxis,
-    node: Highcharts.GridNode
+    axis: TreeGridAxis,
+    node: TreeGridData.GridNode
 ): Array<Highcharts.XAxisBreaksOptions> {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
@@ -116,8 +119,8 @@ function collapse(
  * Returns an array of the new breaks for the axis.
  */
 function expand(
-    axis: Highcharts.TreeGridAxis,
-    node: Highcharts.GridNode
+    axis: TreeGridAxis,
+    node: TreeGridData.GridNode
 ): Array<Highcharts.XAxisBreaksOptions> {
     var breaks = (axis.options.breaks || []),
         obj = getBreakFromNode(node, axis.max);
@@ -153,8 +156,8 @@ function expand(
  * Returns an array of the new breaks for the axis.
  */
 function toggleCollapse(
-    axis: Highcharts.TreeGridAxis,
-    node: Highcharts.GridNode
+    axis: TreeGridAxis,
+    node: TreeGridData.GridNode
 ): Array<Highcharts.XAxisBreaksOptions> {
     return (
         isCollapsed(axis, node) ?
