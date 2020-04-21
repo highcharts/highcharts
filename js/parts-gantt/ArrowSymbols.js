@@ -42,10 +42,10 @@ import H from '../parts/Globals.js';
  */
 H.SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
     return [
-        'M', x, y + h / 2,
-        'L', x + w, y,
-        'L', x, y + h / 2,
-        'L', x + w, y + h
+        ['M', x, y + h / 2],
+        ['L', x + w, y],
+        ['L', x, y + h / 2],
+        ['L', x + w, y + h]
     ];
 };
 /**
@@ -109,10 +109,10 @@ H.SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
  */
 H.SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
     return [
-        'M', x + w, y,
-        'L', x, y + h / 2,
-        'L', x + w, y + h,
-        'Z'
+        ['M', x + w, y],
+        ['L', x, y + h / 2],
+        ['L', x + w, y + h],
+        ['Z']
     ];
 };
 /**

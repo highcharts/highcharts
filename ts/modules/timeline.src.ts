@@ -812,12 +812,8 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
             path = chart.renderer.crispLine(
                 [
-                    'M',
-                    coords.x1,
-                    coords.y1,
-                    'L',
-                    coords.x2,
-                    coords.y2
+                    ['M', coords.x1, coords.y1],
+                    ['L', coords.x2, coords.y2]
                 ] as Highcharts.SVGPathArray,
                 dl.options.connectorWidth
             );

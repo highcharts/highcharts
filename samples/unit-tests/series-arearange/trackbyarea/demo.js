@@ -20,7 +20,7 @@ QUnit.test('Area range with trackByArea:false (#5348)', function (assert) {
     });
 
     assert.strictEqual(
-        chart.series[0].graphPath[0],
+        chart.series[0].graphPath[0][0],
         'M',
         'Graph path starts with moveTo command'
     );

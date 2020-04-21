@@ -200,18 +200,18 @@ seriesType('windbarb', 'column'
         }
         // The stem and the arrow head
         path = [
-            'M', 0, 7 * u,
-            'L', -1.5 * u, 7 * u,
-            0, 10 * u,
-            1.5 * u, 7 * u,
-            0, 7 * u,
-            0, -10 * u // top
+            ['M', 0, 7 * u],
+            ['L', -1.5 * u, 7 * u],
+            ['L', 0, 10 * u],
+            ['L', 1.5 * u, 7 * u],
+            ['L', 0, 7 * u],
+            ['L', 0, -10 * u] // top
         ];
         // For each full 50 knots, add a pennant
         barbs = (knots - knots % 50) / 50; // pennants
         if (barbs > 0) {
             while (barbs--) {
-                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', 5 * u, pos * u + 2, 'L', 0, pos * u + 4);
+                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 5 * u, pos * u + 2], ['L', 0, pos * u + 4]);
                 // Substract from the rest and move position for next
                 knots -= 50;
                 pos += 7;
@@ -221,7 +221,7 @@ seriesType('windbarb', 'column'
         barbs = (knots - knots % 10) / 10;
         if (barbs > 0) {
             while (barbs--) {
-                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', 7 * u, pos * u);
+                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 7 * u, pos * u]);
                 knots -= 10;
                 pos += 3;
             }
@@ -230,7 +230,7 @@ seriesType('windbarb', 'column'
         barbs = (knots - knots % 5) / 5; // half barbs
         if (barbs > 0) {
             while (barbs--) {
-                path.push(pos === -10 ? 'L' : 'M', 0, pos * u, 'L', 4 * u, pos * u);
+                path.push(pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u], ['L', 4 * u, pos * u]);
                 knots -= 5;
                 pos += 3;
             }

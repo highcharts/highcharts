@@ -305,18 +305,17 @@ seriesType('gauge', 'line', {
             }
             rotation = rotation * 180 / Math.PI;
             point.shapeType = 'path';
+            var d = dialOptions.path || [
+                ['M', -rearLength, -baseWidth / 2],
+                ['L', baseLength, -baseWidth / 2],
+                ['L', radius, -topWidth / 2],
+                ['L', radius, topWidth / 2],
+                ['L', baseLength, baseWidth / 2],
+                ['L', -rearLength, baseWidth / 2],
+                ['Z']
+            ];
             point.shapeArgs = {
-                d: dialOptions.path || [
-                    'M',
-                    -rearLength, -baseWidth / 2,
-                    'L',
-                    baseLength, -baseWidth / 2,
-                    radius, -topWidth / 2,
-                    radius, topWidth / 2,
-                    baseLength, baseWidth / 2,
-                    -rearLength, baseWidth / 2,
-                    'z'
-                ],
+                d: d,
                 translateX: center[0],
                 translateY: center[1],
                 rotation: rotation

@@ -265,14 +265,14 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  */
 H.geojson = function (geojson, hType, series) {
     var mapData = [], path = [], polygonToPath = function (polygon) {
-        var i, len = polygon.length;
-        path.push('M');
-        for (i = 0; i < len; i++) {
-            if (i === 1) {
-                path.push('L');
+        polygon.forEach(function (point, i) {
+            if (i === 0) {
+                path.push(['M', point[0], -point[1]]);
             }
-            path.push(polygon[i][0], -polygon[i][1]);
-        }
+            else {
+                path.push(['L', point[0], -point[1]]);
+            }
+        });
     };
     hType = hType || 'map';
     geojson.features.forEach(function (feature) {
@@ -281,13 +281,13 @@ H.geojson = function (geojson, hType, series) {
         if (hType === 'map' || hType === 'mapbubble') {
             if (type === 'Polygon') {
                 coordinates.forEach(polygonToPath);
-                path.push('Z');
+                path.push(['Z']);
             }
             else if (type === 'MultiPolygon') {
                 coordinates.forEach(function (items) {
                     items.forEach(polygonToPath);
                 });
-                path.push('Z');
+                path.push(['Z']);
             }
             if (path.length) {
                 point = { path: path };

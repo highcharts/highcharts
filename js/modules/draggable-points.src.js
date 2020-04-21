@@ -241,14 +241,14 @@ var horizHandleFormatter = function (point) {
     bottom = shapeArgs.height - top, centerY = shapeArgs.height / 2;
     return [
         // Top wick
-        'M', 0, top,
-        'L', 0, centerY - 5,
+        ['M', 0, top],
+        ['L', 0, centerY - 5],
         // Circle
-        'A', 1, 1, 0, 0, 0, 0, centerY + 5,
-        'A', 1, 1, 0, 0, 0, 0, centerY - 5,
+        ['A', 1, 1, 0, 0, 0, 0, centerY + 5],
+        ['A', 1, 1, 0, 0, 0, 0, centerY - 5],
         // Bottom wick
-        'M', 0, centerY + 5,
-        'L', 0, bottom
+        ['M', 0, centerY + 5],
+        ['L', 0, bottom]
     ];
 };
 // Line series - only draggableX/Y, no drag handles
@@ -662,9 +662,9 @@ if (seriesTypes.arearange) {
             point.graphic.getBBox().width / 2 + 1 :
             4;
         return [
-            'M', 0 - radius, 0,
-            'a', radius, radius, 0, 1, 0, radius * 2, 0,
-            'a', radius, radius, 0, 1, 0, radius * -2, 0
+            ['M', 0 - radius, 0],
+            ['a', radius, radius, 0, 1, 0, radius * 2, 0],
+            ['a', radius, radius, 0, 1, 0, radius * -2, 0]
         ];
     };
     seriesTypes.arearange.prototype.dragDropProps = {

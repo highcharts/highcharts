@@ -861,7 +861,7 @@ var Axis = /** @class */ (function () {
             }
             e.path = skip && !force ?
                 null :
-                chart.renderer.crispLine(['M', x1, y1, 'L', x2, y2], lineWidth || 1);
+                chart.renderer.crispLine([['M', x1, y1], ['L', x2, y2]], lineWidth || 1);
         });
         return evt.path;
     };
@@ -1670,7 +1670,7 @@ var Axis = /** @class */ (function () {
     Axis.prototype.getTickAmount = function () {
         var axis = this, options = this.options, tickAmount = options.tickAmount, tickPixelInterval = options.tickPixelInterval;
         if (!defined(options.tickInterval) &&
-            this.len < tickPixelInterval &&
+            !tickAmount && this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
@@ -2535,20 +2535,24 @@ var Axis = /** @class */ (function () {
         }
         return chart.renderer
             .crispLine([
-            'M',
-            horiz ?
-                this.left :
-                lineLeft,
-            horiz ?
-                lineTop :
-                this.top,
-            'L',
-            horiz ?
-                chart.chartWidth - this.right :
-                lineLeft,
-            horiz ?
-                lineTop :
-                chart.chartHeight - this.bottom
+            [
+                'M',
+                horiz ?
+                    this.left :
+                    lineLeft,
+                horiz ?
+                    lineTop :
+                    this.top
+            ],
+            [
+                'L',
+                horiz ?
+                    chart.chartWidth - this.right :
+                    lineLeft,
+                horiz ?
+                    lineTop :
+                    chart.chartHeight - this.bottom
+            ]
         ], lineWidth);
     };
     /**

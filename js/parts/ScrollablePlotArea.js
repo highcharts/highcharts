@@ -319,41 +319,39 @@ Chart.prototype.applyFixed = function () {
     if (this.scrollablePixelsX) {
         d = [
             // Left side
-            'M', 0, maskTop,
-            'L', this.plotLeft - 1, maskTop,
-            'L', this.plotLeft - 1, maskBottom,
-            'L', 0, maskBottom,
-            'Z',
+            ['M', 0, maskTop],
+            ['L', this.plotLeft - 1, maskTop],
+            ['L', this.plotLeft - 1, maskBottom],
+            ['L', 0, maskBottom],
+            ['Z'],
             // Right side
-            'M', maskPlotRight, maskTop,
-            'L', this.chartWidth, maskTop,
-            'L', this.chartWidth, maskBottom,
-            'L', maskPlotRight, maskBottom,
-            'Z'
+            ['M', maskPlotRight, maskTop],
+            ['L', this.chartWidth, maskTop],
+            ['L', this.chartWidth, maskBottom],
+            ['L', maskPlotRight, maskBottom],
+            ['Z']
         ];
     }
     else if (this.scrollablePixelsY) {
         d = [
             // Top side
-            'M', maskLeft, 0,
-            'L', maskLeft, this.plotTop - 1,
-            'L', maskRight, this.plotTop - 1,
-            'L', maskRight, 0,
-            'Z',
+            ['M', maskLeft, 0],
+            ['L', maskLeft, this.plotTop - 1],
+            ['L', maskRight, this.plotTop - 1],
+            ['L', maskRight, 0],
+            ['Z'],
             // Bottom side
-            'M', maskLeft, maskPlotBottom,
-            'L', maskLeft, this.chartHeight,
-            'L', maskRight, this.chartHeight,
-            'L', maskRight, maskPlotBottom,
-            'Z'
+            ['M', maskLeft, maskPlotBottom],
+            ['L', maskLeft, this.chartHeight],
+            ['L', maskRight, this.chartHeight],
+            ['L', maskRight, maskPlotBottom],
+            ['Z']
         ];
     }
     else {
-        d = ['M', 0, 0];
+        d = [['M', 0, 0]];
     }
     if (this.redrawTrigger !== 'adjustHeight') {
-        this.scrollableMask.attr({
-            d: d
-        });
+        this.scrollableMask.attr({ d: d });
     }
 };

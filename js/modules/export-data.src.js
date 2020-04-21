@@ -262,7 +262,6 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
  *
  * @private
  * @function Highcharts.Chart#setUpKeyToAxis
- * @return {void}
  */
 Highcharts.Chart.prototype.setUpKeyToAxis = function () {
     if (seriesTypes.arearange) {
@@ -705,11 +704,14 @@ function getBlobFromContent(content, type) {
     }
 }
 /**
- * Call this on click of 'Download CSV' button
+ * Generates a data URL of CSV for local download in the browser. This is the
+ * default action for a click on the 'Download CSV' button.
  *
- * @private
+ * See {@link Highcharts.Chart#getCSV} to get the CSV data itself.
+ *
  * @function Highcharts.Chart#downloadCSV
- * @return {void}
+ *
+ * @requires modules/exporting
  */
 Highcharts.Chart.prototype.downloadCSV = function () {
     var csv = this.getCSV(true);
@@ -717,11 +719,14 @@ Highcharts.Chart.prototype.downloadCSV = function () {
         'data:text/csv,\uFEFF' + encodeURIComponent(csv), this.getFilename() + '.csv');
 };
 /**
- * Call this on click of 'Download XLS' button
+ * Generates a data URL of an XLS document for local download in the browser.
+ * This is the default action for a click on the 'Download XLS' button.
  *
- * @private
+ * See {@link Highcharts.Chart#getTable} to get the table data itself.
+ *
  * @function Highcharts.Chart#downloadXLS
- * @return {void}
+ *
+ * @requires modules/exporting
  */
 Highcharts.Chart.prototype.downloadXLS = function () {
     var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
@@ -750,7 +755,6 @@ Highcharts.Chart.prototype.downloadXLS = function () {
  * Export-data module required. View the data in a table below the chart.
  *
  * @function Highcharts.Chart#viewData
- * @return {void}
  *
  * @fires Highcharts.Chart#event:afterViewData
  */

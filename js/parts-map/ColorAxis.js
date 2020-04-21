@@ -493,19 +493,15 @@ var ColorAxis = /** @class */ (function (_super) {
         // crosshairs only
         return isNumber(pos) ? // pos can be 0 (#3969)
             (axis.horiz ? [
-                'M',
-                pos - 4, top - 6,
-                'L',
-                pos + 4, top - 6,
-                pos, top,
-                'Z'
+                ['M', pos - 4, this.top - 6],
+                ['L', pos + 4, this.top - 6],
+                ['L', pos, this.top],
+                ['Z']
             ] : [
-                'M',
-                left, pos,
-                'L',
-                left - 6, pos + 6,
-                left - 6, pos - 6,
-                'Z'
+                ['M', this.left, pos],
+                ['L', this.left - 6, pos + 6],
+                ['L', this.left - 6, pos - 6],
+                ['Z']
             ]) :
             _super.prototype.getPlotLinePath.call(this, options);
     };

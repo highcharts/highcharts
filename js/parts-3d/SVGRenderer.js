@@ -41,32 +41,32 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
         result = result.concat(curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy));
         return result;
     }
-    return [
-        'C',
-        cx + (rx * Math.cos(start)) -
-            ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
-        cy + (ry * Math.sin(start)) +
-            ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
-        cx + (rx * Math.cos(end)) +
-            ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
-        cy + (ry * Math.sin(end)) -
-            ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
-        cx + (rx * Math.cos(end)) + dx,
-        cy + (ry * Math.sin(end)) + dy
-    ];
+    return [[
+            'C',
+            cx + (rx * Math.cos(start)) -
+                ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
+            cy + (ry * Math.sin(start)) +
+                ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
+            cx + (rx * Math.cos(end)) +
+                ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
+            cy + (ry * Math.sin(end)) -
+                ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
+            cx + (rx * Math.cos(end)) + dx,
+            cy + (ry * Math.sin(end)) + dy
+        ]];
 }
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
     // Put "L x y" for each point
     points.forEach(function (point) {
-        result.push('L', point.x, point.y);
+        result.push(['L', point.x, point.y]);
     });
     if (points.length) {
         // Set the first element to M
-        result[0] = 'M';
+        result[0][0] = 'M';
         // If it is a closed line, add Z
         if (closed) {
-            result.push('Z');
+            result.push(['Z']);
         }
     }
     return result;
@@ -74,7 +74,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 SVGRenderer.prototype.toLineSegments = function (points) {
     var result = [], m = true;
     points.forEach(function (point) {
-        result.push(m ? 'M' : 'L', point.x, point.y);
+        result.push(m ? ['M', point.x, point.y] : ['L', point.x, point.y]);
         m = !m;
     });
     return result;
@@ -298,8 +298,8 @@ cuboidMethods = merge(element3dMethods, {
         elem3d.singleSetterForParts('fill', null, {
             front: fill,
             // Do not change color if side was forced to render.
-            top: color(fill).brighten(elem3d.forcedSides.includes('top') ? 0 : 0.1).get(),
-            side: color(fill).brighten(elem3d.forcedSides.includes('side') ? 0 : -0.1).get()
+            top: color(fill).brighten(elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1).get(),
+            side: color(fill).brighten(elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1).get()
         });
         // fill for animation getter (#6776)
         elem3d.color = elem3d.fill = fill;
@@ -332,7 +332,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
 };
 // Generates a cuboid path and zIndexes
 H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
-    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z, 
+    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z || 0, 
     // For side calculation (right/left)
     // there is a need for height (and other shapeArgs arguments)
     // to be at least 1px
@@ -728,13 +728,15 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     dx = d * Math.sin(beta), // distance between top and bottom in x
     dy = d * Math.sin(alpha); // distance between top and bottom in y
     // TOP
-    var top = ['M', cx + (rx * cs), cy + (ry * ss)];
+    var top = [
+        ['M', cx + (rx * cs), cy + (ry * ss)]
+    ];
     top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
-    top = top.concat([
+    top.push([
         'L', cx + (irx * ce), cy + (iry * se)
     ]);
     top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
-    top = top.concat(['Z']);
+    top.push(['Z']);
     // OUTSIDE
     var b = (beta > 0 ? Math.PI / 2 : 0), a = (alpha > 0 ? 0 : Math.PI / 2);
     var start2 = start > -b ? start : (end > -b ? -b : start), end2 = end < PI - a ? end : (start < PI - a ? PI - a : end), midEnd = 2 * PI - a;
@@ -761,30 +763,32 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     // 1..n - rendering order for startAngle = 0, when set to e.g 90, order
     // changes clockwise (1->2, 2->3, n->1) and counterclockwise for negative
     // startAngle
-    var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+    var out = [
+        ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))]
+    ];
     out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
     // When shape is wide, it can cross both, (c) and (d) edges, when using
     // startAngle
     if (end > midEnd && start < midEnd) {
         // Go to outer side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
         ]);
         // Curve to the right edge of the slice (d)
         out = out.concat(curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
         // Go to the inner side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
         ]);
         // Curve to the true end of the slice
         out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
         // Go to the outer side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
         ]);
         // Go back to middle (d)
         out = out.concat(curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
         ]);
         // Go back to the left edge
@@ -793,7 +797,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     }
     else if (end > PI - a && start < PI - a) {
         // Go to outer side
-        out = out.concat([
+        out.push([
             'L',
             cx + (rx * Math.cos(end2)) + dx,
             cy + (ry * Math.sin(end2)) + dy
@@ -801,39 +805,41 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         // Curve to the true end of the slice
         out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
         // Go to the inner side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
         ]);
         // Go back to the artifical end2
         out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
     }
-    out = out.concat([
+    out.push([
         'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
     ]);
     out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
-    out = out.concat(['Z']);
+    out.push(['Z']);
     // INSIDE
-    var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
+    var inn = [
+        ['M', cx + (irx * cs), cy + (iry * ss)]
+    ];
     inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
-    inn = inn.concat([
+    inn.push([
         'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
     ]);
     inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
-    inn = inn.concat(['Z']);
+    inn.push(['Z']);
     // SIDES
     var side1 = [
-        'M', cx + (rx * cs), cy + (ry * ss),
-        'L', cx + (rx * cs) + dx, cy + (ry * ss) + dy,
-        'L', cx + (irx * cs) + dx, cy + (iry * ss) + dy,
-        'L', cx + (irx * cs), cy + (iry * ss),
-        'Z'
+        ['M', cx + (rx * cs), cy + (ry * ss)],
+        ['L', cx + (rx * cs) + dx, cy + (ry * ss) + dy],
+        ['L', cx + (irx * cs) + dx, cy + (iry * ss) + dy],
+        ['L', cx + (irx * cs), cy + (iry * ss)],
+        ['Z']
     ];
     var side2 = [
-        'M', cx + (rx * ce), cy + (ry * se),
-        'L', cx + (rx * ce) + dx, cy + (ry * se) + dy,
-        'L', cx + (irx * ce) + dx, cy + (iry * se) + dy,
-        'L', cx + (irx * ce), cy + (iry * se),
-        'Z'
+        ['M', cx + (rx * ce), cy + (ry * se)],
+        ['L', cx + (rx * ce) + dx, cy + (ry * se) + dy],
+        ['L', cx + (irx * ce) + dx, cy + (iry * se) + dy],
+        ['L', cx + (irx * ce), cy + (iry * se)],
+        ['Z']
     ];
     // correction for changed position of vanishing point caused by alpha and
     // beta rotations

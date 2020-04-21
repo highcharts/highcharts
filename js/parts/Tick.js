@@ -346,14 +346,15 @@ var Tick = /** @class */ (function () {
      *
      */
     Tick.prototype.getMarkPath = function (x, y, tickLength, tickWidth, horiz, renderer) {
-        return renderer.crispLine([
-            'M',
-            x,
-            y,
-            'L',
-            x + (horiz ? 0 : -tickLength),
-            y + (horiz ? tickLength : 0)
-        ], tickWidth);
+        return renderer.crispLine([[
+                'M',
+                x,
+                y
+            ], [
+                'L',
+                x + (horiz ? 0 : -tickLength),
+                y + (horiz ? tickLength : 0)
+            ]], tickWidth);
     };
     /**
      * Handle the label overflow by adjusting the labels to the left and right
