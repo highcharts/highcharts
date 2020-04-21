@@ -677,10 +677,10 @@ class Tooltip {
             ),
             container: Highcharts.HTMLDOMElement,
             set: Highcharts.Dictionary<Function>,
-            onMouseEnter = function (e: any): void {
+            onMouseEnter = function (): void {
                 tooltip.inContact = true;
             },
-            onMouseLeave = function (e: any): void {
+            onMouseLeave = function (): void {
                 const series = tooltip.chart.hoverSeries;
 
                 tooltip.inContact = false;

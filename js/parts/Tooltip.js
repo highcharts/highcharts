@@ -398,9 +398,9 @@ var Tooltip = /** @class */ (function () {
         var tooltip = this, renderer = this.chart.renderer, styledMode = this.chart.styledMode, options = this.options, className = ('tooltip' + (defined(options.className) ?
             ' ' + options.className :
             '')), pointerEvents = (((_a = options.style) === null || _a === void 0 ? void 0 : _a.pointerEvents) ||
-            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, set, onMouseEnter = function (e) {
+            (!this.followPointer && options.stickOnContact ? 'auto' : 'none')), container, set, onMouseEnter = function () {
             tooltip.inContact = true;
-        }, onMouseLeave = function (e) {
+        }, onMouseLeave = function () {
             var series = tooltip.chart.hoverSeries;
             tooltip.inContact = false;
             if (series &&
