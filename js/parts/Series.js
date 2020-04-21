@@ -500,6 +500,23 @@ null,
      */
     allowPointSelect: false,
     /**
+     * When true, each point or column edge is rounded to its nearest pixel
+     * in order to render sharp on screen. In some cases, when there are a
+     * lot of densely packed columns, this leads to visible difference
+     * in column widths or distance between columns. In these cases,
+     * setting `crisp` to `false` may look better, even though each column
+     * is rendered blurry.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
+     *         Crisp is false
+     *
+     * @since   5.0.10
+     * @product highcharts highstock gantt
+     *
+     * @private
+     */
+    crisp: true,
+    /**
      * If true, a checkbox is displayed next to the legend item to allow
      * selecting the series. The state of the checkbox is determined by
      * the `selected` option.
@@ -4334,7 +4351,7 @@ null,
      *         CSS.
      */
     markerAttribs: function (point, state) {
-        var seriesMarkerOptions = this.options.marker, seriesStateOptions, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
+        var seriesOptions = this.options, seriesMarkerOptions = seriesOptions.marker, seriesStateOptions, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
             seriesMarkerOptions.symbol), pointStateOptions, radius = pick(pointMarkerOptions.radius, seriesMarkerOptions.radius), attribs;
         // Handle hover and select states
         if (state) {
@@ -4350,7 +4367,9 @@ null,
         }
         attribs = {
             // Math.floor for #1843:
-            x: Math.floor(point.plotX) - radius,
+            x: seriesOptions.crisp ?
+                Math.floor(point.plotX) - radius :
+                point.plotX - radius,
             y: point.plotY - radius
         };
         if (radius) {

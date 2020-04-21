@@ -346,6 +346,7 @@ declare global {
             colors?: Array<ColorType>;
             connectEnds?: boolean;
             connectNulls?: boolean;
+            crisp?: boolean|number;
             cropThreshold?: number;
             cursor?: (string|CursorValue);
             dashStyle?: DashStyleValue;
@@ -1030,6 +1031,24 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @private
          */
         allowPointSelect: false,
+
+        /**
+         * When true, each point or column edge is rounded to its nearest pixel
+         * in order to render sharp on screen. In some cases, when there are a
+         * lot of densely packed columns, this leads to visible difference
+         * in column widths or distance between columns. In these cases,
+         * setting `crisp` to `false` may look better, even though each column
+         * is rendered blurry.
+         *
+         * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
+         *         Crisp is false
+         *
+         * @since   5.0.10
+         * @product highcharts highstock gantt
+         *
+         * @private
+         */
+        crisp: true,
 
         /**
          * If true, a checkbox is displayed next to the legend item to allow
@@ -5779,7 +5798,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
             point: Highcharts.Point,
             state?: string
         ): Highcharts.SVGAttributes {
-            var seriesMarkerOptions = this.options.marker,
+            var seriesOptions = this.options,
+                seriesMarkerOptions = seriesOptions.marker,
                 seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
@@ -5817,7 +5837,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
             attribs = {
                 // Math.floor for #1843:
-                x: Math.floor(point.plotX as any) - radius,
+                x: seriesOptions.crisp ?
+                    Math.floor(point.plotX as any) - radius :
+                    point.plotX as any - radius,
                 y: (point.plotY as any) - radius
             };
 

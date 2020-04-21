@@ -238,6 +238,7 @@ seriesType('packedbubble', 'bubble',
     maxSize: '50%',
     sizeBy: 'area',
     zoneAxis: 'y',
+    crisp: false,
     tooltip: {
         pointFormat: 'Value: {point.value}'
     },
@@ -911,49 +912,6 @@ seriesType('packedbubble', 'bubble',
             nextBubble[3],
             nextBubble[4]
         ]; // the same as described before
-    },
-    /**
-     * Get non-presentational attributes for a point. Used internally for
-     * both styled mode and classic. Can be overridden for different series
-     * types.
-     *
-     * @see Series#pointAttribs
-     *
-     * @function Highcharts.Series#markerAttribs
-     *
-     * @param {Highcharts.Point} point
-     *        The Point to inspect.
-     *
-     * @param {string} [state]
-     *        The state, can be either `hover`, `select` or undefined.
-     *
-     * @return {Highcharts.SVGAttributes}
-     *         A hash containing those attributes that are not settable from
-     *         CSS.
-     */
-    markerAttribs: function (point, state) {
-        var seriesMarkerOptions = this.options.marker, seriesStateOptions, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
-            seriesMarkerOptions.symbol), pointStateOptions, radius = pick(pointMarkerOptions.radius, seriesMarkerOptions.radius), attribs;
-        // Handle hover and select states
-        if (state) {
-            seriesStateOptions = seriesMarkerOptions.states[state];
-            pointStateOptions = pointMarkerOptions.states &&
-                pointMarkerOptions.states[state];
-            radius = pick(pointStateOptions && pointStateOptions.radius, seriesStateOptions && seriesStateOptions.radius, radius + (seriesStateOptions && seriesStateOptions.radiusPlus ||
-                0));
-        }
-        point.hasImage = symbol && symbol.indexOf('url') === 0;
-        if (point.hasImage) {
-            radius = 0; // and subsequently width and height is not set
-        }
-        attribs = {
-            x: point.plotX - radius,
-            y: point.plotY - radius
-        };
-        if (radius) {
-            attribs.width = attribs.height = 2 * radius;
-        }
-        return attribs;
     },
     /**
      * This is the main function responsible

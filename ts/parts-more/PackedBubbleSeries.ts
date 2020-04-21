@@ -557,6 +557,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
         maxSize: '50%',
         sizeBy: 'area',
         zoneAxis: 'y',
+        crisp: false,
         tooltip: {
             pointFormat: 'Value: {point.value}'
         },
@@ -1445,79 +1446,6 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 nextBubble[3],
                 nextBubble[4]
             ]; // the same as described before
-        },
-
-        /**
-         * Get non-presentational attributes for a point. Used internally for
-         * both styled mode and classic. Can be overridden for different series
-         * types.
-         *
-         * @see Series#pointAttribs
-         *
-         * @function Highcharts.Series#markerAttribs
-         *
-         * @param {Highcharts.Point} point
-         *        The Point to inspect.
-         *
-         * @param {string} [state]
-         *        The state, can be either `hover`, `select` or undefined.
-         *
-         * @return {Highcharts.SVGAttributes}
-         *         A hash containing those attributes that are not settable from
-         *         CSS.
-         */
-        markerAttribs: function (
-            this: Highcharts.Series,
-            point: Highcharts.Point,
-            state?: string
-        ): Highcharts.SVGAttributes {
-            var seriesMarkerOptions = this.options.marker,
-                seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
-                pointMarkerOptions = point.marker || {},
-                symbol = (
-                    pointMarkerOptions.symbol ||
-                    (seriesMarkerOptions as any).symbol
-                ),
-                pointStateOptions: Highcharts.PointStatesHoverOptionsObject,
-                radius = pick(
-                    pointMarkerOptions.radius,
-                    (seriesMarkerOptions as any).radius
-                ),
-                attribs: Highcharts.SVGAttributes;
-
-            // Handle hover and select states
-            if (state) {
-                seriesStateOptions = (seriesMarkerOptions as any).states[state];
-                pointStateOptions = pointMarkerOptions.states &&
-                    (pointMarkerOptions.states as any)[state];
-
-                radius = pick(
-                    pointStateOptions && pointStateOptions.radius,
-                    seriesStateOptions && seriesStateOptions.radius,
-                    radius + (
-                        seriesStateOptions && seriesStateOptions.radiusPlus ||
-                        0
-                    )
-                );
-            }
-
-            point.hasImage = symbol && symbol.indexOf('url') === 0;
-
-            if (point.hasImage) {
-                radius = 0; // and subsequently width and height is not set
-            }
-
-            attribs = {
-                x: (point.plotX as any) - radius,
-                y: (point.plotY as any) - radius
-            };
-
-            if (radius) {
-                attribs.width = attribs.height = 2 * radius;
-            }
-
-            return attribs;
-
         },
         /**
          * This is the main function responsible

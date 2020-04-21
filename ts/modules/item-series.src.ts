@@ -62,7 +62,6 @@ declare global {
             row: ItemRowObject;
         }
         interface ItemSeriesOptions extends PieSeriesOptions {
-            crisp?: number;
             itemPadding?: number;
             layout?: string;
             marker?: ItemPointMarkerOptions;
