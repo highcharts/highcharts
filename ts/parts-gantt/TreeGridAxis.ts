@@ -15,6 +15,7 @@ import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridData from './TreeGridData.js';
+import TreeGridTick from './TreeGridTick.js';
 import TreeGridUtils from './TreeGridUtils.js';
 const {
     collapse
@@ -45,6 +46,8 @@ declare global {
         }
     }
 }
+
+import '../modules/broken-axis.src.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -101,6 +104,8 @@ namespace TreeGridAxis {
         wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
         wrap(AxisClass.prototype, 'init', wrapInit);
         wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
+
+        TreeGridTick.compose(Tick);
     }
 
     /**
