@@ -23,6 +23,7 @@ import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
 import type StackingAxis from '../StackingAxis';
 import type Tick from '../Tick';
+import type TreeGridAxis from '../../parts-gantt/TreeGridAxis';
 import type VMLAxis3D from '../../parts-3d/VMLAxis3D';
 import type ZAxis from '../../parts-3d/ZAxis';
 
@@ -50,6 +51,7 @@ export interface AxisComposition {
     parallelCoordinates?: ParallelAxis['parallelCoordinates'];
     scrollbar?: ScrollbarAxis['scrollbar'];
     stacking?: StackingAxis['stacking'];
+    treeGrid?: TreeGridAxis['treeGrid'];
     vml?: VMLAxis3D['vml'];
 }
 
@@ -86,6 +88,7 @@ export type AxisType = (
     RadialAxis|
     ScrollbarAxis|
     StackingAxis|
+    TreeGridAxis|
     VMLAxis3D|
     ZAxis
 );
