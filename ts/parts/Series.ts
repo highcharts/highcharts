@@ -5852,7 +5852,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
         /**
          * Internal function to get presentational attributes for each point.
-         * Unlike {@link Series#markerAttribs}, this function shouldm return
+         * Unlike {@link Series#markerAttribs}, this function should return
          * those attributes that can also be set in CSS. In styled mode,
          * `pointAttribs` won't be called.
          *
