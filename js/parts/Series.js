@@ -1921,7 +1921,6 @@ null,
          *
          * @type      {boolean}
          * @since     3.0
-         * @exclude   series.pie
          * @apioption plotOptions.series.dataLabels.inside
          */
         /**
