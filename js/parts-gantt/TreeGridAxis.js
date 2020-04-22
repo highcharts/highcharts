@@ -12,13 +12,10 @@
 import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
-import TreeGridData from './TreeGridData.js';
 import TreeGridTick from './TreeGridTick.js';
-import TreeGridUtils from './TreeGridUtils.js';
-var collapse = TreeGridUtils.collapse;
 import TreeSeriesMixin from '../mixins/tree-series.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import '../modules/broken-axis.src.js';
 /**
  * @private
@@ -46,6 +43,159 @@ var TreeGridAxis;
         TreeGridTick.compose(Tick);
     }
     TreeGridAxis.compose = compose;
+    /**
+     * @private
+     */
+    function getBreakFromNode(node, max) {
+        var from = node.collapseStart || 0, to = node.collapseEnd || 0;
+        // In broken-axis, the axis.max is minimized until it is not within a
+        // break. Therefore, if break.to is larger than axis.max, the axis.to
+        // should not add the 0.5 axis.tickMarkOffset, to avoid adding a break
+        // larger than axis.max.
+        // TODO consider simplifying broken-axis and this might solve itself
+        if (to >= max) {
+            from -= 0.5;
+        }
+        return {
+            from: from,
+            to: to,
+            showPoints: false
+        };
+    }
+    /**
+     * Creates a tree structure of the data, and the treegrid. Calculates
+     * categories, and y-values of points based on the tree.
+     *
+     * @private
+     * @function getTreeGridFromData
+     *
+     * @param {Array<Highcharts.GanttPointOptions>} data
+     * All the data points to display in the axis.
+     *
+     * @param {boolean} uniqueNames
+     * Wether or not the data node with the same name should share grid cell. If
+     * true they do share cell. False by default.
+     *
+     * @param {number} numberOfSeries
+     *
+     * @return {object}
+     * Returns an object containing categories, mapOfIdToNode,
+     * mapOfPosToGridNode, and tree.
+     *
+     * @todo There should be only one point per line.
+     * @todo It should be optional to have one category per point, or merge
+     *       cells
+     * @todo Add unit-tests.
+     */
+    function getTreeGridFromData(data, uniqueNames, numberOfSeries) {
+        var categories = [], collapsedNodes = [], mapOfIdToNode = {}, mapOfPosToGridNode = {}, posIterator = -1, uniqueNamesEnabled = typeof uniqueNames === 'boolean' ? uniqueNames : false, tree;
+        // Build the tree from the series data.
+        var treeParams = {
+            // After the children has been created.
+            after: function (node) {
+                var gridNode = mapOfPosToGridNode[node.pos], height = 0, descendants = 0;
+                gridNode.children.forEach(function (child) {
+                    descendants += (child.descendants || 0) + 1;
+                    height = Math.max((child.height || 0) + 1, height);
+                });
+                gridNode.descendants = descendants;
+                gridNode.height = height;
+                if (gridNode.collapsed) {
+                    collapsedNodes.push(gridNode);
+                }
+            },
+            // Before the children has been created.
+            before: function (node) {
+                var data = isObject(node.data, true) ? node.data : {}, name = isString(data.name) ? data.name : '', parentNode = mapOfIdToNode[node.parent], parentGridNode = (isObject(parentNode, true) ?
+                    mapOfPosToGridNode[parentNode.pos] :
+                    null), hasSameName = function (x) {
+                    return x.name === name;
+                }, gridNode, pos;
+                // If not unique names, look for sibling node with the same name
+                if (uniqueNamesEnabled &&
+                    isObject(parentGridNode, true) &&
+                    !!(gridNode = find(parentGridNode.children, hasSameName))) {
+                    // If there is a gridNode with the same name, reuse position
+                    pos = gridNode.pos;
+                    // Add data node to list of nodes in the grid node.
+                    gridNode.nodes.push(node);
+                }
+                else {
+                    // If it is a new grid node, increment position.
+                    pos = posIterator++;
+                }
+                // Add new grid node to map.
+                if (!mapOfPosToGridNode[pos]) {
+                    mapOfPosToGridNode[pos] = gridNode = {
+                        depth: parentGridNode ? parentGridNode.depth + 1 : 0,
+                        name: name,
+                        nodes: [node],
+                        children: [],
+                        pos: pos
+                    };
+                    // If not root, then add name to categories.
+                    if (pos !== -1) {
+                        categories.push(name);
+                    }
+                    // Add name to list of children.
+                    if (isObject(parentGridNode, true)) {
+                        parentGridNode.children.push(gridNode);
+                    }
+                }
+                // Add data node to map
+                if (isString(node.id)) {
+                    mapOfIdToNode[node.id] = node;
+                }
+                // If one of the points are collapsed, then start the grid node
+                // in collapsed state.
+                if (gridNode &&
+                    data.collapsed === true) {
+                    gridNode.collapsed = true;
+                }
+                // Assign pos to data node
+                node.pos = pos;
+            }
+        };
+        var updateYValuesAndTickPos = function (map, numberOfSeries) {
+            var setValues = function (gridNode, start, result) {
+                var nodes = gridNode.nodes, end = start + (start === -1 ? 0 : numberOfSeries - 1), diff = (end - start) / 2, padding = 0.5, pos = start + diff;
+                nodes.forEach(function (node) {
+                    var data = node.data;
+                    if (isObject(data, true)) {
+                        // Update point
+                        data.y = start + (data.seriesIndex || 0);
+                        // Remove the property once used
+                        delete data.seriesIndex;
+                    }
+                    node.pos = pos;
+                });
+                result[pos] = gridNode;
+                gridNode.pos = pos;
+                gridNode.tickmarkOffset = diff + padding;
+                gridNode.collapseStart = end + padding;
+                gridNode.children.forEach(function (child) {
+                    setValues(child, end + 1, result);
+                    end = (child.collapseEnd || 0) - padding;
+                });
+                // Set collapseEnd to the end of the last child node.
+                gridNode.collapseEnd = end + padding;
+                return result;
+            };
+            return setValues(map['-1'], -1, {});
+        };
+        // Create tree from data
+        tree = Tree.getTree(data, treeParams);
+        // Update y values of data, and set calculate tick positions.
+        mapOfPosToGridNode = updateYValuesAndTickPos(mapOfPosToGridNode, numberOfSeries);
+        // Return the resulting data.
+        return {
+            categories: categories,
+            mapOfIdToNode: mapOfIdToNode,
+            mapOfPosToGridNode: mapOfPosToGridNode,
+            collapsedNodes: collapsedNodes,
+            tree: tree
+        };
+    }
     /**
      * Builds the tree of categories and calculates its positions.
      * @private
@@ -91,7 +241,7 @@ var TreeGridAxis;
                 }, []);
                 // setScale is fired after all the series is initialized,
                 // which is an ideal time to update the axis.categories.
-                treeGrid = TreeGridData.getTreeGridFromData(data, uniqueNames || false, (uniqueNames === true) ? numberOfSeries : 1);
+                treeGrid = getTreeGridFromData(data, uniqueNames || false, (uniqueNames === true) ? numberOfSeries : 1);
                 // Assign values to the axis.
                 axis.categories = treeGrid.categories;
                 axis.treeGrid.mapOfPosToGridNode = treeGrid.mapOfPosToGridNode;
@@ -123,7 +273,7 @@ var TreeGridAxis;
                     removeFoundExtremesEvent =
                         addEvent(axis, 'foundExtremes', function () {
                             treeGrid.collapsedNodes.forEach(function (node) {
-                                var breaks = collapse(axis, node);
+                                var breaks = axis.treeGrid.collapse(node);
                                 if (axis.brokenAxis) {
                                     axis.brokenAxis.setBreaks(breaks, false);
                                 }
@@ -141,10 +291,10 @@ var TreeGridAxis;
      * @function Highcharts.GridAxis#generateTick
      *
      * @param {Function} proceed
-     *        The original generateTick function.
+     * The original generateTick function.
      *
      * @param {number} pos
-     *        The tick position in axis values.
+     * The tick position in axis values.
      */
     function wrapGenerateTick(proceed, pos) {
         var axis = this, mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {}, isTreeGrid = axis.options.type === 'treegrid', ticks = axis.ticks;
@@ -184,7 +334,7 @@ var TreeGridAxis;
      * @function Highcharts.GridAxis#getMaxLabelDimensions
      *
      * @param {Function} proceed
-     *        The original function
+     * The original function
      */
     function wrapGetMaxLabelDimensions(proceed) {
         var axis = this, options = axis.options, labelOptions = options && options.labels, indentation = (labelOptions && isNumber(labelOptions.indentation) ?
@@ -309,7 +459,7 @@ var TreeGridAxis;
      * @function Highcharts.GridAxis#setTickInterval
      *
      * @param {Function} proceed
-     *        The original setTickInterval function.
+     * The original setTickInterval function.
      */
     function wrapSetTickInterval(proceed) {
         var axis = this, options = axis.options, isTreeGrid = options.type === 'treegrid';
@@ -341,10 +491,10 @@ var TreeGridAxis;
      */
     var Additions = /** @class */ (function () {
         /* *
-        *
-        *  Constructors
-        *
-        * */
+         *
+         *  Constructors
+         *
+         * */
         /**
          * @private
          */
@@ -357,11 +507,59 @@ var TreeGridAxis;
          *
          * */
         /**
+         * Calculates the new axis breaks to collapse a node.
+         *
+         * @private
+         *
+         * @param {Highcharts.Axis} axis
+         * The axis to check against.
+         *
+         * @param {Highcharts.GridNode} node
+         * The node to collapse.
+         *
+         * @param {number} pos
+         * The tick position to collapse.
+         *
+         * @return {Array<object>}
+         * Returns an array of the new breaks for the axis.
+         */
+        Additions.prototype.collapse = function (node) {
+            var axis = this.axis, breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
+            breaks.push(obj);
+            return breaks;
+        };
+        /**
+         * Calculates the new axis breaks to expand a node.
+         *
+         * @private
+         *
+         * @param {Highcharts.Axis} axis
+         * The axis to check against.
+         *
+         * @param {Highcharts.GridNode} node
+         * The node to expand.
+         *
+         * @param {number} pos
+         * The tick position to expand.
+         *
+         * @return {Array<object>}
+         * Returns an array of the new breaks for the axis.
+         */
+        Additions.prototype.expand = function (node) {
+            var axis = this.axis, breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
+            // Remove the break from the axis breaks array.
+            return breaks.reduce(function (arr, b) {
+                if (b.to !== obj.to || b.from !== obj.from) {
+                    arr.push(b);
+                }
+                return arr;
+            }, []);
+        };
+        /**
          * Creates a list of positions for the ticks on the axis. Filters out
          * positions that are outside min and max, or is inside an axis break.
          *
          * @private
-         * @function getTickPositions
          *
          * @return {Array<number>}
          * List of positions.
@@ -377,6 +575,50 @@ var TreeGridAxis;
                 }
                 return arr;
             }, []);
+        };
+        /**
+         * Check if a node is collapsed.
+         *
+         * @private
+         *
+         * @param {Highcharts.Axis} axis
+         * The axis to check against.
+         *
+         * @param {object} node
+         * The node to check if is collapsed.
+         *
+         * @param {number} pos
+         * The tick position to collapse.
+         *
+         * @return {boolean}
+         * Returns true if collapsed, false if expanded.
+         */
+        Additions.prototype.isCollapsed = function (node) {
+            var axis = this.axis, breaks = (axis.options.breaks || []), obj = getBreakFromNode(node, axis.max);
+            return breaks.some(function (b) {
+                return b.from === obj.from && b.to === obj.to;
+            });
+        };
+        /**
+         * Calculates the new axis breaks after toggling the collapse/expand
+         * state of a node. If it is collapsed it will be expanded, and if it is
+         * exapended it will be collapsed.
+         *
+         * @private
+         *
+         * @param {Highcharts.Axis} axis
+         * The axis to check against.
+         *
+         * @param {Highcharts.GridNode} node
+         * The node to toggle.
+         *
+         * @return {Array<object>}
+         * Returns an array of the new breaks for the axis.
+         */
+        Additions.prototype.toggleCollapse = function (node) {
+            return (this.isCollapsed(node) ?
+                this.expand(node) :
+                this.collapse(node));
         };
         return Additions;
     }());

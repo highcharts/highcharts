@@ -9,8 +9,6 @@
  *
  * */
 'use strict';
-import TreeGridUtils from './TreeGridUtils.js';
-var collapse = TreeGridUtils.collapse, expand = TreeGridUtils.expand, isCollapsed = TreeGridUtils.isCollapsed, toggleCollapse = TreeGridUtils.toggleCollapse;
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isObject = U.isObject, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 /**
@@ -162,7 +160,7 @@ var TreeGridTick;
             node &&
             node.descendants &&
             node.descendants > 0) {
-            collapsed = isCollapsed(axis, node);
+            collapsed = axis.treeGrid.isCollapsed(node);
             renderLabelIcon(tick, {
                 color: !styledMode && label.styles && label.styles.color || '',
                 collapsed: collapsed,
@@ -246,7 +244,7 @@ var TreeGridTick;
             var tick = this.tick, axis = tick.axis, brokenAxis = axis.brokenAxis;
             if (brokenAxis &&
                 axis.treeGrid.mapOfPosToGridNode) {
-                var pos = tick.pos, node = axis.treeGrid.mapOfPosToGridNode[pos], breaks = collapse(axis, node);
+                var pos = tick.pos, node = axis.treeGrid.mapOfPosToGridNode[pos], breaks = axis.treeGrid.collapse(node);
                 brokenAxis.setBreaks(breaks, pick(redraw, true));
             }
         };
@@ -266,7 +264,7 @@ var TreeGridTick;
             var tick = this.tick, axis = tick.axis, brokenAxis = axis.brokenAxis;
             if (brokenAxis &&
                 axis.treeGrid.mapOfPosToGridNode) {
-                var pos = tick.pos, node = axis.treeGrid.mapOfPosToGridNode[pos], breaks = expand(axis, node);
+                var pos = tick.pos, node = axis.treeGrid.mapOfPosToGridNode[pos], breaks = axis.treeGrid.expand(node);
                 brokenAxis.setBreaks(breaks, pick(redraw, true));
             }
         };
@@ -287,7 +285,7 @@ var TreeGridTick;
             var tick = this.tick, axis = tick.axis, brokenAxis = axis.brokenAxis;
             if (brokenAxis &&
                 axis.treeGrid.mapOfPosToGridNode) {
-                var pos = tick.pos, node = axis.treeGrid.mapOfPosToGridNode[pos], breaks = toggleCollapse(axis, node);
+                var pos = tick.pos, node = axis.treeGrid.mapOfPosToGridNode[pos], breaks = axis.treeGrid.toggleCollapse(node);
                 brokenAxis.setBreaks(breaks, pick(redraw, true));
             }
         };
