@@ -35,6 +35,16 @@ var TreeGridTick;
         addEvent(TickClass, 'init', onInit);
         wrap(TickClass.prototype, 'getLabelPosition', wrapGetLabelPosition);
         wrap(TickClass.prototype, 'renderLabel', wrapRenderLabel);
+        // backwards compatibility
+        TickClass.prototype.collapse = function (redraw) {
+            this.treeGrid.collapse(redraw);
+        };
+        TickClass.prototype.expand = function (redraw) {
+            this.treeGrid.expand(redraw);
+        };
+        TickClass.prototype.toggleCollapse = function (redraw) {
+            this.treeGrid.toggleCollapse(redraw);
+        };
     }
     TreeGridTick.compose = compose;
     /**
