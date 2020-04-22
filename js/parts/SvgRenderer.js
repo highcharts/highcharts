@@ -4517,11 +4517,13 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 2 * padding +
                 paddingLeft);
             wrapper.height = (height || bBox.height || 0) + 2 * padding;
-            // Update the label-scoped y offset
+            // Update the label-scoped y offset. Math.min because of inline
+            // style (#9400)
             baselineOffset = padding + Math.min(renderer
                 .fontMetrics(style && style.fontSize, text).b, 
-            // Math.min because of inline style (#9400)
-            bBox ? bBox.height : Infinity);
+            // When the height is 0, there is no bBox, so go with the font
+            // metrics. Highmaps CSS demos.
+            bBox.height || Infinity);
             if (needsBox) {
                 // Create the border box if it is not already present
                 if (!box) {
