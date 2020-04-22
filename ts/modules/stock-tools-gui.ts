@@ -137,6 +137,8 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
+import NavigationBindings from '../annotations/navigationBindings.js';
+
 const {
     addEvent,
     createElement,
@@ -1632,7 +1634,7 @@ extend(H.Chart.prototype, {
 });
 
 // Comunication with bindings:
-addEvent(H.NavigationBindings, 'selectButton', function (
+addEvent(NavigationBindings, 'selectButton', function (
     event: Highcharts.Dictionary<Highcharts.HTMLDOMElement>
 ): void {
     var button = event.button,
@@ -1652,7 +1654,7 @@ addEvent(H.NavigationBindings, 'selectButton', function (
     }
 });
 
-addEvent(H.NavigationBindings, 'deselectButton', function (
+addEvent(NavigationBindings, 'deselectButton', function (
     event: Highcharts.Dictionary<Highcharts.HTMLDOMElement>
 ): void {
     var button = event.button,

@@ -12,6 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
+import NavigationBindings from '../annotations/navigationBindings.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick;
 var win = H.win, DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
 H.setOptions({
@@ -1263,7 +1264,7 @@ extend(H.Chart.prototype, {
     }
 });
 // Comunication with bindings:
-addEvent(H.NavigationBindings, 'selectButton', function (event) {
+addEvent(NavigationBindings, 'selectButton', function (event) {
     var button = event.button, className = PREFIX + 'submenu-wrapper', gui = this.chart.stockTools;
     if (gui && gui.guiEnabled) {
         // Unslect other active buttons
@@ -1276,7 +1277,7 @@ addEvent(H.NavigationBindings, 'selectButton', function (event) {
         gui.selectButton(button);
     }
 });
-addEvent(H.NavigationBindings, 'deselectButton', function (event) {
+addEvent(NavigationBindings, 'deselectButton', function (event) {
     var button = event.button, className = PREFIX + 'submenu-wrapper', gui = this.chart.stockTools;
     if (gui && gui.guiEnabled) {
         // If deselecting a button from a submenu, select state for it's parent

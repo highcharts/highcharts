@@ -18,9 +18,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface NavigationBindings {
-            popup: Popup;
-        }
         class Popup {
             public constructor(parentDiv: HTMLDOMElement, iconsURL: string);
             public annotations: PopupAnnotationsObject;
@@ -126,7 +123,9 @@ declare global {
     }
 }
 
+import NavigationBindings from '../annotations/navigationBindings.js';
 import U from '../parts/Utilities.js';
+
 const {
     addEvent,
     createElement,
@@ -1263,8 +1262,8 @@ H.Popup.prototype = {
     }
 } as any;
 
-addEvent(H.NavigationBindings, 'showPopup', function (
-    this: Highcharts.NavigationBindings,
+addEvent(NavigationBindings, 'showPopup', function (
+    this: NavigationBindings,
     config: Highcharts.PopupConfigObject
 ): void {
     if (!this.popup) {
@@ -1289,7 +1288,7 @@ addEvent(H.NavigationBindings, 'showPopup', function (
     );
 });
 
-addEvent(H.NavigationBindings, 'closePopup', function (this: Highcharts.NavigationBindings): void {
+addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): void {
     if (this.popup) {
         this.popup.closePopup();
     }
