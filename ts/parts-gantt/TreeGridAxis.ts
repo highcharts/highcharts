@@ -98,8 +98,6 @@ namespace TreeGridAxis {
      */
     export function compose(AxisClass: typeof Axis): void {
 
-        addEvent(AxisClass, 'init', onInit);
-
         wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
         wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
         wrap(AxisClass.prototype, 'init', wrapInit);
@@ -121,7 +119,7 @@ namespace TreeGridAxis {
             type: string;
         }
     ): void {
-        var chart = e.target,
+        const chart = e.target,
             axes = chart.axes;
 
         (axes.filter(function (axis: Highcharts.Axis): boolean {
@@ -235,17 +233,6 @@ namespace TreeGridAxis {
     }
 
     /**
-     * @private
-     */
-    function onInit(this: Axis, userOptions: Options): void {
-        const axis = this;
-
-        if (!axis.treeGrid) {
-            axis.treeGrid = new Additions(axis as TreeGridAxis);
-        }
-    }
-
-    /**
      * Generates a tick for initial positioning.
      *
      * @private
@@ -262,12 +249,11 @@ namespace TreeGridAxis {
         proceed: Function,
         pos: number
     ): void {
-
-        var axis = this,
+        const axis = this,
             mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {},
             isTreeGrid = axis.options.type === 'treegrid',
-            ticks = axis.ticks,
-            tick = ticks[pos],
+            ticks = axis.ticks;
+        let tick = ticks[pos],
             levelOptions,
             options: (TreeGridAxis.Options|undefined),
             gridNode;
@@ -316,8 +302,7 @@ namespace TreeGridAxis {
         this: TreeGridAxis,
         proceed: Function
     ): Highcharts.SizeObject {
-
-        var axis = this,
+        const axis = this,
             options = axis.options,
             labelOptions = options && options.labels,
             indentation = (
@@ -326,8 +311,8 @@ namespace TreeGridAxis {
                     0
             ),
             retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)),
-            isTreeGrid = axis.options.type === 'treegrid',
-            treeDepth: number;
+            isTreeGrid = axis.options.type === 'treegrid';
+        let treeDepth: number;
 
         if (isTreeGrid && axis.treeGrid.mapOfPosToGridNode) {
             treeDepth = axis.treeGrid.mapOfPosToGridNode[-1].height || 0;
@@ -348,6 +333,10 @@ namespace TreeGridAxis {
     ): void {
         const axis = this,
             isTreeGrid = userOptions.type === 'treegrid';
+
+        if (!axis.treeGrid) {
+            axis.treeGrid = new Additions(axis as TreeGridAxis);
+        }
 
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
@@ -467,7 +456,7 @@ namespace TreeGridAxis {
         this: TreeGridAxis,
         proceed: Function
     ): void {
-        var axis = this,
+        const axis = this,
             options = axis.options,
             isTreeGrid = options.type === 'treegrid';
 
