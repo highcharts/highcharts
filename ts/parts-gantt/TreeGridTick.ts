@@ -13,13 +13,6 @@
 
 import type Tick from '../parts/Tick';
 import type TreeGridAxis from './TreeGridAxis';
-import TreeGridUtils from './TreeGridUtils.js';
-const {
-    collapse,
-    expand,
-    isCollapsed,
-    toggleCollapse
-} = TreeGridUtils;
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -303,7 +296,7 @@ namespace TreeGridTick {
             node.descendants &&
             node.descendants > 0
         ) {
-            collapsed = isCollapsed(axis, node);
+            collapsed = axis.treeGrid.isCollapsed(node);
 
             renderLabelIcon(
                 tick,
@@ -421,7 +414,7 @@ namespace TreeGridTick {
             ) {
                 const pos = tick.pos,
                     node = axis.treeGrid.mapOfPosToGridNode[pos],
-                    breaks = collapse(axis, node);
+                    breaks = axis.treeGrid.collapse(node);
 
                 brokenAxis.setBreaks(breaks, pick(redraw, true));
             }
@@ -450,7 +443,7 @@ namespace TreeGridTick {
             ) {
                 const pos = tick.pos,
                     node = axis.treeGrid.mapOfPosToGridNode[pos],
-                    breaks = expand(axis, node);
+                    breaks = axis.treeGrid.expand(node);
 
                 brokenAxis.setBreaks(breaks, pick(redraw, true));
             }
@@ -480,7 +473,7 @@ namespace TreeGridTick {
             ) {
                 const pos = tick.pos,
                     node = axis.treeGrid.mapOfPosToGridNode[pos],
-                    breaks = toggleCollapse(axis, node);
+                    breaks = axis.treeGrid.toggleCollapse(node);
 
                 brokenAxis.setBreaks(breaks, pick(redraw, true));
             }
