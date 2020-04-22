@@ -2555,7 +2555,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
              *
              * @type      {boolean}
              * @since     3.0
-             * @exclude   series.pie
              * @apioption plotOptions.series.dataLabels.inside
              */
 

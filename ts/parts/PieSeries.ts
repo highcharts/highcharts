@@ -286,7 +286,7 @@ seriesType<Highcharts.PieSeries>(
         /**
          * @declare   Highcharts.SeriesPieDataLabelsOptionsObject
          * @extends   plotOptions.series.dataLabels
-         * @excluding align, allowOverlap, staggerLines, step
+         * @excluding align, allowOverlap, inside, staggerLines, step
          * @private
          */
         dataLabels: {
