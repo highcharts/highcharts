@@ -5834,12 +5834,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
             if (point.hasImage) {
                 radius = 0; // and subsequently width and height is not set
             }
-
             attribs = {
                 // Math.floor for #1843:
                 x: seriesOptions.crisp ?
                     Math.floor(point.plotX as any) - radius :
-                    point.plotX as any - radius,
+                    (point.plotX as any) - radius,
                 y: (point.plotY as any) - radius
             };
 
@@ -5853,7 +5852,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
         /**
          * Internal function to get presentational attributes for each point.
-         * Unlike {@link Series#markerAttribs}, this function should return
+         * Unlike {@link Series#markerAttribs}, this function shouldm return
          * those attributes that can also be set in CSS. In styled mode,
          * `pointAttribs` won't be called.
          *
