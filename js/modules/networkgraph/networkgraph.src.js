@@ -215,6 +215,9 @@ seriesType('networkgraph', 'line',
         },
         textPath: {
             enabled: false
+        },
+        style: {
+            transition: 'opacity 2000ms'
         }
     },
     /**

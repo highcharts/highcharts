@@ -272,7 +272,9 @@ QUnit.test(
 
         assert.strictEqual(
             chart.series[1].points.every(
-                point => point.dataLabel.attr('translateY') < 0
+                point => point.dataLabel.attr('translateY') < 0 ||
+                point.dataLabel.attr('opacity') === 0
+
             ),
             true,
             'All six labels of the second series should be hidden.'

@@ -232,8 +232,9 @@ QUnit.test('Stack labels overlapping issue #11982', function (assert) {
 
 
     assert.strictEqual(
-        chart.yAxis[0].stacks['column,,,'][2].label.y,
-        -9999,
+        chart.yAxis[0].stacks['column,,,'][2].label.y === -9999 ||
+        chart.yAxis[0].stacks['column,,,'][2].label.opacity === 0,
+        true,
         'This stack-label should be hidden because of overlapping #11982'
     );
 });

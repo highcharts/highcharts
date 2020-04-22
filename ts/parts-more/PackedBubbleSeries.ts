@@ -688,7 +688,10 @@ seriesType<Highcharts.PackedBubbleSeries>(
              * @apioption plotOptions.packedbubble.dataLabels.textPath
              */
 
-            padding: 0
+            padding: 0,
+            style: {
+                transition: 'opacity 2000ms'
+            }
 
         },
         /**

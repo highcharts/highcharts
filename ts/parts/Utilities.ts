@@ -1383,26 +1383,6 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 /**
- * Utility function checking if two rectangles are overlapping
- *
- * @private
- * @param {Highcharts.BBoxObject} box1 BBox of the first rectangle
- * @param {Highcharts.BBoxObject} box2 BBox of the second rectangle
- * @return {number} Returns a boolean value if two rectangles intersect.
-*/
-function isIntersectRect(
-    box1: Highcharts.BBoxObject,
-    box2: Highcharts.BBoxObject
-): boolean {
-    return !(
-        box2.x > box1.x + box1.width ||
-        box2.x + box2.width < box1.x ||
-        box2.y > box1.y + box1.height ||
-        box2.y + box2.height < box1.y
-    );
-}
-
-/**
  * Shortcut for parseInt
  *
  * @private
@@ -3506,7 +3486,6 @@ const utilitiesModule = {
     removeEvent,
     seriesType,
     setAnimation,
-    isIntersectRect,
     splat,
     stableSort,
     stop,

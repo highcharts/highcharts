@@ -349,7 +349,10 @@ seriesType('packedbubble', 'bubble',
          * @extends   plotOptions.series.dataLabels.textPath
          * @apioption plotOptions.packedbubble.dataLabels.textPath
          */
-        padding: 0
+        padding: 0,
+        style: {
+            transition: 'opacity 2000ms'
+        }
     },
     /**
      * Options for layout algorithm when simulation is enabled. Inside there

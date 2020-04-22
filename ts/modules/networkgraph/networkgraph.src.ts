@@ -431,6 +431,9 @@ seriesType<Highcharts.NetworkgraphSeries>(
 
             textPath: {
                 enabled: false
+            },
+            style: {
+                transition: 'opacity 2000ms'
             }
 
         },

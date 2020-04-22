@@ -13,7 +13,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, isIntersectRect = U.isIntersectRect;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Chart.js';
 var Chart = H.Chart;
 /* eslint-disable no-invalid-this */
@@ -70,7 +70,12 @@ addEvent(Chart, 'render', function collectAndHide() {
  * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
-    var chart = this, len = labels.length, ren = chart.renderer, label, i, j, label1, label2, box1, box2, isLabelAffected = false, 
+    var chart = this, len = labels.length, ren = chart.renderer, label, i, j, label1, label2, box1, box2, isLabelAffected = false, isIntersectRect = function (box1, box2) {
+        return !(box2.x > box1.x + box1.width ||
+            box2.x + box2.width < box1.x ||
+            box2.y > box1.y + box1.height ||
+            box2.y + box2.height < box1.y);
+    }, 
     // Get the box with its position inside the chart, as opposed to getBBox
     // that only reports the position relative to the parent.
     getAbsoluteBox = function (label) {
@@ -138,7 +143,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
     }
     // Hide or show
     labels.forEach(function (label) {
-        var complete, newOpacity, animOptions;
+        var complete, newOpacity;
         if (label) {
             newOpacity = label.newOpacity;
             if (label.oldOpacity !== newOpacity) {
@@ -150,14 +155,13 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                         if (!chart.styledMode) {
                             label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
                         }
-                        label[newOpacity ? 'show' : 'hide'](true);
+                        label.visibility = newOpacity ? 'inherit' : 'hidden';
                         label.placed = !!newOpacity;
                     };
                     isLabelAffected = true;
                     // Animate or set the opacity
                     label.alignAttr.opacity = newOpacity;
-                    animOptions = label.options && label.options.animation || null;
-                    label[label.isOld ? 'animate' : 'attr'](label.alignAttr, animOptions, complete);
+                    label[label.isOld ? 'animate' : 'attr'](label.alignAttr, null, complete);
                     fireEvent(chart, 'afterHideOverlappingLabel');
                 }
                 else { // other labels, tick labels

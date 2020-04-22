@@ -20,8 +20,7 @@ const {
     fireEvent,
     isArray,
     objectEach,
-    pick,
-    isIntersectRect
+    pick
 } = U;
 
 import '../parts/Chart.js';
@@ -126,6 +125,17 @@ Chart.prototype.hideOverlappingLabels = function (
         box1,
         box2,
         isLabelAffected = false,
+        isIntersectRect = function (
+            box1: Highcharts.BBoxObject,
+            box2: Highcharts.BBoxObject
+        ): boolean {
+            return !(
+                box2.x > box1.x + box1.width ||
+                box2.x + box2.width < box1.x ||
+                box2.y > box1.y + box1.height ||
+                box2.y + box2.height < box1.y
+            );
+        },
 
         // Get the box with its position inside the chart, as opposed to getBBox
         // that only reports the position relative to the parent.
@@ -223,8 +233,7 @@ Chart.prototype.hideOverlappingLabels = function (
     // Hide or show
     labels.forEach(function (label: Highcharts.SVGElement): void {
         var complete: (Function|undefined),
-            newOpacity: number,
-            animOptions: Highcharts.AnimationOptionsObject;
+            newOpacity: number;
 
         if (label) {
             newOpacity = label.newOpacity;
@@ -239,7 +248,7 @@ Chart.prototype.hideOverlappingLabels = function (
                         if (!chart.styledMode) {
                             label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
                         }
-                        label[newOpacity ? 'show' : 'hide'](true);
+                        label.visibility = newOpacity ? 'inherit' : 'hidden';
                         label.placed = !!newOpacity;
                     };
 
@@ -247,10 +256,9 @@ Chart.prototype.hideOverlappingLabels = function (
 
                     // Animate or set the opacity
                     label.alignAttr.opacity = newOpacity;
-                    animOptions = label.options && label.options.animation || null;
                     label[label.isOld ? 'animate' : 'attr'](
                         label.alignAttr,
-                        animOptions,
+                        null as any,
                         complete
                     );
                     fireEvent(chart, 'afterHideOverlappingLabel');

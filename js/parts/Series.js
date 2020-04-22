@@ -2154,15 +2154,7 @@ null,
          * @sample {highcharts} highcharts/plotoptions/series-datalabels-rotation/
          *         Vertical and positioned
          */
-        y: 0,
-        /**
-         * The animation for changing labels opacity.
-         *
-         * @since     next
-         * @default   false
-         * @type    {boolean|Highcharts.AnimationOptionsObject}
-         */
-        animation: false
+        y: 0
     },
     /**
      * When the series contains less points than the crop threshold, all
