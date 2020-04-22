@@ -72,9 +72,22 @@ namespace TreeGridTick {
      * @private
      */
     export function compose(TickClass: typeof Tick): void {
+
         addEvent(TickClass, 'init', onInit);
+
         wrap(TickClass.prototype, 'getLabelPosition', wrapGetLabelPosition);
         wrap(TickClass.prototype, 'renderLabel', wrapRenderLabel);
+
+        // backwards compatibility
+        (TickClass.prototype as any).collapse = function (this: TreeGridTick, redraw?: boolean): void {
+            this.treeGrid.collapse(redraw);
+        };
+        (TickClass.prototype as any).expand = function (this: TreeGridTick, redraw?: boolean): void {
+            this.treeGrid.expand(redraw);
+        };
+        (TickClass.prototype as any).toggleCollapse = function (this: TreeGridTick, redraw?: boolean): void {
+            this.treeGrid.toggleCollapse(redraw);
+        };
     }
 
     /**
