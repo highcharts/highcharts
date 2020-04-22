@@ -39,7 +39,6 @@ var TreeGridAxis;
      * @private
      */
     function compose(AxisClass) {
-        addEvent(AxisClass, 'init', onInit);
         wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
         wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
         wrap(AxisClass.prototype, 'init', wrapInit);
@@ -136,15 +135,6 @@ var TreeGridAxis;
         });
     }
     /**
-     * @private
-     */
-    function onInit(userOptions) {
-        var axis = this;
-        if (!axis.treeGrid) {
-            axis.treeGrid = new Additions(axis);
-        }
-    }
-    /**
      * Generates a tick for initial positioning.
      *
      * @private
@@ -157,7 +147,8 @@ var TreeGridAxis;
      *        The tick position in axis values.
      */
     function wrapGenerateTick(proceed, pos) {
-        var axis = this, mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {}, isTreeGrid = axis.options.type === 'treegrid', ticks = axis.ticks, tick = ticks[pos], levelOptions, options, gridNode;
+        var axis = this, mapOptionsToLevel = axis.treeGrid.mapOptionsToLevel || {}, isTreeGrid = axis.options.type === 'treegrid', ticks = axis.ticks;
+        var tick = ticks[pos], levelOptions, options, gridNode;
         if (isTreeGrid &&
             axis.treeGrid.mapOfPosToGridNode) {
             gridNode = axis.treeGrid.mapOfPosToGridNode[pos];
@@ -198,7 +189,8 @@ var TreeGridAxis;
     function wrapGetMaxLabelDimensions(proceed) {
         var axis = this, options = axis.options, labelOptions = options && options.labels, indentation = (labelOptions && isNumber(labelOptions.indentation) ?
             labelOptions.indentation :
-            0), retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)), isTreeGrid = axis.options.type === 'treegrid', treeDepth;
+            0), retVal = proceed.apply(axis, Array.prototype.slice.call(arguments, 1)), isTreeGrid = axis.options.type === 'treegrid';
+        var treeDepth;
         if (isTreeGrid && axis.treeGrid.mapOfPosToGridNode) {
             treeDepth = axis.treeGrid.mapOfPosToGridNode[-1].height || 0;
             retVal.width += indentation * (treeDepth - 1);
@@ -210,6 +202,9 @@ var TreeGridAxis;
      */
     function wrapInit(proceed, chart, userOptions) {
         var axis = this, isTreeGrid = userOptions.type === 'treegrid';
+        if (!axis.treeGrid) {
+            axis.treeGrid = new Additions(axis);
+        }
         // Set default and forced options for TreeGrid
         if (isTreeGrid) {
             // Add event for updating the categories of a treegrid.
