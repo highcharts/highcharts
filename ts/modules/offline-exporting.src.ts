@@ -356,7 +356,7 @@ Highcharts.downloadSVGLocal = function (
         var width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
-                'l',
+                height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
                 'pt',
                 [width, height]
             );

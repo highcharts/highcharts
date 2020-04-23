@@ -199,7 +199,8 @@ Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallb
      */
     function svgToPdf(svgElement, margin) {
         var width = svgElement.width.baseVal.value + 2 * margin, height = svgElement.height.baseVal.value + 2 * margin, pdf = new win.jsPDF(// eslint-disable-line new-cap
-        'l', 'pt', [width, height]);
+        height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
+        'pt', [width, height]);
         // Workaround for #7090, hidden elements were drawn anyway. It comes
         // down to https://github.com/yWorks/svg2pdf.js/issues/28. Check this
         // later.
