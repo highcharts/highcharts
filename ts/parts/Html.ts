@@ -458,7 +458,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         wrapper.alignSetter =
         wrapper.rotationSetter =
         function (
-            value: ('start'|'middle'|'end'),
+            value: string,
             key?: string
         ): void {
             if (key === 'align') {
