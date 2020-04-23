@@ -505,6 +505,7 @@ seriesType('packedbubble', 'bubble',
      */
     forces: ['barycenter', 'repulsive'],
     pointArrayMap: ['value'],
+    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
     pointValKey: 'value',
     isCartesian: false,
     requireSorting: false,
@@ -676,7 +677,6 @@ seriesType('packedbubble', 'bubble',
     },
     // Create Background/Parent Nodes for split series.
     drawGraph: function () {
-        var _this = this;
         // if the series is not using layout, don't add parent nodes
         if (!this.layout || !this.layout.options.splitSeries) {
             return;
@@ -709,32 +709,11 @@ seriesType('packedbubble', 'bubble',
                     .add(series.parentNodesGroup);
         }
         series.parentNode.graphic.attr(parentAttribs);
-        if (series.options.allowParentSelect &&
-            series.parentNode &&
-            series.parentNode.graphic) {
-            series.parentNode.graphic.on('click', function (event) {
-                var selectedParents = _this.getSelectedParents();
-                if (selectedParents.length === 0) {
-                    series.parentNode.select(null);
-                }
-                else if (!event.ctrlKey && !event.metaKey && !event.shiftKey) {
-                    series.parentNode.select(true);
-                    selectedParents.forEach(function (parent) {
-                        parent.select(false);
-                    });
-                }
-                else if (event.ctrlKey || event.metaKey || event.shiftKey) {
-                    series.parentNode.select(null);
-                }
-            });
-        }
     },
     getSelectedParents: function () {
-        var chart = this.chart;
-        var series = chart.series;
-        var selectedParentsNodes = [];
-        chart.series.forEach(function (series) {
-            if (series.parentNode.selected) {
+        var chart = this.chart, series = chart.series, selectedParentsNodes = [];
+        series.forEach(function (series) {
+            if (series.parentNode && series.parentNode.selected) {
                 selectedParentsNodes.push(series.parentNode);
             }
         });
@@ -746,7 +725,7 @@ seriesType('packedbubble', 'bubble',
      * @private
      */
     createParentNodes: function () {
-        var series = this, chart = series.chart, parentNodeLayout = series.parentNodeLayout, nodeAdded, parentNode = series.parentNode;
+        var series = this, chart = series.chart, parentNodeLayout = series.parentNodeLayout, nodeAdded, parentNode = series.parentNode, PackedBubblePoint = series.pointClass;
         series.parentNodeMass = 0;
         series.points.forEach(function (p) {
             series.parentNodeMass +=
@@ -761,7 +740,7 @@ seriesType('packedbubble', 'bubble',
         parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
         if (!nodeAdded) {
             if (!parentNode) {
-                parentNode = (new NetworkPoint()).init(this, {
+                parentNode = (new PackedBubblePoint()).init(this, {
                     mass: series.parentNodeRadius / 2,
                     marker: {
                         radius: series.parentNodeRadius
@@ -782,6 +761,35 @@ seriesType('packedbubble', 'bubble',
             series.parentNode = parentNode;
             parentNodeLayout.addElementsToCollection([series], parentNodeLayout.series);
             parentNodeLayout.addElementsToCollection([parentNode], parentNodeLayout.nodes);
+        }
+    },
+    drawTracker: function () {
+        var series = this, chart = series.chart, pointer = chart.pointer, onMouseOver = function (e) {
+            var point = pointer.getPointFromEvent(e);
+            // undefined on graph in scatterchart
+            if (typeof point !== 'undefined') {
+                pointer.isDirectTouch = true;
+                point.onMouseOver(e);
+            }
+        }, parentNode = series.parentNode;
+        var dataLabels;
+        H.TrackerMixin.drawTrackerPoint.call(this);
+        // Add reference to the point
+        if (parentNode) {
+            dataLabels = (isArray(parentNode.dataLabels) ?
+                parentNode.dataLabels :
+                (parentNode.dataLabel ? [parentNode.dataLabel] : []));
+            if (parentNode.graphic) {
+                parentNode.graphic.element.point = parentNode;
+            }
+            dataLabels.forEach(function (dataLabel) {
+                if (dataLabel.div) {
+                    dataLabel.div.point = parentNode;
+                }
+                else {
+                    dataLabel.element.point = parentNode;
+                }
+            });
         }
     },
     /**
@@ -1233,6 +1241,78 @@ seriesType('packedbubble', 'bubble',
             this.series.layout.removeElementFromCollection(this, this.series.layout.nodes);
         }
         return Point.prototype.destroy.apply(this, arguments);
+    },
+    firePointEvent: function (eventType, eventArgs, defaultFunction) {
+        var point = this, series = this.series, seriesOptions = series.options;
+        // load event handlers on demand to save time on mouseover/out
+        if (this.isParentNode) {
+            if (seriesOptions.point.events[eventType] ||
+                (point.options &&
+                    point.options.events &&
+                    point.options.events[eventType])) {
+                point.importEvents();
+            }
+            // add default handler if in selection mode
+            if (eventType === 'click' && seriesOptions.allowParentSelect) {
+                defaultFunction = function (event) {
+                    // Control key is for Windows, meta (= Cmd key) for Mac,
+                    // Shift for Opera.
+                    if (point.select) { // #2911
+                        point.select(null, event.ctrlKey || event.metaKey || event.shiftKey);
+                    }
+                };
+            }
+            fireEvent(point, eventType, eventArgs, defaultFunction);
+        }
+        else {
+            return Point.prototype.firePointEvent.apply(this, arguments);
+        }
+    },
+    select: function (selected, accumulate) {
+        if (this.isParentNode) {
+            var parentNode = this, series = parentNode.series, chart = series.chart;
+            selected = pick(selected, !parentNode.selected);
+            this.selectedStaging = selected;
+            // fire the event with the default handler
+            parentNode.firePointEvent(selected ? 'select' : 'unselect', { accumulate: accumulate }, function () {
+                /**
+                 * Whether the point is selected or not.
+                 *
+                 * @see Point#select
+                 * @see Chart#getSelectedPoints
+                 *
+                 * @name Highcharts.Point#selected
+                 * @type {boolean}
+                 */
+                parentNode.selected = parentNode.options.selected = selected;
+                series.options.data[series.data.indexOf(parentNode)] =
+                    parentNode.options;
+                parentNode.setState(selected && 'select');
+                // unselect all other points unless Ctrl or Cmd + click
+                if (!accumulate) {
+                    series.getSelectedParents().forEach(function (loopPoint) {
+                        var loopSeries = loopPoint.series;
+                        if (loopPoint.selected && loopPoint !== parentNode) {
+                            loopPoint.selected = loopPoint.options.selected =
+                                false;
+                            loopSeries.options.data[loopSeries.data.indexOf(loopPoint)] = loopPoint.options;
+                            // Programatically selecting a point should
+                            // restore normal state, but when click
+                            // happened on other point, set inactive
+                            // state to match other points
+                            loopPoint.setState(chart.hoverPoints &&
+                                loopSeries.options.inactiveOtherPoints ?
+                                'inactive' : '');
+                            loopPoint.firePointEvent('unselect');
+                        }
+                    });
+                }
+            });
+            delete this.selectedStaging;
+        }
+        else {
+            return Point.prototype.select.apply(this, arguments);
+        }
     }
 });
 // Remove accumulated data points to redistribute all of them again
