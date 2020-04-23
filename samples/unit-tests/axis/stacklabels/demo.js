@@ -324,3 +324,65 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         'This stack-label text x attribute should be equal to set padding #12308'
     );
 });
+
+QUnit.test('Stack labels styles options #13330', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+
+        yAxis: {
+            stackLabels: {
+                enabled: true,
+                backgroundColor: 'black',
+                borderWidth: 2,
+                borderColor: 'red',
+                borderRadius: 4,
+                style: {
+                    color: 'red'
+                }
+            }
+        },
+
+        plotOptions: {
+            column: {
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+            name: 'A',
+            data: [5, 3]
+        }, {
+            name: 'B',
+            data: [15, 12]
+        }]
+    });
+
+    const stackLabel = chart.yAxis[0].stacking.stacks['column,,,'][0];
+
+    assert.strictEqual(
+        stackLabel.label.fill,
+        stackLabel.options.backgroundColor,
+        'This stack-label fill atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label.stroke,
+        stackLabel.options.borderColor,
+        'This stack-label stroke atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label["stroke-width"],
+        stackLabel.options.borderWidth,
+        'This stack-label stroke-width atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label.box.r,
+        stackLabel.options.borderRadius,
+        'This stack-label box r atribute should be same as set in options #13330'
+    );
+});
