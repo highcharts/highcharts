@@ -1104,6 +1104,7 @@ chartProto.callbacks.push(function (chart) {
         chart.controlPointsGroup.destroy();
     });
     addEvent(chart, 'exportData', function (event) {
+        var _a, _b;
         var annotations = chart.annotations, csvColumnHeaderFormatter = ((this.options.exporting &&
             this.options.exporting.csv) ||
             {}).columnHeaderFormatter, 
@@ -1124,7 +1125,7 @@ chartProto.callbacks.push(function (chart) {
                     topLevelColumnTitle: s
                 };
             }
-        };
+        }, startRowLength = event.dataRows[0].length, annotationSeparator = '; ', concatenatePointAnnotations = (_b = (_a = chart.options.exporting) === null || _a === void 0 ? void 0 : _a.csv) === null || _b === void 0 ? void 0 : _b.concatenatePointAnnotations;
         annotations.forEach(function (annotation) {
             if (annotation.options.labelOptions.includeInDataExport) {
                 annotation.labels.forEach(function (label) {
@@ -1154,7 +1155,14 @@ chartProto.callbacks.push(function (chart) {
                                         row.xValues &&
                                         xAxisIndex !== void 0 &&
                                         annotationX === row.xValues[xAxisIndex]) {
-                                        row.push(annotationText_1);
+                                        if (concatenatePointAnnotations &&
+                                            row.length > startRowLength) {
+                                            row[row.length - 1] +=
+                                                annotationSeparator + annotationText_1;
+                                        }
+                                        else {
+                                            row.push(annotationText_1);
+                                        }
                                         wasAdded = true;
                                     }
                                 });

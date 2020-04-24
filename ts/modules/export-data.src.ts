@@ -54,6 +54,7 @@ declare global {
         }
         interface ExportingCsvOptions {
             columnHeaderFormatter?: (Function|null);
+            concatenatePointAnnotations?: boolean;
             dateFormat?: string;
             decimalPoint?: (string|null);
             itemDelimiter?: (string|null);
@@ -249,6 +250,18 @@ Highcharts.setOptions({
              * @type {Function|null}
              */
             columnHeaderFormatter: null,
+
+            /**
+            * When several labels are assigned to a specific point,
+            * they will be displayed in one field in the table.
+            *
+            * @sample highcharts/export-data/concatenate-point-annotations/
+            *         Concatenate point annotations.
+            *
+            * @since   next
+            * @requires modules/annotations
+            */
+            concatenatePointAnnotations: false,
 
             /**
              * Which date format to use for exported dates on a datetime X axis.

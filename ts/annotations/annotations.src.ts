@@ -1712,7 +1712,10 @@ chartProto.callbacks.push(function (
                         topLevelColumnTitle: s
                     };
                 }
-            };
+            },
+            startRowLength = event.dataRows[0].length,
+            annotationSeparator = '; ',
+            concatenatePointAnnotations = chart.options.exporting?.csv?.concatenatePointAnnotations;
 
         annotations.forEach((annotation): void => {
 
@@ -1752,7 +1755,15 @@ chartProto.callbacks.push(function (
                                         xAxisIndex !== void 0 &&
                                         annotationX === row.xValues[xAxisIndex]
                                     ) {
-                                        row.push(annotationText);
+                                        if (
+                                            concatenatePointAnnotations &&
+                                            row.length > startRowLength
+                                        ) {
+                                            row[row.length - 1] +=
+                                            annotationSeparator + annotationText;
+                                        } else {
+                                            row.push(annotationText);
+                                        }
                                         wasAdded = true;
                                     }
                                 });
