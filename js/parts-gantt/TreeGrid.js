@@ -433,7 +433,7 @@ var onBeforeRender = function (e) {
             // equals true. Only do this on init.
             // Can be called from beforeRender, if getBreakFromNode removes
             // its dependency on axis.max.
-            if (['beforeRender', 'afterAddSeries'].indexOf(e.type) !== -1) {
+            if (e.type === 'beforeRender') {
                 removeFoundExtremesEvent =
                     addEvent(axis, 'foundExtremes', function () {
                         treeGrid.collapsedNodes.forEach(function (node) {
@@ -455,7 +455,6 @@ override(GridAxis.prototype, {
             // NOTE Preferably these events should be set on the axis.
             addEvent(chart, 'beforeRender', onBeforeRender);
             addEvent(chart, 'beforeRedraw', onBeforeRender);
-            addEvent(chart, 'afterAddSeries', onBeforeRender);
             userOptions = merge({
                 // Default options
                 grid: {
