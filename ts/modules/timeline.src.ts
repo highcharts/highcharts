@@ -503,7 +503,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                         (distance - pad) * 2 - ((point.itemHeight as any) / 2)
                     );
                     styles = {
-                        width: targetDLWidth,
+                        width: targetDLWidth + 'px',
                         // Apply ellipsis when data label height is exceeded.
                         textOverflow: dataLabel.width / targetDLWidth *
                             dataLabel.height / 2 > availableSpace * multiplier ?
@@ -511,9 +511,11 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     };
                 } else {
                     styles = {
-                        width: userDLOptions.width ||
+                        width: (
+                            userDLOptions.width ||
                             dataLabelsOptions.width ||
                             availableSpace * multiplier - (pad * 2)
+                        ) + 'px'
                     };
                 }
                 dataLabel.css(styles);
@@ -671,7 +673,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
             // Call default markerAttribs method, when the xAxis type
             // is set to datetime.
-            if (series.xAxis.isDatetimeAxis) {
+            if (series.xAxis.dateTime) {
                 return seriesTypes.line.prototype.markerAttribs
                     .call(this, point, state);
             }
@@ -712,7 +714,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
             ['xAxis', 'yAxis'].forEach(function (axis: string): void {
                 // Initially set the linked xAxis type to category.
                 if (axis === 'xAxis' && !series[axis].userOptions.type) {
-                    series[axis].categories = series[axis].hasNames = true;
+                    series[axis].categories = series[axis].hasNames = true as any;
                 }
             });
         }
@@ -810,12 +812,8 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
             path = chart.renderer.crispLine(
                 [
-                    'M',
-                    coords.x1,
-                    coords.y1,
-                    'L',
-                    coords.x2,
-                    coords.y2
+                    ['M', coords.x1, coords.y1],
+                    ['L', coords.x2, coords.y2]
                 ] as Highcharts.SVGPathArray,
                 dl.options.connectorWidth
             );

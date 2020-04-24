@@ -17,7 +17,7 @@ import './Chart.js';
 import './Navigator.js';
 import './Series.js';
 var Chart = H.Chart, Series = H.Series;
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 var OrdinalAxisAdditions = /** @class */ (function () {
     /* *
      *
@@ -47,7 +47,7 @@ var OrdinalAxisAdditions = /** @class */ (function () {
      * @private
      */
     OrdinalAxisAdditions.prototype.getExtendedPositions = function () {
-        var ordinal = this, axis = ordinal.axis, axisPrototype = axis.constructor.prototype, chart = axis.chart, grouping = axis.series[0].currentDataGrouping, ordinalIndex = ordinal.index, key = grouping ?
+        var ordinal = this, axis = ordinal.axis, axisProto = axis.constructor.prototype, chart = axis.chart, grouping = axis.series[0].currentDataGrouping, ordinalIndex = ordinal.index, key = grouping ?
             grouping.count + grouping.unitName :
             'raw', overscroll = axis.options.overscroll, extremes = axis.getExtremes(), fakeAxis, fakeSeries;
         // If this is the first time, or the ordinal index is deleted by
@@ -72,8 +72,8 @@ var OrdinalAxisAdditions = /** @class */ (function () {
                     ordinal: true
                 },
                 ordinal: {},
-                ordinal2lin: axisPrototype.ordinal2lin,
-                val2lin: axisPrototype.val2lin // #2590
+                ordinal2lin: axisProto.ordinal2lin,
+                val2lin: axisProto.val2lin // #2590
             };
             fakeAxis.ordinal.axis = fakeAxis;
             // Add the fake series to hold the full data, then apply
@@ -83,7 +83,8 @@ var OrdinalAxisAdditions = /** @class */ (function () {
                     xAxis: fakeAxis,
                     xData: series.xData.slice(),
                     chart: chart,
-                    destroyGroupedData: H.noop
+                    destroyGroupedData: H.noop,
+                    getProcessedData: H.Series.prototype.getProcessedData
                 };
                 fakeSeries.xData = fakeSeries.xData.concat(ordinal.getOverscrollPositions());
                 fakeSeries.options = {
@@ -232,14 +233,15 @@ var OrdinalAxis = /** @class */ (function () {
      * @param SeriesClass
      * Series class to use.
      */
-    OrdinalAxis.init = function (AxisClass, ChartClass, SeriesClass) {
-        var axisPrototype = AxisClass.prototype;
+    OrdinalAxis.compose = function (AxisClass, ChartClass, SeriesClass) {
+        AxisClass.keepProps.push('ordinal');
+        var axisProto = AxisClass.prototype;
         /**
          * Calculate the ordinal positions before tick positions are calculated.
          *
          * @private
          */
-        axisPrototype.beforeSetTickPositions = function () {
+        axisProto.beforeSetTickPositions = function () {
             var axis = this, ordinal = axis.ordinal, len, ordinalPositions = [], uniqueOrdinalPositions, useOrdinal = false, dist, extremes = axis.getExtremes(), min = extremes.min, max = extremes.max, minIndex, maxIndex, slope, hasBreaks = axis.isXAxis && !!axis.options.breaks, isOrdinal = axis.options.ordinal, overscrollPointsRange = Number.MAX_VALUE, ignoreHiddenSeries = axis.chart.options.chart.ignoreHiddenSeries, i, hasBoostedSeries;
             // Apply the ordinal logic
             if (isOrdinal || hasBreaks) { // #4167 YAxis is never ordinal ?
@@ -516,7 +518,7 @@ var OrdinalAxis = /** @class */ (function () {
          *
          * @return {number}
          */
-        axisPrototype.lin2val = function (val, fromIndex) {
+        axisProto.lin2val = function (val, fromIndex) {
             var axis = this, ordinal = axis.ordinal, ordinalPositions = ordinal.positions, ret;
             // the visible range contains only equally spaced values
             if (!ordinalPositions) {
@@ -587,7 +589,7 @@ var OrdinalAxis = /** @class */ (function () {
          *
          * @return {number}
          */
-        axisPrototype.val2lin = function (val, toIndex) {
+        axisProto.val2lin = function (val, toIndex) {
             var axis = this, ordinal = axis.ordinal, ordinalPositions = ordinal.positions, ret;
             if (!ordinalPositions) {
                 ret = val;
@@ -623,9 +625,13 @@ var OrdinalAxis = /** @class */ (function () {
             return ret;
         };
         // Record this to prevent overwriting by broken-axis module (#5979)
-        axisPrototype.ordinal2lin = axisPrototype.val2lin;
+        axisProto.ordinal2lin = axisProto.val2lin;
+        /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'afterInit', function () {
-            this.ordinal = new OrdinalAxisAdditions(this);
+            var axis = this;
+            if (!axis.ordinal) {
+                axis.ordinal = new OrdinalAxisAdditions(axis);
+            }
         });
         addEvent(AxisClass, 'foundExtremes', function () {
             var axis = this;
@@ -709,7 +715,7 @@ var OrdinalAxis = /** @class */ (function () {
                     // range, else it happens on the current x axis which is
                     // smaller and faster.
                     chart.fixedRange = max - min;
-                    trimmedRange = xAxis.toFixedRange(null, null, lin2val.apply(searchAxisLeft, [
+                    trimmedRange = xAxis.navigatorAxis.toFixedRange(null, null, lin2val.apply(searchAxisLeft, [
                         val2lin.apply(searchAxisLeft, [min, true]) + movedUnits,
                         true // translate from index
                     ]), lin2val.apply(searchAxisRight, [
@@ -745,8 +751,9 @@ var OrdinalAxis = /** @class */ (function () {
                 delete xAxis.ordinal.index;
             }
         });
+        /* eslint-enable no-invalid-this */
     };
     return OrdinalAxis;
 }());
+OrdinalAxis.compose(Axis, Chart, Series); // @todo move to StockChart, remove from master
 export default OrdinalAxis;
-OrdinalAxis.init(Axis, Chart, Series); // @todo move to StockChart, remove from master

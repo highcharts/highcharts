@@ -10,7 +10,8 @@
 
 'use strict';
 
-import type { AxisComposition } from './axis/types';
+import type { AxisComposition, AxisLike } from './axis/types';
+import type ZAxis from '../parts-3d/ZAxis';
 import Color from './Color.js';
 import H from './Globals.js';
 import Tick from './Tick.js';
@@ -56,7 +57,7 @@ declare global {
             'scrollbar'|'traverseUpButton'|'zoom'
         );
         type AxisMinorTickPositionValue = ('inside'|'outside');
-        type AxisOptions = (XAxisOptions|YAxisOptions|ZAxisOptions);
+        type AxisOptions = (XAxisOptions|YAxisOptions|ZAxis.Options);
         type AxisTickmarkPlacementValue = ('between'|'on');
         type AxisTickPositionValue = ('inside'|'outside');
         type AxisTitleAlignValue = ('high'|'low'|'middle');
@@ -168,13 +169,6 @@ declare global {
             pointInBreak?: AxisPointBreakEventCallbackFunction;
             setExtremes?: AxisSetExtremesEventCallbackFunction;
         }
-        interface XAxisGridOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            cellHeight?: number;
-            columns?: Array<XAxisOptions>;
-            enabled?: boolean;
-        }
         interface XAxisLabelsOptions {
             align?: AlignValue;
             autoRotation?: (false|Array<number>);
@@ -203,6 +197,7 @@ declare global {
             accessibility?: XAxisAccessibilityOptions;
             alignTicks?: boolean;
             allowDecimals?: boolean;
+            allowNegativeLog?: boolean;
             alternateGridColor?: (
                 ColorString|GradientColorObject|PatternObject
             );
@@ -214,7 +209,6 @@ declare global {
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
-            grid?: XAxisGridOptions;
             gridLineColor?: (ColorString|GradientColorObject|PatternObject);
             gridLineDashStyle?: DashStyleValue;
             gridLineWidth?: number;
@@ -224,7 +218,6 @@ declare global {
             isX?: boolean;
             labels?: XAxisLabelsOptions;
             left?: (number|string);
-            linearToLogConverter?: undefined;
             lineColor?: (ColorString|GradientColorObject|PatternObject);
             lineWidth?: number;
             linkedTo?: number;
@@ -279,7 +272,6 @@ declare global {
             top?: (number|string);
             type?: AxisTypeValue;
             uniqueNames?: boolean;
-            units?: Array<[string, (Array<number>|null)]>;
             visible?: boolean;
             width?: (number|string);
             zIndex?: number;
@@ -306,20 +298,14 @@ declare global {
             stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
         }
-        interface ZAxisOptions extends XAxisOptions {
-            breaks?: undefined;
-            crosshair?: undefined;
-            lineColor?: undefined;
-            lineWidth?: undefined;
-            showEmpty?: undefined;
-        }
-        class Axis {
+        class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
             public static defaultLeftAxisOptions: AxisOptions;
             public static defaultOptions: XAxisOptions;
             public static defaultRightAxisOptions: AxisOptions;
             public static defaultTopAxisOptions: AxisOptions;
             public static defaultYAxisOptions: YAxisOptions;
+            public static keepProps: Array<string>;
             public constructor(chart: Chart, userOptions: AxisOptions);
             public _addedPlotLB?: boolean;
             public allowZoomOutside?: boolean;
@@ -333,7 +319,7 @@ declare global {
             public axisTitleMargin?: number;
             public beforeSetTickPositions?: Function;
             public bottom: number;
-            public categories: (boolean|Array<string>);
+            public categories: Array<string>;
             public chart: Chart;
             public closestPointRange: number;
             public coll: string;
@@ -350,16 +336,14 @@ declare global {
             public hasVisibleSeries: boolean;
             public height: number;
             public horiz?: boolean;
-            public isBroken?: boolean;
-            public isDatetimeAxis: boolean;
             public isDirty?: boolean;
+            public isHidden?: boolean;
             public isLinked: boolean;
-            public isLog: boolean;
             public isOrdinal?: boolean;
             public isRadial?: boolean;
             public isXAxis?: boolean;
             public isZAxis?: boolean;
-            public keepProps: Array<string>;
+            public keepProps?: Array<string>;
             public labelAlign?: AlignValue;
             public labelEdge: Array<null>;
             public labelFormatter: (
@@ -402,12 +386,12 @@ declare global {
             public reserveSpaceDefault?: boolean;
             public reversed?: boolean;
             public right: number;
+            public sector?: number;
             public series: Array<Series>;
             public showAxis?: boolean;
             public side: number;
             public single?: boolean;
             public softThreshold?: boolean;
-            public stacksTouched: number;
             public staggerLines?: number;
             public staticScale?: number;
             public threshold?: number;
@@ -425,7 +409,7 @@ declare global {
             public userMax?: number;
             public userMin?: number;
             public userMinRange?: number;
-            public userOptions: AxisOptions;
+            public userOptions: DeepPartial<AxisOptions>;
             public visible: boolean;
             public width: number;
             public zoomEnabled: boolean;
@@ -440,6 +424,7 @@ declare global {
             public generateTick(pos: number, i?: number): void;
             public getClosest(): number;
             public getExtremes(): ExtremesObject;
+            public getKeepProps(): Array<string>;
             public getLinePath(lineWidth: number): SVGPathArray;
             public getLinearTickPositions(
                 tickInterval: number,
@@ -458,6 +443,7 @@ declare global {
             public getTickAmount(): void;
             public getTitlePosition(): PositionObject;
             public hasData(): boolean;
+            public hasVerticalPanning(): boolean;
             public hideCrosshair(): void;
             public init(chart: Chart, userOptions: AxisOptions): void;
             public labelMetrics(): FontMetricsObject;
@@ -478,7 +464,7 @@ declare global {
                 animation?: (boolean|AnimationOptionsObject),
                 eventArguments?: any
             ): void;
-            public setOptions(userOptions: AxisOptions): void;
+            public setOptions(userOptions: DeepPartial<AxisOptions>): void;
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
@@ -756,7 +742,7 @@ var defaultOptions = H.defaultOptions,
  * @param {Highcharts.AxisOptions} userOptions
  * Axis options.
  */
-class Axis implements AxisComposition {
+class Axis implements AxisComposition, AxisLike {
 
     /* *
      *
@@ -1292,8 +1278,8 @@ class Axis implements AxisComposition {
          * the `maxPadding` option to control the axis end.
          *
          * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when the navigator or
-         * vertical panning is enabled, to prevent jumpy scrolling.
+         * In Highstock, `endOnTick` is always `false` when the navigator
+         * is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/chart/reflow-true/
          *         True by default
@@ -2305,16 +2291,13 @@ class Axis implements AxisComposition {
          * the `minPadding` option to control the axis start.
          *
          * @productdesc {highstock}
-         * In Highstock, `startOnTick` is always false when either the
-         * navigator or vertical panning is enabled, to prevent jumpy
-         * scrolling.
+         * In Highstock, `startOnTick` is always `false` when the navigator
+         * is enabled, to prevent jumpy scrolling.
          *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default
          * @sample {highcharts} highcharts/xaxis/startontick-true/
          *         True
-         * @sample {highstock} stock/xaxis/endontick/
-         *         False for Y axis
          *
          * @since 1.2.0
          */
@@ -3136,10 +3119,25 @@ class Axis implements AxisComposition {
          */
 
         /**
-         * @productdesc {highstock}
-         * In Highstock, `endOnTick` is always false when either the
-         * navigator or vertical panning is enabled, to prevent jumpy
-         * scrolling.
+         * Whether to force the axis to end on a tick. Use this option with
+         * the `maxPadding` option to control the axis end.
+         *
+         * This option is always disabled, when panning type is
+         * either `y` or `xy`.
+         *
+         * @see [type](#chart.panning.type)
+         *
+         *
+         * @sample {highcharts} highcharts/chart/reflow-true/
+         *         True by default
+         * @sample {highcharts} highcharts/yaxis/endontick/
+         *         False
+         * @sample {highstock} stock/demo/basic-line/
+         *         True by default
+         * @sample {highstock} stock/xaxis/endontick/
+         *         False for Y axis
+         *
+         * @since 1.2.0
          */
         endOnTick: true,
 
@@ -3514,6 +3512,11 @@ class Axis implements AxisComposition {
          * Whether to force the axis to start on a tick. Use this option with
          * the `maxPadding` option to control the axis start.
          *
+         * This option is always disabled, when panning type is
+         * either `y` or `xy`.
+         *
+         * @see [type](#chart.panning.type)
+         *
          * @sample {highcharts} highcharts/xaxis/startontick-false/
          *         False by default
          * @sample {highcharts} highcharts/xaxis/startontick-true/
@@ -3765,13 +3768,17 @@ class Axis implements AxisComposition {
         }
     };
 
+    // Properties to survive after destroy, needed for Axis.update (#4317,
+    // #5773, #5881).
+    public static keepProps = ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin'];
+
     /* *
      *
      *  Constructors
      *
      * */
 
-    public constructor(chart: Highcharts.Chart, userOptions: Highcharts.AxisOptions) {
+    public constructor(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
         this.init(chart, userOptions);
     }
 
@@ -3792,7 +3799,7 @@ class Axis implements AxisComposition {
     public axisTitle?: Highcharts.SVGElement;
     public axisTitleMargin?: number;
     public bottom: number = void 0 as any;
-    public categories: (boolean|Array<string>) = void 0 as any;
+    public categories: Array<string> = void 0 as any;
     public chart: Highcharts.Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
@@ -3809,15 +3816,13 @@ class Axis implements AxisComposition {
     public hasVisibleSeries: boolean = void 0 as any;
     public height: number = void 0 as any;
     public horiz?: boolean;
-    public isBroken?: boolean;
-    public isDatetimeAxis: boolean = void 0 as any;
     public isDirty?: boolean;
     public isLinked: boolean = void 0 as any;
-    public isLog: boolean = void 0 as any;
     public isOrdinal?: boolean;
     public isRadial?: boolean;
     public isXAxis?: boolean;
     public isZAxis?: boolean;
+    public keepProps?: Array<string>;
     public labelAlign?: Highcharts.AlignValue;
     public labelEdge: Array<null> = void 0 as any; // @todo
     public labelFormatter: (
@@ -3866,7 +3871,6 @@ class Axis implements AxisComposition {
     public side: number = void 0 as any;
     public single?: boolean;
     public softThreshold?: boolean;
-    public stacksTouched: number = void 0 as any;
     public staggerLines?: number;
     public staticScale?: number;
     public threshold?: number;
@@ -3911,7 +3915,7 @@ class Axis implements AxisComposition {
      * @fires Highcharts.Axis#event:afterInit
      * @fires Highcharts.Axis#event:init
      */
-    public init(chart: Highcharts.Chart, userOptions: Highcharts.AxisOptions): void {
+    public init(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
         var isXAxis = userOptions.isX,
             axis: Highcharts.Axis = this as any;
@@ -3976,8 +3980,7 @@ class Axis implements AxisComposition {
 
 
         var options = this.options,
-            type = options.type,
-            isDatetimeAxis = type === 'datetime';
+            type = options.type;
 
         axis.labelFormatter = (
             (options.labels as any).formatter ||
@@ -4038,9 +4041,7 @@ class Axis implements AxisComposition {
         axis.plotLinesAndBandsGroups = {};
 
         // Shorthand types
-        axis.isLog = type === 'logarithmic';
-        axis.isDatetimeAxis = isDatetimeAxis;
-        axis.positiveValuesOnly = axis.isLog && !(axis as any).allowNegativeLog;
+        axis.positiveValuesOnly = !!(axis.logarithmic && !options.allowNegativeLog);
 
         // Flag, if axis is linked to another axis
         axis.isLinked = defined(options.linkedTo);
@@ -4076,12 +4077,6 @@ class Axis implements AxisComposition {
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
         axis.offset = options.offset || 0;
-
-
-        // Dictionary for stacks
-        axis.stacks = {};
-        axis.oldStacks = {};
-        axis.stacksTouched = 0;
 
 
         /**
@@ -4147,19 +4142,14 @@ class Axis implements AxisComposition {
             axis.reversed = true;
         }
 
+        axis.labelRotation = (axis.options as any).labels.rotation;
+
         // register event listeners
         objectEach(events, function (event: any, eventType: string): void {
             if (isFunction(event)) {
                 addEvent(axis, eventType, event);
             }
         });
-
-        // extend logarithmic axis
-        axis.lin2log = options.linearToLogConverter || axis.lin2log;
-        if (axis.isLog) {
-            axis.val2lin = axis.log2lin;
-            axis.lin2val = axis.lin2log;
-        }
 
         fireEvent(this, 'afterInit');
     }
@@ -4225,7 +4215,7 @@ class Axis implements AxisComposition {
 
             // make sure the same symbol is added for all labels on a linear
             // axis
-            numericSymbolDetector = axis.isLog ?
+            numericSymbolDetector = axis.logarithmic ?
                 Math.abs(value) :
                 axis.tickInterval;
         const chart = this.chart;
@@ -4298,8 +4288,8 @@ class Axis implements AxisComposition {
             axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
-            if (axis.buildStacks) {
-                axis.buildStacks();
+            if (axis.stacking) {
+                axis.stacking.buildStacks();
             }
 
             // loop through this axis' series
@@ -4449,8 +4439,8 @@ class Axis implements AxisComposition {
             minPixelPadding = axis.minPixelPadding,
             doPostTranslate = (
                 axis.isOrdinal ||
-                axis.isBroken ||
-                (axis.isLog && handleLog)
+                axis.brokenAxis && axis.brokenAxis.hasBreaks ||
+                (axis.logarithmic && handleLog)
             ) && axis.lin2val;
 
         if (!localA) {
@@ -4644,7 +4634,7 @@ class Axis implements AxisComposition {
             (e as any).path = skip && !force ?
                 null :
                 chart.renderer.crispLine(
-                    ['M', x1, y1, 'L', x2, y2],
+                    [['M', x1, y1], ['L', x2, y2]],
                     lineWidth || 1
                 );
         });
@@ -4767,7 +4757,8 @@ class Axis implements AxisComposition {
         // long running script. So we don't draw them.
         if (range && range / minorTickInterval < axis.len / 3) { // #3875
 
-            if (axis.isLog) {
+            const logarithmic = axis.logarithmic;
+            if (logarithmic) {
                 // For each interval in the major ticks, compute the minor ticks
                 // separately.
                 this.paddedTicks.forEach(function (
@@ -4778,7 +4769,7 @@ class Axis implements AxisComposition {
                     if (i) {
                         minorTickPositions.push.apply(
                             minorTickPositions,
-                            axis.getLogTickPositions(
+                            logarithmic.getLogTickPositions(
                                 minorTickInterval,
                                 paddedTicks[i - 1],
                                 paddedTicks[i],
@@ -4789,12 +4780,12 @@ class Axis implements AxisComposition {
                 });
 
             } else if (
-                axis.isDatetimeAxis &&
+                axis.dateTime &&
                 this.getMinorTickInterval() === 'auto'
             ) { // #1314
                 minorTickPositions = minorTickPositions.concat(
                     axis.getTimeTicks(
-                        axis.normalizeTimeTickInterval(minorTickInterval),
+                        axis.dateTime.normalizeTimeTickInterval(minorTickInterval),
                         min,
                         max,
                         options.startOfWeek as any
@@ -4836,6 +4827,7 @@ class Axis implements AxisComposition {
             options = axis.options,
             min = axis.min,
             max = axis.max,
+            log = axis.logarithmic,
             zoomOffset,
             spaceAvailable: boolean,
             closestDataRange: (number|undefined),
@@ -4851,7 +4843,7 @@ class Axis implements AxisComposition {
         if (
             axis.isXAxis &&
             typeof axis.minRange === 'undefined' &&
-            !axis.isLog
+            !log
         ) {
 
             if (defined(options.min) || defined(options.max)) {
@@ -4898,8 +4890,8 @@ class Axis implements AxisComposition {
             ];
             // If space is available, stay within the data range
             if (spaceAvailable) {
-                minArgs[2] = axis.isLog ?
-                    axis.log2lin(axis.dataMin as any) :
+                minArgs[2] = axis.logarithmic ?
+                    axis.logarithmic.log2lin(axis.dataMin as any) :
                     axis.dataMin;
             }
             min = arrayMax(minArgs);
@@ -4910,8 +4902,8 @@ class Axis implements AxisComposition {
             ];
             // If space is availabe, stay within the data range
             if (spaceAvailable) {
-                maxArgs[2] = axis.isLog ?
-                    axis.log2lin(axis.dataMax as any) :
+                maxArgs[2] = log ?
+                    log.log2lin(axis.dataMax as any) :
                     axis.dataMax;
             }
 
@@ -5222,9 +5214,8 @@ class Axis implements AxisComposition {
     public setTickInterval(secondPass?: boolean): void {
         var axis: Highcharts.Axis = this as any,
             chart = axis.chart,
+            log = axis.logarithmic,
             options = axis.options,
-            isLog = axis.isLog,
-            isDatetimeAxis = axis.isDatetimeAxis,
             isXAxis = axis.isXAxis,
             isLinked = axis.isLinked,
             maxPadding = options.maxPadding,
@@ -5242,7 +5233,7 @@ class Axis implements AxisComposition {
             hardMin,
             hardMax;
 
-        if (!isDatetimeAxis && !categories && !isLinked) {
+        if (!axis.dateTime && !categories && !isLinked) {
             this.getTickAmount();
         }
 
@@ -5288,7 +5279,7 @@ class Axis implements AxisComposition {
 
         }
 
-        if (isLog) {
+        if (log) {
             if (
                 axis.positiveValuesOnly &&
                 !secondPass &&
@@ -5302,8 +5293,8 @@ class Axis implements AxisComposition {
             // The correctFloat cures #934, float errors on full tens. But it
             // was too aggressive for #4360 because of conversion back to lin,
             // therefore use precision 15.
-            axis.min = correctFloat(axis.log2lin(axis.min as any), 16);
-            axis.max = correctFloat(axis.log2lin(axis.max as any), 16);
+            axis.min = correctFloat(log.log2lin(axis.min as any), 16);
+            axis.max = correctFloat(log.log2lin(axis.max as any), 16);
         }
 
         // handle zoomed range
@@ -5333,7 +5324,7 @@ class Axis implements AxisComposition {
         if (
             !categories &&
             !axis.axisPointRange &&
-            !axis.usePercentage &&
+            !(axis.stacking && axis.stacking.usePercentage) &&
             !isLinked &&
             defined(axis.min) &&
             defined(axis.max)
@@ -5470,14 +5461,14 @@ class Axis implements AxisComposition {
         // This applies only if tickInterval is not defined.
         minTickInterval = pick(
             options.minTickInterval,
-            (axis.isDatetimeAxis && axis.closestPointRange) as number
+            (axis.dateTime && axis.closestPointRange) as number
         );
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }
 
         // for linear axes, get magnitude and normalize the interval
-        if (!isDatetimeAxis && !isLog && !tickIntervalOption) {
+        if (!axis.dateTime && !axis.logarithmic && !tickIntervalOption) {
             axis.tickInterval = normalizeTickInterval(
                 axis.tickInterval,
                 null as any,
@@ -5521,8 +5512,10 @@ class Axis implements AxisComposition {
             tickPositionsOption = options.tickPositions,
             minorTickIntervalOption = this.getMinorTickInterval(),
             tickPositioner = options.tickPositioner,
-            startOnTick = options.startOnTick,
-            endOnTick = options.endOnTick;
+            hasVerticalPanning = this.hasVerticalPanning(),
+            isColorAxis = this.coll === 'colorAxis',
+            startOnTick = (isColorAxis || !hasVerticalPanning) && options.startOnTick,
+            endOnTick = (isColorAxis || !hasVerticalPanning) && options.endOnTick;
 
         // Set the tickmarkOffset
         this.tickmarkOffset = (
@@ -5588,9 +5581,9 @@ class Axis implements AxisComposition {
                 tickPositions = [this.min, this.max];
                 error(19, false, this.chart);
 
-            } else if (this.isDatetimeAxis) {
+            } else if (axis.dateTime) {
                 tickPositions = (axis.getTimeTicks as any)(
-                    axis.normalizeTimeTickInterval(
+                    axis.dateTime.normalizeTimeTickInterval(
                         this.tickInterval,
                         options.units
                     ),
@@ -5601,8 +5594,8 @@ class Axis implements AxisComposition {
                     this.closestPointRange,
                     true
                 );
-            } else if (this.isLog) {
-                tickPositions = axis.getLogTickPositions(
+            } else if (axis.logarithmic) {
+                tickPositions = axis.logarithmic.getLogTickPositions(
                     this.tickInterval,
                     this.min as any,
                     this.max as any
@@ -5733,10 +5726,11 @@ class Axis implements AxisComposition {
      * True if there are other axes.
      */
     public alignToOthers(): (boolean|undefined) {
-        var others = // Whether there is another axis to pair with this one
+        var axis: Highcharts.Axis = this as any,
+            others = // Whether there is another axis to pair with this one
                 {} as Highcharts.AxisOptions,
             hasOther,
-            options = this.options;
+            options = axis.options;
 
         if (
             // Only if alignTicks is true
@@ -5749,7 +5743,7 @@ class Axis implements AxisComposition {
 
             // Don't try to align ticks on a log axis, they are not evenly
             // spaced (#6021)
-            !this.isLog
+            !axis.logarithmic
         ) {
             (this.chart as any)[this.coll].forEach(function (
                 axis: Highcharts.Axis
@@ -5784,15 +5778,16 @@ class Axis implements AxisComposition {
      * @function Highcharts.Axis#getTickAmount
      */
     public getTickAmount(): void {
-        var options = this.options,
+        var axis: Highcharts.Axis = this as any,
+            options = this.options,
             tickAmount = options.tickAmount,
-            tickPixelInterval = options.tickPixelInterval;
+            tickPixelInterval = options.tickPixelInterval as any;
 
         if (
             !defined(options.tickInterval) &&
-            this.len < (tickPixelInterval as any) &&
+            !tickAmount && this.len < tickPixelInterval &&
             !this.isRadial &&
-            !this.isLog &&
+            !axis.logarithmic &&
             options.startOnTick &&
             options.endOnTick
         ) {
@@ -5907,18 +5902,19 @@ class Axis implements AxisComposition {
      */
     public setScale(): void {
         var axis: Highcharts.Axis = this as any,
-            isDirtyData = axis.series.some(function (
-                series: Highcharts.Series
-            ): boolean {
-                return (
-                    series.isDirtyData ||
-                    series.isDirty ||
-                    // When x axis is dirty, we need new data extremes for y as
-                    // well:
-                    series.xAxis && (series.xAxis.isDirty as any)
-                );
-            }),
-            isDirtyAxisLength;
+            isDirtyAxisLength,
+            isDirtyData = false,
+            isXAxisDirty = false;
+
+        axis.series.forEach(function (
+            series: Highcharts.Series
+        ): void {
+            isDirtyData = isDirtyData || series.isDirtyData || series.isDirty;
+
+            // When x axis is dirty, we need new data extremes for y as
+            // well:
+            isXAxisDirty = isXAxisDirty || series.xAxis?.isDirty || false;
+        });
 
         axis.oldMin = axis.min;
         axis.oldMax = axis.max;
@@ -5932,6 +5928,7 @@ class Axis implements AxisComposition {
         if (
             isDirtyAxisLength ||
             isDirtyData ||
+            isXAxisDirty ||
             axis.isLinked ||
             axis.forceRedraw ||
             axis.userMin !== axis.oldUserMin ||
@@ -5939,8 +5936,8 @@ class Axis implements AxisComposition {
             axis.alignToOthers()
         ) {
 
-            if (axis.resetStacks) {
-                axis.resetStacks();
+            if (axis.stacking) {
+                axis.stacking.resetStacks();
             }
 
             axis.forceRedraw = false;
@@ -5964,8 +5961,14 @@ class Axis implements AxisComposition {
                     axis.min !== axis.oldMin ||
                     axis.max !== axis.oldMax;
             }
-        } else if (axis.cleanStacks) {
-            axis.cleanStacks();
+        } else if (axis.stacking) {
+            axis.stacking.cleanStacks();
+        }
+
+        // Recalculate panning state object, when the data
+        // has changed. It is required when vertical panning is enabled.
+        if (isDirtyData && axis.panningState) {
+            axis.panningState.isDirty = true;
         }
 
         fireEvent(this, 'afterSetScale');
@@ -6187,15 +6190,15 @@ class Axis implements AxisComposition {
      * An object containing extremes information.
      */
     public getExtremes(): Highcharts.ExtremesObject {
-        var axis: Highcharts.Axis = this as any,
-            isLog = axis.isLog;
+        const axis: Highcharts.Axis = this as any;
+        const log = axis.logarithmic;
 
         return {
-            min: isLog ?
-                correctFloat(axis.lin2log(axis.min as any)) :
+            min: log ?
+                correctFloat(log.lin2log(axis.min as any)) :
                 axis.min as any,
-            max: isLog ?
-                correctFloat(axis.lin2log(axis.max as any)) :
+            max: log ?
+                correctFloat(log.lin2log(axis.max as any)) :
                 axis.max as any,
             dataMin: axis.dataMin as any,
             dataMax: axis.dataMax as any,
@@ -6219,9 +6222,9 @@ class Axis implements AxisComposition {
      */
     public getThreshold(threshold: number): (number|undefined) {
         var axis: Highcharts.Axis = this as any,
-            isLog = axis.isLog,
-            realMin = isLog ? axis.lin2log(axis.min as any) : axis.min as any,
-            realMax = isLog ? axis.lin2log(axis.max as any) : axis.max as any;
+            log = axis.logarithmic,
+            realMin = log ? log.lin2log(axis.min as any) : axis.min as any,
+            realMax = log ? log.lin2log(axis.max as any) : axis.max as any;
 
         if (threshold === null || threshold === -Infinity) {
             threshold = realMin;
@@ -6451,28 +6454,36 @@ class Axis implements AxisComposition {
             ),
             marginLeft = chart.margin[3];
 
-        return (
-            tick &&
-            tick.slotWidth as any // Used by grid axis
-        ) || (
+        // Used by grid axis
+        if (tick && isNumber(tick.slotWidth)) { // #13221, can be 0
+            return tick.slotWidth;
+        }
+
+        if (
             horiz &&
-            ((labelOptions as any).step || 0) < 2 &&
-            !(labelOptions as any).rotation && // #4415
-            ((this.staggerLines || 1) * this.len) / slotCount
-        ) || (
-            !horiz && (
-                // #7028
-                (
-                    (labelOptions as any).style &&
-                    parseInt((labelOptions as any).style.width, 10)
-                ) ||
-                (
-                    marginLeft &&
-                    (marginLeft - chart.spacing[3])
-                ) ||
-                (chart.chartWidth as any) * 0.33
-            )
-        );
+            labelOptions &&
+            (labelOptions.step || 0) < 2
+        ) {
+            if (labelOptions.rotation) { // #4415
+                return 0;
+            }
+            return ((this.staggerLines || 1) * this.len) / slotCount;
+        }
+
+        if (!horiz) {
+            // #7028
+            const cssWidth = labelOptions?.style?.width;
+            if (cssWidth !== void 0) {
+                return parseInt(cssWidth, 10);
+            }
+
+            if (marginLeft) {
+                return marginLeft - chart.spacing[3];
+            }
+        }
+
+        // Last resort, a fraction of the available size
+        return chart.chartWidth * 0.33;
 
     }
 
@@ -6635,7 +6646,7 @@ class Axis implements AxisComposition {
                         label.element.tagName === 'SPAN'
                     )
                 ) {
-                    css.width = commonWidth;
+                    css.width = commonWidth + 'px';
                     if (!textOverflowOption) {
                         css.textOverflow = (
                             label.specificTextOverflow ||
@@ -6747,7 +6758,7 @@ class Axis implements AxisComposition {
             !axis.isRadial
         ) {
             axis.axisTitle.css({
-                width: axis.len
+                width: axis.len + 'px'
             });
         }
 
@@ -7007,20 +7018,24 @@ class Axis implements AxisComposition {
 
         return chart.renderer
             .crispLine([
-                'M',
-                horiz ?
-                    this.left :
-                    lineLeft,
-                horiz ?
-                    lineTop :
-                    this.top,
-                'L',
-                horiz ?
-                    (chart.chartWidth as any) - this.right :
-                    lineLeft,
-                horiz ?
-                    lineTop :
-                    (chart.chartHeight as any) - this.bottom
+                [
+                    'M',
+                    horiz ?
+                        this.left :
+                        lineLeft,
+                    horiz ?
+                        lineTop :
+                        this.top
+                ],
+                [
+                    'L',
+                    horiz ?
+                        (chart.chartWidth as any) - this.right :
+                        lineLeft,
+                    horiz ?
+                        lineTop :
+                        (chart.chartHeight as any) - this.bottom
+                ]
             ], lineWidth);
     }
 
@@ -7193,9 +7208,9 @@ class Axis implements AxisComposition {
     public render(): void {
         var axis: Highcharts.Axis = this as any,
             chart = axis.chart,
+            log = axis.logarithmic,
             renderer = chart.renderer,
             options = axis.options,
-            isLog = axis.isLog,
             isLinked = axis.isLinked,
             tickPositions = axis.tickPositions,
             axisTitle = axis.axisTitle,
@@ -7281,8 +7296,8 @@ class Axis implements AxisComposition {
                         }
                         from = pos + tickmarkOffset; // #949
                         alternateBands[pos].options = {
-                            from: isLog ? axis.lin2log(from) : from,
-                            to: isLog ? axis.lin2log(to) : to,
+                            from: log ? log.lin2log(from) : from,
+                            to: log ? log.lin2log(to) : to,
                             color: alternateGridColor
                         };
                         alternateBands[pos].render();
@@ -7379,8 +7394,8 @@ class Axis implements AxisComposition {
         }
 
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled) {
-            axis.renderStackTotals();
+        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+            axis.stacking.renderStackTotals();
         }
         // End stacked totals
 
@@ -7418,6 +7433,19 @@ class Axis implements AxisComposition {
     }
 
     /**
+     * Returns an array of axis properties, that should be untouched during
+     * reinitialization.
+     *
+     * @private
+     * @function Highcharts.Axis#getKeepProps
+     *
+     * @return {Array<string>}
+     */
+    public getKeepProps(): Array<string> {
+        return (this.keepProps || Axis.keepProps);
+    }
+
+    /**
      * Destroys an Axis instance. See {@link Axis#remove} for the API endpoint
      * to fully remove the axis.
      *
@@ -7429,7 +7457,6 @@ class Axis implements AxisComposition {
      */
     public destroy(keepEvents?: boolean): void {
         var axis: Highcharts.Axis = this as any,
-            stacks = axis.stacks,
             plotLinesAndBands = axis.plotLinesAndBands,
             plotGroup,
             i;
@@ -7440,16 +7467,6 @@ class Axis implements AxisComposition {
         if (!keepEvents) {
             removeEvent(axis);
         }
-
-        // Destroy each stack total
-        objectEach(stacks, function (
-            stack: Highcharts.Dictionary<Highcharts.StackItem>,
-            stackKey: string
-        ): void {
-            destroyObjectProperties(stack);
-
-            stacks[stackKey] = null as any;
-        });
 
         // Destroy collections
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
@@ -7470,7 +7487,7 @@ class Axis implements AxisComposition {
         }
 
         // Destroy elements
-        ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
+        ['axisLine', 'axisTitle', 'axisGroup',
             'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(
             function (prop: string): void {
                 if ((axis as any)[prop]) {
@@ -7487,7 +7504,7 @@ class Axis implements AxisComposition {
 
         // Delete all properties and fall back to the prototype.
         objectEach(axis, function (val: any, key: string): void {
-            if (axis.keepProps.indexOf(key) === -1) {
+            if (axis.getKeepProps().indexOf(key) === -1) {
                 delete (axis as any)[key];
             }
         });
@@ -7651,19 +7668,19 @@ class Axis implements AxisComposition {
         }
         fireEvent(this, 'afterHideCrosshair');
     }
+
+    /**
+    * Check whether the chart has vertical panning ('y' or 'xy' type).
+    *
+    * @private
+    * @function Highcharts.Axis#hasVerticalPanning
+    * @return {boolean}
+    *
+    */
+    public hasVerticalPanning(): boolean {
+        return /y/.test(this.chart.options.chart?.panning?.type || '');
+    }
 }
-
-interface Axis {
-    keepProps: Array<string>;
-}
-
-extend(Axis.prototype, {
-
-    // Properties to survive after destroy, needed for Axis.update (#4317,
-    // #5773, #5881).
-    keepProps: ['extKey', 'hcEvents', 'names', 'series', 'userMax', 'userMin']
-
-});
 
 H.Axis = Axis as any;
 

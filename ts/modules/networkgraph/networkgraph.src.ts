@@ -1166,9 +1166,13 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 }
                 this.graphic.animate(this.shapeArgs);
 
-                // Required for dataLabels:
-                this.plotX = ((path as any)[1] + (path as any)[4]) / 2;
-                this.plotY = ((path as any)[2] + (path as any)[5]) / 2;
+                // Required for dataLabels
+                const start = path[0];
+                const end = path[1];
+                if (start[0] === 'M' && end[0] === 'L') {
+                    this.plotX = (start[1] + end[1]) / 2;
+                    this.plotY = (start[2] + end[2]) / 2;
+                }
             }
         },
         /**
@@ -1212,12 +1216,8 @@ seriesType<Highcharts.NetworkgraphSeries>(
             }
 
             return [
-                'M',
-                left.plotX as any,
-                left.plotY as any,
-                'L',
-                right.plotX as any,
-                right.plotY as any
+                ['M', left.plotX || 0, left.plotY || 0],
+                ['L', right.plotX || 0, right.plotY || 0]
             ];
             /*
             IDEA: different link shapes?

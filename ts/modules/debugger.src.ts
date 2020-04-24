@@ -124,7 +124,7 @@ addEvent(H.Chart, 'displayError', function (
             'debugger'
         ).css({
             color: '#ffffff',
-            width: chartWidth - 16,
+            width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({
             fill: 'rgba(255, 0, 0, 0.9)',

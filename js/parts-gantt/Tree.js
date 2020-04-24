@@ -13,9 +13,6 @@
 'use strict';
 import U from '../parts/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
-var isFunction = function (x) {
-    return typeof x === 'function';
-};
 /**
  * Creates an object map from parent id to childrens index.
  *
@@ -61,7 +58,7 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
         parent: parent
     }, start, end, children;
     // Allow custom logic before the children has been created.
-    if (isFunction(before)) {
+    if (typeof before === 'function') {
         before(node, options);
     }
     // Call getNode recursively on the children. Calulate the height of the
@@ -94,7 +91,7 @@ var getNode = function (id, parent, level, data, mapOfIdToChildren, options) {
         height: height
     });
     // Allow custom logic after the children has been created.
-    if (isFunction(after)) {
+    if (typeof after === 'function') {
         after(node, options);
     }
     return node;

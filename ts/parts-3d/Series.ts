@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type ZAxis from '../parts-3d/ZAxis';
 import H from '../parts/Globals.js';
 
 /**
@@ -52,8 +53,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
 H.Series.prototype.translate3dPoints = function (): void {
     var series = this,
         chart = series.chart,
-        zAxis: Highcharts.ZAxis =
-            pick(series.zAxis, (chart.options.zAxis as any)[0]),
+        zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
         rawPoints = [] as Array<Highcharts.Position3dObject>,
         rawPoint: Highcharts.Point,
         projectedPoints: Array<Highcharts.Position3dObject>,
@@ -65,7 +65,7 @@ H.Series.prototype.translate3dPoints = function (): void {
         rawPoint = series.data[i];
 
         if (zAxis && zAxis.translate) {
-            zValue = zAxis.isLog && zAxis.val2lin ?
+            zValue = zAxis.logarithmic && zAxis.val2lin ?
                 zAxis.val2lin(rawPoint.z as any) :
                 rawPoint.z; // #4562
             rawPoint.plotZ = zAxis.translate(zValue as any);

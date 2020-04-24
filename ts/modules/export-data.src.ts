@@ -377,7 +377,6 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function (): void {
  *
  * @private
  * @function Highcharts.Chart#setUpKeyToAxis
- * @return {void}
  */
 Highcharts.Chart.prototype.setUpKeyToAxis = function (): void {
     if (seriesTypes.arearange) {
@@ -450,7 +449,7 @@ Highcharts.Chart.prototype.getDataRows = function (
 
             if (item instanceof Highcharts.Axis) {
                 return (item.options.title && item.options.title.text) ||
-                    (item.isDatetimeAxis ? 'DateTime' : 'Category');
+                    (item.dateTime ? 'DateTime' : 'Category');
             }
 
             if (multiLevelHeaders) {
@@ -488,7 +487,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     axis && axis.categories
                 ) || [];
                 dateTimeValueAxisMap[prop] = (
-                    axis && axis.isDatetimeAxis
+                    axis && axis.dateTime
                 );
             });
 
@@ -684,7 +683,7 @@ Highcharts.Chart.prototype.getDataRows = function (
             var category = row.name;
 
             if (xAxis && !defined(category)) {
-                if (xAxis.isDatetimeAxis) {
+                if (xAxis.dateTime) {
                     if (row.x instanceof Date) {
                         row.x = row.x.getTime();
                     }
@@ -1033,11 +1032,14 @@ function getBlobFromContent(
 
 
 /**
- * Call this on click of 'Download CSV' button
+ * Generates a data URL of CSV for local download in the browser. This is the
+ * default action for a click on the 'Download CSV' button.
  *
- * @private
+ * See {@link Highcharts.Chart#getCSV} to get the CSV data itself.
+ *
  * @function Highcharts.Chart#downloadCSV
- * @return {void}
+ *
+ * @requires modules/exporting
  */
 Highcharts.Chart.prototype.downloadCSV = function (): void {
     var csv = this.getCSV(true);
@@ -1050,11 +1052,14 @@ Highcharts.Chart.prototype.downloadCSV = function (): void {
 };
 
 /**
- * Call this on click of 'Download XLS' button
+ * Generates a data URL of an XLS document for local download in the browser.
+ * This is the default action for a click on the 'Download XLS' button.
  *
- * @private
+ * See {@link Highcharts.Chart#getTable} to get the table data itself.
+ *
  * @function Highcharts.Chart#downloadXLS
- * @return {void}
+ *
+ * @requires modules/exporting
  */
 Highcharts.Chart.prototype.downloadXLS = function (): void {
     var uri = 'data:application/vnd.ms-excel;base64,',
@@ -1090,7 +1095,6 @@ Highcharts.Chart.prototype.downloadXLS = function (): void {
  * Export-data module required. View the data in a table below the chart.
  *
  * @function Highcharts.Chart#viewData
- * @return {void}
  *
  * @fires Highcharts.Chart#event:afterViewData
  */

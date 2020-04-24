@@ -61,7 +61,7 @@ var AxisResizer = /** @class */ (function () {
      * @function Highcharts.AxisResizer#render
      */
     AxisResizer.prototype.render = function () {
-        var resizer = this, axis = resizer.axis, chart = axis.chart, options = resizer.options, x = options.x, y = options.y, 
+        var resizer = this, axis = resizer.axis, chart = axis.chart, options = resizer.options, x = options.x || 0, y = options.y, 
         // Normalize control line position according to the plot area
         pos = clamp(axis.top + axis.height + y, chart.plotTop, chart.plotTop + chart.plotHeight), attr = {}, lineWidth;
         if (!chart.styledMode) {
@@ -85,8 +85,8 @@ var AxisResizer = /** @class */ (function () {
             resizer.controlLine.strokeWidth() :
             options.lineWidth;
         attr.d = chart.renderer.crispLine([
-            'M', axis.left + x, pos,
-            'L', axis.left + axis.width + x, pos
+            ['M', axis.left + x, pos],
+            ['L', axis.left + axis.width + x, pos]
         ], lineWidth);
         resizer.controlLine.attr(attr);
     };
@@ -453,7 +453,7 @@ var AxisResizer = /** @class */ (function () {
     return AxisResizer;
 }());
 // Keep resizer reference on axis update
-Axis.prototype.keepProps.push('resizer');
+Axis.keepProps.push('resizer');
 /* eslint-disable no-invalid-this */
 // Add new AxisResizer, update or remove it
 addEvent(Axis, 'afterRender', function () {

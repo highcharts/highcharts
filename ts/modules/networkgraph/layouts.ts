@@ -232,6 +232,7 @@ extend(
 
                 // Render elements in initial positions:
                 series.forEach(function (s: Highcharts.Series): void {
+                    s.finishedAnimating = true; // #13169
                     s.render();
                 });
             }

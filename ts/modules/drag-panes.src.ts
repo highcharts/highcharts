@@ -316,7 +316,7 @@ class AxisResizer {
             axis = resizer.axis,
             chart = axis.chart,
             options = resizer.options,
-            x = options.x,
+            x = options.x || 0,
             y = options.y,
             // Normalize control line position according to the plot area
             pos = clamp(
@@ -354,8 +354,8 @@ class AxisResizer {
 
         attr.d = chart.renderer.crispLine(
             [
-                'M', axis.left + (x as any), pos,
-                'L', axis.left + axis.width + (x as any), pos
+                ['M', axis.left + x, pos],
+                ['L', axis.left + axis.width + x, pos]
             ],
             lineWidth
         );
@@ -676,7 +676,7 @@ class AxisResizer {
 }
 
 // Keep resizer reference on axis update
-Axis.prototype.keepProps.push('resizer');
+Axis.keepProps.push('resizer');
 
 /* eslint-disable no-invalid-this */
 // Add new AxisResizer, update or remove it

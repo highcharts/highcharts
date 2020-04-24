@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type RadialAxis from './RadialAxis';
 import H from '../parts/Globals.js';
 
 /**
@@ -405,9 +406,10 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
             .concat(lowerPath, higherPath);
 
         // For the area path, we need to change the 'move' statement
-        // into 'lineTo' or 'curveTo'
-        if (!this.chart.polar && higherAreaPath[0] === 'M') {
-            higherAreaPath[0] = 'L'; // this probably doesn't work for spline
+        // into 'lineTo'
+        if (!this.chart.polar && higherAreaPath[0] && higherAreaPath[0][0] === 'M') {
+            // This probably doesn't work for spline
+            higherAreaPath[0] = ['L', higherAreaPath[0][1], higherAreaPath[0][2]];
         }
 
         this.graphPath = linePath;
@@ -725,14 +727,9 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
     },
     haloPath: function (
         this: Highcharts.AreaRangePoint
-    ): (Highcharts.SVGElement|Highcharts.SVGPathArray|
-        Array<Highcharts.SVGElement>) {
+    ): Highcharts.SVGPathArray {
         var isPolar = this.series.chart.polar,
-            path: (
-                Highcharts.SVGElement|
-                Highcharts.SVGPathArray|
-                Array<Highcharts.SVGElement>
-            ) = [];
+            path: Highcharts.SVGPathArray = [];
 
         // Bottom halo
         this.plotY = this.plotLow;

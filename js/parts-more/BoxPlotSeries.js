@@ -157,6 +157,34 @@ seriesType('boxplot', 'column', {
      * @apioption plotOptions.boxplot.stemColor
      */
     /**
+     * The dash style of the box.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since     next
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.boxDashStyle
+     */
+    /**
+     * The dash style of the median.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since     next
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.medianDashStyle
+     */
+    /**
      * The dash style of the stem, the vertical line extending from the
      * box to the whiskers.
      *
@@ -172,6 +200,20 @@ seriesType('boxplot', 'column', {
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.stemDashStyle
+     */
+    /**
+     * The dash style of the whiskers.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since     next
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.whiskerDashStyle
      */
     /**
      * The width of the stem, the vertical line extending from the box to
@@ -274,7 +316,7 @@ seriesType('boxplot', 'column', {
             var graphic = point.graphic, verb = graphic ? 'animate' : 'attr', shapeArgs = point.shapeArgs, boxAttr = {}, stemAttr = {}, whiskersAttr = {}, medianAttr = {}, color = point.color || series.color;
             if (typeof point.plotY !== 'undefined') {
                 // crisp vector coordinates
-                width = shapeArgs.width;
+                width = Math.round(shapeArgs.width);
                 left = Math.floor(shapeArgs.x);
                 right = left + width;
                 halfWidth = Math.round(width / 2);
@@ -307,8 +349,9 @@ seriesType('boxplot', 'column', {
                     stemAttr.stroke =
                         point.stemColor || options.stemColor || color;
                     stemAttr['stroke-width'] = pick(point.stemWidth, options.stemWidth, options.lineWidth);
-                    stemAttr.dashstyle =
-                        point.stemDashStyle || options.stemDashStyle;
+                    stemAttr.dashstyle = (point.stemDashStyle ||
+                        options.stemDashStyle ||
+                        options.dashStyle);
                     point.stem.attr(stemAttr);
                     // Whiskers attributes
                     if (whiskerLength) {
@@ -316,6 +359,9 @@ seriesType('boxplot', 'column', {
                             options.whiskerColor ||
                             color);
                         whiskersAttr['stroke-width'] = pick(point.whiskerWidth, options.whiskerWidth, options.lineWidth);
+                        whiskersAttr.dashstyle = (point.whiskerDashStyle ||
+                            options.whiskerDashStyle ||
+                            options.dashStyle);
                         point.whiskers.attr(whiskersAttr);
                     }
                     if (doQuartiles) {
@@ -324,6 +370,9 @@ seriesType('boxplot', 'column', {
                             color);
                         boxAttr.stroke = options.lineColor || color;
                         boxAttr['stroke-width'] = options.lineWidth || 0;
+                        boxAttr.dashstyle = (point.boxDashStyle ||
+                            options.boxDashStyle ||
+                            options.dashStyle);
                         point.box.attr(boxAttr);
                     }
                     // Median attributes
@@ -331,25 +380,24 @@ seriesType('boxplot', 'column', {
                         options.medianColor ||
                         color);
                     medianAttr['stroke-width'] = pick(point.medianWidth, options.medianWidth, options.lineWidth);
+                    medianAttr.dashstyle = (point.medianDashStyle ||
+                        options.medianDashStyle ||
+                        options.dashStyle);
                     point.medianShape.attr(medianAttr);
                 }
+                var d = void 0;
                 // The stem
                 crispCorr = (point.stem.strokeWidth() % 2) / 2;
                 crispX = left + halfWidth + crispCorr;
-                point.stem[verb]({
-                    d: [
-                        // stem up
-                        'M',
-                        crispX, q3Plot,
-                        'L',
-                        crispX, highPlot,
-                        // stem down
-                        'M',
-                        crispX, q1Plot,
-                        'L',
-                        crispX, lowPlot
-                    ]
-                });
+                d = [
+                    // stem up
+                    ['M', crispX, q3Plot],
+                    ['L', crispX, highPlot],
+                    // stem down
+                    ['M', crispX, q1Plot],
+                    ['L', crispX, lowPlot]
+                ];
+                point.stem[verb]({ d: d });
                 // The box
                 if (doQuartiles) {
                     crispCorr = (point.box.strokeWidth() % 2) / 2;
@@ -357,21 +405,15 @@ seriesType('boxplot', 'column', {
                     q3Plot = Math.floor(q3Plot) + crispCorr;
                     left += crispCorr;
                     right += crispCorr;
-                    point.box[verb]({
-                        d: [
-                            'M',
-                            left, q3Plot,
-                            'L',
-                            left, q1Plot,
-                            'L',
-                            right, q1Plot,
-                            'L',
-                            right, q3Plot,
-                            'L',
-                            left, q3Plot,
-                            'z'
-                        ]
-                    });
+                    d = [
+                        ['M', left, q3Plot],
+                        ['L', left, q1Plot],
+                        ['L', right, q1Plot],
+                        ['L', right, q3Plot],
+                        ['L', left, q3Plot],
+                        ['Z']
+                    ];
+                    point.box[verb]({ d: d });
                 }
                 // The whiskers
                 if (whiskerLength) {
@@ -381,39 +423,25 @@ seriesType('boxplot', 'column', {
                     pointWiskerLength = (/%$/).test(whiskerLength) ?
                         halfWidth * parseFloat(whiskerLength) / 100 :
                         whiskerLength / 2;
-                    point.whiskers[verb]({
-                        d: [
-                            // High whisker
-                            'M',
-                            crispX - pointWiskerLength,
-                            highPlot,
-                            'L',
-                            crispX + pointWiskerLength,
-                            highPlot,
-                            // Low whisker
-                            'M',
-                            crispX - pointWiskerLength,
-                            lowPlot,
-                            'L',
-                            crispX + pointWiskerLength,
-                            lowPlot
-                        ]
-                    });
+                    d = [
+                        // High whisker
+                        ['M', crispX - pointWiskerLength, highPlot],
+                        ['L', crispX + pointWiskerLength, highPlot],
+                        // Low whisker
+                        ['M', crispX - pointWiskerLength, lowPlot],
+                        ['L', crispX + pointWiskerLength, lowPlot]
+                    ];
+                    point.whiskers[verb]({ d: d });
                 }
                 // The median
                 medianPlot = Math.round(point.medianPlot);
                 crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
                 medianPlot = medianPlot + crispCorr;
-                point.medianShape[verb]({
-                    d: [
-                        'M',
-                        left,
-                        medianPlot,
-                        'L',
-                        right,
-                        medianPlot
-                    ]
-                });
+                d = [
+                    ['M', left, medianPlot],
+                    ['L', right, medianPlot]
+                ];
+                point.medianShape[verb]({ d: d });
             }
         });
     },
@@ -528,5 +556,61 @@ seriesType('boxplot', 'column', {
  * @type      {number}
  * @product   highcharts
  * @apioption series.boxplot.data.q3
+ */
+/**
+ * The dash style of the box.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since     next
+ * @product   highcharts
+ * @apioption series.boxplot.data.boxDashStyle
+ */
+/**
+ * The dash style of the median.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since     next
+ * @product   highcharts
+ * @apioption series.boxplot.data.medianDashStyle
+ */
+/**
+ * The dash style of the stem.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since     next
+ * @product   highcharts
+ * @apioption series.boxplot.data.stemDashStyle
+ */
+/**
+ * The dash style of the whiskers.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since     next
+ * @product   highcharts
+ * @apioption series.boxplot.data.whiskerDashStyle
  */
 ''; // adds doclets above to transpiled file

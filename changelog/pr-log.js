@@ -1,7 +1,8 @@
 /* eslint-env node, es6 */
 /* eslint camelcase: 0, func-style: 0, valid-jsdoc: 0, no-console: 0, require-jsdoc: 0 */
 
-const octokit = require('@octokit/rest')({
+const { Octokit } = require('@octokit/rest');
+const octokit = new Octokit({
     auth: process.env.GITHUB_LIST_PRS_TOKEN
 });
 
@@ -16,6 +17,18 @@ const log = {
     Highstock: {},
     Highmaps: {},
     'Highcharts Gantt': {}
+};
+
+// Whenever the string 'Upgrade note' appears, the next paragraph is interpreted
+// as the not
+const parseUpgradeNote = p => {
+    const paragraphs = p.body.split('\n');
+    for (let i = 0; i < paragraphs.length; i++) {
+        if (/upgrade note/i.test(paragraphs[i])) {
+            return (paragraphs[i + 1] ? paragraphs[i + 1].trim() : void 0);
+        }
+    }
+    return void 0;
 };
 
 module.exports = async since => {
@@ -83,6 +96,7 @@ module.exports = async since => {
     // Simplify
     pulls = pulls.map(p => ({
         description: p.body.split('\n')[0].trim(),
+        upgradeNote: parseUpgradeNote(p),
         labels: p.labels,
         number: p.number
     }));

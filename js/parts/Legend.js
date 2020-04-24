@@ -526,9 +526,9 @@ var Legend = /** @class */ (function () {
         // Take care of max width and text overflow (#6659)
         if (chart.styledMode || !itemStyle.width) {
             li.css({
-                width: (options.itemWidth ||
+                width: ((options.itemWidth ||
                     legend.widthOption ||
-                    chart.spacingBox.width) - itemExtraWidth
+                    chart.spacingBox.width) - itemExtraWidth) + 'px'
             });
         }
         // Always update the text
@@ -832,31 +832,43 @@ var Legend = /** @class */ (function () {
         legend.legendWidth = legendWidth;
         legend.legendHeight = legendHeight;
         if (display) {
-            // If aligning to the top and the layout is horizontal, adjust for
-            // the title (#7428)
-            var alignTo = chart.spacingBox;
-            var y = alignTo.y;
-            if (/(lth|ct|rth)/.test(legend.getAlignment()) &&
-                chart.titleOffset[0] > 0) {
-                y += chart.titleOffset[0];
-            }
-            else if (/(lbh|cb|rbh)/.test(legend.getAlignment()) &&
-                chart.titleOffset[2] > 0) {
-                y -= chart.titleOffset[2];
-            }
-            if (y !== alignTo.y) {
-                alignTo = merge(alignTo, { y: y });
-            }
-            legendGroup.align(merge(options, {
-                width: legendWidth,
-                height: legendHeight,
-                verticalAlign: this.proximate ? 'top' : options.verticalAlign
-            }), true, alignTo);
+            legend.align();
         }
         if (!this.proximate) {
             this.positionItems();
         }
         fireEvent(this, 'afterRender');
+    };
+    /**
+     * Align the legend to chart's box.
+     *
+     * @private
+     * @function Highcharts.align
+     * @param {Highcharts.BBoxObject} alignTo
+     * @return {void}
+     */
+    Legend.prototype.align = function (alignTo) {
+        if (alignTo === void 0) { alignTo = this.chart.spacingBox; }
+        var chart = this.chart, options = this.options;
+        // If aligning to the top and the layout is horizontal, adjust for
+        // the title (#7428)
+        var y = alignTo.y;
+        if (/(lth|ct|rth)/.test(this.getAlignment()) &&
+            chart.titleOffset[0] > 0) {
+            y += chart.titleOffset[0];
+        }
+        else if (/(lbh|cb|rbh)/.test(this.getAlignment()) &&
+            chart.titleOffset[2] > 0) {
+            y -= chart.titleOffset[2];
+        }
+        if (y !== alignTo.y) {
+            alignTo = merge(alignTo, { y: y });
+        }
+        this.group.align(merge(options, {
+            width: this.legendWidth,
+            height: this.legendHeight,
+            verticalAlign: this.proximate ? 'top' : options.verticalAlign
+        }), true, alignTo);
     };
     /**
      * Set up the overflow handling by adding navigation with up and down arrows

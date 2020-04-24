@@ -1,7 +1,7 @@
 Creating custom maps 
 ===
 
-Highmaps can be used for more than geographic data, and more than the featured maps provided in the demos. This article goes through the process of drawing your own map in Inkscape, and using our online map converter tool to construct an interactive map with data values. We use a map of Australia for demo purposes. (Do not use that in production, we have a better one in our mapdata collection).
+Highcharts Maps can be used for more than geographic data, and more than the featured maps provided in the demos. This article goes through the process of drawing your own map in Inkscape, and using our online map converter tool to construct an interactive map with data values. We use a map of Australia for demo purposes. (Do not use that in production, we have a better one in our mapdata collection).
 
 1. The first step is to install [Inkscape](https://www.inkscape.org/en/) on your system. This is the only tool you need to install, and it's free. Open up Inkscape, it opens a new document by default.
 
@@ -13,11 +13,11 @@ Highmaps can be used for more than geographic data, and more than the featured m
 
 ![map-from-svg-3.png](map-from-svg-3.png)
 
-5. The Highmaps converter tool expects fills for areas in order to distinguish it from separators and other lines. In the lower left corner of Inkscape, it says _Fill: None_. Click the text None to bring up the Fill and Stroke dialog. Next to the cross depicting no fill, select the solid fill button. Pick a color.
+5. The Highcharts Maps converter tool expects fills for areas in order to distinguish it from separators and other lines. In the lower left corner of Inkscape, it says _Fill: None_. Click the text None to bring up the Fill and Stroke dialog. Next to the cross depicting no fill, select the solid fill button. Pick a color.
 
 ![map-from-svg-4.png](map-from-svg-4.png)
 
-6. Next, we want to give the territory a name that Highmaps can use for labels and identification. In the Object menu, select _Object Properties (Shift + Ctrl + O)_. Set an _id_ and a _label_. The label is used by Highmaps. Remember to click the _Set_ button, otherwise Inkscape won't apply the information.
+6. Next, we want to give the territory a name that Highcharts Maps can use for labels and identification. In the Object menu, select _Object Properties (Shift + Ctrl + O)_. Set an _id_ and a _label_. The label is used by Highcharts Maps. Remember to click the _Set_ button, otherwise Inkscape won't apply the information.
 
 ![map-from-svg-5.png](map-from-svg-5.png)
 
@@ -47,7 +47,7 @@ Highmaps can be used for more than geographic data, and more than the featured m
 
 ![map-from-svg-10.png](map-from-svg-10.png)
 
-15. Go to [jsfiddle.net/highcharts/TUy7x/](https://jsfiddle.net/highcharts/TUy7x/), an empty boilerplate for Highmaps. Add a series configuration object and paste your data. It should now look like [jsfiddle.net/highcharts/TUy7x/1/](https://jsfiddle.net/highcharts/TUy7x/1/).
+15. Go to [jsfiddle.net/highcharts/TUy7x/](https://jsfiddle.net/highcharts/TUy7x/), an empty boilerplate for Highcharts Maps. Add a series configuration object and paste your data. It should now look like [jsfiddle.net/highcharts/TUy7x/1/](https://jsfiddle.net/highcharts/TUy7x/1/).
 
 ```js
 // Initiate the chart
@@ -58,4 +58,4 @@ Highcharts.mapChart('container', {
 
 16. Now all you have to do is add values to the points to make a useful chart. Alternatively, use the paths in the [mapData](https://api.highcharts.com/highmaps/series<map>.mapData) option and add data separately.
 
-Good luck, and don't hesitate to contact us via our [Support Page](support) if you have any problems or corrections to this article.
+Good luck, and don't hesitate to contact us via our [Support Page](https://www.highcharts.com/blog/support/) if you have any problems or corrections to this article.

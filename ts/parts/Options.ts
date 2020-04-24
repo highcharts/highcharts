@@ -93,12 +93,12 @@ declare global {
             plotBackgroundImage?: string;
             plotBorderColor?: (ColorString|GradientColorObject|PatternObject);
             plotBorderWidth?: number;
-            plotShadow?: (boolean|CSSObject);
+            plotShadow?: (boolean|Partial<ShadowOptionsObject>);
             polar?: boolean;
             reflow?: boolean;
             renderTo?: (string|HTMLDOMElement);
             resetZoomButton?: ChartResetZoomButtonOptions;
-            shadow?: (boolean|CSSObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             selectionMarkerFill?: (
                 ColorString|GradientColorObject|PatternObject
             );
@@ -235,7 +235,7 @@ declare global {
             padding?: number;
             reversed?: boolean;
             rtl?: boolean;
-            shadow?: (boolean|CSSObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             squareSymbol?: boolean;
             /** @deprecated */
             style?: CSSObject;
@@ -335,7 +335,7 @@ declare global {
             pointFormat?: string;
             pointFormatter?: FormatterCallbackFunction<Point>;
             positioner?: TooltipPositionerCallbackFunction;
-            shadow?: (boolean|ShadowOptionsObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             shape?: TooltipShapeValue;
             shared?: boolean;
             snap?: number;
@@ -1314,6 +1314,9 @@ H.defaultOptions = {
         /**
          * Decides in what dimensions the user can pan the chart. Can be
          * one of `x`, `y`, or `xy`.
+         *
+         * @sample {highcharts} highcharts/chart/panning-type
+         *         Zooming and xy panning
          *
          * @type    {string}
          * @validvalue ["x", "y", "xy"]

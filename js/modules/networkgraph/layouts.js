@@ -59,6 +59,7 @@ H.layouts['reingold-fruchterman'].prototype, {
             layout.initPositions();
             // Render elements in initial positions:
             series.forEach(function (s) {
+                s.finishedAnimating = true; // #13169
                 s.render();
             });
         }

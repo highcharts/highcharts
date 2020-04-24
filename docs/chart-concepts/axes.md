@@ -177,7 +177,7 @@ Some useful functions are:
 
 Note that Unix based server timestamps are represented as seconds not milliseconds. This is useful to know since PHP time is based on a Unix timestamp, so to use it with Highcharts the value only needs to be multiplied by 1000.
 
-In Highstock the x-axis is always a datetime axis.
+In Highcharts Stock the x-axis is always a datetime axis.
 
 ### Categories
 

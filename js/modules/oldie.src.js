@@ -448,9 +448,9 @@ if (!svg) {
         on: function (eventType, handler) {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function () {
-                var evt = win.event;
-                evt.target = evt.srcElement;
-                handler(evt);
+                var e = win.event;
+                e.target = e.srcElement;
+                handler(e);
             };
             return this;
         },
@@ -714,6 +714,8 @@ if (!svg) {
          */
         init: function (container, width, height) {
             var renderer = this, boxWrapper, box, css;
+            // Extended SVGRenderer member
+            this.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
             renderer.alignedObjects = [];
             boxWrapper = renderer.createElement('div')
                 .css({ position: 'relative' });

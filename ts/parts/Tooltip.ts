@@ -1325,7 +1325,7 @@ class Tooltip {
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!(options.style as any).width || styledMode) {
                     label.css({
-                        width: this.chart.spacingBox.width
+                        width: this.chart.spacingBox.width + 'px'
                     });
                 }
 
@@ -1838,12 +1838,12 @@ class Tooltip {
                 isNumber(labelConfig.key)
             ),
             formatString = (tooltipOptions as any)[footOrHead + 'Format'],
-            evt = {
+            e = {
                 isFooter: isFooter,
                 labelConfig: labelConfig
             } as Highcharts.Dictionary<any>;
 
-        fireEvent(this, 'headerFormatter', evt, function (
+        fireEvent(this, 'headerFormatter', e, function (
             this: Highcharts.Tooltip,
             e: Highcharts.Dictionary<any>
         ): void {
@@ -1882,7 +1882,7 @@ class Tooltip {
             }, this.chart);
 
         });
-        return evt.text;
+        return e.text;
     }
 
     /**

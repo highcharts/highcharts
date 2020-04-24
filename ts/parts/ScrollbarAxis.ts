@@ -8,9 +8,9 @@
  *
  * */
 
-import type Axis from './Axis.js';
+import type Axis from './Axis';
+import type Scrollbar from './Scrollbar';
 import H from './Globals.js';
-import type Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -38,7 +38,7 @@ class ScrollbarAxis {
      * @param ScrollbarClass
      * Scrollbar class to use.
      */
-    public static init(AxisClass: typeof Axis, ScrollbarClass: typeof Scrollbar): void {
+    public static compose(AxisClass: typeof Axis, ScrollbarClass: typeof Scrollbar): void {
 
         // Wrap axis initialization and create scrollbar if enabled:
         addEvent(AxisClass, 'afterInit', function (): void {
@@ -63,19 +63,34 @@ class ScrollbarAxis {
                     this: Highcharts.Scrollbar,
                     e: Highcharts.ScrollbarChangedEventObject
                 ): void {
-                    var unitedMin = Math.min(
-                            pick(axis.options.min, axis.min as any),
-                            axis.min as any,
-                            axis.dataMin as any
+                    var axisMin = pick(
+                            axis.options && axis.options.min,
+                            axis.min as any
                         ),
-                        unitedMax = Math.max(
-                            pick(axis.options.max, axis.max as any),
-                            axis.max as any,
-                            axis.dataMax as any
+                        axisMax = pick(
+                            axis.options && axis.options.max,
+                            axis.max as any
                         ),
+                        unitedMin = defined(axis.dataMin as any) ?
+                            Math.min(
+                                axisMin,
+                                axis.min as any,
+                                axis.dataMin as any
+                            ) : axisMin,
+                        unitedMax = defined(axis.dataMax as any) ?
+                            Math.max(
+                                axisMax,
+                                axis.max as any,
+                                axis.dataMax as any
+                            ) : axisMax,
                         range = unitedMax - unitedMin,
                         to,
                         from;
+
+                    // #12834, scroll when show/hide series, wrong extremes
+                    if (!defined(axisMin) || !defined(axisMax)) {
+                        return;
+                    }
 
                     if (
                         (axis.horiz && !axis.reversed) ||

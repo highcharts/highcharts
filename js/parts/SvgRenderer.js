@@ -1496,7 +1496,8 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
                 rotation,
                 fontSize,
                 wrapper.textWidth,
-                styles && styles.textOverflow // #5968
+                styles && styles.textOverflow,
+                styles && styles.fontWeight // #12163
             ].join(',');
         }
         if (cacheKey && !reload) {
@@ -1648,7 +1649,7 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
             duration: pick(duration, 150),
             complete: function () {
                 // #3088, assuming we're only using this for tooltips
-                elemWrapper.attr({ y: -9999 });
+                elemWrapper.attr({ y: -9999 }).hide();
             }
         });
     },
@@ -1809,29 +1810,55 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      *         Returns the SVGElement for chaining.
      */
     shadow: function (shadowOptions, group, cutOff) {
-        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, 
+        var shadows = [], i, shadow, element = this.element, strokeWidth, shadowWidth, shadowElementOpacity, update = false, oldShadowOptions = this.oldShadowOptions, 
         // compensate for inverted plot area
         transform;
-        if (!shadowOptions) {
+        var defaultShadowOptions = {
+            color: '${palette.neutralColor100}',
+            offsetX: 1,
+            offsetY: 1,
+            opacity: 0.15,
+            width: 3
+        };
+        var options;
+        if (shadowOptions === true) {
+            options = defaultShadowOptions;
+        }
+        else if (typeof shadowOptions === 'object') {
+            options = extend(defaultShadowOptions, shadowOptions);
+        }
+        // Update shadow when options change (#12091).
+        if (options) {
+            // Go over each key to look for change
+            if (options && oldShadowOptions) {
+                objectEach(options, function (value, key) {
+                    if (value !== oldShadowOptions[key]) {
+                        update = true;
+                    }
+                });
+            }
+            if (update) {
+                this.destroyShadows();
+            }
+            this.oldShadowOptions = options;
+        }
+        if (!options) {
             this.destroyShadows();
         }
         else if (!this.shadows) {
-            shadowWidth = pick(shadowOptions.width, 3);
-            shadowElementOpacity = (shadowOptions.opacity || 0.15) /
-                shadowWidth;
+            shadowElementOpacity = options.opacity / options.width;
             transform = this.parentInverted ?
-                '(-1,-1)' :
-                '(' + pick(shadowOptions.offsetX, 1) + ', ' +
-                    pick(shadowOptions.offsetY, 1) + ')';
-            for (i = 1; i <= shadowWidth; i++) {
-                shadow = element.cloneNode(0);
-                strokeWidth = (shadowWidth * 2) + 1 - (2 * i);
+                'translate(-1,-1)' :
+                "translate(" + options.offsetX + ", " + options.offsetY + ")";
+            for (i = 1; i <= options.width; i++) {
+                shadow = element.cloneNode(false);
+                strokeWidth = (options.width * 2) + 1 - (2 * i);
                 attr(shadow, {
                     stroke: (shadowOptions.color ||
                         '${palette.neutralColor100}'),
                     'stroke-opacity': shadowElementOpacity * i,
                     'stroke-width': strokeWidth,
-                    transform: 'translate' + transform,
+                    transform: transform,
                     fill: 'none'
                 });
                 shadow.setAttribute('class', (shadow.getAttribute('class') || '') + ' highcharts-shadow');
@@ -1919,8 +1946,19 @@ extend(SVGElement.prototype, /** @lends Highcharts.SVGElement.prototype */ {
      * @return {void}
      */
     dSetter: function (value, key, element) {
-        if (value && value.join) { // join path
-            value = value.join(' ');
+        if (isArray(value)) {
+            // Backwards compatibility, convert one-dimensional array into an
+            // array of segments
+            if (typeof value[0] === 'string') {
+                value = this.renderer.pathToSegments(value);
+            }
+            this.pathArray = value;
+            value = value.reduce(function (acc, seg, i) {
+                if (!seg || !seg.join) {
+                    return (seg || '').toString();
+                }
+                return (i ? acc + ' ' : '') + seg.join(' ');
+            }, '');
         }
         if (/(NaN| {2}|^$)/.test(value)) {
             value = 'M 0 0';
@@ -3288,20 +3326,27 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @param {number} width
      *        The width of the line.
      *
+     * @param {string} roundingFunction
+     *        The rounding function name on the `Math` object, can be one of
+     *        `round`, `floor` or `ceil`.
+     *
      * @return {Highcharts.SVGPathArray}
      *         The original points array, but modified to render crisply.
      */
-    crispLine: function (points, width) {
-        // normalize to a crisp line
-        if (points[1] === points[4]) {
+    crispLine: function (points, width, roundingFunction) {
+        if (roundingFunction === void 0) { roundingFunction = 'round'; }
+        var start = points[0];
+        var end = points[1];
+        // Normalize to a crisp line
+        if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[1] = points[4] =
-                Math.round(points[1]) - (width % 2 / 2);
+            start[1] = end[1] =
+                Math[roundingFunction](start[1]) - (width % 2 / 2);
         }
-        if (points[2] === points[5]) {
-            points[2] = points[5] =
-                Math.round(points[2]) + (width % 2 / 2);
+        if (start[2] === end[2]) {
+            start[2] = end[2] =
+                Math[roundingFunction](start[2]) + (width % 2 / 2);
         }
         return points;
     },
@@ -3696,10 +3741,12 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     symbol: function (symbol, x, y, width, height, options) {
         var ren = this, obj, imageRegex = /^url\((.*?)\)$/, isImage = imageRegex.test(symbol), sym = (!isImage && (this.symbols[symbol] ? symbol : 'circle')), 
         // get the symbol definition function
-        symbolFn = (sym && this.symbols[sym]), 
-        // check if there's a path defined for this symbol
-        path = (defined(x) && symbolFn && symbolFn.call(this.symbols, Math.round(x), Math.round(y), width, height, options)), imageSrc, centerImage;
+        symbolFn = (sym && this.symbols[sym]), path, imageSrc, centerImage;
         if (symbolFn) {
+            // Check if there's a path defined for this symbol
+            if (typeof x === 'number') {
+                path = symbolFn.call(this.symbols, Math.round(x || 0), Math.round(y || 0), width, height, options);
+            }
             obj = this.path(path);
             if (!ren.styledMode) {
                 obj.attr('fill', 'none');
@@ -3839,36 +3886,36 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         },
         square: function (x, y, w, h) {
             return [
-                'M', x, y,
-                'L', x + w, y,
-                x + w, y + h,
-                x, y + h,
-                'Z'
+                ['M', x, y],
+                ['L', x + w, y],
+                ['L', x + w, y + h],
+                ['L', x, y + h],
+                ['Z']
             ];
         },
         triangle: function (x, y, w, h) {
             return [
-                'M', x + w / 2, y,
-                'L', x + w, y + h,
-                x, y + h,
-                'Z'
+                ['M', x + w / 2, y],
+                ['L', x + w, y + h],
+                ['L', x, y + h],
+                ['Z']
             ];
         },
         'triangle-down': function (x, y, w, h) {
             return [
-                'M', x, y,
-                'L', x + w, y,
-                x + w / 2, y + h,
-                'Z'
+                ['M', x, y],
+                ['L', x + w, y],
+                ['L', x + w / 2, y + h],
+                ['Z']
             ];
         },
         diamond: function (x, y, w, h) {
             return [
-                'M', x + w / 2, y,
-                'L', x + w, y + h / 2,
-                x + w / 2, y + h,
-                x, y + h / 2,
-                'Z'
+                ['M', x + w / 2, y],
+                ['L', x + w, y + h / 2],
+                ['L', x + w / 2, y + h],
+                ['L', x, y + h / 2],
+                ['Z']
             ];
         },
         arc: function (x, y, w, h, options) {
@@ -3880,28 +3927,47 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             // Proximity takes care of rounding errors around PI (#6971)
             longArc = pick(options.longArc, options.end - start - Math.PI < proximity ? 0 : 1), arc;
             arc = [
-                'M',
-                x + rx * cosStart,
-                y + ry * sinStart,
-                'A',
-                rx,
-                ry,
-                0,
-                longArc,
-                pick(options.clockwise, 1),
-                x + rx * cosEnd,
-                y + ry * sinEnd
+                [
+                    'M',
+                    x + rx * cosStart,
+                    y + ry * sinStart
+                ],
+                [
+                    'A',
+                    rx,
+                    ry,
+                    0,
+                    longArc,
+                    pick(options.clockwise, 1),
+                    x + rx * cosEnd,
+                    y + ry * sinEnd
+                ]
             ];
             if (defined(innerRadius)) {
-                arc.push(open ? 'M' : 'L', x + innerRadius * cosEnd, y + innerRadius * sinEnd, 'A', // arcTo
-                innerRadius, // x radius
-                innerRadius, // y radius
-                0, // slanting
-                longArc, // long or short arc
-                // Clockwise - opposite to the outer arc clockwise
-                defined(options.clockwise) ? 1 - options.clockwise : 0, x + innerRadius * cosStart, y + innerRadius * sinStart);
+                arc.push(open ?
+                    [
+                        'M',
+                        x + innerRadius * cosEnd,
+                        y + innerRadius * sinEnd
+                    ] : [
+                    'L',
+                    x + innerRadius * cosEnd,
+                    y + innerRadius * sinEnd
+                ], [
+                    'A',
+                    innerRadius,
+                    innerRadius,
+                    0,
+                    longArc,
+                    // Clockwise - opposite to the outer arc clockwise
+                    defined(options.clockwise) ? 1 - options.clockwise : 0,
+                    x + innerRadius * cosStart,
+                    y + innerRadius * sinStart
+                ]);
             }
-            arc.push(open ? '' : 'Z'); // close
+            if (!open) {
+                arc.push(['Z']);
+            }
             return arc;
         },
         /**
@@ -3911,26 +3977,26 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         callout: function (x, y, w, h, options) {
             var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY, path;
             path = [
-                'M', x + r, y,
-                'L', x + w - r, y,
-                'C', x + w, y, x + w, y, x + w, y + r,
-                'L', x + w, y + h - r,
-                'C', x + w, y + h, x + w, y + h, x + w - r, y + h,
-                'L', x + r, y + h,
-                'C', x, y + h, x, y + h, x, y + h - r,
-                'L', x, y + r,
-                'C', x, y, x, y, x + r, y // top-left corner
+                ['M', x + r, y],
+                ['L', x + w - r, y],
+                ['C', x + w, y, x + w, y, x + w, y + r],
+                ['L', x + w, y + h - r],
+                ['C', x + w, y + h, x + w, y + h, x + w - r, y + h],
+                ['L', x + r, y + h],
+                ['C', x, y + h, x, y + h, x, y + h - r],
+                ['L', x, y + r],
+                ['C', x, y, x, y, x + r, y] // top-left corner
             ];
             // Anchor on right side
             if (anchorX && anchorX > w) {
                 // Chevron
                 if (anchorY > y + safeDistance &&
                     anchorY < y + h - safeDistance) {
-                    path.splice(13, 3, 'L', x + w, anchorY - halfDistance, x + w + arrowLength, anchorY, x + w, anchorY + halfDistance, x + w, y + h - r);
+                    path.splice(3, 1, ['L', x + w, anchorY - halfDistance], ['L', x + w + arrowLength, anchorY], ['L', x + w, anchorY + halfDistance], ['L', x + w, y + h - r]);
                     // Simple connector
                 }
                 else {
-                    path.splice(13, 3, 'L', x + w, h / 2, anchorX, anchorY, x + w, h / 2, x + w, y + h - r);
+                    path.splice(3, 1, ['L', x + w, h / 2], ['L', anchorX, anchorY], ['L', x + w, h / 2], ['L', x + w, y + h - r]);
                 }
                 // Anchor on left side
             }
@@ -3938,11 +4004,11 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Chevron
                 if (anchorY > y + safeDistance &&
                     anchorY < y + h - safeDistance) {
-                    path.splice(33, 3, 'L', x, anchorY + halfDistance, x - arrowLength, anchorY, x, anchorY - halfDistance, x, y + r);
+                    path.splice(7, 1, ['L', x, anchorY + halfDistance], ['L', x - arrowLength, anchorY], ['L', x, anchorY - halfDistance], ['L', x, y + r]);
                     // Simple connector
                 }
                 else {
-                    path.splice(33, 3, 'L', x, h / 2, anchorX, anchorY, x, h / 2, x, y + r);
+                    path.splice(7, 1, ['L', x, h / 2], ['L', anchorX, anchorY], ['L', x, h / 2], ['L', x, y + r]);
                 }
             }
             else if ( // replace bottom
@@ -3950,14 +4016,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 anchorY > h &&
                 anchorX > x + safeDistance &&
                 anchorX < x + w - safeDistance) {
-                path.splice(23, 3, 'L', anchorX + halfDistance, y + h, anchorX, y + h + arrowLength, anchorX - halfDistance, y + h, x + r, y + h);
+                path.splice(5, 1, ['L', anchorX + halfDistance, y + h], ['L', anchorX, y + h + arrowLength], ['L', anchorX - halfDistance, y + h], ['L', x + r, y + h]);
             }
             else if ( // replace top
             anchorY &&
                 anchorY < 0 &&
                 anchorX > x + safeDistance &&
                 anchorX < x + w - safeDistance) {
-                path.splice(3, 3, 'L', anchorX - halfDistance, y, anchorX, y - arrowLength, anchorX + halfDistance, y, w - r, y);
+                path.splice(1, 1, ['L', anchorX - halfDistance, y], ['L', anchorX, y - arrowLength], ['L', anchorX + halfDistance, y], ['L', w - r, y]);
             }
             return path;
         }
@@ -4136,6 +4202,244 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         };
     },
     /**
+     * Compatibility function to convert the legacy one-dimensional path array
+     * into an array of segments.
+     *
+     * It is used in maps to parse the `path` option, and in SVGRenderer.dSetter
+     * to support legacy paths from demos.
+     *
+     * @param path @private
+     * @function Highcharts.SVGRenderer#pathToSegments
+     *
+     * @param {Array<string|number>}
+     *
+     * @return {Highcharts.SVGPathArray}
+     */
+    pathToSegments: function (path) {
+        var ret = [];
+        var segment = [];
+        var commandLength = {
+            A: 8,
+            C: 7,
+            H: 2,
+            L: 3,
+            M: 3,
+            Q: 5,
+            S: 5,
+            T: 3,
+            V: 2
+        };
+        // Short, non-typesafe parsing of the one-dimensional array. It splits
+        // the path on any string. This is not type checked against the tuple
+        // types, but is shorter, and doesn't require specific checks for any
+        // command type in SVG.
+        for (var i = 0; i < path.length; i++) {
+            // Command skipped, repeat previous or insert L/l for M/m
+            if (isString(segment[0]) &&
+                isNumber(path[i]) &&
+                segment.length === commandLength[(segment[0].toUpperCase())]) {
+                path.splice(i, 0, segment[0].replace('M', 'L').replace('m', 'l'));
+            }
+            // Split on string
+            if (typeof path[i] === 'string') {
+                if (segment.length) {
+                    ret.push(segment.slice(0));
+                }
+                segment.length = 0;
+            }
+            segment.push(path[i]);
+        }
+        ret.push(segment.slice(0));
+        return ret;
+        /*
+        // Fully type-safe version where each tuple type is checked. The
+        // downside is filesize and a lack of flexibility for unsupported
+        // commands
+        const ret: Highcharts.SVGPathArray = [],
+            commands = {
+                A: 7,
+                C: 6,
+                H: 1,
+                L: 2,
+                M: 2,
+                Q: 4,
+                S: 4,
+                T: 2,
+                V: 1,
+                Z: 0
+            };
+
+        let i = 0,
+            lastI = 0,
+            lastCommand;
+
+        while (i < path.length) {
+            const item = path[i];
+
+            let command;
+
+            if (typeof item === 'string') {
+                command = item;
+                i += 1;
+            } else {
+                command = lastCommand || 'M';
+            }
+
+            // Upper case
+            const commandUC = command.toUpperCase();
+
+            if (commandUC in commands) {
+
+                // No numeric parameters
+                if (command === 'Z' || command === 'z') {
+                    ret.push([command]);
+
+                // One numeric parameter
+                } else {
+                    const val0 = path[i];
+                    if (typeof val0 === 'number') {
+
+                        // Horizontal line to
+                        if (command === 'H' || command === 'h') {
+                            ret.push([command, val0]);
+                            i += 1;
+
+                        // Vertical line to
+                        } else if (command === 'V' || command === 'v') {
+                            ret.push([command, val0]);
+                            i += 1;
+
+                        // Two numeric parameters
+                        } else {
+                            const val1 = path[i + 1];
+                            if (typeof val1 === 'number') {
+                                // lineTo
+                                if (command === 'L' || command === 'l') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+
+                                // moveTo
+                                } else if (command === 'M' || command === 'm') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+
+                                // Smooth quadratic bezier
+                                } else if (command === 'T' || command === 't') {
+                                    ret.push([command, val0, val1]);
+                                    i += 2;
+
+                                // Four numeric parameters
+                                } else {
+                                    const val2 = path[i + 2],
+                                        val3 = path[i + 3];
+                                    if (
+                                        typeof val2 === 'number' &&
+                                        typeof val3 === 'number'
+                                    ) {
+                                        // Quadratic bezier to
+                                        if (
+                                            command === 'Q' ||
+                                            command === 'q'
+                                        ) {
+                                            ret.push([
+                                                command,
+                                                val0,
+                                                val1,
+                                                val2,
+                                                val3
+                                            ]);
+                                            i += 4;
+
+                                        // Smooth cubic bezier to
+                                        } else if (
+                                            command === 'S' ||
+                                            command === 's'
+                                        ) {
+                                            ret.push([
+                                                command,
+                                                val0,
+                                                val1,
+                                                val2,
+                                                val3
+                                            ]);
+                                            i += 4;
+
+                                        // Six numeric parameters
+                                        } else {
+                                            const val4 = path[i + 4],
+                                                val5 = path[i + 5];
+
+                                            if (
+                                                typeof val4 === 'number' &&
+                                                typeof val5 === 'number'
+                                            ) {
+                                                // Curve to
+                                                if (
+                                                    command === 'C' ||
+                                                    command === 'c'
+                                                ) {
+                                                    ret.push([
+                                                        command,
+                                                        val0,
+                                                        val1,
+                                                        val2,
+                                                        val3,
+                                                        val4,
+                                                        val5
+                                                    ]);
+                                                    i += 6;
+
+                                                // Seven numeric parameters
+                                                } else {
+                                                    const val6 = path[i + 6];
+
+                                                    // Arc to
+                                                    if (
+                                                        typeof val6 ===
+                                                        'number' &&
+                                                        (
+                                                            command === 'A' ||
+                                                            command === 'a'
+                                                        )
+                                                    ) {
+                                                        ret.push([
+                                                            command,
+                                                            val0,
+                                                            val1,
+                                                            val2,
+                                                            val3,
+                                                            val4,
+                                                            val5,
+                                                            val6
+                                                        ]);
+                                                        i += 7;
+
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            // An unmarked command following a moveTo is a lineTo
+            lastCommand = command === 'M' ? 'L' : command;
+
+            if (i === lastI) {
+                break;
+            }
+            lastI = i;
+        }
+        return ret;
+        */
+    },
+    /**
      * Draw a label, which is an extended text element with support for border
      * and background. Highcharts creates a `g` element with a text and a `path`
      * or `rect` inside, to make it behave somewhat like a HTML div. Border and
@@ -4203,11 +4507,15 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
            box. */
         updateBoxSize = function () {
             var style = text.element.style, crispAdjust, attribs = {};
-            bBox = ((typeof width === 'undefined' ||
-                typeof height === 'undefined' ||
+            bBox = ((
+            // #12165 error when width is null (auto)
+            !isNumber(width) ||
+                !isNumber(height) ||
                 textAlign) &&
                 defined(text.textStr) &&
-                text.getBBox()); // #3295 && 3514 box failure when string equals 0
+                text.getBBox()
+            // #12163 when fontweight: bold, recalculate bBox withot cache
+            ); // #3295 && 3514 box failure when string equals 0
             wrapper.width = ((width || bBox.width || 0) +
                 2 * padding +
                 paddingLeft);
@@ -4414,7 +4722,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
              */
             css: function (styles) {
                 if (styles) {
-                    var textStyles = {};
+                    var textStyles = {}, isWidth, isFontStyle;
                     // Create a copy to avoid altering the original object
                     // (#537)
                     styles = merge(styles);
@@ -4425,14 +4733,16 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                         }
                     });
                     text.css(textStyles);
-                    // Update existing text and box
-                    if ('width' in textStyles) {
+                    isWidth = 'width' in textStyles;
+                    isFontStyle = 'fontSize' in textStyles ||
+                        'fontWeight' in textStyles;
+                    // Update existing text, box (#9400, #12163)
+                    if (isWidth || isFontStyle) {
                         updateBoxSize();
-                    }
-                    // Keep updated (#9400)
-                    if ('fontSize' in textStyles) {
-                        updateBoxSize();
-                        updateTextPadding();
+                        // Keep updated (#9400, #12163)
+                        if (isFontStyle) {
+                            updateTextPadding();
+                        }
                     }
                 }
                 return baseCss.call(wrapper, styles);

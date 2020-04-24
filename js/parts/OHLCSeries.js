@@ -139,7 +139,7 @@ seriesType('ohlc', 'column'
      */
     init: function () {
         seriesTypes.column.prototype.init.apply(this, arguments);
-        this.options.stacking = false; // #8817
+        this.options.stacking = void 0; // #8817
     },
     /**
      * Postprocess mapping between options and SVG attributes
@@ -207,10 +207,16 @@ seriesType('ohlc', 'column'
          * Extend vertical stem to open and close values.
          */
         extendStem = function (path, halfStrokeWidth, openOrClose) {
+            var start = path[0];
+            var end = path[1];
             // We don't need to worry about crisp - openOrClose value
             // is already crisped and halfStrokeWidth should remove it.
-            path[2] = Math.max(openOrClose + halfStrokeWidth, path[2]);
-            path[5] = Math.min(openOrClose - halfStrokeWidth, path[5]);
+            if (typeof start[2] === 'number') {
+                start[2] = Math.max(openOrClose + halfStrokeWidth, start[2]);
+            }
+            if (typeof end[2] === 'number') {
+                end[2] = Math.min(openOrClose - halfStrokeWidth, end[2]);
+            }
         };
         points.forEach(function (point) {
             var plotOpen, plotClose, crispCorr, halfWidth, path, graphic = point.graphic, crispX, isNew = !graphic, strokeWidth;
@@ -231,21 +237,19 @@ seriesType('ohlc', 'column'
                 halfWidth = Math.round(point.shapeArgs.width / 2);
                 // the vertical stem
                 path = [
-                    'M',
-                    crispX, Math.round(point.yBottom),
-                    'L',
-                    crispX, Math.round(point.plotHigh)
+                    ['M', crispX, Math.round(point.yBottom)],
+                    ['L', crispX, Math.round(point.plotHigh)]
                 ];
                 // open
                 if (point.open !== null) {
                     plotOpen = Math.round(point.plotOpen) + crispCorr;
-                    path.push('M', crispX, plotOpen, 'L', crispX - halfWidth, plotOpen);
+                    path.push(['M', crispX, plotOpen], ['L', crispX - halfWidth, plotOpen]);
                     extendStem(path, strokeWidth / 2, plotOpen);
                 }
                 // close
                 if (point.close !== null) {
                     plotClose = Math.round(point.plotClose) + crispCorr;
-                    path.push('M', crispX, plotClose, 'L', crispX + halfWidth, plotClose);
+                    path.push(['M', crispX, plotClose], ['L', crispX + halfWidth, plotClose]);
                     extendStem(path, strokeWidth / 2, plotClose);
                 }
                 graphic[isNew ? 'attr' : 'animate']({ d: path })

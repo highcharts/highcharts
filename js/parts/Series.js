@@ -3497,32 +3497,22 @@ null,
     /**
      * Internal function to process the data by cropping away unused data
      * points if the series is longer than the crop threshold. This saves
-     * computing time for large series. In Highstock, this function is
-     * extended to provide data grouping.
+     * computing time for large series.
      *
      * @private
-     * @function Highcharts.Series#processData
-     * @param {boolean} [force]
-     *        Force data grouping.
-     * @return {boolean|undefined}
+     * @function Highcharts.Series#getProcessedData
+     * @param {boolean} [forceExtremesFromAll]
+     *        Force getting extremes of a total series data range.
+     * @return {Highcharts.SeriesProcessedDataObject}
      */
-    processData: function (force) {
+    getProcessedData: function (forceExtremesFromAll) {
         var series = this, 
         // copied during slice operation:
         processedXData = series.xData, processedYData = series.yData, dataLength = processedXData.length, croppedData, cropStart = 0, cropped, distance, closestPointRange, xAxis = series.xAxis, i, // loop variable
-        options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = series.getExtremesFromAll ||
+        options = series.options, cropThreshold = options.cropThreshold, getExtremesFromAll = forceExtremesFromAll ||
+            series.getExtremesFromAll ||
             options.getExtremesFromAll, // #4599
-        isCartesian = series.isCartesian, xExtremes, val2lin = xAxis && xAxis.val2lin, isLog = xAxis && xAxis.isLog, throwOnUnsorted = series.requireSorting, min, max;
-        // If the series data or axes haven't changed, don't go through
-        // this. Return false to pass the message on to override methods
-        // like in data grouping.
-        if (isCartesian &&
-            !series.isDirty &&
-            !xAxis.isDirty &&
-            !series.yAxis.isDirty &&
-            !force) {
-            return false;
-        }
+        isCartesian = series.isCartesian, xExtremes, val2lin = xAxis && xAxis.val2lin, isLog = !!(xAxis && xAxis.logarithmic), throwOnUnsorted = series.requireSorting, min, max;
         if (xAxis) {
             // corrected for log axis (#3053)
             xExtremes = xAxis.getExtremes();
@@ -3573,13 +3563,44 @@ null,
                 throwOnUnsorted = false; // Only once
             }
         }
+        return {
+            xData: processedXData,
+            yData: processedYData,
+            cropped: cropped,
+            cropStart: cropStart,
+            closestPointRange: closestPointRange
+        };
+    },
+    /**
+     * Internal function to apply processed data.
+     * In Highstock, this function is extended to provide data grouping.
+     *
+     * @private
+     * @function Highcharts.Series#processData
+     * @param {boolean} [force]
+     *        Force data grouping.
+     * @return {boolean|undefined}
+     */
+    processData: function (force) {
+        var series = this, xAxis = series.xAxis, processedData;
+        // If the series data or axes haven't changed, don't go through
+        // this. Return false to pass the message on to override methods
+        // like in data grouping.
+        if (series.isCartesian &&
+            !series.isDirty &&
+            !xAxis.isDirty &&
+            !series.yAxis.isDirty &&
+            !force) {
+            return false;
+        }
+        processedData = series.getProcessedData();
         // Record the properties
-        series.cropped = cropped; // undefined or true
-        series.cropStart = cropStart;
-        series.processedXData = processedXData;
-        series.processedYData = processedYData;
+        series.cropped = processedData.cropped; // undefined or true
+        series.cropStart = processedData.cropStart;
+        series.processedXData = processedData.xData;
+        series.processedYData = processedData.yData;
         series.closestPointRange =
-            series.basePointRange = closestPointRange;
+            series.basePointRange = processedData.closestPointRange;
     },
     /**
      * Iterate over xData and crop values between min and max. Returns
@@ -3766,9 +3787,11 @@ null,
      * @param {Array<number>} [yData]
      *        The data to inspect. Defaults to the current data within the
      *        visible range.
+     * @param {boolean} [forceExtremesFromAll]
+     *        Force getting extremes of a total series data range.
      * @return {Highcharts.DataExtremesObject}
      */
-    getExtremes: function (yData) {
+    getExtremes: function (yData, forceExtremesFromAll) {
         var xAxis = this.xAxis, yAxis = this.yAxis, xData = this.processedXData || this.xData, yDataLength, activeYData = [], activeCounter = 0, 
         // #2117, need to compensate for log X axis
         xExtremes, xMin = 0, xMax = 0, validValue, withinRange, 
@@ -3789,7 +3812,8 @@ null,
             // point outside the visible range (#7061), consider y extremes.
             validValue = ((isNumber(y) || isArray(y)) &&
                 ((y.length || y > 0) || !positiveValuesOnly));
-            withinRange = (this.getExtremesFromAll ||
+            withinRange = (forceExtremesFromAll ||
+                this.getExtremesFromAll ||
                 this.options.getExtremesFromAll ||
                 this.cropped ||
                 !xAxis || // for colorAxis support
@@ -3889,7 +3913,7 @@ null,
         }
         // Translate each point
         for (i = 0; i < dataLength; i++) {
-            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacks[(series.negStacks &&
+            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(series.negStacks &&
                 yValue <
                     (stackThreshold ? 0 : threshold) ?
                 '-' :
@@ -4489,50 +4513,55 @@ null,
             }
             else {
                 if (i === 0 || gap) {
-                    pathToPoint = [
-                        'M',
-                        point.plotX,
-                        point.plotY
-                    ];
+                    pathToPoint = [[
+                            'M',
+                            point.plotX,
+                            point.plotY
+                        ]];
                     // Generate the spline as defined in the SplineSeries object
                 }
                 else if (series.getPointSpline) {
-                    pathToPoint = series.getPointSpline(points, point, i);
+                    pathToPoint = [series.getPointSpline(points, point, i)];
                 }
                 else if (step) {
                     if (step === 1) { // right
-                        pathToPoint = [
-                            'L',
-                            lastPoint.plotX,
-                            plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                lastPoint.plotX,
+                                plotY
+                            ]];
                     }
                     else if (step === 2) { // center
-                        pathToPoint = [
-                            'L',
-                            (lastPoint.plotX + plotX) / 2,
-                            lastPoint.plotY,
-                            'L',
-                            (lastPoint.plotX + plotX) / 2,
-                            plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                (lastPoint.plotX + plotX) / 2,
+                                lastPoint.plotY
+                            ], [
+                                'L',
+                                (lastPoint.plotX + plotX) / 2,
+                                plotY
+                            ]];
                     }
                     else {
-                        pathToPoint = [
-                            'L',
-                            plotX,
-                            lastPoint.plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                plotX,
+                                lastPoint.plotY
+                            ]];
                     }
-                    pathToPoint.push('L', plotX, plotY);
-                }
-                else {
-                    // normal line to next point
-                    pathToPoint = [
+                    pathToPoint.push([
                         'L',
                         plotX,
                         plotY
-                    ];
+                    ]);
+                }
+                else {
+                    // normal line to next point
+                    pathToPoint = [[
+                            'L',
+                            plotX,
+                            plotY
+                        ]];
                 }
                 // Prepare for animation. When step is enabled, there are
                 // two path nodes for each x value.
@@ -4671,7 +4700,7 @@ null,
      * @return {void}
      */
     applyZones: function () {
-        var series = this, chart = this.chart, renderer = chart.renderer, zones = this.zones, translatedFrom, translatedTo, clips = (this.clips || []), clipAttr, graph = this.graph, area = this.area, chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight), axis = this[(this.zoneAxis || 'y') + 'Axis'], extremes, reversed, inverted = chart.inverted, horiz, pxRange, pxPosMin, pxPosMax, ignoreZones = false;
+        var series = this, chart = this.chart, renderer = chart.renderer, zones = this.zones, translatedFrom, translatedTo, clips = (this.clips || []), clipAttr, graph = this.graph, area = this.area, chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight), axis = this[(this.zoneAxis || 'y') + 'Axis'], extremes, reversed, inverted = chart.inverted, horiz, pxRange, pxPosMin, pxPosMax, ignoreZones = false, zoneArea, zoneGraph;
         if (zones.length &&
             (graph || area) &&
             axis &&
@@ -4756,11 +4785,13 @@ null,
                 // when no data, graph zone is not applied and after setData
                 // clip was ignored. As a result, it should be applied each
                 // time.
-                if (graph) {
-                    series['zone-graph-' + i].clip(clips[i]);
+                zoneArea = series['zone-area-' + i];
+                zoneGraph = series['zone-graph-' + i];
+                if (graph && zoneGraph) {
+                    zoneGraph.clip(clips[i]);
                 }
-                if (area) {
-                    series['zone-area-' + i].clip(clips[i]);
+                if (area && zoneArea) {
+                    zoneArea.clip(clips[i]);
                 }
                 // if this zone extends out of the axis, ignore the others
                 ignoreZones = threshold.value > extremes.max;

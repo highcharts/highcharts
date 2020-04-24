@@ -263,9 +263,15 @@ module.exports = function (config) {
         ['unit-tests/oldie/*'] :
         ['unit-tests/*/*'];
 
-    const tests = (argv.tests ? argv.tests.split(',') : defaultTests)
+    const tests = (
+            argv.tests ? argv.tests.split(',') :
+            (
+                argv.testsAbsolutePath ? argv.testsAbsolutePath.split(',') :
+                defaultTests
+            )
+        )
         .filter(path => !!path)
-        .map(path => `samples/${path}/demo.js`);
+        .map(path => argv.testsAbsolutePath ? path : `samples/${path}/demo.js`);
 
     // Get the files
     let files = require('./karma-files.json');
@@ -644,6 +650,17 @@ module.exports = function (config) {
             'BrowserStack initialized. Please wait while tests are uploaded and VMs prepared. ' +
             `Any other test runs must complete before this test run will start. Current Browserstack concurrency rate is ${options.concurrency}.`
         );
+    } else if (argv.testsAbsolutePath) {
+        options.customLaunchers = {
+            'ChromeHeadless.Debugging': {
+                base: 'ChromeHeadless',
+                flags: [
+                    '--remote-debugging-port=9333'
+                ]
+            }
+        };
+        options.browserDisconnectTimeout = 30 * 60 * 1000;
+        options.browserNoActivityTimeout = 30 * 60 * 1000;
     }
 
     config.set(options);

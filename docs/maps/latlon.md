@@ -3,7 +3,7 @@ Latitude/longitude
 
 <iframe style="width: 100%; height: 550px; border: 0;" src=https://www.highcharts.com/samples/embed/maps/demo/latlon-advanced allow="fullscreen"></iframe>
 
-Highmaps from version 1.1.0 comes with support for latitude/longitude. This feature requires that the [proj4js](http://proj4js.org) library has been loaded before Highmaps. The latest version of the proj4js library can be loaded from [cdnjs](https://cdnjs.com/libraries/proj4js).
+Highcharts Maps from version 1.1.0 comes with support for latitude/longitude. This feature requires that the [proj4js](http://proj4js.org) library has been loaded before Highcharts Maps. The latest version of the proj4js library can be loaded from [cdnjs](https://cdnjs.com/libraries/proj4js).
 
     
     <!-- Example of loading from CDNJS: -->
@@ -78,4 +78,4 @@ It is possible to expand on the definition above for more complex maps. The foll
 
 The `hitZone` property is a GeoJSON geometry object, specifying the extent of the zone in the map. The `scale` property specifies a scaling factor applied to the projected coordinates. The `xpan` and `ypan` properties specify offsets applied to the projected coordinates after scaling. Using these parameters it is possible to move and resize areas in the projected map coordinate system while retaining lat/lon support. The `rotation` property specifies the clockwise rotation of the coordinates before scaling and panning, in radians. The rotation is relative to the coordinate system origin.
 
-Highmaps will automatically detect which transform object to use when transforming to and from lat/lon on a map. If you want to manually perform a conversion using a specific transform object, use the [Chart.transformToLatLon](https://api.highcharts.com/class-reference/Highcharts.Chart#transformToLatLon) and [Chart.transformFromLatLon](https://api.highcharts.com/class-reference/Highcharts.Chart#transformFromLatLon) functions.
+Highcharts Maps will automatically detect which transform object to use when transforming to and from lat/lon on a map. If you want to manually perform a conversion using a specific transform object, use the [Chart.transformToLatLon](https://api.highcharts.com/class-reference/Highcharts.Chart#transformToLatLon) and [Chart.transformFromLatLon](https://api.highcharts.com/class-reference/Highcharts.Chart#transformFromLatLon) functions.

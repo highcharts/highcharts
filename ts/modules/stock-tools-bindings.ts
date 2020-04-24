@@ -2000,6 +2000,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
             this: Highcharts.NavigationBindings,
             button: Highcharts.HTMLDOMElement
         ): void {
+            this.chart.fullscreen.toggle();
             fireEvent(
                 this,
                 'deselectButton',

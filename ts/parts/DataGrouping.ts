@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisType } from './axis/types';
+import DateTimeAxis from './DateTimeAxis.js';
 import H from './Globals.js';
 
 /**
@@ -26,48 +27,42 @@ declare global {
                 redraw?: boolean
             ): void;
         }
-        interface ColumnSeriesOptions {
-            groupPixelWidth?: number;
-        }
-        interface ColumnRangeSeriesOptions {
-            groupPixelWidth?: number;
-        }
-        interface DataGrounpingApproximationsArray extends Array<number> {
+        interface DataGroupingApproximationsArray extends Array<number> {
             hasNulls?: boolean;
         }
         interface DataGroupingApproximationsDictionary
             extends Dictionary<(Function|undefined)>
         {
             average: (
-                arr: DataGrounpingApproximationsArray
+                arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);
             averages: (
-                ...arrs: DataGrounpingApproximationsArray
+                ...arrs: DataGroupingApproximationsArray
             ) => (Array<(null|number|undefined)>|undefined);
             close: (
-                arr: DataGrounpingApproximationsArray
+                arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);
             high: (
-                arr: DataGrounpingApproximationsArray
+                arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);
             low: (
-                arr: DataGrounpingApproximationsArray
+                arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);
             open: (
-                arr: DataGrounpingApproximationsArray
+                arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);
             sum: (
-                arr: DataGrounpingApproximationsArray
+                arr: DataGroupingApproximationsArray
             ) => (null|number|undefined);
             ohlc: (
-                open: DataGrounpingApproximationsArray,
-                high: DataGrounpingApproximationsArray,
-                low: DataGrounpingApproximationsArray,
-                close: DataGrounpingApproximationsArray
+                open: DataGroupingApproximationsArray,
+                high: DataGroupingApproximationsArray,
+                low: DataGroupingApproximationsArray,
+                close: DataGroupingApproximationsArray
             ) => ([number, number, number, number]|undefined);
             range: (
-                low: DataGrounpingApproximationsArray,
-                high: DataGrounpingApproximationsArray
+                low: DataGroupingApproximationsArray,
+                high: DataGroupingApproximationsArray
             ) => ([number, number]|null|undefined);
         }
         interface DataGroupingFunctionsObject {
@@ -196,7 +191,7 @@ var Axis = H.Axis,
 var approximations: Highcharts.DataGroupingApproximationsDictionary =
 H.approximations = {
     sum: function (
-        arr: Highcharts.DataGrounpingApproximationsArray
+        arr: Highcharts.DataGroupingApproximationsArray
     ): (null|number|undefined) {
         var len = arr.length,
             ret;
@@ -217,7 +212,7 @@ H.approximations = {
         return ret;
     },
     average: function (
-        arr: Highcharts.DataGrounpingApproximationsArray
+        arr: Highcharts.DataGroupingApproximationsArray
     ): (null|number|undefined) {
         var len = arr.length,
             ret = approximations.sum(arr);
@@ -236,7 +231,7 @@ H.approximations = {
         var ret = [] as Array<(null|number|undefined)>;
 
         [].forEach.call(arguments, function (
-            arr: Highcharts.DataGrounpingApproximationsArray
+            arr: Highcharts.DataGroupingApproximationsArray
         ): void {
             ret.push(approximations.average(arr));
         });
@@ -246,26 +241,26 @@ H.approximations = {
         return typeof ret[0] === 'undefined' ? void 0 : ret;
     },
     open: function (
-        arr: Highcharts.DataGrounpingApproximationsArray
+        arr: Highcharts.DataGroupingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ? arr[0] : ((arr as any).hasNulls ? null : void 0);
     },
     high: function (
-        arr: Highcharts.DataGrounpingApproximationsArray
+        arr: Highcharts.DataGroupingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arrayMax(arr) :
             (arr.hasNulls ? null : void 0);
     },
     low: function (
-        arr: Highcharts.DataGrounpingApproximationsArray
+        arr: Highcharts.DataGroupingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arrayMin(arr) :
             (arr.hasNulls ? null : void 0);
     },
     close: function (
-        arr: Highcharts.DataGrounpingApproximationsArray
+        arr: Highcharts.DataGroupingApproximationsArray
     ): (null|number|undefined) {
         return arr.length ?
             arr[arr.length - 1] :
@@ -274,10 +269,10 @@ H.approximations = {
     // ohlc and range are special cases where a multidimensional array is
     // input and an array is output
     ohlc: function (
-        open: Highcharts.DataGrounpingApproximationsArray,
-        high: Highcharts.DataGrounpingApproximationsArray,
-        low: Highcharts.DataGrounpingApproximationsArray,
-        close: Highcharts.DataGrounpingApproximationsArray
+        open: Highcharts.DataGroupingApproximationsArray,
+        high: Highcharts.DataGroupingApproximationsArray,
+        low: Highcharts.DataGroupingApproximationsArray,
+        close: Highcharts.DataGroupingApproximationsArray
     ): ([number, number, number, number]|undefined) {
         open = approximations.open(open) as any;
         high = approximations.high(high) as any;
@@ -295,8 +290,8 @@ H.approximations = {
         // else, return is undefined
     },
     range: function (
-        low: Highcharts.DataGrounpingApproximationsArray,
-        high: Highcharts.DataGrounpingApproximationsArray
+        low: Highcharts.DataGroupingApproximationsArray,
+        high: Highcharts.DataGroupingApproximationsArray
     ): ([number, number]|null|undefined) {
         low = approximations.low(low) as any;
         high = approximations.high(high) as any;
@@ -333,7 +328,7 @@ var groupData = function (
         // when grouping the fake extended axis for panning,
         // we don't need to consider y
         handleYData = !!yData,
-        values = [] as Array<Highcharts.DataGrounpingApproximationsArray>,
+        values = [] as Array<Highcharts.DataGroupingApproximationsArray>,
         approximationFn,
         pointArrayMap = series.pointArrayMap,
         pointArrayMapLength = pointArrayMap && pointArrayMap.length,
@@ -715,7 +710,7 @@ seriesProto.processData = function (this: Highcharts.Series): any {
                     (groupPixelWidth * (xMax - xMin) / (plotSizeX as any)) *
                     groupIntervalFactor,
                 groupPositions = xAxis.getTimeTicks(
-                    xAxis.normalizeTimeTickInterval(
+                    DateTimeAxis.AdditionsClass.prototype.normalizeTimeTickInterval(
                         interval,
                         (dataGroupingOptions as any).units ||
                         defaultDataGroupingUnits

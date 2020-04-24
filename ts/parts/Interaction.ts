@@ -18,6 +18,9 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Axis {
+            panningState?: AxisPanningState;
+        }
         interface Chart {
             resetZoomButton?: SVGElement;
             pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
@@ -33,6 +36,11 @@ declare global {
                 useHTML?: boolean
             ): void;
         }
+        interface AxisPanningState {
+            startMin: (number);
+            startMax: (number);
+            isDirty?: boolean;
+        }
         interface Point {
             className?: string;
             events?: SeriesEventsOptions;
@@ -40,7 +48,7 @@ declare global {
             selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
-            haloPath(size: number): (SVGElement|SVGPathArray|Array<SVGElement>);
+            haloPath(size: number): SVGPathArray;
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
@@ -64,7 +72,7 @@ declare global {
             (this: Point, event: PointInteractionEventObject): void;
         }
         interface PanningOptions {
-            type: string;
+            type: ('x'|'y'|'xy');
             enabled: boolean;
         }
         interface Series {
@@ -161,6 +169,7 @@ const {
     fireEvent,
     isArray,
     isFunction,
+    isNumber,
     isObject,
     merge,
     objectEach,
@@ -286,14 +295,14 @@ TrackerMixin = H.TrackerMixin = {
                     ((series as Highcharts.AreaSeries).areaPath as any) :
                     (series.graphPath as any)
             ),
-            trackerPathLength = trackerPath.length,
+            // trackerPathLength = trackerPath.length,
             chart = series.chart,
             pointer = chart.pointer,
             renderer = chart.renderer,
             snap = (chart.options.tooltip as any).snap,
             tracker = series.tracker,
-            i,
-            onMouseOver = function (): void {
+            i: number,
+            onMouseOver = function (e: Highcharts.PointerEventObject): void {
                 if (chart.hoverSeries !== series) {
                     series.onMouseOver();
                 }
@@ -313,36 +322,7 @@ TrackerMixin = H.TrackerMixin = {
              */
             TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
 
-        // Extend end points. A better way would be to use round linecaps,
-        // but those are not clickable in VML.
-        if (trackerPathLength && !trackByArea) {
-            i = trackerPathLength + 1;
-            while (i--) {
-                if ((trackerPath[i] as any) === 'M' as any) {
-                    // extend left side
-                    trackerPath.splice(
-                        i + 1, 0,
-                        (trackerPath[i + 1] as any) - snap,
-                        trackerPath[i + 2],
-                        'L'
-                    );
-                }
-                if ((i && (trackerPath[i] as any) === 'M') ||
-                    i === trackerPathLength
-                ) {
-                    // extend right side
-                    trackerPath.splice(
-                        i,
-                        0,
-                        'L',
-                        trackerPath[i - 2] + snap,
-                        trackerPath[i - 1]
-                    );
-                }
-            }
-        }
-
-        // draw the tracker
+        // Draw the tracker
         if (tracker) {
             tracker.attr({ d: trackerPath });
         } else if (series.graph) { // create
@@ -361,6 +341,7 @@ TrackerMixin = H.TrackerMixin = {
 
             if (!chart.styledMode) {
                 (series.tracker as any).attr({
+                    'stroke-linecap': 'round',
                     'stroke-linejoin': 'round', // #1225
                     stroke: TRACKER_FILL,
                     fill: trackByArea ? TRACKER_FILL : 'none',
@@ -773,6 +754,8 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             hoverPoints = chart.hoverPoints,
             panningOptions: Highcharts.PanningOptions,
             chartOptions = chart.options.chart,
+            hasMapNavigation = chart.options.mapNavigation &&
+                chart.options.mapNavigation.enabled,
             doRedraw: boolean,
             type: string;
 
@@ -836,25 +819,69 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     flipped = panMax < panMin,
                     newMin = flipped ? panMax : panMin,
                     newMax = flipped ? panMin : panMax,
-                    paddedMin = Math.min(
-                        extremes.dataMin,
-                        halfPointRange ?
-                            extremes.min :
-                            axis.toValue(
-                                axis.toPixels(extremes.min) -
-                                axis.minPixelPadding
-                            )
-                    ),
-                    paddedMax = Math.max(
-                        extremes.dataMax,
-                        halfPointRange ?
-                            extremes.max :
-                            axis.toValue(
-                                axis.toPixels(extremes.max) +
-                                axis.minPixelPadding
-                            )
-                    ),
-                    spill;
+                    hasVerticalPanning = axis.hasVerticalPanning(),
+                    paddedMin,
+                    paddedMax,
+                    spill,
+                    panningState = axis.panningState;
+
+                // General calculations of panning state.
+                // This is related to using vertical panning. (#11315).
+                axis.series.forEach(function (
+                    series: Highcharts.Series
+                ): void {
+                    if (
+                        hasVerticalPanning &&
+                        !isX && (
+                            !panningState || panningState.isDirty
+                        )
+                    ) {
+                        const processedData = series.getProcessedData(true),
+                            dataExtremes = series.getExtremes(
+                                processedData.yData, true
+                            );
+
+                        if (!panningState) {
+                            panningState = {
+                                startMin: Number.MAX_VALUE,
+                                startMax: -Number.MAX_VALUE
+                            };
+                        }
+
+                        if (
+                            isNumber(dataExtremes.dataMin) &&
+                            isNumber(dataExtremes.dataMax)
+                        ) {
+                            panningState.startMin = Math.min(
+                                dataExtremes.dataMin, panningState.startMin
+                            );
+                            panningState.startMax = Math.max(
+                                dataExtremes.dataMax, panningState.startMax
+                            );
+                        }
+                    }
+                });
+
+                paddedMin = Math.min(
+                    H.pick(panningState?.startMin, extremes.dataMin),
+                    halfPointRange ?
+                        extremes.min :
+                        axis.toValue(
+                            axis.toPixels(extremes.min) -
+                            axis.minPixelPadding
+                        )
+                );
+                paddedMax = Math.max(
+                    H.pick(panningState?.startMax, extremes.dataMax),
+                    halfPointRange ?
+                        extremes.max :
+                        axis.toValue(
+                            axis.toPixels(extremes.max) +
+                            axis.minPixelPadding
+                        )
+                );
+
+                axis.panningState = panningState;
 
                 // It is not necessary to calculate extremes on ordinal axis,
                 // because the are already calculated, so we don't want to
@@ -862,17 +889,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 if (!axisOpt.ordinal) {
                     // If the new range spills over, either to the min or max,
                     // adjust the new range.
-                    if (isX) {
-                        spill = paddedMin - newMin;
-                        if (spill > 0) {
-                            newMax += spill;
-                            newMin = paddedMin;
-                        }
-                        spill = newMax - paddedMax;
-                        if (spill > 0) {
-                            newMax = paddedMax;
-                            newMin -= spill;
-                        }
+                    spill = paddedMin - newMin;
+                    if (spill > 0) {
+                        newMax += spill;
+                        newMin = paddedMin;
+                    }
+
+                    spill = newMax - paddedMax;
+                    if (spill > 0) {
+                        newMax = paddedMax;
+                        newMin -= spill;
                     }
 
                     // Set new extremes if they are actually new
@@ -881,11 +907,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             newMin !== extremes.min &&
                             newMax !== extremes.max &&
                             isX ? true : (
-                                axis.panningState &&
-                                newMin >= axis.panningState
-                                    .startMin &&
-                                newMax <= axis.panningState
-                                    .startMax //
+                                panningState &&
+                                newMin >= paddedMin &&
+                                newMax <= paddedMax
                             )
                     ) {
                         axis.setExtremes(
@@ -895,6 +919,16 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                             false,
                             { trigger: 'pan' }
                         );
+
+                        if (
+                            !chart.resetZoomButton &&
+                            !hasMapNavigation &&
+                            type.match('y')
+                        ) {
+                            chart.showResetZoom();
+                            axis.displayBtn = false;
+                        }
+
                         doRedraw = true;
                     }
 
@@ -1355,13 +1389,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @param {number} size
      *        The radius of the circular halo.
      *
-     * @return {Highcharts.SVGElement}
+     * @return {Highcharts.SVGPathArray}
      *         The path definition.
      */
     haloPath: function (
         this: Highcharts.Point,
         size: number
-    ): Highcharts.SVGElement {
+    ): Highcharts.SVGPathArray {
         var series = this.series,
             chart = series.chart;
 
@@ -1386,7 +1420,10 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
     onMouseOver: function (this: Highcharts.Series): void {
         var series = this,
             chart = series.chart,
-            hoverSeries = chart.hoverSeries;
+            hoverSeries = chart.hoverSeries,
+            pointer = chart.pointer;
+
+        pointer.setHoverChartIndex();
 
         // set normal state to previous series
         if (hoverSeries && hoverSeries !== series) {

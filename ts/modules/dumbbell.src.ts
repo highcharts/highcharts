@@ -12,6 +12,9 @@
 
 import H from '../parts/Globals.js';
 
+const {
+    SVGRenderer
+} = H;
 
 /**
  * Internal types
@@ -59,6 +62,7 @@ declare global {
             public seriesDrawPoints: AreaRangeSeries['drawPoints'];
             public drawTracker: TrackerMixin['drawTrackerPoint'];
             public drawGraph: any;
+            public columnMetrics: ColumnMetricsObject;
             public crispConnector(
                 points: SVGPathArray,
                 width: number
@@ -161,43 +165,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     trackerGroups: ['group', 'markerGroup', 'dataLabelsGroup'],
     drawTracker: H.TrackerMixin.drawTrackerPoint,
     drawGraph: H.noop,
-    /**
-     * Correct line position by Math.floor instead of round.
-     * As a result the line is aligned in the same way as marker
-     *
-     * @private
-     *
-     * @function Highcharts.seriesTypes.dumbbell#crispConnector
-     *
-     * @param {Highcharts.SVGRenderer} this
-     *        Highcharts Renderer.
-     * @param {Highcharts.SVGPathArray} points
-     *        The original points on the format `['M', 0, 0, 'L', 100, 0]`.
-     * @param {number} width
-     *        Connector's width.
-     *
-     * @return {Highcharts.SVGPathArray}
-     *         The original points array, but modified to render crisply.
-     *
-     *
-     */
-    crispConnector: function (
-        this: Highcharts.SVGRenderer,
-        points: Highcharts.SVGPathArray,
-        width: number
-    ): Highcharts.SVGPathArray {
-        if (points[1] === points[4]) {
-            // Substract due to #1129. Now bottom and left axis gridlines behave
-            // the same.
-            points[1] = points[4] =
-                Math.floor(points[1] as any) + (width % 2 / 2);
-        }
-        if (points[2] === points[5]) {
-            points[2] = points[5] =
-                Math.floor(points[2] as any) + (width % 2 / 2);
-        }
-        return points;
-    },
+
     crispCol: colProto.crispCol,
     /**
      * Get connector line path and styles that connects dumbbell point's low and
@@ -296,14 +264,15 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
         }
 
         attribs = {
-            d: series.crispConnector([
+            d: SVGRenderer.prototype.crispLine([[
                 'M',
                 point.plotX,
-                pointTop,
+                pointTop
+            ], [
                 'L',
                 point.plotX,
                 pointBottom
-            ], connectorWidth)
+            ]], connectorWidth, 'ceil')
         };
 
         if (!chart.styledMode) {
@@ -363,7 +332,7 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
     ): Highcharts.ColumnMetricsObject {
         var metrics = colProto.getColumnMetrics.apply(this, arguments as any);
 
-        metrics.offset = metrics.offset + metrics.width / 2;
+        metrics.offset += metrics.width / 2;
 
         return metrics;
     },
@@ -399,6 +368,8 @@ seriesType<Highcharts.DumbbellSeries>('dumbbell', 'arearange', {
             (shapeArgs as any).x = point.plotX - pointWidth / 2;
             (point.tooltipPos as any) = null;
         });
+
+        this.columnMetrics.offset -= this.columnMetrics.width / 2;
     },
     seriesDrawPoints: areaRangeProto.drawPoints,
     /**

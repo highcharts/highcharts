@@ -739,7 +739,7 @@ if (seriesTypes.pie) {
                             point.dataLabel.css({
                                 // Use a fraction of the maxWidth to avoid
                                 // wrapping close to the end of the string.
-                                width: maxWidth * 0.7
+                                width: Math.round(maxWidth * 0.7) + 'px'
                             });
                             point.dataLabel.shortened = true;
                         }

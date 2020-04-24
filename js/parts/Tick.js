@@ -86,6 +86,7 @@ var Tick = /** @class */ (function () {
          */
         this.tickmarkOffset = this.parameters.tickmarkOffset;
         this.options = this.parameters.options;
+        fireEvent(this, 'init');
         if (!type && !noLabel) {
             this.addLabel();
         }
@@ -103,13 +104,13 @@ var Tick = /** @class */ (function () {
      * @return {void}
      */
     Tick.prototype.addLabel = function () {
-        var tick = this, axis = tick.axis, options = axis.options, chart = axis.chart, categories = axis.categories, names = axis.names, pos = tick.pos, labelOptions = pick(tick.options && tick.options.labels, options.labels), str, tickPositions = axis.tickPositions, isFirst = pos === tickPositions[0], isLast = pos === tickPositions[tickPositions.length - 1], value = this.parameters.category || (categories ?
+        var tick = this, axis = tick.axis, options = axis.options, chart = axis.chart, categories = axis.categories, log = axis.logarithmic, names = axis.names, pos = tick.pos, labelOptions = pick(tick.options && tick.options.labels, options.labels), str, tickPositions = axis.tickPositions, isFirst = pos === tickPositions[0], isLast = pos === tickPositions[tickPositions.length - 1], value = this.parameters.category || (categories ?
             pick(categories[pos], names[pos], pos) :
             pos), label = tick.label, animateLabels = (!labelOptions.step || labelOptions.step === 1) &&
             axis.tickInterval === 1, tickPositionInfo = tickPositions.info, dateTimeLabelFormat, dateTimeLabelFormats, i, list;
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
-        if (axis.isDatetimeAxis && tickPositionInfo) {
+        if (axis.dateTime && tickPositionInfo) {
             dateTimeLabelFormats = chart.time.resolveDTLFormat(options.dateTimeLabelFormats[(!options.grid &&
                 tickPositionInfo.higherRanks[pos]) ||
                 tickPositionInfo.unitName]);
@@ -138,7 +139,7 @@ var Tick = /** @class */ (function () {
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat,
             tickPositionInfo: tickPositionInfo,
-            value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
+            value: log ? correctFloat(log.lin2log(value)) : value,
             pos: pos
         };
         str = axis.labelFormatter.call(tick.formatCtx, this.formatCtx);
@@ -167,6 +168,11 @@ var Tick = /** @class */ (function () {
         }
         // First call
         if (!defined(label) && !tick.movedLabel) {
+            /**
+             * The rendered text label of the tick.
+             * @name Highcharts.Tick#label
+             * @type {Highcharts.SVGElement|undefined}
+             */
             tick.label = label = tick.createLabel({ x: 0, y: 0 }, str, labelOptions);
             // Base value to detect change for new calls to getBBox
             tick.rotation = 0;
@@ -340,14 +346,15 @@ var Tick = /** @class */ (function () {
      *
      */
     Tick.prototype.getMarkPath = function (x, y, tickLength, tickWidth, horiz, renderer) {
-        return renderer.crispLine([
-            'M',
-            x,
-            y,
-            'L',
-            x + (horiz ? 0 : -tickLength),
-            y + (horiz ? tickLength : 0)
-        ], tickWidth);
+        return renderer.crispLine([[
+                'M',
+                x,
+                y
+            ], [
+                'L',
+                x + (horiz ? 0 : -tickLength),
+                y + (horiz ? tickLength : 0)
+            ]], tickWidth);
     };
     /**
      * Handle the label overflow by adjusting the labels to the left and right
@@ -411,7 +418,7 @@ var Tick = /** @class */ (function () {
                 tick.shortenLabel();
             }
             else {
-                css.width = Math.floor(textWidth);
+                css.width = Math.floor(textWidth) + 'px';
                 if (!(labelOptions.style || {}).textOverflow) {
                     css.textOverflow = 'ellipsis';
                 }

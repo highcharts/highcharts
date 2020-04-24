@@ -21,6 +21,7 @@ declare global {
             navigationBindings: NavigationBindings;
         }
         interface AnnotationEditableObject {
+            basicAnnotation: Array<string>;
             circle: Array<string>;
             crookedLine: Array<string>;
             fibonacci: Array<string>;
@@ -83,7 +84,7 @@ declare global {
             public initEvents(): void;
             public initUpdate(): void;
             public removeEvents(): void;
-            public update(options: NavigationOptions): void
+            public update(options?: NavigationOptions): void
         }
         interface NavigationBindingsButtonEventsObject {
             button: HTMLDOMElement;
@@ -303,7 +304,8 @@ H.NavigationBindings.annotationsEditable = {
     pitchfork: ['innerBackground', 'outerBackground'],
     rect: ['shapes'],
     // Crooked lines, elliots, arrows etc:
-    crookedLine: []
+    crookedLine: [],
+    basicAnnotation: []
 };
 
 // Define non editable fields per annotation, for example Rectangle inherits
@@ -943,7 +945,7 @@ extend(H.NavigationBindings.prototype, {
      * @private
      * @function Highcharts.NavigationBindings#update
      */
-    update: function (this: Highcharts.NavigationBindings, options: Highcharts.NavigationOptions): void {
+    update: function (this: Highcharts.NavigationBindings, options?: Highcharts.NavigationOptions): void {
         this.options = merge(true, this.options, options);
         this.removeEvents();
         this.initEvents();
@@ -1200,55 +1202,13 @@ H.setOptions({
                     e: Highcharts.PointerEventObject
                 ): Highcharts.Annotation {
                     var coords = this.chart.pointer.getCoordinates(e),
-                        navigation = this.chart.options.navigation,
-                        controlPoints: Array<Partial<Highcharts.AnnotationControlPointOptionsObject>> = [{
-                            positioner: function (
-                                this: Highcharts.AnnotationControlPoint,
-                                target: Highcharts.AnnotationControllable
-                            ): Highcharts.PositionObject {
-                                var xy = H.Annotation.MockPoint.pointToPixels(target.points[0]),
-                                    r: number = target.options.r as any;
-
-                                return {
-                                    x: xy.x + r * Math.cos(Math.PI / 4) -
-                                        this.graphic.width / 2,
-                                    y: xy.y + r * Math.sin(Math.PI / 4) -
-                                        this.graphic.height / 2
-                                };
-                            },
-                            events: {
-                                // TRANSFORM RADIUS ACCORDING TO Y
-                                // TRANSLATION
-                                drag: function (
-                                    this: Highcharts.Annotation,
-                                    e: Highcharts.AnnotationEventObject,
-                                    target: Highcharts.AnnotationControllableCircle
-                                ): void {
-                                    var annotation = target.annotation,
-                                        position = this.mouseMoveToTranslation(e);
-
-                                    target.setRadius(
-                                        Math.max(
-                                            (target.options.r as any) +
-                                                position.y /
-                                                Math.sin(Math.PI / 4),
-                                            5
-                                        )
-                                    );
-
-                                    annotation.options.shapes[0] =
-                                        annotation.userOptions.shapes[0] =
-                                        target.options;
-
-                                    target.redraw(false);
-                                } as any
-                            }
-                        }];
+                        navigation = this.chart.options.navigation;
 
                     return this.chart.addAnnotation(
                         merge(
                             {
                                 langKey: 'circle',
+                                type: 'basicAnnotation',
                                 shapes: [{
                                     type: 'circle',
                                     point: {
@@ -1257,8 +1217,7 @@ H.setOptions({
                                         x: coords.xAxis[0].value,
                                         y: coords.yAxis[0].value
                                     },
-                                    r: 5,
-                                    controlPoints: controlPoints
+                                    r: 5
                                 }]
                             },
                             navigation
@@ -1321,50 +1280,13 @@ H.setOptions({
                     var coords = this.chart.pointer.getCoordinates(e),
                         navigation = this.chart.options.navigation,
                         x = coords.xAxis[0].value,
-                        y = coords.yAxis[0].value,
-                        controlPoints = [{
-                            positioner: function (annotation: Highcharts.Annotation): Highcharts.PositionObject {
-                                var xy = H.Annotation.MockPoint
-                                    .pointToPixels(
-                                        annotation.shapes[0].points[2]
-                                    );
-
-                                return {
-                                    x: xy.x - 4,
-                                    y: xy.y - 4
-                                };
-                            },
-                            events: {
-                                drag: function (
-                                    this: Highcharts.Annotation,
-                                    target: Highcharts.AnnotationControllableRect
-                                ): void {
-                                    var coords = this.chart.pointer.getCoordinates(e),
-                                        x = coords.xAxis[0].value,
-                                        y = coords.yAxis[0].value,
-                                        shape = target.options.shapes[0],
-                                        points: Array<Highcharts.AnnotationMockPointOptionsObject> =
-                                            shape.points as any;
-
-                                    // Top right point
-                                    points[1].x = x;
-                                    // Bottom right point (cursor position)
-                                    points[2].x = x;
-                                    points[2].y = y;
-                                    // Bottom left
-                                    points[3].y = y;
-
-                                    target.options.shapes[0].points = points;
-
-                                    target.redraw(false);
-                                }
-                            }
-                        }];
+                        y = coords.yAxis[0].value;
 
                     return this.chart.addAnnotation(
                         merge(
                             {
                                 langKey: 'rectangle',
+                                type: 'basicAnnotation',
                                 shapes: [{
                                     type: 'path',
                                     points: [{
@@ -1388,8 +1310,7 @@ H.setOptions({
                                         x: x,
                                         y: y
                                     }]
-                                }],
-                                controlPoints: controlPoints
+                                }]
                             },
                             navigation
                                 .annotationsOptions,
@@ -1444,93 +1365,13 @@ H.setOptions({
                     e: Highcharts.PointerEventObject
                 ): Highcharts.Annotation {
                     var coords = this.chart.pointer.getCoordinates(e),
-                        navigation = this.chart.options.navigation,
-                        controlPoints = [{
-                            symbol: 'triangle-down',
-                            positioner: function (
-                                this: Highcharts.AnnotationControlPoint,
-                                target: Highcharts.AnnotationControllable
-                            ): Highcharts.PositionObject {
-                                if (!target.graphic.placed) {
-                                    return {
-                                        x: 0,
-                                        y: -9e7
-                                    };
-                                }
-
-                                var xy = H.Annotation.MockPoint
-                                    .pointToPixels(
-                                        target.points[0]
-                                    );
-
-                                return {
-                                    x: xy.x - this.graphic.width / 2,
-                                    y: xy.y - this.graphic.height / 2
-                                };
-                            },
-
-                            // TRANSLATE POINT/ANCHOR
-                            events: {
-                                drag: function (
-                                    this: Highcharts.Annotation,
-                                    e: Highcharts.AnnotationEventObject,
-                                    target: Highcharts.Annotation
-                                ): void {
-                                    var xy = this.mouseMoveToTranslation(e);
-
-                                    (target.translatePoint as any)(xy.x, xy.y);
-
-                                    target.annotation.labels[0].options =
-                                        target.options as any;
-
-                                    target.redraw(false);
-                                }
-                            }
-                        }, {
-                            symbol: 'square',
-                            positioner: function (
-                                this: Highcharts.AnnotationControlPoint,
-                                target: Highcharts.AnnotationControllable
-                            ): Highcharts.PositionObject {
-                                if (!target.graphic.placed) {
-                                    return {
-                                        x: 0,
-                                        y: -9e7
-                                    };
-                                }
-
-                                return {
-                                    x: target.graphic.alignAttr.x -
-                                        this.graphic.width / 2,
-                                    y: target.graphic.alignAttr.y -
-                                        this.graphic.height / 2
-                                };
-                            },
-
-                            // TRANSLATE POSITION WITHOUT CHANGING THE
-                            // ANCHOR
-                            events: {
-                                drag: function (
-                                    this: Highcharts.Annotation,
-                                    e: Highcharts.AnnotationEventObject,
-                                    target: Highcharts.AnnotationControllable
-                                ): void {
-                                    var xy = this.mouseMoveToTranslation(e);
-
-                                    target.translate(xy.x, xy.y);
-
-                                    target.annotation.labels[0].options =
-                                        target.options as any;
-
-                                    target.redraw(false);
-                                }
-                            }
-                        }];
+                        navigation = this.chart.options.navigation;
 
                     return this.chart.addAnnotation(
                         merge(
                             {
                                 langKey: 'label',
+                                type: 'basicAnnotation',
                                 labelOptions: {
                                     format: '{y:.2f}'
                                 },
@@ -1542,8 +1383,7 @@ H.setOptions({
                                         y: coords.yAxis[0].value
                                     },
                                     overflow: 'none',
-                                    crop: true,
-                                    controlPoints: controlPoints
+                                    crop: true
                                 }]
                             },
                             navigation
@@ -1622,7 +1462,7 @@ H.setOptions({
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   annotations
          * @exclude   crookedLine, elliottWave, fibonacci, infinityLine,
-         *            measure, pitchfork, tunnel, verticalLine
+         *            measure, pitchfork, tunnel, verticalLine, basicAnnotation
          * @apioption navigation.annotationsOptions
          */
         annotationsOptions: {}

@@ -141,57 +141,58 @@ wrap(Axis.prototype, 'getPlotLinePath', function (proceed) {
     if (path === null) {
         return path;
     }
-    var chart = this.chart, options3d = chart.options.chart.options3d, d = this.isZAxis ? chart.plotWidth : options3d.depth, frame = chart.frame3d;
-    var pArr = [
-        this.swapZ({ x: path[1], y: path[2], z: 0 }),
-        this.swapZ({ x: path[1], y: path[2], z: d }),
-        this.swapZ({ x: path[4], y: path[5], z: 0 }),
-        this.swapZ({ x: path[4], y: path[5], z: d })
-    ];
-    var pathSegments = [];
-    if (!this.horiz) { // Y-Axis
-        if (frame.front.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
+    var chart = this.chart, options3d = chart.options.chart.options3d, d = this.isZAxis ? chart.plotWidth : options3d.depth, frame = chart.frame3d, startSegment = path[0], endSegment = path[1], pArr, pathSegments = [];
+    if (startSegment[0] === 'M' && endSegment[0] === 'L') {
+        pArr = [
+            this.swapZ({ x: startSegment[1], y: startSegment[2], z: 0 }),
+            this.swapZ({ x: startSegment[1], y: startSegment[2], z: d }),
+            this.swapZ({ x: endSegment[1], y: endSegment[2], z: 0 }),
+            this.swapZ({ x: endSegment[1], y: endSegment[2], z: d })
+        ];
+        if (!this.horiz) { // Y-Axis
+            if (frame.front.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.back.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.left.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.right.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
         }
-        if (frame.back.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
+        else if (this.isZAxis) { // Z-Axis
+            if (frame.left.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.right.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.top.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.bottom.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
         }
-        if (frame.left.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
+        else { // X-Axis
+            if (frame.front.visible) {
+                pathSegments.push(pArr[0], pArr[2]);
+            }
+            if (frame.back.visible) {
+                pathSegments.push(pArr[1], pArr[3]);
+            }
+            if (frame.top.visible) {
+                pathSegments.push(pArr[0], pArr[1]);
+            }
+            if (frame.bottom.visible) {
+                pathSegments.push(pArr[2], pArr[3]);
+            }
         }
-        if (frame.right.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
+        pathSegments = perspective(pathSegments, this.chart, false);
     }
-    else if (this.isZAxis) { // Z-Axis
-        if (frame.left.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
-        }
-        if (frame.right.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
-        }
-        if (frame.top.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
-        }
-        if (frame.bottom.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
-    }
-    else { // X-Axis
-        if (frame.front.visible) {
-            pathSegments.push(pArr[0], pArr[2]);
-        }
-        if (frame.back.visible) {
-            pathSegments.push(pArr[1], pArr[3]);
-        }
-        if (frame.top.visible) {
-            pathSegments.push(pArr[0], pArr[1]);
-        }
-        if (frame.bottom.visible) {
-            pathSegments.push(pArr[2], pArr[3]);
-        }
-    }
-    pathSegments = perspective(pathSegments, this.chart, false);
     return this.chart.renderer.toLineSegments(pathSegments);
 });
 // Do not draw axislines in 3D
@@ -209,8 +210,16 @@ wrap(Axis.prototype, 'getPlotBandPath', function (proceed) {
     }
     var args = arguments, from = args[1], to = args[2], path = [], fromPath = this.getPlotLinePath({ value: from }), toPath = this.getPlotLinePath({ value: to });
     if (fromPath && toPath) {
-        for (var i = 0; i < fromPath.length; i += 6) {
-            path.push('M', fromPath[i + 1], fromPath[i + 2], 'L', fromPath[i + 4], fromPath[i + 5], 'L', toPath[i + 4], toPath[i + 5], 'L', toPath[i + 1], toPath[i + 2], 'Z');
+        for (var i = 0; i < fromPath.length; i += 2) {
+            var fromStartSeg = fromPath[i], fromEndSeg = fromPath[i + 1], toStartSeg = toPath[i], toEndSeg = toPath[i + 1];
+            if (fromStartSeg[0] === 'M' &&
+                fromEndSeg[0] === 'L' &&
+                toStartSeg[0] === 'M' &&
+                toEndSeg[0] === 'L') {
+                path.push(fromStartSeg, fromEndSeg, toEndSeg, 
+                // lineTo instead of moveTo
+                ['L', toStartSeg[1], toStartSeg[2]], ['Z']);
+            }
         }
     }
     return path;
@@ -397,12 +406,20 @@ function fix3dPosition(axis, pos, isTitle) {
 Tick extensions
  */
 wrap(Tick.prototype, 'getMarkPath', function (proceed) {
+    var chart = this.axis.chart;
     var path = proceed.apply(this, [].slice.call(arguments, 1));
-    var pArr = [
-        fix3dPosition(this.axis, { x: path[1], y: path[2], z: 0 }),
-        fix3dPosition(this.axis, { x: path[4], y: path[5], z: 0 })
-    ];
-    return this.axis.chart.renderer.toLineSegments(pArr);
+    if (chart.is3d && chart.is3d()) {
+        var start = path[0];
+        var end = path[1];
+        if (start[0] === 'M' && end[0] === 'L') {
+            var pArr = [
+                fix3dPosition(this.axis, { x: start[1], y: start[2], z: 0 }),
+                fix3dPosition(this.axis, { x: end[1], y: end[2], z: 0 })
+            ];
+            return this.axis.chart.renderer.toLineSegments(pArr);
+        }
+    }
+    return path;
 });
 addEvent(Tick, 'afterGetLabelPosition', function (e) {
     extend(e.pos, fix3dPosition(this.axis, e.pos));
@@ -474,8 +491,8 @@ extend(ZAxis.prototype, {
             axis.dataMax =
                 axis.ignoreMinPadding =
                     axis.ignoreMaxPadding = null;
-        if (axis.buildStacks) {
-            axis.buildStacks();
+        if (axis.stacking) {
+            axis.stacking.buildStacks();
         }
         // loop through this axis' series
         axis.series.forEach(function (series) {

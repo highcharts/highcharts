@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type RadialAxis from './RadialAxis';
 import H from '../parts/Globals.js';
 
 /**
@@ -118,7 +119,7 @@ class Pane {
         this.init(options, chart);
     }
 
-    public axis?: Highcharts.RadialAxis;
+    public axis?: RadialAxis;
     public background: Array<Highcharts.SVGElement> = void 0 as any;
     public center: Array<number> = void 0 as any;
     public chart: Highcharts.PaneChart = void 0 as any;
@@ -448,10 +449,10 @@ class Pane {
      *
      * @private
      * @function Highcharts.Pane#updateCenter
-     * @param {Highcharts.RadialAxis} [axis]
+     * @param {Highcharts.Axis} [axis]
      * @return {void}
      */
-    public updateCenter(axis?: Highcharts.RadialAxis): void {
+    public updateCenter(axis?: RadialAxis): void {
         this.center = (
             axis ||
             this.axis ||

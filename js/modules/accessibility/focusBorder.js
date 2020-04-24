@@ -36,7 +36,50 @@ extend(H.SVGElement.prototype, {
         var bb = this.getBBox(), pad = pick(margin, 3);
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
-        this.focusBorder = this.renderer.rect(bb.x - pad, bb.y - pad, bb.width + 2 * pad, bb.height + 2 * pad, parseInt((style && style.borderRadius || 0).toString(), 10))
+        var borderPosX = bb.x - pad, borderPosY = bb.y - pad, borderWidth = bb.width + 2 * pad, borderHeight = bb.height + 2 * pad;
+        // For text elements, apply x and y offset, #11397.
+        /**
+         * @private
+         * @function
+         *
+         * @param {Highcharts.SVGElement} text
+         *
+         * @return {TextAnchorCorrectionObject}
+         */
+        function getTextAnchorCorrection(text) {
+            var posXCorrection = 0, posYCorrection = 0;
+            if (text.attr('text-anchor') === 'middle') {
+                posXCorrection = H.isFirefox && text.rotation ? 0.25 : 0.5;
+                posYCorrection = H.isFirefox && !text.rotation ? 0.75 : 0.5;
+            }
+            else if (!text.rotation) {
+                posYCorrection = 0.75;
+            }
+            else {
+                posXCorrection = 0.25;
+            }
+            return {
+                x: posXCorrection,
+                y: posYCorrection
+            };
+        }
+        if (this.element.nodeName === 'text' || this.element.nodeName === 'g') {
+            var isLabel = this.element.nodeName === 'g', isRotated = !!this.rotation, correction = !isLabel ? getTextAnchorCorrection(this) :
+                {
+                    x: isRotated ? 1 : 0,
+                    y: 0
+                };
+            borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
+            borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
+            if (isLabel && isRotated) {
+                var temp = borderWidth;
+                borderWidth = borderHeight;
+                borderHeight = temp;
+                borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
+                borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
+            }
+        }
+        this.focusBorder = this.renderer.rect(borderPosX, borderPosY, borderWidth, borderHeight, parseInt((style && style.borderRadius || 0).toString(), 10))
             .addClass('highcharts-focus-border')
             .attr({
             zIndex: 99
