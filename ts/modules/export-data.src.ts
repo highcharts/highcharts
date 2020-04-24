@@ -72,9 +72,14 @@ declare global {
             options: SeriesOptions;
             pointArrayMap?: Array<string>;
         }
+        interface ExportDataOptions {
+            categoryColumnTitle?: string;
+            categoryColumnTitleDT?: string;
+        }
         interface LangOptions {
             downloadCSV?: string;
             downloadXLS?: string;
+            exportData?: ExportDataOptions;
             viewData?: string;
         }
         interface Series {
@@ -344,6 +349,24 @@ Highcharts.setOptions({
         downloadXLS: 'Download XLS',
 
         /**
+         * The text for exported table.
+         *
+         * @since    8.0.4
+         * @requires modules/export-data
+         */
+        exportData: {
+            /**
+             * The category column title.
+             */
+            categoryColumnTitle: 'Category',
+
+            /**
+             * The category column title when axis type set to "datetime".
+             */
+            categoryColumnTitleDT: 'DateTime'
+        },
+
+        /**
          * The text for the menu item.
          *
          * @since    6.0.0
@@ -429,6 +452,10 @@ Highcharts.Chart.prototype.getDataRows = function (
         i: number,
         x,
         xTitle: string,
+        langOptions: Highcharts.LangOptions = this.options.lang as any,
+        exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
+        categoryColumnTitle = exportDataOptions.categoryColumnTitle as any,
+        categoryColumnTitleDT = exportDataOptions.categoryColumnTitleDT,
         // Options
         columnHeaderFormatter = function (
             item: (Highcharts.Axis|Highcharts.Series),
@@ -444,12 +471,12 @@ Highcharts.Chart.prototype.getDataRows = function (
             }
 
             if (!item) {
-                return 'Category';
+                return categoryColumnTitle;
             }
 
             if (item instanceof Highcharts.Axis) {
                 return (item.options.title && item.options.title.text) ||
-                    (item.dateTime ? 'DateTime' : 'Category');
+                    (item.dateTime ? categoryColumnTitleDT : categoryColumnTitle);
             }
 
             if (multiLevelHeaders) {
