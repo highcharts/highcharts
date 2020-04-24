@@ -11,7 +11,6 @@
  * */
 'use strict';
 import Axis from '../parts/Axis.js';
-import GridAxis from './GridAxis.js';
 import H from '../parts/Globals.js';
 import TreeGridAxis from './TreeGridAxis.js';
 import U from '../parts/Utilities.js';
@@ -21,7 +20,6 @@ import '../modules/static-scale.src.js';
 import './Pathfinder.js';
 import '../modules/xrange.src.js';
 var dateFormat = H.dateFormat, seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
-GridAxis.compose(Axis);
 TreeGridAxis.compose(Axis);
 /**
  * @private
