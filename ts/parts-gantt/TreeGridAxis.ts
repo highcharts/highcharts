@@ -30,6 +30,7 @@ const {
     pick,
     wrap
 } = U;
+import '../modules/broken-axis.src.js';
 
 /**
  * Internal types
