@@ -235,6 +235,22 @@ Highcharts.setOptions({
          */
         downloadXLS: 'Download XLS',
         /**
+         * The text for exported table.
+         *
+         * @since    8.0.4
+         * @requires modules/export-data
+         */
+        exportData: {
+            /**
+             * The category column title.
+             */
+            categoryColumnTitle: 'Category',
+            /**
+             * The category column title when axis type set to "datetime".
+             */
+            categoryColumnTitleDT: 'DateTime'
+        },
+        /**
          * The text for the menu item.
          *
          * @since    6.0.0
@@ -294,7 +310,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  * @fires Highcharts.Chart#event:exportData
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
-    var hasParallelCoords = this.hasParallelCoordinates, time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, 
+    var hasParallelCoords = this.hasParallelCoordinates, time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, langOptions = this.options.lang, exportDataOptions = langOptions.exportData, categoryColumnTitle = exportDataOptions.categoryColumnTitle, categoryColumnTitleDT = exportDataOptions.categoryColumnTitleDT, 
     // Options
     columnHeaderFormatter = function (item, key, keyLength) {
         if (csvOptions.columnHeaderFormatter) {
@@ -304,11 +320,11 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             }
         }
         if (!item) {
-            return 'Category';
+            return categoryColumnTitle;
         }
         if (item instanceof Highcharts.Axis) {
             return (item.options.title && item.options.title.text) ||
-                (item.dateTime ? 'DateTime' : 'Category');
+                (item.dateTime ? categoryColumnTitleDT : categoryColumnTitle);
         }
         if (multiLevelHeaders) {
             return {
