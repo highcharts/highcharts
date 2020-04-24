@@ -379,7 +379,6 @@ namespace TreeGridAxis {
             function (axis: TreeGridAxis): void {
                 var options = axis.options || {},
                     labelOptions = options.labels,
-                    removeFoundExtremesEvent: Function,
                     uniqueNames = options.uniqueNames,
                     numberOfSeries = 0,
                     isDirty: (boolean|undefined),

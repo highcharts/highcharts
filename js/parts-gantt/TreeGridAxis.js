@@ -208,7 +208,7 @@ var TreeGridAxis;
         axes.filter(function (axis) {
             return axis.options.type === 'treegrid';
         }).forEach(function (axis) {
-            var options = axis.options || {}, labelOptions = options.labels, removeFoundExtremesEvent, uniqueNames = options.uniqueNames, numberOfSeries = 0, isDirty, data, treeGrid;
+            var options = axis.options || {}, labelOptions = options.labels, uniqueNames = options.uniqueNames, numberOfSeries = 0, isDirty, data, treeGrid;
             // Check whether any of series is rendering for the first time,
             // visibility has changed, or its data is dirty,
             // and only then update. #10570, #10580
