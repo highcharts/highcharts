@@ -10,13 +10,13 @@
  * */
 'use strict';
 import Axis from '../parts/Axis.js';
+import GridAxis from './GridAxis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
 import TreeSeriesMixin from '../mixins/tree-series.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
-import '../modules/broken-axis.src.js';
 /**
  * @private
  */
@@ -29,6 +29,12 @@ var TreeGridAxis;
      * */
     /* *
      *
+     *  Variables
+     *
+     * */
+    var applied = false;
+    /* *
+     *
      *  Functions
      *
      * */
@@ -36,11 +42,15 @@ var TreeGridAxis;
      * @private
      */
     function compose(AxisClass) {
-        wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
-        wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
-        wrap(AxisClass.prototype, 'init', wrapInit);
-        wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
-        TreeGridTick.compose(Tick);
+        if (!applied) {
+            GridAxis.compose(AxisClass);
+            wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
+            wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
+            wrap(AxisClass.prototype, 'init', wrapInit);
+            wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
+            TreeGridTick.compose(Tick);
+            applied = true;
+        }
     }
     TreeGridAxis.compose = compose;
     /**

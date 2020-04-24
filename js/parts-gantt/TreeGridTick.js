@@ -23,6 +23,12 @@ var TreeGridTick;
      * */
     /* *
      *
+     *  Variables
+     *
+     * */
+    var applied = false;
+    /* *
+     *
      *  Functions
      *
      * */
@@ -30,19 +36,22 @@ var TreeGridTick;
      * @private
      */
     function compose(TickClass) {
-        addEvent(TickClass, 'init', onInit);
-        wrap(TickClass.prototype, 'getLabelPosition', wrapGetLabelPosition);
-        wrap(TickClass.prototype, 'renderLabel', wrapRenderLabel);
-        // backwards compatibility
-        TickClass.prototype.collapse = function (redraw) {
-            this.treeGrid.collapse(redraw);
-        };
-        TickClass.prototype.expand = function (redraw) {
-            this.treeGrid.expand(redraw);
-        };
-        TickClass.prototype.toggleCollapse = function (redraw) {
-            this.treeGrid.toggleCollapse(redraw);
-        };
+        if (!applied) {
+            addEvent(TickClass, 'init', onInit);
+            wrap(TickClass.prototype, 'getLabelPosition', wrapGetLabelPosition);
+            wrap(TickClass.prototype, 'renderLabel', wrapRenderLabel);
+            // backwards compatibility
+            TickClass.prototype.collapse = function (redraw) {
+                this.treeGrid.collapse(redraw);
+            };
+            TickClass.prototype.expand = function (redraw) {
+                this.treeGrid.expand(redraw);
+            };
+            TickClass.prototype.toggleCollapse = function (redraw) {
+                this.treeGrid.toggleCollapse(redraw);
+            };
+            applied = true;
+        }
     }
     TreeGridTick.compose = compose;
     /**

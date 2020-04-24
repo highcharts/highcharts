@@ -13,6 +13,7 @@
 
 import type AxisTypes from '../parts/axis/types';
 import Axis from '../parts/Axis.js';
+import GridAxis from './GridAxis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
@@ -44,8 +45,6 @@ declare global {
         }
     }
 }
-
-import '../modules/broken-axis.src.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -121,6 +120,14 @@ namespace TreeGridAxis {
 
     /* *
      *
+     *  Variables
+     *
+     * */
+
+    let applied: boolean = false;
+
+    /* *
+     *
      *  Functions
      *
      * */
@@ -130,12 +137,19 @@ namespace TreeGridAxis {
      */
     export function compose(AxisClass: typeof Axis): void {
 
-        wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
-        wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
-        wrap(AxisClass.prototype, 'init', wrapInit);
-        wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
+        if (!applied) {
 
-        TreeGridTick.compose(Tick);
+            GridAxis.compose(AxisClass);
+
+            wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
+            wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
+            wrap(AxisClass.prototype, 'init', wrapInit);
+            wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
+
+            TreeGridTick.compose(Tick);
+
+            applied = true;
+        }
     }
 
     /**

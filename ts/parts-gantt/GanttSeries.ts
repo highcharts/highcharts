@@ -99,7 +99,6 @@ var dateFormat = H.dateFormat,
     Series = H.Series,
     parent = seriesTypes.xrange;
 
-GridAxis.compose(Axis);
 TreeGridAxis.compose(Axis);
 
 /**
