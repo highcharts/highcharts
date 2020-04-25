@@ -265,7 +265,7 @@ var SVGElement = /** @class */ (function () {
                 // prevent duplicates, like legendGroup after resize
                 erase(alignedObjects, this);
                 alignedObjects.push(this);
-                box = null; // reassign it below
+                box = void 0; // reassign it below
             }
             // When called on resize, no arguments are supplied
         }
@@ -315,7 +315,7 @@ var SVGElement = /** @class */ (function () {
     /**
      * @private
      * @function Highcharts.SVGElement#alignSetter
-     * @param {"start"|"middle"|"end"} value
+     * @param {"left"|"center"|"right"} value
      */
     SVGElement.prototype.alignSetter = function (value) {
         var convert = {
@@ -632,14 +632,14 @@ var SVGElement = /** @class */ (function () {
      * @private
      * @function Highcharts.SVGElement#complexColor
      *
-     * @param {Highcharts.GradientColorObject} colorOptions
-     *        The gradient options structure.
+     * @param {Highcharts.GradientColorObject|Highcharts.PatternObject} colorOptions
+     * The gradient or pattern options structure.
      *
      * @param {string} prop
-     *        The property to apply, can either be `fill` or `stroke`.
+     * The property to apply, can either be `fill` or `stroke`.
      *
      * @param {Highcharts.SVGDOMElement} elem
-     *        SVG element to apply the gradient on.
+     * SVG element to apply the gradient on.
      */
     SVGElement.prototype.complexColor = function (colorOptions, prop, elem) {
         var renderer = this.renderer, colorObject, gradName, gradAttr, radAttr, gradients, stops, stopColor, stopOpacity, radialReference, id, key = [], value;
@@ -766,7 +766,7 @@ var SVGElement = /** @class */ (function () {
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
             objectEach(styles, function (style, n) {
-                if (style !== oldStyles[n]) {
+                if (oldStyles && oldStyles[n] !== style) {
                     newStyles[n] = style;
                     hasNew = true;
                 }
@@ -841,7 +841,7 @@ var SVGElement = /** @class */ (function () {
         }
         value = value && value.toLowerCase();
         if (value) {
-            value = value
+            var v = value
                 .replace('shortdashdotdot', '3,1,1,1,1,1,')
                 .replace('shortdashdot', '3,1,1,1')
                 .replace('shortdot', '1,1,')
@@ -851,12 +851,11 @@ var SVGElement = /** @class */ (function () {
                 .replace('dash', '4,3,')
                 .replace(/,$/, '')
                 .split(','); // ending comma
-            i = value.length;
+            i = v.length;
             while (i--) {
-                value[i] = pInt(value[i]) * (strokeWidth || 1);
+                v[i] = '' + (pInt(v[i]) * pick(strokeWidth, NaN));
             }
-            value = value.join(',')
-                .replace(/NaN/g, 'none'); // #3226
+            value = v.join(',').replace(/NaN/g, 'none'); // #3226
             this.element.setAttribute('stroke-dasharray', value);
         }
     };
@@ -889,12 +888,13 @@ var SVGElement = /** @class */ (function () {
             wrapper.clipPath = clipPath_1.destroy();
         }
         // Destroy stops in case this is a gradient object @todo old code?
-        /* if (wrapper.stops) {
+        if (wrapper.stops) {
             for (i = 0; i < wrapper.stops.length; i++) {
-                wrapper.stops[i] = wrapper.stops[i].destroy();
+                wrapper.stops[i].destroy();
             }
-            wrapper.stops = null;
-        }*/
+            wrapper.stops.length = 0;
+            wrapper.stops = void 0;
+        }
         // remove element
         wrapper.safeRemoveChild(element);
         if (!renderer.styledMode) {
@@ -944,7 +944,8 @@ var SVGElement = /** @class */ (function () {
      * @private
      */
     SVGElement.prototype.destroyTextPath = function (elem, path) {
-        var tspans, textElement = elem.getElementsByTagName('text')[0];
+        var textElement = elem.getElementsByTagName('text')[0];
+        var tspans;
         if (textElement) {
             // Remove textPath attributes
             textElement.removeAttribute('dx');
@@ -1217,7 +1218,7 @@ var SVGElement = /** @class */ (function () {
      * Whether the class name is found.
      */
     SVGElement.prototype.hasClass = function (className) {
-        return (this.attr('class') || '')
+        return ('' + this.attr('class'))
             .split(' ')
             .indexOf(className) !== -1;
     };
@@ -1383,7 +1384,7 @@ var SVGElement = /** @class */ (function () {
      * @return {Highcharts.SVGElement} Returns the SVG element for chainability.
      */
     SVGElement.prototype.removeClass = function (className) {
-        return this.attr('class', (this.attr('class') || '').replace(isString(className) ?
+        return this.attr('class', ('' + this.attr('class')).replace(isString(className) ?
             new RegExp(" ?" + className + " ?") : // #12064
             className, ''));
     };
@@ -1411,9 +1412,7 @@ var SVGElement = /** @class */ (function () {
      * @function Highcharts.SVGElement#safeRemoveChild
      *
      * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
-     *        The DOM node to remove.
-     *
-     * @return {void}
+     * The DOM node to remove.
      */
     SVGElement.prototype.safeRemoveChild = function (element) {
         var parentNode = element.parentNode;
@@ -1429,14 +1428,15 @@ var SVGElement = /** @class */ (function () {
      * @function Highcharts.SVGElement#setRadialReference
      *
      * @param {Array<number>} coordinates
-     *        The center reference. The format is `[centerX, centerY, diameter]`
-     *        in pixels.
+     * The center reference. The format is `[centerX, centerY, diameter]` in
+     * pixels.
      *
      * @return {Highcharts.SVGElement}
-     *         Returns the SVGElement for chaining.
+     * Returns the SVGElement for chaining.
      */
     SVGElement.prototype.setRadialReference = function (coordinates) {
-        var existingGradient = this.renderer.gradients[this.element.gradient];
+        var existingGradient = (this.element.gradient &&
+            this.renderer.gradients[this.element.gradient]);
         this.element.radialReference = coordinates;
         // On redrawing objects with an existing gradient, the gradient needs
         // to be repositioned (#3801)
@@ -1704,7 +1704,7 @@ var SVGElement = /** @class */ (function () {
         // larger than 0
         if (this.stroke && this['stroke-width']) {
             // Use prototype as instance may be overridden
-            this.fillSetter(this.stroke, 'stroke', element);
+            SVGElement.prototype.fillSetter.call(this, this.stroke, 'stroke', element);
             element.setAttribute('stroke-width', this['stroke-width']);
             this.hasStroke = true;
         }
@@ -1884,11 +1884,13 @@ var SVGElement = /** @class */ (function () {
      */
     SVGElement.prototype.updateShadows = function (key, value, setter) {
         var shadows = this.shadows;
-        var i = shadows.length;
-        while (i--) {
-            setter.call(shadows[i], key === 'height' ?
-                Math.max(value - (shadows[i].cutHeight || 0), 0) :
-                key === 'd' ? this.d : value, key, shadows[i]);
+        if (shadows) {
+            var i = shadows.length;
+            while (i--) {
+                setter.call(shadows[i], key === 'height' ?
+                    Math.max(value - (shadows[i].cutHeight || 0), 0) :
+                    key === 'd' ? this.d : value, key, shadows[i]);
+            }
         }
     };
     /**

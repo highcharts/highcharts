@@ -47,7 +47,6 @@ declare global {
         type AlignValue = ('center'|'left'|'right');
         type ClipRectElement = SVGElement;
         type Renderer = SVGRenderer;
-        type SVGDOMElement = GlobalSVGElement;
         type SVGPathArc = ['A'|'a', number, number, number, number, number, number, number];
         type SVGPathClose = ['Z'|'z'];
         type SVGPathCurveTo = ['C'|'c', number, number, number, number, number, number];

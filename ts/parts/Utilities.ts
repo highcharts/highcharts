@@ -45,7 +45,6 @@ declare global {
         type HTMLAttributes = (
             Dictionary<(boolean|number|string|Function|undefined)>
         );
-        type HTMLDOMElement = GlobalHTMLElement;
         type RelativeSize = (number|string);
         interface AnimationOptionsObject {
             complete?: Function;
@@ -186,7 +185,7 @@ declare global {
         function datePropsToTimestamps(obj: any): void;
         function defined<T>(obj: T): obj is NonNullable<T>;
         function destroyObjectProperties(obj: any, except?: any): void;
-        function discardElement(element: Highcharts.HTMLDOMElement): void;
+        function discardElement(element: HTMLDOMElement): void;
         function erase(arr: Array<unknown>, item: unknown): void;
         function error(
             code: (number|string),
