@@ -51,7 +51,17 @@ const {
  * @private
  */
 declare global {
+    interface Element {
+        gradient?: string;
+        parentNode: (Node&ParentNode);
+        radialReference?: Array<number>;
+    }
+    interface SVGElement {
+        cutHeight?: number;
+    }
     namespace Highcharts {
+        type HTMLDOMElement = globalThis.HTMLElement;
+        type SVGDOMElement = globalThis.SVGElement;
         interface ShadowOptionsObject {
             color: ColorString;
             offsetX: number;
@@ -254,8 +264,8 @@ class SVGElement {
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
         this.element = nodeName === 'span' ?
-            createElement(nodeName) as globalThis.HTMLElement :
-            doc.createElementNS(this.SVG_NS, nodeName) as globalThis.SVGElement;
+            createElement(nodeName) as Highcharts.HTMLDOMElement :
+            doc.createElementNS(this.SVG_NS, nodeName) as Highcharts.SVGDOMElement;
 
         /**
          * The renderer that the SVGElement belongs to.
@@ -277,11 +287,11 @@ class SVGElement {
     public alignByTranslate?: boolean;
     public alignOptions?: Highcharts.AlignObject;
     public alignTo?: string;
-    public alignValue?: ('middle'|'start'|'end');
+    public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
-    public element: (globalThis.HTMLElement|globalThis.SVGElement);
+    public element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement);
     public d?: number;
-    public div?: globalThis.HTMLElement;
+    public div?: Highcharts.HTMLDOMElement;
     public doTransform?: boolean;
     public fakeTS?: boolean;
     public handleZ?: boolean;
@@ -305,8 +315,8 @@ class SVGElement {
     public rotationOriginY?: number;
     public scaleX?: number;
     public scaleY?: number;
-    public shadows?: Array<(globalThis.HTMLElement|globalThis.SVGElement)>;
-    public stops?: Array<Highcharts.GradientColorStopObject>;
+    public shadows?: Array<Highcharts.SVGDOMElement>;
+    public stops?: Array<SVGElement>;
     public stroke?: Highcharts.ColorType;
     public 'stroke-width'?: number;
     public styledMode?: boolean;
@@ -403,7 +413,7 @@ class SVGElement {
     public _defaultSetter(
         value: string,
         key: string,
-        element: globalThis.SVGElement
+        element: Highcharts.SVGDOMElement
     ): void {
         element.setAttribute(key, value);
     }
@@ -446,14 +456,14 @@ class SVGElement {
 
         // If we're adding to renderer root, or other elements in the group
         // have a z index, we need to handle it
-        if (!parent || (parent as any).handleZ || this.zIndex) {
+        if (!parent || parent.handleZ || this.zIndex) {
             inserted = this.zIndexSetter();
         }
 
         // If zIndex is not handled, append at the end
         if (!inserted) {
             (parent ?
-                (parent as any).element :
+                parent.element :
                 renderer.box
             ).appendChild(element);
         }
@@ -575,7 +585,7 @@ class SVGElement {
                 // prevent duplicates, like legendGroup after resize
                 erase(alignedObjects, this);
                 alignedObjects.push(this);
-                box = null as any; // reassign it below
+                box = void 0; // reassign it below
             }
 
         // When called on resize, no arguments are supplied
@@ -631,14 +641,14 @@ class SVGElement {
     /**
      * @private
      * @function Highcharts.SVGElement#alignSetter
-     * @param {"start"|"middle"|"end"} value
+     * @param {"left"|"center"|"right"} value
      */
-    public alignSetter(value: ('start'|'middle'|'end')): void {
-        var convert = {
+    public alignSetter(value: ('left'|'center'|'right')): void {
+        var convert: Record<string, string> = {
             left: 'start',
             center: 'middle',
             right: 'end'
-        } as Highcharts.Dictionary<string>;
+        };
         if (convert[value]) {
             this.alignValue = value;
             this.element.setAttribute('text-anchor', convert[value]);
@@ -723,12 +733,12 @@ class SVGElement {
      */
     public applyTextOutline(textOutline: string): void {
         var elem = this.element,
-            tspans: Array<globalThis.SVGElement>,
+            tspans: Array<Highcharts.SVGDOMElement>,
             hasContrast = textOutline.indexOf('contrast') !== -1,
             styles = {} as Highcharts.CSSObject,
             color: Highcharts.ColorString,
             strokeWidth: string,
-            firstRealChild: globalThis.SVGElement;
+            firstRealChild: Highcharts.SVGDOMElement;
 
         // When the text shadow is set to contrast, use dark stroke for light
         // text and vice versa.
@@ -777,7 +787,7 @@ class SVGElement {
             // For each of the tspans, create a stroked copy behind it.
             firstRealChild = elem.firstChild as any;
             tspans.forEach(function (
-                tspan: globalThis.SVGElement,
+                tspan: Highcharts.SVGDOMElement,
                 y: number
             ): void {
                 var clone: any;
@@ -1052,19 +1062,19 @@ class SVGElement {
      * @private
      * @function Highcharts.SVGElement#complexColor
      *
-     * @param {Highcharts.GradientColorObject} colorOptions
-     *        The gradient options structure.
+     * @param {Highcharts.GradientColorObject|Highcharts.PatternObject} colorOptions
+     * The gradient or pattern options structure.
      *
      * @param {string} prop
-     *        The property to apply, can either be `fill` or `stroke`.
+     * The property to apply, can either be `fill` or `stroke`.
      *
      * @param {Highcharts.SVGDOMElement} elem
-     *        SVG element to apply the gradient on.
+     * SVG element to apply the gradient on.
      */
     public complexColor(
-        colorOptions: Highcharts.GradientColorObject,
+        colorOptions: (Highcharts.GradientColorObject|Highcharts.PatternObject),
         prop: string,
-        elem: globalThis.SVGElement
+        elem: Highcharts.SVGDOMElement
     ): void {
         var renderer = this.renderer,
             colorObject,
@@ -1084,16 +1094,16 @@ class SVGElement {
             args: arguments
         }, function (): void {
             // Apply linear or radial gradients
-            if (colorOptions.radialGradient) {
+            if ((colorOptions as Highcharts.GradientColorObject).radialGradient) {
                 gradName = 'radialGradient';
-            } else if (colorOptions.linearGradient) {
+            } else if ((colorOptions as Highcharts.GradientColorObject).linearGradient) {
                 gradName = 'linearGradient';
             }
 
             if (gradName) {
-                gradAttr = colorOptions[gradName] as any;
+                gradAttr = (colorOptions as Highcharts.GradientColorObject)[gradName] as any;
                 gradients = renderer.gradients as any;
-                stops = colorOptions.stops;
+                stops = (colorOptions as Highcharts.GradientColorObject).stops;
                 radialReference = (elem as any).radialReference;
 
                 // Keep < 2.2 kompatibility
@@ -1210,7 +1220,7 @@ class SVGElement {
      */
     public css(styles: Highcharts.CSSObject): SVGElement {
         var oldStyles = this.styles,
-            newStyles = {} as Highcharts.CSSObject,
+            newStyles: Highcharts.CSSObject = {},
             elem = this.element,
             textWidth,
             serializedCss = '',
@@ -1230,7 +1240,7 @@ class SVGElement {
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
             objectEach(styles, function (style: string, n: string): void {
-                if (style !== (oldStyles as any)[n]) {
+                if (oldStyles && oldStyles[n] !== style) {
                     newStyles[n] = style;
                     hasNew = true;
                 }
@@ -1322,7 +1332,7 @@ class SVGElement {
         }
         value = value && value.toLowerCase();
         if (value) {
-            value = value
+            const v = value
                 .replace('shortdashdotdot', '3,1,1,1,1,1,')
                 .replace('shortdashdot', '3,1,1,1')
                 .replace('shortdot', '1,1,')
@@ -1331,14 +1341,13 @@ class SVGElement {
                 .replace(/dot/g, '1,3,')
                 .replace('dash', '4,3,')
                 .replace(/,$/, '')
-                .split(',') as any; // ending comma
+                .split(','); // ending comma
 
-            i = value.length;
+            i = v.length;
             while (i--) {
-                (value as any)[i] = pInt(value[i]) * (strokeWidth || 1);
+                v[i] = '' + (pInt(v[i]) * pick(strokeWidth, NaN));
             }
-            value = (value as any).join(',')
-                .replace(/NaN/g, 'none'); // #3226
+            value = v.join(',').replace(/NaN/g, 'none'); // #3226
             this.element.setAttribute('stroke-dasharray', value);
         }
     }
@@ -1360,7 +1369,7 @@ class SVGElement {
                 void 0
             ),
             grandParent: SVGElement,
-            ownerSVGElement = (element as any).ownerSVGElement,
+            ownerSVGElement = (element as Highcharts.SVGDOMElement).ownerSVGElement,
             i;
 
         // remove events
@@ -1388,12 +1397,13 @@ class SVGElement {
         }
 
         // Destroy stops in case this is a gradient object @todo old code?
-        /* if (wrapper.stops) {
+        if (wrapper.stops) {
             for (i = 0; i < wrapper.stops.length; i++) {
-                wrapper.stops[i] = wrapper.stops[i].destroy();
+                wrapper.stops[i].destroy();
             }
-            wrapper.stops = null;
-        }*/
+            wrapper.stops.length = 0;
+            wrapper.stops = void 0;
+        }
 
         // remove element
         wrapper.safeRemoveChild(element);
@@ -1459,11 +1469,11 @@ class SVGElement {
      * @private
      */
     public destroyTextPath(
-        elem: globalThis.SVGElement,
+        elem: Highcharts.SVGDOMElement,
         path: SVGElement
     ): void {
-        var tspans,
-            textElement = elem.getElementsByTagName('text')[0];
+        const textElement = elem.getElementsByTagName('text')[0];
+        let tspans: NodeListOf<ChildNode>;
 
         if (textElement) {
             // Remove textPath attributes
@@ -1574,7 +1584,7 @@ class SVGElement {
     public fillSetter(
         value: Highcharts.ColorType,
         key: string,
-        element: globalThis.SVGElement
+        element: Highcharts.SVGDOMElement
     ): void {
         if (typeof value === 'string') {
             element.setAttribute(key, value);
@@ -1813,7 +1823,7 @@ class SVGElement {
      * Whether the class name is found.
      */
     public hasClass(className: string): boolean {
-        return (this.attr('class') as any || '')
+        return ('' + this.attr('class'))
             .split(' ')
             .indexOf(className) !== -1;
     }
@@ -1874,8 +1884,8 @@ class SVGElement {
          * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
          */
         this.element = nodeName === 'span' ?
-            createElement(nodeName) as globalThis.HTMLElement :
-            doc.createElementNS(this.SVG_NS, nodeName) as globalThis.SVGElement;
+            createElement(nodeName) as Highcharts.HTMLDOMElement :
+            doc.createElementNS(this.SVG_NS, nodeName) as Highcharts.SVGDOMElement;
 
         /**
          * The renderer that the SVGElement belongs to.
@@ -1986,7 +1996,7 @@ class SVGElement {
             };
         } else {
             // simplest possible event model for internal use
-            (element as any)['on' + eventType] = handler;
+            (element as Record<string, any>)['on' + eventType] = handler;
         }
         return this;
     }
@@ -2001,7 +2011,7 @@ class SVGElement {
     public opacitySetter(
         value: string,
         key: string,
-        element: globalThis.SVGElement
+        element: Highcharts.SVGDOMElement
     ): void {
         (this as Record<string, any>)[key] = value;
         element.setAttribute(key, value);
@@ -2020,13 +2030,13 @@ class SVGElement {
     public removeClass(className: (string|RegExp)): SVGElement {
         return this.attr(
             'class',
-            (this.attr('class') as any || '').replace(
+            ('' + this.attr('class')).replace(
                 isString(className) ?
                     new RegExp(` ?${className} ?`) : // #12064
                     className,
                 ''
             )
-        ) as any;
+        );
     }
 
     /**
@@ -2034,7 +2044,7 @@ class SVGElement {
      * @param {Array<Highcharts.SVGDOMElement>} tspans
      * Text spans.
      */
-    public removeTextOutline(tspans: Array<globalThis.SVGElement>): void {
+    public removeTextOutline(tspans: Array<Highcharts.SVGDOMElement>): void {
         // Iterate from the end to
         // support removing items inside the cycle (#6472).
         var i = tspans.length,
@@ -2055,12 +2065,10 @@ class SVGElement {
      * @function Highcharts.SVGElement#safeRemoveChild
      *
      * @param {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement} element
-     *        The DOM node to remove.
-     *
-     * @return {void}
+     * The DOM node to remove.
      */
     public safeRemoveChild(
-        element: (globalThis.SVGElement|globalThis.HTMLElement)
+        element: (Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement)
     ): void {
         var parentNode = element.parentNode;
 
@@ -2077,18 +2085,19 @@ class SVGElement {
      * @function Highcharts.SVGElement#setRadialReference
      *
      * @param {Array<number>} coordinates
-     *        The center reference. The format is `[centerX, centerY, diameter]`
-     *        in pixels.
+     * The center reference. The format is `[centerX, centerY, diameter]` in
+     * pixels.
      *
      * @return {Highcharts.SVGElement}
-     *         Returns the SVGElement for chaining.
+     * Returns the SVGElement for chaining.
      */
     public setRadialReference(coordinates: Array<number>): SVGElement {
-        var existingGradient = this.renderer.gradients[
-            (this.element as any).gradient
-        ];
+        var existingGradient = (
+            this.element.gradient &&
+            this.renderer.gradients[this.element.gradient]
+        );
 
-        (this.element as any).radialReference = coordinates;
+        this.element.radialReference = coordinates;
 
         // On redrawing objects with an existing gradient, the gradient needs
         // to be repositioned (#3801)
@@ -2124,7 +2133,7 @@ class SVGElement {
             },
             attrs,
             adder = false,
-            textPathElement: (globalThis.HTMLElement|globalThis.SVGElement),
+            textPathElement: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
             textPathId,
             textPathWrapper: SVGElement = this.textPathWrapper as any,
             tspans,
@@ -2317,7 +2326,7 @@ class SVGElement {
     ): SVGElement {
         var shadows = [],
             i,
-            shadow: (globalThis.HTMLElement|globalThis.SVGElement),
+            shadow: Highcharts.SVGDOMElement,
             element = this.element,
             strokeWidth,
             shadowElementOpacity,
@@ -2392,7 +2401,7 @@ class SVGElement {
                             0
                         )
                     );
-                    (shadow as any).cutHeight = strokeWidth;
+                    shadow.cutHeight = strokeWidth;
                 }
 
                 if (group) {
@@ -2426,7 +2435,7 @@ class SVGElement {
     public show(inherit?: boolean): SVGElement {
         return this.attr(
             { visibility: inherit ? 'inherit' : 'visible' }
-        ) as any;
+        );
     }
 
     /**
@@ -2443,14 +2452,15 @@ class SVGElement {
     public strokeSetter(
         value: (number|string),
         key: string,
-        element: globalThis.SVGElement
+        element: Highcharts.SVGDOMElement
     ): void {
         (this as Record<string, any>)[key] = value;
         // Only apply the stroke attribute if the stroke width is defined and
         // larger than 0
         if (this.stroke && this['stroke-width']) {
             // Use prototype as instance may be overridden
-            this.fillSetter(
+            SVGElement.prototype.fillSetter.call(
+                this,
                 this.stroke,
                 'stroke',
                 element
@@ -2506,7 +2516,7 @@ class SVGElement {
 
         // Other values like em, pt etc need to be measured
         } else if (val !== '') {
-            dummy = doc.createElementNS(SVG_NS, 'rect') as any;
+            dummy = doc.createElementNS(SVG_NS, 'rect') as Highcharts.SVGDOMElement;
             attr(dummy, {
                 width: val,
                 'stroke-width': 0
@@ -2622,7 +2632,7 @@ class SVGElement {
     public toFront(): SVGElement {
         var element = this.element;
 
-        (element.parentNode as any).appendChild(element);
+        element.parentNode.appendChild(element);
 
         return this;
     }
@@ -2671,20 +2681,22 @@ class SVGElement {
         setter: Function
     ): void {
         const shadows = this.shadows;
-        let i = (shadows as any).length;
 
-        while (i--) {
-            setter.call(
-                (shadows as any)[i],
-                key === 'height' ?
-                    Math.max(
-                        value - (((shadows as any)[i] as any).cutHeight || 0),
-                        0
-                    ) :
-                    key === 'd' ? this.d : value,
-                key,
-                (shadows as any)[i]
-            );
+        if (shadows) {
+            let i = shadows.length;
+            while (i--) {
+                setter.call(
+                    shadows[i],
+                    key === 'height' ?
+                        Math.max(
+                            value - (shadows[i].cutHeight || 0),
+                            0
+                        ) :
+                        key === 'd' ? this.d : value,
+                    key,
+                    shadows[i]
+                );
+            }
         }
     }
 
@@ -2766,7 +2778,7 @@ class SVGElement {
     public visibilitySetter(
         value: string,
         key: string,
-        element: globalThis.SVGElement
+        element: Highcharts.SVGDOMElement
     ): void {
         // IE9-11 doesn't handle visibilty:inherit well, so we remove the
         // attribute instead (#2881, #3909)
@@ -2934,7 +2946,7 @@ SVGElement.prototype.verticalAlignSetter = function (
 namespace SVGElement {
 
     export interface ElementSetterFunction<T> {
-        (value: T, key: string, element: globalThis.SVGElement): void;
+        (value: T, key: string, element: Highcharts.SVGDOMElement): void;
     }
 
     export interface GetterFunction<T> {
