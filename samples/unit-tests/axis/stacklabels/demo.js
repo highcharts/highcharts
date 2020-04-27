@@ -48,6 +48,10 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             height: 260
         },
 
+        xAxis: {
+            allowDecimals: true
+        },
+
         yAxis: {
             stackLabels: {
                 enabled: true,
@@ -322,6 +326,76 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         column[4].label.text.x,
         padding,
         'This stack-label text x attribute should be equal to set padding #12308'
+    );
+});
+
+QUnit.test('Stack labels align issue when yAxis/xAxis is moved #11500', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        xAxis: {
+            left: '50%',
+            width: '50%'
+        },
+
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+            name: 'Year 1800',
+            data: [107, 31, 635, 203, 2],
+            dataLabels: {
+                enabled: true
+            }
+        }, {
+            name: 'Year 1900',
+            data: [133, 156, 947, 408, 6]
+        }]
+    });
+
+    const getStack = () => {
+        const stacks = chart.yAxis[0].stacking.stacks,
+            stackKey = Object.keys(stacks)[0];
+
+        return stacks[stackKey][0].label;
+    };
+
+    let dataLabel = chart.series[0].points[0].dataLabel,
+        stackLabel = getStack();
+
+    assert.strictEqual(
+        stackLabel.parentGroup.translateX + stackLabel.translateX,
+        dataLabel.parentGroup.translateX + dataLabel.x,
+        'This stack-label should moved to the same position as dataLabel #11500'
+    );
+
+    chart.update({
+        chart: {
+            type: 'bar'
+        },
+        yAxis: {
+            left: '50%'
+        }
+    });
+
+    dataLabel = chart.series[0].points[0].dataLabel;
+    stackLabel = getStack();
+
+    assert.ok(
+        stackLabel.parentGroup.translateY + stackLabel.translateY,
+        dataLabel.parentGroup.translateY + dataLabel.y,
+        'This stack-label should moved to the same position as dataLabel #11500'
     );
 });
 

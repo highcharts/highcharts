@@ -1451,14 +1451,13 @@ var Axis = /** @class */ (function () {
         }
         // for linear axes, get magnitude and normalize the interval
         if (!axis.dateTime && !axis.logarithmic && !tickIntervalOption) {
-            axis.tickInterval = normalizeTickInterval(axis.tickInterval, null, getMagnitude(axis.tickInterval), 
-            // If the tick interval is between 0.5 and 5 and the axis max is
-            // in the order of thousands, chances are we are dealing with
-            // years. Don't allow decimals. #3363.
-            pick(options.allowDecimals, !(axis.tickInterval > 0.5 &&
-                axis.tickInterval < 5 &&
-                axis.max > 1000 &&
-                axis.max < 9999)), !!this.tickAmount);
+            axis.tickInterval = normalizeTickInterval(axis.tickInterval, void 0, getMagnitude(axis.tickInterval), pick(options.allowDecimals, 
+            // If the tick interval is greather than 0.5, avoid
+            // decimals, as linear axes are often used to render
+            // discrete values. #3363. If a tick amount is set, allow
+            // decimals by default, as it increases the chances for a
+            // good fit.
+            axis.tickInterval < 0.5 || this.tickAmount !== void 0), !!this.tickAmount);
         }
         // Prevent ticks from getting so close that we can't draw the labels
         if (!this.tickAmount) {

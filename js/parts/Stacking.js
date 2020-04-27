@@ -255,9 +255,10 @@ var StackItem = /** @class */ (function () {
             (inverted ? chart.plotLeft : chart.plotTop), neg = (stackItem.isNegative && !reversed) ||
             (!stackItem.isNegative && reversed); // #4056
         return {
-            x: inverted ? (neg ? y : y - h) : x,
+            x: inverted ? (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
+                x + chart.xAxis[0].transB - chart.plotLeft,
             y: inverted ?
-                axisPos - x - xWidth :
+                axis.height - x - xWidth :
                 (neg ?
                     (axisPos - y - h) :
                     axisPos - y),
