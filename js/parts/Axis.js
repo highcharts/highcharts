@@ -5713,6 +5713,8 @@ var Axis = /** @class */ (function () {
             /**
              * The background color or gradient for the stack label.
              *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since     next
              * @apioption yAxis.stackLabels.backgroundColor
@@ -5720,6 +5722,8 @@ var Axis = /** @class */ (function () {
             /**
              * The border color for the stack label. Defaults to `undefined`.
              *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
              * @since     next
              * @apioption yAxis.stackLabels.borderColor
@@ -5727,6 +5731,8 @@ var Axis = /** @class */ (function () {
             /**
              * The border radius in pixels for the stack label.
              *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
              * @type      {number}
              * @default   0
              * @since     next
@@ -5735,6 +5741,8 @@ var Axis = /** @class */ (function () {
             /**
              * The border width in pixels for the stack label.
              *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
              * @type      {number}
              * @default   0
              * @since     next
