@@ -367,7 +367,7 @@ seriesType<Highcharts.VBPIndicator>(
                 translate,
                 position;
 
-            if (!init) {
+            if (!init && group) {
                 translate = inverted ? 'translateY' : 'translateX';
                 position = inverted ? series.yAxis.top : series.xAxis.left;
                 group['forceAnimate:' + translate] = true;

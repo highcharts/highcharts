@@ -196,7 +196,7 @@ seriesType('vbp', 'sma',
     // Initial animation
     animate: function (init) {
         var series = this, inverted = series.chart.inverted, group = series.group, attr = {}, translate, position;
-        if (!init) {
+        if (!init && group) {
             translate = inverted ? 'translateY' : 'translateX';
             position = inverted ? series.yAxis.top : series.xAxis.left;
             group['forceAnimate:' + translate] = true;
