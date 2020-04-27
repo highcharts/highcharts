@@ -202,3 +202,38 @@ QUnit.test('Custom columnHeaderFormatter', function (assert) {
         'Table should look like this with custom columnHeaderFormatter'
     );
 });
+
+QUnit.test('Internationalize export-data table words.', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: [{
+            categories: ['First', 'Second', 'Third'],
+            width: '45%'
+        }, {
+            type: "datetime",
+            width: '45%',
+            left: '50%',
+            offset: 0
+        }],
+        series: [{
+            data: [4, 3, 5]
+        }, {
+            name: 'Test series',
+            data: [5, 10, 8],
+            xAxis: 1
+        }],
+        exporting: {
+            showTable: true
+        }
+    });
+
+    assert.equal(
+        chart.getTable()
+            // Remove the extra attributes from accessibility module, needed if
+            // running as "gulp test".
+            .replace(/<table[^>]+>/g, '<table>'),
+        '<table><caption class="highcharts-table-caption">Chart title</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Series 1</th>' +
+        '<th scope="col" class="text">DateTime</th><th scope="col" class="text">Test series</th></tr></thead><tbody><tr><th scope="row" class="text">First</th><td class="number">4</td><td class="text">1970-01-01 00:00:00</td>' +
+        '<td class="number">5</td></tr><tr><th scope="row" class="text">Second</th><td class="number">3</td><td class="text">1970-01-01 00:00:00</td><td class="number">10</td></tr><tr><th scope="row" class="text">Third</th><td class="number">5</td><td class="text">1970-01-01 00:00:00</td><td class="number">8</td></tr></tbody></table>',
+        'Table should look like this.'
+    );
+});
