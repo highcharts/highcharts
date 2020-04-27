@@ -62,6 +62,15 @@ declare global {
 
 /**
  * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisTypeRegistry {
+        RadialAxis: RadialAxis;
+    }
+}
+
+/**
+ * @private
  * @class
  */
 class RadialAxis {

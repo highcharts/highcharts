@@ -37,6 +37,18 @@ declare global {
     }
 }
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        logarithmic?: LogarithmicAxis['logarithmic'];
+    }
+    interface AxisTypeRegistry {
+        LogarithmicAxis: LogarithmicAxis;
+    }
+}
+
 /* eslint-disable valid-jsdoc */
 
 /**

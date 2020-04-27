@@ -47,6 +47,18 @@ declare global {
     }
 }
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        treeGrid?: TreeGridAxis['treeGrid'];
+    }
+    interface AxisTypeRegistry {
+        TreeGridAxis: TreeGridAxis;
+    }
+}
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**

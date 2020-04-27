@@ -34,6 +34,15 @@ declare global {
     }
 }
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisTypeRegistry {
+        ZAxis: ZAxis;
+    }
+}
+
 /* eslint-disable valid-jsdoc */
 
 /**
