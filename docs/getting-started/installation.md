@@ -17,7 +17,7 @@ If you need support for IE6, 7 or 8, you need to include some polyfills. See det
 
 ### B. Alternatively, load files from your own domain
 
-In the example above the JavaScript files are loaded from ajax.googleapis.com and [code.highcharts.com](https://code.highcharts.com). The Highcharts files can be downloaded from [highcharts.com](download) and put on your webpage. Here is an example with Highcharts served from your own server:
+In the example above the JavaScript files are loaded from ajax.googleapis.com and [code.highcharts.com](https://code.highcharts.com). The Highcharts files can be downloaded from [highcharts.com](https://www.highcharts.com/blog/download/) and put on your webpage. Here is an example with Highcharts served from your own server:
 
 ```html
 <script src="/js/highcharts.js"></script>
