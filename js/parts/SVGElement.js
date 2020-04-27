@@ -37,17 +37,16 @@ var animate = U.animate, animObject = U.animObject, attr = U.attr, createElement
  * @name Highcharts.SVGElement
  */
 var SVGElement = /** @class */ (function () {
-    /* *
-     *
-     *  Constructors
-     *
-     * */
-    /**
-     * @private
-     */
-    function SVGElement(renderer, nodeName) {
+    function SVGElement() {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        this.element = void 0;
         this.height = void 0;
         this.opacity = 1; // Default base for animation
+        this.renderer = void 0;
         this.SVG_NS = SVG_NS;
         // Custom attributes used for symbols, these should be filtered out when
         // setting SVGElement attributes (#9375).
@@ -77,23 +76,6 @@ var SVGElement = /** @class */ (function () {
             'textOutline', 'textOverflow', 'width'
         ];
         this.width = void 0;
-        /**
-         * The primary DOM node. Each `SVGElement` instance wraps a main DOM
-         * node, but may also represent more nodes.
-         *
-         * @name Highcharts.SVGElement#element
-         * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
-         */
-        this.element = nodeName === 'span' ?
-            createElement(nodeName) :
-            doc.createElementNS(this.SVG_NS, nodeName);
-        /**
-         * The renderer that the SVGElement belongs to.
-         *
-         * @name Highcharts.SVGElement#renderer
-         * @type {Highcharts.SVGRenderer}
-         */
-        this.renderer = renderer;
     }
     /* *
      *

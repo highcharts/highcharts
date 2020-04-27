@@ -244,40 +244,6 @@ class SVGElement {
 
     /* *
      *
-     *  Constructors
-     *
-     * */
-
-    /**
-     * @private
-     */
-    public constructor(
-        renderer: Highcharts.SVGRenderer,
-        nodeName: string
-    ) {
-
-        /**
-         * The primary DOM node. Each `SVGElement` instance wraps a main DOM
-         * node, but may also represent more nodes.
-         *
-         * @name Highcharts.SVGElement#element
-         * @type {Highcharts.SVGDOMElement|Highcharts.HTMLDOMElement}
-         */
-        this.element = nodeName === 'span' ?
-            createElement(nodeName) as Highcharts.HTMLDOMElement :
-            doc.createElementNS(this.SVG_NS, nodeName) as Highcharts.SVGDOMElement;
-
-        /**
-         * The renderer that the SVGElement belongs to.
-         *
-         * @name Highcharts.SVGElement#renderer
-         * @type {Highcharts.SVGRenderer}
-         */
-        this.renderer = renderer;
-    }
-
-    /* *
-     *
      *  Properties
      *
      * */
@@ -289,7 +255,7 @@ class SVGElement {
     public alignTo?: string;
     public alignValue?: ('left'|'center'|'right');
     public clipPath?: SVGElement;
-    public element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement);
+    public element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement) = void 0 as any;
     public d?: number;
     public div?: Highcharts.HTMLDOMElement;
     public doTransform?: boolean;
@@ -309,7 +275,7 @@ class SVGElement {
     public placed?: boolean;
     public r?: number;
     public radAttr?: Highcharts.SVGAttributes;
-    public renderer: Highcharts.SVGRenderer;
+    public renderer: Highcharts.SVGRenderer = void 0 as any;
     public rotation?: number;
     public rotationOriginX?: number;
     public rotationOriginY?: number;
