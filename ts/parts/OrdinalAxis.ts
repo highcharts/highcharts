@@ -50,6 +50,18 @@ declare global {
     }
 }
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        ordinal?: OrdinalAxis['ordinal'];
+    }
+    interface AxisTypeRegistry {
+        OrdinalAxis: OrdinalAxis;
+    }
+}
+
 import './Chart.js';
 // Has a dependency on Navigator due to the use of Axis.toFixedRange
 import './Navigator.js';

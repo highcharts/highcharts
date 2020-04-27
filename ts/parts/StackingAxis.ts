@@ -19,6 +19,18 @@ const {
     pick
 } = U;
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        stacking?: StackingAxis['stacking'];
+    }
+    interface AxisTypeRegistry {
+        StackingAxis: StackingAxis;
+    }
+}
+
 /* eslint-disable valid-jsdoc */
 
 /**

@@ -50,6 +50,18 @@ declare global {
     }
 }
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        axis3D?: Axis3D['axis3D'];
+    }
+    interface AxisTypeRegistry {
+        Axis3D: Axis3D;
+    }
+}
+
 var deg2rad = H.deg2rad,
     perspective = H.perspective,
     perspective3D = H.perspective3D,

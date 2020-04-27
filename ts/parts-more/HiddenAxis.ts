@@ -13,6 +13,15 @@ import type RadialAxis from './RadialAxis';
 
 /**
  * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisTypeRegistry {
+        HiddenAxis: HiddenAxis;
+    }
+}
+
+/**
+ * @private
  * @class
  */
 class HiddenAxis {
