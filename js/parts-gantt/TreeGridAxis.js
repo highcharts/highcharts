@@ -219,7 +219,7 @@ var TreeGridAxis;
         axes.filter(function (axis) {
             return axis.options.type === 'treegrid';
         }).forEach(function (axis) {
-            var options = axis.options || {}, labelOptions = options.labels, removeFoundExtremesEvent, uniqueNames = options.uniqueNames, numberOfSeries = 0, isDirty, data, treeGrid;
+            var options = axis.options || {}, labelOptions = options.labels, uniqueNames = options.uniqueNames, numberOfSeries = 0, isDirty, data, treeGrid;
             // Check whether any of series is rendering for the first time,
             // visibility has changed, or its data is dirty,
             // and only then update. #10570, #10580
@@ -276,21 +276,9 @@ var TreeGridAxis;
                         levels: labelOptions && labelOptions.levels,
                         to: axis.treeGrid.tree && axis.treeGrid.tree.height
                     });
-                // Collapse all the nodes belonging to a point where
-                // collapsed equals true. Only do this on init.
-                // Can be called from beforeRender, if getBreakFromNode
-                // removes its dependency on axis.max.
+                // Setting initial collapsed nodes
                 if (e.type === 'beforeRender') {
-                    removeFoundExtremesEvent =
-                        addEvent(axis, 'foundExtremes', function () {
-                            treeGrid.collapsedNodes.forEach(function (node) {
-                                var breaks = axis.treeGrid.collapse(node);
-                                if (axis.brokenAxis) {
-                                    axis.brokenAxis.setBreaks(breaks, false);
-                                }
-                            });
-                            removeFoundExtremesEvent();
-                        });
+                    axis.treeGrid.collapsedNodes = treeGrid.collapsedNodes;
                 }
             }
         });
@@ -372,6 +360,32 @@ var TreeGridAxis;
             // NOTE Preferably these events should be set on the axis.
             addEvent(chart, 'beforeRender', onBeforeRender);
             addEvent(chart, 'beforeRedraw', onBeforeRender);
+            // Add new collapsed nodes on addseries
+            addEvent(chart, 'addSeries', function (e) {
+                if (e.options.data) {
+                    var treeGrid = getTreeGridFromData(e.options.data, userOptions.uniqueNames || false, 1);
+                    axis.treeGrid.collapsedNodes = (axis.treeGrid.collapsedNodes || []).concat(treeGrid.collapsedNodes);
+                }
+            });
+            // Collapse all nodes in axis.treegrid.collapsednodes
+            // where collapsed equals true.
+            addEvent(axis, 'foundExtremes', function () {
+                if (axis.treeGrid.collapsedNodes) {
+                    axis.treeGrid.collapsedNodes.forEach(function (node) {
+                        var breaks = axis.treeGrid.collapse(node);
+                        if (axis.brokenAxis) {
+                            axis.brokenAxis.setBreaks(breaks, false);
+                            // remove the node from the axis collapsedNodes
+                            if (axis.treeGrid.collapsedNodes) {
+                                axis.treeGrid.collapsedNodes = axis.treeGrid.collapsedNodes.filter(function (n) {
+                                    return node.collapseStart !== n.collapseStart ||
+                                        node.collapseEnd !== n.collapseEnd;
+                                });
+                            }
+                        }
+                    });
+                }
+            });
             userOptions = merge({
                 // Default options
                 grid: {
