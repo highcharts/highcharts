@@ -237,18 +237,18 @@ Highcharts.setOptions({
         /**
          * The text for exported table.
          *
-         * @since    8.0.4
+         * @since    next
          * @requires modules/export-data
          */
         exportData: {
             /**
              * The category column title.
              */
-            categoryColumnTitle: 'Category',
+            categoryHeader: 'Category',
             /**
              * The category column title when axis type set to "datetime".
              */
-            categoryColumnTitleDT: 'DateTime'
+            categoryDatetimeHeader: 'DateTime'
         },
         /**
          * The text for the menu item.
@@ -310,7 +310,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  * @fires Highcharts.Chart#event:exportData
  */
 Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
-    var hasParallelCoords = this.hasParallelCoordinates, time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, langOptions = this.options.lang, exportDataOptions = langOptions.exportData, categoryColumnTitle = exportDataOptions.categoryColumnTitle, categoryColumnTitleDT = exportDataOptions.categoryColumnTitleDT, 
+    var hasParallelCoords = this.hasParallelCoordinates, time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, langOptions = this.options.lang, exportDataOptions = langOptions.exportData, categoryHeader = exportDataOptions.categoryHeader, categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader, 
     // Options
     columnHeaderFormatter = function (item, key, keyLength) {
         if (csvOptions.columnHeaderFormatter) {
@@ -320,11 +320,11 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             }
         }
         if (!item) {
-            return categoryColumnTitle;
+            return categoryHeader;
         }
         if (item instanceof Highcharts.Axis) {
             return (item.options.title && item.options.title.text) ||
-                (item.dateTime ? categoryColumnTitleDT : categoryColumnTitle);
+                (item.dateTime ? categoryDatetimeHeader : categoryHeader);
         }
         if (multiLevelHeaders) {
             return {
