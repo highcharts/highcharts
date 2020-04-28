@@ -16,7 +16,7 @@ var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp =
 import './Chart.js';
 import './Pointer.js';
 import './Series.js';
-import './SvgRenderer_.js';
+import './SVGRenderer.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import './Navigator.js';

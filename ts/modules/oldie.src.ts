@@ -338,7 +338,7 @@ const {
     uniqueKey
 } = U;
 
-import '../parts/SvgRenderer_.js';
+import '../parts/SVGRenderer.js';
 
 var VMLRenderer,
     VMLRendererExtension,

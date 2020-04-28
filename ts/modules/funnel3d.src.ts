@@ -104,7 +104,7 @@ const {
 } = U;
 
 import '../parts/ColumnSeries.js';
-import '../parts/SvgRenderer_.js';
+import '../parts/SVGRenderer.js';
 
 var charts = H.charts,
     seriesTypes = H.seriesTypes,

@@ -35,7 +35,7 @@ const {
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import '../parts/SvgRenderer_.js';
+import '../parts/SVGRenderer.js';
 
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,

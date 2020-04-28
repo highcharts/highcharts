@@ -41,7 +41,7 @@ const {
 } = U;
 
 import './../../parts/Chart.js';
-import './../../parts/SvgRenderer_.js';
+import './../../parts/SVGRenderer.js';
 
 /**
  * Options for configuring markers for annotations.

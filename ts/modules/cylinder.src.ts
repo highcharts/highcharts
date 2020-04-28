@@ -87,7 +87,7 @@ const {
 } = U;
 
 import '../parts/ColumnSeries.js';
-import '../parts/SvgRenderer_.js';
+import '../parts/SVGRenderer.js';
 
 var charts = H.charts,
     deg2rad = H.deg2rad,

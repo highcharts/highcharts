@@ -740,7 +740,7 @@ const {
 } = U;
 
 import './Options.js';
-import './SvgRenderer_.js';
+import './SVGRenderer.js';
 
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,

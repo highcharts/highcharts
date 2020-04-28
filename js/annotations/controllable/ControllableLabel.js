@@ -7,7 +7,7 @@
 import H from './../../parts/Globals.js';
 import U from './../../parts/Utilities.js';
 var extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
-import './../../parts/SvgRenderer_.js';
+import './../../parts/SVGRenderer.js';
 import controllableMixin from './controllableMixin.js';
 import MockPoint from './../MockPoint.js';
 import Tooltip from '../../parts/Tooltip.js';

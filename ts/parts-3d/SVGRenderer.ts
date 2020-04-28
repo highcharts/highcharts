@@ -114,7 +114,7 @@ const {
 } = U;
 
 import '../parts/Color.js';
-import '../parts/SvgRenderer_.js';
+import '../parts/SVGRenderer.js';
 
 var cos = Math.cos,
     PI = Math.PI,

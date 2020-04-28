@@ -15,7 +15,7 @@ import H from './Globals.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType, wrap = U.wrap;
 import './Series.js';
-import './SvgRenderer_.js';
+import './SVGRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
 var noop = H.noop, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
 /**

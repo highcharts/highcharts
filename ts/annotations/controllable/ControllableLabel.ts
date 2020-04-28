@@ -83,7 +83,7 @@ const {
     pick
 } = U;
 
-import './../../parts/SvgRenderer_.js';
+import './../../parts/SVGRenderer.js';
 import controllableMixin from './controllableMixin.js';
 import MockPoint from './../MockPoint.js';
 import Tooltip from '../../parts/Tooltip.js';
