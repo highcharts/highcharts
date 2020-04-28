@@ -13,7 +13,7 @@
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
 import VMLAxis3D from './VMLAxis3D.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SvgRenderer_.js';
 var SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
 if (VMLRenderer) {
     H.setOptions({ animate: false });

@@ -41,7 +41,7 @@ declare global {
     }
 }
 
-import '../parts/SvgRenderer.js';
+import '../parts/SvgRenderer_.js';
 
 var SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;

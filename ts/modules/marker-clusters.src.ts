@@ -259,7 +259,7 @@ const {
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SvgRenderer_.js';
 
 var Series = H.Series,
     Scatter = H.seriesTypes.scatter,

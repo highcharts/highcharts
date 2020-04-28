@@ -13,7 +13,7 @@ import U from '../parts/Utilities.js';
 var extend = U.extend, merge = U.merge, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SvgRenderer_.js';
 var Chart = H.Chart, defaultOptions = H.defaultOptions, Renderer = H.Renderer, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {

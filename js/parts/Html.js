@@ -11,7 +11,7 @@
 import H from './Globals.js';
 import U from './Utilities.js';
 var attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, pick = U.pick, pInt = U.pInt;
-import './SvgRenderer.js';
+import './SvgRenderer_.js';
 var isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
 /* eslint-disable valid-jsdoc */
 // Extend SvgElement for useHTML option.

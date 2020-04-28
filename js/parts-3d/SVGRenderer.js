@@ -14,7 +14,7 @@ import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var animObject = U.animObject, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import '../parts/Color.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SvgRenderer_.js';
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
 var charts = H.charts, color = H.color, deg2rad = H.deg2rad, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
 // internal:

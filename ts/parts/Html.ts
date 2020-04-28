@@ -63,7 +63,7 @@ const {
     pInt
 } = U;
 
-import './SvgRenderer.js';
+import './SvgRenderer_.js';
 
 var isFirefox = H.isFirefox,
     isMS = H.isMS,

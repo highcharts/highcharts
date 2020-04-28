@@ -109,7 +109,7 @@ const {
 } = U;
 
 import './Series.js';
-import './SvgRenderer.js';
+import './SvgRenderer_.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
 var noop = H.noop,

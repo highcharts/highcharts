@@ -47,7 +47,7 @@ var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error
 /* eslint-disable no-invalid-this */
 import '../parts/Axis.js';
 import '../parts/Series.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SvgRenderer_.js';
 var Series = H.Series, Scatter = H.seriesTypes.scatter, SvgRenderer = H.SVGRenderer, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.

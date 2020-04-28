@@ -75,7 +75,7 @@ declare global {
 import './Chart.js';
 import './Pointer.js';
 import './Series.js';
-import './SvgRenderer.js';
+import './SvgRenderer_.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import './Navigator.js';
