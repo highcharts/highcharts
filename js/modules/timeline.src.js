@@ -297,7 +297,7 @@ seriesType('timeline', 'line',
             if (isInverted) {
                 targetDLWidth = ((distance - pad) * 2 - (point.itemHeight / 2));
                 styles = {
-                    width: targetDLWidth,
+                    width: targetDLWidth + 'px',
                     // Apply ellipsis when data label height is exceeded.
                     textOverflow: dataLabel.width / targetDLWidth *
                         dataLabel.height / 2 > availableSpace * multiplier ?
@@ -306,9 +306,9 @@ seriesType('timeline', 'line',
             }
             else {
                 styles = {
-                    width: userDLOptions.width ||
+                    width: (userDLOptions.width ||
                         dataLabelsOptions.width ||
-                        availableSpace * multiplier - (pad * 2)
+                        availableSpace * multiplier - (pad * 2)) + 'px'
                 };
             }
             dataLabel.css(styles);
@@ -474,12 +474,8 @@ seriesType('timeline', 'line',
             coords[i] -= (dl.alignAttr || dl)[i[0]];
         });
         path = chart.renderer.crispLine([
-            'M',
-            coords.x1,
-            coords.y1,
-            'L',
-            coords.x2,
-            coords.y2
+            ['M', coords.x1, coords.y1],
+            ['L', coords.x2, coords.y2]
         ], dl.options.connectorWidth);
         return path;
     },

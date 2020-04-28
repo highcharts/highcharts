@@ -151,7 +151,8 @@ H.NavigationBindings.annotationsEditable = {
     pitchfork: ['innerBackground', 'outerBackground'],
     rect: ['shapes'],
     // Crooked lines, elliots, arrows etc:
-    crookedLine: []
+    crookedLine: [],
+    basicAnnotation: []
 };
 // Define non editable fields per annotation, for example Rectangle inherits
 // options from Measure, but crosshairs are not available
@@ -809,33 +810,10 @@ H.setOptions({
                 className: 'highcharts-circle-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, controlPoints = [{
-                            positioner: function (target) {
-                                var xy = H.Annotation.MockPoint.pointToPixels(target.points[0]), r = target.options.r;
-                                return {
-                                    x: xy.x + r * Math.cos(Math.PI / 4) -
-                                        this.graphic.width / 2,
-                                    y: xy.y + r * Math.sin(Math.PI / 4) -
-                                        this.graphic.height / 2
-                                };
-                            },
-                            events: {
-                                // TRANSFORM RADIUS ACCORDING TO Y
-                                // TRANSLATION
-                                drag: function (e, target) {
-                                    var annotation = target.annotation, position = this.mouseMoveToTranslation(e);
-                                    target.setRadius(Math.max(target.options.r +
-                                        position.y /
-                                            Math.sin(Math.PI / 4), 5));
-                                    annotation.options.shapes[0] =
-                                        annotation.userOptions.shapes[0] =
-                                            target.options;
-                                    target.redraw(false);
-                                }
-                            }
-                        }];
+                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation;
                     return this.chart.addAnnotation(merge({
                         langKey: 'circle',
+                        type: 'basicAnnotation',
                         shapes: [{
                                 type: 'circle',
                                 point: {
@@ -844,8 +822,7 @@ H.setOptions({
                                     x: coords.xAxis[0].value,
                                     y: coords.yAxis[0].value
                                 },
-                                r: 5,
-                                controlPoints: controlPoints
+                                r: 5
                             }]
                     }, navigation
                         .annotationsOptions, navigation
@@ -878,32 +855,10 @@ H.setOptions({
                 className: 'highcharts-rectangle-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, x = coords.xAxis[0].value, y = coords.yAxis[0].value, controlPoints = [{
-                            positioner: function (annotation) {
-                                var xy = H.Annotation.MockPoint
-                                    .pointToPixels(annotation.shapes[0].points[2]);
-                                return {
-                                    x: xy.x - 4,
-                                    y: xy.y - 4
-                                };
-                            },
-                            events: {
-                                drag: function (target) {
-                                    var coords = this.chart.pointer.getCoordinates(e), x = coords.xAxis[0].value, y = coords.yAxis[0].value, shape = target.options.shapes[0], points = shape.points;
-                                    // Top right point
-                                    points[1].x = x;
-                                    // Bottom right point (cursor position)
-                                    points[2].x = x;
-                                    points[2].y = y;
-                                    // Bottom left
-                                    points[3].y = y;
-                                    target.options.shapes[0].points = points;
-                                    target.redraw(false);
-                                }
-                            }
-                        }];
+                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, x = coords.xAxis[0].value, y = coords.yAxis[0].value;
                     return this.chart.addAnnotation(merge({
                         langKey: 'rectangle',
+                        type: 'basicAnnotation',
                         shapes: [{
                                 type: 'path',
                                 points: [{
@@ -927,8 +882,7 @@ H.setOptions({
                                         x: x,
                                         y: y
                                     }]
-                            }],
-                        controlPoints: controlPoints
+                            }]
                     }, navigation
                         .annotationsOptions, navigation
                         .bindings
@@ -965,62 +919,10 @@ H.setOptions({
                 className: 'highcharts-label-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, controlPoints = [{
-                            symbol: 'triangle-down',
-                            positioner: function (target) {
-                                if (!target.graphic.placed) {
-                                    return {
-                                        x: 0,
-                                        y: -9e7
-                                    };
-                                }
-                                var xy = H.Annotation.MockPoint
-                                    .pointToPixels(target.points[0]);
-                                return {
-                                    x: xy.x - this.graphic.width / 2,
-                                    y: xy.y - this.graphic.height / 2
-                                };
-                            },
-                            // TRANSLATE POINT/ANCHOR
-                            events: {
-                                drag: function (e, target) {
-                                    var xy = this.mouseMoveToTranslation(e);
-                                    target.translatePoint(xy.x, xy.y);
-                                    target.annotation.labels[0].options =
-                                        target.options;
-                                    target.redraw(false);
-                                }
-                            }
-                        }, {
-                            symbol: 'square',
-                            positioner: function (target) {
-                                if (!target.graphic.placed) {
-                                    return {
-                                        x: 0,
-                                        y: -9e7
-                                    };
-                                }
-                                return {
-                                    x: target.graphic.alignAttr.x -
-                                        this.graphic.width / 2,
-                                    y: target.graphic.alignAttr.y -
-                                        this.graphic.height / 2
-                                };
-                            },
-                            // TRANSLATE POSITION WITHOUT CHANGING THE
-                            // ANCHOR
-                            events: {
-                                drag: function (e, target) {
-                                    var xy = this.mouseMoveToTranslation(e);
-                                    target.translate(xy.x, xy.y);
-                                    target.annotation.labels[0].options =
-                                        target.options;
-                                    target.redraw(false);
-                                }
-                            }
-                        }];
+                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation;
                     return this.chart.addAnnotation(merge({
                         langKey: 'label',
+                        type: 'basicAnnotation',
                         labelOptions: {
                             format: '{y:.2f}'
                         },
@@ -1032,8 +934,7 @@ H.setOptions({
                                     y: coords.yAxis[0].value
                                 },
                                 overflow: 'none',
-                                crop: true,
-                                controlPoints: controlPoints
+                                crop: true
                             }]
                     }, navigation
                         .annotationsOptions, navigation
@@ -1103,7 +1004,7 @@ H.setOptions({
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   annotations
          * @exclude   crookedLine, elliottWave, fibonacci, infinityLine,
-         *            measure, pitchfork, tunnel, verticalLine
+         *            measure, pitchfork, tunnel, verticalLine, basicAnnotation
          * @apioption navigation.annotationsOptions
          */
         annotationsOptions: {}

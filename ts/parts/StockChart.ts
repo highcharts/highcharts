@@ -64,7 +64,7 @@ declare global {
             crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
         }
         interface VMLRenderer {
-            crispPolyLine(points: VMLPathArray, width: number): VMLPathArray;
+            crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
         }
         class StockChart extends Chart {
         }
@@ -90,7 +90,6 @@ var Chart = H.Chart,
     Renderer = H.Renderer,
     Series = H.Series,
     SVGRenderer = H.SVGRenderer,
-    VMLRenderer = H.VMLRenderer,
 
     seriesProto = Series.prototype,
     seriesInit = seriesProto.init,
@@ -540,7 +539,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1, y1 as any, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             } else {
@@ -567,7 +566,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1 as any, y1, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             }
@@ -590,30 +589,28 @@ addEvent(Axis, 'getPlotLinePath', function (
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: Highcharts.SVGRenderer,
-    points: Highcharts.SVGPathArray,
+    points: Array<Highcharts.SVGPathMoveTo|Highcharts.SVGPathLineTo>,
     width: number
 ): Highcharts.SVGPathArray {
-    // points format: ['M', 0, 0, 'L', 100, 0]
+    // points format: [['M', 0, 0], ['L', 100, 0]]
     // normalize to a crisp line
-    var i;
+    for (let i = 0; i < points.length; i = i + 2) {
+        const start = points[i],
+            end = points[i + 1];
 
-    for (i = 0; i < points.length; i = i + 6) {
-        if (points[i + 1] === points[i + 4]) {
+        if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[i + 1] = points[i + 4] =
-                Math.round(points[i + 1] as any) - (width % 2 / 2);
+            start[1] = end[1] =
+                Math.round(start[1]) - (width % 2 / 2);
         }
-        if (points[i + 2] === points[i + 5]) {
-            points[i + 2] = points[i + 5] =
-                Math.round(points[i + 2] as any) + (width % 2 / 2);
+        if (start[2] === end[2]) {
+            start[2] = end[2] =
+                Math.round(start[2]) + (width % 2 / 2);
         }
     }
     return points;
 };
-if ((Renderer as unknown) === VMLRenderer) {
-    VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
-}
 
 // Wrapper to hide the label
 addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {

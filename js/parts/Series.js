@@ -3930,7 +3930,7 @@ null,
         }
         // Translate each point
         for (i = 0; i < dataLength; i++) {
-            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacks[(series.negStacks &&
+            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(series.negStacks &&
                 yValue <
                     (stackThreshold ? 0 : threshold) ?
                 '-' :
@@ -4532,50 +4532,55 @@ null,
             }
             else {
                 if (i === 0 || gap) {
-                    pathToPoint = [
-                        'M',
-                        point.plotX,
-                        point.plotY
-                    ];
+                    pathToPoint = [[
+                            'M',
+                            point.plotX,
+                            point.plotY
+                        ]];
                     // Generate the spline as defined in the SplineSeries object
                 }
                 else if (series.getPointSpline) {
-                    pathToPoint = series.getPointSpline(points, point, i);
+                    pathToPoint = [series.getPointSpline(points, point, i)];
                 }
                 else if (step) {
                     if (step === 1) { // right
-                        pathToPoint = [
-                            'L',
-                            lastPoint.plotX,
-                            plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                lastPoint.plotX,
+                                plotY
+                            ]];
                     }
                     else if (step === 2) { // center
-                        pathToPoint = [
-                            'L',
-                            (lastPoint.plotX + plotX) / 2,
-                            lastPoint.plotY,
-                            'L',
-                            (lastPoint.plotX + plotX) / 2,
-                            plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                (lastPoint.plotX + plotX) / 2,
+                                lastPoint.plotY
+                            ], [
+                                'L',
+                                (lastPoint.plotX + plotX) / 2,
+                                plotY
+                            ]];
                     }
                     else {
-                        pathToPoint = [
-                            'L',
-                            plotX,
-                            lastPoint.plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                plotX,
+                                lastPoint.plotY
+                            ]];
                     }
-                    pathToPoint.push('L', plotX, plotY);
-                }
-                else {
-                    // normal line to next point
-                    pathToPoint = [
+                    pathToPoint.push([
                         'L',
                         plotX,
                         plotY
-                    ];
+                    ]);
+                }
+                else {
+                    // normal line to next point
+                    pathToPoint = [[
+                            'L',
+                            plotX,
+                            plotY
+                        ]];
                 }
                 // Prepare for animation. When step is enabled, there are
                 // two path nodes for each x value.
@@ -4714,7 +4719,7 @@ null,
      * @return {void}
      */
     applyZones: function () {
-        var series = this, chart = this.chart, renderer = chart.renderer, zones = this.zones, translatedFrom, translatedTo, clips = (this.clips || []), clipAttr, graph = this.graph, area = this.area, chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight), axis = this[(this.zoneAxis || 'y') + 'Axis'], extremes, reversed, inverted = chart.inverted, horiz, pxRange, pxPosMin, pxPosMax, ignoreZones = false;
+        var series = this, chart = this.chart, renderer = chart.renderer, zones = this.zones, translatedFrom, translatedTo, clips = (this.clips || []), clipAttr, graph = this.graph, area = this.area, chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight), axis = this[(this.zoneAxis || 'y') + 'Axis'], extremes, reversed, inverted = chart.inverted, horiz, pxRange, pxPosMin, pxPosMax, ignoreZones = false, zoneArea, zoneGraph;
         if (zones.length &&
             (graph || area) &&
             axis &&
@@ -4799,11 +4804,13 @@ null,
                 // when no data, graph zone is not applied and after setData
                 // clip was ignored. As a result, it should be applied each
                 // time.
-                if (graph) {
-                    series['zone-graph-' + i].clip(clips[i]);
+                zoneArea = series['zone-area-' + i];
+                zoneGraph = series['zone-graph-' + i];
+                if (graph && zoneGraph) {
+                    zoneGraph.clip(clips[i]);
                 }
-                if (area) {
-                    series['zone-area-' + i].clip(clips[i]);
+                if (area && zoneArea) {
+                    zoneArea.clip(clips[i]);
                 }
                 // if this zone extends out of the axis, ignore the others
                 ignoreZones = threshold.value > extremes.max;

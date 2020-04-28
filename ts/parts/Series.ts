@@ -5176,7 +5176,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     xValue = point.x,
                     yValue = point.y,
                     yBottom = point.low,
-                    stack = stacking && yAxis.stacks[(
+                    stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(
                         series.negStacks &&
                         (yValue as any) <
                         (stackThreshold ? 0 : (threshold as any)) ?
@@ -6109,64 +6109,65 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 } else {
 
                     if (i === 0 || gap) {
-                        pathToPoint = [
+                        pathToPoint = [[
                             'M',
                             point.plotX as any,
                             point.plotY as any
-                        ];
+                        ]];
 
                     // Generate the spline as defined in the SplineSeries object
                     } else if (
                         (series as Highcharts.SplineSeries).getPointSpline
                     ) {
 
-                        pathToPoint = (
+                        pathToPoint = [(
                             series as Highcharts.SplineSeries
                         ).getPointSpline(
                             points as Array<Highcharts.SplinePoint>,
                             point as Highcharts.SplinePoint,
                             i
-                        );
+                        )];
 
                     } else if (step) {
 
                         if (step === 1) { // right
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 lastPoint.plotX as any,
                                 plotY as any
-                            ];
+                            ]];
 
                         } else if (step === 2) { // center
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                lastPoint.plotY as any,
+                                lastPoint.plotY as any
+                            ], [
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
                                 plotY as any
-                            ];
+                            ]];
 
                         } else {
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 plotX as any,
                                 lastPoint.plotY as any
-                            ];
+                            ]];
                         }
-                        pathToPoint.push(
+                        pathToPoint.push([
                             'L',
                             plotX as any,
                             plotY as any
-                        );
+                        ]);
 
                     } else {
                         // normal line to next point
-                        pathToPoint = [
+                        pathToPoint = [[
                             'L',
                             plotX as any,
                             plotY as any
-                        ];
+                        ]];
                     }
 
                     // Prepare for animation. When step is enabled, there are
@@ -6364,7 +6365,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 pxRange: number,
                 pxPosMin: number,
                 pxPosMax: number,
-                ignoreZones = false;
+                ignoreZones = false,
+                zoneArea: Highcharts.SVGElement,
+                zoneGraph: Highcharts.SVGElement;
 
             if (
                 zones.length &&
@@ -6475,12 +6478,15 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     // when no data, graph zone is not applied and after setData
                     // clip was ignored. As a result, it should be applied each
                     // time.
-                    if (graph) {
-                        (series as any)['zone-graph-' + i].clip(clips[i]);
+                    zoneArea = (series as any)['zone-area-' + i];
+                    zoneGraph = (series as any)['zone-graph-' + i];
+
+                    if (graph && zoneGraph) {
+                        zoneGraph.clip(clips[i]);
                     }
 
-                    if (area) {
-                        (series as any)['zone-area-' + i].clip(clips[i]);
+                    if (area && zoneArea) {
+                        zoneArea.clip(clips[i]);
                     }
 
                     // if this zone extends out of the axis, ignore the others

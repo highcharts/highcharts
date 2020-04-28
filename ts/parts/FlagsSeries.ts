@@ -751,17 +751,20 @@ symbols.flag = function (
     var anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
 
-    return symbols.circle(anchorX - 1, anchorY - 1, 2, 2).concat(
-        [
-            'M', anchorX, anchorY,
-            'L', x, y + h,
-            x, y,
-            x + w, y,
-            x + w, y + h,
-            x, y + h,
-            'Z'
-        ]
+    // To do: unwanted any cast because symbols.circle has wrong type, it
+    // actually returns an SVGPathArray
+    const path = symbols.circle(anchorX - 1, anchorY - 1, 2, 2) as any;
+    path.push(
+        ['M', anchorX, anchorY],
+        ['L', x, y + h],
+        ['L', x, y],
+        ['L', x + w, y],
+        ['L', x + w, y + h],
+        ['L', x, y + h],
+        ['Z']
     );
+
+    return path;
 };
 
 /**
@@ -770,7 +773,7 @@ symbols.flag = function (
  * @param {string} shape - circle or square
  * @return {void}
  */
-function createPinSymbol(shape: string): void {
+function createPinSymbol(shape: ('circle'|'square')): void {
     symbols[shape + 'pin'] = function (
         x: number,
         y: number,
@@ -781,8 +784,7 @@ function createPinSymbol(shape: string): void {
 
         var anchorX = options && options.anchorX,
             anchorY = options && options.anchorY,
-            path: Highcharts.SVGPathArray,
-            labelTopOrBottomY;
+            path: Highcharts.SVGPathArray;
 
         // For single-letter flags, make sure circular flags are not taller
         // than their width
@@ -791,30 +793,39 @@ function createPinSymbol(shape: string): void {
             w = h;
         }
 
-        path = (symbols[shape] as any)(x, y, w, h);
+        path = (symbols[shape])(x, y, w, h);
 
         if (anchorX && anchorY) {
             /**
-             * If the label is below the anchor, draw the connecting line
-             * from the top edge of the label
-             * otherwise start drawing from the bottom edge
+             * If the label is below the anchor, draw the connecting line from
+             * the top edge of the label, otherwise start drawing from the
+             * bottom edge
              */
-            labelTopOrBottomY = (y > anchorY) ? y : y + h;
-            path.push(
+            let labelX = anchorX;
+            if (shape === 'circle') {
+                labelX = x + w / 2;
+            } else {
+                const startSeg = path[0];
+                const endSeg = path[1];
+                if (startSeg[0] === 'M' && endSeg[0] === 'L') {
+                    labelX = (startSeg[1] + endSeg[1]) / 2;
+                }
+            }
+            const labelY = (y > anchorY) ? y : y + h;
+
+            path.push([
                 'M',
-                shape === 'circle' ?
-                    x + w / 2 :
-                    (path[1] as any) + (path[4] as any) / 2,
-                labelTopOrBottomY,
+                labelX,
+                labelY
+            ], [
                 'L',
                 anchorX,
                 anchorY
-            );
+            ]);
             path = path.concat(
-                symbols.circle(anchorX - 1, anchorY - 1, 2, 2) as any
+                symbols.circle(anchorX - 1, anchorY - 1, 2, 2)
             );
         }
-
         return path;
     };
 }

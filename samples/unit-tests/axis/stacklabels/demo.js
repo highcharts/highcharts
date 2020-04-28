@@ -48,6 +48,10 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
             height: 260
         },
 
+        xAxis: {
+            allowDecimals: true
+        },
+
         yAxis: {
             stackLabels: {
                 enabled: true,
@@ -70,7 +74,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
     });
 
     const getFirstAndLast = () => {
-        const stacks = chart.yAxis[0].stacks,
+        const stacks = chart.yAxis[0].stacking.stacks,
             stackKey = Object.keys(stacks)[0];
 
         return [
@@ -269,7 +273,7 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         }]
     });
 
-    var testValue = chart.yAxis[0].stacks['column,,,'][4].label.alignAttr;
+    var testValue = chart.yAxis[0].stacking.stacks['column,,,'][4].label.alignAttr;
     // StackedLabel has incorrect position after resize chart container #12337
     chart.update({
         chart: {
@@ -283,7 +287,7 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         }
     });
 
-    var column = chart.yAxis[0].stacks['column,,,'],
+    var column = chart.yAxis[0].stacking.stacks['column,,,'],
         padding = chart.yAxis[0].options.stackLabels.padding;
 
     assert.strictEqual(
@@ -316,11 +320,143 @@ QUnit.test('StackLabels outside xAxis min & max range are displayed #12294', fun
         }
     });
 
-    column = chart.yAxis[0].stacks['column,,,'];
+    column = chart.yAxis[0].stacking.stacks['column,,,'];
 
     assert.strictEqual(
         column[4].label.text.x,
         padding,
         'This stack-label text x attribute should be equal to set padding #12308'
+    );
+});
+
+QUnit.test('Stack labels align issue when yAxis/xAxis is moved #11500', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+
+        yAxis: {
+            stackLabels: {
+                enabled: true
+            }
+        },
+        xAxis: {
+            left: '50%',
+            width: '50%'
+        },
+
+        plotOptions: {
+            series: {
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+            name: 'Year 1800',
+            data: [107, 31, 635, 203, 2],
+            dataLabels: {
+                enabled: true
+            }
+        }, {
+            name: 'Year 1900',
+            data: [133, 156, 947, 408, 6]
+        }]
+    });
+
+    const getStack = () => {
+        const stacks = chart.yAxis[0].stacking.stacks,
+            stackKey = Object.keys(stacks)[0];
+
+        return stacks[stackKey][0].label;
+    };
+
+    let dataLabel = chart.series[0].points[0].dataLabel,
+        stackLabel = getStack();
+
+    assert.strictEqual(
+        stackLabel.parentGroup.translateX + stackLabel.translateX,
+        dataLabel.parentGroup.translateX + dataLabel.x,
+        'This stack-label should moved to the same position as dataLabel #11500'
+    );
+
+    chart.update({
+        chart: {
+            type: 'bar'
+        },
+        yAxis: {
+            left: '50%'
+        }
+    });
+
+    dataLabel = chart.series[0].points[0].dataLabel;
+    stackLabel = getStack();
+
+    assert.ok(
+        stackLabel.parentGroup.translateY + stackLabel.translateY,
+        dataLabel.parentGroup.translateY + dataLabel.y,
+        'This stack-label should moved to the same position as dataLabel #11500'
+    );
+});
+
+QUnit.test('Stack labels styles options #13330', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+
+        yAxis: {
+            stackLabels: {
+                enabled: true,
+                backgroundColor: 'black',
+                borderWidth: 2,
+                borderColor: 'red',
+                borderRadius: 4,
+                style: {
+                    color: 'red'
+                }
+            }
+        },
+
+        plotOptions: {
+            column: {
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+            name: 'A',
+            data: [5, 3]
+        }, {
+            name: 'B',
+            data: [15, 12]
+        }]
+    });
+
+    const stackLabel = chart.yAxis[0].stacking.stacks['column,,,'][0];
+
+    assert.strictEqual(
+        stackLabel.label.fill,
+        stackLabel.options.backgroundColor,
+        'This stack-label fill atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label.stroke,
+        stackLabel.options.borderColor,
+        'This stack-label stroke atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label["stroke-width"],
+        stackLabel.options.borderWidth,
+        'This stack-label stroke-width atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label.box.r,
+        stackLabel.options.borderRadius,
+        'This stack-label box r atribute should be same as set in options #13330'
     );
 });

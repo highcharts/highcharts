@@ -12,17 +12,13 @@ var Annotation = H.Annotation, MockPoint = Annotation.MockPoint, Tunnel = Annota
 var createPathDGenerator = function (retracementIndex, isBackground) {
     return function () {
         var annotation = this.annotation, leftTop = this.anchor(annotation.startRetracements[retracementIndex]).absolutePosition, rightTop = this.anchor(annotation.endRetracements[retracementIndex]).absolutePosition, d = [
-            'M',
-            Math.round(leftTop.x),
-            Math.round(leftTop.y),
-            'L',
-            Math.round(rightTop.x),
-            Math.round(rightTop.y)
+            ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
+            ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
         ], rightBottom, leftBottom;
         if (isBackground) {
             rightBottom = this.anchor(annotation.endRetracements[retracementIndex - 1]).absolutePosition;
             leftBottom = this.anchor(annotation.startRetracements[retracementIndex - 1]).absolutePosition;
-            d.push('L', Math.round(rightBottom.x), Math.round(rightBottom.y), 'L', Math.round(leftBottom.x), Math.round(leftBottom.y));
+            d.push(['L', Math.round(rightBottom.x), Math.round(rightBottom.y)], ['L', Math.round(leftBottom.x), Math.round(leftBottom.y)]);
         }
         return d;
     };

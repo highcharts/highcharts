@@ -87,12 +87,8 @@ var RadialAxis = /** @class */ (function () {
             else {
                 end = this.postTranslate(this.angleRad, r);
                 path = [
-                    'M',
-                    this.center[0] + chart.plotLeft,
-                    this.center[1] + chart.plotTop,
-                    'L',
-                    end.x,
-                    end.y
+                    ['M', this.center[0] + chart.plotLeft, this.center[1] + chart.plotTop],
+                    ['L', end.x, end.y]
                 ];
             }
             return path;
@@ -393,12 +389,8 @@ var RadialAxis = /** @class */ (function () {
                     }
                 }
                 path = [
-                    'M',
-                    x1 + a * (x2 - x1),
-                    y1 - a * (y1 - y2),
-                    'L',
-                    x2 - (1 - b) * (x2 - x1),
-                    y2 + (1 - b) * (y1 - y2)
+                    ['M', x1 + a * (x2 - x1), y1 - a * (y1 - y2)],
+                    ['L', x2 - (1 - b) * (x2 - x1), y2 + (1 - b) * (y1 - y2)]
                 ];
                 // Concentric circles
             }
@@ -423,30 +415,32 @@ var RadialAxis = /** @class */ (function () {
                     // Concentric polygons
                 }
                 else {
+                    path = [];
                     // Find the other axis (a circular one) in the same pane
                     chart[inverted ? 'yAxis' : 'xAxis'].forEach(function (a) {
                         if (a.pane === axis.pane) {
                             otherAxis = a;
                         }
                     });
-                    path = [];
-                    tickPositions = otherAxis.tickPositions;
-                    if (otherAxis.autoConnect) {
-                        tickPositions =
-                            tickPositions.concat([tickPositions[0]]);
+                    if (otherAxis) {
+                        tickPositions = otherAxis.tickPositions;
+                        if (otherAxis.autoConnect) {
+                            tickPositions =
+                                tickPositions.concat([tickPositions[0]]);
+                        }
+                        // Reverse the positions for concatenation of polygonal
+                        // plot bands
+                        if (reverse) {
+                            tickPositions = tickPositions.slice().reverse();
+                        }
+                        if (value) {
+                            value += paneInnerR;
+                        }
+                        for (var i = 0; i < tickPositions.length; i++) {
+                            xy = otherAxis.getPosition(tickPositions[i], value);
+                            path.push(i ? ['L', xy.x, xy.y] : ['M', xy.x, xy.y]);
+                        }
                     }
-                    // Reverse the positions for concatenation of polygonal
-                    // plot bands
-                    if (reverse) {
-                        tickPositions = [].concat(tickPositions).reverse();
-                    }
-                    if (value) {
-                        value += paneInnerR;
-                    }
-                    tickPositions.forEach(function (pos, i) {
-                        xy = otherAxis.getPosition(pos, value);
-                        path.push(i ? 'L' : 'M', xy.x, xy.y);
-                    });
                 }
             }
             return path;

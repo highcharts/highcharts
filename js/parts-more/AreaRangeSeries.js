@@ -239,9 +239,10 @@ seriesType('arearange', 'area', {
         linePath = []
             .concat(lowerPath, higherPath);
         // For the area path, we need to change the 'move' statement
-        // into 'lineTo' or 'curveTo'
-        if (!this.chart.polar && higherAreaPath[0] === 'M') {
-            higherAreaPath[0] = 'L'; // this probably doesn't work for spline
+        // into 'lineTo'
+        if (!this.chart.polar && higherAreaPath[0] && higherAreaPath[0][0] === 'M') {
+            // This probably doesn't work for spline
+            higherAreaPath[0] = ['L', higherAreaPath[0][1], higherAreaPath[0][2]];
         }
         this.graphPath = linePath;
         this.areaPath = lowerPath.concat(higherAreaPath);

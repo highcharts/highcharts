@@ -15,7 +15,7 @@ declare global {
         }
         interface GeometryIntersectionObject {
             center: PositionObject;
-            d: Array<SVGPathArray>;
+            d: SVGPathArray;
         }
         interface GeometryObject extends PositionObject {
             angle?: number;
@@ -336,7 +336,7 @@ function getAreaOfIntersectionBetweenCircles(
             });
 
         const startPoint = intersectionPoints[intersectionPoints.length - 1];
-        const arcs: Array<Highcharts.SVGPathArray> = intersectionPoints
+        const arcs: Highcharts.SVGPathArray = intersectionPoints
             .reduce(function (
                 data,
                 p1: Highcharts.GeometryObject
@@ -402,7 +402,7 @@ function getAreaOfIntersectionBetweenCircles(
                 return data;
             }, {
                 startPoint: startPoint,
-                arcs: [] as Array<Highcharts.SVGPathArray>
+                arcs: [] as Highcharts.SVGPathArray
             }).arcs;
 
         if (arcs.length === 0) {

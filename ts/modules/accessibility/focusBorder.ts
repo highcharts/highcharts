@@ -25,6 +25,8 @@ declare global {
         interface Chart {
             focusElement?: SVGElement;
             /** @requires modules/accessibility */
+            renderFocusBorder(): void;
+            /** @requires modules/accessibility */
             setFocusToElement(
                 svgElement: SVGElement,
                 focusElement?: (HTMLDOMElement|SVGDOMElement)
@@ -40,8 +42,114 @@ declare global {
     }
 }
 
+interface TextAnchorCorrectionObject {
+    x: number;
+    y: number;
+}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
+
+
+// Attributes that trigger a focus border update
+const svgElementBorderUpdateTriggers = [
+    'x', 'y', 'transform', 'width', 'height', 'r', 'd', 'stroke-width'
+];
+
+
+/**
+ * Add hook to destroy focus border if SVG element is destroyed, unless
+ * hook already exists.
+ *
+ * @param el Element to add destroy hook to
+ */
+function addDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
+    if (el.focusBorderDestroyHook) {
+        return;
+    }
+
+    const origDestroy = el.destroy;
+
+    el.destroy = function (): undefined {
+        el.focusBorder?.destroy?.();
+        return origDestroy.apply(el, arguments);
+    };
+
+    el.focusBorderDestroyHook = origDestroy;
+}
+
+
+/**
+ * Remove hook from SVG element added by addDestroyFocusBorderHook, if
+ * existing.
+ *
+ * @param el Element to remove destroy hook from
+ */
+function removeDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
+    if (!el.focusBorderDestroyHook) {
+        return;
+    }
+
+    el.destroy = el.focusBorderDestroyHook;
+
+    delete el.focusBorderDestroyHook;
+}
+
+
+/**
+ * Add hooks to update the focus border of an element when the element
+ * size/position is updated, unless already added.
+ *
+ * @param el Element to add update hooks to
+ * @param updateParams Parameters to pass through to addFocusBorder when updating.
+ */
+function addUpdateFocusBorderHooks(
+    el: Highcharts.SVGElement,
+    ...updateParams: any[]
+): void {
+    if (el.focusBorderUpdateHooks) {
+        return;
+    }
+
+    el.focusBorderUpdateHooks = {};
+
+    svgElementBorderUpdateTriggers.forEach((trigger): void => {
+        const setterKey = trigger + 'Setter';
+        const origSetter = el[setterKey] || el._defaultSetter;
+
+        el.focusBorderUpdateHooks[setterKey] = origSetter;
+
+        el[setterKey] = function (): unknown {
+            const ret = origSetter.apply(el, arguments);
+            el.addFocusBorder.apply(el, updateParams as any);
+            return ret;
+        };
+    });
+}
+
+
+/**
+ * Remove hooks from SVG element added by addUpdateFocusBorderHooks, if
+ * existing.
+ *
+ * @param el Element to remove update hooks from
+ */
+function removeUpdateFocusBorderHooks(el: Highcharts.SVGElement): void {
+    if (!el.focusBorderUpdateHooks) {
+        return;
+    }
+
+    Object.keys(el.focusBorderUpdateHooks).forEach((setterKey): void => {
+        const origSetter = el.focusBorderUpdateHooks[setterKey];
+        if (origSetter === el._defaultSetter) {
+            delete el[setterKey];
+        } else {
+            el[setterKey] = origSetter;
+        }
+    });
+
+    delete el.focusBorderUpdateHooks;
+}
+
 
 /*
  * Add focus border functionality to SVGElements. Draws a new rect on top of
@@ -67,17 +175,71 @@ extend(H.SVGElement.prototype, {
             this.removeFocusBorder();
         }
         // Add the border rect
-        var bb = this.getBBox(),
+        const bb = this.getBBox(),
             pad = pick(margin, 3);
 
         bb.x += this.translateX ? this.translateX : 0;
         bb.y += this.translateY ? this.translateY : 0;
 
+        let borderPosX = bb.x - pad,
+            borderPosY = bb.y - pad,
+            borderWidth = bb.width + 2 * pad,
+            borderHeight = bb.height + 2 * pad;
+
+        // For text elements, apply x and y offset, #11397.
+        /**
+         * @private
+         * @function
+         *
+         * @param {Highcharts.SVGElement} text
+         *
+         * @return {TextAnchorCorrectionObject}
+         */
+        function getTextAnchorCorrection(text: Highcharts.SVGElement): TextAnchorCorrectionObject {
+            let posXCorrection = 0,
+                posYCorrection = 0;
+
+            if (text.attr('text-anchor') === 'middle') {
+                posXCorrection = H.isFirefox && text.rotation ? 0.25 : 0.5;
+                posYCorrection = H.isFirefox && !text.rotation ? 0.75 : 0.5;
+            } else if (!text.rotation) {
+                posYCorrection = 0.75;
+            } else {
+                posXCorrection = 0.25;
+            }
+
+            return {
+                x: posXCorrection,
+                y: posYCorrection
+            };
+        }
+
+        if (this.element.nodeName === 'text' || this.element.nodeName === 'g') {
+            const isLabel = this.element.nodeName === 'g',
+                isRotated = !!this.rotation,
+                correction = !isLabel ? getTextAnchorCorrection(this) :
+                    {
+                        x: isRotated ? 1 : 0,
+                        y: 0
+                    };
+
+            borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
+            borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
+
+            if (isLabel && isRotated) {
+                const temp = borderWidth;
+                borderWidth = borderHeight;
+                borderHeight = temp;
+                borderPosX = +this.attr('x') - (bb.height * correction.x) - pad;
+                borderPosY = +this.attr('y') - (bb.width * correction.y) - pad;
+            }
+        }
+
         this.focusBorder = this.renderer.rect(
-            bb.x - pad,
-            bb.y - pad,
-            bb.width + 2 * pad,
-            bb.height + 2 * pad,
+            borderPosX,
+            borderPosY,
+            borderWidth,
+            borderHeight,
             parseInt((style && style.borderRadius || 0).toString(), 10)
         )
             .addClass('highcharts-focus-border')
@@ -92,6 +254,9 @@ extend(H.SVGElement.prototype, {
                 'stroke-width': style && style.strokeWidth
             });
         }
+
+        addUpdateFocusBorderHooks(this, margin, style);
+        addDestroyFocusBorderHook(this);
     },
 
     /**
@@ -99,12 +264,41 @@ extend(H.SVGElement.prototype, {
      * @function Highcharts.SVGElement#removeFocusBorder
      */
     removeFocusBorder: function (this: Highcharts.SVGElement): void {
+        removeUpdateFocusBorderHooks(this);
+        removeDestroyFocusBorderHook(this);
+
         if (this.focusBorder) {
             this.focusBorder.destroy();
             delete this.focusBorder;
         }
     }
 });
+
+
+/**
+ * Redraws the focus border on the currently focused element.
+ *
+ * @private
+ * @function Highcharts.Chart#renderFocusBorder
+ */
+H.Chart.prototype.renderFocusBorder = function (this: Highcharts.AccessibilityChart): void {
+    const focusElement = this.focusElement,
+        focusBorderOptions: (
+            Highcharts.AccessibilityKeyboardNavigationFocusBorderOptions
+        ) = this.options.accessibility.keyboardNavigation.focusBorder;
+
+    if (focusElement) {
+        focusElement.removeFocusBorder();
+
+        if (focusBorderOptions.enabled) {
+            focusElement.addFocusBorder(focusBorderOptions.margin, {
+                stroke: focusBorderOptions.style.color,
+                strokeWidth: focusBorderOptions.style.lineWidth,
+                borderRadius: focusBorderOptions.style.borderRadius
+            });
+        }
+    }
+};
 
 
 /**
@@ -152,17 +346,11 @@ H.Chart.prototype.setFocusToElement = function (
             browserFocusElement.style.outline = 'none';
         }
     }
-    if (focusBorderOptions.enabled) {
-        // Remove old focus border
-        if (this.focusElement) {
-            this.focusElement.removeFocusBorder();
-        }
-        // Draw focus border (since some browsers don't do it automatically)
-        svgElement.addFocusBorder(focusBorderOptions.margin, {
-            stroke: focusBorderOptions.style.color,
-            strokeWidth: focusBorderOptions.style.lineWidth,
-            borderRadius: focusBorderOptions.style.borderRadius
-        });
-        this.focusElement = svgElement;
+
+    if (this.focusElement) {
+        this.focusElement.removeFocusBorder();
     }
+
+    this.focusElement = svgElement;
+    this.renderFocusBorder();
 };

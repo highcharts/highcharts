@@ -9,15 +9,20 @@
  * */
 
 import type Axis from '../Axis';
-import type BrokenAxis from '../../modules/broken-axis.src';
-import type DateTimeAxis from '../DateTimeAxis';
-import type HiddenAxis from '../../parts-more/HiddenAxis';
-import type LogarithmicAxis from '../LogarithmicAxis';
-import type MapAxis from '../../parts-map/MapAxis';
-import type NavigatorAxis from '../NavigatorAxis';
-import type OrdinalAxis from '../OrdinalAxis';
+import type ParallelAxis from '../../modules/parallel-coordinates.src';
 import type RadialAxis from '../../parts-more/RadialAxis';
 import type ScrollbarAxis from '../ScrollbarAxis';
+import type StackingAxis from '../StackingAxis';
+import type Tick from '../Tick';
+import type TreeGridAxis from '../../parts-gantt/TreeGridAxis';
+import type VMLAxis3D from '../../parts-3d/VMLAxis3D';
+import type ZAxis from '../../parts-3d/ZAxis';
+
+/**
+ * All possible axis types.
+ * @private
+ */
+export type AxisType = AxisTypeRegistry[keyof AxisTypeRegistry];
 
 export interface AxisBreakBorderObject {
     move: string;
@@ -32,26 +37,25 @@ export interface AxisBreakObject {
 }
 
 export interface AxisComposition {
-    brokenAxis?: BrokenAxis['brokenAxis'];
-    dateTime?: DateTimeAxis['dateTime'];
-    logarithmic?: LogarithmicAxis['logarithmic'];
-    navigatorAxis?: NavigatorAxis['navigatorAxis'];
-    mapAxis?: MapAxis['mapAxis'];
-    ordinal?: OrdinalAxis['ordinal'];
-    scrollbar?: ScrollbarAxis['scrollbar'];
+    // interface for composition types
 }
 
-/**
- * All possible axis types.
- */
-export type AxisType = (
-    Axis|
-    BrokenAxis|
-    HiddenAxis|
-    LogarithmicAxis|
-    MapAxis|
-    NavigatorAxis|
-    OrdinalAxis|
-    RadialAxis|
-    ScrollbarAxis
-);
+export interface AxisLike {
+    categories?: Array<string>;
+    chart: Highcharts.Chart;
+    coll: string;
+    isXAxis?: boolean;
+    max: (null|number);
+    min: (null|number);
+    options: Highcharts.AxisOptions;
+    reversed?: boolean;
+    series: Array<Highcharts.Series>;
+    side: number;
+    ticks: Record<string, Tick>;
+    userOptions: DeepPartial<Highcharts.AxisOptions>;
+    visible: boolean;
+}
+
+interface AxisTypeRegistry {
+    Axis: Axis;
+}

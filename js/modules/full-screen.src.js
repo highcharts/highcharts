@@ -140,6 +140,7 @@ var Fullscreen = /** @class */ (function () {
             });
             var promise = chart.renderTo[fullscreen.browserProps.requestFullscreen]();
             if (promise) {
+                // No dot notation because of IE8 compatibility
                 promise['catch'](function () {
                     alert(// eslint-disable-line no-alert
                     'Full screen is not supported inside a frame.');

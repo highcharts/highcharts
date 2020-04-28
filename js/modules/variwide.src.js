@@ -159,7 +159,7 @@ seriesType('variwide', 'column'
         series.points.forEach(function (point) {
             xValue = point.x;
             pointWidth = point.shapeArgs.width;
-            stack = yAxis.stacks[(series.negStacks &&
+            stack = yAxis.stacking.stacks[(series.negStacks &&
                 point.y < (options.startFromThreshold ?
                     0 :
                     options.threshold) ?

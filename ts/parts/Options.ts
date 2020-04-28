@@ -93,12 +93,12 @@ declare global {
             plotBackgroundImage?: string;
             plotBorderColor?: (ColorString|GradientColorObject|PatternObject);
             plotBorderWidth?: number;
-            plotShadow?: (boolean|CSSObject);
+            plotShadow?: (boolean|Partial<ShadowOptionsObject>);
             polar?: boolean;
             reflow?: boolean;
             renderTo?: (string|HTMLDOMElement);
             resetZoomButton?: ChartResetZoomButtonOptions;
-            shadow?: (boolean|CSSObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             selectionMarkerFill?: (
                 ColorString|GradientColorObject|PatternObject
             );
@@ -235,7 +235,7 @@ declare global {
             padding?: number;
             reversed?: boolean;
             rtl?: boolean;
-            shadow?: (boolean|CSSObject);
+            shadow?: (boolean|Partial<ShadowOptionsObject>);
             squareSymbol?: boolean;
             /** @deprecated */
             style?: CSSObject;

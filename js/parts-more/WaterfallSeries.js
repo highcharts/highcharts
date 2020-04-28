@@ -67,7 +67,7 @@ addEvent(Axis, 'afterRender', function () {
  * @function Highcharts.Axis#renderWaterfallStackTotals
  */
 Axis.prototype.renderWaterfallStackTotals = function () {
-    var yAxis = this, waterfallStacks = yAxis.waterfallStacks, stackTotalGroup = yAxis.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, void 0);
+    var yAxis = this, waterfallStacks = yAxis.waterfallStacks, stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup, dummyStackItem = new StackItem(yAxis, yAxis.options.stackLabels, false, 0, void 0);
     yAxis.dummyStackItem = dummyStackItem;
     // Render each waterfall stack total
     objectEach(waterfallStacks, function (type) {
@@ -420,18 +420,18 @@ seriesType('waterfall', 'column', {
     // Return an empty path initially, because we need to know the stroke-width
     // in order to set the final path.
     getGraphPath: function () {
-        return ['M', 0, 0];
+        return [['M', 0, 0]];
     },
     // Draw columns' connector lines
     getCrispPath: function () {
-        var data = this.data, yAxis = this.yAxis, length = data.length, graphNormalizer = Math.round(this.graph.strokeWidth()) % 2 / 2, borderNormalizer = Math.round(this.borderWidth) % 2 / 2, reversedXAxis = this.xAxis.reversed, reversedYAxis = this.yAxis.reversed, stacking = this.options.stacking, path = [], connectorThreshold, prevStack, prevStackX, prevPoint, yPos, isPos, prevArgs, pointArgs, i, d;
+        var data = this.data, yAxis = this.yAxis, length = data.length, graphNormalizer = Math.round(this.graph.strokeWidth()) % 2 / 2, borderNormalizer = Math.round(this.borderWidth) % 2 / 2, reversedXAxis = this.xAxis.reversed, reversedYAxis = this.yAxis.reversed, stacking = this.options.stacking, path = [], connectorThreshold, prevStack, prevStackX, prevPoint, yPos, isPos, prevArgs, pointArgs, i;
         for (i = 1; i < length; i++) {
             pointArgs = data[i].shapeArgs;
             prevPoint = data[i - 1];
             prevArgs = data[i - 1].shapeArgs;
             prevStack = yAxis.waterfallStacks[this.stackKey];
             isPos = prevPoint.y > 0 ? -prevArgs.height : 0;
-            if (prevStack) {
+            if (prevStack && prevArgs && pointArgs) {
                 prevStackX = prevStack[i - 1];
                 // y position of the connector is different when series are
                 // stacked, yAxis is reversed and it also depends on point's
@@ -446,26 +446,28 @@ seriesType('waterfall', 'column', {
                         prevArgs.y + prevPoint.minPointLengthOffset +
                             borderNormalizer - graphNormalizer;
                 }
-                d = [
+                path.push([
                     'M',
-                    prevArgs.x + (reversedXAxis ?
+                    (prevArgs.x || 0) + (reversedXAxis ?
                         0 :
-                        prevArgs.width),
-                    yPos,
+                        (prevArgs.width || 0)),
+                    yPos
+                ], [
                     'L',
-                    pointArgs.x + (reversedXAxis ?
-                        pointArgs.width :
+                    (pointArgs.x || 0) + (reversedXAxis ?
+                        (pointArgs.width || 0) :
                         0),
                     yPos
-                ];
+                ]);
             }
-            if (!stacking && d &&
-                (prevPoint.y < 0 && !reversedYAxis) ||
-                (prevPoint.y > 0 && reversedYAxis)) {
-                d[2] += prevArgs.height;
-                d[5] += prevArgs.height;
+            if (!stacking &&
+                path.length &&
+                prevArgs &&
+                ((prevPoint.y < 0 && !reversedYAxis) ||
+                    (prevPoint.y > 0 && reversedYAxis))) {
+                path[path.length - 2][2] += prevArgs.height;
+                path[path.length - 1][2] += prevArgs.height;
             }
-            path = path.concat(d);
         }
         return path;
     },
@@ -499,7 +501,7 @@ seriesType('waterfall', 'column', {
             }
             actualStackX.stackState.push(actualStackX.stackState[statesLen - 1] + nextS);
         }
-        series.yAxis.usePercentage = false;
+        series.yAxis.stacking.usePercentage = false;
         totalYVal = actualSum = prevSum = stackThreshold;
         // code responsible for creating stacks for waterfall series
         if (series.visible ||

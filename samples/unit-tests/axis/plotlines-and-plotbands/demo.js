@@ -187,7 +187,7 @@ QUnit.test('General tests', function (assert) {
 
     assert.strictEqual(
         line[line.length - 1],
-        'z',
+        'Z',
         'Border should be rendered around the shape (#5909)'
     );
 

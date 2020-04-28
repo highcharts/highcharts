@@ -33,7 +33,7 @@ declare global {
                 normalizedInterval: DateTimeAxisNormalizedObject,
                 min: number,
                 max: number,
-                startOfWeek: number,
+                startOfWeek?: number,
                 positions?: Array<number>,
                 closestDistance?: number,
                 findHigherRanks?: boolean
@@ -47,6 +47,18 @@ declare global {
         interface XAxisOptions {
             keepOrdinalPadding?: boolean;
         }
+    }
+}
+
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        ordinal?: OrdinalAxis['ordinal'];
+    }
+    interface AxisTypeRegistry {
+        OrdinalAxis: OrdinalAxis;
     }
 }
 
@@ -580,7 +592,7 @@ class OrdinalAxis {
             normalizedInterval: Highcharts.DateTimeAxisNormalizedObject,
             min: number,
             max: number,
-            startOfWeek: number,
+            startOfWeek?: number,
             positions: Array<number> = [],
             closestDistance: number = 0,
             findHigherRanks?: boolean

@@ -91,6 +91,9 @@ QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (asse
         'Graphic should be removed'
     );
 
+    //Issue #13101
+    chart.series[0].points[0].select(false, false);
+
     // Issue #5526
     assert.ok(
         Highcharts.defined(chart.series[0].graph),

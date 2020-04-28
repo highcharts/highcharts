@@ -22,6 +22,11 @@ import '../parts/SvgRenderer.js';
 var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, 
 // Work on H.Renderer instead of H.SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, cuboidPath = RendererProto.cuboidPath, cylinderMethods;
+// Check if a path is simplified. The simplified path contains only lineTo
+// segments, whereas non-simplified contain curves.
+var isSimplified = function (path) {
+    return !path.some(function (seg) { return seg[0] === 'C'; });
+};
 /**
   * The cylinder series type.
   *
@@ -171,44 +176,61 @@ RendererProto.cylinderPath = function (shapeArgs) {
 };
 // Returns cylinder Front path
 RendererProto.getCylinderFront = function (topPath, bottomPath) {
-    var path = topPath.slice(0, topPath.simplified ? 9 : 17);
-    path.push('L');
-    if (bottomPath.simplified) {
-        path = path
-            .concat(bottomPath.slice(7, 9))
-            .concat(bottomPath.slice(3, 6))
-            .concat(bottomPath.slice(0, 3));
-        // change 'M' into 'L'
-        path[path.length - 3] = 'L';
+    var path = topPath.slice(0, 3);
+    if (isSimplified(bottomPath)) {
+        var move = bottomPath[0];
+        if (move[0] === 'M') {
+            path.push(bottomPath[2]);
+            path.push(bottomPath[1]);
+            path.push(['L', move[1], move[2]]);
+        }
     }
     else {
-        path.push(bottomPath[15], bottomPath[16], 'C', bottomPath[13], bottomPath[14], bottomPath[11], bottomPath[12], bottomPath[8], bottomPath[9], 'C', bottomPath[6], bottomPath[7], bottomPath[4], bottomPath[5], bottomPath[1], bottomPath[2]);
+        var move = bottomPath[0], curve1 = bottomPath[1], curve2 = bottomPath[2];
+        if (move[0] === 'M' && curve1[0] === 'C' && curve2[0] === 'C') {
+            path.push(['L', curve2[5], curve2[6]]);
+            path.push(['C', curve2[3], curve2[4], curve2[1], curve2[2], curve1[5], curve1[6]]);
+            path.push(['C', curve1[3], curve1[4], curve1[1], curve1[2], move[1], move[2]]);
+        }
     }
-    path.push('Z');
+    path.push(['Z']);
     return path;
 };
 // Returns cylinder Back path
 RendererProto.getCylinderBack = function (topPath, bottomPath) {
-    var path = ['M'];
-    if (topPath.simplified) {
-        path = path.concat(topPath.slice(7, 12));
-        // end at start
-        path.push('L', topPath[1], topPath[2]);
+    var path = [];
+    if (isSimplified(topPath)) {
+        var move = topPath[0], line2 = topPath[2];
+        if (move[0] === 'M' && line2[0] === 'L') {
+            path.push(['M', line2[1], line2[2]]);
+            path.push(topPath[3]);
+            // End at start
+            path.push(['L', move[1], move[2]]);
+        }
     }
     else {
-        path = path.concat(topPath.slice(15));
+        if (topPath[2][0] === 'C') {
+            path.push(['M', topPath[2][5], topPath[2][6]]);
+        }
+        path.push(topPath[3], topPath[4]);
     }
-    path.push('L');
-    if (bottomPath.simplified) {
-        path = path
-            .concat(bottomPath.slice(1, 3))
-            .concat(bottomPath.slice(9, 12))
-            .concat(bottomPath.slice(6, 9));
+    if (isSimplified(bottomPath)) {
+        var move = bottomPath[0];
+        if (move[0] === 'M') {
+            path.push(['L', move[1], move[2]]);
+            path.push(bottomPath[3]);
+            path.push(bottomPath[2]);
+        }
     }
     else {
-        path.push(bottomPath[29], bottomPath[30], 'C', bottomPath[27], bottomPath[28], bottomPath[25], bottomPath[26], bottomPath[22], bottomPath[23], 'C', bottomPath[20], bottomPath[21], bottomPath[18], bottomPath[19], bottomPath[15], bottomPath[16]);
+        var curve2 = bottomPath[2], curve3 = bottomPath[3], curve4 = bottomPath[4];
+        if (curve2[0] === 'C' && curve3[0] === 'C' && curve4[0] === 'C') {
+            path.push(['L', curve4[5], curve4[6]]);
+            path.push(['C', curve4[3], curve4[4], curve4[1], curve4[2], curve3[5], curve3[6]]);
+            path.push(['C', curve3[3], curve3[4], curve3[1], curve3[2], curve2[5], curve2[6]]);
+        }
     }
-    path.push('Z');
+    path.push(['Z']);
     return path;
 };
 // Retruns cylinder path for top or bottom
@@ -298,7 +320,6 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
             perspectivePoints[6],
             perspectivePoints[9]
         ], true);
-        path.simplified = true;
     }
     else {
         // or default curved path to imitate ellipse (2D circle)
@@ -310,12 +331,14 @@ RendererProto.getCylinderEnd = function (chart, shapeArgs, isBottom) {
 // [ M, x, y, ...[C, cp1x, cp2y, cp2x, cp2y, epx, epy]*n_times ]
 // (cp - control point, ep - end point)
 RendererProto.getCurvedPath = function (points) {
-    var path = [
-        'M',
-        points[0].x, points[0].y
-    ], limit = points.length - 2, i;
+    var path = [['M', points[0].x, points[0].y]], limit = points.length - 2, i;
     for (i = 1; i < limit; i += 3) {
-        path.push('C', points[i].x, points[i].y, points[i + 1].x, points[i + 1].y, points[i + 2].x, points[i + 2].y);
+        path.push([
+            'C',
+            points[i].x, points[i].y,
+            points[i + 1].x, points[i + 1].y,
+            points[i + 2].x, points[i + 2].y
+        ]);
     }
     return path;
 };

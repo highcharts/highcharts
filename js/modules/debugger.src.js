@@ -61,7 +61,7 @@ addEvent(H.Chart, 'displayError', function (e) {
         // Render error message
         chart.errorElements[1] = renderer.label(msg, 0, 0, 'rect', void 0, void 0, void 0, void 0, 'debugger').css({
             color: '#ffffff',
-            width: chartWidth - 16,
+            width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({
             fill: 'rgba(255, 0, 0, 0.9)',
