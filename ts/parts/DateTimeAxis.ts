@@ -50,6 +50,18 @@ declare global {
     }
 }
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        dateTime?: DateTimeAxis['dateTime'];
+    }
+    interface AxisTypeRegistry {
+        DateTimeAxis: DateTimeAxis;
+    }
+}
+
 /* eslint-disable valid-jsdoc */
 
 class DateTimeAxisAdditions {

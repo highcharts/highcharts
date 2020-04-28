@@ -132,15 +132,19 @@ var StackItem = /** @class */ (function () {
             this.label = chart.renderer
                 .label(str, null, null, options.shape, null, null, options.useHTML, false, 'stack-labels');
             attr = {
+                r: options.borderRadius || 0,
                 text: str,
                 rotation: options.rotation,
                 padding: pick(options.padding, 5),
                 visibility: 'hidden' // hidden until setOffset is called
             };
-            this.label.attr(attr);
             if (!chart.styledMode) {
+                attr.fill = options.backgroundColor;
+                attr.stroke = options.borderColor;
+                attr['stroke-width'] = options.borderWidth;
                 this.label.css(options.style);
             }
+            this.label.attr(attr);
             if (!this.label.added) {
                 this.label.add(group); // add to the labels-group
             }
@@ -251,9 +255,10 @@ var StackItem = /** @class */ (function () {
             (inverted ? chart.plotLeft : chart.plotTop), neg = (stackItem.isNegative && !reversed) ||
             (!stackItem.isNegative && reversed); // #4056
         return {
-            x: inverted ? (neg ? y : y - h) : x,
+            x: inverted ? (neg ? y - axis.right : y - h + axis.pos - chart.plotLeft) :
+                x + chart.xAxis[0].transB - chart.plotLeft,
             y: inverted ?
-                axisPos - x - xWidth :
+                axis.height - x - xWidth :
                 (neg ?
                     (axisPos - y - h) :
                     axisPos - y),

@@ -44,6 +44,18 @@ declare global {
     }
 }
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        brokenAxis?: BrokenAxis['brokenAxis'];
+    }
+    interface AxisTypeRegistry {
+        BrokenAxis: BrokenAxis;
+    }
+}
+
 import '../parts/Series.js';
 import StackItem from '../parts/Stacking.js';
 
