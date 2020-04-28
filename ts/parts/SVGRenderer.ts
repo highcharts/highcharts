@@ -10,8 +10,8 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Color from './Color.js';
-const color = Color.parse;
 import H from './Globals.js';
 import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
@@ -47,29 +47,6 @@ declare global {
         type AlignValue = ('center'|'left'|'right');
         type ClipRectElement = SVGElement;
         type Renderer = SVGRenderer;
-        type SVGPathArc = ['A'|'a', number, number, number, number, number, number, number];
-        type SVGPathClose = ['Z'|'z'];
-        type SVGPathCurveTo = ['C'|'c', number, number, number, number, number, number];
-        type SVGPathHorizontalLineTo = ['H'|'h', number];
-        type SVGPathLineTo = ['L'|'l', number, number];
-        type SVGPathMoveTo = ['M'|'m', number, number];
-        type SVGPathQuadTo = ['Q'|'q', number, number, number, number];
-        type SVGPathCurveSmoothTo = ['S'|'s', number, number, number, number];
-        type SVGPathQuadSmoothTo = ['T'|'t', number, number];
-        type SVGPathVerticalLineTo = ['V'|'v', number];
-        type SVGPathSegment = (
-            SVGPathArc|
-            SVGPathClose|
-            SVGPathCurveTo|
-            SVGPathCurveSmoothTo|
-            SVGPathHorizontalLineTo|
-            SVGPathLineTo|
-            SVGPathMoveTo|
-            SVGPathQuadTo|
-            SVGPathQuadSmoothTo|
-            SVGPathVerticalLineTo
-        );
-        type SVGPathArray = Array<SVGPathSegment>;
         type SymbolKeyValue = (
             'arc'|'bottombutton'|'callout'|'circle'|'connector'|'diamond'|
             'rect'|'square'|'topbutton'|'triangle'|'triangle-down'
@@ -114,7 +91,7 @@ declare global {
         interface SVGAttributes {
             [key: string]: any;
             clockwise?: number;
-            d?: (string|SVGPathArray);
+            d?: (string|SVGPath);
             fill?: ColorType;
             // height?: number;
             inverted?: boolean;
@@ -142,15 +119,15 @@ declare global {
         }
         interface SymbolDictionary {
             [key: string]: SymbolFunction<(
-                SVGElement|SVGPathArray|Array<SVGElement>
+                SVGElement|SVGPath|Array<SVGElement>
             )>;
-            arc: SymbolFunction<SVGPathArray>;
-            callout: SymbolFunction<SVGPathArray>;
-            circle: SymbolFunction<SVGPathArray>;
-            diamond: SymbolFunction<SVGPathArray>;
-            square: SymbolFunction<SVGPathArray>;
-            triangle: SymbolFunction<SVGPathArray>;
-            'triangle-down': SymbolFunction<SVGPathArray>;
+            arc: SymbolFunction<SVGPath>;
+            callout: SymbolFunction<SVGPath>;
+            circle: SymbolFunction<SVGPath>;
+            diamond: SymbolFunction<SVGPath>;
+            square: SymbolFunction<SVGPath>;
+            triangle: SymbolFunction<SVGPath>;
+            'triangle-down': SymbolFunction<SVGPath>;
         }
         interface SymbolFunction<T> {
             (...args: Array<any>): T;
@@ -236,10 +213,10 @@ declare global {
             ): ClipRectElement;
             public createElement(nodeName: string): SVGElement;
             public crispLine(
-                points: SVGPathArray,
+                points: SVGPath,
                 width: number,
                 roundingFunction?: ('round'|'floor'|'ceil')
-            ): SVGPathArray;
+            ): SVGPath;
             public definition(def: SVGDefinitionObject): SVGElement;
             public destroy(): null;
             /** @deprecated */
@@ -285,8 +262,8 @@ declare global {
                 className?: string
             ): SVGElement;
             public path(attribs?: SVGAttributes): SVGElement;
-            public path(path?: SVGPathArray): SVGElement;
-            public pathToSegments(path: Array<string|number>): SVGPathArray;
+            public path(path?: SVGPath): SVGElement;
+            public pathToSegments(path: Array<string|number>): SVGPath;
             public rect(attribs: SVGAttributes): SVGElement;
             public rect(
                 x?: number,
@@ -1785,7 +1762,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
     getContrast: function (
         rgba: Highcharts.ColorString
     ): Highcharts.ColorString {
-        rgba = color(rgba).rgba as any;
+        rgba = Color.parse(rgba).rgba as any;
 
         // The threshold may be discussed. Here's a proposal for adding
         // different weight to the color channels (#6216)
@@ -2003,10 +1980,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     crispLine: function (
         this: Highcharts.SVGRenderer,
-        points: Array<Highcharts.SVGPathMoveTo|Highcharts.SVGPathLineTo>,
+        points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
         width: number,
         roundingFunction: ('round'|'floor'|'ceil') = 'round'
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         const start = points[0];
         const end = points[1];
 
@@ -2059,7 +2036,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     path: function (
         this: Highcharts.SVGRenderer,
-        path?: (Highcharts.SVGAttributes|Highcharts.SVGPathArray)
+        path?: (Highcharts.SVGAttributes|SVGPath)
     ): Highcharts.SVGElement {
         var attribs = (this.styledMode ? {} : {
             fill: 'none'
@@ -2715,7 +2692,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             y: number,
             w: number,
             h: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             // Return a full arc
             return this.arc(x + w / 2, y + h / 2, w / 2, h / 2, {
                 start: Math.PI * 0.5,
@@ -2729,7 +2706,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             y: number,
             w: number,
             h: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             return [
                 ['M', x, y],
                 ['L', x + w, y],
@@ -2744,7 +2721,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             y: number,
             w: number,
             h: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             return [
                 ['M', x + w / 2, y],
                 ['L', x + w, y + h],
@@ -2758,7 +2735,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             y: number,
             w: number,
             h: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             return [
                 ['M', x, y],
                 ['L', x + w, y],
@@ -2771,7 +2748,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             y: number,
             w: number,
             h: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             return [
                 ['M', x + w / 2, y],
                 ['L', x + w, y + h / 2],
@@ -2786,7 +2763,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             w: number,
             h: number,
             options: Highcharts.SVGAttributes
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var start = options.start,
                 rx = options.r || w,
                 ry = options.r || h || w,
@@ -2806,7 +2783,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Proximity takes care of rounding errors around PI (#6971)
                 longArc = pick(options.longArc,
                     options.end - start - Math.PI < proximity ? 0 : 1),
-                arc: Highcharts.SVGPathArray;
+                arc: SVGPath;
 
             arc = [
                 [
@@ -2868,14 +2845,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             w: number,
             h: number,
             options: Highcharts.SVGAttributes
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var arrowLength = 6,
                 halfDistance = 6,
                 r = Math.min((options && options.r) || 0, w, h),
                 safeDistance = r + halfDistance,
                 anchorX = options && options.anchorX,
                 anchorY = options && options.anchorY,
-                path: Highcharts.SVGPathArray;
+                path: SVGPath;
 
             path = [
                 ['M', x + r, y],
@@ -3224,9 +3201,9 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      */
     pathToSegments: function (
         path: Array<string|number>
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
 
-        const ret: Highcharts.SVGPathArray = [];
+        const ret: SVGPath = [];
         const segment = [];
         const commandLength: Record<string, number | undefined> = {
             A: 8,
@@ -3275,7 +3252,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // Fully type-safe version where each tuple type is checked. The
         // downside is filesize and a lack of flexibility for unsupported
         // commands
-        const ret: Highcharts.SVGPathArray = [],
+        const ret: SVGPath = [],
             commands = {
                 A: 7,
                 C: 6,

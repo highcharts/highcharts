@@ -20,6 +20,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 declare global {
@@ -189,6 +190,6 @@ H.SVGRenderer.prototype.symbols.rect = function (
     w: number,
     h: number,
     options: Highcharts.SymbolOptionsObject
-): Highcharts.SVGPathArray {
+): SVGPath {
     return H.SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };

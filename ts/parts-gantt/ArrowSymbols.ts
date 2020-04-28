@@ -11,6 +11,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -21,7 +22,7 @@ declare global {
     namespace Highcharts {
         interface SymbolDictionary {
             /** @requires highcharts-gantt */
-            arrow: SymbolFunction<SVGPathArray>;
+            arrow: SymbolFunction<SVGPath>;
             /** @requires highcharts-gantt */
             'arrow-filled': SymbolDictionary['triangle-left'];
             /** @requires highcharts-gantt */
@@ -29,7 +30,7 @@ declare global {
             /** @requires highcharts-gantt */
             'arrow-half': SymbolDictionary['arrow'];
             /** @requires highcharts-gantt */
-            'triangle-left': SymbolFunction<SVGPathArray>;
+            'triangle-left': SymbolFunction<SVGPath>;
             /** @requires highcharts-gantt */
             'triangle-left-half': SymbolDictionary['triangle-left'];
         }
@@ -71,7 +72,7 @@ H.SVGRenderer.prototype.symbols.arrow = function (
     y: number,
     w: number,
     h: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     return [
         ['M', x, y + h / 2],
         ['L', x + w, y],
@@ -113,7 +114,7 @@ H.SVGRenderer.prototype.symbols['arrow-half'] = function (
     y: number,
     w: number,
     h: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     return H.SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
 };
 
@@ -150,7 +151,7 @@ H.SVGRenderer.prototype.symbols['triangle-left'] = function (
     y: number,
     w: number,
     h: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     return [
         ['M', x + w, y],
         ['L', x, y + h / 2],
@@ -216,7 +217,7 @@ H.SVGRenderer.prototype.symbols['triangle-left-half'] = function (
     y: number,
     w: number,
     h: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     return H.SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
 };
 

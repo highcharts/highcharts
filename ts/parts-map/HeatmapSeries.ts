@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -832,7 +833,7 @@ seriesType<Highcharts.HeatmapSeries>(
         haloPath: function (
             this: Highcharts.HeatmapPoint,
             size: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             if (!size) {
                 return [];
             }

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -194,7 +195,7 @@ declare global {
         }
         interface SymbolDictionary {
             /** @requires modules/exporting */
-            menuball: SymbolFunction<SVGPathArray>;
+            menuball: SymbolFunction<SVGPath>;
         }
         interface XAxisOptions {
             internalKey?: string;
@@ -2565,8 +2566,8 @@ symbols.menu = function (
     y: number,
     width: number,
     height: number
-): Highcharts.SVGPathArray {
-    var arr: Highcharts.SVGPathArray = [
+): SVGPath {
+    var arr: SVGPath = [
         ['M', x, y + 2.5],
         ['L', x + width, y + 2.5],
         ['M', x, y + height / 2 + 0.5],
@@ -2583,8 +2584,8 @@ symbols.menuball = function (
     y: number,
     width: number,
     height: number
-): Highcharts.SVGPathArray {
-    var path: Highcharts.SVGPathArray = [],
+): SVGPath {
+    var path: SVGPath = [],
         h = (height / 3) - 2;
 
     path = path.concat(

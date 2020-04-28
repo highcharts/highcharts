@@ -5,7 +5,20 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
+
+import type SVGPath from '../../parts/SVGPath';
+import controllableMixin from './controllableMixin.js';
+import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from '../../parts/Utilities.js';
+const {
+    extend,
+    format,
+    isNumber,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -69,24 +82,12 @@ declare global
             ttBelow?: boolean;
         }
         interface SymbolDictionary {
-            connector: SymbolFunction<SVGPathArray>;
+            connector: SymbolFunction<SVGPath>;
         }
     }
 }
 
-import U from './../../parts/Utilities.js';
-const {
-    extend,
-    format,
-    isNumber,
-    merge,
-    pick
-} = U;
-
-import './../../parts/SVGRenderer.js';
-import controllableMixin from './controllableMixin.js';
-import MockPoint from './../MockPoint.js';
-import Tooltip from '../../parts/Tooltip.js';
+import '../../parts/SVGRenderer.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -522,10 +523,10 @@ H.SVGRenderer.prototype.symbols.connector = function (
     w: number,
     h: number,
     options: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
+): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
-        path: (Highcharts.SVGPathArray|undefined),
+        path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 

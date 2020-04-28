@@ -11,6 +11,7 @@
 'use strict';
 
 import type StackingAxis from './StackingAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -34,7 +35,7 @@ declare global {
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
         }
-        interface AreaPathObject extends SVGPathArray {
+        interface AreaPathObject extends SVGPath {
             xMap?: number;
         }
         interface AreaPointOptions extends LinePointOptions {
@@ -396,9 +397,9 @@ seriesType<Highcharts.AreaSeries>(
         getGraphPath: function (
             this: Highcharts.AreaSeries,
             points: Array<Highcharts.AreaPoint>
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var getGraphPath = Series.prototype.getGraphPath,
-                graphPath: Highcharts.SVGPathArray,
+                graphPath: SVGPath,
                 options = this.options,
                 stacking = options.stacking,
                 yAxis = this.yAxis as StackingAxis,

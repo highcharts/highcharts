@@ -11,6 +11,7 @@
 'use strict';
 
 import type RadialAxis from './RadialAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -342,7 +343,7 @@ if (seriesTypes.spline) {
             segment: Array<Highcharts.PolarPoint>,
             point: Highcharts.PolarPoint,
             i: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var ret,
                 connectors;
 
@@ -479,7 +480,7 @@ wrap(seriesProto, 'getGraphPath', function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     points: Array<Highcharts.PolarPoint>
-): Highcharts.SVGPathArray {
+): SVGPath {
     var series = this,
         i,
         firstValid,

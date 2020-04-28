@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 const {
@@ -64,9 +65,9 @@ declare global {
             public drawGraph: any;
             public columnMetrics: ColumnMetricsObject;
             public crispConnector(
-                points: SVGPathArray,
+                points: SVGPath,
                 width: number
-            ): SVGPathArray;
+            ): SVGPath;
             public getConnectorAttribs(point: DumbbellPoint): SVGAttributes;
             public drawConnector(point: DumbbellPoint): void;
             public getColumnMetrics(): ColumnMetricsObject;

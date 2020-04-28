@@ -13,6 +13,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -84,9 +86,9 @@ declare global {
             funnel3dPath(shapeArgs: SVGAttributes): Funnel3dPathsObject;
         }
         interface Funnel3dPathsObject extends SVGPath3dObject {
-            frontUpper: SVGPathArray;
-            backUpper: SVGPathArray;
-            rightUpper: SVGPathArray;
+            frontUpper: SVGPath;
+            backUpper: SVGPath;
+            rightUpper: SVGPath;
         }
     }
 }

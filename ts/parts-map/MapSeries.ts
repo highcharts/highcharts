@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 declare global {
@@ -21,7 +22,7 @@ declare global {
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
-            public path: SVGPathArray;
+            public path: SVGPath;
             public properties?: object;
             public series: MapSeries;
             public value: (number|null);
@@ -77,7 +78,7 @@ declare global {
             ): void;
             public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions;
             public translate(): void;
-            public translatePath(path: SVGPathArray): SVGPathArray;
+            public translatePath(path: SVGPath): SVGPath;
         }
         interface MapBaseTransObject {
             originX: number;
@@ -506,7 +507,7 @@ seriesType<Highcharts.MapSeries>(
                         );
                     }
 
-                    var path: Highcharts.SVGPathArray = point.path || [],
+                    var path: SVGPath = point.path || [],
                         pointMaxX = -MAX_VALUE,
                         pointMinX = MAX_VALUE,
                         pointMaxY = -MAX_VALUE,
@@ -624,8 +625,8 @@ seriesType<Highcharts.MapSeries>(
         // Translate the path, so it automatically fits into the plot area box
         translatePath: function (
             this: Highcharts.MapSeries,
-            path: Highcharts.SVGPathArray
-        ): Highcharts.SVGPathArray {
+            path: SVGPath
+        ): SVGPath {
 
             var series = this,
                 xAxis = series.xAxis,
@@ -636,7 +637,7 @@ seriesType<Highcharts.MapSeries>(
                 yMin = yAxis.min,
                 yTransA = yAxis.transA,
                 yMinPixelPadding = yAxis.minPixelPadding,
-                ret: Highcharts.SVGPathArray = []; // Preserve the original
+                ret: SVGPath = []; // Preserve the original
 
             // Do the translation
             if (path) {

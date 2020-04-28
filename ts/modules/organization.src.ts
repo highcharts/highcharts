@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
@@ -50,9 +51,9 @@ declare global {
             public createNode: (id: string) => NodesPoint;
             public createNodeColumn(): OrganizationColumnArray;
             public curvedPath(
-                path: SVGPathArray,
+                path: SVGPath,
                 r: number
-            ): SVGPathArray;
+            ): SVGPath;
             public pointAttribs(
                 point: OrganizationPoint,
                 state: string
@@ -465,10 +466,10 @@ seriesType<Highcharts.OrganizationSeries>(
         // General function to apply corner radius to a path - can be lifted to
         // renderer or utilities if we need it elsewhere.
         curvedPath: function (
-            path: Highcharts.SVGPathArray,
+            path: SVGPath,
             r: number
-        ): Highcharts.SVGPathArray {
-            var d: Highcharts.SVGPathArray = [];
+        ): SVGPath {
+            var d: SVGPath = [];
 
             for (let i = 0; i < path.length; i++) {
                 const x = path[i][1];

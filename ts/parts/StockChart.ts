@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import H from './Globals.js';
 import Point from './Point.js';
@@ -61,10 +62,10 @@ declare global {
             compareStart?: boolean;
         }
         interface SVGRenderer {
-            crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
+            crispPolyLine(points: SVGPath, width: number): SVGPath;
         }
         interface VMLRenderer {
-            crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
+            crispPolyLine(points: SVGPath, width: number): SVGPath;
         }
         class StockChart extends Chart {
         }
@@ -422,7 +423,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         y1,
         x2,
         y2,
-        result = [] as Highcharts.SVGPathArray,
+        result = [] as SVGPath,
         axes = [], // #3416 need a default array
         axes2: Array<Highcharts.Axis>,
         uniqueAxes: Array<Highcharts.Axis>,
@@ -589,9 +590,9 @@ addEvent(Axis, 'getPlotLinePath', function (
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: Highcharts.SVGRenderer,
-    points: Array<Highcharts.SVGPathMoveTo|Highcharts.SVGPathLineTo>,
+    points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
     width: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     // points format: [['M', 0, 0], ['L', 100, 0]]
     // normalize to a crisp line
     for (let i = 0; i < points.length; i = i + 2) {

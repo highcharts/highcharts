@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 
@@ -795,7 +796,7 @@ seriesType<Highcharts.VBPIndicator>(
             var indicator = this,
                 renderer: Highcharts.Renderer = chart.renderer,
                 zoneLinesSVG: Highcharts.SVGElement = indicator.zoneLinesSVG,
-                zoneLinesPath: Highcharts.SVGPathArray = [],
+                zoneLinesPath: SVGPath = [],
                 leftLinePos = 0,
                 rightLinePos: number = chart.plotWidth,
                 verticalOffset: number = chart.plotTop,

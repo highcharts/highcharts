@@ -5,6 +5,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../../parts/SVGPath';
 import H from '../../parts/Globals.js';
 
 /**
@@ -314,8 +316,8 @@ H.extendAnnotation(Measure, null,
                     point: point,
                     type: 'path'
                 },
-                pathH: Highcharts.SVGPathArray = [],
-                pathV: Highcharts.SVGPathArray = [],
+                pathH: SVGPath = [],
+                pathV: SVGPath = [],
                 crosshairOptionsX,
                 crosshairOptionsY,
                 temp;

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -59,9 +60,9 @@ declare global {
             allowDG?: boolean;
         }
         interface SymbolDictionary {
-            circlepin: SymbolFunction<SVGPathArray>;
-            flag: SymbolFunction<SVGPathArray>;
-            squarepin: SymbolFunction<SVGPathArray>;
+            circlepin: SymbolFunction<SVGPath>;
+            flag: SymbolFunction<SVGPath>;
+            squarepin: SymbolFunction<SVGPath>;
         }
         interface SeriesTypesDictionary {
             flags: typeof FlagsSeries;
@@ -747,7 +748,7 @@ symbols.flag = function (
     w: number,
     h: number,
     options: Highcharts.Dictionary<number>
-): Highcharts.SVGPathArray {
+): SVGPath {
     var anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
 
@@ -780,11 +781,11 @@ function createPinSymbol(shape: ('circle'|'square')): void {
         w: number,
         h: number,
         options: Highcharts.Dictionary<number>
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
 
         var anchorX = options && options.anchorX,
             anchorY = options && options.anchorY,
-            path: Highcharts.SVGPathArray;
+            path: SVGPath;
 
         // For single-letter flags, make sure circular flags are not taller
         // than their width

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -41,7 +42,7 @@ declare global {
                 w: number,
                 h: number,
                 options: SVGAttributes
-            ): SVGPathArray;
+            ): SVGPath;
         }
         interface SVGRenderer {
             /** @requires highcharts/modules/oldies */
@@ -239,7 +240,7 @@ declare global {
                 wrapper: VMLElement
             ): T;
             public createElement(nodeName: string): VMLElement;
-            public crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
+            public crispPolyLine(points: SVGPath, width: number): SVGPath;
             public g(name: string): VMLElement;
             public image(
                 src: string,
@@ -2076,7 +2077,7 @@ if (!svg) {
                 w: number,
                 h: number,
                 options: Highcharts.SVGAttributes
-            ): Highcharts.SVGPathArray {
+            ): SVGPath {
                 return SVGRenderer.prototype.symbols[
                     !defined(options) || !options.r ? 'square' : 'callout'
                 ].call(0, x, y, w, h, options);

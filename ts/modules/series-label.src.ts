@@ -9,6 +9,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -330,10 +332,10 @@ SVGRenderer.prototype.symbols.connector = function (
     w: number,
     h: number,
     options: Highcharts.SymbolOptionsObject
-): Highcharts.SVGPathArray {
+): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
-        path: (Highcharts.SVGPathArray|undefined),
+        path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 
@@ -396,7 +398,7 @@ Series.prototype.getPointsOnGraph = function (
         len: (number|undefined),
         n: (number|undefined),
         j: (number|undefined),
-        d: (Highcharts.SVGPathArray|undefined),
+        d: (SVGPath|undefined),
         graph: Highcharts.SVGElement = this.graph || (this.area as any),
         node: SVGPathElement = graph.element as any,
         inverted = this.chart.inverted,

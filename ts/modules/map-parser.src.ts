@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -26,7 +27,7 @@ declare global {
             $frame?: JQuery<HTMLDOMElement>;
             init(options: DataOptions): void;
             loadSVG(): void;
-            pathToArray(path: string, matrix: Dictionary<number>): SVGPathArray;
+            pathToArray(path: string, matrix: Dictionary<number>): SVGPath;
             pathToString(arr: Array<MapPointOptions>): Array<MapPointOptions>;
             roundPaths(
                 arr: Array<(MapPointOptions&MapPointCacheObject)>,
@@ -72,7 +73,7 @@ extend(H.Data.prototype, {
         this: Highcharts.Data,
         path: string,
         matrix: Highcharts.Dictionary<number>
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var i = 0,
             position = 0,
             point: Array<number>,
@@ -83,7 +84,7 @@ extend(H.Data.prototype, {
             isString: boolean,
             operator: (string|undefined),
             matrixTransform = function (
-                p: Highcharts.SVGPathArray,
+                p: SVGPath,
                 m: Highcharts.Dictionary<number>
             ): Array<number> {
                 return [
@@ -235,7 +236,7 @@ extend(H.Data.prototype, {
         arr: Array<Highcharts.MapPointOptions>
     ): Array<Highcharts.MapPointOptions> {
         arr.forEach(function (point: Highcharts.MapPointOptions): void {
-            var path: Highcharts.SVGPathArray = point.path as any;
+            var path: SVGPath = point.path as any;
 
             // Join all by commas
             path = path.join(',') as any;
@@ -294,7 +295,7 @@ extend(H.Data.prototype, {
         ): void {
 
             var i: number,
-                path: Highcharts.SVGPathArray;
+                path: SVGPath;
 
             point.path = path = (mapProto.translatePath as any).call(
                 fakeSeries,
@@ -489,7 +490,7 @@ extend(H.Data.prototype, {
             if (handleGroups) {
                 lastCommonAncestor.getElementsByTagName('g').forEach(
                     function (g: Highcharts.SVGDOMElement): void {
-                        var groupPath: Highcharts.SVGPathArray = [],
+                        var groupPath: SVGPath = [],
                             pathHasFill: (boolean|undefined);
 
                         getPathLikeChildren(g).forEach(function (

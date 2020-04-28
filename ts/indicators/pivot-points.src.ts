@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -203,13 +204,13 @@ seriesType<Highcharts.PivotPointsIndicator>(
         getGraphPath: function (
             this: Highcharts.PivotPointsIndicator,
             points: Array<Highcharts.Point>
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var indicator = this,
                 pointsLength: number = points.length,
                 allPivotPoints: Array<Array<Highcharts.Point>> = (
                     [[], [], [], [], [], [], [], [], []]
                 ),
-                path: Highcharts.SVGPathArray = [],
+                path: SVGPath = [],
                 endPoint: (number|undefined) = indicator.plotEndPoint,
                 pointArrayMapLength: number = indicator.pointArrayMap.length,
                 position: string,

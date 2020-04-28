@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -61,7 +62,7 @@ declare global {
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
             public graph?: SVGElement;
-            public graphPath?: SVGPathArray;
+            public graphPath?: SVGPath;
             public group?: SVGElement;
             public hasCartesianSeries?: Chart['hasCartesianSeries'];
             public hasRendered?: boolean;
@@ -151,7 +152,7 @@ declare global {
                 points: Array<Point>,
                 nullsAsZeroes?: boolean,
                 connectCliffs?: boolean
-            ): SVGPathArray;
+            ): SVGPath;
             public getPlotBox(): SeriesPlotBoxObject;
             public getProcessedData(
                 forceExtremesFromAll?: boolean
@@ -6030,12 +6031,12 @@ H.Series = seriesType<Highcharts.LineSeries>(
             points: Array<Highcharts.Point>,
             nullsAsZeroes?: boolean,
             connectCliffs?: boolean
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var series = this,
                 options = series.options,
                 step = options.step as any,
                 reversed,
-                graphPath = [] as Highcharts.SVGPathArray,
+                graphPath = [] as SVGPath,
                 xMap = [] as Array<(number|null)>,
                 gap: boolean;
 
@@ -6069,7 +6070,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     plotY = point.plotY,
                     lastPoint = points[i - 1],
                     // the path to this point from the previous
-                    pathToPoint: Highcharts.SVGPathArray;
+                    pathToPoint: SVGPath;
 
                 if (
                     (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&

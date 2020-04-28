@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -38,10 +39,10 @@ declare global {
             fillSetter(fill: ColorType): SVGElement;
         }
         interface CylinderPathsObject extends SVGPath3dObject {
-            back: SVGPathArray;
-            bottom: SVGPathArray;
-            front: SVGPathArray;
-            top: SVGPathArray;
+            back: SVGPath;
+            bottom: SVGPath;
+            front: SVGPath;
+            top: SVGPath;
             zIndexes: Dictionary<number>;
         }
         interface CylinderPointOptions extends ColumnPointOptions {
@@ -56,20 +57,20 @@ declare global {
         interface SVGRenderer {
             cylinder(shapeArgs: SVGAttributes): SVGElement;
             cylinderPath(shapeArgs: SVGAttributes): CylinderPathsObject;
-            getCurvedPath(points: Array<PositionObject>): SVGPathArray;
+            getCurvedPath(points: Array<PositionObject>): SVGPath;
             getCylinderBack(
-                topPath: SVGPathArray,
-                bottomPath: SVGPathArray
-            ): SVGPathArray;
+                topPath: SVGPath,
+                bottomPath: SVGPath
+            ): SVGPath;
             getCylinderEnd(
                 chart: Chart,
                 shapeArgs: SVGAttributes,
                 isBottom?: boolean
-            ): SVGPathArray;
+            ): SVGPath;
             getCylinderFront(
-                topPath: SVGPathArray,
-                bottomPath: SVGPathArray
-            ): SVGPathArray;
+                topPath: SVGPath,
+                bottomPath: SVGPath
+            ): SVGPath;
         }
         interface SeriesTypesDictionary {
             cylinder: typeof CylinderSeries;
@@ -100,7 +101,7 @@ var charts = H.charts,
 
 // Check if a path is simplified. The simplified path contains only lineTo
 // segments, whereas non-simplified contain curves.
-const isSimplified = (path: Highcharts.SVGPathArray): boolean =>
+const isSimplified = (path: SVGPath): boolean =>
     !path.some((seg): boolean => seg[0] === 'C');
 
 
@@ -284,9 +285,9 @@ RendererProto.cylinderPath = function (
 
 // Returns cylinder Front path
 RendererProto.getCylinderFront = function (
-    topPath: Highcharts.SVGPathArray,
-    bottomPath: Highcharts.SVGPathArray
-): Highcharts.SVGPathArray {
+    topPath: SVGPath,
+    bottomPath: SVGPath
+): SVGPath {
     const path = topPath.slice(0, 3);
 
     if (isSimplified(bottomPath)) {
@@ -317,11 +318,11 @@ RendererProto.getCylinderFront = function (
 
 // Returns cylinder Back path
 RendererProto.getCylinderBack = function (
-    topPath: Highcharts.SVGPathArray,
-    bottomPath: Highcharts.SVGPathArray
-): Highcharts.SVGPathArray {
+    topPath: SVGPath,
+    bottomPath: SVGPath
+): SVGPath {
 
-    const path: Highcharts.SVGPathArray = [];
+    const path: SVGPath = [];
 
     if (isSimplified(topPath)) {
         const move = topPath[0],
@@ -369,7 +370,7 @@ RendererProto.getCylinderEnd = function (
     chart: Highcharts.Chart,
     shapeArgs: Highcharts.SVGAttributes,
     isBottom?: boolean
-): Highcharts.SVGPathArray {
+): SVGPath {
     // A half of the smaller one out of width or depth (optional, because
     // there's no depth for a funnel that reuses the code)
     var depth = pick(shapeArgs.depth, shapeArgs.width),
@@ -451,7 +452,7 @@ RendererProto.getCylinderEnd = function (
         cosTheta = Math.cos(angleOffset),
         sinTheta = Math.sin(angleOffset),
         perspectivePoints,
-        path: Highcharts.SVGPathArray,
+        path: SVGPath,
         x, z;
 
     // rotete to match chart's beta and translate to the shape center
@@ -494,8 +495,8 @@ RendererProto.getCylinderEnd = function (
 // (cp - control point, ep - end point)
 RendererProto.getCurvedPath = function (
     points: Array<Highcharts.PositionObject>
-): Highcharts.SVGPathArray {
-    var path: Highcharts.SVGPathArray = [['M', points[0].x, points[0].y]],
+): SVGPath {
+    var path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2,
         i;
 

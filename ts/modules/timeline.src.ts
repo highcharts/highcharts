@@ -13,6 +13,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -28,7 +30,7 @@ declare global {
             public userDLOptions?: TimelineDataLabelsOptionsObject;
             public alignConnector(): void;
             public drawConnector(): void;
-            public getConnectorPath(): SVGPathArray;
+            public getConnectorPath(): SVGPath;
             public init(): this;
             public isValid(): boolean;
             public setState(): void;
@@ -766,7 +768,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
         },
         getConnectorPath: function (
             this: Highcharts.TimelinePoint
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var point = this,
                 chart = point.series.chart,
                 xAxisLen = point.series.xAxis.len,
@@ -784,7 +786,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     (dl.alignAttr || dl)[direction[0]] <
                         point.series.yAxis.len / 2
                 ),
-                path: Highcharts.SVGPathArray;
+                path: SVGPath;
 
             // Recalculate coords when the chart is inverted.
             if (inverted) {
@@ -814,7 +816,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                 [
                     ['M', coords.x1, coords.y1],
                     ['L', coords.x2, coords.y2]
-                ] as Highcharts.SVGPathArray,
+                ] as SVGPath,
                 dl.options.connectorWidth
             );
 

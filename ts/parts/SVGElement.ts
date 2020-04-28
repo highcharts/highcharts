@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Color from './Color.js';
 import H from './Globals.js';
 const {
@@ -74,7 +75,7 @@ declare global {
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
             public parentGroup?: SVGElement;
-            public pathArray?: SVGPathArray;
+            public pathArray?: SVGPath;
             public r?: number;
             public renderer: SVGRenderer;
             public rotation?: number;
@@ -115,7 +116,7 @@ declare global {
             ): (number|string)
             public attr(
                 hash?: (string|SVGAttributes),
-                val?: (number|string|SVGPathArray),
+                val?: (number|string|SVGPath),
                 complete?: Function,
                 continueAnimation?: boolean
             ): SVGElement;
@@ -138,7 +139,7 @@ declare global {
                 path: SVGElement
             ): void;
             public dSetter(
-                value: (number|string|SVGPathArray),
+                value: (number|string|SVGPath),
                 key: string,
                 element: SVGDOMElement
             ): void;
@@ -271,7 +272,7 @@ class SVGElement {
     public options?: Record<string, any>;
     public parentInverted?: boolean;
     public parentGroup?: SVGElement;
-    public pathArray?: Highcharts.SVGPathArray;
+    public pathArray?: SVGPath;
     public placed?: boolean;
     public r?: number;
     public radAttr?: Highcharts.SVGAttributes;
@@ -802,7 +803,7 @@ class SVGElement {
     ): SVGElement;
     public attr(
         key: string,
-        val: (number|string|Highcharts.SVGPathArray),
+        val: (number|string|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): SVGElement;
@@ -867,7 +868,7 @@ class SVGElement {
      */
     public attr(
         hash?: (string|Highcharts.SVGAttributes),
-        val?: (number|string|Highcharts.SVGPathArray),
+        val?: (number|string|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|SVGElement) {
@@ -1482,7 +1483,7 @@ class SVGElement {
      * @param {Highcharts.SVGDOMElement} element
      */
     public dSetter(
-        value: (string|Highcharts.SVGPathArray),
+        value: (string|SVGPath),
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {

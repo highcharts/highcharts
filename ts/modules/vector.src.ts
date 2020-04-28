@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
@@ -41,7 +43,7 @@ declare global {
             public pointArrayMap: Array<string>;
             public pointClass: typeof VectorPoint;
             public points: Array<VectorPoint>;
-            public arrow(point: VectorPoint): SVGPathArray;
+            public arrow(point: VectorPoint): SVGPath;
             public drawPoints(): void;
             public pointAttribs(
                 point: VectorPoint,
@@ -212,8 +214,8 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
         arrow: function (
             this: Highcharts.VectorSeries,
             point: Highcharts.VectorPoint
-        ): Highcharts.SVGPathArray {
-            var path: Highcharts.SVGPathArray,
+        ): SVGPath {
+            var path: SVGPath,
                 fraction: number = (point.length as any) / this.lengthMax,
                 u: number = fraction * (this.options.vectorLength as any) / 20,
                 o: number = ({

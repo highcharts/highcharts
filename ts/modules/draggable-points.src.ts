@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -178,7 +179,7 @@ declare global {
             resize: boolean;
             resizeSide: (string|SeriesDragDropPropsResizeSideFunction);
             validateIndividualDrag?: Function;
-            handleFormatter(point: Point): (SVGPathArray|null);
+            handleFormatter(point: Point): (SVGPath|null);
             handlePositioner(point: Point): PositionObject;
             propValidate(val: number, point: Point): boolean;
         }
@@ -437,7 +438,7 @@ Supported options for each prop:
 // 90deg rotated column handle path, used in multiple series types
 var horizHandleFormatter = function (
     point: Highcharts.Point
-): Highcharts.SVGPathArray {
+): SVGPath {
     var shapeArgs = point.shapeArgs || (point.graphic as any).getBBox(),
         top = shapeArgs.r || 0, // Rounding of bar corners
         bottom = shapeArgs.height - top,
@@ -552,7 +553,7 @@ var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         // Horizontal handle
         handleFormatter: function (
             point: Highcharts.ColumnPoint
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var shapeArgs = point.shapeArgs,
                 radius = (shapeArgs as any).r || 0, // Rounding of bar corners
                 centerX = (shapeArgs as any).width / 2;
@@ -953,7 +954,7 @@ if (seriesTypes.arearange) {
         // Use a circle covering the marker as drag handle
         arearangeHandleFormatter = function (
             point: Highcharts.AreaRangePoint
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var radius = point.graphic ?
                 point.graphic.getBBox().width / 2 + 1 :
                 4;
@@ -1031,7 +1032,7 @@ if (seriesTypes.waterfall) {
         y: merge(columnDragDropProps.y, {
             handleFormatter: function (
                 point: Highcharts.WaterfallPoint
-            ): (Highcharts.SVGPathArray|null) {
+            ): (SVGPath|null) {
                 return point.isSum || point.isIntermediateSum ? null :
                     columnDragDropProps.y.handleFormatter(point);
             }

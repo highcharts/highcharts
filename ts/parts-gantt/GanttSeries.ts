@@ -12,8 +12,8 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
-import GridAxis from './GridAxis.js';
 import H from '../parts/Globals.js';
 import TreeGridAxis from './TreeGridAxis.js';
 import U from '../parts/Utilities.js';
@@ -262,7 +262,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                 graphic = point.graphic,
                 state = point.selected && 'select',
                 cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
-                diamondShape: Highcharts.SVGPathArray;
+                diamondShape: SVGPath;
 
             if (point.options.milestone) {
                 if (isNumber(plotY) && point.y !== null && point.visible !== false) {

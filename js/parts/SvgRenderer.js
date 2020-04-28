@@ -9,7 +9,6 @@
  * */
 'use strict';
 import Color from './Color.js';
-var color = Color.parse;
 import H from './Globals.js';
 import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
@@ -1130,7 +1129,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *         The contrast color, either `#000000` or `#FFFFFF`.
      */
     getContrast: function (rgba) {
-        rgba = color(rgba).rgba;
+        rgba = Color.parse(rgba).rgba;
         // The threshold may be discussed. Here's a proposal for adding
         // different weight to the color channels (#6216)
         rgba[0] *= 1; // red
@@ -2215,7 +2214,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // Fully type-safe version where each tuple type is checked. The
         // downside is filesize and a lack of flexibility for unsupported
         // commands
-        const ret: Highcharts.SVGPathArray = [],
+        const ret: SVGPath = [],
             commands = {
                 A: 7,
                 C: 6,

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -445,10 +446,10 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
             highPlot,
             lowPlot,
             medianPlot,
-            medianPath: Highcharts.SVGPathArray,
+            medianPath: SVGPath,
             crispCorr,
             crispX = 0,
-            boxPath: Highcharts.SVGPathArray,
+            boxPath: SVGPath,
             width,
             left,
             right,
@@ -576,7 +577,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     point.medianShape.attr(medianAttr);
                 }
 
-                let d: Highcharts.SVGPathArray;
+                let d: SVGPath;
 
                 // The stem
                 crispCorr = (point.stem.strokeWidth() % 2) / 2;

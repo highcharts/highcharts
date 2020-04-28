@@ -11,6 +11,7 @@
 'use strict';
 
 import type Pane from './Pane';
+import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import HiddenAxis from './HiddenAxis.js';
@@ -654,7 +655,7 @@ class RadialAxis {
         // Find the path for plot lines perpendicular to the radial axis.
         axis.getPlotLinePath = function (
             options: Highcharts.AxisPlotLinesOptions
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var axis = this,
                 center = axis.pane.center,
                 chart = axis.chart,
@@ -683,7 +684,7 @@ class RadialAxis {
                 xy: Highcharts.PositionObject,
                 tickPositions: number[],
                 crossPos,
-                path: Highcharts.SVGPathArray;
+                path: SVGPath;
 
             // Crosshair logic
             if (isCrosshair) {
@@ -1191,7 +1192,7 @@ class RadialAxis {
             tickWidth: number,
             horiz: boolean,
             renderer: Highcharts.Renderer
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             const tick = this;
             const axis = tick.axis as RadialAxis;
 
@@ -1263,14 +1264,14 @@ interface RadialAxis extends Axis {
         lineWidth: number,
         radius?: number,
         innerRadius?: number
-    ): Highcharts.SVGPathArray;
+    ): SVGPath;
     getOffset(): void;
     getPlotBandPath(
         from: number,
         to: number,
         options: Highcharts.AxisPlotBandsOptions
     ): RadialAxisPath;
-    getPlotLinePath(options: Highcharts.AxisPlotLinesOptions): Highcharts.SVGPathArray;
+    getPlotLinePath(options: Highcharts.AxisPlotLinesOptions): SVGPath;
     getPosition(
         value: number,
         length?: number
@@ -1288,7 +1289,7 @@ interface RadialAxis extends Axis {
 interface RadialAxisOptions extends YAxisOptions {
 }
 
-interface RadialAxisPath extends Highcharts.SVGPathArray {
+interface RadialAxisPath extends SVGPath {
     xBounds?: Array<number>;
     yBounds?: Array<number>;
 }

@@ -13,6 +13,7 @@
 'use strict';
 
 import type Axis from '../parts/Axis.js';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 import Tick from '../parts/Tick.js';
 import Tick3D from './Tick3D.js';
@@ -563,7 +564,7 @@ class Axis3D {
     public static wrapGetLinePath(
         this: Axis3D,
         proceed: Function
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         const axis = this;
 
         // Do not do this if the chart is not 3D
@@ -580,7 +581,7 @@ class Axis3D {
     public static wrapGetPlotBandPath(
         this: Axis3D,
         proceed: Function
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         // Do not do this if the chart is not 3D
         if (!this.chart.is3d() || this.coll === 'colorAxis') {
             return proceed.apply(this, [].slice.call(arguments, 1));
@@ -589,7 +590,7 @@ class Axis3D {
         var args = arguments,
             from = args[1],
             to = args[2],
-            path: Highcharts.SVGPathArray = [],
+            path: SVGPath = [],
             fromPath = this.getPlotLinePath({ value: from }),
             toPath = this.getPlotLinePath({ value: to });
 
@@ -626,11 +627,11 @@ class Axis3D {
     public static wrapGetPlotLinePath(
         this: Axis3D,
         proceed: Function
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         const axis = this;
         const axis3D = axis.axis3D;
         const chart = axis.chart;
-        const path: Highcharts.SVGPathArray = proceed.apply(
+        const path: SVGPath = proceed.apply(
             axis,
             [].slice.call(arguments, 1)
         );
