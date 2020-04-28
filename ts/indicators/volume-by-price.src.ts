@@ -362,7 +362,7 @@ seriesType<Highcharts.VBPIndicator>(
         ): void {
             var series = this,
                 inverted = series.chart.inverted,
-                group = series.group as Highcharts.SVGElement,
+                group = series.group,
                 attr: Highcharts.SVGAttributes = {},
                 translate,
                 position;
