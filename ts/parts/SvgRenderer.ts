@@ -1855,10 +1855,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 x,
                 y,
                 shape,
-                null as any,
-                null as any,
+                void 0,
+                void 0,
                 useHTML,
-                null as any,
+                void 0,
                 'button'
             ),
             curState = 0,
@@ -3529,9 +3529,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             text = wrapper.text = renderer.text('', 0, 0, useHTML)
                 .attr({
                     zIndex: 1
-                }) as Highcharts.SVGAttributes,
+                }),
             box: (Highcharts.SVGElement|undefined),
-            bBox: Highcharts.BBoxObject,
+            emptyBBox: Highcharts.BBoxObject = { width: 0, height: 0, x: 0, y: 0 },
+            bBox = emptyBBox,
             alignFactor = 0,
             padding = 3,
             paddingLeft = 0,
@@ -3567,15 +3568,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 crispAdjust,
                 attribs = {} as Highcharts.SVGAttributes;
 
-            bBox = ((
-                // #12165 error when width is null (auto)
-                !isNumber(width) ||
-                !isNumber(height) ||
-                textAlign) &&
-                defined(text.textStr) &&
-                text.getBBox()
-                // #12163 when fontweight: bold, recalculate bBox withot cache
-            ); // #3295 && 3514 box failure when string equals 0
+            // #12165 error when width is null (auto)
+            // #12163 when fontweight: bold, recalculate bBox withot cache
+            // #3295 && 3514 box failure when string equals 0
+            bBox = (
+                (!isNumber(width) || !isNumber(height) || textAlign) &&
+                defined(text.textStr)
+            ) ?
+                text.getBBox() : emptyBBox;
 
             wrapper.width = (
                 (width || bBox.width || 0) +
@@ -3584,12 +3584,14 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             );
             wrapper.height = (height || bBox.height || 0) + 2 * padding;
 
-            // Update the label-scoped y offset
+            // Update the label-scoped y offset. Math.min because of inline
+            // style (#9400)
             baselineOffset = padding + Math.min(
                 renderer
                     .fontMetrics(style && style.fontSize as any, text as any).b,
-                // Math.min because of inline style (#9400)
-                bBox ? bBox.height : Infinity
+                // When the height is 0, there is no bBox, so go with the font
+                // metrics. Highmaps CSS demos.
+                bBox.height || Infinity
             );
 
             if (needsBox) {
@@ -3879,7 +3881,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 removeEvent(wrapper.element, 'mouseleave');
 
                 if (text) {
-                    text = text.destroy();
+                    text.destroy();
                 }
                 if (box) {
                     box = box.destroy();
@@ -3890,6 +3892,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Release local pointers (#1298)
                 wrapper =
                 renderer =
+                text =
                 updateBoxSize =
                 updateTextPadding =
                 boxAttr = null as any;
@@ -3905,8 +3908,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             handler: Function
         ): Highcharts.SVGElement {
             const span: Highcharts.SVGElement|undefined =
-                // @todo: text has the wrong type. Should be SVGElement.
-                text && text.element.tagName === 'SPAN' ? text as any : void 0;
+                text && text.element.tagName === 'SPAN' ? text : void 0;
 
             let selectiveHandler: Function|undefined;
 

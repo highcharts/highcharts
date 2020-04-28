@@ -1180,7 +1180,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      *         The button element.
      */
     button: function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape, useHTML) {
-        var label = this.label(text, x, y, shape, null, null, useHTML, null, 'button'), curState = 0, styledMode = this.styledMode;
+        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode;
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
         if (!styledMode) {
@@ -2453,7 +2453,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         var renderer = this, styledMode = renderer.styledMode, wrapper = renderer.g((className !== 'button' && 'label')), text = wrapper.text = renderer.text('', 0, 0, useHTML)
             .attr({
             zIndex: 1
-        }), box, bBox, alignFactor = 0, padding = 3, paddingLeft = 0, width, height, wrapperX, wrapperY, textAlign, deferredAttr = {}, strokeWidth, baselineOffset, hasBGImage = /^url\((.*?)\)$/.test(shape), needsBox = styledMode || hasBGImage, getCrispAdjust = function () {
+        }), box, emptyBBox = { width: 0, height: 0, x: 0, y: 0 }, bBox = emptyBBox, alignFactor = 0, padding = 3, paddingLeft = 0, width, height, wrapperX, wrapperY, textAlign, deferredAttr = {}, strokeWidth, baselineOffset, hasBGImage = /^url\((.*?)\)$/.test(shape), needsBox = styledMode || hasBGImage, getCrispAdjust = function () {
             return styledMode ?
                 box.strokeWidth() % 2 / 2 :
                 (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
@@ -2467,24 +2467,23 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
            box. */
         updateBoxSize = function () {
             var style = text.element.style, crispAdjust, attribs = {};
-            bBox = ((
             // #12165 error when width is null (auto)
-            !isNumber(width) ||
-                !isNumber(height) ||
-                textAlign) &&
-                defined(text.textStr) &&
-                text.getBBox()
             // #12163 when fontweight: bold, recalculate bBox withot cache
-            ); // #3295 && 3514 box failure when string equals 0
+            // #3295 && 3514 box failure when string equals 0
+            bBox = ((!isNumber(width) || !isNumber(height) || textAlign) &&
+                defined(text.textStr)) ?
+                text.getBBox() : emptyBBox;
             wrapper.width = ((width || bBox.width || 0) +
                 2 * padding +
                 paddingLeft);
             wrapper.height = (height || bBox.height || 0) + 2 * padding;
-            // Update the label-scoped y offset
+            // Update the label-scoped y offset. Math.min because of inline
+            // style (#9400)
             baselineOffset = padding + Math.min(renderer
                 .fontMetrics(style && style.fontSize, text).b, 
-            // Math.min because of inline style (#9400)
-            bBox ? bBox.height : Infinity);
+            // When the height is 0, there is no bBox, so go with the font
+            // metrics. Highmaps CSS demos.
+            bBox.height || Infinity);
             if (needsBox) {
                 // Create the border box if it is not already present
                 if (!box) {
@@ -2726,7 +2725,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 removeEvent(wrapper.element, 'mouseenter');
                 removeEvent(wrapper.element, 'mouseleave');
                 if (text) {
-                    text = text.destroy();
+                    text.destroy();
                 }
                 if (box) {
                     box = box.destroy();
@@ -2736,9 +2735,10 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
                 // Release local pointers (#1298)
                 wrapper =
                     renderer =
-                        updateBoxSize =
-                            updateTextPadding =
-                                boxAttr = null;
+                        text =
+                            updateBoxSize =
+                                updateTextPadding =
+                                    boxAttr = null;
             }
         };
         // Event handling. In case of useHTML, we need to make sure that events
@@ -2746,9 +2746,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
         // between the SVG group and the HTML span are not treated as real
         // enter/leave events. #13310.
         wrapper.on = function (eventType, handler) {
-            var span = 
-            // @todo: text has the wrong type. Should be SVGElement.
-            text && text.element.tagName === 'SPAN' ? text : void 0;
+            var span = text && text.element.tagName === 'SPAN' ? text : void 0;
             var selectiveHandler;
             if (span) {
                 selectiveHandler = function (e) {
