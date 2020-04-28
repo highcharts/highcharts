@@ -3609,6 +3609,48 @@ class Axis implements AxisComposition, AxisLike {
             allowOverlap: false,
 
             /**
+             * The background color or gradient for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since     next
+             * @apioption yAxis.stackLabels.backgroundColor
+             */
+
+            /**
+             * The border color for the stack label. Defaults to `undefined`.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since     next
+             * @apioption yAxis.stackLabels.borderColor
+             */
+
+            /**
+             * The border radius in pixels for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {number}
+             * @default   0
+             * @since     next
+             * @apioption yAxis.stackLabels.borderRadius
+             */
+
+            /**
+             * The border width in pixels for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {number}
+             * @default   0
+             * @since     next
+             * @apioption yAxis.stackLabels.borderWidth
+             */
+
+            /**
              * Enable or disable the stack total labels.
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-enabled/

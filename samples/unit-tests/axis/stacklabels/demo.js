@@ -369,7 +369,6 @@ QUnit.test('Stack labels align issue when yAxis/xAxis is moved #11500', function
             stackKey = Object.keys(stacks)[0];
 
         return stacks[stackKey][0].label;
-
     };
 
     let dataLabel = chart.series[0].points[0].dataLabel,
@@ -397,5 +396,67 @@ QUnit.test('Stack labels align issue when yAxis/xAxis is moved #11500', function
         stackLabel.parentGroup.translateY + stackLabel.translateY,
         dataLabel.parentGroup.translateY + dataLabel.y,
         'This stack-label should moved to the same position as dataLabel #11500'
+    );
+});
+
+QUnit.test('Stack labels styles options #13330', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        chart: {
+            type: 'column'
+        },
+
+        yAxis: {
+            stackLabels: {
+                enabled: true,
+                backgroundColor: 'black',
+                borderWidth: 2,
+                borderColor: 'red',
+                borderRadius: 4,
+                style: {
+                    color: 'red'
+                }
+            }
+        },
+
+        plotOptions: {
+            column: {
+                stacking: 'normal'
+            }
+        },
+
+        series: [{
+            name: 'A',
+            data: [5, 3]
+        }, {
+            name: 'B',
+            data: [15, 12]
+        }]
+    });
+
+    const stackLabel = chart.yAxis[0].stacking.stacks['column,,,'][0];
+
+    assert.strictEqual(
+        stackLabel.label.fill,
+        stackLabel.options.backgroundColor,
+        'This stack-label fill atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label.stroke,
+        stackLabel.options.borderColor,
+        'This stack-label stroke atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label["stroke-width"],
+        stackLabel.options.borderWidth,
+        'This stack-label stroke-width atribute should be same as set in options #13330'
+    );
+
+    assert.strictEqual(
+        stackLabel.label.box.r,
+        stackLabel.options.borderRadius,
+        'This stack-label box r atribute should be same as set in options #13330'
     );
 });

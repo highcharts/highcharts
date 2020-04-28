@@ -82,6 +82,10 @@ declare global {
         interface YAxisStackLabelsOptions {
             align?: AlignValue;
             allowOverlap?: boolean;
+            backgroundColor?: (ColorString|GradientColorObject|PatternObject);
+            borderColor?: (ColorString|GradientColorObject|PatternObject);
+            borderRadius?: number;
+            borderWidth?: number;
             crop?: boolean;
             enabled?: boolean;
             format?: string;
@@ -94,6 +98,9 @@ declare global {
             verticalAlign?: VerticalAlignValue;
             x?: number;
             y?: number;
+        }
+        interface AttrObject {
+            [key: string]: any;
         }
         class StackItem {
             public constructor(
@@ -288,7 +295,7 @@ class StackItem {
         var chart = this.axis.chart,
             options = this.options,
             formatOption = options.format,
-            attr = {},
+            attr: Highcharts.AttrObject = {},
             str = formatOption ? // format the text in the label
                 format(formatOption, this, chart) :
                 (options.formatter as any).call(this);
@@ -313,15 +320,22 @@ class StackItem {
                 );
 
             attr = {
+                r: options.borderRadius || 0,
                 text: str,
                 rotation: (options as any).rotation,
                 padding: pick((options as any).padding, 5), // set default padding to 5 as it is in datalabels #12308
                 visibility: 'hidden' // hidden until setOffset is called
             };
-            this.label.attr(attr);
+
             if (!chart.styledMode) {
+                attr.fill = options.backgroundColor;
+                attr.stroke = options.borderColor;
+                attr['stroke-width'] = options.borderWidth;
                 this.label.css(options.style as any);
             }
+
+            this.label.attr(attr);
+
             if (!this.label.added) {
                 this.label.add(group); // add to the labels-group
             }

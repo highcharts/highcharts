@@ -132,15 +132,19 @@ var StackItem = /** @class */ (function () {
             this.label = chart.renderer
                 .label(str, null, null, options.shape, null, null, options.useHTML, false, 'stack-labels');
             attr = {
+                r: options.borderRadius || 0,
                 text: str,
                 rotation: options.rotation,
                 padding: pick(options.padding, 5),
                 visibility: 'hidden' // hidden until setOffset is called
             };
-            this.label.attr(attr);
             if (!chart.styledMode) {
+                attr.fill = options.backgroundColor;
+                attr.stroke = options.borderColor;
+                attr['stroke-width'] = options.borderWidth;
                 this.label.css(options.style);
             }
+            this.label.attr(attr);
             if (!this.label.added) {
                 this.label.add(group); // add to the labels-group
             }
