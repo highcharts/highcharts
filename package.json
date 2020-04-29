@@ -69,7 +69,7 @@
     "gulp-zip": "^5.0.1",
     "gzip-size": "^5.1.1",
     "highcharts-assembler": "github:highcharts/highcharts-assembler#v1.3.5",
-    "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.16",
+    "highcharts-declarations-generator": "github:highcharts/highcharts-declarations-generator#v1.1.17",
     "highcharts-documentation-generators": "github:highcharts/highcharts-documentation-generators#v0.5.7",
     "highcharts-utils": "github:highcharts/highcharts-utils",
     "highsoft-websearch": "github:highcharts/highsoft-websearch#v0.0.3",
