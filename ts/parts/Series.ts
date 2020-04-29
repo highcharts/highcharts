@@ -6116,9 +6116,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                         ]];
 
                     // Generate the spline as defined in the SplineSeries object
-                    } else if (
-                        (series as Highcharts.SplineSeries).getPointSpline
-                    ) {
+                    } else if ((series as Partial<Highcharts.SplineSeries>).getPointSpline) {
 
                         pathToPoint = [(
                             series as Highcharts.SplineSeries
