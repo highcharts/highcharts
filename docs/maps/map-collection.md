@@ -32,9 +32,9 @@ In the [map collection reference](https://code.highcharts.com/mapdata/), each ma
 mapData: Highcharts.maps['custom/world'],
 ```
 Alternatively, you can set the default map for all series with the [`chart.map`](https://api.highcharts.com/highmaps/chart.map) option:
-
 ```js
 map: 'custom/world'
+```
 
 3. Join your data with the map. By default Highcharts Maps is set up to map your data against the `hc-key`property of the map collection, allowing you to define your data like this:
 ```js 
