@@ -506,11 +506,12 @@ Highcharts.Chart.prototype.getDataRows = function (
 
     this.series.forEach(function (series: Highcharts.Series): void {
         var keys = series.options.keys,
+            xAxis = series.xAxis,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
             valueCount = pointArrayMap.length,
             xTaken: (false|Highcharts.Dictionary<unknown>) =
                 !series.requireSorting && {},
-            xAxisIndex = xAxes.indexOf(series.xAxis),
+            xAxisIndex = xAxes.indexOf(xAxis),
             categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                 series,
                 pointArrayMap
@@ -599,7 +600,11 @@ Highcharts.Chart.prototype.getDataRows = function (
                 j = 0;
 
                 // Pies, funnels, geo maps etc. use point name in X row
-                if (!series.xAxis || series.exportKey === 'name') {
+                if (
+                    !xAxis ||
+                    series.exportKey === 'name' ||
+                    (!hasParallelCoords && xAxis && xAxis.hasNames)
+                ) {
                     key = name as any;
                 }
 
