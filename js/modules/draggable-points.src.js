@@ -335,9 +335,7 @@ var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
                 'A', 1, 1, 0, 0, 0, centerX - 5, 0,
                 // Right wick
                 'M', centerX + 5, 0,
-                'L',
-                shapeArgs.width - radius,
-                0
+                'L', shapeArgs.width - radius, 0
             ];
         }
     }

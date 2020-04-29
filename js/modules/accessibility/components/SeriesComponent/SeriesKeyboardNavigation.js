@@ -442,13 +442,16 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         var keyboardNavigation = this, keys = this.keyCodes, chart = this.chart, inverted = chart.inverted;
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
-                [inverted ? [keys.up, keys.down] : [keys.left, keys.right], function (keyCode) {
+                [inverted ? [keys.up, keys.down] : [keys.left, keys.right],
+                    function (keyCode) {
                         return keyboardNavigation.onKbdSideways(this, keyCode);
                     }],
-                [inverted ? [keys.left, keys.right] : [keys.up, keys.down], function (keyCode) {
+                [inverted ? [keys.left, keys.right] : [keys.up, keys.down],
+                    function (keyCode) {
                         return keyboardNavigation.onKbdVertical(this, keyCode);
                     }],
-                [[keys.enter, keys.space], function () {
+                [[keys.enter, keys.space],
+                    function () {
                         if (chart.highlightedPoint) {
                             chart.highlightedPoint.firePointEvent('click');
                         }
