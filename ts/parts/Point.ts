@@ -1075,6 +1075,9 @@ class Point {
             styledMode = series.chart.styledMode,
             colorIndex: number;
 
+        // remove points nonZonedColor for later recalculation
+        delete (this as any).nonZonedColor;
+
         /**
          * The point's current color.
          *
