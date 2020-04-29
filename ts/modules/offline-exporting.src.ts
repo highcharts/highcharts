@@ -516,7 +516,7 @@ Highcharts.downloadSVGLocal = function (
                         ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
                         try {
                             Highcharts.downloadURL(
-                                nav.msSaveOrOpenBlob ?
+                                nav.msSaveOrOpenBlob as any ?
                                     canvas.msToBlob() :
                                     canvas.toDataURL(imageType),
                                 filename

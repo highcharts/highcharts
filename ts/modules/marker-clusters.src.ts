@@ -1818,7 +1818,7 @@ Scatter.prototype.getClusteredData = function (
         groupedYData = [],
         clusters = [], // Container for clusters.
         noise = [], // Container for points not belonging to any cluster.
-        groupMap = [],
+        groupMap: Array<Highcharts.GroupMapObject> = [],
         index = 0,
 
         // Prevent minimumClusterSize lower than 2.
@@ -1983,7 +1983,7 @@ Scatter.prototype.getClusteredData = function (
                     };
                 }
 
-                groupMap.push({ options: pointOptions });
+                groupMap.push({ options: pointOptions as any });
                 index++;
             }
         }

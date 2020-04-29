@@ -512,7 +512,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 yAxisDescription: axesDesc.yAxis,
                 playAsSoundButton: shouldHaveSonifyBtn ?
                     this.getSonifyButtonText(sonifyButtonId) : '',
-                viewTableButton: chart.getCSV ?
+                viewTableButton: chart.getCSV as any ?
                     this.getDataTableButtonText(dataTableButtonId) : '',
                 annotationsTitle: annotationsList ? annotationsTitleStr : '',
                 annotationsList: annotationsList
