@@ -163,15 +163,14 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                 // Make sure the label is completely hidden to avoid catching
                 // clicks (#4362)
                 if (label.alignAttr && label.placed) { // data labels
-                    if (newOpacity) {
-                        label.show(true);
-                    }
-                    else {
-                        complete = function () {
-                            label.hide(true);
-                            label.placed = false; // avoid animation from top
-                        };
-                    }
+                    label[newOpacity ? 'removeClass' : 'addClass']('highcharts-data-label-hidden');
+                    complete = function () {
+                        if (!chart.styledMode) {
+                            label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
+                        }
+                        label.visibility = newOpacity ? 'inherit' : 'hidden';
+                        label.placed = !!newOpacity;
+                    };
                     isLabelAffected = true;
                     // Animate or set the opacity
                     label.alignAttr.opacity = newOpacity;

@@ -270,21 +270,20 @@ QUnit.test(
             }]
         });
 
-        assert.strictEqual(
+        assert.ok(
             chart.series[1].points.every(
-                point => point.dataLabel.attr('translateY') < 0
+                point => point.dataLabel.attr('translateY') < 0 ||
+                point.dataLabel.attr('opacity') === 0
             ),
-            true,
             'All six labels of the second series should be hidden.'
         );
 
         chart.series[0].hide();
 
-        assert.strictEqual(
+        assert.ok(
             chart.series[1].points.every(
                 point => point.dataLabel.attr('translateY') >= 0
             ),
-            true,
             'All six labels of the second series should be visible.'
         );
 

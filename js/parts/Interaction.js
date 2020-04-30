@@ -747,7 +747,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 pointAttribsAnimation = pick(chart.options.chart.animation, stateOptions.animation);
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints) {
+                if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
                     (point.dataLabels || []).forEach(function (label) {
                         if (label) {
                             label.animate({
