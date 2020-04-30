@@ -223,24 +223,6 @@ var options = {
          */
         point: {
             /**
-             * Format to use for describing the values of data points
-             * to assistive technology - including screen readers.
-             * The point context is available as `{point}`.
-             *
-             * Additionally, the series name, annotation info, and
-             * description added in `point.accessibility.description`
-             * is added by default if relevant. To override this, use the
-             * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
-             * option.
-             *
-             * @see [point.accessibility.description](#series.line.data.accessibility.description)
-             * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
-             *
-             * @type      {string}
-             * @since 8.0.1
-             */
-            valueDescriptionFormat: '{index}. {xDescription}{separator}{value}.'
-            /**
              * Date format to use for points on datetime axes when describing
              * them to screen reader users.
              *
@@ -312,6 +294,24 @@ var options = {
              * @since 8.0.0
              * @apioption accessibility.point.descriptionFormatter
              */
+            /**
+             * Format to use for describing the values of data points
+             * to assistive technology - including screen readers.
+             * The point context is available as `{point}`.
+             *
+             * Additionally, the series name, annotation info, and
+             * description added in `point.accessibility.description`
+             * is added by default if relevant. To override this, use the
+             * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+             * option.
+             *
+             * @see [point.accessibility.description](#series.line.data.accessibility.description)
+             * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+             *
+             * @type      {string}
+             * @since 8.0.1
+             */
+            valueDescriptionFormat: '{index}. {xDescription}{separator}{value}.'
         },
         /**
          * Amount of landmarks/regions to create for screen reader users. More
