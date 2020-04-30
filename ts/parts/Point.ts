@@ -27,9 +27,7 @@ declare global {
             public isNew?: boolean;
             public isNull: boolean;
             public marker?: PointMarkerOptionsObject;
-            public nonZonedColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
+            public nonZonedColor?: ColorType;
             public options: PointOptionsObject;
             public percentage?: number;
             public series: Series;
@@ -453,6 +451,8 @@ class Point {
      * @type {string}
      */
     public name: string = void 0 as any;
+
+    public nonZonedColor?: Highcharts.ColorType;
 
     /**
      * The point's options as applied in the initial configuration, or
@@ -924,14 +924,14 @@ class Point {
         }
 
         // For resetting or reusing the point (#8100)
-        if (!(this as any).nonZonedColor) {
-            (this as any).nonZonedColor = this.color;
+        if (!this.nonZonedColor) {
+            this.nonZonedColor = this.color;
         }
 
         if (zone && zone.color && !this.options.color) {
             this.color = zone.color;
         } else {
-            this.color = (this as any).nonZonedColor;
+            this.color = this.nonZonedColor;
         }
 
         return zone;
