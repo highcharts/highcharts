@@ -4,8 +4,9 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
-var Annotation = H.Annotation;
+import MockPoint from '../MockPoint.js';
 /* eslint-disable no-invalid-this */
 var BasicAnnotation = function () {
     Annotation.apply(this, arguments);
@@ -21,7 +22,7 @@ H.extendAnnotation(BasicAnnotation, null, {
                             y: -9e7
                         };
                     }
-                    var xy = H.Annotation.MockPoint
+                    var xy = MockPoint
                         .pointToPixels(target.points[0]);
                     return {
                         x: xy.x - this.graphic.width / 2,
@@ -68,7 +69,7 @@ H.extendAnnotation(BasicAnnotation, null, {
             }],
         rectangle: [{
                 positioner: function (annotation) {
-                    var xy = H.Annotation.MockPoint
+                    var xy = MockPoint
                         .pointToPixels(annotation.points[2]);
                     return {
                         x: xy.x - 4,
@@ -93,7 +94,7 @@ H.extendAnnotation(BasicAnnotation, null, {
             }],
         circle: [{
                 positioner: function (target) {
-                    var xy = H.Annotation.MockPoint.pointToPixels(target.points[0]), r = target.options.r;
+                    var xy = MockPoint.pointToPixels(target.points[0]), r = target.options.r;
                     return {
                         x: xy.x + r * Math.cos(Math.PI / 4) -
                             this.graphic.width / 2,

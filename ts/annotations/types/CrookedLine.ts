@@ -5,7 +5,15 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -35,20 +43,11 @@ declare global {
         interface AnnotationMockPointOptionsObject {
             controlPoint?: AnnotationControlPointOptionsObject;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             crookedLine: typeof AnnotationCrookedLine;
         }
     }
 }
-
-import U from '../../parts/Utilities.js';
-const {
-    merge
-} = U;
-
-var Annotation = H.Annotation,
-    MockPoint = Annotation.MockPoint,
-    ControlPoint = Annotation.ControlPoint;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

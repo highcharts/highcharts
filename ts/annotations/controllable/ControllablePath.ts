@@ -5,7 +5,16 @@
  * */
 
 'use strict';
+
+import type Annotation from '../annotations.src';
+import controllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
+import markerMixin from './markerMixin.js';
+import U from './../../parts/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -60,15 +69,6 @@ declare global {
     }
 }
 
-import U from './../../parts/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
-
-import controllableMixin from './controllableMixin.js';
-import markerMixin from './markerMixin.js';
-
 // See TRACKER_FILL in highcharts.src.js
 var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 
@@ -94,7 +94,7 @@ var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  **/
 const ControllablePath: typeof Highcharts.AnnotationControllablePath = function (
     this: Highcharts.AnnotationControllablePath,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsShapeOptions,
     index: number
 ): void {

@@ -5,7 +5,20 @@
  * */
 
 'use strict';
+
+import type Annotation from '../annotations.src';
+import controllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
+import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+const {
+    extend,
+    format,
+    isNumber,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -74,19 +87,7 @@ declare global
     }
 }
 
-import U from './../../parts/Utilities.js';
-const {
-    extend,
-    format,
-    isNumber,
-    merge,
-    pick
-} = U;
-
 import './../../parts/SvgRenderer.js';
-import controllableMixin from './controllableMixin.js';
-import MockPoint from './../MockPoint.js';
-import Tooltip from '../../parts/Tooltip.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -108,7 +109,7 @@ import Tooltip from '../../parts/Tooltip.js';
  */
 const ControllableLabel: typeof Highcharts.AnnotationControllableLabel = function (
     this: Highcharts.AnnotationControllableLabel,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsLabelOptions,
     index: number
 ): void {
