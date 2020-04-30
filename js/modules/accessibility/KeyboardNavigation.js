@@ -79,6 +79,9 @@ KeyboardNavigation.prototype = {
         ep.addEvent(chart.renderTo, 'keydown', function (e) { return _this.onKeydown(e); });
         ep.addEvent(chart.container, 'focus', function (e) { return _this.onFocus(e); });
         ep.addEvent(doc, 'mouseup', function () { return _this.onMouseUp(); });
+        ep.addEvent(chart.renderTo, 'mousedown', function () {
+            _this.isClickingChart = true;
+        });
         ep.addEvent(chart.renderTo, 'mouseover', function () {
             _this.pointerIsOverChart = true;
         });
@@ -127,7 +130,8 @@ KeyboardNavigation.prototype = {
         var chart = this.chart;
         var focusComesFromChart = (e.relatedTarget &&
             chart.container.contains(e.relatedTarget));
-        if (!focusComesFromChart) {
+        // Init keyboard nav if tabbing into chart
+        if (!this.isClickingChart && !focusComesFromChart) {
             (_a = this.modules[0]) === null || _a === void 0 ? void 0 : _a.init(1);
         }
     },
@@ -137,6 +141,7 @@ KeyboardNavigation.prototype = {
      * @private
      */
     onMouseUp: function () {
+        delete this.isClickingChart;
         if (!this.keyboardReset && !this.pointerIsOverChart) {
             var chart = this.chart, curMod = this.modules &&
                 this.modules[this.currentModuleIx || 0];
