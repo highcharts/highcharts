@@ -2037,11 +2037,11 @@ var Axis = /** @class */ (function () {
      * @param {string} [prefix]
      * 'tick' or 'minorTick'
      *
-     * @return {Array<number>}
+     * @return {[number, number]|undefined}
      * An array of tickLength and tickWidth
      */
     Axis.prototype.tickSize = function (prefix) {
-        var options = this.options, tickLength = options[prefix + 'Length'], tickWidth = pick(options[prefix + 'Width'], 
+        var options = this.options, tickLength = options[prefix === 'tick' ? 'tickLength' : 'minorTickLength'], tickWidth = pick(options[prefix === 'tick' ? 'tickWidth' : 'minorTickWidth'], 
         // Default to 1 on linear and datetime X axes
         prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0), e, tickSize;
         if (tickWidth && tickLength) {
@@ -2403,7 +2403,7 @@ var Axis = /** @class */ (function () {
         var axis = this, chart = axis.chart, renderer = chart.renderer, options = axis.options, tickPositions = axis.tickPositions, ticks = axis.ticks, horiz = axis.horiz, side = axis.side, invertedSide = chart.inverted &&
             !axis.isZAxis ? [1, 0, 3, 2][side] : side, hasData, showAxis, titleOffset = 0, titleOffsetOption, titleMargin = 0, axisTitleOptions = options.title, labelOptions = options.labels, labelOffset = 0, // reset
         labelOffsetPadded, axisOffset = chart.axisOffset, clipOffset = chart.clipOffset, clip, directionFactor = [-1, 1, 1, -1][side], className = options.className, axisParent = axis.axisParent, // Used in color axis
-        lineHeightCorrection, tickSize;
+        lineHeightCorrection;
         // For reuse in Axis.render
         hasData = axis.hasData();
         axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
@@ -2497,7 +2497,7 @@ var Axis = /** @class */ (function () {
         }
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
-        tickSize = this.tickSize('tick');
+        var tickSize = this.tickSize('tick');
         axisOffset[side] = Math.max(axisOffset[side], axis.axisTitleMargin + titleOffset +
             directionFactor * axis.offset, labelOffsetPadded, // #3027
         tickPositions && tickPositions.length && tickSize ?
