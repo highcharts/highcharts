@@ -339,6 +339,7 @@ declare global {
             func: WrapProceedFunction
         ): void;
         let timeUnits: Dictionary<number>;
+        let uniqueSerial: (boolean|undefined);
     }
 }
 
@@ -3336,13 +3337,34 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
-        idCounter = 0;
+    const uniqueKeyHash = H.uniqueSerial ?
+        '0000000' :
+        Math.random().toString(36).substring(2, 9);
+
+    let idCounter = 0;
 
     return function (): string {
         return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
     };
 }());
+
+/**
+ * Activates a serial mode for {@link Highcharts.uniqueKey} that can be used in
+ * automated tests. This is only for testing purposes and can break
+ * functionality in webpages with multiple Highcharts renderer.
+ *
+ * @example
+ * if (
+ *   process &&
+ *   process.env.NODE_ENV === 'development'
+ * ) {
+ *   Highcharts.uniqueSerial = true;
+ * }
+ *
+ * @name Highcharts.uniqueSerial
+ * @type {boolean|undefined}
+ */
+''; // detach doclet
 
 const isFunction = H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';

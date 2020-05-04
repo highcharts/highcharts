@@ -2444,11 +2444,31 @@ var seriesType = H.seriesType = function (type, parent, options, props, pointPro
  *         A unique key.
  */
 var uniqueKey = H.uniqueKey = (function () {
-    var uniqueKeyHash = Math.random().toString(36).substring(2, 9), idCounter = 0;
+    var uniqueKeyHash = H.uniqueSerial ?
+        '0000000' :
+        Math.random().toString(36).substring(2, 9);
+    var idCounter = 0;
     return function () {
         return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
     };
 }());
+/**
+ * Activates a serial mode for {@link Highcharts.uniqueKey} that can be used in
+ * automated tests. This is only for testing purposes and can break
+ * functionality in webpages with multiple Highcharts renderer.
+ *
+ * @example
+ * if (
+ *   process &&
+ *   process.env.NODE_ENV === 'development'
+ * ) {
+ *   Highcharts.uniqueSerial = true;
+ * }
+ *
+ * @name Highcharts.uniqueSerial
+ * @type {boolean|undefined}
+ */
+''; // detach doclet
 var isFunction = H.isFunction = function (obj) {
     return typeof obj === 'function';
 };
