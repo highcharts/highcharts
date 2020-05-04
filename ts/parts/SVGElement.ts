@@ -90,12 +90,6 @@ declare global {
                 SVGElement.ElementSetterFunction<string>|
                 SVGElement.SetterFunction<number>
             );
-            public _defaultGetter(key: string): (number|string);
-            public _defaultSetter(
-                value: string,
-                key: string,
-                element: SVGDOMElement
-            ): void;
             public add(parent?: SVGElement): SVGElement;
             public addClass(className: string, replace?: boolean): SVGElement;
             public afterSetters(): void;
@@ -104,7 +98,7 @@ declare global {
                 alignByTranslate?: boolean,
                 box?: (string|BBoxObject)
             ): SVGElement;
-            public alignSetter(value: ('start'|'middle'|'end')): void;
+            public alignSetter(value: ('left'|'center'|'right')): void;
             public animate(
                 params: SVGAttributes,
                 options?: (boolean|AnimationOptionsObject),
@@ -215,6 +209,13 @@ declare global {
             public zIndexSetter(value: number, key: string): boolean;
         }
     }
+}
+
+/**
+ * @private
+ */
+interface SVGElement extends Highcharts.SVGElement {
+    // takes interfaces from internal namespace
 }
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
