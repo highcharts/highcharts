@@ -242,10 +242,11 @@ seriesType<Highcharts.ItemSeries>(
                 testRows: (Array<Highcharts.ItemRowObject>|undefined),
                 rowsOption = this.options.rows,
                 // How many rows (arcs) should be used
-                rowFraction = (diameter - innerSize) / diameter;
+                rowFraction = (diameter - innerSize) / diameter,
+                isCircle: boolean = fullAngle % (2 * Math.PI) === 0;
 
             // Increase the itemSize until we find the best fit
-            while (itemCount > (this.total as any)) {
+            while (itemCount > (this.total as any) + (rows && isCircle ? rows.length : 0)) {
 
                 finalItemCount = itemCount;
 
@@ -305,7 +306,8 @@ seriesType<Highcharts.ItemSeries>(
             // the rows and remove the last slot until the count is correct.
             // For each iteration we sort the last slot by the angle, and
             // remove those with the highest angles.
-            var overshoot = (finalItemCount as any) - (this.total as any);
+            var overshoot = (finalItemCount as any) - (this.total as any) -
+                (isCircle ? rows.length : 0);
             /**
              * @private
              * @param {Highcharts.ItemRowContainerObject} item
