@@ -10,7 +10,6 @@
  * */
 'use strict';
 import Axis from '../parts/Axis.js';
-import GridAxis from './GridAxis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
@@ -45,7 +44,6 @@ var TreeGridAxis;
      */
     function compose(AxisClass) {
         if (!applied) {
-            GridAxis.compose(AxisClass);
             wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
             wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
             wrap(AxisClass.prototype, 'init', wrapInit);

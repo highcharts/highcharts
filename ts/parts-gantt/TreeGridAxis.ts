@@ -13,7 +13,6 @@
 
 import type AxisTypes from '../parts/axis/types';
 import Axis from '../parts/Axis.js';
-import GridAxis from './GridAxis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
@@ -153,8 +152,6 @@ namespace TreeGridAxis {
     export function compose(AxisClass: typeof Axis): void {
 
         if (!applied) {
-
-            GridAxis.compose(AxisClass);
 
             wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
             wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
