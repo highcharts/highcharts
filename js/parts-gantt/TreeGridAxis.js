@@ -17,6 +17,7 @@ import TreeGridTick from './TreeGridTick.js';
 import TreeSeriesMixin from '../mixins/tree-series.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, pick = U.pick, wrap = U.wrap;
+import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 /**
  * @private
@@ -653,4 +654,5 @@ var TreeGridAxis;
 Axis.prototype.utils = {
     getNode: Tree.getNode
 };
+TreeGridAxis.compose(Axis);
 export default TreeGridAxis;

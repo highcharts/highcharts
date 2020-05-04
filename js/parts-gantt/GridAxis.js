@@ -839,4 +839,5 @@ var GridAxis = /** @class */ (function () {
         Side[Side["left"] = 3] = "left";
     })(Side = GridAxis.Side || (GridAxis.Side = {}));
 })(GridAxis || (GridAxis = {}));
+GridAxis.compose(Axis);
 export default GridAxis;

@@ -1240,4 +1240,6 @@ namespace GridAxis {
 
 }
 
+GridAxis.compose(Axis);
+
 export default GridAxis;
