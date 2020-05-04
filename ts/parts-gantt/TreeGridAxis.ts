@@ -30,6 +30,8 @@ const {
     pick,
     wrap
 } = U;
+
+import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 
 /**
@@ -966,5 +968,7 @@ namespace TreeGridAxis {
 (Axis.prototype as TreeGridAxis).utils = {
     getNode: Tree.getNode
 };
+
+TreeGridAxis.compose(Axis);
 
 export default TreeGridAxis;
