@@ -1602,7 +1602,9 @@ QUnit.test('Solidgauge two data labels auto alignment (#10635)', function (asser
 QUnit.test('Overlapping of xAxis labels in polar chart (#12894)', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
-                polar: true
+                polar: true,
+                width: 600,
+                height: 400
             },
             xAxis: {
                 tickmarkPlacement: 'on',
@@ -1641,18 +1643,18 @@ QUnit.test('Overlapping of xAxis labels in polar chart (#12894)', function (asse
     assert.strictEqual(
         secondLabel.newOpacity,
         1,
-        'The second category is visible'
+        'The second category should be visible'
     );
 
     assert.strictEqual(
         secondLabel.newOpacity,
         secondLabel.oldOpacity,
-        'The visiblility of the second category has not changed'
+        'The visiblility of the second category should not change'
     );
 
     assert.strictEqual(
         thirdLabel.newOpacity === 0,
         seventhLabel.newOpacity === 0,
-        'The third and seventh categories are both hidden'
+        'The third and seventh categories should both be hidden'
     );
 });
