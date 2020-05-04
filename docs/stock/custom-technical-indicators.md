@@ -166,3 +166,9 @@ Highcharts.seriesType(
   }
 );
 ```
+
+**Module**
+The indicator is available as a [indicators/trendline.js](http://code.highcharts.com/stock/indicators/trendline.js) main module.
+
+_For more detailed samples and documentation check the [API.](https://api.highcharts.com/highstock/series.trendline)_
+
