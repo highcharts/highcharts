@@ -1989,7 +1989,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
      * @function Highcharts.SVGRenderer#crispLine
      *
      * @param {Highcharts.SVGPathArray} points
-     *        The original points on the format `['M', 0, 0, 'L', 100, 0]`.
+     *        The original points on the format `[['M', 0, 0], ['L', 100, 0]]`.
      *
      * @param {number} width
      *        The width of the line.
