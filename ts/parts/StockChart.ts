@@ -14,6 +14,7 @@ import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import H from './Globals.js';
 import Point from './Point.js';
+import SVGRenderer from './SVGRenderer.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -76,7 +77,6 @@ declare global {
 import './Chart.js';
 import './Pointer.js';
 import './Series.js';
-import './SVGRenderer.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import './Navigator.js';
@@ -88,10 +88,7 @@ import './Scrollbar.js';
 import './RangeSelector.js';
 
 var Chart = H.Chart,
-    Renderer = H.Renderer,
     Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
-
     seriesProto = Series.prototype,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,

@@ -12,6 +12,18 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    extend,
+    fireEvent,
+    format,
+    isNumber,
+    pick,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -105,24 +117,13 @@ declare global {
  * https://jsfiddle.net/highcharts/y5A37/
  */
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    extend,
-    fireEvent,
-    format,
-    isNumber,
-    pick,
-    syncTimeout
-} = U;
+''; // detach doclets above
 
 import '../parts/Chart.js';
 import '../parts/Series.js';
 
 var labelDistance = 3,
     Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
     Chart = H.Chart;
 
 H.setOptions({

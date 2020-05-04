@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+import SVGElement from '../../parts/SVGElement.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -101,7 +102,7 @@ function removeUpdateFocusBorderHooks(el) {
  * Add focus border functionality to SVGElements. Draws a new rect on top of
  * element around its bounding box. This is used by multiple components.
  */
-extend(H.SVGElement.prototype, {
+extend(SVGElement.prototype, {
     /**
      * @private
      * @function Highcharts.SVGElement#addFocusBorder

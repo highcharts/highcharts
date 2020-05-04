@@ -319,6 +319,8 @@ declare global {
 
 import Color from '../parts/Color.js';
 const color = Color.parse;
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -339,8 +341,6 @@ const {
     uniqueKey
 } = U;
 
-import '../parts/SVGRenderer.js';
-
 var VMLRenderer,
     VMLRendererExtension,
     VMLElement: typeof Highcharts.VMLElement,
@@ -349,8 +349,6 @@ var VMLRenderer,
     doc = H.doc,
     noop = H.noop,
     svg = H.svg,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
     win = H.win;
 
 

@@ -12,6 +12,18 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
+import SVGElement from './SVGElement.js';
+import SVGRenderer from './SVGRenderer.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    defined,
+    isNumber,
+    merge,
+    objectEach,
+    seriesType,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -98,16 +110,6 @@ declare global {
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
-import U from './Utilities.js';
-const {
-    addEvent,
-    defined,
-    isNumber,
-    merge,
-    objectEach,
-    seriesType,
-    wrap
-} = U;
 
 import './Series.js';
 import './SVGRenderer.js';
@@ -116,7 +118,6 @@ import onSeriesMixin from '../mixins/on-series.js';
 var noop = H.noop,
     Renderer = H.Renderer,
     Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
     TrackerMixin = H.TrackerMixin,
     VMLRenderer = H.VMLRenderer,
     symbols = SVGRenderer.prototype.symbols;
@@ -617,7 +618,7 @@ seriesType<Highcharts.FlagsSeries>(
                     this: Highcharts.FlagsSeries,
                     proceed
                 ): Highcharts.SVGElement {
-                    return H.SVGElement.prototype.on.apply(
+                    return SVGElement.prototype.on.apply(
                         // for HTML
                         proceed.apply(this, [].slice.call(arguments, 1)),
                         // and for SVG

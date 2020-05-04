@@ -11,6 +11,18 @@
 'use strict';
 
 import H from './Globals.js';
+import SVGElement from './SVGElement.js';
+import SVGRenderer from './SVGRenderer.js';
+import U from './Utilities.js';
+const {
+    attr,
+    createElement,
+    css,
+    defined,
+    extend,
+    pick,
+    pInt
+} = U;
 
 /**
  * Internal types
@@ -52,24 +64,9 @@ declare global {
     }
 }
 
-import U from './Utilities.js';
-const {
-    attr,
-    createElement,
-    css,
-    defined,
-    extend,
-    pick,
-    pInt
-} = U;
-
-import './SVGRenderer.js';
-
 var isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
     win = H.win;
 
 /* eslint-disable valid-jsdoc */

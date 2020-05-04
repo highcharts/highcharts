@@ -12,6 +12,22 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    fireEvent,
+    getNestedProperty,
+    isArray,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    seriesType,
+    splat
+} = U;
 
 declare global {
     namespace Highcharts {
@@ -142,22 +158,6 @@ import '../parts/Options.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
-
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    fireEvent,
-    getNestedProperty,
-    isArray,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    seriesType,
-    splat
-} = U;
 
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
@@ -502,7 +502,7 @@ seriesType<Highcharts.MapSeries>(
 
                     // Legacy one-dimensional array
                     } else if (point.path[0] as any === 'M') {
-                        point.path = H.SVGRenderer.prototype.pathToSegments(
+                        point.path = SVGRenderer.prototype.pathToSegments(
                             point.path as any
                         );
                     }

@@ -16,6 +16,21 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import SVGElement from '../parts/SVGElement.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    defined,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -144,21 +159,6 @@ declare global {
  * @name Highcharts.TimelineDataLabelsFormatterContextObject#series
  * @type {Highcharts.Series}
  */
-
-import Point from '../parts/Point.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    defined,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    seriesType
-} = U;
 
 var TrackerMixin = H.TrackerMixin,
     Series = H.Series,
@@ -417,7 +417,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                             if (this.targetPosition) {
                                 this.targetPosition = params;
                             }
-                            return H.SVGElement.prototype.animate.apply(
+                            return SVGElement.prototype.animate.apply(
                                 this,
                                 arguments
                             );

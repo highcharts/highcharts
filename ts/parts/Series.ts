@@ -712,6 +712,7 @@ declare global {
 
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from './Point.js';
+import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -741,12 +742,10 @@ const {
 } = U;
 
 import './Options.js';
-import './SVGRenderer.js';
 
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     seriesTypes = H.seriesTypes,
-    SVGElement = H.SVGElement,
     win = H.win;
 
 /**

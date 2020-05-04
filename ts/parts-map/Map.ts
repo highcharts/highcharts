@@ -12,6 +12,13 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -27,21 +34,12 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
-
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import '../parts/SVGRenderer.js';
 
 var Chart = H.Chart,
     defaultOptions = H.defaultOptions,
     Renderer = H.Renderer,
-    SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;
 
 // Add language

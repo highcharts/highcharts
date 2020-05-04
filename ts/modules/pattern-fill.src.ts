@@ -14,6 +14,18 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    erase,
+    merge,
+    pick,
+    removeEvent,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -176,18 +188,6 @@ declare global {
  */
 
 ''; // detach doclets above
-
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    erase,
-    merge,
-    pick,
-    removeEvent,
-    wrap
-} = U;
 
 // Add the predefined patterns
 H.patterns = ((): Array<Highcharts.PatternOptionsObject> => {
@@ -372,7 +372,7 @@ Point.prototype.calculatePatternDimensions = function (
  *
  * @requires modules/pattern-fill
  */
-H.SVGRenderer.prototype.addPattern = function (
+SVGRenderer.prototype.addPattern = function (
     options: Highcharts.PatternOptionsObject,
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): (Highcharts.SVGElement|undefined) {
@@ -585,7 +585,7 @@ addEvent(Point, 'afterInit', function (): void {
 
 
 // Add functionality to SVG renderer to handle patterns as complex colors
-addEvent(H.SVGRenderer, 'complexColor', function (
+addEvent(SVGRenderer, 'complexColor', function (
     args: {
         args: [
             Highcharts.PatternObject,

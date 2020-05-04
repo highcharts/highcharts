@@ -9,14 +9,15 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
 import '../parts/Options.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
 var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * @private
@@ -300,7 +301,7 @@ seriesType('map', 'scatter',
                     // Legacy one-dimensional array
                 }
                 else if (point.path[0] === 'M') {
-                    point.path = H.SVGRenderer.prototype.pathToSegments(point.path);
+                    point.path = SVGRenderer.prototype.pathToSegments(point.path);
                 }
                 var path = point.path || [], pointMaxX = -MAX_VALUE, pointMinX = MAX_VALUE, pointMaxY = -MAX_VALUE, pointMinY = MAX_VALUE, properties = point.properties;
                 // The first time a map point is used, analyze its box

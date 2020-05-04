@@ -13,7 +13,20 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    animObject,
+    defined,
+    extend,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -104,29 +117,13 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    animObject,
-    defined,
-    extend,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-import '../parts/Color.js';
-import '../parts/SVGRenderer.js';
-
 var cos = Math.cos,
     PI = Math.PI,
     sin = Math.sin;
 
 var charts = H.charts,
-    color = H.color,
     deg2rad = H.deg2rad,
     perspective = H.perspective,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
     // internal:
     dFactor: number,
     element3dMethods: Highcharts.Element3dMethodsObject,
@@ -646,7 +643,7 @@ SVGRenderer.prototype.cuboid = function (
 };
 
 // Generates a cuboid path and zIndexes
-H.SVGRenderer.prototype.cuboidPath = function (
+SVGRenderer.prototype.cuboidPath = function (
     this: Highcharts.SVGRenderer,
     shapeArgs: Highcharts.SVGAttributes
 ): Highcharts.CuboidPathsObject {
@@ -892,7 +889,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
 };
 
 // SECTORS //
-H.SVGRenderer.prototype.arc3d = function (
+SVGRenderer.prototype.arc3d = function (
     attribs: Highcharts.SVGAttributes
 ): Highcharts.SVGElement {
 
