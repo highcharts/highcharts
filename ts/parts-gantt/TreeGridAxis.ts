@@ -13,6 +13,7 @@
 
 import type AxisTypes from '../parts/axis/types';
 import Axis from '../parts/Axis.js';
+import GridAxis from './GridAxis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
@@ -29,6 +30,7 @@ const {
     pick,
     wrap
 } = U;
+import '../modules/broken-axis.src.js';
 
 /**
  * Internal types
@@ -45,7 +47,17 @@ declare global {
     }
 }
 
-import '../modules/broken-axis.src.js';
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        treeGrid?: TreeGridAxis['treeGrid'];
+    }
+    interface AxisTypeRegistry {
+        TreeGridAxis: TreeGridAxis;
+    }
+}
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -121,6 +133,14 @@ namespace TreeGridAxis {
 
     /* *
      *
+     *  Variables
+     *
+     * */
+
+    let applied: boolean = false;
+
+    /* *
+     *
      *  Functions
      *
      * */
@@ -130,12 +150,19 @@ namespace TreeGridAxis {
      */
     export function compose(AxisClass: typeof Axis): void {
 
-        wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
-        wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
-        wrap(AxisClass.prototype, 'init', wrapInit);
-        wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
+        if (!applied) {
 
-        TreeGridTick.compose(Tick);
+            GridAxis.compose(AxisClass);
+
+            wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
+            wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
+            wrap(AxisClass.prototype, 'init', wrapInit);
+            wrap(AxisClass.prototype, 'setTickInterval', wrapSetTickInterval);
+
+            TreeGridTick.compose(Tick);
+
+            applied = true;
+        }
     }
 
     /**
@@ -379,7 +406,6 @@ namespace TreeGridAxis {
             function (axis: TreeGridAxis): void {
                 var options = axis.options || {},
                     labelOptions = options.labels,
-                    removeFoundExtremesEvent: Function,
                     uniqueNames = options.uniqueNames,
                     numberOfSeries = 0,
                     isDirty: (boolean|undefined),
@@ -459,25 +485,11 @@ namespace TreeGridAxis {
                             to: axis.treeGrid.tree && axis.treeGrid.tree.height
                         });
 
-                    // Collapse all the nodes belonging to a point where
-                    // collapsed equals true. Only do this on init.
-                    // Can be called from beforeRender, if getBreakFromNode
-                    // removes its dependency on axis.max.
+                    // Setting initial collapsed nodes
                     if (e.type === 'beforeRender') {
-                        removeFoundExtremesEvent =
-                            addEvent(axis, 'foundExtremes', function (): void {
-                                treeGrid.collapsedNodes.forEach(function (
-                                    node: GridNode
-                                ): void {
-                                    var breaks = axis.treeGrid.collapse(node);
-
-                                    if (axis.brokenAxis) {
-                                        axis.brokenAxis.setBreaks(breaks, false);
-                                    }
-                                });
-                                removeFoundExtremesEvent();
-                            });
+                        axis.treeGrid.collapsedNodes = treeGrid.collapsedNodes;
                     }
+
                 }
             }
         );
@@ -596,6 +608,38 @@ namespace TreeGridAxis {
             // NOTE Preferably these events should be set on the axis.
             addEvent(chart, 'beforeRender', onBeforeRender);
             addEvent(chart, 'beforeRedraw', onBeforeRender);
+
+            // Add new collapsed nodes on addseries
+            addEvent(chart, 'addSeries', function (e: Highcharts.ChartAddSeriesEventObject): void {
+                if (e.options.data) {
+                    const treeGrid = getTreeGridFromData((e.options.data as any), userOptions.uniqueNames || false, 1);
+
+                    axis.treeGrid.collapsedNodes = (axis.treeGrid.collapsedNodes || []).concat(treeGrid.collapsedNodes);
+                }
+            });
+
+            // Collapse all nodes in axis.treegrid.collapsednodes
+            // where collapsed equals true.
+            addEvent(axis, 'foundExtremes', function (): void {
+                if (axis.treeGrid.collapsedNodes) {
+                    axis.treeGrid.collapsedNodes.forEach(function (
+                        node: GridNode
+                    ): void {
+                        const breaks = axis.treeGrid.collapse(node);
+
+                        if (axis.brokenAxis) {
+                            axis.brokenAxis.setBreaks(breaks, false);
+
+                            // remove the node from the axis collapsedNodes
+                            if (axis.treeGrid.collapsedNodes) {
+                                axis.treeGrid.collapsedNodes = axis.treeGrid.collapsedNodes.filter((n): boolean =>
+                                    node.collapseStart !== n.collapseStart ||
+                                    node.collapseEnd !== n.collapseEnd);
+                            }
+                        }
+                    });
+                }
+            });
 
             userOptions = merge({
                 // Default options
@@ -766,6 +810,7 @@ namespace TreeGridAxis {
         public mapOfPosToGridNode?: Record<string, GridNode>;
         public mapOptionsToLevel?: Record<string, LabelsOptions>;
         public tree?: Highcharts.TreeNode;
+        public collapsedNodes?: GridNode[];
 
         /* *
          *

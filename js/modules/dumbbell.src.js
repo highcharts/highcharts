@@ -48,6 +48,7 @@ seriesType('dumbbell', 'arearange', {
     /** @ignore-option */
     stickyTracking: false,
     groupPadding: 0.2,
+    crisp: false,
     pointPadding: 0.1,
     /**
      * Color of the start markers in a dumbbell graph.

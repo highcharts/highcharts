@@ -273,15 +273,35 @@ var TestController = /** @class */ (function () {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    TestController.prototype.mouseEnter = function (chartX, chartY, extra, debug) {
-        if (chartX === void 0) { chartX = this.positionX; }
-        if (chartY === void 0) { chartY = this.positionY; }
+    TestController.prototype.mouseEnter = function (newPosition, oldPosition, extra, debug) {
         if (extra === void 0) { extra = undefined; }
         if (debug === void 0) { debug = false; }
-        this.triggerEvent('mouseenter', chartX, chartY, extra, debug);
+        var oldStack = this.elementsFromPoint(oldPosition[0], oldPosition[1]);
+        var newStack = this.elementsFromPoint(newPosition[0], newPosition[1]);
+        var newElement = newStack[0];
+        if (debug) {
+            this.setDebugMark(newPosition[0], newPosition[1], TestController.DebugMarkTypes.normal);
+        }
+        var element;
+        while (element = newStack.pop()) {
+            if (oldStack.indexOf(element) !== -1) {
+                continue;
+            }
+            extra.currentTarget = element;
+            extra.target = newElement;
+            element.dispatchEvent(this.createEvent('mouseenter', newPosition[0], newPosition[1], extra));
+        }
+        // Make sure to fire always for the top SVG element
+        if (newElement instanceof SVGElement &&
+            oldStack.indexOf(newElement) !== -1) {
+            extra.currentTarget = newElement;
+            extra.target = newElement;
+            newElement.dispatchEvent(this.createEvent('mouseenter', newPosition[0], newPosition[1], extra));
+        }
     };
     /**
-     * Triggers mouse enter event on all necessary elements.
+     * Triggers mouse enter event on all elements, that are missing on the
+     * provided new position.
      *
      * @param chartX
      * X relative to the chart.
@@ -299,12 +319,32 @@ var TestController = /** @class */ (function () {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    TestController.prototype.mouseLeave = function (chartX, chartY, extra, debug) {
-        if (chartX === void 0) { chartX = this.positionX; }
-        if (chartY === void 0) { chartY = this.positionY; }
+    TestController.prototype.mouseLeave = function (newPosition, oldPosition, extra, debug) {
         if (extra === void 0) { extra = undefined; }
         if (debug === void 0) { debug = false; }
-        this.triggerEvent('mouseleave', chartX, chartY, extra, debug);
+        var oldStack = this.elementsFromPoint(oldPosition[0], oldPosition[1]);
+        var oldElement = oldStack[0];
+        var newStack = this.elementsFromPoint(newPosition[0], newPosition[1]);
+        var newElement = newStack[0];
+        if (debug) {
+            this.setDebugMark(newPosition[0], newPosition[1], TestController.DebugMarkTypes.normal);
+        }
+        var element;
+        while (element = oldStack.shift()) {
+            if (newStack.indexOf(element) !== -1) {
+                continue;
+            }
+            extra.currentTarget = element;
+            extra.target = newElement;
+            element.dispatchEvent(this.createEvent('mouseleave', oldPosition[0], oldPosition[1], extra));
+        }
+        // Make sure to fire always for the top SVG element
+        if (oldElement instanceof SVGElement &&
+            newStack.indexOf(oldElement) !== -1) {
+            extra.currentTarget = oldElement;
+            extra.target = newElement;
+            oldElement.dispatchEvent(this.createEvent('mouseleave', oldPosition[0], oldPosition[1], extra));
+        }
     };
     /**
      * Triggers an event.
@@ -433,49 +473,44 @@ var TestController = /** @class */ (function () {
     TestController.prototype.moveTo = function (chartX, chartY, extra, debug) {
         if (extra === void 0) { extra = undefined; }
         if (debug === void 0) { debug = false; }
-        var fromPosition = this.getPosition();
-        var from = [fromPosition.x, fromPosition.y];
-        var to = [chartX, chartY];
-        var points = TestController.getPointsBetween(from, to);
-        var currentTarget = fromPosition.relatedTarget, point, target, x1, y1;
+        var points = TestController.getPointsBetween([this.positionX, this.positionY], [chartX, chartY]);
+        var point, oldPoint, oldTarget, target;
         var clipPaths = this.setUpMSWorkaround();
         for (var i = 0, ie = points.length; i < ie; ++i) {
+            oldPoint = [this.positionX, this.positionY];
+            oldTarget = this.relatedTarget;
             point = points[i];
-            x1 = point[0];
-            y1 = point[1];
-            target = this.elementFromPoint(x1, y1, false);
+            this.setPosition(point[0], point[1], false);
+            target = this.relatedTarget;
             if (!target) {
                 continue;
             }
-            if (target !== currentTarget) {
+            if (oldTarget &&
+                target !== oldTarget) {
                 // First trigger a mouseout on the old target.
-                this.mouseOut(x1, y1, Highcharts.merge({
-                    currentTarget: currentTarget,
+                this.mouseOut(oldPoint[0], oldPoint[1], Highcharts.merge({
+                    currentTarget: oldTarget,
                     relatedTarget: target,
                     target: target
                 }, extra));
-                this.mouseLeave(x1, y1, Highcharts.merge({
+                this.mouseLeave(point, oldPoint, Highcharts.merge({
+                    currentTarget: oldTarget,
                     relatedTarget: target,
                     target: target
                 }, extra));
-            }
-            this.mouseMove(x1, y1, extra, debug);
-            if (target !== currentTarget) {
                 // Then trigger a mouseover on the new target.
-                this.mouseOver(x1, y1, Highcharts.merge({
+                this.mouseOver(point[0], point[1], Highcharts.merge({
                     relatedTarget: target,
                     target: target
                 }, extra));
-                this.mouseEnter(x1, y1, Highcharts.merge({
+                this.mouseEnter(point, oldPoint, Highcharts.merge({
                     relatedTarget: target,
                     target: target
                 }, extra));
-                currentTarget = target;
             }
+            this.mouseMove(point[0], point[1], extra, debug);
         }
         this.tearDownMSWorkaround(clipPaths);
-        // Update controller positions and relatedTarget.
-        this.setPosition(chartX, chartY);
     };
     /**
      * Simulates a mouse pan action between two points.
@@ -608,13 +643,16 @@ var TestController = /** @class */ (function () {
      *
      * @param chartY
      * New y position on the chart.
+     *
+     * @param useMSWorkaround
+     * Whether to do additional operations to work around IE problems.
      */
-    TestController.prototype.setPosition = function (chartX, chartY) {
+    TestController.prototype.setPosition = function (chartX, chartY, useMSWorkaround) {
         if (chartX === void 0) { chartX = this.positionX; }
         if (chartY === void 0) { chartY = this.positionY; }
         this.positionX = chartX;
         this.positionY = chartY;
-        this.relatedTarget = this.elementFromPoint(chartX, chartY);
+        this.relatedTarget = this.elementFromPoint(chartX, chartY, useMSWorkaround);
     };
     /**
      * Edge and IE are unable to get elementFromPoint when the group has a
@@ -891,8 +929,6 @@ var TestController = /** @class */ (function () {
      * might catch events and mess up the test result.
      */
     TestController.prototype.triggerEvent = function (type, chartX, chartY, extra, debug) {
-        var _a;
-        var _this = this;
         if (chartX === void 0) { chartX = this.positionX; }
         if (chartY === void 0) { chartY = this.positionY; }
         if (extra === void 0) { extra = {}; }
@@ -918,39 +954,7 @@ var TestController = /** @class */ (function () {
         if (typeof extra.target === 'undefined') {
             extra.target = element;
         }
-        var evt = this.createEvent(type, chartX, chartY, extra);
-        switch (type) {
-            default:
-                element.dispatchEvent(evt);
-                break;
-            case 'mouseleave':
-            case 'mouseenter':
-                var elements = this.elementsFromPoint(chartX, chartY);
-                var mouseEnterStack_1 = this.mouseEnterStack;
-                if (type === 'mouseleave') {
-                    this.mouseEnterStack = elements.filter(function (element) {
-                        if (mouseEnterStack_1.indexOf(element)) {
-                            return true;
-                        }
-                        extra.currentTarget = element;
-                        evt = _this.createEvent(type, chartX, chartY, extra);
-                        element.dispatchEvent(evt);
-                        return false;
-                    });
-                }
-                else {
-                    (_a = this.mouseEnterStack).unshift.apply(_a, elements.filter(function (element) {
-                        if (mouseEnterStack_1.indexOf(element)) {
-                            return false;
-                        }
-                        extra.currentTarget = element;
-                        evt = _this.createEvent(type, chartX, chartY, extra);
-                        element.dispatchEvent(evt);
-                        return true;
-                    }));
-                }
-                break;
-        }
+        element.dispatchEvent(this.createEvent(type, chartX, chartY, extra));
     };
     return TestController;
 }());

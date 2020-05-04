@@ -53,6 +53,18 @@ declare global {
     }
 }
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        grid?: GridAxis['grid'];
+    }
+    interface AxisTypeRegistry {
+        GridAxis: GridAxis;
+    }
+}
+
 var argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },

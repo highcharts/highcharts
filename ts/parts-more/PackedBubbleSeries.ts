@@ -262,12 +262,12 @@ import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
 
+
 var Series = H.Series,
     Chart = H.Chart,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
     dragNodesMixin = H.dragNodesMixin;
-
 
 (H.networkgraphIntegrations as any).packedbubble = {
     repulsiveForceFunction: function (
@@ -557,6 +557,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
         maxSize: '50%',
         sizeBy: 'area',
         zoneAxis: 'y',
+        crisp: false,
         tooltip: {
             pointFormat: 'Value: {point.value}'
         },
@@ -687,7 +688,10 @@ seriesType<Highcharts.PackedBubbleSeries>(
              * @apioption plotOptions.packedbubble.dataLabels.textPath
              */
 
-            padding: 0
+            padding: 0,
+            style: {
+                transition: 'opacity 2000ms'
+            }
 
         },
         /**
@@ -891,7 +895,6 @@ seriesType<Highcharts.PackedBubbleSeries>(
         init: function (
             this: Highcharts.PackedBubbleSeries
         ): Highcharts.PackedBubbleSeries {
-
             Series.prototype.init.apply(this, arguments as any);
 
             // When one series is modified, the others need to be recomputed

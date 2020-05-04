@@ -644,19 +644,22 @@ seriesType<Highcharts.OrganizationSeries>(
                 width -= padjust;
 
                 // Set the size of the surrounding div emulating `g`
-                css(dataLabel.text.element.parentNode, {
-                    width: width + 'px',
-                    height: height + 'px'
-                });
+                const text = dataLabel.text;
+                if (text) {
+                    css(text.element.parentNode as SVGElement, {
+                        width: width + 'px',
+                        height: height + 'px'
+                    });
 
-                // Set properties for the span emulating `text`
-                css(dataLabel.text.element, {
-                    left: 0,
-                    top: 0,
-                    width: '100%',
-                    height: '100%',
-                    overflow: 'hidden'
-                });
+                    // Set properties for the span emulating `text`
+                    css(text.element, {
+                        left: 0,
+                        top: 0,
+                        width: '100%',
+                        height: '100%',
+                        overflow: 'hidden'
+                    });
+                }
 
                 // The getBBox function is used in `alignDataLabel` to align
                 // inside the box

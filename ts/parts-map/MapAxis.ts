@@ -18,6 +18,18 @@ const {
 } = U;
 
 /**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        mapAxis?: MapAxis['mapAxis'];
+    }
+    interface AxisTypeRegistry {
+        MapAxis: MapAxis;
+    }
+}
+
+/**
  * Map support for axes.
  * @private
  * @class

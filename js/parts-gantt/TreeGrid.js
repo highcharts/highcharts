@@ -11,7 +11,5 @@
 'use strict';
 import Axis from '../parts/Axis.js';
 import TreeGridAxis from './TreeGridAxis.js';
-import './GridAxis.js';
-import '../modules/broken-axis.src.js';
 /* eslint-disable valid-jsdoc */
 TreeGridAxis.compose(Axis);

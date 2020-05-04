@@ -72,9 +72,14 @@ declare global {
             options: SeriesOptions;
             pointArrayMap?: Array<string>;
         }
+        interface ExportDataOptions {
+            categoryHeader?: string;
+            categoryDatetimeHeader?: string;
+        }
         interface LangOptions {
             downloadCSV?: string;
             downloadXLS?: string;
+            exportData?: ExportDataOptions;
             viewData?: string;
         }
         interface Series {
@@ -344,6 +349,24 @@ Highcharts.setOptions({
         downloadXLS: 'Download XLS',
 
         /**
+         * The text for exported table.
+         *
+         * @since    next
+         * @requires modules/export-data
+         */
+        exportData: {
+            /**
+             * The category column title.
+             */
+            categoryHeader: 'Category',
+
+            /**
+             * The category column title when axis type set to "datetime".
+             */
+            categoryDatetimeHeader: 'DateTime'
+        },
+
+        /**
          * The text for the menu item.
          *
          * @since    6.0.0
@@ -429,6 +452,10 @@ Highcharts.Chart.prototype.getDataRows = function (
         i: number,
         x,
         xTitle: string,
+        langOptions: Highcharts.LangOptions = this.options.lang as any,
+        exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
+        categoryHeader = exportDataOptions.categoryHeader as any,
+        categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
         columnHeaderFormatter = function (
             item: (Highcharts.Axis|Highcharts.Series),
@@ -444,12 +471,12 @@ Highcharts.Chart.prototype.getDataRows = function (
             }
 
             if (!item) {
-                return 'Category';
+                return categoryHeader;
             }
 
             if (item instanceof Highcharts.Axis) {
                 return (item.options.title && item.options.title.text) ||
-                    (item.dateTime ? 'DateTime' : 'Category');
+                    (item.dateTime ? categoryDatetimeHeader : categoryHeader);
             }
 
             if (multiLevelHeaders) {
@@ -505,11 +532,12 @@ Highcharts.Chart.prototype.getDataRows = function (
 
     this.series.forEach(function (series: Highcharts.Series): void {
         var keys = series.options.keys,
+            xAxis = series.xAxis,
             pointArrayMap = keys || series.pointArrayMap || ['y'],
             valueCount = pointArrayMap.length,
             xTaken: (false|Highcharts.Dictionary<unknown>) =
                 !series.requireSorting && {},
-            xAxisIndex = xAxes.indexOf(series.xAxis),
+            xAxisIndex = xAxes.indexOf(xAxis),
             categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                 series,
                 pointArrayMap
@@ -598,7 +626,11 @@ Highcharts.Chart.prototype.getDataRows = function (
                 j = 0;
 
                 // Pies, funnels, geo maps etc. use point name in X row
-                if (!series.xAxis || series.exportKey === 'name') {
+                if (
+                    !xAxis ||
+                    series.exportKey === 'name' ||
+                    (!hasParallelCoords && xAxis && xAxis.hasNames)
+                ) {
                     key = name as any;
                 }
 

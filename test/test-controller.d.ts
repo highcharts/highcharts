@@ -154,9 +154,10 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseEnter(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    mouseEnter(newPosition: TestControllerPoint, oldPosition: TestControllerPoint, extra?: any, debug?: boolean): void;
     /**
-     * Triggers mouse enter event on all necessary elements.
+     * Triggers mouse enter event on all elements, that are missing on the
+     * provided new position.
      *
      * @param chartX
      * X relative to the chart.
@@ -174,7 +175,7 @@ declare class TestController {
      * production, as it slows down the test and also leaves an element that
      * might catch events and mess up the test result.
      */
-    mouseLeave(chartX?: number, chartY?: number, extra?: any, debug?: boolean): void;
+    mouseLeave(newPosition: TestControllerPoint, oldPosition: TestControllerPoint, extra?: any, debug?: boolean): void;
     /**
      * Triggers an event.
      *
@@ -333,8 +334,11 @@ declare class TestController {
      *
      * @param chartY
      * New y position on the chart.
+     *
+     * @param useMSWorkaround
+     * Whether to do additional operations to work around IE problems.
      */
-    setPosition(chartX?: number, chartY?: number): void;
+    setPosition(chartX?: number, chartY?: number, useMSWorkaround?: boolean): void;
     /**
      * Edge and IE are unable to get elementFromPoint when the group has a
      * clip path. It reports the first underlying element with no clip path.

@@ -195,10 +195,13 @@ seriesType('vbp', 'sma',
     },
     // Initial animation
     animate: function (init) {
-        var series = this, attr = {};
-        if (!init) {
-            attr.translateX = series.yAxis.pos;
-            series.group.animate(attr, extend(animObject(series.options.animation), {
+        var series = this, inverted = series.chart.inverted, group = series.group, attr = {}, translate, position;
+        if (!init && group) {
+            translate = inverted ? 'translateY' : 'translateX';
+            position = inverted ? series.yAxis.top : series.xAxis.left;
+            group['forceAnimate:' + translate] = true;
+            attr[translate] = position;
+            group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
                     series.group.attr({
                         scaleX: Math.max(0.001, fx.pos)

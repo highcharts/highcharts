@@ -3609,6 +3609,48 @@ class Axis implements AxisComposition, AxisLike {
             allowOverlap: false,
 
             /**
+             * The background color or gradient for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since     next
+             * @apioption yAxis.stackLabels.backgroundColor
+             */
+
+            /**
+             * The border color for the stack label. Defaults to `undefined`.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since     next
+             * @apioption yAxis.stackLabels.borderColor
+             */
+
+            /**
+             * The border radius in pixels for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {number}
+             * @default   0
+             * @since     next
+             * @apioption yAxis.stackLabels.borderRadius
+             */
+
+            /**
+             * The border width in pixels for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {number}
+             * @default   0
+             * @since     next
+             * @apioption yAxis.stackLabels.borderWidth
+             */
+
+            /**
              * Enable or disable the stack total labels.
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-enabled/
@@ -5471,19 +5513,16 @@ class Axis implements AxisComposition, AxisLike {
         if (!axis.dateTime && !axis.logarithmic && !tickIntervalOption) {
             axis.tickInterval = normalizeTickInterval(
                 axis.tickInterval,
-                null as any,
+                void 0,
                 getMagnitude(axis.tickInterval),
-                // If the tick interval is between 0.5 and 5 and the axis max is
-                // in the order of thousands, chances are we are dealing with
-                // years. Don't allow decimals. #3363.
                 pick(
                     options.allowDecimals,
-                    !(
-                        axis.tickInterval > 0.5 &&
-                        axis.tickInterval < 5 &&
-                        (axis.max as any) > 1000 &&
-                        (axis.max as any) < 9999
-                    )
+                    // If the tick interval is greather than 0.5, avoid
+                    // decimals, as linear axes are often used to render
+                    // discrete values. #3363. If a tick amount is set, allow
+                    // decimals by default, as it increases the chances for a
+                    // good fit.
+                    axis.tickInterval < 0.5 || this.tickAmount !== void 0
                 ),
                 !!this.tickAmount
             );

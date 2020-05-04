@@ -215,6 +215,9 @@ seriesType('networkgraph', 'line',
         },
         textPath: {
             enabled: false
+        },
+        style: {
+            transition: 'opacity 2000ms'
         }
     },
     /**
@@ -600,28 +603,28 @@ seriesType('networkgraph', 'line',
      * @private
      */
     render: function () {
-        var points = this.points, hoverPoint = this.chart.hoverPoint, dataLabels = [];
+        var series = this, points = series.points, hoverPoint = series.chart.hoverPoint, dataLabels = [];
         // Render markers:
-        this.points = this.nodes;
+        series.points = series.nodes;
         seriesTypes.line.prototype.render.call(this);
-        this.points = points;
+        series.points = points;
         points.forEach(function (point) {
             if (point.fromNode && point.toNode) {
                 point.renderLink();
                 point.redrawLink();
             }
         });
-        if (hoverPoint && hoverPoint.series === this) {
-            this.redrawHalo(hoverPoint);
+        if (hoverPoint && hoverPoint.series === series) {
+            series.redrawHalo(hoverPoint);
         }
-        if (this.chart.hasRendered &&
-            !this.options.dataLabels.allowOverlap) {
-            this.nodes.concat(this.points).forEach(function (node) {
+        if (series.chart.hasRendered &&
+            !series.options.dataLabels.allowOverlap) {
+            series.nodes.concat(series.points).forEach(function (node) {
                 if (node.dataLabel) {
                     dataLabels.push(node.dataLabel);
                 }
             });
-            this.chart.hideOverlappingLabels(dataLabels);
+            series.chart.hideOverlappingLabels(dataLabels);
         }
     },
     // Networkgraph has two separate collecions of nodes and lines, render
