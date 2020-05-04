@@ -6320,7 +6320,7 @@ class Axis implements AxisComposition, AxisLike {
      * @param {string} [prefix]
      * 'tick' or 'minorTick'
      *
-     * @return {[number,number]|undefined}
+     * @return {Array<number,number>|undefined}
      * An array of tickLength and tickWidth
      */
     public tickSize(prefix?: string): [number, number]|undefined {
