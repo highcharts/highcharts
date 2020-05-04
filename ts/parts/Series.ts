@@ -12,6 +12,37 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import './Options.js';
+import Point from './Point.js';
+import SVGElement from './SVGElement.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    animObject,
+    arrayMax,
+    arrayMin,
+    clamp,
+    correctFloat,
+    defined,
+    erase,
+    error,
+    extend,
+    find,
+    fireEvent,
+    getNestedProperty,
+    isArray,
+    isFunction,
+    isNumber,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    removeEvent,
+    seriesType,
+    splat,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -342,6 +373,7 @@ declare global {
             colors?: Array<ColorType>;
             connectEnds?: boolean;
             connectNulls?: boolean;
+            crisp?: boolean|number;
             cropThreshold?: number;
             cursor?: (string|CursorValue);
             dashStyle?: DashStyleValue;
@@ -462,6 +494,9 @@ declare global {
             dashStyle?: DashStyleValue;
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             value?: number;
+        }
+        interface SVGElement {
+            survive?: boolean;
         }
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
         type SeriesFindNearestPointByValue = ('x'|'xy');
@@ -709,39 +744,6 @@ declare global {
  */
 
 ''; // detach doclets above
-
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from './Point.js';
-import SVGElement from './SVGElement.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    animObject,
-    arrayMax,
-    arrayMin,
-    clamp,
-    correctFloat,
-    defined,
-    erase,
-    error,
-    extend,
-    find,
-    fireEvent,
-    getNestedProperty,
-    isArray,
-    isFunction,
-    isNumber,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    removeEvent,
-    seriesType,
-    splat,
-    syncTimeout
-} = U;
-
-import './Options.js';
 
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
@@ -1030,6 +1032,24 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @private
          */
         allowPointSelect: false,
+
+        /**
+         * When true, each point or column edge is rounded to its nearest pixel
+         * in order to render sharp on screen. In some cases, when there are a
+         * lot of densely packed columns, this leads to visible difference
+         * in column widths or distance between columns. In these cases,
+         * setting `crisp` to `false` may look better, even though each column
+         * is rendered blurry.
+         *
+         * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
+         *         Crisp is false
+         *
+         * @since   5.0.10
+         * @product highcharts highstock gantt
+         *
+         * @private
+         */
+        crisp: true,
 
         /**
          * If true, a checkbox is displayed next to the legend item to allow
@@ -2789,7 +2809,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
              *         Vertical and positioned
              */
             y: 0
-
         } as Highcharts.DataLabelsOptions,
 
         /**
@@ -5770,7 +5789,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
             point: Highcharts.Point,
             state?: string
         ): Highcharts.SVGAttributes {
-            var seriesMarkerOptions = this.options.marker,
+            var seriesOptions = this.options,
+                seriesMarkerOptions = seriesOptions.marker,
                 seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
@@ -5805,10 +5825,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
             if (point.hasImage) {
                 radius = 0; // and subsequently width and height is not set
             }
-
             attribs = {
                 // Math.floor for #1843:
-                x: Math.floor(point.plotX as any) - radius,
+                x: seriesOptions.crisp ?
+                    Math.floor(point.plotX as any) - radius :
+                    (point.plotX as any) - radius,
                 y: (point.plotY as any) - radius
             };
 
@@ -5946,7 +5967,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             var series = this,
                 chart = series.chart,
                 issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
-                destroy,
+                destroy: ('hide'|'destroy'),
                 i,
                 data = series.data || [],
                 point,

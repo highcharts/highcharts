@@ -469,7 +469,7 @@ declare global {
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
-            public tickSize(prefix?: string): Array<number>;
+            public tickSize(prefix?: string): [number, number]|undefined;
             public toPixels(value: number, paneCoordinates?: boolean): number;
             public toValue(pixel: number, paneCoordinates?: boolean): number;
             public translate(
@@ -6321,19 +6321,21 @@ class Axis implements AxisComposition, AxisLike {
      * @param {string} [prefix]
      * 'tick' or 'minorTick'
      *
-     * @return {Array<number>}
+     * @return {Array<number,number>|undefined}
      * An array of tickLength and tickWidth
      */
-    public tickSize(prefix?: string): Array<number> {
+    public tickSize(prefix?: string): [number, number]|undefined {
         var options = this.options,
-            tickLength = (options as any)[prefix + 'Length'],
+            tickLength = options[
+                prefix === 'tick' ? 'tickLength' : 'minorTickLength'
+            ],
             tickWidth = pick(
-                (options as any)[prefix + 'Width'],
+                options[prefix === 'tick' ? 'tickWidth' : 'minorTickWidth'],
                 // Default to 1 on linear and datetime X axes
                 prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0
             ),
             e,
-            tickSize: (Array<number>|undefined);
+            tickSize: ([number, number]|undefined);
 
         if (tickWidth && tickLength) {
             // Negate the length
@@ -6343,10 +6345,10 @@ class Axis implements AxisComposition, AxisLike {
             tickSize = [tickLength, tickWidth];
         }
 
-        e = { tickSize: tickSize };
+        e = { tickSize };
         fireEvent(this, 'afterTickSize', e);
 
-        return e.tickSize as any;
+        return e.tickSize;
 
     }
 
@@ -6863,8 +6865,7 @@ class Axis implements AxisComposition, AxisLike {
             directionFactor = [-1, 1, 1, -1][side],
             className = options.className,
             axisParent = axis.axisParent, // Used in color axis
-            lineHeightCorrection,
-            tickSize;
+            lineHeightCorrection;
 
         // For reuse in Axis.render
         hasData = axis.hasData();
@@ -7007,7 +7008,7 @@ class Axis implements AxisComposition, AxisLike {
 
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
-        tickSize = this.tickSize('tick');
+        const tickSize = this.tickSize('tick');
 
         axisOffset[side] = Math.max(
             axisOffset[side],

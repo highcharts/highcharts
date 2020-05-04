@@ -9,6 +9,12 @@
  * */
 'use strict';
 import H from './Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import './Options.js';
+import Point from './Point.js';
+import SVGElement from './SVGElement.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * This is a placeholder type of the possible series options for
  * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
@@ -226,12 +232,6 @@ import H from './Globals.js';
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 ''; // detach doclets above
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from './Point.js';
-import SVGElement from './SVGElement.js';
-import U from './Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
-import './Options.js';
 var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, seriesTypes = H.seriesTypes, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
@@ -499,6 +499,23 @@ null,
      * @private
      */
     allowPointSelect: false,
+    /**
+     * When true, each point or column edge is rounded to its nearest pixel
+     * in order to render sharp on screen. In some cases, when there are a
+     * lot of densely packed columns, this leads to visible difference
+     * in column widths or distance between columns. In these cases,
+     * setting `crisp` to `false` may look better, even though each column
+     * is rendered blurry.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
+     *         Crisp is false
+     *
+     * @since   5.0.10
+     * @product highcharts highstock gantt
+     *
+     * @private
+     */
+    crisp: true,
     /**
      * If true, a checkbox is displayed next to the legend item to allow
      * selecting the series. The state of the checkbox is determined by
@@ -4326,7 +4343,7 @@ null,
      *         CSS.
      */
     markerAttribs: function (point, state) {
-        var seriesMarkerOptions = this.options.marker, seriesStateOptions, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
+        var seriesOptions = this.options, seriesMarkerOptions = seriesOptions.marker, seriesStateOptions, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
             seriesMarkerOptions.symbol), pointStateOptions, radius = pick(pointMarkerOptions.radius, seriesMarkerOptions.radius), attribs;
         // Handle hover and select states
         if (state) {
@@ -4342,7 +4359,9 @@ null,
         }
         attribs = {
             // Math.floor for #1843:
-            x: Math.floor(point.plotX) - radius,
+            x: seriesOptions.crisp ?
+                Math.floor(point.plotX) - radius :
+                point.plotX - radius,
             y: point.plotY - radius
         };
         if (radius) {

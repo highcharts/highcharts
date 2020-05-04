@@ -107,6 +107,7 @@ seriesType('item',
      * @type {number}
      */
     rows: void 0,
+    crisp: false,
     showInLegend: true,
     /**
      * In circular view, the start angle of the item layout, in degrees

@@ -13,7 +13,6 @@
 
 import type AxisTypes from '../parts/axis/types';
 import Axis from '../parts/Axis.js';
-import GridAxis from './GridAxis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
 import TreeGridTick from './TreeGridTick.js';
@@ -30,6 +29,8 @@ const {
     pick,
     wrap
 } = U;
+
+import './GridAxis.js';
 import '../modules/broken-axis.src.js';
 
 /**
@@ -151,8 +152,6 @@ namespace TreeGridAxis {
     export function compose(AxisClass: typeof Axis): void {
 
         if (!applied) {
-
-            GridAxis.compose(AxisClass);
 
             wrap(AxisClass.prototype, 'generateTick', wrapGenerateTick);
             wrap(AxisClass.prototype, 'getMaxLabelDimensions', wrapGetMaxLabelDimensions);
@@ -966,5 +965,7 @@ namespace TreeGridAxis {
 (Axis.prototype as TreeGridAxis).utils = {
     getNode: Tree.getNode
 };
+
+TreeGridAxis.compose(Axis);
 
 export default TreeGridAxis;

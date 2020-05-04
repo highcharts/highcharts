@@ -167,7 +167,7 @@ addEvent(Tick, 'afterGetLabelPosition', function (e) {
     verticalAlign = 'middle', // labelOpts.verticalAlign,
     side = GridAxis.Side[axis.side], tickmarkOffset = e.tickmarkOffset, tickPositions = axis.tickPositions, tickPos = tick.pos - tickmarkOffset, nextTickPos = (isNumber(tickPositions[e.index + 1]) ?
         tickPositions[e.index + 1] - tickmarkOffset :
-        axis.max + tickmarkOffset), tickSize = axis.tickSize('tick', true), tickWidth = isArray(tickSize) ? tickSize[0] : 0, crispCorr = tickSize && tickSize[1] / 2, labelHeight, lblMetrics, lines, bottom, top, left, right;
+        axis.max + tickmarkOffset), tickSize = axis.tickSize('tick'), tickWidth = tickSize ? tickSize[0] : 0, crispCorr = tickSize ? tickSize[1] / 2 : 0, labelHeight, lblMetrics, lines, bottom, top, left, right;
     // Only center tick labels in grid axes
     if (gridOptions.enabled === true) {
         // Calculate top and bottom positions of the cell.
@@ -353,12 +353,13 @@ var GridAxis = /** @class */ (function () {
             var titleMargin = pick(axisTitleOptions.margin, horiz ? 5 : 10);
             var titleFontSize = axis.chart.renderer.fontMetrics(axisTitleOptions.style &&
                 axisTitleOptions.style.fontSize, title).f;
+            var crispCorr = tickSize ? tickSize[0] / 2 : 0;
             // TODO account for alignment
             // the position in the perpendicular direction of the axis
             var offAxis = ((horiz ? axisTop + axisHeight : axisLeft) +
                 (horiz ? 1 : -1) * // horizontal axis reverses the margin
                     (opposite ? -1 : 1) * // so does opposite axes
-                    (tickSize[0] / 2) +
+                    crispCorr +
                 (axis.side === GridAxis.Side.bottom ? titleFontSize : 0));
             e.titlePosition.x = horiz ?
                 axisLeft - titleWidth / 2 - titleMargin + xOption :
@@ -467,7 +468,8 @@ var GridAxis = /** @class */ (function () {
                     var endPoint = linePath[1];
                     // Negate distance if top or left axis
                     // Subtract 1px to draw the line at the end of the tick
-                    var distance = (axis.tickSize('tick')[0] - 1) * ((axis.side === GridAxis.Side.top ||
+                    var tickLength = (axis.tickSize('tick') || [1])[0];
+                    var distance = (tickLength - 1) * ((axis.side === GridAxis.Side.top ||
                         axis.side === GridAxis.Side.left) ? -1 : 1);
                     // If axis is horizontal, reposition line path vertically
                     if (startPoint[0] === 'M' && endPoint[0] === 'L') {
@@ -734,7 +736,7 @@ var GridAxis = /** @class */ (function () {
                 e.tickSize[0] = distance;
             }
             else {
-                e.tickSize = [distance];
+                e.tickSize = [distance, 0];
             }
         }
     };
@@ -837,4 +839,5 @@ var GridAxis = /** @class */ (function () {
         Side[Side["left"] = 3] = "left";
     })(Side = GridAxis.Side || (GridAxis.Side = {}));
 })(GridAxis || (GridAxis = {}));
+GridAxis.compose(Axis);
 export default GridAxis;

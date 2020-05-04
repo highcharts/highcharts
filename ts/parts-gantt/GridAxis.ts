@@ -283,9 +283,9 @@ addEvent(
                     tickPositions[e.index + 1] - tickmarkOffset :
                     (axis.max as any) + tickmarkOffset
             ),
-            tickSize: Array<number> = (axis.tickSize as any)('tick', true),
-            tickWidth = isArray(tickSize) ? tickSize[0] : 0,
-            crispCorr = tickSize && tickSize[1] / 2,
+            tickSize = axis.tickSize('tick'),
+            tickWidth = tickSize ? tickSize[0] : 0,
+            crispCorr = tickSize ? tickSize[1] / 2 : 0,
             labelHeight: number,
             lblMetrics: Highcharts.FontMetricsObject,
             lines: number,
@@ -556,13 +556,15 @@ class GridAxis {
                 axisTitleOptions.style.fontSize,
                 title
             ).f;
+            const crispCorr = tickSize ? tickSize[0] / 2 : 0;
+
             // TODO account for alignment
             // the position in the perpendicular direction of the axis
             const offAxis = (
                 (horiz ? axisTop + axisHeight : axisLeft) +
                 (horiz ? 1 : -1) * // horizontal axis reverses the margin
                 (opposite ? -1 : 1) * // so does opposite axes
-                (tickSize[0] / 2) +
+                crispCorr +
                 (axis.side === GridAxis.Side.bottom ? titleFontSize : 0)
             );
 
@@ -726,7 +728,8 @@ class GridAxis {
 
                     // Negate distance if top or left axis
                     // Subtract 1px to draw the line at the end of the tick
-                    const distance = (axis.tickSize('tick')[0] - 1) * ((
+                    const tickLength = (axis.tickSize('tick') || [1])[0];
+                    const distance = (tickLength - 1) * ((
                         axis.side === GridAxis.Side.top ||
                         axis.side === GridAxis.Side.left
                     ) ? -1 : 1);
@@ -1066,7 +1069,7 @@ class GridAxis {
      */
     public static onAfterTickSize(
         this: Axis,
-        e: { tickSize?: Array<number> }
+        e: { tickSize?: [number, number] }
     ): void {
         const defaultLeftAxisOptions = Axis.defaultLeftAxisOptions;
         const {
@@ -1086,7 +1089,7 @@ class GridAxis {
             if (isArray(e.tickSize)) {
                 e.tickSize[0] = distance;
             } else {
-                e.tickSize = [distance];
+                e.tickSize = [distance, 0];
             }
         }
     }
@@ -1236,5 +1239,7 @@ namespace GridAxis {
     }
 
 }
+
+GridAxis.compose(Axis);
 
 export default GridAxis;

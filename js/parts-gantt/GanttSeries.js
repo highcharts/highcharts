@@ -10,17 +10,15 @@
  *
  * */
 'use strict';
-import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
-import TreeGridAxis from './TreeGridAxis.js';
 import U from '../parts/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
 import './CurrentDateIndicator.js';
 import '../modules/static-scale.src.js';
+import './TreeGridAxis.js';
 import './Pathfinder.js';
 import '../modules/xrange.src.js';
 var dateFormat = H.dateFormat, seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
-TreeGridAxis.compose(Axis);
 /**
  * @private
  * @class

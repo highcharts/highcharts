@@ -62,7 +62,6 @@ declare global {
             row: ItemRowObject;
         }
         interface ItemSeriesOptions extends PieSeriesOptions {
-            crisp?: number;
             itemPadding?: number;
             layout?: string;
             marker?: ItemPointMarkerOptions;
@@ -184,6 +183,7 @@ seriesType<Highcharts.ItemSeries>(
          * @type {number}
          */
         rows: void 0,
+        crisp: false,
         showInLegend: true,
         /**
          * In circular view, the start angle of the item layout, in degrees
@@ -489,7 +489,6 @@ seriesType<Highcharts.ItemSeries>(
                         y += padding;
                         width = Math.round(size - 2 * padding);
                         height = width;
-
                         if (series.options.crisp) {
                             x = Math.round(x) - crisp;
                             y = Math.round(y) + crisp;
