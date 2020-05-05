@@ -1881,7 +1881,7 @@ const relativeLength = H.relativeLength = function relativeLength(
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
-' * @function Highcharts.wrap
+ * @function Highcharts.wrap
  *
  * @param {*} obj
  *        The context object that the method belongs to. In real cases, this is
@@ -1894,8 +1894,6 @@ const relativeLength = H.relativeLength = function relativeLength(
  *        A wrapper function callback. This function is called with the same
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
- *
- * @return {void}
  */
 const wrap = H.wrap = function wrap(
     obj: any,

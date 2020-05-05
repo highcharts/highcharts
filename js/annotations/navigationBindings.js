@@ -733,6 +733,8 @@ if (H.Annotation) {
 H.setOptions({
     /**
      * @optionparent lang
+     *
+     * @private
      */
     lang: {
         /**
@@ -782,6 +784,8 @@ H.setOptions({
     /**
      * @optionparent navigation
      * @product      highcharts highstock
+     *
+     * @private
      */
     navigation: {
         /**
