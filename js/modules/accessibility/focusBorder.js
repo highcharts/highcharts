@@ -146,15 +146,15 @@ extend(H.SVGElement.prototype, {
                 y: posYCorrection
             };
         }
-        if (this.element.nodeName === 'text' || this.element.nodeName === 'g') {
-            var isLabel = this.element.nodeName === 'g', isRotated = !!this.rotation, correction = !isLabel ? getTextAnchorCorrection(this) :
+        if (this.element.nodeName === 'text' || this.isLabel) {
+            var isRotated = !!this.rotation, correction = !this.isLabel ? getTextAnchorCorrection(this) :
                 {
                     x: isRotated ? 1 : 0,
                     y: 0
                 };
             borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
             borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
-            if (isLabel && isRotated) {
+            if (this.isLabel && isRotated) {
                 var temp = borderWidth;
                 borderWidth = borderHeight;
                 borderHeight = temp;
