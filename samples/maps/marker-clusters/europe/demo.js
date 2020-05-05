@@ -13,8 +13,12 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d
             enabled: true
         },
         tooltip: {
-            headerFormat: '',
-            pointFormat: '<b>{point.name}</b><br>Lat: {point.lat:.2f}, Lon: {point.lon:.2f}'
+            formatter: function() {
+                if (this.point.clusteredData) {
+                    return 'Clustered points: ' + this.point.clusterPointsAmount;
+                }
+                return '<b>' + this.key + '</b><br>Lat: ' + this.point.lat.toFixed(2) + ', Lon: ' + this.point.lon.toFixed(2);
+            }
         },
         colorAxis: {
             min: 0,
