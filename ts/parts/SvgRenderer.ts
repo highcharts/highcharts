@@ -3815,6 +3815,8 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             wrapper.attr('translateY', wrapperY as any);
         } as any;
 
+        wrapper.isLabel = true;
+
         // Redirect certain methods to either the box or the text
         var baseCss = wrapper.css;
         var wrapperExtension = {

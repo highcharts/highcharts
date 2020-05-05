@@ -2672,6 +2672,7 @@ extend(SVGRenderer.prototype, /** @lends Highcharts.SVGRenderer.prototype */ {
             wrapperY = wrapper.y = Math.round(value);
             wrapper.attr('translateY', wrapperY);
         };
+        wrapper.isLabel = true;
         // Redirect certain methods to either the box or the text
         var baseCss = wrapper.css;
         var wrapperExtension = {
