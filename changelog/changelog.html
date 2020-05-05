@@ -4,8 +4,8 @@
       <div class="col-md-12">
         <p style="text-align: center;">View changelog for
           <a href="#highcharts">Highcharts</a>,
-          <a href="#highstock">Highstock</a>,
-          <a href="#highmaps">Highmaps</a>,
+          <a href="#highcharts-stock">Highcharts Stock</a>,
+          <a href="#highcharts-maps">Highcharts Maps</a>,
           <a href="#highcharts-gantt">Highcharts Gantt</a>. Go to the
           <a href="download">Download</a> page to get the latest version.</p>
         <div id="hc-changelog">
@@ -13,6 +13,75 @@
             <h4 id="highcharts">Highcharts Basic</h4>
           </div>
           <div class="changelog-container">
+            <p class="release-header">
+              <a id="highcharts-v8.1.0"></a>
+              <a href="#highcharts-v8.1.0">Highcharts Basic v8.1.0 (2020-05-05)</a>
+            </p>
+            <ul>
+              <li>Added vertical panning to Highcharts. The <code>chart.panning.type</code> now accepts <code>y</code> directions.</li>
+              <li>Added box options for <code>yAxis.stackLabels</code>: <code>backgroundColor</code>, <code>borderWidth</code>, <code>borderRadius</code> and <code>borderColor</code>. See <a href="https://github.com/highcharts/highcharts/issues/13330">#13330</a>.</li>
+              <li>Reduced instantiation of axis compositions by help of keepProps. Replaces partially PR <a href="https://github.com/highcharts/highcharts/issues/13223">#13223</a>.</li>
+              <li>Added new series label options, <code>series.label.format</code> and <a href="https://api.highcharts.com/highcharts/plotOptions.series.label.formatter">series.label.formatter</a>.</li>
+              <li>Added individual dash style settings for various parts of box plots. See <a href="https://github.com/highcharts/highcharts/issues/13065">#13065</a>.</li>
+              <li>Added language options for export-data table text, see <a href="https://github.com/highcharts/highcharts/issues/13166">#13166</a>.</li>
+            </ul>
+            <h2 id="upgrade-nots">Upgrade nots</h2>
+            <ul>
+              <li>The Axis class was refactored as part of the TypeScript migration. Axis extensions like log axis, broken axis, parallel axis, datetime axis and ordinal axis are now handled as compositions. Instead of adding multiple properties to the main axis instance, they now add a single object that holds all properties. This does not affect the options API, but it may affect implementations that are based on some of our samples that used the original properties. Our samples have been updated to use the new structure.</li>
+              <li>For added type safety, we are now defining SVG path definition as two-dimensional arrays, or in TypeScript sense an array of tuples. So <code>[&#39;M&#39;, 0, 0, &#39;L&#39;, 100, 100]</code> in the new implementation should be written <code>[[&#39;M&#39;, 0, 0], [&#39;L&#39;, 100, 100]]</code>. We built in a converter for old paths, but there may be cases, like for example directly accessing <code>SVGRenderer.crispLine</code>, where it breaks.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="heading-8-1-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#8-1-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="8-1-0-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed issue with missing accessibility options in the API.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12767">#12767</a>, exported data table had wrong points categories.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13305">#13305</a>, focus border not updated with scrolling points.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11500">#11500</a>, stack labels had a wrong position after moving X axis or Y axis.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13332">#13332</a>, 3D column not working on IE browsers. Fixed <code>fillSetter</code> in cuboid methods.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13310">#13310</a>, HTML tooltip did not stick on pointer contact when activated.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13136">#13136</a>, couldn&#39;t set <code>yAxis.tickAmount</code> when the chart size was small.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13098">#13098</a>, wordcloud animation options didn&#39;t work.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12656">#12656</a>, drilldown points were wrong after click on axis label.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13204">#13204</a>, multiple <code>yAxis</code> labels were not centered over the gridlines when rotation was set and <code>alignTicks</code> was enabled.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/8280">#8280</a>, 3D column <code>zIndex</code> was wrongly calculated on wide screens.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13101">#13101</a>, pie with negative values threw error on drilldown.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13226">#13226</a>, tooltip prevented interaction on other chart elements.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13169">#13169</a>, a regression causing packed bubble&#39;s initial simulation not to work smoothly.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12163">#12163</a>, width of button was not updated when the font weight changed. Also fixed <a href="https://github.com/highcharts/highcharts/issues/12165">#12165</a>, errors on setting the button width to <code>null</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13161">#13161</a>, stacking was erroneously applied on xrange.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/5999">#5999</a>, <code>point.color</code> was not respected for boosted series.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13134">#13134</a>, lollipop misaligned on errorbar series.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12979">#12979</a>, console errors when updating an axis at the same time as updating a related annotation.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11928">#11928</a>, 3D pie was misplaced after calling <code>Series.update</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13110">#13110</a>, <code>chart.sonify</code> was no longer working after v8.0.1.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13069">#13069</a>, histogram produced the wrong number of bins when <code>baseSeries</code> was filled by points with negative values.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12027">#12027</a>, print was not working correctly in packed bubble charts.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12991">#12991</a>, <a href="https://api.highcharts.com/highcharts/chart.scrollablePlotArea.minHeight">scrollablePlotArea.minHeight</a> was not responsive when changing window height.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13100">#13100</a>, in organization charts, node data labels disappeared in some cases.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12883">#12883</a>, legend pagination was not working correctly when the accessibility module was included.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13001">#13001</a>, <code>scrollablePlotArea</code> not inheriting chart style. Also applied chart styles to tooltip container when <a href="https://api.highcharts.com/highcharts/tooltip.outside">tooltip.outside</a> is <code>true</code>.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13070">#13070</a>, annotation was not draggable when HTML label was used.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13077">#13077</a>, the <code>point.isInsidePlot</code> method didn&#39;t handle polar charts.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11635">#11635</a>, scrolling didn&#39;t trigger hiding of the tooltip when the cursor left the chart&#39;s container.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12091">#12091</a>, could not update series shadows without disabling them first.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12994">#12994</a>, <a href="https://api.highcharts.com/highcharts/tooltip.hideDelay">tooltip.hideDelay</a> of 0 was causing unexpected tooltip behavior.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/11397">#11397</a>, incorrect position of the focus border on text elements.</li>
+                      <li>Fixed issue with crosshair wrong position with shared tooltip, see <a href="https://github.com/highcharts/highcharts/issues/13002">#13002</a>.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p class="release-header">
               <a id="highcharts-v8.0.4"></a>
               <a href="#highcharts-v8.0.4">Highcharts Basic v8.0.4 (2020-03-10)</a>
@@ -565,14 +634,14 @@
               <li>Added <a href="https://www.highcharts.com/docs/chart-and-series-types/organization-chart">Organization Chart</a> series type.</li>
               <li>Added <a href="https://www.highcharts.com/docs/chart-and-series-types/item-chart">Item Chart</a> series type for visualizing item counts and parliaments.</li>
               <li>Added <a href="https://www.highcharts.com/docs/chart-and-series-types/dependency-wheel">Dependency Wheel</a> series type.</li>
-              <li>Added <a href="https://www.highcharts.com/docs/chart-and-series-types/timeline">Timeline</a> series type.</li>
+              <li>Added <a href="https://www.highcharts.com/docs/chart-and-series-types/timeline-series">Timeline</a> series type.</li>
               <li>Added <a href="https://www.highcharts.com/docs/chart-and-series-types/pyramid-3d">3D Pyramid</a> and <a href="https://www.highcharts.com/docs/chart-and-series-types/funnel-3d">3D Funnel</a> series types.</li>
               <li><a href="https://www.highcharts.com/docs/accessibility/accessibility-module">Accessibility</a> - improved experience for screen reader users, support for dynamic data and drilldown, as well as support for voice input software.</li>
               <li>Added <code>inactive</code> states to series and points, allowing other series to be dimmed when the user is hovering the data or legend. To bring back the old series dimming behavior, set <a href="https://api.highcharts.com/highcharts/plotOptions.series.states.inactive.opacity">plotOptions.series.states.inactive.opacity</a> to 1.</li>
-              <li>Added <a href="https://api.highcharts.com/highcharts/plotOptions.series.sankey.levels">levels</a> to sankey series.</li>
+              <li>Added <a href="https://api.highcharts.com/highcharts/plotOptions.sankey.levels">levels</a> to sankey series.</li>
               <li>Added <code>annotation.events</code>: <code>add</code>, <code>afterUpdate</code> and <code>remove</code>.</li>
               <li>Added full screen capabilities to exporting module.</li>
-              <li>Added option <a href="https://api.highcharts.com/highcharts/treemap.events.setRootNode">treemap.events.setRootNode</a>.</li>
+              <li>Added option <a href="https://api.highcharts.com/highcharts/series.treemap.events.setRootNode">series.treemap.events.setRootNode</a>.</li>
               <li>Added option <a href="https://api.highcharts.com/highcharts/xAxis.margin">xAxis.margin</a> to ensure a distance between multiple axes on the same side.</li>
               <li>Added options <a href="https://api.highcharts.com/highcharts/plotOptions.sankey.borderWidth">plotOptions.sankey.borderWidth</a> and <code>sankey.borderColor</code> for sankey nodes.</li>
               <li>Added force directed algorithm for improved packing of packed bubble charts. </li>
@@ -5292,12 +5361,19 @@
         </div>
         <div id="hs-changelog">
           <div class="changelog-header">
-            <h4 id="highstock">Highstock</h4>
+            <h4 id="highcharts-stock">Highcharts Stock</h4>
           </div>
           <div class="changelog-container">
             <p class="release-header">
-              <a id="highstock-v8.0.4"></a>
-              <a href="#highstock-v8.0.4">Highstock v8.0.4 (2020-03-10)</a>
+              <a id="highcharts-stock-v8.1.0"></a>
+              <a href="#highcharts-stock-v8.1.0">Highcharts Stock v8.1.0 (2020-05-05)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 8.1.0 above also apply to Highcharts Stock 8.1.0.</li>
+            </ul>
+            <p class="release-header">
+              <a id="highcharts-stock-v8.0.4"></a>
+              <a href="#highcharts-stock-v8.0.4">Highcharts Stock v8.0.4 (2020-03-10)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.4 above also apply to Highstock 8.0.4.</li>
@@ -5322,22 +5398,22 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v8.0.3"></a>
-              <a href="#highstock-v8.0.3">Highstock v8.0.3 (2020-03-05)</a>
+              <a id="highcharts-stock-v8.0.3"></a>
+              <a href="#highcharts-stock-v8.0.3">Highcharts Stock v8.0.3 (2020-03-05)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.3 above also apply to Highstock 8.0.3.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v8.0.2"></a>
-              <a href="#highstock-v8.0.2">Highstock v8.0.2 (2020-03-03)</a>
+              <a id="highcharts-stock-v8.0.2"></a>
+              <a href="#highcharts-stock-v8.0.2">Highcharts Stock v8.0.2 (2020-03-03)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.2 above also apply to Highstock 8.0.2.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v8.0.1"></a>
-              <a href="#highstock-v8.0.1">Highstock v8.0.1 (2020-03-02)</a>
+              <a id="highcharts-stock-v8.0.1"></a>
+              <a href="#highcharts-stock-v8.0.1">Highcharts Stock v8.0.1 (2020-03-02)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.1 above also apply to Highstock 8.0.1.</li>
@@ -5364,8 +5440,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v8.0.0"></a>
-              <a href="#highstock-v8.0.0">Highstock v8.0.0 (2019-12-10)</a>
+              <a id="highcharts-stock-v8.0.0"></a>
+              <a href="#highcharts-stock-v8.0.0">Highcharts Stock v8.0.0 (2019-12-10)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.0 above also apply to Highstock 8.0.0.</li>
@@ -5394,8 +5470,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.2.1"></a>
-              <a href="#highstock-v7.2.1">Highstock v7.2.1 (2019-10-31)</a>
+              <a id="highcharts-stock-v7.2.1"></a>
+              <a href="#highcharts-stock-v7.2.1">Highcharts Stock v7.2.1 (2019-10-31)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.2.1 above also apply to Highstock 7.2.1.</li>
@@ -5427,15 +5503,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.2.0"></a>
-              <a href="#highstock-v7.2.0">Highstock v7.2.0 (2019-09-03)</a>
+              <a id="highcharts-stock-v7.2.0"></a>
+              <a href="#highcharts-stock-v7.2.0">Highcharts Stock v7.2.0 (2019-09-03)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.2.0 above also apply to Highstock 7.2.0.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v7.1.3"></a>
-              <a href="#highstock-v7.1.3">Highstock v7.1.3 (2019-08-14)</a>
+              <a id="highcharts-stock-v7.1.3"></a>
+              <a href="#highcharts-stock-v7.1.3">Highcharts Stock v7.1.3 (2019-08-14)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.1.3 above also apply to Highstock 7.1.3.</li>
@@ -5475,8 +5551,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.1.2"></a>
-              <a href="#highstock-v7.1.2">Highstock v7.1.2 (2019-06-03)</a>
+              <a id="highcharts-stock-v7.1.2"></a>
+              <a href="#highcharts-stock-v7.1.2">Highcharts Stock v7.1.2 (2019-06-03)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.1.2 above also apply to Highstock 7.1.2.</li>
@@ -5507,8 +5583,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.1.1"></a>
-              <a href="#highstock-v7.1.1">Highstock v7.1.1 (2019-04-09)</a>
+              <a id="highcharts-stock-v7.1.1"></a>
+              <a href="#highcharts-stock-v7.1.1">Highcharts Stock v7.1.1 (2019-04-09)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.1.1 above also apply to Highstock 7.1.1.</li>
@@ -5533,8 +5609,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.1.0"></a>
-              <a href="#highstock-v7.1.0">Highstock v7.1.0 (2019-04-01)</a>
+              <a id="highcharts-stock-v7.1.0"></a>
+              <a href="#highcharts-stock-v7.1.0">Highcharts Stock v7.1.0 (2019-04-01)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.1.0 above also apply to Highstock 7.1.0.</li>
@@ -5574,8 +5650,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.0.3"></a>
-              <a href="#highstock-v7.0.3">Highstock v7.0.3 (2019-02-06)</a>
+              <a id="highcharts-stock-v7.0.3"></a>
+              <a href="#highcharts-stock-v7.0.3">Highcharts Stock v7.0.3 (2019-02-06)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.0.3 above also apply to Highstock 7.0.3.</li>
@@ -5609,8 +5685,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.0.2"></a>
-              <a href="#highstock-v7.0.2">Highstock v7.0.2 (2019-01-17)</a>
+              <a id="highcharts-stock-v7.0.2"></a>
+              <a href="#highcharts-stock-v7.0.2">Highcharts Stock v7.0.2 (2019-01-17)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.0.2 above also apply to Highstock 7.0.2.</li>
@@ -5646,8 +5722,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.0.1"></a>
-              <a href="#highstock-v7.0.1">Highstock v7.0.1 (2018-12-19)</a>
+              <a id="highcharts-stock-v7.0.1"></a>
+              <a href="#highcharts-stock-v7.0.1">Highcharts Stock v7.0.1 (2018-12-19)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.0.1 above also apply to Highstock 7.0.1.</li>
@@ -5679,8 +5755,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v7.0.0"></a>
-              <a href="#highstock-v7.0.0">Highstock v7.0.0 (2018-12-11)</a>
+              <a id="highcharts-stock-v7.0.0"></a>
+              <a href="#highcharts-stock-v7.0.0">Highcharts Stock v7.0.0 (2018-12-11)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.0.0 above also apply to Highstock 7.0.0.</li>
@@ -5734,8 +5810,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.2.0"></a>
-              <a href="#highstock-v6.2.0">Highstock v6.2.0 (2018-10-17)</a>
+              <a id="highcharts-stock-v6.2.0"></a>
+              <a href="#highcharts-stock-v6.2.0">Highcharts Stock v6.2.0 (2018-10-17)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.2.0 above also apply to Highstock 6.2.0.</li>
@@ -5762,8 +5838,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.1.4"></a>
-              <a href="#highstock-v6.1.4">Highstock v6.1.4 (2018-09-25)</a>
+              <a id="highcharts-stock-v6.1.4"></a>
+              <a href="#highcharts-stock-v6.1.4">Highcharts Stock v6.1.4 (2018-09-25)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.4 above also apply to Highstock 6.1.4.</li>
@@ -5802,8 +5878,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.1.3"></a>
-              <a href="#highstock-v6.1.3">Highstock v6.1.3 (2018-09-12)</a>
+              <a id="highcharts-stock-v6.1.3"></a>
+              <a href="#highcharts-stock-v6.1.3">Highcharts Stock v6.1.3 (2018-09-12)</a>
             </p>
             <div id="accordion" class="card-group">
               <div class="card">
@@ -5825,8 +5901,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.1.2"></a>
-              <a href="#highstock-v6.1.2">Highstock v6.1.2 (2018-09-03)</a>
+              <a id="highcharts-stock-v6.1.2"></a>
+              <a href="#highcharts-stock-v6.1.2">Highcharts Stock v6.1.2 (2018-09-03)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.2 above also apply to Highstock 6.1.2.</li>
@@ -5875,8 +5951,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.1.1"></a>
-              <a href="#highstock-v6.1.1">Highstock v6.1.1 (2018-06-27)</a>
+              <a id="highcharts-stock-v6.1.1"></a>
+              <a href="#highcharts-stock-v6.1.1">Highcharts Stock v6.1.1 (2018-06-27)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.1 above also apply to Highstock 6.1.1.</li>
@@ -5908,8 +5984,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.1.0"></a>
-              <a href="#highstock-v6.1.0">Highstock v6.1.0 (2018-04-13)</a>
+              <a id="highcharts-stock-v6.1.0"></a>
+              <a href="#highcharts-stock-v6.1.0">Highcharts Stock v6.1.0 (2018-04-13)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.0 above also apply to Highstock 6.1.0.</li>
@@ -5947,8 +6023,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.0.7"></a>
-              <a href="#highstock-v6.0.7">Highstock v6.0.7 (2018-02-16)</a>
+              <a id="highcharts-stock-v6.0.7"></a>
+              <a href="#highcharts-stock-v6.0.7">Highcharts Stock v6.0.7 (2018-02-16)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.7 above also apply to Highstock 6.0.7.</li>
@@ -5974,8 +6050,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.0.6"></a>
-              <a href="#highstock-v6.0.6">Highstock v6.0.6 (2018-02-05)</a>
+              <a id="highcharts-stock-v6.0.6"></a>
+              <a href="#highcharts-stock-v6.0.6">Highcharts Stock v6.0.6 (2018-02-05)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.6 above also apply to Highstock 6.0.6.</li>
@@ -6002,8 +6078,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.0.5"></a>
-              <a href="#highstock-v6.0.5">Highstock v6.0.5 (2018-01-31)</a>
+              <a id="highcharts-stock-v6.0.5"></a>
+              <a href="#highcharts-stock-v6.0.5">Highcharts Stock v6.0.5 (2018-01-31)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.5 above also apply to Highstock 6.0.5.</li>
@@ -6037,8 +6113,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.0.4"></a>
-              <a href="#highstock-v6.0.4">Highstock v6.0.4 (2017-12-15)</a>
+              <a id="highcharts-stock-v6.0.4"></a>
+              <a href="#highcharts-stock-v6.0.4">Highcharts Stock v6.0.4 (2017-12-15)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.4 above also apply to Highstock 6.0.4.</li>
@@ -6066,8 +6142,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.0.3"></a>
-              <a href="#highstock-v6.0.3">Highstock v6.0.3 (2017-11-14)</a>
+              <a id="highcharts-stock-v6.0.3"></a>
+              <a href="#highcharts-stock-v6.0.3">Highcharts Stock v6.0.3 (2017-11-14)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.3 above also apply to Highstock 6.0.3.</li>
@@ -6099,8 +6175,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.0.2"></a>
-              <a href="#highstock-v6.0.2">Highstock v6.0.2 (2017-10-20)</a>
+              <a id="highcharts-stock-v6.0.2"></a>
+              <a href="#highcharts-stock-v6.0.2">Highcharts Stock v6.0.2 (2017-10-20)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.2 above also apply to Highstock 6.0.2.</li>
@@ -6126,15 +6202,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v6.0.1"></a>
-              <a href="#highstock-v6.0.1">Highstock v6.0.1 (2017-10-05)</a>
+              <a id="highcharts-stock-v6.0.1"></a>
+              <a href="#highcharts-stock-v6.0.1">Highcharts Stock v6.0.1 (2017-10-05)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.1 above also apply to Highstock 6.0.1.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v6.0.0"></a>
-              <a href="#highstock-v6.0.0">Highstock v6.0.0 (2017-10-04)</a>
+              <a id="highcharts-stock-v6.0.0"></a>
+              <a href="#highcharts-stock-v6.0.0">Highcharts Stock v6.0.0 (2017-10-04)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.0 above also apply to Highstock 6.0.0.</li>
@@ -6171,15 +6247,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.14"></a>
-              <a href="#highstock-v5.0.14">Highstock v5.0.14 (2017-07-28)</a>
+              <a id="highcharts-stock-v5.0.14"></a>
+              <a href="#highcharts-stock-v5.0.14">Highcharts Stock v5.0.14 (2017-07-28)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.14 above also apply to Highstock 5.0.14.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v5.0.13"></a>
-              <a href="#highstock-v5.0.13">Highstock v5.0.13 (2017-07-27)</a>
+              <a id="highcharts-stock-v5.0.13"></a>
+              <a href="#highcharts-stock-v5.0.13">Highcharts Stock v5.0.13 (2017-07-27)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.13 above also apply to Highstock 5.0.13.</li>
@@ -6212,8 +6288,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.12"></a>
-              <a href="#highstock-v5.0.12">Highstock v5.0.12 (2017-05-24)</a>
+              <a id="highcharts-stock-v5.0.12"></a>
+              <a href="#highcharts-stock-v5.0.12">Highcharts Stock v5.0.12 (2017-05-24)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.12 above also apply to Highstock 5.0.12.</li>
@@ -6243,8 +6319,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.11"></a>
-              <a href="#highstock-v5.0.11">Highstock v5.0.11 (2017-05-04)</a>
+              <a id="highcharts-stock-v5.0.11"></a>
+              <a href="#highcharts-stock-v5.0.11">Highcharts Stock v5.0.11 (2017-05-04)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.11 above also apply to Highstock 5.0.11.</li>
@@ -6277,8 +6353,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.10"></a>
-              <a href="#highstock-v5.0.10">Highstock v5.0.10 (2017-03-31)</a>
+              <a id="highcharts-stock-v5.0.10"></a>
+              <a href="#highcharts-stock-v5.0.10">Highcharts Stock v5.0.10 (2017-03-31)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.10 above also apply to Highstock 5.0.10.</li>
@@ -6308,15 +6384,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.9"></a>
-              <a href="#highstock-v5.0.9">Highstock v5.0.9 (2017-03-08)</a>
+              <a id="highcharts-stock-v5.0.9"></a>
+              <a href="#highcharts-stock-v5.0.9">Highcharts Stock v5.0.9 (2017-03-08)</a>
             </p>
             <ul>
               <li>Worked around a Closure Compiler error that made 3D charts fail.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v5.0.8"></a>
-              <a href="#highstock-v5.0.8">Highstock v5.0.8 (2017-03-08)</a>
+              <a id="highcharts-stock-v5.0.8"></a>
+              <a href="#highcharts-stock-v5.0.8">Highcharts Stock v5.0.8 (2017-03-08)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.8 above also apply to Highstock 5.0.8.</li>
@@ -6351,8 +6427,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.7"></a>
-              <a href="#highstock-v5.0.7">Highstock v5.0.7 (2017-01-17)</a>
+              <a id="highcharts-stock-v5.0.7"></a>
+              <a href="#highcharts-stock-v5.0.7">Highcharts Stock v5.0.7 (2017-01-17)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.7 above also apply to Highstock 5.0.7.</li>
@@ -6390,8 +6466,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.6"></a>
-              <a href="#highstock-v5.0.6">Highstock v5.0.6 (2016-12-07)</a>
+              <a id="highcharts-stock-v5.0.6"></a>
+              <a href="#highcharts-stock-v5.0.6">Highcharts Stock v5.0.6 (2016-12-07)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.6 above also apply to Highstock 5.0.6.</li>
@@ -6420,8 +6496,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.5"></a>
-              <a href="#highstock-v5.0.5">Highstock v5.0.5 (2016-11-29)</a>
+              <a id="highcharts-stock-v5.0.5"></a>
+              <a href="#highcharts-stock-v5.0.5">Highcharts Stock v5.0.5 (2016-11-29)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.5 above also apply to Highstock 5.0.5.</li>
@@ -6449,15 +6525,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.4"></a>
-              <a href="#highstock-v5.0.4">Highstock v5.0.4 (2016-11-22)</a>
+              <a id="highcharts-stock-v5.0.4"></a>
+              <a href="#highcharts-stock-v5.0.4">Highcharts Stock v5.0.4 (2016-11-22)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.4 above also apply to Highstock 5.0.4.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v5.0.3"></a>
-              <a href="#highstock-v5.0.3">Highstock v5.0.3 (2016-11-18)</a>
+              <a id="highcharts-stock-v5.0.3"></a>
+              <a href="#highcharts-stock-v5.0.3">Highcharts Stock v5.0.3 (2016-11-18)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.3 above also apply to Highstock 5.0.3.</li>
@@ -6485,15 +6561,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.2"></a>
-              <a href="#highstock-v5.0.2">Highstock v5.0.2 (2016-10-26)</a>
+              <a id="highcharts-stock-v5.0.2"></a>
+              <a href="#highcharts-stock-v5.0.2">Highcharts Stock v5.0.2 (2016-10-26)</a>
             </p>
             <ul>
               <li>The changes listed under Highcharts 5.0.1 above also apply to Highstock 5.0.1.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v5.0.1"></a>
-              <a href="#highstock-v5.0.1">Highstock v5.0.1 (2016-10-26)</a>
+              <a id="highcharts-stock-v5.0.1"></a>
+              <a href="#highcharts-stock-v5.0.1">Highcharts Stock v5.0.1 (2016-10-26)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.1 above also apply to Highstock 5.0.1.</li>
@@ -6526,8 +6602,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v5.0.0"></a>
-              <a href="#highstock-v5.0.0">Highstock v5.0.0 (2016-09-29)</a>
+              <a id="highcharts-stock-v5.0.0"></a>
+              <a href="#highcharts-stock-v5.0.0">Highcharts Stock v5.0.0 (2016-09-29)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.0 above also apply to Highstock 5.0.0.</li>
@@ -6536,8 +6612,8 @@
               <li>Deprecated the <a href="https://api.highcharts.com/highstock/navigator.baseSeries">baseSeries</a> option, now replaced by <code>showInNavigator</code>.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v4.2.7"></a>
-              <a href="#highstock-v4.2.7">Highstock v4.2.7 (2016-09-21)</a>
+              <a id="highcharts-stock-v4.2.7"></a>
+              <a href="#highcharts-stock-v4.2.7">Highcharts Stock v4.2.7 (2016-09-21)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.7 above also apply to Highstock 4.2.7.</li>
@@ -6575,8 +6651,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v4.2.6"></a>
-              <a href="#highstock-v4.2.6">Highstock v4.2.6 (2016-08-02)</a>
+              <a id="highcharts-stock-v4.2.6"></a>
+              <a href="#highcharts-stock-v4.2.6">Highcharts Stock v4.2.6 (2016-08-02)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.6 above also apply to Highstock 4.2.6.</li>
@@ -6615,8 +6691,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v4.2.5"></a>
-              <a href="#highstock-v4.2.5">Highstock v4.2.5 (2016-05-06)</a>
+              <a id="highcharts-stock-v4.2.5"></a>
+              <a href="#highcharts-stock-v4.2.5">Highcharts Stock v4.2.5 (2016-05-06)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.5 above also apply to Highstock 4.2.5.</li>
@@ -6645,8 +6721,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v4.2.4"></a>
-              <a href="#highstock-v4.2.4">Highstock v4.2.4 (2016-04-14)</a>
+              <a id="highcharts-stock-v4.2.4"></a>
+              <a href="#highcharts-stock-v4.2.4">Highcharts Stock v4.2.4 (2016-04-14)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.4 above also apply to Highstock 4.2.4.</li>
@@ -6676,8 +6752,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v4.2.3"></a>
-              <a href="#highstock-v4.2.3">Highstock v4.2.3 (2016-02-08)</a>
+              <a id="highcharts-stock-v4.2.3"></a>
+              <a href="#highcharts-stock-v4.2.3">Highcharts Stock v4.2.3 (2016-02-08)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.3 above also apply to Highstock 4.2.3.</li>
@@ -6702,8 +6778,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v4.2.2"></a>
-              <a href="#highstock-v4.2.2">Highstock v4.2.2 (2016-02-04)</a>
+              <a id="highcharts-stock-v4.2.2"></a>
+              <a href="#highcharts-stock-v4.2.2">Highcharts Stock v4.2.2 (2016-02-04)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.2 above also apply to Highstock 4.2.2.</li>
@@ -6732,8 +6808,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v4.2.0"></a>
-              <a href="#highstock-v4.2.0">Highstock v4.2.0 (2015-12-15)</a>
+              <a id="highcharts-stock-v4.2.0"></a>
+              <a href="#highcharts-stock-v4.2.0">Highcharts Stock v4.2.0 (2015-12-15)</a>
             </p>
             <ul>
               <li>Jumped to version 4.2 to align versioning with Highcharts, which shares the same code and GitHub repo.</li>
@@ -6760,8 +6836,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.10"></a>
-              <a href="#highstock-v2.1.10">Highstock v2.1.10 (2015-12-07)</a>
+              <a id="highcharts-stock-v2.1.10"></a>
+              <a href="#highcharts-stock-v2.1.10">Highcharts Stock v2.1.10 (2015-12-07)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.10 above also apply to Highstock 2.1.10.</li>
@@ -6794,8 +6870,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.9"></a>
-              <a href="#highstock-v2.1.9">Highstock v2.1.9 (2015-10-07)</a>
+              <a id="highcharts-stock-v2.1.9"></a>
+              <a href="#highcharts-stock-v2.1.9">Highcharts Stock v2.1.9 (2015-10-07)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.9 above also apply to Highstock 2.1.9.</li>
@@ -6824,8 +6900,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.8"></a>
-              <a href="#highstock-v2.1.8">Highstock v2.1.8 (2015-08-20)</a>
+              <a id="highcharts-stock-v2.1.8"></a>
+              <a href="#highcharts-stock-v2.1.8">Highcharts Stock v2.1.8 (2015-08-20)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.8 above also apply to Highstock 2.1.8.</li>
@@ -6858,8 +6934,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.7"></a>
-              <a href="#highstock-v2.1.7">Highstock v2.1.7 (2015-06-26)</a>
+              <a id="highcharts-stock-v2.1.7"></a>
+              <a href="#highcharts-stock-v2.1.7">Highcharts Stock v2.1.7 (2015-06-26)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.7 above also apply to Highstock 2.1.7.</li>
@@ -6890,8 +6966,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.6"></a>
-              <a href="#highstock-v2.1.6">Highstock v2.1.6 (2015-06-12)</a>
+              <a id="highcharts-stock-v2.1.6"></a>
+              <a href="#highcharts-stock-v2.1.6">Highcharts Stock v2.1.6 (2015-06-12)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.6 above also apply to Highstock 2.1.6.</li>
@@ -6921,8 +6997,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.5"></a>
-              <a href="#highstock-v2.1.5">Highstock v2.1.5 (2015-04-13)</a>
+              <a id="highcharts-stock-v2.1.5"></a>
+              <a href="#highcharts-stock-v2.1.5">Highcharts Stock v2.1.5 (2015-04-13)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.5 above also apply to Highstock 2.1.5.</li>
@@ -6951,8 +7027,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.4"></a>
-              <a href="#highstock-v2.1.4">Highstock v2.1.4 (2015-03-10)</a>
+              <a id="highcharts-stock-v2.1.4"></a>
+              <a href="#highcharts-stock-v2.1.4">Highcharts Stock v2.1.4 (2015-03-10)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.4 above also apply to Highstock 2.1.4.</li>
@@ -6979,8 +7055,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.3"></a>
-              <a href="#highstock-v2.1.3">Highstock v2.1.3 (2015-02-27)</a>
+              <a id="highcharts-stock-v2.1.3"></a>
+              <a href="#highcharts-stock-v2.1.3">Highcharts Stock v2.1.3 (2015-02-27)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 4.1.3 above also apply to Highstock 2.1.3.</li>
@@ -7005,8 +7081,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.2"></a>
-              <a href="#highstock-v2.1.2">Highstock v2.1.2 (2015-02-27)</a>
+              <a id="highcharts-stock-v2.1.2"></a>
+              <a href="#highcharts-stock-v2.1.2">Highcharts Stock v2.1.2 (2015-02-27)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 4.1.2 above also apply to Highstock 2.1.2.</li>
@@ -7032,8 +7108,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.1"></a>
-              <a href="#highstock-v2.1.1">Highstock v2.1.1 (2015-02-17)</a>
+              <a id="highcharts-stock-v2.1.1"></a>
+              <a href="#highcharts-stock-v2.1.1">Highcharts Stock v2.1.1 (2015-02-17)</a>
             </p>
             <div id="accordion" class="card-group">
               <div class="card">
@@ -7058,8 +7134,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.1.0"></a>
-              <a href="#highstock-v2.1.0">Highstock v2.1.0 (2015-02-16)</a>
+              <a id="highcharts-stock-v2.1.0"></a>
+              <a href="#highcharts-stock-v2.1.0">Highcharts Stock v2.1.0 (2015-02-16)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 4.1.0 above also apply to Highstock 2.1.0.</li>
@@ -7092,8 +7168,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.0.4"></a>
-              <a href="#highstock-v2.0.4">Highstock v2.0.4 (2014-09-02)</a>
+              <a id="highcharts-stock-v2.0.4"></a>
+              <a href="#highcharts-stock-v2.0.4">Highcharts Stock v2.0.4 (2014-09-02)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 4.0.4 above also apply to Highstock 2.0.4.</li>
@@ -7125,8 +7201,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.0.3"></a>
-              <a href="#highstock-v2.0.3">Highstock v2.0.3 (2014-07-03)</a>
+              <a id="highcharts-stock-v2.0.3"></a>
+              <a href="#highcharts-stock-v2.0.3">Highcharts Stock v2.0.3 (2014-07-03)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 4.0.3 above also apply to Highstock 2.0.3.</li>
@@ -7156,16 +7232,16 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v2.0.0"></a>
-              <a href="#highstock-v2.0.0">Highstock v2.0.0 (2014-04-22)</a>
+              <a id="highcharts-stock-v2.0.0"></a>
+              <a href="#highcharts-stock-v2.0.0">Highcharts Stock v2.0.0 (2014-04-22)</a>
             </p>
             <ul>
               <li>See the <a href="/component/content/article/2-news/134-announcing-highcharts-4/">release announcement</a>.</li>
               <li>The default design has been updated with Highstock 2, but all aspects of design can be reverted to the Highstock 1.3 looks by applying options. See <a href="https://jsfiddle.net/highcharts/Y5ak7/">this design compatibilty demo</a> for a listing of what options it applies to.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v1.3.10"></a>
-              <a href="#highstock-v1.3.10">Highstock v1.3.10 (2014-03-10)</a>
+              <a id="highcharts-stock-v1.3.10"></a>
+              <a href="#highcharts-stock-v1.3.10">Highcharts Stock v1.3.10 (2014-03-10)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.10 above also apply to Highstock 1.3.10.</li>
@@ -7198,8 +7274,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.9"></a>
-              <a href="#highstock-v1.3.9">Highstock v1.3.9 (2014-01-15)</a>
+              <a id="highcharts-stock-v1.3.9"></a>
+              <a href="#highcharts-stock-v1.3.9">Highcharts Stock v1.3.9 (2014-01-15)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.9 above also apply to Highstock 1.3.9.</li>
@@ -7225,8 +7301,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.8"></a>
-              <a href="#highstock-v1.3.8">Highstock v1.3.8 (2014-01-09)</a>
+              <a id="highcharts-stock-v1.3.8"></a>
+              <a href="#highcharts-stock-v1.3.8">Highcharts Stock v1.3.8 (2014-01-09)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.8 above also apply to Highstock 1.3.8.</li>
@@ -7259,8 +7335,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.7"></a>
-              <a href="#highstock-v1.3.7">Highstock v1.3.7 (2013-10-24)</a>
+              <a id="highcharts-stock-v1.3.7"></a>
+              <a href="#highcharts-stock-v1.3.7">Highcharts Stock v1.3.7 (2013-10-24)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.7 above also apply to Highstock 1.3.7.</li>
@@ -7290,8 +7366,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.6"></a>
-              <a href="#highstock-v1.3.6">Highstock v1.3.6 (2013-10-04)</a>
+              <a id="highcharts-stock-v1.3.6"></a>
+              <a href="#highcharts-stock-v1.3.6">Highcharts Stock v1.3.6 (2013-10-04)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.6 above also apply to Highstock 1.3.6.</li>
@@ -7326,8 +7402,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.5"></a>
-              <a href="#highstock-v1.3.5">Highstock v1.3.5 (2013-08-23)</a>
+              <a id="highcharts-stock-v1.3.5"></a>
+              <a href="#highcharts-stock-v1.3.5">Highcharts Stock v1.3.5 (2013-08-23)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.5 above also apply to Highstock 1.3.5.</li>
@@ -7356,8 +7432,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.4"></a>
-              <a href="#highstock-v1.3.4">Highstock v1.3.4 (2013-08-02)</a>
+              <a id="highcharts-stock-v1.3.4"></a>
+              <a href="#highcharts-stock-v1.3.4">Highcharts Stock v1.3.4 (2013-08-02)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.4 above also apply to Highstock 1.3.4.</li>
@@ -7384,8 +7460,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.3"></a>
-              <a href="#highstock-v1.3.3">Highstock v1.3.3 (2013-07-31)</a>
+              <a id="highcharts-stock-v1.3.3"></a>
+              <a href="#highcharts-stock-v1.3.3">Highcharts Stock v1.3.3 (2013-07-31)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.3 above also apply to Highstock 1.3.3.</li>
@@ -7431,8 +7507,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.2"></a>
-              <a href="#highstock-v1.3.2">Highstock v1.3.2 (2013-06-05)</a>
+              <a id="highcharts-stock-v1.3.2"></a>
+              <a href="#highcharts-stock-v1.3.2">Highcharts Stock v1.3.2 (2013-06-05)</a>
             </p>
             <ul>
               <li>Most issues listed under Highcharts 3.0.2 above also apply to Highstock 1.3.2.</li>
@@ -7464,8 +7540,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.1"></a>
-              <a href="#highstock-v1.3.1">Highstock v1.3.1 (2013-04-09)</a>
+              <a id="highcharts-stock-v1.3.1"></a>
+              <a href="#highcharts-stock-v1.3.1">Highcharts Stock v1.3.1 (2013-04-09)</a>
             </p>
             <ul>
               <li>Added new option, <a href="https://api.highcharts.com#tooltip.followTouchMove">tooltip.followTouchMove</a>. When this is true, the tooltip can be moved by dragging a single finger across the chart, like in Highcharts 2. When it is false, dragging a single finger is ignored by the chart, and causes the whole page to scroll. This applies only when zooming is not enabled. <a href="https://github.com/highcharts/highcharts/issues/1644">#1644</a>. <a href="https://github.com/highcharts/highcharts/issues/1662">#1662</a>.</li>
@@ -7517,15 +7593,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.3.0"></a>
-              <a href="#highstock-v1.3.0">Highstock v1.3.0 (2013-03-22)</a>
+              <a id="highcharts-stock-v1.3.0"></a>
+              <a href="#highcharts-stock-v1.3.0">Highcharts Stock v1.3.0 (2013-03-22)</a>
             </p>
             <ul>
               <li>Highstock 1.3 is built on Highcharts 3.0, and shares the same new features for cartesian series types. See the <a href="/component/content/article/2-news/54-highcharts-3-0-released">release announcement</a> for 3.0.</li>
             </ul>
             <p class="release-header">
-              <a id="highstock-v1.2.5"></a>
-              <a href="#highstock-v1.2.5">Highstock v1.2.5 (2012-12-19)</a>
+              <a id="highcharts-stock-v1.2.5"></a>
+              <a href="#highcharts-stock-v1.2.5">Highcharts Stock v1.2.5 (2012-12-19)</a>
             </p>
             <ul>
               <li>Applied fixes for Highcharts Basic version 2.3.5.</li>
@@ -7558,8 +7634,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.2.4"></a>
-              <a href="#highstock-v1.2.4">Highstock v1.2.4 (2012-10-08)</a>
+              <a id="highcharts-stock-v1.2.4"></a>
+              <a href="#highcharts-stock-v1.2.4">Highcharts Stock v1.2.4 (2012-10-08)</a>
             </p>
             <div id="accordion" class="card-group">
               <div class="card">
@@ -7582,8 +7658,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.2.3"></a>
-              <a href="#highstock-v1.2.3">Highstock v1.2.3 (2012-10-04)</a>
+              <a id="highcharts-stock-v1.2.3"></a>
+              <a href="#highcharts-stock-v1.2.3">Highcharts Stock v1.2.3 (2012-10-04)</a>
             </p>
             <ul>
               <li>Refactored data label alignment logic for better maintainability. <a href="https://github.com/highcharts/highcharts/issues/1168">#1168</a>. <a href="https://github.com/highcharts/highcharts/issues/1212">#1212</a>.</li>
@@ -7628,8 +7704,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.2.2"></a>
-              <a href="#highstock-v1.2.2">Highstock v1.2.2 (2012-08-31)</a>
+              <a id="highcharts-stock-v1.2.2"></a>
+              <a href="#highcharts-stock-v1.2.2">Highcharts Stock v1.2.2 (2012-08-31)</a>
             </p>
             <ul>
               <li>Added demonstration of async data loading in Highstock.</li>
@@ -7665,8 +7741,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.2.1"></a>
-              <a href="#highstock-v1.2.1">Highstock v1.2.1 (2012-08-29)</a>
+              <a id="highcharts-stock-v1.2.1"></a>
+              <a href="#highcharts-stock-v1.2.1">Highcharts Stock v1.2.1 (2012-08-29)</a>
             </p>
             <div id="accordion" class="card-group">
               <div class="card">
@@ -7688,8 +7764,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.2.0"></a>
-              <a href="#highstock-v1.2.0">Highstock v1.2.0 (2012-08-24)</a>
+              <a id="highcharts-stock-v1.2.0"></a>
+              <a href="#highcharts-stock-v1.2.0">Highcharts Stock v1.2.0 (2012-08-24)</a>
             </p>
             <ul>
               <li>Added range series types: area range, area spline range and column range.</li>
@@ -7714,8 +7790,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.1.6"></a>
-              <a href="#highstock-v1.1.6">Highstock v1.1.6 (2012-08-24)</a>
+              <a id="highcharts-stock-v1.1.6"></a>
+              <a href="#highcharts-stock-v1.1.6">Highcharts Stock v1.1.6 (2012-08-24)</a>
             </p>
             <ul>
               <li>Removed double clipping assignment in development branch, and subsequent JS error on Series.remove in legacy IE. <a href="https://github.com/highcharts/highcharts/issues/1027">#1027</a>.</li>
@@ -7799,8 +7875,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.1.5"></a>
-              <a href="#highstock-v1.1.5">Highstock v1.1.5 (2012-03-15)</a>
+              <a id="highcharts-stock-v1.1.5"></a>
+              <a href="#highcharts-stock-v1.1.5">Highcharts Stock v1.1.5 (2012-03-15)</a>
             </p>
             <ul>
               <li>Added feature for the first and last x axis label to stay within the plot area, or be hidden if there is no room.</li>
@@ -7825,8 +7901,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.1.4"></a>
-              <a href="#highstock-v1.1.4">Highstock v1.1.4 (2012-02-15)</a>
+              <a id="highcharts-stock-v1.1.4"></a>
+              <a href="#highcharts-stock-v1.1.4">Highcharts Stock v1.1.4 (2012-02-15)</a>
             </p>
             <ul>
               <li>Added temporary workaround for <a href="https://github.com/highcharts/highcharts/issues/732">text rendering bug</a> in Chrome 18 Beta.</li>
@@ -7852,8 +7928,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.1.3"></a>
-              <a href="#highstock-v1.1.3">Highstock v1.1.3 (2012-02-03)</a>
+              <a id="highcharts-stock-v1.1.3"></a>
+              <a href="#highcharts-stock-v1.1.3">Highcharts Stock v1.1.3 (2012-02-03)</a>
             </p>
             <div id="accordion" class="card-group">
               <div class="card">
@@ -7875,8 +7951,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.1.2"></a>
-              <a href="#highstock-v1.1.2">Highstock v1.1.2 (2011-12-23)</a>
+              <a id="highcharts-stock-v1.1.2"></a>
+              <a href="#highcharts-stock-v1.1.2">Highcharts Stock v1.1.2 (2011-12-23)</a>
             </p>
             <div id="accordion" class="card-group">
               <div class="card">
@@ -7898,8 +7974,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.1.1"></a>
-              <a href="#highstock-v1.1.1">Highstock v1.1.1 (2011-12-22)</a>
+              <a id="highcharts-stock-v1.1.1"></a>
+              <a href="#highcharts-stock-v1.1.1">Highcharts Stock v1.1.1 (2011-12-22)</a>
             </p>
             <ul>
               <li>Made navigator.xAxis.ordinal inherit xAxis.ordinal.</li>
@@ -7924,8 +8000,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.1.0"></a>
-              <a href="#highstock-v1.1.0">Highstock v1.1.0 (2011-12-14)</a>
+              <a id="highcharts-stock-v1.1.0"></a>
+              <a href="#highcharts-stock-v1.1.0">Highcharts Stock v1.1.0 (2011-12-14)</a>
             </p>
             <ul>
               <li>Added <a href="/stock/ref#xAxis--ordinal">ordinal axis option</a> for displaying non-linear data without gaps, typically intraday data withiout gaps for nights and weekends or daily data without gaps for weekends.</li>
@@ -7951,8 +8027,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.0.2"></a>
-              <a href="#highstock-v1.0.2">Highstock v1.0.2 (2011-11-08)</a>
+              <a id="highcharts-stock-v1.0.2"></a>
+              <a href="#highcharts-stock-v1.0.2">Highcharts Stock v1.0.2 (2011-11-08)</a>
             </p>
             <div id="accordion" class="card-group">
               <div class="card">
@@ -7975,8 +8051,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.0.1"></a>
-              <a href="#highstock-v1.0.1">Highstock v1.0.1 (2011-10-25)</a>
+              <a id="highcharts-stock-v1.0.1"></a>
+              <a href="#highcharts-stock-v1.0.1">Highcharts Stock v1.0.1 (2011-10-25)</a>
             </p>
             <ul>
               <li>Added <a href="/stock/ref/#plotOptions-series--compare">series.compare</a> option to compare the development of values.</li>
@@ -8002,8 +8078,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highstock-v1.0.0"></a>
-              <a href="#highstock-v1.0.0">Highstock v1.0.0 (2011-10-18)</a>
+              <a id="highcharts-stock-v1.0.0"></a>
+              <a href="#highcharts-stock-v1.0.0">Highcharts Stock v1.0.0 (2011-10-18)</a>
             </p>
             <ul>
               <li>First release.</li>
@@ -8012,33 +8088,59 @@
         </div>
         <div id="hm-changelog">
           <div class="changelog-header">
-            <h4 id="highmaps">Highmaps</h4>
+            <h4 id="highcharts-maps">Highcharts Maps</h4>
           </div>
           <div class="changelog-container">
             <p class="release-header">
-              <a id="highmaps-v8.0.4"></a>
-              <a href="#highmaps-v8.0.4">Highmaps v8.0.4 (2020-03-10)</a>
+              <a id="highcharts-maps-v8.1.0"></a>
+              <a href="#highcharts-maps-v8.1.0">Highcharts Maps v8.1.0 (2020-05-05)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 8.1.0 above also apply to Highcharts Maps 8.1.0.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="hm-heading-8-1-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#hm-8-1-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hm-8-1-0-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed regression in vertical panning.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
+              <a id="highcharts-maps-v8.0.4"></a>
+              <a href="#highcharts-maps-v8.0.4">Highcharts Maps v8.0.4 (2020-03-10)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.4 above also apply to Highmaps 8.0.4.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v8.0.3"></a>
-              <a href="#highmaps-v8.0.3">Highmaps v8.0.3 (2020-03-05)</a>
+              <a id="highcharts-maps-v8.0.3"></a>
+              <a href="#highcharts-maps-v8.0.3">Highcharts Maps v8.0.3 (2020-03-05)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.3 above also apply to Highmaps 8.0.3.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v8.0.2"></a>
-              <a href="#highmaps-v8.0.2">Highmaps v8.0.2 (2020-03-03)</a>
+              <a id="highcharts-maps-v8.0.2"></a>
+              <a href="#highcharts-maps-v8.0.2">Highcharts Maps v8.0.2 (2020-03-03)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.2 above also apply to Highmaps 8.0.2.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v8.0.1"></a>
-              <a href="#highmaps-v8.0.1">Highmaps v8.0.1 (2020-03-02)</a>
+              <a id="highcharts-maps-v8.0.1"></a>
+              <a href="#highcharts-maps-v8.0.1">Highcharts Maps v8.0.1 (2020-03-02)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.1 above also apply to Highmaps 8.0.1.</li>
@@ -8064,16 +8166,16 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v8.0.0"></a>
-              <a href="#highmaps-v8.0.0">Highmaps v8.0.0 (2019-12-10)</a>
+              <a id="highcharts-maps-v8.0.0"></a>
+              <a href="#highcharts-maps-v8.0.0">Highcharts Maps v8.0.0 (2019-12-10)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 8.0.0 above also apply to Highmaps 8.0.0.</li>
               <li>Added <a href="https://www.highcharts.com/docs/advanced-chart-features/marker-clusters">marker clusters </a> for scatter and map point series.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v7.2.1"></a>
-              <a href="#highmaps-v7.2.1">Highmaps v7.2.1 (2019-10-31)</a>
+              <a id="highcharts-maps-v7.2.1"></a>
+              <a href="#highcharts-maps-v7.2.1">Highcharts Maps v7.2.1 (2019-10-31)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.2.1 above also apply to Highmaps 7.2.1.</li>
@@ -8099,8 +8201,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v7.2.0"></a>
-              <a href="#highmaps-v7.2.0">Highmaps v7.2.0 (2019-09-03)</a>
+              <a id="highcharts-maps-v7.2.0"></a>
+              <a href="#highcharts-maps-v7.2.0">Highcharts Maps v7.2.0 (2019-09-03)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.2.0 above also apply to Highmaps 7.2.0.</li>
@@ -8125,15 +8227,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v7.1.3"></a>
-              <a href="#highmaps-v7.1.3">Highmaps v7.1.3 (2019-08-14)</a>
+              <a id="highcharts-maps-v7.1.3"></a>
+              <a href="#highcharts-maps-v7.1.3">Highcharts Maps v7.1.3 (2019-08-14)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.1.3 above also apply to Highmaps 7.1.3.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v7.1.2"></a>
-              <a href="#highmaps-v7.1.2">Highmaps v7.1.2 (2019-06-03)</a>
+              <a id="highcharts-maps-v7.1.2"></a>
+              <a href="#highcharts-maps-v7.1.2">Highcharts Maps v7.1.2 (2019-06-03)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.1.2 above also apply to Highmaps 7.1.2.</li>
@@ -8159,15 +8261,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v7.1.1"></a>
-              <a href="#highmaps-v7.1.1">Highmaps v7.1.1 (2019-04-09)</a>
+              <a id="highcharts-maps-v7.1.1"></a>
+              <a href="#highcharts-maps-v7.1.1">Highcharts Maps v7.1.1 (2019-04-09)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.1.1 above also apply to Highmaps 7.1.1.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v7.1.0"></a>
-              <a href="#highmaps-v7.1.0">Highmaps v7.1.0 (2019-04-01)</a>
+              <a id="highcharts-maps-v7.1.0"></a>
+              <a href="#highcharts-maps-v7.1.0">Highcharts Maps v7.1.0 (2019-04-01)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.1.0 above also apply to Highmaps 7.1.0.</li>
@@ -8193,50 +8295,50 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v7.0.3"></a>
-              <a href="#highmaps-v7.0.3">Highmaps v7.0.3 (2019-02-06)</a>
+              <a id="highcharts-maps-v7.0.3"></a>
+              <a href="#highcharts-maps-v7.0.3">Highcharts Maps v7.0.3 (2019-02-06)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.0.3 above also apply to Highmaps 7.0.3.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v7.0.2"></a>
-              <a href="#highmaps-v7.0.2">Highmaps v7.0.2 (2019-01-17)</a>
+              <a id="highcharts-maps-v7.0.2"></a>
+              <a href="#highcharts-maps-v7.0.2">Highcharts Maps v7.0.2 (2019-01-17)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.0.2 above also apply to Highmaps 7.0.2.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v7.0.1"></a>
-              <a href="#highmaps-v7.0.1">Highmaps v7.0.1 (2018-12-19)</a>
+              <a id="highcharts-maps-v7.0.1"></a>
+              <a href="#highcharts-maps-v7.0.1">Highcharts Maps v7.0.1 (2018-12-19)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.0.1 above also apply to Highmaps 7.0.1.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v7.0.0"></a>
-              <a href="#highmaps-v7.0.0">Highmaps v7.0.0 (2018-12-11)</a>
+              <a id="highcharts-maps-v7.0.0"></a>
+              <a href="#highcharts-maps-v7.0.0">Highcharts Maps v7.0.0 (2018-12-11)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 7.0.0 above also apply to Highmaps 7.0.0.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.2.0"></a>
-              <a href="#highmaps-v6.2.0">Highmaps v6.2.0 (2018-10-17)</a>
+              <a id="highcharts-maps-v6.2.0"></a>
+              <a href="#highcharts-maps-v6.2.0">Highcharts Maps v6.2.0 (2018-10-17)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.2.0 above also apply to Highmaps 6.2.0.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.1.4"></a>
-              <a href="#highmaps-v6.1.4">Highmaps v6.1.4 (2018-09-25)</a>
+              <a id="highcharts-maps-v6.1.4"></a>
+              <a href="#highcharts-maps-v6.1.4">Highcharts Maps v6.1.4 (2018-09-25)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.4 above also apply to Highmaps 6.1.4.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.1.3"></a>
-              <a href="#highmaps-v6.1.3">Highmaps v6.1.3 (2018-09-12)</a>
+              <a id="highcharts-maps-v6.1.3"></a>
+              <a href="#highcharts-maps-v6.1.3">Highcharts Maps v6.1.3 (2018-09-12)</a>
             </p>
             <div id="accordion" class="card-group">
               <div class="card">
@@ -8258,15 +8360,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v6.1.2"></a>
-              <a href="#highmaps-v6.1.2">Highmaps v6.1.2 (2018-09-03)</a>
+              <a id="highcharts-maps-v6.1.2"></a>
+              <a href="#highcharts-maps-v6.1.2">Highcharts Maps v6.1.2 (2018-09-03)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.2 above also apply to Highmaps 6.1.2.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.1.1"></a>
-              <a href="#highmaps-v6.1.1">Highmaps v6.1.1 (2018-06-27)</a>
+              <a id="highcharts-maps-v6.1.1"></a>
+              <a href="#highcharts-maps-v6.1.1">Highcharts Maps v6.1.1 (2018-06-27)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.1 above also apply to Highmaps 6.1.1.</li>
@@ -8292,8 +8394,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v6.1.0"></a>
-              <a href="#highmaps-v6.1.0">Highmaps v6.1.0 (2018-04-13)</a>
+              <a id="highcharts-maps-v6.1.0"></a>
+              <a href="#highcharts-maps-v6.1.0">Highcharts Maps v6.1.0 (2018-04-13)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.1.0 above also apply to Highmaps 6.1.0.</li>
@@ -8318,29 +8420,29 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v6.0.7"></a>
-              <a href="#highmaps-v6.0.7">Highmaps v6.0.7 (2018-02-16)</a>
+              <a id="highcharts-maps-v6.0.7"></a>
+              <a href="#highcharts-maps-v6.0.7">Highcharts Maps v6.0.7 (2018-02-16)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.7 above also apply to Highmaps 6.0.7.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.0.6"></a>
-              <a href="#highmaps-v6.0.6">Highmaps v6.0.6 (2018-02-05)</a>
+              <a id="highcharts-maps-v6.0.6"></a>
+              <a href="#highcharts-maps-v6.0.6">Highcharts Maps v6.0.6 (2018-02-05)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.6 above also apply to Highmaps 6.0.6.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.0.5"></a>
-              <a href="#highmaps-v6.0.5">Highmaps v6.0.5 (2018-01-31)</a>
+              <a id="highcharts-maps-v6.0.5"></a>
+              <a href="#highcharts-maps-v6.0.5">Highcharts Maps v6.0.5 (2018-01-31)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.5 above also apply to Highmaps 6.0.5.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.0.4"></a>
-              <a href="#highmaps-v6.0.4">Highmaps v6.0.4 (2017-12-15)</a>
+              <a id="highcharts-maps-v6.0.4"></a>
+              <a href="#highcharts-maps-v6.0.4">Highcharts Maps v6.0.4 (2017-12-15)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.4 above also apply to Highmaps 6.0.4.</li>
@@ -8366,8 +8468,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v6.0.3"></a>
-              <a href="#highmaps-v6.0.3">Highmaps v6.0.3 (2017-11-14)</a>
+              <a id="highcharts-maps-v6.0.3"></a>
+              <a href="#highcharts-maps-v6.0.3">Highcharts Maps v6.0.3 (2017-11-14)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.3 above also apply to Highmaps 6.0.3.</li>
@@ -8392,22 +8494,22 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v6.0.2"></a>
-              <a href="#highmaps-v6.0.2">Highmaps v6.0.2 (2017-10-20)</a>
+              <a id="highcharts-maps-v6.0.2"></a>
+              <a href="#highcharts-maps-v6.0.2">Highcharts Maps v6.0.2 (2017-10-20)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.2 above also apply to Highmaps 6.0.2.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.0.1"></a>
-              <a href="#highmaps-v6.0.1">Highmaps v6.0.1 (2017-10-05)</a>
+              <a id="highcharts-maps-v6.0.1"></a>
+              <a href="#highcharts-maps-v6.0.1">Highcharts Maps v6.0.1 (2017-10-05)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.1 above also apply to Highmaps 6.0.1.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v6.0.0"></a>
-              <a href="#highmaps-v6.0.0">Highmaps v6.0.0 (2017-10-04)</a>
+              <a id="highcharts-maps-v6.0.0"></a>
+              <a href="#highcharts-maps-v6.0.0">Highcharts Maps v6.0.0 (2017-10-04)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 6.0.0 above also apply to Highmaps 6.0.0.</li>
@@ -8433,15 +8535,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.14"></a>
-              <a href="#highmaps-v5.0.14">Highmaps v5.0.14 (2017-07-28)</a>
+              <a id="highcharts-maps-v5.0.14"></a>
+              <a href="#highcharts-maps-v5.0.14">Highcharts Maps v5.0.14 (2017-07-28)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.14 above also apply to Highmaps 5.0.14.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v5.0.13"></a>
-              <a href="#highmaps-v5.0.13">Highmaps v5.0.13 (2017-07-27)</a>
+              <a id="highcharts-maps-v5.0.13"></a>
+              <a href="#highcharts-maps-v5.0.13">Highcharts Maps v5.0.13 (2017-07-27)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.13 above also apply to Highmaps 5.0.13.</li>
@@ -8469,15 +8571,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.12"></a>
-              <a href="#highmaps-v5.0.12">Highmaps v5.0.12 (2017-05-24)</a>
+              <a id="highcharts-maps-v5.0.12"></a>
+              <a href="#highcharts-maps-v5.0.12">Highcharts Maps v5.0.12 (2017-05-24)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.12 above also apply to Highmaps 5.0.12.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v5.0.11"></a>
-              <a href="#highmaps-v5.0.11">Highmaps v5.0.11 (2017-05-04)</a>
+              <a id="highcharts-maps-v5.0.11"></a>
+              <a href="#highcharts-maps-v5.0.11">Highcharts Maps v5.0.11 (2017-05-04)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.11 above also apply to Highmaps 5.0.11.</li>
@@ -8503,22 +8605,22 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.10"></a>
-              <a href="#highmaps-v5.0.10">Highmaps v5.0.10 (2017-03-31)</a>
+              <a id="highcharts-maps-v5.0.10"></a>
+              <a href="#highcharts-maps-v5.0.10">Highcharts Maps v5.0.10 (2017-03-31)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.10 above also apply to Highmaps 5.0.10.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v5.0.9"></a>
-              <a href="#highmaps-v5.0.9">Highmaps v5.0.9 (2017-03-08)</a>
+              <a id="highcharts-maps-v5.0.9"></a>
+              <a href="#highcharts-maps-v5.0.9">Highcharts Maps v5.0.9 (2017-03-08)</a>
             </p>
             <ul>
               <li>Worked around a Closure Compiler error that made 3D charts fail.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v5.0.8"></a>
-              <a href="#highmaps-v5.0.8">Highmaps v5.0.8 (2017-03-08)</a>
+              <a id="highcharts-maps-v5.0.8"></a>
+              <a href="#highcharts-maps-v5.0.8">Highcharts Maps v5.0.8 (2017-03-08)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.8 above also apply to Highmaps 5.0.8.</li>
@@ -8546,8 +8648,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.7"></a>
-              <a href="#highmaps-v5.0.7">Highmaps v5.0.7 (2017-01-17)</a>
+              <a id="highcharts-maps-v5.0.7"></a>
+              <a href="#highcharts-maps-v5.0.7">Highcharts Maps v5.0.7 (2017-01-17)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.7 above also apply to Highmaps 5.0.7.</li>
@@ -8575,8 +8677,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.6"></a>
-              <a href="#highmaps-v5.0.6">Highmaps v5.0.6 (2016-12-07)</a>
+              <a id="highcharts-maps-v5.0.6"></a>
+              <a href="#highcharts-maps-v5.0.6">Highcharts Maps v5.0.6 (2016-12-07)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.6 above also apply to Highmaps 5.0.6.</li>
@@ -8601,8 +8703,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.5"></a>
-              <a href="#highmaps-v5.0.5">Highmaps v5.0.5 (2016-11-29)</a>
+              <a id="highcharts-maps-v5.0.5"></a>
+              <a href="#highcharts-maps-v5.0.5">Highcharts Maps v5.0.5 (2016-11-29)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.5 above also apply to Highmaps 5.0.5.</li>
@@ -8627,8 +8729,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.4"></a>
-              <a href="#highmaps-v5.0.4">Highmaps v5.0.4 (2016-11-22)</a>
+              <a id="highcharts-maps-v5.0.4"></a>
+              <a href="#highcharts-maps-v5.0.4">Highcharts Maps v5.0.4 (2016-11-22)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.4 above also apply to Highmaps 5.0.4.</li>
@@ -8653,8 +8755,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.3"></a>
-              <a href="#highmaps-v5.0.3">Highmaps v5.0.3 (2016-11-18)</a>
+              <a id="highcharts-maps-v5.0.3"></a>
+              <a href="#highcharts-maps-v5.0.3">Highcharts Maps v5.0.3 (2016-11-18)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.3 above also apply to Highmaps 5.0.3.</li>
@@ -8680,15 +8782,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.2"></a>
-              <a href="#highmaps-v5.0.2">Highmaps v5.0.2 (2016-10-26)</a>
+              <a id="highcharts-maps-v5.0.2"></a>
+              <a href="#highcharts-maps-v5.0.2">Highcharts Maps v5.0.2 (2016-10-26)</a>
             </p>
             <ul>
               <li>The changes listed under Highcharts 5.0.1 above also apply to Highmaps 5.0.1.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v5.0.1"></a>
-              <a href="#highmaps-v5.0.1">Highmaps v5.0.1 (2016-10-26)</a>
+              <a id="highcharts-maps-v5.0.1"></a>
+              <a href="#highcharts-maps-v5.0.1">Highcharts Maps v5.0.1 (2016-10-26)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.1 above also apply to Highmaps 5.0.1.</li>
@@ -8713,8 +8815,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v5.0.0"></a>
-              <a href="#highmaps-v5.0.0">Highmaps v5.0.0 (2016-09-29)</a>
+              <a id="highcharts-maps-v5.0.0"></a>
+              <a href="#highcharts-maps-v5.0.0">Highcharts Maps v5.0.0 (2016-09-29)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 5.0.0 above also apply to Highmaps 5.0.0.</li>
@@ -8722,8 +8824,8 @@
               <li>Added new option, <a href="https://api.highcharts.com/highmaps/chart.mapTransforms">chart.mapTransforms</a>.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v4.2.7"></a>
-              <a href="#highmaps-v4.2.7">Highmaps v4.2.7 (2016-09-21)</a>
+              <a id="highcharts-maps-v4.2.7"></a>
+              <a href="#highcharts-maps-v4.2.7">Highcharts Maps v4.2.7 (2016-09-21)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.7 above also apply to Highmaps 4.2.7.</li>
@@ -8752,8 +8854,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v4.2.6"></a>
-              <a href="#highmaps-v4.2.6">Highmaps v4.2.6 (2016-08-02)</a>
+              <a id="highcharts-maps-v4.2.6"></a>
+              <a href="#highcharts-maps-v4.2.6">Highcharts Maps v4.2.6 (2016-08-02)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.6 above also apply to Highmaps 4.2.6.</li>
@@ -8778,8 +8880,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v4.2.5"></a>
-              <a href="#highmaps-v4.2.5">Highmaps v4.2.5 (2016-05-06)</a>
+              <a id="highcharts-maps-v4.2.5"></a>
+              <a href="#highcharts-maps-v4.2.5">Highcharts Maps v4.2.5 (2016-05-06)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.5 above also apply to Highmaps 4.2.5.</li>
@@ -8806,8 +8908,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v4.2.4"></a>
-              <a href="#highmaps-v4.2.4">Highmaps v4.2.4 (2016-04-14)</a>
+              <a id="highcharts-maps-v4.2.4"></a>
+              <a href="#highcharts-maps-v4.2.4">Highcharts Maps v4.2.4 (2016-04-14)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.4 above also apply to Highmaps 4.2.4.</li>
@@ -8835,15 +8937,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v4.2.3"></a>
-              <a href="#highmaps-v4.2.3">Highmaps v4.2.3 (2016-02-08)</a>
+              <a id="highcharts-maps-v4.2.3"></a>
+              <a href="#highcharts-maps-v4.2.3">Highcharts Maps v4.2.3 (2016-02-08)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.3 above also apply to Highmaps 4.2.3.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v4.2.2"></a>
-              <a href="#highmaps-v4.2.2">Highmaps v4.2.2 (2016-02-04)</a>
+              <a id="highcharts-maps-v4.2.2"></a>
+              <a href="#highcharts-maps-v4.2.2">Highcharts Maps v4.2.2 (2016-02-04)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.2.2 above also apply to Highmaps 4.2.2.</li>
@@ -8869,23 +8971,23 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v4.2.0"></a>
-              <a href="#highmaps-v4.2.0">Highmaps v4.2.0 (2015-12-15)</a>
+              <a id="highcharts-maps-v4.2.0"></a>
+              <a href="#highcharts-maps-v4.2.0">Highcharts Maps v4.2.0 (2015-12-15)</a>
             </p>
             <ul>
               <li>Jumped to version 4.2 to align versioning with Highcharts, which shares the same code and GitHub repo.</li>
               <li>Most changes listed under Highcharts 4.2.0 above also apply to Highmaps 4.2.0.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v1.1.10"></a>
-              <a href="#highmaps-v1.1.10">Highmaps v1.1.10 (2015-12-07)</a>
+              <a id="highcharts-maps-v1.1.10"></a>
+              <a href="#highcharts-maps-v1.1.10">Highcharts Maps v1.1.10 (2015-12-07)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.10 above also apply to Highmaps 1.1.10.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v1.1.9"></a>
-              <a href="#highmaps-v1.1.9">Highmaps v1.1.9 (2015-10-07)</a>
+              <a id="highcharts-maps-v1.1.9"></a>
+              <a href="#highcharts-maps-v1.1.9">Highcharts Maps v1.1.9 (2015-10-07)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.9 above also apply to Highmaps 1.1.9.</li>
@@ -8910,8 +9012,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v1.1.8"></a>
-              <a href="#highmaps-v1.1.8">Highmaps v1.1.8 (2015-08-20)</a>
+              <a id="highcharts-maps-v1.1.8"></a>
+              <a href="#highcharts-maps-v1.1.8">Highcharts Maps v1.1.8 (2015-08-20)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.8 above also apply to Highmaps 1.1.8.</li>
@@ -8940,15 +9042,15 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v1.1.7"></a>
-              <a href="#highmaps-v1.1.7">Highmaps v1.1.7 (2015-06-26)</a>
+              <a id="highcharts-maps-v1.1.7"></a>
+              <a href="#highcharts-maps-v1.1.7">Highcharts Maps v1.1.7 (2015-06-26)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.7 above also apply to Highmaps 1.1.7.</li>
             </ul>
             <p class="release-header">
-              <a id="highmaps-v1.1.6"></a>
-              <a href="#highmaps-v1.1.6">Highmaps v1.1.6 (2015-06-12)</a>
+              <a id="highcharts-maps-v1.1.6"></a>
+              <a href="#highcharts-maps-v1.1.6">Highcharts Maps v1.1.6 (2015-06-12)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.6 above also apply to Highmaps 1.1.6.</li>
@@ -8974,8 +9076,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v1.1.5"></a>
-              <a href="#highmaps-v1.1.5">Highmaps v1.1.5 (2015-04-13)</a>
+              <a id="highcharts-maps-v1.1.5"></a>
+              <a href="#highcharts-maps-v1.1.5">Highcharts Maps v1.1.5 (2015-04-13)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.5 above also apply to Highmaps 1.1.5.</li>
@@ -9001,8 +9103,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v1.1.4"></a>
-              <a href="#highmaps-v1.1.4">Highmaps v1.1.4 (2015-03-10)</a>
+              <a id="highcharts-maps-v1.1.4"></a>
+              <a href="#highcharts-maps-v1.1.4">Highcharts Maps v1.1.4 (2015-03-10)</a>
             </p>
             <ul>
               <li>Most changes listed under Highcharts 4.1.4 above also apply to Highmaps 1.1.4.</li>
@@ -9027,8 +9129,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v1.1.2"></a>
-              <a href="#highmaps-v1.1.2">Highmaps v1.1.2 (2015-02-27)</a>
+              <a id="highcharts-maps-v1.1.2"></a>
+              <a href="#highcharts-maps-v1.1.2">Highcharts Maps v1.1.2 (2015-02-27)</a>
             </p>
             <ul>
               <li>Some issues listed under Highcharts 4.1.2 above also apply to Highmaps 1.1.2.</li>
@@ -9053,8 +9155,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v1.1.0"></a>
-              <a href="#highmaps-v1.1.0">Highmaps v1.1.0 (2015-02-16)</a>
+              <a id="highcharts-maps-v1.1.0"></a>
+              <a href="#highcharts-maps-v1.1.0">Highcharts Maps v1.1.0 (2015-02-16)</a>
             </p>
             <ul>
               <li>Some issues listed under Highcharts 4.1.0 above also apply to Highmaps 1.1.0.</li>
@@ -9086,8 +9188,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v1.0.4"></a>
-              <a href="#highmaps-v1.0.4">Highmaps v1.0.4 (2014-09-02)</a>
+              <a id="highcharts-maps-v1.0.4"></a>
+              <a href="#highcharts-maps-v1.0.4">Highcharts Maps v1.0.4 (2014-09-02)</a>
             </p>
             <ul>
               <li>Some issues listed under Highcharts 4.0.4 above also apply to Highmaps 1.0.4.</li>
@@ -9115,8 +9217,8 @@
               </div>
             </div>
             <p class="release-header">
-              <a id="highmaps-v1.0.1"></a>
-              <a href="#highmaps-v1.0.1">Highmaps v1.0.1 (2014-06-12)</a>
+              <a id="highcharts-maps-v1.0.1"></a>
+              <a href="#highcharts-maps-v1.0.1">Highcharts Maps v1.0.1 (2014-06-12)</a>
             </p>
             <ul>
               <li>First release of Highmaps.</li>
@@ -9128,6 +9230,33 @@
             <h4 id="highcharts-gantt">Highcharts Gantt</h4>
           </div>
           <div class="changelog-container">
+            <p class="release-header">
+              <a id="highcharts-gantt-v8.1.0"></a>
+              <a href="#highcharts-gantt-v8.1.0">Highcharts Gantt v8.1.0 (2020-05-05)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 8.1.0 above also apply to Highcharts Gantt 8.1.0.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="hg-heading-8-1-0-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#hg-8-1-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hg-8-1-0-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/13221">#13221</a>, grid axis labels rendered outside the cell if the cell width was 0.</li>
+                      <li>Fixed <a href="https://github.com/highcharts/highcharts/issues/12984">#12984</a>, Gantt tasks not being collapsed when added by <code>chart.addSeries</code>.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p class="release-header">
               <a id="highcharts-gantt-v8.0.4"></a>
               <a href="#highcharts-gantt-v8.0.4">Highcharts Gantt v8.0.4 (2020-03-10)</a>

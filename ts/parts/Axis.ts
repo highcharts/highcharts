@@ -3614,7 +3614,7 @@ class Axis implements AxisComposition, AxisLike {
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.backgroundColor
              */
 
@@ -3624,7 +3624,7 @@ class Axis implements AxisComposition, AxisLike {
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderColor
              */
 
@@ -3635,7 +3635,7 @@ class Axis implements AxisComposition, AxisLike {
              *          Stack labels box options
              * @type      {number}
              * @default   0
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderRadius
              */
 
@@ -3646,7 +3646,7 @@ class Axis implements AxisComposition, AxisLike {
              *          Stack labels box options
              * @type      {number}
              * @default   0
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderWidth
              */
 
