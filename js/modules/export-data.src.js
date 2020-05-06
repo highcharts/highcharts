@@ -237,7 +237,7 @@ Highcharts.setOptions({
         /**
          * The text for exported table.
          *
-         * @since    next
+         * @since 8.1.0
          * @requires modules/export-data
          */
         exportData: {

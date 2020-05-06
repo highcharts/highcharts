@@ -1924,7 +1924,7 @@ class SVGRenderer {
      * @function Highcharts.SVGRenderer#crispLine
      *
      * @param {Highcharts.SVGPathArray} points
-     *        The original points on the format `['M', 0, 0, 'L', 100, 0]`.
+     *        The original points on the format `[['M', 0, 0], ['L', 100, 0]]`.
      *
      * @param {number} width
      *        The width of the line.
@@ -3460,6 +3460,8 @@ class SVGRenderer {
             wrapperY = wrapper.y = Math.round(value);
             wrapper.attr('translateY', wrapperY as any);
         } as any;
+
+        wrapper.isLabel = true;
 
         // Redirect certain methods to either the box or the text
         var baseCss = wrapper.css;

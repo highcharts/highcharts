@@ -166,7 +166,7 @@ seriesType('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.boxDashStyle
      */
@@ -180,7 +180,7 @@ seriesType('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.medianDashStyle
      */
@@ -211,7 +211,7 @@ seriesType('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.whiskerDashStyle
      */
@@ -567,7 +567,7 @@ seriesType('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.boxDashStyle
  */
@@ -581,7 +581,7 @@ seriesType('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.medianDashStyle
  */
@@ -595,7 +595,7 @@ seriesType('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.stemDashStyle
  */
@@ -609,7 +609,7 @@ seriesType('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.whiskerDashStyle
  */

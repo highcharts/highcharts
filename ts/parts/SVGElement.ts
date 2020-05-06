@@ -74,6 +74,7 @@ declare global {
             public constructor();
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
+            public isLabel: boolean;
             public parentGroup?: SVGElement;
             public pathArray?: SVGPath;
             public r?: number;
