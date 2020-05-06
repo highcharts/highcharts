@@ -144,7 +144,7 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  *
  * @param {Highcharts.Axis} this
  *
- * @return {Array<number>}
+ * @return {Highcharts.AxisTickPositionsArray}
  */
 /**
  * @interface Highcharts.AxisTickPositionsArray
