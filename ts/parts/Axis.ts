@@ -634,7 +634,7 @@ declare global {
  *
  * @param {Highcharts.Axis} this
  *
- * @return {Array<number>}
+ * @return {Highcharts.AxisTickPositionsArray}
  */
 
 /**
