@@ -1637,21 +1637,8 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             }, this);
         }
 
-        // Update the Z index of groups (#3380, #7397)
-        if (options.zIndex !== oldOptions.zIndex) {
-            groups.forEach(function (groupName: string): void {
-                if ((series as any)[groupName]) {
-                    (series as any)[groupName].attr({
-                        zIndex: options.zIndex
-                    });
-                }
-            });
-        }
-
-
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)
-
 
         fireEvent(this, 'afterUpdate');
 
