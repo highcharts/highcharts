@@ -339,7 +339,7 @@ declare global {
             func: WrapProceedFunction
         ): void;
         let timeUnits: Dictionary<number>;
-        let uniqueSerial: (boolean|undefined);
+        let serialKeys: (boolean|undefined);
     }
 }
 
@@ -3337,14 +3337,14 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    const uniqueKeyHash = H.uniqueSerial ?
-        '0000000' :
-        Math.random().toString(36).substring(2, 9);
+    const uniqueKeyHash = H.serialKeys ?
+        '' :
+        Math.random().toString(36).substring(2, 9) + '-';
 
     let idCounter = 0;
 
     return function (): string {
-        return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
+        return 'highcharts-' + uniqueKeyHash + idCounter++;
     };
 }());
 
@@ -3361,7 +3361,7 @@ const uniqueKey = H.uniqueKey = (function (): () => string {
  *   Highcharts.uniqueSerial = true;
  * }
  *
- * @name Highcharts.uniqueSerial
+ * @name Highcharts.serialKeys
  * @type {boolean|undefined}
  */
 ''; // detach doclet
