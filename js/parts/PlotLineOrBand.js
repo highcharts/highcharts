@@ -126,8 +126,8 @@ var PlotLineOrBand = /** @class */ (function () {
             return;
         }
         // common for lines and bands
-        if ((isNew || !svgElem.d) && path && path.length) {
-            svgElem.attr({ d: path });
+        // Add events only if they were not added before.
+        if (!svgElem.eventsAdded) {
             // events
             if (events) {
                 objectEach(events, function (event, eventType) {
@@ -136,6 +136,10 @@ var PlotLineOrBand = /** @class */ (function () {
                     });
                 });
             }
+            svgElem.eventsAdded = true;
+        }
+        if ((isNew || !svgElem.d) && path && path.length) {
+            svgElem.attr({ d: path });
         }
         else if (svgElem) {
             if (path) {
