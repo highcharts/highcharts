@@ -2442,12 +2442,12 @@ var seriesType = H.seriesType = function (type, parent, options, props, pointPro
  *         A unique key.
  */
 var uniqueKey = H.uniqueKey = (function () {
-    var uniqueKeyHash = H.uniqueSerial ?
-        '0000000' :
-        Math.random().toString(36).substring(2, 9);
+    var uniqueKeyHash = H.serialKeys ?
+        '' :
+        Math.random().toString(36).substring(2, 9) + '-';
     var idCounter = 0;
     return function () {
-        return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
+        return 'highcharts-' + uniqueKeyHash + idCounter++;
     };
 }());
 /**
@@ -2463,7 +2463,7 @@ var uniqueKey = H.uniqueKey = (function () {
  *   Highcharts.uniqueSerial = true;
  * }
  *
- * @name Highcharts.uniqueSerial
+ * @name Highcharts.serialKeys
  * @type {boolean|undefined}
  */
 ''; // detach doclet
