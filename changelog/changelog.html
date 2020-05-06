@@ -25,14 +25,23 @@
               <li>Added individual dash style settings for various parts of box plots. See <a href="https://github.com/highcharts/highcharts/issues/13065">#13065</a>.</li>
               <li>Added language options for export-data table text, see <a href="https://github.com/highcharts/highcharts/issues/13166">#13166</a>.</li>
             </ul>
-            <h2 id="upgrade-nots">Upgrade nots</h2>
-            <ul>
-              <li>The Axis class was refactored as part of the TypeScript migration. Axis extensions like log axis, broken axis, parallel axis, datetime axis and ordinal axis are now handled as compositions. Instead of adding multiple properties to the main axis instance, they now add a single object that holds all properties. This does not affect the options API, but it may affect implementations that are based on some of our samples that used the original properties. Our samples have been updated to use the new structure.</li>
-              <li>For added type safety, we are now defining SVG path definition as two-dimensional arrays, or in TypeScript sense an array of tuples. So <code>[&#39;M&#39;, 0, 0, &#39;L&#39;, 100, 100]</code> in the new implementation should be written <code>[[&#39;M&#39;, 0, 0], [&#39;L&#39;, 100, 100]]</code>. We built in a converter for old paths, but there may be cases, like for example directly accessing <code>SVGRenderer.crispLine</code>, where it breaks.</li>
-            </ul>
             <div id="accordion" class="card-group">
               <div class="card">
+                <div id="heading-8-1-0-upgrade-notes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#8-1-0-upgrade-notes" data-toggle="collapse" data-parent="#accordion"> Upgrade notes</a>
+                  </h4>
+                </div>
+                <div id="8-1-0-upgrade-notes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>The Axis class was refactored as part of the TypeScript migration. Axis extensions like log axis, broken axis, parallel axis, datetime axis and ordinal axis are now handled as compositions. Instead of adding multiple properties to the main axis instance, they now add a single object that holds all properties. This does not affect the options API, but it may affect implementations that are based on some of our samples that used the original properties. Our samples have been updated to use the new structure.</li>
+                      <li>For added type safety, we are now defining SVG path definition as two-dimensional arrays, or in TypeScript sense an array of tuples. So <code>[&#39;M&#39;, 0, 0, &#39;L&#39;, 100, 100]</code> in the new implementation should be written <code>[[&#39;M&#39;, 0, 0], [&#39;L&#39;, 100, 100]]</code>. We built in a converter for old paths, but there may be cases, like for example directly accessing <code>SVGRenderer.crispLine</code>, where it breaks.</li>
+                    </ul>
 
+                  </div>
+
+                </div>
                 <div id="heading-8-1-0-bug-fixes" class="card-header">
                   <h4 class="card-title">
                     <a href="#8-1-0-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
