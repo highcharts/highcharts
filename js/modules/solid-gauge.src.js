@@ -10,7 +10,12 @@
  *
  * */
 'use strict';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import U from '../parts/Utilities.js';
+var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
 /**
  * Additional options, depending on the actual symbol drawn.
  *
@@ -20,14 +25,9 @@ import H from '../parts/Globals.js';
 * @name Highcharts.SymbolOptionsObject#rounded
 * @type {boolean|undefined}
 */
-import Color from '../parts/Color.js';
-var color = Color.parse;
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
-var clamp = U.clamp, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, seriesType = U.seriesType, wrap = U.wrap;
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
-var Renderer = H.Renderer, colorAxisMethods;
+var Renderer = H.Renderer;
 /**
  * Symbol definition of an arc with round edges.
  *
@@ -65,80 +65,113 @@ wrap(Renderer.prototype.symbols, 'arc', function (proceed, x, y, w, h, options) 
     }
     return path;
 });
-// These methods are defined in the ColorAxis object, and copied here.
-// If we implement an AMD system we should make ColorAxis a dependency.
-colorAxisMethods = {
-    initDataClasses: function (userOptions) {
-        var chart = this.chart, dataClasses, colorCounter = 0, options = this.options;
-        this.dataClasses = dataClasses = [];
-        userOptions.dataClasses.forEach(function (dataClass, i) {
-            var colors;
-            dataClass = merge(dataClass);
-            dataClasses.push(dataClass);
-            if (!dataClass.color) {
-                if (options.dataClassColor === 'category') {
-                    colors = chart.options.colors;
-                    dataClass.color = colors[colorCounter++];
-                    // loop back to zero
-                    if (colorCounter === colors.length) {
-                        colorCounter = 0;
+/**
+ * @private
+ */
+var SolidGaugeAxis;
+(function (SolidGaugeAxis) {
+    /* *
+     *
+     *  Interfaces
+     *
+     * */
+    /* *
+     *
+     *  Constants
+     *
+     * */
+    /**
+     * These methods are defined in the ColorAxis object, and copied here.
+     * @private
+     *
+     * @todo
+     * If we implement an AMD system we should make ColorAxis a dependency.
+     */
+    var methods = {
+        initDataClasses: function (userOptions) {
+            var chart = this.chart, dataClasses, colorCounter = 0, options = this.options;
+            this.dataClasses = dataClasses = [];
+            userOptions.dataClasses.forEach(function (dataClass, i) {
+                var colors;
+                dataClass = merge(dataClass);
+                dataClasses.push(dataClass);
+                if (!dataClass.color) {
+                    if (options.dataClassColor === 'category') {
+                        colors = chart.options.colors;
+                        dataClass.color = colors[colorCounter++];
+                        // loop back to zero
+                        if (colorCounter === colors.length) {
+                            colorCounter = 0;
+                        }
+                    }
+                    else {
+                        dataClass.color = color(options.minColor).tweenTo(color(options.maxColor), i / (userOptions.dataClasses.length - 1));
                     }
                 }
-                else {
-                    dataClass.color = color(options.minColor).tweenTo(color(options.maxColor), i / (userOptions.dataClasses.length - 1));
-                }
-            }
-        });
-    },
-    initStops: function (userOptions) {
-        this.stops = userOptions.stops || [
-            [0, this.options.minColor],
-            [1, this.options.maxColor]
-        ];
-        this.stops.forEach(function (stop) {
-            stop.color = color(stop[1]);
-        });
-    },
-    // Translate from a value to a color
-    toColor: function (value, point) {
-        var pos, stops = this.stops, from, to, color, dataClasses = this.dataClasses, dataClass, i;
-        if (dataClasses) {
-            i = dataClasses.length;
-            while (i--) {
-                dataClass = dataClasses[i];
-                from = dataClass.from;
-                to = dataClass.to;
-                if ((typeof from === 'undefined' || value >= from) &&
-                    (typeof to === 'undefined' || value <= to)) {
-                    color = dataClass.color;
-                    if (point) {
-                        point.dataClass = i;
+            });
+        },
+        initStops: function (userOptions) {
+            this.stops = userOptions.stops || [
+                [0, this.options.minColor],
+                [1, this.options.maxColor]
+            ];
+            this.stops.forEach(function (stop) {
+                stop.color = color(stop[1]);
+            });
+        },
+        // Translate from a value to a color
+        toColor: function (value, point) {
+            var pos, stops = this.stops, from, to, color, dataClasses = this.dataClasses, dataClass, i;
+            if (dataClasses) {
+                i = dataClasses.length;
+                while (i--) {
+                    dataClass = dataClasses[i];
+                    from = dataClass.from;
+                    to = dataClass.to;
+                    if ((typeof from === 'undefined' || value >= from) &&
+                        (typeof to === 'undefined' || value <= to)) {
+                        color = dataClass.color;
+                        if (point) {
+                            point.dataClass = i;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
-        }
-        else {
-            if (this.logarithmic) {
-                value = this.val2lin(value);
-            }
-            pos = 1 - ((this.max - value) / (this.max - this.min));
-            i = stops.length;
-            while (i--) {
-                if (pos > stops[i][0]) {
-                    break;
+            else {
+                if (this.logarithmic) {
+                    value = this.val2lin(value);
                 }
+                pos = 1 - ((this.max - value) / (this.max - this.min));
+                i = stops.length;
+                while (i--) {
+                    if (pos > stops[i][0]) {
+                        break;
+                    }
+                }
+                from = stops[i] || stops[i + 1];
+                to = stops[i + 1] || from;
+                // The position within the gradient
+                pos = (1 - (to[0] - pos) / ((to[0] -
+                    from[0]) || 1));
+                color = from.color.tweenTo(to.color, pos);
             }
-            from = stops[i] || stops[i + 1];
-            to = stops[i + 1] || from;
-            // The position within the gradient
-            pos = (1 - (to[0] - pos) / ((to[0] -
-                from[0]) || 1));
-            color = from.color.tweenTo(to.color, pos);
+            return color;
         }
-        return color;
+    };
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    /**
+     * @private
+     */
+    function init(axis) {
+        extend(axis, methods);
     }
-};
+    SolidGaugeAxis.init = init;
+})(SolidGaugeAxis || (SolidGaugeAxis = {}));
 /**
  * A solid gauge is a circular gauge where the value is indicated by a filled
  * arc, and the color of the arc may variate with the value.
@@ -242,7 +275,7 @@ seriesType('solidgauge', 'gauge', solidGaugeOptions, {
     // decoration (#5895).
     translate: function () {
         var axis = this.yAxis;
-        extend(axis, colorAxisMethods);
+        SolidGaugeAxis.init(axis);
         // Prepare data classes
         if (!axis.dataClasses && axis.options.dataClasses) {
             axis.initDataClasses(axis.options);
@@ -414,3 +447,4 @@ seriesType('solidgauge', 'gauge', solidGaugeOptions, {
  * @apioption series.solidgauge.data.radius
  */
 ''; // adds doclets above to transpiled file
+export default SolidGaugeAxis;
