@@ -315,9 +315,8 @@ class PlotLineOrBand {
 
 
         // common for lines and bands
-        if ((isNew || !(svgElem as any).d) && path && path.length) {
-            (svgElem as any).attr({ d: path });
-
+        // Add events only if they were not added before.
+        if (!(svgElem as any).eventsAdded) {
             // events
             if (events) {
                 objectEach(events, function (event, eventType): void {
@@ -326,6 +325,10 @@ class PlotLineOrBand {
                     });
                 });
             }
+            (svgElem as any).eventsAdded = true;
+        }
+        if ((isNew || !(svgElem as any).d) && path && path.length) {
+            (svgElem as any).attr({ d: path });
         } else if (svgElem) {
             if (path) {
                 svgElem.show(true);
