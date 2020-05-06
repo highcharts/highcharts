@@ -106,7 +106,7 @@ var PlotLineOrBand = /** @class */ (function () {
              * @name Highcharts.PlotLineOrBand#svgElement
              * @type {Highcharts.SVGElement}
              */
-            plotLine.svgElem = svgElem = renderer
+            plotLine.svgElem = svgElem = svgElem || renderer
                 .path()
                 .attr(attribs)
                 .add(group);
@@ -127,16 +127,13 @@ var PlotLineOrBand = /** @class */ (function () {
         }
         // common for lines and bands
         // Add events only if they were not added before.
-        if (!svgElem.eventsAdded) {
-            // events
-            if (events) {
-                objectEach(events, function (event, eventType) {
-                    svgElem.on(eventType, function (e) {
-                        events[eventType].apply(plotLine, [e]);
-                    });
+        if (!plotLine.eventsAdded && events) {
+            objectEach(events, function (event, eventType) {
+                svgElem.on(eventType, function (e) {
+                    events[eventType].apply(plotLine, [e]);
                 });
-            }
-            svgElem.eventsAdded = true;
+            });
+            plotLine.eventsAdded = true;
         }
         if ((isNew || !svgElem.d) && path && path.length) {
             svgElem.attr({ d: path });
@@ -950,7 +947,15 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
-        var obj = new PlotLineOrBand(this, options).render(), userOptions = this.userOptions;
+        var obj, userOptions = this.userOptions;
+        // If path of the same id already exists on related axis,
+        // use this path instead.
+        this.plotLinesAndBands.forEach(function (PlotLineOrBand) {
+            if (options.id && PlotLineOrBand.id === options.id && PlotLineOrBand.svgElem) {
+                obj = PlotLineOrBand;
+            }
+        });
+        obj = obj || new PlotLineOrBand(this, options).render();
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
             if (coll) {
