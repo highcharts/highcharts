@@ -102,14 +102,17 @@ addEvent(H.Series, 'afterRender', function () {
             }, seriesOptions.lastVisiblePrice);
             yAxis.cross = serie.lastVisiblePrice;
             lastPoint = points[pLength - crop];
+            if (serie.crossLabel) {
+                serie.crossLabel.destroy();
+                // Set to undefined to avoid collision with
+                // the yAxis crosshair #11480
+                delete yAxis.crossLabel;
+            }
             // Save price
             yAxis.drawCrosshair(null, lastPoint);
             if (yAxis.cross) {
                 serie.lastVisiblePrice = yAxis.cross;
                 serie.lastVisiblePrice.y = lastPoint.y;
-            }
-            if (serie.crossLabel) {
-                serie.crossLabel.destroy();
             }
             serie.crossLabel = yAxis.crossLabel;
         }

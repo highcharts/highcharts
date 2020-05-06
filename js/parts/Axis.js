@@ -285,7 +285,6 @@ var Axis = /** @class */ (function () {
         this.right = void 0;
         this.series = void 0;
         this.side = void 0;
-        this.stacksTouched = void 0;
         this.tickAmount = void 0;
         this.tickInterval = void 0;
         this.tickmarkOffset = void 0;
@@ -454,10 +453,6 @@ var Axis = /** @class */ (function () {
         axis.minRange = axis.userMinRange = options.minRange || options.maxZoom;
         axis.range = options.range;
         axis.offset = options.offset || 0;
-        // Dictionary for stacks
-        axis.stacks = {};
-        axis.oldStacks = {};
-        axis.stacksTouched = 0;
         /**
          * The maximum value of the axis. In a logarithmic axis, this is the
          * logarithm of the real value, and the real value can be obtained from
@@ -508,6 +503,7 @@ var Axis = /** @class */ (function () {
             typeof axis.reversed === 'undefined') {
             axis.reversed = true;
         }
+        axis.labelRotation = axis.options.labels.rotation;
         // register event listeners
         objectEach(events, function (event, eventType) {
             if (isFunction(event)) {
@@ -619,8 +615,8 @@ var Axis = /** @class */ (function () {
             // Reset properties in case we're redrawing (#3353)
             axis.dataMin = axis.dataMax = axis.threshold = null;
             axis.softThreshold = !axis.isXAxis;
-            if (axis.buildStacks) {
-                axis.buildStacks();
+            if (axis.stacking) {
+                axis.stacking.buildStacks();
             }
             // loop through this axis' series
             axis.series.forEach(function (series) {
@@ -865,7 +861,7 @@ var Axis = /** @class */ (function () {
             }
             e.path = skip && !force ?
                 null :
-                chart.renderer.crispLine(['M', x1, y1, 'L', x2, y2], lineWidth || 1);
+                chart.renderer.crispLine([['M', x1, y1], ['L', x2, y2]], lineWidth || 1);
         });
         return evt.path;
     };
@@ -1342,7 +1338,7 @@ var Axis = /** @class */ (function () {
         // computing tick interval (#1337).
         if (!categories &&
             !axis.axisPointRange &&
-            !axis.usePercentage &&
+            !(axis.stacking && axis.stacking.usePercentage) &&
             !isLinked &&
             defined(axis.min) &&
             defined(axis.max)) {
@@ -1455,14 +1451,13 @@ var Axis = /** @class */ (function () {
         }
         // for linear axes, get magnitude and normalize the interval
         if (!axis.dateTime && !axis.logarithmic && !tickIntervalOption) {
-            axis.tickInterval = normalizeTickInterval(axis.tickInterval, null, getMagnitude(axis.tickInterval), 
-            // If the tick interval is between 0.5 and 5 and the axis max is
-            // in the order of thousands, chances are we are dealing with
-            // years. Don't allow decimals. #3363.
-            pick(options.allowDecimals, !(axis.tickInterval > 0.5 &&
-                axis.tickInterval < 5 &&
-                axis.max > 1000 &&
-                axis.max < 9999)), !!this.tickAmount);
+            axis.tickInterval = normalizeTickInterval(axis.tickInterval, void 0, getMagnitude(axis.tickInterval), pick(options.allowDecimals, 
+            // If the tick interval is greather than 0.5, avoid
+            // decimals, as linear axes are often used to render
+            // discrete values. #3363. If a tick amount is set, allow
+            // decimals by default, as it increases the chances for a
+            // good fit.
+            axis.tickInterval < 0.5 || this.tickAmount !== void 0), !!this.tickAmount);
         }
         // Prevent ticks from getting so close that we can't draw the labels
         if (!this.tickAmount) {
@@ -1674,7 +1669,7 @@ var Axis = /** @class */ (function () {
     Axis.prototype.getTickAmount = function () {
         var axis = this, options = this.options, tickAmount = options.tickAmount, tickPixelInterval = options.tickPixelInterval;
         if (!defined(options.tickInterval) &&
-            this.len < tickPixelInterval &&
+            !tickAmount && this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
@@ -1783,8 +1778,8 @@ var Axis = /** @class */ (function () {
             axis.userMin !== axis.oldUserMin ||
             axis.userMax !== axis.oldUserMax ||
             axis.alignToOthers()) {
-            if (axis.resetStacks) {
-                axis.resetStacks();
+            if (axis.stacking) {
+                axis.stacking.resetStacks();
             }
             axis.forceRedraw = false;
             // get data extremes if needed
@@ -1804,8 +1799,8 @@ var Axis = /** @class */ (function () {
                         axis.max !== axis.oldMax;
             }
         }
-        else if (axis.cleanStacks) {
-            axis.cleanStacks();
+        else if (axis.stacking) {
+            axis.stacking.cleanStacks();
         }
         // Recalculate panning state object, when the data
         // has changed. It is required when vertical panning is enabled.
@@ -2042,11 +2037,11 @@ var Axis = /** @class */ (function () {
      * @param {string} [prefix]
      * 'tick' or 'minorTick'
      *
-     * @return {Array<number>}
+     * @return {Array<number,number>|undefined}
      * An array of tickLength and tickWidth
      */
     Axis.prototype.tickSize = function (prefix) {
-        var options = this.options, tickLength = options[prefix + 'Length'], tickWidth = pick(options[prefix + 'Width'], 
+        var options = this.options, tickLength = options[prefix === 'tick' ? 'tickLength' : 'minorTickLength'], tickWidth = pick(options[prefix === 'tick' ? 'tickWidth' : 'minorTickWidth'], 
         // Default to 1 on linear and datetime X axes
         prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0), e, tickSize;
         if (tickWidth && tickLength) {
@@ -2152,20 +2147,33 @@ var Axis = /** @class */ (function () {
      * The pixel width allocated to each axis label.
      */
     Axis.prototype.getSlotWidth = function (tick) {
+        var _a;
         // #5086, #1580, #1931
         var chart = this.chart, horiz = this.horiz, labelOptions = this.options.labels, slotCount = Math.max(this.tickPositions.length - (this.categories ? 0 : 1), 1), marginLeft = chart.margin[3];
-        return (tick &&
-            tick.slotWidth // Used by grid axis
-        ) || (horiz &&
-            (labelOptions.step || 0) < 2 &&
-            !labelOptions.rotation && // #4415
-            ((this.staggerLines || 1) * this.len) / slotCount) || (!horiz && (
-        // #7028
-        (labelOptions.style &&
-            parseInt(labelOptions.style.width, 10)) ||
-            (marginLeft &&
-                (marginLeft - chart.spacing[3])) ||
-            chart.chartWidth * 0.33));
+        // Used by grid axis
+        if (tick && isNumber(tick.slotWidth)) { // #13221, can be 0
+            return tick.slotWidth;
+        }
+        if (horiz &&
+            labelOptions &&
+            (labelOptions.step || 0) < 2) {
+            if (labelOptions.rotation) { // #4415
+                return 0;
+            }
+            return ((this.staggerLines || 1) * this.len) / slotCount;
+        }
+        if (!horiz) {
+            // #7028
+            var cssWidth = (_a = labelOptions === null || labelOptions === void 0 ? void 0 : labelOptions.style) === null || _a === void 0 ? void 0 : _a.width;
+            if (cssWidth !== void 0) {
+                return parseInt(cssWidth, 10);
+            }
+            if (marginLeft) {
+                return marginLeft - chart.spacing[3];
+            }
+        }
+        // Last resort, a fraction of the available size
+        return chart.chartWidth * 0.33;
     };
     /**
      * Render the axis labels and determine whether ellipsis or rotation need to
@@ -2274,7 +2282,7 @@ var Axis = /** @class */ (function () {
                     commonWidth < label.textPxLength ||
                         // Resetting CSS, #4928
                         label.element.tagName === 'SPAN')) {
-                    css.width = commonWidth;
+                    css.width = commonWidth + 'px';
                     if (!textOverflowOption) {
                         css.textOverflow = (label.specificTextOverflow ||
                             commonTextOverflow);
@@ -2355,7 +2363,7 @@ var Axis = /** @class */ (function () {
             !axisTitleOptions.style.width &&
             !axis.isRadial) {
             axis.axisTitle.css({
-                width: axis.len
+                width: axis.len + 'px'
             });
         }
         // hide or show the title depending on whether showEmpty is set
@@ -2395,7 +2403,7 @@ var Axis = /** @class */ (function () {
         var axis = this, chart = axis.chart, renderer = chart.renderer, options = axis.options, tickPositions = axis.tickPositions, ticks = axis.ticks, horiz = axis.horiz, side = axis.side, invertedSide = chart.inverted &&
             !axis.isZAxis ? [1, 0, 3, 2][side] : side, hasData, showAxis, titleOffset = 0, titleOffsetOption, titleMargin = 0, axisTitleOptions = options.title, labelOptions = options.labels, labelOffset = 0, // reset
         labelOffsetPadded, axisOffset = chart.axisOffset, clipOffset = chart.clipOffset, clip, directionFactor = [-1, 1, 1, -1][side], className = options.className, axisParent = axis.axisParent, // Used in color axis
-        lineHeightCorrection, tickSize;
+        lineHeightCorrection;
         // For reuse in Axis.render
         hasData = axis.hasData();
         axis.showAxis = showAxis = hasData || pick(options.showEmpty, true);
@@ -2489,7 +2497,7 @@ var Axis = /** @class */ (function () {
         }
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
-        tickSize = this.tickSize('tick');
+        var tickSize = this.tickSize('tick');
         axisOffset[side] = Math.max(axisOffset[side], axis.axisTitleMargin + titleOffset +
             directionFactor * axis.offset, labelOffsetPadded, // #3027
         tickPositions && tickPositions.length && tickSize ?
@@ -2526,20 +2534,24 @@ var Axis = /** @class */ (function () {
         }
         return chart.renderer
             .crispLine([
-            'M',
-            horiz ?
-                this.left :
-                lineLeft,
-            horiz ?
-                lineTop :
-                this.top,
-            'L',
-            horiz ?
-                chart.chartWidth - this.right :
-                lineLeft,
-            horiz ?
-                lineTop :
-                chart.chartHeight - this.bottom
+            [
+                'M',
+                horiz ?
+                    this.left :
+                    lineLeft,
+                horiz ?
+                    lineTop :
+                    this.top
+            ],
+            [
+                'L',
+                horiz ?
+                    chart.chartWidth - this.right :
+                    lineLeft,
+                horiz ?
+                    lineTop :
+                    chart.chartHeight - this.bottom
+            ]
         ], lineWidth);
     };
     /**
@@ -2793,8 +2805,8 @@ var Axis = /** @class */ (function () {
             }
         }
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled) {
-            axis.renderStackTotals();
+        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+            axis.stacking.renderStackTotals();
         }
         // End stacked totals
         axis.isDirty = false;
@@ -2844,17 +2856,12 @@ var Axis = /** @class */ (function () {
      * Whether to preserve events, used internally in Axis.update.
      */
     Axis.prototype.destroy = function (keepEvents) {
-        var axis = this, stacks = axis.stacks, plotLinesAndBands = axis.plotLinesAndBands, plotGroup, i;
+        var axis = this, plotLinesAndBands = axis.plotLinesAndBands, plotGroup, i;
         fireEvent(this, 'destroy', { keepEvents: keepEvents });
         // Remove the events
         if (!keepEvents) {
             removeEvent(axis);
         }
-        // Destroy each stack total
-        objectEach(stacks, function (stack, stackKey) {
-            destroyObjectProperties(stack);
-            stacks[stackKey] = null;
-        });
         // Destroy collections
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(function (coll) {
             destroyObjectProperties(coll);
@@ -2866,7 +2873,7 @@ var Axis = /** @class */ (function () {
             }
         }
         // Destroy elements
-        ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
+        ['axisLine', 'axisTitle', 'axisGroup',
             'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(function (prop) {
             if (axis[prop]) {
                 axis[prop] = axis[prop].destroy();
@@ -5702,6 +5709,44 @@ var Axis = /** @class */ (function () {
              * @product highcharts
              */
             allowOverlap: false,
+            /**
+             * The background color or gradient for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since 8.1.0
+             * @apioption yAxis.stackLabels.backgroundColor
+             */
+            /**
+             * The border color for the stack label. Defaults to `undefined`.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since 8.1.0
+             * @apioption yAxis.stackLabels.borderColor
+             */
+            /**
+             * The border radius in pixels for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {number}
+             * @default   0
+             * @since 8.1.0
+             * @apioption yAxis.stackLabels.borderRadius
+             */
+            /**
+             * The border width in pixels for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {number}
+             * @default   0
+             * @since 8.1.0
+             * @apioption yAxis.stackLabels.borderWidth
+             */
             /**
              * Enable or disable the stack total labels.
              *

@@ -759,15 +759,15 @@ class BubbleLegend {
             label,
             elementCenter = range.center,
             absoluteRadius = Math.abs(range.radius as any),
-            connectorDistance = options.connectorDistance,
+            connectorDistance = options.connectorDistance || 0,
             labelsAlign = (labelsOptions as any).align,
             rtl = legend.options.rtl,
             fontSize = (labelsOptions as any).style.fontSize,
             connectorLength = rtl || labelsAlign === 'left' ?
-                -(connectorDistance as any) : connectorDistance,
+                -connectorDistance : connectorDistance,
             borderWidth = options.borderWidth,
             connectorWidth = options.connectorWidth,
-            posX = mainRange.radius,
+            posX = mainRange.radius || 0,
             posY = (elementCenter as any) - absoluteRadius -
                 (borderWidth as any) / 2 + (connectorWidth as any) / 2,
             labelY,
@@ -786,13 +786,13 @@ class BubbleLegend {
         }
 
         labelY = posY + (options.labels as any).y;
-        labelX = (posX as any) + connectorLength + (options.labels as any).x;
+        labelX = posX + connectorLength + (options.labels as any).x;
 
         // Render bubble symbol
         symbols.bubbleItems.push(
             renderer
                 .circle(
-                    posX as any,
+                    posX,
                     (elementCenter as any) + crispMovement,
                     absoluteRadius
                 )
@@ -818,12 +818,8 @@ class BubbleLegend {
             renderer
                 .path(renderer.crispLine(
                     [
-                        'M',
-                        posX as any,
-                        posY,
-                        'L',
-                        (posX as any) + (connectorLength as any),
-                        posY
+                        ['M', posX, posY],
+                        ['L', posX + connectorLength, posY]
                     ],
                     options.connectorWidth as any
                 ))

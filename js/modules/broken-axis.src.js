@@ -318,6 +318,7 @@ var BrokenAxis = /** @class */ (function () {
      * @private
      */
     BrokenAxis.compose = function (AxisClass, SeriesClass) {
+        AxisClass.keepProps.push('brokenAxis');
         var seriesProto = Series.prototype;
         /**
          * @private
@@ -452,8 +453,8 @@ var BrokenAxis = /** @class */ (function () {
                             x: xRange
                         });
                         // For stacked chart generate empty stack items, #6546
-                        if (this.options.stacking) {
-                            stack = yAxis.stacks[this.stackKey][xRange] =
+                        if (yAxis.stacking && this.options.stacking) {
+                            stack = yAxis.stacking.stacks[this.stackKey][xRange] =
                                 new StackItem(yAxis, yAxis.options
                                     .stackLabels, false, xRange, this.stack);
                             stack.total = 0;
@@ -469,7 +470,9 @@ var BrokenAxis = /** @class */ (function () {
         /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'init', function () {
             var axis = this;
-            axis.brokenAxis = new BrokenAxisAdditions(axis);
+            if (!axis.brokenAxis) {
+                axis.brokenAxis = new BrokenAxisAdditions(axis);
+            }
         });
         addEvent(AxisClass, 'afterInit', function () {
             if (typeof this.brokenAxis !== 'undefined') {

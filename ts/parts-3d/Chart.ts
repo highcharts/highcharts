@@ -12,7 +12,19 @@
 
 'use strict';
 
+import Axis from '../parts/Axis.js';
+import Axis3D from './Axis3D.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    Fx,
+    isArray,
+    merge,
+    pick,
+    wrap
+} = U;
+import ZAxis from './ZAxis.js';
 
 /**
  * Internal types
@@ -82,16 +94,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    Fx,
-    isArray,
-    merge,
-    pick,
-    wrap
-} = U;
 
 import '../parts/Chart.js';
 
@@ -1851,6 +1853,9 @@ Fx.prototype.matrixSetter = function (): void {
         true
     );
 };
+
+ZAxis.ZChartComposition.compose(Chart);
+Axis3D.compose(Axis);
 
 /**
  * Note: As of v5.0.12, `frame.left` or `frame.right` should be used instead.

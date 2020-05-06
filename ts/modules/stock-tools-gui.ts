@@ -123,7 +123,6 @@ declare global {
                 submenuItems?: NodeListOf<HTMLDOMElement>
             ): void;
             public getIconsURL(): string;
-            public inIframe(): boolean;
             public init(): void;
             public redraw(): void;
             public scrollButtons(): void;
@@ -138,6 +137,8 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
+import NavigationBindings from '../annotations/navigationBindings.js';
+
 const {
     addEvent,
     createElement,
@@ -998,7 +999,6 @@ class Toolbar {
             defs: Highcharts.StockToolsGuiDefinitionsOptions =
                 guiOptions.definitions as any,
             allButtons = toolbar.childNodes,
-            inIframe = this.inIframe(),
             button: (
                 Highcharts.Dictionary<Highcharts.HTMLDOMElement>|undefined
             );
@@ -1007,11 +1007,6 @@ class Toolbar {
         buttons.forEach(function (btnName: string): void {
 
             button = _self.addButton(toolbar, defs, btnName, lang);
-
-            if (inIframe && btnName === 'fullScreen') {
-                (button as any).buttonWrapper.className +=
-                    ' ' + PREFIX + 'disabled-btn';
-            }
 
             _self.eventsToUnbind.push(
                 addEvent(
@@ -1510,18 +1505,6 @@ class Toolbar {
         });
     }
     /*
-     * Verify if chart is in iframe.
-     *
-     * @return {Object} - elements translations.
-     */
-    public inIframe(): boolean {
-        try {
-            return win.self !== win.top;
-        } catch (e) {
-            return true;
-        }
-    }
-    /*
      * Update GUI with given options.
      *
      * @param {Object} - general options for Stock Tools
@@ -1651,7 +1634,7 @@ extend(H.Chart.prototype, {
 });
 
 // Comunication with bindings:
-addEvent(H.NavigationBindings, 'selectButton', function (
+addEvent(NavigationBindings, 'selectButton', function (
     event: Highcharts.Dictionary<Highcharts.HTMLDOMElement>
 ): void {
     var button = event.button,
@@ -1671,7 +1654,7 @@ addEvent(H.NavigationBindings, 'selectButton', function (
     }
 });
 
-addEvent(H.NavigationBindings, 'deselectButton', function (
+addEvent(NavigationBindings, 'deselectButton', function (
     event: Highcharts.Dictionary<Highcharts.HTMLDOMElement>
 ): void {
     var button = event.button,

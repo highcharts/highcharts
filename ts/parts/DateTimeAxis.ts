@@ -25,8 +25,9 @@ const {
  */
 declare global {
     namespace Highcharts {
+        type DateTimeLabelFormatsKey = keyof XAxisDateTimeLabelFormatsOptions;
         interface DateTimeAxisNormalizedObject extends TimeNormalizedObject {
-            unitName: string;
+            unitName: DateTimeLabelFormatsKey;
         }
         interface DateTimeLabelFormatOptionsObject {
             main?: string;
@@ -44,7 +45,20 @@ declare global {
         }
         interface XAxisOptions {
             dateTimeLabelFormats?: XAxisDateTimeLabelFormatsOptions;
+            units?: Array<[DateTimeLabelFormatsKey, (Array<number>|null)]>;
         }
+    }
+}
+
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        dateTime?: DateTimeAxis['dateTime'];
+    }
+    interface AxisTypeRegistry {
+        DateTimeAxis: DateTimeAxis;
     }
 }
 
@@ -77,13 +91,6 @@ class DateTimeAxisAdditions {
      * */
 
     /**
-     * @private
-     */
-    public destroy(): void {
-        this.axis = void 0 as any;
-    }
-
-    /**
      * Get a normalized tick interval for dates. Returns a configuration object
      * with unit range (interval), count and name. Used to prepare data for
      * `getTimeTicks`. Previously this logic was part of getTimeTicks, but as
@@ -103,7 +110,7 @@ class DateTimeAxisAdditions {
      */
     public normalizeTimeTickInterval(
         tickInterval: number,
-        unitsOption?: Array<[string, (Array<number>|null)]>
+        unitsOption?: Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>
     ): Highcharts.DateTimeAxisNormalizedObject {
         var units = unitsOption || [[
                 'millisecond', // unit name
@@ -129,7 +136,7 @@ class DateTimeAxisAdditions {
             ], [
                 'year',
                 null
-            ]] as Array<[string, (Array<number>|null)]>,
+            ]] as Array<[Highcharts.DateTimeLabelFormatsKey, (Array<number>|null)]>,
             unit = units[units.length - 1], // default unit is years
             interval = timeUnits[unit[0]],
             multiples = unit[1],
@@ -211,6 +218,8 @@ class DateTimeAxis {
      */
     public static compose(AxisClass: typeof Axis): void {
 
+        AxisClass.keepProps.push('dateTime');
+
         const axisProto = AxisClass.prototype as DateTimeAxis;
 
         /**
@@ -245,18 +254,14 @@ class DateTimeAxis {
 
         addEvent(AxisClass, 'init', function (e: { userOptions: Axis['userOptions'] }): void {
             const axis = this;
-            const dateTime = axis.dateTime;
             const options = e.userOptions;
 
             if (options.type !== 'datetime') {
-                if (dateTime) {
-                    dateTime.destroy();
-                    axis.dateTime = void 0;
-                }
+                axis.dateTime = void 0;
                 return;
             }
 
-            if (!dateTime) {
+            if (!axis.dateTime) {
                 axis.dateTime = new DateTimeAxisAdditions(axis as DateTimeAxis);
             }
         });

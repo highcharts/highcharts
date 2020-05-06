@@ -55,7 +55,7 @@ Android 2.x
 
 Android 2.x doesn't have SVG support built in, so we have created a separate renderer based on the canvg library for this system. This solution has some limitations:
 
-*   Using Highstock on Android 2.x is not recommended as it relies heavily on zooming and mouse interaction
+*   Using Highcharts Stock on Android 2.x is not recommended as it relies heavily on zooming and mouse interaction
 *   Shared tooltip is always enabled.
 *   During first render, the canvg renderer + rgbcolor.js + canvg.js (concatenated to one file) will be downloaded from code.highcharts.com This is configurable with the `global.canvasToolsURL` option.
 *   Chart and series animation is turned off.

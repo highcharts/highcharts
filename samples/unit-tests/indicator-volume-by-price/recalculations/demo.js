@@ -117,6 +117,12 @@ QUnit.test('Test algorithm on data updates.', function (assert) {
         indicator = chart.series[2];
 
     assert.deepEqual(
+        chart.series[2].group.translateX,
+        chart.series[2].xAxis.left,
+        'The vbp series is positioned correctly (non-inverted).'
+    );
+
+    assert.deepEqual(
         round(indicator.volumeDataArray),
         expectedData,
         'volumeDataArray is correct after the chart is loaded.'

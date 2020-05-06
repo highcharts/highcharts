@@ -304,7 +304,7 @@ extend(H.Data.prototype, {
             i = path.length;
             while (i--) {
                 if (typeof path[i] === 'number') {
-                    path[i] = Math.round(path[i] as any);
+                    (path[i] as any) = Math.round(path[i] as any);
                 }
             }
             delete point._foundBox;

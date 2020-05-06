@@ -146,7 +146,9 @@ TrackerMixin = H.TrackerMixin = {
     drawTrackerGraph: function () {
         var series = this, options = series.options, trackByArea = options.trackByArea, trackerPath = [].concat(trackByArea ?
             series.areaPath :
-            series.graphPath), trackerPathLength = trackerPath.length, chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
+            series.graphPath), 
+        // trackerPathLength = trackerPath.length,
+        chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
             if (chart.hoverSeries !== series) {
                 series.onMouseOver();
             }
@@ -165,23 +167,7 @@ TrackerMixin = H.TrackerMixin = {
          * Opera: 0.00000000001 (unlimited)
          */
         TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
-        // Extend end points. A better way would be to use round linecaps,
-        // but those are not clickable in VML.
-        if (trackerPathLength && !trackByArea) {
-            i = trackerPathLength + 1;
-            while (i--) {
-                if (trackerPath[i] === 'M') {
-                    // extend left side
-                    trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], 'L');
-                }
-                if ((i && trackerPath[i] === 'M') ||
-                    i === trackerPathLength) {
-                    // extend right side
-                    trackerPath.splice(i, 0, 'L', trackerPath[i - 2] + snap, trackerPath[i - 1]);
-                }
-            }
-        }
-        // draw the tracker
+        // Draw the tracker
         if (tracker) {
             tracker.attr({ d: trackerPath });
         }
@@ -197,6 +183,7 @@ TrackerMixin = H.TrackerMixin = {
                 .add(series.group);
             if (!chart.styledMode) {
                 series.tracker.attr({
+                    'stroke-linecap': 'round',
                     'stroke-linejoin': 'round',
                     stroke: TRACKER_FILL,
                     fill: trackByArea ? TRACKER_FILL : 'none',
@@ -760,7 +747,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 pointAttribsAnimation = pick(chart.options.chart.animation, stateOptions.animation);
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints) {
+                if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
                     (point.dataLabels || []).forEach(function (label) {
                         if (label) {
                             label.animate({
@@ -875,7 +862,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @param {number} size
      *        The radius of the circular halo.
      *
-     * @return {Highcharts.SVGElement}
+     * @return {Highcharts.SVGPathArray}
      *         The path definition.
      */
     haloPath: function (size) {

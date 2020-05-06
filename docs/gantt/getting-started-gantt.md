@@ -15,7 +15,7 @@ _Example of loading Highcharts Gantt into a webpage_
     
     <script src="https://code.highcharts.com/gantt/highcharts-gantt.js"></script> 
 
-Load Highcharts Gantt as a module when a project needs both Highcharts and Gantt loaded at the same time. Place the script tag or import statement after loading the main library, Highcharts or Highstock.
+Load Highcharts Gantt as a module when a project needs both Highcharts and Gantt loaded at the same time. Place the script tag or import statement after loading the main library, Highcharts or Highcharts Stock.
 
 _Example of loading both libraries in a webpage_
 

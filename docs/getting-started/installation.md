@@ -17,15 +17,15 @@ If you need support for IE6, 7 or 8, you need to include some polyfills. See det
 
 ### B. Alternatively, load files from your own domain
 
-In the example above the JavaScript files are loaded from ajax.googleapis.com and [code.highcharts.com](https://code.highcharts.com). The Highcharts files can be downloaded from [highcharts.com](download) and put on your webpage. Here is an example with Highcharts served from your own server:
+In the example above the JavaScript files are loaded from ajax.googleapis.com and [code.highcharts.com](https://code.highcharts.com). The Highcharts files can be downloaded from [highcharts.com](https://www.highcharts.com/download/) and put on your webpage. Here is an example with Highcharts served from your own server:
 
 ```html
 <script src="/js/highcharts.js"></script>
 ```
 
-### C. Load Highstock or Highmaps
+### C. Load Highcharts Stock or Highcharts Maps
 
-Highcharts is already included in Highstock, so it is not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. Highstock and Highmaps can be loaded separate files like this:
+Highcharts is already included in Highcharts Stock, so it is not necessary to load both. The highstock.js file is included in the package. The highmaps.js file is also included, but unlike highstock.js, this doesn't include the complete Highcharts feature set. Highcharts Stock and Highcharts Maps can be loaded separate files like this:
 
 ```html
 <script src="/js/highstock.js"></script>
@@ -44,4 +44,4 @@ But the separate files can't run in the same page along with each other or with 
 
 You are now ready to use Highcharts, see [Your first chart](https://highcharts.com/docs/getting-started/your-first-chart) to get started.
 
-*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highstock versions) IE VML rendering is built into the library.
+*) Highcharts version 1.x relied on excanvas.js for rendering in IE. From Highcharts 2.0 (and all Highcharts Stock versions) IE VML rendering is built into the library.

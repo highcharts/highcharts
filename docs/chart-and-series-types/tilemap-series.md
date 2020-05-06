@@ -1,7 +1,7 @@
 Tilemaps
 ===
 
-Tilemaps are maps where each area is represented by tiles of equal shape. Highmaps supports four different tilemap types: Circlemap, Diamondmap, Honeycomb, and Squaremap, each with a different tile shape.
+Tilemaps are maps where each area is represented by tiles of equal shape. Highcharts Maps supports four different tilemap types: Circlemap, Diamondmap, Honeycomb, and Squaremap, each with a different tile shape.
 
 _For more detailed samples and documentation check the [API.](https://api.highcharts.com/highcharts/plotOptions.tilemap)_
 
@@ -40,7 +40,7 @@ Square tilemaps are just Heatmap series with slightly different default values. 
 How to create a tilemap
 -----------------------
 
-Tilemaps require the following module [modules/tilemap.js](https://code.highcharts.com/maps/modules/tilemap.js) with Highmaps only. Add also this module [modules/heatmap.js](https://code.highcharts.com/modules/heatmap.js) in case of using Highcharts.
+Tilemaps require the following module [modules/tilemap.js](https://code.highcharts.com/maps/modules/tilemap.js) with Highcharts Maps only. Add also this module [modules/heatmap.js](https://code.highcharts.com/modules/heatmap.js) in case of using Highcharts.
 
 Use the [series.tileShape](https://api.highcharts.com/highmaps/series.tilemap.tileShape) option to switch between the different tile shapes. Currently, four shapes are supported “circle”, “diamond”, “hexagon”and “square”. The default shape is “hexagon”.
 

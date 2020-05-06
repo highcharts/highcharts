@@ -113,52 +113,20 @@ var bindingsUtils = {
 /**
  * @private
  */
-H.NavigationBindings = function (chart, options) {
-    this.chart = chart;
-    this.options = options;
-    this.eventsToUnbind = [];
-    this.container = doc.getElementsByClassName(this.options.bindingsClassName);
-};
-// Define which options from annotations should show up in edit box:
-H.NavigationBindings.annotationsEditable = {
-    // `typeOptions` are always available
-    // Nested and shared options:
-    nestedOptions: {
-        labelOptions: ['style', 'format', 'backgroundColor'],
-        labels: ['style'],
-        label: ['style'],
-        style: ['fontSize', 'color'],
-        background: ['fill', 'strokeWidth', 'stroke'],
-        innerBackground: ['fill', 'strokeWidth', 'stroke'],
-        outerBackground: ['fill', 'strokeWidth', 'stroke'],
-        shapeOptions: ['fill', 'strokeWidth', 'stroke'],
-        shapes: ['fill', 'strokeWidth', 'stroke'],
-        line: ['strokeWidth', 'stroke'],
-        backgroundColors: [true],
-        connector: ['fill', 'strokeWidth', 'stroke'],
-        crosshairX: ['strokeWidth', 'stroke'],
-        crosshairY: ['strokeWidth', 'stroke']
-    },
-    // Simple shapes:
-    circle: ['shapes'],
-    verticalLine: [],
-    label: ['labelOptions'],
-    // Measure
-    measure: ['background', 'crosshairY', 'crosshairX'],
-    // Others:
-    fibonacci: [],
-    tunnel: ['background', 'line', 'height'],
-    pitchfork: ['innerBackground', 'outerBackground'],
-    rect: ['shapes'],
-    // Crooked lines, elliots, arrows etc:
-    crookedLine: []
-};
-// Define non editable fields per annotation, for example Rectangle inherits
-// options from Measure, but crosshairs are not available
-H.NavigationBindings.annotationsNonEditable = {
-    rectangle: ['crosshairX', 'crosshairY', 'label']
-};
-extend(H.NavigationBindings.prototype, {
+var NavigationBindings = /** @class */ (function () {
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+    function NavigationBindings(chart, options) {
+        this.boundClassNames = void 0;
+        this.selectedButton = void 0;
+        this.chart = chart;
+        this.options = options;
+        this.eventsToUnbind = [];
+        this.container = doc.getElementsByClassName(this.options.bindingsClassName || '');
+    }
     // Private properties added by bindings:
     // Active (selected) annotation that is editted through popup/forms
     // activeAnnotation: Annotation
@@ -175,23 +143,28 @@ extend(H.NavigationBindings.prototype, {
     // Holder for user options, returned from `start` event, and passed on to
     // `step`'s' and `end`.
     // currentUserDetails: {}
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Initi all events conencted to NavigationBindings.
      *
      * @private
      * @function Highcharts.NavigationBindings#initEvents
      */
-    initEvents: function () {
+    NavigationBindings.prototype.initEvents = function () {
         var navigation = this, chart = navigation.chart, bindingsContainer = navigation.container, options = navigation.options;
         // Shorthand object for getting events for buttons:
         navigation.boundClassNames = {};
-        objectEach(options.bindings, function (value) {
+        objectEach((options.bindings || {}), function (value) {
             navigation.boundClassNames[value.className] = value;
         });
         // Handle multiple containers with the same class names:
         [].forEach.call(bindingsContainer, function (subContainer) {
             navigation.eventsToUnbind.push(addEvent(subContainer, 'click', function (event) {
-                var bindings = navigation.getButtonEvents(bindingsContainer, event);
+                var bindings = navigation.getButtonEvents(subContainer, event);
                 if (bindings) {
                     navigation.bindingsButtonClick(bindings.button, bindings.events, event);
                 }
@@ -211,19 +184,19 @@ extend(H.NavigationBindings.prototype, {
         navigation.eventsToUnbind.push(addEvent(chart.container, 'mousemove', function (e) {
             navigation.bindingsContainerMouseMove(this, e);
         }));
-    },
+    };
     /**
      * Common chart.update() delegation, shared between bindings and exporting.
      *
      * @private
      * @function Highcharts.NavigationBindings#initUpdate
      */
-    initUpdate: function () {
+    NavigationBindings.prototype.initUpdate = function () {
         var navigation = this;
         chartNavigationMixin.addUpdate(function (options) {
             navigation.update(options);
         }, this.chart);
-    },
+    };
     /**
      * Hook for click on a button, method selcts/unselects buttons,
      * then calls `bindings.init` callback.
@@ -240,7 +213,7 @@ extend(H.NavigationBindings.prototype, {
      * @param {Highcharts.PointerEventObject} clickEvent
      *        Browser's click event
      */
-    bindingsButtonClick: function (button, events, clickEvent) {
+    NavigationBindings.prototype.bindingsButtonClick = function (button, events, clickEvent) {
         var navigation = this, chart = navigation.chart;
         if (navigation.selectedButtonElement) {
             fireEvent(navigation, 'deselectButton', { button: navigation.selectedButtonElement });
@@ -263,7 +236,7 @@ extend(H.NavigationBindings.prototype, {
         if (events.start || events.steps) {
             chart.renderer.boxWrapper.addClass(PREFIX + 'draw-mode');
         }
-    },
+    };
     /**
      * Hook for click on a chart, first click on a chart calls `start` event,
      * then on all subsequent clicks iterate over `steps` array.
@@ -278,7 +251,7 @@ extend(H.NavigationBindings.prototype, {
      * @param {Highcharts.PointerEventObject} clickEvent
      *        Browser's click event.
      */
-    bindingsChartClick: function (chart, clickEvent) {
+    NavigationBindings.prototype.bindingsChartClick = function (chart, clickEvent) {
         var navigation = this, chart = navigation.chart, selectedButton = navigation.selectedButton, svgContainer = chart.renderer.boxWrapper;
         // Click outside popups, should close them and deselect the annotation
         if (navigation.activeAnnotation &&
@@ -336,7 +309,7 @@ extend(H.NavigationBindings.prototype, {
                 }
             }
         }
-    },
+    };
     /**
      * Hook for mouse move on a chart's container. It calls current step.
      *
@@ -349,11 +322,11 @@ extend(H.NavigationBindings.prototype, {
      * @param {global.Event} moveEvent
      *        Browser's move event.
      */
-    bindingsContainerMouseMove: function (_container, moveEvent) {
+    NavigationBindings.prototype.bindingsContainerMouseMove = function (_container, moveEvent) {
         if (this.mouseMoveEvent) {
             this.mouseMoveEvent(moveEvent, this.currentUserDetails);
         }
-    },
+    };
     /**
      * Translate fields (e.g. `params.period` or `marker.styles.color`) to
      * Highcharts options object (e.g. `{ params: { period } }`).
@@ -370,7 +343,7 @@ extend(H.NavigationBindings.prototype, {
      * @return {T}
      *         Modified config
      */
-    fieldsToOptions: function (fields, config) {
+    NavigationBindings.prototype.fieldsToOptions = function (fields, config) {
         objectEach(fields, function (value, field) {
             var parsedValue = parseFloat(value), path = field.split('.'), parent = config, pathLength = path.length - 1;
             // If it's a number (not "format" options), parse it:
@@ -400,18 +373,18 @@ extend(H.NavigationBindings.prototype, {
             }
         });
         return config;
-    },
+    };
     /**
      * Shorthand method to deselect an annotation.
      *
      * @function Highcharts.NavigationBindings#deselectAnnotation
      */
-    deselectAnnotation: function () {
+    NavigationBindings.prototype.deselectAnnotation = function () {
         if (this.activeAnnotation) {
             this.activeAnnotation.setControlPointsVisibility(false);
             this.activeAnnotation = false;
         }
-    },
+    };
     /**
      * Generates API config for popup in the same format as options for
      * Annotation object.
@@ -424,10 +397,10 @@ extend(H.NavigationBindings.prototype, {
      * @return {Highcharts.Dictionary<string>}
      *         Annotation options to be displayed in popup box
      */
-    annotationToFields: function (annotation) {
-        var options = annotation.options, editables = H.NavigationBindings.annotationsEditable, nestedEditables = editables.nestedOptions, getFieldType = this.utils.getFieldType, type = pick(options.type, options.shapes && options.shapes[0] &&
+    NavigationBindings.prototype.annotationToFields = function (annotation) {
+        var options = annotation.options, editables = NavigationBindings.annotationsEditable, nestedEditables = editables.nestedOptions, getFieldType = this.utils.getFieldType, type = pick(options.type, options.shapes && options.shapes[0] &&
             options.shapes[0].type, options.labels && options.labels[0] &&
-            options.labels[0].itemType, 'label'), nonEditables = H.NavigationBindings.annotationsNonEditable[options.langKey] || [], visualOptions = {
+            options.labels[0].itemType, 'label'), nonEditables = NavigationBindings.annotationsNonEditable[options.langKey] || [], visualOptions = {
             langKey: options.langKey,
             type: type
         };
@@ -445,7 +418,7 @@ extend(H.NavigationBindings.prototype, {
          *        Option name, for example "visible" or "x", "y"
          *
          * @param {object} parentEditables
-         *        Editables from H.NavigationBindings.annotationsEditable
+         *        Editables from NavigationBindings.annotationsEditable
          *
          * @param {object} parent
          *        Where new options will be assigned
@@ -519,7 +492,7 @@ extend(H.NavigationBindings.prototype, {
             }
         });
         return visualOptions;
-    },
+    };
     /**
      * Get all class names for all parents in the element. Iterates until finds
      * main container.
@@ -535,7 +508,7 @@ extend(H.NavigationBindings.prototype, {
      * @return {Array<Array<string, Highcharts.HTMLDOMElement>>}
      *         Array of class names with corresponding elements
      */
-    getClickedClassNames: function (container, event) {
+    NavigationBindings.prototype.getClickedClassNames = function (container, event) {
         var element = event.target, classNames = [], elemClassName;
         while (element) {
             elemClassName = attr(element, 'class');
@@ -555,7 +528,7 @@ extend(H.NavigationBindings.prototype, {
             }
         }
         return classNames;
-    },
+    };
     /**
      * Get events bound to a button. It's a custom event delegation to find all
      * events connected to the element.
@@ -572,7 +545,7 @@ extend(H.NavigationBindings.prototype, {
      * @return {object}
      *         Object with events (init, start, steps, and end)
      */
-    getButtonEvents: function (container, event) {
+    NavigationBindings.prototype.getButtonEvents = function (container, event) {
         var navigation = this, classNames = this.getClickedClassNames(container, event), bindings;
         classNames.forEach(function (className) {
             if (navigation.boundClassNames[className[0]] && !bindings) {
@@ -583,7 +556,7 @@ extend(H.NavigationBindings.prototype, {
             }
         });
         return bindings;
-    },
+    };
     /**
      * Bindings are just events, so the whole update process is simply
      * removing old events and adding new ones.
@@ -591,38 +564,84 @@ extend(H.NavigationBindings.prototype, {
      * @private
      * @function Highcharts.NavigationBindings#update
      */
-    update: function (options) {
+    NavigationBindings.prototype.update = function (options) {
         this.options = merge(true, this.options, options);
         this.removeEvents();
         this.initEvents();
-    },
+    };
     /**
      * Remove all events created in the navigation.
      *
      * @private
      * @function Highcharts.NavigationBindings#removeEvents
      */
-    removeEvents: function () {
+    NavigationBindings.prototype.removeEvents = function () {
         this.eventsToUnbind.forEach(function (unbinder) {
             unbinder();
         });
-    },
-    destroy: function () {
+    };
+    NavigationBindings.prototype.destroy = function () {
         this.removeEvents();
-    },
-    /**
-     * General utils for bindings
+    };
+    /* *
      *
-     * @private
-     * @name Highcharts.NavigationBindings#utils
-     * @type {bindingsUtils}
-     */
-    utils: bindingsUtils
-});
+     *  Static Properties
+     *
+     * */
+    // Define which options from annotations should show up in edit box:
+    NavigationBindings.annotationsEditable = {
+        // `typeOptions` are always available
+        // Nested and shared options:
+        nestedOptions: {
+            labelOptions: ['style', 'format', 'backgroundColor'],
+            labels: ['style'],
+            label: ['style'],
+            style: ['fontSize', 'color'],
+            background: ['fill', 'strokeWidth', 'stroke'],
+            innerBackground: ['fill', 'strokeWidth', 'stroke'],
+            outerBackground: ['fill', 'strokeWidth', 'stroke'],
+            shapeOptions: ['fill', 'strokeWidth', 'stroke'],
+            shapes: ['fill', 'strokeWidth', 'stroke'],
+            line: ['strokeWidth', 'stroke'],
+            backgroundColors: [true],
+            connector: ['fill', 'strokeWidth', 'stroke'],
+            crosshairX: ['strokeWidth', 'stroke'],
+            crosshairY: ['strokeWidth', 'stroke']
+        },
+        // Simple shapes:
+        circle: ['shapes'],
+        verticalLine: [],
+        label: ['labelOptions'],
+        // Measure
+        measure: ['background', 'crosshairY', 'crosshairX'],
+        // Others:
+        fibonacci: [],
+        tunnel: ['background', 'line', 'height'],
+        pitchfork: ['innerBackground', 'outerBackground'],
+        rect: ['shapes'],
+        // Crooked lines, elliots, arrows etc:
+        crookedLine: [],
+        basicAnnotation: []
+    };
+    // Define non editable fields per annotation, for example Rectangle inherits
+    // options from Measure, but crosshairs are not available
+    NavigationBindings.annotationsNonEditable = {
+        rectangle: ['crosshairX', 'crosshairY', 'label']
+    };
+    return NavigationBindings;
+}());
+/**
+ * General utils for bindings
+ *
+ * @private
+ * @name Highcharts.NavigationBindings.utils
+ * @type {bindingsUtils}
+ */
+NavigationBindings.prototype.utils = bindingsUtils;
 H.Chart.prototype.initNavigationBindings = function () {
     var chart = this, options = chart.options;
     if (options && options.navigation && options.navigation.bindings) {
-        chart.navigationBindings = new H.NavigationBindings(chart, options.navigation);
+        chart.navigationBindings = new NavigationBindings(chart, options.navigation);
         chart.navigationBindings.initEvents();
         chart.navigationBindings.initUpdate();
     }
@@ -635,7 +654,7 @@ addEvent(H.Chart, 'destroy', function () {
         this.navigationBindings.destroy();
     }
 });
-addEvent(H.NavigationBindings, 'deselectButton', function () {
+addEvent(NavigationBindings, 'deselectButton', function () {
     this.selectedButtonElement = null;
 });
 addEvent(H.Annotation, 'remove', function () {
@@ -809,33 +828,10 @@ H.setOptions({
                 className: 'highcharts-circle-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, controlPoints = [{
-                            positioner: function (target) {
-                                var xy = H.Annotation.MockPoint.pointToPixels(target.points[0]), r = target.options.r;
-                                return {
-                                    x: xy.x + r * Math.cos(Math.PI / 4) -
-                                        this.graphic.width / 2,
-                                    y: xy.y + r * Math.sin(Math.PI / 4) -
-                                        this.graphic.height / 2
-                                };
-                            },
-                            events: {
-                                // TRANSFORM RADIUS ACCORDING TO Y
-                                // TRANSLATION
-                                drag: function (e, target) {
-                                    var annotation = target.annotation, position = this.mouseMoveToTranslation(e);
-                                    target.setRadius(Math.max(target.options.r +
-                                        position.y /
-                                            Math.sin(Math.PI / 4), 5));
-                                    annotation.options.shapes[0] =
-                                        annotation.userOptions.shapes[0] =
-                                            target.options;
-                                    target.redraw(false);
-                                }
-                            }
-                        }];
+                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation;
                     return this.chart.addAnnotation(merge({
                         langKey: 'circle',
+                        type: 'basicAnnotation',
                         shapes: [{
                                 type: 'circle',
                                 point: {
@@ -844,8 +840,7 @@ H.setOptions({
                                     x: coords.xAxis[0].value,
                                     y: coords.yAxis[0].value
                                 },
-                                r: 5,
-                                controlPoints: controlPoints
+                                r: 5
                             }]
                     }, navigation
                         .annotationsOptions, navigation
@@ -878,32 +873,10 @@ H.setOptions({
                 className: 'highcharts-rectangle-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, x = coords.xAxis[0].value, y = coords.yAxis[0].value, controlPoints = [{
-                            positioner: function (annotation) {
-                                var xy = H.Annotation.MockPoint
-                                    .pointToPixels(annotation.shapes[0].points[2]);
-                                return {
-                                    x: xy.x - 4,
-                                    y: xy.y - 4
-                                };
-                            },
-                            events: {
-                                drag: function (target) {
-                                    var coords = this.chart.pointer.getCoordinates(e), x = coords.xAxis[0].value, y = coords.yAxis[0].value, shape = target.options.shapes[0], points = shape.points;
-                                    // Top right point
-                                    points[1].x = x;
-                                    // Bottom right point (cursor position)
-                                    points[2].x = x;
-                                    points[2].y = y;
-                                    // Bottom left
-                                    points[3].y = y;
-                                    target.options.shapes[0].points = points;
-                                    target.redraw(false);
-                                }
-                            }
-                        }];
+                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, x = coords.xAxis[0].value, y = coords.yAxis[0].value;
                     return this.chart.addAnnotation(merge({
                         langKey: 'rectangle',
+                        type: 'basicAnnotation',
                         shapes: [{
                                 type: 'path',
                                 points: [{
@@ -927,8 +900,7 @@ H.setOptions({
                                         x: x,
                                         y: y
                                     }]
-                            }],
-                        controlPoints: controlPoints
+                            }]
                     }, navigation
                         .annotationsOptions, navigation
                         .bindings
@@ -965,62 +937,10 @@ H.setOptions({
                 className: 'highcharts-label-annotation',
                 /** @ignore-option */
                 start: function (e) {
-                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation, controlPoints = [{
-                            symbol: 'triangle-down',
-                            positioner: function (target) {
-                                if (!target.graphic.placed) {
-                                    return {
-                                        x: 0,
-                                        y: -9e7
-                                    };
-                                }
-                                var xy = H.Annotation.MockPoint
-                                    .pointToPixels(target.points[0]);
-                                return {
-                                    x: xy.x - this.graphic.width / 2,
-                                    y: xy.y - this.graphic.height / 2
-                                };
-                            },
-                            // TRANSLATE POINT/ANCHOR
-                            events: {
-                                drag: function (e, target) {
-                                    var xy = this.mouseMoveToTranslation(e);
-                                    target.translatePoint(xy.x, xy.y);
-                                    target.annotation.labels[0].options =
-                                        target.options;
-                                    target.redraw(false);
-                                }
-                            }
-                        }, {
-                            symbol: 'square',
-                            positioner: function (target) {
-                                if (!target.graphic.placed) {
-                                    return {
-                                        x: 0,
-                                        y: -9e7
-                                    };
-                                }
-                                return {
-                                    x: target.graphic.alignAttr.x -
-                                        this.graphic.width / 2,
-                                    y: target.graphic.alignAttr.y -
-                                        this.graphic.height / 2
-                                };
-                            },
-                            // TRANSLATE POSITION WITHOUT CHANGING THE
-                            // ANCHOR
-                            events: {
-                                drag: function (e, target) {
-                                    var xy = this.mouseMoveToTranslation(e);
-                                    target.translate(xy.x, xy.y);
-                                    target.annotation.labels[0].options =
-                                        target.options;
-                                    target.redraw(false);
-                                }
-                            }
-                        }];
+                    var coords = this.chart.pointer.getCoordinates(e), navigation = this.chart.options.navigation;
                     return this.chart.addAnnotation(merge({
                         langKey: 'label',
+                        type: 'basicAnnotation',
                         labelOptions: {
                             format: '{y:.2f}'
                         },
@@ -1032,8 +952,7 @@ H.setOptions({
                                     y: coords.yAxis[0].value
                                 },
                                 overflow: 'none',
-                                crop: true,
-                                controlPoints: controlPoints
+                                crop: true
                             }]
                     }, navigation
                         .annotationsOptions, navigation
@@ -1103,9 +1022,10 @@ H.setOptions({
          * @type      {Highcharts.AnnotationsOptions}
          * @extends   annotations
          * @exclude   crookedLine, elliottWave, fibonacci, infinityLine,
-         *            measure, pitchfork, tunnel, verticalLine
+         *            measure, pitchfork, tunnel, verticalLine, basicAnnotation
          * @apioption navigation.annotationsOptions
          */
         annotationsOptions: {}
     }
 });
+export default NavigationBindings;

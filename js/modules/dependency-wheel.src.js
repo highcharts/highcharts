@@ -187,30 +187,34 @@ seriesType('dependencywheel', 'sankey',
                             };
                         });
                         point.shapeArgs = {
-                            d: [
-                                'M',
-                                corners[0].x, corners[0].y,
-                                'A',
-                                innerR, innerR,
-                                0,
-                                0,
-                                1,
-                                corners[1].x, corners[1].y,
-                                'C',
-                                corners[1].cpX, corners[1].cpY,
-                                corners[2].cpX, corners[2].cpY,
-                                corners[2].x, corners[2].y,
-                                'A',
-                                innerR, innerR,
-                                0,
-                                0,
-                                1,
-                                corners[3].x, corners[3].y,
-                                'C',
-                                corners[3].cpX, corners[3].cpY,
-                                corners[0].cpX, corners[0].cpY,
-                                corners[0].x, corners[0].y
-                            ]
+                            d: [[
+                                    'M',
+                                    corners[0].x, corners[0].y
+                                ], [
+                                    'A',
+                                    innerR, innerR,
+                                    0,
+                                    0,
+                                    1,
+                                    corners[1].x, corners[1].y
+                                ], [
+                                    'C',
+                                    corners[1].cpX, corners[1].cpY,
+                                    corners[2].cpX, corners[2].cpY,
+                                    corners[2].x, corners[2].y
+                                ], [
+                                    'A',
+                                    innerR, innerR,
+                                    0,
+                                    0,
+                                    1,
+                                    corners[3].x, corners[3].y
+                                ], [
+                                    'C',
+                                    corners[3].cpX, corners[3].cpY,
+                                    corners[0].cpX, corners[0].cpY,
+                                    corners[0].x, corners[0].y
+                                ]]
                         };
                     }
                 });

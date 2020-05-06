@@ -30,7 +30,7 @@ var eventEmitterMixin = {
         };
         addMouseDownEvent(this.graphic.element);
         (emitter.labels || []).forEach(function (label) {
-            if (label.options.useHTML) {
+            if (label.options.useHTML && label.graphic.text) {
                 // Mousedown event bound to HTML element (#13070).
                 addMouseDownEvent(label.graphic.text.element);
             }
@@ -60,7 +60,7 @@ var eventEmitterMixin = {
                 };
                 emitter.graphic.css(cssPointer_1);
                 (emitter.labels || []).forEach(function (label) {
-                    if (label.options.useHTML) {
+                    if (label.options.useHTML && label.graphic.text) {
                         label.graphic.text.css(cssPointer_1);
                     }
                 });

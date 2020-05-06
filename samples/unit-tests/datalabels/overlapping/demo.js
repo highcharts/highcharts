@@ -127,9 +127,9 @@ QUnit.test(
             }]
         });
 
-        assert.strictEqual(
-            chart.series[0].points[0].dataLabel.attr('y') < 0,
-            true,
+        assert.ok(
+            chart.series[0].points[0].dataLabel.attr('y') < 0 ||
+            chart.series[0].points[0].dataLabel.attr('opacity') === 0,
             'Overlapping dataLabel is hidden (#9119).'
         );
     }

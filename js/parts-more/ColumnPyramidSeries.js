@@ -161,13 +161,12 @@ seriesType('columnpyramid', 'column',
                 width: x2 - x1,
                 height: barH,
                 // path of pyramid
-                d: ['M',
-                    x1, y1,
-                    'L',
-                    x2, y1,
-                    x3, y2,
-                    x4, y2,
-                    'Z'
+                d: [
+                    ['M', x1, y1],
+                    ['L', x2, y1],
+                    ['L', x3, y2],
+                    ['L', x4, y2],
+                    ['Z']
                 ]
             };
         });

@@ -194,7 +194,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         }).highcharts();
 
         assert.strictEqual(
-            sizeof(chart.yAxis[0].stacks[chart.series[0].stackKey]),
+            sizeof(chart.yAxis[0].stacking.stacks[chart.series[0].stackKey]),
             5,
             'Stack is 5'
         );
@@ -210,7 +210,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         // Note: the size of the stacks is now 10, while we would ideally have 5.
         // It seems like the initial 5 are not removed at all.
         assert.strictEqual(
-            sizeof(chart.yAxis[0].stacks[chart.series[0].stackKey]) < 11,
+            sizeof(chart.yAxis[0].stacking.stacks[chart.series[0].stackKey]) < 11,
             true,
             'Stacks have been removed'
         );
@@ -408,7 +408,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
                     ]
                 }]
             }),
-            path = chart.series[0].graphPath;
+            path = chart.series[0].graphPath.flat();
 
         path.splice(0, 1);
 
@@ -524,6 +524,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         assert.strictEqual(
             chart
                 .yAxis[0]
+                .stacking
                 .stacks[chart.series[1].stackKey][0]
                 .label.alignAttr.y <
             chart.series[1].points[0].plotY,
@@ -558,6 +559,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
 
         var labelPos = chart
             .yAxis[0]
+            .stacking
             .stacks[chart.series[0].stackKey][0]
             .label;
 

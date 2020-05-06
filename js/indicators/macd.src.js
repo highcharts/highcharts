@@ -102,6 +102,7 @@ seriesType('macd', 'sma',
     threshold: 0,
     groupPadding: 0.1,
     pointPadding: 0.1,
+    crisp: false,
     states: {
         hover: {
             halo: {

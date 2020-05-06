@@ -3,28 +3,28 @@ QUnit.test('Wheel scroll with middle click should hide tooltip (#11635)', functi
     var container1 = document.getElementById('container'),
         container2 = document.createElement('div');
 
-    container1.style.position = 'absolute';
-    container1.style.left = '0px';
-    container1.style.top = '0px';
-    container1.style.width = '400px';
-    container1.style.height = '400px';
-    container1.style.zIndex = 1;
-
+    container1.style.display = container2.style.display = 'block';
+    container1.style.position = container2.style.position = 'relative';
     container2.setAttribute('id', 'container2');
-    container2.style.position = container1.style.position;
-    container2.style.left = container1.style.left;
-    container2.style.top = container1.style.height;
-    container2.style.width = container1.style.width;
-    container2.style.height = container1.style.height;
-    container2.style.zIndex = container1.style.zIndex;
-    container1.parentNode.insertBefore(container2, container1.nextSibling);
+
+    if (container1.nextSibling) {
+        container1.parentNode.insertBefore(container2, container1.nextSibling);
+    } else {
+        container1.parentNode.appendChild(container2);
+    }
 
     var chartOptions = {
+            chart: {
+                width: 400,
+                height: 400
+            },
             tooltip: {
+                animation: false,
+                enabled: true,
                 hideDelay: 0
             },
             series: [{
-                type: 'column',
+                type: 'line',
                 data: [3, 2, 1]
             }]
         },
@@ -73,9 +73,7 @@ QUnit.test('Wheel scroll with middle click should hide tooltip (#11635)', functi
         );
 
         // simulate wheel scroll effect with middle click in Chrome-based browsers
-        controller1.setPosition(point1Position.x, chart1.plotHeight + point2Position.y);
-        controller1.moveTo(-1, -1);
-        controller1.setPosition(point2Position.x, point2Position.y);
+        controller1.moveTo(point1Position.x, chart1.plotHeight + point2Position.y);
         controller2.moveTo(point2Position.x, point2Position.y);
         controller2.mouseDown(
             point2Position.x, point2Position.y,

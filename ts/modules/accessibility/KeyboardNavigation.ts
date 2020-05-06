@@ -42,6 +42,7 @@ declare global {
             public eventProvider: EventProvider;
             public exitAnchor: (HTMLDOMElement|SVGDOMElement);
             public exiting?: boolean;
+            public isClickingChart?: boolean;
             public keyboardReset?: boolean;
             public modules: Array<KeyboardNavigationHandler>;
             public pointerIsOverChart?: boolean;
@@ -158,6 +159,10 @@ KeyboardNavigation.prototype = {
 
         ep.addEvent(doc, 'mouseup', (): void => this.onMouseUp());
 
+        ep.addEvent(chart.renderTo, 'mousedown', (): void => {
+            this.isClickingChart = true;
+        });
+
         ep.addEvent(chart.renderTo, 'mouseover', (): void => {
             this.pointerIsOverChart = true;
         });
@@ -228,7 +233,8 @@ KeyboardNavigation.prototype = {
             chart.container.contains(e.relatedTarget as any)
         );
 
-        if (!focusComesFromChart) {
+        // Init keyboard nav if tabbing into chart
+        if (!this.isClickingChart && !focusComesFromChart) {
             this.modules[0]?.init(1);
         }
     },
@@ -240,6 +246,8 @@ KeyboardNavigation.prototype = {
      * @private
      */
     onMouseUp: function (this: Highcharts.KeyboardNavigation): void {
+        delete this.isClickingChart;
+
         if (!this.keyboardReset && !this.pointerIsOverChart) {
             var chart = this.chart,
                 curMod = this.modules &&

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type ColorAxis from '../parts-map/ColorAxis';
 import type RadialAxis from '../parts-more/RadialAxis';
 import H from '../parts/Globals.js';
 
@@ -45,19 +46,19 @@ declare global {
             dataClasses: ColorAxis['dataClasses'];
             options: SolidGaugeAxisOptions;
             stops: ColorAxis['stops'];
-            initDataClasses(userOptions: ColorAxisOptions): void;
-            initStops(userOptions: ColorAxisOptions): void;
+            initDataClasses(userOptions: ColorAxis.Options): void;
+            initStops(userOptions: ColorAxis.Options): void;
             toColor(
                 value: number,
                 point: SolidGaugePoint
             ): (ColorType|undefined);
         }
         interface SolidGaugeAxisOptions extends YAxisOptions {
-            dataClassColor?: ColorAxisOptions['dataClassColor'];
-            dataClasses?: ColorAxisOptions['dataClasses'];
-            maxColor?: ColorAxisOptions['maxColor'];
-            minColor?: ColorAxisOptions['minColor'];
-            stops?: ColorAxisOptions['stops'];
+            dataClassColor?: ColorAxis.Options['dataClassColor'];
+            dataClasses?: ColorAxis.Options['dataClasses'];
+            maxColor?: ColorAxis.Options['maxColor'];
+            minColor?: ColorAxis.Options['minColor'];
+            stops?: ColorAxis.Options['stops'];
         }
         interface SolidGaugePointOptions extends GaugePointOptions {
             innerRadius?: (number|string);
@@ -146,22 +147,26 @@ wrap(
         options: Highcharts.SymbolOptionsObject
     ): Highcharts.SVGPathArray {
         var arc = proceed,
-            path = arc(x, y, w, h, options);
+            path: Highcharts.SVGPathArray = arc(x, y, w, h, options);
 
         if (options.rounded) {
             var r = options.r || w,
-                smallR = (r - (options.innerR as any)) / 2,
-                x1 = path[1],
-                y1 = path[2],
-                x2 = path[12],
-                y2 = path[13],
-                roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1],
-                roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+                smallR = (r - (options.innerR || 0)) / 2,
+                outerArcStart = path[0],
+                innerArcStart = path[2];
 
-            // Insert rounded edge on end, and remove line.
-            path.splice.apply(path, [path.length - 1, 0].concat(roundStart));
-            // Insert rounded edge on end, and remove line.
-            path.splice.apply(path, [11, 3].concat(roundEnd));
+            if (outerArcStart[0] === 'M' && innerArcStart[0] === 'L') {
+                const x1 = outerArcStart[1],
+                    y1 = outerArcStart[2],
+                    x2 = innerArcStart[1],
+                    y2 = innerArcStart[2],
+                    roundStart: Highcharts.SVGPathArc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+                    roundEnd: Highcharts.SVGPathArc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+
+                // Replace the line segment and the last close segment
+                path[2] = roundEnd;
+                path[4] = roundStart;
+            }
         }
 
         return path;
@@ -175,17 +180,17 @@ colorAxisMethods = {
 
     initDataClasses: function (
         this: Highcharts.SolidGaugeAxis,
-        userOptions: Highcharts.ColorAxisOptions
+        userOptions: ColorAxis.Options
     ): void {
         var chart = this.chart,
-            dataClasses: Array<Highcharts.ColorAxisDataClassesOptions>,
+            dataClasses: Array<ColorAxis.DataClassesOptions>,
             colorCounter = 0,
             options = this.options;
 
         this.dataClasses = dataClasses = [];
 
         (userOptions.dataClasses as any).forEach(function (
-            dataClass: Highcharts.ColorAxisDataClassesOptions,
+            dataClass: ColorAxis.DataClassesOptions,
             i: number
         ): void {
             var colors: (Array<string>|undefined);
@@ -212,7 +217,7 @@ colorAxisMethods = {
 
     initStops: function (
         this: Highcharts.SolidGaugeAxis,
-        userOptions: Highcharts.ColorAxisOptions
+        userOptions: ColorAxis.Options
     ): void {
         this.stops = userOptions.stops || [
             [0, this.options.minColor as any],
@@ -236,7 +241,7 @@ colorAxisMethods = {
             to: (number|Highcharts.GradientColorStopObject|undefined),
             color: (Highcharts.ColorType|undefined),
             dataClasses = this.dataClasses,
-            dataClass: (Highcharts.ColorAxisDataClassesOptions|undefined),
+            dataClass: (ColorAxis.DataClassesOptions|undefined),
             i: (number|undefined);
 
         if (dataClasses) {

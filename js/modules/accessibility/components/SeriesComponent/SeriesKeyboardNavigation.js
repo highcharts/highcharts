@@ -17,7 +17,7 @@ var extend = U.extend, defined = U.defined;
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../utils/EventProvider.js';
 import ChartUtilities from '../../utils/chartUtilities.js';
-var getPointFromXY = ChartUtilities.getPointFromXY, getSeriesFromName = ChartUtilities.getSeriesFromName;
+var getPointFromXY = ChartUtilities.getPointFromXY, getSeriesFromName = ChartUtilities.getSeriesFromName, scrollToPoint = ChartUtilities.scrollToPoint;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /*
  * Set for which series types it makes sense to move to the closest point with
@@ -153,6 +153,7 @@ Point.prototype.highlight = function () {
         }
         // Don't call blur on the element, as it messes up the chart div's focus
     }
+    scrollToPoint(this);
     // We focus only after calling onMouseOver because the state change can
     // change z-index and mess up the element.
     if (this.graphic) {
@@ -519,15 +520,12 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
      * @private
      */
     onHandlerTerminate: function () {
+        var _a, _b;
         var chart = this.chart;
         var curPoint = chart.highlightedPoint;
-        if (chart.tooltip) {
-            chart.tooltip.hide(0);
-        }
-        if (curPoint) {
-            curPoint.onMouseOut();
-            delete chart.highlightedPoint;
-        }
+        (_a = chart.tooltip) === null || _a === void 0 ? void 0 : _a.hide(0);
+        (_b = curPoint === null || curPoint === void 0 ? void 0 : curPoint.onMouseOut) === null || _b === void 0 ? void 0 : _b.call(curPoint);
+        delete chart.highlightedPoint;
     },
     /**
      * Function that attempts to highlight next/prev point. Handles wrap around.

@@ -74,7 +74,7 @@ const {
  * @mixin
  * @memberOf Annotation
  */
-var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
+const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Add emitter events.
      */
@@ -95,7 +95,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         addMouseDownEvent(this.graphic.element);
 
         (emitter.labels || []).forEach((label): void => {
-            if (label.options.useHTML) {
+            if (label.options.useHTML && label.graphic.text) {
                 // Mousedown event bound to HTML element (#13070).
                 addMouseDownEvent(label.graphic.text.element);
             }
@@ -140,7 +140,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 emitter.graphic.css(cssPointer);
 
                 (emitter.labels || []).forEach((label): void => {
-                    if (label.options.useHTML) {
+                    if (label.options.useHTML && label.graphic.text) {
                         label.graphic.text.css(cssPointer);
                     }
                 });
@@ -369,5 +369,9 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         this.hcEvents = null;
     }
 };
+
+namespace eventEmitterMixin {
+    export type Type = Highcharts.AnnotationEventEmitter;
+}
 
 export default eventEmitterMixin;

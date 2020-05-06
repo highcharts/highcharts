@@ -59,6 +59,7 @@ Highcharts.chart('container', {
         networkgraph: {
             keys: ['from', 'to'],
             layoutAlgorithm: {
+                enableSimulation: true,
                 friction: -0.9
             }
         }

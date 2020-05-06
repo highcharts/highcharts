@@ -706,6 +706,8 @@ var Point = /** @class */ (function () {
      */
     Point.prototype.resolveColor = function () {
         var series = this.series, colors, optionsChart = series.chart.options.chart, colorCount = optionsChart.colorCount, styledMode = series.chart.styledMode, colorIndex;
+        // remove points nonZonedColor for later recalculation
+        delete this.nonZonedColor;
         /**
          * The point's current color.
          *

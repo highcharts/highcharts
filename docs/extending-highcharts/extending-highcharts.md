@@ -76,7 +76,7 @@ H.wrap(H.Series.prototype, 'drawGraph', function (proceed) {
 Example extension
 -----------------
 
-In this example the client wanted to use markers ("trackballs") on column type series in Highstock. Markers is currently only supported in line type series. To get this functionality, a small plugin can be written.
+In this example the client wanted to use markers ("trackballs") on column type series in Highcharts Stock. Markers is currently only supported in line type series. To get this functionality, a small plugin can be written.
 
 This plugin will add a trackball to each series in the chart, that does not already support and contain a marker.
 

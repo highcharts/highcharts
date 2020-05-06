@@ -17,7 +17,7 @@ import './Chart.js';
 import './Navigator.js';
 import './Series.js';
 var Chart = H.Chart, Series = H.Series;
-/* eslint-disable no-invalid-this, valid-jsdoc */
+/* eslint-disable valid-jsdoc */
 var OrdinalAxisAdditions = /** @class */ (function () {
     /* *
      *
@@ -234,6 +234,7 @@ var OrdinalAxis = /** @class */ (function () {
      * Series class to use.
      */
     OrdinalAxis.compose = function (AxisClass, ChartClass, SeriesClass) {
+        AxisClass.keepProps.push('ordinal');
         var axisProto = AxisClass.prototype;
         /**
          * Calculate the ordinal positions before tick positions are calculated.
@@ -625,8 +626,12 @@ var OrdinalAxis = /** @class */ (function () {
         };
         // Record this to prevent overwriting by broken-axis module (#5979)
         axisProto.ordinal2lin = axisProto.val2lin;
+        /* eslint-disable no-invalid-this */
         addEvent(AxisClass, 'afterInit', function () {
-            this.ordinal = new OrdinalAxisAdditions(this);
+            var axis = this;
+            if (!axis.ordinal) {
+                axis.ordinal = new OrdinalAxisAdditions(axis);
+            }
         });
         addEvent(AxisClass, 'foundExtremes', function () {
             var axis = this;
@@ -746,6 +751,7 @@ var OrdinalAxis = /** @class */ (function () {
                 delete xAxis.ordinal.index;
             }
         });
+        /* eslint-enable no-invalid-this */
     };
     return OrdinalAxis;
 }());

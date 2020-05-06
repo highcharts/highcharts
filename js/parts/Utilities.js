@@ -436,32 +436,42 @@ var Fx = /** @class */ (function () {
      * @return {void}
      */
     Fx.prototype.dSetter = function () {
-        var start = this.paths[0], end = this.paths[1], ret = [], now = this.now, i = start.length, startVal;
+        var paths = this.paths, start = paths && paths[0], end = paths && paths[1], path = [], now = this.now || 0;
         // Land on the final path without adjustment points appended in the ends
-        if (now === 1) {
-            ret = this.toD;
+        if (now === 1 || !start || !end) {
+            path = this.toD || [];
         }
-        else if (i === end.length && now < 1) {
-            while (i--) {
-                startVal = parseFloat(start[i]);
-                ret[i] = (
-                // A letter instruction like M or L
-                isNaN(startVal) ||
-                    // Arc boolean flags:
-                    end[i - 4] === 'A' || // large-arc-flag
-                    end[i - 5] === 'A' // sweep-flag
-                ) ?
-                    end[i] :
-                    (now *
-                        parseFloat('' + (end[i] - startVal)) +
-                        startVal);
+        else if (start.length === end.length && now < 1) {
+            for (var i = 0; i < end.length; i++) {
+                // Tween between the start segment and the end segment. Start
+                // with a copy of the end segment and tween the appropriate
+                // numerics
+                var startSeg = start[i];
+                var endSeg = end[i];
+                var tweenSeg = [];
+                for (var j = 0; j < endSeg.length; j++) {
+                    var startItem = startSeg[j];
+                    var endItem = endSeg[j];
+                    // Tween numbers
+                    if (typeof startItem === 'number' &&
+                        typeof endItem === 'number' &&
+                        // Arc boolean flags
+                        !(endSeg[0] === 'A' && (j === 4 || j === 5))) {
+                        tweenSeg[j] = startItem + now * (endItem - startItem);
+                        // Strings, take directly from the end segment
+                    }
+                    else {
+                        tweenSeg[j] = endItem;
+                    }
+                }
+                path.push(tweenSeg);
             }
             // If animation is finished or length not matching, land on right value
         }
         else {
-            ret = end;
+            path = end;
         }
-        this.elem.attr('d', ret, null, true);
+        this.elem.attr('d', path, void 0, true);
     };
     /**
      * Update the element with the current animation step.
@@ -591,7 +601,7 @@ var Fx = /** @class */ (function () {
      * @param {Highcharts.SVGElement} elem
      *        The SVGElement item.
      *
-     * @param {string} fromD
+     * @param {Highcharts.SVGPathArray|undefined} fromD
      *        Starting path definition.
      *
      * @param {Highcharts.SVGPathArray} toD
@@ -602,39 +612,11 @@ var Fx = /** @class */ (function () {
      *         they can be animated in parallel.
      */
     Fx.prototype.initPath = function (elem, fromD, toD) {
-        fromD = fromD || '';
-        var shift, startX = elem.startX, endX = elem.endX, bezier = fromD.indexOf('C') > -1, numParams = bezier ? 7 : 3, fullLength, slice, i, start = fromD.split(' '), end = toD.slice(), // copy
+        var shift, startX = elem.startX, endX = elem.endX, fullLength, i, start = fromD && fromD.slice(), // copy
+        end = toD.slice(), // copy
         isArea = elem.isArea, positionFactor = isArea ? 2 : 1, reverse;
-        /**
-         * In splines make moveTo and lineTo points have six parameters like
-         * bezier curves, to allow animation one-to-one.
-         * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @return {void}
-         */
-        function sixify(arr) {
-            var isOperator, nextIsOperator;
-            i = arr.length;
-            while (i--) {
-                // Fill in dummy coordinates only if the next operator comes
-                // three places behind (#5788)
-                isOperator = arr[i] === 'M' || arr[i] === 'L';
-                nextIsOperator = /[a-zA-Z]/.test(arr[i + 3]);
-                if (isOperator && nextIsOperator) {
-                    arr.splice(i + 1, 0, arr[i + 1], arr[i + 2], arr[i + 1], arr[i + 2]);
-                }
-            }
-        }
-        /**
-         * Insert an array at the given position of another array
-         * @private
-         * @param {Array<*>} arr - array
-         * @param {Array<*>} subArr - array
-         * @param {number} index - number
-         * @return {void}
-         */
-        function insertSlice(arr, subArr, index) {
-            [].splice.apply(arr, [index, 0].concat(subArr));
+        if (!start) {
+            return [end, end];
         }
         /**
          * If shifting points, prepend a dummy point to the end path.
@@ -646,17 +628,31 @@ var Fx = /** @class */ (function () {
         function prepend(arr, other) {
             while (arr.length < fullLength) {
                 // Move to, line to or curve to?
-                arr[0] = other[fullLength - arr.length];
+                var moveSegment = arr[0], otherSegment = other[fullLength - arr.length];
+                if (otherSegment && moveSegment[0] === 'M') {
+                    if (otherSegment[0] === 'C') {
+                        arr[0] = [
+                            'C',
+                            moveSegment[1],
+                            moveSegment[2],
+                            moveSegment[1],
+                            moveSegment[2],
+                            moveSegment[1],
+                            moveSegment[2]
+                        ];
+                    }
+                    else {
+                        arr[0] = ['L', moveSegment[1], moveSegment[2]];
+                    }
+                }
                 // Prepend a copy of the first point
-                insertSlice(arr, arr.slice(0, numParams), 0);
+                arr.unshift(moveSegment);
                 // For areas, the bottom path goes back again to the left, so we
                 // need to append a copy of the last point.
                 if (isArea) {
-                    insertSlice(arr, arr.slice(arr.length - numParams), arr.length);
-                    i--;
+                    arr.push(arr[arr.length - 1]);
                 }
             }
-            arr[0] = 'M';
         }
         /**
          * Copy and append last point until the length matches the end length.
@@ -666,33 +662,27 @@ var Fx = /** @class */ (function () {
          * @return {void}
          */
         function append(arr, other) {
-            var i = (fullLength - arr.length) / numParams;
-            while (i > 0 && i--) {
+            while (arr.length < fullLength) {
                 // Pull out the slice that is going to be appended or inserted.
                 // In a line graph, the positionFactor is 1, and the last point
                 // is sliced out. In an area graph, the positionFactor is 2,
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                slice = arr.slice().splice((arr.length / positionFactor) - numParams, numParams * positionFactor);
-                // Move to, line to or curve to?
-                slice[0] = other[fullLength - numParams - (i * numParams)];
-                // Disable first control point
-                if (bezier) {
-                    slice[numParams - 6] = slice[numParams - 2];
-                    slice[numParams - 5] = slice[numParams - 1];
+                var segmentToAdd = arr[arr.length / positionFactor - 1].slice();
+                // Disable the first control point of curve segments
+                if (segmentToAdd[0] === 'C') {
+                    segmentToAdd[1] = segmentToAdd[5];
+                    segmentToAdd[2] = segmentToAdd[6];
                 }
-                // Now insert the slice, either in the middle (for areas) or at
-                // the end (for lines)
-                insertSlice(arr, slice, arr.length / positionFactor);
-                if (isArea) {
-                    i--;
+                if (!isArea) {
+                    arr.push(segmentToAdd);
+                }
+                else {
+                    var lowerSegmentToAdd = arr[arr.length / positionFactor].slice();
+                    arr.splice(arr.length / 2, 0, segmentToAdd, lowerSegmentToAdd);
                 }
             }
-        }
-        if (bezier) {
-            sixify(start);
-            sixify(end);
         }
         // For sideways animation, find out how much we need to shift to get the
         // start path Xs to match the end path Xs.
@@ -724,7 +714,7 @@ var Fx = /** @class */ (function () {
         if (start.length && isNumber(shift)) {
             // The common target length for the start and end array, where both
             // arrays are padded in opposite ends
-            fullLength = (end.length + shift * positionFactor * numParams);
+            fullLength = end.length + shift * positionFactor;
             if (!reverse) {
                 prepend(end, start);
                 append(start, end);
@@ -2386,8 +2376,8 @@ var animate = H.animate = function (el, params, opt) {
         stop(el, prop);
         fx = new Fx(el, opt, prop);
         end = null;
-        if (prop === 'd') {
-            fx.paths = fx.initPath(el, el.d, params.d);
+        if (prop === 'd' && isArray(params.d)) {
+            fx.paths = fx.initPath(el, el.pathArray, params.d);
             fx.toD = params.d;
             start = 0;
             end = 1;

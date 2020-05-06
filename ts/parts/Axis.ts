@@ -10,7 +10,8 @@
 
 'use strict';
 
-import type { AxisComposition } from './axis/types';
+import type { AxisComposition, AxisLike } from './axis/types';
+import type ZAxis from '../parts-3d/ZAxis';
 import Color from './Color.js';
 import H from './Globals.js';
 import Tick from './Tick.js';
@@ -56,7 +57,7 @@ declare global {
             'scrollbar'|'traverseUpButton'|'zoom'
         );
         type AxisMinorTickPositionValue = ('inside'|'outside');
-        type AxisOptions = (XAxisOptions|YAxisOptions|ZAxisOptions);
+        type AxisOptions = (XAxisOptions|YAxisOptions|ZAxis.Options);
         type AxisTickmarkPlacementValue = ('between'|'on');
         type AxisTickPositionValue = ('inside'|'outside');
         type AxisTitleAlignValue = ('high'|'low'|'middle');
@@ -168,13 +169,6 @@ declare global {
             pointInBreak?: AxisPointBreakEventCallbackFunction;
             setExtremes?: AxisSetExtremesEventCallbackFunction;
         }
-        interface XAxisGridOptions {
-            borderColor?: (ColorString|GradientColorObject|PatternObject);
-            borderWidth?: number;
-            cellHeight?: number;
-            columns?: Array<XAxisOptions>;
-            enabled?: boolean;
-        }
         interface XAxisLabelsOptions {
             align?: AlignValue;
             autoRotation?: (false|Array<number>);
@@ -215,7 +209,6 @@ declare global {
             endOnTick?: boolean;
             events?: XAxisEventsOptions;
             floor?: number;
-            grid?: XAxisGridOptions;
             gridLineColor?: (ColorString|GradientColorObject|PatternObject);
             gridLineDashStyle?: DashStyleValue;
             gridLineWidth?: number;
@@ -279,7 +272,6 @@ declare global {
             top?: (number|string);
             type?: AxisTypeValue;
             uniqueNames?: boolean;
-            units?: Array<[string, (Array<number>|null)]>;
             visible?: boolean;
             width?: (number|string);
             zIndex?: number;
@@ -306,14 +298,7 @@ declare global {
             stops?: Array<GradientColorStopObject>;
             tooltipValueFormat?: string;
         }
-        interface ZAxisOptions extends XAxisOptions {
-            breaks?: undefined;
-            crosshair?: undefined;
-            lineColor?: undefined;
-            lineWidth?: undefined;
-            showEmpty?: undefined;
-        }
-        class Axis {
+        class Axis implements AxisLike {
             public static defaultBottomAxisOptions: AxisOptions;
             public static defaultLeftAxisOptions: AxisOptions;
             public static defaultOptions: XAxisOptions;
@@ -334,7 +319,7 @@ declare global {
             public axisTitleMargin?: number;
             public beforeSetTickPositions?: Function;
             public bottom: number;
-            public categories: (boolean|Array<string>);
+            public categories: Array<string>;
             public chart: Chart;
             public closestPointRange: number;
             public coll: string;
@@ -407,7 +392,6 @@ declare global {
             public side: number;
             public single?: boolean;
             public softThreshold?: boolean;
-            public stacksTouched: number;
             public staggerLines?: number;
             public staticScale?: number;
             public threshold?: number;
@@ -425,7 +409,7 @@ declare global {
             public userMax?: number;
             public userMin?: number;
             public userMinRange?: number;
-            public userOptions: AxisOptions;
+            public userOptions: DeepPartial<AxisOptions>;
             public visible: boolean;
             public width: number;
             public zoomEnabled: boolean;
@@ -480,11 +464,11 @@ declare global {
                 animation?: (boolean|AnimationOptionsObject),
                 eventArguments?: any
             ): void;
-            public setOptions(userOptions: AxisOptions): void;
+            public setOptions(userOptions: DeepPartial<AxisOptions>): void;
             public setScale(): void;
             public setTickInterval(secondPass?: boolean): void;
             public setTickPositions(): void;
-            public tickSize(prefix?: string): Array<number>;
+            public tickSize(prefix?: string): [number, number]|undefined;
             public toPixels(value: number, paneCoordinates?: boolean): number;
             public toValue(pixel: number, paneCoordinates?: boolean): number;
             public translate(
@@ -758,7 +742,7 @@ var defaultOptions = H.defaultOptions,
  * @param {Highcharts.AxisOptions} userOptions
  * Axis options.
  */
-class Axis implements AxisComposition {
+class Axis implements AxisComposition, AxisLike {
 
     /* *
      *
@@ -3625,6 +3609,48 @@ class Axis implements AxisComposition {
             allowOverlap: false,
 
             /**
+             * The background color or gradient for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since 8.1.0
+             * @apioption yAxis.stackLabels.backgroundColor
+             */
+
+            /**
+             * The border color for the stack label. Defaults to `undefined`.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
+             * @since 8.1.0
+             * @apioption yAxis.stackLabels.borderColor
+             */
+
+            /**
+             * The border radius in pixels for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {number}
+             * @default   0
+             * @since 8.1.0
+             * @apioption yAxis.stackLabels.borderRadius
+             */
+
+            /**
+             * The border width in pixels for the stack label.
+             *
+             * @sample {highcharts} highcharts/yaxis/stacklabels-box/
+             *          Stack labels box options
+             * @type      {number}
+             * @default   0
+             * @since 8.1.0
+             * @apioption yAxis.stackLabels.borderWidth
+             */
+
+            /**
              * Enable or disable the stack total labels.
              *
              * @sample {highcharts} highcharts/yaxis/stacklabels-enabled/
@@ -3794,7 +3820,7 @@ class Axis implements AxisComposition {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart, userOptions: Highcharts.AxisOptions) {
+    public constructor(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
         this.init(chart, userOptions);
     }
 
@@ -3815,7 +3841,7 @@ class Axis implements AxisComposition {
     public axisTitle?: Highcharts.SVGElement;
     public axisTitleMargin?: number;
     public bottom: number = void 0 as any;
-    public categories: (boolean|Array<string>) = void 0 as any;
+    public categories: Array<string> = void 0 as any;
     public chart: Highcharts.Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
@@ -3887,7 +3913,6 @@ class Axis implements AxisComposition {
     public side: number = void 0 as any;
     public single?: boolean;
     public softThreshold?: boolean;
-    public stacksTouched: number = void 0 as any;
     public staggerLines?: number;
     public staticScale?: number;
     public threshold?: number;
@@ -3932,7 +3957,7 @@ class Axis implements AxisComposition {
      * @fires Highcharts.Axis#event:afterInit
      * @fires Highcharts.Axis#event:init
      */
-    public init(chart: Highcharts.Chart, userOptions: Highcharts.AxisOptions): void {
+    public init(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
         var isXAxis = userOptions.isX,
             axis: Highcharts.Axis = this as any;
@@ -4096,12 +4121,6 @@ class Axis implements AxisComposition {
         axis.offset = options.offset || 0;
 
 
-        // Dictionary for stacks
-        axis.stacks = {};
-        axis.oldStacks = {};
-        axis.stacksTouched = 0;
-
-
         /**
          * The maximum value of the axis. In a logarithmic axis, this is the
          * logarithm of the real value, and the real value can be obtained from
@@ -4164,6 +4183,8 @@ class Axis implements AxisComposition {
         ) {
             axis.reversed = true;
         }
+
+        axis.labelRotation = (axis.options as any).labels.rotation;
 
         // register event listeners
         objectEach(events, function (event: any, eventType: string): void {
@@ -4309,8 +4330,8 @@ class Axis implements AxisComposition {
             axis.dataMin = axis.dataMax = axis.threshold = null as any;
             axis.softThreshold = !axis.isXAxis;
 
-            if (axis.buildStacks) {
-                axis.buildStacks();
+            if (axis.stacking) {
+                axis.stacking.buildStacks();
             }
 
             // loop through this axis' series
@@ -4655,7 +4676,7 @@ class Axis implements AxisComposition {
             (e as any).path = skip && !force ?
                 null :
                 chart.renderer.crispLine(
-                    ['M', x1, y1, 'L', x2, y2],
+                    [['M', x1, y1], ['L', x2, y2]],
                     lineWidth || 1
                 );
         });
@@ -5345,7 +5366,7 @@ class Axis implements AxisComposition {
         if (
             !categories &&
             !axis.axisPointRange &&
-            !axis.usePercentage &&
+            !(axis.stacking && axis.stacking.usePercentage) &&
             !isLinked &&
             defined(axis.min) &&
             defined(axis.max)
@@ -5492,19 +5513,16 @@ class Axis implements AxisComposition {
         if (!axis.dateTime && !axis.logarithmic && !tickIntervalOption) {
             axis.tickInterval = normalizeTickInterval(
                 axis.tickInterval,
-                null as any,
+                void 0,
                 getMagnitude(axis.tickInterval),
-                // If the tick interval is between 0.5 and 5 and the axis max is
-                // in the order of thousands, chances are we are dealing with
-                // years. Don't allow decimals. #3363.
                 pick(
                     options.allowDecimals,
-                    !(
-                        axis.tickInterval > 0.5 &&
-                        axis.tickInterval < 5 &&
-                        (axis.max as any) > 1000 &&
-                        (axis.max as any) < 9999
-                    )
+                    // If the tick interval is greather than 0.5, avoid
+                    // decimals, as linear axes are often used to render
+                    // discrete values. #3363. If a tick amount is set, allow
+                    // decimals by default, as it increases the chances for a
+                    // good fit.
+                    axis.tickInterval < 0.5 || this.tickAmount !== void 0
                 ),
                 !!this.tickAmount
             );
@@ -5802,11 +5820,11 @@ class Axis implements AxisComposition {
         var axis: Highcharts.Axis = this as any,
             options = this.options,
             tickAmount = options.tickAmount,
-            tickPixelInterval = options.tickPixelInterval;
+            tickPixelInterval = options.tickPixelInterval as any;
 
         if (
             !defined(options.tickInterval) &&
-            this.len < (tickPixelInterval as any) &&
+            !tickAmount && this.len < tickPixelInterval &&
             !this.isRadial &&
             !axis.logarithmic &&
             options.startOnTick &&
@@ -5957,8 +5975,8 @@ class Axis implements AxisComposition {
             axis.alignToOthers()
         ) {
 
-            if (axis.resetStacks) {
-                axis.resetStacks();
+            if (axis.stacking) {
+                axis.stacking.resetStacks();
             }
 
             axis.forceRedraw = false;
@@ -5982,8 +6000,8 @@ class Axis implements AxisComposition {
                     axis.min !== axis.oldMin ||
                     axis.max !== axis.oldMax;
             }
-        } else if (axis.cleanStacks) {
-            axis.cleanStacks();
+        } else if (axis.stacking) {
+            axis.stacking.cleanStacks();
         }
 
         // Recalculate panning state object, when the data
@@ -6302,19 +6320,21 @@ class Axis implements AxisComposition {
      * @param {string} [prefix]
      * 'tick' or 'minorTick'
      *
-     * @return {Array<number>}
+     * @return {Array<number,number>|undefined}
      * An array of tickLength and tickWidth
      */
-    public tickSize(prefix?: string): Array<number> {
+    public tickSize(prefix?: string): [number, number]|undefined {
         var options = this.options,
-            tickLength = (options as any)[prefix + 'Length'],
+            tickLength = options[
+                prefix === 'tick' ? 'tickLength' : 'minorTickLength'
+            ],
             tickWidth = pick(
-                (options as any)[prefix + 'Width'],
+                options[prefix === 'tick' ? 'tickWidth' : 'minorTickWidth'],
                 // Default to 1 on linear and datetime X axes
                 prefix === 'tick' && this.isXAxis && !this.categories ? 1 : 0
             ),
             e,
-            tickSize: (Array<number>|undefined);
+            tickSize: ([number, number]|undefined);
 
         if (tickWidth && tickLength) {
             // Negate the length
@@ -6324,10 +6344,10 @@ class Axis implements AxisComposition {
             tickSize = [tickLength, tickWidth];
         }
 
-        e = { tickSize: tickSize };
+        e = { tickSize };
         fireEvent(this, 'afterTickSize', e);
 
-        return e.tickSize as any;
+        return e.tickSize;
 
     }
 
@@ -6475,28 +6495,36 @@ class Axis implements AxisComposition {
             ),
             marginLeft = chart.margin[3];
 
-        return (
-            tick &&
-            tick.slotWidth as any // Used by grid axis
-        ) || (
+        // Used by grid axis
+        if (tick && isNumber(tick.slotWidth)) { // #13221, can be 0
+            return tick.slotWidth;
+        }
+
+        if (
             horiz &&
-            ((labelOptions as any).step || 0) < 2 &&
-            !(labelOptions as any).rotation && // #4415
-            ((this.staggerLines || 1) * this.len) / slotCount
-        ) || (
-            !horiz && (
-                // #7028
-                (
-                    (labelOptions as any).style &&
-                    parseInt((labelOptions as any).style.width, 10)
-                ) ||
-                (
-                    marginLeft &&
-                    (marginLeft - chart.spacing[3])
-                ) ||
-                (chart.chartWidth as any) * 0.33
-            )
-        );
+            labelOptions &&
+            (labelOptions.step || 0) < 2
+        ) {
+            if (labelOptions.rotation) { // #4415
+                return 0;
+            }
+            return ((this.staggerLines || 1) * this.len) / slotCount;
+        }
+
+        if (!horiz) {
+            // #7028
+            const cssWidth = labelOptions?.style?.width;
+            if (cssWidth !== void 0) {
+                return parseInt(cssWidth, 10);
+            }
+
+            if (marginLeft) {
+                return marginLeft - chart.spacing[3];
+            }
+        }
+
+        // Last resort, a fraction of the available size
+        return chart.chartWidth * 0.33;
 
     }
 
@@ -6659,7 +6687,7 @@ class Axis implements AxisComposition {
                         label.element.tagName === 'SPAN'
                     )
                 ) {
-                    css.width = commonWidth;
+                    css.width = commonWidth + 'px';
                     if (!textOverflowOption) {
                         css.textOverflow = (
                             label.specificTextOverflow ||
@@ -6771,7 +6799,7 @@ class Axis implements AxisComposition {
             !axis.isRadial
         ) {
             axis.axisTitle.css({
-                width: axis.len
+                width: axis.len + 'px'
             });
         }
 
@@ -6836,8 +6864,7 @@ class Axis implements AxisComposition {
             directionFactor = [-1, 1, 1, -1][side],
             className = options.className,
             axisParent = axis.axisParent, // Used in color axis
-            lineHeightCorrection,
-            tickSize;
+            lineHeightCorrection;
 
         // For reuse in Axis.render
         hasData = axis.hasData();
@@ -6980,7 +7007,7 @@ class Axis implements AxisComposition {
 
         // Due to GridAxis.tickSize, tickSize should be calculated after ticks
         // has rendered.
-        tickSize = this.tickSize('tick');
+        const tickSize = this.tickSize('tick');
 
         axisOffset[side] = Math.max(
             axisOffset[side],
@@ -7031,20 +7058,24 @@ class Axis implements AxisComposition {
 
         return chart.renderer
             .crispLine([
-                'M',
-                horiz ?
-                    this.left :
-                    lineLeft,
-                horiz ?
-                    lineTop :
-                    this.top,
-                'L',
-                horiz ?
-                    (chart.chartWidth as any) - this.right :
-                    lineLeft,
-                horiz ?
-                    lineTop :
-                    (chart.chartHeight as any) - this.bottom
+                [
+                    'M',
+                    horiz ?
+                        this.left :
+                        lineLeft,
+                    horiz ?
+                        lineTop :
+                        this.top
+                ],
+                [
+                    'L',
+                    horiz ?
+                        (chart.chartWidth as any) - this.right :
+                        lineLeft,
+                    horiz ?
+                        lineTop :
+                        (chart.chartHeight as any) - this.bottom
+                ]
             ], lineWidth);
     }
 
@@ -7403,8 +7434,8 @@ class Axis implements AxisComposition {
         }
 
         // Stacked totals:
-        if (stackLabelOptions && stackLabelOptions.enabled) {
-            axis.renderStackTotals();
+        if (stackLabelOptions && stackLabelOptions.enabled && axis.stacking) {
+            axis.stacking.renderStackTotals();
         }
         // End stacked totals
 
@@ -7466,7 +7497,6 @@ class Axis implements AxisComposition {
      */
     public destroy(keepEvents?: boolean): void {
         var axis: Highcharts.Axis = this as any,
-            stacks = axis.stacks,
             plotLinesAndBands = axis.plotLinesAndBands,
             plotGroup,
             i;
@@ -7477,16 +7507,6 @@ class Axis implements AxisComposition {
         if (!keepEvents) {
             removeEvent(axis);
         }
-
-        // Destroy each stack total
-        objectEach(stacks, function (
-            stack: Highcharts.Dictionary<Highcharts.StackItem>,
-            stackKey: string
-        ): void {
-            destroyObjectProperties(stack);
-
-            stacks[stackKey] = null as any;
-        });
 
         // Destroy collections
         [axis.ticks, axis.minorTicks, axis.alternateBands].forEach(
@@ -7507,7 +7527,7 @@ class Axis implements AxisComposition {
         }
 
         // Destroy elements
-        ['stackTotalGroup', 'axisLine', 'axisTitle', 'axisGroup',
+        ['axisLine', 'axisTitle', 'axisGroup',
             'gridGroup', 'labelGroup', 'cross', 'scrollbar'].forEach(
             function (prop: string): void {
                 if ((axis as any)[prop]) {

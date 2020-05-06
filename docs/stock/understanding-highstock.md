@@ -1,11 +1,11 @@
-Understanding Highstock
+Understanding Highcharts Stock
 ===
 
-Highstock is based on Highcharts, meaning it has all the core functionality of Highcharts, plus some additional features.
+Highcharts Stock is based on Highcharts, meaning it has all the core functionality of Highcharts, plus some additional features.
 
 ![understanding_highstock.png](understanding_highstock.png)
 
-Highstock also supports candlestick and OHLC charts.
+Highcharts Stock also supports candlestick and OHLC charts.
 
 Navigator
 ---------
