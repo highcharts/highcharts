@@ -10,7 +10,11 @@
  *
  * */
 'use strict';
-import Highcharts from '../parts/Globals.js';
+import Chart from '../parts/Chart.js';
+import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
 /**
  * Callback function to modify the CSV before parsing it by the data module.
  *
@@ -83,14 +87,9 @@ import Highcharts from '../parts/Globals.js';
  *         Return `false` to stop completion, or call `this.complete()` to
  *         continue async.
  */
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
-import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
 import '../mixins/ajax.js';
-import '../parts/Chart.js';
 // Utilities
-var Chart = H.Chart, win = H.win, doc = win.document;
+var win = H.win, doc = win.document;
 /**
  * The Data module provides a simplified interface for adding data to
  * a chart from sources like CVS, HTML tables or grid views. See also

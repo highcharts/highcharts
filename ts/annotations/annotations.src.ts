@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart.js';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
@@ -44,7 +45,7 @@ declare global {
             public group: SVGElement;
             public index: AnnotationControllable['index'];
             public isUpdating?: boolean;
-            public labelCollector: ChartLabelCollectorFunction;
+            public labelCollector: Chart.LabelCollectorFunction;
             public labels: Array<AnnotationLabelType>;
             public labelsGroup: SVGElement;
             public linkPoints: AnnotationControllableMixin['linkPoints'];

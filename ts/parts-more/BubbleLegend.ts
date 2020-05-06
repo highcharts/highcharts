@@ -12,7 +12,25 @@
 
 'use strict';
 
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../parts/Globals.js';
+import Legend from '../parts/Legend.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    stableSort,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -145,26 +163,7 @@ declare global {
 
 ''; // detach doclets above
 
-import Color from '../parts/Color.js';
-const {
-    parse: color
-} = Color;
-import Legend from '../parts/Legend.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    stableSort,
-    wrap
-} = U;
-
 var Series = H.Series,
-    Chart = H.Chart,
     noop = H.noop,
     setOptions = H.setOptions;
 
@@ -1295,10 +1294,10 @@ addEvent(Series, 'legendItemClick', function (this: Highcharts.Series): void {
 // If ranges are not specified, determine ranges from rendered bubble series
 // and render legend again.
 wrap(Chart.prototype, 'drawChartBox', function (
-    this: Highcharts.Chart,
+    this: Chart,
     proceed: Function,
     options: Highcharts.Options,
-    callback: Highcharts.ChartCallbackFunction
+    callback: Chart.CallbackFunction
 ): void {
     var chart = this,
         legend = chart.legend,
