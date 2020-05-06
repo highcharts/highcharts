@@ -5715,7 +5715,7 @@ var Axis = /** @class */ (function () {
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.backgroundColor
              */
             /**
@@ -5724,7 +5724,7 @@ var Axis = /** @class */ (function () {
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderColor
              */
             /**
@@ -5734,7 +5734,7 @@ var Axis = /** @class */ (function () {
              *          Stack labels box options
              * @type      {number}
              * @default   0
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderRadius
              */
             /**
@@ -5744,7 +5744,7 @@ var Axis = /** @class */ (function () {
              *          Stack labels box options
              * @type      {number}
              * @default   0
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderWidth
              */
             /**

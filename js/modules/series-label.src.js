@@ -102,7 +102,7 @@ H.setOptions({
                  * a static text for the label.
                  *
                  * @type string
-                 * @since next
+                 * @since 8.1.0
                  */
                 format: void 0,
                 /**
@@ -111,7 +111,7 @@ H.setOptions({
                  * `formatter` is undefined and the `series.name` is rendered.
                  *
                  * @type {Highcharts.FormatterCallbackFunction<Series>}
-                 * @since next
+                 * @since 8.1.0
                  */
                 formatter: void 0,
                 /**
