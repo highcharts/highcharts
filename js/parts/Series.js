@@ -4890,20 +4890,19 @@ null,
      * @return {Highcharts.SVGElement}
      */
     plotGroup: function (prop, name, visibility, zIndex, parent) {
-        var group = this[prop], isNew = !group, newAttrs;
+        var group = this[prop], isNew = !group, attrs = {
+            visibility: visibility,
+            zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+        };
+        // Avoid setting undefined opacity, or in styled mode
+        if (typeof this.opacity !== 'undefined' &&
+            !this.chart.styledMode) {
+            attrs.opacity = this.opacity;
+        }
         // Generate it on first call
         if (isNew) {
-            newAttrs = {
-                zIndex: zIndex || 0.1 // IE8 and pointer logic use this
-            };
-            if (!this.chart.styledMode &&
-                this.opacity &&
-                this.opacity !== 1) {
-                newAttrs.opacity = this.opacity;
-            }
             this[prop] = group = this.chart.renderer
                 .g()
-                .attr(newAttrs)
                 .add(parent);
         }
         // Add the class names, and replace existing ones as response to
@@ -4919,7 +4918,7 @@ null,
                 ' highcharts-tracker' :
                 '')), true);
         // Place it on first and subsequent (redraw) calls
-        group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](this.getPlotBox());
+        group.attr(attrs)[isNew ? 'attr' : 'animate'](this.getPlotBox());
         return group;
     },
     /**
