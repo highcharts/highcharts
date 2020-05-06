@@ -293,7 +293,7 @@ class PlotLineOrBand {
              * @name Highcharts.PlotLineOrBand#svgElement
              * @type {Highcharts.SVGElement}
              */
-            plotLine.svgElem = svgElem = svgElem || renderer
+            plotLine.svgElem = svgElem = renderer
                 .path()
                 .attr(attribs)
                 .add(group);
@@ -1279,16 +1279,8 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj,
+        var obj = new PlotLineOrBand(this, options).render(),
             userOptions = this.userOptions;
-        // If path of the same id already exists on related axis,
-        // use this path instead.
-        this.plotLinesAndBands.forEach(function (PlotLineOrBand): void {
-            if (options.id && PlotLineOrBand.id === options.id && PlotLineOrBand.svgElem) {
-                obj = PlotLineOrBand;
-            }
-        });
-        obj = obj || new PlotLineOrBand(this, options).render();
 
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
@@ -1299,6 +1291,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
+            this._addedPlotLB = true;
         }
 
         return obj;
