@@ -197,6 +197,7 @@ class PlotLineOrBand {
     public axis: Highcharts.Axis;
     public id?: string;
     public isActive?: boolean;
+    public eventsAdded?: boolean;
     public label?: Highcharts.SVGElement;
     public options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions);
     public svgElem?: Highcharts.SVGElement;
@@ -293,7 +294,7 @@ class PlotLineOrBand {
              * @name Highcharts.PlotLineOrBand#svgElement
              * @type {Highcharts.SVGElement}
              */
-            plotLine.svgElem = svgElem = renderer
+            plotLine.svgElem = svgElem = svgElem || renderer
                 .path()
                 .attr(attribs)
                 .add(group);
@@ -316,16 +317,13 @@ class PlotLineOrBand {
 
         // common for lines and bands
         // Add events only if they were not added before.
-        if (!(svgElem as any).eventsAdded) {
-            // events
-            if (events) {
-                objectEach(events, function (event, eventType): void {
-                    (svgElem as any).on(eventType, function (e: any): void {
-                        events[eventType].apply(plotLine, [e]);
-                    });
+        if (!plotLine.eventsAdded && events) {
+            objectEach(events, function (event, eventType): void {
+                (svgElem as any).on(eventType, function (e: any): void {
+                    events[eventType].apply(plotLine, [e]);
                 });
-            }
-            (svgElem as any).eventsAdded = true;
+            });
+            plotLine.eventsAdded = true;
         }
         if ((isNew || !(svgElem as any).d) && path && path.length) {
             (svgElem as any).attr({ d: path });
@@ -1282,8 +1280,16 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 'plotLines'
         )
     ): (Highcharts.PlotLineOrBand|undefined) {
-        var obj = new PlotLineOrBand(this, options).render(),
+        var obj,
             userOptions = this.userOptions;
+        // If path of the same id already exists on related axis,
+        // use this path instead.
+        this.plotLinesAndBands.forEach(function (PlotLineOrBand): void {
+            if (options.id && PlotLineOrBand.id === options.id && PlotLineOrBand.svgElem) {
+                obj = PlotLineOrBand;
+            }
+        });
+        obj = obj || new PlotLineOrBand(this, options).render();
 
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
@@ -1313,7 +1319,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             options = this.options,
             userOptions = this.userOptions,
             i = plotLinesAndBands.length;
-
         while (i--) {
             if (plotLinesAndBands[i].id === id) {
                 plotLinesAndBands[i].destroy();
