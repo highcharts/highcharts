@@ -52,7 +52,6 @@ QUnit.test('Single touch drag should not zoom (#5790)', function (assert) {
     );
 });
 
-/* global TestController */
 QUnit.test('TouchPointer events', function (assert) {
     var chart,
         controller,

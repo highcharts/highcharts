@@ -48,7 +48,7 @@ declare global {
             selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
-            haloPath(size: number): (SVGElement|SVGPathArray|Array<SVGElement>);
+            haloPath(size: number): SVGPathArray;
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
@@ -295,7 +295,7 @@ TrackerMixin = H.TrackerMixin = {
                     ((series as Highcharts.AreaSeries).areaPath as any) :
                     (series.graphPath as any)
             ),
-            trackerPathLength = trackerPath.length,
+            // trackerPathLength = trackerPath.length,
             chart = series.chart,
             pointer = chart.pointer,
             renderer = chart.renderer,
@@ -322,36 +322,7 @@ TrackerMixin = H.TrackerMixin = {
              */
             TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
 
-        // Extend end points. A better way would be to use round linecaps,
-        // but those are not clickable in VML.
-        if (trackerPathLength && !trackByArea) {
-            i = trackerPathLength + 1;
-            while (i--) {
-                if ((trackerPath[i] as any) === 'M' as any) {
-                    // extend left side
-                    trackerPath.splice(
-                        i + 1, 0,
-                        (trackerPath[i + 1] as any) - snap,
-                        trackerPath[i + 2],
-                        'L'
-                    );
-                }
-                if ((i && (trackerPath[i] as any) === 'M') ||
-                    i === trackerPathLength
-                ) {
-                    // extend right side
-                    trackerPath.splice(
-                        i,
-                        0,
-                        'L',
-                        trackerPath[i - 2] + snap,
-                        trackerPath[i - 1]
-                    );
-                }
-            }
-        }
-
-        // draw the tracker
+        // Draw the tracker
         if (tracker) {
             tracker.attr({ d: trackerPath });
         } else if (series.graph) { // create
@@ -370,6 +341,7 @@ TrackerMixin = H.TrackerMixin = {
 
             if (!chart.styledMode) {
                 (series.tracker as any).attr({
+                    'stroke-linecap': 'round',
                     'stroke-linejoin': 'round', // #1225
                     stroke: TRACKER_FILL,
                     fill: trackByArea ? TRACKER_FILL : 'none',
@@ -1255,7 +1227,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints) {
+                if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
                     (point.dataLabels || []).forEach(function (
                         label: Highcharts.SVGElement
                     ): void {
@@ -1417,13 +1389,13 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @param {number} size
      *        The radius of the circular halo.
      *
-     * @return {Highcharts.SVGElement}
+     * @return {Highcharts.SVGPathArray}
      *         The path definition.
      */
     haloPath: function (
         this: Highcharts.Point,
         size: number
-    ): Highcharts.SVGElement {
+    ): Highcharts.SVGPathArray {
         var series = this.series,
             chart = series.chart;
 

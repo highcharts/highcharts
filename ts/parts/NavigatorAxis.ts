@@ -24,6 +24,18 @@ const {
     pick
 } = U;
 
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        navigatorAxis?: NavigatorAxis['navigatorAxis'];
+    }
+    interface AxisTypeRegistry {
+        NavigatorAxis: NavigatorAxis;
+    }
+}
+
 /* eslint-disable valid-jsdoc */
 
 /**

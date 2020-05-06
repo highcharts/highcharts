@@ -197,9 +197,9 @@ Axis.prototype.renderWaterfallStackTotals = function (
 ): void {
     var yAxis = this,
         waterfallStacks = yAxis.waterfallStacks,
-        stackTotalGroup = yAxis.stackTotalGroup,
+        stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
         dummyStackItem = new StackItem(
-            yAxis,
+            yAxis as any,
             yAxis.options.stackLabels as any,
             false,
             0,
@@ -753,7 +753,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
     getGraphPath: function (
         this: Highcharts.WaterfallSeries
     ): Highcharts.SVGPathArray {
-        return ['M', 0, 0];
+        return [['M', 0, 0]];
     },
 
     // Draw columns' connector lines
@@ -770,7 +770,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             reversedXAxis = this.xAxis.reversed,
             reversedYAxis = this.yAxis.reversed,
             stacking = this.options.stacking,
-            path = [] as Highcharts.SVGPathArray,
+            path: Highcharts.SVGPathArray = [],
             connectorThreshold,
             prevStack,
             prevStackX,
@@ -779,8 +779,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             isPos,
             prevArgs,
             pointArgs,
-            i: (number|undefined),
-            d: (Highcharts.SVGPathArray|undefined);
+            i: (number|undefined);
 
         for (i = 1; i < length; i++) {
             pointArgs = data[i].shapeArgs;
@@ -789,7 +788,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             prevStack = yAxis.waterfallStacks[this.stackKey];
             isPos = prevPoint.y > 0 ? -(prevArgs as any).height : 0;
 
-            if (prevStack) {
+            if (prevStack && prevArgs && pointArgs) {
                 prevStackX = (prevStack as any)[i - 1];
 
                 // y position of the connector is different when series are
@@ -814,34 +813,37 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                         borderNormalizer - graphNormalizer;
                 }
 
-                d = [
+                path.push([
                     'M',
-                    (prevArgs as any).x + (reversedXAxis ?
+                    (prevArgs.x || 0) + (reversedXAxis ?
                         0 :
-                        (prevArgs as any).width
+                        (prevArgs.width || 0)
                     ),
-                    yPos,
+                    yPos
+                ], [
                     'L',
-                    (pointArgs as any).x + (reversedXAxis ?
-                        (pointArgs as any).width :
+                    (pointArgs.x || 0) + (reversedXAxis ?
+                        (pointArgs.width || 0) :
                         0
                     ),
                     yPos
-                ];
+                ]);
             }
 
             if (
-                !stacking && d &&
-                (prevPoint.y < 0 && !reversedYAxis) ||
-                (prevPoint.y > 0 && reversedYAxis)
+                !stacking &&
+                path.length &&
+                prevArgs &&
+                (
+                    (prevPoint.y < 0 && !reversedYAxis) ||
+                    (prevPoint.y > 0 && reversedYAxis)
+                )
             ) {
-                (d as any)[2] += (prevArgs as any).height;
-                (d as any)[5] += (prevArgs as any).height;
+                path[path.length - 2][2] += prevArgs.height;
+                path[path.length - 1][2] += prevArgs.height;
             }
 
-            path = path.concat(d as any);
         }
-
         return path;
     },
 
@@ -906,7 +908,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             );
         }
 
-        series.yAxis.usePercentage = false;
+        (series.yAxis as any).stacking.usePercentage = false;
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series

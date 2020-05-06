@@ -254,3 +254,45 @@ QUnit.test('#12834 - xAxis had wrong extremes after scroll .', function (assert)
     );
 
 });
+
+QUnit.test('Toggle chart.scrollbar', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [5, 6, 2]
+        }],
+        scrollbar: {
+            enabled: true
+        }
+    });
+
+    chart.update({
+        scrollbar: {
+            enabled: false
+        },
+        series: [{
+            data: [5, 6, 2, 4]
+        }]
+    });
+
+    chart.update({
+        xAxis: {
+            min: 0,
+            max: 0
+        },
+        series: [{
+            data: [5]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        1,
+        'xAxis should have just one tick (#13184).'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions[0],
+        0,
+        'xAxis\'s tick should equal min and max values (#13184).'
+    );
+});

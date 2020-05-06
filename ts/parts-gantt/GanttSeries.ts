@@ -13,6 +13,14 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    isNumber,
+    merge,
+    pick,
+    seriesType,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -78,19 +86,9 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    isNumber,
-    merge,
-    pick,
-    seriesType,
-    splat
-} = U;
-
 import './CurrentDateIndicator.js';
-import './GridAxis.js';
 import '../modules/static-scale.src.js';
-import './TreeGrid.js';
+import './TreeGridAxis.js';
 import './Pathfinder.js';
 import '../modules/xrange.src.js';
 

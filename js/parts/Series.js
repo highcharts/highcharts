@@ -8,7 +8,12 @@
  *
  * */
 'use strict';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import H from './Globals.js';
+import './Options.js';
+import Point from './Point.js';
+import './SvgRenderer.js';
+import U from './Utilities.js';
 /**
  * This is a placeholder type of the possible series options for
  * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
@@ -226,12 +231,7 @@ import H from './Globals.js';
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 ''; // detach doclets above
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from './Point.js';
-import U from './Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
-import './Options.js';
-import './SvgRenderer.js';
 var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
@@ -499,6 +499,23 @@ null,
      * @private
      */
     allowPointSelect: false,
+    /**
+     * When true, each point or column edge is rounded to its nearest pixel
+     * in order to render sharp on screen. In some cases, when there are a
+     * lot of densely packed columns, this leads to visible difference
+     * in column widths or distance between columns. In these cases,
+     * setting `crisp` to `false` may look better, even though each column
+     * is rendered blurry.
+     *
+     * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
+     *         Crisp is false
+     *
+     * @since   5.0.10
+     * @product highcharts highstock gantt
+     *
+     * @private
+     */
+    crisp: true,
     /**
      * If true, a checkbox is displayed next to the legend item to allow
      * selecting the series. The state of the checkbox is determined by
@@ -3914,7 +3931,7 @@ null,
         }
         // Translate each point
         for (i = 0; i < dataLength; i++) {
-            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacks[(series.negStacks &&
+            var point = points[i], xValue = point.x, yValue = point.y, yBottom = point.low, stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(series.negStacks &&
                 yValue <
                     (stackThreshold ? 0 : threshold) ?
                 '-' :
@@ -4327,7 +4344,7 @@ null,
      *         CSS.
      */
     markerAttribs: function (point, state) {
-        var seriesMarkerOptions = this.options.marker, seriesStateOptions, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
+        var seriesOptions = this.options, seriesMarkerOptions = seriesOptions.marker, seriesStateOptions, pointMarkerOptions = point.marker || {}, symbol = (pointMarkerOptions.symbol ||
             seriesMarkerOptions.symbol), pointStateOptions, radius = pick(pointMarkerOptions.radius, seriesMarkerOptions.radius), attribs;
         // Handle hover and select states
         if (state) {
@@ -4343,7 +4360,9 @@ null,
         }
         attribs = {
             // Math.floor for #1843:
-            x: Math.floor(point.plotX) - radius,
+            x: seriesOptions.crisp ?
+                Math.floor(point.plotX) - radius :
+                point.plotX - radius,
             y: point.plotY - radius
         };
         if (radius) {
@@ -4514,50 +4533,55 @@ null,
             }
             else {
                 if (i === 0 || gap) {
-                    pathToPoint = [
-                        'M',
-                        point.plotX,
-                        point.plotY
-                    ];
+                    pathToPoint = [[
+                            'M',
+                            point.plotX,
+                            point.plotY
+                        ]];
                     // Generate the spline as defined in the SplineSeries object
                 }
                 else if (series.getPointSpline) {
-                    pathToPoint = series.getPointSpline(points, point, i);
+                    pathToPoint = [series.getPointSpline(points, point, i)];
                 }
                 else if (step) {
                     if (step === 1) { // right
-                        pathToPoint = [
-                            'L',
-                            lastPoint.plotX,
-                            plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                lastPoint.plotX,
+                                plotY
+                            ]];
                     }
                     else if (step === 2) { // center
-                        pathToPoint = [
-                            'L',
-                            (lastPoint.plotX + plotX) / 2,
-                            lastPoint.plotY,
-                            'L',
-                            (lastPoint.plotX + plotX) / 2,
-                            plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                (lastPoint.plotX + plotX) / 2,
+                                lastPoint.plotY
+                            ], [
+                                'L',
+                                (lastPoint.plotX + plotX) / 2,
+                                plotY
+                            ]];
                     }
                     else {
-                        pathToPoint = [
-                            'L',
-                            plotX,
-                            lastPoint.plotY
-                        ];
+                        pathToPoint = [[
+                                'L',
+                                plotX,
+                                lastPoint.plotY
+                            ]];
                     }
-                    pathToPoint.push('L', plotX, plotY);
-                }
-                else {
-                    // normal line to next point
-                    pathToPoint = [
+                    pathToPoint.push([
                         'L',
                         plotX,
                         plotY
-                    ];
+                    ]);
+                }
+                else {
+                    // normal line to next point
+                    pathToPoint = [[
+                            'L',
+                            plotX,
+                            plotY
+                        ]];
                 }
                 // Prepare for animation. When step is enabled, there are
                 // two path nodes for each x value.
@@ -4696,7 +4720,7 @@ null,
      * @return {void}
      */
     applyZones: function () {
-        var series = this, chart = this.chart, renderer = chart.renderer, zones = this.zones, translatedFrom, translatedTo, clips = (this.clips || []), clipAttr, graph = this.graph, area = this.area, chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight), axis = this[(this.zoneAxis || 'y') + 'Axis'], extremes, reversed, inverted = chart.inverted, horiz, pxRange, pxPosMin, pxPosMax, ignoreZones = false;
+        var series = this, chart = this.chart, renderer = chart.renderer, zones = this.zones, translatedFrom, translatedTo, clips = (this.clips || []), clipAttr, graph = this.graph, area = this.area, chartSizeMax = Math.max(chart.chartWidth, chart.chartHeight), axis = this[(this.zoneAxis || 'y') + 'Axis'], extremes, reversed, inverted = chart.inverted, horiz, pxRange, pxPosMin, pxPosMax, ignoreZones = false, zoneArea, zoneGraph;
         if (zones.length &&
             (graph || area) &&
             axis &&
@@ -4781,11 +4805,13 @@ null,
                 // when no data, graph zone is not applied and after setData
                 // clip was ignored. As a result, it should be applied each
                 // time.
-                if (graph) {
-                    series['zone-graph-' + i].clip(clips[i]);
+                zoneArea = series['zone-area-' + i];
+                zoneGraph = series['zone-graph-' + i];
+                if (graph && zoneGraph) {
+                    zoneGraph.clip(clips[i]);
                 }
-                if (area) {
-                    series['zone-area-' + i].clip(clips[i]);
+                if (area && zoneArea) {
+                    zoneArea.clip(clips[i]);
                 }
                 // if this zone extends out of the axis, ignore the others
                 ignoreZones = threshold.value > extremes.max;

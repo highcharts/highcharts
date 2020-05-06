@@ -503,8 +503,8 @@ var BubbleLegend = /** @class */ (function () {
      * @return {void}
      */
     BubbleLegend.prototype.renderRange = function (range) {
-        var mainRange = this.ranges[0], legend = this.legend, options = this.options, labelsOptions = options.labels, chart = this.chart, renderer = chart.renderer, symbols = this.symbols, labels = symbols.labels, label, elementCenter = range.center, absoluteRadius = Math.abs(range.radius), connectorDistance = options.connectorDistance, labelsAlign = labelsOptions.align, rtl = legend.options.rtl, fontSize = labelsOptions.style.fontSize, connectorLength = rtl || labelsAlign === 'left' ?
-            -connectorDistance : connectorDistance, borderWidth = options.borderWidth, connectorWidth = options.connectorWidth, posX = mainRange.radius, posY = elementCenter - absoluteRadius -
+        var mainRange = this.ranges[0], legend = this.legend, options = this.options, labelsOptions = options.labels, chart = this.chart, renderer = chart.renderer, symbols = this.symbols, labels = symbols.labels, label, elementCenter = range.center, absoluteRadius = Math.abs(range.radius), connectorDistance = options.connectorDistance || 0, labelsAlign = labelsOptions.align, rtl = legend.options.rtl, fontSize = labelsOptions.style.fontSize, connectorLength = rtl || labelsAlign === 'left' ?
+            -connectorDistance : connectorDistance, borderWidth = options.borderWidth, connectorWidth = options.connectorWidth, posX = mainRange.radius || 0, posY = elementCenter - absoluteRadius -
             borderWidth / 2 + connectorWidth / 2, labelY, labelX, fontMetrics = this.fontMetrics, labelMovement = fontSize / 2 - (fontMetrics.h - fontSize) / 2, crispMovement = (posY % 1 ? 1 : 0.5) -
             (connectorWidth % 2 ? 0 : 0.5), styledMode = renderer.styledMode;
         // Set options for centered labels
@@ -528,12 +528,8 @@ var BubbleLegend = /** @class */ (function () {
         // Render connector
         symbols.connectors.push(renderer
             .path(renderer.crispLine([
-            'M',
-            posX,
-            posY,
-            'L',
-            posX + connectorLength,
-            posY
+            ['M', posX, posY],
+            ['L', posX + connectorLength, posY]
         ], options.connectorWidth))
             .attr(styledMode ? {} : range.connectorStyle)
             .addClass((styledMode ?

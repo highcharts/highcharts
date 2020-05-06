@@ -714,7 +714,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
             ['xAxis', 'yAxis'].forEach(function (axis: string): void {
                 // Initially set the linked xAxis type to category.
                 if (axis === 'xAxis' && !series[axis].userOptions.type) {
-                    series[axis].categories = series[axis].hasNames = true;
+                    series[axis].categories = series[axis].hasNames = true as any;
                 }
             });
         }
@@ -812,12 +812,8 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
             path = chart.renderer.crispLine(
                 [
-                    'M',
-                    coords.x1,
-                    coords.y1,
-                    'L',
-                    coords.x2,
-                    coords.y2
+                    ['M', coords.x1, coords.y1],
+                    ['L', coords.x2, coords.y2]
                 ] as Highcharts.SVGPathArray,
                 dl.options.connectorWidth
             );

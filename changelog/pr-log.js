@@ -14,8 +14,8 @@ const error = e => {
 
 const log = {
     Highcharts: {},
-    Highstock: {},
-    Highmaps: {},
+    'Highcharts Stock': {},
+    'Highcharts Maps': {},
     'Highcharts Gantt': {}
 };
 

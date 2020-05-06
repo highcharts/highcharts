@@ -39,11 +39,14 @@ QUnit.test('Point animation', function (assert) {
                             depth: 0
                         }
                     },
+                    yAxis: {
+                        max: 250
+                    },
                     series: [{
-                        data: [25, 25, 250]
+                        data: [25]
                     }]
                 }),
-            point = chart.series[0].points[1],
+            point = chart.series[0].points[0],
             initialPos = getCalculatedHeight(point),
             realPos,
             done = assert.async();
@@ -54,14 +57,14 @@ QUnit.test('Point animation', function (assert) {
         assert.strictEqual(
             realPos,
             initialPos,
-            'Time 0 - point has not started moving'
+            'Time 0 - point should not yet have started moving'
         );
 
         setTimeout(function () {
             assert.strictEqual(
                 getPhysicalHeight(point) > realPos,
                 true,
-                'Time 400 - point has continued'
+                'Time 400 - point should have moved'
             );
             realPos = getPhysicalHeight(point);
         }, 400);
@@ -70,7 +73,7 @@ QUnit.test('Point animation', function (assert) {
             assert.strictEqual(
                 getPhysicalHeight(point) > realPos,
                 true,
-                'Time 800 - point has continued'
+                'Time 800 - point should have continued to move'
             );
 
         }, 800);
@@ -79,7 +82,7 @@ QUnit.test('Point animation', function (assert) {
             assert.strictEqual(
                 getPhysicalHeight(point),
                 getCalculatedHeight(point),
-                'Time 1200 - point has landed'
+                'Time 1200 - point should be landed'
             );
 
             done();

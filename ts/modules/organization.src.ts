@@ -50,7 +50,7 @@ declare global {
             public createNode: (id: string) => NodesPoint;
             public createNodeColumn(): OrganizationColumnArray;
             public curvedPath(
-                path: Array<SVGPathArray>,
+                path: SVGPathArray,
                 r: number
             ): SVGPathArray;
             public pointAttribs(
@@ -465,61 +465,68 @@ seriesType<Highcharts.OrganizationSeries>(
         // General function to apply corner radius to a path - can be lifted to
         // renderer or utilities if we need it elsewhere.
         curvedPath: function (
-            path: Array<Highcharts.SVGPathArray>,
+            path: Highcharts.SVGPathArray,
             r: number
         ): Highcharts.SVGPathArray {
-            var d: Highcharts.SVGPathArray = [],
-                i: number,
-                x: number,
-                y: number,
-                x1: number,
-                x2: number,
-                y1: number,
-                y2: number,
-                directionX: (number|undefined),
-                directionY: (number|undefined);
+            var d: Highcharts.SVGPathArray = [];
 
-            for (i = 0; i < path.length; i++) {
-                x = path[i][0] as any;
-                y = path[i][1] as any;
+            for (let i = 0; i < path.length; i++) {
+                const x = path[i][1];
+                const y = path[i][2];
 
-                // moveTo
-                if (i === 0) {
-                    d.push('M', x, y);
+                if (typeof x === 'number' && typeof y === 'number') {
+                    // moveTo
+                    if (i === 0) {
+                        d.push(['M', x, y]);
 
-                } else if (i === path.length - 1) {
-                    d.push('L', x, y);
+                    } else if (i === path.length - 1) {
+                        d.push(['L', x, y]);
 
-                // curveTo
-                } else if (r) {
-                    x1 = path[i - 1][0] as any;
-                    y1 = path[i - 1][1] as any;
-                    x2 = path[i + 1][0] as any;
-                    y2 = path[i + 1][1] as any;
+                    // curveTo
+                    } else if (r) {
+                        const prevSeg = path[i - 1];
+                        const nextSeg = path[i + 1];
+                        if (prevSeg && nextSeg) {
+                            const x1 = prevSeg[1],
+                                y1 = prevSeg[2],
+                                x2 = nextSeg[1],
+                                y2 = nextSeg[2];
 
-                    // Only apply to breaks
-                    if (x1 !== x2 && y1 !== y2) {
-                        directionX = x1 < x2 ? 1 : -1;
-                        directionY = y1 < y2 ? 1 : -1;
-                        d.push(
-                            'L',
-                            x - directionX * Math.min(Math.abs(x - x1), r),
-                            y - directionY * Math.min(Math.abs(y - y1), r),
-                            'C',
-                            x,
-                            y,
-                            x,
-                            y,
-                            x + directionX * Math.min(Math.abs(x - x2), r),
-                            y + directionY * Math.min(Math.abs(y - y2), r)
-                        );
+                            // Only apply to breaks
+                            if (
+                                typeof x1 === 'number' &&
+                                typeof x2 === 'number' &&
+                                typeof y1 === 'number' &&
+                                typeof y2 === 'number' &&
+                                x1 !== x2 &&
+                                y1 !== y2
+                            ) {
+                                const directionX = x1 < x2 ? 1 : -1,
+                                    directionY = y1 < y2 ? 1 : -1;
+                                d.push([
+                                    'L',
+                                    x - directionX * Math.min(Math.abs(x - x1), r),
+                                    y - directionY * Math.min(Math.abs(y - y1), r)
+                                ], [
+                                    'C',
+                                    x,
+                                    y,
+                                    x,
+                                    y,
+                                    x + directionX * Math.min(Math.abs(x - x2), r),
+                                    y + directionY * Math.min(Math.abs(y - y2), r)
+                                ]);
+                            }
+
+                        }
+
+                    // lineTo
+                    } else {
+                        d.push(['L', x, y]);
                     }
-
-                // lineTo
-                } else {
-                    d.push('L', x, y);
                 }
             }
+
             return d;
 
         },
@@ -605,10 +612,10 @@ seriesType<Highcharts.OrganizationSeries>(
             point.shapeType = 'path';
             point.shapeArgs = {
                 d: this.curvedPath([
-                    [x1, y1],
-                    [xMiddle, y1],
-                    [xMiddle, y2],
-                    [x2, y2]
+                    ['M', x1, y1],
+                    ['L', xMiddle, y1],
+                    ['L', xMiddle, y2],
+                    ['L', x2, y2]
                 ], this.options.linkRadius as any)
             };
         },
@@ -637,19 +644,22 @@ seriesType<Highcharts.OrganizationSeries>(
                 width -= padjust;
 
                 // Set the size of the surrounding div emulating `g`
-                css(dataLabel.text.element.parentNode, {
-                    width: width + 'px',
-                    height: height + 'px'
-                });
+                const text = dataLabel.text;
+                if (text) {
+                    css(text.element.parentNode as SVGElement, {
+                        width: width + 'px',
+                        height: height + 'px'
+                    });
 
-                // Set properties for the span emulating `text`
-                css(dataLabel.text.element, {
-                    left: 0,
-                    top: 0,
-                    width: '100%',
-                    height: '100%',
-                    overflow: 'hidden'
-                });
+                    // Set properties for the span emulating `text`
+                    css(text.element, {
+                        left: 0,
+                        top: 0,
+                        width: '100%',
+                        height: '100%',
+                        overflow: 'hidden'
+                    });
+                }
 
                 // The getBBox function is used in `alignDataLabel` to align
                 // inside the box

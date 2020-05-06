@@ -194,7 +194,7 @@ declare global {
         }
         interface SymbolDictionary {
             /** @requires modules/exporting */
-            menuball: SymbolFunction<Array<SVGElement>>;
+            menuball: SymbolFunction<SVGPathArray>;
         }
         interface XAxisOptions {
             internalKey?: string;
@@ -2567,12 +2567,12 @@ symbols.menu = function (
     height: number
 ): Highcharts.SVGPathArray {
     var arr: Highcharts.SVGPathArray = [
-        'M', x, y + 2.5,
-        'L', x + width, y + 2.5,
-        'M', x, y + height / 2 + 0.5,
-        'L', x + width, y + height / 2 + 0.5,
-        'M', x, y + height - 1.5,
-        'L', x + width, y + height - 1.5
+        ['M', x, y + 2.5],
+        ['L', x + width, y + 2.5],
+        ['M', x, y + height / 2 + 0.5],
+        ['L', x + width, y + height / 2 + 0.5],
+        ['M', x, y + height - 1.5],
+        ['L', x + width, y + height - 1.5]
     ];
 
     return arr;
@@ -2583,8 +2583,8 @@ symbols.menuball = function (
     y: number,
     width: number,
     height: number
-): Array<Highcharts.SVGElement> {
-    var path: Array<Highcharts.SVGElement> = [],
+): Highcharts.SVGPathArray {
+    var path: Highcharts.SVGPathArray = [],
         h = (height / 3) - 2;
 
     path = path.concat(

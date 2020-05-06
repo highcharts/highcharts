@@ -97,13 +97,13 @@ seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
         this: Highcharts.PolygonSeries
     ): Highcharts.SVGPathArray {
 
-        var graphPath = (Series.prototype.getGraphPath as any).call(this),
+        var graphPath: Highcharts.SVGPathArray = (Series.prototype.getGraphPath as any).call(this),
             i = graphPath.length + 1;
 
         // Close all segments
         while (i--) {
-            if ((i === graphPath.length || graphPath[i] === 'M') && i > 0) {
-                graphPath.splice(i, 0, 'z');
+            if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
+                graphPath.splice(i, 0, ['Z']);
             }
         }
         this.areaPath = graphPath;

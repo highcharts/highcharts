@@ -128,7 +128,7 @@ import Color from '../parts/Color.js';
 import Point from '../parts/Point.js';
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, merge = U.merge, objectEach = U.objectEach, pick = U.pick, syncTimeout = U.syncTimeout;
 import '../parts/Options.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
@@ -978,14 +978,19 @@ Tick.prototype.drillable = function () {
                 label.basicStyles = merge(label.styles);
             }
             label.addClass('highcharts-drilldown-axis-label');
+            // #12656 - avoid duplicate of attach event
+            if (label.removeOnDrillableClick) {
+                removeEvent(label.element, 'click');
+            }
             label.removeOnDrillableClick = addEvent(label.element, 'click', function (e) {
+                e.preventDefault();
                 axis.drilldownCategory(pos, e);
             });
             if (!styledMode) {
                 label.css(axis.chart.options.drilldown.activeAxisLabelStyle);
             }
         }
-        else if (label && label.removeOnDrillableClick) {
+        else if (label && label.drillable && label.removeOnDrillableClick) {
             if (!styledMode) {
                 label.styles = {}; // reset for full overwrite of styles
                 label.css(label.basicStyles);

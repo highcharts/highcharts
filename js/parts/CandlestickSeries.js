@@ -200,20 +200,26 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, candlestickOp
                 // with all the values would lead to a crash when updating
                 // frequently (#5193).
                 path = [];
-                path.push('M', crispX - halfWidth, bottomBox, 'L', crispX - halfWidth, topBox, 'L', crispX + halfWidth, topBox, 'L', crispX + halfWidth, bottomBox, 'Z', // Ensure a nice rectangle #2602
-                'M', crispX, topBox, 'L', 
-                // #460, #2094
-                crispX, hasTopWhisker ?
-                    Math.round(reversedYAxis ?
-                        point.yBottom :
-                        point.plotHigh) :
-                    topBox, 'M', crispX, bottomBox, 'L', 
-                // #460, #2094
-                crispX, hasBottomWhisker ?
-                    Math.round(reversedYAxis ?
-                        point.plotHigh :
-                        point.yBottom) :
-                    bottomBox);
+                path.push(['M', crispX - halfWidth, bottomBox], ['L', crispX - halfWidth, topBox], ['L', crispX + halfWidth, topBox], ['L', crispX + halfWidth, bottomBox], ['Z'], // Ensure a nice rectangle #2602
+                ['M', crispX, topBox], [
+                    'L',
+                    // #460, #2094
+                    crispX,
+                    hasTopWhisker ?
+                        Math.round(reversedYAxis ?
+                            point.yBottom :
+                            point.plotHigh) :
+                        topBox
+                ], ['M', crispX, bottomBox], [
+                    'L',
+                    // #460, #2094
+                    crispX,
+                    hasBottomWhisker ?
+                        Math.round(reversedYAxis ?
+                            point.plotHigh :
+                            point.yBottom) :
+                        bottomBox
+                ]);
                 graphic[isNew ? 'attr' : 'animate']({ d: path })
                     .addClass(point.getClassName(), true);
             }

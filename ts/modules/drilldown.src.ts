@@ -298,6 +298,7 @@ import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    removeEvent,
     animObject,
     extend,
     fireEvent,
@@ -1435,10 +1436,17 @@ Tick.prototype.drillable = function (): void {
             }
 
             label.addClass('highcharts-drilldown-axis-label');
+
+            // #12656 - avoid duplicate of attach event
+            if (label.removeOnDrillableClick) {
+                removeEvent(label.element, 'click');
+            }
+
             label.removeOnDrillableClick = addEvent(
                 label.element,
                 'click',
                 function (e: MouseEvent): void {
+                    e.preventDefault();
                     axis.drilldownCategory(pos, e);
                 }
             );
@@ -1449,12 +1457,14 @@ Tick.prototype.drillable = function (): void {
                 );
             }
 
-        } else if (label && label.removeOnDrillableClick) {
+        } else if (label && label.drillable && label.removeOnDrillableClick) {
+
 
             if (!styledMode) {
                 label.styles = {}; // reset for full overwrite of styles
                 label.css(label.basicStyles);
             }
+
             label.removeOnDrillableClick(); // #3806
             label.removeClass('highcharts-drilldown-axis-label');
         }

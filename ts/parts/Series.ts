@@ -10,7 +10,12 @@
 
 'use strict';
 
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import H from './Globals.js';
+import './Options.js';
+import Point from './Point.js';
+import './SvgRenderer.js';
+import U from './Utilities.js';
 
 /**
  * Internal types
@@ -342,6 +347,7 @@ declare global {
             colors?: Array<ColorType>;
             connectEnds?: boolean;
             connectNulls?: boolean;
+            crisp?: boolean|number;
             cropThreshold?: number;
             cursor?: (string|CursorValue);
             dashStyle?: DashStyleValue;
@@ -710,9 +716,6 @@ declare global {
 
 ''; // detach doclets above
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from './Point.js';
-import U from './Utilities.js';
 const {
     addEvent,
     animObject,
@@ -740,8 +743,6 @@ const {
     syncTimeout
 } = U;
 
-import './Options.js';
-import './SvgRenderer.js';
 
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
@@ -1031,6 +1032,24 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @private
          */
         allowPointSelect: false,
+
+        /**
+         * When true, each point or column edge is rounded to its nearest pixel
+         * in order to render sharp on screen. In some cases, when there are a
+         * lot of densely packed columns, this leads to visible difference
+         * in column widths or distance between columns. In these cases,
+         * setting `crisp` to `false` may look better, even though each column
+         * is rendered blurry.
+         *
+         * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
+         *         Crisp is false
+         *
+         * @since   5.0.10
+         * @product highcharts highstock gantt
+         *
+         * @private
+         */
+        crisp: true,
 
         /**
          * If true, a checkbox is displayed next to the legend item to allow
@@ -2790,7 +2809,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
              *         Vertical and positioned
              */
             y: 0
-
         } as Highcharts.DataLabelsOptions,
 
         /**
@@ -5160,7 +5178,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     xValue = point.x,
                     yValue = point.y,
                     yBottom = point.low,
-                    stack = stacking && yAxis.stacks[(
+                    stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(
                         series.negStacks &&
                         (yValue as any) <
                         (stackThreshold ? 0 : (threshold as any)) ?
@@ -5772,7 +5790,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
             point: Highcharts.Point,
             state?: string
         ): Highcharts.SVGAttributes {
-            var seriesMarkerOptions = this.options.marker,
+            var seriesOptions = this.options,
+                seriesMarkerOptions = seriesOptions.marker,
                 seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
@@ -5807,10 +5826,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
             if (point.hasImage) {
                 radius = 0; // and subsequently width and height is not set
             }
-
             attribs = {
                 // Math.floor for #1843:
-                x: Math.floor(point.plotX as any) - radius,
+                x: seriesOptions.crisp ?
+                    Math.floor(point.plotX as any) - radius :
+                    (point.plotX as any) - radius,
                 y: (point.plotY as any) - radius
             };
 
@@ -6091,64 +6111,65 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 } else {
 
                     if (i === 0 || gap) {
-                        pathToPoint = [
+                        pathToPoint = [[
                             'M',
                             point.plotX as any,
                             point.plotY as any
-                        ];
+                        ]];
 
                     // Generate the spline as defined in the SplineSeries object
                     } else if (
                         (series as Highcharts.SplineSeries).getPointSpline
                     ) {
 
-                        pathToPoint = (
+                        pathToPoint = [(
                             series as Highcharts.SplineSeries
                         ).getPointSpline(
                             points as Array<Highcharts.SplinePoint>,
                             point as Highcharts.SplinePoint,
                             i
-                        );
+                        )];
 
                     } else if (step) {
 
                         if (step === 1) { // right
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 lastPoint.plotX as any,
                                 plotY as any
-                            ];
+                            ]];
 
                         } else if (step === 2) { // center
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                lastPoint.plotY as any,
+                                lastPoint.plotY as any
+                            ], [
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
                                 plotY as any
-                            ];
+                            ]];
 
                         } else {
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 plotX as any,
                                 lastPoint.plotY as any
-                            ];
+                            ]];
                         }
-                        pathToPoint.push(
+                        pathToPoint.push([
                             'L',
                             plotX as any,
                             plotY as any
-                        );
+                        ]);
 
                     } else {
                         // normal line to next point
-                        pathToPoint = [
+                        pathToPoint = [[
                             'L',
                             plotX as any,
                             plotY as any
-                        ];
+                        ]];
                     }
 
                     // Prepare for animation. When step is enabled, there are
@@ -6346,7 +6367,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 pxRange: number,
                 pxPosMin: number,
                 pxPosMax: number,
-                ignoreZones = false;
+                ignoreZones = false,
+                zoneArea: Highcharts.SVGElement,
+                zoneGraph: Highcharts.SVGElement;
 
             if (
                 zones.length &&
@@ -6457,12 +6480,15 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     // when no data, graph zone is not applied and after setData
                     // clip was ignored. As a result, it should be applied each
                     // time.
-                    if (graph) {
-                        (series as any)['zone-graph-' + i].clip(clips[i]);
+                    zoneArea = (series as any)['zone-area-' + i];
+                    zoneGraph = (series as any)['zone-graph-' + i];
+
+                    if (graph && zoneGraph) {
+                        zoneGraph.clip(clips[i]);
                     }
 
-                    if (area) {
-                        (series as any)['zone-area-' + i].clip(clips[i]);
+                    if (area && zoneArea) {
+                        zoneArea.clip(clips[i]);
                     }
 
                     // if this zone extends out of the axis, ignore the others

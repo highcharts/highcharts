@@ -49,7 +49,7 @@ declare global {
             public labelPos?: PositionObject;
             public mark?: SVGElement;
             public movedLabel?: SVGElement;
-            public options: (Dictionary<any>|undefined);
+            public options?: AxisOptions;
             public parameters: TickParametersObject;
             public prevLabel?: SVGElement;
             public pos: number;
@@ -218,6 +218,8 @@ class Tick {
 
         this.options = this.parameters.options;
 
+        fireEvent(this, 'init');
+
         if (!type && !noLabel) {
             this.addLabel();
         }
@@ -253,7 +255,7 @@ class Tick {
 
     public movedLabel?: Highcharts.SVGElement;
 
-    public options?: Highcharts.Dictionary<any>;
+    public options?: Highcharts.AxisOptions;
 
     public parameters: Highcharts.TickParametersObject;
 
@@ -291,10 +293,10 @@ class Tick {
             log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
-            labelOptions = pick(
+            labelOptions: Highcharts.XAxisLabelsOptions = pick(
                 tick.options && tick.options.labels,
                 options.labels
-            ),
+            ) as any,
             str: string,
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
@@ -388,6 +390,11 @@ class Tick {
         }
         // First call
         if (!defined(label) && !tick.movedLabel) {
+            /**
+             * The rendered text label of the tick.
+             * @name Highcharts.Tick#label
+             * @type {Highcharts.SVGElement|undefined}
+             */
             tick.label = label = tick.createLabel(
                 { x: 0, y: 0 },
                 str,
@@ -662,14 +669,15 @@ class Tick {
         horiz: boolean,
         renderer: Highcharts.Renderer
     ): Highcharts.SVGPathArray {
-        return renderer.crispLine([
+        return renderer.crispLine([[
             'M',
             x,
-            y,
+            y
+        ], [
             'L',
             x + (horiz ? 0 : -tickLength),
             y + (horiz ? tickLength : 0)
-        ], tickWidth);
+        ]], tickWidth);
     }
 
     /**

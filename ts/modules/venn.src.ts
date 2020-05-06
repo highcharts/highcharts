@@ -1206,27 +1206,20 @@ var vennSeries = {
                         r: (shape as any).r * scale
                     };
                 } else if ((shape as any).d) {
-                    // TODO: find a better way to handle scaling of a path.
-                    var d = (shape as any).d.reduce(function (
-                        path: Highcharts.SVGPathArray,
-                        arr: Highcharts.SVGPathArray
-                    ): Highcharts.SVGPathArray {
-                        if (arr[0] === 'M') {
-                            arr[1] = centerX + (arr as any)[1] * scale;
-                            arr[2] = centerY + (arr as any)[2] * scale;
-                        } else if (arr[0] === 'A') {
-                            arr[1] = (arr as any)[1] * scale;
-                            arr[2] = (arr as any)[2] * scale;
-                            arr[6] = centerX + (arr as any)[6] * scale;
-                            arr[7] = centerY + (arr as any)[7] * scale;
-                        }
-                        return path.concat(arr);
-                    }, [])
-                        .join(' ');
 
-                    shapeArgs = {
-                        d: d
-                    };
+                    const d: Highcharts.SVGPathArray = (shape as any).d;
+                    d.forEach((seg): void => {
+                        if (seg[0] === 'M') {
+                            seg[1] = centerX + seg[1] * scale;
+                            seg[2] = centerY + seg[2] * scale;
+                        } else if (seg[0] === 'A') {
+                            seg[1] = seg[1] * scale;
+                            seg[2] = seg[2] * scale;
+                            seg[6] = centerX + seg[6] * scale;
+                            seg[7] = centerY + seg[7] * scale;
+                        }
+                    });
+                    shapeArgs = { d };
                 }
 
                 // Scale the position for the data label.

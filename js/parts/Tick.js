@@ -86,6 +86,7 @@ var Tick = /** @class */ (function () {
          */
         this.tickmarkOffset = this.parameters.tickmarkOffset;
         this.options = this.parameters.options;
+        fireEvent(this, 'init');
         if (!type && !noLabel) {
             this.addLabel();
         }
@@ -167,6 +168,11 @@ var Tick = /** @class */ (function () {
         }
         // First call
         if (!defined(label) && !tick.movedLabel) {
+            /**
+             * The rendered text label of the tick.
+             * @name Highcharts.Tick#label
+             * @type {Highcharts.SVGElement|undefined}
+             */
             tick.label = label = tick.createLabel({ x: 0, y: 0 }, str, labelOptions);
             // Base value to detect change for new calls to getBBox
             tick.rotation = 0;
@@ -340,14 +346,15 @@ var Tick = /** @class */ (function () {
      *
      */
     Tick.prototype.getMarkPath = function (x, y, tickLength, tickWidth, horiz, renderer) {
-        return renderer.crispLine([
-            'M',
-            x,
-            y,
-            'L',
-            x + (horiz ? 0 : -tickLength),
-            y + (horiz ? tickLength : 0)
-        ], tickWidth);
+        return renderer.crispLine([[
+                'M',
+                x,
+                y
+            ], [
+                'L',
+                x + (horiz ? 0 : -tickLength),
+                y + (horiz ? tickLength : 0)
+            ]], tickWidth);
     };
     /**
      * Handle the label overflow by adjusting the labels to the left and right

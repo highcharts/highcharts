@@ -58,4 +58,4 @@ Highcharts.mapChart('container', {
 
 16. Now all you have to do is add values to the points to make a useful chart. Alternatively, use the paths in the [mapData](https://api.highcharts.com/highmaps/series<map>.mapData) option and add data separately.
 
-Good luck, and don't hesitate to contact us via our [Support Page](support) if you have any problems or corrections to this article.
+Good luck, and don't hesitate to contact us via our [Support Page](https://www.highcharts.com/blog/support/) if you have any problems or corrections to this article.

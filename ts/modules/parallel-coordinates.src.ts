@@ -15,6 +15,20 @@
 import type RadialAxis from '../parts-more/RadialAxis';
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    defined,
+    erase,
+    extend,
+    format,
+    merge,
+    pick,
+    splat,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -46,22 +60,18 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    defined,
-    erase,
-    extend,
-    format,
-    merge,
-    pick,
-    splat,
-    wrap
-} = U;
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        parallelCoordinates?: ParallelAxis['parallelCoordinates'];
+    }
+    interface AxisTypeRegistry {
+        ParallelAxis: ParallelAxis;
+    }
+}
 
-import '../parts/Axis.js';
 import '../parts/Chart.js';
 import '../parts/Series.js';
 

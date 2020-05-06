@@ -768,7 +768,8 @@ Connection.prototype = {
             box,
             width,
             height,
-            pathVector;
+            pathVector: Highcharts.PositionObject,
+            segment: Highcharts.SVGPathSegment;
 
 
         if (!options.enabled) {
@@ -777,77 +778,77 @@ Connection.prototype = {
 
         // Last vector before start/end of path, used to get angle
         if (type === 'start') {
-            pathVector = {
-                x: path[4],
-                y: path[5]
-            };
+            segment = path[1];
         } else { // 'end'
+            segment = path[path.length - 2];
+        }
+        if (segment && segment[0] === 'M' || segment[0] === 'L') {
             pathVector = {
-                x: path[path.length - 5],
-                y: path[path.length - 4]
+                x: segment[1],
+                y: segment[2]
             };
-        }
 
-        // Get angle between pathVector and anchor point and use it to create
-        // marker position.
-        radians = point.getRadiansToVector(pathVector as any, anchor);
-        markerVector = point.getMarkerVector(
-            radians,
-            options.radius as any,
-            anchor
-        );
+            // Get angle between pathVector and anchor point and use it to
+            // create marker position.
+            radians = point.getRadiansToVector(pathVector, anchor);
+            markerVector = point.getMarkerVector(
+                radians,
+                options.radius as any,
+                anchor
+            );
 
-        // Rotation of marker is calculated from angle between pathVector and
-        // markerVector.
-        // (Note:
-        //  Used to recalculate radians between markerVector and pathVector,
-        //  but this should be the same as between pathVector and anchor.)
-        rotation = -radians / deg2rad;
+            // Rotation of marker is calculated from angle between pathVector
+            // and markerVector.
+            // (Note:
+            //  Used to recalculate radians between markerVector and pathVector,
+            //  but this should be the same as between pathVector and anchor.)
+            rotation = -radians / deg2rad;
 
-        if (options.width && options.height) {
-            width = options.width;
-            height = options.height;
-        } else {
-            width = height = (options.radius as any) * 2;
-        }
-
-        // Add graphics object if it does not exist
-        connection.graphics = connection.graphics || {};
-        box = {
-            x: markerVector.x - (width / 2),
-            y: markerVector.y - (height / 2),
-            width: width,
-            height: height,
-            rotation: rotation,
-            rotationOriginX: markerVector.x,
-            rotationOriginY: markerVector.y
-        };
-
-        if (!connection.graphics[type]) {
-
-            // Create new marker element
-            connection.graphics[type] = renderer
-                .symbol(options.symbol as any)
-                .addClass(
-                    'highcharts-point-connecting-path-' + type + '-marker'
-                )
-                .attr(box)
-                .add((pathfinder as any).group);
-
-            if (!renderer.styledMode) {
-                connection.graphics[type].attr({
-                    fill: options.color || connection.fromPoint.color,
-                    stroke: options.lineColor,
-                    'stroke-width': options.lineWidth,
-                    opacity: 0
-                })
-                    .animate({
-                        opacity: 1
-                    }, point.series.options.animation);
+            if (options.width && options.height) {
+                width = options.width;
+                height = options.height;
+            } else {
+                width = height = (options.radius as any) * 2;
             }
 
-        } else {
-            connection.graphics[type].animate(box);
+            // Add graphics object if it does not exist
+            connection.graphics = connection.graphics || {};
+            box = {
+                x: markerVector.x - (width / 2),
+                y: markerVector.y - (height / 2),
+                width: width,
+                height: height,
+                rotation: rotation,
+                rotationOriginX: markerVector.x,
+                rotationOriginY: markerVector.y
+            };
+
+            if (!connection.graphics[type]) {
+
+                // Create new marker element
+                connection.graphics[type] = renderer
+                    .symbol(options.symbol as any)
+                    .addClass(
+                        'highcharts-point-connecting-path-' + type + '-marker'
+                    )
+                    .attr(box)
+                    .add((pathfinder as any).group);
+
+                if (!renderer.styledMode) {
+                    connection.graphics[type].attr({
+                        fill: options.color || connection.fromPoint.color,
+                        stroke: options.lineColor,
+                        'stroke-width': options.lineWidth,
+                        opacity: 0
+                    })
+                        .animate({
+                            opacity: 1
+                        }, point.series.options.animation);
+                }
+
+            } else {
+                connection.graphics[type].animate(box);
+            }
         }
     },
 
@@ -1426,11 +1427,14 @@ extend(Point.prototype, /** @lends Point.prototype */ {
 
         if (!defined(v2)) {
             box = getPointBB(this);
-            v2 = {
-                x: ((box as any).xMin + (box as any).xMax) / 2,
-                y: ((box as any).yMin + (box as any).yMax) / 2
-            };
+            if (box) {
+                v2 = {
+                    x: (box.xMin + box.xMax) / 2,
+                    y: (box.yMin + box.yMax) / 2
+                };
+            }
         }
+
         return Math.atan2(v2.y - v1.y, v1.x - v2.x);
     },
 
