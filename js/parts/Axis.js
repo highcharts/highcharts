@@ -1431,9 +1431,7 @@ var Axis = /** @class */ (function () {
         // set the translation factor used in translate function
         axis.setAxisTranslation(true);
         // hook for ordinal axes and radial axes
-        if (axis.beforeSetTickPositions) {
-            axis.beforeSetTickPositions();
-        }
+        fireEvent(this, 'setTickInterval');
         // hook for extensions, used in Highstock ordinal axes
         if (axis.ordinal) {
             axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);

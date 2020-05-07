@@ -318,7 +318,6 @@ declare global {
             public axisPointRange?: number;
             public axisTitle?: SVGElement;
             public axisTitleMargin?: number;
-            public beforeSetTickPositions?: Function;
             public bottom: number;
             public categories: Array<string>;
             public chart: Chart;
@@ -5484,9 +5483,7 @@ class Axis implements AxisComposition, AxisLike {
         axis.setAxisTranslation(true);
 
         // hook for ordinal axes and radial axes
-        if (axis.beforeSetTickPositions) {
-            axis.beforeSetTickPositions();
-        }
+        fireEvent(this, 'setTickInterval');
 
         // hook for extensions, used in Highstock ordinal axes
         if (axis.ordinal) {
