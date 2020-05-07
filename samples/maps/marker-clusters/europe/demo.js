@@ -13,7 +13,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@1e9e659c2d
             enabled: true
         },
         tooltip: {
-            formatter: function() {
+            formatter: function () {
                 if (this.point.clusteredData) {
                     return 'Clustered points: ' + this.point.clusterPointsAmount;
                 }

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -61,7 +62,7 @@ declare global {
             public updateTotals(): void;
         }
         interface PiePointConnectorShapeFunction {
-            (...args: Array<any>): SVGPathArray;
+            (...args: Array<any>): SVGPath;
         }
         interface PiePointLabelConnectorPositionObject {
             breakAt: PositionObject;
@@ -1444,7 +1445,7 @@ seriesType<Highcharts.PieSeries>(
         haloPath: function (
             this: Highcharts.PiePoint,
             size: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var shapeArgs = this.shapeArgs;
 
             return this.sliced || !this.visible ?
@@ -1471,7 +1472,7 @@ seriesType<Highcharts.PieSeries>(
                     Highcharts.PiePointLabelConnectorPositionObject
                 ),
                 options: Highcharts.PieSeriesDataLabelsOptionsObject
-            ): Highcharts.SVGPathArray {
+            ): SVGPath {
                 var breakAt = connectorPosition.breakAt,
                     touchingSliceAt = connectorPosition.touchingSliceAt,
                     lineSegment = options.softConnector ? [
@@ -1485,11 +1486,11 @@ seriesType<Highcharts.PieSeries>(
                         2 * breakAt.y - touchingSliceAt.y, //
                         breakAt.x, // end of the curve
                         breakAt.y //
-                    ] as Highcharts.SVGPathCurveTo : [
+                    ] as SVGPath.CurveTo : [
                         'L', // pointy break
                         breakAt.x,
                         breakAt.y
-                    ] as Highcharts.SVGPathLineTo;
+                    ] as SVGPath.LineTo;
 
                 // assemble the path
                 return ([
@@ -1504,7 +1505,7 @@ seriesType<Highcharts.PieSeries>(
                 connectorPosition: (
                     Highcharts.PiePointLabelConnectorPositionObject
                 )
-            ): Highcharts.SVGPathArray {
+            ): SVGPath {
                 var touchingSliceAt = connectorPosition.touchingSliceAt;
 
                 // direct line to the slice
@@ -1521,7 +1522,7 @@ seriesType<Highcharts.PieSeries>(
                     Highcharts.PiePointLabelConnectorPositionObject
                 ),
                 options: Highcharts.PieSeriesDataLabelsOptionsObject
-            ): Highcharts.SVGPathArray {
+            ): SVGPath {
 
                 var touchingSliceAt = connectorPosition.touchingSliceAt,
                     series = this.series,
@@ -1537,11 +1538,11 @@ seriesType<Highcharts.PieSeries>(
                         pieCenterX + radius + (plotWidth + plotLeft -
                         pieCenterX - radius) * (1 - crookDistance) :
                         plotLeft + (pieCenterX - radius) * crookDistance,
-                    segmentWithCrook = [
+                    segmentWithCrook: SVGPath.LineTo = [
                         'L',
                         crookX,
                         labelPosition.y
-                    ] as Highcharts.SVGPathLineTo,
+                    ],
                     useCrook = true;
 
                 // crookedLine formula doesn't make sense if the path overlaps
@@ -1555,7 +1556,7 @@ seriesType<Highcharts.PieSeries>(
                 // assemble the path
                 const path = [
                     ['M', labelPosition.x, labelPosition.y]
-                ] as Highcharts.SVGPathArray;
+                ] as SVGPath;
                 if (useCrook) {
                     path.push(segmentWithCrook);
                 }

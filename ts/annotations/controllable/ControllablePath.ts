@@ -7,6 +7,7 @@
 'use strict';
 
 import type Annotation from '../annotations.src';
+import type SVGPath from '../../parts/SVGPath';
 import controllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
 import markerMixin from './markerMixin.js';
@@ -59,7 +60,7 @@ declare global {
             public redraw(animation?: boolean): void;
             public render(parent: SVGElement): void;
             public shouldBeDrawn(): boolean;
-            public toD(): (SVGPathArray|null);
+            public toD(): (SVGPath|null);
         }
         interface SVGAnnotationElement extends SVGElement {
             markerEndSetter?: AnnotationMarkerMixin['markerEndSetter'];
@@ -133,7 +134,7 @@ merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationContro
          * @return {Highcharts.SVGPathArray|null}
          * A path's d attribute.
          */
-        toD: function (this: Highcharts.AnnotationControllablePath): (Highcharts.SVGPathArray|null) {
+        toD: function (this: Highcharts.AnnotationControllablePath): (SVGPath|null) {
             var dOption = this.options.d;
 
             if (dOption) {
@@ -149,7 +150,7 @@ merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationContro
                 position = showPath && this.anchor(point).absolutePosition,
                 pointIndex = 0,
                 command,
-                d: Highcharts.SVGPathArray = [];
+                d: SVGPath = [];
 
             if (position) {
                 d.push(['M', position.x, position.y]);

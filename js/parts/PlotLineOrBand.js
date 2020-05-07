@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
 import Axis from './Axis.js';
+import H from './Globals.js';
 /**
  * Options for plot bands on axes.
  *

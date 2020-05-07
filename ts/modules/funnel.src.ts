@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Highcharts from '../parts/Globals.js';
 
 /**
@@ -271,7 +272,7 @@ seriesType<Highcharts.FunnelSeries>(
                 neckHeight = getLength(options.neckHeight, plotHeight),
                 neckY = (centerY - height / 2) + height - neckHeight,
                 data = series.data,
-                path: Highcharts.SVGPathArray,
+                path: SVGPath,
                 fraction,
                 half = (
                     (options.dataLabels as any).position === 'left' ?

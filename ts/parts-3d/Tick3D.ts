@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import type Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 const {
@@ -71,10 +72,10 @@ class Tick3D {
     public static wrapGetMarkPath(
         this: Tick,
         proceed: Function
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         const chart = this.axis.chart;
         const axis3D = this.axis.axis3D;
-        const path: Highcharts.SVGPathArray = proceed.apply(
+        const path: SVGPath = proceed.apply(
             this,
             [].slice.call(arguments, 1)
         );

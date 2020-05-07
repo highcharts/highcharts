@@ -22,7 +22,6 @@ const childProcess = require('child_process');
     'use strict';
 
     var fs = require('fs'),
-        cmd = require('child_process'),
         path = require('path'),
         tree = require('../tree.json');
 

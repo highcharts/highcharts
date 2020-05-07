@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type SVGPath from '../../parts/SVGPath';
 import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
@@ -53,7 +54,7 @@ var Tunnel = Annotation.types.tunnel;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 var createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
-    return function (this: Highcharts.AnnotationControllable): Highcharts.SVGPathArray {
+    return function (this: Highcharts.AnnotationControllable): SVGPath {
         var annotation = this.annotation as Highcharts.AnnotationFibonacci,
             leftTop = this.anchor(
                 annotation.startRetracements[retracementIndex]
@@ -61,7 +62,7 @@ var createPathDGenerator = function (retracementIndex: number, isBackground?: bo
             rightTop = this.anchor(
                 annotation.endRetracements[retracementIndex]
             ).absolutePosition,
-            d: Highcharts.SVGPathArray = [
+            d: SVGPath = [
                 ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
                 ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
             ],

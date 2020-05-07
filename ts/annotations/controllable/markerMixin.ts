@@ -40,7 +40,7 @@ declare global {
 }
 
 import './../../parts/Chart.js';
-import './../../parts/SvgRenderer.js';
+import './../../parts/SVGRenderer.js';
 
 /**
  * Options for configuring markers for annotations.

@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../../parts/SVGPath';
 import H from '../../parts/Globals.js';
 
 /**
@@ -197,7 +199,7 @@ wrap(Series.prototype, 'searchPoint', function (
 wrap(Point.prototype, 'haloPath', function (
     this: Highcharts.Point,
     proceed: Function
-): Highcharts.SVGPathArray {
+): SVGPath {
     var halo,
         point = this,
         series = point.series,

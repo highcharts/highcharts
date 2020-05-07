@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -119,7 +120,7 @@ declare global {
             zIndex: number;
         }
         interface AnnotationsShapeOptions extends AnnotationControllableOptionsObject {
-            d?: (string|Function|SVGPathArray);
+            d?: (string|Function|SVGPath);
             fill: ColorType;
             height?: number;
             r: number;

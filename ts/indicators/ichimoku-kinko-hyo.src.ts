@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /* eslint-disable @typescript-eslint/interface-name-prefix */
@@ -847,11 +848,11 @@ seriesType<Highcharts.IKHIndicator>(
         getGraphPath: function (
             this: Highcharts.IKHIndicator,
             points: Array<Highcharts.Point>
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var indicator = this,
-                path: Highcharts.SVGPathArray = [],
-                spanA: Highcharts.SVGPathArray,
-                spanAarr: Highcharts.SVGPathArray = [];
+                path: SVGPath = [],
+                spanA: SVGPath,
+                spanAarr: SVGPath = [];
 
             points = points || this.points;
 

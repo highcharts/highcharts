@@ -20,6 +20,7 @@ WIP on vertical scrollable plot area (#9378). To do:
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -197,13 +198,13 @@ addEvent(Chart, 'afterSetChartSize', function (
                     // temporarily set it to the adjusted plot width.
                     axis.getPlotLinePath = function (
                         this: Highcharts.Axis
-                    ): Highcharts.SVGPathArray {
+                    ): SVGPath {
                         var marginName = (corrections as any)[axis.side].name,
                             correctionValue =
                                 (corrections as any)[axis.side].value,
                             // axis.right or axis.bottom
                             margin = (this as any)[marginName],
-                            path: Highcharts.SVGPathArray;
+                            path: SVGPath;
 
                         // Temporarily adjust
                         (this as any)[marginName] = margin - correctionValue;
@@ -444,7 +445,7 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
             (this.scrollablePixelsX || 0),
         maskPlotBottom = this.plotTop + this.plotHeight -
             (this.scrollablePixelsY || 0),
-        d: Highcharts.SVGPathArray;
+        d: SVGPath;
 
 
     if (this.scrollablePixelsX) {

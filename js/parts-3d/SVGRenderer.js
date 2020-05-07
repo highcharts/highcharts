@@ -10,13 +10,15 @@
  *
  * */
 'use strict';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 var animObject = U.animObject, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import '../parts/Color.js';
-import '../parts/SvgRenderer.js';
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var charts = H.charts, color = H.color, deg2rad = H.deg2rad, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
+var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, 
 // internal:
 dFactor, element3dMethods, cuboidMethods;
 /*
@@ -331,7 +333,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
     return this.element3d('cuboid', shapeArgs);
 };
 // Generates a cuboid path and zIndexes
-H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
+SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z || 0, 
     // For side calculation (right/left)
     // there is a need for height (and other shapeArgs arguments)
@@ -525,7 +527,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     }; // #4774
 };
 // SECTORS //
-H.SVGRenderer.prototype.arc3d = function (attribs) {
+SVGRenderer.prototype.arc3d = function (attribs) {
     var wrapper = this.g(), renderer = wrapper.renderer, customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
     /**
      * Get custom attributes. Don't mutate the original object and return an

@@ -12,7 +12,24 @@
 
 'use strict';
 
+import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import Tick from '../parts/Tick.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    removeEvent,
+    animObject,
+    extend,
+    fireEvent,
+    format,
+    merge,
+    objectEach,
+    pick,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -291,23 +308,6 @@ declare global {
  * @name Highcharts.DrillupEventObject#type
  * @type {"drillup"}
  */
-
-import Color from '../parts/Color.js';
-import Point from '../parts/Point.js';
-import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    removeEvent,
-    animObject,
-    extend,
-    fireEvent,
-    format,
-    merge,
-    objectEach,
-    pick,
-    syncTimeout
-} = U;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -628,7 +628,7 @@ defaultOptions.drilldown = {
  * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
  * The animation options for the element fade.
  */
-H.SVGRenderer.prototype.Element.prototype.fadeIn = function (
+SVGRenderer.prototype.Element.prototype.fadeIn = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): void {
     this

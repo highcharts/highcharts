@@ -13,6 +13,7 @@
 'use strict';
 
 import H from '../../parts/Globals.js';
+import SVGElement from '../../parts/SVGElement.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
@@ -155,7 +156,7 @@ function removeUpdateFocusBorderHooks(el: Highcharts.SVGElement): void {
  * Add focus border functionality to SVGElements. Draws a new rect on top of
  * element around its bounding box. This is used by multiple components.
  */
-extend(H.SVGElement.prototype, {
+extend(SVGElement.prototype, {
 
     /**
      * @private

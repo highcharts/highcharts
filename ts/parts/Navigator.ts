@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import Color from './Color.js';
 const {
@@ -88,7 +89,7 @@ declare global {
                 w: number,
                 h: number,
                 options: NavigatorHandlesOptions
-            ) => SVGPathArray;
+            ) => SVGPath;
         }
         interface XAxisOptions {
             maxRange?: number;
@@ -761,7 +762,7 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
     w: number,
     h: number,
     options: Highcharts.NavigatorHandlesOptions
-): Highcharts.SVGPathArray {
+): SVGPath {
     var halfWidth = (options.width as any) / 2,
         markerPosition = Math.round(halfWidth / 3) + 0.5,
         height = options.height || 0;
@@ -914,7 +915,7 @@ class Navigator {
             left = navigator.left - scrollbarHeight,
             navigatorTop = navigator.top,
             verticalMin,
-            path: Highcharts.SVGPathArray;
+            path: SVGPath;
 
         if (inverted) {
             left -= halfOutline;

@@ -16,6 +16,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -1200,7 +1202,7 @@ var vennSeries = {
                     };
                 } else if ((shape as any).d) {
 
-                    const d: Highcharts.SVGPathArray = (shape as any).d;
+                    const d: SVGPath = (shape as any).d;
                     d.forEach((seg): void => {
                         if (seg[0] === 'M') {
                             seg[1] = centerX + seg[1] * scale;

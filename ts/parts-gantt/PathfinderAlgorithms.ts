@@ -11,6 +11,13 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    pick
+} = U;
+
 /**
  * Internal types
  * @private
@@ -23,7 +30,7 @@ declare global {
         }
         interface PathfinderAlgorithmResultObject {
             obstacles: Array<any>;
-            path: SVGPathArray;
+            path: SVGPath;
         }
         interface PathfinderAlgorithmsObject {
             [key: string]: PathfinderAlgorithmFunction;
@@ -59,12 +66,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    pick
-} = U;
 
 const {
     min,
@@ -183,8 +184,8 @@ function findObstacleFromPoint(obstacles: Array<any>, point: any): number {
  * @return {Highcharts.SVGPathArray}
  *         SVG path array as accepted by the SVG Renderer.
  */
-function pathFromSegments(segments: Array<any>): Highcharts.SVGPathArray {
-    var path: Highcharts.SVGPathArray = [];
+function pathFromSegments(segments: Array<any>): SVGPath {
+    var path: SVGPath = [];
 
     if (segments.length) {
         path.push(['M', segments[0].start.x, segments[0].start.y]);

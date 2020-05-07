@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -45,9 +46,9 @@ declare global {
             public yData: Array<any>;
             public drawGraph(): void;
             public generatePoints(): void;
-            public getCrispPath(): SVGPathArray;
+            public getCrispPath(): SVGPath;
             public getExtremes(): DataExtremesObject;
-            public getGraphPath(): SVGPathArray;
+            public getGraphPath(): SVGPath;
             public pointAttribs(
                 point: WaterfallPoint,
                 state: string
@@ -752,14 +753,14 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
     // in order to set the final path.
     getGraphPath: function (
         this: Highcharts.WaterfallSeries
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         return [['M', 0, 0]];
     },
 
     // Draw columns' connector lines
     getCrispPath: function (
         this: Highcharts.WaterfallSeries
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
 
         var data = this.data,
             yAxis = this.yAxis,
@@ -770,7 +771,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             reversedXAxis = this.xAxis.reversed,
             reversedYAxis = this.yAxis.reversed,
             stacking = this.options.stacking,
-            path: Highcharts.SVGPathArray = [],
+            path: SVGPath = [],
             connectorThreshold,
             prevStack,
             prevStackX,

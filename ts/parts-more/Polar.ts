@@ -11,7 +11,23 @@
 'use strict';
 
 import type RadialAxis from './RadialAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import Pane from '../parts-more/Pane.js';
+import Pointer from '../parts/Pointer.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    defined,
+    find,
+    isNumber,
+    pick,
+    splat,
+    uniqueKey,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -106,29 +122,12 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    defined,
-    find,
-    isNumber,
-    pick,
-    splat,
-    uniqueKey,
-    wrap
-} = U;
-
-import Pane from '../parts-more/Pane.js';
-import '../parts/Pointer.js';
 import '../parts/Series.js';
-import '../parts/Pointer.js';
 
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-var Pointer = H.Pointer,
-    Series = H.Series,
+var Series = H.Series,
     seriesTypes = H.seriesTypes,
     seriesProto = Series.prototype as Highcharts.PolarSeries,
     pointerProto = Pointer.prototype,
@@ -342,7 +341,7 @@ if (seriesTypes.spline) {
             segment: Array<Highcharts.PolarPoint>,
             point: Highcharts.PolarPoint,
             i: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var ret,
                 connectors;
 
@@ -479,7 +478,7 @@ wrap(seriesProto, 'getGraphPath', function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     points: Array<Highcharts.PolarPoint>
-): Highcharts.SVGPathArray {
+): SVGPath {
     var series = this,
         i,
         firstValid,
@@ -1078,7 +1077,7 @@ wrap(pointerProto, 'getCoordinates', function (
     return ret;
 });
 
-H.SVGRenderer.prototype.clipCircle = function (
+SVGRenderer.prototype.clipCircle = function (
     this: Highcharts.SVGRenderer,
     x: number,
     y: number,

@@ -7,6 +7,7 @@
 'use strict';
 
 import type Annotation from '../annotations.src';
+import type SVGPath from '../../parts/SVGPath';
 import controllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
 import MockPoint from './../MockPoint.js';
@@ -82,12 +83,12 @@ declare global
             ttBelow?: boolean;
         }
         interface SymbolDictionary {
-            connector: SymbolFunction<SVGPathArray>;
+            connector: SymbolFunction<SVGPath>;
         }
     }
 }
 
-import './../../parts/SvgRenderer.js';
+import '../../parts/SVGRenderer.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -523,10 +524,10 @@ H.SVGRenderer.prototype.symbols.connector = function (
     w: number,
     h: number,
     options: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
+): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
-        path: (Highcharts.SVGPathArray|undefined),
+        path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -23,7 +24,7 @@ declare global {
             y: (number|null);
         }
         interface MapPathObject {
-            path: SVGPathArray;
+            path: SVGPath;
         }
         interface MapLatLonObject {
             lat: number;
@@ -421,7 +422,7 @@ H.geojson = function (
     series?: Highcharts.Series
 ): Array<any> {
     var mapData = [] as Array<any>,
-        path = [] as Highcharts.SVGPathArray,
+        path = [] as SVGPath,
         polygonToPath = function (polygon: Array<Array<number>>): void {
             polygon.forEach((point, i): void => {
                 if (i === 0) {

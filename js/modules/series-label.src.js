@@ -9,6 +9,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
 /**
  * Containing the position of a box that should be avoided by labels.
  *
@@ -39,11 +42,10 @@ import H from '../parts/Globals.js';
  * https://jsfiddle.net/highcharts/264Nm/
  * https://jsfiddle.net/highcharts/y5A37/
  */
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
+''; // detach doclets above
 import '../parts/Chart.js';
 import '../parts/Series.js';
-var labelDistance = 3, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
+var labelDistance = 3, Series = H.Series, Chart = H.Chart;
 H.setOptions({
     /**
      * @optionparent plotOptions

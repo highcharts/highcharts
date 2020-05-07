@@ -9,15 +9,17 @@
  * */
 'use strict';
 import H from './Globals.js';
+import SVGElement from './SVGElement.js';
+import SVGRenderer from './SVGRenderer.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType, wrap = U.wrap;
 /**
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
-import U from './Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType, wrap = U.wrap;
 import './Series.js';
-import './SvgRenderer.js';
+import './SVGRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
-var noop = H.noop, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
+var noop = H.noop, Renderer = H.Renderer, Series = H.Series, TrackerMixin = H.TrackerMixin, VMLRenderer = H.VMLRenderer, symbols = SVGRenderer.prototype.symbols;
 /**
  * The Flags series.
  *
@@ -412,7 +414,7 @@ seriesType('flags', 'column'
         // Can be a mix of SVG and HTML and we need events for both (#6303)
         if (options.useHTML) {
             wrap(series.markerGroup, 'on', function (proceed) {
-                return H.SVGElement.prototype.on.apply(
+                return SVGElement.prototype.on.apply(
                 // for HTML
                 proceed.apply(this, [].slice.call(arguments, 1)), 
                 // and for SVG

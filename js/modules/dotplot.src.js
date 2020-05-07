@@ -17,7 +17,7 @@
  *   Highcharts symbols.
  */
 'use strict';
-import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 var extend = U.extend, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Series.js';
@@ -103,6 +103,6 @@ seriesType('dotplot', 'column', {
         });
     }
 });
-H.SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
-    return H.SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
+SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
+    return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };
