@@ -3908,7 +3908,6 @@ class Axis implements AxisComposition, AxisLike {
     public reserveSpaceDefault?: boolean;
     public reversed?: boolean;
     public right: number = void 0 as any;
-    public scrollbar?: AxisComposition['scrollbar'];
     public series: Array<Highcharts.Series> = void 0 as any;
     public showAxis?: boolean;
     public side: number = void 0 as any;
