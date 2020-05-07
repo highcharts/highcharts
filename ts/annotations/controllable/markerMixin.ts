@@ -5,7 +5,16 @@
  * */
 
 'use strict';
+
 import H from './../../parts/Globals.js';
+import U from './../../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    merge,
+    objectEach,
+    uniqueKey
+} = U;
 
 /**
  * Internal types.
@@ -30,18 +39,8 @@ declare global {
     }
 }
 
-
-import U from './../../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    merge,
-    objectEach,
-    uniqueKey
-} = U;
-
 import './../../parts/Chart.js';
-import './../../parts/SvgRenderer.js';
+import './../../parts/SVGRenderer.js';
 
 /**
  * Options for configuring markers for annotations.

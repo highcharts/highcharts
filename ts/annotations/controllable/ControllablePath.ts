@@ -5,7 +5,17 @@
  * */
 
 'use strict';
+
+import type Annotation from '../annotations.src';
+import type SVGPath from '../../parts/SVGPath';
+import controllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
+import markerMixin from './markerMixin.js';
+import U from './../../parts/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -50,7 +60,7 @@ declare global {
             public redraw(animation?: boolean): void;
             public render(parent: SVGElement): void;
             public shouldBeDrawn(): boolean;
-            public toD(): (SVGPathArray|null);
+            public toD(): (SVGPath|null);
         }
         interface SVGAnnotationElement extends SVGElement {
             markerEndSetter?: AnnotationMarkerMixin['markerEndSetter'];
@@ -59,15 +69,6 @@ declare global {
         }
     }
 }
-
-import U from './../../parts/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
-
-import controllableMixin from './controllableMixin.js';
-import markerMixin from './markerMixin.js';
 
 // See TRACKER_FILL in highcharts.src.js
 var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
@@ -94,7 +95,7 @@ var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  **/
 const ControllablePath: typeof Highcharts.AnnotationControllablePath = function (
     this: Highcharts.AnnotationControllablePath,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsShapeOptions,
     index: number
 ): void {
@@ -133,7 +134,7 @@ merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationContro
          * @return {Highcharts.SVGPathArray|null}
          * A path's d attribute.
          */
-        toD: function (this: Highcharts.AnnotationControllablePath): (Highcharts.SVGPathArray|null) {
+        toD: function (this: Highcharts.AnnotationControllablePath): (SVGPath|null) {
             var dOption = this.options.d;
 
             if (dOption) {
@@ -149,7 +150,7 @@ merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationContro
                 position = showPath && this.anchor(point).absolutePosition,
                 pointIndex = 0,
                 command,
-                d: Highcharts.SVGPathArray = [];
+                d: SVGPath = [];
 
             if (position) {
                 d.push(['M', position.x, position.y]);

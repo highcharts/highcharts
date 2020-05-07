@@ -9,8 +9,24 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
+import type Annotation from './annotations.src';
+import NavigationBindings from './navigationBindings.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    createElement,
+    defined,
+    isArray,
+    isObject,
+    isString,
+    objectEach,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types.
@@ -122,21 +138,6 @@ declare global {
         }
     }
 }
-
-import NavigationBindings from '../annotations/navigationBindings.js';
-import U from '../parts/Utilities.js';
-
-const {
-    addEvent,
-    createElement,
-    defined,
-    isArray,
-    isObject,
-    isString,
-    objectEach,
-    pick,
-    wrap
-} = U;
 
 var indexFilter = /\d/g,
     PREFIX = 'highcharts-',

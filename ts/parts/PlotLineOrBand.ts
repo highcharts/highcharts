@@ -10,8 +10,9 @@
 
 'use strict';
 
-import H from './Globals.js';
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
+import H from './Globals.js';
 
 /**
  * Internal types
@@ -38,7 +39,7 @@ declare global {
                 from: number,
                 to: number,
                 options?: (AxisPlotBandsOptions|AxisPlotLinesOptions)
-            ): SVGPathArray;
+            ): SVGPath;
             removePlotBand(id: string): void;
             removePlotBandOrLine(id: string): void;
             removePlotLine(id: string): void;
@@ -117,7 +118,7 @@ declare global {
                     AxisPlotBandsLabelOptions|
                     AxisPlotLinesLabelOptions
                 ),
-                path: SVGPathArray,
+                path: SVGPath,
                 isBand?: boolean,
                 zIndex?: number
             ): void;
@@ -227,7 +228,7 @@ class PlotLineOrBand {
             isLine = defined(value),
             svgElem = plotLine.svgElem,
             isNew = !svgElem,
-            path = [] as Highcharts.SVGPathArray,
+            path = [] as SVGPath,
             color = options.color,
             zIndex = pick(options.zIndex, 0),
             events = options.events,
@@ -382,7 +383,7 @@ class PlotLineOrBand {
             Highcharts.AxisPlotLinesLabelOptions|
             Highcharts.AxisPlotBandsLabelOptions
         ),
-        path: Highcharts.SVGPathArray,
+        path: SVGPath,
         isBand?: boolean,
         zIndex?: number
     ): void {
@@ -1138,7 +1139,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         this: Highcharts.Axis,
         from: number,
         to: number
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
@@ -1149,7 +1150,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 force: true,
                 acrossPanes: (this.options as any).acrossPanes
             } as Highcharts.AxisPlotLinePathOptionsObject),
-            result = [] as Highcharts.SVGPathArray,
+            result = [] as SVGPath,
             i,
             // #4964 check if chart is inverted or plotband is on yAxis
             horiz = this.horiz,

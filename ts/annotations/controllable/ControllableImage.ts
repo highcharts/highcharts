@@ -6,6 +6,14 @@
 
 'use strict';
 
+import type Annotation from '../annotations.src';
+import ControllableLabel from './ControllableLabel.js';
+import controllableMixin from './controllableMixin.js';
+import U from './../../parts/Utilities.js';
+const {
+    merge
+} = U;
+
 /**
  * Internal types.
  * @private
@@ -49,13 +57,6 @@ declare global {
     }
 }
 
-import U from './../../parts/Utilities.js';
-const {
-    merge
-} = U;
-import controllableMixin from './controllableMixin.js';
-import ControllableLabel from './ControllableLabel.js';
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -78,7 +79,7 @@ import ControllableLabel from './ControllableLabel.js';
  **/
 const ControllableImage = function (
     this: Highcharts.AnnotationControllableImage,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsShapeOptions,
     index: number
 ): void {

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -313,7 +314,7 @@ seriesType<Highcharts.OHLCSeries>(
                  * Extend vertical stem to open and close values.
                  */
                 extendStem = function (
-                    path: Highcharts.SVGPathArray,
+                    path: SVGPath,
                     halfStrokeWidth: number,
                     openOrClose: number
                 ): void {
@@ -342,7 +343,7 @@ seriesType<Highcharts.OHLCSeries>(
                     plotClose,
                     crispCorr,
                     halfWidth,
-                    path: Highcharts.SVGPathArray,
+                    path: SVGPath,
                     graphic = point.graphic,
                     crispX,
                     isNew = !graphic,

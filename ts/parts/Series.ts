@@ -10,12 +10,39 @@
 
 'use strict';
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import './Options.js';
 import Point from './Point.js';
-import './SvgRenderer.js';
+import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
+const {
+    addEvent,
+    animObject,
+    arrayMax,
+    arrayMin,
+    clamp,
+    correctFloat,
+    defined,
+    erase,
+    error,
+    extend,
+    find,
+    fireEvent,
+    getNestedProperty,
+    isArray,
+    isFunction,
+    isNumber,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    removeEvent,
+    seriesType,
+    splat,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -66,7 +93,7 @@ declare global {
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
             public graph?: SVGElement;
-            public graphPath?: SVGPathArray;
+            public graphPath?: SVGPath;
             public group?: SVGElement;
             public hasCartesianSeries?: Chart['hasCartesianSeries'];
             public hasRendered?: boolean;
@@ -156,7 +183,7 @@ declare global {
                 points: Array<Point>,
                 nullsAsZeroes?: boolean,
                 connectCliffs?: boolean
-            ): SVGPathArray;
+            ): SVGPath;
             public getPlotBox(): SeriesPlotBoxObject;
             public getProcessedData(
                 forceExtremesFromAll?: boolean
@@ -468,6 +495,9 @@ declare global {
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             value?: number;
         }
+        interface SVGElement {
+            survive?: boolean;
+        }
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
         type SeriesFindNearestPointByValue = ('x'|'xy');
         type SeriesOptionsType = SeriesOptions;
@@ -715,38 +745,9 @@ declare global {
 
 ''; // detach doclets above
 
-const {
-    addEvent,
-    animObject,
-    arrayMax,
-    arrayMin,
-    clamp,
-    correctFloat,
-    defined,
-    erase,
-    error,
-    extend,
-    find,
-    fireEvent,
-    getNestedProperty,
-    isArray,
-    isFunction,
-    isNumber,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    removeEvent,
-    seriesType,
-    splat,
-    syncTimeout
-} = U;
-
-
 var defaultOptions = H.defaultOptions,
     defaultPlotOptions = H.defaultPlotOptions,
     seriesTypes = H.seriesTypes,
-    SVGElement = H.SVGElement,
     win = H.win;
 
 /**
@@ -5966,7 +5967,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             var series = this,
                 chart = series.chart,
                 issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
-                destroy,
+                destroy: ('hide'|'destroy'),
                 i,
                 data = series.data || [],
                 point,
@@ -6050,12 +6051,12 @@ H.Series = seriesType<Highcharts.LineSeries>(
             points: Array<Highcharts.Point>,
             nullsAsZeroes?: boolean,
             connectCliffs?: boolean
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var series = this,
                 options = series.options,
                 step = options.step as any,
                 reversed,
-                graphPath = [] as Highcharts.SVGPathArray,
+                graphPath = [] as SVGPath,
                 xMap = [] as Array<(number|null)>,
                 gap: boolean;
 
@@ -6089,7 +6090,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     plotY = point.plotY,
                     lastPoint = points[i - 1],
                     // the path to this point from the previous
-                    pathToPoint: Highcharts.SVGPathArray;
+                    pathToPoint: SVGPath;
 
                 if (
                     (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
@@ -6116,9 +6117,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                         ]];
 
                     // Generate the spline as defined in the SplineSeries object
-                    } else if (
-                        (series as Highcharts.SplineSeries).getPointSpline
-                    ) {
+                    } else if ((series as Partial<Highcharts.SplineSeries>).getPointSpline) {
 
                         pathToPoint = [(
                             series as Highcharts.SplineSeries

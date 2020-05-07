@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../../parts/SVGPath';
 import H from '../../parts/Globals.js';
 
 /**
@@ -120,7 +121,7 @@ declare global {
             public destroy(): void;
             public getDegree(): number;
             public getLinkAttributes(): SVGAttributes;
-            public getLinkPath(): SVGPathArray;
+            public getLinkPath(): SVGPath;
             public getMass(): Dictionary<number>;
             public getPointsCollection(): Array<NetworkgraphPoint>;
             public init(
@@ -1206,7 +1207,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
          */
         getLinkPath: function (
             this: Highcharts.NetworkgraphPoint
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var left = this.fromNode,
                 right = this.toNode;
 

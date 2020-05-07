@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -83,7 +84,7 @@ declare global {
                 tickWidth: number,
                 horiz: boolean,
                 renderer: Renderer
-            ): SVGPathArray;
+            ): SVGPath;
             public getPosition(
                 horiz: boolean,
                 tickPos: number,
@@ -668,7 +669,7 @@ class Tick {
         tickWidth: number,
         horiz: boolean,
         renderer: Highcharts.Renderer
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         return renderer.crispLine([[
             'M',
             x,

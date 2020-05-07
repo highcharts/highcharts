@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Annotation from '../../../annotations/annotations.src';
 import U from '../../../parts/Utilities.js';
 const {
     inArray
@@ -38,7 +39,7 @@ function getChartAnnotationLabels(
 
     return annotations.reduce((
         acc: Array<Highcharts.AnnotationLabelType>,
-        cur: Highcharts.Annotation
+        cur: Annotation
     ): Array<Highcharts.AnnotationLabelType> => {
         if (cur.options?.visible !== false) {
             acc = acc.concat(cur.labels);

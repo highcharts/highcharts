@@ -11,6 +11,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -120,7 +121,7 @@ declare global {
             public addMarker(
                 type: string,
                 options: ConnectorsMarkerOptions,
-                path: SVGPathArray
+                path: SVGPath
             ): void;
             public destroy(): void;
             public getPath(
@@ -133,7 +134,7 @@ declare global {
             ): void;
             public render(): void;
             public renderPath(
-                path: SVGPathArray,
+                path: SVGPath,
                 attribs?: SVGAttributes,
                 animation?: (boolean|AnimationOptionsObject)
             ): void;
@@ -678,7 +679,7 @@ Connection.prototype = {
      */
     renderPath: function (
         this: Highcharts.Connection,
-        path: Highcharts.SVGPathArray,
+        path: SVGPath,
         attribs?: Highcharts.SVGAttributes,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
@@ -750,7 +751,7 @@ Connection.prototype = {
         this: Highcharts.Connection,
         type: string,
         options: Highcharts.ConnectorsMarkerOptions,
-        path: Highcharts.SVGPathArray
+        path: SVGPath
     ): void {
         var connection = this,
             chart = connection.fromPoint.series.chart,
@@ -769,7 +770,7 @@ Connection.prototype = {
             width,
             height,
             pathVector: Highcharts.PositionObject,
-            segment: Highcharts.SVGPathSegment;
+            segment: SVGPath.Segment;
 
 
         if (!options.enabled) {
@@ -934,7 +935,7 @@ Connection.prototype = {
             chart = series.chart,
             pathfinder = chart.pathfinder,
             pathResult: Highcharts.PathfinderAlgorithmResultObject,
-            path: Highcharts.SVGPathArray,
+            path: SVGPath,
             options = merge(
                 chart.options.connectors, series.options.connectors,
                 fromPoint.options.connectors, connection.options

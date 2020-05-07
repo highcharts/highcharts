@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisLike } from '../parts/axis/types';
+import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
 import Color from '../parts/Color.js';
 const {
@@ -65,7 +66,7 @@ declare global {
             public getOffset(): void;
             public getPlotLinePath(
                 options: AxisPlotLinePathOptionsObject
-            ): (SVGPathArray|null);
+            ): (SVGPath|null);
             public getSeriesExtremes(): void;
             public hasData(): boolean;
             public init(chart: Chart, userOptions: ColorAxis.Options): void;
@@ -1227,7 +1228,7 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (Highcharts.SVGPathArray|null) {
+    public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (SVGPath|null) {
         const axis = this;
         const left = axis.left;
         const pos = options.translatedValue;

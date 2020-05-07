@@ -4,10 +4,11 @@
  *
  * */
 'use strict';
+import Annotation from '../../annotations/annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var extend = U.extend, isNumber = U.isNumber, merge = U.merge;
-var Annotation = H.Annotation, ControlPoint = Annotation.ControlPoint;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var Measure = function () {
     Annotation.apply(this, arguments);

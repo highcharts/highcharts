@@ -9,7 +9,7 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 /**
  * Creates an arrow symbol. Like a triangle, except not filled.
  * ```
@@ -40,7 +40,7 @@ import H from '../parts/Globals.js';
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-H.SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
+SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
     return [
         ['M', x, y + h / 2],
         ['L', x + w, y],
@@ -76,8 +76,8 @@ H.SVGRenderer.prototype.symbols.arrow = function (x, y, w, h) {
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-H.SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
-    return H.SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
+SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
+    return SVGRenderer.prototype.symbols.arrow(x, y, w / 2, h);
 };
 /**
  * Creates a left-oriented triangle.
@@ -107,7 +107,7 @@ H.SVGRenderer.prototype.symbols['arrow-half'] = function (x, y, w, h) {
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-H.SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
+SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
     return [
         ['M', x + w, y],
         ['L', x, y + h / 2],
@@ -136,8 +136,7 @@ H.SVGRenderer.prototype.symbols['triangle-left'] = function (x, y, w, h) {
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-H.SVGRenderer.prototype.symbols['arrow-filled'] =
-    H.SVGRenderer.prototype.symbols['triangle-left'];
+SVGRenderer.prototype.symbols['arrow-filled'] = SVGRenderer.prototype.symbols['triangle-left'];
 /**
  * Creates a half-width, left-oriented triangle.
  * ```
@@ -166,8 +165,8 @@ H.SVGRenderer.prototype.symbols['arrow-filled'] =
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-H.SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
-    return H.SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
+SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
+    return SVGRenderer.prototype.symbols['triangle-left'](x, y, w / 2, h);
 };
 /**
  * Alias function for triangle-left-half.
@@ -190,5 +189,4 @@ H.SVGRenderer.prototype.symbols['triangle-left-half'] = function (x, y, w, h) {
  * @return {Highcharts.SVGPathArray}
  *         Path array
  */
-H.SVGRenderer.prototype.symbols['arrow-filled-half'] =
-    H.SVGRenderer.prototype.symbols['triangle-left-half'];
+SVGRenderer.prototype.symbols['arrow-filled-half'] = SVGRenderer.prototype.symbols['triangle-left-half'];

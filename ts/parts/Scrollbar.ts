@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import H from './Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
@@ -138,7 +139,7 @@ declare global {
             public update(options: Highcharts.ScrollbarOptions): void;
             public updatePosition(from: number, to: number): void;
         }
-        function swapXY(path: SVGPathArray, vertical?: boolean): SVGPathArray;
+        function swapXY(path: SVGPath, vertical?: boolean): SVGPath;
     }
 }
 
@@ -170,9 +171,9 @@ var defaultOptions = H.defaultOptions,
  * @requires modules/stock
  */
 const swapXY = H.swapXY = function (
-    path: Highcharts.SVGPathArray,
+    path: SVGPath,
     vertical?: boolean
-): Highcharts.SVGPathArray {
+): SVGPath {
     if (vertical) {
         path.forEach((seg): void => {
             const len = seg.length;

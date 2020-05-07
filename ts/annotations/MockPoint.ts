@@ -416,7 +416,7 @@ class MockPoint {
      * Returns a label config object - the same as
      * Highcharts.Point.prototype.getLabelConfig
      * @private
-     * @return {Annotation.MockPoint.LabelConfig} the point's label config
+     * @return {Highcharts.AnnotationMockLabelOptionsObject} the point's label config
      */
     public getLabelConfig(): Highcharts.AnnotationMockLabelOptionsObject {
         return {

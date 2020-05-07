@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -41,7 +42,7 @@ declare global {
                 w: number,
                 h: number,
                 options: SVGAttributes
-            ): SVGPathArray;
+            ): SVGPath;
         }
         interface SVGRenderer {
             /** @requires highcharts/modules/oldies */
@@ -239,7 +240,7 @@ declare global {
                 wrapper: VMLElement
             ): T;
             public createElement(nodeName: string): VMLElement;
-            public crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
+            public crispPolyLine(points: SVGPath, width: number): SVGPath;
             public g(name: string): VMLElement;
             public image(
                 src: string,
@@ -275,6 +276,10 @@ declare global {
             type: string,
             fn: EventCallbackFunction<T>
         ): void;
+    }
+    interface CSSStyleSheet {
+        /** @deprecated */
+        cssText: string;
     }
     interface Document {
         /** @deprecated */
@@ -318,6 +323,8 @@ declare global {
 
 import Color from '../parts/Color.js';
 const color = Color.parse;
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -338,8 +345,6 @@ const {
     uniqueKey
 } = U;
 
-import '../parts/SvgRenderer.js';
-
 var VMLRenderer,
     VMLRendererExtension,
     VMLElement: typeof Highcharts.VMLElement,
@@ -348,8 +353,6 @@ var VMLRenderer,
     doc = H.doc,
     noop = H.noop,
     svg = H.svg,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
     win = H.win;
 
 
@@ -2076,7 +2079,7 @@ if (!svg) {
                 w: number,
                 h: number,
                 options: Highcharts.SVGAttributes
-            ): Highcharts.SVGPathArray {
+            ): SVGPath {
                 return SVGRenderer.prototype.symbols[
                     !defined(options) || !options.r ? 'square' : 'callout'
                 ].call(0, x, y, w, h, options);

@@ -14,6 +14,7 @@
 
 import type ColorAxis from '../parts-map/ColorAxis';
 import type RadialAxis from '../parts-more/RadialAxis';
+import type SVGPath from '../parts/SVGPath';
 import Color from '../parts/Color.js';
 const color = Color.parse;
 import H from '../parts/Globals.js';
@@ -125,9 +126,9 @@ wrap(
         w: number,
         h: number,
         options: Highcharts.SymbolOptionsObject
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var arc = proceed,
-            path: Highcharts.SVGPathArray = arc(x, y, w, h, options);
+            path: SVGPath = arc(x, y, w, h, options);
 
         if (options.rounded) {
             var r = options.r || w,
@@ -140,8 +141,8 @@ wrap(
                     y1 = outerArcStart[2],
                     x2 = innerArcStart[1],
                     y2 = innerArcStart[2],
-                    roundStart: Highcharts.SVGPathArc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
-                    roundEnd: Highcharts.SVGPathArc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+                    roundStart: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+                    roundEnd: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
 
                 // Replace the line segment and the last close segment
                 path[2] = roundEnd;
@@ -522,7 +523,7 @@ seriesType<Highcharts.SolidGaugeSeries>(
                             ) * center[2]
                         ) / 200),
                         shapeArgs: (Highcharts.SVGAttributes|undefined),
-                        d: (string|Highcharts.SVGPathArray|undefined),
+                        d: (string|SVGPath|undefined),
                         toColor = yAxis.toColor(point.y as any, point),
                         axisMinAngle = Math.min(
                             yAxis.startAngleRad,

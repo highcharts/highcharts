@@ -4,13 +4,14 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var Annotation = H.Annotation, MockPoint = Annotation.MockPoint;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var VerticalLine = function () {
-    H.Annotation.apply(this, arguments);
+    Annotation.apply(this, arguments);
 };
 VerticalLine.connectorFirstPoint = function (target) {
     var annotation = target.annotation, point = annotation.points[0], xy = MockPoint.pointToPixels(point, true), y = xy.y, offset = annotation.options.typeOptions.label.offset;

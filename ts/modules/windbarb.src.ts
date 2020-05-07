@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -52,7 +54,7 @@ declare global {
                 state?: string
             ): SVGAttributes;
             public translate(): void;
-            public windArrow(point: WindbarbPoint): (SVGElement|SVGPathArray);
+            public windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
         }
         interface DataGroupingApproximationsDictionary {
             windbarb?(
@@ -296,10 +298,10 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
         windArrow: function (
             this: Highcharts.WindbarbSeries,
             point: Highcharts.WindbarbPoint
-        ): (Highcharts.SVGElement|Highcharts.SVGPathArray) {
+        ): (Highcharts.SVGElement|SVGPath) {
             var knots = point.value * 1.943844,
                 level = point.beaufortLevel,
-                path: Highcharts.SVGPathArray,
+                path: SVGPath,
                 barbs,
                 u = (this.options.vectorLength as any) / 20,
                 pos = -10;

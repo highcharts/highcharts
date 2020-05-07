@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -23,7 +24,7 @@ declare global {
             public series: BubbleSeries;
             public haloPath(
                 size: number
-            ): SVGPathArray;
+            ): SVGPath;
         }
         class BubbleSeries extends ScatterSeries {
             public alignDataLabel: ColumnSeries['alignDataLabel'];
@@ -610,7 +611,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
     haloPath: function (
         this: Highcharts.BubblePoint,
         size: number
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         return Point.prototype.haloPath.call(
             this,
             // #6067
