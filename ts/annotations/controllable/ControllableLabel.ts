@@ -6,12 +6,13 @@
 
 'use strict';
 
+import type Annotation from '../annotations.src';
 import type SVGPath from '../../parts/SVGPath';
 import controllableMixin from './controllableMixin.js';
-import H from '../../parts/Globals.js';
-import MockPoint from '../MockPoint.js';
+import H from './../../parts/Globals.js';
+import MockPoint from './../MockPoint.js';
 import Tooltip from '../../parts/Tooltip.js';
-import U from '../../parts/Utilities.js';
+import U from './../../parts/Utilities.js';
 const {
     extend,
     format,
@@ -109,7 +110,7 @@ import '../../parts/SVGRenderer.js';
  */
 const ControllableLabel: typeof Highcharts.AnnotationControllableLabel = function (
     this: Highcharts.AnnotationControllableLabel,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsLabelOptions,
     index: number
 ): void {

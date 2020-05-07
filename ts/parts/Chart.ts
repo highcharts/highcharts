@@ -915,7 +915,7 @@ class Chart {
         series.forEach(function (serie: Highcharts.Series): void {
             if (serie.isDirty) {
                 if (serie.options.legendType === 'point') {
-                    if ((serie as Highcharts.PieSeries).updateTotals) {
+                    if ((serie as Partial<Highcharts.PieSeries>).updateTotals) {
                         (serie as Highcharts.PieSeries).updateTotals();
                     }
                     redrawLegend = true;

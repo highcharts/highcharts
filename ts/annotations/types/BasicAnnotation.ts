@@ -5,7 +5,10 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
 
 /**
  * Internal types.
@@ -25,8 +28,6 @@ declare global {
         }
     }
 }
-
-var Annotation = H.Annotation;
 
 /* eslint-disable no-invalid-this */
 
@@ -54,7 +55,7 @@ H.extendAnnotation(
                             y: -9e7
                         };
                     }
-                    var xy = H.Annotation.MockPoint
+                    var xy = MockPoint
                         .pointToPixels(target.points[0]);
                     return {
                         x: xy.x - this.graphic.width / 2,
@@ -64,9 +65,9 @@ H.extendAnnotation(
                 // TRANSLATE POINT/ANCHOR
                 events: {
                     drag: function (
-                        this: Highcharts.Annotation,
+                        this: Annotation,
                         e: Highcharts.AnnotationEventObject,
-                        target: Highcharts.Annotation
+                        target: Annotation
                     ): void {
                         var xy = this.mouseMoveToTranslation(e);
 
@@ -100,7 +101,7 @@ H.extendAnnotation(
                 // ANCHOR
                 events: {
                     drag: function (
-                        this: Highcharts.Annotation,
+                        this: Annotation,
                         e: Highcharts.AnnotationEventObject,
                         target: Highcharts.AnnotationControllable
                     ): void {
@@ -116,8 +117,8 @@ H.extendAnnotation(
             }],
 
             rectangle: [{
-                positioner: function (annotation: Highcharts.Annotation): Highcharts.PositionObject {
-                    var xy = H.Annotation.MockPoint
+                positioner: function (annotation: Annotation): Highcharts.PositionObject {
+                    var xy = MockPoint
                         .pointToPixels(annotation.points[2]);
                     return {
                         x: xy.x - 4,
@@ -126,7 +127,7 @@ H.extendAnnotation(
                 },
                 events: {
                     drag: function (
-                        this: Highcharts.Annotation,
+                        this: Annotation,
                         e: Highcharts.PointerEventObject,
                         target: Highcharts.AnnotationControllableRect
                     ): void {
@@ -156,7 +157,7 @@ H.extendAnnotation(
                     this: Highcharts.AnnotationControlPoint,
                     target: Highcharts.AnnotationControllable
                 ): Highcharts.PositionObject {
-                    var xy = H.Annotation.MockPoint.pointToPixels(target.points[0]),
+                    var xy = MockPoint.pointToPixels(target.points[0]),
                         r: number = target.options.r as any;
                     return {
                         x: xy.x + r * Math.cos(Math.PI / 4) -
@@ -169,7 +170,7 @@ H.extendAnnotation(
                 // TRANSFORM RADIUS ACCORDING TO Y
                 // TRANSLATION
                     drag: function (
-                        this: Highcharts.Annotation,
+                        this: Annotation,
                         e: Highcharts.AnnotationEventObject,
                         target: Highcharts.AnnotationControllableCircle
                     ): void {

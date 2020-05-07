@@ -5,7 +5,15 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
+import MockPoint from '../MockPoint.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -31,20 +39,13 @@ declare global {
             height: number;
             heightControlPoint: AnnotationControlPointOptionsObject;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             tunnel: typeof AnnotationTunnel;
         }
     }
 }
-import U from '../../parts/Utilities.js';
-const {
-    merge
-} = U;
 
-var Annotation = H.Annotation,
-    CrookedLine = Annotation.types.crookedLine,
-    ControlPoint = Annotation.ControlPoint,
-    MockPoint = Annotation.MockPoint;
+var CrookedLine = Annotation.types.crookedLine;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

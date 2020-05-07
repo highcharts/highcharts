@@ -66,7 +66,7 @@ declare global {
         const isTouchDevice: boolean;
         const isWebKit: boolean;
         const marginNames: Array<string>;
-        const noop: Function;
+        const noop: () => void;
         const product: string;
         const symbolSizes: Dictionary<SizeObject>;
         const win: GlobalWindow;

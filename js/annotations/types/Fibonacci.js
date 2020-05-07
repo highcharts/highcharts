@@ -4,10 +4,12 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var Annotation = H.Annotation, MockPoint = Annotation.MockPoint, Tunnel = Annotation.types.tunnel;
+var Tunnel = Annotation.types.tunnel;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var createPathDGenerator = function (retracementIndex, isBackground) {
     return function () {

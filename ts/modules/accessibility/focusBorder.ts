@@ -60,7 +60,7 @@ const svgElementBorderUpdateTriggers = [
 /**
  * Add hook to destroy focus border if SVG element is destroyed, unless
  * hook already exists.
- *
+ * @private
  * @param el Element to add destroy hook to
  */
 function addDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
@@ -82,7 +82,7 @@ function addDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
 /**
  * Remove hook from SVG element added by addDestroyFocusBorderHook, if
  * existing.
- *
+ * @private
  * @param el Element to remove destroy hook from
  */
 function removeDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
@@ -99,7 +99,7 @@ function removeDestroyFocusBorderHook(el: Highcharts.SVGElement): void {
 /**
  * Add hooks to update the focus border of an element when the element
  * size/position is updated, unless already added.
- *
+ * @private
  * @param el Element to add update hooks to
  * @param updateParams Parameters to pass through to addFocusBorder when updating.
  */
@@ -131,7 +131,7 @@ function addUpdateFocusBorderHooks(
 /**
  * Remove hooks from SVG element added by addUpdateFocusBorderHooks, if
  * existing.
- *
+ * @private
  * @param el Element to remove update hooks from
  */
 function removeUpdateFocusBorderHooks(el: Highcharts.SVGElement): void {

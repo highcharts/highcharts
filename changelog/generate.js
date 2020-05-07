@@ -9,7 +9,6 @@
  * --since String  The tag to start from, defaults to latest commit.
  * --after String  The start date.
  * --before String Optional. The end date for the changelog, defaults to today.
- * --pr            Use Pull Request descriptions as source for the log.
  * --review        Create a review page with edit links and a list of all PRs
  *                 that are not used in the changelog.
  */
@@ -23,7 +22,6 @@ const childProcess = require('child_process');
     'use strict';
 
     var fs = require('fs'),
-        cmd = require('child_process'),
         path = require('path'),
         tree = require('../tree.json');
 
@@ -59,36 +57,9 @@ const childProcess = require('child_process');
      * Get the log from Git
      */
     async function getLog(callback) {
-        var command;
+        var log = await prLog(params.since).catch(e => console.error(e));
 
-        function puts(err, stdout) {
-            if (err) {
-                throw err;
-            }
-            callback(stdout);
-        }
-
-        if (params.pr) {
-            var log = await prLog(params.since).catch(e => console.error(e));
-
-            callback(log);
-            return;
-
-        }
-
-        command = 'git log --format="%s<br>" ';
-        if (params.since) {
-            command += ' ' + params.since + '..HEAD ';
-        } else {
-            if (params.after) {
-                command += '--after={' + params.after + '} ';
-            }
-            if (params.before) {
-                command += '--before={' + params.before + '} ';
-            }
-        }
-
-        cmd.exec(command, null, puts);
+        callback(log);
     }
 
     function addMissingDotToCommitMessage(string) {
@@ -96,60 +67,6 @@ const childProcess = require('child_process');
             string = string + '.';
         }
         return string;
-    }
-
-    /**
-     * Prepare the log for each product, and sort the result to get all additions, fixes
-     * etc. nicely lined up.
-     */
-    function washLog(name, log) {
-        var washed = [],
-            proceed = true;
-
-        log.forEach(function (item) {
-
-            // Keep only the commits after the last release
-            if (proceed && (new RegExp('official release ---$')).test(item) &&
-                !params.since) {
-                proceed = false;
-            }
-
-            if (proceed) {
-
-                // Commits tagged with Highstock, Highmaps or Gantt
-                if (name === 'Highstock' && item.indexOf('Highstock:') === 0) {
-                    washed.push(item.replace(/Highstock:\s?/, ''));
-                } else if (name === 'Highmaps' && item.indexOf('Highmaps:') === 0) {
-                    washed.push(item.replace(/Highmaps:\s?/, ''));
-                } else if (name === 'Highcharts Gantt' && item.indexOf('Gantt:') === 0) {
-                    washed.push(item.replace(/Gantt:\s?/, ''));
-
-                    // All others go into the Highcharts changelog for review
-                } else if (name === 'Highcharts' && !/^(Highstock|Highmaps|Gantt):/.test(item)) {
-                    washed.push(item);
-                }
-            }
-        });
-
-        // Last release not found, abort
-        if (proceed === true && !params.since) {
-            throw new Error('Last release not located, try setting an older start date.');
-        }
-
-        // Sort alphabetically
-        washed.sort();
-
-        // Pull out Fixes and append at the end
-        var fixes = washed.filter(message => message.indexOf('Fixed') === 0);
-
-        if (fixes.length > 0) {
-            washed = washed.filter(message => message.indexOf('Fixed') !== 0);
-
-            washed = washed.concat(fixes);
-            washed.startFixes = washed.length - fixes.length;
-        }
-
-        return washed;
     }
 
     function washPRLog(name, log) {
@@ -214,16 +131,12 @@ const childProcess = require('child_process');
             ),
             apiFolder = {
                 Highcharts: 'highcharts',
-                Highstock: 'highstock',
-                Highmaps: 'highmaps',
+                'Highcharts Stock': 'highstock',
+                'Highcharts Maps': 'highmaps',
                 'Highcharts Gantt': 'gantt'
             }[name];
 
-        if (params.pr) {
-            log = washPRLog(name, log);
-        } else {
-            log = washLog(name, log);
-        }
+        log = washPRLog(name, log);
 
         const upgradeNotes = log
             .filter(change => typeof change.upgradeNote === 'string')
@@ -304,12 +217,6 @@ const childProcess = require('child_process');
         const d = new Date();
         const review = [];
 
-        // Split the log into an array
-        if (!params.pr) {
-            log = log.split('<br>\n');
-            log.pop();
-        }
-
         // Load the current products and versions, and create one log each
         fs.readFile(
             path.join(__dirname, '/../build/dist/products.js'),
@@ -330,13 +237,12 @@ const childProcess = require('child_process');
 
                     if (products.hasOwnProperty(name)) { // eslint-disable-line no-prototype-builtins
                         const version = params.buildMetadata ? `${pack.version}+build.${getLatestGitSha()}` : pack.version;
-                        if (params.pr) {
-                            products[name].nr = version;
-                            products[name].date =
-                                d.getFullYear() + '-' +
-                                pad(d.getMonth() + 1, 2) + '-' +
-                                pad(d.getDate(), 2);
-                        }
+
+                        products[name].nr = version;
+                        products[name].date =
+                            d.getFullYear() + '-' +
+                            pad(d.getMonth() + 1, 2) + '-' +
+                            pad(d.getDate(), 2);
 
                         review.push(buildMarkdown(
                             name,

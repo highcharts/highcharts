@@ -4,6 +4,7 @@
  *
  * */
 
+import type Annotation from '../annotations/annotations.src';
 import H from '../parts/Globals.js';
 
 /**
@@ -102,7 +103,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         });
 
         objectEach(emitter.options.events, function (
-            event: Highcharts.EventCallbackFunction<Highcharts.Annotation>,
+            event: Highcharts.EventCallbackFunction<Annotation>,
             type: string
         ): void {
             var eventHandler = function (e: Highcharts.PointerEventObject): void {
@@ -226,7 +227,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      */
     onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
         var chart = this.chart,
-            annotation: Highcharts.Annotation = this.target as any || this,
+            annotation: Annotation = this.target as any || this,
             annotationsOptions = chart.options.annotations,
             index = chart.annotations.indexOf(annotation);
 

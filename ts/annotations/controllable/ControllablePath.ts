@@ -6,11 +6,12 @@
 
 'use strict';
 
+import type Annotation from '../annotations.src';
 import type SVGPath from '../../parts/SVGPath';
 import controllableMixin from './controllableMixin.js';
-import H from '../../parts/Globals.js';
+import H from './../../parts/Globals.js';
 import markerMixin from './markerMixin.js';
-import U from '../../parts/Utilities.js';
+import U from './../../parts/Utilities.js';
 const {
     extend,
     merge
@@ -94,7 +95,7 @@ var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  **/
 const ControllablePath: typeof Highcharts.AnnotationControllablePath = function (
     this: Highcharts.AnnotationControllablePath,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsShapeOptions,
     index: number
 ): void {
