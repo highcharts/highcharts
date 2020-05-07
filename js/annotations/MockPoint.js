@@ -284,7 +284,7 @@ var MockPoint = /** @class */ (function () {
      * Returns a label config object - the same as
      * Highcharts.Point.prototype.getLabelConfig
      * @private
-     * @return {Annotation.MockPoint.LabelConfig} the point's label config
+     * @return {Highcharts.AnnotationMockLabelOptionsObject} the point's label config
      */
     MockPoint.prototype.getLabelConfig = function () {
         return {
