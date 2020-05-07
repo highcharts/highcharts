@@ -12,7 +12,21 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
+import Chart from '../parts/Chart.js';
+import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -246,27 +260,10 @@ declare global {
  *         continue async.
  */
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    splat
-} = U;
-
-import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
 import '../mixins/ajax.js';
-import '../parts/Chart.js';
 
 // Utilities
-var Chart = H.Chart,
-    win = H.win,
+var win = H.win,
     doc = win.document;
 
 /**
@@ -2571,7 +2568,7 @@ addEvent(
         e: Event & {
             args: [
                 (Highcharts.Options|undefined),
-                (Highcharts.ChartCallbackFunction|undefined)
+                (Chart.CallbackFunction|undefined)
             ];
         }
     ): void {

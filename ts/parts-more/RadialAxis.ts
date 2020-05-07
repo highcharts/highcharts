@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type Pane from './Pane';
 import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
@@ -821,7 +822,7 @@ class RadialAxis {
          *
          * @return {Highcharts.ChartLabelCollectorFunction}
          */
-        axis.createLabelCollector = function (): Highcharts.ChartLabelCollectorFunction {
+        axis.createLabelCollector = function (): Chart.LabelCollectorFunction {
             var axis = this;
 
             return function (
@@ -932,7 +933,7 @@ class RadialAxis {
                 if (axis.labelCollector) {
                     // Prevent overlapping axis labels (#9761)
                     chart.labelCollectors.push(
-                        axis.labelCollector as Highcharts.ChartLabelCollectorFunction
+                        axis.labelCollector as Chart.LabelCollectorFunction
                     );
                 }
             } else {
@@ -1243,7 +1244,7 @@ interface RadialAxis extends Axis {
     defaultPolarOptions: RadialAxisOptions;
     endAngleRad: number;
     isCircular?: boolean;
-    labelCollector?: Highcharts.ChartLabelCollectorFunction;
+    labelCollector?: Chart.LabelCollectorFunction;
     max: number;
     min: number;
     minPointOffset: number;
@@ -1253,7 +1254,7 @@ interface RadialAxis extends Axis {
     isRadial: true;
     sector?: number;
     startAngleRad: number;
-    createLabelCollector(): Highcharts.ChartLabelCollectorFunction;
+    createLabelCollector(): Chart.LabelCollectorFunction;
     beforeSetTickPositions(): void;
     getCrosshairPosition(
         options: Highcharts.AxisPlotLinesOptions,

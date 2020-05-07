@@ -11,6 +11,7 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
@@ -37,8 +38,7 @@ declare global {
 import '../parts/Options.js';
 import '../parts/Chart.js';
 
-var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
+var defaultOptions = H.defaultOptions,
     Renderer = H.Renderer,
     VMLRenderer = H.VMLRenderer;
 
@@ -454,8 +454,8 @@ if ((Renderer as any) === VMLRenderer) {
  */
 H.Map = H.mapChart = function (
     a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
-    b?: (Highcharts.ChartCallbackFunction|Highcharts.Options),
-    c?: Highcharts.ChartCallbackFunction
+    b?: (Chart.CallbackFunction|Highcharts.Options),
+    c?: Chart.CallbackFunction
 ): Highcharts.Map {
 
     var hasRenderToArg = typeof a === 'string' || (a as any).nodeName,

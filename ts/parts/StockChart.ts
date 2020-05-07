@@ -12,6 +12,7 @@
 
 import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
 import Point from './Point.js';
 import SVGRenderer from './SVGRenderer.js';
@@ -74,7 +75,6 @@ declare global {
     }
 }
 
-import './Chart.js';
 import './Pointer.js';
 import './Series.js';
 // Has a dependency on Navigator due to the use of
@@ -87,8 +87,7 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var Chart = H.Chart,
-    Series = H.Series,
+var Series = H.Series,
     seriesProto = Series.prototype,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
@@ -189,8 +188,8 @@ var Chart = H.Chart,
  */
 H.StockChart = H.stockChart = function (
     a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
-    b?: (Highcharts.ChartCallbackFunction|Highcharts.Options),
-    c?: Highcharts.ChartCallbackFunction
+    b?: (Chart.CallbackFunction|Highcharts.Options),
+    c?: Chart.CallbackFunction
 ): Highcharts.StockChart {
     var hasRenderToArg = isString(a) || (a as any).nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],

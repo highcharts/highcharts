@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart.js';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
@@ -412,7 +413,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public graphic: Highcharts.SVGElement = void 0 as any;
     public group: Highcharts.SVGElement = void 0 as any;
     public isUpdating?: boolean;
-    public labelCollector: Highcharts.ChartLabelCollectorFunction = void 0 as any;
+    public labelCollector: Chart.LabelCollectorFunction = void 0 as any;
     public labels: Array<Highcharts.AnnotationLabelType>;
     public labelsGroup: Highcharts.SVGElement = void 0 as any;
     public options: Highcharts.AnnotationsOptions;
