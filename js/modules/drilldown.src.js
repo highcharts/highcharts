@@ -45,7 +45,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.DrilldownEventObject#point
 * @type {Highcharts.Point}
 */ /**
-* If a category label was clicked, this array holds all points corresponing to
+* If a category label was clicked, this array holds all points corresponding to
 * the category. Otherwise it is set to false.
 * @name Highcharts.DrilldownEventObject#points
 * @type {boolean|Array<Highcharts.Point>|undefined}
@@ -361,7 +361,7 @@ defaultOptions.drilldown = {
  * - `point`: The originating point.
  *
  * - `points`: If a category label was clicked, this array holds all points
- *   corresponing to the category.
+ *   corresponding to the category.
  *
  * - `seriesOptions`: Options for the new series.
  *
