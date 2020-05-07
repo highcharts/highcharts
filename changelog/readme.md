@@ -22,12 +22,12 @@ in past tense.
 1. Run the `generate-changelog.js` script which copies PR descriptions since the last release into markdown files for each product.
 
     ```
-    node changelog/generate --pr
+    node changelog/generate
     ```
 
 3. Manually edit these generated markdown files to your wish.
 
-4. Run the script that assembles the content of all markdown files in to a .html file and uploads it to S3, where the website will pick it up.
+4. Run the script that assembles the content of all markdown files in to a HTML file and uploads it to S3, where the website will pick it up. If testing, run `node changelog/generate-html` first.
 
     ```
     node changelog/upload

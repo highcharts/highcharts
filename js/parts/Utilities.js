@@ -1263,7 +1263,7 @@ var relativeLength = H.relativeLength = function relativeLength(value, base, off
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
-' * @function Highcharts.wrap
+ * @function Highcharts.wrap
  *
  * @param {*} obj
  *        The context object that the method belongs to. In real cases, this is
@@ -1276,8 +1276,6 @@ var relativeLength = H.relativeLength = function relativeLength(value, base, off
  *        A wrapper function callback. This function is called with the same
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
- *
- * @return {void}
  */
 var wrap = H.wrap = function wrap(obj, method, func) {
     var proceed = obj[method];

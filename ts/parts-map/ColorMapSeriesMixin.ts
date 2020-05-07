@@ -43,7 +43,7 @@ declare global {
             axisTypes: ColorSeries['axisTypes'];
             colorAttribs: ColorMapSeries['colorAttribs'];
             colorKey: ColorSeries['colorKey'];
-            getSymbol: Function;
+            getSymbol: () => void;
             parallelArrays: ColorMapSeries['parallelArrays'];
             pointArrayMap: ColorMapSeries['pointArrayMap'];
             pointAttribs: ColorMapSeries['pointAttribs'];

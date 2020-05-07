@@ -7,7 +7,15 @@
 'use strict';
 
 import type SVGPath from '../../parts/SVGPath';
+import Annotation from '../../annotations/annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    extend,
+    isNumber,
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -89,21 +97,11 @@ declare global {
             xAxis: number;
             yAxis: number;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             measure: typeof AnnotationMeasure;
         }
     }
 }
-
-import U from '../../parts/Utilities.js';
-const {
-    extend,
-    isNumber,
-    merge
-} = U;
-
-var Annotation = H.Annotation,
-    ControlPoint = Annotation.ControlPoint;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -474,7 +472,7 @@ H.extendAnnotation(Measure, null,
 
             // #11174 - clipBox was not recalculate during resize / redraw
             if (this.clipRect) {
-                this.clipRect.animate(this.getClipBox());
+                this.clipRect.animate(this.getClipBox() as any);
             }
 
             this.addValues(resize);

@@ -4,10 +4,12 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
+import MockPoint from '../MockPoint.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var Annotation = H.Annotation, MockPoint = Annotation.MockPoint, CrookedLine = Annotation.types.crookedLine;
+var CrookedLine = Annotation.types.crookedLine;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var InfinityLine = function () {
     CrookedLine.apply(this, arguments);

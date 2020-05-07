@@ -277,6 +277,10 @@ declare global {
             fn: EventCallbackFunction<T>
         ): void;
     }
+    interface CSSStyleSheet {
+        /** @deprecated */
+        cssText: string;
+    }
     interface Document {
         /** @deprecated */
         documentMode?: number;

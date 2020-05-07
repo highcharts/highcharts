@@ -4,10 +4,10 @@
  *
  * */
 'use strict';
+import ControllableLabel from './ControllableLabel.js';
+import controllableMixin from './controllableMixin.js';
 import U from './../../parts/Utilities.js';
 var merge = U.merge;
-import controllableMixin from './controllableMixin.js';
-import ControllableLabel from './ControllableLabel.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable image class.

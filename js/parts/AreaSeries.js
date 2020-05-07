@@ -143,7 +143,7 @@ seriesType('area', 'line',
      * * If `null`, the scaling behaves like a line series with fill between
      *   the graph and the Y axis minimum.
      * * If `Infinity` or `-Infinity`, the area between the graph and the
-     *   corresponing Y axis extreme is filled (since v6.1.0).
+     *   corresponding Y axis extreme is filled (since v6.1.0).
      *
      * @sample {highcharts} highcharts/plotoptions/area-threshold/
      *         A threshold of 100

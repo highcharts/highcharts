@@ -3,10 +3,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
-import U from '../../parts/Utilities.js';
-var merge = U.merge;
 import controllableMixin from './controllableMixin.js';
 import ControllablePath from './ControllablePath.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable rect class.
