@@ -1259,6 +1259,7 @@ var Pointer = /** @class */ (function () {
         // Refresh tooltip for kdpoint if new hover point or tooltip was hidden
         // #3926, #4200
         if (hoverPoint &&
+            hoverPoint.isVisibleInPlot() && // only refresh tooltip for points inside plotArea
             // !(hoverSeries && hoverSeries.directTouch) &&
             (hoverPoint !== chart.hoverPoint || (tooltip && tooltip.isHidden))) {
             (chart.hoverPoints || []).forEach(function (p) {
