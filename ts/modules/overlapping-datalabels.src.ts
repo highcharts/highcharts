@@ -20,6 +20,7 @@ const {
     addEvent,
     fireEvent,
     isArray,
+    isNumber,
     objectEach,
     pick
 } = U;
@@ -192,7 +193,7 @@ Chart.prototype.hideOverlappingLabels = function (
 
                 if (alignValue) {
                     xOffset = +alignValue * boxWidth;
-                } else if (Math.round(label.x) !== label.translateX) {
+                } else if (isNumber(label.x) && Math.round(label.x) !== label.translateX) {
                     xOffset = label.x - label.translateX;
                 }
 

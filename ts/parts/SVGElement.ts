@@ -74,6 +74,7 @@ declare global {
             public constructor();
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
+            public hasBoxWidthChanged: boolean;
             public isLabel: boolean;
             public parentGroup?: SVGElement;
             public pathArray?: SVGPath;
@@ -83,14 +84,9 @@ declare global {
             public shadows?: Array<(HTMLDOMElement|SVGDOMElement)>;
             public oldShadowOptions?: Highcharts.ShadowOptionsObject;
             public styles?: CSSObject;
-            public xSetter?: (
-                SVGElement.ElementSetterFunction<string>|
-                SVGElement.SetterFunction<number>
-            );
-            public ySetter?: (
-                SVGElement.ElementSetterFunction<string>|
-                SVGElement.SetterFunction<number>
-            );
+            public textStr?: string;
+            public x?: number;
+            public y?: number;
             public add(parent?: SVGElement): SVGElement;
             public addClass(className: string, replace?: boolean): SVGElement;
             public afterSetters(): void;
@@ -308,18 +304,6 @@ class SVGElement {
     ];
     public symbolName?: string;
     public text?: SVGElement;
-    /**
-     * For labels, these CSS properties are applied to the `text` node directly.
-     *
-     * @private
-     * @name Highcharts.SVGElement#textProps
-     * @type {Array<string>}
-     */
-    public textProps: Array<string> = [
-        'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
-        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-        'textOutline', 'textOverflow', 'width'
-    ];
     public textStr?: string;
     public textWidth?: number;
     public textPathWrapper?: SVGElement;
@@ -403,7 +387,6 @@ class SVGElement {
      *         Returns the SVGElement for chaining.
      */
     public add(parent?: SVGElement): SVGElement {
-
         var renderer = this.renderer,
             element = this.element,
             inserted;
@@ -416,8 +399,8 @@ class SVGElement {
         this.parentInverted = parent && (parent as any).inverted;
 
         // build formatted text
-        if (typeof this.textStr !== 'undefined') {
-            renderer.buildText(this as any);
+        if (typeof this.textStr !== 'undefined' && !(this instanceof H.SVGLabel)) {
+            renderer.buildText(this);
         }
 
         // Mark as added

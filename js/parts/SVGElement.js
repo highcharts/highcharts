@@ -63,18 +63,6 @@ var SVGElement = /** @class */ (function () {
             'anchorY',
             'rounded'
         ];
-        /**
-         * For labels, these CSS properties are applied to the `text` node directly.
-         *
-         * @private
-         * @name Highcharts.SVGElement#textProps
-         * @type {Array<string>}
-         */
-        this.textProps = [
-            'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
-            'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-            'textOutline', 'textOverflow', 'width'
-        ];
         this.width = void 0;
     }
     /* *
@@ -142,7 +130,7 @@ var SVGElement = /** @class */ (function () {
         // mark as inverted
         this.parentInverted = parent && parent.inverted;
         // build formatted text
-        if (typeof this.textStr !== 'undefined') {
+        if (typeof this.textStr !== 'undefined' && !(this instanceof H.SVGLabel)) {
             renderer.buildText(this);
         }
         // Mark as added

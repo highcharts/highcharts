@@ -112,7 +112,9 @@ addEvent(H.Series, 'afterRender', function () {
             yAxis.drawCrosshair(null, lastPoint);
             if (yAxis.cross) {
                 serie.lastVisiblePrice = yAxis.cross;
-                serie.lastVisiblePrice.y = lastPoint.y;
+                if (typeof lastPoint.y === 'number') {
+                    serie.lastVisiblePrice.y = lastPoint.y;
+                }
             }
             serie.crossLabel = yAxis.crossLabel;
         }
