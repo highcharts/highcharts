@@ -4074,7 +4074,7 @@ null,
      * @return {Highcharts.Dictionary<number>}
      */
     getClipBox: function (animation, finalBox) {
-        var series = this, options = series.options, chart = series.chart, inverted = chart.inverted, xAxis = series.xAxis, yAxis = xAxis && series.yAxis, clipBox;
+        var series = this, options = series.options, chart = series.chart, inverted = chart.inverted, xAxis = series.xAxis, yAxis = xAxis && series.yAxis, clipBox, scrollablePlotAreaOptions = chart.options.chart.scrollablePlotArea || {};
         if (animation && options.clip === false && yAxis) {
             // support for not clipped series animation (#10450)
             clipBox = inverted ? {
@@ -4095,7 +4095,8 @@ null,
             clipBox = series.clipBox || chart.clipBox;
             if (finalBox) {
                 clipBox.width = chart.plotSizeX;
-                clipBox.x = 0;
+                clipBox.x = (chart.scrollablePixelsX || 0) *
+                    (scrollablePlotAreaOptions.scrollPositionX || 0);
             }
         }
         return !finalBox ? clipBox : {

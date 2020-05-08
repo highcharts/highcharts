@@ -5412,7 +5412,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 inverted = chart.inverted,
                 xAxis = series.xAxis,
                 yAxis = xAxis && series.yAxis,
-                clipBox;
+                clipBox,
+                scrollablePlotAreaOptions =
+                    (chart.options.chart as any).scrollablePlotArea || {};
 
             if (animation && options.clip === false && yAxis) {
                 // support for not clipped series animation (#10450)
@@ -5434,7 +5436,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
                 if (finalBox) {
                     clipBox.width = chart.plotSizeX as any;
-                    clipBox.x = 0;
+                    clipBox.x = (chart.scrollablePixelsX || 0) *
+                        (scrollablePlotAreaOptions.scrollPositionX || 0);
                 }
             }
 
