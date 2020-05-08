@@ -785,22 +785,18 @@ class Tooltip {
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside && !tooltip.split) {
-                set = {
-                    x: this.label.xSetter as any,
-                    y: this.label.ySetter as any
-                };
-                this.label.xSetter = function (
-                    value: string,
-                    key: string
+                const label = this.label;
+                const { xSetter, ySetter } = label;
+                label.xSetter = function (
+                    value: string
                 ): void {
-                    set[key].call(this.label, tooltip.distance);
+                    xSetter.call(label, tooltip.distance);
                     container.style.left = value + 'px';
                 };
-                this.label.ySetter = function (
-                    value: string,
-                    key: string
+                label.ySetter = function (
+                    value: string
                 ): void {
-                    set[key].call(this.label, tooltip.distance);
+                    ySetter.call(label, tooltip.distance);
                     container.style.top = value + 'px';
                 };
             }
