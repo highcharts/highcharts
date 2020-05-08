@@ -123,6 +123,9 @@ seriesType('item',
 {
     markerAttribs: void 0,
     translate: function () {
+        if (this.total === 0) {
+            this.center = this.getCenter();
+        }
         if (!this.slots) {
             this.slots = [];
         }
