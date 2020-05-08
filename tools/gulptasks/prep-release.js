@@ -6,7 +6,7 @@ const Gulp = require('gulp');
 const packageJson = require('../../package.json');
 const ChildProcess = require('child_process');
 const LogLib = require('./lib/log');
-const getBuildProperties = require('./lib/build').getBuildProperties;
+const fs = require('fs');
 
 /**
  * Prepares a new release by replacing version numbers with the supplied version. Replaces version numbers in
@@ -22,8 +22,8 @@ function prepareRelease() {
     return new Promise((resolve, reject) => {
         const packageJsonVersion = packageJson.version;
         const bowerJsonVersion = require('../../bower.json').version;
-        const buildProperties = getBuildProperties();
-        const buildPropsVersion = buildProperties.highcharts.product.version;
+        const buildProperties = require('../../build-properties.json');
+        const buildPropsVersion = buildProperties.version;
 
         LogLib.message(`Versions before applying next version are:\n
             package.json: ${packageJsonVersion}
@@ -40,15 +40,16 @@ function prepareRelease() {
 
         if (argv.cleanup) {
             const stagedChanges = ChildProcess.execSync('git diff --cached --name-only').toString();
-            ChildProcess.execSync(`sed -i'.bak' -e 's/${buildPropsVersion}.*/${packageJsonVersion}-modified/g' build.properties`);
-            ChildProcess.execSync('sed -i\'.bak\' -e "s/date=.*/date=/" build.properties');
+            buildProperties.version = packageJsonVersion + '-modified';
+            buildProperties.date = '';
+            fs.writeFileSync('build-properties.json', JSON.stringify(buildProperties, null, 2));
 
             if (argv.commit) {
                 if (stagedChanges) {
                     reject(new Error('You have other staged changes. Please commit or remove them first.'));
                     return;
                 }
-                ChildProcess.execSync(`git add build.properties && git commit -m"Cleaned up after v${packageJsonVersion}."`);
+                ChildProcess.execSync(`git add build-properties.json && git commit -m"Cleaned up after v${packageJsonVersion}."`);
                 LogLib.message('Clean up commit added. git push when you are ready.');
             }
             LogLib.success(`Cleaned up after v${packageJsonVersion}`);
@@ -70,10 +71,11 @@ function prepareRelease() {
         */
         ChildProcess.execSync(`sed -i'.bak' -e '/version/s/"${packageJsonVersion}"/'\\"${nextVersion}\\"/ package.json`);
         ChildProcess.execSync(`sed -i'.bak' -e '/version/s/"${bowerJsonVersion}"/'\\"${nextVersion}\\"/ bower.json`);
-        ChildProcess.execSync(`sed -i'.bak' -e 's/${buildPropsVersion}/${nextVersion}/' build.properties`);
 
-        // replace/fill in date in build.properties
-        ChildProcess.execSync('sed -i\'.bak\' -e "s/date=.*/date=$(date +%Y-%m-%d)/" build.properties');
+        // Update build-properties.json
+        buildProperties.version = nextVersion;
+        buildProperties.date = new Date().toISOString().split('T')[0];
+        fs.writeFileSync('build-properties.json', JSON.stringify(buildProperties, null, 2));
 
         // replace occurences of @ since next in docs with @since x.y.z, first checking if xargs is on gnu (linux) or bsd (osx).
         const isGNU = ChildProcess.execSync('xargs --version 2>&1 |grep -s GNU >/dev/null && echo true || echo false').toString().replace('\n', '') === 'true';
