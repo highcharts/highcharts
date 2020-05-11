@@ -3,7 +3,6 @@ const fs = require('fs');
 const gulp = require('gulp');
 const zip = require('gulp-zip');
 const { promisify } = require('util');
-const build = require('./lib/build');
 const log = require('./lib/log');
 
 /* Promisify utility functions. NOTE: When configured Node.js version is
@@ -78,8 +77,9 @@ function createProductsAPIArchives() {
 
     // Copy lib files, then zip all product api archives
     return copyLibFiles().then(() => {
-        const properties = build.getBuildProperties();
-        const zipTasks = Object.keys(properties).map(zipProductAPI);
+        const properties = require('../../build-properties.json');
+        const fileNames = Object.keys(properties.products).map(p => properties.products[p].distpath);
+        const zipTasks = fileNames.map(zipProductAPI);
         return Promise.all(zipTasks);
     });
 }
