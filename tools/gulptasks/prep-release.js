@@ -10,7 +10,7 @@ const fs = require('fs');
 
 /**
  * Prepares a new release by replacing version numbers with the supplied version. Replaces version numbers in
- * package.json, bower.json, build.properties and replaces any "@ since next" tag in docs with the specified --nextversion
+ * package.json, bower.json, build-properties.json and replaces any "@ since next" tag in docs with the specified --nextversion
  * Run using `gulp prep-release --nextversion` and `gulp prep-release --cleanup (--commit)`.
  *
  * @return {Promise<void>}
@@ -28,14 +28,14 @@ function prepareRelease() {
         LogLib.message(`Versions before applying next version are:\n
             package.json: ${packageJsonVersion}
             bower.json: ${bowerJsonVersion}
-            build.properties: ${buildPropsVersion}
+            build-properties.json: ${buildPropsVersion}
         `);
 
         if (packageJsonVersion !== bowerJsonVersion ||
             packageJsonVersion !== buildPropsVersion.replace('-modified', '') ||
             buildPropsVersion.replace('-modified', '') !== bowerJsonVersion) {
             LogLib.warn('The current versions declared in files package.json, ' +
-                                'bower.json and build.properties does not match!');
+                                'bower.json and build-properties.json does not match!');
         }
 
         if (argv.cleanup) {
@@ -81,19 +81,19 @@ function prepareRelease() {
         const isGNU = ChildProcess.execSync('xargs --version 2>&1 |grep -s GNU >/dev/null && echo true || echo false').toString().replace('\n', '') === 'true';
         ChildProcess.execSync(`grep -Rl --exclude=*.bak --exclude-dir=node_modules --exclude-dir=code "@since\\s\\+next" . | xargs ${isGNU ? '-r' : ''} sed -i'.bak' -e 's/@since *next/@since ${nextVersion}/'`);
 
-        LogLib.success('Updated version in package.json, bower.json, build.properties and replaced @ since next' +
+        LogLib.success('Updated version in package.json, bower.json, build-properties.json and replaced @ since next' +
                         ' in the docs. Please review changes and commit & push when ready.');
         resolve();
     });
 }
 
 prepareRelease.description = 'Prepares a new release by replacing version numbers with the supplied version. ' +
-                                'Replaces version numbers in package.json, bower.json, build.properties and ' +
+                                'Replaces version numbers in package.json, bower.json, build-properties.json and ' +
                                 'replaces any "@ since next" tag in docs with the specified nextversion';
 prepareRelease.flags = {
-    '--cleanup': 'Will add -modified to version and remove date from build.properties. Exludes --version',
+    '--cleanup': 'Will add -modified to version and remove date from build-properties.json. Exludes --version',
     '--commit': 'Commit cleanup changes. Implies --cleanup.',
-    '--nextversion': 'Version that will replace version in package.json, build.properties, bower.json and "since next" in the docs.'
+    '--nextversion': 'Version that will replace version in package.json, build-properties.json, bower.json and "since next" in the docs.'
 };
 
 Gulp.task('prep-release', prepareRelease);
