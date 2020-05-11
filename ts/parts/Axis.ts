@@ -5483,12 +5483,7 @@ class Axis implements AxisComposition, AxisLike {
         axis.setAxisTranslation(true);
 
         // hook for ordinal axes and radial axes
-        fireEvent(this, 'setTickInterval');
-
-        // hook for extensions, used in Highstock ordinal axes
-        if (axis.ordinal) {
-            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
-        }
+        fireEvent(this, 'initialAxisTranslation');
 
         // In column-like charts, don't cramp in more ticks than there are
         // points (#1943, #4184)
