@@ -14,7 +14,7 @@ function afterSetExtremes(e) {
     });
 }
 
-// See source code from the JSONP handler at https://github.com/highcharts/highcharts/blob/master/samples/data/from-sql.php
+// See source code from the JSONP handler at https://github.com/highcharts/highcharts/blob/v7.0.0/samples/data/from-sql.php
 $.getJSON('https://www.highcharts.com/samples/data/from-sql.php?callback=?', function (data) {
 
     // Add a null value for the end date
