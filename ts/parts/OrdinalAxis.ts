@@ -1032,8 +1032,13 @@ namespace OrdinalAxis {
             }
         });
 
-        addEvent(AxisClass, 'setTickInterval', function (): void {
-            (this as OrdinalAxis).ordinal.beforeSetTickPositions();
+        addEvent(AxisClass, 'initialAxisTranslation', function (): void {
+            const axis = this;
+
+            if (axis.ordinal) {
+                axis.ordinal.beforeSetTickPositions();
+                axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
+            }
         });
 
         // Extending the Chart.pan method for ordinal axes

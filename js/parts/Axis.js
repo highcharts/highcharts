@@ -1431,11 +1431,7 @@ var Axis = /** @class */ (function () {
         // set the translation factor used in translate function
         axis.setAxisTranslation(true);
         // hook for ordinal axes and radial axes
-        fireEvent(this, 'setTickInterval');
-        // hook for extensions, used in Highstock ordinal axes
-        if (axis.ordinal) {
-            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
-        }
+        fireEvent(this, 'initialAxisTranslation');
         // In column-like charts, don't cramp in more ticks than there are
         // points (#1943, #4184)
         if (axis.pointRange && !tickIntervalOption) {

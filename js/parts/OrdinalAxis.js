@@ -675,8 +675,12 @@ var OrdinalAxis;
                     !axis.chart.navigator.adaptToUpdatedData;
             }
         });
-        addEvent(AxisClass, 'setTickInterval', function () {
-            this.ordinal.beforeSetTickPositions();
+        addEvent(AxisClass, 'initialAxisTranslation', function () {
+            var axis = this;
+            if (axis.ordinal) {
+                axis.ordinal.beforeSetTickPositions();
+                axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
+            }
         });
         // Extending the Chart.pan method for ordinal axes
         addEvent(ChartClass, 'pan', function (e) {
