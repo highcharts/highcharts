@@ -323,7 +323,7 @@ var SVGLabel = /** @class */ (function (_super) {
             // Create the border box if it is not already present
             if (!this.box) {
                 // Symbol definition exists (#5324)
-                var box = this.symbolKey ?
+                var box = this.box = this.symbolKey ?
                     this.renderer.symbol(this.symbolKey) :
                     this.renderer.rect();
                 box.addClass(// Don't use label className for buttons
@@ -333,7 +333,6 @@ var SVGLabel = /** @class */ (function (_super) {
                 crispAdjust = this.getCrispAdjust();
                 attribs.x = crispAdjust;
                 attribs.y = (this.baseline ? -this.baselineOffset : 0) + crispAdjust;
-                this.box = box;
             }
             // Apply the box attributes
             attribs.width = Math.round(this.width);

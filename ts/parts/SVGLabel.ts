@@ -478,7 +478,7 @@ class SVGLabel extends SVGElement {
             // Create the border box if it is not already present
             if (!this.box) {
                 // Symbol definition exists (#5324)
-                const box = this.symbolKey ?
+                const box = this.box = this.symbolKey ?
                     this.renderer.symbol(this.symbolKey) :
                     this.renderer.rect();
 
@@ -492,7 +492,6 @@ class SVGLabel extends SVGElement {
                 crispAdjust = this.getCrispAdjust();
                 attribs.x = crispAdjust;
                 attribs.y = (this.baseline ? -this.baselineOffset : 0) + crispAdjust;
-                this.box = box;
 
             }
 
