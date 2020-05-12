@@ -1816,8 +1816,13 @@ var Chart = /** @class */ (function () {
      */
     Chart.prototype.updateContainerScaling = function () {
         var container = this.container;
-        if (container.offsetWidth &&
-            container.offsetHeight &&
+        if (
+        /**
+         * #13342 - tooltip was not visible in Chrome, when chart
+         * updates height.
+         */
+        container.offsetWidth > 2 &&
+            container.offsetHeight > 2 &&
             container.getBoundingClientRect) {
             var bb = container.getBoundingClientRect(), scaleX = bb.width / container.offsetWidth, scaleY = bb.height / container.offsetHeight;
             if (scaleX !== 1 || scaleY !== 1) {

@@ -2652,8 +2652,12 @@ class Chart {
     public updateContainerScaling(): void {
         const container = this.container;
         if (
-            container.offsetWidth &&
-            container.offsetHeight &&
+            /**
+             * #13342 - tooltip was not visible in Chrome, when chart
+             * updates height.
+             */
+            container.offsetWidth > 2 &&
+            container.offsetHeight > 2 &&
             container.getBoundingClientRect
         ) {
             const bb = container.getBoundingClientRect(),
