@@ -162,7 +162,7 @@ class SVGLabel extends SVGElement {
         if (alignFactor !== this.alignFactor) {
             this.alignFactor = alignFactor;
             // Bounding box exists, means we're dynamically changing
-            if (this.bBox) {
+            if (this.bBox && isNumber(this.xSetting)) {
                 this.attr({ x: this.xSetting }); // #5134
             }
         }
