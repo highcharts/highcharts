@@ -88,5 +88,6 @@ function createProductsAPIArchives() {
 require('./jsdoc');
 gulp.task('dist-api', gulp.series(
     'jsdoc',
+    'test-tree',
     createProductsAPIArchives
 ));
