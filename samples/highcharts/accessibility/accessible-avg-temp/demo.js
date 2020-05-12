@@ -5,12 +5,12 @@ Highcharts.chart('container', {
     accessibility: {
         point: {
             descriptionFormatter: function (p) {
-                return p.series.name + ', ' + p.category + ', ' + p.y + ' millimetres rainfall.';
+                return p.series.name + ', ' + p.category + ', ' + p.y + '°F.';
             }
         }
     },
     title: {
-        text: 'Monthly Average Rainfall'
+        text: 'Monthly Average Temperature'
     },
     subtitle: {
         text: 'Source: WorldClimate.com'
@@ -35,12 +35,12 @@ Highcharts.chart('container', {
     yAxis: {
         min: 0,
         title: {
-            text: 'Rainfall (mm)'
+            text: 'Temperature (°F)'
         }
     },
     tooltip: {
-        headerFormat: '<span style="font-size: 10px">{point.key} rainfall</span><br/>',
-        valueSuffix: 'mm'
+        headerFormat: '<span style="font-size: 10px">{point.key} average temperature</span><br/>',
+        valueSuffix: '°F'
     },
     plotOptions: {
         column: {
@@ -50,15 +50,15 @@ Highcharts.chart('container', {
     },
     series: [{
         name: 'New York',
-        data: [83.6, 78.8, 98.5, 93.4, 106.0, 84.5, 105.0, 104.3, 91.2, 83.5, 106.6, 92.3]
+        data: [30.7, 31.5, 39, 49.8, 60.8, 70.2, 75.6, 73.8, 66.9, 55.9, 44.8, 34.5]
     }, {
-        name: 'Tokyo',
-        data: [49.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
+        name: 'Canberra',
+        data: [68.4, 67.8, 63.5, 55.8, 48.4, 43.5, 41.5, 44.2, 48.7, 54.5, 59.7, 64.9]
     }, {
-        name: 'London',
-        data: [48.9, 38.8, 39.3, 41.4, 47.0, 48.3, 59.0, 59.6, 52.4, 65.2, 59.3, 51.2]
+        name: 'Ottawa',
+        data: [12.2, 13.8, 25.5, 41.2, 55.0, 64.8, 69.1, 66.7, 58.5, 46.6, 33.3, 17.8]
     }, {
-        name: 'Berlin',
-        data: [42.4, 33.2, 34.5, 39.7, 52.6, 75.5, 57.4, 60.4, 47.6, 39.1, 46.8, 51.1]
+        name: 'Dubai',
+        data: [65.5, 67.1, 72.1, 79.2, 86.7, 90.1, 95.0, 95.0, 90.5, 84.2, 76.3, 68.7]
     }]
 });
