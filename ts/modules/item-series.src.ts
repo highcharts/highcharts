@@ -199,6 +199,7 @@ seriesType<Highcharts.ItemSeries>(
     {
         markerAttribs: void 0,
         translate: function (this: Highcharts.ItemSeries): void {
+            // Initialize chart without setting data, #13379.
             if (this.total === 0) {
                 this.center = this.getCenter();
             }

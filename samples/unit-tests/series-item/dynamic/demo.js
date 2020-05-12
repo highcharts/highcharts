@@ -39,16 +39,3 @@ QUnit.test('Item series dynamics', assert => {
         'Point length modified'
     );
 });
-
-QUnit.test('Errors in the console during initialization with no data should not be visible, #13379.', assert => {
-    Highcharts.chart('container', {
-        series: [{
-            type: 'item'
-        }]
-    });
-
-    assert.ok(
-        true,
-        'No errors in console.'
-    );
-});
