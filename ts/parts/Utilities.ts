@@ -3333,18 +3333,18 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
  * @function Highcharts.uniqueKey
  *
  * @return {string}
- *         A unique key.
+ * A unique key.
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    const uniqueKeyHash = H.serialKeys ?
+    const hash = H.serialKeys ?
         '' :
         Math.random().toString(36).substring(2, 9) + '-';
 
-    let idCounter = 0;
+    let id = 0;
 
     return function (): string {
-        return 'highcharts-' + uniqueKeyHash + idCounter++;
+        return 'highcharts-' + hash + id++;
     };
 }());
 
