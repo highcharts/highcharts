@@ -2543,7 +2543,7 @@ class SVGElement {
                 strokeWidth = (options.width * 2) + 1 - (2 * i);
                 attr(shadow, {
                     stroke: (
-                        (shadowOptions as any).color ||
+                        (shadowOptions && (shadowOptions as any).color) ||
                         '${palette.neutralColor100}'
                     ),
                     'stroke-opacity': shadowElementOpacity * i,
