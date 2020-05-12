@@ -2439,15 +2439,15 @@ var seriesType = H.seriesType = function (type, parent, options, props, pointPro
  * @function Highcharts.uniqueKey
  *
  * @return {string}
- *         A unique key.
+ * A unique key.
  */
 var uniqueKey = H.uniqueKey = (function () {
-    var uniqueKeyHash = H.serialKeys ?
+    var hash = H.serialKeys ?
         '' :
         Math.random().toString(36).substring(2, 9) + '-';
-    var idCounter = 0;
+    var id = 0;
     return function () {
-        return 'highcharts-' + uniqueKeyHash + idCounter++;
+        return 'highcharts-' + hash + id++;
     };
 }());
 /**
