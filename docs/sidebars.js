@@ -30,7 +30,7 @@ module.exports = {
             'chart-concepts/responsive'
         ],
         'Stock': [
-            'stock/understanding-highstock',
+            'stock/understanding-highcharts-stock',
             'stock/stock-tools',
             'stock/candlestick-chart',
             'stock/custom-technical-indicators',
@@ -47,7 +47,7 @@ module.exports = {
             'maps/map-navigation',
             'maps/color-axis',
             'maps/map-collection',
-            'maps/create-custom-maps-for-highmaps',
+            'maps/create-custom-maps',
             'maps/custom-geojson-maps',
             'maps/adding-points-and-lines',
             'maps/latlon'
