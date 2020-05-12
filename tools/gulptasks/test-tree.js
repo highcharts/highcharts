@@ -125,14 +125,15 @@ function loadOldTree() {
         request.get(
             'https://api.highcharts.com/highcharts/tree.json',
             function (error, response) {
+
                 if (error) {
                     reject(error);
                     return;
                 }
 
                 log.message('Parsing old tree.json...');
+
                 resolve(JSON.parse(response.body.toString()));
-                log.message('Done.');
             }
         );
 
@@ -170,6 +171,7 @@ function testTree() {
 
             log.message('Comparing trees...');
             compareChildren(oldTree, newTree);
+            log.message('Done.');
         })
         .catch(error => {
 
