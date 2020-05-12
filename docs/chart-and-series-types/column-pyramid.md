@@ -1,4 +1,4 @@
-Introduction
+Column pyramid
 ===
 
 A column pyramid chart, like the column chart, is often used to visualize comparisons of data sets with discrete data, where the focus is on the values instead of categories as people read from left to right. This demo visualizes comparisons of the height of five pyramids.
@@ -36,13 +36,13 @@ Use Cases
 
     
     {
-            chart: {
-                type: 'columnpyramid'
-            },
-            series: [{
-                data: [138.8, 136.4, 104, 101.1, 75]
-            }]
-        }
+        chart: {
+            type: 'columnpyramid'
+        },
+        series: [{
+            data: [138.8, 136.4, 104, 101.1, 75]
+        }]
+    }
 
 API Docs
 --------
