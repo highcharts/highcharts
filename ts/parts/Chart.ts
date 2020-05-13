@@ -951,8 +951,10 @@ class Chart {
         if (hasCartesianSeries) {
             // set axes scales
             axes.forEach(function (axis: Highcharts.Axis): void {
-                axis.updateNames();
-                axis.setScale();
+                if (!chart.isResizing || !axis.tickPositions) {
+                    axis.updateNames();
+                    axis.setScale();
+                }
             });
         }
 
