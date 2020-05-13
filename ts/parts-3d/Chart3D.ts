@@ -36,48 +36,9 @@ declare global {
         interface Chart {
             chart3d?: Chart3D['chart3d'];
             is3d(): boolean;
-            retrieveStacks(stacking?: string): Stack3dDictionary;
-        }
-        interface Chart3dFrameObject extends Chart3dFrameOptions {
-            axes: Record<string, Record<string, (Edge3dObject|null)>>;
-            back: Chart3dFrameSideObject;
-            bottom: Chart3dFrameSideObject;
-            front: Chart3dFrameSideObject;
-            left: Chart3dFrameSideObject;
-            right: Chart3dFrameSideObject;
-            top: Chart3dFrameSideObject;
-        }
-        interface Chart3dFrameOptions {
-            back?: Chart3dFrameSideOptions;
-            bottom?: Chart3dFrameSideOptions;
-            front?: Chart3dFrameSideOptions;
-            left?: Chart3dFrameSideOptions;
-            right?: Chart3dFrameSideOptions;
-            size?: number;
-            top?: Chart3dFrameSideOptions;
-            visible?: string;
-        }
-        interface Chart3dFrameSideObject extends Chart3dFrameSideOptions {
-            frontFacing: boolean;
-            size: number;
-        }
-        interface Chart3dFrameSideOptions {
-            color?: (ColorString|GradientColorObject|PatternObject);
-            size?: number;
-            visible?: ('auto'|'default'|boolean);
-        }
-        interface Chart3dOptions {
-            alpha?: number;
-            axisLabelPosition?: ('auto'|null);
-            beta?: number;
-            depth?: number;
-            enabled?: boolean;
-            fitToPlot?: boolean;
-            frame?: Chart3dFrameOptions;
-            viewDistance?: number;
         }
         interface ChartOptions {
-            options3d?: Chart3dOptions;
+            options3d?: Chart3D.Options;
         }
         interface Edge3dObject extends Position3dObject {
             xDir: Position3dObject;
@@ -108,6 +69,55 @@ namespace Chart3D {
 
     /* *
      *
+     *  Interfaces
+     *
+     * */
+
+    export interface FrameObject extends FrameOptions {
+        axes: Record<string, Record<string, (Highcharts.Edge3dObject|null)>>;
+        back: FrameSideObject;
+        bottom: FrameSideObject;
+        front: FrameSideObject;
+        left: FrameSideObject;
+        right: FrameSideObject;
+        top: FrameSideObject;
+    }
+
+    export interface FrameOptions {
+        back?: FrameSideOptions;
+        bottom?: FrameSideOptions;
+        front?: FrameSideOptions;
+        left?: FrameSideOptions;
+        right?: FrameSideOptions;
+        size?: number;
+        top?: FrameSideOptions;
+        visible?: string;
+    }
+
+    export interface FrameSideObject extends FrameSideOptions {
+        frontFacing: boolean;
+        size: number;
+    }
+
+    export interface FrameSideOptions {
+        color?: Highcharts.ColorType;
+        size?: number;
+        visible?: ('auto'|'default'|boolean);
+    }
+
+    export interface Options {
+        alpha?: number;
+        axisLabelPosition?: ('auto'|null);
+        beta?: number;
+        depth?: number;
+        enabled?: boolean;
+        fitToPlot?: boolean;
+        frame?: FrameOptions;
+        viewDistance?: number;
+    }
+
+    /* *
+     *
      *  Classes
      *
      * */
@@ -134,7 +144,7 @@ namespace Chart3D {
          * */
 
         public chart: Chart3D;
-        public frame3d: Highcharts.Chart3dFrameObject = void 0 as any;
+        public frame3d: Chart3D.FrameObject = void 0 as any;
 
         /* *
          *
@@ -142,7 +152,7 @@ namespace Chart3D {
          *
          * */
 
-        public get3dFrame(): Highcharts.Chart3dFrameObject {
+        public get3dFrame(): Chart3D.FrameObject {
             var chart = this.chart,
                 options3d = (chart.options.chart as any).options3d,
                 frameOptions = options3d.frame,
@@ -236,9 +246,9 @@ namespace Chart3D {
                 sources: Array<unknown>,
                 faceOrientation: number,
                 defaultVisible?: ('auto'|'default'|boolean)
-            ): Highcharts.Chart3dFrameSideObject {
+            ): Chart3D.FrameSideObject {
                 var faceAttrs = ['size', 'color', 'visible'];
-                var options = {} as Highcharts.Chart3dFrameSideOptions;
+                var options: Chart3D.FrameSideOptions = {};
 
                 for (var i = 0; i < faceAttrs.length; i++) {
                     var attr = faceAttrs[i];
@@ -272,7 +282,7 @@ namespace Chart3D {
 
             // docs @TODO: Add all frame options (left, right, top, bottom,
             // front, back) to apioptions JSDoc once the new system is up.
-            var ret: Highcharts.Chart3dFrameObject = {
+            var ret: Chart3D.FrameObject = {
                 axes: {},
                 // FIXME: Previously, left/right, top/bottom and front/back
                 // pairs shared size and color.
@@ -329,8 +339,8 @@ namespace Chart3D {
             // should be one the left-most edge (right-most if opposite).
             if (options3d.axisLabelPosition === 'auto') {
                 var isValidEdge = function (
-                    face1: Highcharts.Chart3dFrameSideObject,
-                    face2: Highcharts.Chart3dFrameSideObject
+                    face1: Chart3D.FrameSideObject,
+                    face2: Chart3D.FrameSideObject
                 ): (boolean|undefined) {
                     return (
                         (face1.visible !== face2.visible) ||
@@ -859,7 +869,54 @@ namespace Chart3D {
     /**
      * @private
      */
-    export function compose(ChartClass: typeof Chart): void {
+    export function compose(ChartClass: typeof Chart, FxClass: typeof Fx): void {
+
+        const chartProto = ChartClass.prototype;
+        const fxProto = FxClass.prototype;
+
+        /**
+         * Shorthand to check the is3d flag.
+         * @private
+         * @return {boolean}
+         * Whether it is a 3D chart.
+         */
+        chartProto.is3d = function (): boolean {
+            return (
+                (this.options.chart as any).options3d &&
+                (this.options.chart as any).options3d.enabled
+            ); // #4280
+        };
+
+        chartProto.propsRequireDirtyBox.push('chart.options3d');
+        chartProto.propsRequireUpdateSeries.push('chart.options3d');
+
+        /**
+         * Animation setter for matrix property.
+         * @private
+         */
+        fxProto.matrixSetter = function (): void {
+            let interpolated;
+
+            if (this.pos < 1 &&
+                    (isArray(this.start) || isArray(this.end))) {
+                var start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0];
+                var end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
+
+                interpolated = [];
+                for (var i = 0; i < 6; i++) {
+                    interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);
+                }
+            } else {
+                interpolated = this.end;
+            }
+
+            (this.elem as any).attr(
+                this.prop,
+                interpolated,
+                null,
+                true
+            );
+        };
 
         merge(true, H.getOptions(), defaultOptions);
 
@@ -871,6 +928,10 @@ namespace Chart3D {
         addEvent(ChartClass, 'afterSetChartSize', onAfterSetChartSize);
         addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onBeforeRender);
+
+        wrap(H.Chart.prototype, 'isInsidePlot', wrapIsInsidePlot);
+        wrap(ChartClass, 'renderSeries', wrapRenderSeries);
+        wrap(ChartClass, 'setClassName', wrapSetClassName);
 
     }
 
@@ -1861,113 +1922,55 @@ namespace Chart3D {
         }
     }
 
+    /**
+     * @private
+     */
+    function wrapIsInsidePlot(
+        this: Chart,
+        proceed: Function
+    ): boolean {
+        return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
+    }
+
+    /**
+     * Draw the series in the reverse order (#3803, #3917)
+     * @private
+     */
+    function wrapRenderSeries(
+        this: Chart,
+        proceed: Function
+    ): void {
+        var series,
+            i = this.series.length;
+
+        if (this.is3d()) {
+            while (i--) {
+                series = this.series[i];
+                series.translate();
+                series.render();
+            }
+        } else {
+            proceed.call(this);
+        }
+    }
+
+    /**
+     * @private
+     */
+    function wrapSetClassName(
+        this: Chart,
+        proceed: Function
+    ): void {
+        proceed.apply(this, [].slice.call(arguments, 1));
+
+        if (this.is3d()) {
+            this.container.className += ' highcharts-3d-chart';
+        }
+    }
+
 }
 
-Chart3D.compose(Chart);
-
-/**
- * Shorthand to check the is3d flag.
- * @private
- * @return {boolean}
- *         Whether it is a 3D chart.
- */
-Chart.prototype.is3d = function (): boolean {
-    return (
-        (this.options.chart as any).options3d &&
-        (this.options.chart as any).options3d.enabled
-    ); // #4280
-};
-
-Chart.prototype.propsRequireDirtyBox.push('chart.options3d');
-Chart.prototype.propsRequireUpdateSeries.push('chart.options3d');
-
-wrap(H.Chart.prototype, 'isInsidePlot', function (
-    this: Highcharts.Chart,
-    proceed: Function
-): boolean {
-    return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
-});
-
-wrap(Chart.prototype, 'setClassName', function (
-    this: Highcharts.Chart,
-    proceed: Function
-): void {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    if (this.is3d()) {
-        this.container.className += ' highcharts-3d-chart';
-    }
-});
-
-// Draw the series in the reverse order (#3803, #3917)
-wrap(Chart.prototype, 'renderSeries', function (
-    this: Highcharts.Chart,
-    proceed: Function
-): void {
-    var series,
-        i = this.series.length;
-
-    if (this.is3d()) {
-        while (i--) {
-            series = this.series[i];
-            series.translate();
-            series.render();
-        }
-    } else {
-        proceed.call(this);
-    }
-});
-
-Chart.prototype.retrieveStacks = function (
-    stacking?: string
-): Highcharts.Stack3dDictionary {
-    var series = this.series,
-        stacks = {} as Highcharts.Stack3dDictionary,
-        stackNumber: number,
-        i = 1;
-
-    this.series.forEach(function (s: Highcharts.Series): void {
-        stackNumber = pick(
-            s.options.stack as any,
-            (stacking ? 0 : series.length - 1 - (s.index as any))
-        ); // #3841, #4532
-        if (!stacks[stackNumber]) {
-            stacks[stackNumber] = { series: [s], position: i };
-            i++;
-        } else {
-            stacks[stackNumber].series.push(s);
-        }
-    });
-
-    stacks.totalStacks = i + 1;
-    return stacks;
-};
-
-// Animation setter for matrix property.
-Fx.prototype.matrixSetter = function (): void {
-    let interpolated;
-
-    if (this.pos < 1 &&
-            (isArray(this.start) || isArray(this.end))) {
-        var start: Array<number> = (this.start as any) || [1, 0, 0, 1, 0, 0];
-        var end: Array<number> = (this.end as any) || [1, 0, 0, 1, 0, 0];
-
-        interpolated = [];
-        for (var i = 0; i < 6; i++) {
-            interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);
-        }
-    } else {
-        interpolated = this.end;
-    }
-
-    (this.elem as any).attr(
-        this.prop,
-        interpolated,
-        null,
-        true
-    );
-};
-
+Chart3D.compose(Chart, Fx);
 ZAxis.ZChartComposition.compose(Chart);
 Axis3D.compose(Axis);
 
@@ -2006,3 +2009,5 @@ Axis3D.compose(Axis);
  */
 
 ''; // adds doclets above to transpiled file
+
+export default Chart3D;
