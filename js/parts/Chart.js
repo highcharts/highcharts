@@ -558,8 +558,10 @@ var Chart = /** @class */ (function () {
         if (hasCartesianSeries) {
             // set axes scales
             axes.forEach(function (axis) {
-                axis.updateNames();
-                axis.setScale();
+                if (!chart.isResizing || !axis.tickPositions) {
+                    axis.updateNames();
+                    axis.setScale();
+                }
             });
         }
         chart.getMargins(); // #3098
