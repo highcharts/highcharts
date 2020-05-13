@@ -1981,7 +1981,10 @@ class Pointer {
                 return;
             }
 
-            hoverPoint.firePointEvent('mouseOver');
+            // Hover state should not be lost when axis is updated (#12569)
+            if (hoverSeries && hoverSeries.directTouch) {
+                hoverPoint.firePointEvent('mouseOver');
+            }
 
             /**
              * Contains all hovered points.
