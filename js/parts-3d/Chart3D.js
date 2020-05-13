@@ -22,6 +22,11 @@ var Chart3D;
 (function (Chart3D) {
     /* *
      *
+     *  Interfaces
+     *
+     * */
+    /* *
+     *
      *  Classes
      *
      * */
@@ -612,7 +617,41 @@ var Chart3D;
     /**
      * @private
      */
-    function compose(ChartClass) {
+    function compose(ChartClass, FxClass) {
+        var chartProto = ChartClass.prototype;
+        var fxProto = FxClass.prototype;
+        /**
+         * Shorthand to check the is3d flag.
+         * @private
+         * @return {boolean}
+         * Whether it is a 3D chart.
+         */
+        chartProto.is3d = function () {
+            return (this.options.chart.options3d &&
+                this.options.chart.options3d.enabled); // #4280
+        };
+        chartProto.propsRequireDirtyBox.push('chart.options3d');
+        chartProto.propsRequireUpdateSeries.push('chart.options3d');
+        /**
+         * Animation setter for matrix property.
+         * @private
+         */
+        fxProto.matrixSetter = function () {
+            var interpolated;
+            if (this.pos < 1 &&
+                (isArray(this.start) || isArray(this.end))) {
+                var start = this.start || [1, 0, 0, 1, 0, 0];
+                var end = this.end || [1, 0, 0, 1, 0, 0];
+                interpolated = [];
+                for (var i = 0; i < 6; i++) {
+                    interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);
+                }
+            }
+            else {
+                interpolated = this.end;
+            }
+            this.elem.attr(this.prop, interpolated, null, true);
+        };
         merge(true, H.getOptions(), Chart3D.defaultOptions);
         addEvent(ChartClass, 'init', onInit);
         addEvent(ChartClass, 'addSeries', onAddSeries);
@@ -622,6 +661,9 @@ var Chart3D;
         addEvent(ChartClass, 'afterSetChartSize', onAfterSetChartSize);
         addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
         addEvent(ChartClass, 'beforeRender', onBeforeRender);
+        wrap(H.Chart.prototype, 'isInsidePlot', wrapIsInsidePlot);
+        wrap(ChartClass, 'renderSeries', wrapRenderSeries);
+        wrap(ChartClass, 'setClassName', wrapSetClassName);
     }
     Chart3D.compose = compose;
     /**
@@ -1557,75 +1599,77 @@ var Chart3D;
             this.chart3d = new Composition(this);
         }
     }
+    /**
+     * @private
+     */
+    function wrapIsInsidePlot(proceed) {
+        return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
+    }
+    /**
+     * Draw the series in the reverse order (#3803, #3917)
+     * @private
+     */
+    function wrapRenderSeries(proceed) {
+        var series, i = this.series.length;
+        if (this.is3d()) {
+            while (i--) {
+                series = this.series[i];
+                series.translate();
+                series.render();
+            }
+        }
+        else {
+            proceed.call(this);
+        }
+    }
+    /**
+     * @private
+     */
+    function wrapSetClassName(proceed) {
+        proceed.apply(this, [].slice.call(arguments, 1));
+        if (this.is3d()) {
+            this.container.className += ' highcharts-3d-chart';
+        }
+    }
 })(Chart3D || (Chart3D = {}));
-Chart3D.compose(Chart);
-/**
- * Shorthand to check the is3d flag.
- * @private
- * @return {boolean}
- *         Whether it is a 3D chart.
- */
-Chart.prototype.is3d = function () {
-    return (this.options.chart.options3d &&
-        this.options.chart.options3d.enabled); // #4280
-};
-Chart.prototype.propsRequireDirtyBox.push('chart.options3d');
-Chart.prototype.propsRequireUpdateSeries.push('chart.options3d');
-wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
+/*
+wrap(H.Chart.prototype, 'isInsidePlot', function (
+    this: Highcharts.Chart,
+    proceed: Function
+): boolean {
     return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
-wrap(Chart.prototype, 'setClassName', function (proceed) {
+
+wrap(Chart.prototype, 'setClassName', function (
+    this: Highcharts.Chart,
+    proceed: Function
+): void {
     proceed.apply(this, [].slice.call(arguments, 1));
+
     if (this.is3d()) {
         this.container.className += ' highcharts-3d-chart';
     }
 });
+
 // Draw the series in the reverse order (#3803, #3917)
-wrap(Chart.prototype, 'renderSeries', function (proceed) {
-    var series, i = this.series.length;
+wrap(Chart.prototype, 'renderSeries', function (
+    this: Highcharts.Chart,
+    proceed: Function
+): void {
+    var series,
+        i = this.series.length;
+
     if (this.is3d()) {
         while (i--) {
             series = this.series[i];
             series.translate();
             series.render();
         }
-    }
-    else {
+    } else {
         proceed.call(this);
     }
-});
-Chart.prototype.retrieveStacks = function (stacking) {
-    var series = this.series, stacks = {}, stackNumber, i = 1;
-    this.series.forEach(function (s) {
-        stackNumber = pick(s.options.stack, (stacking ? 0 : series.length - 1 - s.index)); // #3841, #4532
-        if (!stacks[stackNumber]) {
-            stacks[stackNumber] = { series: [s], position: i };
-            i++;
-        }
-        else {
-            stacks[stackNumber].series.push(s);
-        }
-    });
-    stacks.totalStacks = i + 1;
-    return stacks;
-};
-// Animation setter for matrix property.
-Fx.prototype.matrixSetter = function () {
-    var interpolated;
-    if (this.pos < 1 &&
-        (isArray(this.start) || isArray(this.end))) {
-        var start = this.start || [1, 0, 0, 1, 0, 0];
-        var end = this.end || [1, 0, 0, 1, 0, 0];
-        interpolated = [];
-        for (var i = 0; i < 6; i++) {
-            interpolated.push(this.pos * end[i] + (1 - this.pos) * start[i]);
-        }
-    }
-    else {
-        interpolated = this.end;
-    }
-    this.elem.attr(this.prop, interpolated, null, true);
-};
+});*/
+Chart3D.compose(Chart, Fx);
 ZAxis.ZChartComposition.compose(Chart);
 Axis3D.compose(Axis);
 /**
@@ -1660,3 +1704,4 @@ Axis3D.compose(Axis);
  * @apioption chart.options3d.frame.side.size
  */
 ''; // adds doclets above to transpiled file
+export default Chart3D;
