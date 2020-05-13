@@ -1632,43 +1632,6 @@ var Chart3D;
         }
     }
 })(Chart3D || (Chart3D = {}));
-/*
-wrap(H.Chart.prototype, 'isInsidePlot', function (
-    this: Highcharts.Chart,
-    proceed: Function
-): boolean {
-    return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
-});
-
-wrap(Chart.prototype, 'setClassName', function (
-    this: Highcharts.Chart,
-    proceed: Function
-): void {
-    proceed.apply(this, [].slice.call(arguments, 1));
-
-    if (this.is3d()) {
-        this.container.className += ' highcharts-3d-chart';
-    }
-});
-
-// Draw the series in the reverse order (#3803, #3917)
-wrap(Chart.prototype, 'renderSeries', function (
-    this: Highcharts.Chart,
-    proceed: Function
-): void {
-    var series,
-        i = this.series.length;
-
-    if (this.is3d()) {
-        while (i--) {
-            series = this.series[i];
-            series.translate();
-            series.render();
-        }
-    } else {
-        proceed.call(this);
-    }
-});*/
 Chart3D.compose(Chart, Fx);
 ZAxis.ZChartComposition.compose(Chart);
 Axis3D.compose(Axis);
