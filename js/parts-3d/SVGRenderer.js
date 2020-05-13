@@ -544,7 +544,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
                 hasCA = true;
             }
         }
-        return hasCA ? ca : false;
+        return hasCA ? [ca, params] : false;
     }
     attribs = merge(attribs);
     attribs.alpha = (attribs.alpha || 0) * deg2rad;
@@ -626,10 +626,12 @@ SVGRenderer.prototype.arc3d = function (attribs) {
     });
     // Override attr to remove shape attributes and use those to set child paths
     wrapper.attr = function (params) {
-        var ca;
+        var ca, paramArr;
         if (typeof params === 'object') {
-            ca = suckOutCustom(params);
-            if (ca) {
+            paramArr = suckOutCustom(params);
+            if (paramArr) {
+                ca = paramArr[0];
+                arguments[0] = paramArr[1];
                 extend(wrapper.attribs, ca);
                 wrapper.setPaths(wrapper.attribs);
             }
@@ -639,7 +641,7 @@ SVGRenderer.prototype.arc3d = function (attribs) {
     // Override the animate function by sucking out custom parameters related to
     // the shapes directly, and update the shapes from the animation step.
     wrapper.animate = function (params, animation, complete) {
-        var ca, from = this.attribs, to, anim, randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
+        var paramArr, from = this.attribs, to, anim, randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
         // Attribute-line properties connected to 3D. These shouldn't have been
         // in the attribs collection in the first place.
         delete params.center;
@@ -648,14 +650,14 @@ SVGRenderer.prototype.arc3d = function (attribs) {
         delete params.beta;
         anim = animObject(pick(animation, this.renderer.globalAnimation));
         if (anim.duration) {
-            ca = suckOutCustom(params);
+            paramArr = suckOutCustom(params);
             // Params need to have a property in order for the step to run
             // (#5765, #7097, #7437)
             wrapper[randomProp] = 0;
             params[randomProp] = 1;
             wrapper[randomProp + 'Setter'] = H.noop;
-            if (ca) {
-                to = ca;
+            if (paramArr) {
+                to = paramArr[0]; // custom attr
                 anim.step = function (a, fx) {
                     /**
                      * @private
