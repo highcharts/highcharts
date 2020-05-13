@@ -160,3 +160,41 @@ QUnit.test('Testing hovering over panes.', function (assert) {
     );
 
 });
+
+QUnit.test('Hover state when axis is updated (#12569).', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 4, null, 6, 7],
+            step: 'right'
+        }],
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        mouseOver: function () {
+                            this.series.chart.yAxis[0].update({
+                                title: {
+                                    style: {
+                                        color: this.color
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    var controller = new TestController(chart),
+        series = chart.series[0],
+        point = series.points[1];
+
+    controller.moveTo(point.plotX, point.plotY);
+
+    assert.ok(
+        series.halo && series.halo.visibility !== 'hidden',
+        'Halo and hover state should be visible.'
+    );
+
+});
