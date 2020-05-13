@@ -951,6 +951,9 @@ class Chart {
         if (hasCartesianSeries) {
             // set axes scales
             axes.forEach(function (axis: Highcharts.Axis): void {
+                // Don't do setScale again if we're only resizing. Regression
+                // #13507. But we need it after chart.update (responsive), as
+                // axis is initialized again (#12137).
                 if (!chart.isResizing || !axis.tickPositions) {
                     axis.updateNames();
                     axis.setScale();
