@@ -267,15 +267,21 @@ seriesType('packedbubble', 'bubble',
      */
     useSimulation: true,
     /**
-    /**
-     * Allow this series' parent nodes to be selected
-     * by clicking on the graph.
+     * Series options for parent nodes.
      *
-     * @since 8.0.4
+     * @since next
      *
      * @private
      */
-    allowParentSelect: false,
+    parentNode: {
+        /**
+         * Allow this series' parent nodes to be selected
+         * by clicking on the graph.
+         *
+         * @since next
+         */
+        allowPointSelect: false
+    },
     /**
     /**
      *
@@ -314,10 +320,6 @@ seriesType('packedbubble', 'bubble',
          */
         // eslint-disable-next-line valid-jsdoc
         /**
-         * Callback to format data labels for _parentNodes_. The
-         * `parentNodeFormat` option takes precedence over the
-         * `parentNodeFormatter`.
-         *
          * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
          * @since 7.1.0
          */
@@ -325,10 +327,6 @@ seriesType('packedbubble', 'bubble',
             return this.name;
         },
         /**
-         * Options for a _parentNode_ label text.
-         *
-         * **Note:** Only SVG-based renderer supports this option.
-         *
          * @sample {highcharts} highcharts/series-packedbubble/packed-dashboard
          *         Dashboard with dataLabels on parentNodes
          *
@@ -1174,7 +1172,13 @@ seriesType('packedbubble', 'bubble',
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseDown: dragNodesMixin.onMouseDown,
+    onMouseDown: function (point, event) {
+        var isParentNode = point.isParentNode, parentNodeLayout = this.parentNodeLayout;
+        if (isParentNode) {
+            parentNodeLayout.start();
+        }
+        dragNodesMixin.onMouseDown.apply(this, arguments);
+    },
     /**
      * Mouse move action during drag&drop.
      * @private
@@ -1253,7 +1257,9 @@ seriesType('packedbubble', 'bubble',
                 point.importEvents();
             }
             // add default handler if in selection mode
-            if (eventType === 'click' && seriesOptions.allowParentSelect) {
+            if (eventType === 'click' &&
+                seriesOptions.parentNode &&
+                seriesOptions.parentNode.allowPointSelect) {
                 defaultFunction = function (event) {
                     // Control key is for Windows, meta (= Cmd key) for Mac,
                     // Shift for Opera.

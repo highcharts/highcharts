@@ -17,10 +17,14 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
             }
         },
         series: [{
-            allowParentSelect: true,
+            parentNode: {
+                allowPointSelect: true
+            },
             data: []
         }, {
-            allowParentSelect: true,
+            parentNode: {
+                allowPointSelect: true
+            },
             data: []
         }, {
             data: []
@@ -59,7 +63,7 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     );
     assert.ok(
         chart.series[0].parentNode.selected,
-        'It should be possible to select a parent node that has enabled allowParentSelect property'
+        'It should be possible to select a parent node that has enabled parentNode.allowPointSelect property'
     );
     controller.triggerEvent(
         'mouseover',
@@ -76,7 +80,7 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
     );
     assert.notOk(
         chart.series[2].parentNode.selected,
-        'It shouldn\'t be possible to select a parent that has not enabled allowParentSelect property.'
+        'It shouldn\'t be possible to select a parent that has not enabled parentNode.allowPointSelect property.'
     );
     controller.triggerEvent(
         'mouseover',

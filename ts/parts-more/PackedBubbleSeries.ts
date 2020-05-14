@@ -178,11 +178,15 @@ declare global {
             seriesInteraction?: boolean;
             splitSeries?: boolean;
         }
+
+        interface PackedBubbleParentNodeOptionsObject {
+            allowPointSelect?: boolean;
+        }
         interface PackedBubblePointOptions extends BubblePointOptions {
             mass?: number;
         }
         interface PackedBubbleSeriesOptions extends BubbleSeriesOptions {
-            allowParentSelect?: boolean;
+            parentNode?: PackedBubbleParentNodeOptionsObject;
             dataLabels?: PackedBubbleDataLabelsOptionsObject;
             draggable?: boolean;
             layoutAlgorithm?: PackedBubbleLayoutAlgorithmOptions;
@@ -590,15 +594,21 @@ seriesType<Highcharts.PackedBubbleSeries>(
          */
         useSimulation: true,
         /**
-        /**
-         * Allow this series' parent nodes to be selected
-         * by clicking on the graph.
+         * Series options for parent nodes.
          *
-         * @since 8.0.4
+         * @since next
          *
          * @private
          */
-        allowParentSelect: false,
+        parentNode: {
+            /**
+             * Allow this series' parent nodes to be selected
+             * by clicking on the graph.
+             *
+             * @since next
+             */
+            allowPointSelect: false
+        },
         /**
         /**
          *
@@ -646,10 +656,6 @@ seriesType<Highcharts.PackedBubbleSeries>(
 
             // eslint-disable-next-line valid-jsdoc
             /**
-             * Callback to format data labels for _parentNodes_. The
-             * `parentNodeFormat` option takes precedence over the
-             * `parentNodeFormatter`.
-             *
              * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
              * @since 7.1.0
              */
@@ -663,10 +669,6 @@ seriesType<Highcharts.PackedBubbleSeries>(
             },
 
             /**
-             * Options for a _parentNode_ label text.
-             *
-             * **Note:** Only SVG-based renderer supports this option.
-             *
              * @sample {highcharts} highcharts/series-packedbubble/packed-dashboard
              *         Dashboard with dataLabels on parentNodes
              *
@@ -1843,7 +1845,18 @@ seriesType<Highcharts.PackedBubbleSeries>(
          * @param {global.Event} event Browser event, before normalization.
          * @param {Highcharts.Point} point The point that event occured.
          */
-        onMouseDown: dragNodesMixin.onMouseDown,
+        onMouseDown: function (
+            this: Highcharts.PackedBubbleSeries,
+            point: Highcharts.PackedBubblePoint,
+            event: Highcharts.PointerEventObject
+        ): void {
+            const isParentNode = point.isParentNode,
+                parentNodeLayout = this.parentNodeLayout;
+            if (isParentNode) {
+                parentNodeLayout.start();
+            }
+            dragNodesMixin.onMouseDown.apply(this, arguments as any);
+        },
         /**
          * Mouse move action during drag&drop.
          * @private
@@ -1956,7 +1969,11 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 }
 
                 // add default handler if in selection mode
-                if (eventType === 'click' && seriesOptions.allowParentSelect) {
+                if (
+                    eventType === 'click' &&
+                    seriesOptions.parentNode &&
+                    seriesOptions.parentNode.allowPointSelect
+                ) {
                     defaultFunction = function (event: MouseEvent): void {
                         // Control key is for Windows, meta (= Cmd key) for Mac,
                         // Shift for Opera.
