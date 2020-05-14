@@ -494,7 +494,7 @@ defaultOptions.exporting = {
      *
      * @sample {highcharts} highcharts/exporting/chartoptions-data-labels/
      *         Added data labels
-     * @sample {highstock} highcharts/exporting/chartoptions-data-labels/
+     * @sample {highstock} highstock/exporting/chartoptions-data-labels/
      *         Added data labels
      *
      * @type      {Highcharts.Options}
@@ -506,7 +506,7 @@ defaultOptions.exporting = {
      *
      * @sample {highcharts} highcharts/exporting/enabled-false/
      *         Exporting module is loaded but disabled
-     * @sample {highstock} highcharts/exporting/enabled-false/
+     * @sample {highstock} highstock/exporting/enabled-false/
      *         Exporting module is loaded but disabled
      *
      * @type      {boolean}
@@ -552,7 +552,7 @@ defaultOptions.exporting = {
      *
      * @sample {highcharts} highcharts/exporting/filename/
      *         Custom file name
-     * @sample {highstock} highcharts/exporting/filename/
+     * @sample {highstock} highstock/exporting/filename/
      *         Custom file name
      *
      * @type      {string}
@@ -599,9 +599,9 @@ defaultOptions.exporting = {
      *
      * @sample {highcharts} highcharts/exporting/sourcewidth/
      *         Source size demo
-     * @sample {highstock} highcharts/exporting/sourcewidth/
+     * @sample {highstock} highstock/exporting/sourcewidth/
      *         Source size demo
-     * @sample {highmaps} maps/exporting/sourcewidth/
+     * @sample {highmaps} highmaps/exporting/sourcewidth/
      *         Source size demo
      *
      * @type      {number}
@@ -616,7 +616,7 @@ defaultOptions.exporting = {
      *
      * @sample {highcharts} highcharts/exporting/width/
      *         Export to 200px wide images
-     * @sample {highstock} highcharts/exporting/width/
+     * @sample {highstock} highstock/exporting/width/
      *         Export to 200px wide images
      *
      * @type      {number}
@@ -660,9 +660,9 @@ defaultOptions.exporting = {
      *
      * @sample {highcharts} highcharts/exporting/scale/
      *         Scale demonstrated
-     * @sample {highstock} highcharts/exporting/scale/
+     * @sample {highstock} highstock/exporting/scale/
      *         Scale demonstrated
-     * @sample {highmaps} maps/exporting/scale/
+     * @sample {highmaps} highmaps/exporting/scale/
      *         Scale demonstrated
      *
      * @since 3.0
@@ -769,9 +769,9 @@ defaultOptions.exporting = {
              *
              * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
              *         Menu item definitions
-             * @sample {highstock} highcharts/exporting/menuitemdefinitions/
+             * @sample {highstock} highstock/exporting/menuitemdefinitions/
              *         Menu item definitions
-             * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
+             * @sample {highmaps} highmaps/exporting/menuitemdefinitions/
              *         Menu item definitions
              *
              * @type    {Array<string>}
@@ -807,9 +807,9 @@ defaultOptions.exporting = {
      *
      * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
-     * @sample {highstock} highcharts/exporting/menuitemdefinitions/
+     * @sample {highstock} highstock/exporting/menuitemdefinitions/
      *         Menu item definitions
-     * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
+     * @sample {highmaps} highmaps/exporting/menuitemdefinitions/
      *         Menu item definitions
      *
      *
