@@ -520,27 +520,25 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
             this.points.forEach(function (point: Highcharts.BubblePoint): void {
-                var graphic = point.graphic,
-                    animationTarget;
+                const { graphic } = point;
 
                 if (graphic && graphic.width) { // URL symbols don't have width
-                    animationTarget = {
-                        x: graphic.x,
-                        y: graphic.y,
-                        width: graphic.width,
-                        height: graphic.height
-                    };
 
                     // Start values
-                    graphic.attr({
-                        x: point.plotX,
-                        y: point.plotY,
-                        width: 1,
-                        height: 1
-                    });
+                    if (!this.hasRendered) {
+                        graphic.attr({
+                            x: point.plotX,
+                            y: point.plotY,
+                            width: 1,
+                            height: 1
+                        });
+                    }
 
                     // Run animation
-                    graphic.animate(animationTarget, this.options.animation);
+                    graphic.animate(
+                        this.markerAttribs(point),
+                        this.options.animation
+                    );
                 }
             }, this);
         }
