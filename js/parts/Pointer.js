@@ -1284,10 +1284,6 @@ var Pointer = /** @class */ (function () {
             if (!hoverPoint.series) {
                 return;
             }
-            // Hover state should not be lost when axis is updated (#12569)
-            if (hoverSeries && hoverSeries.directTouch) {
-                hoverPoint.firePointEvent('mouseOver');
-            }
             /**
              * Contains all hovered points.
              *
@@ -1302,6 +1298,14 @@ var Pointer = /** @class */ (function () {
              * @type {Highcharts.Point|null}
              */
             chart.hoverPoint = hoverPoint;
+            /**
+             * Hover state should not be lost when axis is updated (#12569)
+             * Axis.update runs pointer.reset which uses chart.hoverPoint.state
+             * to apply state which does not exist in hoverPoint yet.
+             * The mouseOver event should be triggered when hoverPoint
+             * is correct.
+             */
+            hoverPoint.firePointEvent('mouseOver');
             // Draw tooltip if necessary
             if (tooltip) {
                 tooltip.refresh(useSharedTooltip ? points : hoverPoint, e);
