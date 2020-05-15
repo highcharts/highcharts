@@ -194,6 +194,7 @@ var SVGElement = /** @class */ (function () {
          * */
         this.element = void 0;
         this.height = void 0;
+        this.kind = 'element';
         this.opacity = 1; // Default base for animation
         this.renderer = void 0;
         this.SVG_NS = SVG_NS;
@@ -279,7 +280,7 @@ var SVGElement = /** @class */ (function () {
         // mark as inverted
         this.parentInverted = parent && parent.inverted;
         // build formatted text
-        if (typeof this.textStr !== 'undefined' && !(this instanceof H.SVGLabel)) {
+        if (typeof this.textStr !== 'undefined' && this.kind !== 'label') {
             renderer.buildText(this);
         }
         // Mark as added

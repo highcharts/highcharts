@@ -21,24 +21,39 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-import H from './Globals.js';
 import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
 var defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, removeEvent = U.removeEvent;
+/**
+ * SVG label to render text.
+ * @private
+ * @class
+ * @name Highcharts.SVGLabel
+ * @augments Highcharts.SVGElement
+ */
 var SVGLabel = /** @class */ (function (_super) {
     __extends(SVGLabel, _super);
     /* *
      *
-     *  Functions
+     *  Constructors
      *
      * */
     function SVGLabel(renderer, str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
         var _this = _super.call(this) || this;
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        /**
+         * @private
+         */
+        _this.kind = 'label';
         /**
          * For labels, these CSS properties are applied to the `text` node directly.
          *
          * @private
-         * @name Highcharts.SVGElement#textProps
+         * @name Highcharts.SVGLabel#textProps
          * @type {Array<string>}
          */
         _this.textProps = [
@@ -81,6 +96,11 @@ var SVGLabel = /** @class */ (function (_super) {
         _this.alignFactor = 0;
         return _this;
     }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     SVGLabel.prototype.alignSetter = function (value) {
         var alignFactor = {
             left: 0,
@@ -235,7 +255,7 @@ var SVGLabel = /** @class */ (function (_super) {
         this.attr({
             // Alignment is available now  (#3295, 0 not rendered if given
             // as a value)
-            text: (str || str === 0) ? str : '',
+            text: (defined(str) ? str : ''),
             x: this.x,
             y: this.y
         });
@@ -393,8 +413,12 @@ var SVGLabel = /** @class */ (function (_super) {
         this.ySetting = this.y = Math.round(value);
         this.attr('translateY', this.ySetting);
     };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
     SVGLabel.emptyBBox = { width: 0, height: 0, x: 0, y: 0 };
     return SVGLabel;
 }(SVGElement));
-H.SVGLabel = SVGLabel;
 export default SVGLabel;
