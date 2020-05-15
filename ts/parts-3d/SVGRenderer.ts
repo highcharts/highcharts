@@ -12,7 +12,21 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    animObject,
+    defined,
+    extend,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -21,11 +35,11 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface Arc3dPaths {
-            out: SVGPathArray;
-            inn: SVGPathArray;
-            side1: SVGPathArray;
-            side2: SVGPathArray;
-            top: SVGPathArray;
+            out: SVGPath;
+            inn: SVGPath;
+            side1: SVGPath;
+            side2: SVGPath;
+            top: SVGPath;
             zInn: number;
             zOut: number;
             zSide1: number;
@@ -51,11 +65,11 @@ declare global {
             fillSetter(this: SVGElement, fill: ColorType): SVGElement;
         }
         interface CuboidPathsObject extends SVGPath3dObject {
-            front: SVGPathArray;
+            front: SVGPath;
             isFront: number;
             isTop: number;
-            side: SVGPathArray;
-            top: SVGPathArray;
+            side: SVGPath;
+            top: SVGPath;
             zIndexes: Dictionary<number>;
             forcedSides?: Array<string>;
         }
@@ -70,11 +84,11 @@ declare global {
             cuboid: CuboidMethodsObject;
         }
         interface SVGPath3dObject {
-            back?: SVGPathArray;
-            bottom?: SVGPathArray;
-            front?: SVGPathArray;
-            side?: SVGPathArray;
-            top?: SVGPathArray;
+            back?: SVGPath;
+            bottom?: SVGPath;
+            front?: SVGPath;
+            side?: SVGPath;
+            top?: SVGPath;
             zIndexes?: Dictionary<number>;
         }
         interface SVGElement {
@@ -97,35 +111,19 @@ declare global {
             toLinePath(
                 points: Array<PositionObject>,
                 closed?: boolean
-            ): SVGPathArray;
-            toLineSegments(points: Array<PositionObject>): SVGPathArray;
+            ): SVGPath;
+            toLineSegments(points: Array<PositionObject>): SVGPath;
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    animObject,
-    defined,
-    extend,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-import '../parts/Color.js';
-import '../parts/SvgRenderer.js';
 
 var cos = Math.cos,
     PI = Math.PI,
     sin = Math.sin;
 
 var charts = H.charts,
-    color = H.color,
     deg2rad = H.deg2rad,
     perspective = H.perspective,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
     // internal:
     dFactor: number,
     element3dMethods: Highcharts.Element3dMethodsObject,
@@ -152,8 +150,8 @@ function curveTo(
     end: number,
     dx: number,
     dy: number
-): Highcharts.SVGPathArray {
-    var result = [] as Highcharts.SVGPathArray,
+): SVGPath {
+    var result = [] as SVGPath,
         arcAngle = end - start;
 
     if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
@@ -193,8 +191,8 @@ function curveTo(
 SVGRenderer.prototype.toLinePath = function (
     points: Array<Highcharts.PositionObject>,
     closed?: boolean
-): Highcharts.SVGPathArray {
-    var result: Highcharts.SVGPathArray = [];
+): SVGPath {
+    var result: SVGPath = [];
 
     // Put "L x y" for each point
     points.forEach(function (point: Highcharts.PositionObject): void {
@@ -216,8 +214,8 @@ SVGRenderer.prototype.toLinePath = function (
 
 SVGRenderer.prototype.toLineSegments = function (
     points: Array<Highcharts.PositionObject>
-): Highcharts.SVGPathArray {
-    var result = [] as Highcharts.SVGPathArray,
+): SVGPath {
+    var result = [] as SVGPath,
         m = true;
 
     points.forEach(function (point: Highcharts.PositionObject): void {
@@ -645,7 +643,7 @@ SVGRenderer.prototype.cuboid = function (
 };
 
 // Generates a cuboid path and zIndexes
-H.SVGRenderer.prototype.cuboidPath = function (
+SVGRenderer.prototype.cuboidPath = function (
     this: Highcharts.SVGRenderer,
     shapeArgs: Highcharts.SVGAttributes
 ): Highcharts.CuboidPathsObject {
@@ -891,7 +889,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
 };
 
 // SECTORS //
-H.SVGRenderer.prototype.arc3d = function (
+SVGRenderer.prototype.arc3d = function (
     attribs: Highcharts.SVGAttributes
 ): Highcharts.SVGElement {
 
@@ -920,7 +918,7 @@ H.SVGRenderer.prototype.arc3d = function (
                 hasCA = true;
             }
         }
-        return hasCA ? ca : (false as any);
+        return hasCA ? [ca, params] : (false as any);
     }
 
     attribs = merge(attribs);
@@ -1040,11 +1038,13 @@ H.SVGRenderer.prototype.arc3d = function (
         this: Highcharts.SVGElement,
         params?: (string|Highcharts.SVGAttributes)
     ): (number|string|Highcharts.SVGElement) {
-        var ca;
+        var ca, paramArr;
 
         if (typeof params === 'object') {
-            ca = suckOutCustom(params);
-            if (ca) {
+            paramArr = suckOutCustom(params);
+            if (paramArr) {
+                ca = paramArr[0];
+                arguments[0] = paramArr[1];
                 extend(wrapper.attribs, ca);
                 wrapper.setPaths(wrapper.attribs as any);
             }
@@ -1060,7 +1060,7 @@ H.SVGRenderer.prototype.arc3d = function (
         animation?: (boolean|Highcharts.AnimationOptionsObject),
         complete?: Function
     ): Highcharts.SVGElement {
-        var ca,
+        var paramArr,
             from = this.attribs,
             to: Highcharts.SVGAttributes,
             anim,
@@ -1076,15 +1076,15 @@ H.SVGRenderer.prototype.arc3d = function (
         anim = animObject(pick(animation, this.renderer.globalAnimation));
 
         if (anim.duration) {
-            ca = suckOutCustom(params);
+            paramArr = suckOutCustom(params);
             // Params need to have a property in order for the step to run
             // (#5765, #7097, #7437)
             wrapper[randomProp] = 0;
             params[randomProp] = 1;
             wrapper[randomProp + 'Setter'] = H.noop;
 
-            if (ca) {
-                to = ca;
+            if (paramArr) {
+                to = paramArr[0]; // custom attr
                 anim.step = function (a: unknown, fx: Highcharts.Fx): void {
 
                     /**
@@ -1178,7 +1178,7 @@ SVGRenderer.prototype.arc3dPath = function (
         dy = d * Math.sin(alpha); // distance between top and bottom in y
 
     // TOP
-    var top: Highcharts.SVGPathArray = [
+    var top: SVGPath = [
         ['M', cx + (rx * cs), cy + (ry * ss)]
     ];
 
@@ -1221,7 +1221,7 @@ SVGRenderer.prototype.arc3dPath = function (
     // changes clockwise (1->2, 2->3, n->1) and counterclockwise for negative
     // startAngle
 
-    var out: Highcharts.SVGPathArray = [
+    var out: SVGPath = [
         ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))]
     ];
 
@@ -1279,7 +1279,7 @@ SVGRenderer.prototype.arc3dPath = function (
     out.push(['Z']);
 
     // INSIDE
-    var inn: Highcharts.SVGPathArray = [
+    var inn: SVGPath = [
         ['M', cx + (irx * cs), cy + (iry * ss)]
     ];
 
@@ -1291,14 +1291,14 @@ SVGRenderer.prototype.arc3dPath = function (
     inn.push(['Z']);
 
     // SIDES
-    var side1: Highcharts.SVGPathArray = [
+    var side1: SVGPath = [
         ['M', cx + (rx * cs), cy + (ry * ss)],
         ['L', cx + (rx * cs) + dx, cy + (ry * ss) + dy],
         ['L', cx + (irx * cs) + dx, cy + (iry * ss) + dy],
         ['L', cx + (irx * cs), cy + (iry * ss)],
         ['Z']
     ];
-    var side2: Highcharts.SVGPathArray = [
+    var side2: SVGPath = [
         ['M', cx + (rx * ce), cy + (ry * se)],
         ['L', cx + (rx * ce) + dx, cy + (ry * se) + dy],
         ['L', cx + (irx * ce) + dx, cy + (iry * se) + dy],

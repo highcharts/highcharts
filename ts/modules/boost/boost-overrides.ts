@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../../parts/SVGPath';
 import H from '../../parts/Globals.js';
 
 /**
@@ -197,7 +199,7 @@ wrap(Series.prototype, 'searchPoint', function (
 wrap(Point.prototype, 'haloPath', function (
     this: Highcharts.Point,
     proceed: Function
-): Highcharts.SVGPathArray {
+): SVGPath {
     var halo,
         point = this,
         series = point.series,
@@ -450,6 +452,9 @@ Series.prototype.enterBoost = function (): void {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
+
+    // Prevent animation when zooming in on boosted series(#13421).
+    this.finishedAnimating = true;
 
     // Hide series label if any
     if (this.labelBySeries) {

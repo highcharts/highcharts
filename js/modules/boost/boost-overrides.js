@@ -285,6 +285,8 @@ Series.prototype.enterBoost = function () {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
+    // Prevent animation when zooming in on boosted series(#13421).
+    this.finishedAnimating = true;
     // Hide series label if any
     if (this.labelBySeries) {
         this.labelBySeries = this.labelBySeries.destroy();

@@ -10,8 +10,8 @@
  *
  * */
 'use strict';
+import NavigationBindings from './navigationBindings.js';
 import H from '../parts/Globals.js';
-import NavigationBindings from '../annotations/navigationBindings.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, wrap = U.wrap;
 var indexFilter = /\d/g, PREFIX = 'highcharts-', DIV = 'div', INPUT = 'input', LABEL = 'label', BUTTON = 'button', SELECT = 'select', OPTION = 'option', SPAN = 'span', UL = 'ul', LI = 'li', H3 = 'h3';

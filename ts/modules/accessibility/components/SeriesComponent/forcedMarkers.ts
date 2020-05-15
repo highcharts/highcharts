@@ -74,13 +74,15 @@ function isWithinNavigationThreshold(
 function shouldForceMarkers(
     series: Highcharts.AccessibilitySeries
 ): boolean {
-    var chartA11yEnabled = series.chart.options.accessibility.enabled,
+    const chart = series.chart,
+        chartA11yEnabled = chart.options.accessibility.enabled,
         seriesA11yEnabled = (series.options.accessibility &&
             series.options.accessibility.enabled) !== false,
         withinDescriptionThreshold = isWithinDescriptionThreshold(series),
-        withinNavigationThreshold = isWithinNavigationThreshold(series);
+        withinNavigationThreshold = isWithinNavigationThreshold(series),
+        isStyledMode = chart.styledMode; // #13482
 
-    return chartA11yEnabled && seriesA11yEnabled &&
+    return chartA11yEnabled && seriesA11yEnabled && !isStyledMode &&
         (withinDescriptionThreshold || withinNavigationThreshold);
 }
 

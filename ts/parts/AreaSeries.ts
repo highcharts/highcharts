@@ -11,6 +11,7 @@
 'use strict';
 
 import type StackingAxis from './StackingAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -34,7 +35,7 @@ declare global {
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
         }
-        interface AreaPathObject extends SVGPathArray {
+        interface AreaPathObject extends SVGPath {
             xMap?: number;
         }
         interface AreaPointOptions extends LinePointOptions {
@@ -204,7 +205,7 @@ seriesType<Highcharts.AreaSeries>(
          * * If `null`, the scaling behaves like a line series with fill between
          *   the graph and the Y axis minimum.
          * * If `Infinity` or `-Infinity`, the area between the graph and the
-         *   corresponing Y axis extreme is filled (since v6.1.0).
+         *   corresponding Y axis extreme is filled (since v6.1.0).
          *
          * @sample {highcharts} highcharts/plotoptions/area-threshold/
          *         A threshold of 100
@@ -396,9 +397,9 @@ seriesType<Highcharts.AreaSeries>(
         getGraphPath: function (
             this: Highcharts.AreaSeries,
             points: Array<Highcharts.AreaPoint>
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var getGraphPath = Series.prototype.getGraphPath,
-                graphPath: Highcharts.SVGPathArray,
+                graphPath: SVGPath,
                 options = this.options,
                 stacking = options.stacking,
                 yAxis = this.yAxis as StackingAxis,

@@ -10,7 +10,16 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -22,25 +31,15 @@ declare global {
         }
         let maps: Dictionary<any>;
         function mapChart(): Map;
-        function splitPath(path: string): SVGPathArray;
+        function splitPath(path: string): SVGPath;
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
-
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import '../parts/SvgRenderer.js';
 
-var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
+var defaultOptions = H.defaultOptions,
     Renderer = H.Renderer,
-    SVGRenderer = H.SVGRenderer,
     VMLRenderer = H.VMLRenderer;
 
 // Add language
@@ -320,7 +319,7 @@ defaultOptions.mapNavigation = {
  */
 H.splitPath = function (
     path: string|Array<string|number>
-): Highcharts.SVGPathArray {
+): SVGPath {
     let arr: Array<string|number>;
 
     if (typeof path === 'string') {
@@ -372,7 +371,7 @@ function selectiveRoundedRect(
     rTopRight: number,
     rBottomRight: number,
     rBottomLeft: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     return [
         ['M', x + rTopLeft, y],
         // top side
@@ -400,7 +399,7 @@ SVGRenderer.prototype.symbols.topbutton = function (
     w: number,
     h: number,
     attr: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
+): SVGPath {
     return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
 };
 SVGRenderer.prototype.symbols.bottombutton = function (
@@ -409,7 +408,7 @@ SVGRenderer.prototype.symbols.bottombutton = function (
     w: number,
     h: number,
     attr: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
+): SVGPath {
     return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers.
@@ -455,8 +454,8 @@ if ((Renderer as any) === VMLRenderer) {
  */
 H.Map = H.mapChart = function (
     a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
-    b?: (Highcharts.ChartCallbackFunction|Highcharts.Options),
-    c?: Highcharts.ChartCallbackFunction
+    b?: (Chart.CallbackFunction|Highcharts.Options),
+    c?: Chart.CallbackFunction
 ): Highcharts.Map {
 
     var hasRenderToArg = typeof a === 'string' || (a as any).nodeName,

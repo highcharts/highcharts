@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
 import Axis from './Axis.js';
+import H from './Globals.js';
 /**
  * Options for plot bands on axes.
  *
@@ -126,16 +126,17 @@ var PlotLineOrBand = /** @class */ (function () {
             return;
         }
         // common for lines and bands
+        // Add events only if they were not added before.
+        if (!plotLine.eventsAdded && events) {
+            objectEach(events, function (event, eventType) {
+                svgElem.on(eventType, function (e) {
+                    events[eventType].apply(plotLine, [e]);
+                });
+            });
+            plotLine.eventsAdded = true;
+        }
         if ((isNew || !svgElem.d) && path && path.length) {
             svgElem.attr({ d: path });
-            // events
-            if (events) {
-                objectEach(events, function (event, eventType) {
-                    svgElem.on(eventType, function (e) {
-                        events[eventType].apply(plotLine, [e]);
-                    });
-                });
-            }
         }
         else if (svgElem) {
             if (path) {
@@ -956,6 +957,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
+            this._addedPlotLB = true;
         }
         return obj;
     },

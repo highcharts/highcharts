@@ -4,10 +4,11 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var Annotation = H.Annotation, CrookedLine = Annotation.types.crookedLine;
+var CrookedLine = Annotation.types.crookedLine;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var ElliottWave = function () {
     CrookedLine.apply(this, arguments);

@@ -4,6 +4,8 @@
  *
  * */
 
+import type Annotation from './annotations.src';
+
 /**
  * Internal types.
  * @private

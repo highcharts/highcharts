@@ -15,6 +15,23 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    defined,
+    error,
+    isArray,
+    isFunction,
+    isObject,
+    isNumber,
+    merge,
+    objectEach,
+    relativeLength,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -238,32 +255,13 @@ declare global {
 
 ''; // detach doclets from following code
 
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    defined,
-    error,
-    isArray,
-    isFunction,
-    isObject,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    syncTimeout
-} = U;
-
 /* eslint-disable no-invalid-this */
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
-import '../parts/SvgRenderer.js';
 
 var Series = H.Series,
     Scatter = H.seriesTypes.scatter,
-    SvgRenderer = H.SVGRenderer,
     baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array
@@ -842,7 +840,7 @@ function getStateId(): string {
 
 
 // Cluster symbol.
-SvgRenderer.prototype.symbols.cluster = function (
+SVGRenderer.prototype.symbols.cluster = function (
     this: Highcharts.SVGRenderer,
     x: number,
     y: number,
@@ -1818,7 +1816,7 @@ Scatter.prototype.getClusteredData = function (
         groupedYData = [],
         clusters = [], // Container for clusters.
         noise = [], // Container for points not belonging to any cluster.
-        groupMap = [],
+        groupMap: Array<Highcharts.GroupMapObject> = [],
         index = 0,
 
         // Prevent minimumClusterSize lower than 2.
@@ -1983,7 +1981,7 @@ Scatter.prototype.getClusteredData = function (
                     };
                 }
 
-                groupMap.push({ options: pointOptions });
+                groupMap.push({ options: pointOptions as any });
                 index++;
             }
         }

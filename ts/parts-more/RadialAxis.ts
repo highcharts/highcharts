@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type Pane from './Pane';
+import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import HiddenAxis from './HiddenAxis.js';
@@ -654,7 +656,7 @@ class RadialAxis {
         // Find the path for plot lines perpendicular to the radial axis.
         axis.getPlotLinePath = function (
             options: Highcharts.AxisPlotLinesOptions
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var axis = this,
                 center = axis.pane.center,
                 chart = axis.chart,
@@ -683,7 +685,7 @@ class RadialAxis {
                 xy: Highcharts.PositionObject,
                 tickPositions: number[],
                 crossPos,
-                path: Highcharts.SVGPathArray;
+                path: SVGPath;
 
             // Crosshair logic
             if (isCrosshair) {
@@ -820,7 +822,7 @@ class RadialAxis {
          *
          * @return {Highcharts.ChartLabelCollectorFunction}
          */
-        axis.createLabelCollector = function (): Highcharts.ChartLabelCollectorFunction {
+        axis.createLabelCollector = function (): Chart.LabelCollectorFunction {
             var axis = this;
 
             return function (
@@ -931,7 +933,7 @@ class RadialAxis {
                 if (axis.labelCollector) {
                     // Prevent overlapping axis labels (#9761)
                     chart.labelCollectors.push(
-                        axis.labelCollector as Highcharts.ChartLabelCollectorFunction
+                        axis.labelCollector as Chart.LabelCollectorFunction
                     );
                 }
             } else {
@@ -1004,6 +1006,14 @@ class RadialAxis {
                 if (index >= 0) {
                     axis.chart.labelCollectors.splice(index, 1);
                 }
+            }
+        });
+
+        addEvent(AxisClass, 'initialAxisTranslation', function (): void {
+            const axis = this as RadialAxis;
+
+            if (axis.isRadial) {
+                axis.beforeSetTickPositions();
             }
         });
 
@@ -1191,7 +1201,7 @@ class RadialAxis {
             tickWidth: number,
             horiz: boolean,
             renderer: Highcharts.Renderer
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             const tick = this;
             const axis = tick.axis as RadialAxis;
 
@@ -1242,7 +1252,7 @@ interface RadialAxis extends Axis {
     defaultPolarOptions: RadialAxisOptions;
     endAngleRad: number;
     isCircular?: boolean;
-    labelCollector?: Highcharts.ChartLabelCollectorFunction;
+    labelCollector?: Chart.LabelCollectorFunction;
     max: number;
     min: number;
     minPointOffset: number;
@@ -1252,7 +1262,7 @@ interface RadialAxis extends Axis {
     isRadial: true;
     sector?: number;
     startAngleRad: number;
-    createLabelCollector(): Highcharts.ChartLabelCollectorFunction;
+    createLabelCollector(): Chart.LabelCollectorFunction;
     beforeSetTickPositions(): void;
     getCrosshairPosition(
         options: Highcharts.AxisPlotLinesOptions,
@@ -1263,14 +1273,14 @@ interface RadialAxis extends Axis {
         lineWidth: number,
         radius?: number,
         innerRadius?: number
-    ): Highcharts.SVGPathArray;
+    ): SVGPath;
     getOffset(): void;
     getPlotBandPath(
         from: number,
         to: number,
         options: Highcharts.AxisPlotBandsOptions
     ): RadialAxisPath;
-    getPlotLinePath(options: Highcharts.AxisPlotLinesOptions): Highcharts.SVGPathArray;
+    getPlotLinePath(options: Highcharts.AxisPlotLinesOptions): SVGPath;
     getPosition(
         value: number,
         length?: number
@@ -1288,7 +1298,7 @@ interface RadialAxis extends Axis {
 interface RadialAxisOptions extends YAxisOptions {
 }
 
-interface RadialAxisPath extends Highcharts.SVGPathArray {
+interface RadialAxisPath extends SVGPath {
     xBounds?: Array<number>;
     yBounds?: Array<number>;
 }

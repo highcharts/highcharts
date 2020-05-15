@@ -12,7 +12,26 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import chartNavigationMixin from '../mixins/navigation.js';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    css,
+    createElement,
+    discardElement,
+    extend,
+    find,
+    fireEvent,
+    isObject,
+    merge,
+    objectEach,
+    pick,
+    removeEvent,
+    uniqueKey
+} = U;
 
 /**
  * Internal types
@@ -194,7 +213,7 @@ declare global {
         }
         interface SymbolDictionary {
             /** @requires modules/exporting */
-            menuball: SymbolFunction<SVGPathArray>;
+            menuball: SymbolFunction<SVGPath>;
         }
         interface XAxisOptions {
             internalKey?: string;
@@ -281,26 +300,8 @@ declare global {
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    css,
-    createElement,
-    discardElement,
-    extend,
-    find,
-    fireEvent,
-    isObject,
-    merge,
-    objectEach,
-    pick,
-    removeEvent,
-    uniqueKey
-} = U;
-
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import chartNavigationMixin from '../mixins/navigation.js';
 
 // create shortcuts
 var defaultOptions = H.defaultOptions,
@@ -309,7 +310,6 @@ var defaultOptions = H.defaultOptions,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,
-    SVGRenderer = H.SVGRenderer,
     symbols = H.Renderer.prototype.symbols,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent),
     isFirefoxBrowser = /firefox/i.test(userAgent);
@@ -2565,8 +2565,8 @@ symbols.menu = function (
     y: number,
     width: number,
     height: number
-): Highcharts.SVGPathArray {
-    var arr: Highcharts.SVGPathArray = [
+): SVGPath {
+    var arr: SVGPath = [
         ['M', x, y + 2.5],
         ['L', x + width, y + 2.5],
         ['M', x, y + height / 2 + 0.5],
@@ -2583,8 +2583,8 @@ symbols.menuball = function (
     y: number,
     width: number,
     height: number
-): Highcharts.SVGPathArray {
-    var path: Highcharts.SVGPathArray = [],
+): SVGPath {
+    var path: SVGPath = [],
         h = (height / 3) - 2;
 
     path = path.concat(

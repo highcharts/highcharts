@@ -727,3 +727,55 @@ QUnit.test(
         );
     }
 );
+
+QUnit.test(
+    'Wrong spacings when zero minLinkWidth #13308',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+            chart: {
+                height: 200
+            },
+
+            series: [{
+                keys: ['from', 'to', 'weight'],
+                nodePadding: 50,
+                minLinkWidth: 0,
+                data: [
+                    ['Brazil', 'Portugal', 5],
+                    ['Brazil', 'France', 1],
+                    ['Canada', 'Portugal', 1],
+                    ['Canada', 'France', 1000],
+                    ['Portugal', 'Angola', 2],
+                    ['Portugal', 'Senegal', 1],
+                    ['Portugal', 'Morocco', 1]
+                ],
+                type: 'sankey'
+            }]
+        });
+
+        const nodeYBeforeUpdate = chart.series[0].nodes[1].nodeY,
+            factorBeforeUpdate = chart.series[0].translationFactor,
+            newMinLinkWidth = 5;
+
+        chart.series[0].update({
+            minLinkWidth: newMinLinkWidth
+        });
+
+        const nodeYAfterUpdate = chart.series[0].nodes[1].nodeY,
+            factorAfterUpdate = chart.series[0].translationFactor;
+
+        assert.strictEqual(
+            nodeYAfterUpdate - nodeYBeforeUpdate,
+            newMinLinkWidth,
+            'For this node the difference of the nodeY value should be equal to the new minLinkWidth after the update (#13308)'
+        );
+
+        assert.close(
+            factorBeforeUpdate,
+            factorAfterUpdate,
+            0.02,
+            'The translate-factor value should not be changed significantly while changing the minLinkWidth (#13308)'
+        );
+    }
+);

@@ -2005,7 +2005,7 @@ RangeSelector.prototype = {
         // Destroy HTML and SVG elements
         objectEach(rSelector, function (val: unknown, key: string): void {
             if (val && key !== 'chart') {
-                if ((val as Highcharts.SVGElement).destroy) {
+                if ((val as Partial<Highcharts.SVGElement>).destroy) {
                     // SVGElement
                     (val as Highcharts.SVGElement).destroy();
                 } else if ((val as Highcharts.HTMLDOMElement).nodeType) {

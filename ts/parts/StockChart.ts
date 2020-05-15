@@ -10,9 +10,12 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
 import Point from './Point.js';
+import SVGRenderer from './SVGRenderer.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -61,10 +64,10 @@ declare global {
             compareStart?: boolean;
         }
         interface SVGRenderer {
-            crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
+            crispPolyLine(points: SVGPath, width: number): SVGPath;
         }
         interface VMLRenderer {
-            crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
+            crispPolyLine(points: SVGPath, width: number): SVGPath;
         }
         class StockChart extends Chart {
         }
@@ -72,10 +75,8 @@ declare global {
     }
 }
 
-import './Chart.js';
 import './Pointer.js';
 import './Series.js';
-import './SvgRenderer.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import './Navigator.js';
@@ -86,11 +87,7 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var Chart = H.Chart,
-    Renderer = H.Renderer,
-    Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
-
+var Series = H.Series,
     seriesProto = Series.prototype,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
@@ -191,8 +188,8 @@ var Chart = H.Chart,
  */
 H.StockChart = H.stockChart = function (
     a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
-    b?: (Highcharts.ChartCallbackFunction|Highcharts.Options),
-    c?: Highcharts.ChartCallbackFunction
+    b?: (Chart.CallbackFunction|Highcharts.Options),
+    c?: Chart.CallbackFunction
 ): Highcharts.StockChart {
     var hasRenderToArg = isString(a) || (a as any).nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
@@ -422,7 +419,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         y1,
         x2,
         y2,
-        result = [] as Highcharts.SVGPathArray,
+        result = [] as SVGPath,
         axes = [], // #3416 need a default array
         axes2: Array<Highcharts.Axis>,
         uniqueAxes: Array<Highcharts.Axis>,
@@ -589,9 +586,9 @@ addEvent(Axis, 'getPlotLinePath', function (
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: Highcharts.SVGRenderer,
-    points: Array<Highcharts.SVGPathMoveTo|Highcharts.SVGPathLineTo>,
+    points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
     width: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     // points format: [['M', 0, 0], ['L', 100, 0]]
     // normalize to a crisp line
     for (let i = 0; i < points.length; i = i + 2) {

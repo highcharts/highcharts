@@ -10,11 +10,11 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var isArray = U.isArray, merge = U.merge, splat = U.splat;
 import './GanttSeries.js';
-var Chart = H.Chart;
 /**
  * Factory function for Gantt charts.
  *
@@ -102,10 +102,12 @@ H.ganttChart = function (renderTo, options, callback) {
         isGantt: true
     });
     options.series = userOptions.series = seriesOptions;
-    options.series.forEach(function (series) {
-        series.data.forEach(function (point) {
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
-        });
+    (options.series || []).forEach(function (series) {
+        if (series.data) {
+            series.data.forEach(function (point) {
+                H.seriesTypes.gantt.prototype.setGanttPointAliases(point);
+            });
+        }
     });
     return hasRenderToArg ?
         new Chart(renderTo, options, callback) :

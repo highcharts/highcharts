@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -114,7 +115,7 @@ wrap(
     function (
         this: Highcharts.PiePoint,
         proceed: Function
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var args = arguments;
 
         return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);

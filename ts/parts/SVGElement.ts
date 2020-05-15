@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Color from './Color.js';
 import H from './Globals.js';
 const {
@@ -60,8 +61,23 @@ declare global {
         cutHeight?: number;
     }
     namespace Highcharts {
+        type AlignValue = ('center'|'left'|'right');
         type HTMLDOMElement = globalThis.HTMLElement;
         type SVGDOMElement = globalThis.SVGElement;
+        type VerticalAlignValue = ('bottom'|'middle'|'top');
+        interface AlignObject {
+            align?: AlignValue;
+            alignByTranslate?: boolean;
+            verticalAlign?: VerticalAlignValue;
+            x?: number;
+            y?: number;
+        }
+        interface BBoxObject extends PositionObject, SizeObject {
+            height: number;
+            width: number;
+            x: number;
+            y: number;
+        }
         interface ShadowOptionsObject {
             color: ColorString;
             offsetX: number;
@@ -69,12 +85,36 @@ declare global {
             opacity: number;
             width: number;
         }
+        interface SVGAttributes {
+            [key: string]: any;
+            clockwise?: number;
+            d?: (string|SVGPath);
+            fill?: ColorType;
+            // height?: number;
+            inverted?: boolean;
+            longArc?: number;
+            matrix?: Array<number>;
+            rotation?: number;
+            rotationOriginX?: number;
+            rotationOriginY?: number;
+            scaleX?: number;
+            scaleY?: number;
+            stroke?: ColorType;
+            style?: CSSObject;
+            translateX?: number;
+            translateY?: number;
+            // width?: number;
+            // x?: number;
+            // y?: number;
+            zIndex?: number;
+        }
         class SVGElement {
             public constructor();
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
+            public isLabel: boolean;
             public parentGroup?: SVGElement;
-            public pathArray?: SVGPathArray;
+            public pathArray?: SVGPath;
             public r?: number;
             public renderer: SVGRenderer;
             public rotation?: number;
@@ -89,12 +129,6 @@ declare global {
                 SVGElement.ElementSetterFunction<string>|
                 SVGElement.SetterFunction<number>
             );
-            public _defaultGetter(key: string): (number|string);
-            public _defaultSetter(
-                value: string,
-                key: string,
-                element: SVGDOMElement
-            ): void;
             public add(parent?: SVGElement): SVGElement;
             public addClass(className: string, replace?: boolean): SVGElement;
             public afterSetters(): void;
@@ -103,7 +137,7 @@ declare global {
                 alignByTranslate?: boolean,
                 box?: (string|BBoxObject)
             ): SVGElement;
-            public alignSetter(value: ('start'|'middle'|'end')): void;
+            public alignSetter(value: ('left'|'center'|'right')): void;
             public animate(
                 params: SVGAttributes,
                 options?: (boolean|AnimationOptionsObject),
@@ -115,7 +149,7 @@ declare global {
             ): (number|string)
             public attr(
                 hash?: (string|SVGAttributes),
-                val?: (number|string|SVGPathArray),
+                val?: (number|string|SVGPath),
                 complete?: Function,
                 continueAnimation?: boolean
             ): SVGElement;
@@ -138,7 +172,7 @@ declare global {
                 path: SVGElement
             ): void;
             public dSetter(
-                value: (number|string|SVGPathArray),
+                value: (number|string|SVGPath),
                 key: string,
                 element: SVGDOMElement
             ): void;
@@ -216,6 +250,169 @@ declare global {
     }
 }
 
+/**
+ * The horizontal alignment of an element.
+ *
+ * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
+ */
+
+/**
+ * Options to align the element relative to the chart or another box.
+ *
+ * @interface Highcharts.AlignObject
+ *//**
+ * Horizontal alignment. Can be one of `left`, `center` and `right`.
+ *
+ * @name Highcharts.AlignObject#align
+ * @type {Highcharts.AlignValue|undefined}
+ *
+ * @default left
+ *//**
+ * Vertical alignment. Can be one of `top`, `middle` and `bottom`.
+ *
+ * @name Highcharts.AlignObject#verticalAlign
+ * @type {Highcharts.VerticalAlignValue|undefined}
+ *
+ * @default top
+ *//**
+ * Horizontal pixel offset from alignment.
+ *
+ * @name Highcharts.AlignObject#x
+ * @type {number|undefined}
+ *
+ * @default 0
+ *//**
+ * Vertical pixel offset from alignment.
+ *
+ * @name Highcharts.AlignObject#y
+ * @type {number|undefined}
+ *
+ * @default 0
+ *//**
+ * Use the `transform` attribute with translateX and translateY custom
+ * attributes to align this elements rather than `x` and `y` attributes.
+ *
+ * @name Highcharts.AlignObject#alignByTranslate
+ * @type {boolean|undefined}
+ *
+ * @default false
+ */
+
+/**
+ * Bounding box of an element.
+ *
+ * @interface Highcharts.BBoxObject
+ * @extends Highcharts.PositionObject
+ *//**
+ * Height of the bounding box.
+ *
+ * @name Highcharts.BBoxObject#height
+ * @type {number}
+ *//**
+ * Width of the bounding box.
+ *
+ * @name Highcharts.BBoxObject#width
+ * @type {number}
+ *//**
+ * Horizontal position of the bounding box.
+ *
+ * @name Highcharts.BBoxObject#x
+ * @type {number}
+ *//**
+ * Vertical position of the bounding box.
+ *
+ * @name Highcharts.BBoxObject#y
+ * @type {number}
+ */
+
+/**
+ * An object of key-value pairs for SVG attributes. Attributes in Highcharts
+ * elements for the most parts correspond to SVG, but some are specific to
+ * Highcharts, like `zIndex`, `rotation`, `rotationOriginX`,
+ * `rotationOriginY`, `translateX`, `translateY`, `scaleX` and `scaleY`. SVG
+ * attributes containing a hyphen are _not_ camel-cased, they should be
+ * quoted to preserve the hyphen.
+ *
+ * @example
+ * {
+ *     'stroke': '#ff0000', // basic
+ *     'stroke-width': 2, // hyphenated
+ *     'rotation': 45 // custom
+ *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
+ * }
+ *
+ * @interface Highcharts.SVGAttributes
+ *//**
+ * @name Highcharts.SVGAttributes#[key:string]
+ * @type {*}
+ *//**
+ * @name Highcharts.SVGAttributes#d
+ * @type {string|Highcharts.SVGPathArray|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#fill
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#inverted
+ * @type {boolean|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#matrix
+ * @type {Array<number>|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotation
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotationOriginX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#rotationOriginY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#scaleX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#scaleY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#stroke
+ * @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#style
+ * @type {string|Highcharts.CSSObject|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#translateX
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#translateY
+ * @type {number|undefined}
+ *//**
+ * @name Highcharts.SVGAttributes#zIndex
+ * @type {number|undefined}
+ */
+
+/**
+ * An SVG DOM element. The type is a reference to the regular SVGElement in the
+ * global scope.
+ *
+ * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ */
+
+/**
+ * The vertical alignment of an element.
+ *
+ * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
+ */
+
+''; // detach doclets above
+
+/**
+ * @private
+ */
+interface SVGElement extends Highcharts.SVGElement {
+    // takes interfaces from internal namespace
+}
+
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -271,7 +468,7 @@ class SVGElement {
     public options?: Record<string, any>;
     public parentInverted?: boolean;
     public parentGroup?: SVGElement;
-    public pathArray?: Highcharts.SVGPathArray;
+    public pathArray?: SVGPath;
     public placed?: boolean;
     public r?: number;
     public radAttr?: Highcharts.SVGAttributes;
@@ -802,7 +999,7 @@ class SVGElement {
     ): SVGElement;
     public attr(
         key: string,
-        val: (number|string|Highcharts.SVGPathArray),
+        val: (number|string|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): SVGElement;
@@ -867,7 +1064,7 @@ class SVGElement {
      */
     public attr(
         hash?: (string|Highcharts.SVGAttributes),
-        val?: (number|string|Highcharts.SVGPathArray),
+        val?: (number|string|SVGPath),
         complete?: Function,
         continueAnimation?: boolean
     ): (number|string|SVGElement) {
@@ -1482,7 +1679,7 @@ class SVGElement {
      * @param {Highcharts.SVGDOMElement} element
      */
     public dSetter(
-        value: (string|Highcharts.SVGPathArray),
+        value: (string|SVGPath),
         key: string,
         element: Highcharts.SVGDOMElement
     ): void {

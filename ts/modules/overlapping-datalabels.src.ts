@@ -13,7 +13,8 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import type SVGElement from '../parts/SVGElement';
+import Chart from '../parts/Chart.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -23,9 +24,17 @@ const {
     pick
 } = U;
 
-import '../parts/Chart.js';
-
-var Chart = H.Chart;
+/**
+ * Internal type
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface Chart {
+            hideOverlappingLabels(labels: Array<SVGElement>): void;
+        }
+    }
+}
 
 /* eslint-disable no-invalid-this */
 
@@ -37,7 +46,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
 
     // Consider external label collectors
     (this.labelCollectors || []).forEach(function (
-        collector: Highcharts.ChartLabelCollectorFunction
+        collector: Chart.LabelCollectorFunction
     ): void {
         labels = labels.concat(collector());
     });
@@ -97,7 +106,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         }
     });
 
-    this.hideOverlappingLabels(labels);
+    this.hideOverlappingLabels(labels as any);
 });
 
 /**
@@ -108,11 +117,10 @@ addEvent(Chart, 'render', function collectAndHide(): void {
  * @function Highcharts.Chart#hideOverlappingLabels
  * @param {Array<Highcharts.SVGElement>} labels
  * Rendered data labels
- * @return {void}
  * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (
-    labels: Array<Highcharts.SVGElement>
+    labels: Array<SVGElement>
 ): void {
 
     var chart = this,

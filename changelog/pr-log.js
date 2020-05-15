@@ -14,8 +14,8 @@ const error = e => {
 
 const log = {
     Highcharts: {},
-    Highstock: {},
-    Highmaps: {},
+    'Highcharts Stock': {},
+    'Highcharts Maps': {},
     'Highcharts Gantt': {}
 };
 
@@ -67,7 +67,9 @@ module.exports = async since => {
                 repo: 'highcharts',
                 state: 'closed',
                 base,
-                page
+                page,
+                sort: 'updated',
+                direction: 'desc'
             }).catch(error);
 
             // On the master, keep only PRs that have been closed since last

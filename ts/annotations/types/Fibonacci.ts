@@ -5,7 +5,15 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../../parts/SVGPath';
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -13,10 +21,6 @@ import H from '../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Annotation {
-            endRetracements?: Array<AnnotationMockPoint>;
-            startRetracements?: Array<AnnotationMockPoint>;
-        }
         class AnnotationFibonacci extends AnnotationTunnel {
             public static levels: Array<number>;
             public options: AnnotationFibonacciOptionsObject;
@@ -45,27 +49,20 @@ declare global {
     }
 }
 
-import U from '../../parts/Utilities.js';
-const {
-    merge
-} = U;
-
-var Annotation = H.Annotation,
-    MockPoint = Annotation.MockPoint,
-    Tunnel = Annotation.types.tunnel;
+var Tunnel = Annotation.types.tunnel;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 var createPathDGenerator = function (retracementIndex: number, isBackground?: boolean): Function {
-    return function (this: Highcharts.AnnotationControllable): Highcharts.SVGPathArray {
-        var annotation = this.annotation,
+    return function (this: Highcharts.AnnotationControllable): SVGPath {
+        var annotation = this.annotation as Highcharts.AnnotationFibonacci,
             leftTop = this.anchor(
-                (annotation.startRetracements as any)[retracementIndex]
+                annotation.startRetracements[retracementIndex]
             ).absolutePosition,
             rightTop = this.anchor(
-                (annotation.endRetracements as any)[retracementIndex]
+                annotation.endRetracements[retracementIndex]
             ).absolutePosition,
-            d: Highcharts.SVGPathArray = [
+            d: SVGPath = [
                 ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
                 ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
             ],
@@ -74,11 +71,11 @@ var createPathDGenerator = function (retracementIndex: number, isBackground?: bo
 
         if (isBackground) {
             rightBottom = this.anchor(
-                (annotation.endRetracements as any)[retracementIndex - 1]
+                annotation.endRetracements[retracementIndex - 1]
             ).absolutePosition;
 
             leftBottom = this.anchor(
-                (annotation.startRetracements as any)[retracementIndex - 1]
+                annotation.startRetracements[retracementIndex - 1]
             ).absolutePosition;
 
             d.push(

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -266,7 +267,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.boxDashStyle
      */
@@ -281,7 +282,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.medianDashStyle
      */
@@ -314,7 +315,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.whiskerDashStyle
      */
@@ -445,10 +446,10 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
             highPlot,
             lowPlot,
             medianPlot,
-            medianPath: Highcharts.SVGPathArray,
+            medianPath: SVGPath,
             crispCorr,
             crispX = 0,
-            boxPath: Highcharts.SVGPathArray,
+            boxPath: SVGPath,
             width,
             left,
             right,
@@ -576,7 +577,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     point.medianShape.attr(medianAttr);
                 }
 
-                let d: Highcharts.SVGPathArray;
+                let d: SVGPath;
 
                 // The stem
                 crispCorr = (point.stem.strokeWidth() % 2) / 2;
@@ -775,7 +776,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.boxDashStyle
  */
@@ -790,7 +791,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.medianDashStyle
  */
@@ -805,7 +806,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.stemDashStyle
  */
@@ -820,7 +821,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.whiskerDashStyle
  */

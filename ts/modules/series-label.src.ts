@@ -9,7 +9,21 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    extend,
+    fireEvent,
+    format,
+    isNumber,
+    pick,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -103,24 +117,13 @@ declare global {
  * https://jsfiddle.net/highcharts/y5A37/
  */
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    extend,
-    fireEvent,
-    format,
-    isNumber,
-    pick,
-    syncTimeout
-} = U;
+''; // detach doclets above
 
 import '../parts/Chart.js';
 import '../parts/Series.js';
 
 var labelDistance = 3,
     Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
     Chart = H.Chart;
 
 H.setOptions({
@@ -185,7 +188,7 @@ H.setOptions({
                  * a static text for the label.
                  *
                  * @type string
-                 * @since next
+                 * @since 8.1.0
                  */
                 format: void 0,
 
@@ -195,7 +198,7 @@ H.setOptions({
                  * `formatter` is undefined and the `series.name` is rendered.
                  *
                  * @type {Highcharts.FormatterCallbackFunction<Series>}
-                 * @since next
+                 * @since 8.1.0
                  */
                 formatter: void 0,
 
@@ -330,10 +333,10 @@ SVGRenderer.prototype.symbols.connector = function (
     w: number,
     h: number,
     options: Highcharts.SymbolOptionsObject
-): Highcharts.SVGPathArray {
+): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
-        path: (Highcharts.SVGPathArray|undefined),
+        path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 
@@ -396,7 +399,7 @@ Series.prototype.getPointsOnGraph = function (
         len: (number|undefined),
         n: (number|undefined),
         j: (number|undefined),
-        d: (Highcharts.SVGPathArray|undefined),
+        d: (SVGPath|undefined),
         graph: Highcharts.SVGElement = this.graph || (this.area as any),
         node: SVGPathElement = graph.element as any,
         inverted = this.chart.inverted,

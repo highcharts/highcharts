@@ -10,13 +10,15 @@
  *
  * */
 'use strict';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 var animObject = U.animObject, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import '../parts/Color.js';
-import '../parts/SvgRenderer.js';
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var charts = H.charts, color = H.color, deg2rad = H.deg2rad, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
+var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, 
 // internal:
 dFactor, element3dMethods, cuboidMethods;
 /*
@@ -331,7 +333,7 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
     return this.element3d('cuboid', shapeArgs);
 };
 // Generates a cuboid path and zIndexes
-H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
+SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z || 0, 
     // For side calculation (right/left)
     // there is a need for height (and other shapeArgs arguments)
@@ -525,7 +527,7 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
     }; // #4774
 };
 // SECTORS //
-H.SVGRenderer.prototype.arc3d = function (attribs) {
+SVGRenderer.prototype.arc3d = function (attribs) {
     var wrapper = this.g(), renderer = wrapper.renderer, customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
     /**
      * Get custom attributes. Don't mutate the original object and return an
@@ -542,7 +544,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                 hasCA = true;
             }
         }
-        return hasCA ? ca : false;
+        return hasCA ? [ca, params] : false;
     }
     attribs = merge(attribs);
     attribs.alpha = (attribs.alpha || 0) * deg2rad;
@@ -624,10 +626,12 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     });
     // Override attr to remove shape attributes and use those to set child paths
     wrapper.attr = function (params) {
-        var ca;
+        var ca, paramArr;
         if (typeof params === 'object') {
-            ca = suckOutCustom(params);
-            if (ca) {
+            paramArr = suckOutCustom(params);
+            if (paramArr) {
+                ca = paramArr[0];
+                arguments[0] = paramArr[1];
                 extend(wrapper.attribs, ca);
                 wrapper.setPaths(wrapper.attribs);
             }
@@ -637,7 +641,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     // Override the animate function by sucking out custom parameters related to
     // the shapes directly, and update the shapes from the animation step.
     wrapper.animate = function (params, animation, complete) {
-        var ca, from = this.attribs, to, anim, randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
+        var paramArr, from = this.attribs, to, anim, randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
         // Attribute-line properties connected to 3D. These shouldn't have been
         // in the attribs collection in the first place.
         delete params.center;
@@ -646,14 +650,14 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         delete params.beta;
         anim = animObject(pick(animation, this.renderer.globalAnimation));
         if (anim.duration) {
-            ca = suckOutCustom(params);
+            paramArr = suckOutCustom(params);
             // Params need to have a property in order for the step to run
             // (#5765, #7097, #7437)
             wrapper[randomProp] = 0;
             params[randomProp] = 1;
             wrapper[randomProp + 'Setter'] = H.noop;
-            if (ca) {
-                to = ca;
+            if (paramArr) {
+                to = paramArr[0]; // custom attr
                 anim.step = function (a, fx) {
                     /**
                      * @private

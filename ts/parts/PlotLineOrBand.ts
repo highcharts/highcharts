@@ -10,8 +10,9 @@
 
 'use strict';
 
-import H from './Globals.js';
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
+import H from './Globals.js';
 
 /**
  * Internal types
@@ -38,7 +39,7 @@ declare global {
                 from: number,
                 to: number,
                 options?: (AxisPlotBandsOptions|AxisPlotLinesOptions)
-            ): SVGPathArray;
+            ): SVGPath;
             removePlotBand(id: string): void;
             removePlotBandOrLine(id: string): void;
             removePlotLine(id: string): void;
@@ -117,7 +118,7 @@ declare global {
                     AxisPlotBandsLabelOptions|
                     AxisPlotLinesLabelOptions
                 ),
-                path: SVGPathArray,
+                path: SVGPath,
                 isBand?: boolean,
                 zIndex?: number
             ): void;
@@ -196,6 +197,7 @@ class PlotLineOrBand {
     public axis: Highcharts.Axis;
     public id?: string;
     public isActive?: boolean;
+    public eventsAdded?: boolean;
     public label?: Highcharts.SVGElement;
     public options?: (Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions);
     public svgElem?: Highcharts.SVGElement;
@@ -227,7 +229,7 @@ class PlotLineOrBand {
             isLine = defined(value),
             svgElem = plotLine.svgElem,
             isNew = !svgElem,
-            path = [] as Highcharts.SVGPathArray,
+            path = [] as SVGPath,
             color = options.color,
             zIndex = pick(options.zIndex, 0),
             events = options.events,
@@ -314,17 +316,17 @@ class PlotLineOrBand {
 
 
         // common for lines and bands
+        // Add events only if they were not added before.
+        if (!plotLine.eventsAdded && events) {
+            objectEach(events, function (event, eventType): void {
+                (svgElem as any).on(eventType, function (e: any): void {
+                    events[eventType].apply(plotLine, [e]);
+                });
+            });
+            plotLine.eventsAdded = true;
+        }
         if ((isNew || !(svgElem as any).d) && path && path.length) {
             (svgElem as any).attr({ d: path });
-
-            // events
-            if (events) {
-                objectEach(events, function (event, eventType): void {
-                    (svgElem as any).on(eventType, function (e: any): void {
-                        events[eventType].apply(plotLine, [e]);
-                    });
-                });
-            }
         } else if (svgElem) {
             if (path) {
                 svgElem.show(true);
@@ -382,7 +384,7 @@ class PlotLineOrBand {
             Highcharts.AxisPlotLinesLabelOptions|
             Highcharts.AxisPlotBandsLabelOptions
         ),
-        path: Highcharts.SVGPathArray,
+        path: SVGPath,
         isBand?: boolean,
         zIndex?: number
     ): void {
@@ -1138,7 +1140,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         this: Highcharts.Axis,
         from: number,
         to: number
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var toPath = this.getPlotLinePath({
                 value: to,
                 force: true,
@@ -1149,7 +1151,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 force: true,
                 acrossPanes: (this.options as any).acrossPanes
             } as Highcharts.AxisPlotLinePathOptionsObject),
-            result = [] as Highcharts.SVGPathArray,
+            result = [] as SVGPath,
             i,
             // #4964 check if chart is inverted or plotband is on yAxis
             horiz = this.horiz,
@@ -1290,6 +1292,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
+            this._addedPlotLB = true;
         }
 
         return obj;
@@ -1309,7 +1312,6 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
             options = this.options,
             userOptions = this.userOptions,
             i = plotLinesAndBands.length;
-
         while (i--) {
             if (plotLinesAndBands[i].id === id) {
                 plotLinesAndBands[i].destroy();

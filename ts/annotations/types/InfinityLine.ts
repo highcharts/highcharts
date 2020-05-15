@@ -5,7 +5,14 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
+import MockPoint from '../MockPoint.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types
@@ -35,21 +42,14 @@ declare global {
         interface AnnotationInfinityLineTypeOptionsObject extends AnnotationCrookedLineTypeOptionsObject {
             type: string;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             infinityLine: typeof AnnotationInfinityLine;
         }
     }
 }
 
 
-import U from '../../parts/Utilities.js';
-const {
-    merge
-} = U;
-
-var Annotation = H.Annotation,
-    MockPoint = Annotation.MockPoint,
-    CrookedLine = Annotation.types.crookedLine;
+var CrookedLine = Annotation.types.crookedLine;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

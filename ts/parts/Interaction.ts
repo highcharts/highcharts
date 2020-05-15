@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -48,7 +49,7 @@ declare global {
             selected?: boolean;
             selectedStaging?: boolean;
             state?: string;
-            haloPath(size: number): SVGPathArray;
+            haloPath(size: number): SVGPath;
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
@@ -290,7 +291,7 @@ TrackerMixin = H.TrackerMixin = {
             options = series.options,
             trackByArea =
                 (options as Highcharts.AreaRangeSeriesOptions).trackByArea,
-            trackerPath = ([] as Highcharts.SVGPathArray).concat(
+            trackerPath = ([] as SVGPath).concat(
                 trackByArea ?
                     ((series as Highcharts.AreaSeries).areaPath as any) :
                     (series.graphPath as any)
@@ -1395,7 +1396,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
     haloPath: function (
         this: Highcharts.Point,
         size: number
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var series = this.series,
             chart = series.chart;
 

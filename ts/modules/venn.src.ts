@@ -16,6 +16,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -44,6 +46,7 @@ declare global {
             public pointClass: typeof VennPoint;
             public points: Array<VennPoint>;
             public utils: VennUtilsObject;
+            public init(chart: Chart, options: VennSeriesOptions): void;
             public animate(init?: boolean): void;
             public drawPoints(): void;
             public translate(): void;
@@ -1146,6 +1149,12 @@ var vennSeries = {
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
+    init: function (this: Highcharts.VennSeries): void {
+        seriesTypes.scatter.prototype.init.apply(this, arguments);
+
+        // Venn's opacity is a different option from other series
+        delete this.opacity;
+    },
     translate: function (this: Highcharts.VennSeries): void {
 
         var chart = this.chart;
@@ -1200,7 +1209,7 @@ var vennSeries = {
                     };
                 } else if ((shape as any).d) {
 
-                    const d: Highcharts.SVGPathArray = (shape as any).d;
+                    const d: SVGPath = (shape as any).d;
                     d.forEach((seg): void => {
                         if (seg[0] === 'M') {
                             seg[1] = centerX + seg[1] * scale;

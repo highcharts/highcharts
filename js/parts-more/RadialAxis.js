@@ -596,6 +596,12 @@ var RadialAxis = /** @class */ (function () {
                 }
             }
         });
+        addEvent(AxisClass, 'initialAxisTranslation', function () {
+            var axis = this;
+            if (axis.isRadial) {
+                axis.beforeSetTickPositions();
+            }
+        });
         // Add special cases within the Tick class' methods for radial axes.
         addEvent(TickClass, 'afterGetPosition', function (e) {
             var tick = this;

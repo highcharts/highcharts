@@ -12,6 +12,7 @@
 
 'use strict';
 
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 
 /**
@@ -26,7 +27,7 @@ declare global {
         function ganttChart(
             renderTo: (string|HTMLDOMElement),
             options: Options,
-            callback?: ChartCallbackFunction
+            callback?: Chart.CallbackFunction
         ): Chart;
     }
 }
@@ -39,8 +40,6 @@ const {
 } = U;
 
 import './GanttSeries.js';
-
-var Chart = H.Chart;
 
 /**
  * Factory function for Gantt charts.
@@ -76,8 +75,8 @@ var Chart = H.Chart;
 H.ganttChart = function (
     renderTo: (string|Highcharts.HTMLDOMElement),
     options: Highcharts.Options,
-    callback?: Highcharts.ChartCallbackFunction
-): Highcharts.Chart {
+    callback?: Chart.CallbackFunction
+): Chart {
     var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
         seriesOptions = options.series,
         defaultOptions = H.getOptions(),
@@ -165,10 +164,12 @@ H.ganttChart = function (
 
     options.series = userOptions.series = seriesOptions;
 
-    (options.series as any).forEach(function (series: Highcharts.Series): void {
-        series.data.forEach(function (point: Highcharts.Point): void {
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
-        });
+    (options.series || []).forEach(function (series): void {
+        if (series.data) {
+            series.data.forEach(function (point): void {
+                H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
+            });
+        }
     });
 
     return hasRenderToArg ?

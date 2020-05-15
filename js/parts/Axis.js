@@ -144,7 +144,7 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  *
  * @param {Highcharts.Axis} this
  *
- * @return {Array<number>}
+ * @return {Highcharts.AxisTickPositionsArray}
  */
 /**
  * @interface Highcharts.AxisTickPositionsArray
@@ -1431,13 +1431,7 @@ var Axis = /** @class */ (function () {
         // set the translation factor used in translate function
         axis.setAxisTranslation(true);
         // hook for ordinal axes and radial axes
-        if (axis.beforeSetTickPositions) {
-            axis.beforeSetTickPositions();
-        }
-        // hook for extensions, used in Highstock ordinal axes
-        if (axis.ordinal) {
-            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
-        }
+        fireEvent(this, 'initialAxisTranslation');
         // In column-like charts, don't cramp in more ticks than there are
         // points (#1943, #4184)
         if (axis.pointRange && !tickIntervalOption) {
@@ -5715,7 +5709,7 @@ var Axis = /** @class */ (function () {
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.backgroundColor
              */
             /**
@@ -5724,7 +5718,7 @@ var Axis = /** @class */ (function () {
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderColor
              */
             /**
@@ -5734,7 +5728,7 @@ var Axis = /** @class */ (function () {
              *          Stack labels box options
              * @type      {number}
              * @default   0
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderRadius
              */
             /**
@@ -5744,7 +5738,7 @@ var Axis = /** @class */ (function () {
              *          Stack labels box options
              * @type      {number}
              * @default   0
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderWidth
              */
             /**

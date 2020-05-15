@@ -12,7 +12,24 @@
 
 'use strict';
 
+import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import Tick from '../parts/Tick.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    removeEvent,
+    animObject,
+    extend,
+    fireEvent,
+    format,
+    merge,
+    objectEach,
+    pick,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -208,7 +225,7 @@ declare global {
  * @name Highcharts.DrilldownEventObject#point
  * @type {Highcharts.Point}
  *//**
- * If a category label was clicked, this array holds all points corresponing to
+ * If a category label was clicked, this array holds all points corresponding to
  * the category. Otherwise it is set to false.
  * @name Highcharts.DrilldownEventObject#points
  * @type {boolean|Array<Highcharts.Point>|undefined}
@@ -291,23 +308,6 @@ declare global {
  * @name Highcharts.DrillupEventObject#type
  * @type {"drillup"}
  */
-
-import Color from '../parts/Color.js';
-import Point from '../parts/Point.js';
-import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    removeEvent,
-    animObject,
-    extend,
-    fireEvent,
-    format,
-    merge,
-    objectEach,
-    pick,
-    syncTimeout
-} = U;
 
 import '../parts/Options.js';
 import '../parts/Chart.js';
@@ -566,7 +566,7 @@ defaultOptions.drilldown = {
  * - `point`: The originating point.
  *
  * - `points`: If a category label was clicked, this array holds all points
- *   corresponing to the category.
+ *   corresponding to the category.
  *
  * - `seriesOptions`: Options for the new series.
  *
@@ -628,7 +628,7 @@ defaultOptions.drilldown = {
  * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
  * The animation options for the element fade.
  */
-H.SVGRenderer.prototype.Element.prototype.fadeIn = function (
+SVGRenderer.prototype.Element.prototype.fadeIn = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): void {
     this

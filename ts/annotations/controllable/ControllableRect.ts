@@ -4,6 +4,14 @@
  *
  * */
 
+import type Annotation from '../annotations.src';
+import controllableMixin from './controllableMixin.js';
+import ControllablePath from './ControllablePath.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
+
 /**
  * Internal types.
  * @private
@@ -51,13 +59,6 @@ declare global {
     }
 }
 
-import U from '../../parts/Utilities.js';
-const {
-    merge
-} = U;
-import controllableMixin from './controllableMixin.js';
-import ControllablePath from './ControllablePath.js';
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -80,7 +81,7 @@ import ControllablePath from './ControllablePath.js';
  */
 const ControllableRect: typeof Highcharts.AnnotationControllableRect = function (
     this: Highcharts.AnnotationControllableRect,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsShapeOptions,
     index: number
 ): void {

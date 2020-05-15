@@ -11,6 +11,7 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+import SVGElement from '../../parts/SVGElement.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -21,7 +22,7 @@ var svgElementBorderUpdateTriggers = [
 /**
  * Add hook to destroy focus border if SVG element is destroyed, unless
  * hook already exists.
- *
+ * @private
  * @param el Element to add destroy hook to
  */
 function addDestroyFocusBorderHook(el) {
@@ -39,7 +40,7 @@ function addDestroyFocusBorderHook(el) {
 /**
  * Remove hook from SVG element added by addDestroyFocusBorderHook, if
  * existing.
- *
+ * @private
  * @param el Element to remove destroy hook from
  */
 function removeDestroyFocusBorderHook(el) {
@@ -52,7 +53,7 @@ function removeDestroyFocusBorderHook(el) {
 /**
  * Add hooks to update the focus border of an element when the element
  * size/position is updated, unless already added.
- *
+ * @private
  * @param el Element to add update hooks to
  * @param updateParams Parameters to pass through to addFocusBorder when updating.
  */
@@ -79,7 +80,7 @@ function addUpdateFocusBorderHooks(el) {
 /**
  * Remove hooks from SVG element added by addUpdateFocusBorderHooks, if
  * existing.
- *
+ * @private
  * @param el Element to remove update hooks from
  */
 function removeUpdateFocusBorderHooks(el) {
@@ -101,7 +102,7 @@ function removeUpdateFocusBorderHooks(el) {
  * Add focus border functionality to SVGElements. Draws a new rect on top of
  * element around its bounding box. This is used by multiple components.
  */
-extend(H.SVGElement.prototype, {
+extend(SVGElement.prototype, {
     /**
      * @private
      * @function Highcharts.SVGElement#addFocusBorder
@@ -146,15 +147,15 @@ extend(H.SVGElement.prototype, {
                 y: posYCorrection
             };
         }
-        if (this.element.nodeName === 'text' || this.element.nodeName === 'g') {
-            var isLabel = this.element.nodeName === 'g', isRotated = !!this.rotation, correction = !isLabel ? getTextAnchorCorrection(this) :
+        if (this.element.nodeName === 'text' || this.isLabel) {
+            var isRotated = !!this.rotation, correction = !this.isLabel ? getTextAnchorCorrection(this) :
                 {
                     x: isRotated ? 1 : 0,
                     y: 0
                 };
             borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
             borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
-            if (isLabel && isRotated) {
+            if (this.isLabel && isRotated) {
                 var temp = borderWidth;
                 borderWidth = borderHeight;
                 borderHeight = temp;

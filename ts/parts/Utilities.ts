@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 type NonArray<T> = T extends Array<unknown> ? never : T;
@@ -122,7 +123,7 @@ declare global {
             public elem: (HTMLElement|SVGElement);
             public end?: any;
             public options: AnimationOptionsObject;
-            public paths?: [SVGPathArray, SVGPathArray];
+            public paths?: [SVGPath, SVGPath];
             public pos?: any;
             public prop: string;
             public start?: any;
@@ -130,9 +131,9 @@ declare global {
             public fillSetter(): void;
             public initPath(
                 elem: SVGElement,
-                fromD: SVGPathArray,
-                toD: SVGPathArray
-            ): [SVGPathArray, SVGPathArray];
+                fromD: SVGPath,
+                toD: SVGPath
+            ): [SVGPath, SVGPath];
             public run(from: number, to: number, unit: string): void;
             public step(gotoEnd?: boolean): boolean;
             public strokeSetter(): void;
@@ -804,12 +805,12 @@ class Fx {
     public from?: number;
     public now?: number;
     public options: Highcharts.AnimationOptionsObject;
-    public paths?: [Highcharts.SVGPathArray, Highcharts.SVGPathArray];
+    public paths?: [SVGPath, SVGPath];
     public pos?: number;
     public prop: string;
     public start?: number;
     public startTime?: number;
-    public toD?: Highcharts.SVGPathArray;
+    public toD?: SVGPath;
     public unit?: string;
 
     /* *
@@ -829,7 +830,7 @@ class Fx {
         var paths = this.paths,
             start = paths && paths[0],
             end = paths && paths[1],
-            path: Highcharts.SVGPathArray = [],
+            path: SVGPath = [],
             now = this.now || 0;
 
         // Land on the final path without adjustment points appended in the ends
@@ -865,7 +866,7 @@ class Fx {
                     }
                 }
 
-                path.push(tweenSeg as Highcharts.SVGPathSegment);
+                path.push(tweenSeg as SVGPath.Segment);
 
             }
         // If animation is finished or length not matching, land on right value
@@ -1046,9 +1047,9 @@ class Fx {
      */
     public initPath(
         elem: Highcharts.SVGElement,
-        fromD: Highcharts.SVGPathArray|undefined,
-        toD: Highcharts.SVGPathArray
-    ): [Highcharts.SVGPathArray, Highcharts.SVGPathArray] {
+        fromD: SVGPath|undefined,
+        toD: SVGPath
+    ): [SVGPath, SVGPath] {
         var shift,
             startX = elem.startX,
             endX = elem.endX,
@@ -1072,8 +1073,8 @@ class Fx {
          * @return {void}
          */
         function prepend(
-            arr: Highcharts.SVGPathArray,
-            other: Highcharts.SVGPathArray
+            arr: SVGPath,
+            other: SVGPath
         ): void {
             while (arr.length < fullLength) {
 
@@ -1115,8 +1116,8 @@ class Fx {
          * @return {void}
          */
         function append(
-            arr: Highcharts.SVGPathArray,
-            other: Highcharts.SVGPathArray
+            arr: SVGPath,
+            other: SVGPath
         ): void {
             while (arr.length < fullLength) {
 
@@ -1135,7 +1136,7 @@ class Fx {
                 }
 
                 if (!isArea) {
-                    arr.push(segmentToAdd as Highcharts.SVGPathSegment);
+                    arr.push(segmentToAdd as SVGPath.Segment);
 
                 } else {
 
@@ -1143,8 +1144,8 @@ class Fx {
                     arr.splice(
                         arr.length / 2,
                         0,
-                        segmentToAdd as Highcharts.SVGPathSegment,
-                        lowerSegmentToAdd as Highcharts.SVGPathSegment
+                        segmentToAdd as SVGPath.Segment,
+                        lowerSegmentToAdd as SVGPath.Segment
                     );
                 }
             }
@@ -1882,7 +1883,7 @@ const relativeLength = H.relativeLength = function relativeLength(
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
-' * @function Highcharts.wrap
+ * @function Highcharts.wrap
  *
  * @param {*} obj
  *        The context object that the method belongs to. In real cases, this is
@@ -1895,8 +1896,6 @@ const relativeLength = H.relativeLength = function relativeLength(
  *        A wrapper function callback. This function is called with the same
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
- *
- * @return {void}
  */
 const wrap = H.wrap = function wrap(
     obj: any,

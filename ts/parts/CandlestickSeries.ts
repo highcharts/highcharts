@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -261,7 +262,7 @@ seriesType<Highcharts.CandlestickSeries>(
                     hasBottomWhisker,
                     crispCorr,
                     crispX,
-                    path: Highcharts.SVGPathArray,
+                    path: SVGPath,
                     halfWidth,
                     isNew = !graphic;
 

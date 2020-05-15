@@ -10,7 +10,20 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
+import SVGElement from './SVGElement.js';
+import SVGRenderer from './SVGRenderer.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    defined,
+    isNumber,
+    merge,
+    objectEach,
+    seriesType,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -59,9 +72,9 @@ declare global {
             allowDG?: boolean;
         }
         interface SymbolDictionary {
-            circlepin: SymbolFunction<SVGPathArray>;
-            flag: SymbolFunction<SVGPathArray>;
-            squarepin: SymbolFunction<SVGPathArray>;
+            circlepin: SymbolFunction<SVGPath>;
+            flag: SymbolFunction<SVGPath>;
+            squarepin: SymbolFunction<SVGPath>;
         }
         interface SeriesTypesDictionary {
             flags: typeof FlagsSeries;
@@ -97,25 +110,14 @@ declare global {
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
-import U from './Utilities.js';
-const {
-    addEvent,
-    defined,
-    isNumber,
-    merge,
-    objectEach,
-    seriesType,
-    wrap
-} = U;
 
 import './Series.js';
-import './SvgRenderer.js';
+import './SVGRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
 var noop = H.noop,
     Renderer = H.Renderer,
     Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
     TrackerMixin = H.TrackerMixin,
     VMLRenderer = H.VMLRenderer,
     symbols = SVGRenderer.prototype.symbols;
@@ -616,7 +618,7 @@ seriesType<Highcharts.FlagsSeries>(
                     this: Highcharts.FlagsSeries,
                     proceed
                 ): Highcharts.SVGElement {
-                    return H.SVGElement.prototype.on.apply(
+                    return SVGElement.prototype.on.apply(
                         // for HTML
                         proceed.apply(this, [].slice.call(arguments, 1)),
                         // and for SVG
@@ -747,7 +749,7 @@ symbols.flag = function (
     w: number,
     h: number,
     options: Highcharts.Dictionary<number>
-): Highcharts.SVGPathArray {
+): SVGPath {
     var anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
 
@@ -780,11 +782,11 @@ function createPinSymbol(shape: ('circle'|'square')): void {
         w: number,
         h: number,
         options: Highcharts.Dictionary<number>
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
 
         var anchorX = options && options.anchorX,
             anchorY = options && options.anchorY,
-            path: Highcharts.SVGPathArray;
+            path: SVGPath;
 
         // For single-letter flags, make sure circular flags are not taller
         // than their width

@@ -10,7 +10,15 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
+import StackItem from '../parts/Stacking.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -51,15 +59,7 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    pick,
-    wrap
-} = U;
-
 import '../parts/Series.js';
-import StackItem from '../parts/Stacking.js';
 
 var perspective = H.perspective,
     Series = H.Series,
@@ -109,6 +109,41 @@ var perspective = H.perspective,
  */
 
 /* eslint-disable no-invalid-this */
+
+/**
+ * @private
+ * @param {Highcharts.Chart} chart
+ * Chart with stacks
+ * @param {string} stacking
+ * Stacking option
+ * @return {Highcharts.Stack3dDictionary}
+ */
+function retrieveStacks(
+    chart: Chart,
+    stacking?: string
+): Highcharts.Stack3dDictionary {
+    const series = chart.series,
+        stacks = {} as Highcharts.Stack3dDictionary;
+
+    let stackNumber: number,
+        i = 1;
+
+    series.forEach(function (s: Highcharts.Series): void {
+        stackNumber = pick(
+            s.options.stack as any,
+            (stacking ? 0 : series.length - 1 - (s.index as any))
+        ); // #3841, #4532
+        if (!stacks[stackNumber]) {
+            stacks[stackNumber] = { series: [s], position: i };
+            i++;
+        } else {
+            stacks[stackNumber].series.push(s);
+        }
+    });
+
+    stacks.totalStacks = i + 1;
+    return stacks;
+}
 
 wrap(seriesTypes.column.prototype, 'translate', function (
     this: Highcharts.ColumnSeries,
@@ -405,7 +440,7 @@ addEvent(Series, 'afterInit', function (): void {
 
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
-            var stacks = this.chart.retrieveStacks(stacking),
+            var stacks = retrieveStacks(this.chart, stacking),
                 stack: number = (seriesOptions.stack as any) || 0,
                 i; // position within the stack
 

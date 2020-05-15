@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisComposition, AxisLike } from './axis/types';
+import type SVGPath from '../parts/SVGPath';
 import type ZAxis from '../parts-3d/ZAxis';
 import Color from './Color.js';
 import H from './Globals.js';
@@ -317,7 +318,6 @@ declare global {
             public axisPointRange?: number;
             public axisTitle?: SVGElement;
             public axisTitleMargin?: number;
-            public beforeSetTickPositions?: Function;
             public bottom: number;
             public categories: Array<string>;
             public chart: Chart;
@@ -425,7 +425,7 @@ declare global {
             public getClosest(): number;
             public getExtremes(): ExtremesObject;
             public getKeepProps(): Array<string>;
-            public getLinePath(lineWidth: number): SVGPathArray;
+            public getLinePath(lineWidth: number): SVGPath;
             public getLinearTickPositions(
                 tickInterval: number,
                 min: number,
@@ -436,7 +436,7 @@ declare global {
             public getOffset(): void;
             public getPlotLinePath(
                 options: AxisPlotLinePathOptionsObject
-            ): (SVGPathArray|null);
+            ): (SVGPath|null);
             public getSeriesExtremes(): void;
             public getSlotWidth(tick?: Tick): number;
             public getThreshold(threshold: number): (number|undefined);
@@ -634,7 +634,7 @@ declare global {
  *
  * @param {Highcharts.Axis} this
  *
- * @return {Array<number>}
+ * @return {Highcharts.AxisTickPositionsArray}
  */
 
 /**
@@ -3614,7 +3614,7 @@ class Axis implements AxisComposition, AxisLike {
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.backgroundColor
              */
 
@@ -3624,7 +3624,7 @@ class Axis implements AxisComposition, AxisLike {
              * @sample {highcharts} highcharts/yaxis/stacklabels-box/
              *          Stack labels box options
              * @type      {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject}
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderColor
              */
 
@@ -3635,7 +3635,7 @@ class Axis implements AxisComposition, AxisLike {
              *          Stack labels box options
              * @type      {number}
              * @default   0
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderRadius
              */
 
@@ -3646,7 +3646,7 @@ class Axis implements AxisComposition, AxisLike {
              *          Stack labels box options
              * @type      {number}
              * @default   0
-             * @since     next
+             * @since 8.1.0
              * @apioption yAxis.stackLabels.borderWidth
              */
 
@@ -3907,7 +3907,6 @@ class Axis implements AxisComposition, AxisLike {
     public reserveSpaceDefault?: boolean;
     public reversed?: boolean;
     public right: number = void 0 as any;
-    public scrollbar?: AxisComposition['scrollbar'];
     public series: Array<Highcharts.Series> = void 0 as any;
     public showAxis?: boolean;
     public side: number = void 0 as any;
@@ -4599,7 +4598,7 @@ class Axis implements AxisComposition, AxisLike {
      * @return {Highcharts.SVGPathArray|null}
      * The SVG path definition for the plot line.
      */
-    public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (Highcharts.SVGPathArray|null) {
+    public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (SVGPath|null) {
         var axis = this,
             chart = axis.chart,
             axisLeft = axis.left,
@@ -5484,14 +5483,7 @@ class Axis implements AxisComposition, AxisLike {
         axis.setAxisTranslation(true);
 
         // hook for ordinal axes and radial axes
-        if (axis.beforeSetTickPositions) {
-            axis.beforeSetTickPositions();
-        }
-
-        // hook for extensions, used in Highstock ordinal axes
-        if (axis.ordinal) {
-            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
-        }
+        fireEvent(this, 'initialAxisTranslation');
 
         // In column-like charts, don't cramp in more ticks than there are
         // points (#1943, #4184)
@@ -7043,7 +7035,7 @@ class Axis implements AxisComposition, AxisLike {
      * @return {Highcharts.SVGPathArray}
      * The SVG path definition in array form.
      */
-    public getLinePath(lineWidth: number): Highcharts.SVGPathArray {
+    public getLinePath(lineWidth: number): SVGPath {
         var chart = this.chart,
             opposite = this.opposite,
             offset = this.offset,

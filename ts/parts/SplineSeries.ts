@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from './Globals.js';
+import type SVGPath from './SVGPath';
 
 /**
  * Internal types
@@ -42,7 +42,7 @@ declare global {
                 points: Array<SplinePoint>,
                 point: SplinePoint,
                 i: number
-            ): SVGPathCurveTo;
+            ): SVGPath.CurveTo;
         }
     }
 }
@@ -112,7 +112,7 @@ seriesType<Highcharts.SplineSeries>(
             points: Array<Highcharts.SplinePoint>,
             point: Highcharts.SplinePoint,
             i: number
-        ): Highcharts.SVGPathCurveTo {
+        ): SVGPath.CurveTo {
             var
                 // 1 means control points midway between points, 2 means 1/3
                 // from the point, 3 is 1/4 etc
@@ -126,7 +126,7 @@ seriesType<Highcharts.SplineSeries>(
                 leftContY: number | undefined,
                 rightContX: number,
                 rightContY: number,
-                ret: Highcharts.SVGPathCurveTo;
+                ret: SVGPath.CurveTo;
 
             /**
              * @private
