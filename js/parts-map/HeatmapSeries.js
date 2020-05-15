@@ -139,6 +139,7 @@ seriesType('heatmap', 'scatter',
     },
     /**
      * @excluding radius, enabledThreshold
+     * @since     8.1
      */
     marker: {
         /**
@@ -741,11 +742,13 @@ seriesType('heatmap', 'scatter',
 /**
  * @excluding radius, enabledThreshold
  * @product   highcharts highmaps
+ * @since     8.1
  * @apioption series.heatmap.data.marker
  */
 /**
  * @excluding radius, enabledThreshold
  * @product   highcharts highmaps
+ * @since     8.1
  * @apioption series.heatmap.marker
  */
 /**

@@ -414,16 +414,6 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                     ): number {
                         return component.onKbdClick(this);
                     }
-                ],
-
-                // ESC handler
-                [
-                    [keys.esc],
-                    function (
-                        this: Highcharts.KeyboardNavigationHandler
-                    ): number {
-                        return this.response.prev;
-                    }
                 ]
             ],
 

@@ -7,7 +7,6 @@ const fs = require('fs-extra');
 const zlib = require('zlib');
 const glob = require('glob');
 const log = require('./lib/log');
-const build = require('./lib/build');
 const yargs = require('yargs');
 const zip = require('gulp-zip');
 const stream = require('stream');
@@ -15,6 +14,7 @@ const util = require('util');
 
 
 const DIST_DIR = 'build/dist';
+const properties = require('../../build-properties.json');
 
 
 /**
@@ -23,14 +23,15 @@ const DIST_DIR = 'build/dist';
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function distZip() {
-    const properties = build.getBuildProperties();
+    const { products, version } = properties;
 
-    const zipTasks = Object.keys(properties).map(key => {
+    const zipTasks = Object.keys(products).map(key => {
+        const product = products[key];
+        const name = key;
 
-        const { product } = properties[key];
-        const { name, version } = product;
+        const { distpath } = product;
 
-        const dirToZip = `${DIST_DIR}/${key}`;
+        const dirToZip = `${DIST_DIR}${distpath}`;
         if (!fs.existsSync(dirToZip)) {
             return Promise.reject(new Error(`Missing folder: ${dirToZip}. Has the other dist tasks been run in advance?`));
         }
@@ -58,7 +59,7 @@ function distZip() {
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function distGZip() {
-    const properties = build.getBuildProperties();
+    const { products } = properties;
 
     const gzipDirs = glob.sync(`${DIST_DIR}/**/js-gzip`);
     gzipDirs.forEach(dir => {
@@ -69,8 +70,8 @@ function distGZip() {
     log.starting('GZipping files..');
 
     let streams = [];
-    Object.keys(properties).forEach(key => {
-        const dirToZip = `${DIST_DIR}/${key}/code`;
+    Object.keys(products).forEach(key => {
+        const dirToZip = `${DIST_DIR}${products[key].distpath}/code`;
         const files = glob.sync(`${dirToZip}/**/*+(.js|.css|.map)`);
 
         log.message(`Gzipping files for ${key}... `);
@@ -89,7 +90,7 @@ function distGZip() {
             return pipeline(
                 fileContents,
                 gzip,
-                writeStream,
+                writeStream
             );
         });
     });

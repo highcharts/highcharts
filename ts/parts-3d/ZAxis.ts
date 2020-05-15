@@ -9,6 +9,7 @@
  * */
 
 import type { AxisLike } from '../parts/axis/types';
+import type Chart from '../parts/Chart.js';
 import Axis from '../parts/Axis.js';
 import U from '../parts/Utilities.js';
 const {
@@ -58,7 +59,7 @@ class ZChart {
      *
      * */
 
-    public static compose(ChartClass: typeof Highcharts.Chart): void {
+    public static compose(ChartClass: typeof Chart): void {
 
         addEvent(ChartClass, 'afterGetAxes', ZChart.onAfterGetAxes);
 

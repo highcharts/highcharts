@@ -15,78 +15,6 @@ import SVGLabel from './SVGLabel.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, uniqueKey = U.uniqueKey;
 /**
- * The horizontal alignment of an element.
- *
- * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
- */
-/**
- * Options to align the element relative to the chart or another box.
- *
- * @interface Highcharts.AlignObject
- */ /**
-* Horizontal alignment. Can be one of `left`, `center` and `right`.
-*
-* @name Highcharts.AlignObject#align
-* @type {Highcharts.AlignValue|undefined}
-*
-* @default left
-*/ /**
-* Vertical alignment. Can be one of `top`, `middle` and `bottom`.
-*
-* @name Highcharts.AlignObject#verticalAlign
-* @type {Highcharts.VerticalAlignValue|undefined}
-*
-* @default top
-*/ /**
-* Horizontal pixel offset from alignment.
-*
-* @name Highcharts.AlignObject#x
-* @type {number|undefined}
-*
-* @default 0
-*/ /**
-* Vertical pixel offset from alignment.
-*
-* @name Highcharts.AlignObject#y
-* @type {number|undefined}
-*
-* @default 0
-*/ /**
-* Use the `transform` attribute with translateX and translateY custom
-* attributes to align this elements rather than `x` and `y` attributes.
-*
-* @name Highcharts.AlignObject#alignByTranslate
-* @type {boolean|undefined}
-*
-* @default false
-*/
-/**
- * Bounding box of an element.
- *
- * @interface Highcharts.BBoxObject
- * @extends Highcharts.PositionObject
- */ /**
-* Height of the bounding box.
-*
-* @name Highcharts.BBoxObject#height
-* @type {number}
-*/ /**
-* Width of the bounding box.
-*
-* @name Highcharts.BBoxObject#width
-* @type {number}
-*/ /**
-* Horizontal position of the bounding box.
-*
-* @name Highcharts.BBoxObject#x
-* @type {number}
-*/ /**
-* Vertical position of the bounding box.
-*
-* @name Highcharts.BBoxObject#y
-* @type {number}
-*/
-/**
  * A clipping rectangle that can be applied to one or more {@link SVGElement}
  * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
  * and applied with the {@link SVGElement#clip} function.
@@ -198,69 +126,6 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
 * @type {number}
 */
 /**
- * An object of key-value pairs for SVG attributes. Attributes in Highcharts
- * elements for the most parts correspond to SVG, but some are specific to
- * Highcharts, like `zIndex`, `rotation`, `rotationOriginX`,
- * `rotationOriginY`, `translateX`, `translateY`, `scaleX` and `scaleY`. SVG
- * attributes containing a hyphen are _not_ camel-cased, they should be
- * quoted to preserve the hyphen.
- *
- * @example
- * {
- *     'stroke': '#ff0000', // basic
- *     'stroke-width': 2, // hyphenated
- *     'rotation': 45 // custom
- *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
- * }
- *
- * @interface Highcharts.SVGAttributes
- */ /**
-* @name Highcharts.SVGAttributes#[key:string]
-* @type {*}
-*/ /**
-* @name Highcharts.SVGAttributes#d
-* @type {string|Highcharts.SVGPathArray|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#fill
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#inverted
-* @type {boolean|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#matrix
-* @type {Array<number>|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#rotation
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#rotationOriginX
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#rotationOriginY
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#scaleX
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#scaleY
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#stroke
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#style
-* @type {string|Highcharts.CSSObject|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#translateX
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#translateY
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#zIndex
-* @type {number|undefined}
-*/
-/**
  * Serialized form of an SVG definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
  *
@@ -279,21 +144,14 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
 * @type {string|undefined}
 */
 /**
- * An SVG DOM element. The type is a reference to the regular SVGElement in the
- * global scope.
- *
- * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
- */
-/**
  * Array of path commands, that will go into the `d` attribute of an SVG
  * element.
  *
- * @typedef {Array<number|Highcharts.SVGPathCommand>} Highcharts.SVGPathArray
+ * @typedef {Array<Array<Highcharts.SVGPathCommand,number?,number?,number?,number?,number?,number?,number?>>} Highcharts.SVGPathArray
  */
 /**
- * Possible path commands in a SVG path array.
+ * Possible path commands in an SVG path array. Valid values are `A`, `C`, `H`,
+ * `L`, `M`, `Q`, `S`, `T`, `V`, `Z`.
  *
  * @typedef {string} Highcharts.SVGPathCommand
  * @validvalue ["a","c","h","l","m","q","s","t","v","z","A","C","H","L","M","Q","S","T","V","Z"]
@@ -371,11 +229,6 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
 * @name Highcharts.SymbolOptionsObject#start
 * @type {number|undefined}
 */
-/**
- * The vertical alignment of an element.
- *
- * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
- */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**

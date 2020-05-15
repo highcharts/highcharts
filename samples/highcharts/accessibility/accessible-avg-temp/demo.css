@@ -1,12 +1,11 @@
-#container {
-    height: 420px; 
+.highcharts-figure, .highcharts-data-table table {
+    min-width: 310px; 
+    max-width: 800px;
+    margin: 1em auto;
 }
 
-.highcharts-figure, .highcharts-data-table table {
-    min-width: 360px; 
-    max-width: 820px;
-	margin: 1em auto;
-	font-size: 0.9em;
+#container {
+    height: 480px;
 }
 
 .highcharts-data-table table {
