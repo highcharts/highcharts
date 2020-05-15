@@ -554,20 +554,21 @@ var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         handleFormatter: function (
             point: Highcharts.ColumnPoint
         ): SVGPath {
-            var shapeArgs = point.shapeArgs,
-                radius = (shapeArgs as any).r || 0, // Rounding of bar corners
-                centerX = (shapeArgs as any).width / 2;
+            var shapeArgs = point.shapeArgs || {},
+                radius: number = shapeArgs.r || 0, // Rounding of bar corners
+                width: number = shapeArgs.width || 0,
+                centerX = width / 2;
 
             return [
                 // Left wick
-                'M', radius, 0,
-                'L', centerX - 5, 0,
+                ['M', radius, 0],
+                ['L', centerX - 5, 0],
                 // Circle
-                'A', 1, 1, 0, 0, 0, centerX + 5, 0,
-                'A', 1, 1, 0, 0, 0, centerX - 5, 0,
+                ['A', 1, 1, 0, 0, 0, centerX + 5, 0],
+                ['A', 1, 1, 0, 0, 0, centerX - 5, 0],
                 // Right wick
-                'M', centerX + 5, 0,
-                'L', (shapeArgs as any).width - radius, 0
+                ['M', centerX + 5, 0],
+                ['L', width - radius, 0]
             ];
         }
     }
