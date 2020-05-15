@@ -14,6 +14,7 @@
 
 import H from '../../parts/Globals.js';
 import SVGElement from '../../parts/SVGElement.js';
+import SVGLabel from '../../parts/SVGLabel.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
@@ -215,7 +216,7 @@ extend(SVGElement.prototype, {
             };
         }
 
-        const isLabel = this instanceof H.SVGLabel;
+        const isLabel = this instanceof SVGLabel;
         if (this.element.nodeName === 'text' || isLabel) {
             const isRotated = !!this.rotation,
                 correction = !isLabel ? getTextAnchorCorrection(this) :
