@@ -10,11 +10,9 @@
 
 'use strict';
 
-
-import H from './Globals.js';
+import type SVGRenderer from './SVGRenderer';
 import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
-
 const {
     defined,
     extend,
@@ -23,82 +21,31 @@ const {
     removeEvent
 } = U;
 
-declare global {
-    namespace Highcharts {
-        class SVGLabel extends SVGElement {
-            public constructor(
-                renderer: SVGRenderer,
-                str: string,
-                x: number,
-                y?: number,
-                shape?: SymbolKeyValue,
-                anchorX?: number,
-                anchorY?: number,
-                useHTML?: boolean,
-                baseline?: boolean,
-                className?: string
-            );
-            public alignFactor: number;
-            public anchorX?: number;
-            public anchorY?: number;
-            public baseline?: boolean;
-            public baselineOffset: number;
-            public bBox: BBoxObject;
-            public box?: SVGElement;
-            public className?: string;
-            public deferredAttr: SVGAttributes;
-            public fill: ColorType;
-            public height: number;
-            public heightSetting: number;
-            public needsBox?: boolean;
-            public padding: number;
-            public paddingLeft: number;
-            public shape?: SymbolKeyValue;
-            public stroke: number|string;
-            public 'stroke-width': string;
-            public symbolKey?: SymbolKeyValue | string;
-            public text: SVGElement;
-            public textAlign: string;
-            public textStr?: string;
-            public width: number;
-            public widthSetting?: number;
-            public x?: number;
-            public xSetting: number;
-            public y?: number;
-            public ySetting: number;
-        }
-    }
-}
-
 /**
+ * SVG label to render text.
  * @private
+ * @class
+ * @name Highcharts.SVGLabel
+ * @augments Highcharts.SVGElement
  */
-interface SVGLabel extends Highcharts.SVGLabel {
-    // takes interfaces from internal namespace
-}
-
 class SVGLabel extends SVGElement {
-    public static emptyBBox: Highcharts.BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
-    /**
-     * For labels, these CSS properties are applied to the `text` node directly.
-     *
-     * @private
-     * @name Highcharts.SVGElement#textProps
-     * @type {Array<string>}
-     */
-    public textProps: Array<string> = [
-        'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
-        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-        'textOutline', 'textOverflow', 'width'
-    ]
 
     /* *
      *
-     *  Functions
+     *  Static Properties
      *
      * */
+
+    public static readonly emptyBBox: Highcharts.BBoxObject = { width: 0, height: 0, x: 0, y: 0 };
+
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
     public constructor(
-        renderer: Highcharts.SVGRenderer,
+        renderer: SVGRenderer,
         str: string,
         x: number,
         y?: number,
@@ -150,6 +97,36 @@ class SVGLabel extends SVGElement {
         this.alignFactor = 0;
 
     }
+
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    /**
+     * @private
+     */
+    public kind: string = 'label';
+
+    /**
+     * For labels, these CSS properties are applied to the `text` node directly.
+     *
+     * @private
+     * @name Highcharts.SVGLabel#textProps
+     * @type {Array<string>}
+     */
+    public textProps: Array<string> = [
+        'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
+        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
+        'textOutline', 'textOverflow', 'width'
+    ]
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     public alignSetter(value: 'left' | 'center' | 'right'): void {
         const alignFactor = ({
@@ -351,7 +328,7 @@ class SVGLabel extends SVGElement {
         this.attr({
             // Alignment is available now  (#3295, 0 not rendered if given
             // as a value)
-            text: (str || str as any === 0) ? str : '',
+            text: (defined(str) ? str : ''),
             x: this.x,
             y: this.y
         });
@@ -567,7 +544,5 @@ class SVGLabel extends SVGElement {
         this.attr('translateY', this.ySetting);
     }
 }
-
-H.SVGLabel = SVGLabel;
 
 export default SVGLabel;
