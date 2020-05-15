@@ -46,14 +46,15 @@ declare global {
     }
 }
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import U from './Utilities.js';
 const {
     merge,
     seriesType
 } = U;
 
-var defaultPlotOptions = H.defaultPlotOptions,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * A candlestick chart is a style of financial chart used to describe price
@@ -109,7 +110,7 @@ var candlestickOptions = {
     /**
      * @extends plotOptions.ohlc.tooltip
      */
-    tooltip: (defaultPlotOptions.ohlc as any).tooltip,
+    tooltip: (defaultOptions.plotOptions as any).ohlc.tooltip,
 
     /**
      * @type    {number|null}
@@ -182,7 +183,7 @@ seriesType<Highcharts.CandlestickSeries>(
     'candlestick',
     'ohlc',
     merge(
-        defaultPlotOptions.column,
+        (defaultOptions.plotOptions as any).column,
         candlestickOptions
     ),
 

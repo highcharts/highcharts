@@ -8,15 +8,17 @@
  *
  * */
 'use strict';
+import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import O from './Options.js';
+var time = O.time;
 import Point from './Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
-import './Axis.js';
-import './Chart.js';
 import './Series.js';
-var Axis = H.Axis, Chart = H.Chart, Series = H.Series, seriesTypes = H.seriesTypes;
+var Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -478,7 +480,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Maintaining legacy global time. If the chart is instanciated first
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
-        if (options.time && this.time === H.time) {
+        if (options.time && this.time === time) {
             this.time = new Time(options.time);
         }
         // Some option stuctures correspond one-to-one to chart objects that

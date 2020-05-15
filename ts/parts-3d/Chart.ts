@@ -19,6 +19,7 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     Fx,
+    getOptions,
     isArray,
     merge,
     pick,
@@ -278,7 +279,7 @@ wrap(H.Chart.prototype, 'isInsidePlot', function (
     return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
 
-var defaultOptions = H.getOptions();
+var defaultOptions = getOptions();
 
 /**
  * @optionparent

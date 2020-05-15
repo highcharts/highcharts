@@ -15,6 +15,8 @@
  * */
 'use strict';
 import Highcharts from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var setOptions = U.setOptions;
 var textBright = '#F0F0F3';
 Highcharts.theme = {
     colors: [
@@ -206,4 +208,4 @@ Highcharts.theme = {
     }
 };
 // Apply the theme
-Highcharts.setOptions(Highcharts.theme);
+setOptions(Highcharts.theme);

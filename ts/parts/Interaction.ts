@@ -178,12 +178,11 @@ const {
 } = U;
 
 import './Chart.js';
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 import './Series.js';
 
 var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
-    defaultPlotOptions = H.defaultPlotOptions,
     hasTouch = H.hasTouch,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -1151,7 +1150,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 {}
             ),
             markerOptions = (
-                (defaultPlotOptions as any)[series.type as any].marker &&
+                (defaultOptions.plotOptions as any)[series.type as any].marker &&
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),

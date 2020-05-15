@@ -10,7 +10,8 @@
 'use strict';
 import H from './Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import './Options.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
@@ -232,7 +233,7 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 ''; // detach doclets above
-var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, seriesTypes = H.seriesTypes, win = H.win;
+var seriesTypes = H.seriesTypes, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -3100,7 +3101,7 @@ null,
         }
         else {
             this.getCyclic('color', this.options.color ||
-                defaultPlotOptions[this.type].color, this.chart.options.colors);
+                defaultOptions.plotOptions[this.type].color, this.chart.options.colors);
         }
     },
     /**

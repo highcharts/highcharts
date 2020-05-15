@@ -14,6 +14,10 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { dateFormat } = O;
+import Time from '../parts/Time.js';
+import './TreeGridAxis.js';
 import U from '../parts/Utilities.js';
 const {
     isNumber,
@@ -89,12 +93,10 @@ declare global {
 
 import './CurrentDateIndicator.js';
 import '../modules/static-scale.src.js';
-import './TreeGridAxis.js';
 import './Pathfinder.js';
 import '../modules/xrange.src.js';
 
-var dateFormat = H.dateFormat,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     Series = H.Series,
     parent = seriesTypes.xrange;
 

@@ -22,6 +22,7 @@ const {
     format,
     isNumber,
     pick,
+    setOptions,
     syncTimeout
 } = U;
 
@@ -126,7 +127,7 @@ var labelDistance = 3,
     Series = H.Series,
     Chart = H.Chart;
 
-H.setOptions({
+setOptions({
 
     /**
      * @optionparent plotOptions

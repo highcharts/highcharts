@@ -13,6 +13,8 @@ import H from './Globals.js';
 var charts = H.charts, doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions, time = O.time;
 import Pointer from './Pointer.js';
 import Time from './Time.js';
 import U from './Utilities.js';
@@ -106,9 +108,8 @@ var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr 
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-import './Options.js';
 import './Pointer.js';
-var defaultOptions = H.defaultOptions, marginNames = H.marginNames;
+var marginNames = H.marginNames;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.
@@ -302,7 +303,7 @@ var Chart = /** @class */ (function () {
             this.time =
                 userOptions.time && Object.keys(userOptions.time).length ?
                     new Time(userOptions.time) :
-                    H.time;
+                    time;
             /**
              * Callback function to override the default function that formats
              * all the numbers in the chart. Returns a string with the formatted

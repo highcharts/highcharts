@@ -208,8 +208,9 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  *
  * @return {string}
  */
-import './Options.js';
-var defaultOptions = H.defaultOptions, deg2rad = H.deg2rad;
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
+var deg2rad = H.deg2rad;
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
  * adding axes by {@link Highcharts.Chart#addAxis}.

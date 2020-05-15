@@ -71,6 +71,8 @@ declare global {
     }
 }
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -169,7 +171,7 @@ seriesType<Highcharts.ItemSeries>(
          * @extends plotOptions.series.marker
          */
         marker: merge(
-            (H.defaultOptions.plotOptions as any).line.marker,
+            (defaultOptions.plotOptions as any).line.marker,
             {
                 radius: null
             }

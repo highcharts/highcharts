@@ -10,12 +10,14 @@
 'use strict';
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, merge = U.merge, pick = U.pick;
+var extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-var defaultOptions = H.defaultOptions, Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
+var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {
     zoomIn: 'Zoom in',
@@ -370,7 +372,7 @@ H.Map = H.mapChart = function (a, b, c) {
         minPadding: 0,
         maxPadding: 0,
         startOnTick: false
-    }, seriesOptions, defaultCreditsOptions = H.getOptions().credits;
+    }, seriesOptions, defaultCreditsOptions = getOptions().credits;
     /* For visual testing
     hiddenAxis.gridLineWidth = 1;
     hiddenAxis.gridZIndex = 10;

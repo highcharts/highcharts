@@ -34,6 +34,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    getOptions,
     isArray,
     merge,
     splat
@@ -79,7 +80,7 @@ H.ganttChart = function (
 ): Chart {
     var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
         seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
+        defaultOptions = getOptions(),
         defaultLinkedTo: number,
         userOptions = options;
 

@@ -11,6 +11,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import U from '../parts/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Series.js';
@@ -95,7 +97,7 @@ seriesType('item',
     /**
      * @extends plotOptions.series.marker
      */
-    marker: merge(H.defaultOptions.plotOptions.line.marker, {
+    marker: merge(defaultOptions.plotOptions.line.marker, {
         radius: null
     }),
     /**

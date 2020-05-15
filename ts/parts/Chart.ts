@@ -23,6 +23,11 @@ const {
 } = H;
 import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
+import O from './Options.js';
+const {
+    defaultOptions,
+    time
+} = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';
 import Time from './Time.js';
@@ -327,11 +332,9 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import './Options.js';
 import './Pointer.js';
 
-var defaultOptions = H.defaultOptions,
-    marginNames = H.marginNames;
+var marginNames = H.marginNames;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -619,7 +622,7 @@ class Chart {
             this.time =
                 userOptions.time && Object.keys(userOptions.time).length ?
                     new Time(userOptions.time) :
-                    H.time;
+                    time;
 
             /**
              * Callback function to override the default function that formats

@@ -17,6 +17,8 @@
 'use strict';
 
 import Highcharts from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const { setOptions } = U;
 
 var textBright = '#F0F0F3';
 
@@ -227,4 +229,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-Highcharts.setOptions(Highcharts.theme);
+setOptions(Highcharts.theme);

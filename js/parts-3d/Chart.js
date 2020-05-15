@@ -14,7 +14,7 @@ import Axis from '../parts/Axis.js';
 import Axis3D from './Axis3D.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, Fx = U.Fx, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, Fx = U.Fx, getOptions = U.getOptions, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import ZAxis from './ZAxis.js';
 import '../parts/Chart.js';
 var Chart = H.Chart, perspective = H.perspective;
@@ -144,7 +144,7 @@ function getScale(chart, depth) {
 wrap(H.Chart.prototype, 'isInsidePlot', function (proceed) {
     return this.is3d() || proceed.apply(this, [].slice.call(arguments, 1));
 });
-var defaultOptions = H.getOptions();
+var defaultOptions = getOptions();
 /**
  * @optionparent
  */

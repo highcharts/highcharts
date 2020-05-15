@@ -189,6 +189,8 @@ declare global {
 
 ''; // detach doclets above
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
@@ -218,7 +220,7 @@ var deg2rad = H.deg2rad,
 
 
 // Set default Pathfinder options
-extend(H.defaultOptions, {
+extend(defaultOptions, {
     /**
      * The Pathfinder module allows you to define connections between any two
      * points, represented as lines - optionally with markers for the start

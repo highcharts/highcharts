@@ -12,7 +12,6 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
-
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
@@ -3295,7 +3294,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     props?: Partial<TSeries>,
     pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
-    var defaultOptions = H.getOptions(),
+    var defaultOptions = getOptions(),
         seriesTypes = H.seriesTypes;
 
     // Merge the options
@@ -3345,6 +3344,54 @@ const uniqueKey = H.uniqueKey = (function (): () => string {
 
 const isFunction = H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
+};
+
+/**
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
+ *
+ * @function Highcharts.getOptions
+ *
+ * @return {Highcharts.Options}
+ */
+const getOptions = H.getOptions = function (): Highcharts.Options {
+    return H.defaultOptions;
+};
+
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+const setOptions = H.setOptions = function (
+    options: Highcharts.Options
+): Highcharts.Options {
+
+    // Copy in the default options
+    H.defaultOptions = merge(true, H.defaultOptions, options);
+
+    // Update the time object
+    if (options.time || options.global) {
+        H.time.update(merge(
+            H.defaultOptions.global,
+            H.defaultOptions.time,
+            options.global,
+            options.time
+        ));
+    }
+
+    return H.defaultOptions;
 };
 
 // Register Highcharts as a plugin in jQuery
@@ -3432,6 +3479,7 @@ const utilitiesModule = {
     format,
     getMagnitude,
     getNestedProperty,
+    getOptions,
     getStyle,
     inArray,
     isArray,
@@ -3453,6 +3501,7 @@ const utilitiesModule = {
     removeEvent,
     seriesType,
     setAnimation,
+    setOptions,
     splat,
     stableSort,
     stop,
