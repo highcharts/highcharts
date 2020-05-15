@@ -13,6 +13,155 @@ import H from './Globals.js';
 var deg2rad = H.deg2rad, doc = H.doc, hasTouch = H.hasTouch, isFirefox = H.isFirefox, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, win = H.win;
 import U from './Utilities.js';
 var animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, inArray = U.inArray, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, stop = U.stop, uniqueKey = U.uniqueKey;
+/**
+ * The horizontal alignment of an element.
+ *
+ * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
+ */
+/**
+ * Options to align the element relative to the chart or another box.
+ *
+ * @interface Highcharts.AlignObject
+ */ /**
+* Horizontal alignment. Can be one of `left`, `center` and `right`.
+*
+* @name Highcharts.AlignObject#align
+* @type {Highcharts.AlignValue|undefined}
+*
+* @default left
+*/ /**
+* Vertical alignment. Can be one of `top`, `middle` and `bottom`.
+*
+* @name Highcharts.AlignObject#verticalAlign
+* @type {Highcharts.VerticalAlignValue|undefined}
+*
+* @default top
+*/ /**
+* Horizontal pixel offset from alignment.
+*
+* @name Highcharts.AlignObject#x
+* @type {number|undefined}
+*
+* @default 0
+*/ /**
+* Vertical pixel offset from alignment.
+*
+* @name Highcharts.AlignObject#y
+* @type {number|undefined}
+*
+* @default 0
+*/ /**
+* Use the `transform` attribute with translateX and translateY custom
+* attributes to align this elements rather than `x` and `y` attributes.
+*
+* @name Highcharts.AlignObject#alignByTranslate
+* @type {boolean|undefined}
+*
+* @default false
+*/
+/**
+ * Bounding box of an element.
+ *
+ * @interface Highcharts.BBoxObject
+ * @extends Highcharts.PositionObject
+ */ /**
+* Height of the bounding box.
+*
+* @name Highcharts.BBoxObject#height
+* @type {number}
+*/ /**
+* Width of the bounding box.
+*
+* @name Highcharts.BBoxObject#width
+* @type {number}
+*/ /**
+* Horizontal position of the bounding box.
+*
+* @name Highcharts.BBoxObject#x
+* @type {number}
+*/ /**
+* Vertical position of the bounding box.
+*
+* @name Highcharts.BBoxObject#y
+* @type {number}
+*/
+/**
+ * An object of key-value pairs for SVG attributes. Attributes in Highcharts
+ * elements for the most parts correspond to SVG, but some are specific to
+ * Highcharts, like `zIndex`, `rotation`, `rotationOriginX`,
+ * `rotationOriginY`, `translateX`, `translateY`, `scaleX` and `scaleY`. SVG
+ * attributes containing a hyphen are _not_ camel-cased, they should be
+ * quoted to preserve the hyphen.
+ *
+ * @example
+ * {
+ *     'stroke': '#ff0000', // basic
+ *     'stroke-width': 2, // hyphenated
+ *     'rotation': 45 // custom
+ *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
+ * }
+ *
+ * @interface Highcharts.SVGAttributes
+ */ /**
+* @name Highcharts.SVGAttributes#[key:string]
+* @type {*}
+*/ /**
+* @name Highcharts.SVGAttributes#d
+* @type {string|Highcharts.SVGPathArray|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#fill
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#inverted
+* @type {boolean|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#matrix
+* @type {Array<number>|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#rotation
+* @type {number|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#rotationOriginX
+* @type {number|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#rotationOriginY
+* @type {number|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#scaleX
+* @type {number|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#scaleY
+* @type {number|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#stroke
+* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#style
+* @type {string|Highcharts.CSSObject|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#translateX
+* @type {number|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#translateY
+* @type {number|undefined}
+*/ /**
+* @name Highcharts.SVGAttributes#zIndex
+* @type {number|undefined}
+*/
+/**
+ * An SVG DOM element. The type is a reference to the regular SVGElement in the
+ * global scope.
+ *
+ * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
+ *
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
+ */
+/**
+ * The vertical alignment of an element.
+ *
+ * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
+ */
+''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The SVGElement prototype is a JavaScript wrapper for SVG elements used in the

@@ -1009,6 +1009,14 @@ class RadialAxis {
             }
         });
 
+        addEvent(AxisClass, 'initialAxisTranslation', function (): void {
+            const axis = this as RadialAxis;
+
+            if (axis.isRadial) {
+                axis.beforeSetTickPositions();
+            }
+        });
+
         // Add special cases within the Tick class' methods for radial axes.
         addEvent(TickClass, 'afterGetPosition', function (e: RadialAfterGetPositionEvent): void {
             const tick = this as RadialTick;
