@@ -495,8 +495,6 @@ var Point = /** @class */ (function () {
             (point.selected ? ' highcharts-point-select' : '') +
             (point.negative ? ' highcharts-negative' : '') +
             (point.isNull ? ' highcharts-null-point' : '') +
-            (typeof point.colorIndex !== 'undefined' ?
-                ' highcharts-color-' + point.colorIndex : '') +
             (point.options.className ? ' ' + point.options.className : '') +
             (point.zone && point.zone.className ? ' ' +
                 point.zone.className.replace('highcharts-negative', '') : '');
