@@ -75,7 +75,6 @@ declare global {
             [key: string]: any;
             public element: (HTMLDOMElement|SVGDOMElement);
             public hasBoxWidthChanged: boolean;
-            public isLabel: boolean;
             public parentGroup?: SVGElement;
             public pathArray?: SVGPath;
             public r?: number;
