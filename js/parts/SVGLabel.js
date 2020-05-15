@@ -397,4 +397,4 @@ var SVGLabel = /** @class */ (function (_super) {
     return SVGLabel;
 }(SVGElement));
 H.SVGLabel = SVGLabel;
-export default H.SVGLabel;
+export default SVGLabel;

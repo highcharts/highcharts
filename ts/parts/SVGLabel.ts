@@ -570,4 +570,4 @@ class SVGLabel extends SVGElement {
 
 H.SVGLabel = SVGLabel;
 
-export default H.SVGLabel;
+export default SVGLabel;
