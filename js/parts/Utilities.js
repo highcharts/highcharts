@@ -2472,11 +2472,11 @@ var uniqueKey = H.uniqueKey = (function () {
  * @param {boolean} [mode]
  * Changes the state of serial mode.
  *
- * @return {boolean}
+ * @return {boolean|undefined}
  * State of the serial mode.
  */
 var useSerialIds = H.useSerialIds = function (mode) {
-    return (serialMode = pick(mode, serialMode, false));
+    return (serialMode = pick(mode, serialMode));
 };
 var isFunction = H.isFunction = function (obj) {
     return typeof obj === 'function';

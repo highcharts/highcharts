@@ -111,10 +111,6 @@ declare global {
             max: number;
             min: number;
         }
-        interface UniqueKeyFunction {
-            (): string;
-            useSerialIds?: boolean;
-        }
         interface WrapProceedFunction {
             (...args: Array<any>): any;
         }
@@ -338,7 +334,7 @@ declare global {
             context?: unknown
         ): number;
         function uniqueKey(): string;
-        function useSerialIds(mode?: boolean): boolean;
+        function useSerialIds(mode?: boolean): (boolean|undefined);
         function wrap(
             obj: any,
             method: string,
@@ -3372,11 +3368,11 @@ const uniqueKey = H.uniqueKey = (function (): () => string {
  * @param {boolean} [mode]
  * Changes the state of serial mode.
  *
- * @return {boolean}
+ * @return {boolean|undefined}
  * State of the serial mode.
  */
-const useSerialIds = H.useSerialIds = function (mode?: boolean): boolean {
-    return (serialMode = pick(mode, serialMode, false));
+const useSerialIds = H.useSerialIds = function (mode?: boolean): (boolean|undefined) {
+    return (serialMode = pick(mode, serialMode));
 };
 
 const isFunction = H.isFunction = function (obj: unknown): obj is Function {
