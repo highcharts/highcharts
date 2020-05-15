@@ -2651,13 +2651,11 @@ class Chart {
      */
     public updateContainerScaling(): void {
         const container = this.container;
+        // #13342 - tooltip was not visible in Chrome, when chart
+        // updates height.
         if (
-            /**
-             * #13342 - tooltip was not visible in Chrome, when chart
-             * updates height.
-             */
-            container.offsetWidth > 2 &&
-            container.offsetHeight > 2 &&
+            container.offsetWidth > 2 && // #13342
+            container.offsetHeight > 2 && // #13342
             container.getBoundingClientRect
         ) {
             const bb = container.getBoundingClientRect(),
