@@ -2428,6 +2428,7 @@ var seriesType = H.seriesType = function (type, parent, options, props, pointPro
     }
     return seriesTypes[type];
 };
+var serialMode;
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
  * composed of a random hash specific to this Highcharts instance, and a
@@ -2442,7 +2443,7 @@ var seriesType = H.seriesType = function (type, parent, options, props, pointPro
  * A unique key.
  */
 var uniqueKey = H.uniqueKey = (function () {
-    var hash = H.serialKeys ?
+    var hash = serialMode ?
         '' :
         Math.random().toString(36).substring(2, 9) + '-';
     var id = 0;
@@ -2451,22 +2452,32 @@ var uniqueKey = H.uniqueKey = (function () {
     };
 }());
 /**
- * Activates a serial mode for {@link Highcharts.uniqueKey} that can be used in
- * automated tests. This is only for testing purposes and can break
- * functionality in webpages with multiple Highcharts renderer.
+ * Activates a serial mode for element IDs provided by
+ * {@link Highcharts.uniqueKey}. This mode can be used in automated tests, where
+ * a simple comparison of two rendered SVG graphics is needed.
+ *
+ * **Note:** This is only for testing purposes and will break functionality in
+ * webpages with multiple charts.
  *
  * @example
  * if (
  *   process &&
  *   process.env.NODE_ENV === 'development'
  * ) {
- *   Highcharts.uniqueSerial = true;
+ *   Highcharts.useSerialIds(true);
  * }
  *
- * @name Highcharts.serialKeys
- * @type {boolean|undefined}
+ * @function Highcharts.useSerialIds
+ *
+ * @param {boolean} [mode]
+ * Changes the state of serial mode.
+ *
+ * @return {boolean}
+ * State of the serial mode.
  */
-''; // detach doclet
+var useSerialIds = H.useSerialIds = function (mode) {
+    return (serialMode = pick(mode, serialMode, false));
+};
 var isFunction = H.isFunction = function (obj) {
     return typeof obj === 'function';
 };
@@ -2575,6 +2586,7 @@ var utilitiesModule = {
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
     uniqueKey: uniqueKey,
+    useSerialIds: useSerialIds,
     wrap: wrap
 };
 export default utilitiesModule;

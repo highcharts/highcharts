@@ -111,6 +111,10 @@ declare global {
             max: number;
             min: number;
         }
+        interface UniqueKeyFunction {
+            (): string;
+            useSerialIds?: boolean;
+        }
         interface WrapProceedFunction {
             (...args: Array<any>): any;
         }
@@ -334,13 +338,13 @@ declare global {
             context?: unknown
         ): number;
         function uniqueKey(): string;
+        function useSerialIds(mode?: boolean): boolean;
         function wrap(
             obj: any,
             method: string,
             func: WrapProceedFunction
         ): void;
         let timeUnits: Dictionary<number>;
-        let serialKeys: (boolean|undefined);
     }
 }
 
@@ -3321,6 +3325,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     return seriesTypes[type];
 };
 
+let serialMode: (boolean|undefined);
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
  * composed of a random hash specific to this Highcharts instance, and a
@@ -3336,7 +3341,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    const hash = H.serialKeys ?
+    const hash = serialMode ?
         '' :
         Math.random().toString(36).substring(2, 9) + '-';
 
@@ -3346,24 +3351,33 @@ const uniqueKey = H.uniqueKey = (function (): () => string {
         return 'highcharts-' + hash + id++;
     };
 }());
-
 /**
- * Activates a serial mode for {@link Highcharts.uniqueKey} that can be used in
- * automated tests. This is only for testing purposes and can break
- * functionality in webpages with multiple Highcharts renderer.
+ * Activates a serial mode for element IDs provided by
+ * {@link Highcharts.uniqueKey}. This mode can be used in automated tests, where
+ * a simple comparison of two rendered SVG graphics is needed.
+ *
+ * **Note:** This is only for testing purposes and will break functionality in
+ * webpages with multiple charts.
  *
  * @example
  * if (
  *   process &&
  *   process.env.NODE_ENV === 'development'
  * ) {
- *   Highcharts.uniqueSerial = true;
+ *   Highcharts.useSerialIds(true);
  * }
  *
- * @name Highcharts.serialKeys
- * @type {boolean|undefined}
+ * @function Highcharts.useSerialIds
+ *
+ * @param {boolean} [mode]
+ * Changes the state of serial mode.
+ *
+ * @return {boolean}
+ * State of the serial mode.
  */
-''; // detach doclet
+const useSerialIds = H.useSerialIds = function (mode?: boolean): boolean {
+    return (serialMode = pick(mode, serialMode, false));
+};
 
 const isFunction = H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
@@ -3481,6 +3495,7 @@ const utilitiesModule = {
     syncTimeout,
     timeUnits,
     uniqueKey,
+    useSerialIds,
     wrap
 };
 
