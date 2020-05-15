@@ -79,7 +79,6 @@ var SVGLabel = /** @class */ (function (_super) {
         _this.needsBox = renderer.styledMode || hasBGImage;
         _this.deferredAttr = {};
         _this.alignFactor = 0;
-        _this.isLabel = true;
         return _this;
     }
     SVGLabel.prototype.alignSetter = function (value) {

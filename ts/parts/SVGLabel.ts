@@ -148,8 +148,6 @@ class SVGLabel extends SVGElement {
         this.needsBox = renderer.styledMode || hasBGImage;
         this.deferredAttr = {};
         this.alignFactor = 0;
-        this.isLabel = true;
-
 
     }
 
