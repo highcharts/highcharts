@@ -27,7 +27,6 @@ declare global {
             stackLabels?: any; // @todo
         }
         interface Chart {
-            frame3d?: any; // @todo highcharts 3d
             frameShapes?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
         }

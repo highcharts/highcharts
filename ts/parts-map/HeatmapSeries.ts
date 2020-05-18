@@ -261,6 +261,7 @@ seriesType<Highcharts.HeatmapSeries>(
         },
         /**
          * @excluding radius, enabledThreshold
+         * @since     8.1
          */
         marker: {
             /**
@@ -1086,12 +1087,14 @@ seriesType<Highcharts.HeatmapSeries>(
 /**
  * @excluding radius, enabledThreshold
  * @product   highcharts highmaps
+ * @since     8.1
  * @apioption series.heatmap.data.marker
  */
 
 /**
  * @excluding radius, enabledThreshold
  * @product   highcharts highmaps
+ * @since     8.1
  * @apioption series.heatmap.marker
  */
 
