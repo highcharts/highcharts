@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
 
 /**
@@ -38,9 +39,9 @@ declare global {
         }
 
         interface SupertrendGroupedPointsObject {
-            bottom: Array<Partial<Point>>;
-            intersect: Array<Partial<Point>>;
-            top: Array<Partial<Point>>;
+            bottom: Array<SupertrendIndicatorPoint>;
+            intersect: Array<SupertrendIndicatorPoint>;
+            top: Array<SupertrendIndicatorPoint>;
         }
 
         interface SupertrendLineObject {
@@ -322,8 +323,8 @@ seriesType<Highcharts.SupertrendIndicator>(
                 pointColor: Highcharts.ColorType,
 
                 // Temporary points that fill groupedPoitns array
-                newPoint: Partial<Highcharts.Point>,
-                newNextPoint: Partial<Highcharts.Point>;
+                newPoint: Highcharts.SupertrendIndicatorPoint,
+                newNextPoint: Highcharts.SupertrendIndicatorPoint;
 
             // Loop which sort supertrend points
             while (indicPointsLen--) {
@@ -339,7 +340,7 @@ seriesType<Highcharts.SupertrendIndicator>(
                     plotX: point.plotX,
                     plotY: point.plotY,
                     isNull: false
-                };
+                } as Highcharts.SupertrendIndicatorPoint;
 
                 // When mainPoint is the last one (left plot area edge)
                 // but supertrend has additional one
@@ -412,7 +413,7 @@ seriesType<Highcharts.SupertrendIndicator>(
                         plotX: nextPoint.plotX,
                         plotY: nextPoint.plotY,
                         isNull: false
-                    };
+                    } as Highcharts.SupertrendIndicatorPoint;
 
                     if (
                         point.y >= mainPoint.close &&
@@ -496,10 +497,7 @@ seriesType<Highcharts.SupertrendIndicator>(
 
             // Generate lines:
             objectEach(groupedPoitns,
-                function (
-                    values: Array<Highcharts.SupertrendIndicatorPoint>,
-                    lineName: string
-                ): void {
+                function (values, lineName): void {
                     indicator.points = values;
                     indicator.options = merge(
                         (supertrendLineOptions as any)[lineName].styles,

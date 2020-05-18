@@ -814,7 +814,7 @@ class SVGRenderer {
                     attr: Highcharts.SVGAttributes = {};
 
                 // Set attributes
-                objectEach(item, function (val: string, key: string): void {
+                objectEach(item, function (val, key): void {
                     if (
                         key !== 'tagName' &&
                         key !== 'children' &&

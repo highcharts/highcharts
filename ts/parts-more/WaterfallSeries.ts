@@ -225,9 +225,7 @@ namespace WaterfallAxis {
             this.dummyStackItem = dummyStackItem;
 
             // Render each waterfall stack total
-            objectEach(waterfallStacks, function (
-                type: (boolean|StacksItemObject)
-            ): void {
+            objectEach(waterfallStacks, function (type): void {
                 objectEach(type, function (
                     stackItem: StacksItemObject
                 ): void {

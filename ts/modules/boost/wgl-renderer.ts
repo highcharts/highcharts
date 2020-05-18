@@ -1645,7 +1645,7 @@ function GLRenderer(
         shader.destroy();
         if (gl) {
 
-            objectEach(textureHandles, function (key: string): void {
+            objectEach(textureHandles, function (_val, key): void {
                 if (textureHandles[key].handle) {
                     gl.deleteTexture(textureHandles[key].handle);
                 }

@@ -1797,8 +1797,11 @@ Chart.prototype.inlineStyles = function () {
                 if ((parentStyles[prop] !== val || node.nodeName === 'svg') &&
                     defaultStyles[node.nodeName][prop] !== val) {
                     // Attributes
-                    if (inlineToAttributes.indexOf(prop) !== -1) {
-                        node.setAttribute(hyphenate(prop), val);
+                    if (!inlineToAttributes ||
+                        inlineToAttributes.indexOf(prop) !== -1) {
+                        if (val) {
+                            node.setAttribute(hyphenate(prop), val);
+                        }
                         // Styles
                     }
                     else {

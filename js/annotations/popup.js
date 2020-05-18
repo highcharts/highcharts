@@ -603,7 +603,7 @@ H.Popup.prototype = {
          */
         getAmount: function () {
             var series = this.series, counter = 0;
-            objectEach(series, function (serie) {
+            series.forEach(function (serie) {
                 var seriesOptions = serie.options;
                 if (serie.params ||
                     seriesOptions && seriesOptions.params) {

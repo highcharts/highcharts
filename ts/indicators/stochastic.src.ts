@@ -218,7 +218,7 @@ seriesType<Highcharts.StochasticIndicator>(
                 slicedY = yVal.slice(i - periodK + 1, i + 1);
 
                 // Calculate %K
-                extremes = getArrayExtremes(slicedY, low, high);
+                extremes = getArrayExtremes(slicedY, low as any, high as any);
                 LL = extremes[0]; // Lowest low in %K periods
                 CL = yVal[i][close] - LL;
                 HL = extremes[1] - LL;
