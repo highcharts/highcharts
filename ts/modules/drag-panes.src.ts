@@ -15,6 +15,21 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+const {
+    hasTouch
+} = H;
+import Axis from '../parts/Axis.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    isNumber,
+    merge,
+    objectEach,
+    relativeLength,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -70,24 +85,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    wrap
-} = U;
-
-import '../parts/Axis.js';
-import '../parts/Pointer.js';
-
-var hasTouch = H.hasTouch,
-    Axis = H.Axis,
-    Pointer = H.Pointer;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -720,7 +717,7 @@ addEvent(Axis, 'destroy', function (e: Event): void {
 
 // Prevent any hover effects while dragging a control line of AxisResizer.
 wrap(Pointer.prototype, 'runPointActions', function (
-    this: Highcharts.Pointer,
+    this: Pointer,
     proceed: Function
 ): void {
     if (!this.chart.activeResizer) {
@@ -731,7 +728,7 @@ wrap(Pointer.prototype, 'runPointActions', function (
 // Prevent default drag action detection while dragging a control line of
 // AxisResizer. (#7563)
 wrap(Pointer.prototype, 'drag', function (
-    this: Highcharts.Pointer,
+    this: Pointer,
     proceed: Function
 ): void {
     if (!this.chart.activeResizer) {

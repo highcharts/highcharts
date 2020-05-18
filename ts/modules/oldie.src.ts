@@ -13,7 +13,32 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import Pointer from '../parts/Pointer.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    discardElement,
+    erase,
+    extend,
+    extendClass,
+    isArray,
+    isNumber,
+    isObject,
+    merge,
+    offset,
+    pick,
+    pInt,
+    uniqueKey
+} = U;
 
 /**
  * Internal types
@@ -321,34 +346,9 @@ declare global {
     }
 }
 
-import Color from '../parts/Color.js';
-const color = Color.parse;
-import SVGElement from '../parts/SVGElement.js';
-import SVGRenderer from '../parts/SVGRenderer.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    createElement,
-    css,
-    defined,
-    discardElement,
-    erase,
-    extend,
-    extendClass,
-    isArray,
-    isNumber,
-    isObject,
-    merge,
-    offset,
-    pick,
-    pInt,
-    uniqueKey
-} = U;
-
 var VMLRenderer,
     VMLRendererExtension,
     VMLElement: typeof Highcharts.VMLElement,
-    Chart = H.Chart,
     deg2rad = H.deg2rad,
     doc = H.doc,
     noop = H.noop,
@@ -445,10 +445,8 @@ if (!svg) {
      * @param {boolean} [chartPosition=false]
      * @return {Highcharts.PointerEventObject}
      */
-    H.Pointer.prototype.normalize = function<
-        T extends Highcharts.PointerEventObject
-    > (
-        e: (T|PointerEvent|TouchEvent),
+    Pointer.prototype.normalize = function<T extends Highcharts.PointerEventObject> (
+        e: (T|MouseEvent|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
 
