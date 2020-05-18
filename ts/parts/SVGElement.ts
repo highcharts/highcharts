@@ -1287,7 +1287,7 @@ class SVGElement {
                         (key as any).push(n, val);
                     }
                 });
-                objectEach(stops, function (val: string): void {
+                objectEach(stops, function (val): void {
                     (key as any).push(val);
                 });
                 key = (key as any).join(',');
@@ -1387,7 +1387,7 @@ class SVGElement {
 
         // Filter out existing styles to increase performance (#2640)
         if (oldStyles) {
-            objectEach(styles, function (style: string, n: string): void {
+            objectEach(styles, function (style, n): void {
                 if (oldStyles && oldStyles[n] !== style) {
                     newStyles[n] = style;
                     hasNew = true;
@@ -1431,7 +1431,7 @@ class SVGElement {
                 hyphenate = function (a: string, b: string): string {
                     return '-' + b.toLowerCase();
                 };
-                objectEach(styles, function (style: string, n: string): void {
+                objectEach(styles, function (style, n): void {
                     if (svgPseudoProps.indexOf(n) === -1) {
                         serializedCss +=
                         n.replace(/([A-Z])/g, hyphenate as any) + ':' +

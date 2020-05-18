@@ -658,12 +658,9 @@ class Chart {
 
             // Chart event handlers
             if (chartEvents) {
-                objectEach(chartEvents, function (
-                    event: Highcharts.EventCallbackFunction<Chart>,
-                    eventType: string
-                ): void {
+                objectEach(chartEvents, function (event, eventType): void {
                     if (isFunction(event)) {
-                        addEvent(chart as any, eventType, event);
+                        addEvent(chart, eventType, event);
                     }
                 });
             }

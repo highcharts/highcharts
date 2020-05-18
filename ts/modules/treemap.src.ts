@@ -331,7 +331,7 @@ var seriesTypes = H.seriesTypes,
     eachObject = function (
         this: unknown,
         list: any,
-        func: Highcharts.ObjectEachCallbackFunction<unknown>,
+        func: Highcharts.ObjectEachCallbackFunction<any, unknown>,
         context?: unknown
     ): void {
         context = context || this;

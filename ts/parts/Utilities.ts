@@ -93,8 +93,13 @@ declare global {
         interface FormatterCallbackFunction<T> {
             (this: T): string;
         }
-        interface ObjectEachCallbackFunction<T> {
-            (this: T, value: any, key: string, obj: any): void;
+        interface ObjectEachCallbackFunction<TObject, TContext> {
+            (
+                this: TContext,
+                value: TObject[keyof TObject],
+                key: keyof TObject,
+                obj: TObject
+            ): void;
         }
         interface OffsetObject {
             left: number;
@@ -275,10 +280,10 @@ declare global {
             decimalPoint?: string,
             thousandsSep?: string
         ): string;
-        function objectEach<T>(
-            obj: any,
-            fn: ObjectEachCallbackFunction<T>,
-            ctx?: T
+        function objectEach<TObject, TContext>(
+            obj: TObject,
+            fn: ObjectEachCallbackFunction<TObject, TContext>,
+            ctx?: TContext
         ): void;
         function offset(el: Element): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
@@ -708,7 +713,7 @@ const error = H.error = function (
     code: (number|string),
     stop?: boolean,
     chart?: Highcharts.Chart,
-    params?: Highcharts.Dictionary<string>
+    params?: Record<string, string>
 ): void {
     var isCode = isNumber(code),
         message = isCode ?
@@ -729,7 +734,7 @@ const error = H.error = function (
         if (isCode) {
             message += '?';
         }
-        objectEach(params, function (value: string, key: string): void {
+        objectEach(params, function (value, key): void {
             additionalMessages += ('\n' + key + ': ' + value);
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
@@ -1304,7 +1309,7 @@ function merge<T>(): T {
                 copy = {};
             }
 
-            objectEach(original, function (value: any, key: string): void {
+            objectEach(original, function (value, key): void {
 
                 // Copy the contents of objects, but not arrays or DOM nodes
                 if (isObject(value, true) &&
@@ -1579,7 +1584,7 @@ function attr(
 
     // else if prop is defined, it is a hash of key/value pairs
     } else {
-        objectEach(prop, function (val: any, key: string): void {
+        objectEach(prop, function (val, key): void {
             elem.setAttribute(key, val);
         });
     }
@@ -2228,7 +2233,7 @@ const arrayMax = H.arrayMax = function arrayMax(data: Array<any>): number {
  */
 const destroyObjectProperties = H.destroyObjectProperties =
     function destroyObjectProperties(obj: any, except?: any): void {
-        objectEach(obj, function (val: any, n: string): void {
+        objectEach(obj, function (val, n): void {
             // If the object is non-null and destroy is defined
             if (val && val !== except && val.destroy) {
                 // Invoke the destroy
@@ -2758,15 +2763,15 @@ const stop = H.stop = function (el: Highcharts.SVGElement, prop?: string): void 
  *
  * @return {void}
  */
-const objectEach = H.objectEach = function objectEach<T>(
-    obj: any,
-    fn: Highcharts.ObjectEachCallbackFunction<T>,
-    ctx?: T
+const objectEach = H.objectEach = function objectEach<TObject, TContext>(
+    obj: TObject,
+    fn: Highcharts.ObjectEachCallbackFunction<TObject, TContext>,
+    ctx?: TContext
 ): void {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
-            fn.call(ctx || obj[key], obj[key], key, obj);
+            fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
         }
     }
 };
@@ -2871,9 +2876,9 @@ objectEach({
     grep: 'filter',
     reduce: 'reduce',
     some: 'some'
-}, function (val: any, key: string): void {
-    (H as any)[key] = function (arr: Array<any>): any {
-        return Array.prototype[val].apply(
+} as Record<string, ('map'|'forEach'|'filter'|'reduce'|'some')>, function (val, key): void {
+    (H as any)[key] = function (arr: Array<unknown>): any {
+        return (Array.prototype[val] as any).apply(
             arr,
             [].slice.call(arguments, 1)
         );
@@ -3029,11 +3034,11 @@ const removeEvent = H.removeEvent = function removeEvent<T>(
             types = eventCollection;
         }
 
-        objectEach(types, function (val: any, n: string): void {
+        objectEach(types, function (_val, n): void {
             if (eventCollection[n]) {
                 len = eventCollection[n].length;
                 while (len--) {
-                    removeOneEvent(n, eventCollection[n][len].fn);
+                    removeOneEvent(n as any, eventCollection[n][len].fn);
                 }
             }
         });
@@ -3216,15 +3221,15 @@ const animate = H.animate = function (
             complete: args[4]
         };
     }
-    if (!isNumber((opt as any).duration)) {
-        (opt as any).duration = 400;
+    if (!isNumber(opt.duration)) {
+        opt.duration = 400;
     }
-    (opt as any).easing = typeof (opt as any).easing === 'function' ?
-        (opt as any).easing :
-        ((Math as any)[(opt as any).easing as any] || Math.easeInOutSine);
-    (opt as any).curAnim = merge(params) as any;
+    opt.easing = typeof opt.easing === 'function' ?
+        opt.easing :
+        (Math[opt.easing as keyof Math] || Math.easeInOutSine) as any;
+    opt.curAnim = merge(params) as any;
 
-    objectEach(params, function (val: any, prop: string): void {
+    objectEach(params, function (val, prop): void {
         // Stop current running animation of this property
         stop(el as any, prop);
 

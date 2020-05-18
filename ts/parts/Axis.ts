@@ -11,7 +11,8 @@
 'use strict';
 
 import type { AxisComposition, AxisLike } from './axis/types';
-import type SVGPath from '../parts/SVGPath';
+import type PlotLineOrBand from './PlotLineOrBand';
+import type SVGPath from './SVGPath';
 import type ZAxis from '../parts-3d/ZAxis';
 import Color from './Color.js';
 import H from './Globals.js';
@@ -7266,11 +7267,11 @@ class Axis implements AxisComposition, AxisLike {
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (
-                Highcharts.Dictionary<Highcharts.Tick>|
-                Highcharts.Dictionary<Highcharts.PlotLineOrBand>
+                Highcharts.Dictionary<Tick>|
+                Highcharts.Dictionary<PlotLineOrBand>
             )
         ): void {
-            objectEach(coll, function (tick: Highcharts.Tick): void {
+            objectEach(coll, function (tick): void {
                 tick.isActive = false;
             });
         });
@@ -7380,10 +7381,7 @@ class Axis implements AxisComposition, AxisLike {
 
                 };
 
-            objectEach(coll, function (
-                tick: Highcharts.Tick,
-                pos: string
-            ): void {
+            objectEach(coll, function (tick, pos): void {
                 if (!tick.isActive) {
                     // Render to zero opacity
                     tick.render(pos as any, false, 0);

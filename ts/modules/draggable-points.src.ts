@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGElement from '../parts/SVGElement';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
@@ -2659,12 +2660,9 @@ H.Chart.prototype.hideDragHandles = function (): void {
     var chart = this;
 
     if (chart.dragHandles) {
-        objectEach(chart.dragHandles, function (
-            val: { destroy?: Function },
-            key: string
-        ): void {
-            if (key !== 'group' && val.destroy) {
-                val.destroy();
+        objectEach(chart.dragHandles, function (val, key): void {
+            if (key !== 'group' && (val as SVGElement).destroy) {
+                (val as SVGElement).destroy();
             }
         });
         if (chart.dragHandles.group && chart.dragHandles.group.destroy) {

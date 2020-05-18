@@ -384,10 +384,7 @@ class NavigationBindings {
             );
         });
 
-        objectEach(options.events || {}, function (
-            callback: Function,
-            eventName: string
-        ): void {
+        objectEach(options.events || {}, function (callback, eventName): void {
             if (isFunction(callback)) {
                 navigation.eventsToUnbind.push(
                     addEvent(

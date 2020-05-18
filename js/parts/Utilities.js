@@ -2202,7 +2202,7 @@ var removeEvent = H.removeEvent = function removeEvent(el, type, fn) {
         else {
             types = eventCollection;
         }
-        objectEach(types, function (val, n) {
+        objectEach(types, function (_val, n) {
             if (eventCollection[n]) {
                 len = eventCollection[n].length;
                 while (len--) {

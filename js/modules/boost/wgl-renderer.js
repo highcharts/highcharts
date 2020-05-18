@@ -1115,7 +1115,7 @@ function GLRenderer(postRenderCallback) {
         vbuffer.destroy();
         shader.destroy();
         if (gl) {
-            objectEach(textureHandles, function (key) {
+            objectEach(textureHandles, function (_val, key) {
                 if (textureHandles[key].handle) {
                     gl.deleteTexture(textureHandles[key].handle);
                 }

@@ -2426,7 +2426,7 @@ Chart.prototype.inlineStyles = function (): void {
          *        Style property name
          * @return {void}
          */
-        function filterStyles(val: string, prop: string): void {
+        function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
 
             // Check against whitelist & blacklist
             blacklisted = whitelisted = false;
@@ -2462,8 +2462,13 @@ Chart.prototype.inlineStyles = function (): void {
                     defaultStyles[node.nodeName][prop] !== val
                 ) {
                     // Attributes
-                    if ((inlineToAttributes as any).indexOf(prop) !== -1) {
-                        node.setAttribute(hyphenate(prop), val);
+                    if (
+                        !inlineToAttributes ||
+                        inlineToAttributes.indexOf(prop) !== -1
+                    ) {
+                        if (val) {
+                            node.setAttribute(hyphenate(prop), val);
+                        }
                     // Styles
                     } else {
                         cssText += hyphenate(prop) + ':' + val + ';';

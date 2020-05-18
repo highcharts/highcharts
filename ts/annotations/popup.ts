@@ -13,6 +13,7 @@
 'use strict';
 
 import type Annotation from './annotations.src';
+import type Pointer from '../parts/Pointer';
 import NavigationBindings from './navigationBindings.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
@@ -158,7 +159,7 @@ var indexFilter = /\d/g,
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
 // Related issue #4606
 
-wrap(H.Pointer.prototype, 'onContainerMouseDown', function (this: Highcharts.Pointer, proceed: Function, e): void {
+wrap(H.Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed: Function, e): void {
 
     var popupClass = e.target && e.target.className;
 
@@ -660,7 +661,7 @@ H.Popup.prototype = {
                             parentDiv,
                             chart,
                             parentFullName,
-                            value,
+                            value as any,
                             storage,
                             false
                         );
@@ -1070,7 +1071,7 @@ H.Popup.prototype = {
                 addInput = this.addInput,
                 parentFullName;
 
-            objectEach(fields, function (value: string, fieldName: string): void {
+            objectEach(fields, function (value, fieldName): void {
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
 
@@ -1106,12 +1107,12 @@ H.Popup.prototype = {
             var series = this.series,
                 counter = 0;
 
-            objectEach(series, function (serie: Highcharts.SMAIndicator): void {
+            series.forEach(function (serie): void {
                 var seriesOptions = serie.options;
 
                 if (
                     (serie as any).params ||
-                    seriesOptions && seriesOptions.params
+                    seriesOptions && (seriesOptions as any).params
                 ) {
                     counter++;
                 }
