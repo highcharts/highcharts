@@ -2019,7 +2019,7 @@ class Axis implements AxisComposition, AxisLike {
          * So a minRange of 1 means that the axis can be zoomed to 10-100,
          * 100-1000, 1000-10000 etc.
          *
-         * Note that the `minPadding`, `maxPadding`, `startOnTick` and
+         * **Note**: The `minPadding`, `maxPadding`, `startOnTick` and
          * `endOnTick` settings also affect how the extremes of the axis
          * are computed.
          *
