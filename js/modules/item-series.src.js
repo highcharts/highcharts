@@ -123,6 +123,10 @@ seriesType('item',
 {
     markerAttribs: void 0,
     translate: function () {
+        // Initialize chart without setting data, #13379.
+        if (this.total === 0) {
+            this.center = this.getCenter();
+        }
         if (!this.slots) {
             this.slots = [];
         }
