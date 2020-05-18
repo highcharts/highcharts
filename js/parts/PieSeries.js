@@ -774,25 +774,27 @@ seriesType('pie', 'line',
      * @function Highcharts.seriesTypes.pie#drawEmpty
      */
     drawEmpty: function () {
-        var centerX, centerY, options = this.options;
+        var centerX, centerY, start = this.startAngleRad, end = this.endAngleRad, options = this.options;
         // Draw auxiliary graph if there're no visible points.
         if (this.total === 0) {
             centerX = this.center[0];
             centerY = this.center[1];
-            if (!this.graph) { // Auxiliary graph doesn't exist yet.
-                this.graph = this.chart.renderer.circle(centerX, centerY, 0)
+            if (!this.graph) {
+                this.graph = this.chart.renderer
+                    .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
                     .addClass('highcharts-graph')
                     .add(this.group);
             }
-            this.graph.animate({
+            this.graph.attr({
+                d: Highcharts.SVGRenderer.prototype.symbols.arc(centerX, centerY, this.center[2] / 2, 0, {
+                    start: start,
+                    end: end,
+                    innerR: options.innerSize
+                }),
                 'stroke-width': options.borderWidth,
-                cx: centerX,
-                cy: centerY,
-                r: this.center[2] / 2,
                 fill: options.fillColor || 'none',
-                stroke: options.color ||
-                    '${palette.neutralColor20}'
-            }, this.options.animation);
+                stroke: options.color || '#cccccc'
+            });
         }
         else if (this.graph) { // Destroy the graph object.
             this.graph = this.graph.destroy();
