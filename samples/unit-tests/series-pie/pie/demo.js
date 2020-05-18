@@ -99,6 +99,29 @@ QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (asse
         Highcharts.defined(chart.series[0].graph),
         'Empty pie graphic is created.'
     );
+
+    chart.update({
+        plotOptions: {
+            pie: {
+                innerSize: 40,
+                startAngle: -90,
+                endAngle: 90,
+                center: ['50%', '75%']
+            }
+        },
+
+        series: {
+            data: []
+        }
+    })
+
+    var graph = chart.series[0].graph;
+
+    // Issue #13229
+    assert.ok(
+        graph.pathArray,
+        'Path should be drawn instead of a circle.'
+    );
 });
 
 QUnit.test('Updating point visibility (#8428)', function (assert) {
@@ -185,65 +208,4 @@ QUnit.test('Updating point visibility (#8428)', function (assert) {
         isHidden(point.dataLabel),
         'Hidden point should not have a data label'
     );
-});
-
-QUnit.test('Animation - Empty pie', function (assert) {
-
-    var clock = null;
-
-    try {
-
-        clock = TestUtilities.lolexInstall();
-
-        var chart = Highcharts
-                .chart('container', {
-                    chart: {
-                        type: 'pie'
-                    },
-                    series: [{
-                        animation: {
-                            duration: 1000
-                        },
-                        data: null
-                    }, {
-                        animation: false,
-                        data: null
-                    }]
-                }),
-            animationCircle = chart.series[0].graph,
-            notAnimated = chart.series[1].graph,
-            animatedInitialRadius = animationCircle.attr('r'),
-            notAnimatedInitialRadius = notAnimated.attr('r'),
-            done = assert.async();
-
-        assert.ok(
-            animationCircle.attr('r') === animatedInitialRadius,
-            'Time 0 - animated radius has not changed.'
-        );
-
-        assert.ok(
-            notAnimated.attr('r') === notAnimatedInitialRadius,
-            'Time 0 - not animated radius has not changed.(#12619)'
-        );
-
-        setTimeout(function () {
-            assert.ok(
-                animationCircle.attr('r') !== animatedInitialRadius,
-                'Time 800 - animated radius has changed.'
-            );
-            assert.ok(
-                notAnimated.attr('r') === notAnimatedInitialRadius,
-                'Time 800 - not animated radius has not changed. (#12619)'
-            );
-            done();
-        }, 800);
-
-        TestUtilities.lolexRunAndUninstall(clock);
-
-    } finally {
-
-        TestUtilities.lolexUninstall(clock);
-
-    }
-
 });
