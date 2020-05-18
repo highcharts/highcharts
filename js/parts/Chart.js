@@ -14,7 +14,7 @@ var charts = H.charts, doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
 import O from './Options.js';
-var defaultOptions = O.defaultOptions, time = O.time;
+var defaultOptions = O.defaultOptions;
 import Pointer from './Pointer.js';
 import Time from './Time.js';
 import U from './Utilities.js';
@@ -303,7 +303,7 @@ var Chart = /** @class */ (function () {
             this.time =
                 userOptions.time && Object.keys(userOptions.time).length ?
                     new Time(userOptions.time) :
-                    time;
+                    H.time;
             /**
              * Callback function to override the default function that formats
              * all the numbers in the chart. Returns a string with the formatted

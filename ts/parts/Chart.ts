@@ -24,10 +24,7 @@ const {
 import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
 import O from './Options.js';
-const {
-    defaultOptions,
-    time
-} = O;
+const { defaultOptions } = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';
 import Time from './Time.js';
@@ -622,7 +619,7 @@ class Chart {
             this.time =
                 userOptions.time && Object.keys(userOptions.time).length ?
                     new Time(userOptions.time) :
-                    time;
+                    H.time;
 
             /**
              * Callback function to override the default function that formats
