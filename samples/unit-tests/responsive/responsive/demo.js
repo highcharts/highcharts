@@ -793,3 +793,46 @@ QUnit.test('Restoring to undefined settings (#10286)', assert => {
         'Y axis label position should be restored'
     );
 });
+
+QUnit.test('Pane with responsive margin', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'gauge',
+            width: 400,
+            height: 400,
+            plotBorderWidth: 1
+        },
+        yAxis: {
+            min: 0,
+            max: 3
+        },
+        series: [{
+            data: [1]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    chart: {
+                        marginLeft: 100
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.close(
+        chart.plotBorder.attr('x'),
+        100,
+        1,
+        'The plot border should respect the responsive left margin'
+    );
+
+    assert.ok(
+        chart.container.querySelector('.highcharts-pane').getBBox().x > 100,
+        'The rendered pane should be within the responsive left margin (#10671)'
+    );
+
+});

@@ -461,9 +461,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.isDirtyBox = true;
                 }
                 // Chart setSize
-                if (!isResponsiveOptions &&
-                    chart.propsRequireReflow.indexOf(key) !== -1) {
-                    runSetSize = true;
+                if (chart.propsRequireReflow.indexOf(key) !== -1) {
+                    if (isResponsiveOptions) {
+                        chart.isDirtyBox = true;
+                    }
+                    else {
+                        runSetSize = true;
+                    }
                 }
             });
             if (!chart.styledMode && 'style' in optionsChart) {
