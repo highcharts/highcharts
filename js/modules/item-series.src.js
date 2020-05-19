@@ -122,13 +122,13 @@ seriesType('item',
 // Prototype members
 {
     markerAttribs: void 0,
-    translate: function () {
+    translate: function (positions) {
         if (!this.slots) {
             this.slots = [];
         }
         if (isNumber(this.options.startAngle) &&
             isNumber(this.options.endAngle)) {
-            H.seriesTypes.pie.prototype.translate.call(this);
+            H.seriesTypes.pie.prototype.translate.call(this, positions);
             this.slots = this.getSlots();
         }
         else {

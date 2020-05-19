@@ -42,7 +42,7 @@ declare global {
             public drawPoints(): void;
             public getRows(): number;
             public getSlots(): (Array<ItemGeometryObject>|undefined);
-            public translate(): void;
+            public translate(positions?: Array<number>): void;
         }
         interface ItemPointOptions extends PiePointOptions {
         }
@@ -198,7 +198,9 @@ seriesType<Highcharts.ItemSeries>(
     // Prototype members
     {
         markerAttribs: void 0,
-        translate: function (this: Highcharts.ItemSeries): void {
+        translate: function (this: Highcharts.ItemSeries,
+            positions?: Array<number>
+        ): void {
             if (!this.slots) {
                 this.slots = [];
             }
@@ -206,7 +208,7 @@ seriesType<Highcharts.ItemSeries>(
                 isNumber(this.options.startAngle) &&
                 isNumber(this.options.endAngle)
             ) {
-                H.seriesTypes.pie.prototype.translate.call(this);
+                H.seriesTypes.pie.prototype.translate.call(this, positions);
                 this.slots = this.getSlots();
             } else {
                 this.generatePoints();
