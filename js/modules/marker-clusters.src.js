@@ -29,6 +29,8 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
@@ -338,7 +340,7 @@ var clusterDefaultOptions = {
         inside: true
     }
 };
-(H.defaultOptions.plotOptions || {}).series = merge((H.defaultOptions.plotOptions || {}).series, {
+(defaultOptions.plotOptions || {}).series = merge((defaultOptions.plotOptions || {}).series, {
     cluster: clusterDefaultOptions,
     tooltip: {
         /**

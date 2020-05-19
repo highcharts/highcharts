@@ -21,6 +21,7 @@ const {
     addEvent,
     createElement,
     defined,
+    getOptions,
     isArray,
     isObject,
     isString,
@@ -464,7 +465,7 @@ H.Popup.prototype = {
      * @return {Highcharts.Dictionary<string>} - elements translations.
      */
     getLangpack: function (this: Highcharts.Popup): Highcharts.Dictionary<string> {
-        return (H.getOptions().lang as any).navigation.popup;
+        return (getOptions().lang as any).navigation.popup;
     },
     annotations: {
         /**

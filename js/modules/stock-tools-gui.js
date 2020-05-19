@@ -13,9 +13,9 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 import NavigationBindings from '../annotations/navigationBindings.js';
-var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick;
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick, setOptions = U.setOptions;
 var win = H.win, DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
-H.setOptions({
+setOptions({
     /**
      * @optionparent lang
      */

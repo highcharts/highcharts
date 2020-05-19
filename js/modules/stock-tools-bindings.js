@@ -13,7 +13,7 @@
 import H from '../parts/Globals.js';
 import NavigationBindings from '../annotations/navigationBindings.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, setOptions = U.setOptions, uniqueKey = U.uniqueKey;
 var bindingsUtils = NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -1712,7 +1712,7 @@ var stockToolsBindings = {
         }
     }
 };
-H.setOptions({
+setOptions({
     navigation: {
         bindings: stockToolsBindings
     }

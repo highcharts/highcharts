@@ -28,6 +28,7 @@ const {
     merge,
     objectEach,
     pick,
+    setOptions,
     stableSort,
     wrap
 } = U;
@@ -164,8 +165,7 @@ declare global {
 ''; // detach doclets above
 
 var Series = H.Series,
-    noop = H.noop,
-    setOptions = H.setOptions;
+    noop = H.noop;
 
 setOptions({ // Set default bubble legend options
     legend: {

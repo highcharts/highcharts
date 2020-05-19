@@ -26,6 +26,7 @@ const {
     format,
     merge,
     pick,
+    setOptions,
     splat,
     wrap
 } = U;
@@ -169,7 +170,7 @@ var defaultParallelOptions: Highcharts.ChartOptions = {
     }
 };
 
-H.setOptions({
+setOptions({
     chart: defaultParallelOptions
 });
 

@@ -52,6 +52,8 @@ declare global {
     }
 }
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import U from '../parts/Utilities.js';
 const {
     clamp,
@@ -60,8 +62,7 @@ const {
     seriesType
 } = U;
 
-var defaultPlotOptions = H.defaultPlotOptions,
-    noop = H.noop,
+var noop = H.noop,
     seriesTypes = H.seriesTypes;
 
 var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
@@ -119,8 +120,8 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
  * @augments Highcharts.Series
  */
 seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
-    defaultPlotOptions.column,
-    defaultPlotOptions.arearange,
+    (defaultOptions.plotOptions as any).column,
+    (defaultOptions.plotOptions as any).arearange,
     columnRangeOptions
 ), {
 

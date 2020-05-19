@@ -14,10 +14,9 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, extend = U.extend;
+var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions;
 import '../parts/Series.js';
-import '../parts/Options.js';
-var chartPrototype = H.Chart.prototype, defaultOptions = H.getOptions();
+var chartPrototype = H.Chart.prototype, defaultOptions = getOptions();
 // Add language option
 extend(defaultOptions.lang, 
 /**

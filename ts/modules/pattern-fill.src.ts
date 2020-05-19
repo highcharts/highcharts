@@ -21,6 +21,7 @@ const {
     addEvent,
     animObject,
     erase,
+    getOptions,
     merge,
     pick,
     removeEvent,
@@ -192,7 +193,7 @@ declare global {
 // Add the predefined patterns
 H.patterns = ((): Array<Highcharts.PatternOptionsObject> => {
     const patterns: Array<Highcharts.PatternOptionsObject> = [],
-        colors: Array<string> = H.getOptions().colors as any;
+        colors: Array<string> = getOptions().colors as any;
 
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',

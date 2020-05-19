@@ -11,6 +11,8 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+import O from '../../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge;
@@ -89,7 +91,7 @@ H.sonification = {
     Timeline: TimelineClasses.Timeline
 };
 // Add default options
-merge(true, H.defaultOptions, sonificationOptions);
+merge(true, defaultOptions, sonificationOptions);
 // Chart specific
 Point.prototype.sonify = pointSonifyFunctions.pointSonify;
 Point.prototype.cancelSonify = pointSonifyFunctions.pointCancelSonify;
