@@ -26,13 +26,15 @@ import H from './Globals.js';
 * @type {number}
 */
 ''; // detach doclets above
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import './Axis.js';
 import './Series.js';
-var Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, Series = H.Series;
+var Axis = H.Axis, Series = H.Series;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
@@ -585,7 +587,7 @@ addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
 addEvent(Series, 'afterSetOptions', function (e) {
-    var options = e.options, type = this.type, plotOptions = this.chart.options.plotOptions, defaultOptions = defaultPlotOptions[type].dataGrouping, 
+    var options = e.options, type = this.type, plotOptions = this.chart.options.plotOptions, defaultOptions = O.defaultOptions.plotOptions[type].dataGrouping, 
     // External series, for example technical indicators should also
     // inherit commonOptions which are not available outside this module
     baseOptions = this.useCommonDataGrouping && commonOptions;

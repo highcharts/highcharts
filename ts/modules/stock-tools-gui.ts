@@ -148,7 +148,8 @@ const {
     getStyle,
     isArray,
     merge,
-    pick
+    pick,
+    setOptions
 } = U;
 
 var win = H.win,
@@ -159,7 +160,7 @@ var win = H.win,
     PREFIX = 'highcharts-',
     activeClass = PREFIX + 'active';
 
-H.setOptions({
+setOptions({
     /**
      * @optionparent lang
      */

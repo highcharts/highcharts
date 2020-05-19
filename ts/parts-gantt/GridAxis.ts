@@ -13,7 +13,10 @@
 
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { dateFormat } = O;
 import Tick from '../parts/Tick.js';
+import Time from '../parts/Time.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -68,7 +71,6 @@ declare module '../parts/axis/types' {
 var argsToArray = function (args: IArguments): Array<any> {
         return Array.prototype.slice.call(args, 1);
     },
-    dateFormat = H.dateFormat,
     isObject = function (x: unknown): x is object {
         // Always use strict mode
         return U.isObject(x, true);

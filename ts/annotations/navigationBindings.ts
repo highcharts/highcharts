@@ -26,7 +26,8 @@ const {
     isObject,
     merge,
     objectEach,
-    pick
+    pick,
+    setOptions
 } = U;
 
 /**
@@ -1100,7 +1101,7 @@ if ((H as any).Annotation) {
     });
 }
 
-H.setOptions({
+setOptions({
     /**
      * @optionparent lang
      *

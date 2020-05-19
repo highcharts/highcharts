@@ -17,6 +17,13 @@ import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 const color = Color.parse;
 import H from '../parts/Globals.js';
+const {
+    deg2rad,
+    doc,
+    noop,
+    svg,
+    win
+} = H;
 import Pointer from '../parts/Pointer.js';
 import SVGElement from '../parts/SVGElement.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
@@ -30,6 +37,7 @@ const {
     erase,
     extend,
     extendClass,
+    getOptions,
     isArray,
     isNumber,
     isObject,
@@ -348,13 +356,7 @@ declare global {
 
 var VMLRenderer,
     VMLRendererExtension,
-    VMLElement: typeof Highcharts.VMLElement,
-    deg2rad = H.deg2rad,
-    doc = H.doc,
-    noop = H.noop,
-    svg = H.svg,
-    win = H.win;
-
+    VMLElement: typeof Highcharts.VMLElement;
 
 /**
  * Path to the pattern image required by VML browsers in order to
@@ -366,7 +368,7 @@ var VMLRenderer,
  * @requires  modules/oldie
  * @apioption global.VMLRadialGradientURL
  */
-(H.getOptions().global as any).VMLRadialGradientURL =
+(getOptions().global as any).VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 
 
@@ -1669,7 +1671,7 @@ if (!svg) {
                                 }
                                 fillAttr =
                                     'src="' + (
-                                        H.getOptions().global as any
+                                        getOptions().global as any
                                     ).VMLRadialGradientURL +
                                     '" ' +
                                     'size="' + sizex + ',' + sizey + '" ' +

@@ -2415,7 +2415,7 @@ var animate = H.animate = function (el, params, opt) {
  */
 // docs: add to API + extending Highcharts
 var seriesType = H.seriesType = function (type, parent, options, props, pointProps) {
-    var defaultOptions = H.getOptions(), seriesTypes = H.seriesTypes;
+    var defaultOptions = getOptions(), seriesTypes = H.seriesTypes;
     // Merge the options
     defaultOptions.plotOptions[type] = merge(defaultOptions.plotOptions[parent], options);
     // Create the class
@@ -2480,6 +2480,42 @@ var useSerialIds = H.useSerialIds = function (mode) {
 };
 var isFunction = H.isFunction = function (obj) {
     return typeof obj === 'function';
+};
+/**
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
+ *
+ * @function Highcharts.getOptions
+ *
+ * @return {Highcharts.Options}
+ */
+var getOptions = H.getOptions = function () {
+    return H.defaultOptions;
+};
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+var setOptions = H.setOptions = function (options) {
+    // Copy in the default options
+    H.defaultOptions = merge(true, H.defaultOptions, options);
+    // Update the time object
+    if (options.time || options.global) {
+        H.time.update(merge(H.defaultOptions.global, H.defaultOptions.time, options.global, options.time));
+    }
+    return H.defaultOptions;
 };
 // Register Highcharts as a plugin in jQuery
 if (win.jQuery) {
@@ -2559,6 +2595,7 @@ var utilitiesModule = {
     format: format,
     getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
+    getOptions: getOptions,
     getStyle: getStyle,
     inArray: inArray,
     isArray: isArray,
@@ -2580,6 +2617,7 @@ var utilitiesModule = {
     removeEvent: removeEvent,
     seriesType: seriesType,
     setAnimation: setAnimation,
+    setOptions: setOptions,
     splat: splat,
     stableSort: stableSort,
     stop: stop,

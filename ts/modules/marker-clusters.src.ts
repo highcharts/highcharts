@@ -15,6 +15,8 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
@@ -562,8 +564,8 @@ var clusterDefaultOptions = {
     }
 };
 
-(H.defaultOptions.plotOptions || {}).series = merge(
-    (H.defaultOptions.plotOptions || {}).series,
+(defaultOptions.plotOptions || {}).series = merge(
+    (defaultOptions.plotOptions || {}).series,
     {
         cluster: clusterDefaultOptions,
         tooltip: {

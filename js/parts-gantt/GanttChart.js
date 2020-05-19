@@ -13,7 +13,7 @@
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, merge = U.merge, splat = U.splat;
+var getOptions = U.getOptions, isArray = U.isArray, merge = U.merge, splat = U.splat;
 import './GanttSeries.js';
 /**
  * Factory function for Gantt charts.
@@ -47,7 +47,7 @@ import './GanttSeries.js';
  *         Returns the Chart object.
  */
 H.ganttChart = function (renderTo, options, callback) {
-    var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName, seriesOptions = options.series, defaultOptions = H.getOptions(), defaultLinkedTo, userOptions = options;
+    var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName, seriesOptions = options.series, defaultOptions = getOptions(), defaultLinkedTo, userOptions = options;
     options = arguments[hasRenderToArg ? 1 : 0];
     // If user hasn't defined axes as array, make it into an array and add a
     // second axis by default.
