@@ -72,7 +72,6 @@ declare global {
         }
         interface SymbolOptionsObject {
             rounded?: boolean;
-            innerR?: number;
         }
     }
 }
