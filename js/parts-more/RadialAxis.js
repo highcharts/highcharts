@@ -249,7 +249,7 @@ var RadialAxis = /** @class */ (function () {
         axis.getPlotBandPath = function (from, to, options) {
             var center = this.center, startAngleRad = this.startAngleRad, fullRadius = center[2] / 2, radiiOptions = [
                 pick(options.outerRadius, '100%'),
-                options.innerRadius || 0,
+                options.innerRadius,
                 pick(options.thickness, 10)
             ], radii, offset = Math.min(this.offset, 0), percentRegex = /%$/, start, end, angle, xOnPerimeter, open, isCircular = this.isCircular, // X axis in a polar chart
             path;
@@ -264,11 +264,12 @@ var RadialAxis = /** @class */ (function () {
                 to = Math.min(to, this.max);
                 // Convert percentages to pixel values
                 radii = radiiOptions.map(function (radius) {
-                    if (percentRegex.test(radius)) {
-                        radius = (pInt(radius, 10) * fullRadius) / 100;
-                    }
-                    else if (typeof radius === 'string') {
-                        radius = parseInt(radius, 10);
+                    if (typeof radius === 'string') {
+                        var r = parseInt(radius, 10);
+                        if (percentRegex.test(radius)) {
+                            r = (r * fullRadius) / 100;
+                        }
+                        return r;
                     }
                     return radius;
                 });

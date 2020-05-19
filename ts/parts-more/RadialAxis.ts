@@ -494,10 +494,10 @@ class RadialAxis {
                 fullRadius = center[2] / 2,
                 radiiOptions = [
                     pick(options.outerRadius, '100%'),
-                    options.innerRadius || 0,
+                    options.innerRadius,
                     pick(options.thickness, 10)
                 ],
-                radii: number[],
+                radii: Array<number|undefined>,
                 offset = Math.min(this.offset, 0),
                 percentRegex = /%$/,
                 start,
@@ -522,11 +522,13 @@ class RadialAxis {
                 to = Math.min(to, this.max);
 
                 // Convert percentages to pixel values
-                radii = radiiOptions.map(function (radius): number {
-                    if (percentRegex.test(radius as any)) {
-                        radius = (pInt(radius, 10) * fullRadius) / 100;
-                    } else if (typeof radius === 'string') {
-                        radius = parseInt(radius, 10);
+                radii = radiiOptions.map(function (radius): (number|undefined) {
+                    if (typeof radius === 'string') {
+                        let r = parseInt(radius, 10);
+                        if (percentRegex.test(radius)) {
+                            r = (r * fullRadius) / 100;
+                        }
+                        return r;
                     }
                     return radius;
                 });
@@ -551,8 +553,8 @@ class RadialAxis {
                     end = startAngleRad + (transTo || 0);
                 }
 
-                radii[0] -= offset; // #5283
-                radii[2] -= offset; // #5283
+                (radii[0] as any) -= offset; // #5283
+                (radii[2] as any) -= offset; // #5283
 
                 path = this.chart.renderer.symbols.arc(
                     this.left + center[0],
@@ -565,7 +567,7 @@ class RadialAxis {
                         end: Math.max(start, end),
                         innerR: pick(
                             radii[1],
-                            radii[0] - radii[2]
+                            (radii[0] as any) - (radii[2] as any)
                         ),
                         open: open
                     }
