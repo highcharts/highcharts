@@ -80,17 +80,7 @@ declare global {
             tagName?: string;
             textContent?: string;
         }
-        interface SymbolDictionary {
-            [key: string]: SymbolFunction<SVGPath>;
-            arc: SymbolFunction<SVGPath>;
-            callout: SymbolFunction<SVGPath>;
-            circle: SymbolFunction<SVGPath>;
-            diamond: SymbolFunction<SVGPath>;
-            square: SymbolFunction<SVGPath>;
-            triangle: SymbolFunction<SVGPath>;
-            'triangle-down': SymbolFunction<SVGPath>;
-        }
-        interface SymbolFunction<T> {
+        interface SymbolFunction {
             (
                 x: number,
                 y: number,
@@ -148,7 +138,7 @@ declare global {
             public isSVG: boolean;
             public style: CSSObject;
             public styledMode?: boolean;
-            public symbols: SymbolDictionary;
+            public symbols: Record<string, SymbolFunction>;
             public unSubPixelFix?: Function;
             public url: string;
             public width: number;
@@ -3028,7 +3018,7 @@ interface SVGRenderer extends Highcharts.SVGRenderer {
     SVG_NS: string;
     draw: Function;
     escapes: Record<string, string>;
-    symbols: Highcharts.SymbolDictionary;
+    symbols: Record<string, Highcharts.SymbolFunction>;
 }
 
 /**
@@ -3358,9 +3348,9 @@ SVGRenderer.prototype.symbols = {
 
         return path;
     }
-} as any;
+};
 
-H.SVGRenderer = SVGRenderer as any;
+H.SVGRenderer = SVGRenderer;
 H.Renderer = H.SVGRenderer;
 
 export default H.Renderer;

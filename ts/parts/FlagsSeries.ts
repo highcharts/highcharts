@@ -71,11 +71,6 @@ declare global {
         interface Series {
             allowDG?: boolean;
         }
-        interface SymbolDictionary {
-            circlepin: SymbolFunction<SVGPath>;
-            flag: SymbolFunction<SVGPath>;
-            squarepin: SymbolFunction<SVGPath>;
-        }
         interface SeriesTypesDictionary {
             flags: typeof FlagsSeries;
         }
