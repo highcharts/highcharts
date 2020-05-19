@@ -11,12 +11,14 @@
 'use strict';
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var dateFormat = O.dateFormat;
 import Tick from '../parts/Tick.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, erase = U.erase, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, timeUnits = U.timeUnits, wrap = U.wrap;
 var argsToArray = function (args) {
     return Array.prototype.slice.call(args, 1);
-}, dateFormat = H.dateFormat, isObject = function (x) {
+}, isObject = function (x) {
     // Always use strict mode
     return U.isObject(x, true);
 }, Chart = H.Chart;

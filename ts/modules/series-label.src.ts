@@ -22,6 +22,7 @@ const {
     format,
     isNumber,
     pick,
+    setOptions,
     syncTimeout
 } = U;
 
@@ -126,7 +127,7 @@ var labelDistance = 3,
     Series = H.Series,
     Chart = H.Chart;
 
-H.setOptions({
+setOptions({
 
     /**
      * @optionparent plotOptions
@@ -884,7 +885,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +
-                        (series.options.className || '') +
+                        (series.options.className || '') + ' ' +
                         colorClass
                     );
 

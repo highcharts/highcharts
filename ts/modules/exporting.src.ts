@@ -300,12 +300,12 @@ declare global {
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 
-import '../parts/Options.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import '../parts/Chart.js';
 
 // create shortcuts
-var defaultOptions = H.defaultOptions,
-    doc = H.doc,
+var doc = H.doc,
     Chart = H.Chart,
     isTouchDevice = H.isTouchDevice,
     win = H.win,

@@ -35,10 +35,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
-    isNumber
+    isNumber,
+    setOptions
 } = U;
-
-var setOptions = H.setOptions;
 
 setOptions({
     /**

@@ -203,10 +203,10 @@ declare global {
 
 import './Chart.js';
 import './Series.js';
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 
 var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     Series = H.Series,

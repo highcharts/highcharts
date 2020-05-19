@@ -50,11 +50,13 @@ declare global {
     }
 }
 
+
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
     error,
+    getOptions,
     isArray,
     isNumber,
     pick,
@@ -63,6 +65,7 @@ const {
 
 import '../../parts/Series.js';
 import '../../parts/Options.js';
+
 import '../../parts/Interaction.js';
 
 import butils from './boost-utils.js';
@@ -74,7 +77,7 @@ var boostEnabled = butils.boostEnabled,
     Chart = H.Chart,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    plotOptions: Highcharts.PlotOptions = H.getOptions().plotOptions as any;
+    plotOptions: Highcharts.PlotOptions = getOptions().plotOptions as any;
 
 /**
  * Returns true if the chart is in series boost mode.

@@ -67,6 +67,8 @@ declare global {
     }
 }
 
+import O from '../../parts/Options.js';
+const { defaultOptions } = O;
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
@@ -89,7 +91,7 @@ import InfoRegionsComponent from './components/InfoRegionsComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
-import defaultOptions from './options/options.js';
+import defaultOptionsA11Y from './options/options.js';
 import defaultLangOptions from './options/langOptions.js';
 import copyDeprecatedOptions from './options/deprecatedOptions.js';
 import './a11y-i18n.js';
@@ -99,8 +101,8 @@ import './focusBorder.js';
 // Add default options
 merge(
     true,
-    H.defaultOptions,
     defaultOptions,
+    defaultOptionsA11Y,
     {
         accessibility: {
             highContrastTheme: highContrastTheme

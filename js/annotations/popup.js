@@ -13,7 +13,7 @@
 import NavigationBindings from './navigationBindings.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, defined = U.defined, isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, createElement = U.createElement, defined = U.defined, getOptions = U.getOptions, isArray = U.isArray, isObject = U.isObject, isString = U.isString, objectEach = U.objectEach, pick = U.pick, wrap = U.wrap;
 var indexFilter = /\d/g, PREFIX = 'highcharts-', DIV = 'div', INPUT = 'input', LABEL = 'label', BUTTON = 'button', SELECT = 'select', OPTION = 'option', SPAN = 'span', UL = 'ul', LI = 'li', H3 = 'h3';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
@@ -247,7 +247,7 @@ H.Popup.prototype = {
      * @return {Highcharts.Dictionary<string>} - elements translations.
      */
     getLangpack: function () {
-        return H.getOptions().lang.navigation.popup;
+        return getOptions().lang.navigation.popup;
     },
     annotations: {
         /**

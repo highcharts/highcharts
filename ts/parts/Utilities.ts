@@ -12,7 +12,6 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
-
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
@@ -334,6 +333,7 @@ declare global {
             context?: unknown
         ): number;
         function uniqueKey(): string;
+        function useSerialIds(mode?: boolean): (boolean|undefined);
         function wrap(
             obj: any,
             method: string,
@@ -3295,7 +3295,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     props?: Partial<TSeries>,
     pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
-    var defaultOptions = H.getOptions(),
+    var defaultOptions = getOptions(),
         seriesTypes = H.seriesTypes;
 
     // Merge the options
@@ -3320,6 +3320,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     return seriesTypes[type];
 };
 
+let serialMode: (boolean|undefined);
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
  * composed of a random hash specific to this Highcharts instance, and a
@@ -3331,20 +3332,98 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
  * @function Highcharts.uniqueKey
  *
  * @return {string}
- *         A unique key.
+ * A unique key.
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
-        idCounter = 0;
+    const hash = serialMode ?
+        '' :
+        Math.random().toString(36).substring(2, 9) + '-';
+
+    let id = 0;
 
     return function (): string {
-        return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
+        return 'highcharts-' + hash + id++;
     };
 }());
+/**
+ * Activates a serial mode for element IDs provided by
+ * {@link Highcharts.uniqueKey}. This mode can be used in automated tests, where
+ * a simple comparison of two rendered SVG graphics is needed.
+ *
+ * **Note:** This is only for testing purposes and will break functionality in
+ * webpages with multiple charts.
+ *
+ * @example
+ * if (
+ *   process &&
+ *   process.env.NODE_ENV === 'development'
+ * ) {
+ *   Highcharts.useSerialIds(true);
+ * }
+ *
+ * @function Highcharts.useSerialIds
+ *
+ * @param {boolean} [mode]
+ * Changes the state of serial mode.
+ *
+ * @return {boolean|undefined}
+ * State of the serial mode.
+ */
+const useSerialIds = H.useSerialIds = function (mode?: boolean): (boolean|undefined) {
+    return (serialMode = pick(mode, serialMode));
+};
 
 const isFunction = H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
+};
+
+/**
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
+ *
+ * @function Highcharts.getOptions
+ *
+ * @return {Highcharts.Options}
+ */
+const getOptions = H.getOptions = function (): Highcharts.Options {
+    return H.defaultOptions;
+};
+
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+const setOptions = H.setOptions = function (
+    options: Highcharts.Options
+): Highcharts.Options {
+
+    // Copy in the default options
+    H.defaultOptions = merge(true, H.defaultOptions, options);
+
+    // Update the time object
+    if (options.time || options.global) {
+        H.time.update(merge(
+            H.defaultOptions.global,
+            H.defaultOptions.time,
+            options.global,
+            options.time
+        ));
+    }
+
+    return H.defaultOptions;
 };
 
 // Register Highcharts as a plugin in jQuery
@@ -3432,6 +3511,7 @@ const utilitiesModule = {
     format,
     getMagnitude,
     getNestedProperty,
+    getOptions,
     getStyle,
     inArray,
     isArray,
@@ -3453,12 +3533,14 @@ const utilitiesModule = {
     removeEvent,
     seriesType,
     setAnimation,
+    setOptions,
     splat,
     stableSort,
     stop,
     syncTimeout,
     timeUnits,
     uniqueKey,
+    useSerialIds,
     wrap
 };
 

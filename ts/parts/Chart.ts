@@ -23,6 +23,8 @@ const {
 } = H;
 import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';
 import Time from './Time.js';
@@ -327,11 +329,9 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import './Options.js';
 import './Pointer.js';
 
-var defaultOptions = H.defaultOptions,
-    marginNames = H.marginNames;
+var marginNames = H.marginNames;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -2656,9 +2656,11 @@ class Chart {
      */
     public updateContainerScaling(): void {
         const container = this.container;
+        // #13342 - tooltip was not visible in Chrome, when chart
+        // updates height.
         if (
-            container.offsetWidth &&
-            container.offsetHeight &&
+            container.offsetWidth > 2 && // #13342
+            container.offsetHeight > 2 && // #13342
             container.getBoundingClientRect
         ) {
             const bb = container.getBoundingClientRect(),

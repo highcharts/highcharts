@@ -335,6 +335,7 @@ const {
     erase,
     extend,
     extendClass,
+    getOptions,
     isArray,
     isNumber,
     isObject,
@@ -366,7 +367,7 @@ var VMLRenderer,
  * @requires  modules/oldie
  * @apioption global.VMLRadialGradientURL
  */
-(H.getOptions().global as any).VMLRadialGradientURL =
+(getOptions().global as any).VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 
 
@@ -1671,7 +1672,7 @@ if (!svg) {
                                 }
                                 fillAttr =
                                     'src="' + (
-                                        H.getOptions().global as any
+                                        getOptions().global as any
                                     ).VMLRadialGradientURL +
                                     '" ' +
                                     'size="' + sizex + ',' + sizey + '" ' +

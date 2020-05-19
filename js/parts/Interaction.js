@@ -62,9 +62,10 @@ import Point from './Point.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import './Chart.js';
-import './Options.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
 import './Series.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
+var Chart = H.Chart, hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**
  * TrackerMixin for points and graphs.
@@ -489,6 +490,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 xy = [0];
             }
             xy.forEach(function (isX) {
+                var _a;
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?
                     -1 :
@@ -523,41 +525,40 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     axis.toValue(axis.toPixels(extremes.max) +
                         axis.minPixelPadding));
                 axis.panningState = panningState;
-                // It is not necessary to calculate extremes on ordinal axis,
-                // because the are already calculated, so we don't want to
-                // override them.
-                if (!axisOpt.ordinal) {
-                    // If the new range spills over, either to the min or max,
-                    // adjust the new range.
-                    spill = paddedMin - newMin;
-                    if (spill > 0) {
-                        newMax += spill;
-                        newMin = paddedMin;
-                    }
-                    spill = newMax - paddedMax;
-                    if (spill > 0) {
-                        newMax = paddedMax;
-                        newMin -= spill;
-                    }
-                    // Set new extremes if they are actually new
-                    if (axis.series.length &&
-                        newMin !== extremes.min &&
-                        newMax !== extremes.max &&
-                        isX ? true : (panningState &&
-                        newMin >= paddedMin &&
-                        newMax <= paddedMax)) {
-                        axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
-                        if (!chart.resetZoomButton &&
-                            !hasMapNavigation &&
-                            type.match('y')) {
-                            chart.showResetZoom();
-                            axis.displayBtn = false;
-                        }
-                        doRedraw = true;
-                    }
-                    // set new reference for next run:
-                    chart[mouseDown] = mousePos;
+                // If the new range spills over, either to the min or max,
+                // adjust the new range.
+                spill = paddedMin - newMin;
+                if (spill > 0) {
+                    newMax += spill;
+                    newMin = paddedMin;
                 }
+                spill = newMax - paddedMax;
+                if (spill > 0) {
+                    newMax = paddedMax;
+                    newMin -= spill;
+                }
+                // Set new extremes if they are actually new
+                if (axis.series.length &&
+                    newMin !== extremes.min &&
+                    newMax !== extremes.max &&
+                    // It is not necessary to calculate extremes on ordinal
+                    // axis (with not equally spaced data), because they
+                    // are already calculated, and we don't want to
+                    // override them.
+                    isX && !((_a = axis.ordinal) === null || _a === void 0 ? void 0 : _a.getExtendedPositions()) ? true : (panningState &&
+                    newMin >= paddedMin &&
+                    newMax <= paddedMax)) {
+                    axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+                    if (!chart.resetZoomButton &&
+                        !hasMapNavigation &&
+                        type.match('y')) {
+                        chart.showResetZoom();
+                        axis.displayBtn = false;
+                    }
+                    doRedraw = true;
+                }
+                // set new reference for next run:
+                chart[mouseDown] = mousePos;
             });
             if (doRedraw) {
                 chart.redraw(false);
@@ -706,7 +707,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     setState: function (state, move) {
         var point = this, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
-            {}), markerOptions = (defaultPlotOptions[series.type].marker &&
+            {}), markerOptions = (defaultOptions.plotOptions[series.type].marker &&
             series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = ((markerOptions &&
             markerOptions.states &&
             markerOptions.states[state || 'normal']) || {}), stateDisabled = markerStateOptions.enabled === false, stateMarkerGraphic = series.stateMarkerGraphic, pointMarker = point.marker || {}, chart = series.chart, halo = series.halo, haloOptions, markerAttribs, pointAttribs, pointAttribsAnimation, hasMarkers = (markerOptions && series.markerAttribs), newSymbol;

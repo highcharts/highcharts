@@ -15,6 +15,8 @@
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const { setOptions } = U;
 import VMLAxis3D from './VMLAxis3D.js';
 
 /**
@@ -46,7 +48,7 @@ var VMLRenderer = H.VMLRenderer;
 
 if (VMLRenderer) {
 
-    H.setOptions({ animate: false } as any);
+    setOptions({ animate: false } as any);
 
     VMLRenderer.prototype.face3d = SVGRenderer.prototype.face3d;
     VMLRenderer.prototype.polyhedron = SVGRenderer.prototype.polyhedron;

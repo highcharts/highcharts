@@ -26,6 +26,7 @@ const {
     extend,
     find,
     format,
+    getOptions,
     isNumber,
     isString,
     merge,
@@ -196,7 +197,7 @@ H.StockChart = H.stockChart = function (
         userOptions = options,
         // to increase performance, don't merge the data
         seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
+        defaultOptions = getOptions(),
         opposite,
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)

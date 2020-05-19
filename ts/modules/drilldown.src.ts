@@ -309,13 +309,13 @@ declare global {
  * @type {"drillup"}
  */
 
-import '../parts/Options.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 
 var noop = H.noop,
-    defaultOptions = H.defaultOptions,
     Chart = H.Chart,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
