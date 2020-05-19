@@ -147,10 +147,10 @@ interface ScrollbarEventCallbackFunction {
     (e: Highcharts.PointerEventObject): void;
 }
 
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 
-var defaultOptions = H.defaultOptions,
-    hasTouch = H.hasTouch,
+var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice;
 
 /**

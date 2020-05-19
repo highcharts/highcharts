@@ -18,6 +18,7 @@
 
 import Highcharts from '../parts/Globals.js';
 
+
 /**
  * Internal types
  * @private
@@ -124,8 +125,10 @@ import U from '../parts/Utilities.js';
 const {
     defined,
     extend,
+    getOptions,
     isObject,
-    pick
+    pick,
+    setOptions
 } = U;
 
 import '../parts/Chart.js';
@@ -156,7 +159,7 @@ function htmlencode(html: string): string {
         .replace(/\//g, '&#x2F;');
 }
 
-Highcharts.setOptions({
+setOptions({
     /**
      * Callback that fires while exporting data. This allows the modification of
      * data rows before processed into the final format.
@@ -1148,7 +1151,7 @@ Highcharts.Chart.prototype.viewData = function (): void {
 
 
 // Add "Download CSV" to the exporting menu.
-var exportingOptions = Highcharts.getOptions().exporting;
+var exportingOptions = getOptions().exporting;
 
 if (exportingOptions) {
 

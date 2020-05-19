@@ -705,10 +705,10 @@ declare global {
  * @return {string}
  */
 
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 
-var defaultOptions = H.defaultOptions,
-    deg2rad = H.deg2rad;
+var deg2rad = H.deg2rad;
 
 /**
  * Create a new axis object. Called internally when instanciating a new chart or

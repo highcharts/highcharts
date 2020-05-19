@@ -24,6 +24,7 @@ const {
     isNumber,
     merge,
     pick,
+    setOptions,
     uniqueKey
 } = U;
 
@@ -2227,7 +2228,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
     }
 };
 
-H.setOptions({
+setOptions({
     navigation: {
         bindings: stockToolsBindings
     }

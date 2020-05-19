@@ -16,10 +16,15 @@ import Axis from '../parts/Axis.js';
 import Axis3D from './Axis3D.js';
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const {
+    defaultOptions: genericDefaultOptions
+} = O;
 import U from '../parts/Utilities.js';
 const {
     addEvent,
     Fx,
+    getOptions,
     isArray,
     merge,
     pick,
@@ -918,7 +923,7 @@ namespace Chart3D {
             );
         };
 
-        merge(true, H.getOptions(), defaultOptions);
+        merge(true, genericDefaultOptions, defaultOptions);
 
         addEvent(ChartClass, 'init', onInit);
         addEvent(ChartClass, 'addSeries', onAddSeries);

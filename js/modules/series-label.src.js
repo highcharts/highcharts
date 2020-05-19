@@ -11,7 +11,7 @@
 import H from '../parts/Globals.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions, syncTimeout = U.syncTimeout;
 /**
  * Containing the position of a box that should be avoided by labels.
  *
@@ -46,7 +46,7 @@ var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEve
 import '../parts/Chart.js';
 import '../parts/Series.js';
 var labelDistance = 3, Series = H.Series, Chart = H.Chart;
-H.setOptions({
+setOptions({
     /**
      * @optionparent plotOptions
      *
