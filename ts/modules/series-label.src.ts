@@ -885,7 +885,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +
-                        (series.options.className || '') +
+                        (series.options.className || '') + ' ' +
                         colorClass
                     );
 

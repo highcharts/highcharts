@@ -7330,7 +7330,8 @@ class Axis implements AxisComposition, AxisLike {
                         alternateBands[pos].options = {
                             from: log ? log.lin2log(from) : from,
                             to: log ? log.lin2log(to) : to,
-                            color: alternateGridColor
+                            color: alternateGridColor,
+                            className: 'highcharts-alternate-grid'
                         };
                         alternateBands[pos].render();
                         alternateBands[pos].isActive = true;
