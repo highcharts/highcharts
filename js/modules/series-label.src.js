@@ -531,7 +531,7 @@ Chart.prototype.drawSeriesLabels = function () {
                     .label(labelText, 0, -9999, 'connector')
                     .addClass('highcharts-series-label ' +
                     'highcharts-series-label-' + series.index + ' ' +
-                    (series.options.className || '') +
+                    (series.options.className || '') + ' ' +
                     colorClass);
                 if (!chart.renderer.styledMode) {
                     label.css(extend({
