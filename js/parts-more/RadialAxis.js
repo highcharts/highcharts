@@ -12,7 +12,7 @@ import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import HiddenAxis from './HiddenAxis.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
 /**
  * @private
  * @class
@@ -247,11 +247,11 @@ var RadialAxis = /** @class */ (function () {
          * @return {RadialAxisPath}
          */
         axis.getPlotBandPath = function (from, to, options) {
-            var center = this.center, startAngleRad = this.startAngleRad, fullRadius = center[2] / 2, radii = [
+            var center = this.center, startAngleRad = this.startAngleRad, fullRadius = center[2] / 2, radiiOptions = [
                 pick(options.outerRadius, '100%'),
-                options.innerRadius,
+                options.innerRadius || 0,
                 pick(options.thickness, 10)
-            ], offset = Math.min(this.offset, 0), percentRegex = /%$/, start, end, angle, xOnPerimeter, open, isCircular = this.isCircular, // X axis in a polar chart
+            ], radii, offset = Math.min(this.offset, 0), percentRegex = /%$/, start, end, angle, xOnPerimeter, open, isCircular = this.isCircular, // X axis in a polar chart
             path;
             // Polygonal plot bands
             if (this.options.gridLineInterpolation === 'polygon') {
@@ -262,19 +262,24 @@ var RadialAxis = /** @class */ (function () {
                 // Keep within bounds
                 from = Math.max(from, this.min);
                 to = Math.min(to, this.max);
-                // Plot bands on Y axis (radial axis) - inner and outer radius
-                // depend on to and from
-                if (!isCircular) {
-                    radii[0] = this.translate(from);
-                    radii[1] = this.translate(to);
-                }
                 // Convert percentages to pixel values
-                radii = radii.map(function (radius) {
+                radii = radiiOptions.map(function (radius) {
                     if (percentRegex.test(radius)) {
                         radius = (pInt(radius, 10) * fullRadius) / 100;
                     }
+                    else if (typeof radius === 'string') {
+                        radius = parseInt(radius, 10);
+                    }
                     return radius;
                 });
+                var transFrom = this.translate(from);
+                var transTo = this.translate(to);
+                // Plot bands on Y axis (radial axis) - inner and outer
+                // radius depend on to and from
+                if (!isCircular) {
+                    radii[0] = transFrom || 0;
+                    radii[1] = transTo || 0;
+                }
                 // Handle full circle
                 if (options.shape === 'circle' || !isCircular) {
                     start = -Math.PI / 2;
@@ -282,12 +287,12 @@ var RadialAxis = /** @class */ (function () {
                     open = true;
                 }
                 else {
-                    start = startAngleRad + this.translate(from);
-                    end = startAngleRad + this.translate(to);
+                    start = startAngleRad + (transFrom || 0);
+                    end = startAngleRad + (transTo || 0);
                 }
                 radii[0] -= offset; // #5283
                 radii[2] -= offset; // #5283
-                path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1], radii[0], radii[0], {
+                path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1], radii[0] || 0, radii[0] || 0, {
                     // Math is for reversed yAxis (#3606)
                     start: Math.min(start, end),
                     end: Math.max(start, end),

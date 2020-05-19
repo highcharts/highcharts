@@ -333,7 +333,7 @@ SVGRenderer.prototype.symbols.connector = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SymbolOptionsObject
+    options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
