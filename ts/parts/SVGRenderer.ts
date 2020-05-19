@@ -103,8 +103,11 @@ declare global {
             anchorX?: number;
             anchorY?: number;
             backgroundSize?: ('contain'|'cover'|'within');
+            clockwise?: (0|1);
             end?: number;
             height?: number;
+            innerR?: number;
+            longArc?: (0|1);
             open?: boolean;
             r?: number;
             start?: number;
@@ -3154,74 +3157,80 @@ SVGRenderer.prototype.symbols = {
         y: number,
         w: number,
         h: number,
-        options: Highcharts.SVGAttributes
+        options?: Highcharts.SymbolOptionsObject
     ): SVGPath {
-        var start = options.start,
-            rx = options.r || w,
-            ry = options.r || h || w,
-            proximity = 0.001,
-            fullCircle =
-                Math.abs(options.end - options.start - 2 * Math.PI) <
-                proximity,
-            // Substract a small number to prevent cos and sin of start and
-            // end from becoming equal on 360 arcs (related: #1561)
-            end = options.end - proximity,
-            innerRadius: number = options.innerR,
-            open = pick(options.open, fullCircle),
-            cosStart = Math.cos(start),
-            sinStart = Math.sin(start),
-            cosEnd = Math.cos(end),
-            sinEnd = Math.sin(end),
-            // Proximity takes care of rounding errors around PI (#6971)
-            longArc = pick(options.longArc,
-                options.end - start - Math.PI < proximity ? 0 : 1),
-            arc: SVGPath;
+        const arc: SVGPath = [];
 
-        arc = [
-            [
-                'M',
-                x + rx * cosStart,
-                y + ry * sinStart
-            ],
-            [
-                'A', // arcTo
-                rx, // x radius
-                ry, // y radius
-                0, // slanting
-                longArc, // long or short arc
-                pick(options.clockwise, 1), // clockwise
-                x + rx * cosEnd,
-                y + ry * sinEnd
-            ]
-        ];
+        if (options) {
+            var start = options.start || 0,
+                end = options.end || 0,
+                rx = options.r || w,
+                ry = options.r || h || w,
+                proximity = 0.001,
+                fullCircle =
+                    Math.abs(end - start - 2 * Math.PI) <
+                    proximity,
+                // Substract a small number to prevent cos and sin of start and
+                // end from becoming equal on 360 arcs (related: #1561)
+                end = end - proximity,
+                innerRadius = options.innerR,
+                open = pick(options.open, fullCircle),
+                cosStart = Math.cos(start),
+                sinStart = Math.sin(start),
+                cosEnd = Math.cos(end),
+                sinEnd = Math.sin(end),
+                // Proximity takes care of rounding errors around PI (#6971)
+                longArc = pick(
+                    options.longArc,
+                    end - start - Math.PI < proximity ? 0 : 1
+                );
 
-        if (defined(innerRadius)) {
             arc.push(
-                open ?
-                    [
-                        'M',
-                        x + innerRadius * cosEnd,
-                        y + innerRadius * sinEnd
-                    ] : [
-                        'L',
-                        x + innerRadius * cosEnd,
-                        y + innerRadius * sinEnd
-                    ],
+                [
+                    'M',
+                    x + rx * cosStart,
+                    y + ry * sinStart
+                ],
                 [
                     'A', // arcTo
-                    innerRadius, // x radius
-                    innerRadius, // y radius
+                    rx, // x radius
+                    ry, // y radius
                     0, // slanting
                     longArc, // long or short arc
-                    // Clockwise - opposite to the outer arc clockwise
-                    defined(options.clockwise) ? 1 - options.clockwise : 0,
-                    x + innerRadius * cosStart,
-                    y + innerRadius * sinStart
+                    pick(options.clockwise, 1), // clockwise
+                    x + rx * cosEnd,
+                    y + ry * sinEnd
                 ]
             );
-        }
-        if (!open) {
-            arc.push(['Z']);
+
+            if (defined(innerRadius)) {
+                arc.push(
+                    open ?
+                        [
+                            'M',
+                            x + innerRadius * cosEnd,
+                            y + innerRadius * sinEnd
+                        ] : [
+                            'L',
+                            x + innerRadius * cosEnd,
+                            y + innerRadius * sinEnd
+                        ],
+                    [
+                        'A', // arcTo
+                        innerRadius, // x radius
+                        innerRadius, // y radius
+                        0, // slanting
+                        longArc, // long or short arc
+                        // Clockwise - opposite to the outer arc clockwise
+                        defined(options.clockwise) ? 1 - options.clockwise : 0,
+                        x + innerRadius * cosStart,
+                        y + innerRadius * sinStart
+                    ]
+                );
+            }
+            if (!open) {
+                arc.push(['Z']);
+            }
         }
 
         return arc;
@@ -3236,14 +3245,14 @@ SVGRenderer.prototype.symbols = {
         y: number,
         w: number,
         h: number,
-        options: Highcharts.SVGAttributes
+        options?: Highcharts.SymbolOptionsObject
     ): SVGPath {
         var arrowLength = 6,
             halfDistance = 6,
             r = Math.min((options && options.r) || 0, w, h),
             safeDistance = r + halfDistance,
-            anchorX = options && options.anchorX,
-            anchorY = options && options.anchorY,
+            anchorX = options && options.anchorX || 0,
+            anchorY = options && options.anchorY || 0,
             path: SVGPath;
 
         path = [

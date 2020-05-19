@@ -2218,20 +2218,20 @@ SVGRenderer.prototype.symbols = {
         ];
     },
     arc: function (x, y, w, h, options) {
-        var start = options.start, rx = options.r || w, ry = options.r || h || w, proximity = 0.001, fullCircle = Math.abs(options.end - options.start - 2 * Math.PI) <
-            proximity, 
-        // Substract a small number to prevent cos and sin of start and
-        // end from becoming equal on 360 arcs (related: #1561)
-        end = options.end - proximity, innerRadius = options.innerR, open = pick(options.open, fullCircle), cosStart = Math.cos(start), sinStart = Math.sin(start), cosEnd = Math.cos(end), sinEnd = Math.sin(end), 
-        // Proximity takes care of rounding errors around PI (#6971)
-        longArc = pick(options.longArc, options.end - start - Math.PI < proximity ? 0 : 1), arc;
-        arc = [
-            [
+        var arc = [];
+        if (options) {
+            var start = options.start || 0, end = options.end || 0, rx = options.r || w, ry = options.r || h || w, proximity = 0.001, fullCircle = Math.abs(end - start - 2 * Math.PI) <
+                proximity, 
+            // Substract a small number to prevent cos and sin of start and
+            // end from becoming equal on 360 arcs (related: #1561)
+            end = end - proximity, innerRadius = options.innerR, open = pick(options.open, fullCircle), cosStart = Math.cos(start), sinStart = Math.sin(start), cosEnd = Math.cos(end), sinEnd = Math.sin(end), 
+            // Proximity takes care of rounding errors around PI (#6971)
+            longArc = pick(options.longArc, end - start - Math.PI < proximity ? 0 : 1);
+            arc.push([
                 'M',
                 x + rx * cosStart,
                 y + ry * sinStart
-            ],
-            [
+            ], [
                 'A',
                 rx,
                 ry,
@@ -2240,32 +2240,32 @@ SVGRenderer.prototype.symbols = {
                 pick(options.clockwise, 1),
                 x + rx * cosEnd,
                 y + ry * sinEnd
-            ]
-        ];
-        if (defined(innerRadius)) {
-            arc.push(open ?
-                [
-                    'M',
+            ]);
+            if (defined(innerRadius)) {
+                arc.push(open ?
+                    [
+                        'M',
+                        x + innerRadius * cosEnd,
+                        y + innerRadius * sinEnd
+                    ] : [
+                    'L',
                     x + innerRadius * cosEnd,
                     y + innerRadius * sinEnd
-                ] : [
-                'L',
-                x + innerRadius * cosEnd,
-                y + innerRadius * sinEnd
-            ], [
-                'A',
-                innerRadius,
-                innerRadius,
-                0,
-                longArc,
-                // Clockwise - opposite to the outer arc clockwise
-                defined(options.clockwise) ? 1 - options.clockwise : 0,
-                x + innerRadius * cosStart,
-                y + innerRadius * sinStart
-            ]);
-        }
-        if (!open) {
-            arc.push(['Z']);
+                ], [
+                    'A',
+                    innerRadius,
+                    innerRadius,
+                    0,
+                    longArc,
+                    // Clockwise - opposite to the outer arc clockwise
+                    defined(options.clockwise) ? 1 - options.clockwise : 0,
+                    x + innerRadius * cosStart,
+                    y + innerRadius * sinStart
+                ]);
+            }
+            if (!open) {
+                arc.push(['Z']);
+            }
         }
         return arc;
     },
@@ -2274,7 +2274,7 @@ SVGRenderer.prototype.symbols = {
      * rectangles in VML
      */
     callout: function (x, y, w, h, options) {
-        var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY, path;
+        var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX || 0, anchorY = options && options.anchorY || 0, path;
         path = [
             ['M', x + r, y],
             ['L', x + w - r, y],
