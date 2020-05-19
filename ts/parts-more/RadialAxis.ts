@@ -23,6 +23,7 @@ const {
     defined,
     extend,
     fireEvent,
+    isNumber,
     merge,
     pick,
     pInt,
@@ -491,11 +492,12 @@ class RadialAxis {
             var center = this.center,
                 startAngleRad = this.startAngleRad,
                 fullRadius = center[2] / 2,
-                radii = [
+                radiiOptions = [
                     pick(options.outerRadius, '100%'),
-                    options.innerRadius,
+                    options.innerRadius || 0,
                     pick(options.thickness, 10)
                 ],
+                radii: number[],
                 offset = Math.min(this.offset, 0),
                 percentRegex = /%$/,
                 start,
@@ -519,22 +521,25 @@ class RadialAxis {
                 from = Math.max(from, this.min);
                 to = Math.min(to, this.max);
 
-                // Plot bands on Y axis (radial axis) - inner and outer radius
-                // depend on to and from
-                if (!isCircular) {
-                    radii[0] = this.translate(from) as any;
-                    radii[1] = this.translate(to) as any;
-                }
-
                 // Convert percentages to pixel values
-                radii = radii.map(function (
-                    radius: (number|string|undefined)
-                ): (number|string|undefined) {
+                radii = radiiOptions.map(function (radius): number {
                     if (percentRegex.test(radius as any)) {
                         radius = (pInt(radius, 10) * fullRadius) / 100;
+                    } else if (typeof radius === 'string') {
+                        radius = parseInt(radius, 10);
                     }
                     return radius;
                 });
+
+                const transFrom = this.translate(from);
+                const transTo = this.translate(to);
+
+                // Plot bands on Y axis (radial axis) - inner and outer
+                // radius depend on to and from
+                if (!isCircular) {
+                    radii[0] = transFrom || 0;
+                    radii[1] = transTo || 0;
+                }
 
                 // Handle full circle
                 if (options.shape === 'circle' || !isCircular) {
@@ -542,25 +547,25 @@ class RadialAxis {
                     end = Math.PI * 1.5;
                     open = true;
                 } else {
-                    start = startAngleRad + (this.translate(from) as any);
-                    end = startAngleRad + (this.translate(to) as any);
+                    start = startAngleRad + (transFrom || 0);
+                    end = startAngleRad + (transTo || 0);
                 }
 
-                (radii[0] as any) -= offset; // #5283
-                (radii[2] as any) -= offset; // #5283
+                radii[0] -= offset; // #5283
+                radii[2] -= offset; // #5283
 
                 path = this.chart.renderer.symbols.arc(
                     this.left + center[0],
                     this.top + center[1],
-                    radii[0],
-                    radii[0],
+                    radii[0] || 0,
+                    radii[0] || 0,
                     {
                         // Math is for reversed yAxis (#3606)
                         start: Math.min(start, end),
                         end: Math.max(start, end),
                         innerR: pick(
                             radii[1],
-                            (radii[0] as any) - (radii[2] as any)
+                            radii[0] - radii[2]
                         ),
                         open: open
                     }

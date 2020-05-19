@@ -523,7 +523,7 @@ H.SVGRenderer.prototype.symbols.connector = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SVGAttributes
+    options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,

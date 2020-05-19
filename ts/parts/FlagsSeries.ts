@@ -748,7 +748,7 @@ symbols.flag = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.Dictionary<number>
+    options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
     var anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
@@ -781,7 +781,7 @@ function createPinSymbol(shape: ('circle'|'square')): void {
         y: number,
         w: number,
         h: number,
-        options: Highcharts.Dictionary<number>
+        options?: Highcharts.SymbolOptionsObject
     ): SVGPath {
 
         var anchorX = options && options.anchorX,

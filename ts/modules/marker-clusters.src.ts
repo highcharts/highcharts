@@ -13,7 +13,7 @@
  * */
 
 'use strict';
-
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 import O from '../parts/Options.js';
 const { defaultOptions } = O;
@@ -843,37 +843,38 @@ function getStateId(): string {
 
 // Cluster symbol.
 SVGRenderer.prototype.symbols.cluster = function (
-    this: Highcharts.SVGRenderer,
     x: number,
     y: number,
     width: number,
     height: number
-): Highcharts.SVGElement {
+): SVGPath {
     var w = width / 2,
         h = height / 2,
         outerWidth = 1,
         space = 1,
-        inner, outer1, outer2;
+        inner: SVGPath,
+        outer1: SVGPath,
+        outer2: SVGPath;
 
     inner = this.arc(x + w, y + h, w - space * 4, h - space * 4, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         open: false
-    } as any);
+    });
 
     outer1 = this.arc(x + w, y + h, w - space * 3, h - space * 3, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         innerR: w - outerWidth * 2,
         open: false
-    } as any);
+    });
 
     outer2 = this.arc(x + w, y + h, w - space, h - space, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         innerR: w,
         open: false
-    } as any);
+    });
 
     return outer2.concat(outer1, inner);
 };

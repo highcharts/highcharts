@@ -80,9 +80,7 @@ declare global {
             textContent?: string;
         }
         interface SymbolDictionary {
-            [key: string]: SymbolFunction<(
-                SVGElement|SVGPath|Array<SVGElement>
-            )>;
+            [key: string]: SymbolFunction<SVGPath>;
             arc: SymbolFunction<SVGPath>;
             callout: SymbolFunction<SVGPath>;
             circle: SymbolFunction<SVGPath>;
@@ -92,7 +90,13 @@ declare global {
             'triangle-down': SymbolFunction<SVGPath>;
         }
         interface SymbolFunction<T> {
-            (...args: Array<any>): T;
+            (
+                x: number,
+                y: number,
+                width: number,
+                height: number,
+                options?: SymbolOptionsObject
+            ): SVGPath;
         }
         interface SymbolOptionsObject {
             anchorX?: number;
@@ -2276,8 +2280,8 @@ class SVGRenderer {
                     this.symbols,
                     Math.round(x || 0),
                     Math.round(y || 0),
-                    width,
-                    height,
+                    width || 0,
+                    height || 0,
                     options
                 );
             }

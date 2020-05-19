@@ -1526,7 +1526,7 @@ var SVGRenderer = /** @class */ (function () {
         if (symbolFn) {
             // Check if there's a path defined for this symbol
             if (typeof x === 'number') {
-                path = symbolFn.call(this.symbols, Math.round(x || 0), Math.round(y || 0), width, height, options);
+                path = symbolFn.call(this.symbols, Math.round(x || 0), Math.round(y || 0), width || 0, height || 0, options);
             }
             obj = this.path(path);
             if (!ren.styledMode) {

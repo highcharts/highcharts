@@ -320,11 +320,13 @@ function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBo
         ['Z']
     ];
 }
-SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
+SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, options) {
+    var r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);
 };
-SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
+SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, options) {
+    var r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers.
 // Even VML browsers need this in order to generate shapes in export. Now share

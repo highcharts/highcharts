@@ -41,7 +41,7 @@ declare global {
                 y: number,
                 w: number,
                 h: number,
-                options: SVGAttributes
+                options?: SymbolOptionsObject
             ): SVGPath;
         }
         interface SVGRenderer {
@@ -2079,7 +2079,7 @@ if (!svg) {
                 y: number,
                 w: number,
                 h: number,
-                options: Highcharts.SVGAttributes
+                options: Highcharts.SymbolOptionsObject
             ): SVGPath {
                 return SVGRenderer.prototype.symbols[
                     !defined(options) || !options.r ? 'square' : 'callout'
