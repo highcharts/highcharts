@@ -211,10 +211,6 @@ declare global {
             inlineToAttributes?: Array<string>;
             unstyledElements?: Array<string>;
         }
-        interface SymbolDictionary {
-            /** @requires modules/exporting */
-            menuball: SymbolFunction<SVGPath>;
-        }
         interface XAxisOptions {
             internalKey?: string;
         }

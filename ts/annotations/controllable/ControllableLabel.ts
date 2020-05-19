@@ -82,9 +82,6 @@ declare global
             negative?: boolean;
             ttBelow?: boolean;
         }
-        interface SymbolDictionary {
-            connector: SymbolFunction<SVGPath>;
-        }
     }
 }
 

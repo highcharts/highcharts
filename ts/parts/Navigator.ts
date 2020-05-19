@@ -82,15 +82,6 @@ declare global {
             baseSeries?: Series;
             navigatorSeries?: Series;
         }
-        interface SymbolDictionary {
-            'navigator-handle': (
-                x: number,
-                y: number,
-                w: number,
-                h: number,
-                options?: SymbolOptionsObject
-            ) => SVGPath;
-        }
         interface XAxisOptions {
             maxRange?: number;
             toFixedRange?: (
