@@ -173,6 +173,8 @@ declare global {
  *         Parsed JavaScript time value.
  */
 
+import O from './Options.js';
+const { defaultOptions } = O;
 import U from './Utilities.js';
 const {
     addEvent,
@@ -195,8 +197,7 @@ import './Axis.js';
 import './Chart.js';
 
 var Axis = H.Axis,
-    Chart = H.Chart,
-    defaultOptions = H.defaultOptions;
+    Chart = H.Chart;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *

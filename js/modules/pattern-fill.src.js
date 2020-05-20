@@ -15,7 +15,7 @@ import H from '../parts/Globals.js';
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
+var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, getOptions = U.getOptions, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
 /**
  * Pattern options
  *
@@ -126,7 +126,7 @@ var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, merge = U
 ''; // detach doclets above
 // Add the predefined patterns
 H.patterns = (function () {
-    var patterns = [], colors = H.getOptions().colors;
+    var patterns = [], colors = getOptions().colors;
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
         'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',

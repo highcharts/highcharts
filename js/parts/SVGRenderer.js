@@ -11,80 +11,9 @@
 import Color from './Color.js';
 import H from './Globals.js';
 import SVGElement from './SVGElement.js';
+import SVGLabel from './SVGLabel.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, uniqueKey = U.uniqueKey;
-/**
- * The horizontal alignment of an element.
- *
- * @typedef {"center"|"left"|"right"} Highcharts.AlignValue
- */
-/**
- * Options to align the element relative to the chart or another box.
- *
- * @interface Highcharts.AlignObject
- */ /**
-* Horizontal alignment. Can be one of `left`, `center` and `right`.
-*
-* @name Highcharts.AlignObject#align
-* @type {Highcharts.AlignValue|undefined}
-*
-* @default left
-*/ /**
-* Vertical alignment. Can be one of `top`, `middle` and `bottom`.
-*
-* @name Highcharts.AlignObject#verticalAlign
-* @type {Highcharts.VerticalAlignValue|undefined}
-*
-* @default top
-*/ /**
-* Horizontal pixel offset from alignment.
-*
-* @name Highcharts.AlignObject#x
-* @type {number|undefined}
-*
-* @default 0
-*/ /**
-* Vertical pixel offset from alignment.
-*
-* @name Highcharts.AlignObject#y
-* @type {number|undefined}
-*
-* @default 0
-*/ /**
-* Use the `transform` attribute with translateX and translateY custom
-* attributes to align this elements rather than `x` and `y` attributes.
-*
-* @name Highcharts.AlignObject#alignByTranslate
-* @type {boolean|undefined}
-*
-* @default false
-*/
-/**
- * Bounding box of an element.
- *
- * @interface Highcharts.BBoxObject
- * @extends Highcharts.PositionObject
- */ /**
-* Height of the bounding box.
-*
-* @name Highcharts.BBoxObject#height
-* @type {number}
-*/ /**
-* Width of the bounding box.
-*
-* @name Highcharts.BBoxObject#width
-* @type {number}
-*/ /**
-* Horizontal position of the bounding box.
-*
-* @name Highcharts.BBoxObject#x
-* @type {number}
-*/ /**
-* Vertical position of the bounding box.
-*
-* @name Highcharts.BBoxObject#y
-* @type {number}
-*/
 /**
  * A clipping rectangle that can be applied to one or more {@link SVGElement}
  * instances. It is instanciated with the {@link SVGRenderer#clipRect} function
@@ -197,69 +126,6 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
 * @type {number}
 */
 /**
- * An object of key-value pairs for SVG attributes. Attributes in Highcharts
- * elements for the most parts correspond to SVG, but some are specific to
- * Highcharts, like `zIndex`, `rotation`, `rotationOriginX`,
- * `rotationOriginY`, `translateX`, `translateY`, `scaleX` and `scaleY`. SVG
- * attributes containing a hyphen are _not_ camel-cased, they should be
- * quoted to preserve the hyphen.
- *
- * @example
- * {
- *     'stroke': '#ff0000', // basic
- *     'stroke-width': 2, // hyphenated
- *     'rotation': 45 // custom
- *     'd': ['M', 10, 10, 'L', 30, 30, 'z'] // path definition, note format
- * }
- *
- * @interface Highcharts.SVGAttributes
- */ /**
-* @name Highcharts.SVGAttributes#[key:string]
-* @type {*}
-*/ /**
-* @name Highcharts.SVGAttributes#d
-* @type {string|Highcharts.SVGPathArray|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#fill
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#inverted
-* @type {boolean|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#matrix
-* @type {Array<number>|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#rotation
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#rotationOriginX
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#rotationOriginY
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#scaleX
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#scaleY
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#stroke
-* @type {Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#style
-* @type {string|Highcharts.CSSObject|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#translateX
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#translateY
-* @type {number|undefined}
-*/ /**
-* @name Highcharts.SVGAttributes#zIndex
-* @type {number|undefined}
-*/
-/**
  * Serialized form of an SVG definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
  *
@@ -278,21 +144,14 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
 * @type {string|undefined}
 */
 /**
- * An SVG DOM element. The type is a reference to the regular SVGElement in the
- * global scope.
- *
- * @typedef {globals.GlobalSVGElement} Highcharts.SVGDOMElement
- *
- * @see https://developer.mozilla.org/en-US/docs/Web/API/SVGElement
- */
-/**
  * Array of path commands, that will go into the `d` attribute of an SVG
  * element.
  *
- * @typedef {Array<number|Highcharts.SVGPathCommand>} Highcharts.SVGPathArray
+ * @typedef {Array<Array<Highcharts.SVGPathCommand,number?,number?,number?,number?,number?,number?,number?>>} Highcharts.SVGPathArray
  */
 /**
- * Possible path commands in a SVG path array.
+ * Possible path commands in an SVG path array. Valid values are `A`, `C`, `H`,
+ * `L`, `M`, `Q`, `S`, `T`, `V`, `Z`.
  *
  * @typedef {string} Highcharts.SVGPathCommand
  * @validvalue ["a","c","h","l","m","q","s","t","v","z","A","C","H","L","M","Q","S","T","V","Z"]
@@ -370,11 +229,6 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
 * @name Highcharts.SymbolOptionsObject#start
 * @type {number|undefined}
 */
-/**
- * The vertical alignment of an element.
- *
- * @typedef {"bottom"|"middle"|"top"} Highcharts.VerticalAlignValue
- */
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var charts = H.charts, deg2rad = H.deg2rad, doc = H.doc, isFirefox = H.isFirefox, isMS = H.isMS, isWebKit = H.isWebKit, noop = H.noop, svg = H.svg, SVG_NS = H.SVG_NS, symbolSizes = H.symbolSizes, win = H.win;
 /**
@@ -959,7 +813,7 @@ var SVGRenderer = /** @class */ (function () {
                 spans = line.split('|||');
                 spans.forEach(function buildTextSpans(span) {
                     if (span !== '' || spans.length === 1) {
-                        var attributes = {}, tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'), classAttribute, styleAttribute, // #390
+                        var attributes = {}, tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'), a, classAttribute, styleAttribute, // #390
                         hrefAttribute;
                         classAttribute = parseAttribute(span, 'class');
                         if (classAttribute) {
@@ -970,13 +824,22 @@ var SVGRenderer = /** @class */ (function () {
                             styleAttribute = styleAttribute.replace(/(;| |^)color([ :])/, '$1fill$2');
                             attr(tspan, 'style', styleAttribute);
                         }
-                        // Not for export - #1529
+                        // For anchors, wrap the tspan in an <a> tag and apply
+                        // the href attribute as is (#13559). Not for export
+                        // (#1529)
                         hrefAttribute = parseAttribute(span, 'href');
                         if (hrefAttribute && !forExport) {
-                            attr(tspan, 'onclick', 'location.href=\"' + hrefAttribute + '\"');
-                            attr(tspan, 'class', 'highcharts-anchor');
-                            if (!renderer.styledMode) {
-                                css(tspan, { cursor: 'pointer' });
+                            if (
+                            // Stop JavaScript links, vulnerable to XSS
+                            hrefAttribute.split(':')[0].toLowerCase()
+                                .indexOf('javascript') === -1) {
+                                a = doc.createElementNS(renderer.SVG_NS, 'a');
+                                attr(a, 'href', hrefAttribute);
+                                attr(tspan, 'class', 'highcharts-anchor');
+                                a.appendChild(tspan);
+                                if (!renderer.styledMode) {
+                                    css(tspan, { cursor: 'pointer' });
+                                }
                             }
                         }
                         // Strip away unsupported HTML tags (#7126)
@@ -998,7 +861,7 @@ var SVGRenderer = /** @class */ (function () {
                             // add attributes
                             attr(tspan, attributes);
                             // Append it
-                            textNode.appendChild(tspan);
+                            textNode.appendChild(a || tspan);
                             // first span on subsequent line, add the line
                             // height
                             if (!spanNo && isSubsequentLine) {
@@ -1076,14 +939,14 @@ var SVGRenderer = /** @class */ (function () {
                     textNode.childNodes.length);
             });
             if (ellipsis && truncated) {
-                wrapper.attr('title', unescapeEntities(wrapper.textStr, ['&lt;', '&gt;']) // #7179
+                wrapper.attr('title', unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
                 );
             }
             if (tempParent) {
                 tempParent.removeChild(textNode);
             }
             // Apply the text outline
-            if (textOutline && wrapper.applyTextOutline) {
+            if (isString(textOutline) && wrapper.applyTextOutline) {
                 wrapper.applyTextOutline(textOutline);
             }
         }
@@ -1150,7 +1013,11 @@ var SVGRenderer = /** @class */ (function () {
      * The button element.
      */
     SVGRenderer.prototype.button = function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape, useHTML) {
-        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode;
+        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode, userNormalStyle = normalState && normalState.style || {};
+        // Remove stylable attributes
+        if (normalState && normalState.style) {
+            delete normalState.style;
+        }
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
         if (!styledMode) {
@@ -1166,6 +1033,8 @@ var SVGRenderer = /** @class */ (function () {
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
+            }, {
+                style: userNormalStyle
             }, normalState);
             normalStyle = normalState.style;
             delete normalState.style;
@@ -2255,341 +2124,7 @@ var SVGRenderer = /** @class */ (function () {
      *         The generated label.
      */
     SVGRenderer.prototype.label = function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
-        var renderer = this, styledMode = renderer.styledMode, wrapper = renderer.g((className !== 'button' && 'label')), text = wrapper.text = renderer.text('', 0, 0, useHTML)
-            .attr({
-            zIndex: 1
-        }), box, emptyBBox = { width: 0, height: 0, x: 0, y: 0 }, bBox = emptyBBox, alignFactor = 0, padding = 3, paddingLeft = 0, width, height, wrapperX, wrapperY, textAlign, deferredAttr = {}, strokeWidth, baselineOffset, hasBGImage = /^url\((.*?)\)$/.test(shape), needsBox = styledMode || hasBGImage, getCrispAdjust = function () {
-            return styledMode ?
-                box.strokeWidth() % 2 / 2 :
-                (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
-        }, updateBoxSize, updateTextPadding, boxAttr;
-        if (className) {
-            wrapper.addClass('highcharts-' + className);
-        }
-        /* This function runs after the label is added to the DOM (when the
-           bounding box is available), and after the text of the label is
-           updated to detect the new bounding box and reflect it in the border
-           box. */
-        updateBoxSize = function () {
-            var style = text.element.style, crispAdjust, attribs = {};
-            // #12165 error when width is null (auto)
-            // #12163 when fontweight: bold, recalculate bBox withot cache
-            // #3295 && 3514 box failure when string equals 0
-            bBox = ((!isNumber(width) || !isNumber(height) || textAlign) &&
-                defined(text.textStr)) ?
-                text.getBBox() : emptyBBox;
-            wrapper.width = ((width || bBox.width || 0) +
-                2 * padding +
-                paddingLeft);
-            wrapper.height = (height || bBox.height || 0) + 2 * padding;
-            // Update the label-scoped y offset. Math.min because of inline
-            // style (#9400)
-            baselineOffset = padding + Math.min(renderer
-                .fontMetrics(style && style.fontSize, text).b, 
-            // When the height is 0, there is no bBox, so go with the font
-            // metrics. Highmaps CSS demos.
-            bBox.height || Infinity);
-            if (needsBox) {
-                // Create the border box if it is not already present
-                if (!box) {
-                    // Symbol definition exists (#5324)
-                    wrapper.box = box =
-                        renderer.symbols[shape] || hasBGImage ?
-                            renderer.symbol(shape) :
-                            renderer.rect();
-                    box.addClass(// Don't use label className for buttons
-                    (className === 'button' ? '' : 'highcharts-label-box') +
-                        (className ? ' highcharts-' + className + '-box' : ''));
-                    box.add(wrapper);
-                    crispAdjust = getCrispAdjust();
-                    attribs.x = crispAdjust;
-                    attribs.y = (baseline ? -baselineOffset : 0) + crispAdjust;
-                }
-                // Apply the box attributes
-                attribs.width = Math.round(wrapper.width);
-                attribs.height = Math.round(wrapper.height);
-                box.attr(extend(attribs, deferredAttr));
-                deferredAttr = {};
-            }
-        };
-        /*
-         * This function runs after setting text or padding, but only if padding
-         * is changed.
-         */
-        updateTextPadding = function () {
-            var textX = paddingLeft + padding, textY;
-            // determin y based on the baseline
-            textY = baseline ? 0 : baselineOffset;
-            // compensate for alignment
-            if (defined(width) &&
-                bBox &&
-                (textAlign === 'center' || textAlign === 'right')) {
-                textX += { center: 0.5, right: 1 }[textAlign] *
-                    (width - bBox.width);
-            }
-            // update if anything changed
-            if (textX !== text.x || textY !== text.y) {
-                text.attr('x', textX);
-                // #8159 - prevent misplaced data labels in treemap
-                // (useHTML: true)
-                if (text.hasBoxWidthChanged) {
-                    bBox = text.getBBox(true);
-                    updateBoxSize();
-                }
-                if (typeof textY !== 'undefined') {
-                    text.attr('y', textY);
-                }
-            }
-            // record current values
-            text.x = textX;
-            text.y = textY;
-        };
-        /*
-         * Set a box attribute, or defer it if the box is not yet created
-         */
-        boxAttr = function (key, value) {
-            if (box) {
-                box.attr(key, value);
-            }
-            else {
-                deferredAttr[key] = value;
-            }
-        };
-        /*
-         * After the text element is added, get the desired size of the border
-         * box and add it before the text in the DOM.
-         */
-        wrapper.onAdd = function () {
-            text.add(wrapper);
-            wrapper.attr({
-                // Alignment is available now  (#3295, 0 not rendered if given
-                // as a value)
-                text: (str || str === 0) ? str : '',
-                x: x,
-                y: y
-            });
-            if (box && defined(anchorX)) {
-                wrapper.attr({
-                    anchorX: anchorX,
-                    anchorY: anchorY
-                });
-            }
-        };
-        /*
-         * Add specific attribute setters.
-         */
-        // only change local variables
-        wrapper.widthSetter = function (value) {
-            // width:auto => null
-            width = isNumber(value) ? value : null;
-        };
-        wrapper.heightSetter = function (value) {
-            height = value;
-        };
-        wrapper['text-alignSetter'] = function (value) {
-            textAlign = value;
-        };
-        wrapper.paddingSetter = function (value) {
-            if (defined(value) && value !== padding) {
-                padding = wrapper.padding = value;
-                updateTextPadding();
-            }
-        };
-        wrapper.paddingLeftSetter = function (value) {
-            if (defined(value) && value !== paddingLeft) {
-                paddingLeft = value;
-                updateTextPadding();
-            }
-        };
-        // change local variable and prevent setting attribute on the group
-        wrapper.alignSetter = function (value) {
-            value = {
-                left: 0,
-                center: 0.5,
-                right: 1
-            }[value];
-            if (value !== alignFactor) {
-                alignFactor = value;
-                // Bounding box exists, means we're dynamically changing
-                if (bBox) {
-                    wrapper.attr({ x: wrapperX }); // #5134
-                }
-            }
-        };
-        // apply these to the box and the text alike
-        wrapper.textSetter = function (value) {
-            if (typeof value !== 'undefined') {
-                // Must use .attr to ensure transforms are done (#10009)
-                text.attr({
-                    text: value
-                });
-            }
-            updateBoxSize();
-            updateTextPadding();
-        };
-        // apply these to the box but not to the text
-        wrapper['stroke-widthSetter'] = function (value, key) {
-            if (value) {
-                needsBox = true;
-            }
-            strokeWidth = this['stroke-width'] = value;
-            boxAttr(key, value);
-        };
-        if (styledMode) {
-            wrapper.rSetter = function (value, key) {
-                boxAttr(key, value);
-            };
-        }
-        else {
-            wrapper.strokeSetter =
-                wrapper.fillSetter =
-                    wrapper.rSetter = function (value, key) {
-                        if (key !== 'r') {
-                            if (key === 'fill' && value) {
-                                needsBox = true;
-                            }
-                            // for animation getter (#6776)
-                            wrapper[key] = value;
-                        }
-                        boxAttr(key, value);
-                    };
-        }
-        wrapper.anchorXSetter = function (value, key) {
-            anchorX = wrapper.anchorX = value;
-            boxAttr(key, Math.round(value) - getCrispAdjust() - wrapperX);
-        };
-        wrapper.anchorYSetter = function (value, key) {
-            anchorY = wrapper.anchorY = value;
-            boxAttr(key, value - wrapperY);
-        };
-        // rename attributes
-        wrapper.xSetter = function (value) {
-            wrapper.x = value; // for animation getter
-            if (alignFactor) {
-                value -= alignFactor * ((width || bBox.width) + 2 * padding);
-                // Force animation even when setting to the same value (#7898)
-                wrapper['forceAnimate:x'] = true;
-            }
-            wrapperX = Math.round(value);
-            wrapper.attr('translateX', wrapperX);
-        };
-        wrapper.ySetter = function (value) {
-            wrapperY = wrapper.y = Math.round(value);
-            wrapper.attr('translateY', wrapperY);
-        };
-        wrapper.isLabel = true;
-        // Redirect certain methods to either the box or the text
-        var baseCss = wrapper.css;
-        var wrapperExtension = {
-            /**
-             * Pick up some properties and apply them to the text instead of the
-             * wrapper.
-             */
-            css: function (styles) {
-                if (styles) {
-                    var textStyles = {}, isWidth, isFontStyle;
-                    // Create a copy to avoid altering the original object
-                    // (#537)
-                    styles = merge(styles);
-                    wrapper.textProps.forEach(function (prop) {
-                        if (typeof styles[prop] !== 'undefined') {
-                            textStyles[prop] = styles[prop];
-                            delete styles[prop];
-                        }
-                    });
-                    text.css(textStyles);
-                    isWidth = 'width' in textStyles;
-                    isFontStyle = 'fontSize' in textStyles ||
-                        'fontWeight' in textStyles;
-                    // Update existing text, box (#9400, #12163)
-                    if (isWidth || isFontStyle) {
-                        updateBoxSize();
-                        // Keep updated (#9400, #12163)
-                        if (isFontStyle) {
-                            updateTextPadding();
-                        }
-                    }
-                }
-                return baseCss.call(wrapper, styles);
-            },
-            /*
-             * Return the bounding box of the box, not the group.
-             */
-            getBBox: function () {
-                return {
-                    width: bBox.width + 2 * padding,
-                    height: bBox.height + 2 * padding,
-                    x: bBox.x - padding,
-                    y: bBox.y - padding
-                };
-            },
-            /**
-             * Destroy and release memory.
-             */
-            destroy: function () {
-                // Added by button implementation
-                removeEvent(wrapper.element, 'mouseenter');
-                removeEvent(wrapper.element, 'mouseleave');
-                if (text) {
-                    text.destroy();
-                }
-                if (box) {
-                    box = box.destroy();
-                }
-                // Call base implementation to destroy the rest
-                SVGElement.prototype.destroy.call(wrapper);
-                // Release local pointers (#1298)
-                wrapper =
-                    renderer =
-                        text =
-                            updateBoxSize =
-                                updateTextPadding =
-                                    boxAttr = null;
-            }
-        };
-        // Event handling. In case of useHTML, we need to make sure that events
-        // are captured on the span as well, and that mouseenter/mouseleave
-        // between the SVG group and the HTML span are not treated as real
-        // enter/leave events. #13310.
-        wrapper.on = function (eventType, handler) {
-            var span = text && text.element.tagName === 'SPAN' ? text : void 0;
-            var selectiveHandler;
-            if (span) {
-                selectiveHandler = function (e) {
-                    if ((eventType === 'mouseenter' ||
-                        eventType === 'mouseleave') &&
-                        e.relatedTarget instanceof Element &&
-                        (wrapper.element.contains(e.relatedTarget) ||
-                            span.element.contains(e.relatedTarget))) {
-                        return;
-                    }
-                    handler.call(wrapper.element, e);
-                };
-                span.on(eventType, selectiveHandler);
-            }
-            SVGElement.prototype.on.call(wrapper, eventType, selectiveHandler || handler);
-            return wrapper;
-        };
-        if (!styledMode) {
-            /**
-             * Apply the shadow to the box.
-             *
-             * @ignore
-             * @function Highcharts.SVGElement#shadow
-             *
-             * @return {Highcharts.SVGElement}
-             */
-            wrapperExtension.shadow = function (b) {
-                if (b) {
-                    updateBoxSize();
-                    if (box) {
-                        box.shadow(b);
-                    }
-                }
-                return wrapper;
-            };
-        }
-        return extend(wrapper, wrapperExtension);
+        return new SVGLabel(this, str, x, y, shape, anchorX, anchorY, useHTML, baseline, className);
     };
     return SVGRenderer;
 }());

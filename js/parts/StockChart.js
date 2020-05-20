@@ -14,7 +14,7 @@ import H from './Globals.js';
 import Point from './Point.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, getOptions = U.getOptions, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
 import './Pointer.js';
 import './Series.js';
 // Has a dependency on Navigator due to the use of
@@ -119,7 +119,7 @@ var Series = H.Series, seriesProto = Series.prototype, seriesInit = seriesProto.
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, 
     // to increase performance, don't merge the data
-    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, 
+    seriesOptions = options.series, defaultOptions = getOptions(), opposite, 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
     navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true);
@@ -499,13 +499,15 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     });
     crossBox = crossLabel.getBBox();
     // now it is placed we can correct its position
-    if (horiz) {
-        if ((tickInside && !opposite) || (!tickInside && opposite)) {
-            posy = crossLabel.y - crossBox.height;
+    if (isNumber(crossLabel.y)) {
+        if (horiz) {
+            if ((tickInside && !opposite) || (!tickInside && opposite)) {
+                posy = crossLabel.y - crossBox.height;
+            }
         }
-    }
-    else {
-        posy = crossLabel.y - (crossBox.height / 2);
+        else {
+            posy = crossLabel.y - (crossBox.height / 2);
+        }
     }
     // check the edges
     if (horiz) {

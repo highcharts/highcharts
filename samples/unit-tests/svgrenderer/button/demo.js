@@ -1,4 +1,4 @@
-QUnit.test('Dynamic fontWeight - button width (#12163)', function (assert) {
+QUnit.test('General button() tests', function (assert) {
     var ren = new Highcharts.Renderer(
         document.getElementById('container'),
         500,
@@ -38,6 +38,12 @@ QUnit.test('Dynamic fontWeight - button width (#12163)', function (assert) {
     assert.strictEqual(
         button.width > normalButtonWidth,
         true,
-        'Width of button should be updated.'
+        'Width of button should be updated  when fontWeight has changed (#12163)'
+    );
+
+    assert.notStrictEqual(
+        button.attr('style'),
+        '[Object object]',
+        'Button should not set wrong styles (#9424).'
     );
 });

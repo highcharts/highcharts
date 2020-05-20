@@ -33,6 +33,8 @@ import H from '../parts/Globals.js';
  * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
  */
 ''; // detach doclets above
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, error = U.error, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
@@ -46,7 +48,7 @@ var deg2rad = H.deg2rad, max = Math.max, min = Math.min;
        and rendering it
 */
 // Set default Pathfinder options
-extend(H.defaultOptions, {
+extend(defaultOptions, {
     /**
      * The Pathfinder module allows you to define connections between any two
      * points, represented as lines - optionally with markers for the start

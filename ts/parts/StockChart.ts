@@ -26,6 +26,7 @@ const {
     extend,
     find,
     format,
+    getOptions,
     isNumber,
     isString,
     merge,
@@ -196,7 +197,7 @@ H.StockChart = H.stockChart = function (
         userOptions = options,
         // to increase performance, don't merge the data
         seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
+        defaultOptions = getOptions(),
         opposite,
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
@@ -744,12 +745,14 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     crossBox = crossLabel.getBBox();
 
     // now it is placed we can correct its position
-    if (horiz) {
-        if ((tickInside && !opposite) || (!tickInside && opposite)) {
-            posy = crossLabel.y - crossBox.height;
+    if (isNumber(crossLabel.y)) {
+        if (horiz) {
+            if ((tickInside && !opposite) || (!tickInside && opposite)) {
+                posy = crossLabel.y - crossBox.height;
+            }
+        } else {
+            posy = crossLabel.y - (crossBox.height / 2);
         }
-    } else {
-        posy = crossLabel.y - (crossBox.height / 2);
     }
 
     // check the edges

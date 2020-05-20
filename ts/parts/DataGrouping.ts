@@ -145,6 +145,8 @@ declare global {
 
 ''; // detach doclets above
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import Point from './Point.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
@@ -166,7 +168,6 @@ import './Axis.js';
 import './Series.js';
 
 var Axis = H.Axis,
-    defaultPlotOptions = H.defaultPlotOptions,
     Series = H.Series;
 
 /* ************************************************************************** *
@@ -971,7 +972,7 @@ addEvent(Series, 'afterSetOptions', function (
         plotOptions: Highcharts.PlotOptions =
             this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
-            (defaultPlotOptions[type] as any).dataGrouping,
+            (O.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
         baseOptions = this.useCommonDataGrouping && commonOptions;

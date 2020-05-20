@@ -9,9 +9,11 @@
  * */
 'use strict';
 import H from './Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import U from './Utilities.js';
 var merge = U.merge, seriesType = U.seriesType;
-var defaultPlotOptions = H.defaultPlotOptions, seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 /**
  * A candlestick chart is a style of financial chart used to describe price
  * movements over time.
@@ -60,7 +62,7 @@ var candlestickOptions = {
     /**
      * @extends plotOptions.ohlc.tooltip
      */
-    tooltip: defaultPlotOptions.ohlc.tooltip,
+    tooltip: defaultOptions.plotOptions.ohlc.tooltip,
     /**
      * @type    {number|null}
      * @product highstock
@@ -122,7 +124,7 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, candlestickOptions), 
+seriesType('candlestick', 'ohlc', merge(defaultOptions.plotOptions.column, candlestickOptions), 
 /**
  * @lends seriesTypes.candlestick
  */

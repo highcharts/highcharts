@@ -49,14 +49,14 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
-    extend
+    extend,
+    getOptions
 } = U;
 
 import '../parts/Series.js';
-import '../parts/Options.js';
 
 var chartPrototype = H.Chart.prototype,
-    defaultOptions = H.getOptions();
+    defaultOptions = getOptions();
 
 // Add language option
 extend(

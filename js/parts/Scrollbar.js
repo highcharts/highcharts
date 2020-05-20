@@ -13,8 +13,9 @@ import H from './Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent;
-import './Options.js';
-var defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
+var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice;
 /**
  * When we have vertical scrollbar, rifles and arrow in buttons should be
  * rotated. The same method is used in Navigator's handles, to rotate them.

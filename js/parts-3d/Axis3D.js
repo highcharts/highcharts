@@ -56,10 +56,11 @@ var Axis3DAdditions = /** @class */ (function () {
         var chart = axis.chart;
         // Do not do this if the chart is not 3D
         if (axis.coll === 'colorAxis' ||
+            !chart.chart3d ||
             !chart.is3d()) {
             return pos;
         }
-        var alpha = deg2rad * chart.options.chart.options3d.alpha, beta = deg2rad * chart.options.chart.options3d.beta, positionMode = pick(isTitle && axis.options.title.position3d, axis.options.labels.position3d), skew = pick(isTitle && axis.options.title.skew3d, axis.options.labels.skew3d), frame = chart.frame3d, plotLeft = chart.plotLeft, plotRight = chart.plotWidth + plotLeft, plotTop = chart.plotTop, plotBottom = chart.plotHeight + plotTop, 
+        var alpha = deg2rad * chart.options.chart.options3d.alpha, beta = deg2rad * chart.options.chart.options3d.beta, positionMode = pick(isTitle && axis.options.title.position3d, axis.options.labels.position3d), skew = pick(isTitle && axis.options.title.skew3d, axis.options.labels.skew3d), frame = chart.chart3d.frame3d, plotLeft = chart.plotLeft, plotRight = chart.plotWidth + plotLeft, plotTop = chart.plotTop, plotBottom = chart.plotHeight + plotTop, 
         // Indicates that we are labelling an X or Z axis on the "back" of
         // the chart
         reverseFlap = false, offsetX = 0, offsetY = 0, vecX, vecY = { x: 0, y: 1, z: 0 };
@@ -361,13 +362,15 @@ var Axis3D = /** @class */ (function () {
         var chart = axis.chart;
         var path = proceed.apply(axis, [].slice.call(arguments, 1));
         // Do not do this if the chart is not 3D
-        if (!chart.is3d() || axis.coll === 'colorAxis') {
+        if (axis.coll === 'colorAxis' ||
+            !chart.chart3d ||
+            !chart.is3d()) {
             return path;
         }
         if (path === null) {
             return path;
         }
-        var options3d = chart.options.chart.options3d, d = axis.isZAxis ? chart.plotWidth : options3d.depth, frame = chart.frame3d, startSegment = path[0], endSegment = path[1], pArr, pathSegments = [];
+        var options3d = chart.options.chart.options3d, d = axis.isZAxis ? chart.plotWidth : options3d.depth, frame = chart.chart3d.frame3d, startSegment = path[0], endSegment = path[1], pArr, pathSegments = [];
         if (startSegment[0] === 'M' && endSegment[0] === 'L') {
             pArr = [
                 axis3D.swapZ({ x: startSegment[1], y: startSegment[2], z: 0 }),

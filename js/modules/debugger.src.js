@@ -10,8 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, isNumber = U.isNumber;
-var setOptions = H.setOptions;
+var addEvent = U.addEvent, isNumber = U.isNumber, setOptions = U.setOptions;
 setOptions({
     /**
      * @optionparent chart

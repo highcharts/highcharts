@@ -11,7 +11,35 @@
 'use strict';
 
 import type ColorAxis from '../parts-map/ColorAxis';
+import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import O from './Options.js';
+const { time } = O;
+import Point from './Point.js';
+import Time from './Time.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    animate,
+    createElement,
+    css,
+    defined,
+    erase,
+    error,
+    extend,
+    fireEvent,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    relativeLength,
+    setAnimation,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -119,38 +147,9 @@ declare global {
     }
 }
 
-import Point from './Point.js';
-import Time from './Time.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    animate,
-    createElement,
-    css,
-    defined,
-    erase,
-    error,
-    extend,
-    fireEvent,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    relativeLength,
-    setAnimation,
-    splat
-} = U;
-
-import './Axis.js';
-import './Chart.js';
 import './Series.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
-    Series = H.Series,
+var Series = H.Series,
     seriesTypes = H.seriesTypes;
 
 /* eslint-disable valid-jsdoc */
@@ -723,10 +722,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 // Chart setSize
                 if (
-                    !isResponsiveOptions &&
                     chart.propsRequireReflow.indexOf(key) !== -1
                 ) {
-                    runSetSize = true;
+                    if (isResponsiveOptions) {
+                        chart.isDirtyBox = true;
+                    } else {
+                        runSetSize = true;
+                    }
                 }
             });
 
@@ -747,7 +749,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Maintaining legacy global time. If the chart is instanciated first
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
-        if (options.time && this.time === H.time) {
+        if (options.time && this.time === time) {
             this.time = new Time(options.time);
         }
 

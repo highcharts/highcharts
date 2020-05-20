@@ -2415,7 +2415,7 @@ var animate = H.animate = function (el, params, opt) {
  */
 // docs: add to API + extending Highcharts
 var seriesType = H.seriesType = function (type, parent, options, props, pointProps) {
-    var defaultOptions = H.getOptions(), seriesTypes = H.seriesTypes;
+    var defaultOptions = getOptions(), seriesTypes = H.seriesTypes;
     // Merge the options
     defaultOptions.plotOptions[type] = merge(defaultOptions.plotOptions[parent], options);
     // Create the class
@@ -2428,6 +2428,7 @@ var seriesType = H.seriesType = function (type, parent, options, props, pointPro
     }
     return seriesTypes[type];
 };
+var serialMode;
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
  * composed of a random hash specific to this Highcharts instance, and a
@@ -2439,16 +2440,82 @@ var seriesType = H.seriesType = function (type, parent, options, props, pointPro
  * @function Highcharts.uniqueKey
  *
  * @return {string}
- *         A unique key.
+ * A unique key.
  */
 var uniqueKey = H.uniqueKey = (function () {
-    var uniqueKeyHash = Math.random().toString(36).substring(2, 9), idCounter = 0;
+    var hash = serialMode ?
+        '' :
+        Math.random().toString(36).substring(2, 9) + '-';
+    var id = 0;
     return function () {
-        return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
+        return 'highcharts-' + hash + id++;
     };
 }());
+/**
+ * Activates a serial mode for element IDs provided by
+ * {@link Highcharts.uniqueKey}. This mode can be used in automated tests, where
+ * a simple comparison of two rendered SVG graphics is needed.
+ *
+ * **Note:** This is only for testing purposes and will break functionality in
+ * webpages with multiple charts.
+ *
+ * @example
+ * if (
+ *   process &&
+ *   process.env.NODE_ENV === 'development'
+ * ) {
+ *   Highcharts.useSerialIds(true);
+ * }
+ *
+ * @function Highcharts.useSerialIds
+ *
+ * @param {boolean} [mode]
+ * Changes the state of serial mode.
+ *
+ * @return {boolean|undefined}
+ * State of the serial mode.
+ */
+var useSerialIds = H.useSerialIds = function (mode) {
+    return (serialMode = pick(mode, serialMode));
+};
 var isFunction = H.isFunction = function (obj) {
     return typeof obj === 'function';
+};
+/**
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
+ *
+ * @function Highcharts.getOptions
+ *
+ * @return {Highcharts.Options}
+ */
+var getOptions = H.getOptions = function () {
+    return H.defaultOptions;
+};
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+var setOptions = H.setOptions = function (options) {
+    // Copy in the default options
+    H.defaultOptions = merge(true, H.defaultOptions, options);
+    // Update the time object
+    if (options.time || options.global) {
+        H.time.update(merge(H.defaultOptions.global, H.defaultOptions.time, options.global, options.time));
+    }
+    return H.defaultOptions;
 };
 // Register Highcharts as a plugin in jQuery
 if (win.jQuery) {
@@ -2528,6 +2595,7 @@ var utilitiesModule = {
     format: format,
     getMagnitude: getMagnitude,
     getNestedProperty: getNestedProperty,
+    getOptions: getOptions,
     getStyle: getStyle,
     inArray: inArray,
     isArray: isArray,
@@ -2549,12 +2617,14 @@ var utilitiesModule = {
     removeEvent: removeEvent,
     seriesType: seriesType,
     setAnimation: setAnimation,
+    setOptions: setOptions,
     splat: splat,
     stableSort: stableSort,
     stop: stop,
     syncTimeout: syncTimeout,
     timeUnits: timeUnits,
     uniqueKey: uniqueKey,
+    useSerialIds: useSerialIds,
     wrap: wrap
 };
 export default utilitiesModule;

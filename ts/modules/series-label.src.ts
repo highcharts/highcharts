@@ -22,6 +22,7 @@ const {
     format,
     isNumber,
     pick,
+    setOptions,
     syncTimeout
 } = U;
 
@@ -126,7 +127,7 @@ var labelDistance = 3,
     Series = H.Series,
     Chart = H.Chart;
 
-H.setOptions({
+setOptions({
 
     /**
      * @optionparent plotOptions
@@ -884,7 +885,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +
-                        (series.options.className || '') +
+                        (series.options.className || '') + ' ' +
                         colorClass
                     );
 
@@ -1044,9 +1045,9 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 });
 
                 // Move it if needed
-                var dist = (Math.sqrt as any)(
-                    Math.pow(Math.abs(best.x - label.x), 2),
-                    Math.pow(Math.abs(best.y - label.y), 2)
+                var dist = Math.sqrt(
+                    Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
+                    Math.pow(Math.abs(best.y - (label.y || 0)), 2)
                 );
 
                 if (dist && series.labelBySeries) {

@@ -13,6 +13,8 @@ import H from './Globals.js';
 var charts = H.charts, doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
 import Pointer from './Pointer.js';
 import Time from './Time.js';
 import U from './Utilities.js';
@@ -106,9 +108,8 @@ var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr 
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-import './Options.js';
 import './Pointer.js';
-var defaultOptions = H.defaultOptions, marginNames = H.marginNames;
+var marginNames = H.marginNames;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.
@@ -558,8 +559,13 @@ var Chart = /** @class */ (function () {
         if (hasCartesianSeries) {
             // set axes scales
             axes.forEach(function (axis) {
-                axis.updateNames();
-                axis.setScale();
+                // Don't do setScale again if we're only resizing. Regression
+                // #13507. But we need it after chart.update (responsive), as
+                // axis is initialized again (#12137).
+                if (!chart.isResizing || !axis.tickPositions) {
+                    axis.updateNames();
+                    axis.setScale();
+                }
             });
         }
         chart.getMargins(); // #3098
@@ -1816,8 +1822,10 @@ var Chart = /** @class */ (function () {
      */
     Chart.prototype.updateContainerScaling = function () {
         var container = this.container;
-        if (container.offsetWidth &&
-            container.offsetHeight &&
+        // #13342 - tooltip was not visible in Chrome, when chart
+        // updates height.
+        if (container.offsetWidth > 2 && // #13342
+            container.offsetHeight > 2 && // #13342
             container.getBoundingClientRect) {
             var bb = container.getBoundingClientRect(), scaleX = bb.width / container.offsetWidth, scaleY = bb.height / container.offsetHeight;
             if (scaleX !== 1 || scaleY !== 1) {

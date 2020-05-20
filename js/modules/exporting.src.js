@@ -81,10 +81,11 @@ var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discard
  *
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
-import '../parts/Options.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import '../parts/Chart.js';
 // create shortcuts
-var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
+var doc = H.doc, Chart = H.Chart, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
 /**

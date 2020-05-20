@@ -182,7 +182,9 @@ addEvent(H.Series, 'afterRender', function (): void {
 
             if (yAxis.cross) {
                 serie.lastVisiblePrice = yAxis.cross;
-                serie.lastVisiblePrice.y = lastPoint.y;
+                if (typeof lastPoint.y === 'number') {
+                    serie.lastVisiblePrice.y = lastPoint.y;
+                }
             }
 
             serie.crossLabel = yAxis.crossLabel;

@@ -12,6 +12,8 @@
 'use strict';
 /* global document */
 import Highcharts from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var setOptions = U.setOptions;
 // Load the fonts
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Signika:400,700',
@@ -108,4 +110,4 @@ Highcharts.theme = {
     }
 };
 // Apply the theme
-Highcharts.setOptions(Highcharts.theme);
+setOptions(Highcharts.theme);

@@ -13,7 +13,8 @@
 import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
@@ -746,9 +747,7 @@ declare global {
 
 ''; // detach doclets above
 
-var defaultOptions = H.defaultOptions,
-    defaultPlotOptions = H.defaultPlotOptions,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     win = H.win;
 
 /**
@@ -3974,7 +3973,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 this.getCyclic(
                     'color',
                     this.options.color ||
-                    (defaultPlotOptions as any)[this.type].color,
+                    (defaultOptions.plotOptions as any)[this.type].color,
                     this.chart.options.colors
                 );
             }
@@ -5412,7 +5411,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 inverted = chart.inverted,
                 xAxis = series.xAxis,
                 yAxis = xAxis && series.yAxis,
-                clipBox;
+                clipBox,
+                scrollablePlotAreaOptions =
+                    (chart.options.chart as any).scrollablePlotArea || {};
 
             if (animation && options.clip === false && yAxis) {
                 // support for not clipped series animation (#10450)
@@ -5434,7 +5435,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
                 if (finalBox) {
                     clipBox.width = chart.plotSizeX as any;
-                    clipBox.x = 0;
+                    clipBox.x = (chart.scrollablePixelsX || 0) *
+                        (scrollablePlotAreaOptions.scrollPositionX || 0);
                 }
             }
 

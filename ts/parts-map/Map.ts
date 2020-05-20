@@ -13,10 +13,13 @@
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 const {
     extend,
+    getOptions,
     merge,
     pick
 } = U;
@@ -38,8 +41,7 @@ declare global {
 import '../parts/Options.js';
 import '../parts/Chart.js';
 
-var defaultOptions = H.defaultOptions,
-    Renderer = H.Renderer,
+var Renderer = H.Renderer,
     VMLRenderer = H.VMLRenderer;
 
 // Add language
@@ -469,7 +471,7 @@ H.Map = H.mapChart = function (
             startOnTick: false
         },
         seriesOptions,
-        defaultCreditsOptions = H.getOptions().credits;
+        defaultCreditsOptions = getOptions().credits;
 
     /* For visual testing
     hiddenAxis.gridLineWidth = 1;
