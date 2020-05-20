@@ -71,6 +71,8 @@ declare global {
     }
 }
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -169,7 +171,7 @@ seriesType<Highcharts.ItemSeries>(
          * @extends plotOptions.series.marker
          */
         marker: merge(
-            (H.defaultOptions.plotOptions as any).line.marker,
+            (defaultOptions.plotOptions as any).line.marker,
             {
                 radius: null
             }
@@ -201,6 +203,11 @@ seriesType<Highcharts.ItemSeries>(
         translate: function (this: Highcharts.ItemSeries,
             positions?: Array<number>
         ): void {
+
+            // Initialize chart without setting data, #13379.
+            if (this.total === 0) {
+                this.center = this.getCenter();
+            }
             if (!this.slots) {
                 this.slots = [];
             }
@@ -208,7 +215,7 @@ seriesType<Highcharts.ItemSeries>(
                 isNumber(this.options.startAngle) &&
                 isNumber(this.options.endAngle)
             ) {
-                H.seriesTypes.pie.prototype.translate.call(this, positions);
+                H.seriesTypes.pie.prototype.translate.apply(this, arguments);
                 this.slots = this.getSlots();
             } else {
                 this.generatePoints();
