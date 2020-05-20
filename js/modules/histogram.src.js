@@ -117,8 +117,8 @@ seriesType('histogram', 'column',
         binWidth = series.binWidth = (correctFloat(isNumber(binWidth) ?
             (binWidth || 1) :
             (max - min) / binsNumber));
-        // #12077 negative pointRange causes wrong calculations
-        // and browser hanging.
+        // #12077 negative pointRange causes wrong calculations,
+        // browser hanging.
         series.options.pointRange = Math.max(binWidth, 0);
         // If binWidth is 0 then max and min are equaled,
         // increment the x with some positive value to quit the loop

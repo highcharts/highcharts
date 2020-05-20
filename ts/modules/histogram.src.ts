@@ -219,8 +219,8 @@ seriesType<Highcharts.HistogramSeries>(
                 )
             );
 
-            // #12077 negative pointRange causes wrong calculations
-            // and browser hanging.
+            // #12077 negative pointRange causes wrong calculations,
+            // browser hanging.
             series.options.pointRange = Math.max(binWidth, 0);
 
             // If binWidth is 0 then max and min are equaled,

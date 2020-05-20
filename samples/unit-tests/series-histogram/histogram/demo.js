@@ -259,7 +259,7 @@ QUnit.test('Histogram', function (assert) {
 
 });
 
-QUnit.test('#12077 - Histogram long digits', function (assert) {
+QUnit.test('#12077 - Histogram long digits.', function (assert) {
     var chart = Highcharts.chart('container', {
         xAxis: [{}, {
             opposite: true
