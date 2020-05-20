@@ -1175,7 +1175,9 @@ seriesType('packedbubble', 'bubble',
     onMouseDown: function (point, event) {
         var isParentNode = point.isParentNode, parentNodeLayout = this.parentNodeLayout;
         if (isParentNode) {
-            parentNodeLayout.start();
+            parentNodeLayout.setMaxIterations();
+            parentNodeLayout.currentStep = 0;
+            parentNodeLayout.step();
         }
         dragNodesMixin.onMouseDown.apply(this, arguments);
     },
@@ -1185,7 +1187,15 @@ seriesType('packedbubble', 'bubble',
      * @param {global.Event} event Browser event, before normalization.
      * @param {Highcharts.Point} point The point that event occured.
      */
-    onMouseMove: dragNodesMixin.onMouseMove,
+    onMouseMove: function (point, event) {
+        var isParentNode = point.isParentNode, parentNodeLayout = this.parentNodeLayout;
+        if (isParentNode) {
+            parentNodeLayout.setMaxIterations();
+            parentNodeLayout.currentStep = 0;
+            parentNodeLayout.step();
+        }
+        dragNodesMixin.onMouseMove.apply(this, arguments);
+    },
     /**
      * Mouse up action, finalizing drag&drop.
      * @private
