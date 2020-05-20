@@ -974,3 +974,23 @@ QUnit.test('Add a navigator by chart update (#7067)', function (assert) {
         'Navigator correctly added (#7067).'
     );
 });
+
+QUnit.test('Navigator overlaps chart (#13392).', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        legend: {
+            enabled: true,
+            layout: 'proximate',
+            align: 'right'
+        },
+        series: [{
+            data: [2, 20]
+        }, {
+            data: [1, 3]
+        }]
+    });
+
+    assert.ok(
+        chart.navigator.top > 330,
+        'Navigator should not overlap the chart (#13392).'
+    );
+});
