@@ -782,19 +782,24 @@ seriesType('pie', 'line',
             if (!this.graph) {
                 this.graph = this.chart.renderer
                     .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
-                    .addClass('highcharts-graph')
+                    .addClass('highcharts-empty-series')
                     .add(this.group);
             }
             this.graph.attr({
                 d: Highcharts.SVGRenderer.prototype.symbols.arc(centerX, centerY, this.center[2] / 2, 0, {
                     start: start,
                     end: end,
-                    innerR: options.innerSize
-                }),
-                'stroke-width': options.borderWidth,
-                fill: options.fillColor || 'none',
-                stroke: options.color || '#cccccc'
+                    innerR: this.center[3] / 2
+                })
             });
+            if (!this.chart.styledMode) {
+                this.graph.attr({
+                    'stroke-width': options.borderWidth,
+                    fill: options.fillColor || 'none',
+                    stroke: options.color ||
+                        '${palette.neutralColor20}'
+                });
+            }
         }
         else if (this.graph) { // Destroy the graph object.
             this.graph = this.graph.destroy();

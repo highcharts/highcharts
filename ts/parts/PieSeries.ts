@@ -1063,7 +1063,7 @@ seriesType<Highcharts.PieSeries>(
                 if (!this.graph) {
                     this.graph = this.chart.renderer
                         .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
-                        .addClass('highcharts-graph')
+                        .addClass('highcharts-empty-series')
                         .add(this.group);
                 }
 
@@ -1075,13 +1075,19 @@ seriesType<Highcharts.PieSeries>(
                         0, {
                             start: start,
                             end: end,
-                            innerR: options.innerSize
+                            innerR: this.center[3] / 2
                         }
-                    ),
-                    'stroke-width': options.borderWidth,
-                    fill: options.fillColor || 'none',
-                    stroke: options.color || '#cccccc'
+                    )
                 });
+
+                if (!this.chart.styledMode) {
+                    this.graph.attr({
+                        'stroke-width': options.borderWidth,
+                        fill: options.fillColor || 'none',
+                        stroke: (options.color as any) ||
+                        '${palette.neutralColor20}'
+                    });
+                }
 
             } else if (this.graph) { // Destroy the graph object.
                 this.graph = this.graph.destroy();
