@@ -1607,10 +1607,16 @@ class SVGRenderer {
                 'button'
             ),
             curState = 0,
-            styledMode = this.styledMode;
+            styledMode = this.styledMode,
+            userNormalStyle = normalState && normalState.style || {};
+
+        // Remove stylable attributes
+        if (normalState && normalState.style) {
+            delete normalState.style;
+        }
 
         // Default, non-stylable attributes
-        label.attr(merge({ padding: 8, r: 2 }, normalState as any));
+        label.attr(merge({ padding: 8, r: 2 }, normalState));
 
         if (!styledMode) {
             // Presentational
@@ -1629,6 +1635,8 @@ class SVGRenderer {
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
+            }, {
+                style: userNormalStyle
             }, normalState);
             normalStyle = normalState.style;
             delete normalState.style;
