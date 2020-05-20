@@ -94,7 +94,7 @@ declare global {
             ): void;
             public updateScreenReaderSection(regionKey: string): void;
         }
-        interface ChartInterface {
+        interface ChartLike {
             /** @requires modules/accessibility */
             getTypeDescription(types: Array<string>): string;
         }

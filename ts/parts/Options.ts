@@ -26,7 +26,7 @@ declare global {
         ): string;
         function getOptions(): Options;
         function setOptions(options: Options): Options;
-        interface ChartInterface {
+        interface ChartLike {
             marginRight: ChartOptions['marginRight'];
             polar: ChartOptions['polar'];
         }

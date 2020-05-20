@@ -39,7 +39,7 @@ declare global {
             val: unknown;
             value: unknown;
         }
-        interface ChartInterface {
+        interface ChartLike {
             /** @requires modules/boost */
             getBoostClipRect(target: BoostTargetObject): BBoxObject;
             /** @requires modules/boost */

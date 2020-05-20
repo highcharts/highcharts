@@ -93,7 +93,7 @@ declare global {
             labelLeft?: number;
             labelRight?: number;
         }
-        interface ChartInterface {
+        interface ChartLike {
             colorAxis?: Array<ColorAxis>;
         }
         interface Series {

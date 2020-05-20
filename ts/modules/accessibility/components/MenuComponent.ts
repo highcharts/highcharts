@@ -55,7 +55,7 @@ declare global {
             public setExportButtonExpandedState(stateStr: string): void;
             isExportMenuShown: boolean;
         }
-        interface ChartInterface {
+        interface ChartLike {
             highlightedExportItemIx?: number;
             /** @requires modules/accessibility */
             hideExportMenu(): void;

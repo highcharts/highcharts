@@ -31,7 +31,7 @@ const {
 declare global {
     namespace Highcharts {
         type ButtonRelativeToValue = ('plotBox'|'spacingBox');
-        interface ChartInterface {
+        interface ChartLike {
             mapNavButtons?: Array<SVGElement>;
             mapNavigation?: MapNavigation;
         }

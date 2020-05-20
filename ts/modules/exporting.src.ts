@@ -49,7 +49,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             btnCount?: number;
             buttonOffset?: number;
             exportContextMenu?: ExportingDivElement;

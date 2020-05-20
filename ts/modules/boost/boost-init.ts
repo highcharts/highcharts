@@ -27,7 +27,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             didBoost?: boolean;
             markerGroup?: Series['markerGroup'];
         }

@@ -33,7 +33,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             scrollbarsOffsets?: [number, number];
         }
         interface Options {

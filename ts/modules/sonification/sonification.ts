@@ -30,7 +30,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             sonification?: SonifyableChart['sonification'];
             sonify?: SonifyableChart['sonify'];
         }

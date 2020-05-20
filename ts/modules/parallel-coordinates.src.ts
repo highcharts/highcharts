@@ -39,7 +39,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             hasParallelCoordinates?: ParallelChart['hasParallelCoordinates'];
             parallelInfo?: ParallelChart['parallelInfo'];
             /** @requires modules/parallel-coordinates */

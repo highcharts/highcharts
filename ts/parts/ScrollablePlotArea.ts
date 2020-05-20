@@ -37,7 +37,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             fixedDiv?: HTMLDOMElement;
             fixedRenderer?: Renderer;
             innerContainer?: HTMLDOMElement;

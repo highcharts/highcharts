@@ -36,7 +36,7 @@ declare global {
             type: string;
             value: string;
         }
-        interface ChartInterface {
+        interface ChartLike {
             /** @requires modules/accessibility */
             langFormat(
                 langKey: string,

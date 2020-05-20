@@ -43,7 +43,7 @@ declare global {
             /** @requires modules/boost */
             boostResizeTarget(): void;
         }
-        interface ChartInterface extends BoostTargetObject {
+        interface ChartLike extends BoostTargetObject {
         }
         interface Series extends BoostTargetObject {
         }

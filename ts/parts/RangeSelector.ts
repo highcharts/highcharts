@@ -47,7 +47,7 @@ declare global {
             newMax?: number;
             range?: (null|number|RangeSelectorButtonsOptions);
         }
-        interface ChartInterface {
+        interface ChartLike {
             extraBottomMargin?: boolean;
             extraTopMargin?: boolean;
             fixedRange?: number;

@@ -48,7 +48,7 @@ declare global {
             drilldownCategory(x: number, e: MouseEvent): void;
             getDDPoints(x: number): (Array<(boolean|Point)>|undefined);
         }
-        interface ChartInterface {
+        interface ChartLike {
             ddDupes?: Array<string>;
             drilldown?: ChartDrilldownObject;
             drilldownLevels?: Array<DrilldownLevelObject>;

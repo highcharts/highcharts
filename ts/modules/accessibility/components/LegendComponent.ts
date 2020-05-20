@@ -65,7 +65,7 @@ declare global {
         interface BubbleLegend {
             a11yProxyElement?: HTMLDOMElement;
         }
-        interface ChartInterface {
+        interface ChartLike {
             highlightedLegendItemIx?: number;
             /** @requires modules/accessibility */
             highlightLegendItem(ix: number): boolean;

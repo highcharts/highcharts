@@ -21,7 +21,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             fullscreen: Fullscreen;
         }
         class Fullscreen {

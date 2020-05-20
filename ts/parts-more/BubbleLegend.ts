@@ -90,7 +90,7 @@ declare global {
             labelStyle?: CSSObject;
             value?: any;
         }
-        interface ChartInterface {
+        interface ChartLike {
             getVisibleBubbleSeriesIndex(): number;
         }
         interface Legend {

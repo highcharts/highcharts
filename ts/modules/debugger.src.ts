@@ -18,7 +18,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             errorElements?: Array<SVGElement>;
         }
         interface ChartOptions {

@@ -33,7 +33,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
             labelSeries?: Array<Series>;
             labelSeriesMaxSum?: number;

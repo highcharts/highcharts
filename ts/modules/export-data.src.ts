@@ -44,7 +44,7 @@ declare global {
             categoryMap: ExportingCategoryMap;
             dateTimeValueAxisMap: ExportingDateTimeMap;
         }
-        interface ChartInterface {
+        interface ChartLike {
             dataTableDiv?: HTMLDivElement;
             /** @requires modules/export-data */
             downloadCSV(): void;

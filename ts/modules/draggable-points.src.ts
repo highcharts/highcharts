@@ -32,7 +32,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             /** @requires modules/draggable-points */
             dragDropData?: DragDropDataObject;
             /** @requires modules/draggable-points */

@@ -43,7 +43,7 @@ declare global {
             lat: number;
             lon: number;
         }
-        interface ChartInterface {
+        interface ChartLike {
             /** @requires modules/maps */
             mapCredits?: string;
             /** @requires modules/maps */

@@ -57,7 +57,7 @@ declare global {
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
         }
-        interface ChartInterface {
+        interface ChartLike {
             a11yDirty?: boolean;
             accessibility?: Accessibility;
             types?: Array<string>;

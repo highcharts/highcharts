@@ -56,7 +56,7 @@ declare global {
             point?: Point;
             reverse?: boolean;
         }
-        interface ChartInterface {
+        interface ChartLike {
             inverted?: boolean;
         }
     }

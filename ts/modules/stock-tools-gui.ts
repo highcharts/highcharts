@@ -35,7 +35,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             stockTools?: Toolbar;
             /** @requires modules/stock-tools */
             setStockTools(options?: StockToolsOptions): void;

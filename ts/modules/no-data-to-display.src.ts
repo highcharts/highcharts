@@ -34,7 +34,7 @@ declare global {
             position?: AlignObject;
             style?: CSSObject;
         }
-        interface ChartInterface {
+        interface ChartLike {
             noDataLabel?: SVGElement;
             /** @requires modules/no-data-to-display */
             showNoData(str?: string): void;

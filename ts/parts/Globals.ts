@@ -28,7 +28,7 @@ declare global {
         interface XAxisOptions {
             stackLabels?: any; // @todo
         }
-        interface ChartInterface {
+        interface ChartLike {
             frameShapes?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
         }

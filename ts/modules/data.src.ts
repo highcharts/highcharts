@@ -35,7 +35,7 @@ const {
 declare global {
     namespace Highcharts {
         type DataValueType = (number|string|null);
-        interface ChartInterface {
+        interface ChartLike {
             data?: Data;
             hasDataDef?: boolean;
             liveDataURL?: string;

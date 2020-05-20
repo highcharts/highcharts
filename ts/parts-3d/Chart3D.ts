@@ -37,7 +37,7 @@ import ZAxis from './ZAxis.js';
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             chart3d?: Chart3D['chart3d'];
             is3d(): boolean;
         }

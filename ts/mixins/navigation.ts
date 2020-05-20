@@ -18,7 +18,7 @@ import type Chart from '../parts/Chart';
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             navigation?: ChartNavigationObject;
         }
         interface ChartNavigationMixin {

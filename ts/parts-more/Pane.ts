@@ -33,7 +33,7 @@ declare global {
         interface Axis {
             pane?: Pane;
         }
-        interface ChartInterface {
+        interface ChartLike {
             pane?: Array<Pane>;
             hoverPane?: Highcharts.Pane;
             getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;

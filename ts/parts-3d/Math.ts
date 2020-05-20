@@ -19,7 +19,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             scale3d?: number;
         }
         interface Position3dObject extends PositionObject {

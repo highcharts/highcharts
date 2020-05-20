@@ -17,7 +17,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             redrawTrigger?: string;
             initiatedScale?: boolean;
             /** @requires modules/static-scale */

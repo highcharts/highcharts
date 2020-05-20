@@ -25,7 +25,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             zAxis?: Array<ZAxis>;
             addZAxis(options: Highcharts.AxisOptions): Axis;
         }

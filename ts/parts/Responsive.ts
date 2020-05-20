@@ -29,7 +29,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             currentResponsive?: ResponsiveCurrentObject;
             currentOptions(options: Options): Options;
             matchResponsiveRule(

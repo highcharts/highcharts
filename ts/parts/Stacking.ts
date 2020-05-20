@@ -30,7 +30,7 @@ const {
 declare global {
     namespace Highcharts {
         type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream');
-        interface ChartInterface {
+        interface ChartLike {
             getStacks(): void;
         }
         interface Point {

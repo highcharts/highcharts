@@ -73,7 +73,7 @@ declare global {
             public updateExitAnchor(): void;
             public updateContainerTabindex(): void;
         }
-        interface ChartInterface {
+        interface ChartLike {
             /** @requires modules/accessibility */
             dismissPopupContent(): void;
         }

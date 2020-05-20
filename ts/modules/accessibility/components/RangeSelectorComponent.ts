@@ -56,7 +56,7 @@ declare global {
                 langKey: string
             ): void;
         }
-        interface ChartInterface {
+        interface ChartLike {
             highlightedInputRangeIx?: number;
             highlightedRangeSelectorItemIx?: number;
             oldRangeSelectorItemState?: number;

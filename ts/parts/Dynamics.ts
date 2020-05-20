@@ -54,7 +54,7 @@ declare global {
             setTitle(titleOptions: AxisTitleOptions, redraw?: boolean): void;
             update(options: AxisOptions, redraw?: boolean): void;
         }
-        interface ChartInterface {
+        interface ChartLike {
             collectionsWithUpdate: Array<string>;
             collectionsWithInit: Dictionary<[Function, Array<any>?]>;
             loadingDiv?: HTMLDOMElement;

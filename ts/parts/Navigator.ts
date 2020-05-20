@@ -46,7 +46,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             navigator?: Navigator;
             scrollbar?: Scrollbar;
             scroller?: Navigator;

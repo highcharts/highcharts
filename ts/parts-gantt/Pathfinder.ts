@@ -27,7 +27,7 @@ declare global {
             'simpleConnect'|
             string
         );
-        interface ChartInterface {
+        interface ChartLike {
             pathfinder?: Pathfinder;
         }
         interface ConnectorsEndMarkerOptions {

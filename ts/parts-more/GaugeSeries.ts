@@ -48,7 +48,7 @@ declare global {
             ): void;
             public translate(): void;
         }
-        interface ChartInterface {
+        interface ChartLike {
             angular?: boolean;
         }
         interface GaugePointOptions extends LinePointOptions {

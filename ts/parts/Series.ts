@@ -258,7 +258,7 @@ declare global {
             ): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
         }
-        interface ChartInterface {
+        interface ChartLike {
             runTrackerClick?: boolean;
         }
         interface DataExtremesObject {

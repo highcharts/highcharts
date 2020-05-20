@@ -54,7 +54,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             /** @requires highcharts/modules/oldies */
             ieSanitizeSVG(svg: string): string;
             /** @requires highcharts/modules/oldies */

@@ -29,7 +29,7 @@ declare global {
     namespace Highcharts {
         /** @requires modules/boost */
         function hasWebGLSupport(): boolean;
-        interface ChartInterface {
+        interface ChartLike {
             boostForceChartBoost?: boolean;
         }
     }

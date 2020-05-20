@@ -35,7 +35,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface ChartInterface {
+        interface ChartLike {
             unbindGetSVG?: Function;
             exportChartLocal(
                 exportingOptions?: ExportingOptions,

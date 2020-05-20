@@ -45,7 +45,7 @@ declare global {
         interface Axis {
             panningState?: AxisPanningState;
         }
-        interface ChartInterface {
+        interface ChartLike {
             resetZoomButton?: SVGElement;
             pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
             showResetZoom(): void;

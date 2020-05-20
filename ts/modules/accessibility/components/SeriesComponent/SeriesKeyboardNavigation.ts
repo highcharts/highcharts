@@ -61,7 +61,7 @@ declare global {
             ): number;
             public onSeriesDestroy(series: Highcharts.Series): void;
         }
-        interface ChartInterface {
+        interface ChartLike {
             highlightedPoint?: Point;
             /** @requires modules/accessibility */
             highlightAdjacentPoint(next: boolean): (boolean|Point);
