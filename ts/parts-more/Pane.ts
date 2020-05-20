@@ -33,7 +33,7 @@ declare global {
         interface Axis {
             pane?: Pane;
         }
-        interface Chart {
+        interface ChartInterface {
             pane?: Array<Pane>;
             hoverPane?: Highcharts.Pane;
             getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
@@ -549,8 +549,7 @@ H.Chart.prototype.getHoverPane = function (
     return hoverPane;
 };
 
-addEvent(H.Chart, 'afterIsInsidePlot', function (
-    this: Highcharts.Chart | Highcharts.PaneChart,
+addEvent(Chart, 'afterIsInsidePlot', function (
     e: {
         x: number;
         y: number;

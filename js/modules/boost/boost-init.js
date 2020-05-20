@@ -10,6 +10,7 @@
  *
  * */
 'use strict';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, wrap = U.wrap;
@@ -240,7 +241,7 @@ function init() {
         sampling: true
     });
     // Take care of the canvas blitting
-    H.Chart.prototype.callbacks.push(function (chart) {
+    Chart.prototype.callbacks.push(function (chart) {
         /**
          * Convert chart-level canvas to image.
          * @private

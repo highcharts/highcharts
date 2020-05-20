@@ -23,8 +23,6 @@ import H from './Globals.js';
  *
  * @param {Highcharts.ChartAddSeriesEventObject} event
  *        The event that occured.
- *
- * @return {void}
  */
 /**
  * Contains common event information. Through the `options` property you can
@@ -58,8 +56,6 @@ import H from './Globals.js';
  *
  * @param {Highcharts.PointerEventObject} event
  *        The event that occured.
- *
- * @return {void}
  */
 /**
  * Contains an axes of the clicked spot.
@@ -103,8 +99,6 @@ import H from './Globals.js';
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 /**
  * Fires when the chart is redrawn, either after a call to `chart.redraw()` or
@@ -118,8 +112,6 @@ import H from './Globals.js';
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 /**
  * Gets fired after initial load of the chart (directly after the `load` event),
@@ -132,8 +124,6 @@ import H from './Globals.js';
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 /**
  * Gets fired when an area of the chart has been selected. The default action

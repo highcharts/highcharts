@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import H from './Globals.js';
@@ -32,7 +33,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartInterface {
             scrollbarsOffsets?: [number, number];
         }
         interface Options {
@@ -437,7 +438,7 @@ class Scrollbar {
     public constructor(
         renderer: Highcharts.SVGRenderer,
         options: Highcharts.ScrollbarOptions,
-        chart: Highcharts.Chart
+        chart: Chart
     ) {
         this.chart = chart;
         this.options = options;
@@ -461,7 +462,7 @@ class Scrollbar {
 
     public calculatedWidth?: number;
 
-    public chart: Highcharts.Chart;
+    public chart: Chart;
 
     private chartX: number = 0;
 
@@ -752,7 +753,7 @@ class Scrollbar {
     public init(
         renderer: Highcharts.SVGRenderer,
         options: Highcharts.ScrollbarOptions,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
 
         this.scrollbarButtons = [];

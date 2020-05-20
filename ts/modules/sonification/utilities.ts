@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
 import musicalFrequencies from './musicalFrequencies.js';
 import U from '../../parts/Utilities.js';
 const { clamp } = U;
@@ -203,7 +205,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
      * @return {Highcharts.RangeObject} Object with min and max properties
      */
     calculateDataExtremes: function (
-        chart: Highcharts.Chart,
+        chart: Chart,
         prop: string
     ): Highcharts.RangeObject {
         return chart.series.reduce(function (

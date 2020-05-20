@@ -8,6 +8,7 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
@@ -43,9 +44,8 @@ var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEve
  * https://jsfiddle.net/highcharts/y5A37/
  */
 ''; // detach doclets above
-import '../parts/Chart.js';
 import '../parts/Series.js';
-var labelDistance = 3, Series = H.Series, Chart = H.Chart;
+var labelDistance = 3, Series = H.Series;
 setOptions({
     /**
      * @optionparent plotOptions

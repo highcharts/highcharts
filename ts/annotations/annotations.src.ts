@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type { AxisType } from '../parts/axis/types';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
@@ -85,9 +86,9 @@ declare global {
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
-            xAxis?: (number|string|Axis|null);
+            xAxis?: (number|string|AxisType|null);
             y: number;
-            yAxis?: (number|string|Axis|null);
+            yAxis?: (number|string|AxisType|null);
         }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
@@ -402,8 +403,8 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public annotation: ControllableMixin.Type['annotation'] = void 0 as any;
     public chart: Highcharts.AnnotationChart;
     public clipRect?: Highcharts.SVGElement;
-    public clipXAxis?: Highcharts.Axis;
-    public clipYAxis?: Highcharts.Axis;
+    public clipXAxis?: AxisType;
+    public clipYAxis?: AxisType;
     public coll: 'annotations' = 'annotations';
     public collection: ControllableMixin.Type['collection'] = void 0 as any;
     public controlPoints: Array<ControlPoint>;
@@ -500,15 +501,15 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public setClipAxes(): void {
         var xAxes = this.chart.xAxis,
             yAxes = this.chart.yAxis,
-            linkedAxes: Array<Highcharts.Axis> = ((
+            linkedAxes: Array<AxisType> = ((
                 this.options.labels || []
             ) as Array<(Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)>)
                 .concat(this.options.shapes || [])
                 .reduce(
                     function (
-                        axes: Array<Highcharts.Axis>,
+                        axes: Array<AxisType>,
                         labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
-                    ): Array<Highcharts.Axis> {
+                    ): Array<AxisType> {
                         return [
                             xAxes[
                                 labelOrShape &&

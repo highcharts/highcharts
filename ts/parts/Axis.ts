@@ -11,9 +11,9 @@
 'use strict';
 
 import type { AxisComposition, AxisLike } from './axis/types';
+import type Chart from './Chart';
 import type PlotLineOrBand from './PlotLineOrBand';
 import type SVGPath from './SVGPath';
-import type ZAxis from '../parts-3d/ZAxis';
 import Color from './Color.js';
 import H from './Globals.js';
 import Tick from './Tick.js';
@@ -59,7 +59,7 @@ declare global {
             'scrollbar'|'traverseUpButton'|'zoom'
         );
         type AxisMinorTickPositionValue = ('inside'|'outside');
-        type AxisOptions = (XAxisOptions|YAxisOptions|ZAxis.Options);
+        type AxisOptions = (XAxisOptions|YAxisOptions);
         type AxisTickmarkPlacementValue = ('between'|'on');
         type AxisTickPositionValue = ('inside'|'outside');
         type AxisTitleAlignValue = ('high'|'low'|'middle');
@@ -3821,7 +3821,7 @@ class Axis implements AxisComposition, AxisLike {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
+    public constructor(chart: Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
         this.init(chart, userOptions);
     }
 
@@ -3843,7 +3843,7 @@ class Axis implements AxisComposition, AxisLike {
     public axisTitleMargin?: number;
     public bottom: number = void 0 as any;
     public categories: Array<string> = void 0 as any;
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
     public cross?: Highcharts.SVGElement;
@@ -3957,7 +3957,7 @@ class Axis implements AxisComposition, AxisLike {
      * @fires Highcharts.Axis#event:afterInit
      * @fires Highcharts.Axis#event:init
      */
-    public init(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
+    public init(chart: Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
         var isXAxis = userOptions.isX,
             axis: Highcharts.Axis = this as any;
@@ -4207,7 +4207,7 @@ class Axis implements AxisComposition, AxisLike {
      *
      * @fires Highcharts.Axis#event:afterSetOptions
      */
-    public setOptions(userOptions: Highcharts.AxisOptions): void {
+    public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
         this.options = merge(
             Axis.defaultOptions,
             ((this.coll === 'yAxis') as any) && Axis.defaultYAxisOptions,

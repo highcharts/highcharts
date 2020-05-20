@@ -13,7 +13,13 @@
  * */
 
 'use strict';
+
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
+const {
+    win,
+    doc
+} = H;
 
 /**
  * Internal types
@@ -23,7 +29,7 @@ declare global {
     namespace Highcharts {
         /** @requires modules/boost */
         function hasWebGLSupport(): boolean;
-        interface Chart {
+        interface ChartInterface {
             boostForceChartBoost?: boolean;
         }
     }
@@ -38,8 +44,6 @@ const {
     pick
 } = U;
 
-var win = H.win,
-    doc = win.document;
 
 // This should be a const.
 var CHUNK_SIZE = 3000;
@@ -88,7 +92,7 @@ function patientMax(...args: Array<Array<unknown>>): number {
  * @return {boolean}
  * True, if boost is enabled.
  */
-function boostEnabled(chart: Highcharts.Chart): boolean {
+function boostEnabled(chart: Chart): boolean {
     return pick(
         (
             chart &&
@@ -111,7 +115,7 @@ function boostEnabled(chart: Highcharts.Chart): boolean {
  * @return {boolean}
  * True, if boosting should be forced.
  */
-function shouldForceChartSeriesBoosting(chart: Highcharts.Chart): boolean {
+function shouldForceChartSeriesBoosting(chart: Chart): boolean {
     // If there are more than five series currently boosting,
     // we should boost the whole chart to avoid running out of webgl contexts.
     var sboostCount = 0,
@@ -185,7 +189,7 @@ function shouldForceChartSeriesBoosting(chart: Highcharts.Chart): boolean {
 function renderIfNotSeriesBoosting(
     renderer: Highcharts.BoostGLRenderer,
     series: Highcharts.Series,
-    chart?: Highcharts.Chart
+    chart?: Chart
 ): void {
     if (renderer &&
         series.renderTarget &&

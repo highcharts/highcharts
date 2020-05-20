@@ -12,6 +12,7 @@
 'use strict';
 
 import type AxisTypes from '../parts/axis/types';
+import type Chart from '../parts/Chart';
 import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import Tree from './Tree.js';
@@ -392,7 +393,7 @@ namespace TreeGridAxis {
      */
     function onBeforeRender(
         e: {
-            target: Highcharts.Chart;
+            target: Chart;
             type: string;
         }
     ): void {
@@ -590,14 +591,14 @@ namespace TreeGridAxis {
     function wrapInit(
         this: TreeGridAxis,
         proceed: Function,
-        chart: Highcharts.Chart,
+        chart: Chart,
         userOptions: TreeGridAxis.Options
     ): void {
         const axis = this,
             isTreeGrid = userOptions.type === 'treegrid';
 
         if (!axis.treeGrid) {
-            axis.treeGrid = new Additions(axis as TreeGridAxis);
+            axis.treeGrid = new Additions(axis);
         }
 
         // Set default and forced options for TreeGrid

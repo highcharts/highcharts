@@ -61,6 +61,8 @@
 
 'use strict';
 
+import Axis from '../../../parts/Axis.js';
+import Chart from '../../../parts/Chart.js';
 import U from '../../../parts/Utilities.js';
 const {
     error,
@@ -94,10 +96,9 @@ declare global {
  * @param {Highcharts.Chart} chart
  * @param {string} oldOption
  * @param {string} newOption
- * @return {void}
  */
 function warn(
-    chart: Highcharts.Chart,
+    chart: Chart,
     oldOption: string,
     newOption: string
 ): void {
@@ -137,7 +138,7 @@ function traverseSetOption<T>(
  * between, we can use this generic function for the copy and warn logic.
  */
 function deprecateFromOptionsMap(
-    chart: Highcharts.Chart,
+    chart: Chart,
     rootOldAsArray: Array<string>,
     rootNewAsArray: Array<string>,
     mapToNewOptions: Highcharts.Dictionary<Array<string>>
@@ -181,7 +182,7 @@ function deprecateFromOptionsMap(
 /**
  * @private
  */
-function copyDeprecatedChartOptions(chart: Highcharts.Chart): void {
+function copyDeprecatedChartOptions(chart: Chart): void {
     var chartOptions = chart.options.chart || {},
         a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (
@@ -197,8 +198,8 @@ function copyDeprecatedChartOptions(chart: Highcharts.Chart): void {
 /**
  * @private
  */
-function copyDeprecatedAxisOptions(chart: Highcharts.Chart): void {
-    chart.axes.forEach(function (axis: Highcharts.Axis): void {
+function copyDeprecatedAxisOptions(chart: Chart): void {
+    chart.axes.forEach(function (axis: Axis): void {
         var opts = axis.options;
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
@@ -211,7 +212,7 @@ function copyDeprecatedAxisOptions(chart: Highcharts.Chart): void {
 /**
  * @private
  */
-function copyDeprecatedSeriesOptions(chart: Highcharts.Chart): void {
+function copyDeprecatedSeriesOptions(chart: Chart): void {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
     var oldToNewSeriesOptions = {
@@ -254,7 +255,7 @@ function copyDeprecatedSeriesOptions(chart: Highcharts.Chart): void {
  * @private
  */
 function copyDeprecatedTopLevelAccessibilityOptions(
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     deprecateFromOptionsMap(
         chart,
@@ -285,7 +286,7 @@ function copyDeprecatedTopLevelAccessibilityOptions(
  * @private
  */
 function copyDeprecatedKeyboardNavigationOptions(
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     deprecateFromOptionsMap(
         chart,
@@ -301,7 +302,7 @@ function copyDeprecatedKeyboardNavigationOptions(
 /**
  * @private
  */
-function copyDeprecatedLangOptions(chart: Highcharts.Chart): void {
+function copyDeprecatedLangOptions(chart: Chart): void {
     deprecateFromOptionsMap(
         chart,
         ['lang', 'accessibility'],
@@ -331,7 +332,7 @@ function copyDeprecatedLangOptions(chart: Highcharts.Chart): void {
  *
  * @private
  */
-function copyDeprecatedOptions(chart: Highcharts.Chart): void {
+function copyDeprecatedOptions(chart: Chart): void {
     copyDeprecatedChartOptions(chart);
     copyDeprecatedAxisOptions(chart);
     if (chart.series) {

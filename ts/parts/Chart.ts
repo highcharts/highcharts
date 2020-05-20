@@ -91,7 +91,7 @@ declare global {
         }
         interface TitleObject extends SVGElement {
             update(titleOptions: TitleOptions, redraw?: boolean): void;
-        }
+        }/*
         class Chart {
             public constructor(
                 options: Options,
@@ -222,7 +222,7 @@ declare global {
             ): void;
             public temporaryDisplay(revert?: boolean): void;
             public updateContainerScaling(): void;
-        }
+        }*/
         function chart(
             options: Options,
             callback?: Chart.CallbackFunction
@@ -232,8 +232,10 @@ declare global {
             options: Options,
             callback?: Chart.CallbackFunction
         ): Chart;
+        let Chart: ChartClass;
     }
 }
+type ChartClass = typeof Chart;
 
 /**
  * Callback for chart constructors.
@@ -329,8 +331,6 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import './Pointer.js';
-
 var marginNames = H.marginNames;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -395,7 +395,7 @@ class Chart {
      * */
 
     public _cursor?: (Highcharts.CursorValue|null);
-    public axes: Array<Axis> = void 0 as any;
+    public axes: Array<AxisType> = void 0 as any;
     public axisOffset: Array<number> = void 0 as any;
     public bounds: Record<string, Record<string, number>> = void 0 as any;
     public callback?: Chart.CallbackFunction;
@@ -2871,7 +2871,7 @@ class Chart {
 
 }
 
-interface Chart extends Highcharts.Chart {
+interface Chart extends Highcharts.ChartInterface {
     callbacks: Array<Chart.CallbackFunction>;
 }
 
@@ -2944,6 +2944,6 @@ function chart(
 }
 
 H.chart = chart as any;
-H.Chart = Chart as any;
+H.Chart = Chart;
 
 export default Chart;

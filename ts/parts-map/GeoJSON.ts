@@ -11,7 +11,20 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+const {
+    win
+} = H;
+import '../parts/Options.js';
+import U from '../parts/Utilities.js';
+const {
+    error,
+    extend,
+    format,
+    merge,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -30,7 +43,7 @@ declare global {
             lat: number;
             lon: number;
         }
-        interface Chart {
+        interface ChartInterface {
             /** @requires modules/maps */
             mapCredits?: string;
             /** @requires modules/maps */
@@ -98,20 +111,7 @@ declare global {
  * @type {number}
  */
 
-import U from '../parts/Utilities.js';
-const {
-    error,
-    extend,
-    format,
-    merge,
-    wrap
-} = U;
-
-import '../parts/Options.js';
-import '../parts/Chart.js';
-
-var Chart = H.Chart,
-    win = H.win;
+''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -172,7 +172,6 @@ function pointInPolygon(
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (
-    this: Highcharts.Chart,
     latLon: Highcharts.MapLatLonObject,
     transform: any
 ): Highcharts.MapCoordinateObject {
@@ -244,7 +243,6 @@ Chart.prototype.transformFromLatLon = function (
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.transformToLatLon = function (
-    this: Highcharts.Chart,
     point: Highcharts.MapCoordinateObject,
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
@@ -302,7 +300,6 @@ Chart.prototype.transformToLatLon = function (
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.fromPointToLatLon = function (
-    this: Highcharts.Chart,
     point: Highcharts.MapCoordinateObject
 ): (Highcharts.MapLatLonObject|undefined) {
     var transforms = this.mapTransforms,
@@ -350,7 +347,6 @@ Chart.prototype.fromPointToLatLon = function (
  *         X and Y coordinates in terms of chart axis values.
  */
 Chart.prototype.fromLatLonToPoint = function (
-    this: Highcharts.Chart,
     latLon: Highcharts.MapLatLonObject
 ): Highcharts.MapCoordinateObject {
     var transforms = this.mapTransforms,
@@ -522,7 +518,7 @@ H.geojson = function (
 
 // Override addCredits to include map source by default
 wrap(Chart.prototype, 'addCredits', function (
-    this: Highcharts.Chart,
+    this: Chart,
     proceed: Function,
     credits: Highcharts.CreditsOptions
 ): void {

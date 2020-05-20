@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../../parts/Chart';
 import ChartUtilities from './utils/chartUtilities.js';
 import H from '../../parts/Globals.js';
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
@@ -56,7 +57,7 @@ declare global {
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
         }
-        interface Chart {
+        interface ChartInterface {
             a11yDirty?: boolean;
             accessibility?: Accessibility;
             types?: Array<string>;
@@ -134,7 +135,7 @@ H.AccessibilityComponent = AccessibilityComponent as any;
  */
 function Accessibility(
     this: Highcharts.Accessibility,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.init(chart);
 }
@@ -149,7 +150,7 @@ Accessibility.prototype = {
      */
     init: function (
         this: Highcharts.Accessibility,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
         this.chart = chart as any;
 
@@ -268,7 +269,7 @@ Accessibility.prototype = {
      * Destroy all elements.
      */
     destroy: function (): void {
-        var chart: Highcharts.Chart = this.chart || {};
+        var chart: Chart = this.chart || {};
 
         // Destroy components
         var components = this.components;

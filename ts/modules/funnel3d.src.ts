@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
@@ -585,7 +586,7 @@ funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
     ): Highcharts.SVGElement {
         var funnel3d = this,
             parts = funnel3d.parts,
-            chart: Highcharts.Chart =
+            chart: Chart =
                 H.charts[funnel3d.renderer.chartIndex] as any,
             filterId = 'group-opacity-' + opacity + '-' + chart.index;
 
@@ -893,7 +894,7 @@ RendererProto.funnel3dPath = function (
     }
 
     var renderer = this,
-        chart: Highcharts.Chart = charts[renderer.chartIndex] as any,
+        chart: Chart = charts[renderer.chartIndex] as any,
         // adjust angles for visible edges
         // based on alpha, selected through visual tests
         alphaCorrection = shapeArgs.alphaCorrection = 90 -

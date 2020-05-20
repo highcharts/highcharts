@@ -12,6 +12,7 @@
 
 import type RadialAxis from './RadialAxis';
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import Pane from '../parts-more/Pane.js';
 import Pointer from '../parts/Pointer.js';
@@ -1100,7 +1101,7 @@ SVGRenderer.prototype.clipCircle = function (
     return wrapper;
 };
 
-addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'getAxes', function (): void {
 
     if (!this.pane) {
         this.pane = [];
@@ -1115,9 +1116,7 @@ addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
     }, this);
 });
 
-addEvent(H.Chart, 'afterDrawChartBox', function (
-    this: Highcharts.Chart
-): void {
+addEvent(Chart, 'afterDrawChartBox', function (): void {
     (this.pane as any).forEach(function (pane: Highcharts.Pane): void {
         pane.render();
     });
@@ -1142,8 +1141,8 @@ addEvent(H.Series, 'afterInit', function (
  * responsiveness and chart.update.
  * @private
  */
-wrap(H.Chart.prototype, 'get', function (
-    this: Highcharts.Chart,
+wrap(Chart.prototype, 'get', function (
+    this: Chart,
     proceed: Function,
     id: string
 ): boolean {

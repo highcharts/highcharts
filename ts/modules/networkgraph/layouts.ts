@@ -12,6 +12,7 @@
 
 'use strict';
 
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 
 /**
@@ -158,8 +159,6 @@ const {
 
 import './integrations.js';
 import './QuadTree.js';
-
-var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

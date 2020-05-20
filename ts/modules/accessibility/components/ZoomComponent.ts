@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
 var extend = U.extend,
@@ -147,7 +148,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      */
     init: function (this: Highcharts.ZoomComponent): void {
         var component = this,
-            chart: Highcharts.Chart = this.chart as any;
+            chart = this.chart;
         [
             'afterShowResetZoom', 'afterDrilldown', 'drillupall'
         ].forEach(function (eventType: string): void {
@@ -162,7 +163,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      * Called when chart is updated
      */
     onChartUpdate: function (this: Highcharts.ZoomComponent): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             component = this;
 
         // Make map zoom buttons accessible
@@ -191,7 +192,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
         button: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement),
         labelFormatKey: string
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             label = chart.langFormat(
                 labelFormatKey,
                 { chart: chart }
@@ -218,7 +219,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
      * Update proxy overlays, recreating the buttons.
      */
     updateProxyOverlays: function (this: Highcharts.ZoomComponent): void {
-        var chart: Highcharts.Chart = this.chart as any;
+        var chart = this.chart;
 
         // Always start with a clean slate
         removeElement(this.drillUpProxyGroup);
@@ -502,7 +503,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                 'resetZoomProxyButton',
                 function (
                     _handler: Highcharts.KeyboardNavigationHandler,
-                    chart: Highcharts.Chart
+                    chart: Chart
                 ): void {
                     chart.zoomOut();
                 }
@@ -512,7 +513,7 @@ extend(ZoomComponent.prototype, /** @lends Highcharts.ZoomComponent */ {
                 'drillUpProxyButton',
                 function (
                     handler: Highcharts.KeyboardNavigationHandler,
-                    chart: Highcharts.Chart
+                    chart: Chart
                 ): number {
                     chart.drillUp();
                     return handler.response.prev;

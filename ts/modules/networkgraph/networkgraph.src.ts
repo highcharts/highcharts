@@ -12,8 +12,19 @@
 
 'use strict';
 
+import type Chart from '../../parts/Chart';
 import type SVGPath from '../../parts/SVGPath';
 import H from '../../parts/Globals.js';
+import Point from '../../parts/Point.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    css,
+    defined,
+    pick,
+    seriesType
+} = U;
+
 
 /**
  * Internal types
@@ -221,16 +232,6 @@ declare global {
  */
 
 ''; // detach doclets above
-
-import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
-const {
-    addEvent,
-    css,
-    defined,
-    pick,
-    seriesType
-} = U;
 
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';

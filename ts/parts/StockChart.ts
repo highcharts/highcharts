@@ -44,7 +44,7 @@ declare global {
             crossLabel?: SVGElement;
             setCompare(compare?: string, redraw?: boolean): void;
         }
-        interface Chart {
+        interface ChartInterface {
             _labelPanes?: Dictionary<Axis>;
         }
         interface Options {

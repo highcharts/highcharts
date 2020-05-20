@@ -11,7 +11,23 @@
  * */
 
 'use strict';
+
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import NavigationBindings from '../annotations/navigationBindings.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    extend,
+    fireEvent,
+    getStyle,
+    isArray,
+    merge,
+    pick,
+    setOptions
+} = U;
 
 /**
  * Internal types
@@ -19,7 +35,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartInterface {
             stockTools?: Toolbar;
             /** @requires modules/stock-tools */
             setStockTools(options?: StockToolsOptions): void;
@@ -135,22 +151,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-import NavigationBindings from '../annotations/navigationBindings.js';
-
-const {
-    addEvent,
-    createElement,
-    css,
-    extend,
-    fireEvent,
-    getStyle,
-    isArray,
-    merge,
-    pick,
-    setOptions
-} = U;
 
 var win = H.win,
     DIV = 'div',
@@ -942,7 +942,7 @@ class Toolbar {
     public constructor(
         options: Highcharts.StockToolsGuiOptions,
         langOptions: (Highcharts.Dictionary<string>|undefined),
-        chart: Highcharts.Chart
+        chart: Chart
     ) {
         this.chart = chart;
         this.options = options;
@@ -971,7 +971,7 @@ class Toolbar {
     public arrowDown: Highcharts.HTMLDOMElement = void 0 as any;
     public arrowUp: Highcharts.HTMLDOMElement = void 0 as any;
     public arrowWrapper: Highcharts.HTMLDOMElement = void 0 as any;
-    public chart: Highcharts.Chart;
+    public chart: Chart;
     public eventsToUnbind: Array<Function>;
     public guiEnabled: (boolean|undefined);
     public iconsURL: string;
@@ -1607,15 +1607,14 @@ Toolbar.prototype.classMapping = {
     separator: PREFIX + 'separator'
 };
 
-extend(H.Chart.prototype, {
+extend(Chart.prototype, {
     /**
      * Verify if Toolbar should be added.
      * @private
      * @param {Highcharts.StockToolsOptions} - chart options
-     * @return {void}
      */
     setStockTools: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options?: Highcharts.StockToolsOptions
     ): void {
         var chartOptions: Highcharts.Options = this.options,

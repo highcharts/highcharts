@@ -12,8 +12,13 @@
 
 'use strict';
 
+import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const {
+    defaultOptions
+} = O;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import Tick from '../parts/Tick.js';
@@ -43,7 +48,7 @@ declare global {
             drilldownCategory(x: number, e: MouseEvent): void;
             getDDPoints(x: number): (Array<(boolean|Point)>|undefined);
         }
-        interface Chart {
+        interface ChartInterface {
             ddDupes?: Array<string>;
             drilldown?: ChartDrilldownObject;
             drilldownLevels?: Array<DrilldownLevelObject>;
@@ -309,14 +314,10 @@ declare global {
  * @type {"drillup"}
  */
 
-import O from '../parts/Options.js';
-const { defaultOptions } = O;
-import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 
 var noop = H.noop,
-    Chart = H.Chart,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
     ColumnSeries = seriesTypes.column,

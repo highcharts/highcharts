@@ -9,6 +9,7 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 /**
  * The default pathfinder algorithm to use for a chart. It is possible to define
@@ -1072,7 +1073,7 @@ function warnLegacy(chart) {
     }
 }
 // Initialize Pathfinder for charts
-H.Chart.prototype.callbacks.push(function (chart) {
+Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options;
     if (options.connectors.enabled !== false) {
         warnLegacy(chart);

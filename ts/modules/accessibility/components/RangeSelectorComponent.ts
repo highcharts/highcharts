@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
 var extend = U.extend;
@@ -55,7 +56,7 @@ declare global {
                 langKey: string
             ): void;
         }
-        interface Chart {
+        interface ChartInterface {
             highlightedInputRangeIx?: number;
             highlightedRangeSelectorItemIx?: number;
             oldRangeSelectorItemState?: number;
@@ -75,7 +76,7 @@ declare global {
 /**
  * @private
  */
-function shouldRunInputNavigation(chart: Highcharts.Chart): boolean {
+function shouldRunInputNavigation(chart: Chart): boolean {
     var inputVisible = (
         chart.rangeSelector &&
         chart.rangeSelector.inputGroup &&
@@ -391,7 +392,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler,
         direction: number
     ): number {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             response = keyboardNavigationHandler.response,
             newIx = chart.highlightedInputRangeIx =
                 (chart.highlightedInputRangeIx as any) + direction,
@@ -414,7 +415,7 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
         this: Highcharts.RangeSelectorComponent,
         direction: number
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             buttonIxToHighlight = direction > 0 ? 0 : 1;
 
         chart.highlightedInputRangeIx = buttonIxToHighlight;

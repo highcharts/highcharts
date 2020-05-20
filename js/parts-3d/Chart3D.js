@@ -17,7 +17,7 @@ import H from '../parts/Globals.js';
 import O from '../parts/Options.js';
 var genericDefaultOptions = O.defaultOptions;
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, Fx = U.Fx, getOptions = U.getOptions, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, Fx = U.Fx, isArray = U.isArray, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import ZAxis from './ZAxis.js';
 var perspective = H.perspective;
 var Chart3D;

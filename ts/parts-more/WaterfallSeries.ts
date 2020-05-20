@@ -13,6 +13,7 @@
 import type SVGElement from '../parts/SVGElement';
 import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import Point from '../parts/Point.js';
 import StackItem from '../parts/Stacking.js';
@@ -97,8 +98,7 @@ declare global {
 import '../parts/Options.js';
 import '../parts/Series.js';
 
-var Chart = H.Chart,
-    Series = H.Series,
+var Series = H.Series,
     seriesTypes = H.seriesTypes;
 
 /**
@@ -295,7 +295,7 @@ namespace WaterfallAxis {
     /**
      * @private
      */
-    function onBeforeRedraw(this: Highcharts.Chart): void {
+    function onBeforeRedraw(this: Chart): void {
         var axes = this.axes as Array<WaterfallAxis>,
             series = this.series,
             i = series.length;

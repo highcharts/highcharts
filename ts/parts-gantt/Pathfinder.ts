@@ -12,6 +12,7 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 
 /**
@@ -26,7 +27,7 @@ declare global {
             'simpleConnect'|
             string
         );
-        interface Chart {
+        interface ChartInterface {
             pathfinder?: Pathfinder;
         }
         interface ConnectorsEndMarkerOptions {
@@ -1023,7 +1024,7 @@ Connection.prototype = {
  */
 function Pathfinder(
     this: Highcharts.Pathfinder,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.init(chart);
 }
@@ -1045,7 +1046,7 @@ Pathfinder.prototype = {
      */
     init: function (
         this: Highcharts.Pathfinder,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
         // Initialize pathfinder with chart context
         this.chart = chart;
@@ -1543,7 +1544,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
  * still break if using the legacy options in chart.update, addSeries etc.
  * @private
  */
-function warnLegacy(chart: Highcharts.Chart): void {
+function warnLegacy(chart: Chart): void {
     if (
         (chart.options as any).pathfinder ||
         chart.series.reduce(function (
@@ -1574,9 +1575,8 @@ function warnLegacy(chart: Highcharts.Chart): void {
 
 
 // Initialize Pathfinder for charts
-H.Chart.prototype.callbacks.push(function (
-    this: Highcharts.Chart,
-    chart: Highcharts.Chart
+Chart.prototype.callbacks.push(function (
+    chart: Chart
 ): void {
     var options = chart.options;
 

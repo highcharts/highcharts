@@ -10,14 +10,13 @@
  *
  * */
 'use strict';
-/* global MSBlobBuilder */
-import Highcharts from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var extend = U.extend, getOptions = U.getOptions;
-import '../parts/Chart.js';
+import H from '../parts/Globals.js';
+var win = H.win, doc = H.doc;
 import '../parts/Options.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
 import '../mixins/download-url.js';
-var addEvent = Highcharts.addEvent, merge = Highcharts.merge, win = Highcharts.win, nav = win.navigator, doc = win.document, domurl = win.URL || win.webkitURL || win, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent), 
+var domurl = win.URL || win.webkitURL || win, nav = win.navigator, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent), 
 // Milliseconds to defer image load event handlers to offset IE bug
 loadEventDeferDelay = isMSBrowser ? 150 : 0;
 // Dummy object so we can reuse our canvas-tools.js without errors

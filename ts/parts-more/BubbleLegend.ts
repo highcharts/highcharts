@@ -90,7 +90,7 @@ declare global {
             labelStyle?: CSSObject;
             value?: any;
         }
-        interface Chart {
+        interface ChartInterface {
             getVisibleBubbleSeriesIndex(): number;
         }
         interface Legend {
@@ -436,7 +436,7 @@ class BubbleLegend {
         this.init(options, legend);
     }
 
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Chart = void 0 as any;
     public fontMetrics: Highcharts.FontMetricsObject = void 0 as any;
     public legend: Highcharts.Legend = void 0 as any;
     public legendGroup: Highcharts.SVGElement = void 0 as any;
@@ -1149,9 +1149,7 @@ addEvent(Legend, 'afterGetAllItems', function (
  * @return {number}
  *         First visible bubble series index
  */
-Chart.prototype.getVisibleBubbleSeriesIndex = function (
-    this: Highcharts.Chart
-): number {
+Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
     var series = this.series,
         i = 0;
 

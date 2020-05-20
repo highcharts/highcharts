@@ -12,9 +12,19 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGElement from '../parts/SVGElement';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -22,7 +32,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartInterface {
             /** @requires modules/draggable-points */
             dragDropData?: DragDropDataObject;
             /** @requires modules/draggable-points */
@@ -358,16 +368,6 @@ declare global {
  */
 
 ''; // detaches doclets above
-
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    merge,
-    objectEach,
-    pick
-} = U;
 
 var seriesTypes = H.seriesTypes;
 
@@ -1620,7 +1620,7 @@ function isSeriesDraggable(series: Highcharts.Series): (boolean|undefined) {
  * @return {boolean}
  *         True if the chart is drag/droppable.
  */
-function isChartDraggable(chart: Highcharts.Chart): (boolean|undefined) {
+function isChartDraggable(chart: Chart): (boolean|undefined) {
     var i = chart.series ? chart.series.length : 0;
 
     if (chart.hasCartesianSeries && !chart.polar) {
@@ -1697,7 +1697,7 @@ function isPointMovable(point: Highcharts.Point): (boolean|undefined) {
  */
 function getNormalizedEvent<T extends Highcharts.PointerEventObject>(
     e: (T|PointerEvent),
-    chart: Highcharts.Chart
+    chart: Chart
 ): Highcharts.PointerEventObject {
     return (
         typeof (e as Highcharts.PointerEventObject).chartX === 'undefined' ||
@@ -1770,7 +1770,7 @@ function addEvents<T>(
  */
 function hasDraggedPastSensitivity(
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart,
+    chart: Chart,
     sensitivity: number
 ): boolean {
     var orig = (chart.dragDropData as any).origin,
@@ -2087,10 +2087,9 @@ function getNewPoints(
  *        A chart with dragDropData.newPoints.
  * @param {boolean} [animate=true]
  *        Animate updating points?
- * @return {void}
  */
 function updatePoints(
-    chart: Highcharts.Chart,
+    chart: Chart,
     animate?: (boolean|Highcharts.AnimationOptionsObject)
 ): void {
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
@@ -2762,11 +2761,10 @@ function mouseOver(point: Highcharts.Point): void {
  *        The mouse move event.
  * @param {Highcharts.Chart} chart
  *        The chart we are moving across.
- * @return {void}
  */
 function mouseMove(
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     // Ignore if zoom/pan key is pressed
     if (chart.zoomOrPanKeyPressed(e)) {
@@ -2839,11 +2837,10 @@ function mouseMove(
  *        The mouse up event.
  * @param {Highcharts.Chart} chart
  *        The chart we were dragging in.
- * @return {void}
  */
 function mouseUp(
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     var dragDropData = chart.dragDropData;
 
@@ -2905,11 +2902,10 @@ function mouseUp(
  *        The mouse down event.
  * @param {Highcharts.Chart} chart
  *        The chart we are clicking.
- * @return {void}
  */
 function mouseDown(
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     var dragPoint = chart.hoverPoint,
         dragDropOptions = merge(
@@ -3014,9 +3010,8 @@ H.Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
  * @function addDragDropEvents
  * @param {Highcharts.Chart} chart
  *        The chart to add events to.
- * @return {void}
  */
-function addDragDropEvents(chart: Highcharts.Chart): void {
+function addDragDropEvents(chart: Chart): void {
     var container = chart.container,
         doc = H.doc;
 

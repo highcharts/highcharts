@@ -13,8 +13,18 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import chartNavigationMixin from '../mixins/navigation.js';
 import H from '../parts/Globals.js';
+const {
+    doc,
+    isTouchDevice,
+    win
+} = H;
+import O from '../parts/Options.js';
+const {
+    defaultOptions
+} = O;
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 const {
@@ -39,7 +49,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartInterface {
             btnCount?: number;
             buttonOffset?: number;
             exportContextMenu?: ExportingDivElement;
@@ -300,16 +310,8 @@ declare global {
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 
-import O from '../parts/Options.js';
-const { defaultOptions } = O;
-import '../parts/Chart.js';
-
 // create shortcuts
-var doc = H.doc,
-    Chart = H.Chart,
-    isTouchDevice = H.isTouchDevice,
-    win = H.win,
-    userAgent = win.navigator.userAgent,
+var userAgent = win.navigator.userAgent,
     symbols = H.Renderer.prototype.symbols,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent),
     isFirefoxBrowser = /firefox/i.test(userAgent);
@@ -1307,7 +1309,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     sanitizeSVG: function (
-        this: Highcharts.Chart,
+        this: Chart,
         svg: string,
         options: Highcharts.Options
     ): string {
@@ -1376,7 +1378,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @requires modules/exporting
      */
-    getChartHTML: function (this: Highcharts.Chart): string {
+    getChartHTML: function (this: Chart): string {
         if (this.styledMode) {
             this.inlineStyles();
         }
@@ -1406,11 +1408,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     getSVG: function (
-        this: Highcharts.Chart,
+        this: Chart,
         chartOptions?: Highcharts.Options
     ): string {
         var chart = this,
-            chartCopy: Highcharts.Chart,
+            chartCopy: Chart,
             sandbox,
             svg,
             seriesOptions: Highcharts.SeriesOptions,
@@ -1551,7 +1553,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     getSVGForExport: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.ExportingOptions,
         chartOptions: Highcharts.Options
     ): string {
@@ -1587,7 +1589,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @requires modules/exporting
      */
-    getFilename: function (this: Highcharts.Chart): string {
+    getFilename: function (this: Chart): string {
         var s = this.userOptions.title && this.userOptions.title.text,
             filename: string = (this.options.exporting as any).filename;
 
@@ -1643,7 +1645,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     exportChart: function (
-        this: Highcharts.Chart,
+        this: Chart,
         exportingOptions: Highcharts.ExportingOptions,
         chartOptions: Highcharts.Options
     ): void {
@@ -1676,7 +1678,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     * @return {void}
     */
     moveContainers: function (
-        this: Highcharts.Chart,
+        this: Chart,
         moveTo: Highcharts.HTMLDOMElement
     ): void {
         const chart = this;
@@ -1701,9 +1703,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     *
     * @fires Highcharts.Chart#event:beforePrint
     */
-    beforePrint: function (
-        this: Highcharts.Chart
-    ): void {
+    beforePrint: function (this: Chart): void {
         const chart = this,
             body = doc.body,
             printMaxWidth: number =
@@ -1762,9 +1762,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     *
     * @fires Highcharts.Chart#event:afterPrint
     */
-    afterPrint: function (
-        this: Highcharts.Chart
-    ): void {
+    afterPrint: function (this: Chart): void {
         const chart = this;
 
         if (!chart.printReverseInfo) {
@@ -1818,7 +1816,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @requires modules/exporting
      */
-    print: function (this: Highcharts.Chart): void {
+    print: function (this: Chart): void {
         var chart = this;
 
         if (chart.isPrinting) { // block the button while in printing mode
@@ -1869,7 +1867,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     contextMenu: function (
-        this: Highcharts.Chart,
+        this: Chart,
         className: string,
         items: Array<(string|Highcharts.ExportingMenuObject)>,
         x: number,
@@ -2069,7 +2067,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     addButton: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.ExportingButtonOptions
     ): void {
         var chart = this,
@@ -2243,10 +2241,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     destroyExport: function (
-        this: Highcharts.Chart,
+        this: Chart,
         e?: Event
     ): void {
-        var chart: Highcharts.Chart = e ? (e.target as any) : this,
+        var chart: Chart = e ? (e.target as any) : this,
             exportSVGElements = chart.exportSVGElements,
             exportDivElements = chart.exportDivElements,
             exportEvents = chart.exportEvents,
@@ -2696,7 +2694,7 @@ addEvent(Chart, 'init', function (): void {
 
 /* eslint-enable no-invalid-this */
 
-Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
+Chart.prototype.callbacks.push(function (chart: Chart): void {
 
     chart.renderExporting();
 

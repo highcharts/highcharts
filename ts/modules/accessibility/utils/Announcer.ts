@@ -12,11 +12,13 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
 import H from '../../../parts/Globals.js';
-
 import DOMElementProvider from './DOMElementProvider.js';
 import HTMLUtilities from './htmlUtilities.js';
-const { visuallyHideElement } = HTMLUtilities;
+const {
+    visuallyHideElement
+} = HTMLUtilities;
 
 
 /**
@@ -41,7 +43,7 @@ class Announcer {
     private clearAnnouncementRegionTimer?: number;
 
     constructor(
-        private chart: Highcharts.Chart,
+        private chart: Chart,
         type: Highcharts.AnnouncerType
     ) {
         this.domElementProvider = new DOMElementProvider();

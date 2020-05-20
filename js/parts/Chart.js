@@ -108,7 +108,6 @@ var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr 
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-import './Pointer.js';
 var marginNames = H.marginNames;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**

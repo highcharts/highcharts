@@ -11,6 +11,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /**
  * Current drag and drop position.
  *
@@ -168,9 +171,6 @@ import H from '../parts/Globals.js';
 * @type {"drop"}
 */
 ''; // detaches doclets above
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 var seriesTypes = H.seriesTypes;
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return
@@ -1570,7 +1570,6 @@ function getNewPoints(dragDropData, newPos) {
  *        A chart with dragDropData.newPoints.
  * @param {boolean} [animate=true]
  *        Animate updating points?
- * @return {void}
  */
 function updatePoints(chart, animate) {
     var newPoints = chart.dragDropData.newPoints, animOptions = animate === false ? false : merge({
@@ -2036,7 +2035,6 @@ function mouseOver(point) {
  *        The mouse move event.
  * @param {Highcharts.Chart} chart
  *        The chart we are moving across.
- * @return {void}
  */
 function mouseMove(e, chart) {
     // Ignore if zoom/pan key is pressed
@@ -2090,7 +2088,6 @@ function mouseMove(e, chart) {
  *        The mouse up event.
  * @param {Highcharts.Chart} chart
  *        The chart we were dragging in.
- * @return {void}
  */
 function mouseUp(e, chart) {
     var dragDropData = chart.dragDropData;
@@ -2138,7 +2135,6 @@ function mouseUp(e, chart) {
  *        The mouse down event.
  * @param {Highcharts.Chart} chart
  *        The chart we are clicking.
- * @return {void}
  */
 function mouseDown(e, chart) {
     var dragPoint = chart.hoverPoint, dragDropOptions = merge(dragPoint && dragPoint.series.options.dragDrop, dragPoint && dragPoint.options.dragDrop), draggableX = dragDropOptions.draggableX || false, draggableY = dragDropOptions.draggableY || false;
@@ -2216,7 +2212,6 @@ H.Chart.prototype.zoomOrPanKeyPressed = function (e) {
  * @function addDragDropEvents
  * @param {Highcharts.Chart} chart
  *        The chart to add events to.
- * @return {void}
  */
 function addDragDropEvents(chart) {
     var container = chart.container, doc = H.doc;

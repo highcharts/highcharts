@@ -30,7 +30,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartInterface {
             hideOverlappingLabels(labels: Array<SVGElement>): void;
         }
     }

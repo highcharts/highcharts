@@ -11,7 +11,7 @@
  * */
 /* eslint indent: 0 */
 'use strict';
-import Highcharts from '../parts/Globals.js';
+import Chart from '../parts/Chart.js';
 import U from '../parts/Utilities.js';
 var isArray = U.isArray, pick = U.pick;
 import '../parts/Options.js';
@@ -380,7 +380,7 @@ seriesType('funnel', 'pie',
     }
 });
 /* eslint-disable no-invalid-this */
-addEvent(Highcharts.Chart, 'afterHideAllOverlappingLabels', function () {
+addEvent(Chart, 'afterHideAllOverlappingLabels', function () {
     this.series.forEach(function (series) {
         var dataLabelsOptions = series.options && series.options.dataLabels;
         if (isArray(dataLabelsOptions)) {

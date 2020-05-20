@@ -67,7 +67,6 @@ var error = U.error, pick = U.pick;
  * @param {Highcharts.Chart} chart
  * @param {string} oldOption
  * @param {string} newOption
- * @return {void}
  */
 function warn(chart, oldOption, newOption) {
     error('Highcharts: Deprecated option ' + oldOption +
