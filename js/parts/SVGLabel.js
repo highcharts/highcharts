@@ -40,27 +40,6 @@ var SVGLabel = /** @class */ (function (_super) {
      * */
     function SVGLabel(renderer, str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
         var _this = _super.call(this) || this;
-        /* *
-         *
-         *  Properties
-         *
-         * */
-        /**
-         * @private
-         */
-        _this.kind = 'label';
-        /**
-         * For labels, these CSS properties are applied to the `text` node directly.
-         *
-         * @private
-         * @name Highcharts.SVGLabel#textProps
-         * @type {Array<string>}
-         */
-        _this.textProps = [
-            'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
-            'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
-            'textOutline', 'textOverflow', 'width'
-        ];
         _this.init(renderer, 'g');
         _this.textStr = str;
         _this.x = x;
@@ -144,7 +123,7 @@ var SVGLabel = /** @class */ (function (_super) {
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
-            this.textProps.forEach(function (prop) {
+            SVGLabel.textProps.forEach(function (prop) {
                 if (typeof styles[prop] !== 'undefined') {
                     textStyles[prop] = styles[prop];
                     delete styles[prop];
@@ -181,15 +160,6 @@ var SVGLabel = /** @class */ (function (_super) {
         // Call base implementation to destroy the rest
         SVGElement.prototype.destroy.call(this);
         return void 0;
-        // Release local pointers (#1298)
-        /*
-        wrapper =
-        renderer =
-        text =
-        updateBoxSize =
-        updateTextPadding =
-        boxAttr = null as any;
-        */
     };
     SVGLabel.prototype.fillSetter = function (value, key) {
         if (value) {
@@ -419,6 +389,23 @@ var SVGLabel = /** @class */ (function (_super) {
      *
      * */
     SVGLabel.emptyBBox = { width: 0, height: 0, x: 0, y: 0 };
+    /* *
+     *
+     *  Properties
+     *
+     * */
+    /**
+     * For labels, these CSS properties are applied to the `text` node directly.
+     *
+     * @private
+     * @name Highcharts.SVGLabel#textProps
+     * @type {Array<string>}
+     */
+    SVGLabel.textProps = [
+        'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
+        'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
+        'textOutline', 'textOverflow', 'width'
+    ];
     return SVGLabel;
 }(SVGElement));
 export default SVGLabel;
