@@ -120,7 +120,7 @@ QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (asse
     // Issue #13229
     assert.ok(
         graph.pathArray,
-        'Path should be drawn instead of a circle.'
+        'Path should be drawn instead of a circle (#13229).'
     );
 });
 
