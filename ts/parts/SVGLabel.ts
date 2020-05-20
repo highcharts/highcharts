@@ -105,18 +105,13 @@ class SVGLabel extends SVGElement {
      * */
 
     /**
-     * @private
-     */
-    public kind: string = 'label';
-
-    /**
      * For labels, these CSS properties are applied to the `text` node directly.
      *
      * @private
      * @name Highcharts.SVGLabel#textProps
      * @type {Array<string>}
      */
-    public textProps: Array<string> = [
+    public static textProps: Array<string> = [
         'color', 'cursor', 'direction', 'fontFamily', 'fontSize', 'fontStyle',
         'fontWeight', 'lineHeight', 'textAlign', 'textDecoration',
         'textOutline', 'textOverflow', 'width'
@@ -128,7 +123,7 @@ class SVGLabel extends SVGElement {
      *
      * */
 
-    public alignSetter(value: 'left' | 'center' | 'right'): void {
+    public alignSetter(value: Highcharts.AlignValue): void {
         const alignFactor = ({
             left: 0,
             center: 0.5,
@@ -180,7 +175,7 @@ class SVGLabel extends SVGElement {
             // Create a copy to avoid altering the original object
             // (#537)
             styles = merge(styles);
-            this.textProps.forEach(function (
+            SVGLabel.textProps.forEach(function (
                 prop: string
             ): void {
                 if (typeof styles[prop] !== 'undefined') {
@@ -227,16 +222,6 @@ class SVGLabel extends SVGElement {
         SVGElement.prototype.destroy.call(this);
 
         return void 0;
-
-        // Release local pointers (#1298)
-        /*
-        wrapper =
-        renderer =
-        text =
-        updateBoxSize =
-        updateTextPadding =
-        boxAttr = null as any;
-        */
     }
 
     public fillSetter(

@@ -456,7 +456,6 @@ class SVGElement {
     public hasStroke?: boolean;
     public height: number = void 0 as any;
     public inverted?: boolean;
-    public kind: string = 'element';
     public matrix?: Array<number>;
     public oldShadowOptions?: Highcharts.ShadowOptionsObject;
     public onAdd?: Function;
@@ -589,11 +588,14 @@ class SVGElement {
             this.parentGroup = parent;
         }
 
-        // mark as inverted
+        // Mark as inverted
         this.parentInverted = parent && (parent as any).inverted;
 
-        // build formatted text
-        if (typeof this.textStr !== 'undefined' && this.kind !== 'label') {
+        // Build formatted text
+        if (
+            typeof this.textStr !== 'undefined' &&
+            this.element.nodeName === 'text' // Not for SVGLabel instances
+        ) {
             renderer.buildText(this);
         }
 
