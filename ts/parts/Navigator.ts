@@ -2726,10 +2726,10 @@ if (!H.Navigator) {
                         (
                             legendOptions &&
                             legendOptions.verticalAlign === 'bottom' &&
+                            legendOptions.layout !== 'proximate' && // #13392
                             legendOptions.enabled &&
                             !legendOptions.floating
-                        ) ?
-                            legend.legendHeight +
+                        ) ? legend.legendHeight +
                             pick(legendOptions.margin, 10) :
                             0
                     ) -

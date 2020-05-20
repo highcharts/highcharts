@@ -1844,10 +1844,10 @@ if (!H.Navigator) {
                             0) -
                         ((legendOptions &&
                             legendOptions.verticalAlign === 'bottom' &&
+                            legendOptions.layout !== 'proximate' && // #13392
                             legendOptions.enabled &&
-                            !legendOptions.floating) ?
-                            legend.legendHeight +
-                                pick(legendOptions.margin, 10) :
+                            !legendOptions.floating) ? legend.legendHeight +
+                            pick(legendOptions.margin, 10) :
                             0) -
                         (this.titleOffset ? this.titleOffset[2] : 0);
             }
