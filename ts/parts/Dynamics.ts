@@ -1515,6 +1515,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'processedXData',
                 'processedYData',
                 'xIncrement',
+                'cropped',
                 '_hasPointMarkers',
                 '_hasPointLabels',
 
