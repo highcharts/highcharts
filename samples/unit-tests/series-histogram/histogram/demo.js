@@ -258,3 +258,31 @@ QUnit.test('Histogram', function (assert) {
     );
 
 });
+
+QUnit.test('#12077 - Histogram long digits', function (assert) {
+    var chart = Highcharts.chart('container', {
+        xAxis: [{}, {
+            opposite: true
+        }],
+        yAxis: [{}, {
+            opposite: true
+        }],
+        series: [{
+            type: 'histogram',
+            xAxis: 1,
+            yAxis: 1,
+            baseSeries: 's1'
+        }, {
+            type: 'scatter',
+            data: Array.from({
+                length: 10000
+            }, () => 6.6429209090989899214),
+            id: 's1'
+        }]
+    });
+
+    assert.ok(
+        chart.series[0].data.length,
+        `Histogram should be draw when long digits.`
+    );
+});
