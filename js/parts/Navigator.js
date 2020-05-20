@@ -1844,6 +1844,7 @@ if (!H.Navigator) {
                             0) -
                         ((legendOptions &&
                             legendOptions.verticalAlign === 'bottom' &&
+                            legendOptions.layout !== 'proximate' && // #13392
                             legendOptions.enabled &&
                             !legendOptions.floating) ?
                             legend.legendHeight +
