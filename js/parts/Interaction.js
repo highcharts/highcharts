@@ -525,7 +525,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         axis.minPixelPadding));
                 axis.panningState = panningState;
                 // It is not necessary to calculate extremes on ordinal axis,
-                // because the are already calculated, so we don't want to
+                // because they are already calculated, so we don't want to
                 // override them.
                 if (!axis.isOrdinal) {
                     // If the new range spills over, either to the min or max,
