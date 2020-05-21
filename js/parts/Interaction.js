@@ -490,7 +490,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 xy = [0];
             }
             xy.forEach(function (isX) {
-                var _a;
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?
                     -1 :
@@ -525,40 +524,41 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     axis.toValue(axis.toPixels(extremes.max) +
                         axis.minPixelPadding));
                 axis.panningState = panningState;
-                // If the new range spills over, either to the min or max,
-                // adjust the new range.
-                spill = paddedMin - newMin;
-                if (spill > 0) {
-                    newMax += spill;
-                    newMin = paddedMin;
-                }
-                spill = newMax - paddedMax;
-                if (spill > 0) {
-                    newMax = paddedMax;
-                    newMin -= spill;
-                }
-                // Set new extremes if they are actually new
-                if (axis.series.length &&
-                    newMin !== extremes.min &&
-                    newMax !== extremes.max &&
-                    // It is not necessary to calculate extremes on ordinal
-                    // axis (with not equally spaced data), because they
-                    // are already calculated, and we don't want to
-                    // override them.
-                    isX && !((_a = axis.ordinal) === null || _a === void 0 ? void 0 : _a.getExtendedPositions()) ? true : (panningState &&
-                    newMin >= paddedMin &&
-                    newMax <= paddedMax)) {
-                    axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
-                    if (!chart.resetZoomButton &&
-                        !hasMapNavigation &&
-                        type.match('y')) {
-                        chart.showResetZoom();
-                        axis.displayBtn = false;
+                // It is not necessary to calculate extremes on ordinal axis,
+                // because the are already calculated, so we don't want to
+                // override them.
+                if (!axisOpt.ordinal) {
+                    // If the new range spills over, either to the min or max,
+                    // adjust the new range.
+                    spill = paddedMin - newMin;
+                    if (spill > 0) {
+                        newMax += spill;
+                        newMin = paddedMin;
                     }
-                    doRedraw = true;
+                    spill = newMax - paddedMax;
+                    if (spill > 0) {
+                        newMax = paddedMax;
+                        newMin -= spill;
+                    }
+                    // Set new extremes if they are actually new
+                    if (axis.series.length &&
+                        newMin !== extremes.min &&
+                        newMax !== extremes.max &&
+                        isX ? true : (panningState &&
+                        newMin >= paddedMin &&
+                        newMax <= paddedMax)) {
+                        axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+                        if (!chart.resetZoomButton &&
+                            !hasMapNavigation &&
+                            type.match('y')) {
+                            chart.showResetZoom();
+                            axis.displayBtn = false;
+                        }
+                        doRedraw = true;
+                    }
+                    // set new reference for next run:
+                    chart[mouseDown] = mousePos;
                 }
-                // set new reference for next run:
-                chart[mouseDown] = mousePos;
             });
             if (doRedraw) {
                 chart.redraw(false);
