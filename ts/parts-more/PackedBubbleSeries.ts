@@ -81,7 +81,6 @@ declare global {
             public drawDataLabels(): void;
             public drawGraph(): void;
             public getPointRadius(): void;
-            public getSelectedParents(): Array<PackedBubblePoint>;
             public init(): PackedBubbleSeries;
             public onMouseUp(point: DragNodesPoint): void;
             public placeBubbles(
@@ -276,6 +275,20 @@ var Series = H.Series,
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
     dragNodesMixin = H.dragNodesMixin;
 
+Chart.prototype.getSelectedParentNodes = function (
+    this: Highcharts.Chart
+): Array<Highcharts.PackedBubblePoint> {
+    const chart = this,
+        series = chart.series as Array<Highcharts.PackedBubbleSeries>,
+        selectedParentsNodes: Array<Highcharts.PackedBubblePoint> = [];
+
+    series.forEach((series): void => {
+        if (series.parentNode && series.parentNode.selected) {
+            selectedParentsNodes.push(series.parentNode);
+        }
+    });
+    return selectedParentsNodes;
+};
 
 (H.networkgraphIntegrations as any).packedbubble = {
     repulsiveForceFunction: function (
@@ -1141,18 +1154,6 @@ seriesType<Highcharts.PackedBubbleSeries>(
             (series.parentNode as any).graphic.attr(parentAttribs);
 
         },
-        getSelectedParents: function (this: Highcharts.PackedBubbleSeries): any {
-            const chart = this.chart,
-                series = chart.series as Array<Highcharts.PackedBubbleSeries>,
-                selectedParentsNodes: Array<Highcharts.PackedBubblePoint> = [];
-
-            series.forEach((series): void => {
-                if (series.parentNode && series.parentNode.selected) {
-                    selectedParentsNodes.push(series.parentNode);
-                }
-            });
-            return selectedParentsNodes;
-        },
         /**
          * Creating parent nodes for split series, in which all the bubbles
          * are rendered.
@@ -1853,9 +1854,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             const isParentNode = point.isParentNode,
                 parentNodeLayout = this.parentNodeLayout;
             if (isParentNode) {
-                parentNodeLayout.setMaxIterations();
-                parentNodeLayout.currentStep = 0;
-                parentNodeLayout.step();
+                parentNodeLayout.restartSimulation();
             }
             dragNodesMixin.onMouseDown.apply(this, arguments as any);
         },
@@ -1873,9 +1872,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             const isParentNode = point.isParentNode,
                 parentNodeLayout = this.parentNodeLayout;
             if (isParentNode) {
-                parentNodeLayout.setMaxIterations();
-                parentNodeLayout.currentStep = 0;
-                parentNodeLayout.step();
+                parentNodeLayout.restartSimulation();
             }
             dragNodesMixin.onMouseMove.apply(this, arguments as any);
         },
@@ -1971,39 +1968,13 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 series = this.series,
                 seriesOptions = series.options;
 
-            // load event handlers on demand to save time on mouseover/out
-            if (this.isParentNode) {
-                if ((seriesOptions.point as any).events[eventType] ||
-                (
-                    point.options &&
-                    point.options.events &&
-                    (point.options.events as any)[eventType]
-                )
-                ) {
-                    point.importEvents();
-                }
-
-                // add default handler if in selection mode
-                if (
-                    eventType === 'click' &&
-                    seriesOptions.parentNode &&
-                    seriesOptions.parentNode.allowPointSelect
-                ) {
-                    defaultFunction = function (event: MouseEvent): void {
-                        // Control key is for Windows, meta (= Cmd key) for Mac,
-                        // Shift for Opera.
-                        if (point.select) { // #2911
-                            point.select(
-                                null as any,
-                                event.ctrlKey || event.metaKey || event.shiftKey
-                            );
-                        }
-                    };
-                }
-
-                fireEvent(point, eventType, eventArgs, defaultFunction);
+            if (this.isParentNode && seriesOptions.parentNode) {
+                const temp = seriesOptions.allowPointSelect;
+                seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
+                Point.prototype.firePointEvent.apply(this, arguments);
+                seriesOptions.allowPointSelect = temp;
             } else {
-                return Point.prototype.firePointEvent.apply(this, arguments as any);
+                Point.prototype.firePointEvent.apply(this, arguments);
             }
         },
         select: function (
@@ -2011,69 +1982,15 @@ seriesType<Highcharts.PackedBubbleSeries>(
             selected?: boolean,
             accumulate?: boolean
         ): void {
-            if (this.isParentNode) {
-                var parentNode = this,
-                    series = parentNode.series,
-                    chart = series.chart;
-
-                selected = pick(selected, !parentNode.selected);
-
-                this.selectedStaging = selected;
-
-                // fire the event with the default handler
-                parentNode.firePointEvent(
-                    selected ? 'select' : 'unselect',
-                    { accumulate: accumulate },
-                    function (): void {
-
-                        /**
-                         * Whether the point is selected or not.
-                         *
-                         * @see Point#select
-                         * @see Chart#getSelectedPoints
-                         *
-                         * @name Highcharts.Point#selected
-                         * @type {boolean}
-                         */
-                        parentNode.selected = parentNode.options.selected = selected;
-                        (series.options.data as any)[series.data.indexOf(parentNode)] =
-                            parentNode.options;
-
-                        parentNode.setState((selected as any) && 'select');
-
-                        // unselect all other points unless Ctrl or Cmd + click
-                        if (!accumulate) {
-                            series.getSelectedParents().forEach(function (
-                                loopPoint: Highcharts.Point
-                            ): void {
-                                var loopSeries = loopPoint.series;
-
-                                if (loopPoint.selected && loopPoint !== parentNode) {
-                                    loopPoint.selected = loopPoint.options.selected =
-                                        false;
-                                    (loopSeries.options.data as any)[
-                                        loopSeries.data.indexOf(loopPoint)
-                                    ] = loopPoint.options;
-
-                                    // Programatically selecting a point should
-                                    // restore normal state, but when click
-                                    // happened on other point, set inactive
-                                    // state to match other points
-                                    loopPoint.setState(
-                                        chart.hoverPoints &&
-                                            loopSeries.options.inactiveOtherPoints ?
-                                            'inactive' : ''
-                                    );
-                                    loopPoint.firePointEvent('unselect');
-                                }
-                            });
-                        }
-                    }
-                );
-
-                delete this.selectedStaging;
+            const point = this,
+                series = this.series,
+                chart = series.chart;
+            if (point.isParentNode) {
+                chart.getSelectedPoints = chart.getSelectedParentNodes;
+                Point.prototype.select.apply(this, arguments);
+                chart.getSelectedPoints = H.Chart.prototype.getSelectedPoints;
             } else {
-                return Point.prototype.select.apply(this, arguments as any);
+                Point.prototype.select.apply(this, arguments);
             }
         }
     }

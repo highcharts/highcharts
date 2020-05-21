@@ -109,7 +109,7 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         false
     );
     assert.strictEqual(
-        chart.series[0].getSelectedParents().length,
+        chart.getSelectedParentNodes().length,
         1,
         'It shouldn\'t be possible to select more than one parent node without using key modifier.'
     );
@@ -127,7 +127,7 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         false
     );
     assert.strictEqual(
-        chart.series[0].getSelectedParents().length,
+        chart.getSelectedParentNodes().length,
         2,
         'It should be possible to select more than one parent node using key modifier.'
     );
@@ -145,7 +145,7 @@ QUnit.test('Packed Bubble layouts operations', function (assert) {
         false
     );
     assert.strictEqual(
-        chart.series[0].getSelectedParents().length,
+        chart.getSelectedParentNodes().length,
         0,
         'After clicking on the selected parent, all selected parents should be deselected.'
     );

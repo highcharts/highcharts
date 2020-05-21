@@ -144,6 +144,7 @@ declare global {
             public getContainer(): void;
             public getMargins(skipAxes?: boolean): void;
             public getSelectedPoints(): Array<Point>;
+            public getSelectedParentNodes(): Array<PackedBubblePoint>;
             public getSelectedSeries(): Array<Series>;
             public getSeriesOrderByLinks(): Array<Series>;
             public init(

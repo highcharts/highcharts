@@ -113,6 +113,11 @@ H.layouts['reingold-fruchterman'].prototype, {
             H.win.cancelAnimationFrame(this.simulation);
         }
     },
+    restartSimulation: function () {
+        this.setMaxIterations();
+        this.currentStep = 0;
+        this.step();
+    },
     setArea: function (x, y, w, h) {
         this.box = {
             left: x,

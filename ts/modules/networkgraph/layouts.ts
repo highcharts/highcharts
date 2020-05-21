@@ -126,6 +126,7 @@ declare global {
             ): void
             public repulsiveForces(): void;
             public resetSimulation(): void;
+            public restartSimulation(): void;
             public setArea(x: number, y: number, w: number, h: number): void;
             public setCircularPositions(): void;
             public setDiffTemperature(): void;
@@ -303,6 +304,11 @@ extend(
             if (this.simulation) {
                 H.win.cancelAnimationFrame(this.simulation as any);
             }
+        },
+        restartSimulation: function (this: Highcharts.NetworkgraphLayout): void {
+            this.setMaxIterations();
+            this.currentStep = 0;
+            this.step();
         },
         setArea: function (
             this: Highcharts.NetworkgraphLayout,
