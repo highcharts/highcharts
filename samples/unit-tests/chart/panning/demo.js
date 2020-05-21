@@ -332,7 +332,7 @@ QUnit.test('Ordinal axis panning, when data is equally spaced (#13334).', functi
     var controller = new TestController(chart),
         initialMin = chart.xAxis[0].min;
 
-    controller.pan([100, 200], [200, 200], {}, true);
+    controller.pan([100, 200], [200, 200]);
 
     assert.notEqual(
         initialMin,
