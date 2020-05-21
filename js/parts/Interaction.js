@@ -527,7 +527,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 // It is not necessary to calculate extremes on ordinal axis,
                 // because the are already calculated, so we don't want to
                 // override them.
-                if (!axisOpt.ordinal) {
+                if (!axis.isOrdinal) {
                     // If the new range spills over, either to the min or max,
                     // adjust the new range.
                     spill = paddedMin - newMin;
