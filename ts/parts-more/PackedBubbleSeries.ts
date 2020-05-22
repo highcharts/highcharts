@@ -18,6 +18,9 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
+        interface Chart {
+            getSelectedParentNodes(): Array<PackedBubblePoint>;
+        }
         class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
             public collisionNmb?: number;
             public dataLabelOnNull?: boolean;
