@@ -36,10 +36,12 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         svg = svg
             .replace(/>/g, '>\n')
 
-            // Don't introduce newlines inside tspans, it will make the text
+            // Don't introduce newlines inside tspans or links, it will make the text
             // render differently
             .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
-            .replace(/<\/tspan>\n/g, '</tspan>');
+            .replace(/<\/tspan>\n/g, '</tspan>')
+            .replace(/<a([^>]*)>\n/g, '<a$1>')
+            .replace(/<\/a>\n/g, '</a>');
 
         return svg;
     }
