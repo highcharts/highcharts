@@ -14,6 +14,7 @@
 
 import H from '../../parts/Globals.js';
 import SVGElement from '../../parts/SVGElement.js';
+import SVGLabel from '../../parts/SVGLabel.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
@@ -215,9 +216,10 @@ extend(SVGElement.prototype, {
             };
         }
 
-        if (this.element.nodeName === 'text' || this.isLabel) {
+        const isLabel = this instanceof SVGLabel;
+        if (this.element.nodeName === 'text' || isLabel) {
             const isRotated = !!this.rotation,
-                correction = !this.isLabel ? getTextAnchorCorrection(this) :
+                correction = !isLabel ? getTextAnchorCorrection(this) :
                     {
                         x: isRotated ? 1 : 0,
                         y: 0
@@ -226,7 +228,7 @@ extend(SVGElement.prototype, {
             borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
             borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
 
-            if (this.isLabel && isRotated) {
+            if (isLabel && isRotated) {
                 const temp = borderWidth;
                 borderWidth = borderHeight;
                 borderHeight = temp;

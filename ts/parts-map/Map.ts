@@ -400,18 +400,20 @@ SVGRenderer.prototype.symbols.topbutton = function (
     y: number,
     w: number,
     h: number,
-    attr: Highcharts.SVGAttributes
+    options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
+    const r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);
 };
 SVGRenderer.prototype.symbols.bottombutton = function (
     x: number,
     y: number,
     w: number,
     h: number,
-    attr: Highcharts.SVGAttributes
+    options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
+    const r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers.
 // Even VML browsers need this in order to generate shapes in export. Now share

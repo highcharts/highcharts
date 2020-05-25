@@ -716,10 +716,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 // Chart setSize
                 if (
-                    !isResponsiveOptions &&
                     chart.propsRequireReflow.indexOf(key) !== -1
                 ) {
-                    runSetSize = true;
+                    if (isResponsiveOptions) {
+                        chart.isDirtyBox = true;
+                    } else {
+                        runSetSize = true;
+                    }
                 }
             });
 

@@ -15,29 +15,6 @@ import type SVGPath from '../parts/SVGPath';
 import SVGRenderer from '../parts/SVGRenderer.js';
 
 /**
- * Internal types
- * @private
- */
-declare global {
-    namespace Highcharts {
-        interface SymbolDictionary {
-            /** @requires highcharts-gantt */
-            arrow: SymbolFunction<SVGPath>;
-            /** @requires highcharts-gantt */
-            'arrow-filled': SymbolDictionary['triangle-left'];
-            /** @requires highcharts-gantt */
-            'arrow-filled-half': SymbolDictionary['triangle-left-half'];
-            /** @requires highcharts-gantt */
-            'arrow-half': SymbolDictionary['arrow'];
-            /** @requires highcharts-gantt */
-            'triangle-left': SymbolFunction<SVGPath>;
-            /** @requires highcharts-gantt */
-            'triangle-left-half': SymbolDictionary['triangle-left'];
-        }
-    }
-}
-
-/**
  * Creates an arrow symbol. Like a triangle, except not filled.
  * ```
  *                   o
