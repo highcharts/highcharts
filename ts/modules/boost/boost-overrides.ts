@@ -151,9 +151,9 @@ Chart.prototype.getBoostClipRect = function (
  *         A Point object as per https://api.highcharts.com/highcharts#Point
  */
 Series.prototype.getPoint = function (
-    boostPoint: (Highcharts.Dictionary<number>|Highcharts.Point)
-): Highcharts.Point {
-    var point: Highcharts.Point = boostPoint as any,
+    boostPoint: (Highcharts.Dictionary<number>|Point)
+): Point {
+    var point: Point = boostPoint as any,
         xData = (
             this.xData || (this.options as any).xData || this.processedXData ||
             false
@@ -190,7 +190,7 @@ Series.prototype.getPoint = function (
 wrap(Series.prototype, 'searchPoint', function (
     this: Highcharts.Series,
     proceed: Function
-): (Highcharts.Point|undefined) {
+): (Point|undefined) {
     return this.getPoint(
         proceed.apply(this, [].slice.call(arguments, 1))
     );
@@ -198,7 +198,7 @@ wrap(Series.prototype, 'searchPoint', function (
 
 // For inverted series, we need to swap X-Y values before running base methods
 wrap(Point.prototype, 'haloPath', function (
-    this: Highcharts.Point,
+    this: Point,
     proceed: Function
 ): SVGPath {
     var halo,
@@ -227,7 +227,7 @@ wrap(Point.prototype, 'haloPath', function (
 wrap(Series.prototype, 'markerAttribs', function (
     this: Highcharts.Series,
     proceed: Function,
-    point: Highcharts.Point
+    point: Point
 ): Highcharts.SVGAttributes {
     var attribs: Highcharts.SVGAttributes,
         series = this,
@@ -266,7 +266,7 @@ addEvent(Series, 'destroy', function (): void {
 
     if (chart.hoverPoints) {
         chart.hoverPoints = chart.hoverPoints.filter(function (
-            point: Highcharts.Point
+            point: Point
         ): boolean {
             return point.series === series;
         });
@@ -528,7 +528,7 @@ Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
 Series.prototype.destroyGraphics = function (this: Highcharts.Series): void {
     var series = this,
         points = this.points,
-        point: Highcharts.Point,
+        point: Point,
         i: number;
 
     if (points) {

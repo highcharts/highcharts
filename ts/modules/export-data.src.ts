@@ -17,6 +17,7 @@
 'use strict';
 
 import type Chart from '../parts/Chart';
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
 const {
     doc,
@@ -606,7 +607,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     prop: string,
                     val: number,
                     name: (string|undefined),
-                    point: (Highcharts.ExportDataPoint|Highcharts.Point);
+                    point: (Highcharts.ExportDataPoint|Point);
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this

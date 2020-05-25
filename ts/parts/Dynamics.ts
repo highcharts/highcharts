@@ -103,7 +103,7 @@ declare global {
             axis: AxisOptions | ColorAxis.Options;
             redraw: undefined | boolean;
         }
-        interface Point {
+        interface PointLike {
             touched?: boolean;
             remove(
                 redraw?: boolean,
@@ -1008,7 +1008,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @fires Highcharts.Point#event:update
      */
     update: function (
-        this: Highcharts.Point,
+        this: Point,
         options: Highcharts.PointOptionsType,
         redraw?: boolean,
         animation?: (boolean|Highcharts.AnimationOptionsObject),
@@ -1120,7 +1120,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @return {void}
      */
     remove: function (
-        this: Highcharts.Point,
+        this: Point,
         redraw?: boolean,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
@@ -1200,7 +1200,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             xAxis = series.xAxis,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
-            point: Highcharts.Point,
+            point: Point,
             xData = series.xData as any,
             isInTheMiddle,
             i: number,
@@ -1609,7 +1609,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                     kinds.dataLabel = 1;
                 }
             }
-            this.points.forEach(function (point: Highcharts.Point): void {
+            this.points.forEach(function (point: Point): void {
                 if (point && point.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated

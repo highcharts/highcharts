@@ -44,7 +44,7 @@ declare global {
             public series: WaterfallSeries;
             public y: any;
             public getClassName(): string;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class WaterfallSeries extends ColumnSeries {
             public chart: WaterfallChart;
@@ -800,7 +800,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
 
     updateParallelArrays: function (
         this: Highcharts.WaterfallSeries,
-        point: Highcharts.Point,
+        point: Point,
         i: (number|string)
     ): void {
         Series.prototype.updateParallelArrays.call(

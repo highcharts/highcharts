@@ -13,6 +13,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type SVGElement from '../parts/SVGElement';
 import Chart from '../parts/Chart.js';
 import U from '../parts/Utilities.js';
@@ -78,7 +79,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             series.visible &&
             !(dlOptions.enabled === false && !series._hasPointLabels)
         ) { // #3866
-            (series.nodes || series.points).forEach(function (point: Highcharts.Point): void {
+            (series.nodes || series.points).forEach(function (point: Point): void {
                 if (point.visible) {
                     var dataLabels = (
                         isArray(point.dataLabels) ?

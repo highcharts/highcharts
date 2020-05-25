@@ -50,7 +50,7 @@ declare global {
         interface Options {
             isStock?: boolean;
         }
-        interface Point {
+        interface PointLike {
             change?: number;
         }
         interface Series {
@@ -620,7 +620,7 @@ addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
 // Extend crosshairs to also draw the label
 addEvent(Axis, 'afterDrawCrosshair', function (
     this: Highcharts.Axis,
-    event: { e: Highcharts.PointerEventObject; point: Highcharts.Point }
+    event: { e: Highcharts.PointerEventObject; point: Point }
 ): void {
 
     // Check if the label has to be drawn
@@ -834,7 +834,7 @@ seriesProto.setCompare = function (
         function (
             this: Highcharts.Series,
             value?: number,
-            point?: Highcharts.Point
+            point?: Point
         ): (number|undefined) {
             var compareValue = this.compareValue;
 
@@ -994,7 +994,7 @@ Axis.prototype.setCompare = function (
  * @param {string} pointFormat
  */
 Point.prototype.tooltipFormatter = function (
-    this: Highcharts.Point,
+    this: Point,
     pointFormat: string
 ): string {
     var point = this;

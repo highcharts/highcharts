@@ -24,6 +24,7 @@ declare global {
             public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
             public delayedRendering?: boolean;
             public half?: number;
+            public isValid: () => boolean;
             public labelDistance: number;
             public labelPosition?: PiePointLabelPositionObject;
             public name: string;
@@ -34,7 +35,6 @@ declare global {
             public slicedTranslation?: TranslationAttributes;
             public getConnectorPath(): void;
             public getTranslate(): TranslationAttributes;
-            public isValid(): boolean;
             public setVisible(vis: boolean, redraw?: boolean): void;
             public slice(
                 sliced: boolean,

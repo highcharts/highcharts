@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import U from '../parts/Utilities.js';

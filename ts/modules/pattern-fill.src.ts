@@ -63,7 +63,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface Point {
+        interface PointLike {
             calculatePatternDimensions(pattern: PatternOptionsObject): void;
         }
         interface SVGRenderer {
@@ -527,7 +527,7 @@ addEvent(H.Series, 'render', function (): void {
     var isResizing = this.chart.isResizing;
 
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
-        (this.points || []).forEach(function (point: Highcharts.Point): void {
+        (this.points || []).forEach(function (point: Point): void {
             var colorOptions = point.options && point.options.color;
 
             if (
@@ -695,7 +695,7 @@ addEvent(H.Chart, 'endResize', function (): void {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
         this.series.forEach(function (series: Highcharts.Series): void {
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (point: Point): void {
                 var colorOptions = point.options && point.options.color;
 
                 if (

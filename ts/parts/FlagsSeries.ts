@@ -89,7 +89,7 @@ declare global {
             public series: FlagsSeries;
             public stackIndex?: number;
             public style?: CSSObject;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class FlagsSeries extends ColumnSeries {
             public allowDG: boolean;

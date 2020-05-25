@@ -164,7 +164,7 @@ declare global {
             animateDrillupTo: ColumnSeries['animateDrillupTo'];
             animateDrilldown(init?: boolean): void;
         }
-        interface Point {
+        interface PointLike {
             drilldown?: string;
             doDrilldown(
                 _holdRedraw: (boolean|undefined),
@@ -664,14 +664,14 @@ SVGRenderer.prototype.Element.prototype.fadeIn = function (
  * The series options for the new, detailed series.
  */
 Chart.prototype.addSeriesAsDrilldown = function (
-    point: Highcharts.Point,
+    point: Point,
     options: Highcharts.SeriesOptionsType
 ): void {
     this.addSingleSeriesAsDrilldown(point, options);
     this.applyDrilldown();
 };
 Chart.prototype.addSingleSeriesAsDrilldown = function (
-    point: Highcharts.Point,
+    point: Point,
     ddOptions: Highcharts.SeriesOptions
 ): void {
     var oldSeries = point.series,
@@ -1084,7 +1084,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
             level = newSeries.drilldownLevel;
 
         // First hide all items before animating in again
-        this.points.forEach(function (point: Highcharts.Point): void {
+        this.points.forEach(function (point: Point): void {
             var dataLabel = point.dataLabel;
 
             if (point.graphic) { // #3407
@@ -1110,7 +1110,7 @@ ColumnSeries.prototype.animateDrillupTo = function (init?: boolean): void {
         syncTimeout(function (): void {
             if (newSeries.points) { // May be destroyed in the meantime, #3389
                 newSeries.points.forEach(function (
-                    point: Highcharts.Point,
+                    point: Point,
                     i: number
                 ): void {
                     // Fade in other points
@@ -1170,7 +1170,7 @@ ColumnSeries.prototype.animateDrilldown = function (init?: boolean): void {
 
         (animateFrom as any).x += pick(xAxis.oldPos, xAxis.pos) - xAxis.pos;
 
-        this.points.forEach(function (point: Highcharts.Point): void {
+        this.points.forEach(function (point: Point): void {
             var animateTo = point.shapeArgs;
 
             if (!styledMode) {
@@ -1232,7 +1232,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
         delete this.group;
     }
 
-    this.points.forEach(function (point: Highcharts.Point): void {
+    this.points.forEach(function (point: Point): void {
         var graphic = point.graphic,
             animateTo = level.shapeArgs,
             complete = function (): void {
@@ -1377,13 +1377,12 @@ Point.prototype.doDrilldown = function (
  *        Tick position
  * @param {global.MouseEvent} e
  *        Click event
- * @return {void}
  */
 H.Axis.prototype.drilldownCategory = function (
     x: number,
     e: MouseEvent
 ): void {
-    objectEach(this.getDDPoints(x), function (point: Highcharts.Point): void {
+    objectEach(this.getDDPoints(x), function (point: Point): void {
         if (
             point &&
             point.series &&
@@ -1408,7 +1407,7 @@ H.Axis.prototype.drilldownCategory = function (
  */
 H.Axis.prototype.getDDPoints = function (
     x: number
-): (Array<(boolean|Highcharts.Point)>|undefined) {
+): (Array<(boolean|Point)>|undefined) {
     return this.ddPoints && this.ddPoints[x];
 };
 
@@ -1418,7 +1417,6 @@ H.Axis.prototype.getDDPoints = function (
  *
  * @private
  * @function Highcharts.Axis#drillable
- * @return {void}
  */
 Tick.prototype.drillable = function (): void {
     var pos = this.pos,
@@ -1475,7 +1473,7 @@ Tick.prototype.drillable = function (): void {
 
 // On initialization of each point, identify its label and make it clickable.
 // Also, provide a list of points associated to that label.
-addEvent(Point, 'afterInit', function (): Highcharts.Point {
+addEvent(Point, 'afterInit', function (): Point {
     var point = this,
         series = point.series;
 
@@ -1507,7 +1505,7 @@ addEvent(H.Series, 'afterDrawDataLabels', function (): void {
         renderer = this.chart.renderer,
         styledMode = this.chart.styledMode;
 
-    this.points.forEach(function (point: Highcharts.Point): void {
+    this.points.forEach(function (point: Point): void {
         var dataLabelsOptions = point.options.dataLabels,
             pointCSS: Highcharts.CSSObject = pick(
                 point.dlOptions as any,
@@ -1558,7 +1556,7 @@ var applyCursorCSS = function (
 addEvent(H.Series, 'afterDrawTracker', function (): void {
     var styledMode = this.chart.styledMode;
 
-    this.points.forEach(function (point: Highcharts.Point): void {
+    this.points.forEach(function (point: Point): void {
         if (point.drilldown && point.graphic) {
             applyCursorCSS(point.graphic, 'pointer', true, styledMode);
         }

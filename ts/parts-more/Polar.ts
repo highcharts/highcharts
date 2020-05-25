@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type RadialAxis from './RadialAxis';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
@@ -46,7 +47,7 @@ declare global {
             polarArc: PolarSeries['polarArc'];
             findAlignments: PolarSeries['findAlignments'];
         }
-        interface Point {
+        interface PointLike {
             rectPlotX?: PolarPoint['rectPlotX'];
             rectPlotY?: PolarPoint['rectPlotY'];
             ttBelow?: boolean;
@@ -145,7 +146,7 @@ var Series = H.Series,
 seriesProto.searchPointByAngle = function (
     this: Highcharts.PolarSeries,
     e: Highcharts.PointerEventObject
-): (Highcharts.Point|undefined) {
+): (Point|undefined) {
     var series = this,
         chart = series.chart,
         xAxis = series.xAxis,

@@ -6,6 +6,7 @@
 
 'use strict';
 
+import type Point from '../../parts/Point';
 import type SVGPath from '../../parts/SVGPath';
 import Annotation from '../../annotations/annotations.src.js';
 import ControlPoint from '../ControlPoint.js';
@@ -698,7 +699,7 @@ H.extendAnnotation(Measure, null,
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point: Highcharts.Point): void {
+                        serie.points.forEach(function (point: Point): void {
                             if (
                                 !point.isNull &&
                                 (point.y as any) < min &&
@@ -736,7 +737,7 @@ H.extendAnnotation(Measure, null,
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point: Highcharts.Point): void {
+                        serie.points.forEach(function (point: Point): void {
                             if (
                                 !point.isNull &&
                                 (point.y as any) > max &&
@@ -783,7 +784,7 @@ H.extendAnnotation(Measure, null,
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point: Highcharts.Point): void {
+                        serie.points.forEach(function (point: Point): void {
                             if (
                                 !point.isNull &&
                                 (point.x as any) > ext.xAxisMin &&

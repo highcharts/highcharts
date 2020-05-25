@@ -15,6 +15,7 @@
 import type Annotation from '../annotations/annotations.src';
 import type { AxisType } from '../parts/axis/types';
 import type Chart from '../parts/Chart';
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
 import NavigationBindings from '../annotations/navigationBindings.js';
 import U from '../parts/Utilities.js';
@@ -368,10 +369,10 @@ bindingsUtils.attractToPoint = function (
         x = coords.xAxis[0].value,
         y = coords.yAxis[0].value,
         distX = Number.MAX_VALUE,
-        closestPoint: (Highcharts.Point|undefined);
+        closestPoint: (Point|undefined);
 
     chart.series.forEach(function (series: Highcharts.Series): void {
-        series.points.forEach(function (point: Highcharts.Point): void {
+        series.points.forEach(function (point: Point): void {
             if (point && distX > Math.abs((point.x as any) - x)) {
                 distX = Math.abs((point.x as any) - x);
                 closestPoint = point;
@@ -435,7 +436,7 @@ bindingsUtils.updateNthPoint = function (
             y = coords.yAxis[0].value;
 
         (options.points as any).forEach(function (
-            point: Highcharts.Point,
+            point: Point,
             index: number
         ): void {
             if (index >= startIndex) {

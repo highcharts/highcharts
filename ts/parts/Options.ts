@@ -11,6 +11,7 @@
 'use strict';
 
 import type Chart from './Chart';
+import type Point from './Point';
 import H from './Globals.js';
 
 /**
@@ -2805,7 +2806,7 @@ H.defaultOptions = {
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
-            this: (Highcharts.Series|Highcharts.Point)
+            this: (Highcharts.Series|Point)
         ): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;

@@ -828,7 +828,7 @@ seriesProto.destroyGroupedData = function (this: Highcharts.Series): void {
     // Clear previous groups
     if (this.groupedData) {
         this.groupedData.forEach(function (
-            point: Highcharts.Point,
+            point: Point,
             i: number
         ): void {
             if (point) {
@@ -858,9 +858,7 @@ seriesProto.generatePoints = function (this: Highcharts.Series): void {
 
 // Override point prototype to throw a warning when trying to update grouped
 // points.
-addEvent(Point, 'update', function (
-    this: Highcharts.Point
-): (boolean|undefined) {
+addEvent(Point, 'update', function (): (boolean|undefined) {
     if (this.dataGroup) {
         error(24, false, this.series.chart);
         return false;

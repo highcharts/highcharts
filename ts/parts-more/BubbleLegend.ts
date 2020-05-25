@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 const {
@@ -104,7 +105,7 @@ declare global {
         interface LegendOptions {
             bubbleLegend?: BubbleLegendOptions;
         }
-        interface Point {
+        interface PointLike {
             isBubble?: boolean;
         }
         interface Series {
@@ -484,7 +485,7 @@ class BubbleLegend {
      *        All legend items
      * @return {void}
      */
-    public addToLegend(items: Array<(Highcharts.Point|Highcharts.Series)>): void {
+    public addToLegend(items: Array<(Point|Highcharts.Series)>): void {
         // Insert bubbleLegend into legend items
         items.splice(this.options.legendIndex as any, 0, this as any);
     }
@@ -1112,7 +1113,7 @@ class BubbleLegend {
 // Start the bubble legend creation process.
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
-    e: { allItems: Array<(Highcharts.Point|Highcharts.Series)> }
+    e: { allItems: Array<(Point|Highcharts.Series)> }
 ): void {
     var legend = this,
         bubbleLegend = legend.bubbleLegend,
@@ -1231,7 +1232,7 @@ Legend.prototype.retranslateItems = function (
         actualLine = 0;
 
     items.forEach(function (
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
         index: number
     ): void {
         orgTranslateX = (item.legendGroup as any).translateX;
@@ -1317,7 +1318,7 @@ wrap(Chart.prototype, 'drawChartBox', function (
 
             legend.allItems.forEach(function (
                 item: (
-                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                    Highcharts.BubbleLegend|Point|Highcharts.Series
                 )
             ): void {
                 (item.legendGroup as any).translateY = null;

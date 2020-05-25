@@ -10,6 +10,7 @@
  *
  * */
 
+import type Point from '../../parts/Point';
 import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 

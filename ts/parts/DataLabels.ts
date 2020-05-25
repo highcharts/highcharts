@@ -10,7 +10,30 @@
 
 'use strict';
 
+import type Point from './Point';
+import type SVGElement from './SVGElement';
 import H from './Globals.js';
+const {
+    noop,
+    seriesTypes
+} = H;
+import U from './Utilities.js';
+const {
+    animObject,
+    arrayMax,
+    clamp,
+    defined,
+    extend,
+    fireEvent,
+    format,
+    isArray,
+    merge,
+    objectEach,
+    pick,
+    relativeLength,
+    splat,
+    stableSort
+} = U;
 
 /**
  * Internal types
@@ -75,7 +98,7 @@ declare global {
             attributes?: SVGAttributes;
             enabled?: boolean;
         }
-        interface Point {
+        interface PointLike {
             bottom?: number;
             connector?: SVGElement;
             connectors?: Array<SVGElement>;
@@ -186,29 +209,8 @@ declare global {
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
 
-import U from './Utilities.js';
-const {
-    animObject,
-    arrayMax,
-    clamp,
-    defined,
-    extend,
-    fireEvent,
-    format,
-    isArray,
-    merge,
-    objectEach,
-    pick,
-    relativeLength,
-    splat,
-    stableSort
-} = U;
-
 import './Series.js';
-
-var noop = H.noop,
-    Series = H.Series,
-    seriesTypes = H.seriesTypes;
+var Series = H.Series;
 
 /* eslint-disable valid-jsdoc */
 
@@ -419,7 +421,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
      * @private
      */
     function applyFilter(
-        point: Highcharts.Point,
+        point: Point,
         options: Highcharts.DataLabelsOptions
     ): boolean {
         var filter = options.filter,
@@ -549,7 +551,7 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         }
 
         // Make the labels for each point
-        points.forEach(function (point: Highcharts.Point): void {
+        points.forEach(function (point: Point): void {
 
             // Merge in series options for the point.
             // @note dataLabelAttribs (like pointAttribs) would eradicate
@@ -798,8 +800,8 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
  */
 Series.prototype.alignDataLabel = function (
     this: Highcharts.Series,
-    point: Highcharts.Point,
-    dataLabel: Highcharts.SVGElement,
+    point: Point,
+    dataLabel: SVGElement,
     options: Highcharts.DataLabelsOptions,
     alignTo: Highcharts.BBoxObject,
     isNew?: boolean
@@ -1660,7 +1662,7 @@ if (seriesTypes.pie) {
     seriesTypes.pie.prototype.placeDataLabels = function (
         this: Highcharts.PieSeries
     ): void {
-        this.points.forEach(function (point: Highcharts.Point): void {
+        this.points.forEach(function (point: Point): void {
             var dataLabel = point.dataLabel,
                 _pos;
 
@@ -1798,8 +1800,8 @@ if (seriesTypes.column) {
      */
     seriesTypes.column.prototype.alignDataLabel = function (
         this: Highcharts.ColumnSeries,
-        point: Highcharts.Point,
-        dataLabel: Highcharts.SVGElement,
+        point: Point,
+        dataLabel: SVGElement,
         options: Highcharts.DataLabelsOptions,
         alignTo: Highcharts.BBoxObject,
         isNew?: boolean

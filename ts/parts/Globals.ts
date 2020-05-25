@@ -38,7 +38,7 @@ declare global {
         interface Options {
             toolbar?: any; // @todo stock-tools
         }
-        interface Point {
+        interface PointLike {
             startR?: any; // @todo solid-gauge
             tooltipDateKeys?: any; // @todo xrange
         }

@@ -1603,7 +1603,6 @@ function updatePoints(chart, animate) {
  *        Difference in X position.
  * @param {number} dY
  *        Difference in Y position.
- * @return {void}
  */
 function resizeGuideBox(point, dX, dY) {
     var series = point.series, chart = series.chart, dragDropData = chart.dragDropData, resizeSide, newPoint, resizeProp = series.dragDropProps[dragDropData.updateProp];
@@ -1635,7 +1634,6 @@ function resizeGuideBox(point, dX, dY) {
  *        The mouse move event.
  * @param {Highcharts.Point} point
  *        The point that is dragged.
- * @return {void}
  */
 function dragMove(e, point) {
     var series = point.series, chart = series.chart, data = chart.dragDropData, options = merge(series.options.dragDrop, point.options.dragDrop), draggableX = options.draggableX, draggableY = options.draggableY, origin = data.origin, dX = e.chartX - origin.chartX, dY = e.chartY - origin.chartY, oldDx = dX, updateProp = data.updateProp;
@@ -1802,7 +1800,6 @@ H.Series.prototype.getGuideBox = function (points) {
  * @function mouseOut
  * @param {Highcharts.Point} point
  *        The point mousing out of.
- * @return {void}
  */
 function mouseOut(point) {
     var chart = point.series && point.series.chart, dragDropData = chart && chart.dragDropData;
@@ -1822,7 +1819,6 @@ function mouseOut(point) {
  * @function onResizeHandleMouseOut
  * @param {Highcharts.Point} point
  *        The point mousing out of.
- * @return {void}
  */
 function onResizeHandleMouseOut(point) {
     var chart = point.series.chart;
@@ -1845,7 +1841,6 @@ function onResizeHandleMouseOut(point) {
  *        The point mousing down on.
  * @param {string} updateProp
  *        The data property this resize handle is attached to for this point.
- * @return {void}
  */
 function onResizeHandleMouseDown(e, point, updateProp) {
     var chart = point.series.chart;
@@ -2007,7 +2002,6 @@ function getFirstProp(obj) {
  * @function mouseOver
  * @param {Highcharts.Point} point
  *        The point mousing over.
- * @return {void}
  */
 function mouseOver(point) {
     var series = point.series, chart = series && series.chart, dragDropData = chart && chart.dragDropData, is3d = chart && chart.is3d && chart.is3d();

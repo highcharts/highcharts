@@ -938,7 +938,6 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
  *        Tick position
  * @param {global.MouseEvent} e
  *        Click event
- * @return {void}
  */
 H.Axis.prototype.drilldownCategory = function (x, e) {
     objectEach(this.getDDPoints(x), function (point) {
@@ -969,7 +968,6 @@ H.Axis.prototype.getDDPoints = function (x) {
  *
  * @private
  * @function Highcharts.Axis#drillable
- * @return {void}
  */
 Tick.prototype.drillable = function () {
     var pos = this.pos, label = this.label, axis = this.axis, isDrillable = axis.coll === 'xAxis' && axis.getDDPoints, ddPointsX = isDrillable && axis.getDDPoints(pos), styledMode = axis.chart.styledMode;

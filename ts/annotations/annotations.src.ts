@@ -11,6 +11,7 @@
 'use strict';
 
 import type { AxisType } from '../parts/axis/types';
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;

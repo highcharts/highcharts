@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
@@ -50,7 +51,7 @@ declare global {
             right: number;
             top: number;
         }
-        interface Point {
+        interface PointLike {
             chartCenterY?: number;
             chartX?: number;
             chartY?: number;
@@ -381,7 +382,7 @@ SVGRenderer.prototype.symbols.connector = function (
  * @function Highcharts.Series#getPointsOnGraph
  */
 Series.prototype.getPointsOnGraph = function (
-): (Array<Highcharts.Point>|undefined) {
+): (Array<Point>|undefined) {
 
     if (!this.xAxis && !this.yAxis) {
         return;
@@ -389,9 +390,9 @@ Series.prototype.getPointsOnGraph = function (
 
     var distance = 16,
         points = this.points,
-        point: Highcharts.Point,
-        last: Highcharts.Point,
-        interpolated: Array<Highcharts.Point> = [],
+        point: Point,
+        last: Point,
+        interpolated: Array<Point> = [],
         i: (number|undefined),
         deltaX: (number|undefined),
         deltaY: (number|undefined),
@@ -417,7 +418,7 @@ Series.prototype.getPointsOnGraph = function (
      * the plot area into a grid and only add one point per series (#9815).
      * @private
      */
-    function pushDiscrete(point: Highcharts.Point): void {
+    function pushDiscrete(point: Point): void {
         var cellSize = 8,
             key = Math.round((point.plotX as any) / cellSize) + ',' +
             Math.round((point.plotY as any) / cellSize);
@@ -570,7 +571,7 @@ Series.prototype.checkClearPoint = function (
         ),
         chart = this.chart,
         series: (Highcharts.Series|undefined),
-        points: (Array<Highcharts.Point>|undefined),
+        points: (Array<Point>|undefined),
         leastDistance = 16,
         withinRange: (boolean|undefined),
         xDist: (number|undefined),
@@ -816,7 +817,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             ),
             paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
-            points: Array<Highcharts.Point> = series.interpolatedPoints as any,
+            points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
             label: Highcharts.SVGElement = series.labelBySeries as any,
             isNew = !label,

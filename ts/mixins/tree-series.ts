@@ -4,6 +4,18 @@
  *
  * */
 
+import type Point from '../parts/Point';
+import Color from '../parts/Color.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    merge,
+    pick
+} = U;
+
 /**
  * Internal types
  * @private
@@ -63,17 +75,6 @@ declare global {
         }
     }
 }
-
-import Color from '../parts/Color.js';
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    merge,
-    pick
-} = U;
 
 var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';

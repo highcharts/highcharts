@@ -10,7 +10,13 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    defined,
+    stableSort
+} = U;
 
 /**
  * Internal types
@@ -35,12 +41,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    defined,
-    stableSort
-} = U;
 
 var seriesTypes = H.seriesTypes;
 

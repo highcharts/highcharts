@@ -8,7 +8,15 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat,
+    defined,
+    merge,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -100,14 +108,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    correctFloat,
-    defined,
-    merge,
-    seriesType
-} = U;
 
 
 var noop = H.noop,

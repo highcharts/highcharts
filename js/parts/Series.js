@@ -3666,7 +3666,6 @@ null,
      *
      * @private
      * @function Highcharts.Series#generatePoints
-     * @return {void}
      */
     generatePoints: function () {
         var series = this, options = series.options, dataOptions = options.data, data = series.data, dataLength, processedXData = series.processedXData, processedYData = series.processedYData, PointClass = series.pointClass, processedDataLength = processedXData.length, cropStart = series.cropStart || 0, cursor, hasGroupedData = series.hasGroupedData, keys = options.keys, point, points = [], i;
@@ -4113,7 +4112,6 @@ null,
      * @private
      * @function Highcharts.Series#setClip
      * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
-     * @return {void}
      */
     setClip: function (animation) {
         var chart = this.chart, options = this.options, renderer = chart.renderer, inverted = chart.inverted, seriesClipBox = this.clipBox, clipBox = this.getClipBox(animation), sharedClipKey = this.sharedClipKey ||
@@ -4194,8 +4192,6 @@ null,
      *
      * @param {boolean} [init]
      *        Initialize the animation.
-     *
-     * @return {void}
      */
     animate: function (init) {
         var series = this, chart = series.chart, animation = animObject(series.options.animation), clipRect, sharedClipKey, finalBox;
@@ -4226,7 +4222,6 @@ null,
      *
      * @private
      * @function Highcharts.Series#afterAnimate
-     * @return {void}
      * @fires Highcharts.Series#event:afterAnimate
      */
     afterAnimate: function () {
@@ -4610,8 +4605,6 @@ null,
      * positions and attributes.
      *
      * @function Highcharts.Series#drawGraph
-     *
-     * @return {void}
      */
     drawGraph: function () {
         var series = this, options = this.options, graphPath = (this.gappedPath || this.getGraphPath).call(this), styledMode = this.chart.styledMode, props = [[

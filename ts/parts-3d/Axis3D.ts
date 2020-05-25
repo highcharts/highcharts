@@ -12,7 +12,8 @@
 
 'use strict';
 
-import type Axis from '../parts/Axis.js';
+import type Axis from '../parts/Axis';
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 import Tick from '../parts/Tick.js';
@@ -31,7 +32,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Point {
+        interface PointLike {
             crosshairPos?: number;
             axisXpos?: number;
             axisYpos?: number;
@@ -530,7 +531,7 @@ class Axis3D {
         this: Axis,
         e: {
             e: Highcharts.PointerEventObject;
-            point: Highcharts.Point;
+            point: Point;
         }
     ): void {
         const axis = this;

@@ -11,12 +11,14 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
 import O from '../parts/Options.js';
-const { dateFormat } = O;
+const {
+    dateFormat
+} = O;
 import Tick from '../parts/Tick.js';
-import Time from '../parts/Time.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -620,7 +622,7 @@ class GridAxis {
                 ).series[0];
                 const isFirst = value === tickPos[0];
                 const isLast = value === tickPos[tickPos.length - 1];
-                const point: (Highcharts.Point|undefined) =
+                const point: (Point|undefined) =
                     series && find(series.options.data as any, function (
                         p: Highcharts.PointOptionsType
                     ): boolean {
