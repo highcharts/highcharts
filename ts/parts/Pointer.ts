@@ -572,7 +572,9 @@ class Pointer {
                                 'zoomX'|
                                 'zoomY'
                             )>)[axis.coll]]
-                        )
+                        ) &&
+                        isNumber(selectionLeft) &&
+                        isNumber(selectionTop)
                     ) { // #859, #3569
                         var horiz = axis.horiz,
                             minPixelPadding = e.type === 'touchend' ?

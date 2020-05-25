@@ -636,7 +636,8 @@ Chart.prototype.drawSeriesLabels = function () {
                     bottom: best.y + bBox.height
                 });
                 // Move it if needed
-                var dist = Math.sqrt(Math.pow(Math.abs(best.x - label.x), 2), Math.pow(Math.abs(best.y - label.y), 2));
+                var dist = Math.sqrt(Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
+                    Math.pow(Math.abs(best.y - (label.y || 0)), 2));
                 if (dist && series.labelBySeries) {
                     // Move fast and fade in - pure animation movement is
                     // distractive...

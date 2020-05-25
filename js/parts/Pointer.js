@@ -342,7 +342,9 @@ var Pointer = /** @class */ (function () {
                             pointer[{
                                 xAxis: 'zoomX',
                                 yAxis: 'zoomY'
-                            }[axis.coll]])) { // #859, #3569
+                            }[axis.coll]]) &&
+                        isNumber(selectionLeft) &&
+                        isNumber(selectionTop)) { // #859, #3569
                         var horiz = axis.horiz, minPixelPadding = e.type === 'touchend' ?
                             axis.minPixelPadding :
                             0, // #1207, #3075

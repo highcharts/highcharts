@@ -82,15 +82,6 @@ declare global {
             baseSeries?: Series;
             navigatorSeries?: Series;
         }
-        interface SymbolDictionary {
-            'navigator-handle': (
-                x: number,
-                y: number,
-                w: number,
-                h: number,
-                options: NavigatorHandlesOptions
-            ) => SVGPath;
-        }
         interface XAxisOptions {
             maxRange?: number;
             toFixedRange?: (
@@ -761,11 +752,11 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.NavigatorHandlesOptions
+    options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
-    var halfWidth = (options.width as any) / 2,
+    var halfWidth = (options && options.width || 0) / 2,
         markerPosition = Math.round(halfWidth / 3) + 0.5,
-        height = options.height || 0;
+        height = options && options.height || 0;
 
     return [
         ['M', -halfWidth - 1, 0.5],

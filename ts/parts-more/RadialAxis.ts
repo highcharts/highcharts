@@ -23,6 +23,7 @@ const {
     defined,
     extend,
     fireEvent,
+    isNumber,
     merge,
     pick,
     pInt,
@@ -488,14 +489,21 @@ class RadialAxis {
             to: number,
             options: Highcharts.AxisPlotBandsOptions
         ): RadialAxisPath {
+
+            const radiusToPixels = (radius: number|string|undefined): (number|undefined) => {
+                if (typeof radius === 'string') {
+                    let r = parseInt(radius, 10);
+                    if (percentRegex.test(radius)) {
+                        r = (r * fullRadius) / 100;
+                    }
+                    return r;
+                }
+                return radius;
+            };
+
             var center = this.center,
                 startAngleRad = this.startAngleRad,
                 fullRadius = center[2] / 2,
-                radii = [
-                    pick(options.outerRadius, '100%'),
-                    options.innerRadius,
-                    pick(options.thickness, 10)
-                ],
                 offset = Math.min(this.offset, 0),
                 percentRegex = /%$/,
                 start,
@@ -504,7 +512,13 @@ class RadialAxis {
                 xOnPerimeter,
                 open,
                 isCircular = this.isCircular, // X axis in a polar chart
-                path: RadialAxisPath;
+                path: RadialAxisPath,
+                outerRadius = pick(
+                    radiusToPixels(options.outerRadius),
+                    fullRadius
+                ),
+                innerRadius = radiusToPixels(options.innerRadius),
+                thickness = pick(radiusToPixels(options.thickness), 10);
 
             // Polygonal plot bands
             if (this.options.gridLineInterpolation === 'polygon') {
@@ -519,22 +533,15 @@ class RadialAxis {
                 from = Math.max(from, this.min);
                 to = Math.min(to, this.max);
 
-                // Plot bands on Y axis (radial axis) - inner and outer radius
-                // depend on to and from
-                if (!isCircular) {
-                    radii[0] = this.translate(from) as any;
-                    radii[1] = this.translate(to) as any;
-                }
+                const transFrom = this.translate(from);
+                const transTo = this.translate(to);
 
-                // Convert percentages to pixel values
-                radii = radii.map(function (
-                    radius: (number|string|undefined)
-                ): (number|string|undefined) {
-                    if (percentRegex.test(radius as any)) {
-                        radius = (pInt(radius, 10) * fullRadius) / 100;
-                    }
-                    return radius;
-                });
+                // Plot bands on Y axis (radial axis) - inner and outer
+                // radius depend on to and from
+                if (!isCircular) {
+                    outerRadius = transFrom || 0;
+                    innerRadius = transTo || 0;
+                }
 
                 // Handle full circle
                 if (options.shape === 'circle' || !isCircular) {
@@ -542,27 +549,27 @@ class RadialAxis {
                     end = Math.PI * 1.5;
                     open = true;
                 } else {
-                    start = startAngleRad + (this.translate(from) as any);
-                    end = startAngleRad + (this.translate(to) as any);
+                    start = startAngleRad + (transFrom || 0);
+                    end = startAngleRad + (transTo || 0);
                 }
 
-                (radii[0] as any) -= offset; // #5283
-                (radii[2] as any) -= offset; // #5283
+                outerRadius -= offset; // #5283
+                thickness -= offset; // #5283
 
                 path = this.chart.renderer.symbols.arc(
                     this.left + center[0],
                     this.top + center[1],
-                    radii[0],
-                    radii[0],
+                    outerRadius,
+                    outerRadius,
                     {
                         // Math is for reversed yAxis (#3606)
                         start: Math.min(start, end),
                         end: Math.max(start, end),
                         innerR: pick(
-                            radii[1],
-                            (radii[0] as any) - (radii[2] as any)
+                            innerRadius,
+                            outerRadius - thickness
                         ),
-                        open: open
+                        open
                     }
                 );
 
