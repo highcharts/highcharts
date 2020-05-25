@@ -10,9 +10,34 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart.js';
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
+const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
+import ControllableMixin from './controllable/controllableMixin.js';
+import ControllableRect from './controllable/ControllableRect.js';
+import ControllableCircle from './controllable/ControllableCircle.js';
+import ControllablePath from './controllable/ControllablePath.js';
+import ControllableImage from './controllable/ControllableImage.js';
+import ControllableLabel from './controllable/ControllableLabel.js';
+import ControlPoint from './ControlPoint.js';
+import EventEmitterMixin from './eventEmitterMixin.js';
 import H from '../parts/Globals.js';
+import MockPoint from './MockPoint.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    find,
+    fireEvent,
+    merge,
+    pick,
+    splat,
+    wrap
+} = U;
 
 /**
  * Internal types.
@@ -169,34 +194,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    destroyObjectProperties,
-    erase,
-    extend,
-    find,
-    fireEvent,
-    merge,
-    pick,
-    splat,
-    wrap
-} = U;
-
-import '../parts/Chart.js';
-import ControllableMixin from './controllable/controllableMixin.js';
-import ControllableRect from './controllable/ControllableRect.js';
-import ControllableCircle from './controllable/ControllableCircle.js';
-import ControllablePath from './controllable/ControllablePath.js';
-import ControllableImage from './controllable/ControllableImage.js';
-import ControllableLabel from './controllable/ControllableLabel.js';
-import EventEmitterMixin from './eventEmitterMixin.js';
-import MockPoint from './MockPoint.js';
-import ControlPoint from './ControlPoint.js';
-
-var chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
 
 /* *********************************************************************
  *
@@ -1702,7 +1699,7 @@ chartProto.callbacks.push(function (
 } as any);
 
 wrap(
-    H.Pointer.prototype,
+    Pointer.prototype,
     'onContainerMouseDown',
     function (this: Annotation, proceed: Function): void {
         if (!this.chart.hasDraggedAnnotation) {
