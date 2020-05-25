@@ -60,33 +60,15 @@ function isWithinDescriptionThreshold(
 /**
  * @private
  */
-function isWithinNavigationThreshold(
-    series: Highcharts.AccessibilitySeries
-): boolean {
-    const navOptions = series.chart.options.accessibility
-        .keyboardNavigation.seriesNavigation;
-
-    return series.points.length <
-        navOptions.pointNavigationEnabledThreshold ||
-        navOptions.pointNavigationEnabledThreshold === false;
-}
-
-
-/**
- * @private
- */
 function shouldForceMarkers(
     series: Highcharts.AccessibilitySeries
 ): boolean {
     const chart = series.chart,
         chartA11yEnabled = chart.options.accessibility.enabled,
         seriesA11yEnabled = (series.options.accessibility &&
-            series.options.accessibility.enabled) !== false,
-        withinDescriptionThreshold = isWithinDescriptionThreshold(series),
-        withinNavigationThreshold = isWithinNavigationThreshold(series);
+            series.options.accessibility.enabled) !== false;
 
-    return chartA11yEnabled && seriesA11yEnabled &&
-        (withinDescriptionThreshold || withinNavigationThreshold);
+    return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
 }
 
 
@@ -104,18 +86,20 @@ function hasIndividualPointMarkerOptions(series: Highcharts.Series): boolean {
 function unforceSeriesMarkerOptions(series: Highcharts.AccessibilitySeries): void {
     const resetMarkerOptions = series.resetA11yMarkerOptions;
 
-    merge(true, series.options, {
-        marker: {
-            enabled: resetMarkerOptions.enabled,
-            states: {
-                normal: {
-                    opacity: resetMarkerOptions.states &&
-                        resetMarkerOptions.states.normal &&
-                        resetMarkerOptions.states.normal.opacity
+    if (resetMarkerOptions) {
+        merge(true, series.options, {
+            marker: {
+                enabled: resetMarkerOptions.enabled,
+                states: {
+                    normal: {
+                        opacity: resetMarkerOptions.states &&
+                            resetMarkerOptions.states.normal &&
+                            resetMarkerOptions.states.normal.opacity
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 }
 
 
@@ -215,7 +199,7 @@ function addForceMarkersEvents(): void {
                 handleForcePointMarkers(series);
             }
 
-        } else if (series.a11yMarkersForced && series.resetMarkerOptions) {
+        } else if (series.a11yMarkersForced) {
             delete series.a11yMarkersForced;
             unforceSeriesMarkerOptions(series);
         }

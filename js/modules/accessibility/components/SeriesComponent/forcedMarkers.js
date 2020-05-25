@@ -26,21 +26,10 @@ function isWithinDescriptionThreshold(series) {
 /**
  * @private
  */
-function isWithinNavigationThreshold(series) {
-    var navOptions = series.chart.options.accessibility
-        .keyboardNavigation.seriesNavigation;
-    return series.points.length <
-        navOptions.pointNavigationEnabledThreshold ||
-        navOptions.pointNavigationEnabledThreshold === false;
-}
-/**
- * @private
- */
 function shouldForceMarkers(series) {
     var chart = series.chart, chartA11yEnabled = chart.options.accessibility.enabled, seriesA11yEnabled = (series.options.accessibility &&
-        series.options.accessibility.enabled) !== false, withinDescriptionThreshold = isWithinDescriptionThreshold(series), withinNavigationThreshold = isWithinNavigationThreshold(series);
-    return chartA11yEnabled && seriesA11yEnabled &&
-        (withinDescriptionThreshold || withinNavigationThreshold);
+        series.options.accessibility.enabled) !== false;
+    return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
 }
 /**
  * @private
@@ -53,18 +42,20 @@ function hasIndividualPointMarkerOptions(series) {
  */
 function unforceSeriesMarkerOptions(series) {
     var resetMarkerOptions = series.resetA11yMarkerOptions;
-    merge(true, series.options, {
-        marker: {
-            enabled: resetMarkerOptions.enabled,
-            states: {
-                normal: {
-                    opacity: resetMarkerOptions.states &&
-                        resetMarkerOptions.states.normal &&
-                        resetMarkerOptions.states.normal.opacity
+    if (resetMarkerOptions) {
+        merge(true, series.options, {
+            marker: {
+                enabled: resetMarkerOptions.enabled,
+                states: {
+                    normal: {
+                        opacity: resetMarkerOptions.states &&
+                            resetMarkerOptions.states.normal &&
+                            resetMarkerOptions.states.normal.opacity
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 }
 /**
  * @private
@@ -141,7 +132,7 @@ function addForceMarkersEvents() {
                 handleForcePointMarkers(series);
             }
         }
-        else if (series.a11yMarkersForced && series.resetMarkerOptions) {
+        else if (series.a11yMarkersForced) {
             delete series.a11yMarkersForced;
             unforceSeriesMarkerOptions(series);
         }
