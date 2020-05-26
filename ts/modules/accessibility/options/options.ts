@@ -12,6 +12,8 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
+
 /**
  * Internal types.
  * @private

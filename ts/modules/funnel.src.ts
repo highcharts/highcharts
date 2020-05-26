@@ -15,7 +15,12 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
-import Highcharts from '../parts/Globals.js';
+import Chart from '../parts/Chart.js';
+import U from '../parts/Utilities.js';
+const {
+    isArray,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -94,15 +99,8 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    isArray,
-    pick
-} = U;
-
 import '../parts/Options.js';
 import '../parts/Series.js';
-import H from '../parts/Globals.js';
 
 // create shortcuts
 var seriesType = Highcharts.seriesType,
@@ -622,9 +620,7 @@ seriesType<Highcharts.FunnelSeries>(
 );
 
 /* eslint-disable no-invalid-this */
-addEvent(Highcharts.Chart, 'afterHideAllOverlappingLabels', function (
-    this: Highcharts.Chart
-): void {
+addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
     this.series.forEach(function (series): void {
         let dataLabelsOptions = series.options && series.options.dataLabels;
         if (isArray(dataLabelsOptions)) {

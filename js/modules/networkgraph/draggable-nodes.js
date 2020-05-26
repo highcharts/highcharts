@@ -9,10 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent;
-var Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.dragNodesMixin = {
     /**

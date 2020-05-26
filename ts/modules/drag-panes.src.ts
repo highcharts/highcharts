@@ -40,7 +40,7 @@ declare global {
         interface Axis {
             resizer?: AxisResizer;
         }
-        interface Chart {
+        interface ChartLike {
             activeResizer?: boolean;
         }
         interface XAxisOptions {

@@ -12,9 +12,11 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
 import HTMLUtilities from './htmlUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
-
+const {
+    stripHTMLTagsFromString: stripHTMLTags
+} = HTMLUtilities;
 import U from '../../../parts/Utilities.js';
 const {
     defined,
@@ -135,10 +137,9 @@ function getSeriesA11yElement(
  * @private
  * @param {Highcharts.Chart} chart
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
- * @return {void}
  */
 function unhideChartElementFromAT(
-    chart: Highcharts.Chart,
+    chart: Chart,
     element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
 ): void {
     element.setAttribute('aria-hidden', false);
@@ -186,7 +187,7 @@ function hideSeriesFromAT(series: Highcharts.Series): void {
  * @return {Array<Highcharts.Series>}
  */
 function getSeriesFromName(
-    chart: Highcharts.Chart,
+    chart: Chart,
     name: string
 ): Array<Highcharts.Series> {
     if (!name) {

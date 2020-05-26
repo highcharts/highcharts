@@ -12,7 +12,7 @@
 
 'use strict';
 
-import H from '../../parts/Globals.js';
+import type Chart from '../../parts/Chart';
 import U from '../../parts/Utilities.js';
 const {
     find
@@ -97,7 +97,7 @@ declare global {
  */
 function KeyboardNavigationHandler(
     this: Highcharts.KeyboardNavigationHandler,
-    chart: Highcharts.Chart,
+    chart: Chart,
     options: Highcharts.KeyboardNavigationHandlerOptionsObject
 ): void {
     this.chart = chart;

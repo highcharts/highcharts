@@ -13,7 +13,19 @@
 'use strict';
 
 import type SVGPath from '../../parts/SVGPath';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
+import Point from '../../parts/Point.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    error,
+    getOptions,
+    isArray,
+    isNumber,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -27,7 +39,7 @@ declare global {
             val: unknown;
             value: unknown;
         }
-        interface Chart {
+        interface ChartLike {
             /** @requires modules/boost */
             getBoostClipRect(target: BoostTargetObject): BBoxObject;
             /** @requires modules/boost */
@@ -50,19 +62,6 @@ declare global {
     }
 }
 
-
-import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
-const {
-    addEvent,
-    error,
-    getOptions,
-    isArray,
-    isNumber,
-    pick,
-    wrap
-} = U;
-
 import '../../parts/Series.js';
 import '../../parts/Options.js';
 
@@ -74,7 +73,6 @@ import boostableMap from './boostable-map.js';
 
 var boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
-    Chart = H.Chart,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     plotOptions: Highcharts.PlotOptions = getOptions().plotOptions as any;
@@ -118,7 +116,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
  * @return {Highcharts.BBoxObject}
  */
 Chart.prototype.getBoostClipRect = function (
-    target: Highcharts.Chart
+    target: Chart
 ): Highcharts.BBoxObject {
     var clipBox = {
         x: this.plotLeft,

@@ -10,8 +10,8 @@
 
 'use strict';
 
+import type Chart from './Chart';
 import H from './Globals.js';
-
 import U from './Utilities.js';
 const {
     clamp,
@@ -24,7 +24,6 @@ const {
     isNumber,
     isString,
     merge,
-    offset,
     pick,
     splat,
     syncTimeout,
@@ -288,7 +287,7 @@ class Tooltip {
      * */
 
     public constructor(
-        chart: Highcharts.Chart,
+        chart: Chart,
         options: Highcharts.TooltipOptions
     ) {
         this.chart = chart;
@@ -301,9 +300,9 @@ class Tooltip {
      *
      * */
 
-    public chart: Highcharts.Chart;
+    public chart: Chart;
 
-    public container?: Highcharts.HTMLDOMElement;
+    public container?: globalThis.HTMLElement;
 
     public crosshairs: Array<null> = [];
 
@@ -1080,7 +1079,7 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
-    public init(chart: Highcharts.Chart, options: Highcharts.TooltipOptions): void {
+    public init(chart: Chart, options: Highcharts.TooltipOptions): void {
 
         /**
          * Chart of the tooltip.

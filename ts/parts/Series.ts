@@ -10,7 +10,9 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
+import type { AxisType } from './axis/types';
+import type Chart from './Chart';
+import type SVGPath from './SVGPath';
 import H from './Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import O from './Options.js';
@@ -130,10 +132,10 @@ declare global {
             public type: string;
             public userOptions: SeriesOptionsType;
             public visible: boolean;
-            public xAxis: Axis;
+            public xAxis: AxisType;
             public xData?: Array<number>;
             public xIncrement?: (number|null);
-            public yAxis: Axis;
+            public yAxis: AxisType;
             public yData?: (
                 Array<(number|null|undefined)>|
                 Array<Array<(number|null|undefined)>>
@@ -256,7 +258,7 @@ declare global {
             ): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
         }
-        interface Chart {
+        interface ChartLike {
             runTrackerClick?: boolean;
         }
         interface DataExtremesObject {
@@ -3324,7 +3326,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
         sorted: true, // requires the data to be sorted
         init: function (
             this: Highcharts.Series,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.SeriesOptionsType
         ): void {
 

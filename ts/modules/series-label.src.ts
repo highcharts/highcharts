@@ -11,6 +11,7 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
@@ -32,7 +33,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
             labelSeries?: Array<Series>;
             labelSeriesMaxSum?: number;
@@ -120,12 +121,10 @@ declare global {
 
 ''; // detach doclets above
 
-import '../parts/Chart.js';
 import '../parts/Series.js';
 
-var labelDistance = 3,
-    Series = H.Series,
-    Chart = H.Chart;
+const labelDistance = 3,
+    Series = H.Series;
 
 setOptions({
 
@@ -1128,7 +1127,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
  * @private
  * @function drawLabels
  */
-function drawLabels(this: Highcharts.Chart, e: Event): void {
+function drawLabels(this: Chart, e: Event): void {
 
     if (this.renderer) {
         var chart = this,

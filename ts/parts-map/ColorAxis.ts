@@ -13,11 +13,15 @@
 import type { AxisLike } from '../parts/axis/types';
 import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
+import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 const {
     parse: color
 } = Color;
 import H from '../parts/Globals.js';
+const {
+    noop
+} = H;
 import Legend from '../parts/Legend.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from '../parts/Point.js';
@@ -77,7 +81,7 @@ declare global {
             public destroyItems(): void;
             public setAxisSize(): void;
             public setLegendColor(): void;
-            public setOptions(userOptions: ColorAxis.Options): void;
+            public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void;
             public setState(state?: string): void;
             public setTickPositions(): void;
             public toColor(
@@ -89,7 +93,7 @@ declare global {
             labelLeft?: number;
             labelRight?: number;
         }
-        interface Chart {
+        interface ChartLike {
             colorAxis?: Array<ColorAxis>;
         }
         interface Series {
@@ -119,14 +123,11 @@ declare global {
 
 ''; // detach doclet above
 
-import '../parts/Chart.js';
 import './ColorSeriesMixin.js';
 
-var Chart = H.Chart,
-    Series = H.Series,
+var Series = H.Series,
     colorPointMixin = H.colorPointMixin,
-    colorSeriesMixin = H.colorSeriesMixin,
-    noop = H.noop;
+    colorSeriesMixin = H.colorSeriesMixin;
 
 extend(Series.prototype, colorSeriesMixin);
 extend(Point.prototype, colorPointMixin);
@@ -631,7 +632,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public static buildOptions(
-        chart: Highcharts.Chart,
+        chart: Chart,
         options: ColorAxis.Options,
         userOptions: ColorAxis.Options
     ): ColorAxis.Options {
@@ -666,7 +667,7 @@ class ColorAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public constructor(chart: Highcharts.Chart, userOptions: ColorAxis.Options) {
+    public constructor(chart: Chart, userOptions: ColorAxis.Options) {
         super(chart, userOptions);
         this.init(chart, userOptions);
     }
@@ -679,7 +680,7 @@ class ColorAxis extends Axis implements AxisLike {
 
     public added?: boolean;
     public beforePadding = false as any; // Prevents unnecessary padding with `hc-more`
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Chart = void 0 as any;
     public coll: 'colorAxis' = 'colorAxis';
     public dataClasses: Array<ColorAxis.DataClassesOptions> = void 0 as any;
     public legendColor?: Highcharts.GradientColorObject;
@@ -712,7 +713,7 @@ class ColorAxis extends Axis implements AxisLike {
      * The color axis options for initialization.
      */
     public init(
-        chart: Highcharts.Chart,
+        chart: Chart,
         userOptions: ColorAxis.Options
     ): void {
         const axis = this as unknown as Highcharts.ColorAxis;
@@ -834,7 +835,7 @@ class ColorAxis extends Axis implements AxisLike {
      * Extend the setOptions method to process extreme colors and color stops.
      * @private
      */
-    public setOptions(userOptions: ColorAxis.Options): void {
+    public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void {
         const axis = this;
 
         super.setOptions(userOptions);
@@ -1441,7 +1442,7 @@ H.ColorAxis = ColorAxis as any;
 
 
 // Extend the chart getAxes method to also get the color axis
-addEvent(Chart, 'afterGetAxes', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'afterGetAxes', function (): void {
     var chart = this,
         options = chart.options;
 
@@ -1575,7 +1576,7 @@ namespace ColorAxis {
 
     export interface LegendItemObject extends DataClassesOptions
     {
-        chart: Highcharts.Chart;
+        chart: Chart;
         name: string;
         options: object;
         drawLegendSymbol: LegendSymbolMixin['drawRectangle'];

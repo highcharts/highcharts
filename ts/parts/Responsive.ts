@@ -10,7 +10,18 @@
 
 'use strict';
 
-import H from './Globals.js';
+import Chart from './Chart.js';
+import U from './Utilities.js';
+const {
+    find,
+    isArray,
+    isObject,
+    merge,
+    objectEach,
+    pick,
+    splat,
+    uniqueKey
+} = U;
 
 /**
  * Internal types
@@ -18,7 +29,7 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             currentResponsive?: ResponsiveCurrentObject;
             currentOptions(options: Options): Options;
             matchResponsiveRule(
@@ -32,7 +43,7 @@ declare global {
             responsive?: ResponsiveOptions;
         }
         interface ResponsiveCallbackFunction {
-            (this: Highcharts.Chart): boolean;
+            (this: Chart): boolean;
         }
         interface ResponsiveOptions {
             rules?: Array<ResponsiveRulesOptions>;
@@ -69,22 +80,6 @@ declare global {
  * @return {boolean}
  *         Return `true` if it applies.
  */
-
-import './Chart.js';
-
-import U from './Utilities.js';
-const {
-    find,
-    isArray,
-    isObject,
-    merge,
-    objectEach,
-    pick,
-    splat,
-    uniqueKey
-} = U;
-
-var Chart = H.Chart;
 
 /**
  * Allows setting a set of rules to apply for different screen or chart
@@ -212,12 +207,10 @@ var Chart = H.Chart;
  * @function Highcharts.Chart#setResponsive
  * @param  {boolean} [redraw=true]
  * @param  {boolean} [reset=false]
- *         Reset by un-applying all rules. Chart.update resets all rules before
- *         applying updated options.
- * @return {void}
+ * Reset by un-applying all rules. Chart.update resets all rules before applying
+ * updated options.
  */
 Chart.prototype.setResponsive = function (
-    this: Highcharts.Chart,
     redraw?: boolean,
     reset?: boolean
 ): void {
@@ -291,17 +284,15 @@ Chart.prototype.setResponsive = function (
  * @function Highcharts.Chart#matchResponsiveRule
  * @param {Highcharts.ResponsiveRulesOptions} rule
  * @param {Array<string>} matches
- * @return {void}
  */
 Chart.prototype.matchResponsiveRule = function (
-    this: Highcharts.Chart,
     rule: Highcharts.ResponsiveRulesOptions,
     matches: Array<string>
 ): void {
 
     var condition =
             rule.condition as Highcharts.ResponsiveRulesConditionOptions,
-        fn = condition.callback || function (this: Highcharts.Chart): boolean {
+        fn = condition.callback || function (this: Chart): boolean {
             return (
                 this.chartWidth <= pick(condition.maxWidth, Number.MAX_VALUE) &&
                 this.chartHeight <=
@@ -327,7 +318,6 @@ Chart.prototype.matchResponsiveRule = function (
  * @return {Highcharts.Options}
  */
 Chart.prototype.currentOptions = function (
-    this: Highcharts.Chart,
     options: Highcharts.Options
 ): Highcharts.Options {
 

@@ -218,8 +218,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
      *        [lang.loading](https://api.highcharts.com/highcharts/lang.loading).
-     *
-     * @return {void}
      */
     showLoading: function (str) {
         var chart = this, options = chart.options, loadingDiv = chart.loadingDiv, loadingOptions = options.loading, setLoadingSize = function () {
@@ -277,8 +275,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         Toggle loading in Highstock
      *
      * @function Highcharts.Chart#hideLoading
-     *
-     * @return {void}
      */
     hideLoading: function () {
         var options = this.options, loadingDiv = this.loadingDiv;
@@ -406,8 +402,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
      *        Whether to apply animation, and optionally animation
      *        configuration.
-     *
-     * @return {void}
      *
      * @fires Highcharts.Chart#event:update
      * @fires Highcharts.Chart#event:afterUpdate
@@ -624,8 +618,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {Highcharts.SubtitleOptions} options
      *        New subtitle options. The subtitle text itself is set by the
      *        `options.text` property.
-     *
-     * @return {void}
      */
     setSubtitle: function (options, redraw) {
         this.applyDescription('subtitle', options);
@@ -640,8 +632,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {Highcharts.CaptionOptions} options
      *        New caption options. The caption text itself is set by the
      *        `options.text` property.
-     *
-     * @return {void}
      */
     setCaption: function (options, redraw) {
         this.applyDescription('caption', options);

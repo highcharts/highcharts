@@ -12,7 +12,14 @@
 
 'use strict';
 
+import Chart from '../../../../parts/Chart.js';
 import H from '../../../../parts/Globals.js';
+import Point from '../../../../parts/Point.js';
+import U from '../../../../parts/Utilities.js';
+const {
+    defined,
+    extend
+} = U;
 
 /**
  * Internal types.
@@ -54,7 +61,7 @@ declare global {
             ): number;
             public onSeriesDestroy(series: Highcharts.Series): void;
         }
-        interface Chart {
+        interface ChartLike {
             highlightedPoint?: Point;
             /** @requires modules/accessibility */
             highlightAdjacentPoint(next: boolean): (boolean|Point);
@@ -80,11 +87,6 @@ declare global {
         }
     }
 }
-
-import Point from '../../../../parts/Point.js';
-import U from '../../../../parts/Utilities.js';
-var extend = U.extend,
-    defined = U.defined;
 
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../utils/EventProvider.js';
@@ -297,7 +299,7 @@ Point.prototype.highlight = function (): Highcharts.Point {
  *         Returns highlighted point on success, false on failure (no adjacent
  *         point to highlight in chosen direction).
  */
-H.Chart.prototype.highlightAdjacentPoint = function (
+Chart.prototype.highlightAdjacentPoint = function (
     this: Highcharts.AccessibilityChart,
     next: boolean
 ): (boolean|Highcharts.Point) {
@@ -407,7 +409,7 @@ H.Series.prototype.highlightFirstValidPoint = function (
  *
  * @return {Highcharts.Point|boolean}
  */
-H.Chart.prototype.highlightAdjacentSeries = function (
+Chart.prototype.highlightAdjacentSeries = function (
     this: Highcharts.AccessibilityChart,
     down: boolean
 ): (boolean|Highcharts.Point) {
@@ -472,7 +474,7 @@ H.Chart.prototype.highlightAdjacentSeries = function (
  *
  * @return {Highcharts.Point|boolean}
  */
-H.Chart.prototype.highlightAdjacentPointVertical = function (
+Chart.prototype.highlightAdjacentPointVertical = function (
     this: Highcharts.AccessibilityChart,
     down: boolean
 ): (boolean|Highcharts.Point) {
@@ -534,7 +536,7 @@ H.Chart.prototype.highlightAdjacentPointVertical = function (
  * @return {Highcharts.Point|boolean}
  */
 function highlightFirstValidPointInChart(
-    chart: Highcharts.Chart
+    chart: Chart
 ): (boolean|Highcharts.Point) {
     var res: (boolean|Highcharts.Point) = false;
 
@@ -557,7 +559,7 @@ function highlightFirstValidPointInChart(
  * @return {Highcharts.Point|boolean}
  */
 function highlightLastValidPointInChart(
-    chart: Highcharts.Chart
+    chart: Chart
 ): (boolean|Highcharts.Point) {
     var numSeries = chart.series.length,
         i = numSeries,
@@ -584,7 +586,7 @@ function highlightLastValidPointInChart(
  * @private
  * @param {Highcharts.Chart} chart
  */
-function updateChartFocusAfterDrilling(chart: Highcharts.Chart): void {
+function updateChartFocusAfterDrilling(chart: Chart): void {
     highlightFirstValidPointInChart(chart);
 
     if (chart.focusElement) {

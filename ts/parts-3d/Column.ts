@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Axis from '../parts/Axis';
 import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 import StackItem from '../parts/Stacking.js';
@@ -606,13 +607,13 @@ wrap(Series.prototype, 'alignDataLabel', function (
 wrap(StackItem.prototype, 'getStackBox', function (
     this: Highcharts.StackItem,
     proceed: Function,
-    chart: Highcharts.Chart,
+    chart: Chart,
     stackItem: Highcharts.StackItem,
     x: number,
     y: number,
     xWidth: number,
     h: number,
-    axis: Highcharts.Axis
+    axis: Axis
 ): void { // #3946
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
     // Only do this for 3D graph

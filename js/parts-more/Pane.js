@@ -369,7 +369,7 @@ H.Chart.prototype.getHoverPane = function (eventArgs) {
     }
     return hoverPane;
 };
-addEvent(H.Chart, 'afterIsInsidePlot', function (e) {
+addEvent(Chart, 'afterIsInsidePlot', function (e) {
     var chart = this;
     if (chart.polar) {
         e.isInsidePlot = chart.pane.some(function (pane) { return isInsidePane(e.x, e.y, pane.center); });

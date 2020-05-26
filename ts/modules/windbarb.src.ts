@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
@@ -260,7 +261,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
 
         init: function (
             this: Highcharts.WindbarbSeries,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.WindbarbSeriesOptions
         ): void {
             registerApproximation();

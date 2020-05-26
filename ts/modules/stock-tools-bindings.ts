@@ -13,6 +13,8 @@
 'use strict';
 
 import type Annotation from '../annotations/annotations.src';
+import type { AxisType } from '../parts/axis/types';
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 import NavigationBindings from '../annotations/navigationBindings.js';
 import U from '../parts/Utilities.js';
@@ -40,13 +42,13 @@ declare global {
             utils: StockToolsNavigationBindingsUtilsObject;
             /** @requires modules/stock-tools */
             getYAxisPositions(
-                yAxes: Array<Axis>,
+                yAxes: Array<AxisType>,
                 plotHeight: number,
                 defaultHeight: number
             ): Array<Dictionary<number>>;
             /** @requires modules/stock-tools */
             getYAxisResizers(
-                yAxes: Array<Axis>
+                yAxes: Array<AxisType>
             ): Array<NavigationBindingsResizerObject>;
             /** @requires modules/stock-tools */
             recalculateYAxisPositions(
@@ -73,7 +75,7 @@ declare global {
         interface StockToolsNavigationBindingsUtilsObject extends NavigationBindingUtils {
             addFlagFromForm(this: NavigationBindings, type: string): Function;
             attractToPoint(e: Event, chart: Chart): NavigationBindingsAttractionObject;
-            isNotNavigatorYAxis(axis: Axis): boolean;
+            isNotNavigatorYAxis(axis: AxisType): boolean;
             manageIndicators(this: NavigationBindings, data: StockToolsFieldsObject): void;
             updateHeight(this: NavigationBindings, e: PointerEventObject, annotation: Annotation): void;
             updateNthPoint(startIndex: number): StockToolsNavigationBindingsUtilsObject['updateHeight'];
@@ -360,7 +362,7 @@ bindingsUtils.updateHeight = function (
 // Consider using getHoverData(), but always kdTree (columns?)
 bindingsUtils.attractToPoint = function (
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart
+    chart: Chart
 ): Highcharts.NavigationBindingsAttractionObject {
     var coords = chart.pointer.getCoordinates(e),
         x = coords.xAxis[0].value,
@@ -399,7 +401,7 @@ bindingsUtils.attractToPoint = function (
  * @return {boolean}
  * True, if axis comes from navigator.
  */
-bindingsUtils.isNotNavigatorYAxis = function (axis: Highcharts.Axis): boolean {
+bindingsUtils.isNotNavigatorYAxis = function (axis: AxisType): boolean {
     return axis.userOptions.className !== PREFIX + 'navigator-yaxis';
 };
 /**
@@ -474,7 +476,7 @@ extend(NavigationBindings.prototype, {
      *         Format: `{top: Number, height: Number}`
      */
     getYAxisPositions: function (
-        yAxes: Array<Highcharts.Axis>,
+        yAxes: Array<AxisType>,
         plotHeight: number,
         defaultHeight: number
     ): Array<Highcharts.Dictionary<number>> {
@@ -487,7 +489,7 @@ extend(NavigationBindings.prototype, {
         }
 
         positions = yAxes.map(function (
-            yAxis: Highcharts.Axis
+            yAxis: AxisType
         ): Highcharts.Dictionary<number> {
             var height = isPercentage(yAxis.options.height) ?
                     parseFloat(yAxis.options.height as any) / 100 :
@@ -533,11 +535,11 @@ extend(NavigationBindings.prototype, {
      *         Format: `{enabled: Boolean, controlledAxis: { next: [String]}}`
      */
     getYAxisResizers: function (
-        yAxes: Array<Highcharts.Axis>
+        yAxes: Array<AxisType>
     ): Array<Highcharts.NavigationBindingsResizerObject> {
         var resizers: Array<Highcharts.NavigationBindingsResizerObject> = [];
 
-        yAxes.forEach(function (_yAxis: Highcharts.Axis, index: number): void {
+        yAxes.forEach(function (_yAxis: AxisType, index: number): void {
             var nextYAxis = yAxes[index + 1];
 
             // We have next axis, bind them:
@@ -577,7 +579,6 @@ extend(NavigationBindings.prototype, {
      * @function Highcharts.NavigationBindings#resizeYAxes
      * @param {number} [defaultHeight]
      * Default height for yAxis
-     * @return {void}
      */
     resizeYAxes: function (
         this: Highcharts.StockToolsNavigationBindings,
@@ -2203,7 +2204,7 @@ var stockToolsBindings: Highcharts.Dictionary<Highcharts.NavigationBindingsOptio
                 }
             });
 
-            chart.yAxis.forEach(function (yAxis: Highcharts.Axis): void {
+            chart.yAxis.forEach(function (yAxis: AxisType): void {
                 if (bindingsUtils.isNotNavigatorYAxis(yAxis)) {
                     yAxes.push(yAxis.options);
                 }

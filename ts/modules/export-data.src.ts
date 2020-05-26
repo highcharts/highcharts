@@ -16,8 +16,20 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
-
+import type Chart from '../parts/Chart';
+import H from '../parts/Globals.js';
+const {
+    doc,
+    win
+} = H;
+import U from '../parts/Utilities.js';
+const {
+    defined,
+    extend,
+    getOptions,
+    pick,
+    setOptions
+} = U;
 
 /**
  * Internal types
@@ -32,7 +44,7 @@ declare global {
             categoryMap: ExportingCategoryMap;
             dateTimeValueAxisMap: ExportingDateTimeMap;
         }
-        interface Chart {
+        interface ChartLike {
             dataTableDiv?: HTMLDivElement;
             /** @requires modules/export-data */
             downloadCSV(): void;
@@ -121,23 +133,11 @@ declare global {
  * @type {Array<Array<string>>}
  */
 
-import U from '../parts/Utilities.js';
-const {
-    defined,
-    extend,
-    getOptions,
-    isObject,
-    pick,
-    setOptions
-} = U;
 
-import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
 
-var win = Highcharts.win,
-    doc = win.document,
-    seriesTypes = Highcharts.seriesTypes,
+var seriesTypes = Highcharts.seriesTypes,
     downloadURL = Highcharts.downloadURL,
     fireEvent = Highcharts.fireEvent;
 

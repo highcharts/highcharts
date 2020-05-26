@@ -11,7 +11,30 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import Legend from './Legend.js';
+import O from './Options.js';
+const {
+    defaultOptions
+} = O;
+import Point from './Point.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    extend,
+    fireEvent,
+    isArray,
+    isFunction,
+    isNumber,
+    isObject,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -22,7 +45,7 @@ declare global {
         interface Axis {
             panningState?: AxisPanningState;
         }
-        interface Chart {
+        interface ChartLike {
             resetZoomButton?: SVGElement;
             pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
             showResetZoom(): void;
@@ -158,32 +181,9 @@ declare global {
  *        Event that occured.
  */
 
-import Legend from './Legend.js';
-import Point from './Point.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    createElement,
-    css,
-    defined,
-    extend,
-    fireEvent,
-    isArray,
-    isFunction,
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-import './Chart.js';
-import O from './Options.js';
-const { defaultOptions } = O;
 import './Series.js';
 
-var Chart = H.Chart,
-    hasTouch = H.hasTouch,
+var hasTouch = H.hasTouch,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     svg = H.svg,
@@ -598,7 +598,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @fires Highcharts.Chart#event:afterShowResetZoom
      * @fires Highcharts.Chart#event:beforeShowResetZoom
      */
-    showResetZoom: function (this: Highcharts.Chart): void {
+    showResetZoom: function (this: Chart): void {
         var chart = this,
             lang = defaultOptions.lang,
             btnOptions = (chart.options.chart as any).resetZoomButton,
@@ -648,7 +648,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      *
      * @fires Highcharts.Chart#event:selection
      */
-    zoomOut: function (this: Highcharts.Chart): void {
+    zoomOut: function (this: Chart): void {
         fireEvent(this, 'selection', { resetSelection: true }, this.zoom);
     },
 
@@ -660,7 +660,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @param {Highcharts.SelectEventObject} event
      */
     zoom: function (
-        this: Highcharts.Chart,
+        this: Chart,
         event: Highcharts.SelectEventObject
     ): void {
         var chart = this,
@@ -745,7 +745,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @param {string} panning
      */
     pan: function (
-        this: Highcharts.Chart,
+        this: Chart,
         e: Highcharts.PointerEventObject,
         panning: Highcharts.PanningOptions|boolean
     ): void {

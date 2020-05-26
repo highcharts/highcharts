@@ -13,6 +13,7 @@
 'use strict';
 
 import type Annotation from './annotations.src';
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 import NavigationBindings from './navigationBindings.js';
 import Pointer from '../parts/Pointer.js';
@@ -1103,7 +1104,7 @@ H.Popup.prototype = {
          * @private
          * @return {number} - Amount of indicators
          */
-        getAmount: function (this: Highcharts.Chart): number {
+        getAmount: function (this: Chart): number {
             var series = this.series,
                 counter = 0;
 

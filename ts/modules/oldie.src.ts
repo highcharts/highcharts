@@ -54,7 +54,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             /** @requires highcharts/modules/oldies */
             ieSanitizeSVG(svg: string): string;
             /** @requires highcharts/modules/oldies */
@@ -493,9 +493,7 @@ if (!svg) {
      * @private
      * @function Highcharts.Chart#isReadyToRender
      */
-    Chart.prototype.isReadyToRender = function (
-        this: Highcharts.Chart
-    ): boolean {
+    Chart.prototype.isReadyToRender = function (): boolean {
         var chart = this;
 
         // Note: win == win.top is required

@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
 import H from '../../parts/Globals.js';
 
 /**
@@ -245,7 +247,7 @@ function getTimeExtremes(
  * New extremes with data properties mapped to min/max objects.
  */
 function getExtremesForInstrumentProps(
-    chart: Highcharts.Chart,
+    chart: Chart,
     instruments: Array<Highcharts.PointInstrumentObject>,
     dataExtremes: Highcharts.Dictionary<Highcharts.RangeObject>
 ): Highcharts.Dictionary<Highcharts.RangeObject> {

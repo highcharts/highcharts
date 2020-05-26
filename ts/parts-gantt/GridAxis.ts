@@ -243,7 +243,7 @@ H.dateFormats.E = function (timestamp: number): string {
 addEvent(
     Chart,
     'afterSetChartSize',
-    function (this: Highcharts.Chart): void {
+    function (): void {
         this.axes.forEach(function (axis: Axis): void {
             (axis.grid && axis.grid.columns || []).forEach(function (column): void {
                 column.setAxisSize();

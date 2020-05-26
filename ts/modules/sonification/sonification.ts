@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
 import H from '../../parts/Globals.js';
 import O from '../../parts/Options.js';
 const { defaultOptions } = O;
@@ -28,7 +30,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             sonification?: SonifyableChart['sonification'];
             sonify?: SonifyableChart['sonify'];
         }

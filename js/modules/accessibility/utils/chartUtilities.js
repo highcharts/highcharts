@@ -71,7 +71,6 @@ function getSeriesA11yElement(series) {
  * @private
  * @param {Highcharts.Chart} chart
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
- * @return {void}
  */
 function unhideChartElementFromAT(chart, element) {
     element.setAttribute('aria-hidden', false);

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
 import H from '../../../parts/Globals.js';
 import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
@@ -64,7 +65,7 @@ declare global {
         interface BubbleLegend {
             a11yProxyElement?: HTMLDOMElement;
         }
-        interface Chart {
+        interface ChartLike {
             highlightedLegendItemIx?: number;
             /** @requires modules/accessibility */
             highlightLegendItem(ix: number): boolean;
@@ -97,7 +98,7 @@ function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
 /**
  * @private
  */
-function shouldDoLegendA11y(chart: Highcharts.Chart): boolean {
+function shouldDoLegendA11y(chart: Chart): boolean {
     var items = chart.legend && chart.legend.allItems,
         legendA11yOptions: Highcharts.LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}

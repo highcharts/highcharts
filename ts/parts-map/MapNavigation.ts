@@ -10,7 +10,19 @@
 
 'use strict';
 
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+const {
+    doc
+} = H;
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    extend,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -19,7 +31,7 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         type ButtonRelativeToValue = ('plotBox'|'spacingBox');
-        interface Chart {
+        interface ChartLike {
             mapNavButtons?: Array<SVGElement>;
             mapNavigation?: MapNavigation;
         }
@@ -79,20 +91,6 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-import '../parts/Chart.js';
-
-var Chart = H.Chart,
-    doc = H.doc;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -123,7 +121,7 @@ function stopEvent(e: Event): void {
  */
 function MapNavigation(
     this: Highcharts.MapNavigation,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.init(chart);
 }
@@ -140,7 +138,7 @@ function MapNavigation(
  */
 MapNavigation.prototype.init = function (
     this: Highcharts.MapNavigation,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.chart = chart as Highcharts.MapNavigationChart;
     chart.mapNavButtons = [];

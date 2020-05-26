@@ -13,7 +13,9 @@
  * */
 
 'use strict';
+
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import O from '../parts/Options.js';
 const { defaultOptions } = O;
@@ -2284,9 +2286,7 @@ Scatter.prototype.generatePoints = function (
 };
 
 // Handle animation.
-addEvent(H.Chart, 'render', function (
-    this: Highcharts.Chart
-): void {
+addEvent(Chart, 'render', function (): void {
     var chart = this;
 
     (chart.series || []).forEach(function (

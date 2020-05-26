@@ -45,7 +45,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             cancelClick?: boolean;
             hoverPoint?: PointerHoverDataObject['hoverPoint'];
             hoverPoints?: PointerHoverDataObject['hoverPoints'];

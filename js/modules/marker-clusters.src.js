@@ -28,6 +28,7 @@ var __read = (this && this.__read) || function (o, n) {
     }
     return ar;
 };
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import O from '../parts/Options.js';
 var defaultOptions = O.defaultOptions;
@@ -1441,7 +1442,7 @@ Scatter.prototype.generatePoints = function () {
     }
 };
 // Handle animation.
-addEvent(H.Chart, 'render', function () {
+addEvent(Chart, 'render', function () {
     var chart = this;
     (chart.series || []).forEach(function (series) {
         if (series.markerClusterInfo) {

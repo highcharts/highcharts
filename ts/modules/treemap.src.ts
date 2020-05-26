@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 
 /**
@@ -977,7 +979,7 @@ seriesType<Highcharts.TreemapSeries>(
         },
         init: function (
             this: Highcharts.TreemapSeries,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.TreemapSeriesOptions
         ): void {
             var series = this,
@@ -2258,6 +2260,7 @@ addEvent(H.Series, 'afterBindAxes', function (): void {
         }
     }
 });
+
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
 /**

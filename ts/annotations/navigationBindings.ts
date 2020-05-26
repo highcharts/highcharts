@@ -58,7 +58,7 @@ declare global {
         interface AnnotationsOptions {
             langKey?: string;
         }
-        interface Chart {
+        interface ChartLike {
             navigationBindings?: NavigationBindings;
             /** @requires modules/annotations */
             initNavigationBindings(): void;

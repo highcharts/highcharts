@@ -24,7 +24,6 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     Fx,
-    getOptions,
     isArray,
     merge,
     pick,
@@ -38,7 +37,7 @@ import ZAxis from './ZAxis.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             chart3d?: Chart3D['chart3d'];
             is3d(): boolean;
         }

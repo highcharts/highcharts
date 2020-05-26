@@ -24,7 +24,7 @@ const {
 
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             focusElement?: SVGElement;
             /** @requires modules/accessibility */
             renderFocusBorder(): void;

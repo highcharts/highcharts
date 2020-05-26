@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../../parts/Globals.js';
-var doc = H.win.document;
+var doc = H.doc;
 import U from '../../../parts/Utilities.js';
 var extend = U.extend, format = U.format, pick = U.pick;
 import AccessibilityComponent from '../AccessibilityComponent.js';

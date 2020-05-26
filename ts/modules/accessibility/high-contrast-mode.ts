@@ -20,7 +20,7 @@ import H from '../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             highContrastModeActive?: boolean;
         }
         interface PointOptionsObject {

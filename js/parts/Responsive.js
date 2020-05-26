@@ -8,7 +8,9 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
+import Chart from './Chart.js';
+import U from './Utilities.js';
+var find = U.find, isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey;
 /**
  * A callback function to gain complete control on when the responsive rule
  * applies.
@@ -21,10 +23,6 @@ import H from './Globals.js';
  * @return {boolean}
  *         Return `true` if it applies.
  */
-import './Chart.js';
-import U from './Utilities.js';
-var find = U.find, isArray = U.isArray, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey;
-var Chart = H.Chart;
 /**
  * Allows setting a set of rules to apply for different screen or chart
  * sizes. Each rule specifies additional chart options.
@@ -141,9 +139,8 @@ var Chart = H.Chart;
  * @function Highcharts.Chart#setResponsive
  * @param  {boolean} [redraw=true]
  * @param  {boolean} [reset=false]
- *         Reset by un-applying all rules. Chart.update resets all rules before
- *         applying updated options.
- * @return {void}
+ * Reset by un-applying all rules. Chart.update resets all rules before applying
+ * updated options.
  */
 Chart.prototype.setResponsive = function (redraw, reset) {
     var options = this.options.responsive, ruleIds = [], currentResponsive = this.currentResponsive, currentRuleIds, undoOptions;
@@ -195,7 +192,6 @@ Chart.prototype.setResponsive = function (redraw, reset) {
  * @function Highcharts.Chart#matchResponsiveRule
  * @param {Highcharts.ResponsiveRulesOptions} rule
  * @param {Array<string>} matches
- * @return {void}
  */
 Chart.prototype.matchResponsiveRule = function (rule, matches) {
     var condition = rule.condition, fn = condition.callback || function () {

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from './Chart';
 import type ColorAxisGlobal from '../parts-map/ColorAxis';
 import H from './Globals.js';
 
@@ -231,7 +232,7 @@ class Legend {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart, options: Highcharts.LegendOptions) {
+    public constructor(chart: Chart, options: Highcharts.LegendOptions) {
         this.chart = chart;
         this.init(chart, options);
     }
@@ -248,7 +249,7 @@ class Legend {
 
     public box: Highcharts.SVGElement = void 0 as any;
 
-    public chart: Highcharts.Chart;
+    public chart: Chart;
 
     public clipHeight?: number;
 
@@ -356,7 +357,7 @@ class Legend {
      * @param {Highcharts.LegendOptions} options
      * Legend options.
      */
-    public init(chart: Highcharts.Chart, options: Highcharts.LegendOptions): void {
+    public init(chart: Chart, options: Highcharts.LegendOptions): void {
 
         /**
          * Chart of this legend.

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../../../../parts/Chart';
 import H from '../../../../parts/Globals.js';
 import U from '../../../../parts/Utilities.js';
 var extend = U.extend,
@@ -85,7 +86,7 @@ declare global {
 /**
  * @private
  */
-function chartHasAnnounceEnabled(chart: Highcharts.Chart): boolean {
+function chartHasAnnounceEnabled(chart: Chart): boolean {
     return !!(chart.options.accessibility as any).announceNewData.enabled;
 }
 
