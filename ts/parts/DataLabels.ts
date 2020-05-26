@@ -42,7 +42,7 @@ declare global {
             );
         }
         interface DataLabelsOptions {
-            align?: (AlignValue|null);
+            align?: AlignValue;
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
             borderColor?: (ColorString|GradientColorObject|PatternObject);
@@ -66,9 +66,9 @@ declare global {
             style?: CSSObject;
             textPath?: DataLabelsTextPathOptionsObject;
             useHTML?: boolean;
-            verticalAlign?: (VerticalAlignValue|null);
+            verticalAlign?: VerticalAlignValue;
             x?: number;
-            y?: (number|null);
+            y?: number;
             zIndex?: number;
         }
         interface DataLabelsTextPathOptionsObject {
@@ -890,13 +890,13 @@ Series.prototype.alignDataLabel = function (
             alignAttr = {
                 x: (
                     alignTo.x +
-                    (options.x as any) +
+                    (options.x || 0) +
                     alignTo.width / 2 +
                     rotCorr.x
                 ),
                 y: (
                     alignTo.y +
-                    (options.y as any) +
+                    (options.y || 0) +
                     ({ top: 0, middle: 0.5, bottom: 1 } as any)[
                         options.verticalAlign as any
                     ] *
@@ -1084,14 +1084,16 @@ Series.prototype.justifyDataLabel = function (
         justified,
         padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
 
+    let { x = 0, y = 0 } = options;
+
     // Off left
     off = alignAttr.x + padding;
     if (off < 0) {
-        if (align === 'right') {
+        if (align === 'right' && x >= 0) {
             options.align = 'left';
             options.inside = true;
         } else {
-            options.x = -off;
+            x -= off;
         }
         justified = true;
     }
@@ -1099,11 +1101,11 @@ Series.prototype.justifyDataLabel = function (
     // Off right
     off = alignAttr.x + bBox.width - padding;
     if (off > chart.plotWidth) {
-        if (align === 'left') {
+        if (align === 'left' && x <= 0) {
             options.align = 'right';
             options.inside = true;
         } else {
-            options.x = chart.plotWidth - off;
+            x += chart.plotWidth - off;
         }
         justified = true;
     }
@@ -1111,11 +1113,11 @@ Series.prototype.justifyDataLabel = function (
     // Off top
     off = alignAttr.y + padding;
     if (off < 0) {
-        if (verticalAlign === 'bottom') {
+        if (verticalAlign === 'bottom' && y >= 0) {
             options.verticalAlign = 'top';
             options.inside = true;
         } else {
-            options.y = -off;
+            y -= off;
         }
         justified = true;
     }
@@ -1123,18 +1125,20 @@ Series.prototype.justifyDataLabel = function (
     // Off bottom
     off = alignAttr.y + bBox.height - padding;
     if (off > chart.plotHeight) {
-        if (verticalAlign === 'top') {
+        if (verticalAlign === 'top' && y <= 0) {
             options.verticalAlign = 'bottom';
             options.inside = true;
         } else {
-            options.y = chart.plotHeight - off;
+            y += chart.plotHeight - off;
         }
         justified = true;
     }
 
     if (justified) {
+        options.x = x;
+        options.y = y;
         dataLabel.placed = !isNew;
-        dataLabel.align(options as any, null as any, alignTo);
+        dataLabel.align(options, void 0, alignTo);
     }
 
     return justified;
