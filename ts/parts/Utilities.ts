@@ -3341,15 +3341,14 @@ let serialMode: (boolean|undefined);
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    const hash = serialMode ?
-        '' :
-        Math.random().toString(36).substring(2, 9) + '-';
+    const hash = Math.random().toString(36).substring(2, 9) + '-';
 
     let id = 0;
 
     return function (): string {
-        return 'highcharts-' + hash + id++;
+        return 'highcharts-' + (serialMode ? '' : hash) + id++;
     };
+
 }());
 /**
  * Activates a serial mode for element IDs provided by
