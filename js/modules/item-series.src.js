@@ -124,7 +124,7 @@ seriesType('item',
 // Prototype members
 {
     markerAttribs: void 0,
-    translate: function () {
+    translate: function (positions) {
         // Initialize chart without setting data, #13379.
         if (this.total === 0) {
             this.center = this.getCenter();
@@ -134,7 +134,7 @@ seriesType('item',
         }
         if (isNumber(this.options.startAngle) &&
             isNumber(this.options.endAngle)) {
-            H.seriesTypes.pie.prototype.translate.call(this);
+            H.seriesTypes.pie.prototype.translate.apply(this, arguments);
             this.slots = this.getSlots();
         }
         else {
