@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import H from './Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
@@ -138,7 +139,7 @@ declare global {
             public update(options: Highcharts.ScrollbarOptions): void;
             public updatePosition(from: number, to: number): void;
         }
-        function swapXY(path: SVGPathArray, vertical?: boolean): SVGPathArray;
+        function swapXY(path: SVGPath, vertical?: boolean): SVGPath;
     }
 }
 
@@ -146,10 +147,10 @@ interface ScrollbarEventCallbackFunction {
     (e: Highcharts.PointerEventObject): void;
 }
 
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 
-var defaultOptions = H.defaultOptions,
-    hasTouch = H.hasTouch,
+var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice;
 
 /**
@@ -170,19 +171,21 @@ var defaultOptions = H.defaultOptions,
  * @requires modules/stock
  */
 const swapXY = H.swapXY = function (
-    path: Highcharts.SVGPathArray,
+    path: SVGPath,
     vertical?: boolean
-): Highcharts.SVGPathArray {
-    var i,
-        len = path.length,
-        temp: Highcharts.SVGPathCommand;
-
+): SVGPath {
     if (vertical) {
-        for (i = 0; i < len; i += 3) {
-            temp = path[i + 1] as Highcharts.SVGPathCommand;
-            path[i + 1] = path[i + 2];
-            path[i + 2] = temp;
-        }
+        path.forEach((seg): void => {
+            const len = seg.length;
+            let temp;
+            for (let i = 0; i < len; i += 2) {
+                temp = seg[i + 1];
+                if (typeof temp === 'number') {
+                    seg[i + 1] = seg[i + 2];
+                    seg[i + 2] = temp;
+                }
+            }
+        });
     }
 
     return path;
@@ -716,17 +719,19 @@ class Scrollbar {
 
         // Button arrow
         tempElem = renderer
-            .path(swapXY([
+            .path(swapXY([[
                 'M',
                 size / 2 + (index ? -1 : 1),
-                size / 2 - 3,
+                size / 2 - 3
+            ], [
                 'L',
                 size / 2 + (index ? -1 : 1),
-                size / 2 + 3,
+                size / 2 + 3
+            ], [
                 'L',
                 size / 2 + (index ? 2 : -2),
                 size / 2
-            ], options.vertical))
+            ]], options.vertical))
             .addClass('highcharts-scrollbar-arrow')
             .add(scrollbarButtons[index]);
 
@@ -985,18 +990,12 @@ class Scrollbar {
 
         scroller.scrollbarRifles = renderer
             .path(swapXY([
-                'M',
-                -3, size / 4,
-                'L',
-                -3, 2 * size / 3,
-                'M',
-                0, size / 4,
-                'L',
-                0, 2 * size / 3,
-                'M',
-                3, size / 4,
-                'L',
-                3, 2 * size / 3
+                ['M', -3, size / 4],
+                ['L', -3, 2 * size / 3],
+                ['M', 0, size / 4],
+                ['L', 0, 2 * size / 3],
+                ['M', 3, size / 4],
+                ['L', 3, 2 * size / 3]
             ], options.vertical))
             .addClass('highcharts-scrollbar-rifles')
             .add(scroller.scrollbarGroup);

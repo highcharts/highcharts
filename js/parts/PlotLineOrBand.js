@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
 import Axis from './Axis.js';
+import H from './Globals.js';
 /**
  * Options for plot bands on axes.
  *
@@ -126,16 +126,17 @@ var PlotLineOrBand = /** @class */ (function () {
             return;
         }
         // common for lines and bands
+        // Add events only if they were not added before.
+        if (!plotLine.eventsAdded && events) {
+            objectEach(events, function (event, eventType) {
+                svgElem.on(eventType, function (e) {
+                    events[eventType].apply(plotLine, [e]);
+                });
+            });
+            plotLine.eventsAdded = true;
+        }
         if ((isNew || !svgElem.d) && path && path.length) {
             svgElem.attr({ d: path });
-            // events
-            if (events) {
-                objectEach(events, function (event, eventType) {
-                    svgElem.on(eventType, function (e) {
-                        events[eventType].apply(plotLine, [e]);
-                    });
-                });
-            }
         }
         else if (svgElem) {
             if (path) {
@@ -213,9 +214,9 @@ var PlotLineOrBand = /** @class */ (function () {
         // get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
         xBounds = path.xBounds ||
-            [path[1], path[4], (isBand ? path[6] : path[1])];
+            [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])];
         yBounds = path.yBounds ||
-            [path[2], path[5], (isBand ? path[7] : path[2])];
+            [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])];
         x = arrayMin(xBounds);
         y = arrayMin(yBounds);
         label.align(optionsLabel, false, {
@@ -868,17 +869,25 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plus = 0;
             }
             // Go over each subpath - for panes in Highstock
-            for (i = 0; i < path.length; i += 6) {
-                // Add 1 pixel when coordinates are the same
-                if (horiz && toPath[i + 1] === path[i + 1]) {
-                    toPath[i + 1] += plus;
-                    toPath[i + 4] += plus;
+            for (i = 0; i < path.length; i += 2) {
+                var pathStart = path[i], pathEnd = path[i + 1], toPathStart = toPath[i], toPathEnd = toPath[i + 1];
+                // Type checking all affected path segments. Consider something
+                // smarter.
+                if ((pathStart[0] === 'M' || pathStart[0] === 'L') &&
+                    (pathEnd[0] === 'M' || pathEnd[0] === 'L') &&
+                    (toPathStart[0] === 'M' || toPathStart[0] === 'L') &&
+                    (toPathEnd[0] === 'M' || toPathEnd[0] === 'L')) {
+                    // Add 1 pixel when coordinates are the same
+                    if (horiz && toPathStart[1] === pathStart[1]) {
+                        toPathStart[1] += plus;
+                        toPathEnd[1] += plus;
+                    }
+                    else if (!horiz && toPathStart[2] === pathStart[2]) {
+                        toPathStart[2] += plus;
+                        toPathEnd[2] += plus;
+                    }
+                    result.push(['M', pathStart[1], pathStart[2]], ['L', pathEnd[1], pathEnd[2]], ['L', toPathEnd[1], toPathEnd[2]], ['L', toPathStart[1], toPathStart[2]], ['Z']);
                 }
-                else if (!horiz && toPath[i + 2] === path[i + 2]) {
-                    toPath[i + 2] += plus;
-                    toPath[i + 5] += plus;
-                }
-                result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2], 'z');
                 result.isFlat = isFlat;
             }
         }
@@ -948,6 +957,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
+            this._addedPlotLB = true;
         }
         return obj;
     },
@@ -975,7 +985,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         ]).forEach(function (arr) {
             i = arr.length;
             while (i--) {
-                if (arr[i].id === id) {
+                if ((arr[i] || {}).id === id) {
                     erase(arr, arr[i]);
                 }
             }

@@ -9,14 +9,14 @@
  * */
 'use strict';
 import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
 import Point from './Point.js';
+import SVGRenderer from './SVGRenderer.js';
 import U from './Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
-import './Chart.js';
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, defined = U.defined, extend = U.extend, find = U.find, format = U.format, getOptions = U.getOptions, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat;
 import './Pointer.js';
 import './Series.js';
-import './SvgRenderer.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import './Navigator.js';
@@ -26,7 +26,7 @@ import './Scrollbar.js';
 // Has a dependency on RangeSelector due to the use of
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
-var Chart = H.Chart, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
+var Series = H.Series, seriesProto = Series.prototype, seriesInit = seriesProto.init, seriesProcessData = seriesProto.processData, pointTooltipFormatter = Point.prototype.tooltipFormatter;
 /**
  * Compare the values of the series against the first non-null, non-
  * zero value in the visible range. The y axis will show percentage
@@ -119,7 +119,7 @@ var Chart = H.Chart, Renderer = H.Renderer, Series = H.Series, SVGRenderer = H.S
 H.StockChart = H.stockChart = function (a, b, c) {
     var hasRenderToArg = isString(a) || a.nodeName, options = arguments[hasRenderToArg ? 1 : 0], userOptions = options, 
     // to increase performance, don't merge the data
-    seriesOptions = options.series, defaultOptions = H.getOptions(), opposite, 
+    seriesOptions = options.series, defaultOptions = getOptions(), opposite, 
     // Always disable startOnTick:true on the main axis when the navigator
     // is enabled (#1090)
     navigatorEnabled = pick(options.navigator && options.navigator.enabled, defaultOptions.navigator.enabled, true);
@@ -347,7 +347,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1, y1, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             }
@@ -368,7 +368,7 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1, y1, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             }
@@ -389,26 +389,23 @@ addEvent(Axis, 'getPlotLinePath', function (e) {
  * @return {Highcharts.SVGPathArray}
  */
 SVGRenderer.prototype.crispPolyLine = function (points, width) {
-    // points format: ['M', 0, 0, 'L', 100, 0]
+    // points format: [['M', 0, 0], ['L', 100, 0]]
     // normalize to a crisp line
-    var i;
-    for (i = 0; i < points.length; i = i + 6) {
-        if (points[i + 1] === points[i + 4]) {
+    for (var i = 0; i < points.length; i = i + 2) {
+        var start = points[i], end = points[i + 1];
+        if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[i + 1] = points[i + 4] =
-                Math.round(points[i + 1]) - (width % 2 / 2);
+            start[1] = end[1] =
+                Math.round(start[1]) - (width % 2 / 2);
         }
-        if (points[i + 2] === points[i + 5]) {
-            points[i + 2] = points[i + 5] =
-                Math.round(points[i + 2]) + (width % 2 / 2);
+        if (start[2] === end[2]) {
+            start[2] = end[2] =
+                Math.round(start[2]) + (width % 2 / 2);
         }
     }
     return points;
 };
-if (Renderer === VMLRenderer) {
-    VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
-}
 // Wrapper to hide the label
 addEvent(Axis, 'afterHideCrosshair', function () {
     if (this.crossLabel) {
@@ -502,13 +499,15 @@ addEvent(Axis, 'afterDrawCrosshair', function (event) {
     });
     crossBox = crossLabel.getBBox();
     // now it is placed we can correct its position
-    if (horiz) {
-        if ((tickInside && !opposite) || (!tickInside && opposite)) {
-            posy = crossLabel.y - crossBox.height;
+    if (isNumber(crossLabel.y)) {
+        if (horiz) {
+            if ((tickInside && !opposite) || (!tickInside && opposite)) {
+                posy = crossLabel.y - crossBox.height;
+            }
         }
-    }
-    else {
-        posy = crossLabel.y - (crossBox.height / 2);
+        else {
+            posy = crossLabel.y - (crossBox.height / 2);
+        }
     }
     // check the edges
     if (horiz) {

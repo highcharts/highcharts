@@ -63,6 +63,7 @@ Gulp.registry(new GulpForwardReference());
     'scripts-vendor',
     'scripts-watch',
     'test',
+    'test-tree',
     'reset-visual-references',
     'tsdoc',
     'tsdoc-next',
@@ -78,7 +79,8 @@ Gulp.registry(new GulpForwardReference());
     'unsorted/update-vendor',
     'unsorted/upload-api',
     'unsorted/upload-files',
-    'update-pr-testresults'
+    'update-pr-testresults',
+    'pr-size-table'
 ]));
 
 /* *

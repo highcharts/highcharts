@@ -241,14 +241,14 @@ var horizHandleFormatter = function (point) {
     bottom = shapeArgs.height - top, centerY = shapeArgs.height / 2;
     return [
         // Top wick
-        'M', 0, top,
-        'L', 0, centerY - 5,
+        ['M', 0, top],
+        ['L', 0, centerY - 5],
         // Circle
-        'A', 1, 1, 0, 0, 0, 0, centerY + 5,
-        'A', 1, 1, 0, 0, 0, 0, centerY - 5,
+        ['A', 1, 1, 0, 0, 0, 0, centerY + 5],
+        ['A', 1, 1, 0, 0, 0, 0, centerY - 5],
         // Bottom wick
-        'M', 0, centerY + 5,
-        'L', 0, bottom
+        ['M', 0, centerY + 5],
+        ['L', 0, bottom]
     ];
 };
 // Line series - only draggableX/Y, no drag handles
@@ -324,18 +324,18 @@ var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         },
         // Horizontal handle
         handleFormatter: function (point) {
-            var shapeArgs = point.shapeArgs, radius = shapeArgs.r || 0, // Rounding of bar corners
-            centerX = shapeArgs.width / 2;
+            var shapeArgs = point.shapeArgs || {}, radius = shapeArgs.r || 0, // Rounding of bar corners
+            width = shapeArgs.width || 0, centerX = width / 2;
             return [
                 // Left wick
-                'M', radius, 0,
-                'L', centerX - 5, 0,
+                ['M', radius, 0],
+                ['L', centerX - 5, 0],
                 // Circle
-                'A', 1, 1, 0, 0, 0, centerX + 5, 0,
-                'A', 1, 1, 0, 0, 0, centerX - 5, 0,
+                ['A', 1, 1, 0, 0, 0, centerX + 5, 0],
+                ['A', 1, 1, 0, 0, 0, centerX - 5, 0],
                 // Right wick
-                'M', centerX + 5, 0,
-                'L', shapeArgs.width - radius, 0
+                ['M', centerX + 5, 0],
+                ['L', width - radius, 0]
             ];
         }
     }
@@ -662,9 +662,9 @@ if (seriesTypes.arearange) {
             point.graphic.getBBox().width / 2 + 1 :
             4;
         return [
-            'M', 0 - radius, 0,
-            'a', radius, radius, 0, 1, 0, radius * 2, 0,
-            'a', radius, radius, 0, 1, 0, radius * -2, 0
+            ['M', 0 - radius, 0],
+            ['a', radius, radius, 0, 1, 0, radius * 2, 0],
+            ['a', radius, radius, 0, 1, 0, radius * -2, 0]
         ];
     };
     seriesTypes.arearange.prototype.dragDropProps = {

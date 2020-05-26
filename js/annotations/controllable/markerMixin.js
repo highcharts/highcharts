@@ -4,11 +4,11 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
-import U from './../../parts/Utilities.js';
+import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.objectEach, uniqueKey = U.uniqueKey;
-import './../../parts/Chart.js';
-import './../../parts/SvgRenderer.js';
+import '../../parts/Chart.js';
+import '../../parts/SVGRenderer.js';
 /**
  * Options for configuring markers for annotations.
  *

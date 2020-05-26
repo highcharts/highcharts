@@ -12,6 +12,7 @@
 
 import type { AxisBreakBorderObject, AxisBreakObject } from '../parts/axis/types';
 import type Point from '../parts/Point';
+import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
@@ -41,6 +42,18 @@ declare global {
         interface XAxisBreaksOptions {
             inclusive?: boolean;
         }
+    }
+}
+
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        brokenAxis?: BrokenAxis['brokenAxis'];
+    }
+    interface AxisTypeRegistry {
+        BrokenAxis: BrokenAxis;
     }
 }
 
@@ -542,7 +555,7 @@ class BrokenAxis {
          * @return {Highcharts.SVGPathArray}
          * Gapped path
          */
-        seriesProto.gappedPath = function (): Highcharts.SVGPathArray {
+        seriesProto.gappedPath = function (): SVGPath {
             var currentDataGrouping = this.currentDataGrouping,
                 groupingSize = currentDataGrouping && currentDataGrouping.gapSize,
                 gapSize = this.options.gapSize,
@@ -648,10 +661,10 @@ class BrokenAxis {
                         );
 
                         // For stacked chart generate empty stack items, #6546
-                        if (this.options.stacking) {
-                            stack = yAxis.stacks[this.stackKey as any][xRange] =
+                        if (yAxis.stacking && this.options.stacking) {
+                            stack = yAxis.stacking.stacks[this.stackKey as any][xRange] =
                                 new StackItem(
-                                    yAxis,
+                                    yAxis as any,
                                     (
                                         (yAxis.options as Highcharts.YAxisOptions)
                                             .stackLabels as any

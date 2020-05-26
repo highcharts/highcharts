@@ -8,7 +8,7 @@
  */
 'use strict';
 import Highcharts from '../parts/Globals.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SVGRenderer.js';
 import '../parts/Html.js';
 import '../parts/Axis.js';
 import '../parts/DateTimeAxis.js';

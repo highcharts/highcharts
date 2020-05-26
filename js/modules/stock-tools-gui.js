@@ -12,9 +12,10 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick;
+import NavigationBindings from '../annotations/navigationBindings.js';
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick, setOptions = U.setOptions;
 var win = H.win, DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
-H.setOptions({
+setOptions({
     /**
      * @optionparent lang
      */
@@ -802,14 +803,10 @@ var Toolbar = /** @class */ (function () {
      * @private
      */
     Toolbar.prototype.init = function () {
-        var _self = this, lang = this.lang, guiOptions = this.options, toolbar = this.toolbar, addSubmenu = _self.addSubmenu, buttons = guiOptions.buttons, defs = guiOptions.definitions, allButtons = toolbar.childNodes, inIframe = this.inIframe(), button;
+        var _self = this, lang = this.lang, guiOptions = this.options, toolbar = this.toolbar, addSubmenu = _self.addSubmenu, buttons = guiOptions.buttons, defs = guiOptions.definitions, allButtons = toolbar.childNodes, button;
         // create buttons
         buttons.forEach(function (btnName) {
             button = _self.addButton(toolbar, defs, btnName, lang);
-            if (inIframe && btnName === 'fullScreen') {
-                button.buttonWrapper.className +=
-                    ' ' + PREFIX + 'disabled-btn';
-            }
             _self.eventsToUnbind.push(addEvent(button.buttonWrapper, 'click', function () {
                 _self.eraseActiveButtons(allButtons, button.buttonWrapper);
             }));
@@ -1161,19 +1158,6 @@ var Toolbar = /** @class */ (function () {
         });
     };
     /*
-     * Verify if chart is in iframe.
-     *
-     * @return {Object} - elements translations.
-     */
-    Toolbar.prototype.inIframe = function () {
-        try {
-            return win.self !== win.top;
-        }
-        catch (e) {
-            return true;
-        }
-    };
-    /*
      * Update GUI with given options.
      *
      * @param {Object} - general options for Stock Tools
@@ -1280,7 +1264,7 @@ extend(H.Chart.prototype, {
     }
 });
 // Comunication with bindings:
-addEvent(H.NavigationBindings, 'selectButton', function (event) {
+addEvent(NavigationBindings, 'selectButton', function (event) {
     var button = event.button, className = PREFIX + 'submenu-wrapper', gui = this.chart.stockTools;
     if (gui && gui.guiEnabled) {
         // Unslect other active buttons
@@ -1293,7 +1277,7 @@ addEvent(H.NavigationBindings, 'selectButton', function (event) {
         gui.selectButton(button);
     }
 });
-addEvent(H.NavigationBindings, 'deselectButton', function (event) {
+addEvent(NavigationBindings, 'deselectButton', function (event) {
     var button = event.button, className = PREFIX + 'submenu-wrapper', gui = this.chart.stockTools;
     if (gui && gui.guiEnabled) {
         // If deselecting a button from a submenu, select state for it's parent

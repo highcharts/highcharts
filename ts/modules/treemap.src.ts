@@ -331,7 +331,7 @@ var seriesTypes = H.seriesTypes,
     eachObject = function (
         this: unknown,
         list: any,
-        func: Highcharts.ObjectEachCallbackFunction<unknown>,
+        func: Highcharts.ObjectEachCallbackFunction<any, unknown>,
         context?: unknown
     ): void {
         context = context || this;
@@ -1016,6 +1016,9 @@ seriesType<Highcharts.TreemapSeries>(
             );
 
             Series.prototype.init.call(series, chart, options);
+
+            // Treemap's opacity is a different option from other series
+            delete series.opacity;
 
             if (series.options.allowTraversingTree) {
                 series.eventsToUnbind.push(

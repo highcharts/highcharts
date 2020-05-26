@@ -10,9 +10,12 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
 import Point from './Point.js';
+import SVGRenderer from './SVGRenderer.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -23,6 +26,7 @@ const {
     extend,
     find,
     format,
+    getOptions,
     isNumber,
     isString,
     merge,
@@ -61,10 +65,10 @@ declare global {
             compareStart?: boolean;
         }
         interface SVGRenderer {
-            crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
+            crispPolyLine(points: SVGPath, width: number): SVGPath;
         }
         interface VMLRenderer {
-            crispPolyLine(points: VMLPathArray, width: number): VMLPathArray;
+            crispPolyLine(points: SVGPath, width: number): SVGPath;
         }
         class StockChart extends Chart {
         }
@@ -72,10 +76,8 @@ declare global {
     }
 }
 
-import './Chart.js';
 import './Pointer.js';
 import './Series.js';
-import './SvgRenderer.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import './Navigator.js';
@@ -86,12 +88,7 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var Chart = H.Chart,
-    Renderer = H.Renderer,
-    Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
-    VMLRenderer = H.VMLRenderer,
-
+var Series = H.Series,
     seriesProto = Series.prototype,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
@@ -192,15 +189,15 @@ var Chart = H.Chart,
  */
 H.StockChart = H.stockChart = function (
     a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
-    b?: (Highcharts.ChartCallbackFunction|Highcharts.Options),
-    c?: Highcharts.ChartCallbackFunction
+    b?: (Chart.CallbackFunction|Highcharts.Options),
+    c?: Chart.CallbackFunction
 ): Highcharts.StockChart {
     var hasRenderToArg = isString(a) || (a as any).nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
         userOptions = options,
         // to increase performance, don't merge the data
         seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
+        defaultOptions = getOptions(),
         opposite,
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
@@ -423,7 +420,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         y1,
         x2,
         y2,
-        result = [] as Highcharts.SVGPathArray,
+        result = [] as SVGPath,
         axes = [], // #3416 need a default array
         axes2: Array<Highcharts.Axis>,
         uniqueAxes: Array<Highcharts.Axis>,
@@ -540,7 +537,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1, y1 as any, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             } else {
@@ -567,7 +564,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1 as any, y1, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             }
@@ -590,30 +587,28 @@ addEvent(Axis, 'getPlotLinePath', function (
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: Highcharts.SVGRenderer,
-    points: Highcharts.SVGPathArray,
+    points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
     width: number
-): Highcharts.SVGPathArray {
-    // points format: ['M', 0, 0, 'L', 100, 0]
+): SVGPath {
+    // points format: [['M', 0, 0], ['L', 100, 0]]
     // normalize to a crisp line
-    var i;
+    for (let i = 0; i < points.length; i = i + 2) {
+        const start = points[i],
+            end = points[i + 1];
 
-    for (i = 0; i < points.length; i = i + 6) {
-        if (points[i + 1] === points[i + 4]) {
+        if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[i + 1] = points[i + 4] =
-                Math.round(points[i + 1] as any) - (width % 2 / 2);
+            start[1] = end[1] =
+                Math.round(start[1]) - (width % 2 / 2);
         }
-        if (points[i + 2] === points[i + 5]) {
-            points[i + 2] = points[i + 5] =
-                Math.round(points[i + 2] as any) + (width % 2 / 2);
+        if (start[2] === end[2]) {
+            start[2] = end[2] =
+                Math.round(start[2]) + (width % 2 / 2);
         }
     }
     return points;
 };
-if ((Renderer as unknown) === VMLRenderer) {
-    VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
-}
 
 // Wrapper to hide the label
 addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
@@ -750,12 +745,14 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     crossBox = crossLabel.getBBox();
 
     // now it is placed we can correct its position
-    if (horiz) {
-        if ((tickInside && !opposite) || (!tickInside && opposite)) {
-            posy = crossLabel.y - crossBox.height;
+    if (isNumber(crossLabel.y)) {
+        if (horiz) {
+            if ((tickInside && !opposite) || (!tickInside && opposite)) {
+                posy = crossLabel.y - crossBox.height;
+            }
+        } else {
+            posy = crossLabel.y - (crossBox.height / 2);
         }
-    } else {
-        posy = crossLabel.y - (crossBox.height / 2);
     }
 
     // check the edges

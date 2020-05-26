@@ -10,7 +10,40 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import O from './Options.js';
+const { defaultOptions } = O;
+import Point from './Point.js';
+import SVGElement from './SVGElement.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    animObject,
+    arrayMax,
+    arrayMin,
+    clamp,
+    correctFloat,
+    defined,
+    erase,
+    error,
+    extend,
+    find,
+    fireEvent,
+    getNestedProperty,
+    isArray,
+    isFunction,
+    isNumber,
+    isString,
+    merge,
+    objectEach,
+    pick,
+    removeEvent,
+    seriesType,
+    splat,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -61,7 +94,7 @@ declare global {
             public finishedAnimating?: boolean;
             public getExtremesFromAll?: boolean;
             public graph?: SVGElement;
-            public graphPath?: SVGPathArray;
+            public graphPath?: SVGPath;
             public group?: SVGElement;
             public hasCartesianSeries?: Chart['hasCartesianSeries'];
             public hasRendered?: boolean;
@@ -76,6 +109,7 @@ declare global {
             public linkedSeries: Array<Series>;
             public markerGroup?: SVGElement;
             public name: string;
+            public opacity?: number;
             public optionalAxis?: string;
             public options: SeriesOptionsType;
             public parallelArrays: Array<string>;
@@ -151,7 +185,7 @@ declare global {
                 points: Array<Point>,
                 nullsAsZeroes?: boolean,
                 connectCliffs?: boolean
-            ): SVGPathArray;
+            ): SVGPath;
             public getPlotBox(): SeriesPlotBoxObject;
             public getProcessedData(
                 forceExtremesFromAll?: boolean
@@ -341,6 +375,7 @@ declare global {
             colors?: Array<ColorType>;
             connectEnds?: boolean;
             connectNulls?: boolean;
+            crisp?: boolean|number;
             cropThreshold?: number;
             cursor?: (string|CursorValue);
             dashStyle?: DashStyleValue;
@@ -461,6 +496,9 @@ declare global {
             dashStyle?: DashStyleValue;
             fillColor?: (ColorString|GradientColorObject|PatternObject);
             value?: number;
+        }
+        interface SVGElement {
+            survive?: boolean;
         }
         type SeriesLinecapValue = ('butt'|'round'|'square'|string);
         type SeriesFindNearestPointByValue = ('x'|'xy');
@@ -709,43 +747,7 @@ declare global {
 
 ''; // detach doclets above
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import Point from './Point.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    animObject,
-    arrayMax,
-    arrayMin,
-    clamp,
-    correctFloat,
-    defined,
-    erase,
-    error,
-    extend,
-    find,
-    fireEvent,
-    getNestedProperty,
-    isArray,
-    isFunction,
-    isNumber,
-    isString,
-    merge,
-    objectEach,
-    pick,
-    removeEvent,
-    seriesType,
-    splat,
-    syncTimeout
-} = U;
-
-import './Options.js';
-import './SvgRenderer.js';
-
-var defaultOptions = H.defaultOptions,
-    defaultPlotOptions = H.defaultPlotOptions,
-    seriesTypes = H.seriesTypes,
-    SVGElement = H.SVGElement,
+var seriesTypes = H.seriesTypes,
     win = H.win;
 
 /**
@@ -1030,6 +1032,24 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @private
          */
         allowPointSelect: false,
+
+        /**
+         * When true, each point or column edge is rounded to its nearest pixel
+         * in order to render sharp on screen. In some cases, when there are a
+         * lot of densely packed columns, this leads to visible difference
+         * in column widths or distance between columns. In these cases,
+         * setting `crisp` to `false` may look better, even though each column
+         * is rendered blurry.
+         *
+         * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
+         *         Crisp is false
+         *
+         * @since   5.0.10
+         * @product highcharts highstock gantt
+         *
+         * @private
+         */
+        crisp: true,
 
         /**
          * If true, a checkbox is displayed next to the legend item to allow
@@ -2789,7 +2809,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
              *         Vertical and positioned
              */
             y: 0
-
         } as Highcharts.DataLabelsOptions,
 
         /**
@@ -3436,6 +3455,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 lastSeries = chartSeries[chartSeries.length - 1];
             }
             series._i = pick(lastSeries && lastSeries._i, -1) + 1;
+            series.opacity = series.options.opacity;
 
             // Insert the series and re-order all series above the insertion
             // point.
@@ -3953,7 +3973,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 this.getCyclic(
                     'color',
                     this.options.color ||
-                    (defaultPlotOptions as any)[this.type].color,
+                    (defaultOptions.plotOptions as any)[this.type].color,
                     this.chart.options.colors
                 );
             }
@@ -5158,7 +5178,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     xValue = point.x,
                     yValue = point.y,
                     yBottom = point.low,
-                    stack = stacking && yAxis.stacks[(
+                    stack = stacking && yAxis.stacking && yAxis.stacking.stacks[(
                         series.negStacks &&
                         (yValue as any) <
                         (stackThreshold ? 0 : (threshold as any)) ?
@@ -5391,7 +5411,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 inverted = chart.inverted,
                 xAxis = series.xAxis,
                 yAxis = xAxis && series.yAxis,
-                clipBox;
+                clipBox,
+                scrollablePlotAreaOptions =
+                    (chart.options.chart as any).scrollablePlotArea || {};
 
             if (animation && options.clip === false && yAxis) {
                 // support for not clipped series animation (#10450)
@@ -5413,7 +5435,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
                 if (finalBox) {
                     clipBox.width = chart.plotSizeX as any;
-                    clipBox.x = 0;
+                    clipBox.x = (chart.scrollablePixelsX || 0) *
+                        (scrollablePlotAreaOptions.scrollPositionX || 0);
                 }
             }
 
@@ -5770,7 +5793,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
             point: Highcharts.Point,
             state?: string
         ): Highcharts.SVGAttributes {
-            var seriesMarkerOptions = this.options.marker,
+            var seriesOptions = this.options,
+                seriesMarkerOptions = seriesOptions.marker,
                 seriesStateOptions: Highcharts.PointStatesHoverOptionsObject,
                 pointMarkerOptions = point.marker || {},
                 symbol = (
@@ -5805,10 +5829,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
             if (point.hasImage) {
                 radius = 0; // and subsequently width and height is not set
             }
-
             attribs = {
                 // Math.floor for #1843:
-                x: Math.floor(point.plotX as any) - radius,
+                x: seriesOptions.crisp ?
+                    Math.floor(point.plotX as any) - radius :
+                    (point.plotX as any) - radius,
                 y: (point.plotY as any) - radius
             };
 
@@ -5946,7 +5971,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             var series = this,
                 chart = series.chart,
                 issue134 = /AppleWebKit\/533/.test(win.navigator.userAgent),
-                destroy,
+                destroy: ('hide'|'destroy'),
                 i,
                 data = series.data || [],
                 point,
@@ -6030,12 +6055,12 @@ H.Series = seriesType<Highcharts.LineSeries>(
             points: Array<Highcharts.Point>,
             nullsAsZeroes?: boolean,
             connectCliffs?: boolean
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var series = this,
                 options = series.options,
                 step = options.step as any,
                 reversed,
-                graphPath = [] as Highcharts.SVGPathArray,
+                graphPath = [] as SVGPath,
                 xMap = [] as Array<(number|null)>,
                 gap: boolean;
 
@@ -6069,7 +6094,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     plotY = point.plotY,
                     lastPoint = points[i - 1],
                     // the path to this point from the previous
-                    pathToPoint: Highcharts.SVGPathArray;
+                    pathToPoint: SVGPath;
 
                 if (
                     (point.leftCliff || (lastPoint && lastPoint.rightCliff)) &&
@@ -6089,64 +6114,63 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 } else {
 
                     if (i === 0 || gap) {
-                        pathToPoint = [
+                        pathToPoint = [[
                             'M',
                             point.plotX as any,
                             point.plotY as any
-                        ];
+                        ]];
 
                     // Generate the spline as defined in the SplineSeries object
-                    } else if (
-                        (series as Highcharts.SplineSeries).getPointSpline
-                    ) {
+                    } else if ((series as Partial<Highcharts.SplineSeries>).getPointSpline) {
 
-                        pathToPoint = (
+                        pathToPoint = [(
                             series as Highcharts.SplineSeries
                         ).getPointSpline(
                             points as Array<Highcharts.SplinePoint>,
                             point as Highcharts.SplinePoint,
                             i
-                        );
+                        )];
 
                     } else if (step) {
 
                         if (step === 1) { // right
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 lastPoint.plotX as any,
                                 plotY as any
-                            ];
+                            ]];
 
                         } else if (step === 2) { // center
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
-                                lastPoint.plotY as any,
+                                lastPoint.plotY as any
+                            ], [
                                 'L',
                                 ((lastPoint.plotX as any) + plotX) / 2,
                                 plotY as any
-                            ];
+                            ]];
 
                         } else {
-                            pathToPoint = [
+                            pathToPoint = [[
                                 'L',
                                 plotX as any,
                                 lastPoint.plotY as any
-                            ];
+                            ]];
                         }
-                        pathToPoint.push(
+                        pathToPoint.push([
                             'L',
                             plotX as any,
                             plotY as any
-                        );
+                        ]);
 
                     } else {
                         // normal line to next point
-                        pathToPoint = [
+                        pathToPoint = [[
                             'L',
                             plotX as any,
                             plotY as any
-                        ];
+                        ]];
                     }
 
                     // Prepare for animation. When step is enabled, there are
@@ -6344,7 +6368,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 pxRange: number,
                 pxPosMin: number,
                 pxPosMax: number,
-                ignoreZones = false;
+                ignoreZones = false,
+                zoneArea: Highcharts.SVGElement,
+                zoneGraph: Highcharts.SVGElement;
 
             if (
                 zones.length &&
@@ -6455,12 +6481,15 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     // when no data, graph zone is not applied and after setData
                     // clip was ignored. As a result, it should be applied each
                     // time.
-                    if (graph) {
-                        (series as any)['zone-graph-' + i].clip(clips[i]);
+                    zoneArea = (series as any)['zone-area-' + i];
+                    zoneGraph = (series as any)['zone-graph-' + i];
+
+                    if (graph && zoneGraph) {
+                        zoneGraph.clip(clips[i]);
                     }
 
-                    if (area) {
-                        (series as any)['zone-area-' + i].clip(clips[i]);
+                    if (area && zoneArea) {
+                        zoneArea.clip(clips[i]);
                     }
 
                     // if this zone extends out of the axis, ignore the others
@@ -6565,15 +6594,24 @@ H.Series = seriesType<Highcharts.LineSeries>(
             parent?: Highcharts.SVGElement
         ): Highcharts.SVGElement {
             var group = (this as any)[prop],
-                isNew = !group;
+                isNew = !group,
+                attrs: Highcharts.SVGAttributes = {
+                    visibility,
+                    zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+                };
+            // Avoid setting undefined opacity, or in styled mode
+            if (
+                typeof this.opacity !== 'undefined' &&
+                !this.chart.styledMode
+            ) {
+                attrs.opacity = this.opacity;
+            }
 
             // Generate it on first call
             if (isNew) {
+
                 (this as any)[prop] = group = this.chart.renderer
                     .g()
-                    .attr({
-                        zIndex: zIndex || 0.1 // IE8 and pointer logic use this
-                    })
                     .add(parent);
 
             }
@@ -6601,7 +6639,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             );
 
             // Place it on first and subsequent (redraw) calls
-            group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](
+            group.attr(attrs)[isNew ? 'attr' : 'animate'](
                 this.getPlotBox()
             );
             return group;

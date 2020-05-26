@@ -179,7 +179,7 @@ seriesType<Highcharts.PCIndicator>(
             for (i = period; i <= yValLen; i++) {
                 date = xVal[i - 1];
                 slicedY = yVal.slice(i - period, i);
-                extremes = getArrayExtremes(slicedY, low, high);
+                extremes = getArrayExtremes(slicedY, low as any, high as any);
                 TL = extremes[1];
                 BL = extremes[0];
                 ML = (TL + BL) / 2;

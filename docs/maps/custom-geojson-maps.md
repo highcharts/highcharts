@@ -1,7 +1,7 @@
 Custom GeoJSON maps
 ===================
 
-This article contains information on creating maps from data in common mapping formats, as well as modifying the [Highcharts Maps Map Collection](https://code.highcharts.com/mapdata "Highcharts Maps Map Collection"). For information on drawing your own maps and creating maps from SVG, see [this article](https://highcharts.com/docs/maps/custom-maps "Custom maps").
+This article contains information on creating maps from data in common mapping formats, as well as modifying the [Highcharts Maps Map Collection](https://code.highcharts.com/mapdata "Highcharts Maps Map Collection"). For information on drawing your own maps and creating maps from SVG, see our article on [creating custom maps](https://www.highcharts.com/docs/maps/create-custom-maps-for-highmaps "Custom maps").
 
 We see that many users have map data in ESRI Shapefile format or other common mapping formats. These can easily be converted for use with Highcharts Maps using an editor with GeoJSON exporting capabilities, as Highcharts Maps supports the GeoJSON format natively. Most full-featured GIS editors will be able to perform this conversion. [QGIS](https://qgis.org "QGIS") is a free alternative that supports both Shapefile, KML, and a number of other formats. See [this demo](https://highcharts.com/maps/demo/geojson-multiple-types/maps/demo/geojson "GeoJSON demo") for an example of how to load polygonal data from a GeoJSON file, and [this demo](https://highcharts.com/maps/demo/geojson-multiple-types "GeoJSON multiple types demo") for a more complex example with line and point data.
 
@@ -12,7 +12,7 @@ Creating maps for Highcharts Maps
 
 We will now go through the process of importing a Shapefile in QGIS and converting it for use with Highcharts Maps. The process is the same when editing the GeoJSON files from our map collection. Note that there are many ways of accomplishing this with QGIS, and that details might vary depending on program version and platform. If you have issues using QGIS, check out their extensive [documentation](https://qgis.org/en/docs/index.html "QGIS Documentation").
 
-1. Once QGIS is installed, the first step is to import your data. To do this, select the "Add Vector Layer" option from the Layer menu. For demonstration purposes, we will use a dataset with USA Zip Code Tabulation Areas available from the [US Census Bureau](http://www.census.gov/cgi-bin/geo/shapefiles2012/main "Zip Code Tabulation Areas"). Our goal is to create a map of the Alaskan Zip codes for use with Highcharts Maps.
+1. Once QGIS is installed, the first step is to import your data. To do this, select the "Add Vector Layer" option from the Layer menu. For demonstration purposes, we will use a dataset with USA Zip Code Tabulation Areas available from the [US Census Bureau](https://www.census.gov/cgi-bin/geo/shapefiles/index.php "Zip Code Tabulation Areas"). Our goal is to create a map of the Alaskan Zip codes for use with Highcharts Maps.
 
 ![custom-geojson-maps-0.jpg](custom-geojson-maps-0.jpg)
 
@@ -20,21 +20,21 @@ We will now go through the process of importing a Shapefile in QGIS and converti
 
 2. To extract Alaska from the dataset, choose the box-selection tool in the toolbar, and draw a rectangle around the area you want to select. Then, click "Save Selection as Vector File" in the Layer menu, and save the selected area to a new file.
 
- ![custom-geojson-maps-2.jpg](custom-geojson-maps-2.jpg)
+![custom-geojson-maps-2.jpg](custom-geojson-maps-2.jpg)
 
 ![custom-geojson-maps-3.jpg](custom-geojson-maps-3.jpg)
 
- 3. Now, start a new project and import the file you saved, following the same procedure as in step 1. The result should look something like this:
+3. Now, start a new project and import the file you saved, following the same procedure as in step 1. The result should look something like this:
 
- ![custom-geojson-maps-4.jpg](custom-geojson-maps-4.jpg)
+![custom-geojson-maps-4.jpg](custom-geojson-maps-4.jpg)
 
 4. While this looks okay, we would like to modify the data before exporting it. To get access to the more advanced features of QGIS, open the Processing Toolbox (View->Panels->Toolbox).
 
- ![custom-geojson-maps-5.jpg](custom-geojson-maps-5.jpg)
+![custom-geojson-maps-5.jpg](custom-geojson-maps-5.jpg)
 
 5. We want to reproject our data to a projection more suitable for Alaska. To do this, open the "Reproject layer" tool in the Toolbox, found under Geoalgorithms->Vector->General tools. As target CRS (Coordinate Reference System), select "NAD27 / Alaska zone 2", EPSG code 26732. Save the result to a temporary file, and make sure to tick the "Open output file after running algorithm" box. After running the tool, you should get a new layer, somewhere out of view. To zoom in on the new layer, right click it in the table of contents, and select "Zoom to Layer Extent". If the process failed somehow, you might need to tweak your projection settings. Refer to the [QGIS documentation](https://docs.qgis.org/3.4/en/docs/user_manual/working_with_projections/working_with_projections.html "Working with projections") for details. 
 
- ![custom-geojson-maps-6.jpg](custom-geojson-maps-6.jpg)
+![custom-geojson-maps-6.jpg](custom-geojson-maps-6.jpg)
 
 ![custom-geojson-maps-7.jpg](custom-geojson-maps-7.jpg)
 

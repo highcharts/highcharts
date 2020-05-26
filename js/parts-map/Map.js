@@ -8,13 +8,16 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, merge = U.merge, pick = U.pick;
+var extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import '../parts/SvgRenderer.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, Renderer = H.Renderer, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
+var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {
     zoomIn: 'Zoom in',
@@ -254,26 +257,33 @@ defaultOptions.mapNavigation = {
  *
  * @function Highcharts.splitPath
  *
- * @param {string} path
+ * @param {string|Array<string|number>} path
  *
  * @return {Highcharts.SVGPathArray}
  */
 H.splitPath = function (path) {
-    var i;
-    // Move letters apart
-    path = path.replace(/([A-Za-z])/g, ' $1 ');
-    // Trim
-    path = path.replace(/^\s*/, '').replace(/\s*$/, '');
-    // Split on spaces and commas
-    // Extra comma to escape gulp.scripts task
-    path = path.split(/[ ,,]+/);
-    // Parse numbers
-    for (i = 0; i < path.length; i++) {
-        if (!/[a-zA-Z]/.test(path[i])) {
-            path[i] = parseFloat(path[i]);
-        }
+    var arr;
+    if (typeof path === 'string') {
+        path = path
+            // Move letters apart
+            .replace(/([A-Za-z])/g, ' $1 ')
+            // Trim
+            .replace(/^\s*/, '').replace(/\s*$/, '');
+        // Split on spaces and commas. The semicolon is bogus, designed to
+        // circumvent string replacement in the pre-v7 assembler that built
+        // specific styled mode files.
+        var split = path.split(/[ ,;]+/);
+        arr = split.map(function (item) {
+            if (!/[A-za-z]/.test(item)) {
+                return parseFloat(item);
+            }
+            return item;
+        });
     }
-    return path;
+    else {
+        arr = path;
+    }
+    return SVGRenderer.prototype.pathToSegments(arr);
 };
 /**
  * Contains all loaded map data for Highmaps.
@@ -290,39 +300,33 @@ H.maps = {};
  */
 function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBottomLeft) {
     return [
-        'M', x + rTopLeft, y,
+        ['M', x + rTopLeft, y],
         // top side
-        'L', x + w - rTopRight, y,
+        ['L', x + w - rTopRight, y],
         // top right corner
-        'C', x + w - rTopRight / 2,
-        y, x + w,
-        y + rTopRight / 2, x + w, y + rTopRight,
+        ['C', x + w - rTopRight / 2, y, x + w, y + rTopRight / 2, x + w, y + rTopRight],
         // right side
-        'L', x + w, y + h - rBottomRight,
+        ['L', x + w, y + h - rBottomRight],
         // bottom right corner
-        'C', x + w, y + h - rBottomRight / 2,
-        x + w - rBottomRight / 2, y + h,
-        x + w - rBottomRight, y + h,
+        ['C', x + w, y + h - rBottomRight / 2, x + w - rBottomRight / 2, y + h, x + w - rBottomRight, y + h],
         // bottom side
-        'L', x + rBottomLeft, y + h,
+        ['L', x + rBottomLeft, y + h],
         // bottom left corner
-        'C', x + rBottomLeft / 2, y + h,
-        x, y + h - rBottomLeft / 2,
-        x, y + h - rBottomLeft,
+        ['C', x + rBottomLeft / 2, y + h, x, y + h - rBottomLeft / 2, x, y + h - rBottomLeft],
         // left side
-        'L', x, y + rTopLeft,
+        ['L', x, y + rTopLeft],
         // top left corner
-        'C', x, y + rTopLeft / 2,
-        x + rTopLeft / 2, y,
-        x + rTopLeft, y,
-        'Z'
+        ['C', x, y + rTopLeft / 2, x + rTopLeft / 2, y, x + rTopLeft, y],
+        ['Z']
     ];
 }
-SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
+SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, options) {
+    var r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);
 };
-SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
+SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, options) {
+    var r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers.
 // Even VML browsers need this in order to generate shapes in export. Now share
@@ -370,7 +374,7 @@ H.Map = H.mapChart = function (a, b, c) {
         minPadding: 0,
         maxPadding: 0,
         startOnTick: false
-    }, seriesOptions, defaultCreditsOptions = H.getOptions().credits;
+    }, seriesOptions, defaultCreditsOptions = getOptions().credits;
     /* For visual testing
     hiddenAxis.gridLineWidth = 1;
     hiddenAxis.gridZIndex = 10;

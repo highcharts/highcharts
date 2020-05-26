@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../../parts/SVGPath';
 import H from '../../parts/Globals.js';
 
 /**
@@ -120,7 +121,7 @@ declare global {
             public destroy(): void;
             public getDegree(): number;
             public getLinkAttributes(): SVGAttributes;
-            public getLinkPath(): SVGPathArray;
+            public getLinkPath(): SVGPath;
             public getMass(): Dictionary<number>;
             public getPointsCollection(): Array<NetworkgraphPoint>;
             public init(
@@ -431,6 +432,9 @@ seriesType<Highcharts.NetworkgraphSeries>(
 
             textPath: {
                 enabled: false
+            },
+            style: {
+                transition: 'opacity 2000ms'
             }
 
         },
@@ -803,7 +807,6 @@ seriesType<Highcharts.NetworkgraphSeries>(
 
             return attribs;
         },
-
         /**
          * Run pre-translation and register nodes&links to the deffered layout.
          * @private
@@ -893,14 +896,15 @@ seriesType<Highcharts.NetworkgraphSeries>(
          * @private
          */
         render: function (this: Highcharts.NetworkgraphSeries): void {
-            var points = this.points,
-                hoverPoint = this.chart.hoverPoint,
+            var series = this,
+                points = series.points,
+                hoverPoint = series.chart.hoverPoint,
                 dataLabels = [] as Array<Highcharts.SVGElement>;
 
             // Render markers:
-            this.points = this.nodes;
+            series.points = series.nodes;
             seriesTypes.line.prototype.render.call(this);
-            this.points = points;
+            series.points = points;
 
             points.forEach(function (
                 point: Highcharts.NetworkgraphPoint
@@ -911,22 +915,21 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 }
             });
 
-            if (hoverPoint && hoverPoint.series === this) {
-                this.redrawHalo(hoverPoint as Highcharts.NetworkgraphPoint);
+            if (hoverPoint && hoverPoint.series === series) {
+                series.redrawHalo(hoverPoint as Highcharts.NetworkgraphPoint);
             }
 
-            if (this.chart.hasRendered &&
-                !(this.options.dataLabels as any).allowOverlap
+            if (series.chart.hasRendered &&
+                !(series.options.dataLabels as any).allowOverlap
             ) {
-                this.nodes.concat(this.points).forEach(function (
+                series.nodes.concat(series.points).forEach(function (
                     node: Highcharts.NetworkgraphPoint
                 ): void {
                     if (node.dataLabel) {
                         dataLabels.push(node.dataLabel);
                     }
                 });
-
-                this.chart.hideOverlappingLabels(dataLabels);
+                series.chart.hideOverlappingLabels(dataLabels);
             }
         },
 
@@ -1166,9 +1169,13 @@ seriesType<Highcharts.NetworkgraphSeries>(
                 }
                 this.graphic.animate(this.shapeArgs);
 
-                // Required for dataLabels:
-                this.plotX = ((path as any)[1] + (path as any)[4]) / 2;
-                this.plotY = ((path as any)[2] + (path as any)[5]) / 2;
+                // Required for dataLabels
+                const start = path[0];
+                const end = path[1];
+                if (start[0] === 'M' && end[0] === 'L') {
+                    this.plotX = (start[1] + end[1]) / 2;
+                    this.plotY = (start[2] + end[2]) / 2;
+                }
             }
         },
         /**
@@ -1200,7 +1207,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
          */
         getLinkPath: function (
             this: Highcharts.NetworkgraphPoint
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var left = this.fromNode,
                 right = this.toNode;
 
@@ -1212,12 +1219,8 @@ seriesType<Highcharts.NetworkgraphSeries>(
             }
 
             return [
-                'M',
-                left.plotX as any,
-                left.plotY as any,
-                'L',
-                right.plotX as any,
-                right.plotY as any
+                ['M', left.plotX || 0, left.plotY || 0],
+                ['L', right.plotX || 0, right.plotY || 0]
             ];
             /*
             IDEA: different link shapes?

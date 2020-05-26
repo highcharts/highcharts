@@ -1402,7 +1402,8 @@ Highcharts.chart('container', {
                 property: 'innerArcLength',
                 operator: '>',
                 value: 16
-            }
+            },
+            rotationMode: 'circular'
         },
         levels: [{
             level: 1,

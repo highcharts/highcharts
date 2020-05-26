@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -52,7 +54,7 @@ declare global {
                 state?: string
             ): SVGAttributes;
             public translate(): void;
-            public windArrow(point: WindbarbPoint): (SVGElement|SVGPathArray);
+            public windArrow(point: WindbarbPoint): (SVGElement|SVGPath);
         }
         interface DataGroupingApproximationsDictionary {
             windbarb?(
@@ -296,10 +298,10 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
         windArrow: function (
             this: Highcharts.WindbarbSeries,
             point: Highcharts.WindbarbPoint
-        ): (Highcharts.SVGElement|Highcharts.SVGPathArray) {
+        ): (Highcharts.SVGElement|SVGPath) {
             var knots = point.value * 1.943844,
                 level = point.beaufortLevel,
-                path: Highcharts.SVGPathArray,
+                path: SVGPath,
                 barbs,
                 u = (this.options.vectorLength as any) / 20,
                 pos = -10;
@@ -319,12 +321,12 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
 
             // The stem and the arrow head
             path = [
-                'M', 0, 7 * u, // base of arrow
-                'L', -1.5 * u, 7 * u,
-                0, 10 * u,
-                1.5 * u, 7 * u,
-                0, 7 * u,
-                0, -10 * u// top
+                ['M', 0, 7 * u], // base of arrow
+                ['L', -1.5 * u, 7 * u],
+                ['L', 0, 10 * u],
+                ['L', 1.5 * u, 7 * u],
+                ['L', 0, 7 * u],
+                ['L', 0, -10 * u] // top
             ];
 
             // For each full 50 knots, add a pennant
@@ -332,16 +334,9 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             if (barbs > 0) {
                 while (barbs--) {
                     path.push(
-                        pos === -10 ? 'L' : 'M',
-                        0,
-                        pos * u,
-                        'L',
-                        5 * u,
-                        pos * u + 2,
-                        'L',
-                        0,
-                        pos * u + 4
-
+                        pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u],
+                        ['L', 5 * u, pos * u + 2],
+                        ['L', 0, pos * u + 4]
                     );
 
                     // Substract from the rest and move position for next
@@ -355,12 +350,8 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             if (barbs > 0) {
                 while (barbs--) {
                     path.push(
-                        pos === -10 ? 'L' : 'M',
-                        0,
-                        pos * u,
-                        'L',
-                        7 * u,
-                        pos * u
+                        pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u],
+                        ['L', 7 * u, pos * u]
                     );
                     knots -= 10;
                     pos += 3;
@@ -372,12 +363,8 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
             if (barbs > 0) {
                 while (barbs--) {
                     path.push(
-                        pos === -10 ? 'L' : 'M',
-                        0,
-                        pos * u,
-                        'L',
-                        4 * u,
-                        pos * u
+                        pos === -10 ? ['L', 0, pos * u] : ['M', 0, pos * u],
+                        ['L', 4 * u, pos * u]
                     );
                     knots -= 5;
                     pos += 3;

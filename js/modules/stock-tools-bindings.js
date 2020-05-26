@@ -11,9 +11,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import NavigationBindings from '../annotations/navigationBindings.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, uniqueKey = U.uniqueKey;
-var bindingsUtils = H.NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
+var correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, setOptions = U.setOptions, uniqueKey = U.uniqueKey;
+var bindingsUtils = NavigationBindings.prototype.utils, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Generates function which will add a flag series using modal in GUI.
@@ -282,7 +283,7 @@ bindingsUtils.updateNthPoint = function (startIndex) {
     };
 };
 // Extends NavigationBindigs to support indicators and resizers:
-extend(H.NavigationBindings.prototype, {
+extend(NavigationBindings.prototype, {
     /* eslint-disable valid-jsdoc */
     /**
      * Get current positions for all yAxes. If new axis does not have position,
@@ -389,7 +390,7 @@ extend(H.NavigationBindings.prototype, {
         defaultHeight = defaultHeight || 20; // in %, but as a number
         var chart = this.chart, 
         // Only non-navigator axes
-        yAxes = chart.yAxis.filter(this.utils.isNotNavigatorYAxis), plotHeight = chart.plotHeight, allAxesLength = yAxes.length, 
+        yAxes = chart.yAxis.filter(bindingsUtils.isNotNavigatorYAxis), plotHeight = chart.plotHeight, allAxesLength = yAxes.length, 
         // Gather current heights (in %)
         positions = this.getYAxisPositions(yAxes, plotHeight, defaultHeight), resizers = this.getYAxisResizers(yAxes), allAxesHeight = positions.allAxesHeight, changedSpace = defaultHeight;
         // More than 100%
@@ -1555,6 +1556,7 @@ var stockToolsBindings = {
         // eslint-disable-next-line valid-jsdoc
         /** @ignore-option */
         init: function (button) {
+            this.chart.fullscreen.toggle();
             fireEvent(this, 'deselectButton', { button: button });
         }
     },
@@ -1696,7 +1698,7 @@ var stockToolsBindings = {
                 }
             });
             chart.yAxis.forEach(function (yAxis) {
-                if (navigation.utils.isNotNavigatorYAxis(yAxis)) {
+                if (bindingsUtils.isNotNavigatorYAxis(yAxis)) {
                     yAxes.push(yAxis.options);
                 }
             });
@@ -1710,8 +1712,9 @@ var stockToolsBindings = {
         }
     }
 };
-H.setOptions({
+setOptions({
     navigation: {
         bindings: stockToolsBindings
     }
 });
+NavigationBindings.prototype.utils = merge(bindingsUtils, NavigationBindings.prototype.utils);

@@ -38,6 +38,7 @@
             }
         ],
         "no-dupe-class-members": 0,
+        "no-inner-declarations": 0, // deprecated with ES6
         "no-shadow": 0, // @todo
         "no-undef": 0,
         "no-underscore-dangle": 0, // @todo

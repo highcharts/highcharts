@@ -13,8 +13,27 @@
  * */
 
 'use strict';
-
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    defined,
+    error,
+    isArray,
+    isFunction,
+    isObject,
+    isNumber,
+    merge,
+    objectEach,
+    relativeLength,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -238,32 +257,13 @@ declare global {
 
 ''; // detach doclets from following code
 
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    defined,
-    error,
-    isArray,
-    isFunction,
-    isObject,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    syncTimeout
-} = U;
-
 /* eslint-disable no-invalid-this */
 
 import '../parts/Axis.js';
 import '../parts/Series.js';
-import '../parts/SvgRenderer.js';
 
 var Series = H.Series,
     Scatter = H.seriesTypes.scatter,
-    SvgRenderer = H.SVGRenderer,
     baseGeneratePoints = Series.prototype.generatePoints,
     stateIdCounter = 0,
     // Points that ids are included in the oldPointsStateId array
@@ -564,8 +564,8 @@ var clusterDefaultOptions = {
     }
 };
 
-(H.defaultOptions.plotOptions || {}).series = merge(
-    (H.defaultOptions.plotOptions || {}).series,
+(defaultOptions.plotOptions || {}).series = merge(
+    (defaultOptions.plotOptions || {}).series,
     {
         cluster: clusterDefaultOptions,
         tooltip: {
@@ -842,38 +842,39 @@ function getStateId(): string {
 
 
 // Cluster symbol.
-SvgRenderer.prototype.symbols.cluster = function (
-    this: Highcharts.SVGRenderer,
+SVGRenderer.prototype.symbols.cluster = function (
     x: number,
     y: number,
     width: number,
     height: number
-): Highcharts.SVGElement {
+): SVGPath {
     var w = width / 2,
         h = height / 2,
         outerWidth = 1,
         space = 1,
-        inner, outer1, outer2;
+        inner: SVGPath,
+        outer1: SVGPath,
+        outer2: SVGPath;
 
     inner = this.arc(x + w, y + h, w - space * 4, h - space * 4, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         open: false
-    } as any);
+    });
 
     outer1 = this.arc(x + w, y + h, w - space * 3, h - space * 3, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         innerR: w - outerWidth * 2,
         open: false
-    } as any);
+    });
 
     outer2 = this.arc(x + w, y + h, w - space, h - space, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         innerR: w,
         open: false
-    } as any);
+    });
 
     return outer2.concat(outer1, inner);
 };
@@ -1818,7 +1819,7 @@ Scatter.prototype.getClusteredData = function (
         groupedYData = [],
         clusters = [], // Container for clusters.
         noise = [], // Container for points not belonging to any cluster.
-        groupMap = [],
+        groupMap: Array<Highcharts.GroupMapObject> = [],
         index = 0,
 
         // Prevent minimumClusterSize lower than 2.
@@ -1983,7 +1984,7 @@ Scatter.prototype.getClusteredData = function (
                     };
                 }
 
-                groupMap.push({ options: pointOptions });
+                groupMap.push({ options: pointOptions as any });
                 index++;
             }
         }

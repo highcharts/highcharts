@@ -35,10 +35,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
-    isNumber
+    isNumber,
+    setOptions
 } = U;
-
-var setOptions = H.setOptions;
 
 setOptions({
     /**
@@ -124,7 +123,7 @@ addEvent(H.Chart, 'displayError', function (
             'debugger'
         ).css({
             color: '#ffffff',
-            width: chartWidth - 16,
+            width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({
             fill: 'rgba(255, 0, 0, 0.9)',

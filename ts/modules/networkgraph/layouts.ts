@@ -939,19 +939,23 @@ addEvent(Chart as any, 'render', function (
 addEvent(Chart as any, 'beforePrint', function (
     this: Highcharts.PackedBubbleChart
 ): void {
-    this.graphLayoutsLookup.forEach(function (layout): void {
-        layout.updateSimulation(false);
-    });
-    this.redraw();
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout): void {
+            layout.updateSimulation(false);
+        });
+        this.redraw();
+    }
 });
 
 // re-enable simulation after print
 addEvent(Chart as any, 'afterPrint', function (
     this: Highcharts.PackedBubbleChart
 ): void {
-    this.graphLayoutsLookup.forEach(function (layout): void {
-        // return to default simulation
-        layout.updateSimulation();
-    });
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout): void {
+            // return to default simulation
+            layout.updateSimulation();
+        });
+    }
     this.redraw();
 });

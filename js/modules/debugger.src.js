@@ -10,8 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, isNumber = U.isNumber;
-var setOptions = H.setOptions;
+var addEvent = U.addEvent, isNumber = U.isNumber, setOptions = U.setOptions;
 setOptions({
     /**
      * @optionparent chart
@@ -61,7 +60,7 @@ addEvent(H.Chart, 'displayError', function (e) {
         // Render error message
         chart.errorElements[1] = renderer.label(msg, 0, 0, 'rect', void 0, void 0, void 0, void 0, 'debugger').css({
             color: '#ffffff',
-            width: chartWidth - 16,
+            width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({
             fill: 'rgba(255, 0, 0, 0.9)',

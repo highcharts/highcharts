@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 
@@ -361,11 +362,18 @@ seriesType<Highcharts.VBPIndicator>(
             init: boolean
         ): void {
             var series = this,
-                attr: Highcharts.SVGAttributes = {};
+                inverted = series.chart.inverted,
+                group = series.group,
+                attr: Highcharts.SVGAttributes = {},
+                translate,
+                position;
 
-            if (!init) {
-                attr.translateX = series.yAxis.pos;
-                (series.group as any).animate(
+            if (!init && group) {
+                translate = inverted ? 'translateY' : 'translateX';
+                position = inverted ? series.yAxis.top : series.xAxis.left;
+                group['forceAnimate:' + translate] = true;
+                attr[translate] = position;
+                group.animate(
                     attr,
                     extend(animObject(series.options.animation), {
                         step: function (val: any, fx: any): void {
@@ -795,7 +803,7 @@ seriesType<Highcharts.VBPIndicator>(
             var indicator = this,
                 renderer: Highcharts.Renderer = chart.renderer,
                 zoneLinesSVG: Highcharts.SVGElement = indicator.zoneLinesSVG,
-                zoneLinesPath: Highcharts.SVGPathArray = [],
+                zoneLinesPath: SVGPath = [],
                 leftLinePos = 0,
                 rightLinePos: number = chart.plotWidth,
                 verticalOffset: number = chart.plotTop,
@@ -803,14 +811,15 @@ seriesType<Highcharts.VBPIndicator>(
 
             zonesValues.forEach(function (value: number): void {
                 verticalLinePos = yAxis.toPixels(value) - verticalOffset;
-                zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([
+                zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([[
                     'M',
                     leftLinePos,
-                    verticalLinePos,
+                    verticalLinePos
+                ], [
                     'L',
                     rightLinePos,
                     verticalLinePos
-                ], (zonesStyles.lineWidth as any)));
+                ]], (zonesStyles.lineWidth as any)));
             });
 
             // Create zone lines one path or update it while animating

@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../../parts/SVGPath';
 import H from '../../parts/Globals.js';
 
 /**
@@ -48,11 +50,13 @@ declare global {
     }
 }
 
+
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
     error,
+    getOptions,
     isArray,
     isNumber,
     pick,
@@ -61,6 +65,7 @@ const {
 
 import '../../parts/Series.js';
 import '../../parts/Options.js';
+
 import '../../parts/Interaction.js';
 
 import butils from './boost-utils.js';
@@ -72,7 +77,7 @@ var boostEnabled = butils.boostEnabled,
     Chart = H.Chart,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    plotOptions: Highcharts.PlotOptions = H.getOptions().plotOptions as any;
+    plotOptions: Highcharts.PlotOptions = getOptions().plotOptions as any;
 
 /**
  * Returns true if the chart is in series boost mode.
@@ -197,7 +202,7 @@ wrap(Series.prototype, 'searchPoint', function (
 wrap(Point.prototype, 'haloPath', function (
     this: Highcharts.Point,
     proceed: Function
-): Highcharts.SVGPathArray {
+): SVGPath {
     var halo,
         point = this,
         series = point.series,
@@ -450,6 +455,9 @@ Series.prototype.enterBoost = function (): void {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
+
+    // Prevent animation when zooming in on boosted series(#13421).
+    this.finishedAnimating = true;
 
     // Hide series label if any
     if (this.labelBySeries) {

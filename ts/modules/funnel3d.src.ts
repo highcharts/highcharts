@@ -13,6 +13,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -84,9 +86,9 @@ declare global {
             funnel3dPath(shapeArgs: SVGAttributes): Funnel3dPathsObject;
         }
         interface Funnel3dPathsObject extends SVGPath3dObject {
-            frontUpper: SVGPathArray;
-            backUpper: SVGPathArray;
-            rightUpper: SVGPathArray;
+            frontUpper: SVGPath;
+            backUpper: SVGPath;
+            rightUpper: SVGPath;
         }
     }
 }
@@ -104,11 +106,11 @@ const {
 } = U;
 
 import '../parts/ColumnSeries.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SVGRenderer.js';
 
 var charts = H.charts,
     seriesTypes = H.seriesTypes,
-    // Use H.Renderer instead of H.SVGRenderer for VML support.
+    // Use H.Renderer instead of SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,
     //
     cuboidPath = RendererProto.cuboidPath,

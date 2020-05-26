@@ -330,7 +330,7 @@
                     y1 = plotY - metrics.width / 2,
                     y2 = plotY + metrics.width / 2,
                     path = renderer.crispLine(
-                        ['M', x1, y1, 'L', x2, y2], lineWidth
+                        [['M', x1, y1], ['L', x2, y2]], lineWidth
                     ),
                     attr = {
                         stroke: options.color,

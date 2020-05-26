@@ -7039,3 +7039,84 @@ QUnit.test('Named categories (#6704)', function (assert) {
         'Drilled category length'
     );
 });
+
+QUnit.test('Wrong points after click on label (#12656)', function (assert) {
+    var fireEvent = Highcharts.fireEvent,
+        chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                inverted: true,
+                events: {
+                    drilldown: function () {
+                        this.update({});
+                    },
+                    drillup: function () {
+                        this.update({});
+                    }
+                }
+            },
+            xAxis: {
+                type: 'category'
+            },
+            series: [{
+                name: "Browsers",
+                data: [{
+                    name: "Chrome",
+                    y: 62.74,
+                    drilldown: "Chrome"
+                },
+                {
+                    name: "Firefox",
+                    y: 10.57,
+                    drilldown: "Firefox"
+                },
+                {
+                    name: "Internet Explorer",
+                    y: 7.23,
+                    drilldown: "Internet Explorer"
+                }]
+            }],
+            drilldown: {
+                series: [{
+                    name: "Chrome",
+                    id: "Chrome",
+                    data: [
+                        [
+                            "v65.0",
+                            0.1
+                        ]
+                    ]
+                },
+                {
+                    name: "Firefox",
+                    id: "Firefox",
+                    data: [
+                        [
+                            "v58.0",
+                            1.5
+                        ]
+                    ]
+                },
+                {
+                    name: "Internet Explorer",
+                    id: "Internet Explorer",
+                    data: [
+                        [
+                            "v11.0",
+                            6.2
+                        ]
+                    ]
+                }]
+            }
+        });
+
+    fireEvent(chart.xAxis[0].ticks[2].label.element, 'click');
+    chart.drillUp();
+
+    fireEvent(chart.xAxis[0].ticks[1].label.element, 'click');
+
+    assert.ok(
+        chart.series[0].name === 'Firefox' && chart.series[0].data[0].y === 1.5,
+        'Points from Firefox should be visible (#12656).'
+    );
+});

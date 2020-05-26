@@ -12,6 +12,8 @@
 
 'use strict';
 
+import type SVGElement from '../parts/SVGElement';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -178,7 +180,7 @@ declare global {
             resize: boolean;
             resizeSide: (string|SeriesDragDropPropsResizeSideFunction);
             validateIndividualDrag?: Function;
-            handleFormatter(point: Point): (SVGPathArray|null);
+            handleFormatter(point: Point): (SVGPath|null);
             handlePositioner(point: Point): PositionObject;
             propValidate(val: number, point: Point): boolean;
         }
@@ -437,7 +439,7 @@ Supported options for each prop:
 // 90deg rotated column handle path, used in multiple series types
 var horizHandleFormatter = function (
     point: Highcharts.Point
-): Highcharts.SVGPathArray {
+): SVGPath {
     var shapeArgs = point.shapeArgs || (point.graphic as any).getBBox(),
         top = shapeArgs.r || 0, // Rounding of bar corners
         bottom = shapeArgs.height - top,
@@ -445,14 +447,14 @@ var horizHandleFormatter = function (
 
     return [
         // Top wick
-        'M', 0, top,
-        'L', 0, centerY - 5,
+        ['M', 0, top],
+        ['L', 0, centerY - 5],
         // Circle
-        'A', 1, 1, 0, 0, 0, 0, centerY + 5,
-        'A', 1, 1, 0, 0, 0, 0, centerY - 5,
+        ['A', 1, 1, 0, 0, 0, 0, centerY + 5],
+        ['A', 1, 1, 0, 0, 0, 0, centerY - 5],
         // Bottom wick
-        'M', 0, centerY + 5,
-        'L', 0, bottom
+        ['M', 0, centerY + 5],
+        ['L', 0, bottom]
     ];
 };
 
@@ -552,21 +554,22 @@ var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         // Horizontal handle
         handleFormatter: function (
             point: Highcharts.ColumnPoint
-        ): Highcharts.SVGPathArray {
-            var shapeArgs = point.shapeArgs,
-                radius = (shapeArgs as any).r || 0, // Rounding of bar corners
-                centerX = (shapeArgs as any).width / 2;
+        ): SVGPath {
+            var shapeArgs = point.shapeArgs || {},
+                radius: number = shapeArgs.r || 0, // Rounding of bar corners
+                width: number = shapeArgs.width || 0,
+                centerX = width / 2;
 
             return [
                 // Left wick
-                'M', radius, 0,
-                'L', centerX - 5, 0,
+                ['M', radius, 0],
+                ['L', centerX - 5, 0],
                 // Circle
-                'A', 1, 1, 0, 0, 0, centerX + 5, 0,
-                'A', 1, 1, 0, 0, 0, centerX - 5, 0,
+                ['A', 1, 1, 0, 0, 0, centerX + 5, 0],
+                ['A', 1, 1, 0, 0, 0, centerX - 5, 0],
                 // Right wick
-                'M', centerX + 5, 0,
-                'L', (shapeArgs as any).width - radius, 0
+                ['M', centerX + 5, 0],
+                ['L', width - radius, 0]
             ];
         }
     }
@@ -953,15 +956,15 @@ if (seriesTypes.arearange) {
         // Use a circle covering the marker as drag handle
         arearangeHandleFormatter = function (
             point: Highcharts.AreaRangePoint
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var radius = point.graphic ?
                 point.graphic.getBBox().width / 2 + 1 :
                 4;
 
             return [
-                'M', 0 - radius, 0,
-                'a', radius, radius, 0, 1, 0, radius * 2, 0,
-                'a', radius, radius, 0, 1, 0, radius * -2, 0
+                ['M', 0 - radius, 0],
+                ['a', radius, radius, 0, 1, 0, radius * 2, 0],
+                ['a', radius, radius, 0, 1, 0, radius * -2, 0]
             ];
         };
 
@@ -1031,7 +1034,7 @@ if (seriesTypes.waterfall) {
         y: merge(columnDragDropProps.y, {
             handleFormatter: function (
                 point: Highcharts.WaterfallPoint
-            ): (Highcharts.SVGPathArray|null) {
+            ): (SVGPath|null) {
                 return point.isSum || point.isIntermediateSum ? null :
                     columnDragDropProps.y.handleFormatter(point);
             }
@@ -2657,12 +2660,9 @@ H.Chart.prototype.hideDragHandles = function (): void {
     var chart = this;
 
     if (chart.dragHandles) {
-        objectEach(chart.dragHandles, function (
-            val: { destroy?: Function },
-            key: string
-        ): void {
-            if (key !== 'group' && val.destroy) {
-                val.destroy();
+        objectEach(chart.dragHandles, function (val, key): void {
+            if (key !== 'group' && (val as SVGElement).destroy) {
+                (val as SVGElement).destroy();
             }
         });
         if (chart.dragHandles.group && chart.dragHandles.group.destroy) {

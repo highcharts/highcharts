@@ -9,7 +9,17 @@
  * */
 
 import type Axis from '../parts/Axis';
+import type Chart from '../parts/Chart';
 import type RadialAxis from './RadialAxis';
+
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisTypeRegistry {
+        HiddenAxis: HiddenAxis;
+    }
+}
 
 /**
  * @private
@@ -38,7 +48,7 @@ class HiddenAxis {
             this.isDirty = false; // prevent setting Y axis dirty
         };
 
-        axis.createLabelCollector = function (): Highcharts.ChartLabelCollectorFunction {
+        axis.createLabelCollector = function (): Chart.LabelCollectorFunction {
             return function (): undefined {
                 return;
             };

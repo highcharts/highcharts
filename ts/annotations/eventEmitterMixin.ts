@@ -4,6 +4,7 @@
  *
  * */
 
+import type Annotation from '../annotations/annotations.src';
 import H from '../parts/Globals.js';
 
 /**
@@ -74,7 +75,7 @@ const {
  * @mixin
  * @memberOf Annotation
  */
-var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
+const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Add emitter events.
      */
@@ -95,14 +96,14 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         addMouseDownEvent(this.graphic.element);
 
         (emitter.labels || []).forEach((label): void => {
-            if (label.options.useHTML) {
+            if (label.options.useHTML && label.graphic.text) {
                 // Mousedown event bound to HTML element (#13070).
                 addMouseDownEvent(label.graphic.text.element);
             }
         });
 
         objectEach(emitter.options.events, function (
-            event: Highcharts.EventCallbackFunction<Highcharts.Annotation>,
+            event: Highcharts.EventCallbackFunction<Annotation>,
             type: string
         ): void {
             var eventHandler = function (e: Highcharts.PointerEventObject): void {
@@ -140,7 +141,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 emitter.graphic.css(cssPointer);
 
                 (emitter.labels || []).forEach((label): void => {
-                    if (label.options.useHTML) {
+                    if (label.options.useHTML && label.graphic.text) {
                         label.graphic.text.css(cssPointer);
                     }
                 });
@@ -226,7 +227,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      */
     onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
         var chart = this.chart,
-            annotation: Highcharts.Annotation = this.target as any || this,
+            annotation: Annotation = this.target as any || this,
             annotationsOptions = chart.options.annotations,
             index = chart.annotations.indexOf(annotation);
 
@@ -369,5 +370,9 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         this.hcEvents = null;
     }
 };
+
+namespace eventEmitterMixin {
+    export type Type = Highcharts.AnnotationEventEmitter;
+}
 
 export default eventEmitterMixin;

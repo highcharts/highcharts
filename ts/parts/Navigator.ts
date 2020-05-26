@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import Color from './Color.js';
 const {
@@ -80,15 +81,6 @@ declare global {
         interface Series {
             baseSeries?: Series;
             navigatorSeries?: Series;
-        }
-        interface SymbolDictionary {
-            'navigator-handle': (
-                x: number,
-                y: number,
-                w: number,
-                h: number,
-                options: NavigatorHandlesOptions
-            ) => SVGPathArray;
         }
         interface XAxisOptions {
             maxRange?: number;
@@ -202,10 +194,10 @@ declare global {
 
 import './Chart.js';
 import './Series.js';
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 
 var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
     hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     Series = H.Series,
@@ -760,31 +752,22 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.NavigatorHandlesOptions
-): Highcharts.SVGPathArray {
-    var halfWidth = (options.width as any) / 2,
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
+    var halfWidth = (options && options.width || 0) / 2,
         markerPosition = Math.round(halfWidth / 3) + 0.5,
-        height = options.height as any;
+        height = options && options.height || 0;
 
     return [
-        'M',
-        -halfWidth - 1, 0.5,
-        'L',
-        halfWidth, 0.5,
-        'L',
-        halfWidth, height + 0.5,
-        'L',
-        -halfWidth - 1, height + 0.5,
-        'L',
-        -halfWidth - 1, 0.5,
-        'M',
-        -markerPosition, 4,
-        'L',
-        -markerPosition, height - 3,
-        'M',
-        markerPosition - 1, 4,
-        'L',
-        markerPosition - 1, height - 3
+        ['M', -halfWidth - 1, 0.5],
+        ['L', halfWidth, 0.5],
+        ['L', halfWidth, height + 0.5],
+        ['L', -halfWidth - 1, height + 0.5],
+        ['L', -halfWidth - 1, 0.5],
+        ['M', -markerPosition, 4],
+        ['L', -markerPosition, height - 3],
+        ['M', markerPosition - 1, 4],
+        ['L', markerPosition - 1, height - 3]
     ];
 };
 
@@ -918,12 +901,12 @@ class Navigator {
             halfOutline = outlineWidth / 2,
             outlineCorrection = (outlineWidth % 2) / 2, // #5800
             outlineHeight = navigator.outlineHeight,
-            scrollbarHeight = navigator.scrollbarHeight,
+            scrollbarHeight = navigator.scrollbarHeight || 0,
             navigatorSize = navigator.size,
-            left = navigator.left - (scrollbarHeight as any),
+            left = navigator.left - scrollbarHeight,
             navigatorTop = navigator.top,
             verticalMin,
-            path;
+            path: SVGPath;
 
         if (inverted) {
             left -= halfOutline;
@@ -931,66 +914,38 @@ class Navigator {
             zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
 
             path = [
-                'M',
-                left + outlineHeight,
-                // top edge
-                navigatorTop - (scrollbarHeight as any) - outlineCorrection,
-                'L',
-                left + outlineHeight,
-                verticalMin, // top right of zoomed range
-                'L',
-                left,
-                verticalMin, // top left of z.r.
-                'L',
-                left,
-                zoomedMax, // bottom left of z.r.
-                'L',
-                left + outlineHeight,
-                zoomedMax, // bottom right of z.r.
-                'L',
-                left + outlineHeight,
-                // bottom edge
-                navigatorTop + navigatorSize + (scrollbarHeight as any)
-            ].concat(maskInside ? [
-                'M',
-                left + outlineHeight,
-                verticalMin - halfOutline, // upper left of zoomed range
-                'L',
-                left + outlineHeight,
-                zoomedMax + halfOutline // upper right of z.r.
-            ] : []);
+                ['M', left + outlineHeight, navigatorTop - scrollbarHeight - outlineCorrection],
+                ['L', left + outlineHeight, verticalMin], // top right of zoomed range
+                ['L', left, verticalMin], // top left of z.r.
+                ['L', left, zoomedMax], // bottom left of z.r.
+                ['L', left + outlineHeight, zoomedMax], // bottom right of z.r.
+                ['L', left + outlineHeight, navigatorTop + navigatorSize + scrollbarHeight]
+            ];
+            if (maskInside) {
+                path.push(
+                    ['M', left + outlineHeight, verticalMin - halfOutline], // upper left of zoomed range
+                    ['L', left + outlineHeight, zoomedMax + halfOutline] // upper right of z.r.
+                );
+            }
         } else {
-            zoomedMin += left + (scrollbarHeight as any) - outlineCorrection;
-            zoomedMax += left + (scrollbarHeight as any) - outlineCorrection;
+            zoomedMin += left + scrollbarHeight - outlineCorrection;
+            zoomedMax += left + scrollbarHeight - outlineCorrection;
             navigatorTop += halfOutline;
 
             path = [
-                'M',
-                left,
-                navigatorTop, // left
-                'L',
-                zoomedMin,
-                navigatorTop, // upper left of zoomed range
-                'L',
-                zoomedMin,
-                navigatorTop + outlineHeight, // lower left of z.r.
-                'L',
-                zoomedMax,
-                navigatorTop + outlineHeight, // lower right of z.r.
-                'L',
-                zoomedMax,
-                navigatorTop, // upper right of z.r.
-                'L',
-                left + navigatorSize + (scrollbarHeight as any) * 2,
-                navigatorTop // right
-            ].concat(maskInside ? [
-                'M',
-                zoomedMin - halfOutline,
-                navigatorTop, // upper left of zoomed range
-                'L',
-                zoomedMax + halfOutline,
-                navigatorTop // upper right of z.r.
-            ] : []);
+                ['M', left, navigatorTop], // left
+                ['L', zoomedMin, navigatorTop], // upper left of zoomed range
+                ['L', zoomedMin, navigatorTop + outlineHeight], // lower left of z.r.
+                ['L', zoomedMax, navigatorTop + outlineHeight], // lower right of z.r.
+                ['L', zoomedMax, navigatorTop], // upper right of z.r.
+                ['L', left + navigatorSize + scrollbarHeight * 2, navigatorTop] // right
+            ];
+            if (maskInside) {
+                path.push(
+                    ['M', zoomedMin - halfOutline, navigatorTop], // upper left of zoomed range
+                    ['L', zoomedMax + halfOutline, navigatorTop] // upper right of z.r.
+                );
+            }
         }
         navigator.outline[verb]({
             d: path
@@ -2510,9 +2465,10 @@ class Navigator {
             if (stickToMax) {
                 newMax = baseDataMax + overscroll;
 
-                // if stickToMin is true, the new min value is set above
+                // If stickToMin is true, the new min value is set above
                 if (!stickToMin) {
                     newMin = Math.max(
+                        baseDataMin, // don't go below data extremes (#13184)
                         newMax - range,
                         (navigator as any).getBaseSeriesMin(
                             navigatorSeries && navigatorSeries.xData ?

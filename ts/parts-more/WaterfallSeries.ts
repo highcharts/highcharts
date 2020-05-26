@@ -10,7 +10,23 @@
 
 'use strict';
 
+import type SVGElement from '../parts/SVGElement';
+import type SVGPath from '../parts/SVGPath';
+import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import StackItem from '../parts/Stacking.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    correctFloat,
+    isNumber,
+    objectEach,
+    pick,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -45,9 +61,9 @@ declare global {
             public yData: Array<any>;
             public drawGraph(): void;
             public generatePoints(): void;
-            public getCrispPath(): SVGPathArray;
+            public getCrispPath(): SVGPath;
             public getExtremes(): DataExtremesObject;
-            public getGraphPath(): SVGPathArray;
+            public getGraphPath(): SVGPath;
             public pointAttribs(
                 point: WaterfallPoint,
                 state: string
@@ -57,19 +73,8 @@ declare global {
             public toYData(pt: WaterfallPoint): any;
             public translate(): void;
         }
-        interface Axis {
-            renderWaterfallStackTotals: (
-                WaterfallAxis['renderWaterfallStackTotals']
-            );
-        }
         interface Series {
             showLine?: WaterfallSeries['showLine'];
-        }
-        interface WaterfallAxis extends Axis {
-            dummyStackItem?: StackItem;
-            options: YAxisOptions;
-            waterfallStacks: WaterfallStacksObject;
-            renderWaterfallStackTotals(): void;
         }
         interface WaterfallChart extends ColumnChart {
             axes: Array<WaterfallAxis>;
@@ -82,45 +87,17 @@ declare global {
             upColor?: (ColorString|GradientColorObject|PatternObject);
             states?: SeriesStatesOptionsObject<WaterfallSeries>;
         }
-        interface WaterfallStacksObject {
-            changed: boolean;
-            alreadyChanged?: Array<string>;
-            waterfall?: Dictionary<WaterfallStacksItemObject>;
-        }
-        interface WaterfallStacksItemObject {
-            label?: SVGElement;
-            negTotal: number;
-            posTotal: number;
-            stackState: Array<string>;
-            stackTotal: number;
-            stateIndex: number;
-            threshold: number;
-        }
         interface SeriesTypesDictionary {
             waterfall: typeof WaterfallSeries;
         }
     }
 }
 
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    correctFloat,
-    isNumber,
-    objectEach,
-    pick,
-    seriesType
-} = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
-import StackItem from '../parts/Stacking.js';
 
-var Axis = H.Axis,
-    Chart = H.Chart,
+var Chart = H.Chart,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -135,102 +112,219 @@ function ownProp(obj: unknown, key: string): boolean {
     return Object.hasOwnProperty.call(obj, key);
 }
 
-/* eslint-disable no-invalid-this */
+/* eslint-disable no-invalid-this, valid-jsdoc */
 
-addEvent(Axis as any, 'afterInit', function (
-    this: Highcharts.WaterfallAxis
-): void {
-    if (!this.isXAxis) {
-        this.waterfallStacks = {
-            changed: false
-        };
+/**
+ * @private
+ */
+declare module '../parts/axis/types' {
+    interface AxisComposition {
+        waterfall?: WaterfallAxis['waterfall'];
     }
-});
+    interface AxisTypeRegistry {
+        WaterfallAxis: WaterfallAxis;
+    }
+}
 
-addEvent(Axis as any, 'afterBuildStacks', function (
-    this: Highcharts.WaterfallAxis
-): void {
-    this.waterfallStacks.changed = false;
-    delete this.waterfallStacks.alreadyChanged;
-});
+/**
+ * @private
+ */
+interface WaterfallAxis extends Axis {
+    waterfall: WaterfallAxis.Composition;
+}
 
-addEvent(Chart as any, 'beforeRedraw', function (
-    this: Highcharts.WaterfallChart
-): void {
-    var axes = this.axes,
-        series = this.series,
-        i = series.length;
+/**
+ * @private
+ */
+namespace WaterfallAxis {
 
-    while (i--) {
-        if (series[i].options.stacking) {
-            axes.forEach(function (axis: Highcharts.WaterfallAxis): void {
-                if (!axis.isXAxis) {
-                    (axis.waterfallStacks as any).changed = true;
-                }
+    /* *
+     *
+     *  Interfaces
+     *
+     * */
+
+    interface StacksObject {
+        changed: boolean;
+        alreadyChanged?: Array<string>;
+        waterfall?: Record<string, StacksItemObject>;
+    }
+
+    export interface StacksItemObject {
+        label?: SVGElement;
+        negTotal: number;
+        posTotal: number;
+        stackState: Array<string>;
+        stackTotal: number;
+        stateIndex: number;
+        threshold: number;
+    }
+
+    /* *
+     *
+     *  Classes
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export class Composition {
+
+        /* *
+         *
+         *  Constructors
+         *
+         * */
+
+        /**
+         * @private
+         */
+        public constructor(axis: WaterfallAxis) {
+            this.axis = axis;
+            this.stacks = {
+                changed: false
+            };
+        }
+
+        /* *
+         *
+         *  Properties
+         *
+         * */
+
+        public axis: WaterfallAxis;
+        public dummyStackItem?: StackItem;
+        public stacks: StacksObject;
+
+        /* *
+         *
+         *  Functions
+         *
+         * */
+
+        /**
+         * Calls StackItem.prototype.render function that creates and renders
+         * stack total label for each waterfall stack item.
+         *
+         * @private
+         * @function Highcharts.Axis#renderWaterfallStackTotals
+         */
+        public renderStackTotals(): void {
+            var yAxis = this.axis,
+                waterfallStacks = yAxis.waterfall.stacks,
+                stackTotalGroup = yAxis.stacking && yAxis.stacking.stackTotalGroup,
+                dummyStackItem = new StackItem(
+                    yAxis as any,
+                    yAxis.options.stackLabels as any,
+                    false,
+                    0,
+                    void 0
+                );
+
+            this.dummyStackItem = dummyStackItem;
+
+            // Render each waterfall stack total
+            objectEach(waterfallStacks, function (type): void {
+                objectEach(type, function (
+                    stackItem: StacksItemObject
+                ): void {
+                    dummyStackItem.total = stackItem.stackTotal;
+
+                    if (stackItem.label) {
+                        dummyStackItem.label = stackItem.label;
+                    }
+
+                    StackItem.prototype.render.call(
+                        dummyStackItem,
+                        stackTotalGroup as any
+                    );
+                    stackItem.label = dummyStackItem.label;
+                    delete dummyStackItem.label;
+                });
             });
-            i = 0;
+            dummyStackItem.total = null;
+        }
+
+    }
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function compose(AxisClass: typeof Axis, ChartClass: typeof Chart): void {
+
+        addEvent(AxisClass, 'init', onInit);
+        addEvent(AxisClass, 'afterBuildStacks', onAfterBuildStacks);
+        addEvent(AxisClass, 'afterRender', onAfterRender);
+        addEvent(ChartClass, 'beforeRedraw', onBeforeRedraw);
+
+    }
+
+    /**
+     * @private
+     */
+    function onAfterBuildStacks(this: Axis): void {
+        const axis = this as WaterfallAxis;
+        const stacks = axis.waterfall.stacks;
+
+        if (stacks) {
+            stacks.changed = false;
+            delete stacks.alreadyChanged;
         }
     }
-});
 
-addEvent(Axis as any, 'afterRender', function (
-    this: Highcharts.WaterfallAxis
-): void {
-    var stackLabelOptions = this.options.stackLabels;
+    /**
+     * @private
+     */
+    function onAfterRender(this: Axis): void {
+        const axis = this as WaterfallAxis;
+        const stackLabelOptions = axis.options.stackLabels;
 
-    if (stackLabelOptions && stackLabelOptions.enabled &&
-        this.waterfallStacks) {
-        this.renderWaterfallStackTotals();
+        if (stackLabelOptions && stackLabelOptions.enabled &&
+            axis.waterfall.stacks) {
+            axis.waterfall.renderStackTotals();
+        }
     }
-});
+
+    /**
+     * @private
+     */
+    function onBeforeRedraw(this: Highcharts.Chart): void {
+        var axes = this.axes as Array<WaterfallAxis>,
+            series = this.series,
+            i = series.length;
+
+        while (i--) {
+            if (series[i].options.stacking) {
+                axes.forEach(function (axis: WaterfallAxis): void {
+                    if (!axis.isXAxis) {
+                        axis.waterfall.stacks.changed = true;
+                    }
+                });
+                i = 0;
+            }
+        }
+    }
+
+    /**
+     * @private
+     */
+    function onInit(this: Axis): void {
+        const axis = this;
+
+        if (!axis.waterfall) {
+            axis.waterfall = new Composition(axis as WaterfallAxis);
+        }
+    }
+}
 
 // eslint-disable-next-line valid-jsdoc
-/**
- * Calls StackItem.prototype.render function that creates and renders stack
- * total label for each waterfall stack item.
- *
- * @private
- * @function Highcharts.Axis#renderWaterfallStackTotals
- */
-Axis.prototype.renderWaterfallStackTotals = function (
-    this: Highcharts.WaterfallAxis
-): void {
-    var yAxis = this,
-        waterfallStacks = yAxis.waterfallStacks,
-        stackTotalGroup = yAxis.stackTotalGroup,
-        dummyStackItem = new StackItem(
-            yAxis,
-            yAxis.options.stackLabels as any,
-            false,
-            0,
-            void 0
-        );
-
-    yAxis.dummyStackItem = dummyStackItem;
-
-    // Render each waterfall stack total
-    objectEach(waterfallStacks, function (
-        type: (boolean|Highcharts.WaterfallStacksItemObject)
-    ): void {
-        objectEach(type, function (
-            stackItem: Highcharts.WaterfallStacksItemObject
-        ): void {
-            dummyStackItem.total = stackItem.stackTotal;
-
-            if (stackItem.label) {
-                dummyStackItem.label = stackItem.label;
-            }
-
-            StackItem.prototype.render.call(
-                dummyStackItem,
-                stackTotalGroup as any
-            );
-            stackItem.label = dummyStackItem.label;
-            delete dummyStackItem.label;
-        });
-    });
-    dummyStackItem.total = null;
-};
 
 /**
  * A waterfall chart displays sequentially introduced positive or negative
@@ -375,7 +469,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             threshold = options.threshold,
             stacking = options.stacking,
             tooltipY,
-            actualStack = yAxis.waterfallStacks[series.stackKey],
+            actualStack = yAxis.waterfall.stacks[series.stackKey],
             actualStackX,
             dummyStackItem,
             total,
@@ -485,7 +579,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                     );
                 }
 
-                dummyStackItem = yAxis.dummyStackItem;
+                dummyStackItem = yAxis.waterfall.dummyStackItem;
                 if (dummyStackItem) {
                     dummyStackItem.x = i;
                     dummyStackItem.label = (actualStack as any)[i].label;
@@ -752,14 +846,14 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
     // in order to set the final path.
     getGraphPath: function (
         this: Highcharts.WaterfallSeries
-    ): Highcharts.SVGPathArray {
-        return ['M', 0, 0];
+    ): SVGPath {
+        return [['M', 0, 0]];
     },
 
     // Draw columns' connector lines
     getCrispPath: function (
         this: Highcharts.WaterfallSeries
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
 
         var data = this.data,
             yAxis = this.yAxis,
@@ -770,7 +864,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             reversedXAxis = this.xAxis.reversed,
             reversedYAxis = this.yAxis.reversed,
             stacking = this.options.stacking,
-            path = [] as Highcharts.SVGPathArray,
+            path: SVGPath = [],
             connectorThreshold,
             prevStack,
             prevStackX,
@@ -779,17 +873,16 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             isPos,
             prevArgs,
             pointArgs,
-            i: (number|undefined),
-            d: (Highcharts.SVGPathArray|undefined);
+            i: (number|undefined);
 
         for (i = 1; i < length; i++) {
             pointArgs = data[i].shapeArgs;
             prevPoint = data[i - 1];
             prevArgs = data[i - 1].shapeArgs;
-            prevStack = yAxis.waterfallStacks[this.stackKey];
+            prevStack = yAxis.waterfall.stacks[this.stackKey];
             isPos = prevPoint.y > 0 ? -(prevArgs as any).height : 0;
 
-            if (prevStack) {
+            if (prevStack && prevArgs && pointArgs) {
                 prevStackX = (prevStack as any)[i - 1];
 
                 // y position of the connector is different when series are
@@ -814,34 +907,37 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
                         borderNormalizer - graphNormalizer;
                 }
 
-                d = [
+                path.push([
                     'M',
-                    (prevArgs as any).x + (reversedXAxis ?
+                    (prevArgs.x || 0) + (reversedXAxis ?
                         0 :
-                        (prevArgs as any).width
+                        (prevArgs.width || 0)
                     ),
-                    yPos,
+                    yPos
+                ], [
                     'L',
-                    (pointArgs as any).x + (reversedXAxis ?
-                        (pointArgs as any).width :
+                    (pointArgs.x || 0) + (reversedXAxis ?
+                        (pointArgs.width || 0) :
                         0
                     ),
                     yPos
-                ];
+                ]);
             }
 
             if (
-                !stacking && d &&
-                (prevPoint.y < 0 && !reversedYAxis) ||
-                (prevPoint.y > 0 && reversedYAxis)
+                !stacking &&
+                path.length &&
+                prevArgs &&
+                (
+                    (prevPoint.y < 0 && !reversedYAxis) ||
+                    (prevPoint.y > 0 && reversedYAxis)
+                )
             ) {
-                (d as any)[2] += (prevArgs as any).height;
-                (d as any)[5] += (prevArgs as any).height;
+                path[path.length - 2][2] += prevArgs.height;
+                path[path.length - 1][2] += prevArgs.height;
             }
 
-            path = path.concat(d as any);
         }
-
         return path;
     },
 
@@ -858,7 +954,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
     setStackedPoints: function (this: Highcharts.WaterfallSeries): void {
         var series = this,
             options = series.options,
-            waterfallStacks = series.yAxis.waterfallStacks,
+            waterfallStacks = series.yAxis.waterfall.stacks,
             seriesThreshold = options.threshold,
             stackThreshold = seriesThreshold || 0,
             interSum = stackThreshold,
@@ -866,7 +962,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             xData = series.xData,
             xLength = xData.length,
             actualStack,
-            actualStackX: (Highcharts.WaterfallStacksItemObject|undefined),
+            actualStackX: (WaterfallAxis.StacksItemObject|undefined),
             totalYVal,
             actualSum,
             prevSum,
@@ -906,7 +1002,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             );
         }
 
-        series.yAxis.usePercentage = false;
+        (series.yAxis as any).stacking.usePercentage = false;
         totalYVal = actualSum = prevSum = stackThreshold;
 
         // code responsible for creating stacks for waterfall series
@@ -1024,7 +1120,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
 
         if (stacking) {
             yAxis = this.yAxis;
-            waterfallStacks = yAxis.waterfallStacks;
+            waterfallStacks = yAxis.waterfall.stacks;
             stackedYNeg = this.stackedYNeg = [];
             stackedYPos = this.stackedYPos = [];
 
@@ -1032,14 +1128,14 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
             // overlap and different when it's set to normal
             if (stacking === 'overlap') {
                 objectEach(waterfallStacks[this.stackKey], function (
-                    stackX: Highcharts.WaterfallStacksItemObject
+                    stackX: WaterfallAxis.StacksItemObject
                 ): void {
                     stackedYNeg.push(arrayMin(stackX.stackState));
                     stackedYPos.push(arrayMax(stackX.stackState));
                 });
             } else {
                 objectEach(waterfallStacks[this.stackKey], function (
-                    stackX: Highcharts.WaterfallStacksItemObject
+                    stackX: WaterfallAxis.StacksItemObject
                 ): void {
                     stackedYNeg.push(stackX.negTotal + stackX.threshold);
                     stackedYPos.push(stackX.posTotal + stackX.threshold);
@@ -1186,3 +1282,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
  */
 
 ''; // adds doclets above to transpiled file
+
+WaterfallAxis.compose(Axis, Chart);
+
+export default WaterfallAxis;

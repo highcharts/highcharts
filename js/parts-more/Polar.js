@@ -9,15 +9,15 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Pane from '../parts-more/Pane.js';
+import Pointer from '../parts/Pointer.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, find = U.find, isNumber = U.isNumber, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
-import Pane from '../parts-more/Pane.js';
-import '../parts/Pointer.js';
 import '../parts/Series.js';
-import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
-var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto, arearangeProto;
+var Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto, arearangeProto;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -442,8 +442,8 @@ if (seriesTypes.column) {
                 point.shapeType = 'arc';
                 if (chart.inverted) {
                     point.plotY = yAxis.translate(pointY);
-                    if (stacking) {
-                        stack = yAxis.stacks[(pointY < 0 ? '-' : '') +
+                    if (stacking && yAxis.stacking) {
+                        stack = yAxis.stacking.stacks[(pointY < 0 ? '-' : '') +
                             series.stackKey];
                         if (series.visible && stack && stack[pointX]) {
                             if (!point.isNull) {
@@ -676,7 +676,7 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
     }
     return ret;
 });
-H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
+SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
     var wrapper, id = uniqueKey(), clipPath = this.createElement('clipPath').attr({
         id: id
     }).add(this.defs);

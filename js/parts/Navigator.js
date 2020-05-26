@@ -18,8 +18,9 @@ import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
 import './Chart.js';
 import './Series.js';
-import './Options.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
+var Chart = H.Chart, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.
@@ -495,26 +496,17 @@ extend(defaultOptions, {
  *         Path to be used in a handle
  */
 H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options) {
-    var halfWidth = options.width / 2, markerPosition = Math.round(halfWidth / 3) + 0.5, height = options.height;
+    var halfWidth = (options && options.width || 0) / 2, markerPosition = Math.round(halfWidth / 3) + 0.5, height = options && options.height || 0;
     return [
-        'M',
-        -halfWidth - 1, 0.5,
-        'L',
-        halfWidth, 0.5,
-        'L',
-        halfWidth, height + 0.5,
-        'L',
-        -halfWidth - 1, height + 0.5,
-        'L',
-        -halfWidth - 1, 0.5,
-        'M',
-        -markerPosition, 4,
-        'L',
-        -markerPosition, height - 3,
-        'M',
-        markerPosition - 1, 4,
-        'L',
-        markerPosition - 1, height - 3
+        ['M', -halfWidth - 1, 0.5],
+        ['L', halfWidth, 0.5],
+        ['L', halfWidth, height + 0.5],
+        ['L', -halfWidth - 1, height + 0.5],
+        ['L', -halfWidth - 1, 0.5],
+        ['M', -markerPosition, 4],
+        ['L', -markerPosition, height - 3],
+        ['M', markerPosition - 1, 4],
+        ['L', markerPosition - 1, height - 3]
     ];
 };
 /**
@@ -602,72 +594,42 @@ var Navigator = /** @class */ (function () {
      */
     Navigator.prototype.drawOutline = function (zoomedMin, zoomedMax, inverted, verb) {
         var navigator = this, maskInside = navigator.navigatorOptions.maskInside, outlineWidth = navigator.outline.strokeWidth(), halfOutline = outlineWidth / 2, outlineCorrection = (outlineWidth % 2) / 2, // #5800
-        outlineHeight = navigator.outlineHeight, scrollbarHeight = navigator.scrollbarHeight, navigatorSize = navigator.size, left = navigator.left - scrollbarHeight, navigatorTop = navigator.top, verticalMin, path;
+        outlineHeight = navigator.outlineHeight, scrollbarHeight = navigator.scrollbarHeight || 0, navigatorSize = navigator.size, left = navigator.left - scrollbarHeight, navigatorTop = navigator.top, verticalMin, path;
         if (inverted) {
             left -= halfOutline;
             verticalMin = navigatorTop + zoomedMax + outlineCorrection;
             zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
             path = [
-                'M',
-                left + outlineHeight,
-                // top edge
-                navigatorTop - scrollbarHeight - outlineCorrection,
-                'L',
-                left + outlineHeight,
-                verticalMin,
-                'L',
-                left,
-                verticalMin,
-                'L',
-                left,
-                zoomedMax,
-                'L',
-                left + outlineHeight,
-                zoomedMax,
-                'L',
-                left + outlineHeight,
-                // bottom edge
-                navigatorTop + navigatorSize + scrollbarHeight
-            ].concat(maskInside ? [
-                'M',
-                left + outlineHeight,
-                verticalMin - halfOutline,
-                'L',
-                left + outlineHeight,
-                zoomedMax + halfOutline // upper right of z.r.
-            ] : []);
+                ['M', left + outlineHeight, navigatorTop - scrollbarHeight - outlineCorrection],
+                ['L', left + outlineHeight, verticalMin],
+                ['L', left, verticalMin],
+                ['L', left, zoomedMax],
+                ['L', left + outlineHeight, zoomedMax],
+                ['L', left + outlineHeight, navigatorTop + navigatorSize + scrollbarHeight]
+            ];
+            if (maskInside) {
+                path.push(['M', left + outlineHeight, verticalMin - halfOutline], // upper left of zoomed range
+                ['L', left + outlineHeight, zoomedMax + halfOutline] // upper right of z.r.
+                );
+            }
         }
         else {
             zoomedMin += left + scrollbarHeight - outlineCorrection;
             zoomedMax += left + scrollbarHeight - outlineCorrection;
             navigatorTop += halfOutline;
             path = [
-                'M',
-                left,
-                navigatorTop,
-                'L',
-                zoomedMin,
-                navigatorTop,
-                'L',
-                zoomedMin,
-                navigatorTop + outlineHeight,
-                'L',
-                zoomedMax,
-                navigatorTop + outlineHeight,
-                'L',
-                zoomedMax,
-                navigatorTop,
-                'L',
-                left + navigatorSize + scrollbarHeight * 2,
-                navigatorTop // right
-            ].concat(maskInside ? [
-                'M',
-                zoomedMin - halfOutline,
-                navigatorTop,
-                'L',
-                zoomedMax + halfOutline,
-                navigatorTop // upper right of z.r.
-            ] : []);
+                ['M', left, navigatorTop],
+                ['L', zoomedMin, navigatorTop],
+                ['L', zoomedMin, navigatorTop + outlineHeight],
+                ['L', zoomedMax, navigatorTop + outlineHeight],
+                ['L', zoomedMax, navigatorTop],
+                ['L', left + navigatorSize + scrollbarHeight * 2, navigatorTop] // right
+            ];
+            if (maskInside) {
+                path.push(['M', zoomedMin - halfOutline, navigatorTop], // upper left of zoomed range
+                ['L', zoomedMax + halfOutline, navigatorTop] // upper right of z.r.
+                );
+            }
         }
         navigator.outline[verb]({
             d: path
@@ -1702,9 +1664,10 @@ var Navigator = /** @class */ (function () {
             // as new data comes in
             if (stickToMax) {
                 newMax = baseDataMax + overscroll;
-                // if stickToMin is true, the new min value is set above
+                // If stickToMin is true, the new min value is set above
                 if (!stickToMin) {
-                    newMin = Math.max(newMax - range, navigator.getBaseSeriesMin(navigatorSeries && navigatorSeries.xData ?
+                    newMin = Math.max(baseDataMin, // don't go below data extremes (#13184)
+                    newMax - range, navigator.getBaseSeriesMin(navigatorSeries && navigatorSeries.xData ?
                         navigatorSeries.xData[0] :
                         -Number.MAX_VALUE));
                 }

@@ -11,6 +11,7 @@
 'use strict';
 
 import type RadialAxis from './RadialAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -58,7 +59,7 @@ declare global {
             baseWidth?: number;
             borderColor?: ColorType;
             borderWidth?: number;
-            path?: SVGPathArray;
+            path?: SVGPath;
             radius?: string;
             rearLength?: string;
             topWidth?: number;
@@ -446,18 +447,17 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
             rotation = rotation * 180 / Math.PI;
 
             point.shapeType = 'path';
+            const d: SVGPath = dialOptions.path || [
+                ['M', -rearLength, -baseWidth / 2],
+                ['L', baseLength, -baseWidth / 2],
+                ['L', radius, -topWidth / 2],
+                ['L', radius, topWidth / 2],
+                ['L', baseLength, baseWidth / 2],
+                ['L', -rearLength, baseWidth / 2],
+                ['Z']
+            ];
             point.shapeArgs = {
-                d: dialOptions.path || [
-                    'M',
-                    -rearLength, -baseWidth / 2,
-                    'L',
-                    baseLength, -baseWidth / 2,
-                    radius, -topWidth / 2,
-                    radius, (topWidth as any) / 2,
-                    baseLength, (baseWidth as any) / 2,
-                    -rearLength, (baseWidth as any) / 2,
-                    'z'
-                ],
+                d,
                 translateX: center[0],
                 translateY: center[1],
                 rotation: rotation

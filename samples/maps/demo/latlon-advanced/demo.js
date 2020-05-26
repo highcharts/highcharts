@@ -12,7 +12,7 @@ Highcharts.getJSON('https://cdn.jsdelivr.net/gh/highcharts/highcharts@v7.0.0/sam
 
     chart = Highcharts.mapChart('container', {
         title: {
-            text: 'Highmaps lat/lon demo'
+            text: 'Highcharts Maps lat/lon demo'
         },
 
         tooltip: {

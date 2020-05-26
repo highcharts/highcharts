@@ -9,6 +9,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 /* *
  * @interface Highcharts.PointOptionsObject in parts/Point.ts
  */ /**
@@ -21,13 +25,11 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PointOptionsObject#value
 * @type {number|null|undefined}
 */
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
-var clamp = U.clamp, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
+''; // detach doclets above
 import '../parts/Options.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, symbols = H.SVGRenderer.prototype.symbols;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, symbols = SVGRenderer.prototype.symbols;
 /**
  * @private
  * @class
@@ -137,6 +139,7 @@ seriesType('heatmap', 'scatter',
     },
     /**
      * @excluding radius, enabledThreshold
+     * @since     8.1
      */
     marker: {
         /**
@@ -739,11 +742,13 @@ seriesType('heatmap', 'scatter',
 /**
  * @excluding radius, enabledThreshold
  * @product   highcharts highmaps
+ * @since     8.1
  * @apioption series.heatmap.data.marker
  */
 /**
  * @excluding radius, enabledThreshold
  * @product   highcharts highmaps
+ * @since     8.1
  * @apioption series.heatmap.marker
  */
 /**

@@ -91,7 +91,8 @@ import EventProvider from '../../utils/EventProvider.js';
 
 import ChartUtilities from '../../utils/chartUtilities.js';
 var getPointFromXY = ChartUtilities.getPointFromXY,
-    getSeriesFromName = ChartUtilities.getSeriesFromName;
+    getSeriesFromName = ChartUtilities.getSeriesFromName,
+    scrollToPoint = ChartUtilities.scrollToPoint;
 
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -269,6 +270,8 @@ Point.prototype.highlight = function (): Highcharts.Point {
         }
         // Don't call blur on the element, as it messes up the chart div's focus
     }
+
+    scrollToPoint(this);
 
     // We focus only after calling onMouseOver because the state change can
     // change z-index and mess up the element.
@@ -817,14 +820,10 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         const chart = this.chart;
         const curPoint = chart.highlightedPoint;
 
-        if (chart.tooltip) {
-            chart.tooltip.hide(0);
-        }
+        chart.tooltip?.hide(0);
 
-        if (curPoint) {
-            curPoint.onMouseOut();
-            delete chart.highlightedPoint;
-        }
+        curPoint?.onMouseOut?.();
+        delete chart.highlightedPoint;
     },
 
 

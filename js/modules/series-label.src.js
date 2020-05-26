@@ -9,6 +9,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions, syncTimeout = U.syncTimeout;
 /**
  * Containing the position of a box that should be avoided by labels.
  *
@@ -39,12 +42,11 @@ import H from '../parts/Globals.js';
  * https://jsfiddle.net/highcharts/264Nm/
  * https://jsfiddle.net/highcharts/y5A37/
  */
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
+''; // detach doclets above
 import '../parts/Chart.js';
 import '../parts/Series.js';
-var labelDistance = 3, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
-H.setOptions({
+var labelDistance = 3, Series = H.Series, Chart = H.Chart;
+setOptions({
     /**
      * @optionparent plotOptions
      *
@@ -100,7 +102,7 @@ H.setOptions({
                  * a static text for the label.
                  *
                  * @type string
-                 * @since next
+                 * @since 8.1.0
                  */
                 format: void 0,
                 /**
@@ -109,7 +111,7 @@ H.setOptions({
                  * `formatter` is undefined and the `series.name` is rendered.
                  *
                  * @type {Highcharts.FormatterCallbackFunction<Series>}
-                 * @since next
+                 * @since 8.1.0
                  */
                 formatter: void 0,
                 /**
@@ -200,7 +202,7 @@ function boxIntersectLine(x, y, w, h, x1, y1, x2, y2) {
 SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
     var anchorX = options && options.anchorX, anchorY = options && options.anchorY, path, yOffset, lateral = w / 2;
     if (isNumber(anchorX) && isNumber(anchorY)) {
-        path = ['M', anchorX, anchorY];
+        path = [['M', anchorX, anchorY]];
         // Prefer 45 deg connectors
         yOffset = y - anchorY;
         if (yOffset < 0) {
@@ -211,19 +213,19 @@ SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
         }
         // Anchor below label
         if (anchorY > y + h) {
-            path.push('L', x + lateral, y + h);
+            path.push(['L', x + lateral, y + h]);
             // Anchor above label
         }
         else if (anchorY < y) {
-            path.push('L', x + lateral, y);
+            path.push(['L', x + lateral, y]);
             // Anchor left of label
         }
         else if (anchorX < x) {
-            path.push('L', x, y + h / 2);
+            path.push(['L', x, y + h / 2]);
             // Anchor right of label
         }
         else if (anchorX > x + w) {
-            path.push('L', x + w, y + h / 2);
+            path.push(['L', x + w, y + h / 2]);
         }
     }
     return path || [];
@@ -529,7 +531,7 @@ Chart.prototype.drawSeriesLabels = function () {
                     .label(labelText, 0, -9999, 'connector')
                     .addClass('highcharts-series-label ' +
                     'highcharts-series-label-' + series.index + ' ' +
-                    (series.options.className || '') +
+                    (series.options.className || '') + ' ' +
                     colorClass);
                 if (!chart.renderer.styledMode) {
                     label.css(extend({
@@ -634,7 +636,8 @@ Chart.prototype.drawSeriesLabels = function () {
                     bottom: best.y + bBox.height
                 });
                 // Move it if needed
-                var dist = Math.sqrt(Math.pow(Math.abs(best.x - label.x), 2), Math.pow(Math.abs(best.y - label.y), 2));
+                var dist = Math.sqrt(Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
+                    Math.pow(Math.abs(best.y - (label.y || 0)), 2));
                 if (dist && series.labelBySeries) {
                     // Move fast and fade in - pure animation movement is
                     // distractive...

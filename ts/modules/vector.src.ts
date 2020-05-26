@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
@@ -41,7 +43,7 @@ declare global {
             public pointArrayMap: Array<string>;
             public pointClass: typeof VectorPoint;
             public points: Array<VectorPoint>;
-            public arrow(point: VectorPoint): SVGPathArray;
+            public arrow(point: VectorPoint): SVGPath;
             public drawPoints(): void;
             public pointAttribs(
                 point: VectorPoint,
@@ -212,8 +214,8 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
         arrow: function (
             this: Highcharts.VectorSeries,
             point: Highcharts.VectorPoint
-        ): Highcharts.SVGPathArray {
-            var path: Highcharts.SVGPathArray,
+        ): SVGPath {
+            var path: SVGPath,
                 fraction: number = (point.length as any) / this.lengthMax,
                 u: number = fraction * (this.options.vectorLength as any) / 20,
                 o: number = ({
@@ -227,12 +229,12 @@ seriesType<Highcharts.VectorSeries>('vector', 'scatter'
             // The stem and the arrow head. Draw the arrow first with rotation
             // 0, which is the arrow pointing down (vector from north to south).
             path = [
-                'M', 0, 7 * u + o, // base of arrow
-                'L', -1.5 * u, 7 * u + o,
-                0, 10 * u + o,
-                1.5 * u, 7 * u + o,
-                0, 7 * u + o,
-                0, -10 * u + o// top
+                ['M', 0, 7 * u + o], // base of arrow
+                ['L', -1.5 * u, 7 * u + o],
+                ['L', 0, 10 * u + o],
+                ['L', 1.5 * u, 7 * u + o],
+                ['L', 0, 7 * u + o],
+                ['L', 0, -10 * u + o] // top
             ];
 
             return path;

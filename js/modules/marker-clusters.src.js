@@ -29,6 +29,12 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /**
  * Function callback when a cluster is clicked.
  *
@@ -41,14 +47,10 @@ import H from '../parts/Globals.js';
  *          Event arguments.
  */
 ''; // detach doclets from following code
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, error = U.error, isArray = U.isArray, isFunction = U.isFunction, isObject = U.isObject, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, relativeLength = U.relativeLength, syncTimeout = U.syncTimeout;
 /* eslint-disable no-invalid-this */
 import '../parts/Axis.js';
 import '../parts/Series.js';
-import '../parts/SvgRenderer.js';
-var Series = H.Series, Scatter = H.seriesTypes.scatter, SvgRenderer = H.SVGRenderer, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
+var Series = H.Series, Scatter = H.seriesTypes.scatter, baseGeneratePoints = Series.prototype.generatePoints, stateIdCounter = 0, 
 // Points that ids are included in the oldPointsStateId array
 // are hidden before animation. Other ones are destroyed.
 oldPointsStateId = [];
@@ -338,7 +340,7 @@ var clusterDefaultOptions = {
         inside: true
     }
 };
-(H.defaultOptions.plotOptions || {}).series = merge((H.defaultOptions.plotOptions || {}).series, {
+(defaultOptions.plotOptions || {}).series = merge((defaultOptions.plotOptions || {}).series, {
     cluster: clusterDefaultOptions,
     tooltip: {
         /**
@@ -543,7 +545,7 @@ function getStateId() {
 // }
 /* eslint-enable require-jsdoc */
 // Cluster symbol.
-SvgRenderer.prototype.symbols.cluster = function (x, y, width, height) {
+SVGRenderer.prototype.symbols.cluster = function (x, y, width, height) {
     var w = width / 2, h = height / 2, outerWidth = 1, space = 1, inner, outer1, outer2;
     inner = this.arc(x + w, y + h, w - space * 4, h - space * 4, {
         start: Math.PI * 0.5,

@@ -12,7 +12,26 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import chartNavigationMixin from '../mixins/navigation.js';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    css,
+    createElement,
+    discardElement,
+    extend,
+    find,
+    fireEvent,
+    isObject,
+    merge,
+    objectEach,
+    pick,
+    removeEvent,
+    uniqueKey
+} = U;
 
 /**
  * Internal types
@@ -192,10 +211,6 @@ declare global {
             inlineToAttributes?: Array<string>;
             unstyledElements?: Array<string>;
         }
-        interface SymbolDictionary {
-            /** @requires modules/exporting */
-            menuball: SymbolFunction<Array<SVGElement>>;
-        }
         interface XAxisOptions {
             internalKey?: string;
         }
@@ -281,35 +296,16 @@ declare global {
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    css,
-    createElement,
-    discardElement,
-    extend,
-    find,
-    fireEvent,
-    isObject,
-    merge,
-    objectEach,
-    pick,
-    removeEvent,
-    uniqueKey
-} = U;
-
-import '../parts/Options.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import '../parts/Chart.js';
-import chartNavigationMixin from '../mixins/navigation.js';
 
 // create shortcuts
-var defaultOptions = H.defaultOptions,
-    doc = H.doc,
+var doc = H.doc,
     Chart = H.Chart,
     isTouchDevice = H.isTouchDevice,
     win = H.win,
     userAgent = win.navigator.userAgent,
-    SVGRenderer = H.SVGRenderer,
     symbols = H.Renderer.prototype.symbols,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent),
     isFirefoxBrowser = /firefox/i.test(userAgent);
@@ -2430,7 +2426,7 @@ Chart.prototype.inlineStyles = function (): void {
          *        Style property name
          * @return {void}
          */
-        function filterStyles(val: string, prop: string): void {
+        function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
 
             // Check against whitelist & blacklist
             blacklisted = whitelisted = false;
@@ -2466,8 +2462,13 @@ Chart.prototype.inlineStyles = function (): void {
                     defaultStyles[node.nodeName][prop] !== val
                 ) {
                     // Attributes
-                    if ((inlineToAttributes as any).indexOf(prop) !== -1) {
-                        node.setAttribute(hyphenate(prop), val);
+                    if (
+                        !inlineToAttributes ||
+                        inlineToAttributes.indexOf(prop) !== -1
+                    ) {
+                        if (val) {
+                            node.setAttribute(hyphenate(prop), val);
+                        }
                     // Styles
                     } else {
                         cssText += hyphenate(prop) + ':' + val + ';';
@@ -2565,14 +2566,14 @@ symbols.menu = function (
     y: number,
     width: number,
     height: number
-): Highcharts.SVGPathArray {
-    var arr: Highcharts.SVGPathArray = [
-        'M', x, y + 2.5,
-        'L', x + width, y + 2.5,
-        'M', x, y + height / 2 + 0.5,
-        'L', x + width, y + height / 2 + 0.5,
-        'M', x, y + height - 1.5,
-        'L', x + width, y + height - 1.5
+): SVGPath {
+    var arr: SVGPath = [
+        ['M', x, y + 2.5],
+        ['L', x + width, y + 2.5],
+        ['M', x, y + height / 2 + 0.5],
+        ['L', x + width, y + height / 2 + 0.5],
+        ['M', x, y + height - 1.5],
+        ['L', x + width, y + height - 1.5]
     ];
 
     return arr;
@@ -2583,8 +2584,8 @@ symbols.menuball = function (
     y: number,
     width: number,
     height: number
-): Array<Highcharts.SVGElement> {
-    var path: Array<Highcharts.SVGElement> = [],
+): SVGPath {
+    var path: SVGPath = [],
         h = (height / 3) - 2;
 
     path = path.concat(

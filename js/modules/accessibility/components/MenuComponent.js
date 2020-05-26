@@ -261,13 +261,6 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                     function () {
                         return component.onKbdClick(this);
                     }
-                ],
-                // ESC handler
-                [
-                    [keys.esc],
-                    function () {
-                        return this.response.prev;
-                    }
                 ]
             ],
             // Only run exporting navigation if exporting support exists and is

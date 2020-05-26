@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /* eslint-disable @typescript-eslint/interface-name-prefix */
@@ -847,12 +848,11 @@ seriesType<Highcharts.IKHIndicator>(
         getGraphPath: function (
             this: Highcharts.IKHIndicator,
             points: Array<Highcharts.Point>
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var indicator = this,
-                path: Highcharts.SVGPathArray = [],
-                spanA: Highcharts.SVGPathArray,
-                fillArray: Highcharts.SVGPathArray = [],
-                spanAarr: Highcharts.SVGPathArray = [];
+                path: SVGPath = [],
+                spanA: SVGPath,
+                spanAarr: SVGPath = [];
 
             points = points || this.points;
 
@@ -866,7 +866,7 @@ seriesType<Highcharts.IKHIndicator>(
                     indicator.nextPoints
                 );
 
-                spanA[0] = 'L';
+                spanA[0][0] = 'L';
 
                 path = SMA.prototype.getGraphPath.call(
                     indicator,
@@ -875,14 +875,9 @@ seriesType<Highcharts.IKHIndicator>(
 
                 spanAarr = spanA.slice(0, path.length);
 
-                for (var i = (spanAarr.length - 1); i > 0; i -= 3) {
-                    fillArray.push(
-                        spanAarr[i - 2],
-                        spanAarr[i - 1],
-                        spanAarr[i]
-                    );
+                for (let i = spanAarr.length - 1; i >= 0; i--) {
+                    path.push(spanAarr[i]);
                 }
-                path = path.concat(fillArray);
 
             } else {
                 path = SMA.prototype.getGraphPath.apply(indicator, arguments);

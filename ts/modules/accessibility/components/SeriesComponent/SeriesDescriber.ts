@@ -569,9 +569,11 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
                     shouldAddDummyPoint(point) && addDummyPointElement(point);
 
             if (pointEl) {
-                // We always set tabindex, as long as we are setting
-                // props.
+                // We always set tabindex, as long as we are setting props.
+                // When setting tabindex, also remove default outline to
+                // avoid ugly border on click.
                 pointEl.setAttribute('tabindex', '-1');
+                pointEl.style.outline = '0';
 
                 if (setScreenReaderProps) {
                     setPointScreenReaderAttribs(point, pointEl);
@@ -648,6 +650,7 @@ function describeSeriesElement(
     } /* else do not add role */
 
     seriesElement.setAttribute('tabindex', '-1');
+    seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
     seriesElement.setAttribute(
         'aria-label',
         escapeStringForHTML(

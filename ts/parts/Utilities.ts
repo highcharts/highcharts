@@ -10,8 +10,8 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
-
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
@@ -45,7 +45,6 @@ declare global {
         type HTMLAttributes = (
             Dictionary<(boolean|number|string|Function|undefined)>
         );
-        type HTMLDOMElement = GlobalHTMLElement;
         type RelativeSize = (number|string);
         interface AnimationOptionsObject {
             complete?: Function;
@@ -71,6 +70,7 @@ declare global {
             pointerEvents?: string;
             stroke?: ColorString;
             strokeWidth?: (number|string);
+            width?: string;
         }
         interface Dictionary<T> extends Record<string, T> {
             [key: string]: T;
@@ -93,8 +93,13 @@ declare global {
         interface FormatterCallbackFunction<T> {
             (this: T): string;
         }
-        interface ObjectEachCallbackFunction<T> {
-            (this: T, value: any, key: string, obj: any): void;
+        interface ObjectEachCallbackFunction<TObject, TContext> {
+            (
+                this: TContext,
+                value: TObject[keyof TObject],
+                key: keyof TObject,
+                obj: TObject
+            ): void;
         }
         interface OffsetObject {
             left: number;
@@ -122,7 +127,7 @@ declare global {
             public elem: (HTMLElement|SVGElement);
             public end?: any;
             public options: AnimationOptionsObject;
-            public paths?: [SVGPathArray, SVGPathArray];
+            public paths?: [SVGPath, SVGPath];
             public pos?: any;
             public prop: string;
             public start?: any;
@@ -130,9 +135,9 @@ declare global {
             public fillSetter(): void;
             public initPath(
                 elem: SVGElement,
-                fromD: string,
-                toD: SVGPathArray
-            ): [SVGPathArray, SVGPathArray];
+                fromD: SVGPath,
+                toD: SVGPath
+            ): [SVGPath, SVGPath];
             public run(from: number, to: number, unit: string): void;
             public step(gotoEnd?: boolean): boolean;
             public strokeSetter(): void;
@@ -185,7 +190,7 @@ declare global {
         function datePropsToTimestamps(obj: any): void;
         function defined<T>(obj: T): obj is NonNullable<T>;
         function destroyObjectProperties(obj: any, except?: any): void;
-        function discardElement(element: Highcharts.HTMLDOMElement): void;
+        function discardElement(element: HTMLDOMElement): void;
         function erase(arr: Array<unknown>, item: unknown): void;
         function error(
             code: (number|string),
@@ -275,10 +280,10 @@ declare global {
             decimalPoint?: string,
             thousandsSep?: string
         ): string;
-        function objectEach<T>(
-            obj: any,
-            fn: ObjectEachCallbackFunction<T>,
-            ctx?: T
+        function objectEach<TObject, TContext>(
+            obj: TObject,
+            fn: ObjectEachCallbackFunction<TObject, TContext>,
+            ctx?: TContext
         ): void;
         function offset(el: Element): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
@@ -333,6 +338,7 @@ declare global {
             context?: unknown
         ): number;
         function uniqueKey(): string;
+        function useSerialIds(mode?: boolean): (boolean|undefined);
         function wrap(
             obj: any,
             method: string,
@@ -707,7 +713,7 @@ const error = H.error = function (
     code: (number|string),
     stop?: boolean,
     chart?: Highcharts.Chart,
-    params?: Highcharts.Dictionary<string>
+    params?: Record<string, string>
 ): void {
     var isCode = isNumber(code),
         message = isCode ?
@@ -728,7 +734,7 @@ const error = H.error = function (
         if (isCode) {
             message += '?';
         }
-        objectEach(params, function (value: string, key: string): void {
+        objectEach(params, function (value, key): void {
             additionalMessages += ('\n' + key + ': ' + value);
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
@@ -803,12 +809,12 @@ class Fx {
     public from?: number;
     public now?: number;
     public options: Highcharts.AnimationOptionsObject;
-    public paths?: [Highcharts.SVGPathArray, Highcharts.SVGPathArray];
+    public paths?: [SVGPath, SVGPath];
     public pos?: number;
     public prop: string;
     public start?: number;
     public startTime?: number;
-    public toD?: Highcharts.SVGPathArray;
+    public toD?: SVGPath;
     public unit?: string;
 
     /* *
@@ -825,40 +831,54 @@ class Fx {
      * @return {void}
      */
     public dSetter(): void {
-        var start: Highcharts.SVGPathArray = (this.paths as any)[0],
-            end: Highcharts.SVGPathArray = (this.paths as any)[1],
-            ret: Highcharts.SVGPathArray = [],
-            now: number = this.now as any,
-            i = start.length,
-            startVal: number;
+        var paths = this.paths,
+            start = paths && paths[0],
+            end = paths && paths[1],
+            path: SVGPath = [],
+            now = this.now || 0;
 
         // Land on the final path without adjustment points appended in the ends
-        if (now === 1) {
-            ret = this.toD as any;
+        if (now === 1 || !start || !end) {
+            path = this.toD || [];
 
-        } else if (i === end.length && now < 1) {
-            while (i--) {
-                startVal = parseFloat(start[i] as any);
-                ret[i] = (
-                    // A letter instruction like M or L
-                    isNaN(startVal) ||
-                    // Arc boolean flags:
-                    end[i - 4] === 'A' || // large-arc-flag
-                    end[i - 5] === 'A' // sweep-flag
-                ) ?
-                    end[i] :
-                    (
-                        now *
-                        parseFloat('' + ((end[i] as any) - startVal)) +
-                        startVal
-                    );
+        } else if (start.length === end.length && now < 1) {
+            for (let i = 0; i < end.length; i++) {
+
+                // Tween between the start segment and the end segment. Start
+                // with a copy of the end segment and tween the appropriate
+                // numerics
+                const startSeg = start[i];
+                const endSeg = end[i];
+                const tweenSeg = [];
+
+                for (let j = 0; j < endSeg.length; j++) {
+                    const startItem = startSeg[j];
+                    const endItem = endSeg[j];
+
+                    // Tween numbers
+                    if (
+                        typeof startItem === 'number' &&
+                        typeof endItem === 'number' &&
+                        // Arc boolean flags
+                        !(endSeg[0] === 'A' && (j === 4 || j === 5))
+                    ) {
+                        tweenSeg[j] = startItem + now * (endItem - startItem);
+
+                    // Strings, take directly from the end segment
+                    } else {
+                        tweenSeg[j] = endItem;
+                    }
+                }
+
+                path.push(tweenSeg as SVGPath.Segment);
 
             }
         // If animation is finished or length not matching, land on right value
         } else {
-            ret = end;
+            path = end;
         }
-        this.elem.attr('d', ret, null as any, true);
+
+        this.elem.attr('d', path, void 0, true);
     }
 
     /**
@@ -1019,7 +1039,7 @@ class Fx {
      * @param {Highcharts.SVGElement} elem
      *        The SVGElement item.
      *
-     * @param {string} fromD
+     * @param {Highcharts.SVGPathArray|undefined} fromD
      *        Starting path definition.
      *
      * @param {Highcharts.SVGPathArray} toD
@@ -1031,69 +1051,22 @@ class Fx {
      */
     public initPath(
         elem: Highcharts.SVGElement,
-        fromD: string,
-        toD: Highcharts.SVGPathArray
-    ): [Highcharts.SVGPathArray, Highcharts.SVGPathArray] {
-        fromD = fromD || '';
+        fromD: SVGPath|undefined,
+        toD: SVGPath
+    ): [SVGPath, SVGPath] {
         var shift,
             startX = elem.startX,
             endX = elem.endX,
-            bezier = fromD.indexOf('C') > -1,
-            numParams = bezier ? 7 : 3,
             fullLength: number,
-            slice,
             i: number,
-            start: Highcharts.SVGPathArray = fromD.split(' ') as any,
-            end: Highcharts.SVGPathArray = toD.slice(), // copy
+            start = fromD && fromD.slice(), // copy
+            end = toD.slice(), // copy
             isArea = elem.isArea,
             positionFactor = isArea ? 2 : 1,
             reverse;
 
-        /**
-         * In splines make moveTo and lineTo points have six parameters like
-         * bezier curves, to allow animation one-to-one.
-         * @private
-         * @param {Highcharts.SVGPathArray} arr - array
-         * @return {void}
-         */
-        function sixify(arr: Highcharts.SVGPathArray): void {
-            var isOperator,
-                nextIsOperator;
-
-            i = arr.length;
-            while (i--) {
-
-                // Fill in dummy coordinates only if the next operator comes
-                // three places behind (#5788)
-                isOperator = arr[i] === 'M' || arr[i] === 'L';
-                nextIsOperator = /[a-zA-Z]/.test(arr[i + 3] as string);
-                if (isOperator && nextIsOperator) {
-                    arr.splice(
-                        i + 1, 0,
-                        arr[i + 1], arr[i + 2],
-                        arr[i + 1], arr[i + 2]
-                    );
-                }
-            }
-        }
-
-        /**
-         * Insert an array at the given position of another array
-         * @private
-         * @param {Array<*>} arr - array
-         * @param {Array<*>} subArr - array
-         * @param {number} index - number
-         * @return {void}
-         */
-        function insertSlice(
-            arr: Array<any>,
-            subArr: Array<any>,
-            index: number
-        ): void {
-            [].splice.apply(
-                arr,
-                [index, 0].concat(subArr) as any
-            );
+        if (!start) {
+            return [end, end];
         }
 
         /**
@@ -1104,28 +1077,39 @@ class Fx {
          * @return {void}
          */
         function prepend(
-            arr: Highcharts.SVGPathArray,
-            other: Highcharts.SVGPathArray
+            arr: SVGPath,
+            other: SVGPath
         ): void {
             while (arr.length < fullLength) {
 
                 // Move to, line to or curve to?
-                arr[0] = other[fullLength - arr.length];
+                const moveSegment = arr[0],
+                    otherSegment = other[fullLength - arr.length];
+                if (otherSegment && moveSegment[0] === 'M') {
+                    if (otherSegment[0] === 'C') {
+                        arr[0] = [
+                            'C',
+                            moveSegment[1],
+                            moveSegment[2],
+                            moveSegment[1],
+                            moveSegment[2],
+                            moveSegment[1],
+                            moveSegment[2]
+                        ];
+                    } else {
+                        arr[0] = ['L', moveSegment[1], moveSegment[2]];
+                    }
+                }
 
                 // Prepend a copy of the first point
-                insertSlice(arr, arr.slice(0, numParams), 0);
+                arr.unshift(moveSegment);
 
                 // For areas, the bottom path goes back again to the left, so we
                 // need to append a copy of the last point.
                 if (isArea) {
-                    insertSlice(
-                        arr,
-                        arr.slice(arr.length - numParams), arr.length
-                    );
-                    i--;
+                    arr.push(arr[arr.length - 1]);
                 }
             }
-            arr[0] = 'M';
         }
 
         /**
@@ -1136,12 +1120,10 @@ class Fx {
          * @return {void}
          */
         function append(
-            arr: Highcharts.SVGPathArray,
-            other: Highcharts.SVGPathArray
+            arr: SVGPath,
+            other: SVGPath
         ): void {
-            var i = (fullLength - arr.length) / numParams;
-
-            while (i > 0 && i--) {
+            while (arr.length < fullLength) {
 
                 // Pull out the slice that is going to be appended or inserted.
                 // In a line graph, the positionFactor is 1, and the last point
@@ -1149,33 +1131,28 @@ class Fx {
                 // causing the middle two points to be sliced out, since an area
                 // path starts at left, follows the upper path then turns and
                 // follows the bottom back.
-                slice = arr.slice().splice(
-                    (arr.length / positionFactor) - numParams,
-                    numParams * positionFactor
-                );
+                const segmentToAdd = arr[arr.length / positionFactor - 1].slice();
 
-                // Move to, line to or curve to?
-                slice[0] = other[fullLength - numParams - (i * numParams)];
-
-                // Disable first control point
-                if (bezier) {
-                    slice[numParams - 6] = slice[numParams - 2];
-                    slice[numParams - 5] = slice[numParams - 1];
+                // Disable the first control point of curve segments
+                if (segmentToAdd[0] === 'C') {
+                    segmentToAdd[1] = segmentToAdd[5];
+                    segmentToAdd[2] = segmentToAdd[6];
                 }
 
-                // Now insert the slice, either in the middle (for areas) or at
-                // the end (for lines)
-                insertSlice(arr, slice, arr.length / positionFactor);
+                if (!isArea) {
+                    arr.push(segmentToAdd as SVGPath.Segment);
 
-                if (isArea) {
-                    i--;
+                } else {
+
+                    const lowerSegmentToAdd = arr[arr.length / positionFactor].slice();
+                    arr.splice(
+                        arr.length / 2,
+                        0,
+                        segmentToAdd as SVGPath.Segment,
+                        lowerSegmentToAdd as SVGPath.Segment
+                    );
                 }
             }
-        }
-
-        if (bezier) {
-            sixify(start as any);
-            sixify(end);
         }
 
         // For sideways animation, find out how much we need to shift to get the
@@ -1210,19 +1187,16 @@ class Fx {
 
             // The common target length for the start and end array, where both
             // arrays are padded in opposite ends
-            fullLength = (
-                end.length + (shift as number) * positionFactor * numParams
-            );
+            fullLength = end.length + shift * positionFactor;
 
             if (!reverse) {
-                prepend(end, start as any);
-                append(start as any, end);
+                prepend(end, start);
+                append(start, end);
             } else {
-                prepend(start as any, end);
-                append(end, start as any);
+                prepend(start, end);
+                append(end, start);
             }
         }
-
         return [start, end];
     }
 
@@ -1335,7 +1309,7 @@ function merge<T>(): T {
                 copy = {};
             }
 
-            objectEach(original, function (value: any, key: string): void {
+            objectEach(original, function (value, key): void {
 
                 // Copy the contents of objects, but not arrays or DOM nodes
                 if (isObject(value, true) &&
@@ -1610,7 +1584,7 @@ function attr(
 
     // else if prop is defined, it is a hash of key/value pairs
     } else {
-        objectEach(prop, function (val: any, key: string): void {
+        objectEach(prop, function (val, key): void {
             elem.setAttribute(key, val);
         });
     }
@@ -1913,7 +1887,7 @@ const relativeLength = H.relativeLength = function relativeLength(
 /**
  * Wrap a method with extended functionality, preserving the original function.
  *
-' * @function Highcharts.wrap
+ * @function Highcharts.wrap
  *
  * @param {*} obj
  *        The context object that the method belongs to. In real cases, this is
@@ -1926,8 +1900,6 @@ const relativeLength = H.relativeLength = function relativeLength(
  *        A wrapper function callback. This function is called with the same
  *        arguments as the original function, except that the original function
  *        is unshifted and passed as the first argument.
- *
- * @return {void}
  */
 const wrap = H.wrap = function wrap(
     obj: any,
@@ -2261,7 +2233,7 @@ const arrayMax = H.arrayMax = function arrayMax(data: Array<any>): number {
  */
 const destroyObjectProperties = H.destroyObjectProperties =
     function destroyObjectProperties(obj: any, except?: any): void {
-        objectEach(obj, function (val: any, n: string): void {
+        objectEach(obj, function (val, n): void {
             // If the object is non-null and destroy is defined
             if (val && val !== except && val.destroy) {
                 // Invoke the destroy
@@ -2791,15 +2763,15 @@ const stop = H.stop = function (el: Highcharts.SVGElement, prop?: string): void 
  *
  * @return {void}
  */
-const objectEach = H.objectEach = function objectEach<T>(
-    obj: any,
-    fn: Highcharts.ObjectEachCallbackFunction<T>,
-    ctx?: T
+const objectEach = H.objectEach = function objectEach<TObject, TContext>(
+    obj: TObject,
+    fn: Highcharts.ObjectEachCallbackFunction<TObject, TContext>,
+    ctx?: TContext
 ): void {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
-            fn.call(ctx || obj[key], obj[key], key, obj);
+            fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
         }
     }
 };
@@ -2904,9 +2876,9 @@ objectEach({
     grep: 'filter',
     reduce: 'reduce',
     some: 'some'
-}, function (val: any, key: string): void {
-    (H as any)[key] = function (arr: Array<any>): any {
-        return Array.prototype[val].apply(
+} as Record<string, ('map'|'forEach'|'filter'|'reduce'|'some')>, function (val, key): void {
+    (H as any)[key] = function (arr: Array<unknown>): any {
+        return (Array.prototype[val] as any).apply(
             arr,
             [].slice.call(arguments, 1)
         );
@@ -3062,11 +3034,11 @@ const removeEvent = H.removeEvent = function removeEvent<T>(
             types = eventCollection;
         }
 
-        objectEach(types, function (val: any, n: string): void {
+        objectEach(types, function (_val, n): void {
             if (eventCollection[n]) {
                 len = eventCollection[n].length;
                 while (len--) {
-                    removeOneEvent(n, eventCollection[n][len].fn);
+                    removeOneEvent(n as any, eventCollection[n][len].fn);
                 }
             }
         });
@@ -3249,26 +3221,26 @@ const animate = H.animate = function (
             complete: args[4]
         };
     }
-    if (!isNumber((opt as any).duration)) {
-        (opt as any).duration = 400;
+    if (!isNumber(opt.duration)) {
+        opt.duration = 400;
     }
-    (opt as any).easing = typeof (opt as any).easing === 'function' ?
-        (opt as any).easing :
-        ((Math as any)[(opt as any).easing as any] || Math.easeInOutSine);
-    (opt as any).curAnim = merge(params) as any;
+    opt.easing = typeof opt.easing === 'function' ?
+        opt.easing :
+        (Math[opt.easing as keyof Math] || Math.easeInOutSine) as any;
+    opt.curAnim = merge(params) as any;
 
-    objectEach(params, function (val: any, prop: string): void {
+    objectEach(params, function (val, prop): void {
         // Stop current running animation of this property
         stop(el as any, prop);
 
         fx = new Fx(el as any, opt as any, prop);
         end = null;
 
-        if (prop === 'd') {
+        if (prop === 'd' && isArray(params.d)) {
             fx.paths = fx.initPath(
                 el as any,
-                (el as any).d,
-                params.d as any
+                (el as any).pathArray,
+                params.d
             );
             fx.toD = params.d as any;
             start = 0;
@@ -3328,7 +3300,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     props?: Partial<TSeries>,
     pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
-    var defaultOptions = H.getOptions(),
+    var defaultOptions = getOptions(),
         seriesTypes = H.seriesTypes;
 
     // Merge the options
@@ -3353,6 +3325,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     return seriesTypes[type];
 };
 
+let serialMode: (boolean|undefined);
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
  * composed of a random hash specific to this Highcharts instance, and a
@@ -3364,20 +3337,98 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
  * @function Highcharts.uniqueKey
  *
  * @return {string}
- *         A unique key.
+ * A unique key.
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
-        idCounter = 0;
+    const hash = serialMode ?
+        '' :
+        Math.random().toString(36).substring(2, 9) + '-';
+
+    let id = 0;
 
     return function (): string {
-        return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
+        return 'highcharts-' + hash + id++;
     };
 }());
+/**
+ * Activates a serial mode for element IDs provided by
+ * {@link Highcharts.uniqueKey}. This mode can be used in automated tests, where
+ * a simple comparison of two rendered SVG graphics is needed.
+ *
+ * **Note:** This is only for testing purposes and will break functionality in
+ * webpages with multiple charts.
+ *
+ * @example
+ * if (
+ *   process &&
+ *   process.env.NODE_ENV === 'development'
+ * ) {
+ *   Highcharts.useSerialIds(true);
+ * }
+ *
+ * @function Highcharts.useSerialIds
+ *
+ * @param {boolean} [mode]
+ * Changes the state of serial mode.
+ *
+ * @return {boolean|undefined}
+ * State of the serial mode.
+ */
+const useSerialIds = H.useSerialIds = function (mode?: boolean): (boolean|undefined) {
+    return (serialMode = pick(mode, serialMode));
+};
 
 const isFunction = H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
+};
+
+/**
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
+ *
+ * @function Highcharts.getOptions
+ *
+ * @return {Highcharts.Options}
+ */
+const getOptions = H.getOptions = function (): Highcharts.Options {
+    return H.defaultOptions;
+};
+
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+const setOptions = H.setOptions = function (
+    options: Highcharts.Options
+): Highcharts.Options {
+
+    // Copy in the default options
+    H.defaultOptions = merge(true, H.defaultOptions, options);
+
+    // Update the time object
+    if (options.time || options.global) {
+        H.time.update(merge(
+            H.defaultOptions.global,
+            H.defaultOptions.time,
+            options.global,
+            options.time
+        ));
+    }
+
+    return H.defaultOptions;
 };
 
 // Register Highcharts as a plugin in jQuery
@@ -3465,6 +3516,7 @@ const utilitiesModule = {
     format,
     getMagnitude,
     getNestedProperty,
+    getOptions,
     getStyle,
     inArray,
     isArray,
@@ -3486,12 +3538,14 @@ const utilitiesModule = {
     removeEvent,
     seriesType,
     setAnimation,
+    setOptions,
     splat,
     stableSort,
     stop,
     syncTimeout,
     timeUnits,
     uniqueKey,
+    useSerialIds,
     wrap
 };
 

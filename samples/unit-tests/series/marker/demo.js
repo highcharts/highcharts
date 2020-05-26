@@ -182,12 +182,14 @@ QUnit.test('visibility', assert => {
         yAxis: [{
             height: axisHeight,
             top: 0,
-            offset: 0
+            offset: 0,
+            allowDecimals: true
         }, {
             opposite: false,
             height: axisHeight,
             top: axisHeight,
-            offset: 0
+            offset: 0,
+            allowDecimals: true
         }],
         rangeSelector: {
             enabled: false

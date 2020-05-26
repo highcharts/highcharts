@@ -12,6 +12,8 @@
 
 'use strict';
 import H from '../../parts/Globals.js';
+import O from '../../parts/Options.js';
+const { defaultOptions } = O;
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
@@ -169,7 +171,7 @@ H.sonification = {
 // Add default options
 merge(
     true,
-    H.defaultOptions,
+    defaultOptions,
     sonificationOptions
 );
 

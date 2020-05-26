@@ -14,7 +14,7 @@
 import U from '../parts/Utilities.js';
 var seriesType = U.seriesType;
 import '../parts/ColumnSeries.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SVGRenderer.js';
 /**
  * The pyramid3d series type.
  *

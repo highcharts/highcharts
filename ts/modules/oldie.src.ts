@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -33,15 +34,6 @@ declare global {
         interface GlobalOptions {
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
-        }
-        interface SymbolDictionary {
-            rect(
-                x: number,
-                y: number,
-                w: number,
-                h: number,
-                options: SVGAttributes
-            ): SVGPathArray;
         }
         interface SVGRenderer {
             /** @requires highcharts/modules/oldies */
@@ -222,7 +214,7 @@ declare global {
             public isIE8: boolean;
             public isVML: true;
             public setSize: SVGRenderer['setSize'];
-            public symbols: SymbolDictionary;
+            public symbols: SVGRenderer['symbols'];
             public circle(obj: Dictionary<number>): VMLElement;
             public circle(x: number, y: number, r: number): VMLElement;
             public clipRect(size: SizeObject): VMLClipRectObject;
@@ -239,6 +231,7 @@ declare global {
                 wrapper: VMLElement
             ): T;
             public createElement(nodeName: string): VMLElement;
+            public crispPolyLine(points: SVGPath, width: number): SVGPath;
             public g(name: string): VMLElement;
             public image(
                 src: string,
@@ -274,6 +267,10 @@ declare global {
             type: string,
             fn: EventCallbackFunction<T>
         ): void;
+    }
+    interface CSSStyleSheet {
+        /** @deprecated */
+        cssText: string;
     }
     interface Document {
         /** @deprecated */
@@ -317,6 +314,8 @@ declare global {
 
 import Color from '../parts/Color.js';
 const color = Color.parse;
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -327,6 +326,7 @@ const {
     erase,
     extend,
     extendClass,
+    getOptions,
     isArray,
     isNumber,
     isObject,
@@ -337,8 +337,6 @@ const {
     uniqueKey
 } = U;
 
-import '../parts/SvgRenderer.js';
-
 var VMLRenderer,
     VMLRendererExtension,
     VMLElement: typeof Highcharts.VMLElement,
@@ -347,8 +345,6 @@ var VMLRenderer,
     doc = H.doc,
     noop = H.noop,
     svg = H.svg,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
     win = H.win;
 
 
@@ -362,7 +358,7 @@ var VMLRenderer,
  * @requires  modules/oldie
  * @apioption global.VMLRadialGradientURL
  */
-(H.getOptions().global as any).VMLRadialGradientURL =
+(getOptions().global as any).VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 
 
@@ -1362,6 +1358,9 @@ if (!svg) {
                 box,
                 css;
 
+            // Extended SVGRenderer member
+            this.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
+
             renderer.alignedObjects = [];
 
             boxWrapper = renderer.createElement('div')
@@ -1664,7 +1663,7 @@ if (!svg) {
                                 }
                                 fillAttr =
                                     'src="' + (
-                                        H.getOptions().global as any
+                                        getOptions().global as any
                                     ).VMLRadialGradientURL +
                                     '" ' +
                                     'size="' + sizex + ',' + sizey + '" ' +
@@ -2071,8 +2070,8 @@ if (!svg) {
                 y: number,
                 w: number,
                 h: number,
-                options: Highcharts.SVGAttributes
-            ): Highcharts.SVGPathArray {
+                options: Highcharts.SymbolOptionsObject
+            ): SVGPath {
                 return SVGRenderer.prototype.symbols[
                     !defined(options) || !options.r ? 'square' : 'callout'
                 ].call(0, x, y, w, h, options);

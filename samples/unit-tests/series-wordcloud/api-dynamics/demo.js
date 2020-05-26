@@ -456,3 +456,75 @@ QUnit.test('Series.update.', function (assert) {
         'series.options.custom should equal true after update.'
     );
 });
+
+QUnit.test('Set the series animation duration(#13098).', function (assert) {
+
+    var clock = null;
+
+    try {
+
+        clock = TestUtilities.lolexInstall();
+
+        var H = Highcharts,
+            chart = H.chart('container', {
+                series: [{
+                    type: 'wordcloud',
+                    animation: {
+                        duration: 1000
+                    },
+                    data: [{
+                        name: 'One'
+                    }, {
+                        name: 'Two'
+                    }, {
+                        name: 'Three'
+                    }]
+                }]
+            }),
+            point = chart.series[0].points[1],
+            initialPos = point.graphic.attr('x'),
+            previousPos;
+
+        setTimeout(function () {
+            assert.strictEqual(
+                point.graphic.attr('x') > initialPos,
+                true,
+                'Time 400- Point should start moving.'
+            );
+            previousPos = point.graphic.attr('x');
+        }, 400);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                point.graphic.attr('x') > previousPos,
+                true,
+                'Time 800- Point should move.'
+            );
+            previousPos = point.graphic.attr('x');
+        }, 800);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                point.graphic.attr('x') > previousPos,
+                true,
+                'Time 1200- Point should move.'
+            );
+            previousPos = point.graphic.attr('x');
+        }, 1200);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                point.graphic.attr('x') === previousPos,
+                true,
+                'Time 1500- Point should stop.'
+            );
+        }, 1500);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+
+    } finally {
+
+        TestUtilities.lolexUninstall(clock);
+
+    }
+});

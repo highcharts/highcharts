@@ -145,10 +145,16 @@ declare global {
         }
         interface TooltipPositionerCallbackFunction {
             (
+                this: Tooltip,
                 labelWidth: number,
                 labelHeight: number,
-                point: Point
+                point: (Point|TooltipPositionerPointObject)
             ): PositionObject;
+        }
+        interface TooltipPositionerPointObject {
+            isHeader: true;
+            plotX: number;
+            plotY: number;
         }
         type TooltipShapeValue = ('callout'|'circle'|'square');
     }
@@ -213,17 +219,20 @@ declare global {
  *
  * @callback Highcharts.TooltipPositionerCallbackFunction
  *
+ * @param {Highcharts.Tooltip} this
+ * Tooltip context of the callback.
+ *
  * @param {number} labelWidth
- *        Width of the tooltip.
+ * Width of the tooltip.
  *
  * @param {number} labelHeight
- *        Height of the tooltip.
+ * Height of the tooltip.
  *
- * @param {Highcharts.Point} point
- *        Point information for positioning a tooltip.
+ * @param {Highcharts.Point|Highcharts.TooltipPositionerPointObject} point
+ * Point information for positioning a tooltip.
  *
  * @return {Highcharts.PositionObject}
- *         New position for the tooltip.
+ * New position for the tooltip.
  */
 
 /**
@@ -235,9 +244,6 @@ declare global {
  * boxes separately, this property indicates the call on the xAxis header, which
  * is not a point itself.
  * @name Highcharts.TooltipPositionerPointObject#isHeader
- * @type {boolean}
- *//**
- * @name Highcharts.TooltipPositionerPointObject#negative
  * @type {boolean}
  *//**
  * The reference point relative to the plot area. Add chart.plotLeft to get the
@@ -779,22 +785,18 @@ class Tooltip {
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside && !tooltip.split) {
-                set = {
-                    x: this.label.xSetter as any,
-                    y: this.label.ySetter as any
-                };
-                this.label.xSetter = function (
-                    value: string,
-                    key: string
+                const label = this.label;
+                const { xSetter, ySetter } = label;
+                label.xSetter = function (
+                    value: string
                 ): void {
-                    set[key].call(this.label, tooltip.distance);
+                    xSetter.call(label, tooltip.distance);
                     container.style.left = value + 'px';
                 };
-                this.label.ySetter = function (
-                    value: string,
-                    key: string
+                label.ySetter = function (
+                    value: string
                 ): void {
-                    set[key].call(this.label, tooltip.distance);
+                    ySetter.call(label, tooltip.distance);
                     container.style.top = value + 'px';
                 };
             }
@@ -1325,7 +1327,7 @@ class Tooltip {
                 // Prevent the tooltip from flowing over the chart box (#6659)
                 if (!(options.style as any).width || styledMode) {
                     label.css({
-                        width: this.chart.spacingBox.width
+                        width: this.chart.spacingBox.width + 'px'
                     });
                 }
 
@@ -1599,14 +1601,17 @@ class Tooltip {
             i: number
         ): Array<Highcharts.Dictionary<any>> {
             if (str !== false && str !== '') {
-                const point = points[i - 1] || {
-                    // Item 0 is the header. Instead of this, we could also
-                    // use the crosshair label
-                    isHeader: true,
-                    plotX: points[0].plotX,
-                    plotY: plotHeight,
-                    series: {}
-                };
+                const point: (Highcharts.Point|Highcharts.TooltipPositionerPointObject) = (
+                    points[i - 1] ||
+                    {
+                        // Item 0 is the header. Instead of this, we could also
+                        // use the crosshair label
+                        isHeader: true,
+                        plotX: points[0].plotX,
+                        plotY: plotHeight,
+                        series: {}
+                    }
+                );
                 const isHeader: boolean = (point as any).isHeader;
 
                 // Store the tooltip label referance on the series
@@ -1630,16 +1635,20 @@ class Tooltip {
                 const { anchorX, anchorY } = getAnchor(point);
                 if (typeof anchorY === 'number') {
                     const size = bBox.height + 1;
-                    const boxPosition = positioner ? positioner.call(
-                        tooltip,
-                        boxWidth,
-                        size,
-                        point as any
-                    ) : defaultPositioner(
-                        anchorX,
-                        anchorY,
-                        isHeader,
-                        boxWidth
+                    const boxPosition = (
+                        positioner ?
+                            positioner.call(
+                                tooltip,
+                                boxWidth,
+                                size,
+                                point
+                            ) :
+                            defaultPositioner(
+                                anchorX,
+                                anchorY,
+                                isHeader,
+                                boxWidth
+                            )
                     );
 
                     boxes.push({
@@ -1648,7 +1657,7 @@ class Tooltip {
                         anchorX,
                         anchorY,
                         boxWidth,
-                        point: point as any,
+                        point,
                         rank: pick((boxPosition as any).rank, isHeader ? 1 : 0),
                         size,
                         target: boxPosition.y,

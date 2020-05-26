@@ -4,10 +4,12 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var Annotation = H.Annotation, MockPoint = Annotation.MockPoint, ControlPoint = Annotation.ControlPoint;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var CrookedLine = function () {
     Annotation.apply(this, arguments);

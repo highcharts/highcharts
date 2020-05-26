@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -23,7 +24,7 @@ declare global {
             public series: PolygonSeries;
         }
         class PolygonSeries extends ScatterSeries {
-            public areaPath?: SVGPathArray;
+            public areaPath?: SVGPath;
             public data: Array<PolygonPoint>;
             public options: PolygonSeriesOptions;
             public pointClass: typeof PolygonPoint;
@@ -95,15 +96,15 @@ seriesType<Highcharts.PolygonSeries>('polygon', 'scatter', {
     type: 'polygon',
     getGraphPath: function (
         this: Highcharts.PolygonSeries
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
 
-        var graphPath = (Series.prototype.getGraphPath as any).call(this),
+        var graphPath: SVGPath = (Series.prototype.getGraphPath as any).call(this),
             i = graphPath.length + 1;
 
         // Close all segments
         while (i--) {
-            if ((i === graphPath.length || graphPath[i] === 'M') && i > 0) {
-                graphPath.splice(i, 0, 'z');
+            if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
+                graphPath.splice(i, 0, ['Z']);
             }
         }
         this.areaPath = graphPath;

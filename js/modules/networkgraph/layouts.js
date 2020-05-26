@@ -515,16 +515,20 @@ addEvent(Chart, 'render', function () {
 });
 // disable simulation before print if enabled
 addEvent(Chart, 'beforePrint', function () {
-    this.graphLayoutsLookup.forEach(function (layout) {
-        layout.updateSimulation(false);
-    });
-    this.redraw();
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout) {
+            layout.updateSimulation(false);
+        });
+        this.redraw();
+    }
 });
 // re-enable simulation after print
 addEvent(Chart, 'afterPrint', function () {
-    this.graphLayoutsLookup.forEach(function (layout) {
-        // return to default simulation
-        layout.updateSimulation();
-    });
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout) {
+            // return to default simulation
+            layout.updateSimulation();
+        });
+    }
     this.redraw();
 });

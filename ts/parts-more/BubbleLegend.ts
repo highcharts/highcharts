@@ -12,7 +12,26 @@
 
 'use strict';
 
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../parts/Globals.js';
+import Legend from '../parts/Legend.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    setOptions,
+    stableSort,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -145,28 +164,8 @@ declare global {
 
 ''; // detach doclets above
 
-import Color from '../parts/Color.js';
-const {
-    parse: color
-} = Color;
-import Legend from '../parts/Legend.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    stableSort,
-    wrap
-} = U;
-
 var Series = H.Series,
-    Chart = H.Chart,
-    noop = H.noop,
-    setOptions = H.setOptions;
+    noop = H.noop;
 
 setOptions({ // Set default bubble legend options
     legend: {
@@ -759,15 +758,15 @@ class BubbleLegend {
             label,
             elementCenter = range.center,
             absoluteRadius = Math.abs(range.radius as any),
-            connectorDistance = options.connectorDistance,
+            connectorDistance = options.connectorDistance || 0,
             labelsAlign = (labelsOptions as any).align,
             rtl = legend.options.rtl,
             fontSize = (labelsOptions as any).style.fontSize,
             connectorLength = rtl || labelsAlign === 'left' ?
-                -(connectorDistance as any) : connectorDistance,
+                -connectorDistance : connectorDistance,
             borderWidth = options.borderWidth,
             connectorWidth = options.connectorWidth,
-            posX = mainRange.radius,
+            posX = mainRange.radius || 0,
             posY = (elementCenter as any) - absoluteRadius -
                 (borderWidth as any) / 2 + (connectorWidth as any) / 2,
             labelY,
@@ -786,13 +785,13 @@ class BubbleLegend {
         }
 
         labelY = posY + (options.labels as any).y;
-        labelX = (posX as any) + connectorLength + (options.labels as any).x;
+        labelX = posX + connectorLength + (options.labels as any).x;
 
         // Render bubble symbol
         symbols.bubbleItems.push(
             renderer
                 .circle(
-                    posX as any,
+                    posX,
                     (elementCenter as any) + crispMovement,
                     absoluteRadius
                 )
@@ -818,12 +817,8 @@ class BubbleLegend {
             renderer
                 .path(renderer.crispLine(
                     [
-                        'M',
-                        posX as any,
-                        posY,
-                        'L',
-                        (posX as any) + (connectorLength as any),
-                        posY
+                        ['M', posX, posY],
+                        ['L', posX + connectorLength, posY]
                     ],
                     options.connectorWidth as any
                 ))
@@ -1299,10 +1294,10 @@ addEvent(Series, 'legendItemClick', function (this: Highcharts.Series): void {
 // If ranges are not specified, determine ranges from rendered bubble series
 // and render legend again.
 wrap(Chart.prototype, 'drawChartBox', function (
-    this: Highcharts.Chart,
+    this: Chart,
     proceed: Function,
     options: Highcharts.Options,
-    callback: Highcharts.ChartCallbackFunction
+    callback: Chart.CallbackFunction
 ): void {
     var chart = this,
         legend = chart.legend,

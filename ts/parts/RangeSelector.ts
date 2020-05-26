@@ -173,6 +173,8 @@ declare global {
  *         Parsed JavaScript time value.
  */
 
+import O from './Options.js';
+const { defaultOptions } = O;
 import U from './Utilities.js';
 const {
     addEvent,
@@ -195,8 +197,7 @@ import './Axis.js';
 import './Chart.js';
 
 var Axis = H.Axis,
-    Chart = H.Chart,
-    defaultOptions = H.defaultOptions;
+    Chart = H.Chart;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
@@ -2005,7 +2006,7 @@ RangeSelector.prototype = {
         // Destroy HTML and SVG elements
         objectEach(rSelector, function (val: unknown, key: string): void {
             if (val && key !== 'chart') {
-                if ((val as Highcharts.SVGElement).destroy) {
+                if ((val as Partial<Highcharts.SVGElement>).destroy) {
                     // SVGElement
                     (val as Highcharts.SVGElement).destroy();
                 } else if ((val as Highcharts.HTMLDOMElement).nodeType) {
@@ -2227,15 +2228,38 @@ if (!H.RangeSelector) {
         var extremes,
             rangeSelector = chart.rangeSelector,
             unbindRender: Function,
-            unbindSetExtremes: Function;
+            unbindSetExtremes: Function,
+            legend,
+            alignTo,
+            verticalAlign: Highcharts.VerticalAlignValue|undefined;
 
         /**
          * @private
          */
         function renderRangeSelector(): void {
             extremes = chart.xAxis[0].getExtremes();
+            legend = chart.legend;
+            verticalAlign = rangeSelector?.options.verticalAlign;
+
             if (isNumber(extremes.min)) {
                 (rangeSelector as any).render(extremes.min, extremes.max);
+            }
+
+            // Re-align the legend so that it's below the rangeselector
+            if (
+                rangeSelector && legend.display &&
+                verticalAlign === 'top' &&
+                verticalAlign === legend.options.verticalAlign
+            ) {
+                // Create a new alignment box for the legend.
+                alignTo = merge(chart.spacingBox);
+                if (legend.options.layout === 'vertical') {
+                    alignTo.y = chart.plotTop;
+                } else {
+                    alignTo.y += rangeSelector.getHeight();
+                }
+                legend.group.placed = false; // Don't animate the alignment.
+                legend.align(alignTo);
             }
         }
 

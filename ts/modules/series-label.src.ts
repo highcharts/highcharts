@@ -9,7 +9,22 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    extend,
+    fireEvent,
+    format,
+    isNumber,
+    pick,
+    setOptions,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -103,27 +118,16 @@ declare global {
  * https://jsfiddle.net/highcharts/y5A37/
  */
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    extend,
-    fireEvent,
-    format,
-    isNumber,
-    pick,
-    syncTimeout
-} = U;
+''; // detach doclets above
 
 import '../parts/Chart.js';
 import '../parts/Series.js';
 
 var labelDistance = 3,
     Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
     Chart = H.Chart;
 
-H.setOptions({
+setOptions({
 
     /**
      * @optionparent plotOptions
@@ -185,7 +189,7 @@ H.setOptions({
                  * a static text for the label.
                  *
                  * @type string
-                 * @since next
+                 * @since 8.1.0
                  */
                 format: void 0,
 
@@ -195,7 +199,7 @@ H.setOptions({
                  * `formatter` is undefined and the `series.name` is rendered.
                  *
                  * @type {Highcharts.FormatterCallbackFunction<Series>}
-                 * @since next
+                 * @since 8.1.0
                  */
                 formatter: void 0,
 
@@ -329,17 +333,17 @@ SVGRenderer.prototype.symbols.connector = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SymbolOptionsObject
-): Highcharts.SVGPathArray {
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
-        path: (Highcharts.SVGPathArray|undefined),
+        path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 
     if (isNumber(anchorX) && isNumber(anchorY)) {
 
-        path = ['M', anchorX, anchorY];
+        path = [['M', anchorX, anchorY]];
 
         // Prefer 45 deg connectors
         yOffset = y - anchorY;
@@ -352,19 +356,19 @@ SVGRenderer.prototype.symbols.connector = function (
 
         // Anchor below label
         if (anchorY > y + h) {
-            path.push('L', x + lateral, y + h);
+            path.push(['L', x + lateral, y + h]);
 
         // Anchor above label
         } else if (anchorY < y) {
-            path.push('L', x + lateral, y);
+            path.push(['L', x + lateral, y]);
 
         // Anchor left of label
         } else if (anchorX < x) {
-            path.push('L', x, y + h / 2);
+            path.push(['L', x, y + h / 2]);
 
         // Anchor right of label
         } else if (anchorX > x + w) {
-            path.push('L', x + w, y + h / 2);
+            path.push(['L', x + w, y + h / 2]);
         }
     }
     return path || [];
@@ -396,7 +400,7 @@ Series.prototype.getPointsOnGraph = function (
         len: (number|undefined),
         n: (number|undefined),
         j: (number|undefined),
-        d: (Highcharts.SVGPathArray|undefined),
+        d: (SVGPath|undefined),
         graph: Highcharts.SVGElement = this.graph || (this.area as any),
         node: SVGPathElement = graph.element as any,
         inverted = this.chart.inverted,
@@ -881,7 +885,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +
-                        (series.options.className || '') +
+                        (series.options.className || '') + ' ' +
                         colorClass
                     );
 
@@ -1041,9 +1045,9 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 });
 
                 // Move it if needed
-                var dist = (Math.sqrt as any)(
-                    Math.pow(Math.abs(best.x - label.x), 2),
-                    Math.pow(Math.abs(best.y - label.y), 2)
+                var dist = Math.sqrt(
+                    Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
+                    Math.pow(Math.abs(best.y - (label.y || 0)), 2)
                 );
 
                 if (dist && series.labelBySeries) {

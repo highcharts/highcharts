@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -266,7 +267,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.boxDashStyle
      */
@@ -281,7 +282,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.medianDashStyle
      */
@@ -314,7 +315,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      *
      * @type      {Highcharts.DashStyleValue}
      * @default   Solid
-     * @since     next
+     * @since 8.1.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.whiskerDashStyle
      */
@@ -445,10 +446,10 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
             highPlot,
             lowPlot,
             medianPlot,
-            medianPath: Highcharts.SVGPathArray,
+            medianPath: SVGPath,
             crispCorr,
             crispX = 0,
-            boxPath: Highcharts.SVGPathArray,
+            boxPath: SVGPath,
             width,
             left,
             right,
@@ -472,7 +473,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
             if (typeof point.plotY !== 'undefined') {
 
                 // crisp vector coordinates
-                width = shapeArgs.width;
+                width = Math.round(shapeArgs.width);
                 left = Math.floor(shapeArgs.x);
                 right = left + width;
                 halfWidth = Math.round(width / 2);
@@ -576,24 +577,21 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     point.medianShape.attr(medianAttr);
                 }
 
+                let d: SVGPath;
+
                 // The stem
                 crispCorr = (point.stem.strokeWidth() % 2) / 2;
                 crispX = left + halfWidth + crispCorr;
-                point.stem[verb]({
-                    d: [
+                d = [
                     // stem up
-                        'M',
-                        crispX, q3Plot,
-                        'L',
-                        crispX, highPlot,
+                    ['M', crispX, q3Plot],
+                    ['L', crispX, highPlot],
 
-                        // stem down
-                        'M',
-                        crispX, q1Plot,
-                        'L',
-                        crispX, lowPlot
-                    ]
-                });
+                    // stem down
+                    ['M', crispX, q1Plot],
+                    ['L', crispX, lowPlot]
+                ];
+                point.stem[verb]({ d });
 
                 // The box
                 if (doQuartiles) {
@@ -602,21 +600,15 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     q3Plot = Math.floor(q3Plot) + crispCorr;
                     left += crispCorr;
                     right += crispCorr;
-                    point.box[verb]({
-                        d: [
-                            'M',
-                            left, q3Plot,
-                            'L',
-                            left, q1Plot,
-                            'L',
-                            right, q1Plot,
-                            'L',
-                            right, q3Plot,
-                            'L',
-                            left, q3Plot,
-                            'z'
-                        ]
-                    });
+                    d = [
+                        ['M', left, q3Plot],
+                        ['L', left, q1Plot],
+                        ['L', right, q1Plot],
+                        ['L', right, q3Plot],
+                        ['L', left, q3Plot],
+                        ['Z']
+                    ];
+                    point.box[verb]({ d });
                 }
 
                 // The whiskers
@@ -627,25 +619,16 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     pointWiskerLength = (/%$/).test(whiskerLength as any) ?
                         halfWidth * parseFloat(whiskerLength as any) / 100 :
                         (whiskerLength as any) / 2;
-                    point.whiskers[verb]({
-                        d: [
+                    d = [
                         // High whisker
-                            'M',
-                            crispX - pointWiskerLength,
-                            highPlot,
-                            'L',
-                            crispX + pointWiskerLength,
-                            highPlot,
+                        ['M', crispX - pointWiskerLength, highPlot],
+                        ['L', crispX + pointWiskerLength, highPlot],
 
-                            // Low whisker
-                            'M',
-                            crispX - pointWiskerLength,
-                            lowPlot,
-                            'L',
-                            crispX + pointWiskerLength,
-                            lowPlot
-                        ]
-                    });
+                        // Low whisker
+                        ['M', crispX - pointWiskerLength, lowPlot],
+                        ['L', crispX + pointWiskerLength, lowPlot]
+                    ];
+                    point.whiskers[verb]({ d });
                 }
 
                 // The median
@@ -653,16 +636,11 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                 crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
                 medianPlot = medianPlot + crispCorr;
 
-                point.medianShape[verb]({
-                    d: [
-                        'M',
-                        left,
-                        medianPlot,
-                        'L',
-                        right,
-                        medianPlot
-                    ]
-                });
+                d = [
+                    ['M', left, medianPlot],
+                    ['L', right, medianPlot]
+                ];
+                point.medianShape[verb]({ d });
             }
         });
 
@@ -798,7 +776,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.boxDashStyle
  */
@@ -813,7 +791,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.medianDashStyle
  */
@@ -828,7 +806,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.stemDashStyle
  */
@@ -843,7 +821,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  *
  * @type      {Highcharts.DashStyleValue}
  * @default   Solid
- * @since     next
+ * @since 8.1.0
  * @product   highcharts
  * @apioption series.boxplot.data.whiskerDashStyle
  */

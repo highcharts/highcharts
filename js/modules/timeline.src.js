@@ -13,6 +13,11 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import SVGElement from '../parts/SVGElement.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -39,10 +44,6 @@ import H from '../parts/Globals.js';
 * @name Highcharts.TimelineDataLabelsFormatterContextObject#series
 * @type {Highcharts.Series}
 */
-import Point from '../parts/Point.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 var TrackerMixin = H.TrackerMixin, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * The timeline series type.
@@ -255,7 +256,7 @@ seriesType('timeline', 'line',
                         if (this.targetPosition) {
                             this.targetPosition = params;
                         }
-                        return H.SVGElement.prototype.animate.apply(this, arguments);
+                        return SVGElement.prototype.animate.apply(this, arguments);
                     };
                     // Initialize the targetPosition field within data label
                     // object. It's necessary because there is need to know
@@ -297,7 +298,7 @@ seriesType('timeline', 'line',
             if (isInverted) {
                 targetDLWidth = ((distance - pad) * 2 - (point.itemHeight / 2));
                 styles = {
-                    width: targetDLWidth,
+                    width: targetDLWidth + 'px',
                     // Apply ellipsis when data label height is exceeded.
                     textOverflow: dataLabel.width / targetDLWidth *
                         dataLabel.height / 2 > availableSpace * multiplier ?
@@ -306,9 +307,9 @@ seriesType('timeline', 'line',
             }
             else {
                 styles = {
-                    width: userDLOptions.width ||
+                    width: (userDLOptions.width ||
                         dataLabelsOptions.width ||
-                        availableSpace * multiplier - (pad * 2)
+                        availableSpace * multiplier - (pad * 2)) + 'px'
                 };
             }
             dataLabel.css(styles);
@@ -474,12 +475,8 @@ seriesType('timeline', 'line',
             coords[i] -= (dl.alignAttr || dl)[i[0]];
         });
         path = chart.renderer.crispLine([
-            'M',
-            coords.x1,
-            coords.y1,
-            'L',
-            coords.x2,
-            coords.y2
+            ['M', coords.x1, coords.y1],
+            ['L', coords.x2, coords.y2]
         ], dl.options.connectorWidth);
         return path;
     },

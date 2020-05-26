@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type StackingAxis from './StackingAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -33,7 +35,7 @@ declare global {
             public points: Array<AreaPoint>;
             public getStackPoints(points: Array<AreaPoint>): Array<AreaPoint>;
         }
-        interface AreaPathObject extends SVGPathArray {
+        interface AreaPathObject extends SVGPath {
             xMap?: number;
         }
         interface AreaPointOptions extends LinePointOptions {
@@ -203,7 +205,7 @@ seriesType<Highcharts.AreaSeries>(
          * * If `null`, the scaling behaves like a line series with fill between
          *   the graph and the Y axis minimum.
          * * If `Infinity` or `-Infinity`, the area between the graph and the
-         *   corresponing Y axis extreme is filled (since v6.1.0).
+         *   corresponding Y axis extreme is filled (since v6.1.0).
          *
          * @sample {highcharts} highcharts/plotoptions/area-threshold/
          *         A threshold of 100
@@ -242,8 +244,8 @@ seriesType<Highcharts.AreaSeries>(
                 segment = [] as Array<Highcharts.AreaPoint>,
                 keys = [] as Array<string>,
                 xAxis = this.xAxis,
-                yAxis = this.yAxis,
-                stack = yAxis.stacks[this.stackKey as any],
+                yAxis = this.yAxis as StackingAxis,
+                stack = yAxis.stacking.stacks[this.stackKey as any],
                 pointMap = {} as Highcharts.Dictionary<Highcharts.AreaPoint>,
                 seriesIndex = series.index,
                 yAxisSeries = yAxis.series,
@@ -395,12 +397,12 @@ seriesType<Highcharts.AreaSeries>(
         getGraphPath: function (
             this: Highcharts.AreaSeries,
             points: Array<Highcharts.AreaPoint>
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var getGraphPath = Series.prototype.getGraphPath,
-                graphPath: Highcharts.SVGPathArray,
+                graphPath: SVGPath,
                 options = this.options,
                 stacking = options.stacking,
-                yAxis = this.yAxis,
+                yAxis = this.yAxis as StackingAxis,
                 topPath: Highcharts.AreaPathObject,
                 bottomPath,
                 bottomPoints: Array<Highcharts.AreaPoint> = [],
@@ -409,7 +411,7 @@ seriesType<Highcharts.AreaSeries>(
                 i,
                 areaPath: Highcharts.AreaPathObject,
                 plotX: number|undefined,
-                stacks = yAxis.stacks[this.stackKey as any],
+                stacks = yAxis.stacking.stacks[this.stackKey as any],
                 threshold = options.threshold,
                 translatedThreshold = Math.round( // #10909
                     yAxis.getThreshold(options.threshold as any) as any
@@ -521,8 +523,9 @@ seriesType<Highcharts.AreaSeries>(
 
             (bottomPoints as any).reversed = true;
             bottomPath = getGraphPath.call(this, bottomPoints, true, true);
-            if (bottomPath.length) {
-                bottomPath[0] = 'L';
+            const firstBottomPoint = bottomPath[0];
+            if (firstBottomPoint && firstBottomPoint[0] === 'M') {
+                bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
             }
 
             areaPath = topPath.concat(bottomPath);

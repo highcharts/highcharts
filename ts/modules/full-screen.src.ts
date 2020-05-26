@@ -225,6 +225,7 @@ class Fullscreen {
             ]();
 
             if (promise) {
+                // No dot notation because of IE8 compatibility
                 promise['catch'](function (): void { // eslint-disable-line dot-notation
                     alert( // eslint-disable-line no-alert
                         'Full screen is not supported inside a frame.'

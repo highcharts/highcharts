@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -23,7 +24,7 @@ declare global {
             public series: BubbleSeries;
             public haloPath(
                 size: number
-            ): (SVGElement|SVGPathArray|Array<SVGElement>);
+            ): SVGPath;
         }
         class BubbleSeries extends ScatterSeries {
             public alignDataLabel: ColumnSeries['alignDataLabel'];
@@ -519,27 +520,25 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
             this.points.forEach(function (point: Highcharts.BubblePoint): void {
-                var graphic = point.graphic,
-                    animationTarget;
+                const { graphic } = point;
 
                 if (graphic && graphic.width) { // URL symbols don't have width
-                    animationTarget = {
-                        x: graphic.x,
-                        y: graphic.y,
-                        width: graphic.width,
-                        height: graphic.height
-                    };
 
                     // Start values
-                    graphic.attr({
-                        x: point.plotX,
-                        y: point.plotY,
-                        width: 1,
-                        height: 1
-                    });
+                    if (!this.hasRendered) {
+                        graphic.attr({
+                            x: point.plotX,
+                            y: point.plotY,
+                            width: 1,
+                            height: 1
+                        });
+                    }
 
                     // Run animation
-                    graphic.animate(animationTarget, this.options.animation);
+                    graphic.animate(
+                        this.markerAttribs(point),
+                        this.options.animation
+                    );
                 }
             }, this);
         }
@@ -610,9 +609,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
     haloPath: function (
         this: Highcharts.BubblePoint,
         size: number
-    ): (Highcharts.SVGElement|
-        Highcharts.SVGPathArray|
-        Array<Highcharts.SVGElement>) {
+    ): SVGPath {
         return Point.prototype.haloPath.call(
             this,
             // #6067

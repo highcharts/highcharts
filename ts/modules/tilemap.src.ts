@@ -12,6 +12,8 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -27,7 +29,7 @@ declare global {
             public series: TilemapSeries;
             public setVisible: ColorPointMixin['setVisible'];
             public tileEdges: Dictionary<number>;
-            public haloPath(): (SVGElement|SVGPathArray|Array<SVGElement>);
+            public haloPath(): SVGPath;
         }
         class TilemapSeries extends HeatmapSeries implements ColorSeries {
             public alignDataLabel: TilemapShapeObject['alignDataLabel'];
@@ -77,7 +79,7 @@ declare global {
             haloPath(
                 this: TilemapPoint,
                 size: number
-            ): (SVGElement|SVGPathArray|Array<SVGElement>);
+            ): SVGPath;
             translate(this: TilemapSeries): void;
         }
         let tileShapeTypes: Dictionary<TilemapShapeObject>;
@@ -140,20 +142,20 @@ H.tileShapeTypes = {
         haloPath: function (
             this: Highcharts.TilemapPoint,
             size: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             if (!size) {
                 return [];
             }
             var hexagon = this.tileEdges;
 
             return [
-                'M', hexagon.x2 - size, hexagon.y1 + size,
-                'L', hexagon.x3 + size, hexagon.y1 + size,
-                hexagon.x4 + size * 1.5, hexagon.y2,
-                hexagon.x3 + size, hexagon.y3 - size,
-                hexagon.x2 - size, hexagon.y3 - size,
-                hexagon.x1 - size * 1.5, hexagon.y2,
-                'Z'
+                ['M', hexagon.x2 - size, hexagon.y1 + size],
+                ['L', hexagon.x3 + size, hexagon.y1 + size],
+                ['L', hexagon.x4 + size * 1.5, hexagon.y2],
+                ['L', hexagon.x3 + size, hexagon.y3 - size],
+                ['L', hexagon.x2 - size, hexagon.y3 - size],
+                ['L', hexagon.x1 - size * 1.5, hexagon.y2],
+                ['Z']
             ];
         },
         translate: function (this: Highcharts.TilemapSeries): void {
@@ -295,13 +297,13 @@ H.tileShapeTypes = {
                 point.shapeType = 'path';
                 point.shapeArgs = {
                     d: [
-                        'M', x2, y1,
-                        'L', x3, y1,
-                        x4, y2,
-                        x3, y3,
-                        x2, y3,
-                        x1, y2,
-                        'Z'
+                        ['M', x2, y1],
+                        ['L', x3, y1],
+                        ['L', x4, y2],
+                        ['L', x3, y3],
+                        ['L', x2, y3],
+                        ['L', x1, y2],
+                        ['Z']
                     ]
                 };
             });
@@ -322,18 +324,18 @@ H.tileShapeTypes = {
         haloPath: function (
             this: Highcharts.TilemapPoint,
             size: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             if (!size) {
                 return [];
             }
             var diamond = this.tileEdges;
 
             return [
-                'M', diamond.x2, diamond.y1 + size,
-                'L', diamond.x3 + size, diamond.y2,
-                diamond.x2, diamond.y3 - size,
-                diamond.x1 - size, diamond.y2,
-                'Z'
+                ['M', diamond.x2, diamond.y1 + size],
+                ['L', diamond.x3 + size, diamond.y2],
+                ['L', diamond.x2, diamond.y3 - size],
+                ['L', diamond.x1 - size, diamond.y2],
+                ['Z']
             ];
         },
         translate: function (this: Highcharts.TilemapSeries): void {
@@ -458,11 +460,11 @@ H.tileShapeTypes = {
                 point.shapeType = 'path';
                 point.shapeArgs = {
                     d: [
-                        'M', x2, y1,
-                        'L', x3, y2,
-                        x2, y3,
-                        x1, y2,
-                        'Z'
+                        ['M', x2, y1],
+                        ['L', x3, y2],
+                        ['L', x2, y3],
+                        ['L', x1, y2],
+                        ['Z']
                     ]
                 };
             });
@@ -483,11 +485,7 @@ H.tileShapeTypes = {
         haloPath: function (
             this: Highcharts.TilemapPoint,
             size: number
-        ): (
-            Highcharts.SVGElement|
-            Highcharts.SVGPathArray|
-            Array<Highcharts.SVGElement>
-        ) { // eslint-disable-line @typescript-eslint/indent
+        ): SVGPath { // eslint-disable-line @typescript-eslint/indent
             return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
                 .call(
                     this,
@@ -928,11 +926,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
          */
         haloPath: function (
             this: Highcharts.TilemapPoint
-        ): (
-            Highcharts.SVGElement|
-            Highcharts.SVGPathArray|
-            Array<Highcharts.SVGElement>
-        ) { // eslint-disable-line @typescript-eslint/indent
+        ): SVGPath { // eslint-disable-line @typescript-eslint/indent
             return this.series.tileShape.haloPath.apply(
                 this,
                 Array.prototype.slice.call(arguments) as any

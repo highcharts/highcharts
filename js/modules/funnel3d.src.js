@@ -18,9 +18,9 @@ var color = Color.parse;
 import U from '../parts/Utilities.js';
 var error = U.error, extend = U.extend, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType;
 import '../parts/ColumnSeries.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SVGRenderer.js';
 var charts = H.charts, seriesTypes = H.seriesTypes, 
-// Use H.Renderer instead of H.SVGRenderer for VML support.
+// Use H.Renderer instead of SVGRenderer for VML support.
 RendererProto = H.Renderer.prototype, 
 //
 cuboidPath = RendererProto.cuboidPath, funnel3dMethods;

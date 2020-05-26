@@ -56,7 +56,8 @@ var draw = function draw(
         animatableAttribs = params.animatableAttribs,
         onComplete = params.onComplete,
         css = params.css,
-        renderer = params.renderer;
+        renderer = params.renderer,
+        animation = component.series?.options.animation;
 
     if (component.shouldDraw()) {
         if (!graphic) {
@@ -69,7 +70,7 @@ var draw = function draw(
             .attr(params.attribs)
             .animate(
                 animatableAttribs,
-                params.isNew ? false : void 0,
+                params.isNew ? false : animation,
                 onComplete
             );
     } else if (graphic) {

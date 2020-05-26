@@ -62,9 +62,10 @@ import Point from './Point.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 import './Chart.js';
-import './Options.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
 import './Series.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
+var Chart = H.Chart, hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**
  * TrackerMixin for points and graphs.
@@ -146,7 +147,9 @@ TrackerMixin = H.TrackerMixin = {
     drawTrackerGraph: function () {
         var series = this, options = series.options, trackByArea = options.trackByArea, trackerPath = [].concat(trackByArea ?
             series.areaPath :
-            series.graphPath), trackerPathLength = trackerPath.length, chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
+            series.graphPath), 
+        // trackerPathLength = trackerPath.length,
+        chart = series.chart, pointer = chart.pointer, renderer = chart.renderer, snap = chart.options.tooltip.snap, tracker = series.tracker, i, onMouseOver = function (e) {
             if (chart.hoverSeries !== series) {
                 series.onMouseOver();
             }
@@ -165,23 +168,7 @@ TrackerMixin = H.TrackerMixin = {
          * Opera: 0.00000000001 (unlimited)
          */
         TRACKER_FILL = 'rgba(192,192,192,' + (svg ? 0.0001 : 0.002) + ')';
-        // Extend end points. A better way would be to use round linecaps,
-        // but those are not clickable in VML.
-        if (trackerPathLength && !trackByArea) {
-            i = trackerPathLength + 1;
-            while (i--) {
-                if (trackerPath[i] === 'M') {
-                    // extend left side
-                    trackerPath.splice(i + 1, 0, trackerPath[i + 1] - snap, trackerPath[i + 2], 'L');
-                }
-                if ((i && trackerPath[i] === 'M') ||
-                    i === trackerPathLength) {
-                    // extend right side
-                    trackerPath.splice(i, 0, 'L', trackerPath[i - 2] + snap, trackerPath[i - 1]);
-                }
-            }
-        }
-        // draw the tracker
+        // Draw the tracker
         if (tracker) {
             tracker.attr({ d: trackerPath });
         }
@@ -197,6 +184,7 @@ TrackerMixin = H.TrackerMixin = {
                 .add(series.group);
             if (!chart.styledMode) {
                 series.tracker.attr({
+                    'stroke-linecap': 'round',
                     'stroke-linejoin': 'round',
                     stroke: TRACKER_FILL,
                     fill: trackByArea ? TRACKER_FILL : 'none',
@@ -502,6 +490,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 xy = [0];
             }
             xy.forEach(function (isX) {
+                var _a;
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?
                     -1 :
@@ -536,41 +525,40 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     axis.toValue(axis.toPixels(extremes.max) +
                         axis.minPixelPadding));
                 axis.panningState = panningState;
-                // It is not necessary to calculate extremes on ordinal axis,
-                // because the are already calculated, so we don't want to
-                // override them.
-                if (!axisOpt.ordinal) {
-                    // If the new range spills over, either to the min or max,
-                    // adjust the new range.
-                    spill = paddedMin - newMin;
-                    if (spill > 0) {
-                        newMax += spill;
-                        newMin = paddedMin;
-                    }
-                    spill = newMax - paddedMax;
-                    if (spill > 0) {
-                        newMax = paddedMax;
-                        newMin -= spill;
-                    }
-                    // Set new extremes if they are actually new
-                    if (axis.series.length &&
-                        newMin !== extremes.min &&
-                        newMax !== extremes.max &&
-                        isX ? true : (panningState &&
-                        newMin >= paddedMin &&
-                        newMax <= paddedMax)) {
-                        axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
-                        if (!chart.resetZoomButton &&
-                            !hasMapNavigation &&
-                            type.match('y')) {
-                            chart.showResetZoom();
-                            axis.displayBtn = false;
-                        }
-                        doRedraw = true;
-                    }
-                    // set new reference for next run:
-                    chart[mouseDown] = mousePos;
+                // If the new range spills over, either to the min or max,
+                // adjust the new range.
+                spill = paddedMin - newMin;
+                if (spill > 0) {
+                    newMax += spill;
+                    newMin = paddedMin;
                 }
+                spill = newMax - paddedMax;
+                if (spill > 0) {
+                    newMax = paddedMax;
+                    newMin -= spill;
+                }
+                // Set new extremes if they are actually new
+                if (axis.series.length &&
+                    newMin !== extremes.min &&
+                    newMax !== extremes.max &&
+                    // It is not necessary to calculate extremes on ordinal
+                    // axis (with not equally spaced data), because they
+                    // are already calculated, and we don't want to
+                    // override them.
+                    isX && !((_a = axis.ordinal) === null || _a === void 0 ? void 0 : _a.getExtendedPositions()) ? true : (panningState &&
+                    newMin >= paddedMin &&
+                    newMax <= paddedMax)) {
+                    axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
+                    if (!chart.resetZoomButton &&
+                        !hasMapNavigation &&
+                        type.match('y')) {
+                        chart.showResetZoom();
+                        axis.displayBtn = false;
+                    }
+                    doRedraw = true;
+                }
+                // set new reference for next run:
+                chart[mouseDown] = mousePos;
             });
             if (doRedraw) {
                 chart.redraw(false);
@@ -719,7 +707,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     setState: function (state, move) {
         var point = this, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
-            {}), markerOptions = (defaultPlotOptions[series.type].marker &&
+            {}), markerOptions = (defaultOptions.plotOptions[series.type].marker &&
             series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = ((markerOptions &&
             markerOptions.states &&
             markerOptions.states[state || 'normal']) || {}), stateDisabled = markerStateOptions.enabled === false, stateMarkerGraphic = series.stateMarkerGraphic, pointMarker = point.marker || {}, chart = series.chart, halo = series.halo, haloOptions, markerAttribs, pointAttribs, pointAttribsAnimation, hasMarkers = (markerOptions && series.markerAttribs), newSymbol;
@@ -760,7 +748,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 pointAttribsAnimation = pick(chart.options.chart.animation, stateOptions.animation);
                 // Some inactive points (e.g. slices in pie) should apply
                 // oppacity also for it's labels
-                if (series.options.inactiveOtherPoints) {
+                if (series.options.inactiveOtherPoints && pointAttribs.opacity) {
                     (point.dataLabels || []).forEach(function (label) {
                         if (label) {
                             label.animate({
@@ -875,7 +863,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @param {number} size
      *        The radius of the circular halo.
      *
-     * @return {Highcharts.SVGElement}
+     * @return {Highcharts.SVGPathArray}
      *         The path definition.
      */
     haloPath: function (size) {

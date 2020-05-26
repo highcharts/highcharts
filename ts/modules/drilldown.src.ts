@@ -12,7 +12,24 @@
 
 'use strict';
 
+import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import Tick from '../parts/Tick.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    removeEvent,
+    animObject,
+    extend,
+    fireEvent,
+    format,
+    merge,
+    objectEach,
+    pick,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -208,7 +225,7 @@ declare global {
  * @name Highcharts.DrilldownEventObject#point
  * @type {Highcharts.Point}
  *//**
- * If a category label was clicked, this array holds all points corresponing to
+ * If a category label was clicked, this array holds all points corresponding to
  * the category. Otherwise it is set to false.
  * @name Highcharts.DrilldownEventObject#points
  * @type {boolean|Array<Highcharts.Point>|undefined}
@@ -292,29 +309,13 @@ declare global {
  * @type {"drillup"}
  */
 
-import Color from '../parts/Color.js';
-import Point from '../parts/Point.js';
-import Tick from '../parts/Tick.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    extend,
-    fireEvent,
-    format,
-    merge,
-    objectEach,
-    pick,
-    syncTimeout
-} = U;
-
-import '../parts/Options.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
 
 var noop = H.noop,
-    defaultOptions = H.defaultOptions,
     Chart = H.Chart,
     seriesTypes = H.seriesTypes,
     PieSeries = seriesTypes.pie,
@@ -565,7 +566,7 @@ defaultOptions.drilldown = {
  * - `point`: The originating point.
  *
  * - `points`: If a category label was clicked, this array holds all points
- *   corresponing to the category.
+ *   corresponding to the category.
  *
  * - `seriesOptions`: Options for the new series.
  *
@@ -627,7 +628,7 @@ defaultOptions.drilldown = {
  * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
  * The animation options for the element fade.
  */
-H.SVGRenderer.prototype.Element.prototype.fadeIn = function (
+SVGRenderer.prototype.Element.prototype.fadeIn = function (
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): void {
     this
@@ -1435,10 +1436,17 @@ Tick.prototype.drillable = function (): void {
             }
 
             label.addClass('highcharts-drilldown-axis-label');
+
+            // #12656 - avoid duplicate of attach event
+            if (label.removeOnDrillableClick) {
+                removeEvent(label.element, 'click');
+            }
+
             label.removeOnDrillableClick = addEvent(
                 label.element,
                 'click',
                 function (e: MouseEvent): void {
+                    e.preventDefault();
                     axis.drilldownCategory(pos, e);
                 }
             );
@@ -1449,12 +1457,14 @@ Tick.prototype.drillable = function (): void {
                 );
             }
 
-        } else if (label && label.removeOnDrillableClick) {
+        } else if (label && label.drillable && label.removeOnDrillableClick) {
+
 
             if (!styledMode) {
                 label.styles = {}; // reset for full overwrite of styles
                 label.css(label.basicStyles);
             }
+
             label.removeOnDrillableClick(); // #3806
             label.removeClass('highcharts-drilldown-axis-label');
         }

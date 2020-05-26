@@ -83,7 +83,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    extend,
+    getOptions
 } = U;
 
 import '../parts/Chart.js';
@@ -328,7 +329,7 @@ Highcharts.downloadSVGLocal = function (
         objectURLRevoke = true,
         finallyHandler: Function,
         libURL = (
-            options.libURL || (Highcharts.getOptions().exporting as any).libURL
+            options.libURL || (getOptions().exporting as any).libURL
         ),
         dummySVGContainer = doc.createElement('div'),
         imageType = options.type || 'image/png',
@@ -516,7 +517,7 @@ Highcharts.downloadSVGLocal = function (
                         ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
                         try {
                             Highcharts.downloadURL(
-                                nav.msSaveOrOpenBlob ?
+                                nav.msSaveOrOpenBlob as any ?
                                     canvas.msToBlob() :
                                     canvas.toDataURL(imageType),
                                 filename
@@ -827,7 +828,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (
 };
 
 // Extend the default options to use the local exporter logic
-merge(true, Highcharts.getOptions().exporting, {
+merge(true, getOptions().exporting, {
     libURL: 'https://code.highcharts.com/@product.version@/lib/',
 
     // When offline-exporting is loaded, redefine the menu item definitions
