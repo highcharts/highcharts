@@ -180,9 +180,9 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
      */
     dataLabels: {
 
-        align: null,
+        align: void 0,
 
-        verticalAlign: null,
+        verticalAlign: void 0,
 
         /**
          * X offset of the lower data labels relative to the point value.

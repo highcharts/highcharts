@@ -20,6 +20,7 @@ const {
     defined,
     destroyObjectProperties,
     format,
+    isNumber,
     pick
 } = U;
 
@@ -462,7 +463,10 @@ class StackItem {
             });
 
             if (pick(!isJustify && stackItem.options.crop, true)) {
-                visible = chart.isInsidePlot(label.x - padding + label.width, label.y) &&
+                visible =
+                    isNumber(label.x) &&
+                    isNumber(label.y) &&
+                    chart.isInsidePlot(label.x - padding + label.width, label.y) &&
                     chart.isInsidePlot(label.x + padding, label.y);
 
                 if (!visible) {

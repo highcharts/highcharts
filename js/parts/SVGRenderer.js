@@ -11,6 +11,7 @@
 import Color from './Color.js';
 import H from './Globals.js';
 import SVGElement from './SVGElement.js';
+import SVGLabel from './SVGLabel.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, removeEvent = U.removeEvent, splat = U.splat, stop = U.stop, uniqueKey = U.uniqueKey;
 /**
@@ -812,7 +813,7 @@ var SVGRenderer = /** @class */ (function () {
                 spans = line.split('|||');
                 spans.forEach(function buildTextSpans(span) {
                     if (span !== '' || spans.length === 1) {
-                        var attributes = {}, tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'), classAttribute, styleAttribute, // #390
+                        var attributes = {}, tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'), a, classAttribute, styleAttribute, // #390
                         hrefAttribute;
                         classAttribute = parseAttribute(span, 'class');
                         if (classAttribute) {
@@ -823,13 +824,22 @@ var SVGRenderer = /** @class */ (function () {
                             styleAttribute = styleAttribute.replace(/(;| |^)color([ :])/, '$1fill$2');
                             attr(tspan, 'style', styleAttribute);
                         }
-                        // Not for export - #1529
+                        // For anchors, wrap the tspan in an <a> tag and apply
+                        // the href attribute as is (#13559). Not for export
+                        // (#1529)
                         hrefAttribute = parseAttribute(span, 'href');
                         if (hrefAttribute && !forExport) {
-                            attr(tspan, 'onclick', 'location.href=\"' + hrefAttribute + '\"');
-                            attr(tspan, 'class', 'highcharts-anchor');
-                            if (!renderer.styledMode) {
-                                css(tspan, { cursor: 'pointer' });
+                            if (
+                            // Stop JavaScript links, vulnerable to XSS
+                            hrefAttribute.split(':')[0].toLowerCase()
+                                .indexOf('javascript') === -1) {
+                                a = doc.createElementNS(renderer.SVG_NS, 'a');
+                                attr(a, 'href', hrefAttribute);
+                                attr(tspan, 'class', 'highcharts-anchor');
+                                a.appendChild(tspan);
+                                if (!renderer.styledMode) {
+                                    css(tspan, { cursor: 'pointer' });
+                                }
                             }
                         }
                         // Strip away unsupported HTML tags (#7126)
@@ -851,7 +861,7 @@ var SVGRenderer = /** @class */ (function () {
                             // add attributes
                             attr(tspan, attributes);
                             // Append it
-                            textNode.appendChild(tspan);
+                            textNode.appendChild(a || tspan);
                             // first span on subsequent line, add the line
                             // height
                             if (!spanNo && isSubsequentLine) {
@@ -929,14 +939,14 @@ var SVGRenderer = /** @class */ (function () {
                     textNode.childNodes.length);
             });
             if (ellipsis && truncated) {
-                wrapper.attr('title', unescapeEntities(wrapper.textStr, ['&lt;', '&gt;']) // #7179
+                wrapper.attr('title', unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
                 );
             }
             if (tempParent) {
                 tempParent.removeChild(textNode);
             }
             // Apply the text outline
-            if (textOutline && wrapper.applyTextOutline) {
+            if (isString(textOutline) && wrapper.applyTextOutline) {
                 wrapper.applyTextOutline(textOutline);
             }
         }
@@ -1003,7 +1013,11 @@ var SVGRenderer = /** @class */ (function () {
      * The button element.
      */
     SVGRenderer.prototype.button = function (text, x, y, callback, normalState, hoverState, pressedState, disabledState, shape, useHTML) {
-        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode;
+        var label = this.label(text, x, y, shape, void 0, void 0, useHTML, void 0, 'button'), curState = 0, styledMode = this.styledMode, userNormalStyle = normalState && normalState.style || {};
+        // Remove stylable attributes
+        if (normalState && normalState.style) {
+            delete normalState.style;
+        }
         // Default, non-stylable attributes
         label.attr(merge({ padding: 8, r: 2 }, normalState));
         if (!styledMode) {
@@ -1019,6 +1033,8 @@ var SVGRenderer = /** @class */ (function () {
                     cursor: 'pointer',
                     fontWeight: 'normal'
                 }
+            }, {
+                style: userNormalStyle
             }, normalState);
             normalStyle = normalState.style;
             delete normalState.style;
@@ -1526,7 +1542,7 @@ var SVGRenderer = /** @class */ (function () {
         if (symbolFn) {
             // Check if there's a path defined for this symbol
             if (typeof x === 'number') {
-                path = symbolFn.call(this.symbols, Math.round(x || 0), Math.round(y || 0), width, height, options);
+                path = symbolFn.call(this.symbols, Math.round(x || 0), Math.round(y || 0), width || 0, height || 0, options);
             }
             obj = this.path(path);
             if (!ren.styledMode) {
@@ -2108,341 +2124,7 @@ var SVGRenderer = /** @class */ (function () {
      *         The generated label.
      */
     SVGRenderer.prototype.label = function (str, x, y, shape, anchorX, anchorY, useHTML, baseline, className) {
-        var renderer = this, styledMode = renderer.styledMode, wrapper = renderer.g((className !== 'button' && 'label')), text = wrapper.text = renderer.text('', 0, 0, useHTML)
-            .attr({
-            zIndex: 1
-        }), box, emptyBBox = { width: 0, height: 0, x: 0, y: 0 }, bBox = emptyBBox, alignFactor = 0, padding = 3, paddingLeft = 0, width, height, wrapperX, wrapperY, textAlign, deferredAttr = {}, strokeWidth, baselineOffset, hasBGImage = /^url\((.*?)\)$/.test(shape), needsBox = styledMode || hasBGImage, getCrispAdjust = function () {
-            return styledMode ?
-                box.strokeWidth() % 2 / 2 :
-                (strokeWidth ? parseInt(strokeWidth, 10) : 0) % 2 / 2;
-        }, updateBoxSize, updateTextPadding, boxAttr;
-        if (className) {
-            wrapper.addClass('highcharts-' + className);
-        }
-        /* This function runs after the label is added to the DOM (when the
-           bounding box is available), and after the text of the label is
-           updated to detect the new bounding box and reflect it in the border
-           box. */
-        updateBoxSize = function () {
-            var style = text.element.style, crispAdjust, attribs = {};
-            // #12165 error when width is null (auto)
-            // #12163 when fontweight: bold, recalculate bBox withot cache
-            // #3295 && 3514 box failure when string equals 0
-            bBox = ((!isNumber(width) || !isNumber(height) || textAlign) &&
-                defined(text.textStr)) ?
-                text.getBBox() : emptyBBox;
-            wrapper.width = ((width || bBox.width || 0) +
-                2 * padding +
-                paddingLeft);
-            wrapper.height = (height || bBox.height || 0) + 2 * padding;
-            // Update the label-scoped y offset. Math.min because of inline
-            // style (#9400)
-            baselineOffset = padding + Math.min(renderer
-                .fontMetrics(style && style.fontSize, text).b, 
-            // When the height is 0, there is no bBox, so go with the font
-            // metrics. Highmaps CSS demos.
-            bBox.height || Infinity);
-            if (needsBox) {
-                // Create the border box if it is not already present
-                if (!box) {
-                    // Symbol definition exists (#5324)
-                    wrapper.box = box =
-                        renderer.symbols[shape] || hasBGImage ?
-                            renderer.symbol(shape) :
-                            renderer.rect();
-                    box.addClass(// Don't use label className for buttons
-                    (className === 'button' ? '' : 'highcharts-label-box') +
-                        (className ? ' highcharts-' + className + '-box' : ''));
-                    box.add(wrapper);
-                    crispAdjust = getCrispAdjust();
-                    attribs.x = crispAdjust;
-                    attribs.y = (baseline ? -baselineOffset : 0) + crispAdjust;
-                }
-                // Apply the box attributes
-                attribs.width = Math.round(wrapper.width);
-                attribs.height = Math.round(wrapper.height);
-                box.attr(extend(attribs, deferredAttr));
-                deferredAttr = {};
-            }
-        };
-        /*
-         * This function runs after setting text or padding, but only if padding
-         * is changed.
-         */
-        updateTextPadding = function () {
-            var textX = paddingLeft + padding, textY;
-            // determin y based on the baseline
-            textY = baseline ? 0 : baselineOffset;
-            // compensate for alignment
-            if (defined(width) &&
-                bBox &&
-                (textAlign === 'center' || textAlign === 'right')) {
-                textX += { center: 0.5, right: 1 }[textAlign] *
-                    (width - bBox.width);
-            }
-            // update if anything changed
-            if (textX !== text.x || textY !== text.y) {
-                text.attr('x', textX);
-                // #8159 - prevent misplaced data labels in treemap
-                // (useHTML: true)
-                if (text.hasBoxWidthChanged) {
-                    bBox = text.getBBox(true);
-                    updateBoxSize();
-                }
-                if (typeof textY !== 'undefined') {
-                    text.attr('y', textY);
-                }
-            }
-            // record current values
-            text.x = textX;
-            text.y = textY;
-        };
-        /*
-         * Set a box attribute, or defer it if the box is not yet created
-         */
-        boxAttr = function (key, value) {
-            if (box) {
-                box.attr(key, value);
-            }
-            else {
-                deferredAttr[key] = value;
-            }
-        };
-        /*
-         * After the text element is added, get the desired size of the border
-         * box and add it before the text in the DOM.
-         */
-        wrapper.onAdd = function () {
-            text.add(wrapper);
-            wrapper.attr({
-                // Alignment is available now  (#3295, 0 not rendered if given
-                // as a value)
-                text: (str || str === 0) ? str : '',
-                x: x,
-                y: y
-            });
-            if (box && defined(anchorX)) {
-                wrapper.attr({
-                    anchorX: anchorX,
-                    anchorY: anchorY
-                });
-            }
-        };
-        /*
-         * Add specific attribute setters.
-         */
-        // only change local variables
-        wrapper.widthSetter = function (value) {
-            // width:auto => null
-            width = isNumber(value) ? value : null;
-        };
-        wrapper.heightSetter = function (value) {
-            height = value;
-        };
-        wrapper['text-alignSetter'] = function (value) {
-            textAlign = value;
-        };
-        wrapper.paddingSetter = function (value) {
-            if (defined(value) && value !== padding) {
-                padding = wrapper.padding = value;
-                updateTextPadding();
-            }
-        };
-        wrapper.paddingLeftSetter = function (value) {
-            if (defined(value) && value !== paddingLeft) {
-                paddingLeft = value;
-                updateTextPadding();
-            }
-        };
-        // change local variable and prevent setting attribute on the group
-        wrapper.alignSetter = function (value) {
-            value = {
-                left: 0,
-                center: 0.5,
-                right: 1
-            }[value];
-            if (value !== alignFactor) {
-                alignFactor = value;
-                // Bounding box exists, means we're dynamically changing
-                if (bBox) {
-                    wrapper.attr({ x: wrapperX }); // #5134
-                }
-            }
-        };
-        // apply these to the box and the text alike
-        wrapper.textSetter = function (value) {
-            if (typeof value !== 'undefined') {
-                // Must use .attr to ensure transforms are done (#10009)
-                text.attr({
-                    text: value
-                });
-            }
-            updateBoxSize();
-            updateTextPadding();
-        };
-        // apply these to the box but not to the text
-        wrapper['stroke-widthSetter'] = function (value, key) {
-            if (value) {
-                needsBox = true;
-            }
-            strokeWidth = this['stroke-width'] = value;
-            boxAttr(key, value);
-        };
-        if (styledMode) {
-            wrapper.rSetter = function (value, key) {
-                boxAttr(key, value);
-            };
-        }
-        else {
-            wrapper.strokeSetter =
-                wrapper.fillSetter =
-                    wrapper.rSetter = function (value, key) {
-                        if (key !== 'r') {
-                            if (key === 'fill' && value) {
-                                needsBox = true;
-                            }
-                            // for animation getter (#6776)
-                            wrapper[key] = value;
-                        }
-                        boxAttr(key, value);
-                    };
-        }
-        wrapper.anchorXSetter = function (value, key) {
-            anchorX = wrapper.anchorX = value;
-            boxAttr(key, Math.round(value) - getCrispAdjust() - wrapperX);
-        };
-        wrapper.anchorYSetter = function (value, key) {
-            anchorY = wrapper.anchorY = value;
-            boxAttr(key, value - wrapperY);
-        };
-        // rename attributes
-        wrapper.xSetter = function (value) {
-            wrapper.x = value; // for animation getter
-            if (alignFactor) {
-                value -= alignFactor * ((width || bBox.width) + 2 * padding);
-                // Force animation even when setting to the same value (#7898)
-                wrapper['forceAnimate:x'] = true;
-            }
-            wrapperX = Math.round(value);
-            wrapper.attr('translateX', wrapperX);
-        };
-        wrapper.ySetter = function (value) {
-            wrapperY = wrapper.y = Math.round(value);
-            wrapper.attr('translateY', wrapperY);
-        };
-        wrapper.isLabel = true;
-        // Redirect certain methods to either the box or the text
-        var baseCss = wrapper.css;
-        var wrapperExtension = {
-            /**
-             * Pick up some properties and apply them to the text instead of the
-             * wrapper.
-             */
-            css: function (styles) {
-                if (styles) {
-                    var textStyles = {}, isWidth, isFontStyle;
-                    // Create a copy to avoid altering the original object
-                    // (#537)
-                    styles = merge(styles);
-                    wrapper.textProps.forEach(function (prop) {
-                        if (typeof styles[prop] !== 'undefined') {
-                            textStyles[prop] = styles[prop];
-                            delete styles[prop];
-                        }
-                    });
-                    text.css(textStyles);
-                    isWidth = 'width' in textStyles;
-                    isFontStyle = 'fontSize' in textStyles ||
-                        'fontWeight' in textStyles;
-                    // Update existing text, box (#9400, #12163)
-                    if (isWidth || isFontStyle) {
-                        updateBoxSize();
-                        // Keep updated (#9400, #12163)
-                        if (isFontStyle) {
-                            updateTextPadding();
-                        }
-                    }
-                }
-                return baseCss.call(wrapper, styles);
-            },
-            /*
-             * Return the bounding box of the box, not the group.
-             */
-            getBBox: function () {
-                return {
-                    width: bBox.width + 2 * padding,
-                    height: bBox.height + 2 * padding,
-                    x: bBox.x - padding,
-                    y: bBox.y - padding
-                };
-            },
-            /**
-             * Destroy and release memory.
-             */
-            destroy: function () {
-                // Added by button implementation
-                removeEvent(wrapper.element, 'mouseenter');
-                removeEvent(wrapper.element, 'mouseleave');
-                if (text) {
-                    text.destroy();
-                }
-                if (box) {
-                    box = box.destroy();
-                }
-                // Call base implementation to destroy the rest
-                SVGElement.prototype.destroy.call(wrapper);
-                // Release local pointers (#1298)
-                wrapper =
-                    renderer =
-                        text =
-                            updateBoxSize =
-                                updateTextPadding =
-                                    boxAttr = null;
-            }
-        };
-        // Event handling. In case of useHTML, we need to make sure that events
-        // are captured on the span as well, and that mouseenter/mouseleave
-        // between the SVG group and the HTML span are not treated as real
-        // enter/leave events. #13310.
-        wrapper.on = function (eventType, handler) {
-            var span = text && text.element.tagName === 'SPAN' ? text : void 0;
-            var selectiveHandler;
-            if (span) {
-                selectiveHandler = function (e) {
-                    if ((eventType === 'mouseenter' ||
-                        eventType === 'mouseleave') &&
-                        e.relatedTarget instanceof Element &&
-                        (wrapper.element.contains(e.relatedTarget) ||
-                            span.element.contains(e.relatedTarget))) {
-                        return;
-                    }
-                    handler.call(wrapper.element, e);
-                };
-                span.on(eventType, selectiveHandler);
-            }
-            SVGElement.prototype.on.call(wrapper, eventType, selectiveHandler || handler);
-            return wrapper;
-        };
-        if (!styledMode) {
-            /**
-             * Apply the shadow to the box.
-             *
-             * @ignore
-             * @function Highcharts.SVGElement#shadow
-             *
-             * @return {Highcharts.SVGElement}
-             */
-            wrapperExtension.shadow = function (b) {
-                if (b) {
-                    updateBoxSize();
-                    if (box) {
-                        box.shadow(b);
-                    }
-                }
-                return wrapper;
-            };
-        }
-        return extend(wrapper, wrapperExtension);
+        return new SVGLabel(this, str, x, y, shape, anchorX, anchorY, useHTML, baseline, className);
     };
     return SVGRenderer;
 }());
@@ -2536,20 +2218,20 @@ SVGRenderer.prototype.symbols = {
         ];
     },
     arc: function (x, y, w, h, options) {
-        var start = options.start, rx = options.r || w, ry = options.r || h || w, proximity = 0.001, fullCircle = Math.abs(options.end - options.start - 2 * Math.PI) <
-            proximity, 
-        // Substract a small number to prevent cos and sin of start and
-        // end from becoming equal on 360 arcs (related: #1561)
-        end = options.end - proximity, innerRadius = options.innerR, open = pick(options.open, fullCircle), cosStart = Math.cos(start), sinStart = Math.sin(start), cosEnd = Math.cos(end), sinEnd = Math.sin(end), 
-        // Proximity takes care of rounding errors around PI (#6971)
-        longArc = pick(options.longArc, options.end - start - Math.PI < proximity ? 0 : 1), arc;
-        arc = [
-            [
+        var arc = [];
+        if (options) {
+            var start = options.start || 0, end = options.end || 0, rx = options.r || w, ry = options.r || h || w, proximity = 0.001, fullCircle = Math.abs(end - start - 2 * Math.PI) <
+                proximity, 
+            // Substract a small number to prevent cos and sin of start and
+            // end from becoming equal on 360 arcs (related: #1561)
+            end = end - proximity, innerRadius = options.innerR, open = pick(options.open, fullCircle), cosStart = Math.cos(start), sinStart = Math.sin(start), cosEnd = Math.cos(end), sinEnd = Math.sin(end), 
+            // Proximity takes care of rounding errors around PI (#6971)
+            longArc = pick(options.longArc, end - start - Math.PI < proximity ? 0 : 1);
+            arc.push([
                 'M',
                 x + rx * cosStart,
                 y + ry * sinStart
-            ],
-            [
+            ], [
                 'A',
                 rx,
                 ry,
@@ -2558,32 +2240,32 @@ SVGRenderer.prototype.symbols = {
                 pick(options.clockwise, 1),
                 x + rx * cosEnd,
                 y + ry * sinEnd
-            ]
-        ];
-        if (defined(innerRadius)) {
-            arc.push(open ?
-                [
-                    'M',
+            ]);
+            if (defined(innerRadius)) {
+                arc.push(open ?
+                    [
+                        'M',
+                        x + innerRadius * cosEnd,
+                        y + innerRadius * sinEnd
+                    ] : [
+                    'L',
                     x + innerRadius * cosEnd,
                     y + innerRadius * sinEnd
-                ] : [
-                'L',
-                x + innerRadius * cosEnd,
-                y + innerRadius * sinEnd
-            ], [
-                'A',
-                innerRadius,
-                innerRadius,
-                0,
-                longArc,
-                // Clockwise - opposite to the outer arc clockwise
-                defined(options.clockwise) ? 1 - options.clockwise : 0,
-                x + innerRadius * cosStart,
-                y + innerRadius * sinStart
-            ]);
-        }
-        if (!open) {
-            arc.push(['Z']);
+                ], [
+                    'A',
+                    innerRadius,
+                    innerRadius,
+                    0,
+                    longArc,
+                    // Clockwise - opposite to the outer arc clockwise
+                    defined(options.clockwise) ? 1 - options.clockwise : 0,
+                    x + innerRadius * cosStart,
+                    y + innerRadius * sinStart
+                ]);
+            }
+            if (!open) {
+                arc.push(['Z']);
+            }
         }
         return arc;
     },
@@ -2592,7 +2274,7 @@ SVGRenderer.prototype.symbols = {
      * rectangles in VML
      */
     callout: function (x, y, w, h, options) {
-        var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX, anchorY = options && options.anchorY, path;
+        var arrowLength = 6, halfDistance = 6, r = Math.min((options && options.r) || 0, w, h), safeDistance = r + halfDistance, anchorX = options && options.anchorX || 0, anchorY = options && options.anchorY || 0, path;
         path = [
             ['M', x + r, y],
             ['L', x + w - r, y],

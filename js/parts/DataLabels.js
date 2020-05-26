@@ -455,11 +455,11 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
             rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
             alignAttr = {
                 x: (alignTo.x +
-                    options.x +
+                    (options.x || 0) +
                     alignTo.width / 2 +
                     rotCorr.x),
                 y: (alignTo.y +
-                    options.y +
+                    (options.y || 0) +
                     { top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] *
                         alignTo.height)
             };
@@ -587,57 +587,60 @@ Series.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isIns
  */
 Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
     var chart = this.chart, align = options.align, verticalAlign = options.verticalAlign, off, justified, padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
+    var _a = options.x, x = _a === void 0 ? 0 : _a, _b = options.y, y = _b === void 0 ? 0 : _b;
     // Off left
     off = alignAttr.x + padding;
     if (off < 0) {
-        if (align === 'right') {
+        if (align === 'right' && x >= 0) {
             options.align = 'left';
             options.inside = true;
         }
         else {
-            options.x = -off;
+            x -= off;
         }
         justified = true;
     }
     // Off right
     off = alignAttr.x + bBox.width - padding;
     if (off > chart.plotWidth) {
-        if (align === 'left') {
+        if (align === 'left' && x <= 0) {
             options.align = 'right';
             options.inside = true;
         }
         else {
-            options.x = chart.plotWidth - off;
+            x += chart.plotWidth - off;
         }
         justified = true;
     }
     // Off top
     off = alignAttr.y + padding;
     if (off < 0) {
-        if (verticalAlign === 'bottom') {
+        if (verticalAlign === 'bottom' && y >= 0) {
             options.verticalAlign = 'top';
             options.inside = true;
         }
         else {
-            options.y = -off;
+            y -= off;
         }
         justified = true;
     }
     // Off bottom
     off = alignAttr.y + bBox.height - padding;
     if (off > chart.plotHeight) {
-        if (verticalAlign === 'top') {
+        if (verticalAlign === 'top' && y <= 0) {
             options.verticalAlign = 'bottom';
             options.inside = true;
         }
         else {
-            options.y = chart.plotHeight - off;
+            y += chart.plotHeight - off;
         }
         justified = true;
     }
     if (justified) {
+        options.x = x;
+        options.y = y;
         dataLabel.placed = !isNew;
-        dataLabel.align(options, null, alignTo);
+        dataLabel.align(options, void 0, alignTo);
     }
     return justified;
 };

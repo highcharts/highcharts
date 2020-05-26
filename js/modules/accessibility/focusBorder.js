@@ -12,6 +12,7 @@
 'use strict';
 import H from '../../parts/Globals.js';
 import SVGElement from '../../parts/SVGElement.js';
+import SVGLabel from '../../parts/SVGLabel.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -147,15 +148,16 @@ extend(SVGElement.prototype, {
                 y: posYCorrection
             };
         }
-        if (this.element.nodeName === 'text' || this.isLabel) {
-            var isRotated = !!this.rotation, correction = !this.isLabel ? getTextAnchorCorrection(this) :
+        var isLabel = this instanceof SVGLabel;
+        if (this.element.nodeName === 'text' || isLabel) {
+            var isRotated = !!this.rotation, correction = !isLabel ? getTextAnchorCorrection(this) :
                 {
                     x: isRotated ? 1 : 0,
                     y: 0
                 };
             borderPosX = +this.attr('x') - (bb.width * correction.x) - pad;
             borderPosY = +this.attr('y') - (bb.height * correction.y) - pad;
-            if (this.isLabel && isRotated) {
+            if (isLabel && isRotated) {
                 var temp = borderWidth;
                 borderWidth = borderHeight;
                 borderHeight = temp;

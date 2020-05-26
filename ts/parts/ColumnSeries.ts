@@ -450,9 +450,9 @@ seriesType<Highcharts.ColumnSeries>(
         },
 
         dataLabels: {
-            align: null,
-            verticalAlign: null,
-            y: null
+            align: void 0,
+            verticalAlign: void 0,
+            y: void 0
         },
 
         /**

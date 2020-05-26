@@ -455,9 +455,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.isDirtyBox = true;
                 }
                 // Chart setSize
-                if (!isResponsiveOptions &&
-                    chart.propsRequireReflow.indexOf(key) !== -1) {
-                    runSetSize = true;
+                if (chart.propsRequireReflow.indexOf(key) !== -1) {
+                    if (isResponsiveOptions) {
+                        chart.isDirtyBox = true;
+                    }
+                    else {
+                        runSetSize = true;
+                    }
                 }
             });
             if (!chart.styledMode && 'style' in optionsChart) {
@@ -1053,7 +1057,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // rules (#6912).
         animation = series.finishedAnimating && { animation: false }, kinds = {};
         if (keepPoints) {
-            preserve.push('data', 'isDirtyData', 'points', 'processedXData', 'processedYData', 'xIncrement', '_hasPointMarkers', '_hasPointLabels', 
+            preserve.push('data', 'isDirtyData', 'points', 'processedXData', 'processedYData', 'xIncrement', 'cropped', '_hasPointMarkers', '_hasPointLabels', 
             // Map specific, consider moving it to series-specific preserve-
             // properties (#10617)
             'mapMap', 'mapData', 'minY', 'maxY', 'minX', 'maxX');

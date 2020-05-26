@@ -188,7 +188,7 @@ SVGRenderer.prototype.symbols.rect = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SymbolOptionsObject
+    options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
     return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };

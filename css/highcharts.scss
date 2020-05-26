@@ -282,6 +282,10 @@ g.highcharts-series,
     stroke-width: 1px;
     stroke: $background-color;
 }
+.highcharts-a11y-markers-hidden .highcharts-point:not(.highcharts-point-hover):not(.highcharts-a11y-marker-visible),
+.highcharts-a11y-marker-hidden {
+    opacity: 0;
+}
 .highcharts-point {
     stroke-width: 1px;
 }

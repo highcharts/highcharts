@@ -496,7 +496,7 @@ extend(defaultOptions, {
  *         Path to be used in a handle
  */
 H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options) {
-    var halfWidth = options.width / 2, markerPosition = Math.round(halfWidth / 3) + 0.5, height = options.height || 0;
+    var halfWidth = (options && options.width || 0) / 2, markerPosition = Math.round(halfWidth / 3) + 0.5, height = options && options.height || 0;
     return [
         ['M', -halfWidth - 1, 0.5],
         ['L', halfWidth, 0.5],
@@ -1844,6 +1844,7 @@ if (!H.Navigator) {
                             0) -
                         ((legendOptions &&
                             legendOptions.verticalAlign === 'bottom' &&
+                            legendOptions.layout !== 'proximate' && // #13392
                             legendOptions.enabled &&
                             !legendOptions.floating) ?
                             legend.legendHeight +
