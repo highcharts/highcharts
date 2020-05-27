@@ -645,7 +645,7 @@ class Pointer {
      * Finds the closest point to a set of coordinates, using the k-d-tree
      * algorithm.
      *
-     * @function Highcharts.Pointer#findNearestKDPoints
+     * @function Highcharts.Pointer#findNearestKDPoint
      *
      * @param {Array<Highcharts.Series>} series
      *        All the series to search in.
