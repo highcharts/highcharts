@@ -40,7 +40,7 @@ declare global {
             states?: SeriesStatesOptionsObject<AreaRangeSeries>;
             trackByArea?: boolean;
         }
-        interface Point {
+        interface PointLike {
             plotHigh?: AreaRangePoint['plotHigh'];
             plotLow?: AreaRangePoint['plotLow'];
         }

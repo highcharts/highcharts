@@ -9,6 +9,9 @@
  * */
 'use strict';
 import H from './Globals.js';
+var noop = H.noop, seriesTypes = H.seriesTypes;
+import U from './Utilities.js';
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -30,10 +33,8 @@ import H from './Globals.js';
  *
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
-import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
-var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+var Series = H.Series;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size

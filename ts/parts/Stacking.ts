@@ -34,7 +34,7 @@ declare global {
         interface ChartLike {
             getStacks(): void;
         }
-        interface Point {
+        interface PointLike {
             leftCliff?: number;
             rightCliff?: number;
         }

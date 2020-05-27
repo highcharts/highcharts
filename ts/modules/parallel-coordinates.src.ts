@@ -13,6 +13,7 @@
 'use strict';
 
 import type { AxisType } from '../parts/axis/types';
+import type Point from '../parts/Point';
 import type RadialAxis from '../parts-more/RadialAxis';
 import Axis from '../parts/Axis.js';
 import Chart from '../parts/Chart.js';
@@ -329,7 +330,7 @@ class ParallelAxis {
 
             if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
                 var index = parallelCoordinates.position,
-                    currentPoints: Array<Highcharts.Point> = [];
+                    currentPoints: Array<Point> = [];
 
                 axis.series.forEach(function (series: Highcharts.Series): void {
                     if (
@@ -587,7 +588,7 @@ addEvent(H.Series, 'destroy', function (): void {
  * @private
  */
 function addFormattedValue(
-    this: Highcharts.Point,
+    this: Point,
     proceed: Function
 ): void {
     var chart = this.series && this.series.chart,

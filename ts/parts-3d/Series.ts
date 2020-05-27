@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type ZAxis from '../parts-3d/ZAxis';
 import H from '../parts/Globals.js';
 
@@ -21,7 +22,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Point {
+        interface PointLike {
             plotZ?: number;
             z?: number;
         }
@@ -55,7 +56,7 @@ H.Series.prototype.translate3dPoints = function (): void {
         chart = series.chart,
         zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
         rawPoints = [] as Array<Highcharts.Position3dObject>,
-        rawPoint: Highcharts.Point,
+        rawPoint: Point,
         projectedPoints: Array<Highcharts.Position3dObject>,
         projectedPoint: Highcharts.Position3dObject,
         zValue: (number|null|undefined),

@@ -46,6 +46,7 @@ declare global {
         class TreemapPoint extends ScatterPoint implements DrawPoint {
             public draw: typeof drawPoint;
             public drillId?: (boolean|string);
+            public isValid: () => boolean;
             public name: string;
             public node: TreemapNodeObject;
             public options: TreemapPointOptions;
@@ -57,7 +58,6 @@ declare global {
             public value: (number|null);
             public drawPoint(params: DrawPointParams): void;
             public getClassName(): string;
-            public isValid(): boolean;
             public shouldDraw(): boolean;
         }
         class TreemapSeries extends ScatterSeries implements TreeSeries {

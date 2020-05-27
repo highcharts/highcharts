@@ -487,21 +487,18 @@ var ColorAxis = /** @class */ (function (_super) {
      * @private
      */
     ColorAxis.prototype.getPlotLinePath = function (options) {
-        var axis = this;
-        var left = axis.left;
-        var pos = options.translatedValue;
-        var top = axis.top;
+        var axis = this, left = axis.left, pos = options.translatedValue, top = axis.top;
         // crosshairs only
         return isNumber(pos) ? // pos can be 0 (#3969)
             (axis.horiz ? [
-                ['M', pos - 4, this.top - 6],
-                ['L', pos + 4, this.top - 6],
-                ['L', pos, this.top],
+                ['M', pos - 4, top - 6],
+                ['L', pos + 4, top - 6],
+                ['L', pos, top],
                 ['Z']
             ] : [
-                ['M', this.left, pos],
-                ['L', this.left - 6, pos + 6],
-                ['L', this.left - 6, pos - 6],
+                ['M', left, pos],
+                ['L', left - 6, pos + 6],
+                ['L', left - 6, pos - 6],
                 ['Z']
             ]) :
             _super.prototype.getPlotLinePath.call(this, options);
@@ -523,10 +520,7 @@ var ColorAxis = /** @class */ (function (_super) {
      * and call {@link Highcharts.Chart#redraw} after.
      */
     ColorAxis.prototype.update = function (newOptions, redraw) {
-        var axis = this;
-        var chart = axis.chart;
-        var legend = chart.legend;
-        var updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
+        var axis = this, chart = axis.chart, legend = chart.legend, updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
         this.series.forEach(function (series) {
             // Needed for Axis.update when choropleth colors change
             series.isDirtyData = true;

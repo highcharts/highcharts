@@ -44,11 +44,11 @@ declare global {
     namespace Highcharts {
         class VennPoint extends ScatterPoint implements DrawPoint {
             public draw: typeof draw;
+            public isValid: () => boolean;
             public options: VennPointOptions;
             public series: VennSeries;
             public sets: Array<string>;
             public value: number;
-            public isValid(): boolean;
             public shouldDraw(): boolean;
         }
         class VennSeries extends ScatterSeries {

@@ -119,6 +119,7 @@ declare global {
             public getSum: NodesPoint['getSum'];
             public hasShape: NodesPoint['hasShape'];
             public isNode: NodesPoint['isNode'];
+            public isValid: () => boolean;
             public linksFrom: Array<NetworkgraphPoint>;
             public linksTo: Array<NetworkgraphPoint>;
             public mass: NodesPoint['mass'];
@@ -140,7 +141,6 @@ declare global {
                 options: NetworkgraphPointOptions,
                 x?: number
             ): Highcharts.NetworkgraphPoint;
-            public isValid(): boolean;
             public redrawLink(): void;
             public remove(redraw?: boolean, animation?: boolean): void;
             public renderLink(): void;

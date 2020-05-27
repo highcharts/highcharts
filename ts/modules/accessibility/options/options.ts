@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../../../parts/Chart';
+import type Point from '../../../parts/Point';
 
 /**
  * Internal types.

@@ -11,6 +11,7 @@
 
 'use strict';
 
+import type Axis from '../parts/Axis';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
@@ -83,7 +84,7 @@ declare global {
         interface Options {
             connectors?: ConnectorsOptions;
         }
-        interface Point {
+        interface PointLike {
             getMarkerVector(
                 radians: number,
                 markerRadius: number,
@@ -501,9 +502,7 @@ extend(defaultOptions, {
  * @return {Highcharts.Dictionary<number>|null}
  *         Result xMax, xMin, yMax, yMin.
  */
-function getPointBB(
-    point: Highcharts.Point
-): (Highcharts.Dictionary<number>|null) {
+function getPointBB(point: Point): (Highcharts.Dictionary<number>|null) {
     var shapeArgs = point.shapeArgs,
         bb;
 
@@ -629,8 +628,8 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
  */
 function Connection(
     this: Highcharts.Connection,
-    from: Highcharts.Point,
-    to: Highcharts.Point,
+    from: Point,
+    to: Point,
     options?: Highcharts.ConnectorsOptions
 ): void {
     this.init(from, to, options);
@@ -654,8 +653,8 @@ Connection.prototype = {
      */
     init: function (
         this: Highcharts.Connection,
-        from: Highcharts.Point,
-        to: Highcharts.Point,
+        from: Point,
+        to: Point,
         options?: Highcharts.ConnectorsOptions
     ): void {
         this.fromPoint = from;
@@ -1081,10 +1080,10 @@ Pathfinder.prototype = {
         pathfinder.connections = [];
         chart.series.forEach(function (series: Highcharts.Series): void {
             if (series.visible && !series.options.isInternal) {
-                series.points.forEach(function (point: Highcharts.Point): void {
+                series.points.forEach(function (point: Point): void {
                     var to: (
-                            Highcharts.Axis|
-                            Highcharts.Point|
+                            Axis|
+                            Point|
                             Highcharts.Series|
                             undefined
                         ),
@@ -1378,7 +1377,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      *         in plot values, not relative to point.
      */
     getPathfinderAnchorPoint: function (
-        this: Highcharts.Point,
+        this: Point,
         markerOptions: Highcharts.ConnectorsMarkerOptions
     ): Highcharts.PositionObject {
         var bb = getPointBB(this),
@@ -1423,7 +1422,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      *         The angle in degrees
      */
     getRadiansToVector: function (
-        this: Highcharts.Point,
+        this: Point,
         v1: Highcharts.PositionObject,
         v2: Highcharts.PositionObject
     ): number {
@@ -1464,7 +1463,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      *         The marker vector as an object with x/y properties.
      */
     getMarkerVector: function (
-        this: Highcharts.Point,
+        this: Point,
         radians: number,
         markerRadius: number,
         anchor: Highcharts.PositionObject

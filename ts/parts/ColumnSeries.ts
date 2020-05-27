@@ -36,7 +36,7 @@ declare global {
             pointWidth?: number;
             states?: SeriesStatesOptionsObject<ColumnSeries>;
         }
-        interface Point {
+        interface PointLike {
             allowShadow?: ColumnPoint['allowShadow'];
         }
         interface Series {

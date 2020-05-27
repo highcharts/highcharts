@@ -26,10 +26,10 @@ declare global {
             public beaufort: string;
             public beaufortLevel: number;
             public direction: number;
+            public isValid: () => boolean;
             public options: WindbarbPointOptions;
             public series: WindbarbSeries;
             public value: number;
-            public isValid(): boolean;
         }
         class WindbarbSeries extends ColumnSeries implements OnSeriesSeries {
             public beaufortFloor: Array<number>;

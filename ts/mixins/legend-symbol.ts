@@ -8,6 +8,7 @@
  *
  * */
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
 
 /**
@@ -36,7 +37,7 @@ declare global {
             drawLineMarker(legend: Legend): void;
             drawRectangle(legend: Legend, item: (Point|Series)): void;
         }
-        interface Point extends LegendItemObject {
+        interface PointLike extends LegendItemObject {
         }
         interface Series extends LegendItemObject {
         }
@@ -75,7 +76,7 @@ H.LegendSymbolMixin = {
     drawRectangle: function (
         this: Highcharts.Series,
         legend: Highcharts.Legend,
-        item: (Highcharts.Point|Highcharts.Series)
+        item: (Point|Highcharts.Series)
     ): void {
         var options = legend.options,
             symbolHeight = legend.symbolHeight,

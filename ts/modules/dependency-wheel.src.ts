@@ -39,6 +39,7 @@ declare global {
             public fromNode: DependencyWheelPoint;
             public getSum: () => number;
             public index: number;
+            public isValid: () => boolean;
             public linksFrom: Array<DependencyWheelPoint>;
             public linksTo: Array<DependencyWheelPoint>;
             public offset: (point: DependencyWheelPoint) => (number|undefined);
@@ -48,7 +49,6 @@ declare global {
             public shapeArgs: SVGAttributes;
             public toNode: DependencyWheelPoint;
             public getDataLabelPath(label: SVGElement): SVGElement;
-            public isValid(): boolean;
         }
         class DependencyWheelSeries extends SankeySeries {
             public animate: (init?: boolean) => void;

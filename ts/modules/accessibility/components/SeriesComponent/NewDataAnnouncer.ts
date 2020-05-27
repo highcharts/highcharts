@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../../../../parts/Chart';
+import type Point from '../../../../parts/Point';
 import H from '../../../../parts/Globals.js';
 import U from '../../../../parts/Utilities.js';
 var extend = U.extend,
@@ -95,10 +96,10 @@ function chartHasAnnounceEnabled(chart: Chart): boolean {
  * @private
  */
 function findPointInDataArray(
-    point: Highcharts.Point
-): Highcharts.Point {
+    point: Point
+): Point {
     var candidates = point.series.data.filter(function (
-        candidate: Highcharts.Point
+        candidate: Point
     ): boolean {
         return point.x === candidate.x && point.y === candidate.y;
     });
@@ -198,7 +199,7 @@ extend(NewDataAnnouncer.prototype, {
         });
 
         e.addEvent(H.Series, 'addPoint', function (
-            e: { point: Highcharts.Point }
+            e: { point: Point }
         ): void {
             announcer.onPointAdded(e.point);
         });
@@ -253,7 +254,7 @@ extend(NewDataAnnouncer.prototype, {
      */
     onPointAdded: function (
         this: Highcharts.NewDataAnnouncer,
-        point: Highcharts.Point
+        point: Point
     ): void {
         var chart = point.series.chart;
 
@@ -318,7 +319,7 @@ extend(NewDataAnnouncer.prototype, {
         this: Highcharts.NewDataAnnouncer,
         dirtySeries: Array<Highcharts.Series>,
         newSeries?: Highcharts.Series,
-        newPoint?: Highcharts.Point
+        newPoint?: Point
     ): void {
         const chart = this.chart;
         const annOptions: Highcharts.AccessibilityAnnounceNewDataOptions =

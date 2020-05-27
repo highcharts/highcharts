@@ -12,6 +12,7 @@
 
 import type Chart from '../parts/Chart';
 import type Pane from './Pane';
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';

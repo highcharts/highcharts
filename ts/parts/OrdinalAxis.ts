@@ -13,6 +13,7 @@
 import type NavigatorAxis from './NavigatorAxis';
 import Axis from './Axis.js';
 import H from './Globals.js';
+import Point from './Point.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -1091,7 +1092,7 @@ namespace OrdinalAxis {
 
                     // Remove active points for shared tooltip
                     if (hoverPoints) {
-                        hoverPoints.forEach(function (point: Highcharts.Point): void {
+                        hoverPoints.forEach(function (point: Point): void {
                             point.setState();
                         });
                     }

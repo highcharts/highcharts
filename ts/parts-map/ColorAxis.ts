@@ -109,7 +109,7 @@ declare global {
         interface Options {
             colorAxis?: (ColorAxis.Options|Array<ColorAxis.Options>);
         }
-        interface Point {
+        interface PointLike {
             dataClass?: number;
         }
     }
@@ -1175,8 +1175,8 @@ class ColorAxis extends Axis implements AxisLike {
      * @fires Highcharts.ColorAxis#event:drawCrosshair
      */
     public drawCrosshair(
-        e: Highcharts.PointerEventObject,
-        point: Highcharts.ColorPoint
+        e?: Highcharts.PointerEventObject,
+        point?: Highcharts.ColorPoint
     ): void {
         const axis = this;
         const plotX = point && point.plotX;
@@ -1230,23 +1230,23 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     public getPlotLinePath(options: Highcharts.AxisPlotLinePathOptionsObject): (SVGPath|null) {
-        const axis = this;
-        const left = axis.left;
-        const pos = options.translatedValue;
-        const top = axis.top;
+        const axis = this,
+            left = axis.left,
+            pos = options.translatedValue,
+            top = axis.top;
 
         // crosshairs only
         return isNumber(pos) ? // pos can be 0 (#3969)
             (
                 axis.horiz ? [
-                    ['M', pos - 4, this.top - 6],
-                    ['L', pos + 4, this.top - 6],
-                    ['L', pos, this.top],
+                    ['M', pos - 4, top - 6],
+                    ['L', pos + 4, top - 6],
+                    ['L', pos, top],
                     ['Z']
                 ] : [
-                    ['M', this.left, pos],
-                    ['L', this.left - 6, pos + 6],
-                    ['L', this.left - 6, pos - 6],
+                    ['M', left, pos],
+                    ['L', left - 6, pos + 6],
+                    ['L', left - 6, pos - 6],
                     ['Z']
                 ]
             ) :
@@ -1273,10 +1273,10 @@ class ColorAxis extends Axis implements AxisLike {
         newOptions: ColorAxis.Options,
         redraw?: boolean
     ): void {
-        const axis = this;
-        const chart = axis.chart;
-        const legend = chart.legend;
-        const updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
+        const axis = this,
+            chart = axis.chart,
+            legend = chart.legend,
+            updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
 
         this.series.forEach(function (series: Highcharts.Series): void {
             // Needed for Axis.update when choropleth colors change
@@ -1392,7 +1392,7 @@ class ColorAxis extends Axis implements AxisLike {
                                 series: Highcharts.Series
                             ): void {
                                 series.points.forEach(function (
-                                    point: Highcharts.Point
+                                    point: Point
                                 ): void {
                                     if (point.dataClass === i) {
                                         (point as any).setVisible(vis);
@@ -1509,7 +1509,7 @@ addEvent(Legend, 'afterGetAllItems', function (
                 if (!series.options.showInLegend || options.dataClasses) {
                     if (series.options.legendType === 'point') {
                         series.points.forEach(function (
-                            point: Highcharts.Point
+                            point: Point
                         ): void {
                             erase(e.allItems, point);
                         });

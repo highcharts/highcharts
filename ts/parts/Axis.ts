@@ -13,6 +13,7 @@
 import type { AxisComposition, AxisLike } from './axis/types';
 import type Chart from './Chart';
 import type PlotLineOrBand from './PlotLineOrBand';
+import type Point from './Point';
 import type SVGPath from './SVGPath';
 import Color from './Color.js';
 import H from './Globals.js';
@@ -5009,7 +5010,7 @@ class Axis implements AxisComposition, AxisLike {
      * @return {number}
      * The X value that the point is given.
      */
-    public nameToX(point: Highcharts.Point): (number|undefined) {
+    public nameToX(point: Point): (number|undefined) {
         var explicitCategories = isArray(this.categories),
             names = explicitCategories ? this.categories : this.names,
             nameX = point.options.x,
@@ -5089,7 +5090,7 @@ class Axis implements AxisComposition, AxisLike {
                 }
 
                 series.data.forEach(function (
-                    point: Highcharts.Point,
+                    point: Point,
                     i: number
                 ): void { // #9487
                     var x;
@@ -7556,7 +7557,7 @@ class Axis implements AxisComposition, AxisLike {
      * @fires Highcharts.Axis#event:afterDrawCrosshair
      * @fires Highcharts.Axis#event:drawCrosshair
      */
-    public drawCrosshair(e?: Highcharts.PointerEventObject, point?: Highcharts.Point): void {
+    public drawCrosshair(e?: Highcharts.PointerEventObject, point?: Point): void {
 
         var path,
             options = this.crosshair,

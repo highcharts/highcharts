@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../../../../parts/Point';
 import H from '../../../../parts/Globals.js';
 import U from '../../../../parts/Utilities.js';
 const {
@@ -33,7 +34,7 @@ declare global {
             resetA11yMarkerOptions: PointMarkerOptionsObject;
             resetMarkerOptions?: unknown;
         }
-        interface Point {
+        interface PointLike {
             hasForcedA11yMarker?: boolean;
         }
     }

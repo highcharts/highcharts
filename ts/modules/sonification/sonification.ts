@@ -39,7 +39,7 @@ declare global {
             timeline?: Timeline;
             duration?: number;
         }
-        interface Point {
+        interface PointLike {
             cancelSonify?: SonifyablePoint['cancelSonify'];
             sonify?: SonifyablePoint['sonify'];
         }

@@ -13,6 +13,7 @@
 'use strict';
 
 import type Chart from '../../parts/Chart';
+import type Point from '../../parts/Point';
 import H from '../../parts/Globals.js';
 
 /**
@@ -563,7 +564,7 @@ function GLRenderer(
                 });
             }
 
-            points.forEach(function (point: Highcharts.Point): void {
+            points.forEach(function (point: Point): void {
                 var plotY = point.plotY,
                     shapeArgs: Highcharts.SVGAttributes,
                     swidth,
