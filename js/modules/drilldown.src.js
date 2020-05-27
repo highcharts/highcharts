@@ -853,7 +853,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (level) {
                 group = group.destroy();
             }
         };
-        if (graphic) {
+        if (graphic && animateTo) {
             delete point.graphic;
             if (!series.chart.styledMode) {
                 animateTo.fill = level.color;
@@ -873,24 +873,31 @@ if (PieSeries) {
         animateDrillupTo: ColumnSeries.prototype.animateDrillupTo,
         animateDrillupFrom: ColumnSeries.prototype.animateDrillupFrom,
         animateDrilldown: function (init) {
-            var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1], animationOptions = this.chart.options.drilldown.animation, animateFrom = level.shapeArgs, start = animateFrom.start, angle = animateFrom.end - start, startAngle = angle / this.points.length, styledMode = this.chart.styledMode;
-            if (!init) {
-                this.points.forEach(function (point, i) {
-                    var animateTo = point.shapeArgs;
-                    if (!styledMode) {
-                        animateFrom.fill = level.color;
-                        animateTo.fill = point.color;
-                    }
-                    if (point.graphic) {
-                        point.graphic
-                            .attr(merge(animateFrom, {
-                            start: start + i * startAngle,
-                            end: start + (i + 1) * startAngle
-                        }))[animationOptions ? 'animate' : 'attr'](animateTo, animationOptions);
-                    }
-                });
-                // Reset to prototype
-                delete this.animate;
+            var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1], animationOptions = this.chart.options.drilldown.animation;
+            // Unable to drill down in the horizontal item series #13372
+            if (this.type !== 'item' && this.center) {
+                var animateFrom = level.shapeArgs, start = animateFrom.start, angle = animateFrom.end - start, startAngle = angle / this.points.length, styledMode = this.chart.styledMode;
+                if (!init) {
+                    this.points.forEach(function (point, i) {
+                        var animateTo = point.shapeArgs;
+                        if (!styledMode) {
+                            animateFrom.fill = level.color;
+                            animateTo.fill = point.color;
+                        }
+                        if (point.graphic) {
+                            point.graphic
+                                .attr(merge(animateFrom, {
+                                start: start + i * startAngle,
+                                end: start + (i + 1) * startAngle
+                            }))[animationOptions ? 'animate' : 'attr'](animateTo, animationOptions);
+                        }
+                    });
+                    // Reset to prototype
+                    delete this.animate;
+                }
+            }
+            else {
+                animationOptions.duration = 0;
             }
         }
     });
