@@ -82,7 +82,7 @@ declare global {
             public getGraphPath(points: Array<AreaRangePoint>): SVGPath;
             public highToXY(point: (AreaRangePoint & PolarPoint)): void;
             public translate(): void;
-            public toYData(point: AreaRangePoint): [number, number];
+            public toYData(point: AreaRangePoint): Array<number>;
         }
     }
 }
