@@ -45,7 +45,7 @@ H.dragNodesMixin = {
      */
     onMouseMove: function (point, event) {
         if (point.fixedPosition && point.inDragMode) {
-            var series = this, chart = series.chart, normalizedEvent = chart.pointer.normalize(event), diffX = point.fixedPosition.chartX - normalizedEvent.chartX, diffY = point.fixedPosition.chartY - normalizedEvent.chartY, newPlotX, newPlotY, graphLayoutsStorage = chart.graphLayoutsStorage;
+            var series = this, chart = series.chart, normalizedEvent = chart.pointer.normalize(event), diffX = point.fixedPosition.chartX - normalizedEvent.chartX, diffY = point.fixedPosition.chartY - normalizedEvent.chartY, newPlotX, newPlotY, graphLayoutsLookup = chart.graphLayoutsLookup;
             // At least 5px to apply change (avoids simple click):
             if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
                 newPlotX = point.fixedPosition.plotX - diffX;
@@ -55,11 +55,9 @@ H.dragNodesMixin = {
                     point.plotY = newPlotY;
                     point.hasDragged = true;
                     this.redrawHalo(point);
-                    for (var layout in graphLayoutsStorage) {
-                        if (Object.prototype.hasOwnProperty.call(graphLayoutsStorage, layout)) {
-                            H.dragNodesMixin.resetSimulation(series, graphLayoutsStorage[layout]);
-                        }
-                    }
+                    graphLayoutsLookup.forEach(function (layout) {
+                        H.dragNodesMixin.resetSimulation(series, layout);
+                    });
                 }
             }
         }

@@ -41,7 +41,7 @@ declare global {
             ): void;
         }
         interface DragNodesChart extends Chart {
-            graphLayoutsStorage: Dictionary<NetworkgraphLayout>;
+            graphLayoutsLookup: Array<NetworkgraphLayout>;
             hoverPoint: DragNodesPoint;
         }
         interface DragNodesPoint extends Point {
@@ -127,7 +127,7 @@ H.dragNodesMixin = {
                 diffY = point.fixedPosition.chartY - normalizedEvent.chartY,
                 newPlotX,
                 newPlotY,
-                graphLayoutsStorage = chart.graphLayoutsStorage;
+                graphLayoutsLookup = chart.graphLayoutsLookup;
 
             // At least 5px to apply change (avoids simple click):
             if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
@@ -141,11 +141,9 @@ H.dragNodesMixin = {
 
                     this.redrawHalo(point);
 
-                    for (const layout in graphLayoutsStorage) {
-                        if (Object.prototype.hasOwnProperty.call(graphLayoutsStorage, layout)) {
-                            H.dragNodesMixin.resetSimulation(series, graphLayoutsStorage[layout]);
-                        }
-                    }
+                    graphLayoutsLookup.forEach((layout): void => {
+                        H.dragNodesMixin.resetSimulation(series, layout);
+                    });
                 }
             }
         }
