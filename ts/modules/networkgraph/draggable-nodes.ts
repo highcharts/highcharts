@@ -35,8 +35,13 @@ declare global {
                 event?: PointerEventObject
             ): void;
             redrawHalo(point: DragNodesPoint): void;
+            resetSimulation(
+                series: DragNodesSeries,
+                layout: NetworkgraphLayout,
+            ): void;
         }
         interface DragNodesChart extends Chart {
+            graphLayoutsStorage: Dictionary<NetworkgraphLayout>;
             hoverPoint: DragNodesPoint;
         }
         interface DragNodesPoint extends Point {
@@ -121,7 +126,8 @@ H.dragNodesMixin = {
                 diffX = point.fixedPosition.chartX - normalizedEvent.chartX,
                 diffY = point.fixedPosition.chartY - normalizedEvent.chartY,
                 newPlotX,
-                newPlotY;
+                newPlotY,
+                graphLayoutsStorage = chart.graphLayoutsStorage;
 
             // At least 5px to apply change (avoids simple click):
             if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
@@ -135,24 +141,10 @@ H.dragNodesMixin = {
 
                     this.redrawHalo(point);
 
-                    if (!series.layout.simulation) {
-                        // When dragging nodes, we don't need to calculate
-                        // initial positions and rendering nodes:
-                        series.layout.setInitialRendering(false);
-
-                        // Start new simulation:
-                        if (!series.layout.enableSimulation) {
-                            // Run only one iteration to speed things up:
-                            series.layout.setMaxIterations(1);
-                        } else {
-                            series.layout.start();
+                    for (const layout in graphLayoutsStorage) {
+                        if (Object.prototype.hasOwnProperty.call(graphLayoutsStorage, layout)) {
+                            H.dragNodesMixin.resetSimulation(series, graphLayoutsStorage[layout]);
                         }
-                        series.chart.redraw();
-                        // Restore defaults:
-                        series.layout.setInitialRendering(true);
-                    } else {
-                        // Extend current simulation:
-                        series.layout.resetSimulation();
                     }
                 }
             }
@@ -200,6 +192,39 @@ H.dragNodesMixin = {
                     (this.options.states as any).hover.halo.size
                 ) as any
             });
+        }
+    },
+    /**
+     * Reset simulation on the layout.
+     *
+     * @private
+     * @param {Highcharts.Series} series
+     * @param {Highcharts.NetworkgraphLayout} layout
+     * @return {void}
+     */
+    resetSimulation: function (
+        this: Highcharts.DragNodesMixin,
+        series: Highcharts.DragNodesSeries,
+        layout: Highcharts.NetworkgraphLayout
+    ): void {
+        const chart = series.chart;
+        if (!layout.simulation) {
+            // When dragging nodes, we don't need to calculate
+            // initial positions and rendering nodes:
+            layout.setInitialRendering(false);
+            // Start new simulation:
+            if (!layout.enableSimulation) {
+                // Run only one iteration to speed things up:
+                layout.setMaxIterations(1);
+            } else {
+                layout.start();
+            }
+            // chart.redraw();
+            // Restore defaults:
+            layout.setInitialRendering(true);
+        } else {
+            // Extend current simulation:
+            layout.resetSimulation();
         }
     }
 };
