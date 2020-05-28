@@ -223,13 +223,13 @@ div.highcharts-tooltip {
     fill-opacity: 0.25;
 }
 
-.highcharts-graph {
+.highcharts-empty-series {
     fill: none;
     stroke-width: 2px;
     stroke-linecap: round;
     stroke-linejoin: round;
 }
-.highcharts-state-hover .highcharts-graph {
+.highcharts-state-hover .highcharts-empty-series {
     stroke-width: 3;
 }
 
@@ -505,11 +505,11 @@ circle.highcharts-legend-nav-active, circle.highcharts-legend-nav-inactive { /* 
     fill: $neutral-color-100;
     stroke-width: 0;
 }
-.highcharts-polygon-series .highcharts-graph {
+.highcharts-polygon-series .highcharts-empty-series {
     fill: inherit;
     stroke-width: 0;
 }
-.highcharts-waterfall-series .highcharts-graph {
+.highcharts-waterfall-series .highcharts-empty-series {
     stroke: $neutral-color-80;
     stroke-dasharray: 1, 3;
 }
@@ -556,7 +556,7 @@ circle.highcharts-legend-nav-active, circle.highcharts-legend-nav-inactive { /* 
     fill: $navigator-series-fill;
     stroke: $navigator-series-border;
 }
-.highcharts-navigator-series .highcharts-graph {
+.highcharts-navigator-series .highcharts-empty-series {
     stroke-width: 1px;
 }
 .highcharts-navigator-series .highcharts-area {
