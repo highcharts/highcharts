@@ -182,9 +182,16 @@ var NavigationBindings = /** @class */ (function () {
                 navigation.bindingsChartClick(this, e);
             }
         }));
-        navigation.eventsToUnbind.push(addEvent(chart.container, 'mousemove', function (e) {
-            navigation.bindingsContainerMouseMove(this, e);
-        }));
+        if (Highcharts.isTouchDevice) {
+            navigation.eventsToUnbind.push(addEvent(chart.container, 'touchmove', function (e) {
+                navigation.bindingsContainerMouseMove(this, e);
+            }));
+        }
+        else {
+            navigation.eventsToUnbind.push(addEvent(chart.container, 'mousemove', function (e) {
+                navigation.bindingsContainerMouseMove(this, e);
+            }));
+        }
     };
     /**
      * Common chart.update() delegation, shared between bindings and exporting.

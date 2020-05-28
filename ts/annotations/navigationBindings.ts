@@ -412,13 +412,23 @@ class NavigationBindings {
                 }
             })
         );
-        navigation.eventsToUnbind.push(
-            addEvent(chart.container, 'mousemove', function (
-                e: Highcharts.PointerEventObject
-            ): void {
-                navigation.bindingsContainerMouseMove(this, e);
-            })
-        );
+        if (Highcharts.isTouchDevice) {
+            navigation.eventsToUnbind.push(
+                addEvent(chart.container, 'touchmove', function (
+                    e: Highcharts.PointerEventObject
+                ): void {
+                    navigation.bindingsContainerMouseMove(this, e);
+                })
+            );
+        } else {
+            navigation.eventsToUnbind.push(
+                addEvent(chart.container, 'mousemove', function (
+                    e: Highcharts.PointerEventObject
+                ): void {
+                    navigation.bindingsContainerMouseMove(this, e);
+                })
+            );
+        }
     }
 
     /**
@@ -429,7 +439,6 @@ class NavigationBindings {
      */
     public initUpdate(): void {
         var navigation = this;
-
         chartNavigationMixin.addUpdate(
             function (options: Highcharts.NavigationOptions): void {
                 navigation.update(options);
