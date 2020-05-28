@@ -206,17 +206,19 @@ QUnit.test('Histogram', function (assert) {
             data: [2, 2.3, 2.6, 2.9, 3.2]
         }, {
             baseSeries: 's1',
+            id: 'histo-s1',
             type: 'histogram'
         }, {
             baseSeries: 's2',
+            id: 'histo-s2',
             type: 'histogram'
         }]
     }, true, true);
 
     assert.strictEqual(
         // Rounding is applied in order to crisp column edges
-        Math.round(chart.series[3].barW),
-        Math.round(chart.series[3].closestPointRangePx),
+        Math.round(chart.get('histo-s2').barW),
+        Math.round(chart.get('histo-s2').closestPointRangePx),
         'Histogram has appropriate pointRange value, when multiple series on the same axis, #9128, #10025'
     );
 
@@ -226,14 +228,15 @@ QUnit.test('Histogram', function (assert) {
             data: [132.8, 137, 139, 142, 145, 148, 151, 151.4]
         }, {
             baseSeries: 'baseSeries',
+            id: 'histo-pisto',
             type: 'histogram',
             binsNumber: 7
         }]
     }, true, true);
 
     assert.strictEqual(
-        chart.series[1].data.length,
-        chart.series[1].options.binsNumber,
+        chart.get('histo-pisto').data.length,
+        chart.get('histo-pisto').options.binsNumber,
         'Histogram produces correct number of bins set by user.'
     );
 
@@ -246,14 +249,15 @@ QUnit.test('Histogram', function (assert) {
         }, {
             type: 'histogram',
             baseSeries: 's1',
+            id: 'histo-s1',
             zIndex: -1,
             binsNumber: void 0
         }]
     }, true, true);
 
     assert.strictEqual(
-        chart.series[1].data.length,
-        chart.series[1].binsNumber(),
+        chart.get('histo-s1').data.length,
+        chart.get('histo-s1').binsNumber(),
         `Histogram produces correctnumber of bins on negative point values.`
     );
 
