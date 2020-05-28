@@ -868,6 +868,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
                 series = chart.series[i] as any;
 
                 if (
+                    series.is('packedbubble') && // #13574
                     series.visible ||
                     !(chart.options.chart as any).ignoreHiddenSeries
                 ) {
