@@ -90,7 +90,7 @@ seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
         }
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
+        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
     }
 }, {
     pointArrayMap: ['y'],
