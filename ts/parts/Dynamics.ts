@@ -805,17 +805,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     });
                 }
 
-
                 splat((options as any)[coll]).forEach(function (
                     newOptions: Highcharts.Dictionary<any>,
                     i: number
                 ): void {
-                    var item = (
-                        defined(newOptions.id) &&
-                        chart.get(newOptions.id)
-                    ) || (chart as any)[coll][indexMap ? indexMap[i] : i];
+                    const hasId = defined(newOptions.id);
+                    let item: Axis|Point|Highcharts.Series|undefined;
 
-                    if (item && item.coll === coll) {
+                    // Match by id
+                    if (hasId) {
+                        item = chart.get(newOptions.id);
+                    }
+
+                    // No match by id found, match by index instead
+                    if (!item) {
+                        item = (chart as any)[coll][indexMap ? indexMap[i] : i];
+
+                        // Check if we grabbed an item with an exising but
+                        // different id (#13541)
+                        if (item && hasId && defined(item.options.id)) {
+                            item = void 0;
+                        }
+                    }
+
+                    if (item && (item as any).coll === coll) {
                         item.update(newOptions, false);
 
                         if (oneToOne) {

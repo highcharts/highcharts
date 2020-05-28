@@ -526,8 +526,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     });
                 }
                 splat(options[coll]).forEach(function (newOptions, i) {
-                    var item = (defined(newOptions.id) &&
-                        chart.get(newOptions.id)) || chart[coll][indexMap ? indexMap[i] : i];
+                    var hasId = defined(newOptions.id);
+                    var item;
+                    // Match by id
+                    if (hasId) {
+                        item = chart.get(newOptions.id);
+                    }
+                    // No match by id found, match by index instead
+                    if (!item) {
+                        item = chart[coll][indexMap ? indexMap[i] : i];
+                        // Check if we grabbed an item with an exising but
+                        // different id (#13541)
+                        if (item && hasId && defined(item.options.id)) {
+                            item = void 0;
+                        }
+                    }
                     if (item && item.coll === coll) {
                         item.update(newOptions, false);
                         if (oneToOne) {
