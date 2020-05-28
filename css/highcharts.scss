@@ -228,6 +228,7 @@ div.highcharts-tooltip {
     stroke-width: 2px;
     stroke-linecap: round;
     stroke-linejoin: round;
+    stroke: $neutral-color-20;
 }
 .highcharts-state-hover .highcharts-empty-series {
     stroke-width: 3;
@@ -516,7 +517,7 @@ circle.highcharts-legend-nav-active, circle.highcharts-legend-nav-inactive { /* 
     fill: inherit;
     stroke-width: 0;
 }
-.highcharts-waterfall-series .highcharts-empty-series {
+.highcharts-waterfall-series {
     stroke: $neutral-color-80;
     stroke-dasharray: 1, 3;
 }
