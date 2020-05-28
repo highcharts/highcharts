@@ -516,7 +516,8 @@ seriesType('packedbubble', 'bubble',
         var chart = series.chart, allDataPoints = [], i, j;
         for (i = 0; i < chart.series.length; i++) {
             series = chart.series[i];
-            if (series.visible ||
+            if (series.is('packedbubble') && // #13574
+                series.visible ||
                 !chart.options.chart.ignoreHiddenSeries) {
                 // add data to array only if series is visible
                 for (j = 0; j < series.yData.length; j++) {
