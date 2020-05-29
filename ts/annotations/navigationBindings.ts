@@ -412,23 +412,13 @@ class NavigationBindings {
                 }
             })
         );
-        if (Highcharts.isTouchDevice) {
-            navigation.eventsToUnbind.push(
-                addEvent(chart.container, 'touchmove', function (
-                    e: Highcharts.PointerEventObject
-                ): void {
-                    navigation.bindingsContainerMouseMove(this, e);
-                })
-            );
-        } else {
-            navigation.eventsToUnbind.push(
-                addEvent(chart.container, 'mousemove', function (
-                    e: Highcharts.PointerEventObject
-                ): void {
-                    navigation.bindingsContainerMouseMove(this, e);
-                })
-            );
-        }
+        navigation.eventsToUnbind.push(
+            addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (
+                e: Highcharts.PointerEventObject
+            ): void {
+                navigation.bindingsContainerMouseMove(this, e);
+            })
+        );
     }
 
     /**

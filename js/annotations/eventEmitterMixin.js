@@ -24,16 +24,9 @@ var eventEmitterMixin = {
      */
     addEvents: function () {
         var emitter = this, addMouseDownEvent = function (element) {
-            if (Highcharts.isTouchDevice) {
-                addEvent(element, 'touchstart', function (e) {
-                    emitter.onMouseDown(e);
-                });
-            }
-            else {
-                addEvent(element, 'mousedown', function (e) {
-                    emitter.onMouseDown(e);
-                });
-            }
+            addEvent(element, Highcharts.isTouchDevice ? 'touchstart' : 'mousedown', function (e) {
+                emitter.onMouseDown(e);
+            });
         };
         addMouseDownEvent(this.graphic.element);
         (emitter.labels || []).forEach(function (label) {
@@ -56,12 +49,7 @@ var eventEmitterMixin = {
             }
         });
         if (emitter.options.draggable) {
-            if (Highcharts.isTouchDevice) {
-                addEvent(emitter, 'touchmove', emitter.onDrag);
-            }
-            else {
-                addEvent(emitter, 'drag', emitter.onDrag);
-            }
+            addEvent(emitter, Highcharts.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
             if (!emitter.graphic.renderer.styledMode) {
                 var cssPointer_1 = {
                     cursor: {
@@ -110,44 +98,23 @@ var eventEmitterMixin = {
         prevChartY = e.chartY;
         emitter.cancelClick = false;
         emitter.chart.hasDraggedAnnotation = true;
-        if (Highcharts.isTouchDevice) {
-            emitter.removeDrag = addEvent(H.doc, 'touchmove', function (e) {
-                emitter.hasDragged = true;
-                e = pointer.normalize(e);
-                e.prevChartX = prevChartX;
-                e.prevChartY = prevChartY;
-                fireEvent(emitter, 'drag', e);
-                prevChartX = e.chartX;
-                prevChartY = e.chartY;
-            });
-            emitter.removeMouseUp = addEvent(H.doc, 'touchend', function (e) {
-                emitter.cancelClick = emitter.hasDragged;
-                emitter.hasDragged = false;
-                emitter.chart.hasDraggedAnnotation = false;
-                // ControlPoints vs Annotation:
-                fireEvent(pick(emitter.target, emitter), 'afterUpdate');
-                emitter.onMouseUp(e);
-            });
-        }
-        else {
-            emitter.removeDrag = addEvent(H.doc, 'mousemove', function (e) {
-                emitter.hasDragged = true;
-                e = pointer.normalize(e);
-                e.prevChartX = prevChartX;
-                e.prevChartY = prevChartY;
-                fireEvent(emitter, 'drag', e);
-                prevChartX = e.chartX;
-                prevChartY = e.chartY;
-            });
-            emitter.removeMouseUp = addEvent(H.doc, 'mouseup', function (e) {
-                emitter.cancelClick = emitter.hasDragged;
-                emitter.hasDragged = false;
-                emitter.chart.hasDraggedAnnotation = false;
-                // ControlPoints vs Annotation:
-                fireEvent(pick(emitter.target, emitter), 'afterUpdate');
-                emitter.onMouseUp(e);
-            });
-        }
+        emitter.removeDrag = addEvent(H.doc, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
+            emitter.hasDragged = true;
+            e = pointer.normalize(e);
+            e.prevChartX = prevChartX;
+            e.prevChartY = prevChartY;
+            fireEvent(emitter, 'drag', e);
+            prevChartX = e.chartX;
+            prevChartY = e.chartY;
+        });
+        emitter.removeMouseUp = addEvent(H.doc, Highcharts.isTouchDevice ? 'touchend' : 'mouseup', function (e) {
+            emitter.cancelClick = emitter.hasDragged;
+            emitter.hasDragged = false;
+            emitter.chart.hasDraggedAnnotation = false;
+            // ControlPoints vs Annotation:
+            fireEvent(pick(emitter.target, emitter), 'afterUpdate');
+            emitter.onMouseUp(e);
+        });
     },
     /**
      * Mouse up handler.
