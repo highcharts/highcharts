@@ -61,8 +61,11 @@ H.colorSeriesMixin = {
                     (colorAxis && typeof value !== 'undefined') ?
                         colorAxis.toColor(value, point) :
                         point.color || series.color);
-            if (color) {
+            if (color && point.color !== color) {
                 point.color = color;
+                if (series.options.legendType === 'point' && point.legendItem) {
+                    series.chart.legend.colorizeItem(point, point.visible);
+                }
             }
         });
     }
