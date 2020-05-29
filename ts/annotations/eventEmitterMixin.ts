@@ -84,23 +84,13 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
             addMouseDownEvent = function (
                 element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
             ): void {
-                if (Highcharts.isTouchDevice) {
-                    addEvent(
-                        element,
-                        'touchstart',
-                        (e: Highcharts.AnnotationEventObject): void => {
-                            emitter.onMouseDown(e);
-                        }
-                    );
-                } else {
-                    addEvent(
-                        element,
-                        'mousedown',
-                        (e: Highcharts.AnnotationEventObject): void => {
-                            emitter.onMouseDown(e);
-                        }
-                    );
-                }
+                addEvent(
+                    element,
+                    Highcharts.isTouchDevice ? 'touchstart' : 'mousedown',
+                    (e: Highcharts.AnnotationEventObject): void => {
+                        emitter.onMouseDown(e);
+                    }
+                );
             };
 
         addMouseDownEvent(this.graphic.element);
@@ -135,11 +125,8 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
         if (emitter.options.draggable) {
 
-            if (Highcharts.isTouchDevice) {
-                addEvent(emitter, 'touchmove', emitter.onDrag);
-            } else {
-                addEvent(emitter, 'drag', emitter.onDrag);
-            }
+            addEvent(emitter, Highcharts.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
+
 
             if (!emitter.graphic.renderer.styledMode) {
                 const cssPointer = {
@@ -204,65 +191,34 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
         emitter.cancelClick = false;
         emitter.chart.hasDraggedAnnotation = true;
-        if (Highcharts.isTouchDevice) {
-            emitter.removeDrag = addEvent(
-                H.doc,
-                'touchmove',
-                function (e: Highcharts.AnnotationEventObject): void {
-                    emitter.hasDragged = true;
+        emitter.removeDrag = addEvent(
+            H.doc,
+            Highcharts.isTouchDevice ? 'touchmove' : 'mousemove',
+            function (e: Highcharts.AnnotationEventObject): void {
+                emitter.hasDragged = true;
 
-                    e = pointer.normalize(e);
-                    e.prevChartX = prevChartX;
-                    e.prevChartY = prevChartY;
+                e = pointer.normalize(e);
+                e.prevChartX = prevChartX;
+                e.prevChartY = prevChartY;
 
-                    fireEvent(emitter, 'drag', e);
+                fireEvent(emitter, 'drag', e);
 
-                    prevChartX = e.chartX;
-                    prevChartY = e.chartY;
-                }
-            );
-            emitter.removeMouseUp = addEvent(
-                H.doc,
-                'touchend',
-                function (e: Highcharts.AnnotationEventObject): void {
-                    emitter.cancelClick = emitter.hasDragged;
-                    emitter.hasDragged = false;
-                    emitter.chart.hasDraggedAnnotation = false;
-                    // ControlPoints vs Annotation:
-                    fireEvent(pick(emitter.target, emitter), 'afterUpdate');
-                    emitter.onMouseUp(e);
-                }
-            );
-        } else {
-            emitter.removeDrag = addEvent(
-                H.doc,
-                'mousemove',
-                function (e: Highcharts.AnnotationEventObject): void {
-                    emitter.hasDragged = true;
-
-                    e = pointer.normalize(e);
-                    e.prevChartX = prevChartX;
-                    e.prevChartY = prevChartY;
-
-                    fireEvent(emitter, 'drag', e);
-
-                    prevChartX = e.chartX;
-                    prevChartY = e.chartY;
-                }
-            );
-            emitter.removeMouseUp = addEvent(
-                H.doc,
-                'mouseup',
-                function (e: Highcharts.AnnotationEventObject): void {
-                    emitter.cancelClick = emitter.hasDragged;
-                    emitter.hasDragged = false;
-                    emitter.chart.hasDraggedAnnotation = false;
-                    // ControlPoints vs Annotation:
-                    fireEvent(pick(emitter.target, emitter), 'afterUpdate');
-                    emitter.onMouseUp(e);
-                }
-            );
-        }
+                prevChartX = e.chartX;
+                prevChartY = e.chartY;
+            }
+        );
+        emitter.removeMouseUp = addEvent(
+            H.doc,
+            Highcharts.isTouchDevice ? 'touchend' : 'mouseup',
+            function (e: Highcharts.AnnotationEventObject): void {
+                emitter.cancelClick = emitter.hasDragged;
+                emitter.hasDragged = false;
+                emitter.chart.hasDraggedAnnotation = false;
+                // ControlPoints vs Annotation:
+                fireEvent(pick(emitter.target, emitter), 'afterUpdate');
+                emitter.onMouseUp(e);
+            }
+        );
     },
 
     /**
