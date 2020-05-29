@@ -310,7 +310,10 @@ Chart.prototype.matchResponsiveRule = function (
 /**
  * Get the current values for a given set of options. Used before we update
  * the chart with a new responsiveness rule.
- * TODO: Restore axis options (by id?)
+ *
+ * @todo Restore axis options (by id?). The matching of items in collections
+ * bears resemblance to the oneToOne matching in Chart.update. Probably we can
+ * refactor out that matching and reuse it in both functions.
  *
  * @private
  * @function Highcharts.Chart#currentOptions
@@ -350,15 +353,27 @@ Chart.prototype.currentOptions = function (
 
                 // Iterate over collections like series, xAxis or yAxis and map
                 // the items by index.
-                for (i = 0; i < val.length; i++) {
-                    if (curr[key][i]) { // Item exists in current data (#6347)
-                        ret[key][i] = {};
-                        getCurrent(
-                            val[i],
-                            curr[key][i],
-                            ret[key][i],
-                            depth + 1
-                        );
+                for (i = 0; i < Math.max(val.length, curr[key].length); i++) {
+
+                    // Item exists in current data (#6347)
+                    if (curr[key][i]) {
+                        // If the item is missing from the new data, we need to
+                        // save the whole config structure. Like when
+                        // responsively updating from a dual axis layout to a
+                        // single axis and back (#13544).
+                        if (val[i] === void 0) {
+                            ret[key][i] = curr[key][i];
+
+                        // Otherwise, proceed
+                        } else {
+                            ret[key][i] = {};
+                            getCurrent(
+                                val[i],
+                                curr[key][i],
+                                ret[key][i],
+                                depth + 1
+                            );
+                        }
                     }
                 }
             } else if (isObject(val)) {
@@ -373,5 +388,6 @@ Chart.prototype.currentOptions = function (
     }
 
     getCurrent(options, this.options, ret, 0);
+
     return ret;
 };
