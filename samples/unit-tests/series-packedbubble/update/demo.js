@@ -39,6 +39,6 @@ QUnit.test('Series update', function (assert) {
     assert.strictEqual(
         radius,
         point.radius,
-        "point's radius is not changing after adding series other than packedbubble."
+        "Point radius should not be updated after adding series other than packedbubble."
     );
 });
