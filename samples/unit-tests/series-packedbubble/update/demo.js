@@ -1,5 +1,7 @@
 QUnit.test('Series update', function (assert) {
     var series,
+        point,
+        radius,
         chart = Highcharts.chart('container', {
             chart: {
                 type: 'packedbubble',
@@ -22,9 +24,21 @@ QUnit.test('Series update', function (assert) {
         }]
     });
     series = chart.series[0];
+    point = series.data[5];
+    radius = point.marker.radius;
     assert.strictEqual(
         !series.parentNode.graphic,
         false,
         'parentNode is visible after series.update'
+    );
+    chart.addSeries({
+        type: 'pie',
+        data: [1],
+        size: '5%'
+    });
+    assert.strictEqual(
+        radius,
+        point.radius,
+        "point's radius is not changing after adding series other than packedbubble."
     );
 });
