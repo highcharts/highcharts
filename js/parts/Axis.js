@@ -1071,8 +1071,7 @@ var Axis = /** @class */ (function () {
             this.series.forEach(function (series) {
                 var seriesClosest = series.closestPointRange, visible = series.visible ||
                     !series.chart.options.chart.ignoreHiddenSeries;
-                if (!series.noSharedTooltip &&
-                    defined(seriesClosest) &&
+                if (defined(seriesClosest) &&
                     visible) {
                     ret = defined(ret) ?
                         Math.min(ret, seriesClosest) :
