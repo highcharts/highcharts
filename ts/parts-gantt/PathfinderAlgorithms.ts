@@ -11,6 +11,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import U from '../parts/Utilities.js';
 const {
@@ -132,7 +133,7 @@ function findLastObstacleBefore(
  * @return {boolean}
  *         Whether point is within the obstacle or not.
  */
-function pointWithinObstacle(obstacle: any, point: Highcharts.Point): boolean {
+function pointWithinObstacle(obstacle: any, point: Point): boolean {
     return (
         (point.x as any) <= obstacle.xMax &&
         (point.x as any) >= obstacle.xMin &&

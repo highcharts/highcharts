@@ -11,6 +11,9 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
+import type Point from '../../parts/Point';
 import H from '../../parts/Globals.js';
 
 /**
@@ -240,7 +243,7 @@ function GLRenderer(
      * Allocate a float buffer to fit all series
      * @private
      */
-    function allocateBuffer(chart: Highcharts.Chart): void {
+    function allocateBuffer(chart: Chart): void {
         var s = 0;
 
         if (!settings.usePreallocated) {
@@ -561,7 +564,7 @@ function GLRenderer(
                 });
             }
 
-            points.forEach(function (point: Highcharts.Point): void {
+            points.forEach(function (point: Point): void {
                 var plotY = point.plotY,
                     shapeArgs: Highcharts.SVGAttributes,
                     swidth,
@@ -1153,7 +1156,7 @@ function GLRenderer(
      * This renders all pushed series.
      * @private
      */
-    function render(chart: Highcharts.Chart): (false|undefined) {
+    function render(chart: Chart): (false|undefined) {
 
         if (chart) {
             if (!chart.chartHeight || !chart.chartWidth) {
@@ -1387,7 +1390,7 @@ function GLRenderer(
      * Render the data when ready
      * @private
      */
-    function renderWhenReady(chart: Highcharts.Chart): (false|undefined) {
+    function renderWhenReady(chart: Chart): (false|undefined) {
         clear();
 
         if (chart.renderer.forExport) {

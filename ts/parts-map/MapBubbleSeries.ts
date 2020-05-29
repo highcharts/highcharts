@@ -25,7 +25,7 @@ declare global {
                 options: MapBubblePointOptions,
                 x?: number
             ): MapBubblePoint;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class MapBubbleSeries extends BubbleSeries {
             public data: Array<MapBubblePoint>;

@@ -13,6 +13,7 @@
 
 'use strict';
 
+import type Chart from '../../parts/Chart';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
@@ -35,7 +36,7 @@ declare global {
             type: string;
             value: string;
         }
-        interface Chart {
+        interface ChartLike {
             /** @requires modules/accessibility */
             langFormat(
                 langKey: string,
@@ -251,7 +252,7 @@ function formatExtendedStatement(
 H.i18nFormat = function (
     formatString: string,
     context: Highcharts.Dictionary<any>,
-    chart: Highcharts.Chart
+    chart: Chart
 ): string {
     var getFirstBracketStatement = function (
             sourceStr: string,

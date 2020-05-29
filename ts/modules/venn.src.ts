@@ -17,8 +17,24 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    seriesType
+} = U;
+
 
 /**
  * Internal types
@@ -28,11 +44,11 @@ declare global {
     namespace Highcharts {
         class VennPoint extends ScatterPoint implements DrawPoint {
             public draw: typeof draw;
+            public isValid: () => boolean;
             public options: VennPointOptions;
             public series: VennSeries;
             public sets: Array<string>;
             public value: number;
-            public isValid(): boolean;
             public shouldDraw(): boolean;
         }
         class VennSeries extends ScatterSeries {
@@ -146,22 +162,6 @@ const {
 import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = nelderMeadModule.nelderMead;
-
-import Color from '../parts/Color.js';
-const color = Color.parse;
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    seriesType
-} = U;
 
 import '../parts/Series.js';
 

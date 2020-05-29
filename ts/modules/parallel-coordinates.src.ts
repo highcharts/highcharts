@@ -12,8 +12,11 @@
 
 'use strict';
 
+import type { AxisType } from '../parts/axis/types';
+import type Point from '../parts/Point';
 import type RadialAxis from '../parts-more/RadialAxis';
 import Axis from '../parts/Axis.js';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
@@ -37,7 +40,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             hasParallelCoordinates?: ParallelChart['hasParallelCoordinates'];
             parallelInfo?: ParallelChart['parallelInfo'];
             /** @requires modules/parallel-coordinates */
@@ -77,8 +80,7 @@ import '../parts/Chart.js';
 import '../parts/Series.js';
 
 // Extensions for parallel coordinates plot.
-var Chart = H.Chart,
-    ChartProto = Chart.prototype;
+var ChartProto = Chart.prototype;
 
 var defaultXAxisOptions = {
     lineWidth: 0,
@@ -328,7 +330,7 @@ class ParallelAxis {
 
             if (chart && chart.hasParallelCoordinates && !axis.isXAxis) {
                 var index = parallelCoordinates.position,
-                    currentPoints: Array<Highcharts.Point> = [];
+                    currentPoints: Array<Point> = [];
 
                 axis.series.forEach(function (series: Highcharts.Series): void {
                     if (
@@ -448,7 +450,7 @@ addEvent(Chart, 'update', function (e: { options: Highcharts.Options }): void {
             this.setParallelInfo(options);
         }
 
-        this.yAxis.forEach(function (axis: Highcharts.Axis): void {
+        this.yAxis.forEach(function (axis: AxisType): void {
             axis.update({}, false);
         });
     }
@@ -586,7 +588,7 @@ addEvent(H.Series, 'destroy', function (): void {
  * @private
  */
 function addFormattedValue(
-    this: Highcharts.Point,
+    this: Point,
     proceed: Function
 ): void {
     var chart = this.series && this.series.chart,

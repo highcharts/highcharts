@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
@@ -721,7 +722,7 @@ seriesType<Highcharts.HeatmapSeries>(
             this: Highcharts.HeatmapSeries,
             points?: Array<Highcharts.HeatmapPoint>,
             insideOnly?: boolean
-        ): Array<Highcharts.Point> {
+        ): Array<Point> {
             return Series.prototype.getValidPoints.call(
                 this,
                 points,

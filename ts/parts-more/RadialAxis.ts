@@ -12,6 +12,7 @@
 
 import type Chart from '../parts/Chart';
 import type Pane from './Pane';
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
@@ -57,7 +58,7 @@ declare global {
             point?: Point;
             reverse?: boolean;
         }
-        interface Chart {
+        interface ChartLike {
             inverted?: boolean;
         }
     }
@@ -198,7 +199,7 @@ class RadialAxis {
         const axisProto = Axis.prototype;
 
         // Merge and set options.
-        axis.setOptions = function (userOptions: RadialAxisOptions): void {
+        axis.setOptions = function (userOptions: DeepPartial<RadialAxisOptions>): void {
 
             var options = this.options = merge(
                 (axis.constructor as typeof Axis).defaultOptions,
@@ -1299,7 +1300,7 @@ interface RadialAxis extends Axis {
     ): Highcharts.PositionObject;
     setAxisSize(): void;
     setAxisTranslation(): void;
-    setOptions(userOptions: RadialAxisOptions): void;
+    setOptions(userOptions: DeepPartial<RadialAxisOptions>): void;
 }
 
 interface RadialAxisOptions extends YAxisOptions {

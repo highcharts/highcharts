@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
 
 /**
@@ -145,7 +146,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
      */
     toYData: function (
         this: Highcharts.MultipleLinesIndicator,
-        point: Highcharts.Point
+        point: Point
     ): Array<number> {
         var pointColl: Array<number> = [];
 
@@ -173,7 +174,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
 
         SMA.prototype.translate.apply(indicator, arguments as any);
 
-        indicator.points.forEach(function (point: Highcharts.Point): void {
+        indicator.points.forEach(function (point: Point): void {
             pointArrayMap.forEach(function (
                 propertyName: string,
                 i: number
@@ -210,7 +211,7 @@ var multipleLinesMixin: Highcharts.MultipleLinesMixin = {
                 }
             },
             // additional lines point place holders:
-            secondaryLines = [] as Array<Array<Highcharts.Point>>,
+            secondaryLines = [] as Array<Array<Point>>,
             secondaryLinesNames = indicator.getTranslatedLinesNames(
                 pointValKey
             ),

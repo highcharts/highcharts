@@ -7,13 +7,13 @@
  */
 
 'use strict';
+
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent
 } = U;
-
-const Chart = H.Chart;
 
 /**
  * Internal types
@@ -21,7 +21,7 @@ const Chart = H.Chart;
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             fullscreen: Fullscreen;
         }
         class Fullscreen {
@@ -81,7 +81,7 @@ class Fullscreen {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart) {
+    public constructor(chart: Chart) {
         /**
          * Chart managed by the fullscreen controller.
          * @name Highcharts.Fullscreen#chart
@@ -140,7 +140,7 @@ class Fullscreen {
     /** @private */
     public browserProps: Highcharts.Fullscreen['browserProps'];
 
-    public chart: Highcharts.Chart;
+    public chart: Chart;
 
     public isOpen: boolean;
 
@@ -300,7 +300,7 @@ H.Fullscreen = Fullscreen;
 export default H.Fullscreen;
 
 // Initialize fullscreen
-addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'beforeRender', function (): void {
     /**
      * @name Highcharts.Chart#fullscreen
      * @type {Highcharts.Fullscreen}

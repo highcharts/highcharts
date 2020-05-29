@@ -8,20 +8,21 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
-import '../parts/Chart.js';
+import Chart from '../parts/Chart.js';
+var chartProto = Chart.prototype;
 import ControllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
 import ControllableCircle from './controllable/ControllableCircle.js';
 import ControllablePath from './controllable/ControllablePath.js';
 import ControllableImage from './controllable/ControllableImage.js';
 import ControllableLabel from './controllable/ControllableLabel.js';
-import EventEmitterMixin from './eventEmitterMixin.js';
-import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var chartProto = H.Chart.prototype;
+import EventEmitterMixin from './eventEmitterMixin.js';
+import H from '../parts/Globals.js';
+import MockPoint from './MockPoint.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -1161,7 +1162,7 @@ chartProto.callbacks.push(function (chart) {
         chart.controlPointsGroup.destroy();
     });
 });
-wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed) {
+wrap(Pointer.prototype, 'onContainerMouseDown', function (proceed) {
     if (!this.chart.hasDraggedAnnotation) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }

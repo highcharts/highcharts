@@ -8,7 +8,13 @@
  *
  * */
 'use strict';
-import Highcharts from './Globals.js';
+import Color from './Color.js';
+var color = Color.parse;
+import H from './Globals.js';
+var charts = H.charts, noop = H.noop;
+import Tooltip from './Tooltip.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
 /**
  * One position in relation to an axis.
  *
@@ -93,12 +99,7 @@ import Highcharts from './Globals.js';
 * @name Highcharts.SelectEventObject#yAxis
 * @type {Array<Highcharts.SelectDataObject>}
 */
-import U from './Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, css = U.css, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isNumber = U.isNumber, isObject = U.isObject, objectEach = U.objectEach, offset = U.offset, pick = U.pick, splat = U.splat;
-import Tooltip from './Tooltip.js';
-import Color from './Color.js';
-var color = Color.parse;
-var H = Highcharts, charts = H.charts, noop = H.noop;
+''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The mouse and touch tracker object. Each {@link Chart} item has one
@@ -141,13 +142,10 @@ var Pointer = /** @class */ (function () {
      * or, if `inactiveOtherPoints` is set to true, set inactive state to
      * all points within that series.
      *
-     * @function Highcharts.Pointer#applyInactiveState
-     *
      * @private
-     *
+     * @function Highcharts.Pointer#applyInactiveState
      * @param {Array<Highcharts.Point>} points
-     *        Currently hovered points
-     *
+     * Currently hovered points
      */
     Pointer.prototype.applyInactiveState = function (points) {
         var activeSeries = [], series;
@@ -185,8 +183,6 @@ var Pointer = /** @class */ (function () {
      * Destroys the Pointer object and disconnects DOM events.
      *
      * @function Highcharts.Pointer#destroy
-     *
-     * @return {void}
      */
     Pointer.prototype.destroy = function () {
         var pointer = this;
@@ -204,8 +200,8 @@ var Pointer = /** @class */ (function () {
         }
         // memory and CPU leak
         clearInterval(pointer.tooltipTimeout);
-        objectEach(pointer, function (val, prop) {
-            pointer[prop] = null;
+        objectEach(pointer, function (_val, prop) {
+            pointer[prop] = void 0;
         });
     };
     /**
@@ -394,7 +390,7 @@ var Pointer = /** @class */ (function () {
      * Finds the closest point to a set of coordinates, using the k-d-tree
      * algorithm.
      *
-     * @function Highcharts.Pointer#findNearestKDPoints
+     * @function Highcharts.Pointer#findNearestKDPoint
      *
      * @param {Array<Highcharts.Series>} series
      *        All the series to search in.
@@ -768,10 +764,6 @@ var Pointer = /** @class */ (function () {
     /**
      * @private
      * @function Highcharts.Pointer#onContainerClick
-     *
-     * @param {global.MouseEvent} e
-     *
-     * @return {void}
      */
     Pointer.prototype.onContainerClick = function (e) {
         var chart = this.chart;
@@ -1503,4 +1495,4 @@ var Pointer = /** @class */ (function () {
     return Pointer;
 }());
 H.Pointer = Pointer;
-export default H.Pointer;
+export default Pointer;

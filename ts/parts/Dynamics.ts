@@ -54,7 +54,7 @@ declare global {
             setTitle(titleOptions: AxisTitleOptions, redraw?: boolean): void;
             update(options: AxisOptions, redraw?: boolean): void;
         }
-        interface Chart {
+        interface ChartLike {
             collectionsWithUpdate: Array<string>;
             collectionsWithInit: Dictionary<[Function, Array<any>?]>;
             loadingDiv?: HTMLDOMElement;
@@ -103,7 +103,7 @@ declare global {
             axis: AxisOptions | ColorAxis.Options;
             redraw: undefined | boolean;
         }
-        interface Point {
+        interface PointLike {
             touched?: boolean;
             remove(
                 redraw?: boolean,
@@ -225,7 +225,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:afterAddSeries
      */
     addSeries: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.SeriesOptionsType,
         redraw?: boolean,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
@@ -291,7 +291,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The newly generated Axis object.
      */
     addAxis: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.AxisOptions,
         isX?: boolean,
         redraw?: boolean,
@@ -328,7 +328,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The newly generated Axis object.
      */
     addColorAxis: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: ColorAxis.Options,
         redraw?: boolean,
         animation?: boolean
@@ -355,7 +355,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         The newly generated Axis object.
      */
     createAxis: function (
-        this: Highcharts.Chart,
+        this: Chart,
         type: string,
         options: Highcharts.CreateAxisOptionsObject
     ): Highcharts.Axis {
@@ -420,10 +420,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
      *        [lang.loading](https://api.highcharts.com/highcharts/lang.loading).
-     *
-     * @return {void}
      */
-    showLoading: function (this: Highcharts.Chart, str?: string): void {
+    showLoading: function (this: Chart, str?: string): void {
         var chart = this,
             options = chart.options,
             loadingDiv = chart.loadingDiv,
@@ -496,10 +494,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         Toggle loading in Highstock
      *
      * @function Highcharts.Chart#hideLoading
-     *
-     * @return {void}
      */
-    hideLoading: function (this: Highcharts.Chart): void {
+    hideLoading: function (this: Chart): void {
 
         var options = this.options,
             loadingDiv = this.loadingDiv;
@@ -636,13 +632,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:update
      * @fires Highcharts.Chart#event:afterUpdate
      */
     update: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.Options,
         redraw?: boolean,
         oneToOne?: boolean,
@@ -934,11 +928,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {Highcharts.SubtitleOptions} options
      *        New subtitle options. The subtitle text itself is set by the
      *        `options.text` property.
-     *
-     * @return {void}
      */
     setSubtitle: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.SubtitleOptions,
         redraw?: boolean
     ): void {
@@ -955,11 +947,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {Highcharts.CaptionOptions} options
      *        New caption options. The caption text itself is set by the
      *        `options.text` property.
-     *
-     * @return {void}
      */
     setCaption: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.CaptionOptions,
         redraw?: boolean
     ): void {
@@ -1021,7 +1011,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @fires Highcharts.Point#event:update
      */
     update: function (
-        this: Highcharts.Point,
+        this: Point,
         options: Highcharts.PointOptionsType,
         redraw?: boolean,
         animation?: (boolean|Highcharts.AnimationOptionsObject),
@@ -1133,7 +1123,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @return {void}
      */
     remove: function (
-        this: Highcharts.Point,
+        this: Point,
         redraw?: boolean,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
@@ -1213,7 +1203,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
             xAxis = series.xAxis,
             names = xAxis && xAxis.hasNames && xAxis.names,
             dataOptions = seriesOptions.data,
-            point: Highcharts.Point,
+            point: Point,
             xData = series.xData as any,
             isInTheMiddle,
             i: number,
@@ -1515,6 +1505,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                 'processedXData',
                 'processedYData',
                 'xIncrement',
+                'cropped',
                 '_hasPointMarkers',
                 '_hasPointLabels',
 
@@ -1622,7 +1613,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                     kinds.dataLabel = 1;
                 }
             }
-            this.points.forEach(function (point: Highcharts.Point): void {
+            this.points.forEach(function (point: Point): void {
                 if (point && point.series) {
                     point.resolveColor();
                     // Destroy elements in order to recreate based on updated

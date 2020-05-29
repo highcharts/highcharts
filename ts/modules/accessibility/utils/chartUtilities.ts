@@ -12,9 +12,13 @@
 
 'use strict';
 
+import type Axis from '../../../parts/Axis';
+import type Chart from '../../../parts/Chart';
+import type Point from '../../../parts/Point';
 import HTMLUtilities from './htmlUtilities.js';
-var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
-
+const {
+    stripHTMLTagsFromString: stripHTMLTags
+} = HTMLUtilities;
 import U from '../../../parts/Utilities.js';
 const {
     defined,
@@ -135,10 +139,9 @@ function getSeriesA11yElement(
  * @private
  * @param {Highcharts.Chart} chart
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
- * @return {void}
  */
 function unhideChartElementFromAT(
-    chart: Highcharts.Chart,
+    chart: Chart,
     element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
 ): void {
     element.setAttribute('aria-hidden', false);
@@ -186,7 +189,7 @@ function hideSeriesFromAT(series: Highcharts.Series): void {
  * @return {Array<Highcharts.Series>}
  */
 function getSeriesFromName(
-    chart: Highcharts.Chart,
+    chart: Chart,
     name: string
 ): Array<Highcharts.Series> {
     if (!name) {
@@ -213,14 +216,12 @@ function getPointFromXY(
     series: Array<Highcharts.Series>,
     x: number,
     y: number
-): (Highcharts.Point|undefined) {
+): (Point|undefined) {
     var i = series.length,
         res;
 
     while (i--) {
-        res = find(series[i].points || [], function (
-            p: Highcharts.Point
-        ): boolean {
+        res = find(series[i].points || [], function (p: Point): boolean {
             return p.x === x && p.y === y;
         });
         if (res) {
@@ -237,7 +238,7 @@ function getPointFromXY(
  * @param {Highcharts.Point} point
  * @return {number}
  */
-function getRelativePointAxisPosition(axis: Highcharts.Axis, point: Highcharts.Point): number {
+function getRelativePointAxisPosition(axis: Axis, point: Point): number {
     if (!defined(axis.dataMin) || !defined(axis.dataMax)) {
         return 0;
     }
@@ -257,7 +258,7 @@ function getRelativePointAxisPosition(axis: Highcharts.Axis, point: Highcharts.P
  * @private
  * @param {Highcharts.Point} point
  */
-function scrollToPoint(point: Highcharts.Point): void {
+function scrollToPoint(point: Point): void {
     const xAxis = point.series.xAxis;
     const yAxis = point.series.yAxis;
     const axis = xAxis?.scrollbar ? xAxis : yAxis;

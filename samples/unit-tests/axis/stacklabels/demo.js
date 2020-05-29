@@ -90,6 +90,7 @@ QUnit.test('Stack labels crop and overflow features #8912', function (assert) {
         0,
         'Stack label should be inside plot area left'
     );
+
     assert.close(
         lastStackLabel.alignAttr.x +
         lastStackLabel.width - lastStackLabel.padding,

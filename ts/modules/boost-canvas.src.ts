@@ -14,6 +14,8 @@
  * */
 
 'use strict';
+
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 
 /**
@@ -838,14 +840,12 @@ H.initCanvasBoost = function (): void {
         sampling: true
     });
 
-    H.Chart.prototype.callbacks.push(function (
-        chart: Highcharts.Chart
-    ): void {
+    Chart.prototype.callbacks.push(function (chart: Chart): void {
 
         /**
          * @private
          */
-        function canvasToSVG(this: Highcharts.Chart): void {
+        function canvasToSVG(this: Chart): void {
             if (chart.boostCopy) {
                 chart.boostCopy();
             }
@@ -854,7 +854,7 @@ H.initCanvasBoost = function (): void {
         /**
          * @private
          */
-        function clear(this: Highcharts.Chart): void {
+        function clear(this: Chart): void {
             if (chart.renderTarget) {
                 chart.renderTarget.attr({ href: '' });
             }

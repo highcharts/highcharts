@@ -2443,12 +2443,10 @@ var serialMode;
  * A unique key.
  */
 var uniqueKey = H.uniqueKey = (function () {
-    var hash = serialMode ?
-        '' :
-        Math.random().toString(36).substring(2, 9) + '-';
+    var hash = Math.random().toString(36).substring(2, 9) + '-';
     var id = 0;
     return function () {
-        return 'highcharts-' + hash + id++;
+        return 'highcharts-' + (serialMode ? '' : hash) + id++;
     };
 }());
 /**

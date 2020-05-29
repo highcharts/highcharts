@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 
 /**
@@ -291,7 +292,7 @@ seriesType<Highcharts.SMAIndicator>(
         },
         init: function (
             this: Highcharts.SMAIndicator,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.SMAIndicatorOptions
         ): (Highcharts.SMAIndicator) {
             var indicator = this,

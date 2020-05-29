@@ -185,7 +185,7 @@ declare global {
             minSize?: (number|string);
             useSimulation?: boolean;
         }
-        interface Point {
+        interface PointLike {
             degree?: number;
         }
         interface SeriesTypesDictionary {

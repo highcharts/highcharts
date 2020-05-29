@@ -13,12 +13,12 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+var win = H.win, doc = H.doc;
 import '../../parts/Series.js';
 import boostableMap from './boostable-map.js';
 import createAndAttachRenderer from './boost-attach.js';
 import U from '../../parts/Utilities.js';
 var pick = U.pick;
-var win = H.win, doc = win.document;
 // This should be a const.
 var CHUNK_SIZE = 3000;
 /**

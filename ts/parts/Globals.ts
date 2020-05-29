@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type Chart from './Chart';
+
 /**
  * Internal types
  * @private
@@ -26,7 +28,7 @@ declare global {
         interface XAxisOptions {
             stackLabels?: any; // @todo
         }
-        interface Chart {
+        interface ChartLike {
             frameShapes?: any; // @todo highcharts 3d
             isBoosting?: any; // @todo boost module
         }
@@ -36,7 +38,7 @@ declare global {
         interface Options {
             toolbar?: any; // @todo stock-tools
         }
-        interface Point {
+        interface PointLike {
             startR?: any; // @todo solid-gauge
             tooltipDateKeys?: any; // @todo xrange
         }

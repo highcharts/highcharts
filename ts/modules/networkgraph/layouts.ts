@@ -12,7 +12,19 @@
 
 'use strict';
 
+import type Point from '../../parts/Point';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    defined,
+    extend,
+    isFunction,
+    pick,
+    setAnimation
+} = U;
 
 /**
  * Internal types
@@ -45,7 +57,7 @@ declare global {
         interface NetworkgraphSeriesOptions {
             layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
         }
-        interface Point {
+        interface PointLike {
             dispX?: number;
             dispY?: number;
             fromNode?: Point;
@@ -143,23 +155,8 @@ declare global {
     }
 }
 
-import U from '../../parts/Utilities.js';
-const {
-    addEvent,
-    merge,
-    clamp,
-    defined,
-    extend,
-    isFunction,
-    pick,
-    setAnimation
-} = U;
-
-
 import './integrations.js';
 import './QuadTree.js';
-
-var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -406,7 +403,7 @@ extend(
 
             if (isFunction(initialPositions)) {
                 initialPositions.call(this);
-                this.nodes.forEach(function (node: Highcharts.Point): void {
+                this.nodes.forEach(function (node: Point): void {
                     if (!defined(node.prevX)) {
                         node.prevX = node.plotX;
                     }
@@ -431,22 +428,18 @@ extend(
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1,
                 angle = 2 * Math.PI / nodesLength,
-                rootNodes = nodes.filter(function (
-                    node: Highcharts.Point
-                ): boolean {
+                rootNodes = nodes.filter(function (node: Point): boolean {
                     return (node.linksTo as any).length === 0;
                 }),
-                sortedNodes = [] as Array<Highcharts.Point>,
+                sortedNodes = [] as Array<Point>,
                 visitedNodes = {} as Highcharts.Dictionary<boolean>,
                 radius = this.options.initialPositionRadius;
 
             /**
              * @private
              */
-            function addToNodes(node: Highcharts.Point): void {
-                (node.linksFrom as any).forEach(function (
-                    link: Highcharts.Point
-                ): void {
+            function addToNodes(node: Point): void {
+                (node.linksFrom as any).forEach(function (link: Point): void {
                     if (!visitedNodes[(link.toNode as any).id]) {
                         visitedNodes[(link.toNode as any).id] = true;
                         sortedNodes.push(link.toNode as any);
@@ -458,9 +451,7 @@ extend(
             // Start with identified root nodes an sort the nodes by their
             // hierarchy. In trees, this ensures that branches don't cross
             // eachother.
-            rootNodes.forEach(function (
-                rootNode: Highcharts.Point
-            ): void {
+            rootNodes.forEach(function (rootNode: Point): void {
                 sortedNodes.push(rootNode);
                 addToNodes(rootNode);
             });
@@ -471,7 +462,7 @@ extend(
 
             // Dangling, cyclic trees
             } else {
-                nodes.forEach(function (node: Highcharts.Point): void {
+                nodes.forEach(function (node: Point): void {
                     if (sortedNodes.indexOf(node) === -1) {
                         sortedNodes.push(node);
                     }
@@ -481,7 +472,7 @@ extend(
             // Initial positions are laid out along a small circle, appearing
             // as a cluster in the middle
             sortedNodes.forEach(function (
-                node: Highcharts.Point,
+                node: Point,
                 index: number
             ): void {
                 node.plotX = node.prevX = pick(
@@ -519,7 +510,7 @@ extend(
             // Initial positions:
             nodes.forEach(
                 function (
-                    node: Highcharts.Point,
+                    node: Point,
                     index: number
                 ): void {
                     node.plotX = node.prevX = pick(
@@ -556,7 +547,7 @@ extend(
                 cx = 0,
                 cy = 0;
 
-            this.nodes.forEach(function (node: Highcharts.Point): void {
+            this.nodes.forEach(function (node: Point): void {
                 cx += (node.plotX as any) * (node.mass as any);
                 cy += (node.plotY as any) * (node.mass as any);
 
@@ -574,7 +565,7 @@ extend(
         },
         barnesHutApproximation: function (
             this: Highcharts.NetworkgraphLayout,
-            node: Highcharts.Point,
+            node: Point,
             quadNode: Highcharts.QuadTreeNode
         ): (boolean|undefined) {
             var layout = this,
@@ -626,7 +617,7 @@ extend(
             var layout = this;
 
             if (layout.approximation === 'barnes-hut') {
-                layout.nodes.forEach(function (node: Highcharts.Point): void {
+                layout.nodes.forEach(function (node: Point): void {
                     layout.quadTree.visitNodeRecursive(
                         null,
                         function (
@@ -640,12 +631,8 @@ extend(
                     );
                 });
             } else {
-                layout.nodes.forEach(function (
-                    node: Highcharts.Point
-                ): void {
-                    layout.nodes.forEach(function (
-                        repNode: Highcharts.Point
-                    ): void {
+                layout.nodes.forEach(function (node: Point): void {
+                    layout.nodes.forEach(function (repNode: Point): void {
                         var force,
                             distanceR,
                             distanceXY;
@@ -685,9 +672,7 @@ extend(
                 distanceR,
                 force;
 
-            layout.links.forEach(function (
-                link: Highcharts.Point
-            ): void {
+            layout.links.forEach(function (link: Point): void {
                 if (link.fromNode && link.toNode) {
                     distanceXY = layout.getDistXY(
                         link.fromNode,
@@ -713,7 +698,7 @@ extend(
             var layout = this,
                 nodes = layout.nodes;
 
-            nodes.forEach(function (node: Highcharts.Point): void {
+            nodes.forEach(function (node: Point): void {
                 if ((node as any).fixedPosition) {
                     return;
                 }
@@ -819,7 +804,7 @@ extend(
         ): number {
             return this.nodes.reduce(function (
                 value: number,
-                node: Highcharts.Point
+                node: Point
             ): number {
                 return value + (node as any).temperature;
             }, 0);
@@ -841,8 +826,8 @@ extend(
         },
         getDistXY: function (
             this: Highcharts.NetworkgraphLayout,
-            nodeA: Highcharts.Point,
-            nodeB: (Highcharts.Point|Highcharts.QuadTreeNode)
+            nodeA: Point,
+            nodeB: (Point|Highcharts.QuadTreeNode)
         ): Highcharts.Dictionary<number> {
             var xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
                 yDist = (nodeA.plotY as any) - (nodeB.plotY as any);

@@ -10,6 +10,8 @@
  *
  * */
 
+import type Point from '../../parts/Point';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 
 /**
@@ -69,8 +71,6 @@ import U from '../../parts/Utilities.js';
 const {
     addEvent
 } = U;
-
-var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

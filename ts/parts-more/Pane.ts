@@ -11,7 +11,17 @@
 'use strict';
 
 import type RadialAxis from './RadialAxis';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    extend,
+    merge,
+    pick,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -23,7 +33,7 @@ declare global {
         interface Axis {
             pane?: Pane;
         }
-        interface Chart {
+        interface ChartLike {
             pane?: Array<Pane>;
             hoverPane?: Highcharts.Pane;
             getHoverPane?(eventArgs: any): Highcharts.Pane|undefined;
@@ -85,20 +95,11 @@ declare global {
 
 import '../mixins/centered-series.js';
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    pick,
-    splat
-} = U;
-
 var CenteredSeriesMixin = H.CenteredSeriesMixin;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-H.Chart.prototype.collectionsWithUpdate.push('pane');
+Chart.prototype.collectionsWithUpdate.push('pane');
 
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
@@ -548,8 +549,7 @@ H.Chart.prototype.getHoverPane = function (
     return hoverPane;
 };
 
-addEvent(H.Chart, 'afterIsInsidePlot', function (
-    this: Highcharts.Chart | Highcharts.PaneChart,
+addEvent(Chart, 'afterIsInsidePlot', function (
     e: {
         x: number;
         y: number;
@@ -564,8 +564,7 @@ addEvent(H.Chart, 'afterIsInsidePlot', function (
     }
 });
 
-addEvent(H.Pointer, 'beforeGetHoverData', function (
-    this: Highcharts.Pointer,
+addEvent(Pointer, 'beforeGetHoverData', function (
     eventArgs: {
         chartX: number;
         chartY: number;
@@ -590,8 +589,7 @@ addEvent(H.Pointer, 'beforeGetHoverData', function (
     }
 });
 
-addEvent(H.Pointer, 'afterGetHoverData', function (
-    this: Highcharts.Pointer,
+addEvent(Pointer, 'afterGetHoverData', function (
     eventArgs: Highcharts.PointerEventArgsObject
 ): void {
     const chart = this.chart;

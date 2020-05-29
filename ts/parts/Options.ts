@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type Chart from './Chart';
+import type Point from './Point';
 import H from './Globals.js';
 
 /**
@@ -25,7 +27,7 @@ declare global {
         ): string;
         function getOptions(): Options;
         function setOptions(options: Options): Options;
-        interface Chart {
+        interface ChartLike {
             marginRight: ChartOptions['marginRight'];
             polar: ChartOptions['polar'];
         }
@@ -381,8 +383,6 @@ declare global {
  *
  * @param {Highcharts.ChartAddSeriesEventObject} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -418,8 +418,6 @@ declare global {
  *
  * @param {Highcharts.PointerEventObject} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -466,8 +464,6 @@ declare global {
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -482,8 +478,6 @@ declare global {
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -497,8 +491,6 @@ declare global {
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -2814,7 +2806,7 @@ H.defaultOptions = {
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
-            this: (Highcharts.Series|Highcharts.Point)
+            this: (Highcharts.Series|Point)
         ): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;

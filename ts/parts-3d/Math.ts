@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 
 /**
@@ -18,7 +19,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             scale3d?: number;
         }
         interface Position3dObject extends PositionObject {
@@ -180,7 +181,7 @@ H.perspective3D = function (
  */
 H.perspective = function (
     points: Array<Highcharts.Position3dObject>,
-    chart: Highcharts.Chart,
+    chart: Chart,
     insidePlotArea?: boolean,
     useInvertedPersp?: boolean
 ): Array<Highcharts.Position3dObject> {
@@ -258,7 +259,7 @@ H.perspective = function (
  */
 H.pointCameraDistance = function (
     coordinates: Highcharts.Dictionary<number>,
-    chart: Highcharts.Chart
+    chart: Chart
 ): number {
     var options3d = (chart.options.chart as any).options3d,
         cameraPosition = {
@@ -326,7 +327,7 @@ H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
  */
 H.shapeArea3d = function (
     vertexes: Array<Highcharts.Position3dObject>,
-    chart: Highcharts.Chart,
+    chart: Chart,
     insidePlotArea?: boolean
 ): number {
     return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));

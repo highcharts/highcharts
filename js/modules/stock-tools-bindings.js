@@ -384,7 +384,6 @@ extend(NavigationBindings.prototype, {
      * @function Highcharts.NavigationBindings#resizeYAxes
      * @param {number} [defaultHeight]
      * Default height for yAxis
-     * @return {void}
      */
     resizeYAxes: function (defaultHeight) {
         defaultHeight = defaultHeight || 20; // in %, but as a number

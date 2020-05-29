@@ -12,9 +12,19 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGElement from '../parts/SVGElement';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -22,7 +32,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             /** @requires modules/draggable-points */
             dragDropData?: DragDropDataObject;
             /** @requires modules/draggable-points */
@@ -108,7 +118,7 @@ declare global {
             group: SVGElement;
             point: string;
         }
-        interface Point {
+        interface PointLike {
             /** @requires modules/draggable-points */
             getDropValues(
                 origin: DragDropPositionObject,
@@ -359,16 +369,6 @@ declare global {
 
 ''; // detaches doclets above
 
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    merge,
-    objectEach,
-    pick
-} = U;
-
 var seriesTypes = H.seriesTypes;
 
 /**
@@ -438,7 +438,7 @@ Supported options for each prop:
 
 // 90deg rotated column handle path, used in multiple series types
 var horizHandleFormatter = function (
-    point: Highcharts.Point
+    point: Point
 ): SVGPath {
     var shapeArgs = point.shapeArgs || (point.graphic as any).getBBox(),
         top = shapeArgs.r || 0, // Rounding of bar corners
@@ -1620,7 +1620,7 @@ function isSeriesDraggable(series: Highcharts.Series): (boolean|undefined) {
  * @return {boolean}
  *         True if the chart is drag/droppable.
  */
-function isChartDraggable(chart: Highcharts.Chart): (boolean|undefined) {
+function isChartDraggable(chart: Chart): (boolean|undefined) {
     var i = chart.series ? chart.series.length : 0;
 
     if (chart.hasCartesianSeries && !chart.polar) {
@@ -1647,7 +1647,7 @@ function isChartDraggable(chart: Highcharts.Chart): (boolean|undefined) {
  * @return {boolean}
  *         True if the point is movable.
  */
-function isPointMovable(point: Highcharts.Point): (boolean|undefined) {
+function isPointMovable(point: Point): (boolean|undefined) {
     var series = point.series,
         seriesDragDropOptions = series.options.dragDrop || {},
         pointDragDropOptions = point.options && point.options.dragDrop,
@@ -1697,7 +1697,7 @@ function isPointMovable(point: Highcharts.Point): (boolean|undefined) {
  */
 function getNormalizedEvent<T extends Highcharts.PointerEventObject>(
     e: (T|PointerEvent),
-    chart: Highcharts.Chart
+    chart: Chart
 ): Highcharts.PointerEventObject {
     return (
         typeof (e as Highcharts.PointerEventObject).chartX === 'undefined' ||
@@ -1770,7 +1770,7 @@ function addEvents<T>(
  */
 function hasDraggedPastSensitivity(
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart,
+    chart: Chart,
     sensitivity: number
 ): boolean {
     var orig = (chart.dragDropData as any).origin,
@@ -1809,7 +1809,7 @@ function hasDraggedPastSensitivity(
  */
 function getPositionSnapshot(
     e: Highcharts.PointerEventObject,
-    points: Array<Highcharts.Point>,
+    points: Array<Point>,
     guideBox?: Highcharts.SVGElement
 ): Highcharts.DragDropPositionObject {
     var res: Highcharts.DragDropPositionObject = {
@@ -1825,7 +1825,7 @@ function getPositionSnapshot(
     };
 
     // Loop over the points and add their props
-    points.forEach(function (point: Highcharts.Point): void {
+    points.forEach(function (point: Point): void {
         var pointProps: Highcharts.Dictionary<number> = {};
 
         // Add all of the props defined in the series' dragDropProps to the
@@ -1865,9 +1865,9 @@ function getPositionSnapshot(
  * @return {Array<Highcharts.Point>}
  *         Array of points in this group.
  */
-function getGroupedPoints(point: Highcharts.Point): Array<Highcharts.Point> {
+function getGroupedPoints(point: Point): Array<Point> {
     var series = point.series,
-        points: Array<Highcharts.Point> = [],
+        points: Array<Point> = [],
         groupKey = (series.options.dragDrop as any).groupBy;
 
     if (series.isSeriesBoosting) { // #11156
@@ -1890,7 +1890,7 @@ function getGroupedPoints(point: Highcharts.Point): Array<Highcharts.Point> {
 
     return (point.options as any)[groupKey] ?
         // If we have a grouping option, filter the points by that
-        points.filter(function (comparePoint: Highcharts.Point): boolean {
+        points.filter(function (comparePoint: Point): boolean {
             return (comparePoint.options as any)[groupKey] ===
                 (point.options as any)[groupKey];
         }) :
@@ -1963,7 +1963,7 @@ function resizeRect(
  */
 function initDragDrop(
     e: Highcharts.PointerEventObject,
-    point: Highcharts.Point
+    point: Point
 ): void {
     var groupedPoints = getGroupedPoints(point),
         series = point.series,
@@ -2065,7 +2065,7 @@ function getNewPoints(
             [point] :
             dragDropData.groupedPoints
     ).forEach(
-        function (p: Highcharts.Point): void {
+        function (p: Point): void {
             hashmap[p.id] = {
                 point: p,
                 newValues: p.getDropValues(
@@ -2087,10 +2087,9 @@ function getNewPoints(
  *        A chart with dragDropData.newPoints.
  * @param {boolean} [animate=true]
  *        Animate updating points?
- * @return {void}
  */
 function updatePoints(
-    chart: Highcharts.Chart,
+    chart: Chart,
     animate?: (boolean|Highcharts.AnimationOptionsObject)
 ): void {
     var newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject> =
@@ -2134,9 +2133,8 @@ function updatePoints(
  *        Difference in X position.
  * @param {number} dY
  *        Difference in Y position.
- * @return {void}
  */
-function resizeGuideBox(point: Highcharts.Point, dX: number, dY: number): void {
+function resizeGuideBox(point: Point, dX: number, dY: number): void {
     var series = point.series,
         chart = series.chart,
         dragDropData: Highcharts.DragDropDataObject = chart.dragDropData as any,
@@ -2181,11 +2179,10 @@ function resizeGuideBox(point: Highcharts.Point, dX: number, dY: number): void {
  *        The mouse move event.
  * @param {Highcharts.Point} point
  *        The point that is dragged.
- * @return {void}
  */
 function dragMove(
     e: Highcharts.PointerEventObject,
-    point: Highcharts.Point
+    point: Point
 ): void {
     var series = point.series,
         chart = series.chart,
@@ -2400,7 +2397,7 @@ Point.prototype.getDropValues = function (
  *         An SVG element for the guide box, not added to DOM.
  */
 H.Series.prototype.getGuideBox = function (
-    points: Array<Highcharts.Point>
+    points: Array<Point>
 ): Highcharts.SVGElement {
     var chart = this.chart,
         minX = Infinity,
@@ -2410,7 +2407,7 @@ H.Series.prototype.getGuideBox = function (
         changed: (boolean|undefined);
 
     // Find bounding box of all points
-    points.forEach(function (point: Highcharts.Point): void {
+    points.forEach(function (point: Point): void {
         var bBox = point.graphic && point.graphic.getBBox() || point.shapeArgs;
 
         if (bBox && (bBox.width || bBox.height || bBox.x || bBox.y)) {
@@ -2438,9 +2435,8 @@ H.Series.prototype.getGuideBox = function (
  * @function mouseOut
  * @param {Highcharts.Point} point
  *        The point mousing out of.
- * @return {void}
  */
-function mouseOut(point: Highcharts.Point): void {
+function mouseOut(point: Point): void {
     var chart = point.series && point.series.chart,
         dragDropData = chart && chart.dragDropData;
 
@@ -2468,9 +2464,8 @@ function mouseOut(point: Highcharts.Point): void {
  * @function onResizeHandleMouseOut
  * @param {Highcharts.Point} point
  *        The point mousing out of.
- * @return {void}
  */
-function onResizeHandleMouseOut(point: Highcharts.Point): void {
+function onResizeHandleMouseOut(point: Point): void {
     var chart = point.series.chart;
 
     if (
@@ -2496,11 +2491,10 @@ function onResizeHandleMouseOut(point: Highcharts.Point): void {
  *        The point mousing down on.
  * @param {string} updateProp
  *        The data property this resize handle is attached to for this point.
- * @return {void}
  */
 function onResizeHandleMouseDown(
     e: Highcharts.PointerEventObject,
-    point: Highcharts.Point,
+    point: Point,
     updateProp: string
 ): void {
     var chart = point.series.chart;
@@ -2725,9 +2719,8 @@ function getFirstProp<T>(obj: Highcharts.Dictionary<T>): (T|undefined) {
  * @function mouseOver
  * @param {Highcharts.Point} point
  *        The point mousing over.
- * @return {void}
  */
-function mouseOver(point: Highcharts.Point): void {
+function mouseOver(point: Point): void {
     var series = point.series,
         chart = series && series.chart,
         dragDropData = chart && chart.dragDropData,
@@ -2762,11 +2755,10 @@ function mouseOver(point: Highcharts.Point): void {
  *        The mouse move event.
  * @param {Highcharts.Chart} chart
  *        The chart we are moving across.
- * @return {void}
  */
 function mouseMove(
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     // Ignore if zoom/pan key is pressed
     if (chart.zoomOrPanKeyPressed(e)) {
@@ -2774,7 +2766,7 @@ function mouseMove(
     }
 
     var dragDropData = chart.dragDropData,
-        point: Highcharts.Point,
+        point: Point,
         seriesDragDropOpts: Highcharts.DragDropOptionsObject,
         newPoints: Highcharts.Dictionary<Highcharts.DragDropPointObject>,
         numNewPoints = 0,
@@ -2839,11 +2831,10 @@ function mouseMove(
  *        The mouse up event.
  * @param {Highcharts.Chart} chart
  *        The chart we were dragging in.
- * @return {void}
  */
 function mouseUp(
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     var dragDropData = chart.dragDropData;
 
@@ -2905,11 +2896,10 @@ function mouseUp(
  *        The mouse down event.
  * @param {Highcharts.Chart} chart
  *        The chart we are clicking.
- * @return {void}
  */
 function mouseDown(
     e: Highcharts.PointerEventObject,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     var dragPoint = chart.hoverPoint,
         dragDropOptions = merge(
@@ -3014,9 +3004,8 @@ H.Chart.prototype.zoomOrPanKeyPressed = function (e: Event): boolean {
  * @function addDragDropEvents
  * @param {Highcharts.Chart} chart
  *        The chart to add events to.
- * @return {void}
  */
-function addDragDropEvents(chart: Highcharts.Chart): void {
+function addDragDropEvents(chart: Chart): void {
     var container = chart.container,
         doc = H.doc;
 

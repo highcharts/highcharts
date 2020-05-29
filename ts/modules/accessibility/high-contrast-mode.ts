@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../../parts/Point.js';
 import H from '../../parts/Globals.js';
 
 /**
@@ -20,7 +21,7 @@ import H from '../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             highContrastModeActive?: boolean;
         }
         interface PointOptionsObject {
@@ -105,7 +106,7 @@ var whcm = {
             });
 
             // Force point colors if existing
-            s.points.forEach(function (p: Highcharts.Point): void {
+            s.points.forEach(function (p: Point): void {
                 if (p.options && p.options.color) {
                     p.update({
                         color: plotOpts.color || 'windowText',

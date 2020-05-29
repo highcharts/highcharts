@@ -12,6 +12,8 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
+import type Point from '../../../parts/Point';
 import H from '../../../parts/Globals.js';
 import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
@@ -53,7 +55,7 @@ declare global {
             public onKbdNavigationInit(direction: number): void;
             public proxyLegendItem(
                 item: (
-                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                    Highcharts.BubbleLegend|Point|Highcharts.Series
                 )
             ): void;
             public proxyLegendItems(): void;
@@ -64,12 +66,12 @@ declare global {
         interface BubbleLegend {
             a11yProxyElement?: HTMLDOMElement;
         }
-        interface Chart {
+        interface ChartLike {
             highlightedLegendItemIx?: number;
             /** @requires modules/accessibility */
             highlightLegendItem(ix: number): boolean;
         }
-        interface Point {
+        interface PointLike {
             a11yProxyElement?: HTMLDOMElement;
         }
         interface Series {
@@ -97,7 +99,7 @@ function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
 /**
  * @private
  */
-function shouldDoLegendA11y(chart: Highcharts.Chart): boolean {
+function shouldDoLegendA11y(chart: Chart): boolean {
     var items = chart.legend && chart.legend.allItems,
         legendA11yOptions: Highcharts.LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
@@ -146,7 +148,7 @@ H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
 // Keep track of pressed state for legend items
 addEvent(Legend, 'afterColorizeItem', function (
     e: {
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series);
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series);
         visible: (boolean|undefined);
     }
 ): void {
@@ -201,7 +203,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             clipHeight = legend.clipHeight || 0;
 
         items.forEach(function (
-            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
         ): void {
             var itemPage = item.pageIx || 0,
                 y = item._legendItemPos ? item._legendItemPos[1] : 0,
@@ -277,7 +279,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             );
 
         items.forEach(function (
-            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
         ): void {
             if (item.legendItem && item.legendItem.element) {
                 component.proxyLegendItem(item);
@@ -288,11 +290,11 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * @private
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
      */
     proxyLegendItem: function (
         this: Highcharts.LegendComponent,
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
     ): void {
         var component = this,
             itemLabel = this.chart.langFormat(
@@ -419,7 +421,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
         var legendItem: (
-            Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+            Highcharts.BubbleLegend|Point|Highcharts.Series
         ) = this.chart.legend.allItems[
             this.highlightedLegendItemIx
         ];

@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 type NonArray<T> = T extends Array<unknown> ? never : T;
@@ -211,7 +212,6 @@ declare global {
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
         function format(str: string, ctx: any, chart?: Chart): string;
-        function formatSingle(format: string, val: any, chart?: Chart): string;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -712,7 +712,7 @@ var charts = H.charts,
 const error = H.error = function (
     code: (number|string),
     stop?: boolean,
-    chart?: Highcharts.Chart,
+    chart?: Chart,
     params?: Record<string, string>
 ): void {
     var isCode = isNumber(code),
@@ -1950,7 +1950,7 @@ const wrap = H.wrap = function wrap(
  * @return {string}
  *         The formatted string.
  */
-const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
+const format = H.format = function (str: string, ctx: any, chart?: Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
@@ -2311,7 +2311,7 @@ const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: 
  */
 const setAnimation = H.setAnimation = function setAnimation(
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     chart.renderer.globalAnimation = pick(
         animation,
@@ -3341,15 +3341,14 @@ let serialMode: (boolean|undefined);
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    const hash = serialMode ?
-        '' :
-        Math.random().toString(36).substring(2, 9) + '-';
+    const hash = Math.random().toString(36).substring(2, 9) + '-';
 
     let id = 0;
 
     return function (): string {
-        return 'highcharts-' + hash + id++;
+        return 'highcharts-' + (serialMode ? '' : hash) + id++;
     };
+
 }());
 /**
  * Activates a serial mode for element IDs provided by

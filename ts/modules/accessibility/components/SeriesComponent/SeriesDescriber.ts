@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../../../../parts/Point';
 import H from '../../../../parts/Globals.js';
 
 /**
@@ -20,7 +21,7 @@ import H from '../../../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Point {
+        interface PointLike {
             /** @requires modules/accessibility */
             hasDummyGraphic?: boolean;
         }
@@ -78,15 +79,15 @@ declare global {
  * @private
  */
 function findFirstPointWithGraphic(
-    point: Highcharts.Point
-): (Highcharts.Point|null) {
+    point: Point
+): (Point|null) {
     const sourcePointIndex = point.index;
 
     if (!point.series || !point.series.data || !defined(sourcePointIndex)) {
         return null;
     }
 
-    return find(point.series.data, function (p: Highcharts.Point): boolean {
+    return find(point.series.data, function (p: Point): boolean {
         return !!(
             p &&
             typeof p.index !== 'undefined' &&
@@ -101,7 +102,7 @@ function findFirstPointWithGraphic(
 /**
  * @private
  */
-function shouldAddDummyPoint(point: Highcharts.Point): boolean {
+function shouldAddDummyPoint(point: Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
     const isSunburst = point.series && point.series.is('sunburst'),
@@ -115,7 +116,7 @@ function shouldAddDummyPoint(point: Highcharts.Point): boolean {
  * @private
  */
 function makeDummyElement(
-    point: Highcharts.Point,
+    point: Point,
     pos: Highcharts.PositionObject
 ): Highcharts.SVGElement {
     var renderer = point.series.chart.renderer,
@@ -139,7 +140,7 @@ function makeDummyElement(
  * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined}
  */
 function addDummyPointElement(
-    point: Highcharts.Point
+    point: Point
 ): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
     var series = point.series,
         firstPointWithGraphic = findFirstPointWithGraphic(point),
@@ -459,7 +460,7 @@ function getPointValue(
  * @param {Highcharts.Point} point The data point to get the annotation info from.
  * @return {string} Annotation description
  */
-function getPointAnnotationDescription(point: Highcharts.Point): string {
+function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
     const annotations = getPointAnnotationTexts(point as Highcharts.AnnotationPoint);

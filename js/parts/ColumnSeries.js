@@ -322,9 +322,9 @@ seriesType('column', 'line',
         }
     },
     dataLabels: {
-        align: null,
-        verticalAlign: null,
-        y: null
+        align: void 0,
+        verticalAlign: void 0,
+        y: void 0
     },
     /**
      * When this is true, the series will not cause the Y axis to cross
