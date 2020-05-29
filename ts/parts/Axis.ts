@@ -4984,7 +4984,6 @@ class Axis implements AxisComposition, AxisLike {
                         !(series.chart.options.chart as any).ignoreHiddenSeries;
 
                 if (
-                    !series.noSharedTooltip &&
                     defined(seriesClosest) &&
                     visible
                 ) {
