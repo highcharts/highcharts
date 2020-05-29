@@ -126,6 +126,7 @@ declare global {
             ): void
             public repulsiveForces(): void;
             public resetSimulation(): void;
+            public restartSimulation(): void;
             public setArea(x: number, y: number, w: number, h: number): void;
             public setCircularPositions(): void;
             public setDiffTemperature(): void;
@@ -358,6 +359,30 @@ extend(
             this.setMaxIterations();
             this.setTemperature();
             this.setDiffTemperature();
+        },
+
+        restartSimulation: function (this: Highcharts.NetworkgraphLayout): void {
+
+            if (!this.simulation) {
+                // When dragging nodes, we don't need to calculate
+                // initial positions and rendering nodes:
+                this.setInitialRendering(false);
+                // Start new simulation:
+                if (!this.enableSimulation) {
+                    // Run only one iteration to speed things up:
+                    this.setMaxIterations(1);
+                } else {
+                    this.start();
+                }
+                if (this.chart) {
+                    this.chart.redraw();
+                }
+                // Restore defaults:
+                this.setInitialRendering(true);
+            } else {
+                // Extend current simulation:
+                this.resetSimulation();
+            }
         },
 
         setMaxIterations: function (

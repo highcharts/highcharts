@@ -56,7 +56,7 @@ H.dragNodesMixin = {
                     point.hasDragged = true;
                     this.redrawHalo(point);
                     graphLayoutsLookup.forEach(function (layout) {
-                        H.dragNodesMixin.resetSimulation(series, layout);
+                        layout.restartSimulation();
                     });
                 }
             }
@@ -96,37 +96,6 @@ H.dragNodesMixin = {
             this.halo.attr({
                 d: point.haloPath(this.options.states.hover.halo.size)
             });
-        }
-    },
-    /**
-     * Reset simulation on the layout.
-     *
-     * @private
-     * @param {Highcharts.Series} series
-     * @param {Highcharts.NetworkgraphLayout} layout
-     * @return {void}
-     */
-    resetSimulation: function (series, layout) {
-        var chart = series.chart;
-        if (!layout.simulation) {
-            // When dragging nodes, we don't need to calculate
-            // initial positions and rendering nodes:
-            layout.setInitialRendering(false);
-            // Start new simulation:
-            if (!layout.enableSimulation) {
-                // Run only one iteration to speed things up:
-                layout.setMaxIterations(1);
-            }
-            else {
-                layout.start();
-            }
-            // chart.redraw();
-            // Restore defaults:
-            layout.setInitialRendering(true);
-        }
-        else {
-            // Extend current simulation:
-            layout.resetSimulation();
         }
     }
 };

@@ -35,10 +35,6 @@ declare global {
                 event?: PointerEventObject
             ): void;
             redrawHalo(point: DragNodesPoint): void;
-            resetSimulation(
-                series: DragNodesSeries,
-                layout: NetworkgraphLayout,
-            ): void;
         }
         interface DragNodesChart extends Chart {
             graphLayoutsLookup: Array<NetworkgraphLayout>;
@@ -142,7 +138,7 @@ H.dragNodesMixin = {
                     this.redrawHalo(point);
 
                     graphLayoutsLookup.forEach((layout): void => {
-                        H.dragNodesMixin.resetSimulation(series, layout);
+                        layout.restartSimulation();
                     });
                 }
             }
@@ -190,39 +186,6 @@ H.dragNodesMixin = {
                     (this.options.states as any).hover.halo.size
                 ) as any
             });
-        }
-    },
-    /**
-     * Reset simulation on the layout.
-     *
-     * @private
-     * @param {Highcharts.Series} series
-     * @param {Highcharts.NetworkgraphLayout} layout
-     * @return {void}
-     */
-    resetSimulation: function (
-        this: Highcharts.DragNodesMixin,
-        series: Highcharts.DragNodesSeries,
-        layout: Highcharts.NetworkgraphLayout
-    ): void {
-        const chart = series.chart;
-        if (!layout.simulation) {
-            // When dragging nodes, we don't need to calculate
-            // initial positions and rendering nodes:
-            layout.setInitialRendering(false);
-            // Start new simulation:
-            if (!layout.enableSimulation) {
-                // Run only one iteration to speed things up:
-                layout.setMaxIterations(1);
-            } else {
-                layout.start();
-            }
-            // chart.redraw();
-            // Restore defaults:
-            layout.setInitialRendering(true);
-        } else {
-            // Extend current simulation:
-            layout.resetSimulation();
         }
     }
 };
