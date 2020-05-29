@@ -10,8 +10,11 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import Color from '../parts/Color.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import Tick from '../parts/Tick.js';
@@ -130,12 +133,9 @@ var addEvent = U.addEvent, removeEvent = U.removeEvent, animObject = U.animObjec
 * @name Highcharts.DrillupEventObject#type
 * @type {"drillup"}
 */
-import O from '../parts/Options.js';
-var defaultOptions = O.defaultOptions;
-import '../parts/Chart.js';
 import '../parts/Series.js';
 import '../parts/ColumnSeries.js';
-var noop = H.noop, Chart = H.Chart, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
+var noop = H.noop, seriesTypes = H.seriesTypes, PieSeries = seriesTypes.pie, ColumnSeries = seriesTypes.column, ddSeriesId = 1;
 // Add language
 extend(defaultOptions.lang, 
 /**
@@ -875,7 +875,7 @@ if (PieSeries) {
         animateDrilldown: function (init) {
             var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1], animationOptions = this.chart.options.drilldown.animation;
             // Unable to drill down in the horizontal item series #13372
-            if (this.type !== 'item' && this.center) {
+            if (this.is('item') && this.center) {
                 var animateFrom = level.shapeArgs, start = animateFrom.start, angle = animateFrom.end - start, startAngle = angle / this.points.length, styledMode = this.chart.styledMode;
                 if (!init) {
                     this.points.forEach(function (point, i) {
@@ -945,7 +945,6 @@ Point.prototype.doDrilldown = function (_holdRedraw, category, originalEvent) {
  *        Tick position
  * @param {global.MouseEvent} e
  *        Click event
- * @return {void}
  */
 H.Axis.prototype.drilldownCategory = function (x, e) {
     objectEach(this.getDDPoints(x), function (point) {
@@ -976,7 +975,6 @@ H.Axis.prototype.getDDPoints = function (x) {
  *
  * @private
  * @function Highcharts.Axis#drillable
- * @return {void}
  */
 Tick.prototype.drillable = function () {
     var pos = this.pos, label = this.label, axis = this.axis, isDrillable = axis.coll === 'xAxis' && axis.getDDPoints, ddPointsX = isDrillable && axis.getDDPoints(pos), styledMode = axis.chart.styledMode;
