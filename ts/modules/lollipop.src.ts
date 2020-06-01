@@ -10,7 +10,12 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -40,11 +45,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    seriesType
-} = U;
 
 var areaProto = H.seriesTypes.area.prototype,
     colProto = H.seriesTypes.column.prototype;
@@ -109,7 +109,7 @@ seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
         series: Highcharts.LollipopSeries,
         options: Highcharts.LollipopPointOptions,
         x?: number
-    ): Highcharts.Point {
+    ): Point {
         if (H.isObject(options) && 'low' in options) {
             options.y = options.low;
             delete options.low;
