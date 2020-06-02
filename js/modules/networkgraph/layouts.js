@@ -152,6 +152,30 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.setTemperature();
         this.setDiffTemperature();
     },
+    restartSimulation: function () {
+        if (!this.simulation) {
+            // When dragging nodes, we don't need to calculate
+            // initial positions and rendering nodes:
+            this.setInitialRendering(false);
+            // Start new simulation:
+            if (!this.enableSimulation) {
+                // Run only one iteration to speed things up:
+                this.setMaxIterations(1);
+            }
+            else {
+                this.start();
+            }
+            if (this.chart) {
+                this.chart.redraw();
+            }
+            // Restore defaults:
+            this.setInitialRendering(true);
+        }
+        else {
+            // Extend current simulation:
+            this.resetSimulation();
+        }
+    },
     setMaxIterations: function (maxIterations) {
         this.maxIterations = pick(maxIterations, this.options.maxIterations);
     },

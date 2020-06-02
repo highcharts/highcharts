@@ -39,6 +39,7 @@ declare global {
             redrawHalo(point: DragNodesPoint): void;
         }
         interface DragNodesChart extends Chart {
+            graphLayoutsLookup: Array<NetworkgraphLayout>;
             hoverPoint: DragNodesPoint;
         }
         interface DragNodesPoint extends Point {
@@ -121,7 +122,8 @@ H.dragNodesMixin = {
                 diffX = point.fixedPosition.chartX - normalizedEvent.chartX,
                 diffY = point.fixedPosition.chartY - normalizedEvent.chartY,
                 newPlotX,
-                newPlotY;
+                newPlotY,
+                graphLayoutsLookup = chart.graphLayoutsLookup;
 
             // At least 5px to apply change (avoids simple click):
             if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
@@ -135,25 +137,9 @@ H.dragNodesMixin = {
 
                     this.redrawHalo(point);
 
-                    if (!series.layout.simulation) {
-                        // When dragging nodes, we don't need to calculate
-                        // initial positions and rendering nodes:
-                        series.layout.setInitialRendering(false);
-
-                        // Start new simulation:
-                        if (!series.layout.enableSimulation) {
-                            // Run only one iteration to speed things up:
-                            series.layout.setMaxIterations(1);
-                        } else {
-                            series.layout.start();
-                        }
-                        series.chart.redraw();
-                        // Restore defaults:
-                        series.layout.setInitialRendering(true);
-                    } else {
-                        // Extend current simulation:
-                        series.layout.resetSimulation();
-                    }
+                    graphLayoutsLookup.forEach((layout): void => {
+                        layout.restartSimulation();
+                    });
                 }
             }
         }
