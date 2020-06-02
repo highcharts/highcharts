@@ -1242,7 +1242,7 @@ ColumnSeries.prototype.animateDrillupFrom = function (
                 }
             };
 
-        if (graphic) {
+        if (graphic && animateTo) {
 
             delete point.graphic;
 
@@ -1277,39 +1277,45 @@ if (PieSeries) {
                     (this.chart.drilldownLevels as any).length - 1
                 ],
                 animationOptions =
-                    (this.chart.options.drilldown as any).animation,
-                animateFrom = level.shapeArgs,
-                start = (animateFrom as any).start,
-                angle = (animateFrom as any).end - start,
-                startAngle = angle / this.points.length,
-                styledMode = this.chart.styledMode;
+                    (this.chart.options.drilldown as any).animation;
 
-            if (!init) {
-                this.points.forEach(function (
-                    point: Highcharts.PiePoint,
-                    i: number
-                ): void {
-                    var animateTo = point.shapeArgs;
+            // Unable to drill down in the horizontal item series #13372
+            if (this.is('item') && this.center) {
+                var animateFrom = level.shapeArgs,
+                    start = (animateFrom as any).start,
+                    angle = (animateFrom as any).end - start,
+                    startAngle = angle / this.points.length,
+                    styledMode = this.chart.styledMode;
 
-                    if (!styledMode) {
-                        (animateFrom as any).fill = level.color;
-                        (animateTo as any).fill = point.color;
-                    }
+                if (!init) {
+                    this.points.forEach(function (
+                        point: Highcharts.PiePoint,
+                        i: number
+                    ): void {
+                        var animateTo = point.shapeArgs;
 
-                    if (point.graphic) {
-                        point.graphic
-                            .attr(merge(animateFrom, {
-                                start: start + i * startAngle,
-                                end: start + (i + 1) * startAngle
-                            }))[animationOptions ? 'animate' : 'attr'](
-                                (animateTo as any),
-                                animationOptions
-                            );
-                    }
-                });
+                        if (!styledMode) {
+                            (animateFrom as any).fill = level.color;
+                            (animateTo as any).fill = point.color;
+                        }
 
-                // Reset to prototype
-                delete this.animate;
+                        if (point.graphic) {
+                            point.graphic
+                                .attr(merge(animateFrom, {
+                                    start: start + i * startAngle,
+                                    end: start + (i + 1) * startAngle
+                                }))[animationOptions ? 'animate' : 'attr'](
+                                    (animateTo as any),
+                                    animationOptions
+                                );
+                        }
+                    });
+
+                    // Reset to prototype
+                    delete this.animate;
+                }
+            } else {
+                animationOptions.duration = 0;
             }
         }
     });
