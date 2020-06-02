@@ -529,14 +529,19 @@ Highcharts.Chart.prototype.getDataRows = function (
             series: Highcharts.Series,
             xAxis: Highcharts.Axis
         ): string[] {
+            const namedPoints = series.data.filter((d: Highcharts.Point): string | undefined => d.name);
             if (
-                series.data.filter((d: Highcharts.Point): string | undefined => d.name).length &&
-                xAxis && !xAxis.categories &&
-                series.type !== 'gantt'
+                namedPoints.length &&
+                xAxis &&
+                !xAxis.categories &&
+                !series.keyToAxis
             ) {
-                if (series.pointArrayMap && series.pointArrayMap.filter((p): boolean => p === 'x').length) {
-                    series.pointArrayMap.unshift('x');
-                    return series.pointArrayMap;
+                if (series.pointArrayMap) {
+                    const pointArrayMapCheck = series.pointArrayMap.filter((p): boolean => p === 'x');
+                    if (pointArrayMapCheck.length) {
+                        series.pointArrayMap.unshift('x');
+                        return series.pointArrayMap;
+                    }
                 }
                 return ['x', 'y'];
             }

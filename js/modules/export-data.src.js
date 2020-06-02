@@ -358,12 +358,17 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
     // Create point array depends if xAxis is category
     // or point.name is defined #13293
     getPointArray = function (series, xAxis) {
-        if (series.data.filter(function (d) { return d.name; }).length &&
-            xAxis && !xAxis.categories &&
-            series.type !== 'gantt') {
-            if (series.pointArrayMap && series.pointArrayMap.filter(function (p) { return p === 'x'; }).length) {
-                series.pointArrayMap.unshift('x');
-                return series.pointArrayMap;
+        var namedPoints = series.data.filter(function (d) { return d.name; });
+        if (namedPoints.length &&
+            xAxis &&
+            !xAxis.categories &&
+            !series.keyToAxis) {
+            if (series.pointArrayMap) {
+                var pointArrayMapCheck = series.pointArrayMap.filter(function (p) { return p === 'x'; });
+                if (pointArrayMapCheck.length) {
+                    series.pointArrayMap.unshift('x');
+                    return series.pointArrayMap;
+                }
             }
             return ['x', 'y'];
         }
