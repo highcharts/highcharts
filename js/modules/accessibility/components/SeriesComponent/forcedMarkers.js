@@ -26,39 +26,36 @@ function isWithinDescriptionThreshold(series) {
 /**
  * @private
  */
-function isWithinNavigationThreshold(series) {
-    var navOptions = series.chart.options.accessibility
-        .keyboardNavigation.seriesNavigation;
-    return series.points.length <
-        navOptions.pointNavigationEnabledThreshold ||
-        navOptions.pointNavigationEnabledThreshold === false;
-}
-/**
- * @private
- */
 function shouldForceMarkers(series) {
-    var chartA11yEnabled = series.chart.options.accessibility.enabled, seriesA11yEnabled = (series.options.accessibility &&
-        series.options.accessibility.enabled) !== false, withinDescriptionThreshold = isWithinDescriptionThreshold(series), withinNavigationThreshold = isWithinNavigationThreshold(series);
-    return chartA11yEnabled && seriesA11yEnabled &&
-        (withinDescriptionThreshold || withinNavigationThreshold);
+    var chart = series.chart, chartA11yEnabled = chart.options.accessibility.enabled, seriesA11yEnabled = (series.options.accessibility &&
+        series.options.accessibility.enabled) !== false;
+    return chartA11yEnabled && seriesA11yEnabled && isWithinDescriptionThreshold(series);
 }
 /**
  * @private
  */
-function unforceMarkerOptions(series) {
+function hasIndividualPointMarkerOptions(series) {
+    return !!(series._hasPointMarkers && series.points && series.points.length);
+}
+/**
+ * @private
+ */
+function unforceSeriesMarkerOptions(series) {
     var resetMarkerOptions = series.resetA11yMarkerOptions;
-    merge(true, series.options, {
-        marker: {
-            enabled: resetMarkerOptions.enabled,
-            states: {
-                normal: {
-                    opacity: resetMarkerOptions.states &&
-                        resetMarkerOptions.states.normal &&
-                        resetMarkerOptions.states.normal.opacity
+    if (resetMarkerOptions) {
+        merge(true, series.options, {
+            marker: {
+                enabled: resetMarkerOptions.enabled,
+                states: {
+                    normal: {
+                        opacity: resetMarkerOptions.states &&
+                            resetMarkerOptions.states.normal &&
+                            resetMarkerOptions.states.normal.opacity
+                    }
                 }
             }
-        }
-    });
+        });
+    }
 }
 /**
  * @private
@@ -86,7 +83,7 @@ function getPointMarkerOpacity(pointOptions) {
 /**
  * @private
  */
-function forceDisplayPointMarker(pointOptions) {
+function unforcePointMarkerOptions(pointOptions) {
     merge(true, pointOptions.marker, {
         states: {
             normal: {
@@ -98,16 +95,20 @@ function forceDisplayPointMarker(pointOptions) {
 /**
  * @private
  */
-function handleForcePointMarkers(points) {
-    var i = points.length;
+function handleForcePointMarkers(series) {
+    var i = series.points.length;
     while (i--) {
-        var pointOptions = points[i].options;
+        var point = series.points[i];
+        var pointOptions = point.options;
+        delete point.hasForcedA11yMarker;
         if (pointOptions.marker) {
             if (pointOptions.marker.enabled) {
-                forceDisplayPointMarker(pointOptions);
+                unforcePointMarkerOptions(pointOptions);
+                point.hasForcedA11yMarker = false;
             }
             else {
                 forceZeroOpacityMarkerOptions(pointOptions);
+                point.hasForcedA11yMarker = true;
             }
         }
     }
@@ -127,13 +128,13 @@ function addForceMarkersEvents() {
                 series.a11yMarkersForced = true;
                 forceZeroOpacityMarkerOptions(series.options);
             }
-            if (series._hasPointMarkers && series.points && series.points.length) {
-                handleForcePointMarkers(series.points);
+            if (hasIndividualPointMarkerOptions(series)) {
+                handleForcePointMarkers(series);
             }
         }
-        else if (series.a11yMarkersForced && series.resetMarkerOptions) {
+        else if (series.a11yMarkersForced) {
             delete series.a11yMarkersForced;
-            unforceMarkerOptions(series);
+            unforceSeriesMarkerOptions(series);
         }
     });
     /**
@@ -142,6 +143,29 @@ function addForceMarkersEvents() {
      */
     addEvent(H.Series, 'afterSetOptions', function (e) {
         this.resetA11yMarkerOptions = merge(e.options.marker || {}, this.userOptions.marker || {});
+    });
+    /**
+     * Process marker graphics after render
+     * @private
+     */
+    addEvent(H.Series, 'afterRender', function () {
+        var series = this;
+        // For styled mode the rendered graphic does not reflect the style
+        // options, and we need to add/remove classes to achieve the same.
+        if (series.chart.styledMode) {
+            if (series.markerGroup) {
+                series.markerGroup[series.a11yMarkersForced ? 'addClass' : 'removeClass']('highcharts-a11y-markers-hidden');
+            }
+            // Do we need to handle individual points?
+            if (hasIndividualPointMarkerOptions(series)) {
+                series.points.forEach(function (point) {
+                    if (point.graphic) {
+                        point.graphic[point.hasForcedA11yMarker ? 'addClass' : 'removeClass']('highcharts-a11y-marker-hidden');
+                        point.graphic[point.hasForcedA11yMarker === false ? 'addClass' : 'removeClass']('highcharts-a11y-marker-visible');
+                    }
+                });
+            }
+        }
     });
 }
 export default addForceMarkersEvents;

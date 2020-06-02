@@ -12,9 +12,11 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
 import H from '../../../parts/Globals.js';
-var doc = H.win.document;
-
+const {
+    doc
+} = H;
 import U from '../../../parts/Utilities.js';
 const {
     extend,
@@ -92,7 +94,7 @@ declare global {
             ): void;
             public updateScreenReaderSection(regionKey: string): void;
         }
-        interface Chart {
+        interface ChartLike {
             /** @requires modules/accessibility */
             getTypeDescription(types: Array<string>): string;
         }
@@ -118,7 +120,7 @@ declare global {
  * @private
  */
 function getTypeDescForMapChart(
-    chart: Highcharts.Chart,
+    chart: Chart,
     formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return formatContext.mapTitle ?
@@ -132,7 +134,7 @@ function getTypeDescForMapChart(
  * @private
  */
 function getTypeDescForCombinationChart(
-    chart: Highcharts.Chart,
+    chart: Chart,
     formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return chart.langFormat('accessibility.chartTypes.combinationChart',
@@ -143,7 +145,7 @@ function getTypeDescForCombinationChart(
  * @private
  */
 function getTypeDescForEmptyChart(
-    chart: Highcharts.Chart,
+    chart: Chart,
     formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return chart.langFormat('accessibility.chartTypes.emptyChart',
@@ -154,7 +156,7 @@ function getTypeDescForEmptyChart(
  * @private
  */
 function buildTypeDescriptionFromSeries(
-    chart: Highcharts.Chart,
+    chart: Chart,
     types: Array<string>,
     context: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
@@ -180,7 +182,7 @@ function buildTypeDescriptionFromSeries(
 /**
  * @private
  */
-function getTableSummary(chart: Highcharts.Chart): string {
+function getTableSummary(chart: Chart): string {
     return chart.langFormat(
         'accessibility.table.tableSummary', { chart: chart }
     );
@@ -307,9 +309,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart: Highcharts.AccessibilityChart
                 ): string {
                     var formatter: (
-                        Highcharts.ScreenReaderFormatterCallbackFunction<(
-                            Highcharts.Chart
-                        )>|undefined
+                        Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
                     ) = chart.options.accessibility
                         .screenReaderSection.beforeChartFormatter;
                     return formatter ? formatter(chart) :
@@ -512,7 +512,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 yAxisDescription: axesDesc.yAxis,
                 playAsSoundButton: shouldHaveSonifyBtn ?
                     this.getSonifyButtonText(sonifyButtonId) : '',
-                viewTableButton: chart.getCSV ?
+                viewTableButton: chart.getCSV as any ?
                     this.getDataTableButtonText(dataTableButtonId) : '',
                 annotationsTitle: annotationsList ? annotationsTitleStr : '',
                 annotationsList: annotationsList

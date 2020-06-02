@@ -12,7 +12,19 @@
 
 'use strict';
 
+import type Chart from '../../parts/Chart';
+import type SVGPath from '../../parts/SVGPath';
 import H from '../../parts/Globals.js';
+import Point from '../../parts/Point.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    css,
+    defined,
+    pick,
+    seriesType
+} = U;
+
 
 /**
  * Internal types
@@ -107,6 +119,7 @@ declare global {
             public getSum: NodesPoint['getSum'];
             public hasShape: NodesPoint['hasShape'];
             public isNode: NodesPoint['isNode'];
+            public isValid: () => boolean;
             public linksFrom: Array<NetworkgraphPoint>;
             public linksTo: Array<NetworkgraphPoint>;
             public mass: NodesPoint['mass'];
@@ -120,7 +133,7 @@ declare global {
             public destroy(): void;
             public getDegree(): number;
             public getLinkAttributes(): SVGAttributes;
-            public getLinkPath(): SVGPathArray;
+            public getLinkPath(): SVGPath;
             public getMass(): Dictionary<number>;
             public getPointsCollection(): Array<NetworkgraphPoint>;
             public init(
@@ -128,7 +141,6 @@ declare global {
                 options: NetworkgraphPointOptions,
                 x?: number
             ): Highcharts.NetworkgraphPoint;
-            public isValid(): boolean;
             public redrawLink(): void;
             public remove(redraw?: boolean, animation?: boolean): void;
             public renderLink(): void;
@@ -220,16 +232,6 @@ declare global {
  */
 
 ''; // detach doclets above
-
-import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
-const {
-    addEvent,
-    css,
-    defined,
-    pick,
-    seriesType
-} = U;
 
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
@@ -1206,7 +1208,7 @@ seriesType<Highcharts.NetworkgraphSeries>(
          */
         getLinkPath: function (
             this: Highcharts.NetworkgraphPoint
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var left = this.fromNode,
                 right = this.toNode;
 

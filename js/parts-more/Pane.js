@@ -8,16 +8,18 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
 /**
  * @typedef {"arc"|"circle"|"solid"} Highcharts.PaneBackgroundShapeValue
  */
 import '../mixins/centered-series.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, extend = U.extend, merge = U.merge, pick = U.pick, splat = U.splat;
 var CenteredSeriesMixin = H.CenteredSeriesMixin;
 /* eslint-disable no-invalid-this, valid-jsdoc */
-H.Chart.prototype.collectionsWithUpdate.push('pane');
+Chart.prototype.collectionsWithUpdate.push('pane');
 /**
  * The Pane object allows options that are common to a set of X and Y axes.
  *
@@ -367,13 +369,13 @@ H.Chart.prototype.getHoverPane = function (eventArgs) {
     }
     return hoverPane;
 };
-addEvent(H.Chart, 'afterIsInsidePlot', function (e) {
+addEvent(Chart, 'afterIsInsidePlot', function (e) {
     var chart = this;
     if (chart.polar) {
         e.isInsidePlot = chart.pane.some(function (pane) { return isInsidePane(e.x, e.y, pane.center); });
     }
 });
-addEvent(H.Pointer, 'beforeGetHoverData', function (eventArgs) {
+addEvent(Pointer, 'beforeGetHoverData', function (eventArgs) {
     var chart = this.chart;
     if (chart.polar) {
         // Find pane we are currently hovering over.
@@ -387,7 +389,7 @@ addEvent(H.Pointer, 'beforeGetHoverData', function (eventArgs) {
         };
     }
 });
-addEvent(H.Pointer, 'afterGetHoverData', function (eventArgs) {
+addEvent(Pointer, 'afterGetHoverData', function (eventArgs) {
     var chart = this.chart;
     if (eventArgs.hoverPoint &&
         eventArgs.hoverPoint.plotX &&

@@ -8,7 +8,12 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+var win = H.win;
+import '../parts/Options.js';
+import U from '../parts/Utilities.js';
+var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
 /**
  * Result object of a map transformation.
  *
@@ -35,11 +40,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.MapLatLonObject#lon
 * @type {number}
 */
-import U from '../parts/Utilities.js';
-var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
-import '../parts/Options.js';
-import '../parts/Chart.js';
-var Chart = H.Chart, win = H.win;
+''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Test for point in polygon. Polygon defined as array of [x,y] points.

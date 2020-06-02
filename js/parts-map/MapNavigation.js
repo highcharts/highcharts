@@ -8,11 +8,11 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+var doc = H.doc;
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import '../parts/Chart.js';
-var Chart = H.Chart, doc = H.doc;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private

@@ -8,15 +8,17 @@
  *
  * */
 'use strict';
+import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import O from './Options.js';
+var time = O.time;
 import Point from './Point.js';
 import Time from './Time.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, animate = U.animate, createElement = U.createElement, css = U.css, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation, splat = U.splat;
-import './Axis.js';
-import './Chart.js';
 import './Series.js';
-var Axis = H.Axis, Chart = H.Chart, Series = H.Series, seriesTypes = H.seriesTypes;
+var Series = H.Series, seriesTypes = H.seriesTypes;
 /* eslint-disable valid-jsdoc */
 /**
  * Remove settings that have not changed, to avoid unnecessary rendering or
@@ -216,8 +218,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        An optional text to show in the loading label instead of the
      *        default one. The default text is set in
      *        [lang.loading](https://api.highcharts.com/highcharts/lang.loading).
-     *
-     * @return {void}
      */
     showLoading: function (str) {
         var chart = this, options = chart.options, loadingDiv = chart.loadingDiv, loadingOptions = options.loading, setLoadingSize = function () {
@@ -275,8 +275,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *         Toggle loading in Highstock
      *
      * @function Highcharts.Chart#hideLoading
-     *
-     * @return {void}
      */
     hideLoading: function () {
         var options = this.options, loadingDiv = this.loadingDiv;
@@ -405,8 +403,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        Whether to apply animation, and optionally animation
      *        configuration.
      *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:update
      * @fires Highcharts.Chart#event:afterUpdate
      */
@@ -459,9 +455,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     chart.isDirtyBox = true;
                 }
                 // Chart setSize
-                if (!isResponsiveOptions &&
-                    chart.propsRequireReflow.indexOf(key) !== -1) {
-                    runSetSize = true;
+                if (chart.propsRequireReflow.indexOf(key) !== -1) {
+                    if (isResponsiveOptions) {
+                        chart.isDirtyBox = true;
+                    }
+                    else {
+                        runSetSize = true;
+                    }
                 }
             });
             if (!chart.styledMode && 'style' in optionsChart) {
@@ -478,7 +478,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Maintaining legacy global time. If the chart is instanciated first
         // with global time, then updated with time options, we need to create a
         // new Time instance to avoid mutating the global time (#10536).
-        if (options.time && this.time === H.time) {
+        if (options.time && this.time === time) {
             this.time = new Time(options.time);
         }
         // Some option stuctures correspond one-to-one to chart objects that
@@ -526,8 +526,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     });
                 }
                 splat(options[coll]).forEach(function (newOptions, i) {
-                    var item = (defined(newOptions.id) &&
-                        chart.get(newOptions.id)) || chart[coll][indexMap ? indexMap[i] : i];
+                    var hasId = defined(newOptions.id);
+                    var item;
+                    // Match by id
+                    if (hasId) {
+                        item = chart.get(newOptions.id);
+                    }
+                    // No match by id found, match by index instead
+                    if (!item) {
+                        item = chart[coll][indexMap ? indexMap[i] : i];
+                        // Check if we grabbed an item with an exising but
+                        // different id (#13541)
+                        if (item && hasId && defined(item.options.id)) {
+                            item = void 0;
+                        }
+                    }
                     if (item && item.coll === coll) {
                         item.update(newOptions, false);
                         if (oneToOne) {
@@ -618,8 +631,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {Highcharts.SubtitleOptions} options
      *        New subtitle options. The subtitle text itself is set by the
      *        `options.text` property.
-     *
-     * @return {void}
      */
     setSubtitle: function (options, redraw) {
         this.applyDescription('subtitle', options);
@@ -634,8 +645,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {Highcharts.CaptionOptions} options
      *        New caption options. The caption text itself is set by the
      *        `options.text` property.
-     *
-     * @return {void}
      */
     setCaption: function (options, redraw) {
         this.applyDescription('caption', options);
@@ -1061,7 +1070,7 @@ extend(Series.prototype, /** @lends Series.prototype */ {
         // rules (#6912).
         animation = series.finishedAnimating && { animation: false }, kinds = {};
         if (keepPoints) {
-            preserve.push('data', 'isDirtyData', 'points', 'processedXData', 'processedYData', 'xIncrement', '_hasPointMarkers', '_hasPointLabels', 
+            preserve.push('data', 'isDirtyData', 'points', 'processedXData', 'processedYData', 'xIncrement', 'cropped', '_hasPointMarkers', '_hasPointLabels', 
             // Map specific, consider moving it to series-specific preserve-
             // properties (#10617)
             'mapMap', 'mapData', 'minY', 'maxY', 'minX', 'maxX');
@@ -1157,16 +1166,6 @@ extend(Series.prototype, /** @lends Series.prototype */ {
                     }
                 }
             }, this);
-        }
-        // Update the Z index of groups (#3380, #7397)
-        if (options.zIndex !== oldOptions.zIndex) {
-            groups.forEach(function (groupName) {
-                if (series[groupName]) {
-                    series[groupName].attr({
-                        zIndex: options.zIndex
-                    });
-                }
-            });
         }
         series.initialType = initialType;
         chart.linkSeries(); // Links are lost in series.remove (#3028)

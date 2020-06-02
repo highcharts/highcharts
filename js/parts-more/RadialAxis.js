@@ -12,7 +12,7 @@ import Axis from '../parts/Axis.js';
 import Tick from '../parts/Tick.js';
 import HiddenAxis from './HiddenAxis.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
+var addEvent = U.addEvent, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, wrap = U.wrap;
 /**
  * @private
  * @class
@@ -247,12 +247,18 @@ var RadialAxis = /** @class */ (function () {
          * @return {RadialAxisPath}
          */
         axis.getPlotBandPath = function (from, to, options) {
-            var center = this.center, startAngleRad = this.startAngleRad, fullRadius = center[2] / 2, radii = [
-                pick(options.outerRadius, '100%'),
-                options.innerRadius,
-                pick(options.thickness, 10)
-            ], offset = Math.min(this.offset, 0), percentRegex = /%$/, start, end, angle, xOnPerimeter, open, isCircular = this.isCircular, // X axis in a polar chart
-            path;
+            var radiusToPixels = function (radius) {
+                if (typeof radius === 'string') {
+                    var r = parseInt(radius, 10);
+                    if (percentRegex.test(radius)) {
+                        r = (r * fullRadius) / 100;
+                    }
+                    return r;
+                }
+                return radius;
+            };
+            var center = this.center, startAngleRad = this.startAngleRad, fullRadius = center[2] / 2, offset = Math.min(this.offset, 0), percentRegex = /%$/, start, end, angle, xOnPerimeter, open, isCircular = this.isCircular, // X axis in a polar chart
+            path, outerRadius = pick(radiusToPixels(options.outerRadius), fullRadius), innerRadius = radiusToPixels(options.innerRadius), thickness = pick(radiusToPixels(options.thickness), 10);
             // Polygonal plot bands
             if (this.options.gridLineInterpolation === 'polygon') {
                 path = this.getPlotLinePath({ value: from }).concat(this.getPlotLinePath({ value: to, reverse: true }));
@@ -262,19 +268,14 @@ var RadialAxis = /** @class */ (function () {
                 // Keep within bounds
                 from = Math.max(from, this.min);
                 to = Math.min(to, this.max);
-                // Plot bands on Y axis (radial axis) - inner and outer radius
-                // depend on to and from
+                var transFrom = this.translate(from);
+                var transTo = this.translate(to);
+                // Plot bands on Y axis (radial axis) - inner and outer
+                // radius depend on to and from
                 if (!isCircular) {
-                    radii[0] = this.translate(from);
-                    radii[1] = this.translate(to);
+                    outerRadius = transFrom || 0;
+                    innerRadius = transTo || 0;
                 }
-                // Convert percentages to pixel values
-                radii = radii.map(function (radius) {
-                    if (percentRegex.test(radius)) {
-                        radius = (pInt(radius, 10) * fullRadius) / 100;
-                    }
-                    return radius;
-                });
                 // Handle full circle
                 if (options.shape === 'circle' || !isCircular) {
                     start = -Math.PI / 2;
@@ -282,16 +283,16 @@ var RadialAxis = /** @class */ (function () {
                     open = true;
                 }
                 else {
-                    start = startAngleRad + this.translate(from);
-                    end = startAngleRad + this.translate(to);
+                    start = startAngleRad + (transFrom || 0);
+                    end = startAngleRad + (transTo || 0);
                 }
-                radii[0] -= offset; // #5283
-                radii[2] -= offset; // #5283
-                path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1], radii[0], radii[0], {
+                outerRadius -= offset; // #5283
+                thickness -= offset; // #5283
+                path = this.chart.renderer.symbols.arc(this.left + center[0], this.top + center[1], outerRadius, outerRadius, {
                     // Math is for reversed yAxis (#3606)
                     start: Math.min(start, end),
                     end: Math.max(start, end),
-                    innerR: pick(radii[1], radii[0] - radii[2]),
+                    innerR: pick(innerRadius, outerRadius - thickness),
                     open: open
                 });
                 // Provide positioning boxes for the label (#6406)
@@ -594,6 +595,12 @@ var RadialAxis = /** @class */ (function () {
                 if (index >= 0) {
                     axis.chart.labelCollectors.splice(index, 1);
                 }
+            }
+        });
+        addEvent(AxisClass, 'initialAxisTranslation', function () {
+            var axis = this;
+            if (axis.isRadial) {
+                axis.beforeSetTickPositions();
             }
         });
         // Add special cases within the Tick class' methods for radial axes.

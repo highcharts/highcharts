@@ -5,7 +5,21 @@
  * */
 
 'use strict';
+
+import type Annotation from '../annotations.src';
+import type SVGPath from '../../parts/SVGPath';
+import controllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
+import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+const {
+    extend,
+    format,
+    isNumber,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -68,25 +82,10 @@ declare global
             negative?: boolean;
             ttBelow?: boolean;
         }
-        interface SymbolDictionary {
-            connector: SymbolFunction<SVGPathArray>;
-        }
     }
 }
 
-import U from './../../parts/Utilities.js';
-const {
-    extend,
-    format,
-    isNumber,
-    merge,
-    pick
-} = U;
-
-import './../../parts/SvgRenderer.js';
-import controllableMixin from './controllableMixin.js';
-import MockPoint from './../MockPoint.js';
-import Tooltip from '../../parts/Tooltip.js';
+import '../../parts/SVGRenderer.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -108,7 +107,7 @@ import Tooltip from '../../parts/Tooltip.js';
  */
 const ControllableLabel: typeof Highcharts.AnnotationControllableLabel = function (
     this: Highcharts.AnnotationControllableLabel,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsLabelOptions,
     index: number
 ): void {
@@ -521,11 +520,11 @@ H.SVGRenderer.prototype.symbols.connector = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
-        path: (Highcharts.SVGPathArray|undefined),
+        path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 

@@ -13,7 +13,8 @@
 'use strict';
 
 import H from '../parts/Globals.js';
-
+import O from '../parts/Options.js';
+const { dateFormat } = O;
 
 /**
  * Internal types
@@ -54,6 +55,7 @@ declare global {
     }
 }
 
+import Time from '../parts/Time.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -106,7 +108,7 @@ var defaultConfig: (
          */
         format: '%a, %b %d %Y, %H:%M',
         formatter: function (value: number, format: string): string {
-            return H.dateFormat(format, value);
+            return dateFormat(format, value);
         },
         rotation: 0,
         /**

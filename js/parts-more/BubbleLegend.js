@@ -10,7 +10,13 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+import Legend from '../parts/Legend.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions, stableSort = U.stableSort, wrap = U.wrap;
 /**
  * @interface Highcharts.BubbleLegendFormatterContextObject
  */ /**
@@ -27,12 +33,7 @@ import H from '../parts/Globals.js';
 * @type {number}
 */
 ''; // detach doclets above
-import Color from '../parts/Color.js';
-var color = Color.parse;
-import Legend from '../parts/Legend.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, stableSort = U.stableSort, wrap = U.wrap;
-var Series = H.Series, Chart = H.Chart, noop = H.noop, setOptions = H.setOptions;
+var Series = H.Series, noop = H.noop;
 setOptions({
     legend: {
         /**

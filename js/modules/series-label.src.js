@@ -8,7 +8,11 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions, syncTimeout = U.syncTimeout;
 /**
  * Containing the position of a box that should be avoided by labels.
  *
@@ -39,12 +43,10 @@ import H from '../parts/Globals.js';
  * https://jsfiddle.net/highcharts/264Nm/
  * https://jsfiddle.net/highcharts/y5A37/
  */
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, pick = U.pick, syncTimeout = U.syncTimeout;
-import '../parts/Chart.js';
+''; // detach doclets above
 import '../parts/Series.js';
-var labelDistance = 3, Series = H.Series, SVGRenderer = H.SVGRenderer, Chart = H.Chart;
-H.setOptions({
+var labelDistance = 3, Series = H.Series;
+setOptions({
     /**
      * @optionparent plotOptions
      *
@@ -529,7 +531,7 @@ Chart.prototype.drawSeriesLabels = function () {
                     .label(labelText, 0, -9999, 'connector')
                     .addClass('highcharts-series-label ' +
                     'highcharts-series-label-' + series.index + ' ' +
-                    (series.options.className || '') +
+                    (series.options.className || '') + ' ' +
                     colorClass);
                 if (!chart.renderer.styledMode) {
                     label.css(extend({
@@ -634,7 +636,8 @@ Chart.prototype.drawSeriesLabels = function () {
                     bottom: best.y + bBox.height
                 });
                 // Move it if needed
-                var dist = Math.sqrt(Math.pow(Math.abs(best.x - label.x), 2), Math.pow(Math.abs(best.y - label.y), 2));
+                var dist = Math.sqrt(Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
+                    Math.pow(Math.abs(best.y - (label.y || 0)), 2));
                 if (dist && series.labelBySeries) {
                     // Move fast and fade in - pure animation movement is
                     // distractive...

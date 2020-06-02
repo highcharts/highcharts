@@ -11,6 +11,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import U from '../parts/Utilities.js';
 var defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Series.js';
@@ -95,7 +97,7 @@ seriesType('item',
     /**
      * @extends plotOptions.series.marker
      */
-    marker: merge(H.defaultOptions.plotOptions.line.marker, {
+    marker: merge(defaultOptions.plotOptions.line.marker, {
         radius: null
     }),
     /**
@@ -122,13 +124,17 @@ seriesType('item',
 // Prototype members
 {
     markerAttribs: void 0,
-    translate: function () {
+    translate: function (positions) {
+        // Initialize chart without setting data, #13379.
+        if (this.total === 0) {
+            this.center = this.getCenter();
+        }
         if (!this.slots) {
             this.slots = [];
         }
         if (isNumber(this.options.startAngle) &&
             isNumber(this.options.endAngle)) {
-            H.seriesTypes.pie.prototype.translate.call(this);
+            H.seriesTypes.pie.prototype.translate.apply(this, arguments);
             this.slots = this.getSlots();
         }
         else {
@@ -140,9 +146,9 @@ seriesType('item',
     getSlots: function () {
         var center = this.center, diameter = center[2], innerSize = center[3], row, slots = this.slots, x, y, rowRadius, rowLength, colCount, increment, angle, col, itemSize = 0, rowCount, fullAngle = (this.endAngleRad - this.startAngleRad), itemCount = Number.MAX_VALUE, finalItemCount, rows, testRows, rowsOption = this.options.rows, 
         // How many rows (arcs) should be used
-        rowFraction = (diameter - innerSize) / diameter;
+        rowFraction = (diameter - innerSize) / diameter, isCircle = fullAngle % (2 * Math.PI) === 0;
         // Increase the itemSize until we find the best fit
-        while (itemCount > this.total) {
+        while (itemCount > this.total + (rows && isCircle ? rows.length : 0)) {
             finalItemCount = itemCount;
             // Reset
             slots.length = 0;
@@ -190,7 +196,8 @@ seriesType('item',
         // the rows and remove the last slot until the count is correct.
         // For each iteration we sort the last slot by the angle, and
         // remove those with the highest angles.
-        var overshoot = finalItemCount - this.total;
+        var overshoot = finalItemCount - this.total -
+            (isCircle ? rows.length : 0);
         /**
          * @private
          * @param {Highcharts.ItemRowContainerObject} item

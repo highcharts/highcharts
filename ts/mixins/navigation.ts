@@ -10,13 +10,15 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
+
 /**
  * Internal types
  * @private
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             navigation?: ChartNavigationObject;
         }
         interface ChartNavigationMixin {
@@ -52,7 +54,7 @@ var chartNavigation: Highcharts.ChartNavigationMixin = {
      *        The chart instance.
      * @return {void}
      */
-    initUpdate: function (chart: Highcharts.Chart): void {
+    initUpdate: function (chart: Chart): void {
         if (!chart.navigation) {
             chart.navigation = {
                 updates: [],

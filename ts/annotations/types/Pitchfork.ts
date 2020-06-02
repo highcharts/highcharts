@@ -5,7 +5,14 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -35,21 +42,13 @@ declare global {
             innerBackground: AnnotationsShapeOptions;
             outerBackground: AnnotationsShapeOptions;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             pitchfork: typeof AnnotationPitchfork;
         }
     }
 }
 
-
-import U from '../../parts/Utilities.js';
-const {
-    merge
-} = U;
-
-var Annotation = H.Annotation,
-    MockPoint = Annotation.MockPoint,
-    InfinityLine = Annotation.types.infinityLine;
+var InfinityLine = Annotation.types.infinityLine;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -74,7 +73,7 @@ Pitchfork.findEdgePoint = function (
     };
 };
 
-Pitchfork.middleLineEdgePoint = function (target: Highcharts.Annotation): Highcharts.PositionObject {
+Pitchfork.middleLineEdgePoint = function (target: Annotation): Highcharts.PositionObject {
     var annotation: Highcharts.AnnotationPitchfork = target.annotation as any,
         points = annotation.points;
 

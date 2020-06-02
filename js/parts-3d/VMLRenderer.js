@@ -12,11 +12,13 @@
 'use strict';
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var setOptions = U.setOptions;
 import VMLAxis3D from './VMLAxis3D.js';
-import '../parts/SvgRenderer.js';
-var SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
+var VMLRenderer = H.VMLRenderer;
 if (VMLRenderer) {
-    H.setOptions({ animate: false });
+    setOptions({ animate: false });
     VMLRenderer.prototype.face3d = SVGRenderer.prototype.face3d;
     VMLRenderer.prototype.polyhedron = SVGRenderer.prototype.polyhedron;
     VMLRenderer.prototype.elements3d = SVGRenderer.prototype.elements3d;
@@ -30,6 +32,6 @@ if (VMLRenderer) {
         result.css({ zIndex: result.zIndex });
         return result;
     };
-    H.VMLRenderer.prototype.arc3dPath = H.SVGRenderer.prototype.arc3dPath;
+    H.VMLRenderer.prototype.arc3dPath = SVGRenderer.prototype.arc3dPath;
     VMLAxis3D.compose(Axis);
 }

@@ -10,13 +10,17 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
+import Chart from '../parts/Chart.js';
 import Color from './Color.js';
 const {
     parse: color
 } = Color;
 import H from './Globals.js';
 import NavigatorAxis from './NavigatorAxis.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 import Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 const {
@@ -42,7 +46,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             navigator?: Navigator;
             scrollbar?: Scrollbar;
             scroller?: Navigator;
@@ -80,15 +84,6 @@ declare global {
         interface Series {
             baseSeries?: Series;
             navigatorSeries?: Series;
-        }
-        interface SymbolDictionary {
-            'navigator-handle': (
-                x: number,
-                y: number,
-                w: number,
-                h: number,
-                options: NavigatorHandlesOptions
-            ) => SVGPathArray;
         }
         interface XAxisOptions {
             maxRange?: number;
@@ -200,13 +195,9 @@ declare global {
     }
 }
 
-import './Chart.js';
 import './Series.js';
-import './Options.js';
 
-var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
-    hasTouch = H.hasTouch,
+var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
@@ -760,11 +751,11 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.NavigatorHandlesOptions
-): Highcharts.SVGPathArray {
-    var halfWidth = (options.width as any) / 2,
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
+    var halfWidth = (options && options.width || 0) / 2,
         markerPosition = Math.round(halfWidth / 3) + 0.5,
-        height = options.height || 0;
+        height = options && options.height || 0;
 
     return [
         ['M', -halfWidth - 1, 0.5],
@@ -790,14 +781,12 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
  *        Chart object
  */
 class Navigator {
-    public constructor(
-        chart: Highcharts.Chart
-    ) {
+    public constructor(chart: Chart) {
         this.init(chart);
     }
 
     public baseSeries: Array<Highcharts.Series> = void 0 as any;
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Chart = void 0 as any;
     public dragOffset?: number;
     public eventsToUnbind?: Array<Function>;
     public fixedExtreme?: (null|number);
@@ -914,7 +903,7 @@ class Navigator {
             left = navigator.left - scrollbarHeight,
             navigatorTop = navigator.top,
             verticalMin,
-            path: Highcharts.SVGPathArray;
+            path: SVGPath;
 
         if (inverted) {
             left -= halfOutline;
@@ -1828,7 +1817,7 @@ class Navigator {
      *
      * @param {Highcharts.Chart} chart
      */
-    public init(chart: Highcharts.Chart): void {
+    public init(chart: Chart): void {
         var chartOptions = chart.options,
             navigatorOptions =
                 chartOptions.navigator as Highcharts.NavigatorOptions,
@@ -2558,7 +2547,7 @@ class Navigator {
             addEvent(
                 this.chart,
                 'redraw',
-                function (this: Highcharts.Chart): void {
+                function (): void {
                     var navigator = this.navigator as Highcharts.Navigator,
                         xAxis = navigator && (
                             navigator.baseSeries &&
@@ -2576,7 +2565,7 @@ class Navigator {
             addEvent(
                 this.chart,
                 'getMargins',
-                function (this: Highcharts.Chart): void {
+                function (): void {
                     var chart = this,
                         navigator = chart.navigator as Highcharts.Navigator,
                         marginName = navigator.opposite ?
@@ -2654,9 +2643,7 @@ if (!H.Navigator) {
     // For Stock charts. For x only zooming, do not to create the zoom button
     // because X axis zooming is already allowed by the Navigator and Range
     // selector. (#9285)
-    addEvent(Chart, 'beforeShowResetZoom', function (
-        this: Highcharts.Chart
-    ): (boolean|undefined) {
+    addEvent(Chart, 'beforeShowResetZoom', function (): (boolean|undefined) {
         var chartOptions = this.options,
             navigator = chartOptions.navigator,
             rangeSelector = chartOptions.rangeSelector;
@@ -2671,7 +2658,7 @@ if (!H.Navigator) {
     });
 
     // Initialize navigator for stock charts
-    addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'beforeRender', function (): void {
         var options = this.options;
 
         if ((options.navigator as any).enabled ||
@@ -2685,9 +2672,7 @@ if (!H.Navigator) {
     // the final top position of the navigator once the height of the chart,
     // including the legend, is determined. #367. We can't use Chart.getMargins,
     // because labels offsets are not calculated yet.
-    addEvent(Chart, 'afterSetChartSize', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'afterSetChartSize', function (): void {
 
         var legend = this.legend,
             navigator = this.navigator,
@@ -2725,6 +2710,7 @@ if (!H.Navigator) {
                         (
                             legendOptions &&
                             legendOptions.verticalAlign === 'bottom' &&
+                            legendOptions.layout !== 'proximate' && // #13392
                             legendOptions.enabled &&
                             !legendOptions.floating
                         ) ?
@@ -2752,10 +2738,7 @@ if (!H.Navigator) {
     });
 
     // Merge options, if no scrolling exists yet
-    addEvent(Chart, 'update', function (
-        this: Highcharts.Chart,
-        e: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'update', function (e: Chart): void {
 
         var navigatorOptions = (e.options.navigator || {}),
             scrollbarOptions = (e.options.scrollbar || {});
@@ -2773,7 +2756,6 @@ if (!H.Navigator) {
 
     // Initialize navigator, if no scrolling exists yet
     addEvent(Chart, 'afterUpdate', function (
-        this: Highcharts.Chart,
         event: Highcharts.ChartAfterUpdateEventObject
     ): void {
 
@@ -2791,7 +2773,7 @@ if (!H.Navigator) {
     });
 
     // Handle adding new series
-    addEvent(Chart, 'afterAddSeries', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'afterAddSeries', function (): void {
         if (this.navigator) {
             // Recompute which series should be shown in navigator, and add them
             this.navigator.setBaseSeries(null as any, false);
@@ -2805,7 +2787,7 @@ if (!H.Navigator) {
         }
     });
 
-    Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
+    Chart.prototype.callbacks.push(function (chart: Chart): void {
         var extremes,
             navigator = chart.navigator as Highcharts.Navigator;
 

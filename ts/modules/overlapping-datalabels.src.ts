@@ -13,19 +13,30 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import type Point from '../parts/Point';
+import type SVGElement from '../parts/SVGElement';
+import Chart from '../parts/Chart.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
     fireEvent,
     isArray,
+    isNumber,
     objectEach,
     pick
 } = U;
 
-import '../parts/Chart.js';
-
-var Chart = H.Chart;
+/**
+ * Internal type
+ * @private
+ */
+declare global {
+    namespace Highcharts {
+        interface ChartLike {
+            hideOverlappingLabels(labels: Array<SVGElement>): void;
+        }
+    }
+}
 
 /* eslint-disable no-invalid-this */
 
@@ -37,7 +48,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
 
     // Consider external label collectors
     (this.labelCollectors || []).forEach(function (
-        collector: Highcharts.ChartLabelCollectorFunction
+        collector: Chart.LabelCollectorFunction
     ): void {
         labels = labels.concat(collector());
     });
@@ -69,7 +80,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
             series.visible &&
             !(dlOptions.enabled === false && !series._hasPointLabels)
         ) { // #3866
-            (series.nodes || series.points).forEach(function (point: Highcharts.Point): void {
+            (series.nodes || series.points).forEach(function (point: Point): void {
                 if (point.visible) {
                     var dataLabels = (
                         isArray(point.dataLabels) ?
@@ -97,7 +108,7 @@ addEvent(Chart, 'render', function collectAndHide(): void {
         }
     });
 
-    this.hideOverlappingLabels(labels);
+    this.hideOverlappingLabels(labels as any);
 });
 
 /**
@@ -108,11 +119,10 @@ addEvent(Chart, 'render', function collectAndHide(): void {
  * @function Highcharts.Chart#hideOverlappingLabels
  * @param {Array<Highcharts.SVGElement>} labels
  * Rendered data labels
- * @return {void}
  * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (
-    labels: Array<Highcharts.SVGElement>
+    labels: Array<SVGElement>
 ): void {
 
     var chart = this,
@@ -184,7 +194,7 @@ Chart.prototype.hideOverlappingLabels = function (
 
                 if (alignValue) {
                     xOffset = +alignValue * boxWidth;
-                } else if (Math.round(label.x) !== label.translateX) {
+                } else if (isNumber(label.x) && Math.round(label.x) !== label.translateX) {
                     xOffset = label.x - label.translateX;
                 }
 

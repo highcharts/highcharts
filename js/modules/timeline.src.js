@@ -13,6 +13,11 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import SVGElement from '../parts/SVGElement.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -39,10 +44,6 @@ import H from '../parts/Globals.js';
 * @name Highcharts.TimelineDataLabelsFormatterContextObject#series
 * @type {Highcharts.Series}
 */
-import Point from '../parts/Point.js';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 var TrackerMixin = H.TrackerMixin, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * The timeline series type.
@@ -255,7 +256,7 @@ seriesType('timeline', 'line',
                         if (this.targetPosition) {
                             this.targetPosition = params;
                         }
-                        return H.SVGElement.prototype.animate.apply(this, arguments);
+                        return SVGElement.prototype.animate.apply(this, arguments);
                     };
                     // Initialize the targetPosition field within data label
                     // object. It's necessary because there is need to know

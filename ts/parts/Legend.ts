@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type Chart from './Chart';
 import type ColorAxisGlobal from '../parts-map/ColorAxis';
+import type Point from './Point';
 import H from './Globals.js';
 
 /**
@@ -231,7 +233,7 @@ class Legend {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart, options: Highcharts.LegendOptions) {
+    public constructor(chart: Chart, options: Highcharts.LegendOptions) {
         this.chart = chart;
         this.init(chart, options);
     }
@@ -242,13 +244,13 @@ class Legend {
      *
      * */
 
-    public allItems: Array<(Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)> = [];
+    public allItems: Array<(Highcharts.BubbleLegend|Point|Highcharts.Series)> = [];
 
     public baseline?: number;
 
     public box: Highcharts.SVGElement = void 0 as any;
 
-    public chart: Highcharts.Chart;
+    public chart: Chart;
 
     public clipHeight?: number;
 
@@ -356,7 +358,7 @@ class Legend {
      * @param {Highcharts.LegendOptions} options
      * Legend options.
      */
-    public init(chart: Highcharts.Chart, options: Highcharts.LegendOptions): void {
+    public init(chart: Chart, options: Highcharts.LegendOptions): void {
 
         /**
          * Chart of this legend.
@@ -475,7 +477,7 @@ class Legend {
      * @todo
      * Make events official: Fires the event `afterColorizeItem`.
      */
-    public colorizeItem(item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series), visible?: boolean): void {
+    public colorizeItem(item: (Highcharts.BubbleLegend|Point|Highcharts.Series), visible?: boolean): void {
         (item.legendGroup as any)[visible ? 'removeClass' : 'addClass'](
             'highcharts-legend-item-hidden'
         );
@@ -547,7 +549,7 @@ class Legend {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * The item to position
      */
-    public positionItem(item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)): void {
+    public positionItem(item: (Highcharts.BubbleLegend|Point|Highcharts.Series)): void {
         var legend = this,
             options = legend.options,
             symbolPadding = options.symbolPadding,
@@ -581,7 +583,7 @@ class Legend {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * The item to remove
      */
-    public destroyItem(item: (Highcharts.BubbleLegend|Highcharts.ColorAxis|Highcharts.Point|Highcharts.Series)): void {
+    public destroyItem(item: (Highcharts.BubbleLegend|Highcharts.ColorAxis|Point|Highcharts.Series)): void {
         var checkbox = item.checkbox;
 
         // destroy SVG elements
@@ -619,7 +621,7 @@ class Legend {
 
         // Destroy items
         this.getAllItems().forEach(function (
-            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
         ): void {
             ['legendItem', 'legendGroup'].forEach(destroyItems, item);
         });
@@ -654,7 +656,7 @@ class Legend {
             translateY = alignAttr.translateY;
             this.allItems.forEach(function (
                 item: (
-                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                    Highcharts.BubbleLegend|Point|Highcharts.Series
                 )
             ): void {
                 var checkbox = item.checkbox,
@@ -743,7 +745,7 @@ class Legend {
      * @param {Highcharts.Point|Highcharts.Series} item
      *        The item for which to update the text in the legend.
      */
-    public setText(item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+    public setText(item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
     ): void {
         var options = this.options;
 
@@ -763,7 +765,7 @@ class Legend {
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      * The item to render.
      */
-    public renderItem(item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)): void {
+    public renderItem(item: (Highcharts.BubbleLegend|Point|Highcharts.Series)): void {
         var legend = this,
             chart = legend.chart,
             renderer = chart.renderer,
@@ -905,7 +907,7 @@ class Legend {
      * @function Highcharts.Legend#layoutItem
      * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
      */
-    public layoutItem(item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)): void {
+    public layoutItem(item: (Highcharts.BubbleLegend|Point|Highcharts.Series)): void {
 
         var options = this.options,
             padding = this.padding,
@@ -982,9 +984,9 @@ class Legend {
      * The current items in the legend.
      * @fires Highcharts.Legend#event:afterGetAllItems
      */
-    public getAllItems(): Array<(Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)> {
+    public getAllItems(): Array<(Highcharts.BubbleLegend|Point|Highcharts.Series)> {
         var allItems = [] as Array<(
-            Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+            Highcharts.BubbleLegend|Point|Highcharts.Series
         )>;
 
         this.chart.series.forEach(function (
@@ -1096,9 +1098,9 @@ class Legend {
             alignLeft = this.options.align === 'left';
 
         this.allItems.forEach(function (
-            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
         ): void {
-            var lastPoint: (Highcharts.Point|undefined),
+            var lastPoint: (Point|undefined),
                 height: number,
                 useFirstPoint = alignLeft,
                 target,
@@ -1113,7 +1115,7 @@ class Legend {
                     useFirstPoint ?
                         (item as any).points :
                         (item as any).points.slice(0).reverse(),
-                    function (item: Highcharts.Point): boolean {
+                    function (item: Point): boolean {
                         return isNumber(item.plotY);
                     }
                 );
@@ -1161,9 +1163,7 @@ class Legend {
             chart = legend.chart,
             renderer = chart.renderer,
             legendGroup = legend.group,
-            allItems: Array<(
-                Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
-            )>,
+            allItems: Array<(Highcharts.BubbleLegend|Point|Highcharts.Series)>,
             display,
             legendWidth,
             legendHeight,
@@ -1214,8 +1214,8 @@ class Legend {
 
         // sort by legendIndex
         stableSort(allItems, function (
-            a: (Highcharts.Point|Highcharts.Series),
-            b: (Highcharts.Point|Highcharts.Series)
+            a: (Point|Highcharts.Series),
+            b: (Point|Highcharts.Series)
         ): number {
             return ((a.options && a.options.legendIndex) || 0) -
                 ((b.options && b.options.legendIndex) || 0);
@@ -1446,7 +1446,7 @@ class Legend {
             // defines the scroll top for each page (#2098)
             allItems.forEach(function (
                 item: (
-                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                    Highcharts.BubbleLegend|Point|Highcharts.Series
                 ),
                 i: number
             ): void {
@@ -1672,7 +1672,7 @@ if (
     wrap(Legend.prototype, 'positionItem', function (
         this: Highcharts.Legend,
         proceed: Function,
-        item: (Highcharts.Point|Highcharts.Series)
+        item: (Point|Highcharts.Series)
     ): void {
         var legend = this,
             // If chart destroyed in sync, this is undefined (#2030)

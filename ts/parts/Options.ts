@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type Chart from './Chart';
+import type Point from './Point';
 import H from './Globals.js';
 
 /**
@@ -25,7 +27,7 @@ declare global {
         ): string;
         function getOptions(): Options;
         function setOptions(options: Options): Options;
-        interface Chart {
+        interface ChartLike {
             marginRight: ChartOptions['marginRight'];
             polar: ChartOptions['polar'];
         }
@@ -349,7 +351,6 @@ declare global {
             xDateFormat?: string;
         }
         let defaultOptions: Options;
-        let defaultPlotOptions: PlotOptions;
         let time: Time;
         type DescriptionOptionsType =
             (TitleOptions|SubtitleOptions|CaptionOptions);
@@ -382,8 +383,6 @@ declare global {
  *
  * @param {Highcharts.ChartAddSeriesEventObject} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -419,8 +418,6 @@ declare global {
  *
  * @param {Highcharts.PointerEventObject} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -467,8 +464,6 @@ declare global {
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -483,8 +478,6 @@ declare global {
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -498,8 +491,6 @@ declare global {
  *
  * @param {global.Event} event
  *        The event that occured.
- *
- * @return {void}
  */
 
 /**
@@ -902,7 +893,136 @@ H.defaultOptions = {
 
     global: {},
 
-    time: Time.defaultOptions,
+
+    /**
+     * Time options that can apply globally or to individual charts. These
+     * settings affect how `datetime` axes are laid out, how tooltips are
+     * formatted, how series
+     * [pointIntervalUnit](#plotOptions.series.pointIntervalUnit) works and how
+     * the Highstock range selector handles time.
+     *
+     * The common use case is that all charts in the same Highcharts object
+     * share the same time settings, in which case the global settings are set
+     * using `setOptions`.
+     *
+     * ```js
+     * // Apply time settings globally
+     * Highcharts.setOptions({
+     *     time: {
+     *         timezone: 'Europe/London'
+     *     }
+     * });
+     * // Apply time settings by instance
+     * var chart = Highcharts.chart('container', {
+     *     time: {
+     *         timezone: 'America/New_York'
+     *     },
+     *     series: [{
+     *         data: [1, 4, 3, 5]
+     *     }]
+     * });
+     *
+     * // Use the Time object
+     * console.log(
+     *        'Current time in New York',
+     *        chart.time.dateFormat('%Y-%m-%d %H:%M:%S', Date.now())
+     * );
+     * ```
+     *
+     * Since v6.0.5, the time options were moved from the `global` obect to the
+     * `time` object, and time options can be set on each individual chart.
+     *
+     * @sample {highcharts|highstock}
+     *         highcharts/time/timezone/
+     *         Set the timezone globally
+     * @sample {highcharts}
+     *         highcharts/time/individual/
+     *         Set the timezone per chart instance
+     * @sample {highstock}
+     *         stock/time/individual/
+     *         Set the timezone per chart instance
+     *
+     * @since     6.0.5
+     * @optionparent time
+     */
+    time: {
+        /**
+         * A custom `Date` class for advanced date handling. For example,
+         * [JDate](https://github.com/tahajahangir/jdate) can be hooked in to
+         * handle Jalali dates.
+         *
+         * @type      {*}
+         * @since     4.0.4
+         * @product   highcharts highstock gantt
+         */
+        Date: void 0,
+        /**
+         * A callback to return the time zone offset for a given datetime. It
+         * takes the timestamp in terms of milliseconds since January 1 1970,
+         * and returns the timezone offset in minutes. This provides a hook
+         * for drawing time based charts in specific time zones using their
+         * local DST crossover dates, with the help of external libraries.
+         *
+         * @see [global.timezoneOffset](#global.timezoneOffset)
+         *
+         * @sample {highcharts|highstock} highcharts/time/gettimezoneoffset/
+         *         Use moment.js to draw Oslo time regardless of browser locale
+         *
+         * @type      {Highcharts.TimezoneOffsetCallbackFunction}
+         * @since     4.1.0
+         * @product   highcharts highstock gantt
+         */
+        getTimezoneOffset: void 0,
+
+        /**
+         * Requires [moment.js](https://momentjs.com/). If the timezone option
+         * is specified, it creates a default
+         * [getTimezoneOffset](#time.getTimezoneOffset) function that looks
+         * up the specified timezone in moment.js. If moment.js is not included,
+         * this throws a Highcharts error in the console, but does not crash the
+         * chart.
+         *
+         * @see [getTimezoneOffset](#time.getTimezoneOffset)
+         *
+         * @sample {highcharts|highstock} highcharts/time/timezone/
+         *         Europe/Oslo
+         *
+         * @type      {string}
+         * @since     5.0.7
+         * @product   highcharts highstock gantt
+         */
+        timezone: void 0,
+        /**
+         * The timezone offset in minutes. Positive values are west, negative
+         * values are east of UTC, as in the ECMAScript
+         * [getTimezoneOffset](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date/getTimezoneOffset)
+         * method. Use this to display UTC based data in a predefined time zone.
+         *
+         * @see [time.getTimezoneOffset](#time.getTimezoneOffset)
+         *
+         * @sample {highcharts|highstock} highcharts/time/timezoneoffset/
+         *         Timezone offset
+         *
+         * @since     3.0.8
+         * @product   highcharts highstock gantt
+         */
+        timezoneOffset: 0,
+
+        /**
+         * Whether to use UTC time for axis scaling, tickmark placement and
+         * time display in `Highcharts.dateFormat`. Advantages of using UTC
+         * is that the time displays equally regardless of the user agent's
+         * time zone settings. Local time can be used when the data is loaded
+         * in real time or when correct Daylight Saving Time transitions are
+         * required.
+         *
+         * @sample {highcharts} highcharts/time/useutc-true/
+         *         True by default
+         * @sample {highcharts} highcharts/time/useutc-false/
+         *         False
+         */
+        useUTC: true
+    },
 
     /**
      * General options for the chart.
@@ -2686,7 +2806,7 @@ H.defaultOptions = {
          * @type {Highcharts.FormatterCallbackFunction<Point|Series>}
          */
         labelFormatter: function (
-            this: (Highcharts.Series|Highcharts.Point)
+            this: (Highcharts.Series|Point)
         ): string {
             /** eslint-enable valid-jsdoc */
             return this.name as any;
@@ -4149,58 +4269,12 @@ H.defaultOptions = {
     }
 };
 
-/**
- * Merge the default options with custom options and return the new options
- * structure. Commonly used for defining reusable templates.
- *
- * @sample highcharts/global/useutc-false Setting a global option
- * @sample highcharts/members/setoptions Applying a global theme
- *
- * @function Highcharts.setOptions
- *
- * @param {Highcharts.Options} options
- *        The new custom chart options.
- *
- * @return {Highcharts.Options}
- *         Updated options.
- */
-H.setOptions = function (
-    options: Highcharts.Options
-): Highcharts.Options {
-
-    // Copy in the default options
-    H.defaultOptions = merge(true, H.defaultOptions, options);
-
-    // Update the time object
-    if (options.time || options.global) {
-        H.time.update(merge(
-            H.defaultOptions.global,
-            H.defaultOptions.time,
-            options.global,
-            options.time
-        ));
-    }
-
-    return H.defaultOptions;
-};
-
-/**
- * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
- * for outside modules wasn't enough because the setOptions method created a new
- * object.
- *
- * @function Highcharts.getOptions
- *
- * @return {Highcharts.Options}
- */
-H.getOptions = function (): Highcharts.Options {
-    return H.defaultOptions;
-};
-
-
-// Series defaults
-H.defaultPlotOptions = H.defaultOptions.plotOptions as any;
-
+/* eslint-disable spaced-comment */
+/*= if (!build.classic) { =*/
+// Legacy build for styled mode, set the styledMode option to true by default.
+(H.defaultOptions.chart as any).styledMode = true;
+/*= } =*/
+'';
 
 /**
  * Global `Time` object with default options. Since v6.0.5, time settings can be
@@ -4272,9 +4346,10 @@ H.dateFormat = function (
     return H.time.dateFormat(format, timestamp, capitalize);
 };
 
-/* eslint-disable spaced-comment */
-/*= if (!build.classic) { =*/
-// Legacy build for styled mode, set the styledMode option to true by default.
-(H.defaultOptions.chart as any).styledMode = true;
-/*= } =*/
-'';
+const optionsModule = {
+    dateFormat: H.dateFormat,
+    defaultOptions: H.defaultOptions,
+    time: H.time
+};
+
+export default optionsModule;

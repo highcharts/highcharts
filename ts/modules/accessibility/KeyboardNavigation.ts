@@ -11,9 +11,13 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
 import H from '../../parts/Globals.js';
-var win = H.win,
-    doc = win.document;
+const {
+    doc,
+    win
+} = H;
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
@@ -69,7 +73,7 @@ declare global {
             public updateExitAnchor(): void;
             public updateContainerTabindex(): void;
         }
-        interface Chart {
+        interface ChartLike {
             /** @requires modules/accessibility */
             dismissPopupContent(): void;
         }
@@ -124,7 +128,7 @@ H.Chart.prototype.dismissPopupContent = function (): void {
  */
 function KeyboardNavigation(
     this: Highcharts.KeyboardNavigation,
-    chart: Highcharts.Chart,
+    chart: Chart,
     components: Highcharts.AccessibilityComponentsObject
 ): void {
     this.init(chart, components);
@@ -141,7 +145,7 @@ KeyboardNavigation.prototype = {
      */
     init: function (
         this: Highcharts.KeyboardNavigation,
-        chart: Highcharts.Chart,
+        chart: Chart,
         components: Highcharts.AccessibilityComponentsObject
     ): void {
         const ep = this.eventProvider = new EventProvider();

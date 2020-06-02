@@ -10,17 +10,18 @@
  *
  * */
 'use strict';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, error = U.error, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
+var addEvent = U.addEvent, error = U.error, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../../parts/Series.js';
 import '../../parts/Options.js';
 import '../../parts/Interaction.js';
 import butils from './boost-utils.js';
 import boostable from './boostables.js';
 import boostableMap from './boostable-map.js';
-var boostEnabled = butils.boostEnabled, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, Chart = H.Chart, Series = H.Series, seriesTypes = H.seriesTypes, plotOptions = H.getOptions().plotOptions;
+var boostEnabled = butils.boostEnabled, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, Series = H.Series, seriesTypes = H.seriesTypes, plotOptions = getOptions().plotOptions;
 /**
  * Returns true if the chart is in series boost mode.
  *
@@ -285,6 +286,8 @@ Series.prototype.enterBoost = function () {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
+    // Prevent animation when zooming in on boosted series(#13421).
+    this.finishedAnimating = true;
     // Hide series label if any
     if (this.labelBySeries) {
         this.labelBySeries = this.labelBySeries.destroy();

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../../parts/Point.js';
 import H from '../../parts/Globals.js';
 
 /**
@@ -20,7 +21,7 @@ import H from '../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             highContrastModeActive?: boolean;
         }
         interface PointOptionsObject {
@@ -52,7 +53,8 @@ var whcm = {
         // Test BG image for IE
         if (isMS && win.getComputedStyle) {
             const testDiv = doc.createElement('div');
-            testDiv.style.backgroundImage = 'url(#)';
+            const imageSrc = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+            testDiv.style.backgroundImage = `url(${imageSrc})`; // #13071
             doc.body.appendChild(testDiv);
 
             const bi = (
@@ -104,7 +106,7 @@ var whcm = {
             });
 
             // Force point colors if existing
-            s.points.forEach(function (p: Highcharts.Point): void {
+            s.points.forEach(function (p: Point): void {
                 if (p.options && p.options.color) {
                     p.update({
                         color: plotOpts.color || 'windowText',

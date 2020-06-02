@@ -5,7 +5,18 @@
  * */
 
 'use strict';
+
+import type Point from '../../parts/Point';
+import type SVGPath from '../../parts/SVGPath';
+import Annotation from '../../annotations/annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    extend,
+    isNumber,
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -87,21 +98,11 @@ declare global {
             xAxis: number;
             yAxis: number;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             measure: typeof AnnotationMeasure;
         }
     }
 }
-
-import U from '../../parts/Utilities.js';
-const {
-    extend,
-    isNumber,
-    merge
-} = U;
-
-var Annotation = H.Annotation,
-    ControlPoint = Annotation.ControlPoint;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -314,8 +315,8 @@ H.extendAnnotation(Measure, null,
                     point: point,
                     type: 'path'
                 },
-                pathH: Highcharts.SVGPathArray = [],
-                pathV: Highcharts.SVGPathArray = [],
+                pathH: SVGPath = [],
+                pathV: SVGPath = [],
                 crosshairOptionsX,
                 crosshairOptionsY,
                 temp;
@@ -472,7 +473,7 @@ H.extendAnnotation(Measure, null,
 
             // #11174 - clipBox was not recalculate during resize / redraw
             if (this.clipRect) {
-                this.clipRect.animate(this.getClipBox());
+                this.clipRect.animate(this.getClipBox() as any);
             }
 
             this.addValues(resize);
@@ -698,7 +699,7 @@ H.extendAnnotation(Measure, null,
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point: Highcharts.Point): void {
+                        serie.points.forEach(function (point: Point): void {
                             if (
                                 !point.isNull &&
                                 (point.y as any) < min &&
@@ -736,7 +737,7 @@ H.extendAnnotation(Measure, null,
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point: Highcharts.Point): void {
+                        serie.points.forEach(function (point: Point): void {
                             if (
                                 !point.isNull &&
                                 (point.y as any) > max &&
@@ -783,7 +784,7 @@ H.extendAnnotation(Measure, null,
                         serie.visible &&
                         serie.options.id !== 'highcharts-navigator-series'
                     ) {
-                        serie.points.forEach(function (point: Highcharts.Point): void {
+                        serie.points.forEach(function (point: Point): void {
                             if (
                                 !point.isNull &&
                                 (point.x as any) > ext.xAxisMin &&

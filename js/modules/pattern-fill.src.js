@@ -12,6 +12,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, getOptions = U.getOptions, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
 /**
  * Pattern options
  *
@@ -120,12 +124,9 @@ import H from '../parts/Globals.js';
 * @type {number|undefined}
 */
 ''; // detach doclets above
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, wrap = U.wrap;
 // Add the predefined patterns
 H.patterns = (function () {
-    var patterns = [], colors = H.getOptions().colors;
+    var patterns = [], colors = getOptions().colors;
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
         'M 0 10 L 10 0 M -1 1 L 1 -1 M 9 11 L 11 9',
@@ -275,7 +276,7 @@ Point.prototype.calculatePatternDimensions = function (pattern) {
  *
  * @requires modules/pattern-fill
  */
-H.SVGRenderer.prototype.addPattern = function (options, animation) {
+SVGRenderer.prototype.addPattern = function (options, animation) {
     var pattern, animate = pick(animation, true), animationOptions = animObject(animate), path, defaultSize = 32, width = options.width || options._width || defaultSize, height = (options.height || options._height || defaultSize), color = options.color || '#343434', id = options.id, ren = this, rect = function (fill) {
         ren.rect(0, 0, width, height)
             .attr({ fill: fill })
@@ -423,7 +424,7 @@ addEvent(Point, 'afterInit', function () {
     }
 });
 // Add functionality to SVG renderer to handle patterns as complex colors
-addEvent(H.SVGRenderer, 'complexColor', function (args) {
+addEvent(SVGRenderer, 'complexColor', function (args) {
     var color = args.args[0], prop = args.args[1], element = args.args[2], chartIndex = (this.chartIndex || 0);
     var pattern = color.pattern, value = '#343434';
     // Handle patternIndex

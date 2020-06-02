@@ -67,7 +67,9 @@ module.exports = async since => {
                 repo: 'highcharts',
                 state: 'closed',
                 base,
-                page
+                page,
+                sort: 'updated',
+                direction: 'desc'
             }).catch(error);
 
             // On the master, keep only PRs that have been closed since last

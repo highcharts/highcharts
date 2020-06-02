@@ -8,12 +8,14 @@
  *
  * */
 'use strict';
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import H from './Globals.js';
-import './Options.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
-import './SvgRenderer.js';
+import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
 /**
  * This is a placeholder type of the possible series options for
  * [Highcharts](../highcharts/series), [Highstock](../highstock/series),
@@ -231,8 +233,7 @@ import U from './Utilities.js';
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 ''; // detach doclets above
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isString = U.isString, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, seriesType = U.seriesType, splat = U.splat, syncTimeout = U.syncTimeout;
-var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, seriesTypes = H.seriesTypes, SVGElement = H.SVGElement, win = H.win;
+var seriesTypes = H.seriesTypes, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -2732,6 +2733,7 @@ null,
             lastSeries = chartSeries[chartSeries.length - 1];
         }
         series._i = pick(lastSeries && lastSeries._i, -1) + 1;
+        series.opacity = series.options.opacity;
         // Insert the series and re-order all series above the insertion
         // point.
         chart.orderSeries(this.insert(chartSeries));
@@ -3099,7 +3101,7 @@ null,
         }
         else {
             this.getCyclic('color', this.options.color ||
-                defaultPlotOptions[this.type].color, this.chart.options.colors);
+                defaultOptions.plotOptions[this.type].color, this.chart.options.colors);
         }
     },
     /**
@@ -3664,7 +3666,6 @@ null,
      *
      * @private
      * @function Highcharts.Series#generatePoints
-     * @return {void}
      */
     generatePoints: function () {
         var series = this, options = series.options, dataOptions = options.data, data = series.data, dataLength, processedXData = series.processedXData, processedYData = series.processedYData, PointClass = series.pointClass, processedDataLength = processedXData.length, cropStart = series.cropStart || 0, cursor, hasGroupedData = series.hasGroupedData, keys = options.keys, point, points = [], i;
@@ -4073,7 +4074,7 @@ null,
      * @return {Highcharts.Dictionary<number>}
      */
     getClipBox: function (animation, finalBox) {
-        var series = this, options = series.options, chart = series.chart, inverted = chart.inverted, xAxis = series.xAxis, yAxis = xAxis && series.yAxis, clipBox;
+        var series = this, options = series.options, chart = series.chart, inverted = chart.inverted, xAxis = series.xAxis, yAxis = xAxis && series.yAxis, clipBox, scrollablePlotAreaOptions = chart.options.chart.scrollablePlotArea || {};
         if (animation && options.clip === false && yAxis) {
             // support for not clipped series animation (#10450)
             clipBox = inverted ? {
@@ -4094,7 +4095,8 @@ null,
             clipBox = series.clipBox || chart.clipBox;
             if (finalBox) {
                 clipBox.width = chart.plotSizeX;
-                clipBox.x = 0;
+                clipBox.x = (chart.scrollablePixelsX || 0) *
+                    (scrollablePlotAreaOptions.scrollPositionX || 0);
             }
         }
         return !finalBox ? clipBox : {
@@ -4110,7 +4112,6 @@ null,
      * @private
      * @function Highcharts.Series#setClip
      * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
-     * @return {void}
      */
     setClip: function (animation) {
         var chart = this.chart, options = this.options, renderer = chart.renderer, inverted = chart.inverted, seriesClipBox = this.clipBox, clipBox = this.getClipBox(animation), sharedClipKey = this.sharedClipKey ||
@@ -4191,8 +4192,6 @@ null,
      *
      * @param {boolean} [init]
      *        Initialize the animation.
-     *
-     * @return {void}
      */
     animate: function (init) {
         var series = this, chart = series.chart, animation = animObject(series.options.animation), clipRect, sharedClipKey, finalBox;
@@ -4223,7 +4222,6 @@ null,
      *
      * @private
      * @function Highcharts.Series#afterAnimate
-     * @return {void}
      * @fires Highcharts.Series#event:afterAnimate
      */
     afterAnimate: function () {
@@ -4607,8 +4605,6 @@ null,
      * positions and attributes.
      *
      * @function Highcharts.Series#drawGraph
-     *
-     * @return {void}
      */
     drawGraph: function () {
         var series = this, options = this.options, graphPath = (this.gappedPath || this.getGraphPath).call(this), styledMode = this.chart.styledMode, props = [[
@@ -4889,14 +4885,19 @@ null,
      * @return {Highcharts.SVGElement}
      */
     plotGroup: function (prop, name, visibility, zIndex, parent) {
-        var group = this[prop], isNew = !group;
+        var group = this[prop], isNew = !group, attrs = {
+            visibility: visibility,
+            zIndex: zIndex || 0.1 // IE8 and pointer logic use this
+        };
+        // Avoid setting undefined opacity, or in styled mode
+        if (typeof this.opacity !== 'undefined' &&
+            !this.chart.styledMode) {
+            attrs.opacity = this.opacity;
+        }
         // Generate it on first call
         if (isNew) {
             this[prop] = group = this.chart.renderer
                 .g()
-                .attr({
-                zIndex: zIndex || 0.1 // IE8 and pointer logic use this
-            })
                 .add(parent);
         }
         // Add the class names, and replace existing ones as response to
@@ -4912,7 +4913,7 @@ null,
                 ' highcharts-tracker' :
                 '')), true);
         // Place it on first and subsequent (redraw) calls
-        group.attr({ visibility: visibility })[isNew ? 'attr' : 'animate'](this.getPlotBox());
+        group.attr(attrs)[isNew ? 'attr' : 'animate'](this.getPlotBox());
         return group;
     },
     /**

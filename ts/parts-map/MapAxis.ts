@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import Axis from '../parts/Axis.js';
 import U from '../parts/Utilities.js';
 const {
@@ -26,6 +27,13 @@ declare module '../parts/axis/types' {
     }
     interface AxisTypeRegistry {
         MapAxis: MapAxis;
+    }
+}
+declare global {
+    namespace Highcharts {
+        interface MapChart extends Chart {
+            xAxis: Array<MapAxis>;
+        }
     }
 }
 
@@ -235,12 +243,9 @@ class MapAxis {
 }
 
 interface MapAxis extends Axis {
-    chart: MapChart;
+    chart: Highcharts.MapChart;
     mapAxis: MapAxisAdditions;
     series: Array<Highcharts.MapSeries>;
-}
-interface MapChart extends Highcharts.Chart {
-    xAxis: Array<MapAxis>;
 }
 
 MapAxis.compose(Axis); // @todo move to factory functions

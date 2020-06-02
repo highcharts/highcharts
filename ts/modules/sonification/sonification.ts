@@ -11,7 +11,11 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
 import H from '../../parts/Globals.js';
+import O from '../../parts/Options.js';
+const { defaultOptions } = O;
 import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
@@ -26,7 +30,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             sonification?: SonifyableChart['sonification'];
             sonify?: SonifyableChart['sonify'];
         }
@@ -35,7 +39,7 @@ declare global {
             timeline?: Timeline;
             duration?: number;
         }
-        interface Point {
+        interface PointLike {
             cancelSonify?: SonifyablePoint['cancelSonify'];
             sonify?: SonifyablePoint['sonify'];
         }
@@ -169,7 +173,7 @@ H.sonification = {
 // Add default options
 merge(
     true,
-    H.defaultOptions,
+    defaultOptions,
     sonificationOptions
 );
 

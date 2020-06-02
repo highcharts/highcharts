@@ -39,14 +39,11 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'map.'],
-        ['es-modules', 'masters', 'modules', 'map-parser.'],
         ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'map.'],
-        ['es-modules', 'modules', 'map-parser.'],
         ['indicators'],
         ['modules', 'canvasrenderer.experimental.'],
-        ['modules', 'map.'],
-        ['modules', 'map-parser.']
+        ['modules', 'map.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
@@ -64,17 +61,14 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
         ['es-modules', 'masters', 'modules', 'map.'],
-        ['es-modules', 'masters', 'modules', 'map-parser.'],
         ['es-modules', 'modules', 'broken-axis.'],
         ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'gantt.'],
         ['es-modules', 'modules', 'map.'],
-        ['es-modules', 'modules', 'map-parser.'],
         ['modules', 'broken-axis.'],
         ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'gantt.'],
-        ['modules', 'map.'],
-        ['modules', 'map-parser.']
+        ['modules', 'map.']
     ].map(
         filePath => Path.join(CODE_DIRECTORY, ...filePath)
     ),
@@ -90,20 +84,17 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'modules', 'broken-axis.'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'gantt.'],
-        ['es-modules', 'masters', 'modules', 'map-parser.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
         ['es-modules', 'modules', 'broken-axis.'],
         ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'gantt.'],
-        ['es-modules', 'modules', 'map-parser.'],
         ['es-modules', 'modules', 'series-label.'],
         ['es-modules', 'modules', 'solid-gauge.'],
         ['indicators'],
         ['modules', 'broken-axis.'],
         ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'gantt.'],
-        ['modules', 'map-parser.'],
         ['modules', 'series-label.'],
         ['modules', 'solid-gauge.']
     ].map(
@@ -126,20 +117,17 @@ const CODE_FILTER = {
         ['es-modules', 'masters', 'indicators'],
         ['es-modules', 'masters', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'masters', 'modules', 'map.'],
-        ['es-modules', 'masters', 'modules', 'map-parser.'],
         ['es-modules', 'masters', 'modules', 'series-label.'],
         ['es-modules', 'masters', 'modules', 'solid-gauge.'],
         ['es-modules', 'masters', 'modules', 'stock.'],
         ['es-modules', 'modules', 'canvasrenderer.experimental.'],
         ['es-modules', 'modules', 'map.'],
-        ['es-modules', 'modules', 'map-parser.'],
         ['es-modules', 'modules', 'series-label.'],
         ['es-modules', 'modules', 'solid-gauge.'],
         ['es-modules', 'modules', 'stock.'],
         ['indicators'],
         ['modules', 'canvasrenderer.experimental.'],
         ['modules', 'map.'],
-        ['modules', 'map-parser.'],
         ['modules', 'series-label.'],
         ['modules', 'solid-gauge.'],
         ['modules', 'stock.']

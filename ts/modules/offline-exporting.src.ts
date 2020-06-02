@@ -14,7 +14,20 @@
 
 /* global MSBlobBuilder */
 
-import Highcharts from '../parts/Globals.js';
+import Chart from '../parts/Chart.js';
+import H from '../parts/Globals.js';
+const {
+    win,
+    doc
+} = H;
+import '../parts/Options.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    extend,
+    getOptions,
+    merge
+} = U;
 
 /**
  * Internal types
@@ -22,7 +35,7 @@ import Highcharts from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             unbindGetSVG?: Function;
             exportChartLocal(
                 exportingOptions?: ExportingOptions,
@@ -81,21 +94,10 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    extend
-} = U;
-
-import '../parts/Chart.js';
-import '../parts/Options.js';
 import '../mixins/download-url.js';
 
-var addEvent = Highcharts.addEvent,
-    merge = Highcharts.merge,
-    win = Highcharts.win,
+var domurl = win.URL || win.webkitURL || win,
     nav = win.navigator,
-    doc = win.document,
-    domurl = win.URL || win.webkitURL || win,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent),
     // Milliseconds to defer image load event handlers to offset IE bug
     loadEventDeferDelay = isMSBrowser ? 150 : 0;
@@ -328,7 +330,7 @@ Highcharts.downloadSVGLocal = function (
         objectURLRevoke = true,
         finallyHandler: Function,
         libURL = (
-            options.libURL || (Highcharts.getOptions().exporting as any).libURL
+            options.libURL || (getOptions().exporting as any).libURL
         ),
         dummySVGContainer = doc.createElement('div'),
         imageType = options.type || 'image/png',
@@ -354,7 +356,7 @@ Highcharts.downloadSVGLocal = function (
         var width = svgElement.width.baseVal.value + 2 * margin,
             height = svgElement.height.baseVal.value + 2 * margin,
             pdf = new win.jsPDF( // eslint-disable-line new-cap
-                'l',
+                height > width ? 'p' : 'l', // setting orientation to portrait if height exceeds width
                 'pt',
                 [width, height]
             );
@@ -516,7 +518,7 @@ Highcharts.downloadSVGLocal = function (
                         ctx.drawSvg(svg, 0, 0, imageWidth, imageHeight);
                         try {
                             Highcharts.downloadURL(
-                                nav.msSaveOrOpenBlob ?
+                                nav.msSaveOrOpenBlob as any ?
                                     canvas.msToBlob() :
                                     canvas.toDataURL(imageType),
                                 filename
@@ -630,7 +632,7 @@ Highcharts.Chart.prototype.getSVGForLocalExport = function (
     // Hook into getSVG to get a copy of the chart copy's container (#8273)
     chart.unbindGetSVG = addEvent(chart, 'getSVG', function (
         e: {
-            chartCopy: Highcharts.Chart;
+            chartCopy: Chart;
         }
     ): void {
         chartCopyOptions = e.chartCopy.options;
@@ -827,7 +829,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (
 };
 
 // Extend the default options to use the local exporter logic
-merge(true, Highcharts.getOptions().exporting, {
+merge(true, getOptions().exporting, {
     libURL: 'https://code.highcharts.com/@product.version@/lib/',
 
     // When offline-exporting is loaded, redefine the menu item definitions
@@ -835,13 +837,13 @@ merge(true, Highcharts.getOptions().exporting, {
     menuItemDefinitions: {
         downloadPNG: {
             textKey: 'downloadPNG',
-            onclick: function (this: Highcharts.Chart): void {
+            onclick: function (this: Chart): void {
                 this.exportChartLocal();
             }
         },
         downloadJPEG: {
             textKey: 'downloadJPEG',
-            onclick: function (this: Highcharts.Chart): void {
+            onclick: function (this: Chart): void {
                 this.exportChartLocal({
                     type: 'image/jpeg'
                 });
@@ -849,7 +851,7 @@ merge(true, Highcharts.getOptions().exporting, {
         },
         downloadSVG: {
             textKey: 'downloadSVG',
-            onclick: function (this: Highcharts.Chart): void {
+            onclick: function (this: Chart): void {
                 this.exportChartLocal({
                     type: 'image/svg+xml'
                 });
@@ -857,7 +859,7 @@ merge(true, Highcharts.getOptions().exporting, {
         },
         downloadPDF: {
             textKey: 'downloadPDF',
-            onclick: function (this: Highcharts.Chart): void {
+            onclick: function (this: Chart): void {
                 this.exportChartLocal({
                     type: 'application/pdf'
                 });

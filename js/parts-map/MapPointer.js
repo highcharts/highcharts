@@ -8,11 +8,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import Pointer from '../parts/Pointer.js';
 import U from '../parts/Utilities.js';
 var extend = U.extend, pick = U.pick, wrap = U.wrap;
-import '../parts/Pointer.js';
-var Pointer = H.Pointer;
 /* eslint-disable no-invalid-this */
 // Extend the Pointer
 extend(Pointer.prototype, {

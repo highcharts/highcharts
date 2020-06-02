@@ -11,6 +11,7 @@
 'use strict';
 
 import type RadialAxis from './RadialAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -39,7 +40,7 @@ declare global {
             states?: SeriesStatesOptionsObject<AreaRangeSeries>;
             trackByArea?: boolean;
         }
-        interface Point {
+        interface PointLike {
             plotHigh?: AreaRangePoint['plotHigh'];
             plotLow?: AreaRangePoint['plotLow'];
         }
@@ -78,10 +79,10 @@ declare global {
             public alignDataLabel(): void;
             public drawDataLabels(): void;
             public drawPoints(): void;
-            public getGraphPath(points: Array<AreaRangePoint>): SVGPathArray;
+            public getGraphPath(points: Array<AreaRangePoint>): SVGPath;
             public highToXY(point: (AreaRangePoint & PolarPoint)): void;
             public translate(): void;
-            public toYData(point: AreaRangePoint): [number, number];
+            public toYData(point: AreaRangePoint): Array<number>;
         }
     }
 }
@@ -179,9 +180,9 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
      */
     dataLabels: {
 
-        align: null,
+        align: void 0,
 
-        verticalAlign: null,
+        verticalAlign: void 0,
 
         /**
          * X offset of the lower data labels relative to the point value.
@@ -317,7 +318,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
     getGraphPath: function (
         this: Highcharts.AreaRangeSeries,
         points: Array<Highcharts.AreaRangePoint>
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
 
         var highPoints = [],
             highAreaPoints: Array<Highcharts.AreaPoint> = [],
@@ -325,8 +326,8 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
             getGraphPath = seriesTypes.area.prototype.getGraphPath,
             point: any,
             pointShim: any,
-            linePath: Highcharts.SVGPathArray & Highcharts.Dictionary<any>,
-            lowerPath: Highcharts.SVGPathArray & Highcharts.Dictionary<any>,
+            linePath: SVGPath & Highcharts.Dictionary<any>,
+            lowerPath: SVGPath & Highcharts.Dictionary<any>,
             options = this.options,
             connectEnds = this.chart.polar && options.connectEnds !== false,
             connectNulls = options.connectNulls,
@@ -402,7 +403,7 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
         options.step = step;
 
         // Create a line on both top and bottom of the range
-        linePath = ([] as Highcharts.SVGPathArray)
+        linePath = ([] as SVGPath)
             .concat(lowerPath, higherPath);
 
         // For the area path, we need to change the 'move' statement
@@ -727,9 +728,9 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
     },
     haloPath: function (
         this: Highcharts.AreaRangePoint
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var isPolar = this.series.chart.polar,
-            path: Highcharts.SVGPathArray = [];
+            path: SVGPath = [];
 
         // Bottom halo
         this.plotY = this.plotLow;

@@ -771,7 +771,7 @@ seriesType('sankey', 'column',
                 while (i--) {
                     if (column[i].getSum() * factor < minLinkWidth) {
                         column.splice(i, 1);
-                        remainingHeight -= minLinkWidth + series.nodePadding;
+                        remainingHeight -= minLinkWidth;
                         exceedsMinLinkWidth = true;
                     }
                 }

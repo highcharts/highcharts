@@ -12,6 +12,9 @@
  * */
 
 'use strict';
+
+import type Point from '../parts/Point';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -27,7 +30,7 @@ declare global {
             public series: TilemapSeries;
             public setVisible: ColorPointMixin['setVisible'];
             public tileEdges: Dictionary<number>;
-            public haloPath(): SVGPathArray;
+            public haloPath(): SVGPath;
         }
         class TilemapSeries extends HeatmapSeries implements ColorSeries {
             public alignDataLabel: TilemapShapeObject['alignDataLabel'];
@@ -77,7 +80,7 @@ declare global {
             haloPath(
                 this: TilemapPoint,
                 size: number
-            ): SVGPathArray;
+            ): SVGPath;
             translate(this: TilemapSeries): void;
         }
         let tileShapeTypes: Dictionary<TilemapShapeObject>;
@@ -140,7 +143,7 @@ H.tileShapeTypes = {
         haloPath: function (
             this: Highcharts.TilemapPoint,
             size: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             if (!size) {
                 return [];
             }
@@ -322,7 +325,7 @@ H.tileShapeTypes = {
         haloPath: function (
             this: Highcharts.TilemapPoint,
             size: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             if (!size) {
                 return [];
             }
@@ -483,7 +486,7 @@ H.tileShapeTypes = {
         haloPath: function (
             this: Highcharts.TilemapPoint,
             size: number
-        ): Highcharts.SVGPathArray { // eslint-disable-line @typescript-eslint/indent
+        ): SVGPath { // eslint-disable-line @typescript-eslint/indent
             return H.seriesTypes.scatter.prototype.pointClass.prototype.haloPath
                 .call(
                     this,
@@ -924,7 +927,7 @@ seriesType<Highcharts.TilemapSeries>('tilemap', 'heatmap'
          */
         haloPath: function (
             this: Highcharts.TilemapPoint
-        ): Highcharts.SVGPathArray { // eslint-disable-line @typescript-eslint/indent
+        ): SVGPath { // eslint-disable-line @typescript-eslint/indent
             return this.series.tileShape.haloPath.apply(
                 this,
                 Array.prototype.slice.call(arguments) as any

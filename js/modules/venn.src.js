@@ -15,7 +15,11 @@
  *
  * */
 'use strict';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType;
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
 import geometryCirclesModule from '../mixins/geometry-circles.js';
@@ -23,10 +27,6 @@ var getAreaOfCircle = geometryCirclesModule.getAreaOfCircle, getAreaOfIntersecti
 import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = nelderMeadModule.nelderMead;
-import Color from '../parts/Color.js';
-var color = Color.parse;
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType;
 import '../parts/Series.js';
 var getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
@@ -740,6 +740,11 @@ var vennSeries = {
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
+    init: function () {
+        seriesTypes.scatter.prototype.init.apply(this, arguments);
+        // Venn's opacity is a different option from other series
+        delete this.opacity;
+    },
     translate: function () {
         var chart = this.chart;
         this.processedXData = this.xData;

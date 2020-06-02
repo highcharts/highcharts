@@ -14,6 +14,19 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    erase,
+    getOptions,
+    merge,
+    pick,
+    removeEvent,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -50,7 +63,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface Point {
+        interface PointLike {
             calculatePatternDimensions(pattern: PatternOptionsObject): void;
         }
         interface SVGRenderer {
@@ -177,22 +190,10 @@ declare global {
 
 ''; // detach doclets above
 
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    erase,
-    merge,
-    pick,
-    removeEvent,
-    wrap
-} = U;
-
 // Add the predefined patterns
 H.patterns = ((): Array<Highcharts.PatternOptionsObject> => {
     const patterns: Array<Highcharts.PatternOptionsObject> = [],
-        colors: Array<string> = H.getOptions().colors as any;
+        colors: Array<string> = getOptions().colors as any;
 
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
@@ -372,7 +373,7 @@ Point.prototype.calculatePatternDimensions = function (
  *
  * @requires modules/pattern-fill
  */
-H.SVGRenderer.prototype.addPattern = function (
+SVGRenderer.prototype.addPattern = function (
     options: Highcharts.PatternOptionsObject,
     animation?: (boolean|Highcharts.AnimationOptionsObject)
 ): (Highcharts.SVGElement|undefined) {
@@ -526,7 +527,7 @@ addEvent(H.Series, 'render', function (): void {
     var isResizing = this.chart.isResizing;
 
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
-        (this.points || []).forEach(function (point: Highcharts.Point): void {
+        (this.points || []).forEach(function (point: Point): void {
             var colorOptions = point.options && point.options.color;
 
             if (
@@ -585,7 +586,7 @@ addEvent(Point, 'afterInit', function (): void {
 
 
 // Add functionality to SVG renderer to handle patterns as complex colors
-addEvent(H.SVGRenderer, 'complexColor', function (
+addEvent(SVGRenderer, 'complexColor', function (
     args: {
         args: [
             Highcharts.PatternObject,
@@ -694,7 +695,7 @@ addEvent(H.Chart, 'endResize', function (): void {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
         this.series.forEach(function (series: Highcharts.Series): void {
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (point: Point): void {
                 var colorOptions = point.options && point.options.color;
 
                 if (

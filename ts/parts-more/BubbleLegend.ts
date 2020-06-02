@@ -12,7 +12,27 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
 import H from '../parts/Globals.js';
+import Legend from '../parts/Legend.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    setOptions,
+    stableSort,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -71,7 +91,7 @@ declare global {
             labelStyle?: CSSObject;
             value?: any;
         }
-        interface Chart {
+        interface ChartLike {
             getVisibleBubbleSeriesIndex(): number;
         }
         interface Legend {
@@ -85,7 +105,7 @@ declare global {
         interface LegendOptions {
             bubbleLegend?: BubbleLegendOptions;
         }
-        interface Point {
+        interface PointLike {
             isBubble?: boolean;
         }
         interface Series {
@@ -145,28 +165,8 @@ declare global {
 
 ''; // detach doclets above
 
-import Color from '../parts/Color.js';
-const {
-    parse: color
-} = Color;
-import Legend from '../parts/Legend.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    stableSort,
-    wrap
-} = U;
-
 var Series = H.Series,
-    Chart = H.Chart,
-    noop = H.noop,
-    setOptions = H.setOptions;
+    noop = H.noop;
 
 setOptions({ // Set default bubble legend options
     legend: {
@@ -437,7 +437,7 @@ class BubbleLegend {
         this.init(options, legend);
     }
 
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Chart = void 0 as any;
     public fontMetrics: Highcharts.FontMetricsObject = void 0 as any;
     public legend: Highcharts.Legend = void 0 as any;
     public legendGroup: Highcharts.SVGElement = void 0 as any;
@@ -485,7 +485,7 @@ class BubbleLegend {
      *        All legend items
      * @return {void}
      */
-    public addToLegend(items: Array<(Highcharts.Point|Highcharts.Series)>): void {
+    public addToLegend(items: Array<(Point|Highcharts.Series)>): void {
         // Insert bubbleLegend into legend items
         items.splice(this.options.legendIndex as any, 0, this as any);
     }
@@ -1113,7 +1113,7 @@ class BubbleLegend {
 // Start the bubble legend creation process.
 addEvent(Legend, 'afterGetAllItems', function (
     this: Highcharts.Legend,
-    e: { allItems: Array<(Highcharts.Point|Highcharts.Series)> }
+    e: { allItems: Array<(Point|Highcharts.Series)> }
 ): void {
     var legend = this,
         bubbleLegend = legend.bubbleLegend,
@@ -1150,9 +1150,7 @@ addEvent(Legend, 'afterGetAllItems', function (
  * @return {number}
  *         First visible bubble series index
  */
-Chart.prototype.getVisibleBubbleSeriesIndex = function (
-    this: Highcharts.Chart
-): number {
+Chart.prototype.getVisibleBubbleSeriesIndex = function (): number {
     var series = this.series,
         i = 0;
 
@@ -1234,7 +1232,7 @@ Legend.prototype.retranslateItems = function (
         actualLine = 0;
 
     items.forEach(function (
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
         index: number
     ): void {
         orgTranslateX = (item.legendGroup as any).translateX;
@@ -1295,10 +1293,10 @@ addEvent(Series, 'legendItemClick', function (this: Highcharts.Series): void {
 // If ranges are not specified, determine ranges from rendered bubble series
 // and render legend again.
 wrap(Chart.prototype, 'drawChartBox', function (
-    this: Highcharts.Chart,
+    this: Chart,
     proceed: Function,
     options: Highcharts.Options,
-    callback: Highcharts.ChartCallbackFunction
+    callback: Chart.CallbackFunction
 ): void {
     var chart = this,
         legend = chart.legend,
@@ -1320,7 +1318,7 @@ wrap(Chart.prototype, 'drawChartBox', function (
 
             legend.allItems.forEach(function (
                 item: (
-                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                    Highcharts.BubbleLegend|Point|Highcharts.Series
                 )
             ): void {
                 (item.legendGroup as any).translateY = null;

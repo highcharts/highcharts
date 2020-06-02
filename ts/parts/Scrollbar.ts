@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
+import type SVGPath from '../parts/SVGPath';
 import Axis from './Axis.js';
 import H from './Globals.js';
 import ScrollbarAxis from './ScrollbarAxis.js';
@@ -31,7 +33,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             scrollbarsOffsets?: [number, number];
         }
         interface Options {
@@ -138,7 +140,7 @@ declare global {
             public update(options: Highcharts.ScrollbarOptions): void;
             public updatePosition(from: number, to: number): void;
         }
-        function swapXY(path: SVGPathArray, vertical?: boolean): SVGPathArray;
+        function swapXY(path: SVGPath, vertical?: boolean): SVGPath;
     }
 }
 
@@ -146,10 +148,10 @@ interface ScrollbarEventCallbackFunction {
     (e: Highcharts.PointerEventObject): void;
 }
 
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 
-var defaultOptions = H.defaultOptions,
-    hasTouch = H.hasTouch,
+var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice;
 
 /**
@@ -170,9 +172,9 @@ var defaultOptions = H.defaultOptions,
  * @requires modules/stock
  */
 const swapXY = H.swapXY = function (
-    path: Highcharts.SVGPathArray,
+    path: SVGPath,
     vertical?: boolean
-): Highcharts.SVGPathArray {
+): SVGPath {
     if (vertical) {
         path.forEach((seg): void => {
             const len = seg.length;
@@ -436,7 +438,7 @@ class Scrollbar {
     public constructor(
         renderer: Highcharts.SVGRenderer,
         options: Highcharts.ScrollbarOptions,
-        chart: Highcharts.Chart
+        chart: Chart
     ) {
         this.chart = chart;
         this.options = options;
@@ -460,7 +462,7 @@ class Scrollbar {
 
     public calculatedWidth?: number;
 
-    public chart: Highcharts.Chart;
+    public chart: Chart;
 
     private chartX: number = 0;
 
@@ -751,7 +753,7 @@ class Scrollbar {
     public init(
         renderer: Highcharts.SVGRenderer,
         options: Highcharts.ScrollbarOptions,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
 
         this.scrollbarButtons = [];

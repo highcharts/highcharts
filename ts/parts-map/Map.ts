@@ -10,7 +10,19 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    getOptions,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -22,25 +34,14 @@ declare global {
         }
         let maps: Dictionary<any>;
         function mapChart(): Map;
-        function splitPath(path: string): SVGPathArray;
+        function splitPath(path: string): SVGPath;
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    merge,
-    pick
-} = U;
-
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import '../parts/SvgRenderer.js';
 
-var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
-    Renderer = H.Renderer,
-    SVGRenderer = H.SVGRenderer,
+var Renderer = H.Renderer,
     VMLRenderer = H.VMLRenderer;
 
 // Add language
@@ -320,7 +321,7 @@ defaultOptions.mapNavigation = {
  */
 H.splitPath = function (
     path: string|Array<string|number>
-): Highcharts.SVGPathArray {
+): SVGPath {
     let arr: Array<string|number>;
 
     if (typeof path === 'string') {
@@ -372,7 +373,7 @@ function selectiveRoundedRect(
     rTopRight: number,
     rBottomRight: number,
     rBottomLeft: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     return [
         ['M', x + rTopLeft, y],
         // top side
@@ -399,18 +400,20 @@ SVGRenderer.prototype.symbols.topbutton = function (
     y: number,
     w: number,
     h: number,
-    attr: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
+    const r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);
 };
 SVGRenderer.prototype.symbols.bottombutton = function (
     x: number,
     y: number,
     w: number,
     h: number,
-    attr: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
+    const r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers.
 // Even VML browsers need this in order to generate shapes in export. Now share
@@ -455,8 +458,8 @@ if ((Renderer as any) === VMLRenderer) {
  */
 H.Map = H.mapChart = function (
     a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
-    b?: (Highcharts.ChartCallbackFunction|Highcharts.Options),
-    c?: Highcharts.ChartCallbackFunction
+    b?: (Chart.CallbackFunction|Highcharts.Options),
+    c?: Chart.CallbackFunction
 ): Highcharts.Map {
 
     var hasRenderToArg = typeof a === 'string' || (a as any).nodeName,
@@ -470,7 +473,7 @@ H.Map = H.mapChart = function (
             startOnTick: false
         },
         seriesOptions,
-        defaultCreditsOptions = H.getOptions().credits;
+        defaultCreditsOptions = getOptions().credits;
 
     /* For visual testing
     hiddenAxis.gridLineWidth = 1;

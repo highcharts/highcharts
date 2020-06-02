@@ -5,7 +5,16 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
+
+import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    merge,
+    objectEach,
+    uniqueKey
+} = U;
 
 /**
  * Internal types.
@@ -30,18 +39,8 @@ declare global {
     }
 }
 
-
-import U from './../../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    merge,
-    objectEach,
-    uniqueKey
-} = U;
-
-import './../../parts/Chart.js';
-import './../../parts/SvgRenderer.js';
+import '../../parts/Chart.js';
+import '../../parts/SVGRenderer.js';
 
 /**
  * Options for configuring markers for annotations.
@@ -222,7 +221,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
 addEvent(H.Chart as any, 'afterGetContainer', function (this: Highcharts.AnnotationChart): void {
     this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    objectEach(this.options.defs, function (def: Highcharts.SVGDefinitionObject): void {
+    objectEach(this.options.defs, function (def): void {
         if (def.tagName === 'marker' && def.render !== false) {
             this.renderer.addMarker(def.id as any, def);
         }

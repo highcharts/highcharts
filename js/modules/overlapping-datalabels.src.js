@@ -11,11 +11,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import Chart from '../parts/Chart.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick;
-import '../parts/Chart.js';
-var Chart = H.Chart;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable no-invalid-this */
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie
@@ -67,7 +65,6 @@ addEvent(Chart, 'render', function collectAndHide() {
  * @function Highcharts.Chart#hideOverlappingLabels
  * @param {Array<Highcharts.SVGElement>} labels
  * Rendered data labels
- * @return {void}
  * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
@@ -109,7 +106,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
             if (alignValue) {
                 xOffset = +alignValue * boxWidth;
             }
-            else if (Math.round(label.x) !== label.translateX) {
+            else if (isNumber(label.x) && Math.round(label.x) !== label.translateX) {
                 xOffset = label.x - label.translateX;
             }
             return {

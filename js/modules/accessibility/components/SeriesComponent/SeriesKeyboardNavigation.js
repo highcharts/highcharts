@@ -10,10 +10,11 @@
  *
  * */
 'use strict';
+import Chart from '../../../../parts/Chart.js';
 import H from '../../../../parts/Globals.js';
 import Point from '../../../../parts/Point.js';
 import U from '../../../../parts/Utilities.js';
-var extend = U.extend, defined = U.defined;
+var defined = U.defined, extend = U.extend;
 import KeyboardNavigationHandler from '../../KeyboardNavigationHandler.js';
 import EventProvider from '../../utils/EventProvider.js';
 import ChartUtilities from '../../utils/chartUtilities.js';
@@ -175,7 +176,7 @@ Point.prototype.highlight = function () {
  *         Returns highlighted point on success, false on failure (no adjacent
  *         point to highlight in chosen direction).
  */
-H.Chart.prototype.highlightAdjacentPoint = function (next) {
+Chart.prototype.highlightAdjacentPoint = function (next) {
     var chart = this, series = chart.series, curPoint = chart.highlightedPoint, curPointIndex = curPoint && getPointIndex(curPoint) || 0, curPoints = (curPoint && curPoint.series.points), lastSeries = chart.series && chart.series[chart.series.length - 1], lastPoint = lastSeries && lastSeries.points &&
         lastSeries.points[lastSeries.points.length - 1], newSeries, newPoint;
     // If no points, return false
@@ -260,7 +261,7 @@ H.Series.prototype.highlightFirstValidPoint = function () {
  *
  * @return {Highcharts.Point|boolean}
  */
-H.Chart.prototype.highlightAdjacentSeries = function (down) {
+Chart.prototype.highlightAdjacentSeries = function (down) {
     var chart = this, newSeries, newPoint, adjacentNewPoint, curPoint = chart.highlightedPoint, lastSeries = chart.series && chart.series[chart.series.length - 1], lastPoint = lastSeries && lastSeries.points &&
         lastSeries.points[lastSeries.points.length - 1];
     // If no point is highlighted, highlight the first/last point
@@ -307,7 +308,7 @@ H.Chart.prototype.highlightAdjacentSeries = function (down) {
  *
  * @return {Highcharts.Point|boolean}
  */
-H.Chart.prototype.highlightAdjacentPointVertical = function (down) {
+Chart.prototype.highlightAdjacentPointVertical = function (down) {
     var curPoint = this.highlightedPoint, minDistance = Infinity, bestPoint;
     if (!defined(curPoint.plotX) || !defined(curPoint.plotY)) {
         return false;
@@ -442,16 +443,13 @@ extend(SeriesKeyboardNavigation.prototype, /** @lends Highcharts.SeriesKeyboardN
         var keyboardNavigation = this, keys = this.keyCodes, chart = this.chart, inverted = chart.inverted;
         return new KeyboardNavigationHandler(chart, {
             keyCodeMap: [
-                [inverted ? [keys.up, keys.down] : [keys.left, keys.right],
-                    function (keyCode) {
+                [inverted ? [keys.up, keys.down] : [keys.left, keys.right], function (keyCode) {
                         return keyboardNavigation.onKbdSideways(this, keyCode);
                     }],
-                [inverted ? [keys.left, keys.right] : [keys.up, keys.down],
-                    function (keyCode) {
+                [inverted ? [keys.left, keys.right] : [keys.up, keys.down], function (keyCode) {
                         return keyboardNavigation.onKbdVertical(this, keyCode);
                     }],
-                [[keys.enter, keys.space],
-                    function () {
+                [[keys.enter, keys.space], function () {
                         if (chart.highlightedPoint) {
                             chart.highlightedPoint.firePointEvent('click');
                         }

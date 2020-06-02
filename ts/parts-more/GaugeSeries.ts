@@ -11,6 +11,7 @@
 'use strict';
 
 import type RadialAxis from './RadialAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -47,7 +48,7 @@ declare global {
             ): void;
             public translate(): void;
         }
-        interface Chart {
+        interface ChartLike {
             angular?: boolean;
         }
         interface GaugePointOptions extends LinePointOptions {
@@ -58,7 +59,7 @@ declare global {
             baseWidth?: number;
             borderColor?: ColorType;
             borderWidth?: number;
-            path?: SVGPathArray;
+            path?: SVGPath;
             radius?: string;
             rearLength?: string;
             topWidth?: number;
@@ -446,7 +447,7 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
             rotation = rotation * 180 / Math.PI;
 
             point.shapeType = 'path';
-            const d: Highcharts.SVGPathArray = dialOptions.path || [
+            const d: SVGPath = dialOptions.path || [
                 ['M', -rearLength, -baseWidth / 2],
                 ['L', baseLength, -baseWidth / 2],
                 ['L', radius, -topWidth / 2],

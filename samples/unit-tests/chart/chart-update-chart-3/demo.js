@@ -244,3 +244,29 @@ QUnit.test('Chart.update with with or height', function (assert) {
         'New height'
     );
 });
+
+QUnit.test('#13342 - Tooltip was missing when update height.', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 0.1
+        },
+        series: [{
+            data: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+        }]
+    });
+
+    chart.update({
+        chart: {
+            height: 400
+        }
+    });
+
+    var controller = new TestController(chart);
+
+    controller.moveTo(chart.plotLeft + 20, chart.plotTop + 20);
+
+    assert.ok(
+        chart.hoverPoint === chart.series[0].points[0],
+        'Tooltip should be visible.'
+    );
+});

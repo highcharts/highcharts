@@ -51,7 +51,7 @@ declare global {
                 x?: number
             ): SankeyPoint;
             public getClassName(): string;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class SankeySeries extends ColumnSeries implements NodesSeries {
             public animate: Series['animate'];
@@ -1191,7 +1191,7 @@ seriesType<Highcharts.SankeySeries>(
                     while (i--) {
                         if (column[i].getSum() * factor < minLinkWidth) {
                             column.splice(i, 1);
-                            remainingHeight -= minLinkWidth + series.nodePadding;
+                            remainingHeight -= minLinkWidth;
                             exceedsMinLinkWidth = true;
                         }
                     }

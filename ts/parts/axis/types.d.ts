@@ -9,14 +9,8 @@
  * */
 
 import type Axis from '../Axis';
-import type ParallelAxis from '../../modules/parallel-coordinates.src';
-import type RadialAxis from '../../parts-more/RadialAxis';
-import type ScrollbarAxis from '../ScrollbarAxis';
-import type StackingAxis from '../StackingAxis';
+import type Chart from '../Chart';
 import type Tick from '../Tick';
-import type TreeGridAxis from '../../parts-gantt/TreeGridAxis';
-import type VMLAxis3D from '../../parts-3d/VMLAxis3D';
-import type ZAxis from '../../parts-3d/ZAxis';
 
 /**
  * All possible axis types.
@@ -36,13 +30,13 @@ export interface AxisBreakObject {
     to: number;
 }
 
-export interface AxisComposition {
+export interface AxisComposition extends AxisLike {
     // interface for composition types
 }
 
 export interface AxisLike {
     categories?: Array<string>;
-    chart: Highcharts.Chart;
+    chart: Chart;
     coll: string;
     isXAxis?: boolean;
     max: (null|number);

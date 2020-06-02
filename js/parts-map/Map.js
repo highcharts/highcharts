@@ -8,13 +8,16 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, merge = U.merge, pick = U.pick;
+var extend = U.extend, getOptions = U.getOptions, merge = U.merge, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import '../parts/SvgRenderer.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, Renderer = H.Renderer, SVGRenderer = H.SVGRenderer, VMLRenderer = H.VMLRenderer;
+var Renderer = H.Renderer, VMLRenderer = H.VMLRenderer;
 // Add language
 extend(defaultOptions.lang, {
     zoomIn: 'Zoom in',
@@ -317,11 +320,13 @@ function selectiveRoundedRect(x, y, w, h, rTopLeft, rTopRight, rBottomRight, rBo
         ['Z']
     ];
 }
-SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, attr) {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
+SVGRenderer.prototype.symbols.topbutton = function (x, y, w, h, options) {
+    var r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);
 };
-SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, attr) {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
+SVGRenderer.prototype.symbols.bottombutton = function (x, y, w, h, options) {
+    var r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers.
 // Even VML browsers need this in order to generate shapes in export. Now share
@@ -369,7 +374,7 @@ H.Map = H.mapChart = function (a, b, c) {
         minPadding: 0,
         maxPadding: 0,
         startOnTick: false
-    }, seriesOptions, defaultCreditsOptions = H.getOptions().credits;
+    }, seriesOptions, defaultCreditsOptions = getOptions().credits;
     /* For visual testing
     hiddenAxis.gridLineWidth = 1;
     hiddenAxis.gridZIndex = 10;

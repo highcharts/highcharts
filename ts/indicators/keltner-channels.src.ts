@@ -192,9 +192,7 @@ seriesType<Highcharts.KeltnerChannelsIndicator>(
                 }
             }, this.options);
         },
-        getValues: function<
-            TLinkedSeries extends Highcharts.KeltnerChannelsLinkedParentSeries
-        > (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.KeltnerChannelsIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -202,7 +200,7 @@ seriesType<Highcharts.KeltnerChannelsIndicator>(
                 periodATR: number = (params.periodATR as any),
                 multiplierATR: number = (params.multiplierATR as any),
                 index: number = (params.index as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = series.yData as any,
                 yValLen: number = yVal ? yVal.length : 0,
                 // Keltner Channels array structure:
                 // 0-date, 1-top line, 2-middle line, 3-bottom line

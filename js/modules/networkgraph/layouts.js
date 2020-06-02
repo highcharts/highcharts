@@ -10,12 +10,12 @@
  *
  * */
 'use strict';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, merge = U.merge, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
-var Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.layouts = {
     'reingold-fruchterman': function () {
@@ -151,6 +151,30 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.setMaxIterations();
         this.setTemperature();
         this.setDiffTemperature();
+    },
+    restartSimulation: function () {
+        if (!this.simulation) {
+            // When dragging nodes, we don't need to calculate
+            // initial positions and rendering nodes:
+            this.setInitialRendering(false);
+            // Start new simulation:
+            if (!this.enableSimulation) {
+                // Run only one iteration to speed things up:
+                this.setMaxIterations(1);
+            }
+            else {
+                this.start();
+            }
+            if (this.chart) {
+                this.chart.redraw();
+            }
+            // Restore defaults:
+            this.setInitialRendering(true);
+        }
+        else {
+            // Extend current simulation:
+            this.resetSimulation();
+        }
     },
     setMaxIterations: function (maxIterations) {
         this.maxIterations = pick(maxIterations, this.options.maxIterations);
@@ -510,16 +534,20 @@ addEvent(Chart, 'render', function () {
 });
 // disable simulation before print if enabled
 addEvent(Chart, 'beforePrint', function () {
-    this.graphLayoutsLookup.forEach(function (layout) {
-        layout.updateSimulation(false);
-    });
-    this.redraw();
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout) {
+            layout.updateSimulation(false);
+        });
+        this.redraw();
+    }
 });
 // re-enable simulation after print
 addEvent(Chart, 'afterPrint', function () {
-    this.graphLayoutsLookup.forEach(function (layout) {
-        // return to default simulation
-        layout.updateSimulation();
-    });
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout) {
+            // return to default simulation
+            layout.updateSimulation();
+        });
+    }
     this.redraw();
 });

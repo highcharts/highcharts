@@ -16,7 +16,25 @@
  * */
 
 'use strict';
+
+import type Chart from '../parts/Chart';
+import type SVGPath from '../parts/SVGPath';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    seriesType
+} = U;
+
 
 /**
  * Internal types
@@ -26,11 +44,11 @@ declare global {
     namespace Highcharts {
         class VennPoint extends ScatterPoint implements DrawPoint {
             public draw: typeof draw;
+            public isValid: () => boolean;
             public options: VennPointOptions;
             public series: VennSeries;
             public sets: Array<string>;
             public value: number;
-            public isValid(): boolean;
             public shouldDraw(): boolean;
         }
         class VennSeries extends ScatterSeries {
@@ -44,6 +62,7 @@ declare global {
             public pointClass: typeof VennPoint;
             public points: Array<VennPoint>;
             public utils: VennUtilsObject;
+            public init(chart: Chart, options: VennSeriesOptions): void;
             public animate(init?: boolean): void;
             public drawPoints(): void;
             public translate(): void;
@@ -143,22 +162,6 @@ const {
 import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = nelderMeadModule.nelderMead;
-
-import Color from '../parts/Color.js';
-const color = Color.parse;
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    animObject,
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    isString,
-    merge,
-    seriesType
-} = U;
 
 import '../parts/Series.js';
 
@@ -1146,6 +1149,12 @@ var vennSeries = {
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
+    init: function (this: Highcharts.VennSeries): void {
+        seriesTypes.scatter.prototype.init.apply(this, arguments);
+
+        // Venn's opacity is a different option from other series
+        delete this.opacity;
+    },
     translate: function (this: Highcharts.VennSeries): void {
 
         var chart = this.chart;
@@ -1200,7 +1209,7 @@ var vennSeries = {
                     };
                 } else if ((shape as any).d) {
 
-                    const d: Highcharts.SVGPathArray = (shape as any).d;
+                    const d: SVGPath = (shape as any).d;
                     d.forEach((seg): void => {
                         if (seg[0] === 'M') {
                             seg[1] = centerX + seg[1] * scale;

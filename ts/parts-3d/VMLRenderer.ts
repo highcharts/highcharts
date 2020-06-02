@@ -14,6 +14,9 @@
 
 import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const { setOptions } = U;
 import VMLAxis3D from './VMLAxis3D.js';
 
 /**
@@ -41,14 +44,11 @@ declare global {
     }
 }
 
-import '../parts/SvgRenderer.js';
-
-var SVGRenderer = H.SVGRenderer,
-    VMLRenderer = H.VMLRenderer;
+var VMLRenderer = H.VMLRenderer;
 
 if (VMLRenderer) {
 
-    H.setOptions({ animate: false } as any);
+    setOptions({ animate: false } as any);
 
     VMLRenderer.prototype.face3d = SVGRenderer.prototype.face3d;
     VMLRenderer.prototype.polyhedron = SVGRenderer.prototype.polyhedron;
@@ -71,7 +71,7 @@ if (VMLRenderer) {
         return result as any;
     };
 
-    H.VMLRenderer.prototype.arc3dPath = H.SVGRenderer.prototype.arc3dPath;
+    H.VMLRenderer.prototype.arc3dPath = SVGRenderer.prototype.arc3dPath;
 
     VMLAxis3D.compose(Axis);
 

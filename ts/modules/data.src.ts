@@ -12,7 +12,21 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
+import Chart from '../parts/Chart.js';
+import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -21,7 +35,7 @@ import Highcharts from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         type DataValueType = (number|string|null);
-        interface Chart {
+        interface ChartLike {
             data?: Data;
             hasDataDef?: boolean;
             liveDataURL?: string;
@@ -246,27 +260,10 @@ declare global {
  *         continue async.
  */
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    splat
-} = U;
-
-import H from '../parts/Globals.js';
-import Point from '../parts/Point.js';
 import '../mixins/ajax.js';
-import '../parts/Chart.js';
 
 // Utilities
-var Chart = H.Chart,
-    win = H.win,
+var win = H.win,
     doc = win.document;
 
 /**
@@ -680,13 +677,13 @@ class Data {
     public constructor(
         dataOptions: Highcharts.DataOptions,
         chartOptions?: Highcharts.Options,
-        chart?: Highcharts.Chart
+        chart?: Chart
     ) {
         this.init(dataOptions, chartOptions, chart);
     }
 
     public alternativeFormat?: string;
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Chart = void 0 as any;
     public chartOptions: Highcharts.Options = void 0 as any;
     public columns?: Array<Array<Highcharts.DataValueType>>;
     public dateFormat?: string;
@@ -709,7 +706,7 @@ class Data {
     public init(
         options: Highcharts.DataOptions,
         chartOptions?: Highcharts.Options,
-        chart?: Highcharts.Chart
+        chart?: Chart
     ): void {
 
         var decimalPoint = options.decimalPoint,
@@ -2557,7 +2554,7 @@ class Data {
 H.data = function (
     dataOptions: Highcharts.DataOptions,
     chartOptions?: Highcharts.Options,
-    chart?: Highcharts.Chart
+    chart?: Chart
 ): Highcharts.Data {
     return new H.Data(dataOptions, chartOptions, chart);
 };
@@ -2571,7 +2568,7 @@ addEvent(
         e: Event & {
             args: [
                 (Highcharts.Options|undefined),
-                (Highcharts.ChartCallbackFunction|undefined)
+                (Chart.CallbackFunction|undefined)
             ];
         }
     ): void {

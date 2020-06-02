@@ -10,7 +10,21 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    clamp,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    pick,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -114,17 +128,7 @@ declare global {
  * @type {number|null|undefined}
  */
 
-import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import U from '../parts/Utilities.js';
-const {
-    clamp,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    pick,
-    seriesType
-} = U;
+''; // detach doclets above
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -135,7 +139,7 @@ var colorMapPointMixin = H.colorMapPointMixin,
     noop = H.noop,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    symbols = H.SVGRenderer.prototype.symbols;
+    symbols = SVGRenderer.prototype.symbols;
 
 /**
  * @private
@@ -258,6 +262,7 @@ seriesType<Highcharts.HeatmapSeries>(
         },
         /**
          * @excluding radius, enabledThreshold
+         * @since     8.1
          */
         marker: {
             /**
@@ -717,7 +722,7 @@ seriesType<Highcharts.HeatmapSeries>(
             this: Highcharts.HeatmapSeries,
             points?: Array<Highcharts.HeatmapPoint>,
             insideOnly?: boolean
-        ): Array<Highcharts.Point> {
+        ): Array<Point> {
             return Series.prototype.getValidPoints.call(
                 this,
                 points,
@@ -832,7 +837,7 @@ seriesType<Highcharts.HeatmapSeries>(
         haloPath: function (
             this: Highcharts.HeatmapPoint,
             size: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             if (!size) {
                 return [];
             }
@@ -1083,12 +1088,14 @@ seriesType<Highcharts.HeatmapSeries>(
 /**
  * @excluding radius, enabledThreshold
  * @product   highcharts highmaps
+ * @since     8.1
  * @apioption series.heatmap.data.marker
  */
 
 /**
  * @excluding radius, enabledThreshold
  * @product   highcharts highmaps
+ * @since     8.1
  * @apioption series.heatmap.marker
  */
 

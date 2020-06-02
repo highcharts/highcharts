@@ -53,16 +53,28 @@ seriesType('lollipop', 'dumbbell', {
         }
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
+        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
     }
 }, {
+    pointArrayMap: ['y'],
+    pointValKey: 'y',
+    toYData: function (point) {
+        return [H.pick(point.y, point.low)];
+    },
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
     setShapeArgs: colProto.translate
 }, {
     pointSetState: areaProto.pointClass.prototype.setState,
-    setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState
+    setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState,
+    init: function (series, options, x) {
+        if (H.isObject(options) && 'low' in options) {
+            options.y = options.low;
+            delete options.low;
+        }
+        return H.Point.prototype.init.apply(this, arguments);
+    }
 });
 /**
  * The `lollipop` series. If the [type](#series.lollipop.type) option is
@@ -133,8 +145,15 @@ seriesType('lollipop', 'dumbbell', {
  *
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.dumbbell.data
- * @excluding lowColor
+ * @excluding high, low, lowColor
  * @product   highcharts highstock
  * @apioption series.lollipop.data
  */
+/**
+* The y value of the point.
+*
+* @type      {number|null}
+* @product   highcharts highstock
+* @apioption series.line.data.y
+*/
 ''; // adds doclets above to transpiled file

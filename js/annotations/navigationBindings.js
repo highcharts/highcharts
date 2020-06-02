@@ -8,7 +8,11 @@
  *
  * */
 'use strict';
+import Annotation from './annotations.src.js';
+import chartNavigationMixin from '../mixins/navigation.js';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, attr = U.attr, extend = U.extend, format = U.format, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, setOptions = U.setOptions;
 /**
  * A config object for navigation bindings in annotations.
  *
@@ -35,9 +39,6 @@ import H from '../parts/Globals.js';
 * @name Highcharts.NavigationBindingsOptionsObject#steps
 * @type {Array<Function>|undefined}
 */
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, attr = U.attr, extend = U.extend, format = U.format, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import chartNavigationMixin from '../mixins/navigation.js';
 var doc = H.doc, win = H.win, PREFIX = 'highcharts-';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
@@ -181,7 +182,7 @@ var NavigationBindings = /** @class */ (function () {
                 navigation.bindingsChartClick(this, e);
             }
         }));
-        navigation.eventsToUnbind.push(addEvent(chart.container, 'mousemove', function (e) {
+        navigation.eventsToUnbind.push(addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
             navigation.bindingsContainerMouseMove(this, e);
         }));
     };
@@ -657,7 +658,7 @@ addEvent(H.Chart, 'destroy', function () {
 addEvent(NavigationBindings, 'deselectButton', function () {
     this.selectedButtonElement = null;
 });
-addEvent(H.Annotation, 'remove', function () {
+addEvent(Annotation, 'remove', function () {
     if (this.chart.navigationBindings) {
         this.chart.navigationBindings.deselectAnnotation();
     }
@@ -723,15 +724,17 @@ function selectableAnnotation(annotationType) {
 }
 if (H.Annotation) {
     // Basic shapes:
-    selectableAnnotation(H.Annotation);
+    selectableAnnotation(Annotation);
     // Advanced annotations:
-    objectEach(H.Annotation.types, function (annotationType) {
+    objectEach(Annotation.types, function (annotationType) {
         selectableAnnotation(annotationType);
     });
 }
-H.setOptions({
+setOptions({
     /**
      * @optionparent lang
+     *
+     * @private
      */
     lang: {
         /**
@@ -781,6 +784,8 @@ H.setOptions({
     /**
      * @optionparent navigation
      * @product      highcharts highstock
+     *
+     * @private
      */
     navigation: {
         /**

@@ -8,20 +8,21 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
-import '../parts/Chart.js';
-import controllableMixin from './controllable/controllableMixin.js';
+import Chart from '../parts/Chart.js';
+var chartProto = Chart.prototype;
+import ControllableMixin from './controllable/controllableMixin.js';
 import ControllableRect from './controllable/ControllableRect.js';
 import ControllableCircle from './controllable/ControllableCircle.js';
 import ControllablePath from './controllable/ControllablePath.js';
 import ControllableImage from './controllable/ControllableImage.js';
 import ControllableLabel from './controllable/ControllableLabel.js';
-import eventEmitterMixin from './eventEmitterMixin.js';
-import MockPoint from './MockPoint.js';
 import ControlPoint from './ControlPoint.js';
-var chartProto = H.Chart.prototype;
+import EventEmitterMixin from './eventEmitterMixin.js';
+import H from '../parts/Globals.js';
+import MockPoint from './MockPoint.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, fireEvent = U.fireEvent, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
 /* *********************************************************************
  *
  * ANNOTATION
@@ -70,92 +71,460 @@ var chartProto = H.Chart.prototype;
  * @param {Highcharts.Chart} chart a chart instance
  * @param {Highcharts.AnnotationsOptions} userOptions the options object
  */
-var Annotation = H.Annotation = function (chart, userOptions) {
-    var labelsAndShapes;
-    /**
-     * The chart that the annotation belongs to.
+var Annotation = /** @class */ (function () {
+    /* *
      *
-     * @type {Highcharts.Chart}
-     */
-    this.chart = chart;
-    /**
-     * The array of points which defines the annotation.
+     *  Constructors
      *
-     * @type {Array<Highcharts.Point>}
-     */
-    this.points = [];
+     * */
     /**
-     * The array of control points.
-     *
      * @private
-     * @name Highcharts.Annotation#controlPoints
-     * @type {Array<Annotation.ControlPoint>}
      */
-    this.controlPoints = [];
-    this.coll = 'annotations';
+    function Annotation(chart, userOptions) {
+        /* *
+         *
+         *  Properties
+         *
+         * */
+        this.annotation = void 0;
+        this.coll = 'annotations';
+        this.collection = void 0;
+        this.graphic = void 0;
+        this.group = void 0;
+        this.labelCollector = void 0;
+        this.labelsGroup = void 0;
+        this.shapesGroup = void 0;
+        var labelsAndShapes;
+        /**
+         * The chart that the annotation belongs to.
+         *
+         * @type {Highcharts.Chart}
+         */
+        this.chart = chart;
+        /**
+         * The array of points which defines the annotation.
+         *
+         * @type {Array<Highcharts.Point>}
+         */
+        this.points = [];
+        /**
+         * The array of control points.
+         *
+         * @private
+         * @name Highcharts.Annotation#controlPoints
+         * @type {Array<Annotation.ControlPoint>}
+         */
+        this.controlPoints = [];
+        this.coll = 'annotations';
+        /**
+         * The array of labels which belong to the annotation.
+         *
+         * @private
+         * @name Highcharts.Annotation#labels
+         * @type {Array<Highcharts.AnnotationLabelType>}
+         */
+        this.labels = [];
+        /**
+         * The array of shapes which belong to the annotation.
+         *
+         * @private
+         * @name Highcharts.Annotation#shapes
+         * @type {Array<Highcharts.AnnotationShapeType>}
+         */
+        this.shapes = [];
+        /**
+         * The options for the annotations.
+         *
+         * @name Highcharts.Annotation#options
+         * @type {Highcharts.AnnotationsOptions}
+         */
+        this.options = merge(this.defaultOptions, userOptions);
+        /**
+         * The user options for the annotations.
+         *
+         * @name Highcharts.Annotation#userOptions
+         * @type {Highcharts.AnnotationsOptions}
+         */
+        this.userOptions = userOptions;
+        // Handle labels and shapes - those are arrays
+        // Merging does not work with arrays (stores reference)
+        labelsAndShapes = this.getLabelsAndShapesOptions(this.options, userOptions);
+        this.options.labels = labelsAndShapes.labels;
+        this.options.shapes = labelsAndShapes.shapes;
+        /**
+         * The callback that reports to the overlapping-labels module which
+         * labels it should account for.
+         * @private
+         * @name Highcharts.Annotation#labelCollector
+         * @type {Function}
+         */
+        /**
+         * The group svg element.
+         *
+         * @name Highcharts.Annotation#group
+         * @type {Highcharts.SVGElement}
+         */
+        /**
+         * The group svg element of the annotation's shapes.
+         *
+         * @name Highcharts.Annotation#shapesGroup
+         * @type {Highcharts.SVGElement}
+         */
+        /**
+         * The group svg element of the annotation's labels.
+         *
+         * @name Highcharts.Annotation#labelsGroup
+         * @type {Highcharts.SVGElement}
+         */
+        this.init(chart, this.options);
+    }
     /**
-     * The array of labels which belong to the annotation.
-     *
+     * Initialize the annotation.
      * @private
-     * @name Highcharts.Annotation#labels
-     * @type {Array<Highcharts.AnnotationLabelType>}
      */
-    this.labels = [];
+    Annotation.prototype.init = function () {
+        this.linkPoints();
+        this.addControlPoints();
+        this.addShapes();
+        this.addLabels();
+        this.setLabelCollector();
+    };
+    Annotation.prototype.getLabelsAndShapesOptions = function (baseOptions, newOptions) {
+        var mergedOptions = {};
+        ['labels', 'shapes'].forEach(function (name) {
+            if (baseOptions[name]) {
+                mergedOptions[name] = splat(newOptions[name]).map(function (basicOptions, i) {
+                    return merge(baseOptions[name][i], basicOptions);
+                });
+            }
+        });
+        return mergedOptions;
+    };
+    Annotation.prototype.addShapes = function () {
+        (this.options.shapes || []).forEach(function (shapeOptions, i) {
+            var shape = this.initShape(shapeOptions, i);
+            merge(true, this.options.shapes[i], shape.options);
+        }, this);
+    };
+    Annotation.prototype.addLabels = function () {
+        (this.options.labels || []).forEach(function (labelsOptions, i) {
+            var labels = this.initLabel(labelsOptions, i);
+            merge(true, this.options.labels[i], labels.options);
+        }, this);
+    };
+    Annotation.prototype.addClipPaths = function () {
+        this.setClipAxes();
+        if (this.clipXAxis && this.clipYAxis) {
+            this.clipRect = this.chart.renderer.clipRect(this.getClipBox());
+        }
+    };
+    Annotation.prototype.setClipAxes = function () {
+        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = (this.options.labels || [])
+            .concat(this.options.shapes || [])
+            .reduce(function (axes, labelOrShape) {
+            return [
+                xAxes[labelOrShape &&
+                    labelOrShape.point &&
+                    labelOrShape.point.xAxis] || axes[0],
+                yAxes[labelOrShape &&
+                    labelOrShape.point &&
+                    labelOrShape.point.yAxis] || axes[1]
+            ];
+        }, []);
+        this.clipXAxis = linkedAxes[0];
+        this.clipYAxis = linkedAxes[1];
+    };
+    Annotation.prototype.getClipBox = function () {
+        if (this.clipXAxis && this.clipYAxis) {
+            return {
+                x: this.clipXAxis.left,
+                y: this.clipYAxis.top,
+                width: this.clipXAxis.width,
+                height: this.clipYAxis.height
+            };
+        }
+    };
+    Annotation.prototype.setLabelCollector = function () {
+        var annotation = this;
+        annotation.labelCollector = function () {
+            return annotation.labels.reduce(function (labels, label) {
+                if (!label.options.allowOverlap) {
+                    labels.push(label.graphic);
+                }
+                return labels;
+            }, []);
+        };
+        annotation.chart.labelCollectors.push(annotation.labelCollector);
+    };
     /**
-     * The array of shapes which belong to the annotation.
-     *
+     * Set an annotation options.
      * @private
-     * @name Highcharts.Annotation#shapes
-     * @type {Array<Highcharts.AnnotationShapeType>}
+     * @param {Highcharts.AnnotationsOptions} - user options for an annotation
      */
-    this.shapes = [];
+    Annotation.prototype.setOptions = function (userOptions) {
+        this.options = merge(this.defaultOptions, userOptions);
+    };
+    Annotation.prototype.redraw = function (animation) {
+        this.linkPoints();
+        if (!this.graphic) {
+            this.render();
+        }
+        if (this.clipRect) {
+            this.clipRect.animate(this.getClipBox());
+        }
+        this.redrawItems(this.shapes, animation);
+        this.redrawItems(this.labels, animation);
+        ControllableMixin.redraw.call(this, animation);
+    };
     /**
-     * The options for the annotations.
-     *
-     * @name Highcharts.Annotation#options
-     * @type {Highcharts.AnnotationsOptions}
-     */
-    this.options = merge(this.defaultOptions, userOptions);
-    /**
-     * The user options for the annotations.
-     *
-     * @name Highcharts.Annotation#userOptions
-     * @type {Highcharts.AnnotationsOptions}
-     */
-    this.userOptions = userOptions;
-    // Handle labels and shapes - those are arrays
-    // Merging does not work with arrays (stores reference)
-    labelsAndShapes = this.getLabelsAndShapesOptions(this.options, userOptions);
-    this.options.labels = labelsAndShapes.labels;
-    this.options.shapes = labelsAndShapes.shapes;
-    /**
-     * The callback that reports to the overlapping-labels module which
-     * labels it should account for.
      * @private
-     * @name Highcharts.Annotation#labelCollector
-     * @type {Function}
+     * @param {Array<Highcharts.AnnotationControllable>} items
+     * @param {boolean} [animation]
      */
+    Annotation.prototype.redrawItems = function (items, animation) {
+        var i = items.length;
+        // needs a backward loop
+        // labels/shapes array might be modified
+        // due to destruction of the item
+        while (i--) {
+            this.redrawItem(items[i], animation);
+        }
+    };
     /**
-     * The group svg element.
-     *
-     * @name Highcharts.Annotation#group
-     * @type {Highcharts.SVGElement}
+     * @private
+     * @param {Array<Highcharts.AnnotationControllable>} items
      */
+    Annotation.prototype.renderItems = function (items) {
+        var i = items.length;
+        while (i--) {
+            this.renderItem(items[i]);
+        }
+    };
+    Annotation.prototype.render = function () {
+        var renderer = this.chart.renderer;
+        this.graphic = renderer
+            .g('annotation')
+            .attr({
+            zIndex: this.options.zIndex,
+            visibility: this.options.visible ?
+                'visible' :
+                'hidden'
+        })
+            .add();
+        this.shapesGroup = renderer
+            .g('annotation-shapes')
+            .add(this.graphic)
+            .clip(this.chart.plotBoxClip);
+        this.labelsGroup = renderer
+            .g('annotation-labels')
+            .attr({
+            // hideOverlappingLabels requires translation
+            translateX: 0,
+            translateY: 0
+        })
+            .add(this.graphic);
+        this.addClipPaths();
+        if (this.clipRect) {
+            this.graphic.clip(this.clipRect);
+        }
+        // Render shapes and labels before adding events (#13070).
+        this.renderItems(this.shapes);
+        this.renderItems(this.labels);
+        this.addEvents();
+        ControllableMixin.render.call(this);
+    };
     /**
-     * The group svg element of the annotation's shapes.
-     *
-     * @name Highcharts.Annotation#shapesGroup
-     * @type {Highcharts.SVGElement}
+     * Set the annotation's visibility.
+     * @private
+     * @param {boolean} [visible]
+     * Whether to show or hide an annotation. If the param is omitted, the
+     * annotation's visibility is toggled.
      */
+    Annotation.prototype.setVisibility = function (visible) {
+        var options = this.options, visibility = pick(visible, !options.visible);
+        this.graphic.attr('visibility', visibility ? 'visible' : 'hidden');
+        if (!visibility) {
+            this.setControlPointsVisibility(false);
+        }
+        options.visible = visibility;
+    };
+    Annotation.prototype.setControlPointsVisibility = function (visible) {
+        var setItemControlPointsVisibility = function (item) {
+            item.setControlPointsVisibility(visible);
+        };
+        ControllableMixin.setControlPointsVisibility.call(this, visible);
+        this.shapes.forEach(setItemControlPointsVisibility);
+        this.labels.forEach(setItemControlPointsVisibility);
+    };
     /**
-     * The group svg element of the annotation's labels.
-     *
-     * @name Highcharts.Annotation#labelsGroup
-     * @type {Highcharts.SVGElement}
+     * Destroy the annotation. This function does not touch the chart
+     * that the annotation belongs to (all annotations are kept in
+     * the chart.annotations array) - it is recommended to use
+     * {@link Highcharts.Chart#removeAnnotation} instead.
+     * @private
      */
-    this.init(chart, this.options);
-};
-merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin, 
+    Annotation.prototype.destroy = function () {
+        var chart = this.chart, destroyItem = function (item) {
+            item.destroy();
+        };
+        this.labels.forEach(destroyItem);
+        this.shapes.forEach(destroyItem);
+        this.clipXAxis = null;
+        this.clipYAxis = null;
+        erase(chart.labelCollectors, this.labelCollector);
+        EventEmitterMixin.destroy.call(this);
+        ControllableMixin.destroy.call(this);
+        destroyObjectProperties(this, chart);
+    };
+    /**
+     * See {@link Highcharts.Chart#removeAnnotation}.
+     * @private
+     */
+    Annotation.prototype.remove = function () {
+        // Let chart.update() remove annoations on demand
+        return this.chart.removeAnnotation(this);
+    };
+    /**
+     * Updates an annotation.
+     *
+     * @function Highcharts.Annotation#update
+     *
+     * @param {Partial<Highcharts.AnnotationsOptions>} userOptions
+     * New user options for the annotation.
+     *
+     * @return {void}
+     */
+    Annotation.prototype.update = function (userOptions, redraw) {
+        var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = merge(true, this.userOptions, userOptions);
+        options.labels = labelsAndShapes.labels;
+        options.shapes = labelsAndShapes.shapes;
+        this.destroy();
+        this.constructor(chart, options);
+        // Update options in chart options, used in exporting (#9767):
+        chart.options.annotations[userOptionsIndex] = options;
+        this.isUpdating = true;
+        if (pick(redraw, true)) {
+            chart.redraw();
+        }
+        fireEvent(this, 'afterUpdate');
+        this.isUpdating = false;
+    };
+    /* *************************************************************
+        * ITEM SECTION
+        * Contains methods for handling a single item in an annotation
+        **************************************************************** */
+    /**
+     * Initialisation of a single shape
+     * @private
+     * @param {Object} shapeOptions - a confg object for a single shape
+     */
+    Annotation.prototype.initShape = function (shapeOptions, index) {
+        var options = merge(this.options.shapeOptions, {
+            controlPointOptions: this.options.controlPointOptions
+        }, shapeOptions), shape = new Annotation.shapesMap[options.type](this, options, index);
+        shape.itemType = 'shape';
+        this.shapes.push(shape);
+        return shape;
+    };
+    /**
+     * Initialisation of a single label
+     * @private
+     */
+    Annotation.prototype.initLabel = function (labelOptions, index) {
+        var options = merge(this.options.labelOptions, {
+            controlPointOptions: this.options.controlPointOptions
+        }, labelOptions), label = new ControllableLabel(this, options, index);
+        label.itemType = 'label';
+        this.labels.push(label);
+        return label;
+    };
+    /**
+     * Redraw a single item.
+     * @private
+     * @param {Annotation.Label|Annotation.Shape} item
+     * @param {boolean} [animation]
+     */
+    Annotation.prototype.redrawItem = function (item, animation) {
+        item.linkPoints();
+        if (!item.shouldBeDrawn()) {
+            this.destroyItem(item);
+        }
+        else {
+            if (!item.graphic) {
+                this.renderItem(item);
+            }
+            item.redraw(pick(animation, true) && item.graphic.placed);
+            if (item.points.length) {
+                this.adjustVisibility(item);
+            }
+        }
+    };
+    /**
+     * Hide or show annotaiton attached to points.
+     * @private
+     * @param {Annotation.Label|Annotation.Shape} item
+     */
+    Annotation.prototype.adjustVisibility = function (item) {
+        var hasVisiblePoints = false, label = item.graphic;
+        item.points.forEach(function (point) {
+            if (point.series.visible !== false &&
+                point.visible !== false) {
+                hasVisiblePoints = true;
+            }
+        });
+        if (!hasVisiblePoints) {
+            label.hide();
+        }
+        else if (label.visibility === 'hidden') {
+            label.show();
+        }
+    };
+    /**
+     * Destroy a single item.
+     * @private
+     * @param {Annotation.Label|Annotation.Shape} item
+     */
+    Annotation.prototype.destroyItem = function (item) {
+        // erase from shapes or labels array
+        erase(this[item.itemType + 's'], item);
+        item.destroy();
+    };
+    /**
+     * @private
+     */
+    Annotation.prototype.renderItem = function (item) {
+        item.render(item.itemType === 'label' ?
+            this.labelsGroup :
+            this.shapesGroup);
+    };
+    /**
+     * @private
+     */
+    Annotation.ControlPoint = ControlPoint;
+    /**
+     * @private
+     */
+    Annotation.MockPoint = MockPoint;
+    /**
+     * An object uses for mapping between a shape type and a constructor.
+     * To add a new shape type extend this object with type name as a key
+     * and a constructor as its value.
+     */
+    Annotation.shapesMap = {
+        'rect': ControllableRect,
+        'circle': ControllableCircle,
+        'path': ControllablePath,
+        'image': ControllableImage
+    };
+    /**
+     * @private
+     */
+    Annotation.types = {};
+    return Annotation;
+}());
+merge(true, Annotation.prototype, ControllableMixin, EventEmitterMixin, 
+// restore original Annotation implementation after mixin overwrite
+merge(Annotation.prototype, 
 /** @lends Highcharts.Annotation# */
 {
     /**
@@ -191,8 +560,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
      */
     defaultOptions: {
         /**
-         * Sets an ID for an annotation. Can be user later when removing an
-         * annotation in [Chart#removeAnnotation(id)](
+         * Sets an ID for an annotation. Can be user later when
+         * removing an annotation in [Chart#removeAnnotation(id)](
          * /class-reference/Highcharts.Chart#removeAnnotation) method.
          *
          * @type      {number|string}
@@ -243,7 +612,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              */
             allowOverlap: false,
             /**
-             * The background color or gradient for the annotation's label.
+             * The background color or gradient for the annotation's
+             * label.
              *
              * @sample highcharts/annotations/label-presentation/
              *         Set labels graphic options
@@ -326,9 +696,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              */
             /**
              * Callback JavaScript function to format the annotation's
-             * label. Note that if a `format` or `text` are defined, the
-             * format or text take precedence and the formatter is ignored.
-             * `This` refers to a point object.
+             * label. Note that if a `format` or `text` are defined,
+             * the format or text take precedence and the formatter is
+             * ignored. `This` refers to a point object.
              *
              * @sample highcharts/annotations/label-text/
              *         Set labels text
@@ -340,9 +710,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
                 return defined(this.y) ? this.y : 'Annotation label';
             },
             /**
-             * How to handle the annotation's label that flow outside the
-             * plot area. The justify option aligns the label inside the
-             * plot area.
+             * How to handle the annotation's label that flow outside
+             * the plot area. The justify option aligns the label inside
+             * the plot area.
              *
              * @sample highcharts/annotations/label-crop-overflow/
              *         Crop or justify labels
@@ -351,8 +721,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              */
             overflow: 'justify',
             /**
-             * When either the borderWidth or the backgroundColor is set,
-             * this    is the padding within the box.
+             * When either the borderWidth or the backgroundColor is
+             * set, this is the padding within the box.
              *
              * @sample highcharts/annotations/label-presentation/
              *         Set labels graphic options
@@ -370,8 +740,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              */
             shadow: false,
             /**
-             * The name of a symbol to use for the border around the label.
-             * Symbols are predefined functions on the Renderer object.
+             * The name of a symbol to use for the border around the
+             * label. Symbols are predefined functions on the Renderer
+             * object.
              *
              * @sample highcharts/annotations/shapes/
              *         Available shapes for labels
@@ -429,8 +800,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
             y: -16
         },
         /**
-         * An array of labels for the annotation. For options that apply to
-         * multiple labels, they can be added to the
+         * An array of labels for the annotation. For options that apply
+         * to multiple labels, they can be added to the
          * [labelOptions](annotations.labelOptions.html).
          *
          * @type      {Array<*>}
@@ -440,8 +811,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         /**
          * This option defines the point to which the label will be
          * connected. It can be either the point which exists in the
-         * series - it is referenced by the point's id - or a new point with
-         * defined x, y properties and optionally axes.
+         * series - it is referenced by the point's id - or a new point
+         * with defined x, y properties and optionally axes.
          *
          * @sample highcharts/annotations/mock-point/
          *         Attach annotation to a mock point
@@ -466,26 +837,28 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * @apioption annotations.labels.point.y
          */
         /**
-         * This number defines which xAxis the point is connected to. It
-         * refers to either the axis id or the index of the axis in the
-         * xAxis array. If the option is not configured or the axis is not
-         * found the point's x coordinate refers to the chart pixels.
+         * This number defines which xAxis the point is connected to.
+         * It refers to either the axis id or the index of the axis in
+         * the xAxis array. If the option is not configured or the axis
+         * is not found the point's x coordinate refers to the chart
+         * pixels.
          *
          * @type      {number|string|null}
          * @apioption annotations.labels.point.xAxis
          */
         /**
-         * This number defines which yAxis the point is connected to. It
-         * refers to either the axis id or the index of the axis in the
-         * yAxis array. If the option is not configured or the axis is not
-         * found the point's y coordinate refers to the chart pixels.
+         * This number defines which yAxis the point is connected to.
+         * It refers to either the axis id or the index of the axis in
+         * the yAxis array. If the option is not configured or the axis
+         * is not found the point's y coordinate refers to the chart
+         * pixels.
          *
          * @type      {number|string|null}
          * @apioption annotations.labels.point.yAxis
          */
         /**
-         * An array of shapes for the annotation. For options that apply to
-         * multiple shapes, then can be added to the
+         * An array of shapes for the annotation. For options that apply
+         * to multiple shapes, then can be added to the
          * [shapeOptions](annotations.shapeOptions.html).
          *
          * @type      {Array<*>}
@@ -495,8 +868,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
         /**
          * This option defines the point to which the shape will be
          * connected. It can be either the point which exists in the
-         * series - it is referenced by the point's id - or a new point with
-         * defined x, y properties and optionally axes.
+         * series - it is referenced by the point's id - or a new point
+         * with defined x, y properties and optionally axes.
          *
          * @declare   Highcharts.AnnotationMockPointOptionsObject
          * @type      {string|Highcharts.AnnotationMockPointOptionsObject}
@@ -504,9 +877,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * @apioption annotations.shapes.point
          */
         /**
-         * An array of points for the shape. This option is available for
-         * shapes which can use multiple points such as path. A point can be
-         * either a point object or a point's id.
+         * An array of points for the shape. This option is available
+         * for shapes which can use multiple points such as path. A
+         * point can be either a point object or a point's id.
          *
          * @see [annotations.shapes.point](annotations.shapes.point.html)
          *
@@ -527,8 +900,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * @apioption annotations.shapes.src
          */
         /**
-         * Id of the marker which will be drawn at the final vertex of the
-         * path. Custom markers can be defined in defs property.
+         * Id of the marker which will be drawn at the final vertex of
+         * the path. Custom markers can be defined in defs property.
          *
          * @see [defs.markers](defs.markers.html)
          *
@@ -539,8 +912,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * @apioption annotations.shapes.markerEnd
          */
         /**
-         * Id of the marker which will be drawn at the first vertex of the
-         * path. Custom markers can be defined in defs property.
+         * Id of the marker which will be drawn at the first vertex of
+         * the path. Custom markers can be defined in defs property.
          *
          * @see [defs.markers](defs.markers.html)
          *
@@ -551,9 +924,9 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * @apioption annotations.shapes.markerStart
          */
         /**
-         * Options for annotation's shapes. Each shape inherits options from
-         * the shapeOptions object. An option from the shapeOptions can be
-         * overwritten by config for a specific shape.
+         * Options for annotation's shapes. Each shape inherits options
+         * from the shapeOptions object. An option from the shapeOptions
+         * can be overwritten by config for a specific shape.
          *
          * @requires  modules/annotations
          */
@@ -587,8 +960,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
              * @apioption annotations.shapeOptions.type
              */
             /**
-             * The URL for an image to use as the annotation shape. Note,
-             * type has to be set to `'image'`.
+             * The URL for an image to use as the annotation shape.
+             * Note, type has to be set to `'image'`.
              *
              * @see [annotations.shapeOptions.type](annotations.shapeOptions.type)
              * @sample highcharts/annotations/shape-src/
@@ -702,341 +1075,8 @@ merge(true, Annotation.prototype, controllableMixin, eventEmitterMixin,
          * The Z index of the annotation.
          */
         zIndex: 6
-    },
-    /**
-     * Initialize the annotation.
-     * @private
-     */
-    init: function () {
-        this.linkPoints();
-        this.addControlPoints();
-        this.addShapes();
-        this.addLabels();
-        this.setLabelCollector();
-    },
-    getLabelsAndShapesOptions: function (baseOptions, newOptions) {
-        var mergedOptions = {};
-        ['labels', 'shapes'].forEach(function (name) {
-            if (baseOptions[name]) {
-                mergedOptions[name] = splat(newOptions[name]).map(function (basicOptions, i) {
-                    return merge(baseOptions[name][i], basicOptions);
-                });
-            }
-        });
-        return mergedOptions;
-    },
-    addShapes: function () {
-        (this.options.shapes || []).forEach(function (shapeOptions, i) {
-            var shape = this.initShape(shapeOptions, i);
-            merge(true, this.options.shapes[i], shape.options);
-        }, this);
-    },
-    addLabels: function () {
-        (this.options.labels || []).forEach(function (labelsOptions, i) {
-            var labels = this.initLabel(labelsOptions, i);
-            merge(true, this.options.labels[i], labels.options);
-        }, this);
-    },
-    addClipPaths: function () {
-        this.setClipAxes();
-        if (this.clipXAxis && this.clipYAxis) {
-            this.clipRect = this.chart.renderer.clipRect(this.getClipBox());
-        }
-    },
-    setClipAxes: function () {
-        var xAxes = this.chart.xAxis, yAxes = this.chart.yAxis, linkedAxes = (this.options.labels || [])
-            .concat(this.options.shapes || [])
-            .reduce(function (axes, labelOrShape) {
-            return [
-                xAxes[labelOrShape &&
-                    labelOrShape.point &&
-                    labelOrShape.point.xAxis] || axes[0],
-                yAxes[labelOrShape &&
-                    labelOrShape.point &&
-                    labelOrShape.point.yAxis] || axes[1]
-            ];
-        }, []);
-        this.clipXAxis = linkedAxes[0];
-        this.clipYAxis = linkedAxes[1];
-    },
-    getClipBox: function () {
-        if (this.clipXAxis && this.clipYAxis) {
-            return {
-                x: this.clipXAxis.left,
-                y: this.clipYAxis.top,
-                width: this.clipXAxis.width,
-                height: this.clipYAxis.height
-            };
-        }
-    },
-    setLabelCollector: function () {
-        var annotation = this;
-        annotation.labelCollector = function () {
-            return annotation.labels.reduce(function (labels, label) {
-                if (!label.options.allowOverlap) {
-                    labels.push(label.graphic);
-                }
-                return labels;
-            }, []);
-        };
-        annotation.chart.labelCollectors.push(annotation.labelCollector);
-    },
-    /**
-     * Set an annotation options.
-     * @private
-     * @param {Highcharts.AnnotationsOptions} - user options for an annotation
-     */
-    setOptions: function (userOptions) {
-        this.options = merge(this.defaultOptions, userOptions);
-    },
-    redraw: function (animation) {
-        this.linkPoints();
-        if (!this.graphic) {
-            this.render();
-        }
-        if (this.clipRect) {
-            this.clipRect.animate(this.getClipBox());
-        }
-        this.redrawItems(this.shapes, animation);
-        this.redrawItems(this.labels, animation);
-        controllableMixin.redraw.call(this, animation);
-    },
-    /**
-     * @private
-     * @param {Array<Highcharts.AnnotationControllable>} items
-     * @param {boolean} [animation]
-     */
-    redrawItems: function (items, animation) {
-        var i = items.length;
-        // needs a backward loop
-        // labels/shapes array might be modified
-        // due to destruction of the item
-        while (i--) {
-            this.redrawItem(items[i], animation);
-        }
-    },
-    /**
-     * @private
-     * @param {Array<Highcharts.AnnotationControllable>} items
-     */
-    renderItems: function (items) {
-        var i = items.length;
-        while (i--) {
-            this.renderItem(items[i]);
-        }
-    },
-    render: function () {
-        var renderer = this.chart.renderer;
-        this.graphic = renderer
-            .g('annotation')
-            .attr({
-            zIndex: this.options.zIndex,
-            visibility: this.options.visible ?
-                'visible' :
-                'hidden'
-        })
-            .add();
-        this.shapesGroup = renderer
-            .g('annotation-shapes')
-            .add(this.graphic)
-            .clip(this.chart.plotBoxClip);
-        this.labelsGroup = renderer
-            .g('annotation-labels')
-            .attr({
-            // hideOverlappingLabels requires translation
-            translateX: 0,
-            translateY: 0
-        })
-            .add(this.graphic);
-        this.addClipPaths();
-        if (this.clipRect) {
-            this.graphic.clip(this.clipRect);
-        }
-        // Render shapes and labels before adding events (#13070).
-        this.renderItems(this.shapes);
-        this.renderItems(this.labels);
-        this.addEvents();
-        controllableMixin.render.call(this);
-    },
-    /**
-     * Set the annotation's visibility.
-     * @private
-     * @param {boolean} [visible]
-     * Whether to show or hide an annotation. If the param is omitted, the
-     * annotation's visibility is toggled.
-     */
-    setVisibility: function (visible) {
-        var options = this.options, visibility = pick(visible, !options.visible);
-        this.graphic.attr('visibility', visibility ? 'visible' : 'hidden');
-        if (!visibility) {
-            this.setControlPointsVisibility(false);
-        }
-        options.visible = visibility;
-    },
-    setControlPointsVisibility: function (visible) {
-        var setItemControlPointsVisibility = function (item) {
-            item.setControlPointsVisibility(visible);
-        };
-        controllableMixin.setControlPointsVisibility.call(this, visible);
-        this.shapes.forEach(setItemControlPointsVisibility);
-        this.labels.forEach(setItemControlPointsVisibility);
-    },
-    /**
-     * Destroy the annotation. This function does not touch the chart
-     * that the annotation belongs to (all annotations are kept in
-     * the chart.annotations array) - it is recommended to use
-     * {@link Highcharts.Chart#removeAnnotation} instead.
-     * @private
-     */
-    destroy: function () {
-        var chart = this.chart, destroyItem = function (item) {
-            item.destroy();
-        };
-        this.labels.forEach(destroyItem);
-        this.shapes.forEach(destroyItem);
-        this.clipXAxis = null;
-        this.clipYAxis = null;
-        erase(chart.labelCollectors, this.labelCollector);
-        eventEmitterMixin.destroy.call(this);
-        controllableMixin.destroy.call(this);
-        destroyObjectProperties(this, chart);
-    },
-    /**
-     * See {@link Highcharts.Chart#removeAnnotation}.
-     * @private
-     */
-    remove: function () {
-        // Let chart.update() remove annoations on demand
-        return this.chart.removeAnnotation(this);
-    },
-    /**
-     * Updates an annotation.
-     *
-     * @function Highcharts.Annotation#update
-     *
-     * @param {Partial<Highcharts.AnnotationsOptions>} userOptions
-     * New user options for the annotation.
-     *
-     * @return {void}
-     */
-    update: function (userOptions, redraw) {
-        var chart = this.chart, labelsAndShapes = this.getLabelsAndShapesOptions(this.userOptions, userOptions), userOptionsIndex = chart.annotations.indexOf(this), options = merge(true, this.userOptions, userOptions);
-        options.labels = labelsAndShapes.labels;
-        options.shapes = labelsAndShapes.shapes;
-        this.destroy();
-        this.constructor(chart, options);
-        // Update options in chart options, used in exporting (#9767):
-        chart.options.annotations[userOptionsIndex] = options;
-        this.isUpdating = true;
-        if (pick(redraw, true)) {
-            chart.redraw();
-        }
-        fireEvent(this, 'afterUpdate');
-        this.isUpdating = false;
-    },
-    /* *************************************************************
-     * ITEM SECTION
-     * Contains methods for handling a single item in an annotation
-     **************************************************************** */
-    /**
-     * Initialisation of a single shape
-     * @private
-     * @param {Object} shapeOptions - a confg object for a single shape
-     */
-    initShape: function (shapeOptions, index) {
-        var options = merge(this.options.shapeOptions, {
-            controlPointOptions: this.options.controlPointOptions
-        }, shapeOptions), shape = new Annotation.shapesMap[options.type](this, options, index);
-        shape.itemType = 'shape';
-        this.shapes.push(shape);
-        return shape;
-    },
-    /**
-     * Initialisation of a single label
-     * @private
-     */
-    initLabel: function (labelOptions, index) {
-        var options = merge(this.options.labelOptions, {
-            controlPointOptions: this.options.controlPointOptions
-        }, labelOptions), label = new ControllableLabel(this, options, index);
-        label.itemType = 'label';
-        this.labels.push(label);
-        return label;
-    },
-    /**
-     * Redraw a single item.
-     * @private
-     * @param {Annotation.Label|Annotation.Shape} item
-     * @param {boolean} [animation]
-     */
-    redrawItem: function (item, animation) {
-        item.linkPoints();
-        if (!item.shouldBeDrawn()) {
-            this.destroyItem(item);
-        }
-        else {
-            if (!item.graphic) {
-                this.renderItem(item);
-            }
-            item.redraw(pick(animation, true) && item.graphic.placed);
-            if (item.points.length) {
-                this.adjustVisibility(item);
-            }
-        }
-    },
-    /**
-     * Hide or show annotaiton attached to points.
-     * @private
-     * @param {Annotation.Label|Annotation.Shape} item
-     */
-    adjustVisibility: function (item) {
-        var hasVisiblePoints = false, label = item.graphic;
-        item.points.forEach(function (point) {
-            if (point.series.visible !== false &&
-                point.visible !== false) {
-                hasVisiblePoints = true;
-            }
-        });
-        if (!hasVisiblePoints) {
-            label.hide();
-        }
-        else if (label.visibility === 'hidden') {
-            label.show();
-        }
-    },
-    /**
-     * Destroy a single item.
-     * @private
-     * @param {Annotation.Label|Annotation.Shape} item
-     */
-    destroyItem: function (item) {
-        // erase from shapes or labels array
-        erase(this[item.itemType + 's'], item);
-        item.destroy();
-    },
-    /**
-     * @private
-     */
-    renderItem: function (item) {
-        item.render(item.itemType === 'label' ?
-            this.labelsGroup :
-            this.shapesGroup);
     }
-});
-/**
- * An object uses for mapping between a shape type and a constructor.
- * To add a new shape type extend this object with type name as a key
- * and a constructor as its value.
- */
-Annotation.shapesMap = {
-    'rect': ControllableRect,
-    'circle': ControllableCircle,
-    'path': ControllablePath,
-    'image': ControllableImage
-};
-Annotation.types = {};
-Annotation.MockPoint = MockPoint;
-Annotation.ControlPoint = ControlPoint;
+}));
 H.extendAnnotation = function (Constructor, BaseConstructor, prototype, defaultOptions) {
     BaseConstructor = BaseConstructor || Annotation;
     merge(true, Constructor.prototype, BaseConstructor.prototype, prototype);
@@ -1122,8 +1162,10 @@ chartProto.callbacks.push(function (chart) {
         chart.controlPointsGroup.destroy();
     });
 });
-wrap(H.Pointer.prototype, 'onContainerMouseDown', function (proceed) {
+wrap(Pointer.prototype, 'onContainerMouseDown', function (proceed) {
     if (!this.chart.hasDraggedAnnotation) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
+H.Annotation = Annotation;
+export default Annotation;

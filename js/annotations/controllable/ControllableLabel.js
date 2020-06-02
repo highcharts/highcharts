@@ -4,13 +4,13 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
-import U from './../../parts/Utilities.js';
-var extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
-import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
+import H from './../../parts/Globals.js';
 import MockPoint from './../MockPoint.js';
 import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+var extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+import '../../parts/SVGRenderer.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable label class.

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../../parts/Point';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
@@ -142,7 +143,7 @@ extend(
          */
         insert: function (
             this: Highcharts.QuadTreeNode,
-            point: Highcharts.Point,
+            point: Point,
             depth: number
         ): void {
             var newQuadTreeNode: Highcharts.QuadTreeNode;
@@ -295,7 +296,7 @@ extend(
          */
         getBoxPosition: function (
             this: Highcharts.QuadTreeNode,
-            point: Highcharts.Point
+            point: Point
         ): number {
             var left =
                     (point.plotX as any) < this.box.left + this.box.width / 2,
@@ -374,9 +375,9 @@ extend(
          */
         insertNodes: function (
             this: Highcharts.QuadTree,
-            points: Array<Highcharts.Point>
+            points: Array<Point>
         ): void {
-            points.forEach(function (point: Highcharts.Point): void {
+            points.forEach(function (point: Point): void {
                 this.root.insert(point, this.maxDepth);
             }, this);
         },

@@ -8,16 +8,17 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import Pane from '../parts-more/Pane.js';
+import Pointer from '../parts/Pointer.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, find = U.find, isNumber = U.isNumber, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
-import Pane from '../parts-more/Pane.js';
-import '../parts/Pointer.js';
 import '../parts/Series.js';
-import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
-var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto, arearangeProto;
+var Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto, arearangeProto;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -676,7 +677,7 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
     }
     return ret;
 });
-H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
+SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
     var wrapper, id = uniqueKey(), clipPath = this.createElement('clipPath').attr({
         id: id
     }).add(this.defs);
@@ -687,7 +688,7 @@ H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
     wrapper.clipPath = clipPath;
     return wrapper;
 };
-addEvent(H.Chart, 'getAxes', function () {
+addEvent(Chart, 'getAxes', function () {
     if (!this.pane) {
         this.pane = [];
     }
@@ -696,7 +697,7 @@ addEvent(H.Chart, 'getAxes', function () {
         paneOptions, this);
     }, this);
 });
-addEvent(H.Chart, 'afterDrawChartBox', function () {
+addEvent(Chart, 'afterDrawChartBox', function () {
     this.pane.forEach(function (pane) {
         pane.render();
     });
@@ -716,7 +717,7 @@ addEvent(H.Series, 'afterInit', function () {
  * responsiveness and chart.update.
  * @private
  */
-wrap(H.Chart.prototype, 'get', function (proceed, id) {
+wrap(Chart.prototype, 'get', function (proceed, id) {
     return find(this.pane, function (pane) {
         return pane.options.id === id;
     }) || proceed.call(this, id);

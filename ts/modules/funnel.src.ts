@@ -14,7 +14,14 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
+import type Point from '../parts/Point';
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
+import U from '../parts/Utilities.js';
+const {
+    isArray,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -93,15 +100,8 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    isArray,
-    pick
-} = U;
-
 import '../parts/Options.js';
 import '../parts/Series.js';
-import H from '../parts/Globals.js';
 
 // create shortcuts
 var seriesType = Highcharts.seriesType,
@@ -271,7 +271,7 @@ seriesType<Highcharts.FunnelSeries>(
                 neckHeight = getLength(options.neckHeight, plotHeight),
                 neckY = (centerY - height / 2) + height - neckHeight,
                 data = series.data,
-                path: Highcharts.SVGPathArray,
+                path: SVGPath,
                 fraction,
                 half = (
                     (options.dataLabels as any).position === 'left' ?
@@ -621,9 +621,7 @@ seriesType<Highcharts.FunnelSeries>(
 );
 
 /* eslint-disable no-invalid-this */
-addEvent(Highcharts.Chart, 'afterHideAllOverlappingLabels', function (
-    this: Highcharts.Chart
-): void {
+addEvent(Chart, 'afterHideAllOverlappingLabels', function (): void {
     this.series.forEach(function (series): void {
         let dataLabelsOptions = series.options && series.options.dataLabels;
         if (isArray(dataLabelsOptions)) {

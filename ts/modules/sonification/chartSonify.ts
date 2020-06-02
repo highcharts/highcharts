@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
 import H from '../../parts/Globals.js';
 
 /**
@@ -245,7 +247,7 @@ function getTimeExtremes(
  * New extremes with data properties mapped to min/max objects.
  */
 function getExtremesForInstrumentProps(
-    chart: Highcharts.Chart,
+    chart: Chart,
     instruments: Array<Highcharts.PointInstrumentObject>,
     dataExtremes: Highcharts.Dictionary<Highcharts.RangeObject>
 ): Highcharts.Dictionary<Highcharts.RangeObject> {
@@ -286,7 +288,7 @@ function getExtremesForInstrumentProps(
  * Array of earcons to be played with this point.
  */
 function getPointEarcons(
-    point: Highcharts.Point,
+    point: Point,
     earconDefinitions: Array<Highcharts.EarconConfiguration>
 ): Array<Highcharts.Earcon> {
     return earconDefinitions.reduce(
@@ -1161,7 +1163,7 @@ function chartSonify(
  */
 function getCurrentPoints(
     this: Highcharts.SonifyableChart
-): Array<Highcharts.Point> {
+): Array<Point> {
     var cursorObj: Highcharts.Dictionary<Highcharts.TimelineEvent>;
 
     if (this.sonification.timeline) {
@@ -1194,12 +1196,12 @@ function getCurrentPoints(
  */
 function setCursor(
     this: Highcharts.SonifyableChart,
-    points: (Highcharts.Point|Array<Highcharts.Point>)
+    points: (Point|Array<Point>)
 ): void {
     var timeline: Highcharts.Timeline = this.sonification.timeline as any;
 
     if (timeline) {
-        splat(points).forEach(function (point: Highcharts.Point): void {
+        splat(points).forEach(function (point: Point): void {
             // We created the events with the ID of the points, which makes
             // this easy. Just call setCursor for each ID.
             timeline.setCursor(point.id);

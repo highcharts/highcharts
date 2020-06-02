@@ -23,9 +23,9 @@ declare global {
     namespace Highcharts {
         class VariwidePoint extends ColumnPoint {
             public crosshairWidth: number;
+            public isValid: () => boolean;
             public options: VariwidePointOptions;
             public series: VariwideSeries;
-            public isValid(): boolean;
         }
         class VariwideSeries extends ColumnSeries {
             public data: Array<VariwidePoint>;
@@ -51,7 +51,7 @@ declare global {
             variwide?: boolean;
             zData?: Array<number>;
         }
-        interface Point {
+        interface PointLike {
             crosshairWidth?: VariwidePoint['crosshairWidth'];
         }
         interface SeriesTypesDictionary {
