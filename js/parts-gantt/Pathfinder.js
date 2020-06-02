@@ -9,6 +9,7 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 /**
  * The default pathfinder algorithm to use for a chart. It is possible to define
@@ -33,6 +34,8 @@ import H from '../parts/Globals.js';
  * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
  */
 ''; // detach doclets above
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, defined = U.defined, error = U.error, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
@@ -46,7 +49,7 @@ var deg2rad = H.deg2rad, max = Math.max, min = Math.min;
        and rendering it
 */
 // Set default Pathfinder options
-extend(H.defaultOptions, {
+extend(defaultOptions, {
     /**
      * The Pathfinder module allows you to define connections between any two
      * points, represented as lines - optionally with markers for the start
@@ -1070,7 +1073,7 @@ function warnLegacy(chart) {
     }
 }
 // Initialize Pathfinder for charts
-H.Chart.prototype.callbacks.push(function (chart) {
+Chart.prototype.callbacks.push(function (chart) {
     var options = chart.options;
     if (options.connectors.enabled !== false) {
         warnLegacy(chart);

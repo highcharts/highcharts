@@ -8,7 +8,14 @@
  *
  * */
 'use strict';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import Legend from './Legend.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
+import Point from './Point.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /**
  * @interface Highcharts.PointEventsOptionsObject
  */ /**
@@ -57,14 +64,8 @@ import H from './Globals.js';
  * @param {Highcharts.PointInteractionEventObject} event
  *        Event that occured.
  */
-import Legend from './Legend.js';
-import Point from './Point.js';
-import U from './Utilities.js';
-var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import './Chart.js';
-import './Options.js';
 import './Series.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
+var hasTouch = H.hasTouch, Series = H.Series, seriesTypes = H.seriesTypes, svg = H.svg, TrackerMixin;
 /* eslint-disable valid-jsdoc */
 /**
  * TrackerMixin for points and graphs.
@@ -240,7 +241,7 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
      * @fires Highcharts.Point#event:legendItemClick
@@ -328,7 +329,7 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
      * @fires Highcharts.Series#event:checkboxClick
      */
     createCheckboxForItem: function (item) {
@@ -524,9 +525,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                         axis.minPixelPadding));
                 axis.panningState = panningState;
                 // It is not necessary to calculate extremes on ordinal axis,
-                // because the are already calculated, so we don't want to
+                // because they are already calculated, so we don't want to
                 // override them.
-                if (!axisOpt.ordinal) {
+                if (!axis.isOrdinal) {
                     // If the new range spills over, either to the min or max,
                     // adjust the new range.
                     spill = paddedMin - newMin;
@@ -706,7 +707,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      */
     setState: function (state, move) {
         var point = this, series = point.series, previousState = point.state, stateOptions = (series.options.states[state || 'normal'] ||
-            {}), markerOptions = (defaultPlotOptions[series.type].marker &&
+            {}), markerOptions = (defaultOptions.plotOptions[series.type].marker &&
             series.options.marker), normalDisabled = (markerOptions && markerOptions.enabled === false), markerStateOptions = ((markerOptions &&
             markerOptions.states &&
             markerOptions.states[state || 'normal']) || {}), stateDisabled = markerStateOptions.enabled === false, stateMarkerGraphic = series.stateMarkerGraphic, pointMarker = point.marker || {}, chart = series.chart, halo = series.halo, haloOptions, markerAttribs, pointAttribs, pointAttribsAnimation, hasMarkers = (markerOptions && series.markerAttribs), newSymbol;

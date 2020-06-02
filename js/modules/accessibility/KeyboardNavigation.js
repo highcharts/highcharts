@@ -11,7 +11,7 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
-var win = H.win, doc = win.document;
+var doc = H.doc, win = H.win;
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, fireEvent = U.fireEvent;
 import HTMLUtilities from './utils/htmlUtilities.js';

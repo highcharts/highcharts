@@ -11,7 +11,9 @@
 
 'use strict';
 
+import type Axis from '../parts/Axis';
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 
 /**
@@ -26,7 +28,7 @@ declare global {
             'simpleConnect'|
             string
         );
-        interface Chart {
+        interface ChartLike {
             pathfinder?: Pathfinder;
         }
         interface ConnectorsEndMarkerOptions {
@@ -82,7 +84,7 @@ declare global {
         interface Options {
             connectors?: ConnectorsOptions;
         }
-        interface Point {
+        interface PointLike {
             getMarkerVector(
                 radians: number,
                 markerRadius: number,
@@ -189,6 +191,8 @@ declare global {
 
 ''; // detach doclets above
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
@@ -218,7 +222,7 @@ var deg2rad = H.deg2rad,
 
 
 // Set default Pathfinder options
-extend(H.defaultOptions, {
+extend(defaultOptions, {
     /**
      * The Pathfinder module allows you to define connections between any two
      * points, represented as lines - optionally with markers for the start
@@ -498,9 +502,7 @@ extend(H.defaultOptions, {
  * @return {Highcharts.Dictionary<number>|null}
  *         Result xMax, xMin, yMax, yMin.
  */
-function getPointBB(
-    point: Highcharts.Point
-): (Highcharts.Dictionary<number>|null) {
+function getPointBB(point: Point): (Highcharts.Dictionary<number>|null) {
     var shapeArgs = point.shapeArgs,
         bb;
 
@@ -626,8 +628,8 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
  */
 function Connection(
     this: Highcharts.Connection,
-    from: Highcharts.Point,
-    to: Highcharts.Point,
+    from: Point,
+    to: Point,
     options?: Highcharts.ConnectorsOptions
 ): void {
     this.init(from, to, options);
@@ -651,8 +653,8 @@ Connection.prototype = {
      */
     init: function (
         this: Highcharts.Connection,
-        from: Highcharts.Point,
-        to: Highcharts.Point,
+        from: Point,
+        to: Point,
         options?: Highcharts.ConnectorsOptions
     ): void {
         this.fromPoint = from;
@@ -1021,7 +1023,7 @@ Connection.prototype = {
  */
 function Pathfinder(
     this: Highcharts.Pathfinder,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.init(chart);
 }
@@ -1043,7 +1045,7 @@ Pathfinder.prototype = {
      */
     init: function (
         this: Highcharts.Pathfinder,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
         // Initialize pathfinder with chart context
         this.chart = chart;
@@ -1078,10 +1080,10 @@ Pathfinder.prototype = {
         pathfinder.connections = [];
         chart.series.forEach(function (series: Highcharts.Series): void {
             if (series.visible && !series.options.isInternal) {
-                series.points.forEach(function (point: Highcharts.Point): void {
+                series.points.forEach(function (point: Point): void {
                     var to: (
-                            Highcharts.Axis|
-                            Highcharts.Point|
+                            Axis|
+                            Point|
                             Highcharts.Series|
                             undefined
                         ),
@@ -1375,7 +1377,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      *         in plot values, not relative to point.
      */
     getPathfinderAnchorPoint: function (
-        this: Highcharts.Point,
+        this: Point,
         markerOptions: Highcharts.ConnectorsMarkerOptions
     ): Highcharts.PositionObject {
         var bb = getPointBB(this),
@@ -1420,7 +1422,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      *         The angle in degrees
      */
     getRadiansToVector: function (
-        this: Highcharts.Point,
+        this: Point,
         v1: Highcharts.PositionObject,
         v2: Highcharts.PositionObject
     ): number {
@@ -1461,7 +1463,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
      *         The marker vector as an object with x/y properties.
      */
     getMarkerVector: function (
-        this: Highcharts.Point,
+        this: Point,
         radians: number,
         markerRadius: number,
         anchor: Highcharts.PositionObject
@@ -1541,7 +1543,7 @@ extend(Point.prototype, /** @lends Point.prototype */ {
  * still break if using the legacy options in chart.update, addSeries etc.
  * @private
  */
-function warnLegacy(chart: Highcharts.Chart): void {
+function warnLegacy(chart: Chart): void {
     if (
         (chart.options as any).pathfinder ||
         chart.series.reduce(function (
@@ -1572,9 +1574,8 @@ function warnLegacy(chart: Highcharts.Chart): void {
 
 
 // Initialize Pathfinder for charts
-H.Chart.prototype.callbacks.push(function (
-    this: Highcharts.Chart,
-    chart: Highcharts.Chart
+Chart.prototype.callbacks.push(function (
+    chart: Chart
 ): void {
     var options = chart.options;
 

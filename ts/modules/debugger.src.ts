@@ -18,7 +18,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             errorElements?: Array<SVGElement>;
         }
         interface ChartOptions {
@@ -35,10 +35,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
-    isNumber
+    isNumber,
+    setOptions
 } = U;
-
-var setOptions = H.setOptions;
 
 setOptions({
     /**

@@ -11,13 +11,14 @@
  * */
 'use strict';
 import Axis from '../parts/Axis.js';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, format = U.format, merge = U.merge, pick = U.pick, splat = U.splat, wrap = U.wrap;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, erase = U.erase, extend = U.extend, format = U.format, merge = U.merge, pick = U.pick, setOptions = U.setOptions, splat = U.splat, wrap = U.wrap;
 import '../parts/Chart.js';
 import '../parts/Series.js';
 // Extensions for parallel coordinates plot.
-var Chart = H.Chart, ChartProto = Chart.prototype;
+var ChartProto = Chart.prototype;
 var defaultXAxisOptions = {
     lineWidth: 0,
     tickLength: 0,
@@ -105,7 +106,7 @@ var defaultParallelOptions = {
         offset: 0
     }
 };
-H.setOptions({
+setOptions({
     chart: defaultParallelOptions
 });
 /**

@@ -9,10 +9,11 @@
  * */
 'use strict';
 import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
 import StackingAxis from './StackingAxis.js';
 import U from './Utilities.js';
-var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, pick = U.pick;
+var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, format = U.format, isNumber = U.isNumber, pick = U.pick;
 /**
  * Stack of data points
  *
@@ -53,9 +54,8 @@ var correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties 
 * @type {number}
 */
 ''; // detached doclets above
-import './Chart.js';
 import './Series.js';
-var Chart = H.Chart, Series = H.Series;
+var Series = H.Series;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The class for stacks. Each stack, on a specific X value and either negative
@@ -222,8 +222,11 @@ var StackItem = /** @class */ (function () {
                 y: label.alignAttr.y
             });
             if (pick(!isJustify && stackItem.options.crop, true)) {
-                visible = chart.isInsidePlot(label.x - padding + label.width, label.y) &&
-                    chart.isInsidePlot(label.x + padding, label.y);
+                visible =
+                    isNumber(label.x) &&
+                        isNumber(label.y) &&
+                        chart.isInsidePlot(label.x - padding + label.width, label.y) &&
+                        chart.isInsidePlot(label.x + padding, label.y);
                 if (!visible) {
                     label.hide();
                 }
@@ -273,7 +276,6 @@ var StackItem = /** @class */ (function () {
  *
  * @private
  * @function Highcharts.Chart#getStacks
- * @return {void}
  */
 Chart.prototype.getStacks = function () {
     var chart = this, inverted = chart.inverted;

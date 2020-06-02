@@ -10,7 +10,8 @@
 'use strict';
 import H from './Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import './Options.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
@@ -232,7 +233,7 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  * @typedef {"hover"|"inactive"|"normal"|"select"} Highcharts.SeriesStateValue
  */
 ''; // detach doclets above
-var defaultOptions = H.defaultOptions, defaultPlotOptions = H.defaultPlotOptions, seriesTypes = H.seriesTypes, win = H.win;
+var seriesTypes = H.seriesTypes, win = H.win;
 /**
  * This is the base series prototype that all other series types inherit from.
  * A new series is initialized either through the
@@ -3100,7 +3101,7 @@ null,
         }
         else {
             this.getCyclic('color', this.options.color ||
-                defaultPlotOptions[this.type].color, this.chart.options.colors);
+                defaultOptions.plotOptions[this.type].color, this.chart.options.colors);
         }
     },
     /**
@@ -3665,7 +3666,6 @@ null,
      *
      * @private
      * @function Highcharts.Series#generatePoints
-     * @return {void}
      */
     generatePoints: function () {
         var series = this, options = series.options, dataOptions = options.data, data = series.data, dataLength, processedXData = series.processedXData, processedYData = series.processedYData, PointClass = series.pointClass, processedDataLength = processedXData.length, cropStart = series.cropStart || 0, cursor, hasGroupedData = series.hasGroupedData, keys = options.keys, point, points = [], i;
@@ -4074,7 +4074,7 @@ null,
      * @return {Highcharts.Dictionary<number>}
      */
     getClipBox: function (animation, finalBox) {
-        var series = this, options = series.options, chart = series.chart, inverted = chart.inverted, xAxis = series.xAxis, yAxis = xAxis && series.yAxis, clipBox;
+        var series = this, options = series.options, chart = series.chart, inverted = chart.inverted, xAxis = series.xAxis, yAxis = xAxis && series.yAxis, clipBox, scrollablePlotAreaOptions = chart.options.chart.scrollablePlotArea || {};
         if (animation && options.clip === false && yAxis) {
             // support for not clipped series animation (#10450)
             clipBox = inverted ? {
@@ -4095,7 +4095,8 @@ null,
             clipBox = series.clipBox || chart.clipBox;
             if (finalBox) {
                 clipBox.width = chart.plotSizeX;
-                clipBox.x = 0;
+                clipBox.x = (chart.scrollablePixelsX || 0) *
+                    (scrollablePlotAreaOptions.scrollPositionX || 0);
             }
         }
         return !finalBox ? clipBox : {
@@ -4111,7 +4112,6 @@ null,
      * @private
      * @function Highcharts.Series#setClip
      * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
-     * @return {void}
      */
     setClip: function (animation) {
         var chart = this.chart, options = this.options, renderer = chart.renderer, inverted = chart.inverted, seriesClipBox = this.clipBox, clipBox = this.getClipBox(animation), sharedClipKey = this.sharedClipKey ||
@@ -4192,8 +4192,6 @@ null,
      *
      * @param {boolean} [init]
      *        Initialize the animation.
-     *
-     * @return {void}
      */
     animate: function (init) {
         var series = this, chart = series.chart, animation = animObject(series.options.animation), clipRect, sharedClipKey, finalBox;
@@ -4224,7 +4222,6 @@ null,
      *
      * @private
      * @function Highcharts.Series#afterAnimate
-     * @return {void}
      * @fires Highcharts.Series#event:afterAnimate
      */
     afterAnimate: function () {
@@ -4608,8 +4605,6 @@ null,
      * positions and attributes.
      *
      * @function Highcharts.Series#drawGraph
-     *
-     * @return {void}
      */
     drawGraph: function () {
         var series = this, options = this.options, graphPath = (this.gappedPath || this.getGraphPath).call(this), styledMode = this.chart.styledMode, props = [[

@@ -1115,9 +1115,9 @@ function GLRenderer(postRenderCallback) {
         vbuffer.destroy();
         shader.destroy();
         if (gl) {
-            objectEach(textureHandles, function (key) {
-                if (textureHandles[key].handle) {
-                    gl.deleteTexture(textureHandles[key].handle);
+            objectEach(textureHandles, function (texture) {
+                if (texture.handle) {
+                    gl.deleteTexture(texture.handle);
                 }
             });
             gl.canvas.width = 1;

@@ -9,17 +9,18 @@
  * */
 'use strict';
 import Axis from './Axis.js';
+import Chart from '../parts/Chart.js';
 import Color from './Color.js';
 var color = Color.parse;
 import H from './Globals.js';
 import NavigatorAxis from './NavigatorAxis.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
 import Scrollbar from './Scrollbar.js';
 import U from './Utilities.js';
 var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
-import './Chart.js';
 import './Series.js';
-import './Options.js';
-var Chart = H.Chart, defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.
@@ -495,7 +496,7 @@ extend(defaultOptions, {
  *         Path to be used in a handle
  */
 H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options) {
-    var halfWidth = options.width / 2, markerPosition = Math.round(halfWidth / 3) + 0.5, height = options.height || 0;
+    var halfWidth = (options && options.width || 0) / 2, markerPosition = Math.round(halfWidth / 3) + 0.5, height = options && options.height || 0;
     return [
         ['M', -halfWidth - 1, 0.5],
         ['L', halfWidth, 0.5],
@@ -1843,6 +1844,7 @@ if (!H.Navigator) {
                             0) -
                         ((legendOptions &&
                             legendOptions.verticalAlign === 'bottom' &&
+                            legendOptions.layout !== 'proximate' && // #13392
                             legendOptions.enabled &&
                             !legendOptions.floating) ?
                             legend.legendHeight +

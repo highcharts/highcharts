@@ -16,7 +16,21 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
+import type Chart from '../parts/Chart';
+import type Point from '../parts/Point';
+import H from '../parts/Globals.js';
+const {
+    doc,
+    win
+} = H;
+import U from '../parts/Utilities.js';
+const {
+    defined,
+    extend,
+    getOptions,
+    pick,
+    setOptions
+} = U;
 
 /**
  * Internal types
@@ -31,7 +45,7 @@ declare global {
             categoryMap: ExportingCategoryMap;
             dateTimeValueAxisMap: ExportingDateTimeMap;
         }
-        interface Chart {
+        interface ChartLike {
             dataTableDiv?: HTMLDivElement;
             /** @requires modules/export-data */
             downloadCSV(): void;
@@ -120,21 +134,11 @@ declare global {
  * @type {Array<Array<string>>}
  */
 
-import U from '../parts/Utilities.js';
-const {
-    defined,
-    extend,
-    isObject,
-    pick
-} = U;
 
-import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
 
-var win = Highcharts.win,
-    doc = win.document,
-    seriesTypes = Highcharts.seriesTypes,
+var seriesTypes = Highcharts.seriesTypes,
     downloadURL = Highcharts.downloadURL,
     fireEvent = Highcharts.fireEvent;
 
@@ -156,7 +160,7 @@ function htmlencode(html: string): string {
         .replace(/\//g, '&#x2F;');
 }
 
-Highcharts.setOptions({
+setOptions({
     /**
      * Callback that fires while exporting data. This allows the modification of
      * data rows before processed into the final format.
@@ -529,7 +533,7 @@ Highcharts.Chart.prototype.getDataRows = function (
             series: Highcharts.Series,
             xAxis: Highcharts.Axis
         ): string[] {
-            const namedPoints = series.data.filter((d: Highcharts.Point): string | undefined => d.name);
+            const namedPoints = series.data.filter((d): string | undefined => d.name);
             if (
                 namedPoints.length &&
                 xAxis &&
@@ -627,7 +631,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     prop: string,
                     val: number,
                     name: (string|undefined),
-                    point: (Highcharts.ExportDataPoint|Highcharts.Point);
+                    point: (Highcharts.ExportDataPoint|Point);
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
@@ -1172,7 +1176,7 @@ Highcharts.Chart.prototype.viewData = function (): void {
 
 
 // Add "Download CSV" to the exporting menu.
-var exportingOptions = Highcharts.getOptions().exporting;
+var exportingOptions = getOptions().exporting;
 
 if (exportingOptions) {
 

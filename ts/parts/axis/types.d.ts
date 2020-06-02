@@ -9,6 +9,7 @@
  * */
 
 import type Axis from '../Axis';
+import type Chart from '../Chart';
 import type Tick from '../Tick';
 
 /**
@@ -35,7 +36,7 @@ export interface AxisComposition extends AxisLike {
 
 export interface AxisLike {
     categories?: Array<string>;
-    chart: Highcharts.Chart;
+    chart: Chart;
     coll: string;
     isXAxis?: boolean;
     max: (null|number);

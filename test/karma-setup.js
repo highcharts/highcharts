@@ -29,6 +29,8 @@ document.body.appendChild(demoHTML);
 
 var currentTests = [];
 
+Highcharts.useSerialIds(true);
+
 // Disable animation over all.
 Highcharts.setOptions({
     chart: {

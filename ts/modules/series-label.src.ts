@@ -10,7 +10,9 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
@@ -22,6 +24,7 @@ const {
     format,
     isNumber,
     pick,
+    setOptions,
     syncTimeout
 } = U;
 
@@ -31,7 +34,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
             labelSeries?: Array<Series>;
             labelSeriesMaxSum?: number;
@@ -48,7 +51,7 @@ declare global {
             right: number;
             top: number;
         }
-        interface Point {
+        interface PointLike {
             chartCenterY?: number;
             chartX?: number;
             chartY?: number;
@@ -119,14 +122,12 @@ declare global {
 
 ''; // detach doclets above
 
-import '../parts/Chart.js';
 import '../parts/Series.js';
 
-var labelDistance = 3,
-    Series = H.Series,
-    Chart = H.Chart;
+const labelDistance = 3,
+    Series = H.Series;
 
-H.setOptions({
+setOptions({
 
     /**
      * @optionparent plotOptions
@@ -332,7 +333,7 @@ SVGRenderer.prototype.symbols.connector = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SymbolOptionsObject
+    options?: Highcharts.SymbolOptionsObject
 ): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
@@ -381,7 +382,7 @@ SVGRenderer.prototype.symbols.connector = function (
  * @function Highcharts.Series#getPointsOnGraph
  */
 Series.prototype.getPointsOnGraph = function (
-): (Array<Highcharts.Point>|undefined) {
+): (Array<Point>|undefined) {
 
     if (!this.xAxis && !this.yAxis) {
         return;
@@ -389,9 +390,9 @@ Series.prototype.getPointsOnGraph = function (
 
     var distance = 16,
         points = this.points,
-        point: Highcharts.Point,
-        last: Highcharts.Point,
-        interpolated: Array<Highcharts.Point> = [],
+        point: Point,
+        last: Point,
+        interpolated: Array<Point> = [],
         i: (number|undefined),
         deltaX: (number|undefined),
         deltaY: (number|undefined),
@@ -417,7 +418,7 @@ Series.prototype.getPointsOnGraph = function (
      * the plot area into a grid and only add one point per series (#9815).
      * @private
      */
-    function pushDiscrete(point: Highcharts.Point): void {
+    function pushDiscrete(point: Point): void {
         var cellSize = 8,
             key = Math.round((point.plotX as any) / cellSize) + ',' +
             Math.round((point.plotY as any) / cellSize);
@@ -570,7 +571,7 @@ Series.prototype.checkClearPoint = function (
         ),
         chart = this.chart,
         series: (Highcharts.Series|undefined),
-        points: (Array<Highcharts.Point>|undefined),
+        points: (Array<Point>|undefined),
         leastDistance = 16,
         withinRange: (boolean|undefined),
         xDist: (number|undefined),
@@ -816,7 +817,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             ),
             paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
-            points: Array<Highcharts.Point> = series.interpolatedPoints as any,
+            points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
             label: Highcharts.SVGElement = series.labelBySeries as any,
             isNew = !label,
@@ -884,7 +885,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +
-                        (series.options.className || '') +
+                        (series.options.className || '') + ' ' +
                         colorClass
                     );
 
@@ -1044,9 +1045,9 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 });
 
                 // Move it if needed
-                var dist = (Math.sqrt as any)(
-                    Math.pow(Math.abs(best.x - label.x), 2),
-                    Math.pow(Math.abs(best.y - label.y), 2)
+                var dist = Math.sqrt(
+                    Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
+                    Math.pow(Math.abs(best.y - (label.y || 0)), 2)
                 );
 
                 if (dist && series.labelBySeries) {
@@ -1127,7 +1128,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
  * @private
  * @function drawLabels
  */
-function drawLabels(this: Highcharts.Chart, e: Event): void {
+function drawLabels(this: Chart, e: Event): void {
 
     if (this.renderer) {
         var chart = this,

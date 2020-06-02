@@ -12,6 +12,8 @@
 
 'use strict';
 
+import type { AxisType } from '../parts/axis/types';
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
@@ -33,7 +35,7 @@ declare global {
             public drawPoints(): void;
             public drawZones(
                 chart: Chart,
-                yAxis: Axis,
+                yAxis: AxisType,
                 zonesValues: Array<number>,
                 zonesStyles: CSSObject
             ): void;
@@ -297,7 +299,7 @@ seriesType<Highcharts.VBPIndicator>(
         crispCol: columnPrototype.crispCol,
         init: function (
             this: Highcharts.VBPIndicator,
-            chart: Highcharts.Chart
+            chart: Chart
         ): Highcharts.VBPIndicator {
             var indicator = this,
                 params: Highcharts.VBPIndicatorParamsOptions,
@@ -464,8 +466,8 @@ seriesType<Highcharts.VBPIndicator>(
         translate: function (this: Highcharts.VBPIndicator): void {
             var indicator = this,
                 options: Highcharts.VBPIndicatorOptions = indicator.options,
-                chart: Highcharts.Chart = indicator.chart,
-                yAxis: Highcharts.Axis = indicator.yAxis,
+                chart: Chart = indicator.chart,
+                yAxis: AxisType = indicator.yAxis,
                 yAxisMin: number = (yAxis.min as any),
                 zoneLinesOptions: Highcharts.VBPIndicatorStyleOptions = (
                     indicator.options.zoneLines as any
@@ -795,8 +797,8 @@ seriesType<Highcharts.VBPIndicator>(
         // Function responsoble for drawing additional lines indicating zones
         drawZones: function (
             this: Highcharts.VBPIndicator,
-            chart: Highcharts.Chart,
-            yAxis: Highcharts.Axis,
+            chart: Chart,
+            yAxis: AxisType,
             zonesValues: Array<number>,
             zonesStyles: Highcharts.CSSObject
         ): void {

@@ -24,6 +24,7 @@ declare global {
             public connectorShapes?: Dictionary<PiePointConnectorShapeFunction>;
             public delayedRendering?: boolean;
             public half?: number;
+            public isValid: () => boolean;
             public labelDistance: number;
             public labelPosition?: PiePointLabelPositionObject;
             public name: string;
@@ -34,7 +35,6 @@ declare global {
             public slicedTranslation?: TranslationAttributes;
             public getConnectorPath(): void;
             public getTranslate(): TranslationAttributes;
-            public isValid(): boolean;
             public setVisible(vis: boolean, redraw?: boolean): void;
             public slice(
                 sliced: boolean,
@@ -1052,6 +1052,8 @@ seriesType<Highcharts.PieSeries>(
         drawEmpty: function (this: Highcharts.PieSeries): void {
             var centerX,
                 centerY,
+                start = this.startAngleRad,
+                end = this.endAngleRad,
                 options = this.options;
 
             // Draw auxiliary graph if there're no visible points.
@@ -1059,22 +1061,34 @@ seriesType<Highcharts.PieSeries>(
                 centerX = this.center[0];
                 centerY = this.center[1];
 
-                if (!this.graph) { // Auxiliary graph doesn't exist yet.
-                    this.graph = this.chart.renderer.circle(centerX,
-                        centerY, 0)
-                        .addClass('highcharts-graph')
+                if (!this.graph) {
+                    this.graph = this.chart.renderer
+                        .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
+                        .addClass('highcharts-empty-series')
                         .add(this.group);
                 }
 
-                this.graph.animate({
-                    'stroke-width': options.borderWidth,
-                    cx: centerX,
-                    cy: centerY,
-                    r: this.center[2] / 2,
-                    fill: (options.fillColor as any) || 'none',
-                    stroke: (options.color as any) ||
+                this.graph.attr({
+                    d: Highcharts.SVGRenderer.prototype.symbols.arc(
+                        centerX,
+                        centerY,
+                        this.center[2] / 2,
+                        0, {
+                            start: start,
+                            end: end,
+                            innerR: this.center[3] / 2
+                        }
+                    )
+                });
+
+                if (!this.chart.styledMode) {
+                    this.graph.attr({
+                        'stroke-width': options.borderWidth,
+                        fill: options.fillColor || 'none',
+                        stroke: (options.color as any) ||
                         '${palette.neutralColor20}'
-                }, this.options.animation);
+                    });
+                }
 
             } else if (this.graph) { // Destroy the graph object.
                 this.graph = this.graph.destroy();

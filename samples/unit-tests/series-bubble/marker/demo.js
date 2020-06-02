@@ -109,3 +109,74 @@ QUnit.test('Bubble data points without z-param.(#8608)', function (assert) {
         'Has marker'
     );
 });
+
+QUnit.test('Bubble animation and async redraws (#13494)', assert => {
+    const clock = TestUtilities.lolexInstall();
+
+    try {
+
+        const chart = Highcharts.chart('container', {
+            chart: {
+                type: 'bubble'
+            },
+            plotOptions: {
+                series: {
+                    animation: {
+                        duration: 100
+                    }
+                }
+            }
+        });
+
+        chart.addSeries({
+            data: [
+                [9, 81, 10],
+                [3, 52, 9],
+                [31, 18, 47],
+                [79, 91, 13],
+                [93, 23, -27],
+                [44, 83, -28]
+            ]
+        });
+
+        assert.strictEqual(
+            chart.series[0].points[0].graphic.attr('width'),
+            1,
+            'Points should be in animation start position'
+        );
+        setTimeout(() => {
+            chart.addSeries({
+                data: [
+                    [13, 30, 10],
+                    [23, 20, -10],
+                    [23, 40, 10]
+                ]
+            });
+            assert.notEqual(
+                chart.series[0].points[0].graphic.attr('width'),
+                1,
+                'First series points should continue animating'
+            );
+            assert.strictEqual(
+                chart.series[1].points[0].graphic.attr('width'),
+                1,
+                'Second series points should be in animation start position'
+            );
+        }, 50);
+
+        setTimeout(() => {
+            assert.strictEqual(
+                chart.series[0].points[0].graphic.attr('width'),
+                chart.series[1].points[0].graphic.attr('width'),
+                'Equal weight points for both series should now be the same size'
+            );
+        }, 200);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+
+    } finally {
+
+        TestUtilities.lolexUninstall(clock);
+
+    }
+});

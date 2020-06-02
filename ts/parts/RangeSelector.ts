@@ -10,7 +10,28 @@
 
 'use strict';
 
+import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import O from './Options.js';
+const { defaultOptions } = O;
+import U from './Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    destroyObjectProperties,
+    discardElement,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    pInt,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -26,7 +47,7 @@ declare global {
             newMax?: number;
             range?: (null|number|RangeSelectorButtonsOptions);
         }
-        interface Chart {
+        interface ChartLike {
             extraBottomMargin?: boolean;
             extraTopMargin?: boolean;
             fixedRange?: number;
@@ -172,31 +193,6 @@ declare global {
  * @return {number}
  *         Parsed JavaScript time value.
  */
-
-import U from './Utilities.js';
-const {
-    addEvent,
-    createElement,
-    css,
-    defined,
-    destroyObjectProperties,
-    discardElement,
-    extend,
-    fireEvent,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    pInt,
-    splat
-} = U;
-
-import './Axis.js';
-import './Chart.js';
-
-var Axis = H.Axis,
-    Chart = H.Chart,
-    defaultOptions = H.defaultOptions;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
@@ -728,7 +724,7 @@ defaultOptions.lang = merge(
  */
 function RangeSelector(
     this: Highcharts.RangeSelector,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
 
     // Run RangeSelector
@@ -955,7 +951,7 @@ RangeSelector.prototype = {
      */
     init: function (
         this: Highcharts.RangeSelector,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
         var rangeSelector = this,
             options =
@@ -1948,7 +1944,7 @@ RangeSelector.prototype = {
      */
     titleCollision: function (
         this: Highcharts.RangeSelector,
-        chart: Highcharts.Chart
+        chart: Chart
     ): boolean {
         return !(
             (chart.options.title as any).text ||
@@ -2088,15 +2084,13 @@ Axis.prototype.minFromRange = function (
 
 if (!H.RangeSelector) {
     // Initialize rangeselector for stock charts
-    addEvent(Chart, 'afterGetContainer', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'afterGetContainer', function (): void {
         if ((this.options.rangeSelector as any).enabled) {
             this.rangeSelector = new (RangeSelector as any)(this);
         }
     });
 
-    addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'beforeRender', function (): void {
 
         var chart = this,
             axes = chart.axes,
@@ -2131,10 +2125,7 @@ if (!H.RangeSelector) {
 
     });
 
-    addEvent(Chart, 'update', function (
-        this: Highcharts.Chart,
-        e: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'update', function (e: Chart): void {
 
         var chart = this,
             options = e.options,
@@ -2187,7 +2178,7 @@ if (!H.RangeSelector) {
 
     });
 
-    addEvent(Chart, 'render', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'render', function (): void {
         var chart = this,
             rangeSelector = chart.rangeSelector,
             verticalAlign;
@@ -2205,9 +2196,7 @@ if (!H.RangeSelector) {
         }
     });
 
-    addEvent(Chart, 'getMargins', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'getMargins', function (): void {
         var rangeSelector = this.rangeSelector,
             rangeSelectorHeight;
 
@@ -2223,7 +2212,7 @@ if (!H.RangeSelector) {
         }
     });
 
-    Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
+    Chart.prototype.callbacks.push(function (chart: Chart): void {
         var extremes,
             rangeSelector = chart.rangeSelector,
             unbindRender: Function,

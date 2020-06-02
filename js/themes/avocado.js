@@ -14,6 +14,8 @@
  * */
 'use strict';
 import Highcharts from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var setOptions = U.setOptions;
 Highcharts.theme = {
     colors: ['#F3E796', '#95C471', '#35729E', '#251735'],
     colorAxis: {
@@ -34,4 +36,4 @@ Highcharts.theme = {
     }
 };
 // Apply the theme
-Highcharts.setOptions(Highcharts.theme);
+setOptions(Highcharts.theme);

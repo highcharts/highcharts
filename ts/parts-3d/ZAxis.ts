@@ -9,6 +9,7 @@
  * */
 
 import type { AxisLike } from '../parts/axis/types';
+import type Chart from '../parts/Chart.js';
 import Axis from '../parts/Axis.js';
 import U from '../parts/Utilities.js';
 const {
@@ -24,12 +25,12 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             zAxis?: Array<ZAxis>;
-            addZAxis(options: ZAxis.Options): Axis;
+            addZAxis(options: Highcharts.AxisOptions): Axis;
         }
         interface Options {
-            zAxis?: (ZAxis.Options|Array<ZAxis.Options>);
+            zAxis?: (Highcharts.AxisOptions|Array<Highcharts.AxisOptions>);
         }
     }
 }
@@ -58,7 +59,7 @@ class ZChart {
      *
      * */
 
-    public static compose(ChartClass: typeof Highcharts.Chart): void {
+    public static compose(ChartClass: typeof Chart): void {
 
         addEvent(ChartClass, 'afterGetAxes', ZChart.onAfterGetAxes);
 
@@ -83,7 +84,7 @@ class ZChart {
         }
         chart.zAxis = [];
         zAxisOptions.forEach(function (
-            axisOptions: ZAxis.Options,
+            axisOptions: Highcharts.AxisOptions,
             i: number
         ): void {
             axisOptions.index = i;
@@ -99,8 +100,8 @@ class ZChart {
      * @private
      */
     public static wrapAddZAxis(
-        this: Highcharts.Chart,
-        options: ZAxis.Options
+        this: Chart,
+        options: Highcharts.AxisOptions
     ): Highcharts.Axis {
         return new ZAxis(this, options);
     }
@@ -110,7 +111,7 @@ class ZChart {
 /**
  * @private
  */
-interface ZChart extends Highcharts.Chart {
+interface ZChart extends Chart {
     // nothing to add to instances
 }
 
@@ -133,7 +134,7 @@ class ZAxis extends Axis implements AxisLike {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart, userOptions: Highcharts.AxisOptions) {
+    public constructor(chart: Chart, userOptions: Highcharts.AxisOptions) {
         super(chart, userOptions);
     }
 
@@ -223,9 +224,9 @@ class ZAxis extends Axis implements AxisLike {
     /**
      * @private
      */
-    public setOptions(userOptions: ZAxis.Options): void {
+    public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
-        userOptions = merge<ZAxis.Options>({
+        userOptions = merge<Highcharts.AxisOptions>({
             offset: 0 as any,
             lineWidth: 0 as any
         }, userOptions);
@@ -233,19 +234,6 @@ class ZAxis extends Axis implements AxisLike {
         super.setOptions(userOptions);
 
         this.coll = 'zAxis';
-    }
-
-}
-
-namespace ZAxis {
-
-    export interface Options extends Highcharts.XAxisOptions {
-        breaks?: undefined;
-        crosshair?: undefined;
-        lineColor?: undefined;
-        lineWidth?: undefined;
-        offset?: undefined;
-        showEmpty?: undefined;
     }
 
 }

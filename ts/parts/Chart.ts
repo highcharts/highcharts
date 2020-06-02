@@ -23,6 +23,8 @@ const {
 } = H;
 import Legend from './Legend.js';
 import MSPointer from './MSPointer.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 import Pointer from './Pointer.js';
 import SVGRenderer from './SVGRenderer.js';
 import Time from './Time.js';
@@ -90,137 +92,6 @@ declare global {
         interface TitleObject extends SVGElement {
             update(titleOptions: TitleOptions, redraw?: boolean): void;
         }
-        class Chart {
-            public constructor(
-                options: Options,
-                callback?: Chart.CallbackFunction
-            );
-            public constructor(
-                renderTo: (string|HTMLDOMElement),
-                options: Options,
-                callback?: Chart.CallbackFunction
-            );
-            public constructor();
-            public _cursor?: (CursorValue|null);
-            public axes: Array<Axis>;
-            public axisOffset: Array<number>;
-            public bounds: Dictionary<Dictionary<number>>;
-            public callback?: Chart.CallbackFunction;
-            public callbacks: Array<Chart.CallbackFunction>;
-            public chartBackground?: SVGElement;
-            public chartHeight: number;
-            public chartWidth: number;
-            public clipBox: BBoxObject;
-            public clipOffset?: Array<number>;
-            public clipRect?: SVGElement;
-            public colorCounter: number;
-            public container: HTMLDOMElement;
-            public containerHeight?: string;
-            public containerScaling?: { scaleX: number; scaleY: number };
-            public containerWidth?: string;
-            public credits?: SVGElement;
-            public caption?: SVGElement;
-            public hasCartesianSeries?: boolean;
-            public hasLoaded?: boolean;
-            public hasRendered?: boolean;
-            public index: number;
-            public isDirtyBox?: boolean;
-            public isDirtyLegend?: boolean;
-            public isResizing: number;
-            public labelCollectors: Array<Chart.LabelCollectorFunction>;
-            public legend: Legend;
-            public margin: Array<number>;
-            public marginBottom?: number;
-            public numberFormatter: NumberFormatterCallbackFunction;
-            public oldChartHeight?: number;
-            public oldChartWidth?: number;
-            public options: Options;
-            public plotBackground?: SVGElement;
-            public plotBGImage?: SVGElement;
-            public plotBorder?: SVGElement;
-            public plotBorderWidth?: number;
-            public plotBox: BBoxObject;
-            public plotHeight: number;
-            public plotLeft: number;
-            public plotSizeX?: number;
-            public plotSizeY?: number;
-            public plotTop: number;
-            public plotWidth: number;
-            public pointCount: number;
-            public pointer: Pointer;
-            public reflowTimeout?: number;
-            public renderer: Chart.Renderer;
-            public renderTo: HTMLDOMElement;
-            public series: Array<Series>;
-            public seriesGroup?: SVGElement;
-            public spacing: Array<number>;
-            public spacingBox: BBoxObject;
-            public styledMode?: boolean;
-            public subtitle?: SVGElement;
-            public symbolCounter: number;
-            public time: Time;
-            public title?: SVGElement;
-            public titleOffset: Array<number>;
-            public unbindReflow?: Function;
-            public userOptions: Options;
-            public xAxis: Array<AxisType>;
-            public yAxis: Array<AxisType>;
-            public addCredits(credits?: CreditsOptions): void;
-            public applyDescription(
-                name: ('title'|'subtitle'|'caption'),
-                options?: DescriptionOptionsType
-            ): void;
-            public destroy(): void;
-            public drawChartBox(): void;
-            public firstRender(): void;
-            public get(id: string): (Axis|Series|Point|undefined);
-            public getArgs(...args: Array<any>): void;
-            public getAxes(): void;
-            public getAxisMargins(): void;
-            public getChartSize(): void;
-            public getContainer(): void;
-            public getMargins(skipAxes?: boolean): void;
-            public getSelectedPoints(): Array<Point>;
-            public getSelectedSeries(): Array<Series>;
-            public getSeriesOrderByLinks(): Array<Series>;
-            public init(
-                userOptions: Options,
-                callback?: Chart.CallbackFunction
-            ): void;
-            public initSeries(options: SeriesOptions): Series;
-            public linkSeries(): void;
-            public isInsidePlot(
-                plotX: number,
-                plotY: number,
-                inverted?: boolean
-            ): boolean;
-            public layOutTitles(redraw?: boolean): void;
-            public onload(): void;
-            public orderSeries(fromIndex?: number): void;
-            public propFromSeries(): void;
-            public redraw(animation?: (boolean|AnimationOptionsObject)): void;
-            public reflow(e?: Event): void;
-            public render(): void;
-            public renderLabels(): void;
-            public renderSeries(): void;
-            public resetMargins(): void;
-            public setChartSize(skipAxes?: boolean): void;
-            public setClassName(className?: string): void;
-            public setReflow(reflow?: boolean): void;
-            public setSeriesData(): void;
-            public setSize(
-                width?: (null|number),
-                height?: (null|number),
-                animation?: (boolean|AnimationOptionsObject)
-            ): void;
-            public setTitle(
-                titleOptions?: TitleOptions,
-                subtitleOptions?: SubtitleOptions,
-                redraw?: boolean
-            ): void;
-            public temporaryDisplay(revert?: boolean): void;
-            public updateContainerScaling(): void;
-        }
         function chart(
             options: Options,
             callback?: Chart.CallbackFunction
@@ -230,8 +101,10 @@ declare global {
             options: Options,
             callback?: Chart.CallbackFunction
         ): Chart;
+        let Chart: ChartClass;
     }
 }
+type ChartClass = typeof Chart;
 
 /**
  * Callback for chart constructors.
@@ -327,11 +200,7 @@ declare global {
  *        and call {@link Chart#redraw} after.
  */
 
-import './Options.js';
-import './Pointer.js';
-
-var defaultOptions = H.defaultOptions,
-    marginNames = H.marginNames;
+var marginNames = H.marginNames;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -395,7 +264,7 @@ class Chart {
      * */
 
     public _cursor?: (Highcharts.CursorValue|null);
-    public axes: Array<Axis> = void 0 as any;
+    public axes: Array<AxisType> = void 0 as any;
     public axisOffset: Array<number> = void 0 as any;
     public bounds: Record<string, Record<string, number>> = void 0 as any;
     public callback?: Chart.CallbackFunction;
@@ -658,12 +527,9 @@ class Chart {
 
             // Chart event handlers
             if (chartEvents) {
-                objectEach(chartEvents, function (
-                    event: Highcharts.EventCallbackFunction<Chart>,
-                    eventType: string
-                ): void {
+                objectEach(chartEvents, function (event, eventType): void {
                     if (isFunction(event)) {
-                        addEvent(chart as any, eventType, event);
+                        addEvent(chart, eventType, event);
                     }
                 });
             }
@@ -951,8 +817,13 @@ class Chart {
         if (hasCartesianSeries) {
             // set axes scales
             axes.forEach(function (axis: Highcharts.Axis): void {
-                axis.updateNames();
-                axis.setScale();
+                // Don't do setScale again if we're only resizing. Regression
+                // #13507. But we need it after chart.update (responsive), as
+                // axis is initialized again (#12137).
+                if (!chart.isResizing || !axis.tickPositions) {
+                    axis.updateNames();
+                    axis.setScale();
+                }
             });
         }
 
@@ -2651,9 +2522,11 @@ class Chart {
      */
     public updateContainerScaling(): void {
         const container = this.container;
+        // #13342 - tooltip was not visible in Chrome, when chart
+        // updates height.
         if (
-            container.offsetWidth &&
-            container.offsetHeight &&
+            container.offsetWidth > 2 && // #13342
+            container.offsetHeight > 2 && // #13342
             container.getBoundingClientRect
         ) {
             const bb = container.getBoundingClientRect(),
@@ -2867,7 +2740,7 @@ class Chart {
 
 }
 
-interface Chart extends Highcharts.Chart {
+interface Chart extends Highcharts.ChartLike {
     callbacks: Array<Chart.CallbackFunction>;
 }
 
@@ -2939,7 +2812,7 @@ function chart(
     return new Chart(a as any, b as any, c);
 }
 
-H.chart = chart as any;
-H.Chart = Chart as any;
+H.chart = chart;
+H.Chart = Chart;
 
 export default Chart;

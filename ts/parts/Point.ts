@@ -10,7 +10,24 @@
 
 'use strict';
 
-import Highcharts from './Globals.js';
+import H from './Globals.js';
+import U from './Utilities.js';
+const {
+    animObject,
+    defined,
+    erase,
+    extend,
+    fireEvent,
+    format,
+    getNestedProperty,
+    isArray,
+    isNumber,
+    isObject,
+    syncTimeout,
+    pick,
+    removeEvent,
+    uniqueKey
+} = U;
 
 /**
  * Internal types
@@ -18,55 +35,6 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class Point {
-            public constructor();
-            public color?: ColorType;
-            public colorIndex?: number;
-            public formatPrefix: string;
-            public id: string;
-            public isNew?: boolean;
-            public isNull: boolean;
-            public marker?: PointMarkerOptionsObject;
-            public nonZonedColor?: ColorType;
-            public options: PointOptionsObject;
-            public percentage?: number;
-            public series: Series;
-            public shapeArgs?: SVGAttributes;
-            public shapeType?: string;
-            public startXPos?: number;
-            public state?: string;
-            public total?: number;
-            public visible: boolean;
-            public x: (number|null);
-            public y?: (number|null);
-            public animateBeforeDestroy(): void;
-            public applyOptions(options: PointOptionsType, x?: number): Point;
-            public destroy(): void;
-            public destroyElements(kinds?: Dictionary<number>): void;
-            public getClassName(): string;
-            public getGraphicalProps(
-                kinds?: Dictionary<number>
-            ): PointGraphicalProps;
-            public firePointEvent(
-                eventType: string,
-                eventArgs?: (Dictionary<any>|Event),
-                defaultFunction?: (EventCallbackFunction<Point>|Function)
-            ): void;
-            public getLabelConfig(): PointLabelObject;
-            public getNestedProperty(key: string): unknown;
-            public getZone(): SeriesZonesOptions;
-            public hasNewShapeType (this: Point): boolean|undefined;
-            public init(
-                series: Series,
-                options: PointOptionsType,
-                x?: number
-            ): Point;
-            public isValid?(): boolean;
-            public optionsToObject(options: PointOptionsType): Dictionary<any>;
-            public resolveColor(): void;
-            public setNestedProperty<T>(object: T, value: any, key: string): T;
-            public tooltipFormatter(pointFormat: string): string;
-        }
         interface PointGraphicalProps {
             singular: Array<string>;
             plural: Array<string>;
@@ -192,8 +160,10 @@ declare global {
             number|string|Array<(number|string)>|PointOptionsObject|null
         );
         type PointStateValue = keyof PointStatesOptionsObject;
+        let Point: PointClass;
     }
 }
+type PointClass = typeof Point;
 
 /**
  * Function callback when a series point is clicked. Return false to cancel the
@@ -354,26 +324,6 @@ declare global {
 
 ''; // detach doclet above
 
-import U from './Utilities.js';
-const {
-    animObject,
-    defined,
-    erase,
-    extend,
-    fireEvent,
-    format,
-    getNestedProperty,
-    isArray,
-    isNumber,
-    isObject,
-    syncTimeout,
-    pick,
-    removeEvent,
-    uniqueKey
-} = U;
-
-var H = Highcharts;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -532,7 +482,6 @@ class Point {
      *
      * @private
      * @function Highcharts.Point#animateBeforeDestroy
-     * @return {void}
      */
     public animateBeforeDestroy(): void {
         var point = this,
@@ -587,7 +536,7 @@ class Point {
         options: Highcharts.PointOptionsType,
         x?: number
     ): Point {
-        var point: Highcharts.Point = this as any,
+        var point = this,
             series = point.series,
             pointValKey = series.options.pointValKey || series.pointValKey;
 
@@ -653,7 +602,7 @@ class Point {
             }
         }
 
-        return point as any;
+        return point;
     }
 
     /**
@@ -662,10 +611,9 @@ class Point {
      *
      * @private
      * @function Highcharts.Point#destroy
-     * @return {void}
      */
     public destroy(): void {
-        var point: Highcharts.Point = this as any,
+        var point = this,
             series = point.series,
             chart = series.chart,
             dataSorting = series.options.dataSorting,
@@ -724,7 +672,6 @@ class Point {
      * @private
      * @function Highcharts.Point#destroyElements
      * @param {Highcharts.Dictionary<number>} [kinds]
-     * @return {void}
      */
     public destroyElements(kinds?: Highcharts.Dictionary<number>): void {
         var point = this,
@@ -766,10 +713,10 @@ class Point {
         eventType: string,
         eventArgs?: (Highcharts.Dictionary<any>|Event),
         defaultFunction?: (
-            Highcharts.EventCallbackFunction<Highcharts.Point>|Function
+            Highcharts.EventCallbackFunction<Point>|Function
         )
     ): void {
-        var point: Highcharts.Point = this as any,
+        var point = this,
             series = this.series,
             seriesOptions = series.options;
 
@@ -811,7 +758,7 @@ class Point {
      *         The class names.
      */
     public getClassName(): string {
-        const point: Highcharts.Point = this as any;
+        const point = this;
         return 'highcharts-point' +
             (point.selected ? ' highcharts-point-select' : '') +
             (point.negative ? ' highcharts-negative' : '') +
@@ -944,7 +891,7 @@ class Point {
      * @return boolean|undefined
      */
     public hasNewShapeType(): boolean|undefined {
-        const point: Highcharts.Point = this as any;
+        const point = this;
         const oldShapeType = point.graphic &&
             (point.graphic.symbolName || point.graphic.element.nodeName);
         return oldShapeType !== this.shapeType;
@@ -1202,6 +1149,10 @@ class Point {
     }
 }
 
-H.Point = Point as any;
+interface Point extends Highcharts.PointLike {
+    // merge extensions with point class
+}
 
-export default H.Point;
+H.Point = Point;
+
+export default Point;

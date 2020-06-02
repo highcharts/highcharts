@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
 
 declare global {
@@ -114,8 +115,12 @@ H.colorSeriesMixin = {
                             point.color || series.color
                 );
 
-            if (color) {
+            if (color && point.color !== color) {
                 point.color = color;
+
+                if (series.options.legendType === 'point' && point.legendItem) {
+                    series.chart.legend.colorizeItem(point, point.visible);
+                }
             }
         });
     }

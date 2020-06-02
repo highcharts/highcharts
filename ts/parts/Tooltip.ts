@@ -10,8 +10,13 @@
 
 'use strict';
 
+import type Chart from './Chart';
+import type Point from './Point';
+import type SVGElement from './SVGElement';
 import H from './Globals.js';
-
+const {
+    doc
+} = H;
 import U from './Utilities.js';
 const {
     clamp,
@@ -24,7 +29,6 @@ const {
     isNumber,
     isString,
     merge,
-    offset,
     pick,
     splat,
     syncTimeout,
@@ -112,7 +116,7 @@ declare global {
             public update(options: TooltipOptions): void;
             public updatePosition(point: Point): void;
         }
-        interface Point {
+        interface PointLike {
             tooltipPos?: Array<number>;
         }
         interface Series {
@@ -145,10 +149,16 @@ declare global {
         }
         interface TooltipPositionerCallbackFunction {
             (
+                this: Tooltip,
                 labelWidth: number,
                 labelHeight: number,
-                point: Point
+                point: (Point|TooltipPositionerPointObject)
             ): PositionObject;
+        }
+        interface TooltipPositionerPointObject {
+            isHeader: true;
+            plotX: number;
+            plotY: number;
         }
         type TooltipShapeValue = ('callout'|'circle'|'square');
     }
@@ -213,17 +223,20 @@ declare global {
  *
  * @callback Highcharts.TooltipPositionerCallbackFunction
  *
+ * @param {Highcharts.Tooltip} this
+ * Tooltip context of the callback.
+ *
  * @param {number} labelWidth
- *        Width of the tooltip.
+ * Width of the tooltip.
  *
  * @param {number} labelHeight
- *        Height of the tooltip.
+ * Height of the tooltip.
  *
- * @param {Highcharts.Point} point
- *        Point information for positioning a tooltip.
+ * @param {Highcharts.Point|Highcharts.TooltipPositionerPointObject} point
+ * Point information for positioning a tooltip.
  *
  * @return {Highcharts.PositionObject}
- *         New position for the tooltip.
+ * New position for the tooltip.
  */
 
 /**
@@ -235,9 +248,6 @@ declare global {
  * boxes separately, this property indicates the call on the xAxis header, which
  * is not a point itself.
  * @name Highcharts.TooltipPositionerPointObject#isHeader
- * @type {boolean}
- *//**
- * @name Highcharts.TooltipPositionerPointObject#negative
  * @type {boolean}
  *//**
  * The reference point relative to the plot area. Add chart.plotLeft to get the
@@ -256,8 +266,6 @@ declare global {
  */
 
 ''; // separates doclets above from variables below
-
-var doc = H.doc;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -282,7 +290,7 @@ class Tooltip {
      * */
 
     public constructor(
-        chart: Highcharts.Chart,
+        chart: Chart,
         options: Highcharts.TooltipOptions
     ) {
         this.chart = chart;
@@ -295,9 +303,9 @@ class Tooltip {
      *
      * */
 
-    public chart: Highcharts.Chart;
+    public chart: Chart;
 
-    public container?: Highcharts.HTMLDOMElement;
+    public container: globalThis.HTMLElement = void 0 as any;
 
     public crosshairs: Array<null> = [];
 
@@ -313,7 +321,7 @@ class Tooltip {
 
     public isSticky: boolean = false;
 
-    public label?: Highcharts.SVGElement;
+    public label?: SVGElement;
 
     public len?: number;
 
@@ -401,8 +409,8 @@ class Tooltip {
      * @param {Array<(Highcharts.Point|Highcharts.Series)>} items
      * @return {Array<string>}
      */
-    public bodyFormatter(items: Array<Highcharts.Point>): Array<string> {
-        return items.map(function (item: (Highcharts.Point|Highcharts.Series)): string {
+    public bodyFormatter(items: Array<Point>): Array<string> {
+        return items.map(function (item: (Point|Highcharts.Series)): string {
             var tooltipOptions = (item as any).series.tooltipOptions;
 
             return (
@@ -508,7 +516,7 @@ class Tooltip {
      * @return {Array<number>}
      */
     public getAnchor(
-        points: (Highcharts.Point|Array<Highcharts.Point>),
+        points: (Point|Array<Point>),
         mouseEvent?: Highcharts.PointerEventObject
     ): Array<number> {
         var ret,
@@ -541,7 +549,7 @@ class Tooltip {
 
         // When shared, use the average position
         } else {
-            points.forEach(function (point: Highcharts.Point): void {
+            points.forEach(function (point: Point): void {
                 yAxis = point.series.yAxis;
                 xAxis = point.series.xAxis;
                 plotX += (point.plotX as any) +
@@ -675,8 +683,8 @@ class Tooltip {
                 options.style?.pointerEvents ||
                 (!this.followPointer && options.stickOnContact ? 'auto' : 'none')
             ),
-            container: Highcharts.HTMLDOMElement,
-            set: Highcharts.Dictionary<Function>,
+            container: globalThis.HTMLElement,
+            set: Record<string, Function>,
             onMouseEnter = function (): void {
                 tooltip.inContact = true;
             },
@@ -779,22 +787,18 @@ class Tooltip {
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside && !tooltip.split) {
-                set = {
-                    x: this.label.xSetter as any,
-                    y: this.label.ySetter as any
-                };
-                this.label.xSetter = function (
-                    value: string,
-                    key: string
+                const label = this.label;
+                const { xSetter, ySetter } = label;
+                label.xSetter = function (
+                    value: string
                 ): void {
-                    set[key].call(this.label, tooltip.distance);
+                    xSetter.call(label, tooltip.distance);
                     container.style.left = value + 'px';
                 };
-                this.label.ySetter = function (
-                    value: string,
-                    key: string
+                label.ySetter = function (
+                    value: string
                 ): void {
-                    set[key].call(this.label, tooltip.distance);
+                    ySetter.call(label, tooltip.distance);
                     container.style.top = value + 'px';
                 };
             }
@@ -824,7 +828,7 @@ class Tooltip {
      *
      * @return {Highcharts.PositionObject}
      */
-    public getPosition(boxWidth: number, boxHeight: number, point: Highcharts.Point): Highcharts.PositionObject {
+    public getPosition(boxWidth: number, boxHeight: number, point: Point): Highcharts.PositionObject {
 
         var chart = this.chart,
             distance = this.distance,
@@ -1019,7 +1023,7 @@ class Tooltip {
      * @return {string}
      */
     public getXDateFormat(
-        point: Highcharts.Point,
+        point: Point,
         options: Highcharts.TooltipOptions,
         xAxis: Highcharts.Axis
     ): string {
@@ -1078,7 +1082,7 @@ class Tooltip {
      * @param {Highcharts.TooltipOptions} options
      *        Tooltip options.
      */
-    public init(chart: Highcharts.Chart, options: Highcharts.TooltipOptions): void {
+    public init(chart: Chart, options: Highcharts.TooltipOptions): void {
 
         /**
          * Chart of the tooltip.
@@ -1250,7 +1254,7 @@ class Tooltip {
      *        used for the tooltip update.
      */
     public refresh(
-        pointOrPoints: (Highcharts.Point|Array<Highcharts.Point>),
+        pointOrPoints: (Point|Array<Point>),
         mouseEvent?: Highcharts.PointerEventObject
     ): void {
         var tooltip = this,
@@ -1289,7 +1293,7 @@ class Tooltip {
             chart.pointer.applyInactiveState(point as any);
 
             // Now set hover state for the choosen ones:
-            (point as any).forEach(function (item: Highcharts.Point): void {
+            (point as any).forEach(function (item: Point): void {
                 item.setState('hover');
                 pointConfig.push(item.getLabelConfig());
             });
@@ -1389,7 +1393,7 @@ class Tooltip {
      *
      * @param {Array<Highcharts.Point>} points
      */
-    public renderSplit(labels: (string|Array<(boolean|string)>), points: Array<Highcharts.Point>): void {
+    public renderSplit(labels: (string|Array<(boolean|string)>), points: Array<Point>): void {
         const tooltip = this;
         const {
             chart,
@@ -1439,7 +1443,7 @@ class Tooltip {
          * @return {object} Returns an object with anchorX and anchorY
          */
         function getAnchor(
-            point: Highcharts.Point & { isHeader?: boolean }
+            point: Point & { isHeader?: boolean }
         ): ({ anchorX: number; anchorY: (number|undefined) }) {
             const { isHeader, plotX = 0, plotY = 0, series } = point;
 
@@ -1529,7 +1533,7 @@ class Tooltip {
          */
         function updatePartialTooltip(
             partialTooltip: (Highcharts.SVGElement|undefined),
-            point: (Highcharts.Point & { isHeader?: boolean }),
+            point: (Point & { isHeader?: boolean }),
             str: (boolean|string)
         ): Highcharts.SVGElement {
             let tt = partialTooltip;
@@ -1599,14 +1603,17 @@ class Tooltip {
             i: number
         ): Array<Highcharts.Dictionary<any>> {
             if (str !== false && str !== '') {
-                const point = points[i - 1] || {
-                    // Item 0 is the header. Instead of this, we could also
-                    // use the crosshair label
-                    isHeader: true,
-                    plotX: points[0].plotX,
-                    plotY: plotHeight,
-                    series: {}
-                };
+                const point: (Point|Highcharts.TooltipPositionerPointObject) = (
+                    points[i - 1] ||
+                    {
+                        // Item 0 is the header. Instead of this, we could also
+                        // use the crosshair label
+                        isHeader: true,
+                        plotX: points[0].plotX,
+                        plotY: plotHeight,
+                        series: {}
+                    }
+                );
                 const isHeader: boolean = (point as any).isHeader;
 
                 // Store the tooltip label referance on the series
@@ -1630,16 +1637,20 @@ class Tooltip {
                 const { anchorX, anchorY } = getAnchor(point);
                 if (typeof anchorY === 'number') {
                     const size = bBox.height + 1;
-                    const boxPosition = positioner ? positioner.call(
-                        tooltip,
-                        boxWidth,
-                        size,
-                        point as any
-                    ) : defaultPositioner(
-                        anchorX,
-                        anchorY,
-                        isHeader,
-                        boxWidth
+                    const boxPosition = (
+                        positioner ?
+                            positioner.call(
+                                tooltip,
+                                boxWidth,
+                                size,
+                                point
+                            ) :
+                            defaultPositioner(
+                                anchorX,
+                                anchorY,
+                                isHeader,
+                                boxWidth
+                            )
                     );
 
                     boxes.push({
@@ -1648,7 +1659,7 @@ class Tooltip {
                         anchorX,
                         anchorY,
                         boxWidth,
-                        point: point as any,
+                        point,
                         rank: pick((boxPosition as any).rank, isHeader ? 1 : 0),
                         size,
                         target: boxPosition.y,
@@ -1908,7 +1919,7 @@ class Tooltip {
      *
      * @param {Highcharts.Point} point
      */
-    public updatePosition(point: Highcharts.Point): void {
+    public updatePosition(point: Point): void {
         var chart = this.chart,
             pointer = chart.pointer,
             label = this.getLabel(),
@@ -1940,7 +1951,7 @@ class Tooltip {
             // scale transform/css zoom. #11329.
             const containerScaling = chart.containerScaling;
             if (containerScaling) {
-                css(this.container as Highcharts.HTMLDOMElement, {
+                css(this.container, {
                     transform: `scale(${
                         containerScaling.scaleX
                     }, ${

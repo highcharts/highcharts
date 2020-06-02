@@ -10,9 +10,9 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
-
 type NonArray<T> = T extends Array<unknown> ? never : T;
 type NonFunction<T> = T extends Function ? never : T;
 type NullType = (null|undefined);
@@ -94,8 +94,13 @@ declare global {
         interface FormatterCallbackFunction<T> {
             (this: T): string;
         }
-        interface ObjectEachCallbackFunction<T> {
-            (this: T, value: any, key: string, obj: any): void;
+        interface ObjectEachCallbackFunction<TObject, TContext> {
+            (
+                this: TContext,
+                value: TObject[keyof TObject],
+                key: keyof TObject,
+                obj: TObject
+            ): void;
         }
         interface OffsetObject {
             left: number;
@@ -207,7 +212,6 @@ declare global {
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
         function format(str: string, ctx: any, chart?: Chart): string;
-        function formatSingle(format: string, val: any, chart?: Chart): string;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -276,10 +280,10 @@ declare global {
             decimalPoint?: string,
             thousandsSep?: string
         ): string;
-        function objectEach<T>(
-            obj: any,
-            fn: ObjectEachCallbackFunction<T>,
-            ctx?: T
+        function objectEach<TObject, TContext>(
+            obj: TObject,
+            fn: ObjectEachCallbackFunction<TObject, TContext>,
+            ctx?: TContext
         ): void;
         function offset(el: Element): OffsetObject;
         function pad(number: number, length?: number, padder?: string): string;
@@ -334,6 +338,7 @@ declare global {
             context?: unknown
         ): number;
         function uniqueKey(): string;
+        function useSerialIds(mode?: boolean): (boolean|undefined);
         function wrap(
             obj: any,
             method: string,
@@ -707,8 +712,8 @@ var charts = H.charts,
 const error = H.error = function (
     code: (number|string),
     stop?: boolean,
-    chart?: Highcharts.Chart,
-    params?: Highcharts.Dictionary<string>
+    chart?: Chart,
+    params?: Record<string, string>
 ): void {
     var isCode = isNumber(code),
         message = isCode ?
@@ -729,7 +734,7 @@ const error = H.error = function (
         if (isCode) {
             message += '?';
         }
-        objectEach(params, function (value: string, key: string): void {
+        objectEach(params, function (value, key): void {
             additionalMessages += ('\n' + key + ': ' + value);
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
@@ -1304,7 +1309,7 @@ function merge<T>(): T {
                 copy = {};
             }
 
-            objectEach(original, function (value: any, key: string): void {
+            objectEach(original, function (value, key): void {
 
                 // Copy the contents of objects, but not arrays or DOM nodes
                 if (isObject(value, true) &&
@@ -1579,7 +1584,7 @@ function attr(
 
     // else if prop is defined, it is a hash of key/value pairs
     } else {
-        objectEach(prop, function (val: any, key: string): void {
+        objectEach(prop, function (val, key): void {
             elem.setAttribute(key, val);
         });
     }
@@ -1945,7 +1950,7 @@ const wrap = H.wrap = function wrap(
  * @return {string}
  *         The formatted string.
  */
-const format = H.format = function (str: string, ctx: any, chart?: Highcharts.Chart): string {
+const format = H.format = function (str: string, ctx: any, chart?: Chart): string {
     var splitter = '{',
         isInside = false,
         segment,
@@ -2228,7 +2233,7 @@ const arrayMax = H.arrayMax = function arrayMax(data: Array<any>): number {
  */
 const destroyObjectProperties = H.destroyObjectProperties =
     function destroyObjectProperties(obj: any, except?: any): void {
-        objectEach(obj, function (val: any, n: string): void {
+        objectEach(obj, function (val, n): void {
             // If the object is non-null and destroy is defined
             if (val && val !== except && val.destroy) {
                 // Invoke the destroy
@@ -2306,7 +2311,7 @@ const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: 
  */
 const setAnimation = H.setAnimation = function setAnimation(
     animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     chart.renderer.globalAnimation = pick(
         animation,
@@ -2758,15 +2763,15 @@ const stop = H.stop = function (el: Highcharts.SVGElement, prop?: string): void 
  *
  * @return {void}
  */
-const objectEach = H.objectEach = function objectEach<T>(
-    obj: any,
-    fn: Highcharts.ObjectEachCallbackFunction<T>,
-    ctx?: T
+const objectEach = H.objectEach = function objectEach<TObject, TContext>(
+    obj: TObject,
+    fn: Highcharts.ObjectEachCallbackFunction<TObject, TContext>,
+    ctx?: TContext
 ): void {
     /* eslint-enable valid-jsdoc */
     for (var key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
-            fn.call(ctx || obj[key], obj[key], key, obj);
+            fn.call(ctx || obj[key] as unknown as TContext, obj[key], key, obj);
         }
     }
 };
@@ -2871,9 +2876,9 @@ objectEach({
     grep: 'filter',
     reduce: 'reduce',
     some: 'some'
-}, function (val: any, key: string): void {
-    (H as any)[key] = function (arr: Array<any>): any {
-        return Array.prototype[val].apply(
+} as Record<string, ('map'|'forEach'|'filter'|'reduce'|'some')>, function (val, key): void {
+    (H as any)[key] = function (arr: Array<unknown>): any {
+        return (Array.prototype[val] as any).apply(
             arr,
             [].slice.call(arguments, 1)
         );
@@ -3029,11 +3034,11 @@ const removeEvent = H.removeEvent = function removeEvent<T>(
             types = eventCollection;
         }
 
-        objectEach(types, function (val: any, n: string): void {
+        objectEach(types, function (_val, n): void {
             if (eventCollection[n]) {
                 len = eventCollection[n].length;
                 while (len--) {
-                    removeOneEvent(n, eventCollection[n][len].fn);
+                    removeOneEvent(n as any, eventCollection[n][len].fn);
                 }
             }
         });
@@ -3216,15 +3221,15 @@ const animate = H.animate = function (
             complete: args[4]
         };
     }
-    if (!isNumber((opt as any).duration)) {
-        (opt as any).duration = 400;
+    if (!isNumber(opt.duration)) {
+        opt.duration = 400;
     }
-    (opt as any).easing = typeof (opt as any).easing === 'function' ?
-        (opt as any).easing :
-        ((Math as any)[(opt as any).easing as any] || Math.easeInOutSine);
-    (opt as any).curAnim = merge(params) as any;
+    opt.easing = typeof opt.easing === 'function' ?
+        opt.easing :
+        (Math[opt.easing as keyof Math] || Math.easeInOutSine) as any;
+    opt.curAnim = merge(params) as any;
 
-    objectEach(params, function (val: any, prop: string): void {
+    objectEach(params, function (val, prop): void {
         // Stop current running animation of this property
         stop(el as any, prop);
 
@@ -3295,7 +3300,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     props?: Partial<TSeries>,
     pointProps?: Partial<TSeries['pointClass']['prototype']>
 ): typeof Highcharts.Series {
-    var defaultOptions = H.getOptions(),
+    var defaultOptions = getOptions(),
         seriesTypes = H.seriesTypes;
 
     // Merge the options
@@ -3320,6 +3325,7 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
     return seriesTypes[type];
 };
 
+let serialMode: (boolean|undefined);
 /**
  * Get a unique key for using in internal element id's and pointers. The key is
  * composed of a random hash specific to this Highcharts instance, and a
@@ -3331,20 +3337,97 @@ const seriesType = H.seriesType = function<TSeries extends Highcharts.Series> (
  * @function Highcharts.uniqueKey
  *
  * @return {string}
- *         A unique key.
+ * A unique key.
  */
 const uniqueKey = H.uniqueKey = (function (): () => string {
 
-    var uniqueKeyHash = Math.random().toString(36).substring(2, 9),
-        idCounter = 0;
+    const hash = Math.random().toString(36).substring(2, 9) + '-';
+
+    let id = 0;
 
     return function (): string {
-        return 'highcharts-' + uniqueKeyHash + '-' + idCounter++;
+        return 'highcharts-' + (serialMode ? '' : hash) + id++;
     };
+
 }());
+/**
+ * Activates a serial mode for element IDs provided by
+ * {@link Highcharts.uniqueKey}. This mode can be used in automated tests, where
+ * a simple comparison of two rendered SVG graphics is needed.
+ *
+ * **Note:** This is only for testing purposes and will break functionality in
+ * webpages with multiple charts.
+ *
+ * @example
+ * if (
+ *   process &&
+ *   process.env.NODE_ENV === 'development'
+ * ) {
+ *   Highcharts.useSerialIds(true);
+ * }
+ *
+ * @function Highcharts.useSerialIds
+ *
+ * @param {boolean} [mode]
+ * Changes the state of serial mode.
+ *
+ * @return {boolean|undefined}
+ * State of the serial mode.
+ */
+const useSerialIds = H.useSerialIds = function (mode?: boolean): (boolean|undefined) {
+    return (serialMode = pick(mode, serialMode));
+};
 
 const isFunction = H.isFunction = function (obj: unknown): obj is Function {
     return typeof obj === 'function';
+};
+
+/**
+ * Get the updated default options. Until 3.0.7, merely exposing defaultOptions
+ * for outside modules wasn't enough because the setOptions method created a new
+ * object.
+ *
+ * @function Highcharts.getOptions
+ *
+ * @return {Highcharts.Options}
+ */
+const getOptions = H.getOptions = function (): Highcharts.Options {
+    return H.defaultOptions;
+};
+
+/**
+ * Merge the default options with custom options and return the new options
+ * structure. Commonly used for defining reusable templates.
+ *
+ * @sample highcharts/global/useutc-false Setting a global option
+ * @sample highcharts/members/setoptions Applying a global theme
+ *
+ * @function Highcharts.setOptions
+ *
+ * @param {Highcharts.Options} options
+ *        The new custom chart options.
+ *
+ * @return {Highcharts.Options}
+ *         Updated options.
+ */
+const setOptions = H.setOptions = function (
+    options: Highcharts.Options
+): Highcharts.Options {
+
+    // Copy in the default options
+    H.defaultOptions = merge(true, H.defaultOptions, options);
+
+    // Update the time object
+    if (options.time || options.global) {
+        H.time.update(merge(
+            H.defaultOptions.global,
+            H.defaultOptions.time,
+            options.global,
+            options.time
+        ));
+    }
+
+    return H.defaultOptions;
 };
 
 // Register Highcharts as a plugin in jQuery
@@ -3432,6 +3515,7 @@ const utilitiesModule = {
     format,
     getMagnitude,
     getNestedProperty,
+    getOptions,
     getStyle,
     inArray,
     isArray,
@@ -3453,12 +3537,14 @@ const utilitiesModule = {
     removeEvent,
     seriesType,
     setAnimation,
+    setOptions,
     splat,
     stableSort,
     stop,
     syncTimeout,
     timeUnits,
     uniqueKey,
+    useSerialIds,
     wrap
 };
 

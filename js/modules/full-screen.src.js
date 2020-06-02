@@ -6,10 +6,10 @@
  * License: www.highcharts.com/license
  */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent;
-var Chart = H.Chart;
 /**
  * The module allows user to enable display chart in full screen mode.
  * Used in StockTools too.

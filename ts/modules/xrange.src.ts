@@ -12,7 +12,26 @@
 
 'use strict';
 
+import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    correctFloat,
+    defined,
+    find,
+    isNumber,
+    isObject,
+    merge,
+    pick,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -22,6 +41,7 @@ declare global {
     namespace Highcharts {
         class XRangePoint extends ColumnPoint {
             public clipRectArgs?: RectangleObject;
+            public isValid: () => boolean;
             public len?: number;
             public options: XRangePointOptions;
             public partialFill: XRangePointOptions['partialFill'];
@@ -32,7 +52,6 @@ declare global {
             public x2?: number;
             public yCategory?: string;
             public init(): XRangePoint;
-            public isValid(): boolean;
             public resolveColor(): void;
         }
         class XRangeSeries extends ColumnSeries {
@@ -103,28 +122,9 @@ declare global {
  * @requires modules/xrange
  */
 
-import Color from '../parts/Color.js';
-const {
-    parse: color
-} = Color;
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    correctFloat,
-    defined,
-    find,
-    isNumber,
-    isObject,
-    merge,
-    pick,
-    seriesType
-} = U;
 
 var columnType = H.seriesTypes.column,
     seriesTypes = H.seriesTypes,
-    Axis = H.Axis,
     Series = H.Series;
 
 /**
@@ -144,7 +144,7 @@ var columnType = H.seriesTypes.column,
  */
 function getColorByCategory(
     series: Highcharts.Series,
-    point: Highcharts.Point
+    point: Point
 ): Highcharts.Dictionary<any> {
     var colors = series.options.colors || series.chart.options.colors,
         colorCount = colors ?

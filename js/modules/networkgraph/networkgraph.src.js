@@ -11,6 +11,9 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+import Point from '../../parts/Point.js';
+import U from '../../parts/Utilities.js';
+var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
 /**
  * Formatter callback function.
  *
@@ -47,9 +50,6 @@ import H from '../../parts/Globals.js';
 * @since 7.0.0
 */
 ''; // detach doclets above
-import Point from '../../parts/Point.js';
-import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';

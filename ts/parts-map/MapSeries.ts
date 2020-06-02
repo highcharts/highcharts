@@ -102,8 +102,6 @@ declare global {
             transAX: number;
             transAY: number;
         }
-        interface MapChart extends Chart {
-        }
         interface MapPointCacheObject {
             _foundBox?: boolean;
             _i?: number;

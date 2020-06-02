@@ -40,7 +40,7 @@ declare global {
             states?: SeriesStatesOptionsObject<AreaRangeSeries>;
             trackByArea?: boolean;
         }
-        interface Point {
+        interface PointLike {
             plotHigh?: AreaRangePoint['plotHigh'];
             plotLow?: AreaRangePoint['plotLow'];
         }
@@ -82,7 +82,7 @@ declare global {
             public getGraphPath(points: Array<AreaRangePoint>): SVGPath;
             public highToXY(point: (AreaRangePoint & PolarPoint)): void;
             public translate(): void;
-            public toYData(point: AreaRangePoint): [number, number];
+            public toYData(point: AreaRangePoint): Array<number>;
         }
     }
 }
@@ -180,9 +180,9 @@ seriesType<Highcharts.AreaRangeSeries>('arearange', 'area', {
      */
     dataLabels: {
 
-        align: null,
+        align: void 0,
 
-        verticalAlign: null,
+        verticalAlign: void 0,
 
         /**
          * X offset of the lower data labels relative to the point value.

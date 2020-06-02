@@ -8,7 +8,9 @@
  *
  * */
 'use strict';
-import Highcharts from './Globals.js';
+import H from './Globals.js';
+import U from './Utilities.js';
+var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 /**
  * Function callback when a series point is clicked. Return false to cancel the
  * action.
@@ -156,9 +158,6 @@ import Highcharts from './Globals.js';
 * @type {Highcharts.PointOptionsType}
 */
 ''; // detach doclet above
-import U from './Utilities.js';
-var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
-var H = Highcharts;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Point object. The point objects are generated from the `series.data`
@@ -280,7 +279,6 @@ var Point = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Point#animateBeforeDestroy
-     * @return {void}
      */
     Point.prototype.animateBeforeDestroy = function () {
         var point = this, animateParams = { x: point.startXPos, opacity: 0 }, isDataLabel, graphicalProps = point.getGraphicalProps();
@@ -379,7 +377,6 @@ var Point = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Point#destroy
-     * @return {void}
      */
     Point.prototype.destroy = function () {
         var point = this, series = point.series, chart = series.chart, dataSorting = series.options.dataSorting, hoverPoints = chart.hoverPoints, globalAnimation = point.series.chart.renderer.globalAnimation, animation = animObject(globalAnimation), prop;
@@ -426,7 +423,6 @@ var Point = /** @class */ (function () {
      * @private
      * @function Highcharts.Point#destroyElements
      * @param {Highcharts.Dictionary<number>} [kinds]
-     * @return {void}
      */
     Point.prototype.destroyElements = function (kinds) {
         var point = this, props = point.getGraphicalProps(kinds);
@@ -803,4 +799,4 @@ var Point = /** @class */ (function () {
     return Point;
 }());
 H.Point = Point;
-export default H.Point;
+export default Point;

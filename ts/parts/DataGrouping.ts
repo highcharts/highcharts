@@ -145,6 +145,8 @@ declare global {
 
 ''; // detach doclets above
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import Point from './Point.js';
 import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
@@ -166,7 +168,6 @@ import './Axis.js';
 import './Series.js';
 
 var Axis = H.Axis,
-    defaultPlotOptions = H.defaultPlotOptions,
     Series = H.Series;
 
 /* ************************************************************************** *
@@ -827,7 +828,7 @@ seriesProto.destroyGroupedData = function (this: Highcharts.Series): void {
     // Clear previous groups
     if (this.groupedData) {
         this.groupedData.forEach(function (
-            point: Highcharts.Point,
+            point: Point,
             i: number
         ): void {
             if (point) {
@@ -857,9 +858,7 @@ seriesProto.generatePoints = function (this: Highcharts.Series): void {
 
 // Override point prototype to throw a warning when trying to update grouped
 // points.
-addEvent(Point, 'update', function (
-    this: Highcharts.Point
-): (boolean|undefined) {
+addEvent(Point, 'update', function (): (boolean|undefined) {
     if (this.dataGroup) {
         error(24, false, this.series.chart);
         return false;
@@ -971,7 +970,7 @@ addEvent(Series, 'afterSetOptions', function (
         plotOptions: Highcharts.PlotOptions =
             this.chart.options.plotOptions as any,
         defaultOptions: Highcharts.DataGroupingOptionsObject =
-            (defaultPlotOptions[type] as any).dataGrouping,
+            (O.defaultOptions.plotOptions as any)[type].dataGrouping,
         // External series, for example technical indicators should also
         // inherit commonOptions which are not available outside this module
         baseOptions = this.useCommonDataGrouping && commonOptions;

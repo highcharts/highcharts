@@ -14,6 +14,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
@@ -367,7 +368,7 @@ RendererProto.getCylinderBack = function (
 
 // Retruns cylinder path for top or bottom
 RendererProto.getCylinderEnd = function (
-    chart: Highcharts.Chart,
+    chart: Chart,
     shapeArgs: Highcharts.SVGAttributes,
     isBottom?: boolean
 ): SVGPath {

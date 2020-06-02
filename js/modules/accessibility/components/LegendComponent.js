@@ -152,7 +152,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     },
     /**
      * @private
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
      */
     proxyLegendItem: function (item) {
         var component = this, itemLabel = this.chart.langFormat('accessibility.legend.legendItem', {

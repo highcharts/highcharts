@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
@@ -25,10 +26,10 @@ declare global {
             public beaufort: string;
             public beaufortLevel: number;
             public direction: number;
+            public isValid: () => boolean;
             public options: WindbarbPointOptions;
             public series: WindbarbSeries;
             public value: number;
-            public isValid(): boolean;
         }
         class WindbarbSeries extends ColumnSeries implements OnSeriesSeries {
             public beaufortFloor: Array<number>;
@@ -260,7 +261,7 @@ seriesType<Highcharts.WindbarbSeries>('windbarb', 'column'
 
         init: function (
             this: Highcharts.WindbarbSeries,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.WindbarbSeriesOptions
         ): void {
             registerApproximation();

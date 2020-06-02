@@ -39,6 +39,7 @@ const {
 declare global {
     namespace Highcharts {
         class TimelinePoint extends LinePoint {
+            public isValid: () => boolean;
             public label?: string;
             public options: TimelinePointOptions;
             public series: TimelineSeries;
@@ -47,7 +48,6 @@ declare global {
             public drawConnector(): void;
             public getConnectorPath(): SVGPath;
             public init(): this;
-            public isValid(): boolean;
             public setState(): void;
             public setVisible(vis: boolean, redraw?: boolean): void;
         }

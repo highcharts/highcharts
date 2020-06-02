@@ -9,8 +9,9 @@
  * */
 'use strict';
 import H from './Globals.js';
+var doc = H.doc;
 import U from './Utilities.js';
-var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, offset = U.offset, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
+var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discardElement, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isNumber = U.isNumber, isString = U.isString, merge = U.merge, pick = U.pick, splat = U.splat, syncTimeout = U.syncTimeout, timeUnits = U.timeUnits;
 /**
  * Callback function to format the text of the tooltip from scratch.
  *
@@ -68,17 +69,20 @@ var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discar
  *
  * @callback Highcharts.TooltipPositionerCallbackFunction
  *
+ * @param {Highcharts.Tooltip} this
+ * Tooltip context of the callback.
+ *
  * @param {number} labelWidth
- *        Width of the tooltip.
+ * Width of the tooltip.
  *
  * @param {number} labelHeight
- *        Height of the tooltip.
+ * Height of the tooltip.
  *
- * @param {Highcharts.Point} point
- *        Point information for positioning a tooltip.
+ * @param {Highcharts.Point|Highcharts.TooltipPositionerPointObject} point
+ * Point information for positioning a tooltip.
  *
  * @return {Highcharts.PositionObject}
- *         New position for the tooltip.
+ * New position for the tooltip.
  */
 /**
  * Point information for positioning a tooltip.
@@ -89,9 +93,6 @@ var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discar
 * boxes separately, this property indicates the call on the xAxis header, which
 * is not a point itself.
 * @name Highcharts.TooltipPositionerPointObject#isHeader
-* @type {boolean}
-*/ /**
-* @name Highcharts.TooltipPositionerPointObject#negative
 * @type {boolean}
 */ /**
 * The reference point relative to the plot area. Add chart.plotLeft to get the
@@ -108,7 +109,6 @@ var clamp = U.clamp, css = U.css, defined = U.defined, discardElement = U.discar
  * @typedef {"callout"|"circle"|"square"} Highcharts.TooltipShapeValue
  */
 ''; // separates doclets above from variables below
-var doc = H.doc;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Tooltip of a chart.
@@ -129,6 +129,7 @@ var Tooltip = /** @class */ (function () {
      *
      * */
     function Tooltip(chart, options) {
+        this.container = void 0;
         this.crosshairs = [];
         this.distance = 0;
         this.isHidden = true;
@@ -468,16 +469,14 @@ var Tooltip = /** @class */ (function () {
             // Split tooltip use updateTooltipContainer to position the tooltip
             // container.
             if (tooltip.outside && !tooltip.split) {
-                set = {
-                    x: this.label.xSetter,
-                    y: this.label.ySetter
-                };
-                this.label.xSetter = function (value, key) {
-                    set[key].call(this.label, tooltip.distance);
+                var label_1 = this.label;
+                var xSetter_1 = label_1.xSetter, ySetter_1 = label_1.ySetter;
+                label_1.xSetter = function (value) {
+                    xSetter_1.call(label_1, tooltip.distance);
                     container.style.left = value + 'px';
                 };
-                this.label.ySetter = function (value, key) {
-                    set[key].call(this.label, tooltip.distance);
+                label_1.ySetter = function (value) {
+                    ySetter_1.call(label_1, tooltip.distance);
                     container.style.top = value + 'px';
                 };
             }
@@ -1075,14 +1074,15 @@ var Tooltip = /** @class */ (function () {
         // Create the individual labels for header and points, ignore footer
         var boxes = labels.slice(0, points.length + 1).reduce(function (boxes, str, i) {
             if (str !== false && str !== '') {
-                var point = points[i - 1] || {
-                    // Item 0 is the header. Instead of this, we could also
-                    // use the crosshair label
-                    isHeader: true,
-                    plotX: points[0].plotX,
-                    plotY: plotHeight,
-                    series: {}
-                };
+                var point = (points[i - 1] ||
+                    {
+                        // Item 0 is the header. Instead of this, we could also
+                        // use the crosshair label
+                        isHeader: true,
+                        plotX: points[0].plotX,
+                        plotY: plotHeight,
+                        series: {}
+                    });
                 var isHeader = point.isHeader;
                 // Store the tooltip label referance on the series
                 var owner = isHeader ? tooltip : point.series;
@@ -1101,7 +1101,9 @@ var Tooltip = /** @class */ (function () {
                 var _a = getAnchor(point), anchorX = _a.anchorX, anchorY = _a.anchorY;
                 if (typeof anchorY === 'number') {
                     var size = bBox.height + 1;
-                    var boxPosition = positioner ? positioner.call(tooltip, boxWidth, size, point) : defaultPositioner(anchorX, anchorY, isHeader, boxWidth);
+                    var boxPosition = (positioner ?
+                        positioner.call(tooltip, boxWidth, size, point) :
+                        defaultPositioner(anchorX, anchorY, isHeader, boxWidth));
                     boxes.push({
                         // 0-align to the top, 1-align to the bottom
                         align: positioner ? 0 : void 0,

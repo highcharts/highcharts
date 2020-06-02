@@ -208,8 +208,9 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
  *
  * @return {string}
  */
-import './Options.js';
-var defaultOptions = H.defaultOptions, deg2rad = H.deg2rad;
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
+var deg2rad = H.deg2rad;
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
  * adding axes by {@link Highcharts.Chart#addAxis}.
@@ -1431,13 +1432,7 @@ var Axis = /** @class */ (function () {
         // set the translation factor used in translate function
         axis.setAxisTranslation(true);
         // hook for ordinal axes and radial axes
-        if (axis.beforeSetTickPositions) {
-            axis.beforeSetTickPositions();
-        }
-        // hook for extensions, used in Highstock ordinal axes
-        if (axis.ordinal) {
-            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
-        }
+        fireEvent(this, 'initialAxisTranslation');
         // In column-like charts, don't cramp in more ticks than there are
         // points (#1943, #4184)
         if (axis.pointRange && !tickIntervalOption) {
@@ -2737,7 +2732,8 @@ var Axis = /** @class */ (function () {
                         alternateBands[pos].options = {
                             from: log ? log.lin2log(from) : from,
                             to: log ? log.lin2log(to) : to,
-                            color: alternateGridColor
+                            color: alternateGridColor,
+                            className: 'highcharts-alternate-grid'
                         };
                         alternateBands[pos].render();
                         alternateBands[pos].isActive = true;
@@ -4225,7 +4221,7 @@ var Axis = /** @class */ (function () {
          * So a minRange of 1 means that the axis can be zoomed to 10-100,
          * 100-1000, 1000-10000 etc.
          *
-         * Note that the `minPadding`, `maxPadding`, `startOnTick` and
+         * **Note**: The `minPadding`, `maxPadding`, `startOnTick` and
          * `endOnTick` settings also affect how the extremes of the axis
          * are computed.
          *

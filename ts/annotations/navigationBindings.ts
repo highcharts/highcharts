@@ -26,7 +26,8 @@ const {
     isObject,
     merge,
     objectEach,
-    pick
+    pick,
+    setOptions
 } = U;
 
 /**
@@ -57,7 +58,7 @@ declare global {
         interface AnnotationsOptions {
             langKey?: string;
         }
-        interface Chart {
+        interface ChartLike {
             navigationBindings?: NavigationBindings;
             /** @requires modules/annotations */
             initNavigationBindings(): void;
@@ -383,10 +384,7 @@ class NavigationBindings {
             );
         });
 
-        objectEach(options.events || {}, function (
-            callback: Function,
-            eventName: string
-        ): void {
+        objectEach(options.events || {}, function (callback, eventName): void {
             if (isFunction(callback)) {
                 navigation.eventsToUnbind.push(
                     addEvent(
@@ -415,7 +413,7 @@ class NavigationBindings {
             })
         );
         navigation.eventsToUnbind.push(
-            addEvent(chart.container, 'mousemove', function (
+            addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (
                 e: Highcharts.PointerEventObject
             ): void {
                 navigation.bindingsContainerMouseMove(this, e);
@@ -431,7 +429,6 @@ class NavigationBindings {
      */
     public initUpdate(): void {
         var navigation = this;
-
         chartNavigationMixin.addUpdate(
             function (options: Highcharts.NavigationOptions): void {
                 navigation.update(options);
@@ -1103,7 +1100,7 @@ if ((H as any).Annotation) {
     });
 }
 
-H.setOptions({
+setOptions({
     /**
      * @optionparent lang
      *

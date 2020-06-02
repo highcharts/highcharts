@@ -11,6 +11,7 @@
 'use strict';
 
 import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
 import StackingAxis from './StackingAxis.js';
 import U from './Utilities.js';
@@ -19,6 +20,7 @@ const {
     defined,
     destroyObjectProperties,
     format,
+    isNumber,
     pick
 } = U;
 
@@ -29,10 +31,10 @@ const {
 declare global {
     namespace Highcharts {
         type OptionsStackingValue = ('normal'|'overlap'|'percent'|'stream');
-        interface Chart {
+        interface ChartLike {
             getStacks(): void;
         }
-        interface Point {
+        interface PointLike {
             leftCliff?: number;
             rightCliff?: number;
         }
@@ -189,11 +191,9 @@ declare global {
 
 ''; // detached doclets above
 
-import './Chart.js';
 import './Series.js';
 
-var Chart = H.Chart,
-    Series = H.Series;
+var Series = H.Series;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -463,7 +463,10 @@ class StackItem {
             });
 
             if (pick(!isJustify && stackItem.options.crop, true)) {
-                visible = chart.isInsidePlot(label.x - padding + label.width, label.y) &&
+                visible =
+                    isNumber(label.x) &&
+                    isNumber(label.y) &&
+                    chart.isInsidePlot(label.x - padding + label.width, label.y) &&
                     chart.isInsidePlot(label.x + padding, label.y);
 
                 if (!visible) {
@@ -494,7 +497,7 @@ class StackItem {
      * @return {Highcharts.BBoxObject}
      */
     public getStackBox(
-        chart: Highcharts.Chart,
+        chart: Chart,
         stackItem: Highcharts.StackItem,
         x: number,
         y: number,
@@ -529,9 +532,8 @@ class StackItem {
  *
  * @private
  * @function Highcharts.Chart#getStacks
- * @return {void}
  */
-Chart.prototype.getStacks = function (this: Highcharts.Chart): void {
+Chart.prototype.getStacks = function (this: Chart): void {
     var chart = this,
         inverted = chart.inverted;
 

@@ -34,6 +34,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    getOptions,
     isArray,
     merge,
     splat
@@ -79,7 +80,7 @@ H.ganttChart = function (
 ): Chart {
     var hasRenderToArg = typeof renderTo === 'string' || renderTo.nodeName,
         seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
+        defaultOptions = getOptions(),
         defaultLinkedTo: number,
         userOptions = options;
 
@@ -164,10 +165,12 @@ H.ganttChart = function (
 
     options.series = userOptions.series = seriesOptions;
 
-    (options.series as any).forEach(function (series: Highcharts.Series): void {
-        series.data.forEach(function (point: Highcharts.Point): void {
-            H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
-        });
+    (options.series || []).forEach(function (series): void {
+        if (series.data) {
+            series.data.forEach(function (point): void {
+                H.seriesTypes.gantt.prototype.setGanttPointAliases(point as any);
+            });
+        }
     });
 
     return hasRenderToArg ?

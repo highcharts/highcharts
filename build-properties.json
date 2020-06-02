@@ -1,0 +1,22 @@
+{
+  "date": "",
+  "version": "8.1.0-modified",
+  "products": {
+    "Highcharts": {
+      "cdnpath": "",
+      "distpath": "/highcharts"
+    },
+    "Highcharts Stock": {
+      "cdnpath": "/stock",
+      "distpath": "/highstock"
+    },
+    "Highcharts Maps": {
+      "cdnpath": "/maps",
+      "distpath": "/highmaps"
+    },
+    "Highcharts Gantt": {
+      "cdnpath": "/gantt",
+      "distpath": "/gantt"
+    }
+  }
+}

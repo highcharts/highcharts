@@ -13,6 +13,7 @@
 import type SVGElement from '../parts/SVGElement';
 import type SVGPath from '../parts/SVGPath';
 import Axis from '../parts/Axis.js';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import Point from '../parts/Point.js';
 import StackItem from '../parts/Stacking.js';
@@ -43,7 +44,7 @@ declare global {
             public series: WaterfallSeries;
             public y: any;
             public getClassName(): string;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class WaterfallSeries extends ColumnSeries {
             public chart: WaterfallChart;
@@ -97,8 +98,7 @@ declare global {
 import '../parts/Options.js';
 import '../parts/Series.js';
 
-var Chart = H.Chart,
-    Series = H.Series,
+var Series = H.Series,
     seriesTypes = H.seriesTypes;
 
 /**
@@ -225,9 +225,7 @@ namespace WaterfallAxis {
             this.dummyStackItem = dummyStackItem;
 
             // Render each waterfall stack total
-            objectEach(waterfallStacks, function (
-                type: (boolean|StacksItemObject)
-            ): void {
+            objectEach(waterfallStacks, function (type): void {
                 objectEach(type, function (
                     stackItem: StacksItemObject
                 ): void {
@@ -297,7 +295,7 @@ namespace WaterfallAxis {
     /**
      * @private
      */
-    function onBeforeRedraw(this: Highcharts.Chart): void {
+    function onBeforeRedraw(this: Chart): void {
         var axes = this.axes as Array<WaterfallAxis>,
             series = this.series,
             i = series.length;
@@ -802,7 +800,7 @@ seriesType<Highcharts.WaterfallSeries>('waterfall', 'column', {
 
     updateParallelArrays: function (
         this: Highcharts.WaterfallSeries,
-        point: Highcharts.Point,
+        point: Point,
         i: (number|string)
     ): void {
         Series.prototype.updateParallelArrays.call(

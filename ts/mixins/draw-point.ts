@@ -4,6 +4,8 @@
  *
  * */
 
+import type Point from '../parts/Point';
+
 /**
  * Internal types
  * @private

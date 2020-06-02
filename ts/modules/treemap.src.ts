@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 
 /**
@@ -44,6 +46,7 @@ declare global {
         class TreemapPoint extends ScatterPoint implements DrawPoint {
             public draw: typeof drawPoint;
             public drillId?: (boolean|string);
+            public isValid: () => boolean;
             public name: string;
             public node: TreemapNodeObject;
             public options: TreemapPointOptions;
@@ -55,7 +58,6 @@ declare global {
             public value: (number|null);
             public drawPoint(params: DrawPointParams): void;
             public getClassName(): string;
-            public isValid(): boolean;
             public shouldDraw(): boolean;
         }
         class TreemapSeries extends ScatterSeries implements TreeSeries {
@@ -331,7 +333,7 @@ var seriesTypes = H.seriesTypes,
     eachObject = function (
         this: unknown,
         list: any,
-        func: Highcharts.ObjectEachCallbackFunction<unknown>,
+        func: Highcharts.ObjectEachCallbackFunction<any, unknown>,
         context?: unknown
     ): void {
         context = context || this;
@@ -977,7 +979,7 @@ seriesType<Highcharts.TreemapSeries>(
         },
         init: function (
             this: Highcharts.TreemapSeries,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.TreemapSeriesOptions
         ): void {
             var series = this,
@@ -2258,6 +2260,7 @@ addEvent(H.Series, 'afterBindAxes', function (): void {
         }
     }
 });
+
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
 /**

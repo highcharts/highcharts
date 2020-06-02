@@ -12,7 +12,8 @@
 
 'use strict';
 
-import type Axis from '../parts/Axis.js';
+import type Axis from '../parts/Axis';
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 import Tick from '../parts/Tick.js';
@@ -31,7 +32,7 @@ const {
  */
 declare global {
     namespace Highcharts {
-        interface Point {
+        interface PointLike {
             crosshairPos?: number;
             axisXpos?: number;
             axisYpos?: number;
@@ -126,6 +127,7 @@ class Axis3DAdditions {
         // Do not do this if the chart is not 3D
         if (
             axis.coll === 'colorAxis' ||
+            !chart.chart3d ||
             !chart.is3d()
         ) {
             return pos;
@@ -141,7 +143,7 @@ class Axis3DAdditions {
                 isTitle && (axis.options.title as any).skew3d,
                 (axis.options.labels as any).skew3d
             ),
-            frame = chart.frame3d,
+            frame = chart.chart3d.frame3d,
             plotLeft = chart.plotLeft,
             plotRight = chart.plotWidth + plotLeft,
             plotTop = chart.plotTop,
@@ -151,7 +153,7 @@ class Axis3DAdditions {
             reverseFlap = false,
             offsetX = 0,
             offsetY = 0,
-            vecX,
+            vecX: Highcharts.Position3dObject,
             vecY = { x: 0, y: 1, z: 0 };
 
         pos = axis.axis3D.swapZ({ x: pos.x, y: pos.y, z: 0 });
@@ -529,7 +531,7 @@ class Axis3D {
         this: Axis,
         e: {
             e: Highcharts.PointerEventObject;
-            point: Highcharts.Point;
+            point: Point;
         }
     ): void {
         const axis = this;
@@ -637,7 +639,11 @@ class Axis3D {
         );
 
         // Do not do this if the chart is not 3D
-        if (!chart.is3d() || axis.coll === 'colorAxis') {
+        if (
+            axis.coll === 'colorAxis' ||
+            !chart.chart3d ||
+            !chart.is3d()
+        ) {
             return path;
         }
 
@@ -647,7 +653,7 @@ class Axis3D {
 
         var options3d = (chart.options.chart as any).options3d,
             d = axis.isZAxis ? chart.plotWidth : options3d.depth,
-            frame = chart.frame3d,
+            frame = chart.chart3d.frame3d,
             startSegment = path[0],
             endSegment = path[1],
             pArr,

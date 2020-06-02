@@ -49,7 +49,7 @@ declare global {
             pointAttribs: ColorMapSeries['pointAttribs'];
             trackerGroups: ColorMapSeries['trackerGroups'];
         }
-        interface Point {
+        interface PointLike {
             dataLabelOnNull?: ColorMapPoint['dataLabelOnNull'];
         }
         let colorMapPointMixin: ColorMapPointMixin;

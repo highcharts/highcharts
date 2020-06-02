@@ -10,10 +10,13 @@
 
 'use strict';
 
-import type SVGPath from '../parts/SVGPath';
+import type { AxisType } from './axis/types';
+import type Chart from './Chart';
+import type SVGPath from './SVGPath';
 import H from './Globals.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 import Point from './Point.js';
 import SVGElement from './SVGElement.js';
 import U from './Utilities.js';
@@ -129,10 +132,10 @@ declare global {
             public type: string;
             public userOptions: SeriesOptionsType;
             public visible: boolean;
-            public xAxis: Axis;
+            public xAxis: AxisType;
             public xData?: Array<number>;
             public xIncrement?: (number|null);
-            public yAxis: Axis;
+            public yAxis: AxisType;
             public yData?: (
                 Array<(number|null|undefined)>|
                 Array<Array<(number|null|undefined)>>
@@ -255,7 +258,7 @@ declare global {
             ): boolean;
             public updateParallelArrays(point: Point, i: (number|string)): void;
         }
-        interface Chart {
+        interface ChartLike {
             runTrackerClick?: boolean;
         }
         interface DataExtremesObject {
@@ -282,7 +285,7 @@ declare global {
         interface LineSeriesOptions extends SeriesOptions {
             states?: SeriesStatesOptionsObject<LineSeries>;
         }
-        interface Point {
+        interface PointLike {
             category?: string;
             clientX?: number;
             dataGroup?: DataGroupingInfoObject;
@@ -746,9 +749,7 @@ declare global {
 
 ''; // detach doclets above
 
-var defaultOptions = H.defaultOptions,
-    defaultPlotOptions = H.defaultPlotOptions,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     win = H.win;
 
 /**
@@ -3325,7 +3326,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
         sorted: true, // requires the data to be sorted
         init: function (
             this: Highcharts.Series,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.SeriesOptionsType
         ): void {
 
@@ -3635,7 +3636,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         updateParallelArrays: function (
             this: Highcharts.Series,
-            point: Highcharts.Point,
+            point: Point,
             i: (number|string)
         ): void {
             var series = point.series,
@@ -3974,7 +3975,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 this.getCyclic(
                     'color',
                     this.options.color ||
-                    (defaultPlotOptions as any)[this.type].color,
+                    (defaultOptions.plotOptions as any)[this.type].color,
                     this.chart.options.colors
                 );
             }
@@ -3989,7 +3990,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         getPointsCollection: function (
             this: Highcharts.Series
-        ): Array<Highcharts.Point> {
+        ): Array<Point> {
             return (this.hasGroupedData ? this.points : this.data) || [];
         },
 
@@ -4048,7 +4049,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     'name' : 'index';
 
                 matchingPoint = find(oldData, function (
-                    oldPoint: Highcharts.Point
+                    oldPoint: Point
                 ): boolean {
                     return !oldPoint.touched && (oldPoint as any)[matchKey] ===
                         (optionsObject as any)[matchKey];
@@ -4237,7 +4238,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 succeeded = false;
             }
 
-            oldData.forEach(function (point: Highcharts.Point): void {
+            oldData.forEach(function (point: Point): void {
                 if (point) {
                     point.touched = false;
                 }
@@ -4797,7 +4798,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
          *
          * @private
          * @function Highcharts.Series#generatePoints
-         * @return {void}
          */
         generatePoints: function (this: Highcharts.Series): void {
             var series = this,
@@ -4818,7 +4818,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 i;
 
             if (!data && !hasGroupedData) {
-                var arr = [] as Array<Highcharts.Point>;
+                var arr = [] as Array<Point>;
 
                 arr.length = (dataOptions as any).length;
                 data = series.data = arr;
@@ -5366,15 +5366,15 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         getValidPoints: function (
             this: Highcharts.Series,
-            points?: Array<Highcharts.Point>,
+            points?: Array<Point>,
             insideOnly?: boolean,
             allowNull?: boolean
-        ): Array<Highcharts.Point> {
+        ): Array<Point> {
             var chart = this.chart;
 
             // #3916, #5029, #5085
             return (points || this.points || []).filter(
-                function isValidPoint(point: Highcharts.Point): boolean {
+                function isValidPoint(point: Point): boolean {
                     if (insideOnly && !chart.isInsidePlot(
                         point.plotX as any,
                         point.plotY as any,
@@ -5412,7 +5412,9 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 inverted = chart.inverted,
                 xAxis = series.xAxis,
                 yAxis = xAxis && series.yAxis,
-                clipBox;
+                clipBox,
+                scrollablePlotAreaOptions =
+                    (chart.options.chart as any).scrollablePlotArea || {};
 
             if (animation && options.clip === false && yAxis) {
                 // support for not clipped series animation (#10450)
@@ -5434,7 +5436,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
 
                 if (finalBox) {
                     clipBox.width = chart.plotSizeX as any;
-                    clipBox.x = 0;
+                    clipBox.x = (chart.scrollablePixelsX || 0) *
+                        (scrollablePlotAreaOptions.scrollPositionX || 0);
                 }
             }
 
@@ -5452,7 +5455,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * @private
          * @function Highcharts.Series#setClip
          * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
-         * @return {void}
          */
         setClip: function (
             this: Highcharts.Series,
@@ -5564,8 +5566,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
          *
          * @param {boolean} [init]
          *        Initialize the animation.
-         *
-         * @return {void}
          */
         animate: function (this: Highcharts.Series, init?: boolean): void {
             var series = this,
@@ -5606,7 +5606,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
          *
          * @private
          * @function Highcharts.Series#afterAnimate
-         * @return {void}
          * @fires Highcharts.Series#event:afterAnimate
          */
         afterAnimate: function (this: Highcharts.Series): void {
@@ -5788,7 +5787,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         markerAttribs: function (
             this: Highcharts.Series,
-            point: Highcharts.Point,
+            point: Point,
             state?: string
         ): Highcharts.SVGAttributes {
             var seriesOptions = this.options,
@@ -5864,7 +5863,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         pointAttribs: function (
             this: Highcharts.Series,
-            point?: Highcharts.Point,
+            point?: Point,
             state?: string
         ): Highcharts.SVGAttributes {
             var seriesMarkerOptions = this.options.marker,
@@ -6050,7 +6049,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         getGraphPath: function (
             this: Highcharts.Series,
-            points: Array<Highcharts.Point>,
+            points: Array<Point>,
             nullsAsZeroes?: boolean,
             connectCliffs?: boolean
         ): SVGPath {
@@ -6201,8 +6200,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
          * positions and attributes.
          *
          * @function Highcharts.Series#drawGraph
-         *
-         * @return {void}
          */
         drawGraph: function (this: Highcharts.Series): void {
             var series = this,
@@ -6883,7 +6880,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             this: Highcharts.Series,
             e: Highcharts.PointerEventObject,
             compareX?: boolean
-        ): (Highcharts.Point|undefined) {
+        ): (Point|undefined) {
             var series = this,
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
@@ -6928,7 +6925,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
              * @private
              */
             function _kdtree(
-                points: Array<Highcharts.Point>,
+                points: Array<Point>,
                 depth: number,
                 dimensions: number
             ): (Highcharts.KDNode|undefined) {
@@ -6942,10 +6939,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                     axis = series.kdAxisArray[depth % dimensions];
 
                     // sort point array
-                    points.sort(function (
-                        a: Highcharts.Point,
-                        b: Highcharts.Point
-                    ): number {
+                    points.sort(function (a: Point, b: Point): number {
                         return (a as any)[axis] - (b as any)[axis];
                     });
 
@@ -7007,7 +7001,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
             point: Highcharts.KDPointSearchObject,
             compareX?: boolean,
             e?: Highcharts.PointerEventObject
-        ): (Highcharts.Point|undefined) {
+        ): (Point|undefined) {
             var series = this,
                 kdX = this.kdAxisArray[0],
                 kdY = this.kdAxisArray[1],
@@ -7021,7 +7015,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
              */
             function setDistance(
                 p1: Highcharts.KDPointSearchObject,
-                p2: Highcharts.Point
+                p2: Point
             ): void {
                 var x = (defined((p1 as any)[kdX]) &&
                         defined((p2 as any)[kdX])) ?
@@ -7045,7 +7039,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 tree: Highcharts.KDNode,
                 depth: number,
                 dimensions: number
-            ): Highcharts.Point {
+            ): Point {
                 var point = tree.point,
                     axis = series.kdAxisArray[depth % dimensions],
                     tdist,
@@ -7139,7 +7133,7 @@ H.Series = seriesType<Highcharts.LineSeries>(
          */
         isPointInside: function (
             this: Highcharts.Series,
-            point: (Highcharts.Dictionary<number>|Highcharts.Point)
+            point: (Highcharts.Dictionary<number>|Point)
         ): boolean {
             const isInside =
                 typeof point.plotY !== 'undefined' &&

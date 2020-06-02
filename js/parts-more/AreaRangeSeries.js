@@ -80,8 +80,8 @@ seriesType('arearange', 'area', {
      * @private
      */
     dataLabels: {
-        align: null,
-        verticalAlign: null,
+        align: void 0,
+        verticalAlign: void 0,
         /**
          * X offset of the lower data labels relative to the point value.
          *

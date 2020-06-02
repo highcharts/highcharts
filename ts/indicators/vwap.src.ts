@@ -12,7 +12,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import type Chart from '../parts/Chart';
 
 /**
  * Internal types
@@ -123,7 +123,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
             params: Highcharts.VWAPIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var indicator = this,
-                chart: Highcharts.Chart = series.chart,
+                chart: Chart = series.chart,
                 xValues: Array<number> = (series.xData as any),
                 yValues: (
                     Array<number>|Array<[number, number, number, number]>

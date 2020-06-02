@@ -14,7 +14,11 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import Point from '../parts/Point.js';
 import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
@@ -169,7 +173,7 @@ declare global {
             clusters: Array<ClusterAndNoiseObject>;
             noise: Array<ClusterAndNoiseObject>;
         }
-        interface Point {
+        interface PointLike {
             isCluster?: boolean;
             clusteredData?: Array<MarkerClusterSplitDataObject>;
             clusterPointsAmount?: number;
@@ -562,8 +566,8 @@ var clusterDefaultOptions = {
     }
 };
 
-(H.defaultOptions.plotOptions || {}).series = merge(
-    (H.defaultOptions.plotOptions || {}).series,
+(defaultOptions.plotOptions || {}).series = merge(
+    (defaultOptions.plotOptions || {}).series,
     {
         cluster: clusterDefaultOptions,
         tooltip: {
@@ -841,37 +845,38 @@ function getStateId(): string {
 
 // Cluster symbol.
 SVGRenderer.prototype.symbols.cluster = function (
-    this: Highcharts.SVGRenderer,
     x: number,
     y: number,
     width: number,
     height: number
-): Highcharts.SVGElement {
+): SVGPath {
     var w = width / 2,
         h = height / 2,
         outerWidth = 1,
         space = 1,
-        inner, outer1, outer2;
+        inner: SVGPath,
+        outer1: SVGPath,
+        outer2: SVGPath;
 
     inner = this.arc(x + w, y + h, w - space * 4, h - space * 4, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         open: false
-    } as any);
+    });
 
     outer1 = this.arc(x + w, y + h, w - space * 3, h - space * 3, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         innerR: w - outerWidth * 2,
         open: false
-    } as any);
+    });
 
     outer2 = this.arc(x + w, y + h, w - space, h - space, {
         start: Math.PI * 0.5,
         end: Math.PI * 2.5,
         innerR: w,
         open: false
-    } as any);
+    });
 
     return outer2.concat(outer1, inner);
 };
@@ -1138,13 +1143,13 @@ Scatter.prototype.getRealExtremes = function (
 };
 
 Scatter.prototype.onDrillToCluster = function (
-    this: Highcharts.Point,
+    this: Point,
     event: Highcharts.PointClickEventObject
 ): void {
     var point = event.point || event.target;
 
     point.firePointEvent('drillToCluster', event, function (
-        this: Highcharts.Point,
+        this: Point,
         e: Highcharts.PointClickEventObject
     ): void {
         var point = e.point || e.target,
@@ -2005,7 +2010,7 @@ Scatter.prototype.destroyClusteredData = function (
 
     // Clear previous groups.
     (clusteredSeriesData || []).forEach(function (
-        point: (Highcharts.Point | null)
+        point: (Point | null)
     ): void {
         if (point && point.destroy) {
             point.destroy();
@@ -2028,7 +2033,7 @@ Scatter.prototype.hideClusteredData = function (
         );
 
     (clusteredSeriesData || []).forEach(function (
-        point: (Highcharts.Point | null)
+        point: (Point | null)
     ): void {
         // If an old point is used in animation hide it, otherwise destroy.
         if (
@@ -2281,9 +2286,7 @@ Scatter.prototype.generatePoints = function (
 };
 
 // Handle animation.
-addEvent(H.Chart, 'render', function (
-    this: Highcharts.Chart
-): void {
+addEvent(Chart, 'render', function (): void {
     var chart = this;
 
     (chart.series || []).forEach(function (
@@ -2318,9 +2321,7 @@ addEvent(H.Chart, 'render', function (
 
 // Override point prototype to throw a warning when trying to update
 // clustered point.
-addEvent(Point, 'update', function (
-    this: Highcharts.Point
-): (boolean | void) {
+addEvent(Point, 'update', function (): (boolean | void) {
     if (this.dataGroup) {
         error(
             'Highcharts marker-clusters module: ' +
@@ -2376,7 +2377,6 @@ addEvent(Series, 'afterRender', function (
 });
 
 addEvent(Point, 'drillToCluster', function (
-    this: Highcharts.Point,
     event: Highcharts.PointClickEventObject
 ): void {
     var point = event.point || event.target,

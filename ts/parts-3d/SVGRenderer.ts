@@ -918,7 +918,7 @@ SVGRenderer.prototype.arc3d = function (
                 hasCA = true;
             }
         }
-        return hasCA ? ca : (false as any);
+        return hasCA ? [ca, params] : (false as any);
     }
 
     attribs = merge(attribs);
@@ -1038,11 +1038,13 @@ SVGRenderer.prototype.arc3d = function (
         this: Highcharts.SVGElement,
         params?: (string|Highcharts.SVGAttributes)
     ): (number|string|Highcharts.SVGElement) {
-        var ca;
+        var ca, paramArr;
 
         if (typeof params === 'object') {
-            ca = suckOutCustom(params);
-            if (ca) {
+            paramArr = suckOutCustom(params);
+            if (paramArr) {
+                ca = paramArr[0];
+                arguments[0] = paramArr[1];
                 extend(wrapper.attribs, ca);
                 wrapper.setPaths(wrapper.attribs as any);
             }
@@ -1058,7 +1060,7 @@ SVGRenderer.prototype.arc3d = function (
         animation?: (boolean|Highcharts.AnimationOptionsObject),
         complete?: Function
     ): Highcharts.SVGElement {
-        var ca,
+        var paramArr,
             from = this.attribs,
             to: Highcharts.SVGAttributes,
             anim,
@@ -1074,15 +1076,15 @@ SVGRenderer.prototype.arc3d = function (
         anim = animObject(pick(animation, this.renderer.globalAnimation));
 
         if (anim.duration) {
-            ca = suckOutCustom(params);
+            paramArr = suckOutCustom(params);
             // Params need to have a property in order for the step to run
             // (#5765, #7097, #7437)
             wrapper[randomProp] = 0;
             params[randomProp] = 1;
             wrapper[randomProp + 'Setter'] = H.noop;
 
-            if (ca) {
-                to = ca;
+            if (paramArr) {
+                to = paramArr[0]; // custom attr
                 anim.step = function (a: unknown, fx: Highcharts.Fx): void {
 
                     /**

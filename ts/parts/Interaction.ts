@@ -11,7 +11,30 @@
 'use strict';
 
 import type SVGPath from '../parts/SVGPath';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import Legend from './Legend.js';
+import O from './Options.js';
+const {
+    defaultOptions
+} = O;
+import Point from './Point.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    extend,
+    fireEvent,
+    isArray,
+    isFunction,
+    isNumber,
+    isObject,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -22,7 +45,7 @@ declare global {
         interface Axis {
             panningState?: AxisPanningState;
         }
-        interface Chart {
+        interface ChartLike {
             resetZoomButton?: SVGElement;
             pan(e: PointerEventObject, panning: boolean|PanningOptions): void;
             showResetZoom(): void;
@@ -42,7 +65,7 @@ declare global {
             startMax: (number);
             isDirty?: boolean;
         }
-        interface Point {
+        interface PointLike {
             className?: string;
             events?: SeriesEventsOptions;
             hasImportedEvents?: boolean;
@@ -53,7 +76,7 @@ declare global {
             importEvents(): void;
             onMouseOut(): void;
             onMouseOver(e?: PointerEventObject): void;
-            select(selected?: boolean, accumulate?: boolean): void;
+            select(selected?: boolean | null, accumulate?: boolean): void;
             setState(
                 state?: string,
                 move?: boolean
@@ -158,33 +181,9 @@ declare global {
  *        Event that occured.
  */
 
-import Legend from './Legend.js';
-import Point from './Point.js';
-import U from './Utilities.js';
-const {
-    addEvent,
-    createElement,
-    css,
-    defined,
-    extend,
-    fireEvent,
-    isArray,
-    isFunction,
-    isNumber,
-    isObject,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-import './Chart.js';
-import './Options.js';
 import './Series.js';
 
-var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
-    defaultPlotOptions = H.defaultPlotOptions,
-    hasTouch = H.hasTouch,
+var hasTouch = H.hasTouch,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
     svg = H.svg,
@@ -224,7 +223,7 @@ TrackerMixin = H.TrackerMixin = {
             dataLabels;
 
         // Add reference to the point
-        series.points.forEach(function (point: Highcharts.Point): void {
+        series.points.forEach(function (point: Point): void {
             dataLabels = (
                 isArray(point.dataLabels) ?
                     point.dataLabels :
@@ -413,7 +412,7 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#setItemEvents
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
      * @param {Highcharts.SVGElement} legendItem
      * @param {boolean} [useHTML=false]
      * @fires Highcharts.Point#event:legendItemClick
@@ -421,7 +420,7 @@ extend(Legend.prototype, {
      */
     setItemEvents: function (
         this: Highcharts.Legend,
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
         legendItem: Highcharts.SVGElement,
         useHTML?: boolean
     ): void {
@@ -446,7 +445,7 @@ extend(Legend.prototype, {
                         if (item.visible) {
                             legend.allItems.forEach(function (
                                 inactiveItem: (
-                                    Highcharts.BubbleLegend|Highcharts.Point|
+                                    Highcharts.BubbleLegend|Point|
                                     Highcharts.Series
                                 )
                             ): void {
@@ -484,7 +483,7 @@ extend(Legend.prototype, {
 
                         legend.allItems.forEach(function (
                             inactiveItem: (
-                                Highcharts.BubbleLegend|Highcharts.Point|
+                                Highcharts.BubbleLegend|Point|
                                 Highcharts.Series
                             )
                         ): void {
@@ -508,7 +507,7 @@ extend(Legend.prototype, {
                                 // Reset inactive state
                                 legend.allItems.forEach(function (
                                     inactiveItem: (
-                                        Highcharts.BubbleLegend|Highcharts.Point|
+                                        Highcharts.BubbleLegend|Point|
                                         Highcharts.Series
                                     )
                                 ): void {
@@ -551,12 +550,12 @@ extend(Legend.prototype, {
     /**
      * @private
      * @function Highcharts.Legend#createCheckboxForItem
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
      * @fires Highcharts.Series#event:checkboxClick
      */
     createCheckboxForItem: function (
         this: Highcharts.Legend,
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
     ): void {
         var legend = this;
 
@@ -599,7 +598,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @fires Highcharts.Chart#event:afterShowResetZoom
      * @fires Highcharts.Chart#event:beforeShowResetZoom
      */
-    showResetZoom: function (this: Highcharts.Chart): void {
+    showResetZoom: function (this: Chart): void {
         var chart = this,
             lang = defaultOptions.lang,
             btnOptions = (chart.options.chart as any).resetZoomButton,
@@ -649,7 +648,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      *
      * @fires Highcharts.Chart#event:selection
      */
-    zoomOut: function (this: Highcharts.Chart): void {
+    zoomOut: function (this: Chart): void {
         fireEvent(this, 'selection', { resetSelection: true }, this.zoom);
     },
 
@@ -661,7 +660,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @param {Highcharts.SelectEventObject} event
      */
     zoom: function (
-        this: Highcharts.Chart,
+        this: Chart,
         event: Highcharts.SelectEventObject
     ): void {
         var chart = this,
@@ -746,7 +745,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
      * @param {string} panning
      */
     pan: function (
-        this: Highcharts.Chart,
+        this: Chart,
         e: Highcharts.PointerEventObject,
         panning: Highcharts.PanningOptions|boolean
     ): void {
@@ -778,7 +777,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
 
             // remove active points for shared tooltip
             if (hoverPoints) {
-                hoverPoints.forEach(function (point: Highcharts.Point): void {
+                hoverPoints.forEach(function (point: Point): void {
                     point.setState();
                 });
             }
@@ -885,9 +884,9 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 axis.panningState = panningState;
 
                 // It is not necessary to calculate extremes on ordinal axis,
-                // because the are already calculated, so we don't want to
+                // because they are already calculated, so we don't want to
                 // override them.
-                if (!axisOpt.ordinal) {
+                if (!axis.isOrdinal) {
                     // If the new range spills over, either to the min or max,
                     // adjust the new range.
                     spill = paddedMin - newMin;
@@ -979,7 +978,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @fires Highcharts.Point#event:unselect
      */
     select: function (
-        this: Highcharts.Point,
+        this: Point,
         selected?: boolean,
         accumulate?: boolean
     ): void {
@@ -1015,7 +1014,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 // unselect all other points unless Ctrl or Cmd + click
                 if (!accumulate) {
                     chart.getSelectedPoints().forEach(function (
-                        loopPoint: Highcharts.Point
+                        loopPoint: Point
                     ): void {
                         var loopSeries = loopPoint.series;
 
@@ -1054,7 +1053,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *        The event arguments.
      */
     onMouseOver: function (
-        this: Highcharts.Point,
+        this: Point,
         e?: Highcharts.PointerEventObject
     ): void {
         var point = this,
@@ -1076,7 +1075,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @function Highcharts.Point#onMouseOut
      * @fires Highcharts.Point#event:mouseOut
      */
-    onMouseOut: function (this: Highcharts.Point): void {
+    onMouseOut: function (this: Point): void {
         var point = this,
             chart = point.series.chart;
 
@@ -1084,7 +1083,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
 
         if (!point.series.options.inactiveOtherPoints) {
             (chart.hoverPoints || []).forEach(function (
-                p: Highcharts.Point
+                p: Point
             ): void {
                 p.setState();
             });
@@ -1100,7 +1099,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @private
      * @function Highcharts.Point#importEvents
      */
-    importEvents: function (this: Highcharts.Point): void {
+    importEvents: function (this: Point): void {
         if (!this.hasImportedEvents) {
             var point = this,
                 options = merge(
@@ -1139,7 +1138,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      * @fires Highcharts.Point#event:afterSetState
      */
     setState: function (
-        this: Highcharts.Point,
+        this: Point,
         state?: (Highcharts.PointStateValue|''),
         move?: boolean
     ): void {
@@ -1151,7 +1150,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
                 {}
             ),
             markerOptions = (
-                (defaultPlotOptions as any)[series.type as any].marker &&
+                (defaultOptions.plotOptions as any)[series.type as any].marker &&
                 series.options.marker
             ),
             normalDisabled = (markerOptions && markerOptions.enabled === false),
@@ -1394,7 +1393,7 @@ extend(Point.prototype, /** @lends Highcharts.Point.prototype */ {
      *         The path definition.
      */
     haloPath: function (
-        this: Highcharts.Point,
+        this: Point,
         size: number
     ): SVGPath {
         var series = this.series,
@@ -1640,7 +1639,7 @@ extend(Series.prototype, /** @lends Highcharts.Series.prototype */ {
         this: Highcharts.Series,
         state?: string
     ): void {
-        this.points.forEach(function (point: Highcharts.Point): void {
+        this.points.forEach(function (point: Point): void {
             if (point.setState) {
                 point.setState(state);
             }

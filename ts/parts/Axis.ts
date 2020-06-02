@@ -11,8 +11,10 @@
 'use strict';
 
 import type { AxisComposition, AxisLike } from './axis/types';
-import type SVGPath from '../parts/SVGPath';
-import type ZAxis from '../parts-3d/ZAxis';
+import type Chart from './Chart';
+import type PlotLineOrBand from './PlotLineOrBand';
+import type Point from './Point';
+import type SVGPath from './SVGPath';
 import Color from './Color.js';
 import H from './Globals.js';
 import Tick from './Tick.js';
@@ -58,7 +60,7 @@ declare global {
             'scrollbar'|'traverseUpButton'|'zoom'
         );
         type AxisMinorTickPositionValue = ('inside'|'outside');
-        type AxisOptions = (XAxisOptions|YAxisOptions|ZAxis.Options);
+        type AxisOptions = (XAxisOptions|YAxisOptions);
         type AxisTickmarkPlacementValue = ('between'|'on');
         type AxisTickPositionValue = ('inside'|'outside');
         type AxisTitleAlignValue = ('high'|'low'|'middle');
@@ -318,7 +320,6 @@ declare global {
             public axisPointRange?: number;
             public axisTitle?: SVGElement;
             public axisTitleMargin?: number;
-            public beforeSetTickPositions?: Function;
             public bottom: number;
             public categories: Array<string>;
             public chart: Chart;
@@ -706,10 +707,10 @@ declare global {
  * @return {string}
  */
 
-import './Options.js';
+import O from './Options.js';
+const { defaultOptions } = O;
 
-var defaultOptions = H.defaultOptions,
-    deg2rad = H.deg2rad;
+var deg2rad = H.deg2rad;
 
 /**
  * Create a new axis object. Called internally when instanciating a new chart or
@@ -2020,7 +2021,7 @@ class Axis implements AxisComposition, AxisLike {
          * So a minRange of 1 means that the axis can be zoomed to 10-100,
          * 100-1000, 1000-10000 etc.
          *
-         * Note that the `minPadding`, `maxPadding`, `startOnTick` and
+         * **Note**: The `minPadding`, `maxPadding`, `startOnTick` and
          * `endOnTick` settings also affect how the extremes of the axis
          * are computed.
          *
@@ -3821,7 +3822,7 @@ class Axis implements AxisComposition, AxisLike {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
+    public constructor(chart: Chart, userOptions: DeepPartial<Highcharts.AxisOptions>) {
         this.init(chart, userOptions);
     }
 
@@ -3843,7 +3844,7 @@ class Axis implements AxisComposition, AxisLike {
     public axisTitleMargin?: number;
     public bottom: number = void 0 as any;
     public categories: Array<string> = void 0 as any;
-    public chart: Highcharts.Chart = void 0 as any;
+    public chart: Chart = void 0 as any;
     public closestPointRange: number = void 0 as any;
     public coll: string = void 0 as any;
     public cross?: Highcharts.SVGElement;
@@ -3957,7 +3958,7 @@ class Axis implements AxisComposition, AxisLike {
      * @fires Highcharts.Axis#event:afterInit
      * @fires Highcharts.Axis#event:init
      */
-    public init(chart: Highcharts.Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
+    public init(chart: Chart, userOptions: DeepPartial<Highcharts.AxisOptions>): void {
 
         var isXAxis = userOptions.isX,
             axis: Highcharts.Axis = this as any;
@@ -4207,7 +4208,7 @@ class Axis implements AxisComposition, AxisLike {
      *
      * @fires Highcharts.Axis#event:afterSetOptions
      */
-    public setOptions(userOptions: Highcharts.AxisOptions): void {
+    public setOptions(userOptions: DeepPartial<Highcharts.AxisOptions>): void {
         this.options = merge(
             Axis.defaultOptions,
             ((this.coll === 'yAxis') as any) && Axis.defaultYAxisOptions,
@@ -5009,7 +5010,7 @@ class Axis implements AxisComposition, AxisLike {
      * @return {number}
      * The X value that the point is given.
      */
-    public nameToX(point: Highcharts.Point): (number|undefined) {
+    public nameToX(point: Point): (number|undefined) {
         var explicitCategories = isArray(this.categories),
             names = explicitCategories ? this.categories : this.names,
             nameX = point.options.x,
@@ -5089,7 +5090,7 @@ class Axis implements AxisComposition, AxisLike {
                 }
 
                 series.data.forEach(function (
-                    point: Highcharts.Point,
+                    point: Point,
                     i: number
                 ): void { // #9487
                     var x;
@@ -5484,14 +5485,7 @@ class Axis implements AxisComposition, AxisLike {
         axis.setAxisTranslation(true);
 
         // hook for ordinal axes and radial axes
-        if (axis.beforeSetTickPositions) {
-            axis.beforeSetTickPositions();
-        }
-
-        // hook for extensions, used in Highstock ordinal axes
-        if (axis.ordinal) {
-            axis.tickInterval = axis.ordinal.postProcessTickInterval(axis.tickInterval);
-        }
+        fireEvent(this, 'initialAxisTranslation');
 
         // In column-like charts, don't cramp in more ticks than there are
         // points (#1943, #4184)
@@ -7274,11 +7268,11 @@ class Axis implements AxisComposition, AxisLike {
         // Mark all elements inActive before we go over and mark the active ones
         [ticks, minorTicks, alternateBands].forEach(function (
             coll: (
-                Highcharts.Dictionary<Highcharts.Tick>|
-                Highcharts.Dictionary<Highcharts.PlotLineOrBand>
+                Highcharts.Dictionary<Tick>|
+                Highcharts.Dictionary<PlotLineOrBand>
             )
         ): void {
-            objectEach(coll, function (tick: Highcharts.Tick): void {
+            objectEach(coll, function (tick): void {
                 tick.isActive = false;
             });
         });
@@ -7338,7 +7332,8 @@ class Axis implements AxisComposition, AxisLike {
                         alternateBands[pos].options = {
                             from: log ? log.lin2log(from) : from,
                             to: log ? log.lin2log(to) : to,
-                            color: alternateGridColor
+                            color: alternateGridColor,
+                            className: 'highcharts-alternate-grid'
                         };
                         alternateBands[pos].render();
                         alternateBands[pos].isActive = true;
@@ -7387,10 +7382,7 @@ class Axis implements AxisComposition, AxisLike {
 
                 };
 
-            objectEach(coll, function (
-                tick: Highcharts.Tick,
-                pos: string
-            ): void {
+            objectEach(coll, function (tick, pos): void {
                 if (!tick.isActive) {
                     // Render to zero opacity
                     tick.render(pos as any, false, 0);
@@ -7565,7 +7557,7 @@ class Axis implements AxisComposition, AxisLike {
      * @fires Highcharts.Axis#event:afterDrawCrosshair
      * @fires Highcharts.Axis#event:drawCrosshair
      */
-    public drawCrosshair(e?: Highcharts.PointerEventObject, point?: Highcharts.Point): void {
+    public drawCrosshair(e?: Highcharts.PointerEventObject, point?: Point): void {
 
         var path,
             options = this.crosshair,

@@ -21,6 +21,7 @@ const {
     addEvent,
     animObject,
     erase,
+    getOptions,
     merge,
     pick,
     removeEvent,
@@ -62,7 +63,7 @@ declare global {
             x?: number;
             y?: number;
         }
-        interface Point {
+        interface PointLike {
             calculatePatternDimensions(pattern: PatternOptionsObject): void;
         }
         interface SVGRenderer {
@@ -192,7 +193,7 @@ declare global {
 // Add the predefined patterns
 H.patterns = ((): Array<Highcharts.PatternOptionsObject> => {
     const patterns: Array<Highcharts.PatternOptionsObject> = [],
-        colors: Array<string> = H.getOptions().colors as any;
+        colors: Array<string> = getOptions().colors as any;
 
     [
         'M 0 0 L 10 10 M 9 -1 L 11 1 M -1 9 L 1 11',
@@ -526,7 +527,7 @@ addEvent(H.Series, 'render', function (): void {
     var isResizing = this.chart.isResizing;
 
     if (this.isDirtyData || isResizing || !this.chart.hasRendered) {
-        (this.points || []).forEach(function (point: Highcharts.Point): void {
+        (this.points || []).forEach(function (point: Point): void {
             var colorOptions = point.options && point.options.color;
 
             if (
@@ -694,7 +695,7 @@ addEvent(H.Chart, 'endResize', function (): void {
         // We have non-default patterns to fix. Find them by looping through
         // all points.
         this.series.forEach(function (series: Highcharts.Series): void {
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (point: Point): void {
                 var colorOptions = point.options && point.options.color;
 
                 if (

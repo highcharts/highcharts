@@ -8,6 +8,7 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import Pane from '../parts-more/Pane.js';
 import Pointer from '../parts/Pointer.js';
@@ -687,7 +688,7 @@ SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
     wrapper.clipPath = clipPath;
     return wrapper;
 };
-addEvent(H.Chart, 'getAxes', function () {
+addEvent(Chart, 'getAxes', function () {
     if (!this.pane) {
         this.pane = [];
     }
@@ -696,7 +697,7 @@ addEvent(H.Chart, 'getAxes', function () {
         paneOptions, this);
     }, this);
 });
-addEvent(H.Chart, 'afterDrawChartBox', function () {
+addEvent(Chart, 'afterDrawChartBox', function () {
     this.pane.forEach(function (pane) {
         pane.render();
     });
@@ -716,7 +717,7 @@ addEvent(H.Series, 'afterInit', function () {
  * responsiveness and chart.update.
  * @private
  */
-wrap(H.Chart.prototype, 'get', function (proceed, id) {
+wrap(Chart.prototype, 'get', function (proceed, id) {
     return find(this.pane, function (pane) {
         return pane.options.id === id;
     }) || proceed.call(this, id);

@@ -26,6 +26,7 @@ const {
     extend,
     find,
     format,
+    getOptions,
     isNumber,
     isString,
     merge,
@@ -43,13 +44,13 @@ declare global {
             crossLabel?: SVGElement;
             setCompare(compare?: string, redraw?: boolean): void;
         }
-        interface Chart {
+        interface ChartLike {
             _labelPanes?: Dictionary<Axis>;
         }
         interface Options {
             isStock?: boolean;
         }
-        interface Point {
+        interface PointLike {
             change?: number;
         }
         interface Series {
@@ -196,7 +197,7 @@ H.StockChart = H.stockChart = function (
         userOptions = options,
         // to increase performance, don't merge the data
         seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
+        defaultOptions = getOptions(),
         opposite,
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
@@ -619,7 +620,7 @@ addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
 // Extend crosshairs to also draw the label
 addEvent(Axis, 'afterDrawCrosshair', function (
     this: Highcharts.Axis,
-    event: { e: Highcharts.PointerEventObject; point: Highcharts.Point }
+    event: { e: Highcharts.PointerEventObject; point: Point }
 ): void {
 
     // Check if the label has to be drawn
@@ -744,12 +745,14 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     crossBox = crossLabel.getBBox();
 
     // now it is placed we can correct its position
-    if (horiz) {
-        if ((tickInside && !opposite) || (!tickInside && opposite)) {
-            posy = crossLabel.y - crossBox.height;
+    if (isNumber(crossLabel.y)) {
+        if (horiz) {
+            if ((tickInside && !opposite) || (!tickInside && opposite)) {
+                posy = crossLabel.y - crossBox.height;
+            }
+        } else {
+            posy = crossLabel.y - (crossBox.height / 2);
         }
-    } else {
-        posy = crossLabel.y - (crossBox.height / 2);
     }
 
     // check the edges
@@ -833,7 +836,7 @@ seriesProto.setCompare = function (
         function (
             this: Highcharts.Series,
             value?: number,
-            point?: Highcharts.Point
+            point?: Point
         ): (number|undefined) {
             var compareValue = this.compareValue;
 
@@ -993,7 +996,7 @@ Axis.prototype.setCompare = function (
  * @param {string} pointFormat
  */
 Point.prototype.tooltipFormatter = function (
-    this: Highcharts.Point,
+    this: Point,
     pointFormat: string
 ): string {
     var point = this;

@@ -12,8 +12,12 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { dateFormat } = O;
+import './TreeGridAxis.js';
 import U from '../parts/Utilities.js';
 const {
     isNumber,
@@ -39,7 +43,7 @@ declare global {
                 options: GanttPointOptions,
                 x: number
             ): GanttPoint;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class GanttSeries extends XRangeSeries {
             public data: Array<GanttPoint>;
@@ -89,12 +93,10 @@ declare global {
 
 import './CurrentDateIndicator.js';
 import '../modules/static-scale.src.js';
-import './TreeGridAxis.js';
 import './Pathfinder.js';
 import '../modules/xrange.src.js';
 
-var dateFormat = H.dateFormat,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     Series = H.Series,
     parent = seriesTypes.xrange;
 
@@ -350,7 +352,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
             this: Highcharts.GanttPoint,
             options: Highcharts.GanttPointOptions,
             x: number
-        ): Highcharts.Point {
+        ): Point {
             var point = this,
                 retVal = merge(options) as any;
 

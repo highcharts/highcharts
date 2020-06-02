@@ -10,12 +10,13 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
 import NavigationBindings from '../annotations/navigationBindings.js';
-var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick;
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, extend = U.extend, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, merge = U.merge, pick = U.pick, setOptions = U.setOptions;
 var win = H.win, DIV = 'div', SPAN = 'span', UL = 'ul', LI = 'li', PREFIX = 'highcharts-', activeClass = PREFIX + 'active';
-H.setOptions({
+setOptions({
     /**
      * @optionparent lang
      */
@@ -1248,12 +1249,11 @@ Toolbar.prototype.classMapping = {
     saveChart: PREFIX + 'save-chart',
     separator: PREFIX + 'separator'
 };
-extend(H.Chart.prototype, {
+extend(Chart.prototype, {
     /**
      * Verify if Toolbar should be added.
      * @private
      * @param {Highcharts.StockToolsOptions} - chart options
-     * @return {void}
      */
     setStockTools: function (options) {
         var chartOptions = this.options, lang = chartOptions.lang, guiOptions = merge(chartOptions.stockTools && chartOptions.stockTools.gui, options && options.gui), langOptions = lang.stockTools && lang.stockTools.gui;

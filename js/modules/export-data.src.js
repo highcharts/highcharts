@@ -13,7 +13,10 @@
 // - Set up systematic tests for all series types, paired with tests of the data
 //   module importing the same data.
 'use strict';
-import Highcharts from '../parts/Globals.js';
+import H from '../parts/Globals.js';
+var doc = H.doc, win = H.win;
+import U from '../parts/Utilities.js';
+var defined = U.defined, extend = U.extend, getOptions = U.getOptions, pick = U.pick, setOptions = U.setOptions;
 /**
  * Function callback to execute while data rows are processed for exporting.
  * This allows the modification of data rows before processed into the final
@@ -37,12 +40,9 @@ import Highcharts from '../parts/Globals.js';
 * @name Highcharts.ExportDataEventObject#dataRows
 * @type {Array<Array<string>>}
 */
-import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isObject = U.isObject, pick = U.pick;
-import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
-var win = Highcharts.win, doc = win.document, seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
+var seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
@@ -59,7 +59,7 @@ function htmlencode(html) {
         .replace(/'/g, '&#x27;')
         .replace(/\//g, '&#x2F;');
 }
-Highcharts.setOptions({
+setOptions({
     /**
      * Callback that fires while exporting data. This allows the modification of
      * data rows before processed into the final format.
@@ -806,7 +806,7 @@ Highcharts.Chart.prototype.viewData = function () {
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 // Add "Download CSV" to the exporting menu.
-var exportingOptions = Highcharts.getOptions().exporting;
+var exportingOptions = getOptions().exporting;
 if (exportingOptions) {
     extend(exportingOptions.menuItemDefinitions, {
         downloadCSV: {

@@ -10,9 +10,36 @@
 
 'use strict';
 
-import type Chart from '../parts/Chart.js';
+import type { AxisType } from '../parts/axis/types';
+import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
+const chartProto: Highcharts.AnnotationChart = Chart.prototype as any;
+import ControllableMixin from './controllable/controllableMixin.js';
+import ControllableRect from './controllable/ControllableRect.js';
+import ControllableCircle from './controllable/ControllableCircle.js';
+import ControllablePath from './controllable/ControllablePath.js';
+import ControllableImage from './controllable/ControllableImage.js';
+import ControllableLabel from './controllable/ControllableLabel.js';
+import ControlPoint from './ControlPoint.js';
+import EventEmitterMixin from './eventEmitterMixin.js';
 import H from '../parts/Globals.js';
+import MockPoint from './MockPoint.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    find,
+    fireEvent,
+    merge,
+    pick,
+    splat,
+    wrap
+} = U;
 
 /**
  * Internal types.
@@ -60,9 +87,9 @@ declare global {
         );
         interface AnnotationMockPointOptionsObject {
             x: number;
-            xAxis?: (number|string|Axis|null);
+            xAxis?: (number|string|AxisType|null);
             y: number;
-            yAxis?: (number|string|Axis|null);
+            yAxis?: (number|string|AxisType|null);
         }
         interface AnnotationPoint extends Point {
             series: AnnotationSeries;
@@ -169,34 +196,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    destroyObjectProperties,
-    erase,
-    extend,
-    find,
-    fireEvent,
-    merge,
-    pick,
-    splat,
-    wrap
-} = U;
-
-import '../parts/Chart.js';
-import ControllableMixin from './controllable/controllableMixin.js';
-import ControllableRect from './controllable/ControllableRect.js';
-import ControllableCircle from './controllable/ControllableCircle.js';
-import ControllablePath from './controllable/ControllablePath.js';
-import ControllableImage from './controllable/ControllableImage.js';
-import ControllableLabel from './controllable/ControllableLabel.js';
-import EventEmitterMixin from './eventEmitterMixin.js';
-import MockPoint from './MockPoint.js';
-import ControlPoint from './ControlPoint.js';
-
-var chartProto: Highcharts.AnnotationChart = H.Chart.prototype as any;
 
 /* *********************************************************************
  *
@@ -405,8 +404,8 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public annotation: ControllableMixin.Type['annotation'] = void 0 as any;
     public chart: Highcharts.AnnotationChart;
     public clipRect?: Highcharts.SVGElement;
-    public clipXAxis?: Highcharts.Axis;
-    public clipYAxis?: Highcharts.Axis;
+    public clipXAxis?: AxisType;
+    public clipYAxis?: AxisType;
     public coll: 'annotations' = 'annotations';
     public collection: ControllableMixin.Type['collection'] = void 0 as any;
     public controlPoints: Array<ControlPoint>;
@@ -503,15 +502,15 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public setClipAxes(): void {
         var xAxes = this.chart.xAxis,
             yAxes = this.chart.yAxis,
-            linkedAxes: Array<Highcharts.Axis> = ((
+            linkedAxes: Array<AxisType> = ((
                 this.options.labels || []
             ) as Array<(Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)>)
                 .concat(this.options.shapes || [])
                 .reduce(
                     function (
-                        axes: Array<Highcharts.Axis>,
+                        axes: Array<AxisType>,
                         labelOrShape: (Highcharts.AnnotationsLabelsOptions|Highcharts.AnnotationsShapesOptions)
-                    ): Array<Highcharts.Axis> {
+                    ): Array<AxisType> {
                         return [
                             xAxes[
                                 labelOrShape &&
@@ -1702,7 +1701,7 @@ chartProto.callbacks.push(function (
 } as any);
 
 wrap(
-    H.Pointer.prototype,
+    Pointer.prototype,
     'onContainerMouseDown',
     function (this: Annotation, proceed: Function): void {
         if (!this.chart.hasDraggedAnnotation) {
