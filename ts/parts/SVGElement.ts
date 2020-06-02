@@ -2181,7 +2181,7 @@ class SVGElement {
             ('' + this.attr('class'))
             .replace(
                 isString(className) ? 
-                new RegExp(`\\b${className}\\b`) :
+                new RegExp(`(^| )${className}( |$)`) :
                 className, ' ')
             .replace(/ +/g, ' ')
             .trim()
