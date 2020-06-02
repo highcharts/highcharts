@@ -799,7 +799,7 @@ seriesType<Highcharts.ColumnSeries>(
                 // handling the grouping of points in each category. This is
                 // done in the `setGroupedPoints` function.
                 Highcharts.objectEach(
-                    this.yAxis.stacks,
+                    this.yAxis.stacking && this.yAxis.stacking.stacks,
                     (stack: Highcharts.Dictionary<Highcharts.StackItem>): void => {
                         if (typeof point.x === 'number') {
                             const stackItem = stack[point.x.toString()];

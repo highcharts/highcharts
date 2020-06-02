@@ -71,7 +71,6 @@ declare global {
             alignOptions: AlignObject;
             axis: StackingAxis;
             cumulative?: number;
-            hasValidPoints: boolean;
             crop?: boolean;
             isNegative: boolean;
             label: SVGElement;
@@ -270,6 +269,7 @@ class StackItem {
     public axis: StackingAxis;
     public base?: string;
     public cumulative?: (null|number);
+    public hasValidPoints: boolean;
     public isNegative: boolean;
     public label?: Highcharts.SVGElement;
     public leftCliff: number;
