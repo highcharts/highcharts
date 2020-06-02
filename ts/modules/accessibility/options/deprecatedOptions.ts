@@ -91,25 +91,6 @@ declare global {
 /* eslint-disable valid-jsdoc */
 
 /**
- * Warn user that a deprecated option was used.
- * @private
- * @param {Highcharts.Chart} chart
- * @param {string} oldOption
- * @param {string} newOption
- */
-function warn(
-    chart: Chart,
-    oldOption: string,
-    newOption: string
-): void {
-    error(
-        'Highcharts: Deprecated option ' + oldOption +
-        ' used. This will be removed from future versions of Highcharts. Use ' +
-        newOption + ' instead.', false, chart
-    );
-}
-
-/**
  * Set a new option on a root prop, where the option is defined as an array of
  * suboptions.
  * @private
@@ -169,11 +150,14 @@ function deprecateFromOptionsMap(
                 mapToNewOptions[oldOptionKey],
                 val
             );
-            warn(
+            error(
+                32,
+                false,
                 chart,
-                rootOldAsArray.join('.') + '.' + oldOptionKey,
-                rootNewAsArray.join('.') + '.' +
-                mapToNewOptions[oldOptionKey].join('.')
+                {
+                    [`${rootOldAsArray.join('.')}.${oldOptionKey}`]:
+                        `${rootNewAsArray.join('.')}.${mapToNewOptions[oldOptionKey].join('.')}`
+                }
             );
         }
     });
@@ -190,7 +174,7 @@ function copyDeprecatedChartOptions(chart: Chart): void {
     ): void {
         if ((chartOptions as any)[prop]) {
             (a11yOptions as any)[prop] = (chartOptions as any)[prop];
-            warn(chart, 'chart.' + prop, 'accessibility.' + prop);
+            error(32, false, chart, { [`chart.${prop}`]: `accessibility.${prop}` });
         }
     });
 }
@@ -204,7 +188,7 @@ function copyDeprecatedAxisOptions(chart: Chart): void {
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            warn(chart, 'axis.description', 'axis.accessibility.description');
+            error(32, false, chart, { 'axis.description': 'axis.accessibility.description' });
         }
     });
 }
@@ -241,10 +225,11 @@ function copyDeprecatedSeriesOptions(chart: Chart): void {
                     oldOption === 'skipKeyboardNavigation' ?
                         !optionVal : optionVal
                 );
-                warn(
+                error(
+                    32,
+                    false,
                     chart,
-                    'series.' + oldOption, 'series.' +
-                    (oldToNewSeriesOptions as any)[oldOption].join('.')
+                    { [`series.${oldOption}`]: `series.${(oldToNewSeriesOptions as any)[oldOption].join('.')}` }
                 );
             }
         });
