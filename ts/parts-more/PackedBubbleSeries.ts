@@ -10,7 +10,25 @@
 
 'use strict';
 
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    defined,
+    extend,
+    extendClass,
+    fireEvent,
+    isArray,
+    isNumber,
+    merge,
+    pick,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -18,7 +36,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             getSelectedParentNodes(): Array<PackedBubblePoint>;
         }
         class PackedBubblePoint extends BubblePoint implements DragNodesPoint {
@@ -249,24 +267,6 @@ declare global {
  * @since 7.0.0
  */
 
-import Color from '../parts/Color.js';
-const color = Color.parse;
-import Point from '../parts/Point.js';
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    defined,
-    extend,
-    extendClass,
-    fireEvent,
-    isArray,
-    isNumber,
-    merge,
-    pick,
-    seriesType
-} = U;
-
 import '../parts/Axis.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
@@ -274,14 +274,11 @@ import '../modules/networkgraph/draggable-nodes.js';
 
 
 var Series = H.Series,
-    Chart = H.Chart,
     Reingold = H.layouts['reingold-fruchterman'],
     NetworkPoint = H.seriesTypes.bubble.prototype.pointClass,
     dragNodesMixin = H.dragNodesMixin;
 
-Chart.prototype.getSelectedParentNodes = function (
-    this: Highcharts.Chart
-): Array<Highcharts.PackedBubblePoint> {
+Chart.prototype.getSelectedParentNodes = function (): Array<Highcharts.PackedBubblePoint> {
     const chart = this,
         series = chart.series as Array<Highcharts.PackedBubbleSeries>,
         selectedParentsNodes: Array<Highcharts.PackedBubblePoint> = [];
@@ -1947,7 +1944,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
             eventType: string,
             eventArgs?: (Highcharts.Dictionary<any>|Event),
             defaultFunction?: (
-                Highcharts.EventCallbackFunction<Highcharts.Point>|Function
+                Highcharts.EventCallbackFunction<Point>|Function
             )
         ): void {
             const point = this,
