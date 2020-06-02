@@ -10,9 +10,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import '../parts/AreaSeries.js';
-var seriesType = H.seriesType;
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
 /**
  * @private
  * @class

@@ -15,6 +15,10 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 
 /**
  * @private
@@ -74,7 +78,7 @@ declare global {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
+seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
     /**
      * Chaikin Money Flow indicator (cmf).
      *
@@ -113,7 +117,7 @@ H.seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
          * otherwise false.
          */
         isValid: function (this: Highcharts.CMFIndicator): boolean {
-            var chart: Highcharts.Chart = this.chart,
+            var chart = this.chart,
                 options: Highcharts.CMFIndicatorOptions = this.options,
                 series = this.linkedParent,
                 volumeSeries: Highcharts.Series = (

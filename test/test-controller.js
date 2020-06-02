@@ -30,13 +30,14 @@ var TestController = /** @class */ (function () {
      * chart.
      *
      * @param chart
-     *        Chart to control
+     * Chart to control
      */
     function TestController(chart) {
         if (!(this instanceof TestController)) {
             return new TestController(chart);
         }
         this.chart = chart;
+        this.mouseEnterStack = [];
         this.positionX = 0;
         this.positionY = 0;
         this.relatedTarget = null;
@@ -51,7 +52,7 @@ var TestController = /** @class */ (function () {
      * Mock a TochList element with required internal methods.
      *
      * @param arr
-     *        The list of touches.
+     * The list of touches.
      */
     TestController.createTouchList = function (positions) {
         positions.item = function (i) {
@@ -63,13 +64,13 @@ var TestController = /** @class */ (function () {
      * Returns all points between a movement.
      *
      * @param a
-     *        First point as [x, y] tuple.
+     * First point as [x, y] tuple.
      *
      * @param b
-     *        Second point as [x, y] tuple.
+     * Second point as [x, y] tuple.
      *
      * @param interval
-     *        The distance between points.
+     * The distance between points.
      */
     TestController.getPointsBetween = function (a, b, interval) {
         if (interval === void 0) { interval = 1; }
@@ -104,36 +105,81 @@ var TestController = /** @class */ (function () {
      * Simulates a mouse click.
      *
      * @param chartX
-     *        X position on the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y position on the chart.
+     * Y relative to the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Draw a position circle for debugging purposes.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.click = function (chartX, chartY, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
         if (chartY === void 0) { chartY = this.positionY; }
-        if (extra === void 0) { extra = undefined; }
+        if (extra === void 0) { extra = void 0; }
         if (debug === void 0) { debug = false; }
         this.mouseDown(chartX, chartY, extra, debug);
         this.mouseUp(chartX, chartY, extra, debug);
         this.triggerEvent('click', chartX, chartY, extra, debug);
     };
+    TestController.prototype.createEvent = function (type, chartX, chartY, extra) {
+        if (chartX === void 0) { chartX = this.positionX; }
+        if (chartY === void 0) { chartY = this.positionY; }
+        if (extra === void 0) { extra = void 0; }
+        var _a, _b;
+        var chartOffset = Highcharts.offset(this.chart.container);
+        var evt;
+        if (document.createEvent) {
+            evt = document.createEvent('Events');
+            evt.initEvent(type, true, true);
+        }
+        else {
+            evt = new Event(type, {
+                bubbles: ((_a = extra.bubbles) !== null && _a !== void 0 ? _a : true),
+                cancelable: ((_b = extra.cancelable) !== null && _b !== void 0 ? _b : true)
+            });
+        }
+        extra = (extra || {});
+        extra.pageX = (chartOffset.left + chartX);
+        extra.pageY = (chartOffset.top + chartY);
+        switch (type) {
+            case 'click':
+            case 'dblclick':
+            case 'mousedown':
+            case 'mouseup':
+                if (typeof extra.button === 'undefined') {
+                    extra.button = TestController.MouseButtons.left;
+                }
+                break;
+            case 'mouseenter':
+            case 'mouseleave':
+                extra.bubbles = false;
+                extra.cancelable = false;
+                break;
+        }
+        if (typeof extra.buttons === 'undefined') {
+            extra.buttons = (TestController.MouseButtonsBitMap[extra.button] || 0);
+        }
+        Object.keys(extra).forEach(function (key) {
+            evt[key] = extra[key];
+        });
+        return evt;
+    };
     /**
      * Get the element from a point on the chart.
      *
      * @param chartX
-     *        X relative to the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y relative to the chart.
+     * Y relative to the chart.
      */
     TestController.prototype.elementFromPoint = function (chartX, chartY, useMSWorkaround) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -145,11 +191,32 @@ var TestController = /** @class */ (function () {
             clipPaths = this.setUpMSWorkaround();
         }
         var element = document.elementFromPoint((chartOffset.left + chartX), (chartOffset.top + chartY));
+        if (element && getComputedStyle(element).pointerEvents === 'none') {
+            element = this.elementsFromPoint(chartX, chartY, useMSWorkaround)[0];
+        }
         // Reset clip paths for Edge and IE
         if (clipPaths) {
             this.tearDownMSWorkaround(clipPaths);
         }
         return element;
+    };
+    TestController.prototype.elementsFromPoint = function (chartX, chartY, useMSWorkaround) {
+        if (chartX === void 0) { chartX = this.positionX; }
+        if (chartY === void 0) { chartY = this.positionY; }
+        if (useMSWorkaround === void 0) { useMSWorkaround = true; }
+        var chartOffset = Highcharts.offset(this.chart.container);
+        var clipPaths;
+        if (useMSWorkaround) {
+            clipPaths = this.setUpMSWorkaround();
+        }
+        var elements = document
+            .elementsFromPoint((chartOffset.left + chartX), (chartOffset.top + chartY))
+            .filter(function (element) { return (getComputedStyle(element).pointerEvents !== 'none'); });
+        // Reset clip paths for Edge and IE
+        if (clipPaths) {
+            this.tearDownMSWorkaround(clipPaths);
+        }
+        return elements;
     };
     /**
      * Get the current position of the cursor.
@@ -165,21 +232,20 @@ var TestController = /** @class */ (function () {
      * Triggers an event.
      *
      * @param chartX
-     *        X relative to the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y relative to the chart.
+     * Y relative to the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.mouseDown = function (chartX, chartY, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -189,24 +255,115 @@ var TestController = /** @class */ (function () {
         this.triggerEvent('mousedown', chartX, chartY, extra, debug);
     };
     /**
+     * Triggers mouse enter event on all necessary elements.
+     *
+     * @param chartX
+     * X relative to the chart.
+     *
+     * @param chartY
+     * Y relative to the chart.
+     *
+     * @param extra
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
+     *
+     * @param debug
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
+     */
+    TestController.prototype.mouseEnter = function (newPosition, oldPosition, extra, debug) {
+        if (extra === void 0) { extra = undefined; }
+        if (debug === void 0) { debug = false; }
+        var oldStack = this.elementsFromPoint(oldPosition[0], oldPosition[1]);
+        var newStack = this.elementsFromPoint(newPosition[0], newPosition[1]);
+        var newElement = newStack[0];
+        if (debug) {
+            this.setDebugMark(newPosition[0], newPosition[1], TestController.DebugMarkTypes.normal);
+        }
+        var element;
+        while (element = newStack.pop()) {
+            if (oldStack.indexOf(element) !== -1) {
+                continue;
+            }
+            extra.currentTarget = element;
+            extra.target = newElement;
+            element.dispatchEvent(this.createEvent('mouseenter', newPosition[0], newPosition[1], extra));
+        }
+        // Make sure to fire always for the top SVG element
+        if (newElement instanceof SVGElement &&
+            oldStack.indexOf(newElement) !== -1) {
+            extra.currentTarget = newElement;
+            extra.target = newElement;
+            newElement.dispatchEvent(this.createEvent('mouseenter', newPosition[0], newPosition[1], extra));
+        }
+    };
+    /**
+     * Triggers mouse enter event on all elements, that are missing on the
+     * provided new position.
+     *
+     * @param chartX
+     * X relative to the chart.
+     *
+     * @param chartY
+     * Y relative to the chart.
+     *
+     * @param extra
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
+     *
+     * @param debug
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
+     */
+    TestController.prototype.mouseLeave = function (newPosition, oldPosition, extra, debug) {
+        if (extra === void 0) { extra = undefined; }
+        if (debug === void 0) { debug = false; }
+        var oldStack = this.elementsFromPoint(oldPosition[0], oldPosition[1]);
+        var oldElement = oldStack[0];
+        var newStack = this.elementsFromPoint(newPosition[0], newPosition[1]);
+        var newElement = newStack[0];
+        if (debug) {
+            this.setDebugMark(newPosition[0], newPosition[1], TestController.DebugMarkTypes.normal);
+        }
+        var element;
+        while (element = oldStack.shift()) {
+            if (newStack.indexOf(element) !== -1) {
+                continue;
+            }
+            extra.currentTarget = element;
+            extra.target = newElement;
+            element.dispatchEvent(this.createEvent('mouseleave', oldPosition[0], oldPosition[1], extra));
+        }
+        // Make sure to fire always for the top SVG element
+        if (oldElement instanceof SVGElement &&
+            newStack.indexOf(oldElement) !== -1) {
+            extra.currentTarget = oldElement;
+            extra.target = newElement;
+            oldElement.dispatchEvent(this.createEvent('mouseleave', oldPosition[0], oldPosition[1], extra));
+        }
+    };
+    /**
      * Triggers an event.
      *
      * @param chartX
-     *        X relative to the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y relative to the chart.
+     * Y relative to the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.mouseMove = function (chartX, chartY, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -219,21 +376,20 @@ var TestController = /** @class */ (function () {
      * Triggers an event.
      *
      * @param chartX
-     *        X relative to the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y relative to the chart.
+     * Y relative to the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.mouseOut = function (chartX, chartY, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -246,21 +402,20 @@ var TestController = /** @class */ (function () {
      * Triggers an event.
      *
      * @param chartX
-     *        X relative to the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y relative to the chart.
+     * Y relative to the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.mouseOver = function (chartX, chartY, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -273,21 +428,20 @@ var TestController = /** @class */ (function () {
      * Triggers an event.
      *
      * @param chartX
-     *        X relative to the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y relative to the chart.
+     * Y relative to the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.mouseUp = function (chartX, chartY, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -301,77 +455,81 @@ var TestController = /** @class */ (function () {
      * mousemoves, also mouseout and mouseover if new targets are found.
      *
      * @param chartX
-     *        New x position on the chart.
+     * New x position on the chart.
      *
      * @param chartY
-     *        New y position on the chart.
+     * New y position on the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.moveTo = function (chartX, chartY, extra, debug) {
         if (extra === void 0) { extra = undefined; }
         if (debug === void 0) { debug = false; }
-        var fromPosition = this.getPosition();
-        var from = [fromPosition.x, fromPosition.y];
-        var to = [chartX, chartY];
-        var points = TestController.getPointsBetween(from, to);
-        var point, relatedTarget = fromPosition.relatedTarget, target, x1, y1;
+        var points = TestController.getPointsBetween([this.positionX, this.positionY], [chartX, chartY]);
+        var point, oldPoint, oldTarget, target;
         var clipPaths = this.setUpMSWorkaround();
         for (var i = 0, ie = points.length; i < ie; ++i) {
+            oldPoint = [this.positionX, this.positionY];
+            oldTarget = this.relatedTarget;
             point = points[i];
-            x1 = point[0];
-            y1 = point[1];
-            target = this.elementFromPoint(x1, y1, false);
-            if (target !== relatedTarget) {
+            this.setPosition(point[0], point[1], false);
+            target = this.relatedTarget;
+            if (!target) {
+                continue;
+            }
+            if (oldTarget &&
+                target !== oldTarget) {
                 // First trigger a mouseout on the old target.
-                this.triggerEvent('mouseout', x1, y1, Highcharts.merge({
-                    currentTarget: relatedTarget,
-                    relatedTarget: target
-                }, extra), debug);
-            }
-            this.triggerEvent('mousemove', x1, y1, extra, debug);
-            if (target !== relatedTarget) {
+                this.mouseOut(oldPoint[0], oldPoint[1], Highcharts.merge({
+                    currentTarget: oldTarget,
+                    relatedTarget: target,
+                    target: target
+                }, extra));
+                this.mouseLeave(point, oldPoint, Highcharts.merge({
+                    currentTarget: oldTarget,
+                    relatedTarget: target,
+                    target: target
+                }, extra));
                 // Then trigger a mouseover on the new target.
-                if (target) {
-                    this.triggerEvent('mouseover', x1, y1, Highcharts.merge({
-                        relatedTarget: target
-                    }, extra), debug);
-                }
-                relatedTarget = target;
+                this.mouseOver(point[0], point[1], Highcharts.merge({
+                    relatedTarget: target,
+                    target: target
+                }, extra));
+                this.mouseEnter(point, oldPoint, Highcharts.merge({
+                    relatedTarget: target,
+                    target: target
+                }, extra));
             }
+            this.mouseMove(point[0], point[1], extra, debug);
         }
         this.tearDownMSWorkaround(clipPaths);
-        // Update controller positions and relatedTarget.
-        this.setPosition(chartX, chartY);
     };
     /**
      * Simulates a mouse pan action between two points.
      *
      * @param startPoint
-     *        Starting point with x and y values relative to the chart.
+     * Starting point with x and y values relative to the chart.
      *
      * @param endPoint
-     *        Ending point with x any y values relative to the chart.
+     * Ending point with x any y values relative to the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.pan = function (startPoint, endPoint, extra, debug) {
         if (startPoint === void 0) { startPoint = [this.positionX, this.positionY]; }
@@ -387,20 +545,19 @@ var TestController = /** @class */ (function () {
      * Simulates a pinch gesture.
      *
      * @param chartX
-     *        X position on the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y position on the chart.
+     * Y relative to the chart.
      *
      * @param distance
-     *        Distance between the two fingers. Negative values indicate,
-     *        that the fingers move to each other.
+     * Distance between the two fingers. Negative values indicate, that the
+     * fingers move to each other.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.pinch = function (chartX, chartY, distance, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -448,6 +605,56 @@ var TestController = /** @class */ (function () {
         }
     };
     /**
+     * Leave marks for debugging purposes.
+     *
+     * @param chartX
+     * X relative to the chart.
+     *
+     * @param chartY
+     * Y relative to the chart.
+     */
+    TestController.prototype.setDebugMark = function (chartX, chartY, type) {
+        if (chartX === void 0) { chartX = this.positionX; }
+        if (chartY === void 0) { chartY = this.positionY; }
+        if (type === void 0) { type = TestController.DebugMarkTypes.normal; }
+        var marker = this.chart.renderer
+            .circle(chartX, chartY, (type === TestController.DebugMarkTypes.movement ? 2 : 3))
+            .attr({
+            fill: 'white',
+            stroke: (type === TestController.DebugMarkTypes.movement ?
+                'blue' :
+                type === TestController.DebugMarkTypes.activation ?
+                    'green' :
+                    'red'),
+            'stroke-width': (type === TestController.DebugMarkTypes.movement ? 1 : 2),
+            zIndex: 100
+        });
+        return marker
+            .css({
+            'pointer-events': 'none'
+        })
+            .add();
+    };
+    /**
+     * Move the cursor position to a new position, without firing events.
+     *
+     * @param chartX
+     * New x position on the chart.
+     *
+     * @param chartY
+     * New y position on the chart.
+     *
+     * @param useMSWorkaround
+     * Whether to do additional operations to work around IE problems.
+     */
+    TestController.prototype.setPosition = function (chartX, chartY, useMSWorkaround) {
+        if (chartX === void 0) { chartX = this.positionX; }
+        if (chartY === void 0) { chartY = this.positionY; }
+        this.positionX = chartX;
+        this.positionY = chartY;
+        this.relatedTarget = this.elementFromPoint(chartX, chartY, useMSWorkaround);
+    };
+    /**
      * Edge and IE are unable to get elementFromPoint when the group has a
      * clip path. It reports the first underlying element with no clip path.
      */
@@ -468,40 +675,21 @@ var TestController = /** @class */ (function () {
         return clipPaths;
     };
     /**
-     * Move the cursor position to a new position, without firing events.
-     *
-     * @param chartX
-     *        New x position on the chart.
-     *
-     * @param chartY
-     *        New y position on the chart.
-     */
-    TestController.prototype.setPosition = function (chartX, chartY) {
-        if (chartX === void 0) { chartX = this.positionX; }
-        if (chartY === void 0) { chartY = this.positionY; }
-        this.positionX = chartX;
-        this.positionY = chartY;
-        this.relatedTarget = this.elementFromPoint(chartX, chartY);
-    };
-    /**
      * Simulates a slide gesture between two points.
      *
      * @param startPoint
-     *        Starting point on the chart with x and y value.
+     * Starting point on the chart with x and y value.
      *
      * @param endPoint
-     *        Ending point on the chart with x any y value.
+     * Ending point on the chart with x any y value.
      *
      * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
+     * Whether to use one or two fingers for the gesture.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
-     *
-     * @return {void}
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.slide = function (startPoint, endPoint, twoFingers, debug) {
         if (startPoint === void 0) { startPoint = [this.positionX, this.positionY]; }
@@ -522,19 +710,18 @@ var TestController = /** @class */ (function () {
      * Simulates a tap action with a finger.
      *
      * @param chartX
-     *        X position to tab on.
+     * X position to tab on.
      *
      * @param chartY
-     *        Y position to tab on.
+     * Y position to tab on.
      *
      * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
+     * Whether to use one or two fingers for the gesture.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.tap = function (chartX, chartY, twoFingers, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -548,8 +735,7 @@ var TestController = /** @class */ (function () {
      * Undo the workaround for Edge and IE.
      *
      * @param clipPaths
-     *        The clip paths that were returned from the `setUpMSWorkaround`
-     *        function
+     * The clip paths that were returned from the `setUpMSWorkaround` function.
      */
     TestController.prototype.tearDownMSWorkaround = function (clipPaths) {
         // Reset clip paths for Edge and IE
@@ -563,22 +749,23 @@ var TestController = /** @class */ (function () {
      * Triggers touch ends events.
      *
      * @param chartX
-     *        X position on the chart.
+     * X position on the chart.
      *
      * @param chartY
-     *        Y position on the chart.
+     * Y position on the chart.
      *
      * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
+     * Whether to use one or two fingers for the gesture.
      *
      * @param extra
-     *        Extra properties for the event arguments.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.touchEnd = function (chartX, chartY, twoFingers, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -615,22 +802,23 @@ var TestController = /** @class */ (function () {
      * Triggers touch move events.
      *
      * @param chartX
-     *        X position on the chart.
+     * X position on the chart.
      *
      * @param chartY
-     *        Y position on the chart.
+     * Y position on the chart.
      *
      * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
+     * Whether to use one or two fingers for the gesture.
      *
      * @param extra
-     *        Extra properties for the event arguments.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.touchMove = function (chartX, chartY, twoFingers, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -667,22 +855,23 @@ var TestController = /** @class */ (function () {
      * Triggers touch starts events.
      *
      * @param chartX
-     *        X position on the chart.
+     * X position on the chart.
      *
      * @param chartY
-     *        Y position on the chart.
+     * Y position on the chart.
      *
      * @param twoFingers
-     *        Whether to use one or two fingers for the gesture.
+     * Whether to use one or two fingers for the gesture.
      *
      * @param extra
-     *        Extra properties for the event arguments.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.touchStart = function (chartX, chartY, twoFingers, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
@@ -721,70 +910,77 @@ var TestController = /** @class */ (function () {
      * like .click() and .mousemove().
      *
      * @param type
-     *        Event type.
+     * Event type.
      *
      * @param chartX
-     *        X relative to the chart.
+     * X relative to the chart.
      *
      * @param chartY
-     *        Y relative to the chart.
+     * Y relative to the chart.
      *
      * @param extra
-     *        Extra properties for the event arguments, for example
-     *        `{ shiftKey: true }` to emulate that the shift key has been
-     *        pressed in a mouse event.
+     * Extra properties for the event arguments, for example
+     * `{ shiftKey: true }` to emulate that the shift key has been pressed in a
+     * mouse event.
      *
      * @param debug
-     *        Add marks where the event was triggered. Should not be
-     *        enabled in production, as it slows down the test and also
-     *        leaves an element that might catch events and mess up the
-     *        test result.
+     * Add marks where the event was triggered. Should not be enabled in
+     * production, as it slows down the test and also leaves an element that
+     * might catch events and mess up the test result.
      */
     TestController.prototype.triggerEvent = function (type, chartX, chartY, extra, debug) {
         if (chartX === void 0) { chartX = this.positionX; }
         if (chartY === void 0) { chartY = this.positionY; }
-        if (extra === void 0) { extra = undefined; }
+        if (extra === void 0) { extra = {}; }
         if (debug === void 0) { debug = false; }
-        var chartOffset = Highcharts.offset(this.chart.container);
-        var evt = (document.createEvent ?
-            document.createEvent('Events') :
-            new Event(type, { bubbles: true, cancelable: true }));
-        if (document.createEvent) {
-            evt.initEvent(type, true, true);
-        }
-        evt.pageX = (chartOffset.left + chartX);
-        evt.pageY = (chartOffset.top + chartY);
-        if (extra) {
-            Object.keys(extra).forEach(function (key) {
-                evt[key] = extra[key];
-            });
+        // Find an element related to the coordinates and fire event.
+        var element = ((extra && extra.currentTarget) ||
+            (extra && extra.target) ||
+            this.elementFromPoint(chartX, chartY));
+        if (!element) {
+            return;
         }
         // Leave marks for debugging
         if (debug) {
-            var marker = this.chart.renderer
-                .circle(chartX, chartY, (type === 'mousemove' ? 2 : 3))
-                .attr({
-                fill: 'white',
-                stroke: (type === 'mousemove' ?
-                    'blue' :
-                    type === 'mousedown' ?
-                        'green' :
-                        'red'),
-                'stroke-width': (type === 'mousemove' ? 1 : 2),
-                zIndex: 100
-            });
-            marker
-                .css({
-                'pointer-events': 'none'
-            })
-                .add();
+            this.setDebugMark(chartX, chartY, type === 'mousemove' ?
+                TestController.DebugMarkTypes.movement :
+                type === 'mousedown' ?
+                    TestController.DebugMarkTypes.activation :
+                    TestController.DebugMarkTypes.normal);
         }
-        // Find an element related to the coordinates and fire event.
-        var element = ((extra && extra.currentTarget) ||
-            this.elementFromPoint(chartX, chartY));
-        if (element) {
-            element.dispatchEvent(evt);
+        if (typeof extra.currentTarget === 'undefined') {
+            extra.currentTarget = element;
         }
+        if (typeof extra.target === 'undefined') {
+            extra.target = element;
+        }
+        element.dispatchEvent(this.createEvent(type, chartX, chartY, extra));
     };
     return TestController;
 }());
+(function (TestController) {
+    /* *
+     *
+     *  Enums
+     *
+     * */
+    var DebugMarkTypes;
+    (function (DebugMarkTypes) {
+        DebugMarkTypes[DebugMarkTypes["activation"] = 0] = "activation";
+        DebugMarkTypes[DebugMarkTypes["movement"] = 1] = "movement";
+        DebugMarkTypes[DebugMarkTypes["normal"] = 2] = "normal";
+    })(DebugMarkTypes = TestController.DebugMarkTypes || (TestController.DebugMarkTypes = {}));
+    var MouseButtons;
+    (function (MouseButtons) {
+        MouseButtons[MouseButtons["left"] = 0] = "left";
+        MouseButtons[MouseButtons["middle"] = 1] = "middle";
+        MouseButtons[MouseButtons["right"] = 2] = "right";
+    })(MouseButtons = TestController.MouseButtons || (TestController.MouseButtons = {}));
+    TestController.MouseButtonsBitMap = {
+        0: 1,
+        1: 4,
+        2: 2,
+        3: 8,
+        4: 16,
+    };
+})(TestController || (TestController = {}));

@@ -51,9 +51,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-
-var seriesType = H.seriesType;
+const {
+    isArray,
+    seriesType
+} = U;
 
 /* eslint-disable require-jsdoc */
 

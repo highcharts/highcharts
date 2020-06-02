@@ -141,4 +141,60 @@ QUnit.test('Testing hovering over panes.', function (assert) {
         chart.tooltip.isHidden,
         'Tooltip should not be displayed (point is out of pane)' // #11148
     );
+
+    chart.update({
+        tooltip: {
+            shared: true
+        }
+    }, false);
+
+    chart.addSeries({
+        data: [125, 110, 43, 44, 20]
+    });
+
+    chart.series[0].points[0].onMouseOver();
+
+    assert.ok(
+        !chart.tooltip.isHidden,
+        'Tooltip should be displayed without any errors' // #12856
+    );
+
+});
+
+QUnit.test('Hover state when axis is updated (#12569).', function (assert) {
+    var chart = Highcharts.chart('container', {
+        series: [{
+            data: [1, 4, null, 6, 7],
+            step: 'right'
+        }],
+        plotOptions: {
+            series: {
+                point: {
+                    events: {
+                        mouseOver: function () {
+                            this.series.chart.yAxis[0].update({
+                                title: {
+                                    style: {
+                                        color: this.color
+                                    }
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    var controller = new TestController(chart),
+        series = chart.series[0],
+        point = series.points[1];
+
+    controller.moveTo(point.plotX, point.plotY);
+
+    assert.ok(
+        series.halo && series.halo.visibility !== 'hidden',
+        'Halo and hover state should be visible.'
+    );
+
 });

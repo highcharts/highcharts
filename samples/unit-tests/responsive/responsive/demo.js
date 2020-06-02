@@ -793,3 +793,141 @@ QUnit.test('Restoring to undefined settings (#10286)', assert => {
         'Y axis label position should be restored'
     );
 });
+
+QUnit.test('Pane with responsive margin', assert => {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            type: 'gauge',
+            width: 400,
+            height: 400,
+            plotBorderWidth: 1
+        },
+        yAxis: {
+            min: 0,
+            max: 3
+        },
+        series: [{
+            data: [1]
+        }],
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 800
+                },
+                chartOptions: {
+                    chart: {
+                        marginLeft: 100
+                    }
+                }
+            }]
+        }
+    });
+
+    assert.close(
+        chart.plotBorder.attr('x'),
+        100,
+        1,
+        'The plot border should respect the responsive left margin'
+    );
+
+    assert.ok(
+        chart.container.querySelector('.highcharts-pane').getBBox().x > 100,
+        'The rendered pane should be within the responsive left margin (#10671)'
+    );
+
+});
+
+QUnit.test('Responsive amount of axes', assert => {
+    const chart = Highcharts.chart('container', {
+
+        chart: {
+            width: 800
+        },
+
+        yAxis: [{
+            title: {
+                text: 'First'
+            }
+        },
+        {
+            title: {
+                text: 'Second'
+            }
+        }],
+
+        series: [{
+            yAxis: 0,
+            name: 'First',
+            data: [434, 523, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432]
+        },
+        {
+            yAxis: 1,
+            name: 'Second',
+            data: [4304, 5230, 3450, 7850, 5650, 8403, 3260, 2900, 6650, 4340, 3102, 4320]
+        }],
+
+        responsive: {
+            rules: [{
+                condition: {
+                    maxWidth: 500
+                },
+                // Make the labels less space demanding on mobile
+                chartOptions: {
+                    yAxis: [{
+                        title: {
+                            text: 'First'
+                        }
+                    }],
+                    series: [{
+                        yAxis: 0,
+                        name: 'First',
+                        data: [1, 2, 345, 785, 565, 843, 726, 590, 665, 434, 312, 432]
+                    },
+                    {
+                        yAxis: 0,
+                        name: 'Second',
+                        data: [4304, 5230, 3450, 7850, 5650, 8403, 3260, 2900, 6650, 4340, 3102, 4320]
+                    }]
+                }
+            }]
+        }
+    });
+
+    assert.deepEqual(
+        chart.yAxis.map(a => a.axisTitle.textStr),
+        ['First', 'Second'],
+        'Initial axis layout'
+    );
+    assert.strictEqual(
+        chart.series[1].yAxis.options.title.text,
+        'Second',
+        'Initial axis binding'
+    );
+
+    chart.setSize(400);
+    assert.deepEqual(
+        chart.yAxis.map(a => a.axisTitle.textStr),
+        ['First'],
+        'Responsive rule kicks in, only the first axis should apply'
+    );
+    assert.strictEqual(
+        chart.series[1].yAxis.options.title.text,
+        'First',
+        'Second series should now be bound to first Y axis'
+    );
+
+    chart.setSize(800);
+
+    assert.deepEqual(
+        chart.yAxis.map(a => a.axisTitle.textStr),
+        ['First', 'Second'],
+        'After resetting, initial axis layout should be restored'
+    );
+    assert.strictEqual(
+        chart.series[1].yAxis.options.title.text,
+        'Second',
+        'After resetting, initial axis binding should be restored'
+    );
+
+
+});

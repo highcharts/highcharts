@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../../parts/Chart';
 import ChartUtilities from './utils/chartUtilities.js';
 import H from '../../parts/Globals.js';
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
@@ -31,6 +32,7 @@ declare global {
             public getChartTypes(): Array<string>;
             public init(chart: Chart): void;
             public initComponents(): void;
+            public getComponentOrder(): Array<string>;
             public update(): void;
         }
         interface AccessibilityComponentsObject {
@@ -55,7 +57,7 @@ declare global {
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
         }
-        interface Chart {
+        interface ChartLike {
             a11yDirty?: boolean;
             accessibility?: Accessibility;
             types?: Array<string>;
@@ -66,13 +68,18 @@ declare global {
     }
 }
 
+import O from '../../parts/Options.js';
+const { defaultOptions } = O;
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    addEvent,
+    extend,
+    fireEvent,
+    merge
+} = U;
 
-var addEvent = H.addEvent,
-    doc = H.win.document,
-    merge = H.merge,
-    fireEvent = H.fireEvent;
+var doc = H.win.document;
 
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
@@ -85,7 +92,7 @@ import InfoRegionsComponent from './components/InfoRegionsComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
-import defaultOptions from './options/options.js';
+import defaultOptionsA11Y from './options/options.js';
 import defaultLangOptions from './options/langOptions.js';
 import copyDeprecatedOptions from './options/deprecatedOptions.js';
 import './a11y-i18n.js';
@@ -95,8 +102,8 @@ import './focusBorder.js';
 // Add default options
 merge(
     true,
-    H.defaultOptions,
     defaultOptions,
+    defaultOptionsA11Y,
     {
         accessibility: {
             highContrastTheme: highContrastTheme
@@ -128,7 +135,7 @@ H.AccessibilityComponent = AccessibilityComponent as any;
  */
 function Accessibility(
     this: Highcharts.Accessibility,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.init(chart);
 }
@@ -143,7 +150,7 @@ Accessibility.prototype = {
      */
     init: function (
         this: Highcharts.Accessibility,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
         this.chart = chart as any;
 
@@ -169,7 +176,7 @@ Accessibility.prototype = {
      * @private
      */
     initComponents: function (this: Highcharts.Accessibility): void {
-        var chart = this.chart,
+        const chart = this.chart,
             a11yOptions = chart.options.accessibility;
 
         this.components = {
@@ -181,16 +188,38 @@ Accessibility.prototype = {
             series: new SeriesComponent(),
             zoom: new ZoomComponent()
         };
+
         if (a11yOptions.customComponents) {
             extend(this.components, a11yOptions.customComponents);
         }
 
-        var components = this.components;
-        // Refactor to use Object.values if we polyfill
-        Object.keys(components).forEach(function (componentName: string): void {
+        const components = this.components;
+        this.getComponentOrder().forEach(function (componentName: string): void {
             components[componentName].initBase(chart);
             components[componentName].init();
         });
+    },
+
+
+    /**
+     * Get order to update components in.
+     * @private
+     */
+    getComponentOrder: function (this: Highcharts.Accessibility): string[] {
+        if (!this.components) {
+            return []; // For zombie accessibility object on old browsers
+        }
+
+        if (!this.components.series) {
+            return Object.keys(this.components);
+        }
+
+        const componentsExceptSeries = Object.keys(this.components)
+            .filter((c): boolean => c !== 'series');
+
+        // Update series first, so that other components can read accessibility
+        // info on points.
+        return ['series'].concat(componentsExceptSeries);
     },
 
 
@@ -208,7 +237,7 @@ Accessibility.prototype = {
         chart.types = this.getChartTypes();
 
         // Update markup
-        Object.keys(components).forEach(function (componentName: string): void {
+        this.getComponentOrder().forEach(function (componentName: string): void {
             components[componentName].onChartUpdate();
 
             fireEvent(chart, 'afterA11yComponentUpdate', {
@@ -230,7 +259,9 @@ Accessibility.prototype = {
             whcm.setHighContrastTheme(chart);
         }
 
-        fireEvent(chart, 'afterA11yUpdate');
+        fireEvent(chart, 'afterA11yUpdate', {
+            accessibility: this
+        });
     },
 
 
@@ -238,7 +269,7 @@ Accessibility.prototype = {
      * Destroy all elements.
      */
     destroy: function (): void {
-        var chart: Highcharts.Chart = this.chart || {};
+        var chart: Chart = this.chart || {};
 
         // Destroy components
         var components = this.components;
@@ -312,7 +343,7 @@ addEvent(H.Chart, 'render', function (e: Event): void {
 
     const a11y = this.accessibility;
     if (a11y) {
-        Object.keys(a11y.components).forEach(function (
+        a11y.getComponentOrder().forEach(function (
             componentName: string
         ): void {
             a11y.components[componentName].onChartRender();
@@ -347,7 +378,7 @@ addEvent(H.Chart as any, 'update', function (
 });
 
 // Mark dirty for update
-addEvent(H.Point, 'update', function (): void {
+addEvent(Point, 'update', function (): void {
     if (this.series.chart.accessibility) {
         this.series.chart.a11yDirty = true;
     }

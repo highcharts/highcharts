@@ -9,16 +9,16 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Color.js';
-import '../parts/Legend.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var extend = U.extend, fireEvent = U.fireEvent, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
-import U from '../parts/Utilities.js';
-var extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick, splat = U.splat;
-var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, fireEvent = H.fireEvent, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var colorMapPointMixin = H.colorMapPointMixin, colorMapSeriesMixin = H.colorMapSeriesMixin, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * @private
  * @class
@@ -298,28 +298,24 @@ seriesType('map', 'scatter',
             if (point.path) {
                 if (typeof point.path === 'string') {
                     point.path = H.splitPath(point.path);
+                    // Legacy one-dimensional array
                 }
-                var path = point.path || [], i = path.length, even = false, // while loop reads from the end
-                pointMaxX = -MAX_VALUE, pointMinX = MAX_VALUE, pointMaxY = -MAX_VALUE, pointMinY = MAX_VALUE, properties = point.properties;
+                else if (point.path[0] === 'M') {
+                    point.path = SVGRenderer.prototype.pathToSegments(point.path);
+                }
+                var path = point.path || [], pointMaxX = -MAX_VALUE, pointMinX = MAX_VALUE, pointMaxY = -MAX_VALUE, pointMinY = MAX_VALUE, properties = point.properties;
                 // The first time a map point is used, analyze its box
                 if (!point._foundBox) {
-                    while (i--) {
-                        if (isNumber(path[i])) {
-                            if (even) { // even = x
-                                pointMaxX =
-                                    Math.max(pointMaxX, path[i]);
-                                pointMinX =
-                                    Math.min(pointMinX, path[i]);
-                            }
-                            else { // odd = Y
-                                pointMaxY =
-                                    Math.max(pointMaxY, path[i]);
-                                pointMinY =
-                                    Math.min(pointMinY, path[i]);
-                            }
-                            even = !even;
+                    path.forEach(function (seg) {
+                        var x = seg[seg.length - 2];
+                        var y = seg[seg.length - 1];
+                        if (typeof x === 'number' && typeof y === 'number') {
+                            pointMinX = Math.min(pointMinX, x);
+                            pointMaxX = Math.max(pointMaxX, x);
+                            pointMinY = Math.min(pointMinY, y);
+                            pointMaxY = Math.max(pointMaxY, y);
                         }
-                    }
+                    });
                     // Cache point bounding box for use to position data
                     // labels, bubbles etc
                     point._midX = (pointMinX + (pointMaxX - pointMinX) * pick(point.middleX, properties &&
@@ -364,37 +360,65 @@ seriesType('map', 'scatter',
     },
     getExtremes: function () {
         // Get the actual value extremes for colors
-        Series.prototype.getExtremes.call(this, this.valueData);
+        var _a = Series.prototype.getExtremes
+            .call(this, this.valueData), dataMin = _a.dataMin, dataMax = _a.dataMax;
         // Recalculate box on updated data
         if (this.chart.hasRendered && this.isDirtyData) {
             this.getBox(this.options.data);
         }
-        this.valueMin = this.dataMin;
-        this.valueMax = this.dataMax;
+        if (isNumber(dataMin)) {
+            this.valueMin = dataMin;
+        }
+        if (isNumber(dataMax)) {
+            this.valueMax = dataMax;
+        }
         // Extremes for the mock Y axis
-        this.dataMin = this.minY;
-        this.dataMax = this.maxY;
+        return { dataMin: this.minY, dataMax: this.maxY };
     },
     // Translate the path, so it automatically fits into the plot area box
     translatePath: function (path) {
-        var series = this, even = false, // while loop reads from the end
-        xAxis = series.xAxis, yAxis = series.yAxis, xMin = xAxis.min, xTransA = xAxis.transA, xMinPixelPadding = xAxis.minPixelPadding, yMin = yAxis.min, yTransA = yAxis.transA, yMinPixelPadding = yAxis.minPixelPadding, i, ret = []; // Preserve the original
+        var series = this, xAxis = series.xAxis, yAxis = series.yAxis, xMin = xAxis.min, xTransA = xAxis.transA, xMinPixelPadding = xAxis.minPixelPadding, yMin = yAxis.min, yTransA = yAxis.transA, yMinPixelPadding = yAxis.minPixelPadding, ret = []; // Preserve the original
         // Do the translation
         if (path) {
-            i = path.length;
-            while (i--) {
-                if (isNumber(path[i])) {
-                    ret[i] = even ?
-                        (path[i] - xMin) *
-                            xTransA + xMinPixelPadding :
-                        (path[i] - yMin) *
-                            yTransA + yMinPixelPadding;
-                    even = !even;
+            path.forEach(function (seg) {
+                if (seg[0] === 'M') {
+                    ret.push([
+                        'M',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
                 }
-                else {
-                    ret[i] = path[i];
+                else if (seg[0] === 'L') {
+                    ret.push([
+                        'L',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
                 }
-            }
+                else if (seg[0] === 'C') {
+                    ret.push([
+                        'C',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                        (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
+                }
+                else if (seg[0] === 'Q') {
+                    ret.push([
+                        'Q',
+                        (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                        (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                        (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
+                    ]);
+                }
+                else if (seg[0] === 'Z') {
+                    ret.push(['Z']);
+                }
+            });
         }
         return ret;
     },
@@ -435,7 +459,7 @@ seriesType('map', 'scatter',
                         if (pointArrayMap[j] &&
                             typeof val[ix] !== 'undefined') {
                             if (pointArrayMap[j].indexOf('.') > 0) {
-                                H.Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
+                                Point.prototype.setNestedProperty(data[i], val[ix], pointArrayMap[j]);
                             }
                             else {
                                 data[i][pointArrayMap[j]] =
@@ -484,9 +508,11 @@ seriesType('map', 'scatter',
             this.mapMap = mapMap;
             // Registered the point codes that actually hold data
             if (data && joinBy[1]) {
-                data.forEach(function (point) {
-                    if (mapMap[point[joinBy[1]]]) {
-                        dataUsed.push(mapMap[point[joinBy[1]]]);
+                var joinKey_1 = joinBy[1];
+                data.forEach(function (pointOptions) {
+                    var mapKey = getNestedProperty(joinKey_1, pointOptions);
+                    if (mapMap[mapKey]) {
+                        dataUsed.push(mapMap[mapKey]);
                     }
                 });
             }
@@ -495,8 +521,9 @@ seriesType('map', 'scatter',
                 data = data || [];
                 // Registered the point codes that actually hold data
                 if (joinBy[1]) {
-                    data.forEach(function (point) {
-                        dataUsed.push(point[joinBy[1]]);
+                    var joinKey_2 = joinBy[1];
+                    data.forEach(function (pointOptions) {
+                        dataUsed.push(getNestedProperty(joinKey_2, pointOptions));
                     });
                 }
                 // Add those map points that don't correspond to data, which
@@ -770,8 +797,6 @@ seriesType('map', 'scatter',
                     scaleX: 1,
                     scaleY: 1
                 }, animation);
-                // Delete this function to allow it only once
-                this.animate = null;
             }
         }
     },
@@ -799,7 +824,6 @@ seriesType('map', 'scatter',
                     }, animationOptions);
                 }
             });
-            this.animate = null;
         }
     },
     drawLegendSymbol: LegendSymbolMixin.drawRectangle,
@@ -821,9 +845,11 @@ seriesType('map', 'scatter',
     // Extend the Point object to split paths
     applyOptions: function (options, x) {
         var series = this.series, point = Point.prototype.applyOptions.call(this, options, x), joinBy = series.joinBy, mapPoint;
-        if (series.mapData) {
-            mapPoint = typeof point[joinBy[1]] !== 'undefined' &&
-                series.mapMap[point[joinBy[1]]];
+        if (series.mapData && series.mapMap) {
+            var joinKey = joinBy[1];
+            var mapKey = Point.prototype.getNestedProperty.call(point, joinKey);
+            mapPoint = typeof mapKey !== 'undefined' &&
+                series.mapMap[mapKey];
             if (mapPoint) {
                 // This applies only to bubbles
                 if (series.xyFromShape) {
@@ -840,7 +866,7 @@ seriesType('map', 'scatter',
     },
     // Stop the fade-out
     onMouseOver: function (e) {
-        H.clearTimeout(this.colorInterval);
+        U.clearTimeout(this.colorInterval);
         if (this.value !== null || this.series.options.nullInteraction) {
             Point.prototype.onMouseOver.call(this, e);
         }
@@ -945,7 +971,7 @@ seriesType('map', 'scatter',
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type      {Highcharts.DataLabelsOptionsObject}
+ * @type      {Highcharts.DataLabelsOptions}
  * @product   highmaps
  * @apioption series.map.data.dataLabels
  */

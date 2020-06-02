@@ -5,7 +5,14 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -32,28 +39,24 @@ declare global {
             label: AnnotationVerticalLineTypeLabelOptionsObject;
             yOffset: number;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             verticalLine: typeof AnnotationVerticalLine;
         }
     }
 }
-
-
-import '../../parts/Utilities.js';
-
-var Annotation = H.Annotation,
-    MockPoint = Annotation.MockPoint;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 const VerticalLine: typeof Highcharts.AnnotationVerticalLine = function (
     this: Highcharts.AnnotationVerticalLine
 ): void {
-    H.Annotation.apply(this, arguments as any);
+    Annotation.apply(this, arguments as any);
 } as any;
 
-VerticalLine.connectorFirstPoint = function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-    var annotation: Highcharts.AnnotationVerticalLine = target.annotation as any,
+VerticalLine.connectorFirstPoint = function (
+    target: Highcharts.AnnotationControllable
+): Highcharts.AnnotationMockPointOptionsObject {
+    var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
         point = annotation.points[0],
         xy = MockPoint.pointToPixels(point, true),
         y = xy.y,
@@ -70,8 +73,10 @@ VerticalLine.connectorFirstPoint = function (target: any): Highcharts.Annotation
     };
 };
 
-VerticalLine.connectorSecondPoint = function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-    var annotation: Highcharts.AnnotationVerticalLine = target.annotation as any,
+VerticalLine.connectorSecondPoint = function (
+    target: Highcharts.AnnotationControllable
+): Highcharts.AnnotationMockPointOptionsObject {
+    var annotation = target.annotation as Highcharts.AnnotationVerticalLine,
         typeOptions = annotation.options.typeOptions,
         point = annotation.points[0],
         yOffset = typeOptions.yOffset,
@@ -100,7 +105,7 @@ H.extendAnnotation(VerticalLine, null,
         addShapes: function (this: Highcharts.AnnotationVerticalLine): void {
             var typeOptions = this.options.typeOptions,
                 connector = this.initShape(
-                    H.merge(typeOptions.connector, {
+                    merge(typeOptions.connector, {
                         type: 'path',
                         points: [
                             VerticalLine.connectorFirstPoint,
@@ -129,7 +134,7 @@ H.extendAnnotation(VerticalLine, null,
             }
 
             var label = (this.initLabel as any)(
-                H.merge(labelOptions, {
+                merge(labelOptions, {
                     verticalAlign: verticalAlign,
                     align: align,
                     x: x,

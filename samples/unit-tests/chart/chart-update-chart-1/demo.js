@@ -58,7 +58,6 @@ QUnit.test('Option chart.animation update', function (assert) {
     var chart = Highcharts.chart('container', {
         chart: {
             type: 'column',
-            animation: false,
             height: 300
         },
 
@@ -79,7 +78,7 @@ QUnit.test('Option chart.animation update', function (assert) {
 
     assert.strictEqual(
         chart.renderer.globalAnimation,
-        undefined,
+        false,
         'Undefined animation'
     );
 

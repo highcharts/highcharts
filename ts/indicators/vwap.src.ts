@@ -12,7 +12,7 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import type Chart from '../parts/Chart';
 
 /**
  * Internal types
@@ -59,9 +59,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-
-var seriesType = H.seriesType;
+const {
+    error,
+    isArray,
+    seriesType
+} = U;
 
 /**
  * The Volume Weighted Average Price (VWAP) series type.
@@ -121,7 +123,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
             params: Highcharts.VWAPIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
             var indicator = this,
-                chart: Highcharts.Chart = series.chart,
+                chart: Chart = series.chart,
                 xValues: Array<number> = (series.xData as any),
                 yValues: (
                     Array<number>|Array<[number, number, number, number]>
@@ -134,7 +136,7 @@ seriesType<Highcharts.VWAPIndicator>('vwap', 'sma',
             if (!(volumeSeries = (
                 chart.get(params.volumeSeriesID as any)) as any
             )) {
-                H.error(
+                error(
                     'Series ' +
                     params.volumeSeriesID +
                     ' not found! Check `volumeSeriesID`.',

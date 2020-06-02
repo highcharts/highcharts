@@ -4,9 +4,12 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
-var Annotation = H.Annotation, MockPoint = Annotation.MockPoint, InfinityLine = Annotation.types.infinityLine;
+import MockPoint from '../MockPoint.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
+var InfinityLine = Annotation.types.infinityLine;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var Pitchfork = function () {
     InfinityLine.apply(this, arguments);
@@ -69,7 +72,7 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
     },
     addBackgrounds: function () {
         var shapes = this.shapes, typeOptions = this.options.typeOptions;
-        var innerBackground = this.initShape(H.merge(typeOptions.innerBackground, {
+        var innerBackground = this.initShape(merge(typeOptions.innerBackground, {
             type: 'path',
             points: [
                 function (target) {
@@ -94,7 +97,7 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
                 }
             ]
         }));
-        var outerBackground = this.initShape(H.merge(typeOptions.outerBackground, {
+        var outerBackground = this.initShape(merge(typeOptions.outerBackground, {
             type: 'path',
             points: [
                 this.points[1],

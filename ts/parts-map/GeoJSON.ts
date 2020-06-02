@@ -10,7 +10,21 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+const {
+    win
+} = H;
+import '../parts/Options.js';
+import U from '../parts/Utilities.js';
+const {
+    error,
+    extend,
+    format,
+    merge,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -23,13 +37,13 @@ declare global {
             y: (number|null);
         }
         interface MapPathObject {
-            path: SVGPathArray;
+            path: SVGPath;
         }
         interface MapLatLonObject {
             lat: number;
             lon: number;
         }
-        interface Chart {
+        interface ChartLike {
             /** @requires modules/maps */
             mapCredits?: string;
             /** @requires modules/maps */
@@ -52,6 +66,10 @@ declare global {
                 point: MapCoordinateObject,
                 transform: any
             ): (MapLatLonObject|undefined);
+        }
+        interface ChartOptions {
+            /** @requires modules/map */
+            proj4?: any;
         }
         /** @requires modules/maps */
         function geojson(
@@ -93,19 +111,7 @@ declare global {
  * @type {number}
  */
 
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    wrap
-} = U;
-
-import '../parts/Options.js';
-import '../parts/Chart.js';
-
-var Chart = H.Chart,
-    format = H.format,
-    merge = H.merge,
-    win = H.win;
+''; // detach doclets above
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -166,19 +172,31 @@ function pointInPolygon(
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (
-    this: Highcharts.Chart,
     latLon: Highcharts.MapLatLonObject,
     transform: any
 ): Highcharts.MapCoordinateObject {
-    if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+
+    /**
+     * Allows to manually load the proj4 library from Highcharts options
+     * instead of the `window`.
+     * In case of loading the library from a `script` tag,
+     * this option is not needed, it will be loaded from there by default.
+     *
+     * @type       {function}
+     * @product    highmaps
+     * @apioption  chart.proj4
+     */
+
+    const proj4 = (this.userOptions.chart?.proj4 || win.proj4);
+    if (!proj4) {
+        error(21, false, this);
         return {
             x: 0,
             y: null
         };
     }
 
-    var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]),
+    var projected = proj4(transform.crs, [latLon.lon, latLon.lat]),
         cosAngle = transform.cosAngle ||
             (transform.rotation && Math.cos(transform.rotation)),
         sinAngle = transform.sinAngle ||
@@ -225,12 +243,11 @@ Chart.prototype.transformFromLatLon = function (
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.transformToLatLon = function (
-    this: Highcharts.Chart,
     point: Highcharts.MapCoordinateObject,
     transform: any
 ): (Highcharts.MapLatLonObject|undefined) {
     if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+        error(21, false, this);
         return;
     }
 
@@ -283,14 +300,13 @@ Chart.prototype.transformToLatLon = function (
  *         An object with `lat` and `lon` properties.
  */
 Chart.prototype.fromPointToLatLon = function (
-    this: Highcharts.Chart,
     point: Highcharts.MapCoordinateObject
 ): (Highcharts.MapLatLonObject|undefined) {
     var transforms = this.mapTransforms,
         transform;
 
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return;
     }
 
@@ -331,7 +347,6 @@ Chart.prototype.fromPointToLatLon = function (
  *         X and Y coordinates in terms of chart axis values.
  */
 Chart.prototype.fromLatLonToPoint = function (
-    this: Highcharts.Chart,
     latLon: Highcharts.MapLatLonObject
 ): Highcharts.MapCoordinateObject {
     var transforms = this.mapTransforms,
@@ -339,7 +354,7 @@ Chart.prototype.fromLatLonToPoint = function (
         coords;
 
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return {
             x: 0,
             y: null
@@ -403,18 +418,15 @@ H.geojson = function (
     series?: Highcharts.Series
 ): Array<any> {
     var mapData = [] as Array<any>,
-        path = [] as Highcharts.SVGPathArray,
+        path = [] as SVGPath,
         polygonToPath = function (polygon: Array<Array<number>>): void {
-            var i: number,
-                len = polygon.length;
-
-            path.push('M');
-            for (i = 0; i < len; i++) {
-                if (i === 1) {
-                    path.push('L');
+            polygon.forEach((point, i): void => {
+                if (i === 0) {
+                    path.push(['M', point[0], -point[1]]);
+                } else {
+                    path.push(['L', point[0], -point[1]]);
                 }
-                path.push(polygon[i][0], -polygon[i][1]);
-            }
+            });
         };
 
     hType = hType || 'map';
@@ -436,7 +448,7 @@ H.geojson = function (
         if (hType === 'map' || hType === 'mapbubble') {
             if (type === 'Polygon') {
                 coordinates.forEach(polygonToPath);
-                path.push('Z');
+                path.push(['Z']);
 
             } else if (type === 'MultiPolygon') {
                 coordinates.forEach(function (
@@ -444,7 +456,7 @@ H.geojson = function (
                 ): void {
                     items.forEach(polygonToPath);
                 });
-                path.push('Z');
+                path.push(['Z']);
             }
 
             if (path.length) {
@@ -506,7 +518,7 @@ H.geojson = function (
 
 // Override addCredits to include map source by default
 wrap(Chart.prototype, 'addCredits', function (
-    this: Highcharts.Chart,
+    this: Chart,
     proceed: Function,
     credits: Highcharts.CreditsOptions
 ): void {

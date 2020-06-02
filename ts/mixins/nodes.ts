@@ -25,7 +25,7 @@ declare global {
             ): void;
             setNodeState(this: NodesPoint, state: string): void;
         }
-        interface Point {
+        interface PointLike {
             name?: string;
         }
         interface Series {
@@ -80,14 +80,14 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
     extend,
+    find,
     pick
 } = U;
-
-var Point = H.Point;
 
 H.NodesMixin = {
 
@@ -107,7 +107,7 @@ H.NodesMixin = {
          * @private
          */
         function findById<T>(nodes: Array<T>, id: string): (T|undefined) {
-            return H.find(nodes, function (node: T): boolean {
+            return find(nodes, function (node: T): boolean {
                 return (node as any).id === id;
             });
         }
@@ -130,7 +130,7 @@ H.NodesMixin = {
             node.linksTo = [];
             node.linksFrom = [];
             node.formatPrefix = 'node';
-            node.name = node.name || node.options.id; // for use in formats
+            node.name = node.name || node.options.id || ''; // for use in formats
             // Mass is used in networkgraph:
             node.mass = pick(
                 // Node:
@@ -291,7 +291,7 @@ H.NodesMixin = {
                 [this.fromNode, this.toNode];
         if (state !== 'select') {
             others.forEach(function (linkOrNode: Highcharts.NodesPoint): void {
-                if (linkOrNode.series) {
+                if (linkOrNode && linkOrNode.series) {
                     Point.prototype.setState.apply(linkOrNode, args as any);
 
                     if (!linkOrNode.isNode) {
@@ -301,7 +301,7 @@ H.NodesMixin = {
                                 args as any
                             );
                         }
-                        if (linkOrNode.toNode.graphic) {
+                        if (linkOrNode.toNode && linkOrNode.toNode.graphic) {
                             Point.prototype.setState.apply(
                                 linkOrNode.toNode,
                                 args as any

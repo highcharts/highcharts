@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../../parts/Point.js';
 import H from '../../parts/Globals.js';
 
 /**
@@ -20,7 +21,7 @@ import H from '../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             highContrastModeActive?: boolean;
         }
         interface PointOptionsObject {
@@ -43,26 +44,29 @@ var whcm = {
      * @return {boolean} Returns true if the browser is in High Contrast mode.
      */
     isHighContrastModeActive: function (): boolean {
-        if (
-            win.matchMedia &&
-            isMS &&
-            /Edge\/\d./i.test(win.navigator.userAgent)
-        ) {
-            // Use media query for Edge
+        // Use media query on Edge, but not on IE
+        const isEdge = /(Edg)/.test(win.navigator.userAgent);
+        if (win.matchMedia && isEdge) {
             return win.matchMedia('(-ms-high-contrast: active)').matches;
         }
+
+        // Test BG image for IE
         if (isMS && win.getComputedStyle) {
-            // Test BG image for IE
-            var testDiv = doc.createElement('div');
-            testDiv.style.backgroundImage = 'url(#)';
+            const testDiv = doc.createElement('div');
+            const imageSrc = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+            testDiv.style.backgroundImage = `url(${imageSrc})`; // #13071
             doc.body.appendChild(testDiv);
-            var bi = (
+
+            const bi = (
                 testDiv.currentStyle as unknown as CSSStyleDeclaration ||
                 win.getComputedStyle(testDiv)
             ).backgroundImage;
+
             doc.body.removeChild(testDiv);
+
             return bi === 'none';
         }
+
         // Not used for other browsers
         return false;
     },
@@ -102,7 +106,7 @@ var whcm = {
             });
 
             // Force point colors if existing
-            s.points.forEach(function (p: Highcharts.Point): void {
+            s.points.forEach(function (p: Point): void {
                 if (p.options && p.options.color) {
                     p.update({
                         color: plotOpts.color || 'windowText',

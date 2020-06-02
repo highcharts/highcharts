@@ -1,12 +1,12 @@
 Map collection
 ===
 
-For your convenience, Highmaps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highmaps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON maps. Instead, you can choose between hundres of pre-generated maps of countries, regions and other administration levels.
+For your convenience, Highcharts Maps offers a free [collection of maps](https://code.highcharts.com/mapdata/), optimized for use with Highcharts Maps. For common maps, it saves you the trouble of finding or drawing suitable SVG or GeoJSON maps. Instead, you can choose between hundres of pre-generated maps of countries, regions and other administration levels.
 
 License
 -------
 
-The Highmaps Map Collection comes with the license of the source data. For Admin0 (countries) and Admin1 (US states, German Bundesländer, Dutch regions etc), the source data is [Natural Earth](https://www.naturalearthdata.com/), which is [Public Domain](https://en.wikipedia.org/wiki/Public_domain). For Admin2, we have only compiled selected countries, and these maps are created from national files with their own license which is specified on the SVG map and in the other format files as meta data. If your country is missing from the list, please contact us and we'll try to find a suitable shapefile and generate more maps. 
+The Highcharts Maps Map Collection comes with the license of the source data. For Admin0 (countries) and Admin1 (US states, German Bundesländer, Dutch regions etc), the source data is [Natural Earth](https://www.naturalearthdata.com/), which is [Public Domain](https://en.wikipedia.org/wiki/Public_domain). For Admin2, we have only compiled selected countries, and these maps are created from national files with their own license which is specified on the SVG map and in the other format files as meta data. If your country is missing from the list, please contact us and we'll try to find a suitable shapefile and generate more maps. 
 
 For maps loaded using the default GeoJSON input into the mapData option, a short version of the copyright will be printed in the chart's credits label.
 
@@ -32,11 +32,11 @@ In the [map collection reference](https://code.highcharts.com/mapdata/), each ma
 mapData: Highcharts.maps['custom/world'],
 ```
 Alternatively, you can set the default map for all series with the [`chart.map`](https://api.highcharts.com/highmaps/chart.map) option:
-
 ```js
 map: 'custom/world'
+```
 
-3. Join your data with the map. By default Highmaps is set up to map your data against the `hc-key`property of the map collection, allowing you to define your data like this:
+3. Join your data with the map. By default Highcharts Maps is set up to map your data against the `hc-key`property of the map collection, allowing you to define your data like this:
 ```js 
 data: [['us-ny', 0], ['us-mi', 5], ['us-tx', 3], ['us-ak', 5]]
 ```
@@ -49,7 +49,7 @@ Our map collection is available on npm as [@highcharts/map-collection](https://w
 npm i @highcharts/map-collection
 ```
 
-To load a map in Node.js and use it in Highmaps you can do the following:
+To load a map in Node.js and use it in Highcharts Maps you can do the following:
 
 ```js    
 var Highcharts = require('highcharts/highmaps.js'),
@@ -67,7 +67,7 @@ Highcharts.mapChart('container', {
 Map properties
 --------------
 
-The following table outlines the properties available in the Highmaps Map Collection maps, and their meaning. The properties are accessible from the **point.properties** object ([example](https://jsfiddle.net/oysteinmoseng/52rgg5zq/)).
+The following table outlines the properties available in the Highcharts Maps Map Collection maps, and their meaning. The properties are accessible from the **point.properties** object ([example](https://jsfiddle.net/oysteinmoseng/52rgg5zq/)).
 
 | Property       | Example values                        | Description                                                                                                                                                                                                                                                                                                                                                                           | Availability                                                      |
 | -------------- | ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -112,9 +112,9 @@ If you can't find the exact map that you want in the collection, it is easy to u
 Modify our maps
 ---------------
 
-Our maps are also a good starting points for your own modified maps. Borders can be moved, areas joined, and labels modified by loading the SVG map in Inkscape, the free SVG editor. Our article on [Custom maps](https://highcharts.com/docs/maps/custom-maps) explains in detail how to draw your maps from scratch. Modifying existing maps is easier - instead of drawing shapes use the existing ones (SVG files can be downloaded from [here](https://code.highcharts.com/mapdata)) and perform the same operations as described in the article. Alternatively, follow the article on [Custom GeoJSON maps](https://highcharts.com/docs/maps/custom-geojson-maps) to edit the map with a GIS editor for even more control and advanced mapping features.
+Our maps are also a good starting points for your own modified maps. Borders can be moved, areas joined, and labels modified by loading the SVG map in Inkscape, the free SVG editor. Our article on [Custom maps](https://www.highcharts.com/docs/maps/create-custom-maps-for-highmaps) explains in detail how to draw your maps from scratch. Modifying existing maps is easier - instead of drawing shapes use the existing ones (SVG files can be downloaded from [here](https://code.highcharts.com/mapdata)) and perform the same operations as described in the article. Alternatively, follow the article on [Custom GeoJSON maps](https://highcharts.com/docs/maps/custom-geojson-maps) to edit the map with a GIS editor for even more control and advanced mapping features.
 
 Disclaimer
 ----------
 
-We offer the map collection for free to use with Highmaps, for your convenience. We will not be held responsible for errors in the maps, although we will strive to respond to bug reports and keep the maps correct.
+We offer the map collection for free to use with Highcharts Maps, for your convenience. We will not be held responsible for errors in the maps, although we will strive to respond to bug reports and keep the maps correct.

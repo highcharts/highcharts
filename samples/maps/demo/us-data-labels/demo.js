@@ -8,35 +8,36 @@ Highcharts.data({
     startColumn: 1,
     firstRowAsNames: false,
     complete: function (options) {
-        $.each(options.series[0].data, function () {
+        options.series[0].data.forEach(function (p) {
             data.push({
-                ucName: this[0],
-                value: this[1]
+                ucName: p[0],
+                value: p[1]
             });
         });
     }
 });
 
 // Process mapdata
-$.each(mapData, function () {
-    var path = this.path,
+mapData.forEach(function (p) {
+    var path = p.path,
         copy = {
             path: path
         };
 
     // This point has a square legend to the right
-    if (path[1] === 9727) {
+    if (path[0][1] === 9727) {
 
         // Identify the box
         Highcharts.seriesTypes.map.prototype.getBox.call({}, [copy]);
 
         // Place the center of the data label in the center of the point legend box
-        this.middleX = ((path[1] + path[4]) / 2 - copy._minX) / (copy._maxX - copy._minX); // eslint-disable-line no-underscore-dangle
-        this.middleY = ((path[2] + path[7]) / 2 - copy._minY) / (copy._maxY - copy._minY); // eslint-disable-line no-underscore-dangle
+        p.middleX = ((path[0][1] + path[1][1]) / 2 - copy._minX) / (copy._maxX - copy._minX); // eslint-disable-line no-underscore-dangle
+        p.middleY = ((path[0][2] + path[2][2]) / 2 - copy._minY) / (copy._maxY - copy._minY); // eslint-disable-line no-underscore-dangle
 
     }
+
     // Tag it for joining
-    this.ucName = this.name.toUpperCase();
+    p.ucName = p.name.toUpperCase();
 });
 
 // Initiate the chart

@@ -30,7 +30,6 @@ declare global {
         }
         interface ColumnSeriesOptions extends LineSeriesOptions {
             borderRadius?: number;
-            crisp?: boolean;
             grouping?: boolean;
             groupPadding?: number;
             maxPointWidth?: number;
@@ -39,7 +38,7 @@ declare global {
             pointWidth?: number;
             states?: SeriesStatesOptionsObject<ColumnSeries>;
         }
-        interface Point {
+        interface PointLike {
             allowShadow?: ColumnPoint['allowShadow'];
         }
         interface Series {
@@ -117,6 +116,13 @@ declare global {
  * @type {number}
  */
 
+''; // detach doclets above
+
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
 const {
     animObject,
@@ -124,20 +130,16 @@ const {
     defined,
     extend,
     isNumber,
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
 
-import './Color.js';
-import './Legend.js';
 import './Series.js';
 import './Options.js';
 
-var color = H.color,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     svg = H.svg;
 
 /**
@@ -162,8 +164,8 @@ seriesType<Highcharts.ColumnSeries>(
      *         Column chart
      *
      * @extends      plotOptions.line
-     * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
-     *               lineWidth, marker, connectEnds, step, useOhlcData
+     * @excluding    connectEnds, connectNulls, gapSize, gapUnit, linecap,
+     *               lineWidth, marker, step, useOhlcData
      * @product      highcharts highstock
      * @optionparent plotOptions.column
      */
@@ -229,24 +231,6 @@ seriesType<Highcharts.ColumnSeries>(
          * @product highcharts highstock gantt
          */
         centerInCategory: false,
-
-        /**
-         * When true, each column edge is rounded to its nearest pixel in order
-         * to render sharp on screen. In some cases, when there are a lot of
-         * densely packed columns, this leads to visible difference in column
-         * widths or distance between columns. In these cases, setting `crisp`
-         * to `false` may look better, even though each column is rendered
-         * blurry.
-         *
-         * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
-         *         Crisp is false
-         *
-         * @since   5.0.10
-         * @product highcharts highstock gantt
-         *
-         * @private
-         */
-        crisp: true,
 
         /**
          * Padding between each value groups, in x axis units.
@@ -487,9 +471,9 @@ seriesType<Highcharts.ColumnSeries>(
         },
 
         dataLabels: {
-            align: null,
-            verticalAlign: null,
-            y: null
+            align: void 0,
+            verticalAlign: void 0,
+            y: void 0
         },
 
         /**
@@ -527,6 +511,7 @@ seriesType<Highcharts.ColumnSeries>(
          * distinguishing between values above and below a threshold. If `null`,
          * the columns extend from the padding Y axis minimum.
          *
+         * @type    {number|null}
          * @since   2.0
          * @product highcharts
          *
@@ -677,7 +662,7 @@ seriesType<Highcharts.ColumnSeries>(
 
             var categoryWidth = Math.min(
                     Math.abs(xAxis.transA) * (
-                        xAxis.ordinalSlope ||
+                        (xAxis.ordinal && xAxis.ordinal.slope) ||
                     options.pointRange ||
                     xAxis.closestPointRange ||
                     xAxis.tickInterval ||
@@ -932,10 +917,12 @@ seriesType<Highcharts.ColumnSeries>(
                     // Reverse zeros if there's no positive value in the series
                     // in visible range (#7046)
                     if (
+                        isNumber(threshold) &&
+                        isNumber(dataMax) &&
                         point.y === threshold &&
-                        series.dataMax <= (threshold as any) &&
+                        dataMax <= threshold &&
                         // and if there's room for it (#7311)
-                        (yAxis.min as any) < (threshold as any) &&
+                        (yAxis.min || 0) < threshold &&
                         // if all points are the same value (i.e zero) not draw
                         // as negative points (#10646)
                         dataMin !== dataMax
@@ -1242,48 +1229,43 @@ seriesType<Highcharts.ColumnSeries>(
                 translateStart: number,
                 translatedThreshold;
 
-            if (svg) { // VML is too slow anyway
-                if (init) {
-                    attr.scaleY = 0.001;
-                    translatedThreshold = clamp(
-                        yAxis.toPixels(options.threshold as any),
-                        yAxis.pos,
-                        yAxis.pos + yAxis.len
-                    );
-                    if (inverted) {
-                        attr.translateX = translatedThreshold - yAxis.len;
-                    } else {
-                        attr.translateY = translatedThreshold;
-                    }
+            if (init) {
+                attr.scaleY = 0.001;
+                translatedThreshold = clamp(
+                    yAxis.toPixels(options.threshold as any),
+                    yAxis.pos,
+                    yAxis.pos + yAxis.len
+                );
+                if (inverted) {
+                    attr.translateX = translatedThreshold - yAxis.len;
+                } else {
+                    attr.translateY = translatedThreshold;
+                }
 
-                    // apply finnal clipping (used in Highstock) (#7083)
-                    // animation is done by scaleY, so cliping is for panes
-                    if (series.clipBox) {
-                        series.setClip();
-                    }
+                // apply finnal clipping (used in Highstock) (#7083)
+                // animation is done by scaleY, so cliping is for panes
+                if (series.clipBox) {
+                    series.setClip();
+                }
 
-                    series.group.attr(attr);
+                series.group.attr(attr);
 
-                } else { // run the animation
-                    translateStart = series.group.attr(translateProp) as any;
-                    series.group.animate(
-                        { scaleY: 1 },
-                        extend(animObject(series.options.animation), {
-                            // Do the scale synchronously to ensure smooth
-                            // updating (#5030, #7228)
-                            step: function (val: any, fx: any): void {
-
-                                attr[translateProp] =
-                            translateStart +
-                            fx.pos * ((yAxis.pos as any) - translateStart);
+            } else { // run the animation
+                translateStart = series.group.attr(translateProp) as any;
+                series.group.animate(
+                    { scaleY: 1 },
+                    extend(animObject(series.options.animation), {
+                        // Do the scale synchronously to ensure smooth
+                        // updating (#5030, #7228)
+                        step: function (val: any, fx: any): void {
+                            if (series.group) {
+                                attr[translateProp] = translateStart +
+                                    fx.pos * (yAxis.pos - translateStart);
                                 series.group.attr(attr);
                             }
-                        })
-                    );
-
-                    // delete this function to allow it only once
-                    series.animate = null as any;
-                }
+                        }
+                    })
+                );
             }
         },
 

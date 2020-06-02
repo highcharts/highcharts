@@ -405,6 +405,42 @@ QUnit.test('Series.setData with updatePoints', function (assert) {
         'Auto incremented X should not overlap first point.'
     );
 
+    chart.update({
+        xAxis: {
+            min: 3
+        },
+        series: {
+            cropThreshold: 1,
+            data: [
+                [0, 2],
+                [2, 1],
+                [4, 2],
+                [6, 1],
+                [8, 2],
+                [10, 1]
+            ]
+        }
+    });
+    const correctSet = chart.series[0].processedXData.slice();
+
+    chart.series[0].update({
+        name: 'New test name'
+    }, false);
+    chart.series[0].setData([
+        [0, 2],
+        [2, 1],
+        [4, 2],
+        [6, 1],
+        [8, 2],
+        [10, 1]
+    ], false);
+    chart.redraw();
+
+    assert.deepEqual(
+        chart.series[0].processedXData,
+        correctSet,
+        'Setting data on a updated series with cropped dataset should keep correct x-values (#12696).'
+    );
 });
 
 QUnit.test('Boosted series with updatePoints', function (assert) {

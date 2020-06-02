@@ -38,6 +38,7 @@
             }
         ],
         "no-dupe-class-members": 0,
+        "no-inner-declarations": 0, // deprecated with ES6
         "no-shadow": 0, // @todo
         "no-undef": 0,
         "no-underscore-dangle": 0, // @todo
@@ -52,6 +53,16 @@
         "prefer-spread": 0, // @todo
         "prefer-rest-params": 0, // @todo
         "quote-props": [2, "as-needed", { "keywords": true, "unnecessary": false }],
+        "valid-jsdoc": [ // @todo EOL 2018-11
+            "error",
+            {
+                "prefer": {
+                    "returns": "return"
+                },
+                "requireReturn": false,
+                "requireReturnDescription": false
+            }
+        ],
         "@typescript-eslint/array-type": 0,
         "@typescript-eslint/explicit-function-return-type": [
             "error",

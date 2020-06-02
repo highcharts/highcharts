@@ -8,6 +8,7 @@
  *
  * */
 'use strict';
+import DateTimeAxis from './DateTimeAxis.js';
 import H from './Globals.js';
 /**
  * @typedef {"average"|"averages"|"open"|"high"|"low"|"close"|"sum"} Highcharts.DataGroupingApproximationValue
@@ -24,12 +25,16 @@ import H from './Globals.js';
 * @name Highcharts.DataGroupingInfoObject#start
 * @type {number}
 */
+''; // detach doclets above
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import Point from './Point.js';
+import Tooltip from './Tooltip.js';
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
+var addEvent = U.addEvent, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, defined = U.defined, error = U.error, extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
 import './Axis.js';
 import './Series.js';
-import './Tooltip.js';
-var addEvent = H.addEvent, Axis = H.Axis, defaultPlotOptions = H.defaultPlotOptions, format = H.format, merge = H.merge, Point = H.Point, Series = H.Series, Tooltip = H.Tooltip;
+var Axis = H.Axis, Series = H.Series;
 /* ************************************************************************** *
  *  Start data grouping module                                                *
  * ************************************************************************** */
@@ -424,8 +429,9 @@ seriesProto.processData = function () {
             series.isDirty = true;
             series.points = null; // #6709
             var extremes = xAxis.getExtremes(), xMin = extremes.min, xMax = extremes.max, groupIntervalFactor = (ordinal &&
-                xAxis.getGroupIntervalFactor(xMin, xMax, series)) || 1, interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) *
-                groupIntervalFactor, groupPositions = xAxis.getTimeTicks(xAxis.normalizeTimeTickInterval(interval, dataGroupingOptions.units ||
+                xAxis.ordinal &&
+                xAxis.ordinal.getGroupIntervalFactor(xMin, xMax, series)) || 1, interval = (groupPixelWidth * (xMax - xMin) / plotSizeX) *
+                groupIntervalFactor, groupPositions = xAxis.getTimeTicks(DateTimeAxis.AdditionsClass.prototype.normalizeTimeTickInterval(interval, dataGroupingOptions.units ||
                 defaultDataGroupingUnits), 
             // Processed data may extend beyond axis (#4907)
             Math.min(xMin, processedXData[0]), Math.max(xMax, processedXData[processedXData.length - 1]), xAxis.options.startOfWeek, processedXData, series.closestPointRange), groupedData = seriesProto.groupData.apply(series, [
@@ -522,7 +528,7 @@ seriesProto.generatePoints = function () {
 // points.
 addEvent(Point, 'update', function () {
     if (this.dataGroup) {
-        H.error(24, false, this.series.chart);
+        error(24, false, this.series.chart);
         return false;
     }
 });
@@ -581,7 +587,7 @@ addEvent(Series, 'destroy', seriesProto.destroyGroupedData);
 // Handle default options for data grouping. This must be set at runtime because
 // some series types are defined after this.
 addEvent(Series, 'afterSetOptions', function (e) {
-    var options = e.options, type = this.type, plotOptions = this.chart.options.plotOptions, defaultOptions = defaultPlotOptions[type].dataGrouping, 
+    var options = e.options, type = this.type, plotOptions = this.chart.options.plotOptions, defaultOptions = O.defaultOptions.plotOptions[type].dataGrouping, 
     // External series, for example technical indicators should also
     // inherit commonOptions which are not available outside this module
     baseOptions = this.useCommonDataGrouping && commonOptions;
@@ -653,6 +659,7 @@ Axis.prototype.getGroupPixelWidth = function () {
  * @return {void}
  */
 Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
+    var axis = this;
     var i;
     redraw = pick(redraw, true);
     if (!dataGrouping) {
@@ -677,7 +684,9 @@ Axis.prototype.setDataGrouping = function (dataGrouping, redraw) {
         }, false);
     }
     // Clear ordinal slope, so we won't accidentaly use the old one (#7827)
-    this.ordinalSlope = null;
+    if (axis.ordinal) {
+        axis.ordinal.slope = void 0;
+    }
     if (redraw) {
         this.chart.redraw();
     }
@@ -702,7 +711,8 @@ export default dataGrouping;
  *
  * @declare   Highcharts.DataGroupingOptionsObject
  * @product   highstock
- * @requires  modules/datagrouping
+ * @requires  product:highstock
+ * @requires  module:modules/datagrouping
  * @apioption plotOptions.series.dataGrouping
  */
 /**
@@ -737,7 +747,6 @@ export default dataGrouping;
  *         Approximation callback with custom data
  *
  * @type       {Highcharts.DataGroupingApproximationValue|Function}
- * @product    highstock
  * @apioption  plotOptions.series.dataGrouping.approximation
  */
 /**
@@ -770,7 +779,6 @@ export default dataGrouping;
  *  and applied to the start and end date of the time span.
  *
  * @type      {object}
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.dateTimeLabelFormats
  */
 /**
@@ -778,7 +786,6 @@ export default dataGrouping;
  *
  * @type      {boolean}
  * @default   true
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.enabled
  */
 /**
@@ -788,7 +795,6 @@ export default dataGrouping;
  *
  * @type      {boolean}
  * @default   false
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.forced
  */
 /**
@@ -805,7 +811,6 @@ export default dataGrouping;
  *
  * @type      {number}
  * @default   2
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.groupPixelWidth
  */
 /**
@@ -822,7 +827,6 @@ export default dataGrouping;
  * @type      {boolean}
  * @default   false
  * @since     6.1.0
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.groupAll
  */
 /**
@@ -835,7 +839,6 @@ export default dataGrouping;
  *
  * @type      {boolean}
  * @default   false
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.smoothed
  */
 /**
@@ -873,7 +876,6 @@ export default dataGrouping;
  * ```
  *
  * @type      {Array<Array<string,(Array<number>|null)>>}
- * @product   highstock
  * @apioption plotOptions.series.dataGrouping.units
  */
 /**
@@ -889,7 +891,6 @@ export default dataGrouping;
  *
  * @type      {number}
  * @default   10
- * @product   highstock
  * @apioption plotOptions.column.dataGrouping.groupPixelWidth
  */
 ''; // required by JSDoc parsing

@@ -50,6 +50,8 @@ declare global {
             r: number;
         }
         class Color {
+            public static names: Record<string, ColorString>;
+            public static parse(input: (ColorType|undefined)): Color;
             public constructor(
                 input: (ColorString|GradientColorObject|PatternObject|undefined)
             );
@@ -180,10 +182,9 @@ declare global {
 import U from './Utilities.js';
 const {
     isNumber,
+    merge,
     pInt
 } = U;
-
-var merge = H.merge;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -192,6 +193,9 @@ var merge = H.merge;
  *
  * @class
  * @name Highcharts.Color
+ *
+ * @param {Highcharts.ColorType} input
+ * The input color in either rbga or hex format
  */
 class Color {
 
@@ -225,12 +229,7 @@ class Color {
      * @return {Highcharts.Color}
      * Color instance.
      */
-    public static parse(
-        input: (
-            Highcharts.ColorString|Highcharts.GradientColorObject|
-            Highcharts.PatternObject|undefined
-        )
-    ): Highcharts.Color {
+    public static parse(input: (Highcharts.ColorType|undefined)): Highcharts.Color {
         return new Color(input);
     }
 
@@ -240,15 +239,13 @@ class Color {
      *
      * */
 
-    /**
-     * Handle color operations. Some object methods are chainable.
-     *
-     * @param {Highcharts.ColorType} input
-     *        The input color in either rbga or hex format
-     */
     public constructor(
         input: (Highcharts.ColorString|Highcharts.GradientColorObject|Highcharts.PatternObject|undefined)
     ) {
+        // Backwards compatibility, allow instanciation without new (#13053)
+        if (!(this instanceof Color)) {
+            return new Color(input);
+        }
         this.init(input);
     }
 
@@ -538,11 +535,6 @@ H.Color = Color;
  * @return {Highcharts.Color}
  *         Color instance
  */
-const color = H.color = Color.parse;
+H.color = Color.parse;
 
-const exports = {
-    Color,
-    color
-};
-
-export default exports;
+export default H.Color;

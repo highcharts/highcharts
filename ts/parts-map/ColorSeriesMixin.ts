@@ -10,12 +10,14 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
 
 declare global {
     namespace Highcharts {
         interface ColorPoint extends Point {
             series: ColorSeries;
+            value?: (number|null);
             setVisible(vis?: boolean): void;
         }
         interface ColorPointMixin {
@@ -101,20 +103,24 @@ H.colorSeriesMixin = {
             colorKey = this.colorKey;
 
         points.forEach(function (point: Highcharts.ColorPoint): void {
-            var value = (point as any)[colorKey],
+            var value = point.getNestedProperty(colorKey) as number,
                 color;
 
             color = point.options.color ||
                 (
-                    point.isNull ?
+                    point.isNull || point.value === null ?
                         nullColor :
                         (colorAxis && typeof value !== 'undefined') ?
                             colorAxis.toColor(value, point) :
                             point.color || series.color
                 );
 
-            if (color) {
+            if (color && point.color !== color) {
                 point.color = color;
+
+                if (series.options.legendType === 'point' && point.legendItem) {
+                    series.chart.legend.colorizeItem(point, point.visible);
+                }
             }
         });
     }

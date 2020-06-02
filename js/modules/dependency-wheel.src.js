@@ -12,7 +12,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var animObject = U.animObject;
+var animObject = U.animObject, seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 var base = H.seriesTypes.sankey.prototype;
@@ -23,7 +23,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType('dependencywheel', 'sankey', 
+seriesType('dependencywheel', 'sankey', 
 /**
  * A dependency wheel chart is a type of flow diagram, where all nodes are
  * laid out in a circle, and the flow between the are drawn as link bands.
@@ -187,30 +187,34 @@ H.seriesType('dependencywheel', 'sankey',
                             };
                         });
                         point.shapeArgs = {
-                            d: [
-                                'M',
-                                corners[0].x, corners[0].y,
-                                'A',
-                                innerR, innerR,
-                                0,
-                                0,
-                                1,
-                                corners[1].x, corners[1].y,
-                                'C',
-                                corners[1].cpX, corners[1].cpY,
-                                corners[2].cpX, corners[2].cpY,
-                                corners[2].x, corners[2].y,
-                                'A',
-                                innerR, innerR,
-                                0,
-                                0,
-                                1,
-                                corners[3].x, corners[3].y,
-                                'C',
-                                corners[3].cpX, corners[3].cpY,
-                                corners[0].cpX, corners[0].cpY,
-                                corners[0].x, corners[0].y
-                            ]
+                            d: [[
+                                    'M',
+                                    corners[0].x, corners[0].y
+                                ], [
+                                    'A',
+                                    innerR, innerR,
+                                    0,
+                                    0,
+                                    1,
+                                    corners[1].x, corners[1].y
+                                ], [
+                                    'C',
+                                    corners[1].cpX, corners[1].cpY,
+                                    corners[2].cpX, corners[2].cpY,
+                                    corners[2].x, corners[2].y
+                                ], [
+                                    'A',
+                                    innerR, innerR,
+                                    0,
+                                    0,
+                                    1,
+                                    corners[3].x, corners[3].y
+                                ], [
+                                    'C',
+                                    corners[3].cpX, corners[3].cpY,
+                                    corners[0].cpX, corners[0].cpY,
+                                    corners[0].x, corners[0].y
+                                ]]
                         };
                     }
                 });
@@ -238,7 +242,6 @@ H.seriesType('dependencywheel', 'sankey',
                     }, this.options.animation);
                 }
             }, this);
-            this.animate = null;
         }
     }
     /* eslint-enable valid-jsdoc */

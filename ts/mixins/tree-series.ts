@@ -4,7 +4,17 @@
  *
  * */
 
-import H from '../parts/Globals.js';
+import type Point from '../parts/Point';
+import Color from '../parts/Color.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -66,23 +76,12 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
-import utilitiesModule from '../parts/Utilities.js';
-const {
-    extend,
-    isArray,
-    isNumber,
-    isObject,
-    pick
-} = utilitiesModule;
-
 var isBoolean = function (x: unknown): x is boolean {
         return typeof x === 'boolean';
     },
     isFn = function (x: unknown): x is Function {
         return typeof x === 'function';
-    },
-    merge = H.merge;
+    };
 
 /* eslint-disable valid-jsdoc */
 
@@ -196,7 +195,7 @@ var getColor = function getColor(
 
         if (colorVariation) {
             if (colorVariation.key === 'brightness') {
-                return colorModule.color(color).brighten(
+                return Color.parse(color).brighten(
                     colorVariation.to * (index / siblings)
                 ).get() as any;
             }

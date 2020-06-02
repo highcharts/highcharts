@@ -74,6 +74,9 @@ nbproject/
 /samples/**/reference.svg
 
 tmp/
+/yarn.lock
 /package-lock.json
 /temp.*
 /env.file
+
+*.bak

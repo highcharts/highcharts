@@ -14,6 +14,8 @@
  * */
 
 'use strict';
+
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 
 /**
@@ -73,17 +75,18 @@ declare global {
     }
 }
 
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
+import U from '../parts/Utilities.js';
 const {
-    Color,
-    color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
-const {
+    addEvent,
     extend,
+    fireEvent,
     isNumber,
+    merge,
+    pick,
     wrap
-} = utilitiesModule;
+} = U;
 
 import '../parts/Series.js';
 import '../parts/Options.js';
@@ -93,10 +96,6 @@ var win = H.win,
     noop = function (): void {},
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
-    merge = H.merge,
-    pick = H.pick,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
@@ -564,7 +563,7 @@ H.initCanvasBoost = function (): void {
                         opacity: 1
                     }
                 });
-                H.clearTimeout(destroyLoadingDiv);
+                U.clearTimeout(destroyLoadingDiv);
                 chart.showLoading('Drawing...');
                 chart.options.loading = loadingOptions; // reset
             }
@@ -841,14 +840,12 @@ H.initCanvasBoost = function (): void {
         sampling: true
     });
 
-    H.Chart.prototype.callbacks.push(function (
-        chart: Highcharts.Chart
-    ): void {
+    Chart.prototype.callbacks.push(function (chart: Chart): void {
 
         /**
          * @private
          */
-        function canvasToSVG(this: Highcharts.Chart): void {
+        function canvasToSVG(this: Chart): void {
             if (chart.boostCopy) {
                 chart.boostCopy();
             }
@@ -857,7 +854,7 @@ H.initCanvasBoost = function (): void {
         /**
          * @private
          */
-        function clear(this: Highcharts.Chart): void {
+        function clear(this: Chart): void {
             if (chart.renderTarget) {
                 chart.renderTarget.attr({ href: '' });
             }

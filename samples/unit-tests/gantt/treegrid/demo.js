@@ -273,6 +273,35 @@ QUnit.test('Chart.addSeries', assert => {
     );
 });
 
+QUnit.test('Chart.addSeries collapsed', assert => {
+    const chart = Highcharts.chart('container', {
+        yAxis: [{
+            type: 'treegrid'
+        }]
+    });
+    const series = {
+        data: [{
+            start: 0,
+            end: 3,
+            name: 'Category 1',
+            id: 'cat1',
+            collapsed: true
+        }, {
+            parent: 'cat1',
+            start: 2,
+            end: 3,
+            name: 'Category 2'
+        }]
+    };
+    chart.addSeries(series);
+
+    assert.strictEqual(
+        chart.renderTo.querySelectorAll('.highcharts-treegrid-node-collapsed').length,
+        1,
+        'should have one collapsed node'
+    );
+});
+
 QUnit.test('Series.setVisible', assert => {
     const {
         series: [series1, series2, series3],

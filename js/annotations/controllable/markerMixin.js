@@ -4,11 +4,11 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
-import U from './../../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, objectEach = U.objectEach;
-import './../../parts/Chart.js';
-import './../../parts/SvgRenderer.js';
+import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+var addEvent = U.addEvent, defined = U.defined, merge = U.merge, objectEach = U.objectEach, uniqueKey = U.uniqueKey;
+import '../../parts/Chart.js';
+import '../../parts/SVGRenderer.js';
 /**
  * Options for configuring markers for annotations.
  *
@@ -90,9 +90,9 @@ H.SVGRenderer.prototype.addMarker = function (id, markerOptions) {
         fill: markerOptions.color || 'rgba(0, 0, 0, 0.75)'
     };
     options.children = markerOptions.children.map(function (child) {
-        return H.merge(attrs, child);
+        return merge(attrs, child);
     });
-    var marker = this.definition(H.merge(true, {
+    var marker = this.definition(merge(true, {
         markerWidth: 20,
         markerHeight: 20,
         refX: 0,
@@ -137,8 +137,8 @@ var markerMixin = {
                 }
                 if (predefinedMarker) {
                     marker = item[markerType] = chart.renderer
-                        .addMarker((itemOptions.id || H.uniqueKey()) + '-' +
-                        predefinedMarker.id, H.merge(predefinedMarker, { color: color }));
+                        .addMarker((itemOptions.id || uniqueKey()) + '-' +
+                        predefinedMarker.id, merge(predefinedMarker, { color: color }));
                     item.attr(markerType, marker.attr('id'));
                 }
             }
@@ -147,7 +147,7 @@ var markerMixin = {
     }
 };
 addEvent(H.Chart, 'afterGetContainer', function () {
-    this.options.defs = H.merge(defaultMarkers, this.options.defs || {});
+    this.options.defs = merge(defaultMarkers, this.options.defs || {});
     objectEach(this.options.defs, function (def) {
         if (def.tagName === 'marker' && def.render !== false) {
             this.renderer.addMarker(def.id, def);

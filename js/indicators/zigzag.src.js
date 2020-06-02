@@ -8,9 +8,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
-var seriesType = H.seriesType, UNDEFINED;
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
+var UNDEFINED;
 /**
  * The Zig Zag series type.
  *

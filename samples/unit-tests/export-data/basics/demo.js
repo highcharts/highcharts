@@ -964,3 +964,43 @@ QUnit.test('Parallel coordinates', function (assert) {
         'Value should not be translated (#11477)'
     );
 });
+
+QUnit.test('Descending categories', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                type: 'category'
+            },
+            series: [{
+                name: "New",
+                data: [{
+                    name: "Category 1",
+                    y: 34
+                }]
+            },
+            {
+                name: "In Progress",
+                data: [{
+                    name: "Category 2",
+                    y: 16
+                },
+                {
+                    name: "Category 1",
+                    y: 66
+                }]
+            }
+            ],
+            exporting: {
+                showTable: true
+            }
+        }),
+        csv = chart.getCSV().split('\n');
+
+    assert.strictEqual(
+        csv[2],
+        '"Category 1",34,66',
+        'First point should be in Category 2 (#12767)'
+    );
+});

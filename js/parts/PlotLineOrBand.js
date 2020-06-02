@@ -8,8 +8,8 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
 import Axis from './Axis.js';
+import H from './Globals.js';
 /**
  * Options for plot bands on axes.
  *
@@ -31,8 +31,7 @@ import Axis from './Axis.js';
  * @typedef {Highcharts.XAxisPlotLinesLabelOptions|Highcharts.YAxisPlotLinesLabelOptions|Highcharts.ZAxisPlotLinesLabelOptions} Highcharts.AxisPlotLinesLabelOptions
  */
 import U from './Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
-var merge = H.merge;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The object wrapper for plot lines and plot bands
@@ -44,14 +43,14 @@ var merge = H.merge;
  *
  * @param {Highcharts.AxisPlotLinesOptions|Highcharts.AxisPlotBandsOptions} [options]
  */
-H.PlotLineOrBand = function (axis, options) {
-    this.axis = axis;
-    if (options) {
-        this.options = options;
-        this.id = options.id;
+var PlotLineOrBand = /** @class */ (function () {
+    function PlotLineOrBand(axis, options) {
+        this.axis = axis;
+        if (options) {
+            this.options = options;
+            this.id = options.id;
+        }
     }
-};
-H.PlotLineOrBand.prototype = {
     /**
      * Render the plot line or plot band. If it is already existing,
      * move it.
@@ -60,17 +59,17 @@ H.PlotLineOrBand.prototype = {
      * @function Highcharts.PlotLineOrBand#render
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
-    render: function () {
+    PlotLineOrBand.prototype.render = function () {
         H.fireEvent(this, 'render');
-        var plotLine = this, axis = plotLine.axis, horiz = axis.horiz, options = plotLine.options, optionsLabel = options.label, label = plotLine.label, to = options.to, from = options.from, value = options.value, isBand = defined(from) && defined(to), isLine = defined(value), svgElem = plotLine.svgElem, isNew = !svgElem, path = [], color = options.color, zIndex = pick(options.zIndex, 0), events = options.events, attribs = {
+        var plotLine = this, axis = plotLine.axis, horiz = axis.horiz, log = axis.logarithmic, options = plotLine.options, optionsLabel = options.label, label = plotLine.label, to = options.to, from = options.from, value = options.value, isBand = defined(from) && defined(to), isLine = defined(value), svgElem = plotLine.svgElem, isNew = !svgElem, path = [], color = options.color, zIndex = pick(options.zIndex, 0), events = options.events, attribs = {
             'class': 'highcharts-plot-' + (isBand ? 'band ' : 'line ') +
                 (options.className || '')
         }, groupAttribs = {}, renderer = axis.chart.renderer, groupName = isBand ? 'bands' : 'lines', group;
         // logarithmic conversion
-        if (axis.isLog) {
-            from = axis.log2lin(from);
-            to = axis.log2lin(to);
-            value = axis.log2lin(value);
+        if (log) {
+            from = log.log2lin(from);
+            to = log.log2lin(to);
+            value = log.log2lin(value);
         }
         // Set the presentational attributes
         if (!axis.chart.styledMode) {
@@ -127,16 +126,17 @@ H.PlotLineOrBand.prototype = {
             return;
         }
         // common for lines and bands
+        // Add events only if they were not added before.
+        if (!plotLine.eventsAdded && events) {
+            objectEach(events, function (event, eventType) {
+                svgElem.on(eventType, function (e) {
+                    events[eventType].apply(plotLine, [e]);
+                });
+            });
+            plotLine.eventsAdded = true;
+        }
         if ((isNew || !svgElem.d) && path && path.length) {
             svgElem.attr({ d: path });
-            // events
-            if (events) {
-                objectEach(events, function (event, eventType) {
-                    svgElem.on(eventType, function (e) {
-                        events[eventType].apply(plotLine, [e]);
-                    });
-                });
-            }
         }
         else if (svgElem) {
             if (path) {
@@ -173,7 +173,7 @@ H.PlotLineOrBand.prototype = {
         }
         // chainable
         return plotLine;
-    },
+    };
     /**
      * Render and align label for plot line or band.
      *
@@ -185,7 +185,7 @@ H.PlotLineOrBand.prototype = {
      * @param {number} [zIndex]
      * @return {void}
      */
-    renderLabel: function (optionsLabel, path, isBand, zIndex) {
+    PlotLineOrBand.prototype.renderLabel = function (optionsLabel, path, isBand, zIndex) {
         var plotLine = this, label = plotLine.label, renderer = plotLine.axis.chart.renderer, attribs, xBounds, yBounds, x, y, labelText;
         // add the SVG element
         if (!label) {
@@ -214,9 +214,9 @@ H.PlotLineOrBand.prototype = {
         // get the bounding box and align the label
         // #3000 changed to better handle choice between plotband or plotline
         xBounds = path.xBounds ||
-            [path[1], path[4], (isBand ? path[6] : path[1])];
+            [path[0][1], path[1][1], (isBand ? path[2][1] : path[0][1])];
         yBounds = path.yBounds ||
-            [path[2], path[5], (isBand ? path[7] : path[2])];
+            [path[0][2], path[1][2], (isBand ? path[2][2] : path[0][2])];
         x = arrayMin(xBounds);
         y = arrayMin(yBounds);
         label.align(optionsLabel, false, {
@@ -226,7 +226,7 @@ H.PlotLineOrBand.prototype = {
             height: arrayMax(yBounds) - y
         });
         label.show(true);
-    },
+    };
     /**
      * Get label's text content.
      *
@@ -235,25 +235,26 @@ H.PlotLineOrBand.prototype = {
      * @param {Highcharts.AxisPlotLinesLabelOptions|Highcharts.AxisPlotBandsLabelOptions} optionsLabel
      * @return {string}
      */
-    getLabelText: function (optionsLabel) {
+    PlotLineOrBand.prototype.getLabelText = function (optionsLabel) {
         return defined(optionsLabel.formatter) ?
             optionsLabel.formatter
                 .call(this) :
             optionsLabel.text;
-    },
+    };
     /**
      * Remove the plot line or band.
      *
      * @function Highcharts.PlotLineOrBand#destroy
      * @return {void}
      */
-    destroy: function () {
+    PlotLineOrBand.prototype.destroy = function () {
         // remove it from the lookup
         erase(this.axis.plotLinesAndBands, this);
         delete this.axis;
         destroyObjectProperties(this);
-    }
-};
+    };
+    return PlotLineOrBand;
+}());
 /* eslint-enable no-invalid-this, valid-jsdoc */
 // Object with members for extending the Axis prototype
 extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
@@ -868,17 +869,25 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 plus = 0;
             }
             // Go over each subpath - for panes in Highstock
-            for (i = 0; i < path.length; i += 6) {
-                // Add 1 pixel when coordinates are the same
-                if (horiz && toPath[i + 1] === path[i + 1]) {
-                    toPath[i + 1] += plus;
-                    toPath[i + 4] += plus;
+            for (i = 0; i < path.length; i += 2) {
+                var pathStart = path[i], pathEnd = path[i + 1], toPathStart = toPath[i], toPathEnd = toPath[i + 1];
+                // Type checking all affected path segments. Consider something
+                // smarter.
+                if ((pathStart[0] === 'M' || pathStart[0] === 'L') &&
+                    (pathEnd[0] === 'M' || pathEnd[0] === 'L') &&
+                    (toPathStart[0] === 'M' || toPathStart[0] === 'L') &&
+                    (toPathEnd[0] === 'M' || toPathEnd[0] === 'L')) {
+                    // Add 1 pixel when coordinates are the same
+                    if (horiz && toPathStart[1] === pathStart[1]) {
+                        toPathStart[1] += plus;
+                        toPathEnd[1] += plus;
+                    }
+                    else if (!horiz && toPathStart[2] === pathStart[2]) {
+                        toPathStart[2] += plus;
+                        toPathEnd[2] += plus;
+                    }
+                    result.push(['M', pathStart[1], pathStart[2]], ['L', pathEnd[1], pathEnd[2]], ['L', toPathEnd[1], toPathEnd[2]], ['L', toPathStart[1], toPathStart[2]], ['Z']);
                 }
-                else if (!horiz && toPath[i + 2] === path[i + 2]) {
-                    toPath[i + 2] += plus;
-                    toPath[i + 5] += plus;
-                }
-                result.push('M', path[i + 1], path[i + 2], 'L', path[i + 4], path[i + 5], toPath[i + 4], toPath[i + 5], toPath[i + 1], toPath[i + 2], 'z');
                 result.isFlat = isFlat;
             }
         }
@@ -938,7 +947,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
      * @return {Highcharts.PlotLineOrBand|undefined}
      */
     addPlotBandOrLine: function (options, coll) {
-        var obj = new H.PlotLineOrBand(this, options).render(), userOptions = this.userOptions;
+        var obj = new PlotLineOrBand(this, options).render(), userOptions = this.userOptions;
         if (obj) { // #2189
             // Add it to the user options for exporting and Axis.update
             if (coll) {
@@ -948,6 +957,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
                 userOptions[coll] = updatedOptions;
             }
             this.plotLinesAndBands.push(obj);
+            this._addedPlotLB = true;
         }
         return obj;
     },
@@ -975,7 +985,7 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         ]).forEach(function (arr) {
             i = arr.length;
             while (i--) {
-                if (arr[i].id === id) {
+                if ((arr[i] || {}).id === id) {
                     erase(arr, arr[i]);
                 }
             }
@@ -1018,3 +1028,5 @@ extend(Axis.prototype, /** @lends Highcharts.Axis.prototype */ {
         this.removePlotBandOrLine(id);
     }
 });
+H.PlotLineOrBand = PlotLineOrBand;
+export default H.PlotLineOrBand;

@@ -13,10 +13,10 @@ The heat map series is defined by setting the type to `heatmap`. A heat map has 
 
 ### The color axis
 
-Heat maps borrow a central concept from Highmaps, the color axis. See the docs article on [color axis](https://highcharts.com/docs/maps/color-axis/) for details
+Heat maps borrow a central concept from Highcharts Maps, the color axis. See the docs article on [color axis](https://highcharts.com/docs/maps/color-axis/) for details
 
 ### Resources
 
 See the featured demos at [Heat map](https://highcharts.com/demo/heatmap/) and [Large heatmap](https://highcharts.com/demo/heatmap-canvas/). The latter demonstrates how a HTML5 canvas can be plugged in to optimize rendering times.
 
-See [heatmap](https://api.highcharts.com/highmaps/plotOptions.heatmap) in the Highmaps docs.
+See [heatmap](https://api.highcharts.com/highmaps/plotOptions.heatmap) in the Highcharts Maps docs.

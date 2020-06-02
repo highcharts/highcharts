@@ -14,7 +14,12 @@
 
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    error,
+    merge,
+    pick,
+    uniqueKey
+} = U;
 
 /**
  * Internal types.
@@ -124,7 +129,7 @@ Earcon.prototype.init = function (
 ): void {
     this.options = options;
     if (!this.options.id) {
-        this.options.id = this.id = H.uniqueKey();
+        this.options.id = this.id = uniqueKey();
     }
     this.instrumentsPlaying = {};
 };
@@ -147,7 +152,7 @@ Earcon.prototype.sonify = function (
     this: Highcharts.Earcon,
     options: Highcharts.EarconOptionsObject
 ): void {
-    var playOptions = H.merge(this.options, options);
+    var playOptions = merge(this.options, options);
 
     // Find master volume/pan settings
     var masterVolume = pick(playOptions.volume, 1),
@@ -162,7 +167,7 @@ Earcon.prototype.sonify = function (
     ): void {
         var instrument = typeof opts.instrument === 'string' ?
                 H.sonification.instruments[opts.instrument] : opts.instrument,
-            instrumentOpts = H.merge(opts.playOptions),
+            instrumentOpts = merge(opts.playOptions),
             instrOnEnd: (Function|undefined),
             instrumentCopy,
             copyId = '';
@@ -201,7 +206,7 @@ Earcon.prototype.sonify = function (
                 instrumentCopy.play(instrumentOpts);
             }
         } else {
-            H.error(30);
+            error(30);
         }
     });
 };

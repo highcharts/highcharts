@@ -10,6 +10,8 @@
 
 'use strict';
 
+import type RadialAxis from './RadialAxis';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -46,7 +48,7 @@ declare global {
             ): void;
             public translate(): void;
         }
-        interface Chart {
+        interface ChartLike {
             angular?: boolean;
         }
         interface GaugePointOptions extends LinePointOptions {
@@ -57,7 +59,7 @@ declare global {
             baseWidth?: number;
             borderColor?: ColorType;
             borderWidth?: number;
-            path?: SVGPathArray;
+            path?: SVGPath;
             radius?: string;
             rearLength?: string;
             topWidth?: number;
@@ -89,8 +91,10 @@ import U from '../parts/Utilities.js';
 const {
     clamp,
     isNumber,
+    merge,
     pick,
-    pInt
+    pInt,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -98,10 +102,8 @@ import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/Interaction.js';
 
-var merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     Series = H.Series,
-    seriesType = H.seriesType,
     TrackerMixin = H.TrackerMixin;
 
 /**
@@ -445,18 +447,17 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
             rotation = rotation * 180 / Math.PI;
 
             point.shapeType = 'path';
+            const d: SVGPath = dialOptions.path || [
+                ['M', -rearLength, -baseWidth / 2],
+                ['L', baseLength, -baseWidth / 2],
+                ['L', radius, -topWidth / 2],
+                ['L', radius, topWidth / 2],
+                ['L', baseLength, baseWidth / 2],
+                ['L', -rearLength, baseWidth / 2],
+                ['Z']
+            ];
             point.shapeArgs = {
-                d: dialOptions.path || [
-                    'M',
-                    -rearLength, -baseWidth / 2,
-                    'L',
-                    baseLength, -baseWidth / 2,
-                    radius, -topWidth / 2,
-                    radius, (topWidth as any) / 2,
-                    baseLength, (baseWidth as any) / 2,
-                    -rearLength, (baseWidth as any) / 2,
-                    'z'
-                ],
+                d,
                 translateX: center[0],
                 translateY: center[1],
                 rotation: rotation
@@ -569,9 +570,6 @@ seriesType<Highcharts.GaugeSeries>('gauge', 'line', {
                     }, series.options.animation);
                 }
             });
-
-            // delete this function to allow it only once
-            series.animate = null as any;
         }
     },
 

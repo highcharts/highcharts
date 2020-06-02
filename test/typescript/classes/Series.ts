@@ -1,5 +1,7 @@
 import * as Highcharts from 'highcharts';
 
+test_Series();
+
 function test_Series() {
     const chart = new Highcharts.Chart('container', {});
     const series = new Highcharts.Series(chart, {
@@ -8,5 +10,3 @@ function test_Series() {
     });
     series.render();
 }
-
-test_Series();

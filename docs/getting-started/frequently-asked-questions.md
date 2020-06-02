@@ -4,7 +4,7 @@ Frequently asked questions
 *   [Does Highcharts refer to files outside our domain?](#does-highcharts-refer-to-files-outside-our-domain)
 *   [My charts are not showing in Internet Explorer 7 or 8](#my-charts-are-not-showing-in-internet-explorer-7-or-8)
 *   [Can I use Highcharts with a ... server?](#can-i-use-highcharts-with-a-server)
-*   [Can I use features from Highstock in Highcharts?](#can-i-use-features-from-highstock-in-highcharts)
+*   [Can I use features from Highcharts Stock in Highcharts?](#can-i-use-features-from-highstock-in-highcharts)
 *   [Can I add a data table to the exported chart?](#can-i-add-a-data-table-to-the-exported-chart)
 *   [How can I get the best performance out of Highcharts?](#how-can-i-get-the-best-performance-out-of-highcharts)
 *   [Can I export multiple charts to the same image or PDF?](#can-i-export-multiple-charts-to-the-same-image-or-pdf)
@@ -63,14 +63,14 @@ The best practice in integrating Highcharts may differ from system to system. Yo
 
 For a live connection to the server, you may set up the web page to load new data over XHR or set up direct communicatations using WebSockets. With the new data arriving in the browser, the chart can be kept updated through various dynamic endpoints like `Series.addPoint()`, `Point.update()`, `Chart.addSeries()`, `Chart.update()` etc.
 
-Before you start to set up a complex backend, you may want to check out [www.highcharts.com/download](download) whether someone has created a wrapper for your specific system.
+Before you start to set up a complex backend, you may want to check out [highcharts.com/download](https://highcharts.com/download) to see if there is a wrapper for your specific system.
 
 * * *
 
-Can I use features from Highstock in Highcharts?
+Can I use features from Highcharts Stock in Highcharts?
 ------------------------------------------------
 
-Yes, most Highstock features can be applied to standard charts. From a licensing point of view, using features of the Stock package obviously requires a Highstock license.
+Yes, most Highcharts Stock features can be applied to standard charts. From a licensing point of view, using features of the Stock package obviously requires a Highcharts Stock license.
 
 Technically Highcharts Stock is implemented as a set of plugins for Highcharts. The entire code base for Highcharts is included in the Stock package, and you can invoke a chart using `Highcharts.Chart` and enable certain features that are normally associated with a stock chart.
 
@@ -97,7 +97,7 @@ How can I get the best performance out of Highcharts?
 
 When working with series with a high number of data points, there are a few things to consider.
 
-1.  First of all, consider using [the Boost module](news/175-highcharts-performance-boost).
+1.  First of all, consider using the [Boost module](https://www.highcharts.com/blog/tutorials/highcharts-high-performance-boost-module/).
 2.  Otherwise, for line plots, it is recommended that you disable point markers, as these will add a performance overhead. See [https://highcharts.com/demo/line-time-series](https://highcharts.com/demo/line-time-series).
 3.  Disabling shadows increases performance, as three shadow elements are created for each shape that includes a shadow.
 4.  For large column series, it is recommended that you disable the initial animation, [plotOptions.column.animation](https://api.highcharts.com/highcharts#plotOptions.column.animation), at least for VML based browsers. The best way to distinguish between fast SVG browsers and slower VML browsers is to use the Highcharts.svg boolean property.

@@ -10,7 +10,19 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    getOptions,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -22,25 +34,14 @@ declare global {
         }
         let maps: Dictionary<any>;
         function mapChart(): Map;
-        function splitPath(path: string): SVGPathArray;
+        function splitPath(path: string): SVGPath;
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    pick
-} = U;
-
 import '../parts/Options.js';
 import '../parts/Chart.js';
-import '../parts/SvgRenderer.js';
 
-var Chart = H.Chart,
-    defaultOptions = H.defaultOptions,
-    merge = H.merge,
-    Renderer = H.Renderer,
-    SVGRenderer = H.SVGRenderer,
+var Renderer = H.Renderer,
     VMLRenderer = H.VMLRenderer;
 
 // Add language
@@ -314,30 +315,38 @@ defaultOptions.mapNavigation = {
  *
  * @function Highcharts.splitPath
  *
- * @param {string} path
+ * @param {string|Array<string|number>} path
  *
  * @return {Highcharts.SVGPathArray}
  */
-H.splitPath = function (path: string): Highcharts.SVGPathArray {
-    var i: number;
+H.splitPath = function (
+    path: string|Array<string|number>
+): SVGPath {
+    let arr: Array<string|number>;
 
-    // Move letters apart
-    path = path.replace(/([A-Za-z])/g, ' $1 ');
-    // Trim
-    path = path.replace(/^\s*/, '').replace(/\s*$/, '');
+    if (typeof path === 'string') {
+        path = path
+            // Move letters apart
+            .replace(/([A-Za-z])/g, ' $1 ')
+            // Trim
+            .replace(/^\s*/, '').replace(/\s*$/, '');
 
-    // Split on spaces and commas
-    // Extra comma to escape gulp.scripts task
-    path = path.split(/[ ,,]+/) as any;
+        // Split on spaces and commas. The semicolon is bogus, designed to
+        // circumvent string replacement in the pre-v7 assembler that built
+        // specific styled mode files.
+        const split = path.split(/[ ,;]+/);
 
-    // Parse numbers
-    for (i = 0; i < path.length; i++) {
-        if (!/[a-zA-Z]/.test(path[i])) {
-            (path as any)[i] = parseFloat(path[i]);
-        }
+        arr = split.map((item): (number|string) => {
+            if (!/[A-za-z]/.test(item)) {
+                return parseFloat(item);
+            }
+            return item;
+        });
+    } else {
+        arr = path;
     }
 
-    return path as any;
+    return SVGRenderer.prototype.pathToSegments(arr);
 };
 
 /**
@@ -364,34 +373,26 @@ function selectiveRoundedRect(
     rTopRight: number,
     rBottomRight: number,
     rBottomLeft: number
-): Highcharts.SVGPathArray {
+): SVGPath {
     return [
-        'M', x + rTopLeft, y,
+        ['M', x + rTopLeft, y],
         // top side
-        'L', x + w - rTopRight, y,
+        ['L', x + w - rTopRight, y],
         // top right corner
-        'C', x + w - rTopRight / 2,
-        y, x + w,
-        y + rTopRight / 2, x + w, y + rTopRight,
+        ['C', x + w - rTopRight / 2, y, x + w, y + rTopRight / 2, x + w, y + rTopRight],
         // right side
-        'L', x + w, y + h - rBottomRight,
+        ['L', x + w, y + h - rBottomRight],
         // bottom right corner
-        'C', x + w, y + h - rBottomRight / 2,
-        x + w - rBottomRight / 2, y + h,
-        x + w - rBottomRight, y + h,
+        ['C', x + w, y + h - rBottomRight / 2, x + w - rBottomRight / 2, y + h, x + w - rBottomRight, y + h],
         // bottom side
-        'L', x + rBottomLeft, y + h,
+        ['L', x + rBottomLeft, y + h],
         // bottom left corner
-        'C', x + rBottomLeft / 2, y + h,
-        x, y + h - rBottomLeft / 2,
-        x, y + h - rBottomLeft,
+        ['C', x + rBottomLeft / 2, y + h, x, y + h - rBottomLeft / 2, x, y + h - rBottomLeft],
         // left side
-        'L', x, y + rTopLeft,
+        ['L', x, y + rTopLeft],
         // top left corner
-        'C', x, y + rTopLeft / 2,
-        x + rTopLeft / 2, y,
-        x + rTopLeft, y,
-        'Z'
+        ['C', x, y + rTopLeft / 2, x + rTopLeft / 2, y, x + rTopLeft, y],
+        ['Z']
     ];
 }
 SVGRenderer.prototype.symbols.topbutton = function (
@@ -399,18 +400,20 @@ SVGRenderer.prototype.symbols.topbutton = function (
     y: number,
     w: number,
     h: number,
-    attr: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, attr.r, attr.r, 0, 0);
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
+    const r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, r, r, 0, 0);
 };
 SVGRenderer.prototype.symbols.bottombutton = function (
     x: number,
     y: number,
     w: number,
     h: number,
-    attr: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
-    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, attr.r, attr.r);
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
+    const r = (options && options.r) || 0;
+    return selectiveRoundedRect(x - 1, y - 1, w, h, 0, 0, r, r);
 };
 // The symbol callbacks are generated on the SVGRenderer object in all browsers.
 // Even VML browsers need this in order to generate shapes in export. Now share
@@ -455,8 +458,8 @@ if ((Renderer as any) === VMLRenderer) {
  */
 H.Map = H.mapChart = function (
     a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
-    b?: (Highcharts.ChartCallbackFunction|Highcharts.Options),
-    c?: Highcharts.ChartCallbackFunction
+    b?: (Chart.CallbackFunction|Highcharts.Options),
+    c?: Chart.CallbackFunction
 ): Highcharts.Map {
 
     var hasRenderToArg = typeof a === 'string' || (a as any).nodeName,
@@ -470,7 +473,7 @@ H.Map = H.mapChart = function (
             startOnTick: false
         },
         seriesOptions,
-        defaultCreditsOptions = H.getOptions().credits;
+        defaultCreditsOptions = getOptions().credits;
 
     /* For visual testing
     hiddenAxis.gridLineWidth = 1;
@@ -485,7 +488,10 @@ H.Map = H.mapChart = function (
     options = merge(
         {
             chart: {
-                panning: 'xy',
+                panning: {
+                    enabled: true,
+                    type: 'xy'
+                },
                 type: 'map'
             },
             credits: {

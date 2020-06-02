@@ -5,7 +5,14 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
+
+import type Annotation from '../annotations.src';
+import controllableMixin from './controllableMixin.js';
+import ControllablePath from './ControllablePath.js';
+import U from './../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -51,11 +58,6 @@ declare global {
     }
 }
 
-
-import './../../parts/Utilities.js';
-import controllableMixin from './controllableMixin.js';
-import ControllablePath from './ControllablePath.js';
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -73,7 +75,7 @@ import ControllablePath from './ControllablePath.js';
  **/
 const ControllableCircle: typeof Highcharts.AnnotationControllableCircle = function (
     this: Highcharts.AnnotationControllableCircle,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsShapeOptions,
     index: number
 ): void {
@@ -87,11 +89,11 @@ const ControllableCircle: typeof Highcharts.AnnotationControllableCircle = funct
  * @name Highcharts.AnnotationControllableCircle.attrsMap
  * @type {Highcharts.Dictionary<string>}
  */
-ControllableCircle.attrsMap = H.merge(ControllablePath.attrsMap, {
+ControllableCircle.attrsMap = merge(ControllablePath.attrsMap, {
     r: 'r'
 });
 
-H.merge<Highcharts.AnnotationControllableCircle, Partial<Highcharts.AnnotationControllableCircle>>(
+merge<Highcharts.AnnotationControllableCircle, Partial<Highcharts.AnnotationControllableCircle>>(
     true,
     ControllableCircle.prototype,
     controllableMixin, /** @lends Highcharts.AnnotationControllableCircle# */ {

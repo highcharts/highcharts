@@ -6,9 +6,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, pick = U.pick;
+var correctFloat = U.correctFloat, pick = U.pick, seriesType = U.seriesType;
 /* eslint-disable valid-jsdoc */
 // Utils
 /**
@@ -31,7 +30,7 @@ function accumulatePoints(sum, yVal, i, index, subtract) {
  *
  * @augments Highcharts.Series
  */
-H.seriesType('dpo', 'sma', 
+seriesType('dpo', 'sma', 
 /**
  * Detrended Price Oscillator. This series requires the `linkedTo` option to
  * be set and should be loaded after the `stock/indicators/indicators.js`.

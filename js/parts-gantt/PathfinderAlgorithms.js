@@ -114,9 +114,9 @@ function findObstacleFromPoint(obstacles, point) {
 function pathFromSegments(segments) {
     var path = [];
     if (segments.length) {
-        path.push('M', segments[0].start.x, segments[0].start.y);
+        path.push(['M', segments[0].start.x, segments[0].start.y]);
         for (var i = 0; i < segments.length; ++i) {
-            path.push('L', segments[i].end.x, segments[i].end.y);
+            path.push(['L', segments[i].end.x, segments[i].end.y]);
         }
     }
     return path;
@@ -165,7 +165,10 @@ var algorithms = {
      */
     straight: function (start, end) {
         return {
-            path: ['M', start.x, start.y, 'L', end.x, end.y],
+            path: [
+                ['M', start.x, start.y],
+                ['L', end.x, end.y]
+            ],
             obstacles: [{ start: start, end: end }]
         };
     },

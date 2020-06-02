@@ -182,3 +182,117 @@ QUnit.test('#10733 - scrollbar had wrong range when extremes was the same.', fun
         'Scrollbar starts from left button.'
     );
 });
+
+QUnit.test('#12834 - scrollbar had wrong extremes when series was hidden.', function (assert) {
+    var chart = Highcharts.chart('container', {
+            xAxis: {
+                min: 100,
+                max: 200,
+                scrollbar: {
+                    enabled: true
+                }
+            },
+            series: [{
+                visible: true,
+                data: [
+                    [100, 1],
+                    [200, 3]
+                ]
+            }]
+        }),
+        scrollbar = chart.xAxis[0].scrollbar;
+
+    assert.strictEqual(
+        chart.xAxis[0].min === 100 && chart.xAxis[0].max === 200,
+        true,
+        'Scrollbar should have range from xAxis min and max.'
+    );
+
+    chart.series[0].setVisible(false);
+
+    scrollbar.buttonToMinClick({
+        trigger: 'scrollbar'
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].min === 100 && chart.xAxis[0].max === 200,
+        true,
+        'Scrollbar should have the same range like visible series.'
+    );
+
+});
+
+QUnit.test('#12834 - xAxis had wrong extremes after scroll .', function (assert) {
+    var isNumber = Highcharts.isNumber,
+        chart = Highcharts.chart('container', {
+            xAxis: {
+                scrollbar: {
+                    enabled: true
+                }
+            },
+            series: [{
+                visible: true,
+                data: [
+                    [100, 1],
+                    [200, 3]
+                ]
+            }]
+        }),
+        scrollbar = chart.xAxis[0].scrollbar;
+
+    chart.series[0].setVisible(false);
+
+    scrollbar.buttonToMinClick({
+        trigger: 'scrollbar'
+    });
+
+    chart.series[0].setVisible(true);
+
+    assert.ok(
+        isNumber(chart.xAxis[0].min) && isNumber(chart.xAxis[0].max),
+        'xAxis should have extremes after scrolling.'
+    );
+
+});
+
+QUnit.test('Toggle chart.scrollbar', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            data: [5, 6, 2]
+        }],
+        scrollbar: {
+            enabled: true
+        }
+    });
+
+    chart.update({
+        scrollbar: {
+            enabled: false
+        },
+        series: [{
+            data: [5, 6, 2, 4]
+        }]
+    });
+
+    chart.update({
+        xAxis: {
+            min: 0,
+            max: 0
+        },
+        series: [{
+            data: [5]
+        }]
+    });
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions.length,
+        1,
+        'xAxis should have just one tick (#13184).'
+    );
+
+    assert.strictEqual(
+        chart.xAxis[0].tickPositions[0],
+        0,
+        'xAxis\'s tick should equal min and max values (#13184).'
+    );
+});

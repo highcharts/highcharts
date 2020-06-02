@@ -10,12 +10,12 @@
  *
  * */
 'use strict';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var clamp = U.clamp, defined = U.defined, extend = U.extend, pick = U.pick, setAnimation = U.setAnimation;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, isFunction = U.isFunction, pick = U.pick, setAnimation = U.setAnimation;
 import './integrations.js';
 import './QuadTree.js';
-var addEvent = H.addEvent, Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.layouts = {
     'reingold-fruchterman': function () {
@@ -42,24 +42,30 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.setInitialRendering(true);
         this.integration =
             H.networkgraphIntegrations[options.integration];
+        this.enableSimulation = options.enableSimulation;
         this.attractiveForce = pick(options.attractiveForce, this.integration.attractiveForceFunction);
         this.repulsiveForce = pick(options.repulsiveForce, this.integration.repulsiveForceFunction);
         this.approximation = options.approximation;
+    },
+    updateSimulation: function (enable) {
+        this.enableSimulation = pick(enable, this.options.enableSimulation);
     },
     start: function () {
         var layout = this, series = this.series, options = this.options;
         layout.currentStep = 0;
         layout.forces = series[0] && series[0].forces || [];
+        layout.chart = series[0] && series[0].chart;
         if (layout.initialRendering) {
             layout.initPositions();
             // Render elements in initial positions:
             series.forEach(function (s) {
+                s.finishedAnimating = true; // #13169
                 s.render();
             });
         }
         layout.setK();
         layout.resetSimulation(options);
-        if (options.enableSimulation) {
+        if (layout.enableSimulation) {
             layout.step();
         }
     },
@@ -80,7 +86,7 @@ H.layouts['reingold-fruchterman'].prototype, {
         layout.temperature = layout.coolDown(layout.startTemperature, layout.diffTemperature, layout.currentStep);
         layout.prevSystemTemperature = layout.systemTemperature;
         layout.systemTemperature = layout.getSystemTemperature();
-        if (options.enableSimulation) {
+        if (layout.enableSimulation) {
             series.forEach(function (s) {
                 // Chart could be destroyed during the simulation
                 if (s.chart) {
@@ -146,6 +152,30 @@ H.layouts['reingold-fruchterman'].prototype, {
         this.setTemperature();
         this.setDiffTemperature();
     },
+    restartSimulation: function () {
+        if (!this.simulation) {
+            // When dragging nodes, we don't need to calculate
+            // initial positions and rendering nodes:
+            this.setInitialRendering(false);
+            // Start new simulation:
+            if (!this.enableSimulation) {
+                // Run only one iteration to speed things up:
+                this.setMaxIterations(1);
+            }
+            else {
+                this.start();
+            }
+            if (this.chart) {
+                this.chart.redraw();
+            }
+            // Restore defaults:
+            this.setInitialRendering(true);
+        }
+        else {
+            // Extend current simulation:
+            this.resetSimulation();
+        }
+    },
     setMaxIterations: function (maxIterations) {
         this.maxIterations = pick(maxIterations, this.options.maxIterations);
     },
@@ -166,7 +196,7 @@ H.layouts['reingold-fruchterman'].prototype, {
     },
     initPositions: function () {
         var initialPositions = this.options.initialPositions;
-        if (H.isFunction(initialPositions)) {
+        if (isFunction(initialPositions)) {
             initialPositions.call(this);
             this.nodes.forEach(function (node) {
                 if (!defined(node.prevX)) {
@@ -467,7 +497,7 @@ addEvent(Chart, 'render', function () {
         if (layout.maxIterations-- &&
             isFinite(layout.temperature) &&
             !layout.isStable() &&
-            !layout.options.enableSimulation) {
+            !layout.enableSimulation) {
             // Hook similar to build-in addEvent, but instead of
             // creating whole events logic, use just a function.
             // It's faster which is important for rAF code.
@@ -501,4 +531,23 @@ addEvent(Chart, 'render', function () {
             });
         }
     }
+});
+// disable simulation before print if enabled
+addEvent(Chart, 'beforePrint', function () {
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout) {
+            layout.updateSimulation(false);
+        });
+        this.redraw();
+    }
+});
+// re-enable simulation after print
+addEvent(Chart, 'afterPrint', function () {
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout) {
+            // return to default simulation
+            layout.updateSimulation();
+        });
+    }
+    this.redraw();
 });

@@ -5,7 +5,14 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
+
+import type Annotation from '../annotations.src';
+import ControllableLabel from './ControllableLabel.js';
+import controllableMixin from './controllableMixin.js';
+import U from './../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -50,10 +57,6 @@ declare global {
     }
 }
 
-import './../../parts/Utilities.js';
-import controllableMixin from './controllableMixin.js';
-import ControllableLabel from './ControllableLabel.js';
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -76,7 +79,7 @@ import ControllableLabel from './ControllableLabel.js';
  **/
 const ControllableImage = function (
     this: Highcharts.AnnotationControllableImage,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsShapeOptions,
     index: number
 ): void {
@@ -96,7 +99,7 @@ ControllableImage.attrsMap = {
     zIndex: 'zIndex'
 };
 
-H.merge<Highcharts.AnnotationControllableImage, Partial<Highcharts.AnnotationControllableImage>>(
+merge<Highcharts.AnnotationControllableImage, Partial<Highcharts.AnnotationControllableImage>>(
     true,
     ControllableImage.prototype,
     controllableMixin, /** @lends Annotation.ControllableImage# */ {

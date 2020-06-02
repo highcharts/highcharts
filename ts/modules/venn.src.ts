@@ -16,7 +16,25 @@
  * */
 
 'use strict';
+
+import type Chart from '../parts/Chart';
+import type SVGPath from '../parts/SVGPath';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    extend,
+    isArray,
+    isNumber,
+    isObject,
+    isString,
+    merge,
+    seriesType
+} = U;
+
 
 /**
  * Internal types
@@ -26,11 +44,11 @@ declare global {
     namespace Highcharts {
         class VennPoint extends ScatterPoint implements DrawPoint {
             public draw: typeof draw;
+            public isValid: () => boolean;
             public options: VennPointOptions;
             public series: VennSeries;
             public sets: Array<string>;
             public value: number;
-            public isValid(): boolean;
             public shouldDraw(): boolean;
         }
         class VennSeries extends ScatterSeries {
@@ -44,6 +62,7 @@ declare global {
             public pointClass: typeof VennPoint;
             public points: Array<VennPoint>;
             public utils: VennUtilsObject;
+            public init(chart: Chart, options: VennSeriesOptions): void;
             public animate(init?: boolean): void;
             public drawPoints(): void;
             public translate(): void;
@@ -144,28 +163,10 @@ import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
 var nelderMead = nelderMeadModule.nelderMead;
 
-import colorModule from '../parts/Color.js';
-const {
-    color
-} = colorModule;
-
-import utilitiesModule from '../parts/Utilities.js';
-const {
-    animObject,
-    isArray,
-    isNumber,
-    isObject,
-    isString
-} = utilitiesModule;
-
 import '../parts/Series.js';
 
-var addEvent = H.addEvent,
-    extend = H.extend,
-    getCenterOfPoints = geometry.getCenterOfPoints,
+var getCenterOfPoints = geometry.getCenterOfPoints,
     getDistanceBetweenPoints = geometry.getDistanceBetweenPoints,
-    merge = H.merge,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 var objectValues = function objectValues<T>(
@@ -1133,6 +1134,9 @@ var vennOptions: Highcharts.VennSeriesOptions = {
             color: '${palette.neutralColor20}',
             borderColor: '${palette.neutralColor100}',
             animation: false
+        },
+        inactive: {
+            opacity: 0.075
         }
     },
     tooltip: {
@@ -1145,6 +1149,12 @@ var vennSeries = {
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
+    init: function (this: Highcharts.VennSeries): void {
+        seriesTypes.scatter.prototype.init.apply(this, arguments);
+
+        // Venn's opacity is a different option from other series
+        delete this.opacity;
+    },
     translate: function (this: Highcharts.VennSeries): void {
 
         var chart = this.chart;
@@ -1198,27 +1208,20 @@ var vennSeries = {
                         r: (shape as any).r * scale
                     };
                 } else if ((shape as any).d) {
-                    // TODO: find a better way to handle scaling of a path.
-                    var d = (shape as any).d.reduce(function (
-                        path: Highcharts.SVGPathArray,
-                        arr: Highcharts.SVGPathArray
-                    ): Highcharts.SVGPathArray {
-                        if (arr[0] === 'M') {
-                            arr[1] = centerX + (arr as any)[1] * scale;
-                            arr[2] = centerY + (arr as any)[2] * scale;
-                        } else if (arr[0] === 'A') {
-                            arr[1] = (arr as any)[1] * scale;
-                            arr[2] = (arr as any)[2] * scale;
-                            arr[6] = centerX + (arr as any)[6] * scale;
-                            arr[7] = centerY + (arr as any)[7] * scale;
-                        }
-                        return path.concat(arr);
-                    }, [])
-                        .join(' ');
 
-                    shapeArgs = {
-                        d: d
-                    };
+                    const d: SVGPath = (shape as any).d;
+                    d.forEach((seg): void => {
+                        if (seg[0] === 'M') {
+                            seg[1] = centerX + seg[1] * scale;
+                            seg[2] = centerY + seg[2] * scale;
+                        } else if (seg[0] === 'A') {
+                            seg[1] = seg[1] * scale;
+                            seg[2] = seg[2] * scale;
+                            seg[6] = centerX + seg[6] * scale;
+                            seg[7] = centerY + seg[7] * scale;
+                        }
+                    });
+                    shapeArgs = { d };
                 }
 
                 // Scale the position for the data label.
@@ -1251,7 +1254,7 @@ var vennSeries = {
                             width: dataLabelWidth
                         }
                     },
-                    isObject(dlOptions) && dlOptions
+                    isObject(dlOptions) && dlOptions as any
                 );
             }
 
@@ -1374,7 +1377,6 @@ var vennSeries = {
                     }
                 }
             }, series);
-            series.animate = null as any;
         }
     },
     utils: {

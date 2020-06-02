@@ -70,13 +70,12 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     correctFloat,
-    isNumber
+    isNumber,
+    merge,
+    seriesType
 } = U;
 
 import derivedSeriesMixin from '../mixins/derived-series.js';
-
-var seriesType = H.seriesType,
-    merge = H.merge;
 
 /* ************************************************************************** *
  *  BELL CURVE                                                                *

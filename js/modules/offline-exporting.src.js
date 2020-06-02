@@ -10,14 +10,13 @@
  *
  * */
 'use strict';
-/* global MSBlobBuilder */
-import Highcharts from '../parts/Globals.js';
-import U from '../parts/Utilities.js';
-var extend = U.extend;
-import '../parts/Chart.js';
+import H from '../parts/Globals.js';
+var win = H.win, doc = H.doc;
 import '../parts/Options.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, extend = U.extend, getOptions = U.getOptions, merge = U.merge;
 import '../mixins/download-url.js';
-var addEvent = Highcharts.addEvent, merge = Highcharts.merge, win = Highcharts.win, nav = win.navigator, doc = win.document, domurl = win.URL || win.webkitURL || win, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent), 
+var domurl = win.URL || win.webkitURL || win, nav = win.navigator, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(nav.userAgent), 
 // Milliseconds to defer image load event handlers to offset IE bug
 loadEventDeferDelay = isMSBrowser ? 150 : 0;
 // Dummy object so we can reuse our canvas-tools.js without errors
@@ -189,7 +188,7 @@ Highcharts.imageToDataUrl = function (imageURL, imageType, callbackArgs, scale, 
  * @return {void}
  */
 Highcharts.downloadSVGLocal = function (svg, options, failCallback, successCallback) {
-    var svgurl, blob, objectURLRevoke = true, finallyHandler, libURL = (options.libURL || Highcharts.getOptions().exporting.libURL), dummySVGContainer = doc.createElement('div'), imageType = options.type || 'image/png', filename = ((options.filename || 'chart') +
+    var svgurl, blob, objectURLRevoke = true, finallyHandler, libURL = (options.libURL || getOptions().exporting.libURL), dummySVGContainer = doc.createElement('div'), imageType = options.type || 'image/png', filename = ((options.filename || 'chart') +
         '.' +
         (imageType === 'image/svg+xml' ? 'svg' : imageType.split('/')[1])), scale = options.scale || 1;
     // Allow libURL to end with or without fordward slash
@@ -552,7 +551,7 @@ Highcharts.Chart.prototype.exportChartLocal = function (exportingOptions, chartO
     chart.getSVGForLocalExport(options, chartOptions, fallbackToExportServer, svgSuccess);
 };
 // Extend the default options to use the local exporter logic
-merge(true, Highcharts.getOptions().exporting, {
+merge(true, getOptions().exporting, {
     libURL: 'https://code.highcharts.com/@product.version@/lib/',
     // When offline-exporting is loaded, redefine the menu item definitions
     // related to download.

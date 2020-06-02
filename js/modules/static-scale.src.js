@@ -10,7 +10,7 @@
 'use strict';
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, isNumber = U.isNumber, pick = U.pick;
+var addEvent = U.addEvent, defined = U.defined, isNumber = U.isNumber, pick = U.pick;
 var Chart = H.Chart;
 /* eslint-disable no-invalid-this */
 /**
@@ -29,7 +29,7 @@ var Chart = H.Chart;
  * @product   gantt
  * @apioption yAxis.staticScale
  */
-H.addEvent(H.Axis, 'afterSetOptions', function () {
+addEvent(H.Axis, 'afterSetOptions', function () {
     var chartOptions = this.chart.options && this.chart.options.chart;
     if (!this.horiz &&
         isNumber(this.options.staticScale) &&
@@ -45,7 +45,7 @@ Chart.prototype.adjustHeight = function () {
             var chart = axis.chart, animate = !!chart.initiatedScale &&
                 chart.options.animation, staticScale = axis.options.staticScale, height, diff;
             if (axis.staticScale && defined(axis.min)) {
-                height = pick(axis.unitLength, axis.max + axis.tickInterval - axis.min) * staticScale;
+                height = pick(axis.brokenAxis && axis.brokenAxis.unitLength, axis.max + axis.tickInterval - axis.min) * staticScale;
                 // Minimum height is 1 x staticScale.
                 height = Math.max(height, staticScale);
                 diff = height - chart.plotHeight;
@@ -71,4 +71,4 @@ Chart.prototype.adjustHeight = function () {
     }
     this.redrawTrigger = null;
 };
-H.addEvent(Chart, 'render', Chart.prototype.adjustHeight);
+addEvent(Chart, 'render', Chart.prototype.adjustHeight);

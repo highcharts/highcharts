@@ -41,17 +41,17 @@ QUnit.test('isOuterAxis()', function (assert) {
     });
 
     assert.ok(
-        chart.xAxis[1].isOuterAxis(),
+        chart.xAxis[1].grid.isOuterAxis(),
         'Leftmost left x-axis is outerAxis'
     );
 
     assert.notOk(
-        chart.xAxis[2].isOuterAxis(),
+        chart.xAxis[2].grid.isOuterAxis(),
         'Leftmost right x-axis is not outerAxis'
     );
 
     assert.ok(
-        chart.xAxis[3].isOuterAxis(),
+        chart.xAxis[3].grid.isOuterAxis(),
         'Rightmost right x-axis is outerAxis'
     );
 });
@@ -72,17 +72,78 @@ QUnit.test('dateFormats', function (assert) {
         'Single character week day format exists'
     );
 
-    assert.equal(
-        Highcharts.dateFormats.W(Date.UTC(2016, 8, 15)), // September 15th 2016
-        37,
-        'Week format produces correct output'
-    );
+    const dates = [
+        { date: new Date(2016, 8, 15), expectedWeek: 37, expectedDay: 'T' },
+        { date: new Date(2020, 0, 1), expectedWeek: 1, expectedDay: 'W' },
+        { date: new Date(2020, 1, 29), expectedWeek: 9, expectedDay: 'S' }
+    ];
 
-    assert.equal(
-        Highcharts.dateFormats.E(Date.UTC(2016, 8, 15)), // September 15th 2016
-        'T',
-        'Signle character week day format produces correct output'
-    );
+    Highcharts.setOptions({
+        global: {
+            useUTC: false,
+            timezone: undefined
+        }
+    });
+
+    dates.forEach(function (dateObject) {
+        const { date, expectedWeek, expectedDay } = dateObject;
+
+        assert.equal(
+            Highcharts.dateFormat('%W', date.valueOf()),
+            expectedWeek,
+            `Week format produces correct output for ${date}`
+        );
+
+        assert.equal(
+            Highcharts.dateFormats.E(date.valueOf()),
+            expectedDay,
+            `Single character week day format produces correct output`
+        );
+    });
+
+    /* Teardown */
+    Highcharts.setOptions({
+        global: {
+            timezone: undefined,
+            useUTC: undefined
+        }
+    });
+
+    const UTCDates = [
+        { date: Date.UTC(2016, 8, 15), expectedWeek: 37, expectedDay: 'T' },
+        { date: Date.UTC(2020, 0, 1), expectedWeek: 1, expectedDay: 'W' },
+        { date: Date.UTC(2020, 1, 29), expectedWeek: 9, expectedDay: 'S' }
+    ];
+
+    Highcharts.setOptions({
+        global: {
+            useUTC: true,
+            timezone: undefined
+        }
+    });
+
+    UTCDates.forEach(function (dateObject) {
+        const { date, expectedWeek, expectedDay } = dateObject;
+        assert.equal(
+            Highcharts.dateFormat('%W', date),
+            expectedWeek,
+            `Week format produces correct output when using UTC for ${new Date(date)}`
+        );
+
+        assert.equal(
+            Highcharts.dateFormats.E(date),
+            expectedDay,
+            `Single character week day format produces correct output when using UTC`
+        );
+    });
+
+    /* Teardown */
+    Highcharts.setOptions({
+        global: {
+            timezone: undefined,
+            useUTC: undefined
+        }
+    });
 });
 
 /**
@@ -1559,3 +1620,35 @@ QUnit.test(
 
     }
 );
+
+QUnit.test('Zero-width slot', assert => {
+    const chart = Highcharts.ganttChart('container', {
+        chart: {
+            width: 600
+        },
+        series: [{
+            data: [{
+                start: 1580688000000,
+                end: 1583107200000,
+                y: 1
+            }]
+        }],
+        xAxis: [{
+            min: 1582934399999 - 24 * 36e5,
+            max: 1582934399999
+        },
+        {}
+        ]
+    });
+
+    const labels = chart.xAxis[1].tickPositions.map(
+        pos => chart.xAxis[1].ticks[pos].label
+    );
+
+    assert.ok(
+        // As of implementation, the textStr is ''. But it may be refactored to
+        // disable the legend in general, without that being an error.
+        !labels[0] || !labels[0].textStr,
+        'The first label has a 0px slot and should not render (#13221)'
+    );
+});

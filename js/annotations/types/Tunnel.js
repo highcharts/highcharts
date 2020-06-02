@@ -4,9 +4,13 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
+import MockPoint from '../MockPoint.js';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
-var Annotation = H.Annotation, CrookedLine = Annotation.types.crookedLine, ControlPoint = Annotation.ControlPoint, MockPoint = Annotation.MockPoint;
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
+var CrookedLine = Annotation.types.crookedLine;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -28,13 +32,13 @@ H.extendAnnotation(Tunnel, CrookedLine, {
         return this.getPointsOptions().slice(0, 2);
     },
     heightPointOptions: function (pointOptions) {
-        var heightPointOptions = H.merge(pointOptions);
+        var heightPointOptions = merge(pointOptions);
         heightPointOptions.y += this.options.typeOptions.height;
         return heightPointOptions;
     },
     addControlPoints: function () {
         CrookedLine.prototype.addControlPoints.call(this);
-        var options = this.options, controlPoint = new ControlPoint(this.chart, this, H.merge(options.controlPointOptions, options.typeOptions.heightControlPoint), 2);
+        var options = this.options, controlPoint = new ControlPoint(this.chart, this, merge(options.controlPointOptions, options.typeOptions.heightControlPoint), 2);
         this.controlPoints.push(controlPoint);
         options.typeOptions.heightControlPoint = controlPoint.options;
     },
@@ -43,7 +47,7 @@ H.extendAnnotation(Tunnel, CrookedLine, {
         this.addBackground();
     },
     addLine: function () {
-        var line = this.initShape(H.merge(this.options.typeOptions.line, {
+        var line = this.initShape(merge(this.options.typeOptions.line, {
             type: 'path',
             points: [
                 this.points[0],
@@ -59,7 +63,7 @@ H.extendAnnotation(Tunnel, CrookedLine, {
         this.options.typeOptions.line = line.options;
     },
     addBackground: function () {
-        var background = this.initShape(H.merge(this.options.typeOptions.background, {
+        var background = this.initShape(merge(this.options.typeOptions.background, {
             type: 'path',
             points: this.points.slice()
         }));
@@ -67,7 +71,7 @@ H.extendAnnotation(Tunnel, CrookedLine, {
     },
     /**
      * Translate start or end ("left" or "right") side of the tunnel.
-     *
+     * @private
      * @param {number} dx - the amount of x translation
      * @param {number} dy - the amount of y translation
      * @param {boolean} [end] - whether to translate start or end side
@@ -79,7 +83,7 @@ H.extendAnnotation(Tunnel, CrookedLine, {
     },
     /**
      * Translate height of the tunnel.
-     *
+     * @private
      * @param {number} dh - the amount of height translation
      */
     translateHeight: function (dh) {

@@ -10,7 +10,29 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import Point from './Point.js';
+import SVGRenderer from './SVGRenderer.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    clamp,
+    defined,
+    extend,
+    find,
+    format,
+    getOptions,
+    isNumber,
+    isString,
+    merge,
+    pick,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -21,15 +43,14 @@ declare global {
         interface Axis {
             crossLabel?: SVGElement;
             setCompare(compare?: string, redraw?: boolean): void;
-            panningState?: AxisPanningState;
         }
-        interface Chart {
+        interface ChartLike {
             _labelPanes?: Dictionary<Axis>;
         }
         interface Options {
             isStock?: boolean;
         }
-        interface Point {
+        interface PointLike {
             change?: number;
         }
         interface Series {
@@ -44,14 +65,10 @@ declare global {
             compareStart?: boolean;
         }
         interface SVGRenderer {
-            crispPolyLine(points: SVGPathArray, width: number): SVGPathArray;
+            crispPolyLine(points: SVGPath, width: number): SVGPath;
         }
         interface VMLRenderer {
-            crispPolyLine(points: VMLPathArray, width: number): VMLPathArray;
-        }
-        interface AxisPanningState {
-            startMin: number;
-            startMax: number;
+            crispPolyLine(points: SVGPath, width: number): SVGPath;
         }
         class StockChart extends Chart {
         }
@@ -59,25 +76,8 @@ declare global {
     }
 }
 
-import U from './Utilities.js';
-const {
-    arrayMax,
-    arrayMin,
-    clamp,
-    defined,
-    extend,
-    isNumber,
-    isString,
-    pick,
-    splat
-} = U;
-
-import './Chart.js';
-import './Axis.js';
-import './Point.js';
 import './Pointer.js';
 import './Series.js';
-import './SvgRenderer.js';
 // Has a dependency on Navigator due to the use of
 // defaultOptions.navigator
 import './Navigator.js';
@@ -88,22 +88,11 @@ import './Scrollbar.js';
 // defaultOptions.rangeSelector
 import './RangeSelector.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
-    Chart = H.Chart,
-    format = H.format,
-    merge = H.merge,
-    Point = H.Point,
-    Renderer = H.Renderer,
-    Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
-    VMLRenderer = H.VMLRenderer,
-
+var Series = H.Series,
     seriesProto = Series.prototype,
     seriesInit = seriesProto.init,
     seriesProcessData = seriesProto.processData,
     pointTooltipFormatter = Point.prototype.tooltipFormatter;
-
 
 /**
  * Compare the values of the series against the first non-null, non-
@@ -200,29 +189,23 @@ var addEvent = H.addEvent,
  */
 H.StockChart = H.stockChart = function (
     a: (string|Highcharts.HTMLDOMElement|Highcharts.Options),
-    b?: (Highcharts.ChartCallbackFunction|Highcharts.Options),
-    c?: Highcharts.ChartCallbackFunction
+    b?: (Chart.CallbackFunction|Highcharts.Options),
+    c?: Chart.CallbackFunction
 ): Highcharts.StockChart {
     var hasRenderToArg = isString(a) || (a as any).nodeName,
         options = arguments[hasRenderToArg ? 1 : 0],
         userOptions = options,
         // to increase performance, don't merge the data
         seriesOptions = options.series,
-        defaultOptions = H.getOptions(),
+        defaultOptions = getOptions(),
         opposite,
-        panning = options.chart && options.chart.panning,
         // Always disable startOnTick:true on the main axis when the navigator
         // is enabled (#1090)
         navigatorEnabled = pick(
             options.navigator && options.navigator.enabled,
             (defaultOptions.navigator as any).enabled,
             true
-        ),
-        verticalPanningEnabled = panning && /y/.test(panning.type),
-        disableStartOnTick = {
-            startOnTick: false,
-            endOnTick: false
-        };
+        );
 
     // apply X axis options to both single and multi y axes
     options.xAxis = splat(options.xAxis || {}).map(function (
@@ -250,7 +233,10 @@ H.StockChart = H.stockChart = function (
                 type: 'datetime',
                 categories: null
             },
-            (navigatorEnabled ? disableStartOnTick : null) as any
+            (navigatorEnabled ? {
+                startOnTick: false,
+                endOnTick: false
+            } : null) as any
         );
     });
 
@@ -286,8 +272,7 @@ H.StockChart = H.stockChart = function (
             },
             defaultOptions.yAxis, // #3802
             defaultOptions.yAxis && (defaultOptions.yAxis as any)[i], // #7690
-            yAxisOptions, // user options
-            (verticalPanningEnabled ? disableStartOnTick : null) as any
+            yAxisOptions // user options
         );
     });
 
@@ -435,7 +420,7 @@ addEvent(Axis, 'getPlotLinePath', function (
         y1,
         x2,
         y2,
-        result = [] as Highcharts.SVGPathArray,
+        result = [] as SVGPath,
         axes = [], // #3416 need a default array
         axes2: Array<Highcharts.Axis>,
         uniqueAxes: Array<Highcharts.Axis>,
@@ -513,7 +498,7 @@ addEvent(Axis, 'getPlotLinePath', function (
             if (
                 uniqueAxes.indexOf(axis2) === -1 &&
                 // Do not draw on axis which overlap completely. #5424
-                !H.find(uniqueAxes, function (
+                !find(uniqueAxes, function (
                     unique: Highcharts.Axis
                 ): boolean {
                     return unique.pos === axis2.pos && unique.len === axis2.len;
@@ -552,7 +537,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1, y1 as any, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             } else {
@@ -579,7 +564,7 @@ addEvent(Axis, 'getPlotLinePath', function (
                         }
                     }
                     if (!skip) {
-                        result.push('M', x1 as any, y1, 'L', x2, y2);
+                        result.push(['M', x1, y1], ['L', x2, y2]);
                     }
                 });
             }
@@ -602,30 +587,28 @@ addEvent(Axis, 'getPlotLinePath', function (
  */
 SVGRenderer.prototype.crispPolyLine = function (
     this: Highcharts.SVGRenderer,
-    points: Highcharts.SVGPathArray,
+    points: Array<SVGPath.MoveTo|SVGPath.LineTo>,
     width: number
-): Highcharts.SVGPathArray {
-    // points format: ['M', 0, 0, 'L', 100, 0]
+): SVGPath {
+    // points format: [['M', 0, 0], ['L', 100, 0]]
     // normalize to a crisp line
-    var i;
+    for (let i = 0; i < points.length; i = i + 2) {
+        const start = points[i],
+            end = points[i + 1];
 
-    for (i = 0; i < points.length; i = i + 6) {
-        if (points[i + 1] === points[i + 4]) {
+        if (start[1] === end[1]) {
             // Substract due to #1129. Now bottom and left axis gridlines behave
             // the same.
-            points[i + 1] = points[i + 4] =
-                Math.round(points[i + 1] as any) - (width % 2 / 2);
+            start[1] = end[1] =
+                Math.round(start[1]) - (width % 2 / 2);
         }
-        if (points[i + 2] === points[i + 5]) {
-            points[i + 2] = points[i + 5] =
-                Math.round(points[i + 2] as any) + (width % 2 / 2);
+        if (start[2] === end[2]) {
+            start[2] = end[2] =
+                Math.round(start[2]) + (width % 2 / 2);
         }
     }
     return points;
 };
-if ((Renderer as unknown) === VMLRenderer) {
-    VMLRenderer.prototype.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
-}
 
 // Wrapper to hide the label
 addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
@@ -637,7 +620,7 @@ addEvent(Axis, 'afterHideCrosshair', function (this: Highcharts.Axis): void {
 // Extend crosshairs to also draw the label
 addEvent(Axis, 'afterDrawCrosshair', function (
     this: Highcharts.Axis,
-    event: { e: Highcharts.PointerEventObject; point: Highcharts.Point }
+    event: { e: Highcharts.PointerEventObject; point: Point }
 ): void {
 
     // Check if the label has to be drawn
@@ -650,6 +633,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     var chart = this.chart,
+        log = this.logarithmic,
         options = (this.options.crosshair as any).label, // the label's options
         horiz = this.horiz, // axis orientation
         opposite = this.opposite, // axis position
@@ -670,16 +654,12 @@ addEvent(Axis, 'afterDrawCrosshair', function (
         // Use last available event (#5287)
         e = event.e || (this.cross && this.cross.e),
         point = event.point,
-        lin2log = this.lin2log,
-        min,
-        max;
-
-    if (this.isLog) {
-        min = lin2log(this.min as any);
-        max = lin2log(this.max as any);
-    } else {
-        min = this.min;
+        min = this.min,
         max = this.max;
+
+    if (log) {
+        min = log.lin2log(min as any);
+        max = log.lin2log(max as any);
     }
 
     align = (horiz ? 'center' : opposite ?
@@ -737,7 +717,7 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     }
 
     if (!formatOption && !options.formatter) {
-        if (this.isDatetimeAxis) {
+        if (this.dateTime) {
             formatFormat = '%b %d, %Y';
         }
         formatOption =
@@ -765,12 +745,14 @@ addEvent(Axis, 'afterDrawCrosshair', function (
     crossBox = crossLabel.getBBox();
 
     // now it is placed we can correct its position
-    if (horiz) {
-        if ((tickInside && !opposite) || (!tickInside && opposite)) {
-            posy = crossLabel.y - crossBox.height;
+    if (isNumber(crossLabel.y)) {
+        if (horiz) {
+            if ((tickInside && !opposite) || (!tickInside && opposite)) {
+                posy = crossLabel.y - crossBox.height;
+            }
+        } else {
+            posy = crossLabel.y - (crossBox.height / 2);
         }
-    } else {
-        posy = crossLabel.y - (crossBox.height / 2);
     }
 
     // check the edges
@@ -854,7 +836,7 @@ seriesProto.setCompare = function (
         function (
             this: Highcharts.Series,
             value?: number,
-            point?: Highcharts.Point
+            point?: Point
         ): (number|undefined) {
             var compareValue = this.compareValue;
 
@@ -953,17 +935,22 @@ seriesProto.processData = function (
 };
 
 // Modify series extremes
-addEvent(Series, 'afterGetExtremes', function (this: Highcharts.Series): void {
-    if (this.modifyValue) {
-        var extremes = [
-            this.modifyValue(this.dataMin),
-            this.modifyValue(this.dataMax)
-        ];
+addEvent(
+    Series,
+    'afterGetExtremes',
+    function (this: Highcharts.Series, e): void {
+        const dataExtremes: Highcharts.DataExtremesObject = (e as any).dataExtremes;
+        if (this.modifyValue && dataExtremes) {
+            var extremes = [
+                this.modifyValue(dataExtremes.dataMin),
+                this.modifyValue(dataExtremes.dataMax)
+            ];
 
-        this.dataMin = arrayMin(extremes);
-        this.dataMax = arrayMax(extremes);
+            dataExtremes.dataMin = arrayMin(extremes);
+            dataExtremes.dataMax = arrayMax(extremes);
+        }
     }
-});
+);
 
 /**
  * Highstock only. Set the compare mode on all series belonging to an Y axis
@@ -1009,7 +996,7 @@ Axis.prototype.setCompare = function (
  * @param {string} pointFormat
  */
 Point.prototype.tooltipFormatter = function (
-    this: Highcharts.Point,
+    this: Point,
     pointFormat: string
 ): string {
     var point = this;
@@ -1101,40 +1088,5 @@ addEvent(Chart, 'update', function (
         merge(true, this.options.scrollbar, options.scrollbar);
         (this.navigator.update as any)({}, false);
         delete options.scrollbar;
-    }
-});
-
-// Extend the Axis prototype to calculate start min/max values
-// (including min/maxPadding). This is related to using vertical panning
-// (#11315).
-addEvent(Axis, 'afterSetScale', function (
-    this: Highcharts.Axis
-): void {
-    var axis = this,
-        panning = axis.chart.options.chart &&
-            axis.chart.options.chart.panning;
-
-    if (
-        panning &&
-        (panning.type === 'y' ||
-        panning.type === 'xy') &&
-        !axis.isXAxis &&
-        !defined(axis.panningState)
-    ) {
-
-        var min = Number.MAX_VALUE,
-            max = Number.MIN_VALUE;
-
-        axis.series.forEach(function (series): void {
-            min = Math.min(H.arrayMin(series.yData as any), min) -
-                (axis.min && axis.dataMin ? axis.dataMin - axis.min : 0);
-            max = Math.max(H.arrayMax(series.yData as any), max) +
-                (axis.max && axis.dataMax ? axis.max - axis.dataMax : 0);
-        });
-
-        axis.panningState = {
-            startMin: min,
-            startMax: max
-        };
     }
 });

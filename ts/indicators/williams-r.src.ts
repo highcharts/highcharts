@@ -43,7 +43,10 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    isArray,
+    seriesType
+} = U;
 
 import reduceArrayMixin from '../mixins/reduce-array.js';
 
@@ -58,7 +61,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.WilliamsRIndicator>(
+seriesType<Highcharts.WilliamsRIndicator>(
     'williamsr',
     'sma',
     /**
@@ -132,7 +135,7 @@ H.seriesType<Highcharts.WilliamsRIndicator>(
             // with (+1)
             for (i = period - 1; i < yValLen; i++) {
                 slicedY = yVal.slice(i - period + 1, i + 1);
-                extremes = getArrayExtremes(slicedY, low, high);
+                extremes = getArrayExtremes(slicedY, low as any, high as any);
 
                 LL = extremes[0];
                 HH = extremes[1];

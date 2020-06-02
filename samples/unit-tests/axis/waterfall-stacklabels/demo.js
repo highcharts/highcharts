@@ -8,7 +8,8 @@ QUnit.test('#3165 - Stack labels in waterfall series', function (assert) {
         },
         yAxis: {
             stackLabels: {
-                enabled: true
+                enabled: true,
+                padding: 0
             }
         },
         plotOptions: {
@@ -36,7 +37,7 @@ QUnit.test('#3165 - Stack labels in waterfall series', function (assert) {
 
     assert.strictEqual(
         series[1].points[3].plotY >
-            yAxis.waterfallStacks[series[0].stackKey][3].label.alignAttr.y,
+            yAxis.waterfall.stacks[series[0].stackKey][3].label.alignAttr.y,
         true,
         'Stack label should be positioned above the stack.'
     );
@@ -52,7 +53,7 @@ QUnit.test('#3165 - Stack labels in waterfall series', function (assert) {
 
     assert.strictEqual(
         series[1].points[3].plotY <
-            yAxis.waterfallStacks[series[0].stackKey][3].label.alignAttr.y,
+            yAxis.waterfall.stacks[series[0].stackKey][3].label.alignAttr.y,
         true,
         'Stack label should be positioned below the stack.'
     );

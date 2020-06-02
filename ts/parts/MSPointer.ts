@@ -10,7 +10,22 @@
 
 'use strict';
 
+import type Chart from './Chart';
 import H from './Globals.js';
+const {
+    charts,
+    doc,
+    noop,
+    win
+} = H;
+import Pointer from './Pointer.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    css,
+    objectEach,
+    removeEvent
+} = U;
 
 /**
  * Internal types
@@ -24,20 +39,6 @@ declare global {
 }
 
 /* globals MSPointerEvent, PointerEvent */
-
-import Pointer from './Pointer.js';
-import utilitiesModule from './Utilities.js';
-const {
-    addEvent,
-    objectEach,
-    removeEvent
-} = utilitiesModule;
-
-var charts = H.charts,
-    css = H.css,
-    doc = H.doc,
-    noop = H.noop,
-    win = H.win;
 
 // The touches object keeps track of the points being touched at all times
 const touches = {} as Highcharts.Dictionary<Highcharts.PointerEventObject>;
@@ -136,7 +137,7 @@ class MSPointer extends Pointer {
     }
 
     // Disable default IE actions for pinch and such on chart element
-    public init(chart: Highcharts.Chart, options: Highcharts.Options): void {
+    public init(chart: Chart, options: Highcharts.Options): void {
 
         super.init(chart, options);
 
@@ -215,7 +216,7 @@ class MSPointer extends Pointer {
     }
 
     // Add IE specific touch events to chart
-    protected setDOMEvents(): void {
+    public setDOMEvents(): void {
 
         super.setDOMEvents();
 

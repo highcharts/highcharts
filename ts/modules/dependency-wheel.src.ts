@@ -39,6 +39,7 @@ declare global {
             public fromNode: DependencyWheelPoint;
             public getSum: () => number;
             public index: number;
+            public isValid: () => boolean;
             public linksFrom: Array<DependencyWheelPoint>;
             public linksTo: Array<DependencyWheelPoint>;
             public offset: (point: DependencyWheelPoint) => (number|undefined);
@@ -48,7 +49,6 @@ declare global {
             public shapeArgs: SVGAttributes;
             public toNode: DependencyWheelPoint;
             public getDataLabelPath(label: SVGElement): SVGElement;
-            public isValid(): boolean;
         }
         class DependencyWheelSeries extends SankeySeries {
             public animate: (init?: boolean) => void;
@@ -70,7 +70,8 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    animObject
+    animObject,
+    seriesType
 } = U;
 
 import '../parts/Options.js';
@@ -85,7 +86,7 @@ var base = H.seriesTypes.sankey.prototype;
  *
  * @augments Highcharts.seriesTypes.sankey
  */
-H.seriesType<Highcharts.DependencyWheelSeries>(
+seriesType<Highcharts.DependencyWheelSeries>(
     'dependencywheel',
     'sankey',
     /**
@@ -325,30 +326,34 @@ H.seriesType<Highcharts.DependencyWheelSeries>(
                             });
 
                             point.shapeArgs = {
-                                d: [
+                                d: [[
                                     'M',
-                                    corners[0].x, corners[0].y,
+                                    corners[0].x, corners[0].y
+                                ], [
                                     'A',
                                     innerR, innerR,
                                     0,
                                     0, // long arc
                                     1, // clockwise
-                                    corners[1].x, corners[1].y,
+                                    corners[1].x, corners[1].y
+                                ], [
                                     'C',
                                     corners[1].cpX, corners[1].cpY,
                                     corners[2].cpX, corners[2].cpY,
-                                    corners[2].x, corners[2].y,
+                                    corners[2].x, corners[2].y
+                                ], [
                                     'A',
                                     innerR, innerR,
                                     0,
                                     0,
                                     1,
-                                    corners[3].x, corners[3].y,
+                                    corners[3].x, corners[3].y
+                                ], [
                                     'C',
                                     corners[3].cpX, corners[3].cpY,
                                     corners[0].cpX, corners[0].cpY,
                                     corners[0].x, corners[0].y
-                                ]
+                                ]]
                             };
                         }
 
@@ -391,7 +396,6 @@ H.seriesType<Highcharts.DependencyWheelSeries>(
                     }
                 }, this);
 
-                this.animate = null as any;
             }
         }
 

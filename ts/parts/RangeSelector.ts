@@ -10,7 +10,28 @@
 
 'use strict';
 
+import Axis from './Axis.js';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import O from './Options.js';
+const { defaultOptions } = O;
+import U from './Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    destroyObjectProperties,
+    discardElement,
+    extend,
+    fireEvent,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    pInt,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -26,7 +47,7 @@ declare global {
             newMax?: number;
             range?: (null|number|RangeSelectorButtonsOptions);
         }
-        interface Chart {
+        interface ChartLike {
             extraBottomMargin?: boolean;
             extraTopMargin?: boolean;
             fixedRange?: number;
@@ -172,31 +193,6 @@ declare global {
  * @return {number}
  *         Parsed JavaScript time value.
  */
-
-import U from './Utilities.js';
-const {
-    defined,
-    destroyObjectProperties,
-    discardElement,
-    extend,
-    isNumber,
-    objectEach,
-    pick,
-    pInt,
-    splat
-} = U;
-
-import './Axis.js';
-import './Chart.js';
-
-var addEvent = H.addEvent,
-    Axis = H.Axis,
-    Chart = H.Chart,
-    css = H.css,
-    createElement = H.createElement,
-    defaultOptions = H.defaultOptions,
-    fireEvent = H.fireEvent,
-    merge = H.merge;
 
 /* ************************************************************************** *
  * Start Range Selector code                                                  *
@@ -728,7 +724,7 @@ defaultOptions.lang = merge(
  */
 function RangeSelector(
     this: Highcharts.RangeSelector,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
 
     // Run RangeSelector
@@ -955,7 +951,7 @@ RangeSelector.prototype = {
      */
     init: function (
         this: Highcharts.RangeSelector,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
         var rangeSelector = this,
             options =
@@ -1501,7 +1497,7 @@ RangeSelector.prototype = {
         var time = this.chart.time,
             min,
             now = new time.Date(dataMax),
-            year = (time.get as any)('FullYear', now),
+            year = time.get('FullYear', now),
             startOfYear = useUTC ?
                 time.Date.UTC(year, 0, 1) : // eslint-disable-line new-cap
                 +new time.Date(year, 0, 1);
@@ -1573,7 +1569,7 @@ RangeSelector.prototype = {
             legendOptions = legend && legend.options,
             buttonPositionY = (buttonPosition as any).y,
             inputPositionY = (inputPosition as any).y,
-            animate = rendered || false,
+            animate = chart.hasLoaded,
             verb = animate ? 'animate' : 'attr',
             exportingX = 0,
             alignTranslateY,
@@ -1711,11 +1707,12 @@ RangeSelector.prototype = {
             exportingX = -40;
         }
 
-        if ((buttonPosition as any).align === 'left') {
-            translateX = (buttonPosition as any).x - chart.spacing[3];
-        } else if ((buttonPosition as any).align === 'right') {
-            translateX =
-                (buttonPosition as any).x + exportingX - chart.spacing[1];
+        translateX = (buttonPosition as any).x - chart.spacing[3];
+
+        if ((buttonPosition as any).align === 'right') {
+            translateX += exportingX - plotLeft; // (#13014)
+        } else if ((buttonPosition as any).align === 'center') {
+            translateX -= plotLeft / 2;
         }
 
         // align button group
@@ -1947,7 +1944,7 @@ RangeSelector.prototype = {
      */
     titleCollision: function (
         this: Highcharts.RangeSelector,
-        chart: Highcharts.Chart
+        chart: Chart
     ): boolean {
         return !(
             (chart.options.title as any).text ||
@@ -2004,7 +2001,7 @@ RangeSelector.prototype = {
         // Destroy HTML and SVG elements
         objectEach(rSelector, function (val: unknown, key: string): void {
             if (val && key !== 'chart') {
-                if ((val as Highcharts.SVGElement).destroy) {
+                if ((val as Partial<Highcharts.SVGElement>).destroy) {
                     // SVGElement
                     (val as Highcharts.SVGElement).destroy();
                 } else if ((val as Highcharts.HTMLDOMElement).nodeType) {
@@ -2035,10 +2032,6 @@ Axis.prototype.minFromRange = function (
 ): (number|undefined) {
     var rangeOptions = this.range,
         type = (rangeOptions as any).type,
-        timeName = ({
-            month: 'Month',
-            year: 'FullYear'
-        } as Highcharts.Dictionary<string>)[type],
         min,
         max = this.max as any,
         dataMin,
@@ -2046,13 +2039,14 @@ Axis.prototype.minFromRange = function (
         time = this.chart.time,
         // Get the true range from a start date
         getTrueRange = function (base: number, count: number): number {
-            var date = new time.Date(base),
-                basePeriod = (time.get as any)(timeName, date);
+            const timeName: Highcharts.TimeUnitValue = type === 'year' ? 'FullYear' : 'Month';
+            const date = new time.Date(base);
+            const basePeriod = time.get(timeName, date);
 
-            (time.set as any)(timeName, date, basePeriod + count);
+            time.set(timeName, date, basePeriod + count);
 
-            if (basePeriod === (time.get as any)(timeName, date)) {
-                (time.set as any)('Date', date, 0); // #6537
+            if (basePeriod === time.get(timeName, date)) {
+                time.set('Date', date, 0); // #6537
             }
 
             return date.getTime() - base;
@@ -2090,15 +2084,13 @@ Axis.prototype.minFromRange = function (
 
 if (!H.RangeSelector) {
     // Initialize rangeselector for stock charts
-    addEvent(Chart, 'afterGetContainer', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'afterGetContainer', function (): void {
         if ((this.options.rangeSelector as any).enabled) {
             this.rangeSelector = new (RangeSelector as any)(this);
         }
     });
 
-    addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'beforeRender', function (): void {
 
         var chart = this,
             axes = chart.axes,
@@ -2133,10 +2125,7 @@ if (!H.RangeSelector) {
 
     });
 
-    addEvent(Chart, 'update', function (
-        this: Highcharts.Chart,
-        e: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'update', function (e: Chart): void {
 
         var chart = this,
             options = e.options,
@@ -2189,7 +2178,7 @@ if (!H.RangeSelector) {
 
     });
 
-    addEvent(Chart, 'render', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'render', function (): void {
         var chart = this,
             rangeSelector = chart.rangeSelector,
             verticalAlign;
@@ -2207,9 +2196,7 @@ if (!H.RangeSelector) {
         }
     });
 
-    addEvent(Chart, 'getMargins', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'getMargins', function (): void {
         var rangeSelector = this.rangeSelector,
             rangeSelectorHeight;
 
@@ -2225,19 +2212,42 @@ if (!H.RangeSelector) {
         }
     });
 
-    Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
+    Chart.prototype.callbacks.push(function (chart: Chart): void {
         var extremes,
             rangeSelector = chart.rangeSelector,
             unbindRender: Function,
-            unbindSetExtremes: Function;
+            unbindSetExtremes: Function,
+            legend,
+            alignTo,
+            verticalAlign: Highcharts.VerticalAlignValue|undefined;
 
         /**
          * @private
          */
         function renderRangeSelector(): void {
             extremes = chart.xAxis[0].getExtremes();
+            legend = chart.legend;
+            verticalAlign = rangeSelector?.options.verticalAlign;
+
             if (isNumber(extremes.min)) {
                 (rangeSelector as any).render(extremes.min, extremes.max);
+            }
+
+            // Re-align the legend so that it's below the rangeselector
+            if (
+                rangeSelector && legend.display &&
+                verticalAlign === 'top' &&
+                verticalAlign === legend.options.verticalAlign
+            ) {
+                // Create a new alignment box for the legend.
+                alignTo = merge(chart.spacingBox);
+                if (legend.options.layout === 'vertical') {
+                    alignTo.y = chart.plotTop;
+                } else {
+                    alignTo.y += rangeSelector.getHeight();
+                }
+                legend.group.placed = false; // Don't animate the alignment.
+                legend.align(alignTo);
             }
         }
 

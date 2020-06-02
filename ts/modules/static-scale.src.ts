@@ -17,7 +17,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             redrawTrigger?: string;
             initiatedScale?: boolean;
             /** @requires modules/static-scale */
@@ -31,6 +31,7 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
     isNumber,
     pick
@@ -57,7 +58,7 @@ var Chart = H.Chart;
  * @apioption yAxis.staticScale
  */
 
-H.addEvent(H.Axis, 'afterSetOptions', function (): void {
+addEvent(H.Axis, 'afterSetOptions', function (): void {
     var chartOptions = this.chart.options && this.chart.options.chart;
     if (
         !this.horiz &&
@@ -87,7 +88,7 @@ Chart.prototype.adjustHeight = function (): void {
 
             if (axis.staticScale && defined(axis.min)) {
                 height = pick(
-                    axis.unitLength,
+                    axis.brokenAxis && axis.brokenAxis.unitLength,
                     (axis.max as any) + axis.tickInterval - axis.min
                 ) * (staticScale as any);
 
@@ -122,4 +123,4 @@ Chart.prototype.adjustHeight = function (): void {
     }
     this.redrawTrigger = null as any;
 };
-H.addEvent(Chart, 'render', Chart.prototype.adjustHeight);
+addEvent(Chart, 'render', Chart.prototype.adjustHeight);

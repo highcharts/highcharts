@@ -48,8 +48,10 @@ declare global {
 }
 
 import '../parts/AreaSeries.js';
-
-var seriesType = H.seriesType;
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 
 /**
  * @private

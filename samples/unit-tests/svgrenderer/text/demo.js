@@ -739,3 +739,99 @@ QUnit.test('Adding new text style (#3501)', function (assert) {
         renderer.destroy();
     }
 });
+
+QUnit.test('RTL characters with outline (#10162)', function (assert) {
+    var renderer;
+    try {
+
+        renderer = new Highcharts.Renderer(
+            document.getElementById('container'),
+            500,
+            300
+        );
+
+        var arabicChars = renderer.text('عربي', 100, 50)
+            .css({ textOutline: '1px contrast' })
+            .add();
+
+        var hebrewChars = renderer.text('עברית', 100, 100)
+            .css({ textOutline: '1px contrast' })
+            .add();
+
+        var japanChars = renderer.text('中文', 100, 150)
+            .css({ textOutline: '1px contrast' })
+            .add();
+
+        var latinChars = renderer.text('Edge', 100, 200)
+            .css({ textOutline: '1px contrast' })
+            .add();
+
+        // In Firefox the placement is reversed.
+        const expectedClass = Highcharts.isFirefox ? null : 'highcharts-text-outline';
+        assert.notOk(
+            ~[].indexOf.apply(
+                arabicChars.element.children[0].classList,
+                [expectedClass]
+            ),
+            'Arabic characters are not covered with the outline'
+        );
+        assert.notOk(
+            ~[].indexOf.apply(
+                hebrewChars.element.children[0].classList,
+                [expectedClass]
+            ),
+            'Hebrew characters are not covered with the outline'
+        );
+
+        assert.ok(
+            ~[].indexOf.apply(
+                japanChars.element.children[0].classList,
+                ['highcharts-text-outline']
+            ),
+            'Japan characters are not covered with the outline'
+        );
+        assert.ok(
+            ~[].indexOf.apply(
+                latinChars.element.children[0].classList,
+                ['highcharts-text-outline']
+            ),
+            'Latin characters are not covered with the outline'
+        );
+    } finally {
+        renderer.destroy();
+    }
+});
+
+QUnit.test('XSS and script injection', assert => {
+    const ren = new Highcharts.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    ren.text(
+        'This is a link to <a href="https://www.highcharts.com">highcharts.com</a>',
+        30,
+        30
+    )
+        .add();
+
+    assert.strictEqual(
+        document.getElementById('container').innerHTML.indexOf('onclick'),
+        -1,
+        'There should be no translation of anchors to onclick like historically'
+    );
+
+    ren.text(
+        'This is a link to <a href="javascript:alert(\'XSS\')">an alert</a>',
+        30,
+        60
+    )
+        .add();
+
+    assert.strictEqual(
+        document.getElementById('container').innerHTML.indexOf('javascript'),
+        -1,
+        'JavaScript execution should not be allowed from config'
+    );
+});

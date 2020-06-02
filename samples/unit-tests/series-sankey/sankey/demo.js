@@ -491,8 +491,11 @@ QUnit.test(
     'Sankey and circular data',
     function (assert) {
 
-        Highcharts.chart('container', {
+        const chart = Highcharts.chart('container', {
 
+            chart: {
+                width: 489
+            },
             title: {
                 text: 'Highcharts Sankey Diagram'
             },
@@ -512,6 +515,24 @@ QUnit.test(
             true,
             'No errors with circular data (#10658).'
         );
+
+        chart.series[0].setData([
+            ['a', 'c', 5],
+            ['a', 'b', 5],
+            ['b', 'd', 5],
+            ['b', 'c', 5]
+        ]);
+
+        const numberOfCurves = chart.series[0].points[3].graphic
+            .attr('d')
+            .split(' ')
+            .filter(item => item === 'C')
+            .length;
+        assert.ok(
+            numberOfCurves > 4,
+            'The link should have a complex, circular structure, not direct (#12882)'
+        );
+
     }
 );
 
@@ -667,6 +688,94 @@ QUnit.test(
             chart.series[0].nodes[4].id,
             'Netherlands',
             'This node id(position) should not been have changed after the update (#12453)'
+        );
+    }
+);
+
+QUnit.test(
+    'Test null data in sankey #12666',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+            series: [{
+                keys: ['from', 'to', 'weight'],
+                data: [
+                    ['Coal', 'Transportation', 0],
+                    ['Renewable', 'Transportation', 0],
+                    ['Nuclear', 'Transportation', 2],
+
+                    ['Coal', 'Industrial', 7],
+                    ['Renewable', 'Industrial', 11],
+                    ['Nuclear', 'Industrial', 0],
+
+                    ['Coal', 'R&C', 1],
+                    ['Renewable', 'R&C', 7],
+                    ['Nuclear', 'R&C', 5],
+
+                    ['Coal', 'Electric Power', 48],
+                    ['Renewable', 'Electric Power', 11],
+                    ['Nuclear', null, 52]
+                ],
+                type: 'sankey'
+            }]
+        });
+
+        assert.strictEqual(
+            chart.series[0].nodes[2].sum,
+            59,
+            'For this node value from the point with linkTo null should be added to sum (#12666)'
+        );
+    }
+);
+
+QUnit.test(
+    'Wrong spacings when zero minLinkWidth #13308',
+    function (assert) {
+
+        var chart = Highcharts.chart('container', {
+            chart: {
+                height: 200
+            },
+
+            series: [{
+                keys: ['from', 'to', 'weight'],
+                nodePadding: 50,
+                minLinkWidth: 0,
+                data: [
+                    ['Brazil', 'Portugal', 5],
+                    ['Brazil', 'France', 1],
+                    ['Canada', 'Portugal', 1],
+                    ['Canada', 'France', 1000],
+                    ['Portugal', 'Angola', 2],
+                    ['Portugal', 'Senegal', 1],
+                    ['Portugal', 'Morocco', 1]
+                ],
+                type: 'sankey'
+            }]
+        });
+
+        const nodeYBeforeUpdate = chart.series[0].nodes[1].nodeY,
+            factorBeforeUpdate = chart.series[0].translationFactor,
+            newMinLinkWidth = 5;
+
+        chart.series[0].update({
+            minLinkWidth: newMinLinkWidth
+        });
+
+        const nodeYAfterUpdate = chart.series[0].nodes[1].nodeY,
+            factorAfterUpdate = chart.series[0].translationFactor;
+
+        assert.strictEqual(
+            nodeYAfterUpdate - nodeYBeforeUpdate,
+            newMinLinkWidth,
+            'For this node the difference of the nodeY value should be equal to the new minLinkWidth after the update (#13308)'
+        );
+
+        assert.close(
+            factorBeforeUpdate,
+            factorAfterUpdate,
+            0.02,
+            'The translate-factor value should not be changed significantly while changing the minLinkWidth (#13308)'
         );
     }
 );

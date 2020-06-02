@@ -11,11 +11,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
+import Chart from '../parts/Chart.js';
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, objectEach = U.objectEach, pick = U.pick;
-import '../parts/Chart.js';
-var Chart = H.Chart, addEvent = H.addEvent, fireEvent = H.fireEvent;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable no-invalid-this */
 // Collect potensial overlapping data labels. Stack labels probably don't need
 // to be considered because they are usually accompanied by data labels that lie
@@ -27,9 +25,10 @@ addEvent(Chart, 'render', function collectAndHide() {
         labels = labels.concat(collector());
     });
     (this.yAxis || []).forEach(function (yAxis) {
-        if (yAxis.options.stackLabels &&
+        if (yAxis.stacking &&
+            yAxis.options.stackLabels &&
             !yAxis.options.stackLabels.allowOverlap) {
-            objectEach(yAxis.stacks, function (stack) {
+            objectEach(yAxis.stacking.stacks, function (stack) {
                 objectEach(stack, function (stackItem) {
                     labels.push(stackItem.label);
                 });
@@ -40,7 +39,7 @@ addEvent(Chart, 'render', function collectAndHide() {
         var dlOptions = series.options.dataLabels;
         if (series.visible &&
             !(dlOptions.enabled === false && !series._hasPointLabels)) { // #3866
-            series.points.forEach(function (point) {
+            (series.nodes || series.points).forEach(function (point) {
                 if (point.visible) {
                     var dataLabels = (isArray(point.dataLabels) ?
                         point.dataLabels :
@@ -66,7 +65,6 @@ addEvent(Chart, 'render', function collectAndHide() {
  * @function Highcharts.Chart#hideOverlappingLabels
  * @param {Array<Highcharts.SVGElement>} labels
  * Rendered data labels
- * @return {void}
  * @requires modules/overlapping-datalabels
  */
 Chart.prototype.hideOverlappingLabels = function (labels) {
@@ -81,7 +79,7 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
     getAbsoluteBox = function (label) {
         var pos, parent, bBox, 
         // Substract the padding if no background or border (#4333)
-        padding = label.box ? 0 : (label.padding || 0), lineHeightCorrection = 0;
+        padding = label.box ? 0 : (label.padding || 0), lineHeightCorrection = 0, xOffset = 0, boxWidth, alignValue;
         if (label &&
             (!label.alignAttr || label.placed)) {
             pos = label.alignAttr || {
@@ -99,8 +97,20 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                 lineHeightCorrection = ren
                     .fontMetrics(null, label.element).h;
             }
+            boxWidth = label.width - 2 * padding;
+            alignValue = {
+                left: '0',
+                center: '0.5',
+                right: '1'
+            }[label.alignValue];
+            if (alignValue) {
+                xOffset = +alignValue * boxWidth;
+            }
+            else if (isNumber(label.x) && Math.round(label.x) !== label.translateX) {
+                xOffset = label.x - label.translateX;
+            }
             return {
-                x: pos.x + (parent.translateX || 0) + padding,
+                x: pos.x + (parent.translateX || 0) + padding - xOffset,
                 y: pos.y + (parent.translateY || 0) + padding -
                     lineHeightCorrection,
                 width: label.width - 2 * padding,
@@ -150,15 +160,14 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                 // Make sure the label is completely hidden to avoid catching
                 // clicks (#4362)
                 if (label.alignAttr && label.placed) { // data labels
-                    if (newOpacity) {
-                        label.show(true);
-                    }
-                    else {
-                        complete = function () {
-                            label.hide(true);
-                            label.placed = false; // avoid animation from top
-                        };
-                    }
+                    label[newOpacity ? 'removeClass' : 'addClass']('highcharts-data-label-hidden');
+                    complete = function () {
+                        if (!chart.styledMode) {
+                            label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
+                        }
+                        label.visibility = newOpacity ? 'inherit' : 'hidden';
+                        label.placed = !!newOpacity;
+                    };
                     isLabelAffected = true;
                     // Animate or set the opacity
                     label.alignAttr.opacity = newOpacity;

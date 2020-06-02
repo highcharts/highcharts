@@ -11,6 +11,9 @@
 
 'use strict';
 
+import type Axis from '../parts/Axis';
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 
 /**
@@ -25,7 +28,7 @@ declare global {
             'simpleConnect'|
             string
         );
-        interface Chart {
+        interface ChartLike {
             pathfinder?: Pathfinder;
         }
         interface ConnectorsEndMarkerOptions {
@@ -81,7 +84,7 @@ declare global {
         interface Options {
             connectors?: ConnectorsOptions;
         }
-        interface Point {
+        interface PointLike {
             getMarkerVector(
                 radians: number,
                 markerRadius: number,
@@ -120,7 +123,7 @@ declare global {
             public addMarker(
                 type: string,
                 options: ConnectorsMarkerOptions,
-                path: SVGPathArray
+                path: SVGPath
             ): void;
             public destroy(): void;
             public getPath(
@@ -133,7 +136,7 @@ declare global {
             ): void;
             public render(): void;
             public renderPath(
-                path: SVGPathArray,
+                path: SVGPath,
                 attribs?: SVGAttributes,
                 animation?: (boolean|AnimationOptionsObject)
             ): void;
@@ -186,12 +189,18 @@ declare global {
  * @typedef {"fastAvoid"|"simpleConnect"|"straight"|string} Highcharts.PathfinderTypeValue
  */
 
-import '../parts/Point.js';
+''; // detach doclets above
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     defined,
+    error,
     extend,
+    merge,
     objectEach,
     pick,
     splat
@@ -201,8 +210,6 @@ import pathfinderAlgorithms from './PathfinderAlgorithms.js';
 import './ArrowSymbols.js';
 
 var deg2rad = H.deg2rad,
-    addEvent = H.addEvent,
-    merge = H.merge,
     max = Math.max,
     min = Math.min;
 
@@ -215,7 +222,7 @@ var deg2rad = H.deg2rad,
 
 
 // Set default Pathfinder options
-extend(H.defaultOptions, {
+extend(defaultOptions, {
     /**
      * The Pathfinder module allows you to define connections between any two
      * points, represented as lines - optionally with markers for the start
@@ -495,9 +502,7 @@ extend(H.defaultOptions, {
  * @return {Highcharts.Dictionary<number>|null}
  *         Result xMax, xMin, yMax, yMin.
  */
-function getPointBB(
-    point: Highcharts.Point
-): (Highcharts.Dictionary<number>|null) {
+function getPointBB(point: Point): (Highcharts.Dictionary<number>|null) {
     var shapeArgs = point.shapeArgs,
         bb;
 
@@ -623,8 +628,8 @@ function calculateObstacleMargin(obstacles: Array<any>): number {
  */
 function Connection(
     this: Highcharts.Connection,
-    from: Highcharts.Point,
-    to: Highcharts.Point,
+    from: Point,
+    to: Point,
     options?: Highcharts.ConnectorsOptions
 ): void {
     this.init(from, to, options);
@@ -648,8 +653,8 @@ Connection.prototype = {
      */
     init: function (
         this: Highcharts.Connection,
-        from: Highcharts.Point,
-        to: Highcharts.Point,
+        from: Point,
+        to: Point,
         options?: Highcharts.ConnectorsOptions
     ): void {
         this.fromPoint = from;
@@ -676,7 +681,7 @@ Connection.prototype = {
      */
     renderPath: function (
         this: Highcharts.Connection,
-        path: Highcharts.SVGPathArray,
+        path: SVGPath,
         attribs?: Highcharts.SVGAttributes,
         animation?: (boolean|Highcharts.AnimationOptionsObject)
     ): void {
@@ -748,7 +753,7 @@ Connection.prototype = {
         this: Highcharts.Connection,
         type: string,
         options: Highcharts.ConnectorsMarkerOptions,
-        path: Highcharts.SVGPathArray
+        path: SVGPath
     ): void {
         var connection = this,
             chart = connection.fromPoint.series.chart,
@@ -766,7 +771,8 @@ Connection.prototype = {
             box,
             width,
             height,
-            pathVector;
+            pathVector: Highcharts.PositionObject,
+            segment: SVGPath.Segment;
 
 
         if (!options.enabled) {
@@ -775,77 +781,77 @@ Connection.prototype = {
 
         // Last vector before start/end of path, used to get angle
         if (type === 'start') {
-            pathVector = {
-                x: path[4],
-                y: path[5]
-            };
+            segment = path[1];
         } else { // 'end'
+            segment = path[path.length - 2];
+        }
+        if (segment && segment[0] === 'M' || segment[0] === 'L') {
             pathVector = {
-                x: path[path.length - 5],
-                y: path[path.length - 4]
+                x: segment[1],
+                y: segment[2]
             };
-        }
 
-        // Get angle between pathVector and anchor point and use it to create
-        // marker position.
-        radians = point.getRadiansToVector(pathVector as any, anchor);
-        markerVector = point.getMarkerVector(
-            radians,
-            options.radius as any,
-            anchor
-        );
+            // Get angle between pathVector and anchor point and use it to
+            // create marker position.
+            radians = point.getRadiansToVector(pathVector, anchor);
+            markerVector = point.getMarkerVector(
+                radians,
+                options.radius as any,
+                anchor
+            );
 
-        // Rotation of marker is calculated from angle between pathVector and
-        // markerVector.
-        // (Note:
-        //  Used to recalculate radians between markerVector and pathVector,
-        //  but this should be the same as between pathVector and anchor.)
-        rotation = -radians / deg2rad;
+            // Rotation of marker is calculated from angle between pathVector
+            // and markerVector.
+            // (Note:
+            //  Used to recalculate radians between markerVector and pathVector,
+            //  but this should be the same as between pathVector and anchor.)
+            rotation = -radians / deg2rad;
 
-        if (options.width && options.height) {
-            width = options.width;
-            height = options.height;
-        } else {
-            width = height = (options.radius as any) * 2;
-        }
-
-        // Add graphics object if it does not exist
-        connection.graphics = connection.graphics || {};
-        box = {
-            x: markerVector.x - (width / 2),
-            y: markerVector.y - (height / 2),
-            width: width,
-            height: height,
-            rotation: rotation,
-            rotationOriginX: markerVector.x,
-            rotationOriginY: markerVector.y
-        };
-
-        if (!connection.graphics[type]) {
-
-            // Create new marker element
-            connection.graphics[type] = renderer
-                .symbol(options.symbol as any)
-                .addClass(
-                    'highcharts-point-connecting-path-' + type + '-marker'
-                )
-                .attr(box)
-                .add((pathfinder as any).group);
-
-            if (!renderer.styledMode) {
-                connection.graphics[type].attr({
-                    fill: options.color || connection.fromPoint.color,
-                    stroke: options.lineColor,
-                    'stroke-width': options.lineWidth,
-                    opacity: 0
-                })
-                    .animate({
-                        opacity: 1
-                    }, point.series.options.animation);
+            if (options.width && options.height) {
+                width = options.width;
+                height = options.height;
+            } else {
+                width = height = (options.radius as any) * 2;
             }
 
-        } else {
-            connection.graphics[type].animate(box);
+            // Add graphics object if it does not exist
+            connection.graphics = connection.graphics || {};
+            box = {
+                x: markerVector.x - (width / 2),
+                y: markerVector.y - (height / 2),
+                width: width,
+                height: height,
+                rotation: rotation,
+                rotationOriginX: markerVector.x,
+                rotationOriginY: markerVector.y
+            };
+
+            if (!connection.graphics[type]) {
+
+                // Create new marker element
+                connection.graphics[type] = renderer
+                    .symbol(options.symbol as any)
+                    .addClass(
+                        'highcharts-point-connecting-path-' + type + '-marker'
+                    )
+                    .attr(box)
+                    .add((pathfinder as any).group);
+
+                if (!renderer.styledMode) {
+                    connection.graphics[type].attr({
+                        fill: options.color || connection.fromPoint.color,
+                        stroke: options.lineColor,
+                        'stroke-width': options.lineWidth,
+                        opacity: 0
+                    })
+                        .animate({
+                            opacity: 1
+                        }, point.series.options.animation);
+                }
+
+            } else {
+                connection.graphics[type].animate(box);
+            }
         }
     },
 
@@ -871,7 +877,7 @@ Connection.prototype = {
             chartObstacles = pathfinder.chartObstacles;
 
         if (typeof algorithm !== 'function') {
-            H.error(
+            error(
                 '"' + options.type + '" is not a Pathfinder algorithm.'
             );
             return;
@@ -931,7 +937,7 @@ Connection.prototype = {
             chart = series.chart,
             pathfinder = chart.pathfinder,
             pathResult: Highcharts.PathfinderAlgorithmResultObject,
-            path: Highcharts.SVGPathArray,
+            path: SVGPath,
             options = merge(
                 chart.options.connectors, series.options.connectors,
                 fromPoint.options.connectors, connection.options
@@ -1017,7 +1023,7 @@ Connection.prototype = {
  */
 function Pathfinder(
     this: Highcharts.Pathfinder,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.init(chart);
 }
@@ -1039,7 +1045,7 @@ Pathfinder.prototype = {
      */
     init: function (
         this: Highcharts.Pathfinder,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
         // Initialize pathfinder with chart context
         this.chart = chart;
@@ -1074,10 +1080,10 @@ Pathfinder.prototype = {
         pathfinder.connections = [];
         chart.series.forEach(function (series: Highcharts.Series): void {
             if (series.visible && !series.options.isInternal) {
-                series.points.forEach(function (point: Highcharts.Point): void {
+                series.points.forEach(function (point: Point): void {
                     var to: (
-                            Highcharts.Axis|
-                            Highcharts.Point|
+                            Axis|
+                            Point|
                             Highcharts.Series|
                             undefined
                         ),
@@ -1096,7 +1102,7 @@ Pathfinder.prototype = {
                                     connect : connect.to
                             );
                             if (
-                                to instanceof H.Point &&
+                                to instanceof Point &&
                                 to.series.visible &&
                                 to.visible &&
                                 to.isInside !== false
@@ -1355,7 +1361,7 @@ H.Pathfinder = Pathfinder as any;
 
 
 // Add pathfinding capabilities to Points
-extend(H.Point.prototype, /** @lends Point.prototype */ {
+extend(Point.prototype, /** @lends Point.prototype */ {
 
     /**
      * Get coordinates of anchor point for pathfinder connection.
@@ -1371,7 +1377,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
      *         in plot values, not relative to point.
      */
     getPathfinderAnchorPoint: function (
-        this: Highcharts.Point,
+        this: Point,
         markerOptions: Highcharts.ConnectorsMarkerOptions
     ): Highcharts.PositionObject {
         var bb = getPointBB(this),
@@ -1416,7 +1422,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
      *         The angle in degrees
      */
     getRadiansToVector: function (
-        this: Highcharts.Point,
+        this: Point,
         v1: Highcharts.PositionObject,
         v2: Highcharts.PositionObject
     ): number {
@@ -1424,11 +1430,14 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
 
         if (!defined(v2)) {
             box = getPointBB(this);
-            v2 = {
-                x: ((box as any).xMin + (box as any).xMax) / 2,
-                y: ((box as any).yMin + (box as any).yMax) / 2
-            };
+            if (box) {
+                v2 = {
+                    x: (box.xMin + box.xMax) / 2,
+                    y: (box.yMin + box.yMax) / 2
+                };
+            }
         }
+
         return Math.atan2(v2.y - v1.y, v1.x - v2.x);
     },
 
@@ -1454,7 +1463,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
      *         The marker vector as an object with x/y properties.
      */
     getMarkerVector: function (
-        this: Highcharts.Point,
+        this: Point,
         radians: number,
         markerRadius: number,
         anchor: Highcharts.PositionObject
@@ -1534,7 +1543,7 @@ extend(H.Point.prototype, /** @lends Point.prototype */ {
  * still break if using the legacy options in chart.update, addSeries etc.
  * @private
  */
-function warnLegacy(chart: Highcharts.Chart): void {
+function warnLegacy(chart: Chart): void {
     if (
         (chart.options as any).pathfinder ||
         chart.series.reduce(function (
@@ -1558,16 +1567,15 @@ function warnLegacy(chart: Highcharts.Chart): void {
             (chart.options.connectors = chart.options.connectors || {}),
             (chart.options as any).pathfinder
         );
-        H.error('WARNING: Pathfinder options have been renamed. ' +
+        error('WARNING: Pathfinder options have been renamed. ' +
             'Use "chart.connectors" or "series.connectors" instead.');
     }
 }
 
 
 // Initialize Pathfinder for charts
-H.Chart.prototype.callbacks.push(function (
-    this: Highcharts.Chart,
-    chart: Highcharts.Chart
+Chart.prototype.callbacks.push(function (
+    chart: Chart
 ): void {
     var options = chart.options;
 

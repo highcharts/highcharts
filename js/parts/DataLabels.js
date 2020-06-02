@@ -9,6 +9,9 @@
  * */
 'use strict';
 import H from './Globals.js';
+var noop = H.noop, seriesTypes = H.seriesTypes;
+import U from './Utilities.js';
+var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, fireEvent = U.fireEvent, format = U.format, isArray = U.isArray, merge = U.merge, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 /**
  * Callback JavaScript function to format the data label as a string. Note that
  * if a `format` is defined, the format takes precedence and the formatter is
@@ -16,69 +19,22 @@ import H from './Globals.js';
  *
  * @callback Highcharts.DataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject} this
- *        Data label context to format
+ * @param {Highcharts.PointLabelObject} this
+ * Data label context to format
+ *
+ * @param {Highcharts.DataLabelsOptions} options
+ * [API options](/highcharts/plotOptions.series.dataLabels) of the data label
  *
  * @return {number|string|null|undefined}
- *         Formatted data label text
- */
-/**
- * Context for the callback function to format the data label.
- *
- * @interface Highcharts.DataLabelsFormatterContextObject
- */ /**
-* Stacked series and pies only. The point's percentage of the total.
-* @name Highcharts.DataLabelsFormatterContextObject#percentage
-* @type {number|undefined}
-*/ /**
-* The point object. The point name, if defined, is available through
-* `this.point.name`.
-* @name Highcharts.DataLabelsFormatterContextObject#point
-* @type {Highcharts.Point}
-*/ /**
-* The series object. The series name is available through `this.series.name`.
-* @name Highcharts.DataLabelsFormatterContextObject#series
-* @type {Highcharts.Series}
-*/ /**
-* Stacked series only. The total value at this point's x value.
-* @name Highcharts.DataLabelsFormatterContextObject#total
-* @type {number|undefined}
-*/ /**
-* The x value.
-* @name Highcharts.DataLabelsFormatterContextObject#x
-* @type {number}
-*/ /**
-* The y value.
-* @name Highcharts.DataLabelsFormatterContextObject#y
-* @type {number|null}
-*/
-/**
- * Options for the series data labels, appearing next to each data point.
- *
- * Since v6.2.0, multiple data labels can be applied to each single point by
- * defining them as an array of configs.
- *
- * In styled mode, the data labels can be styled with the
- * `.highcharts-data-label-box` and `.highcharts-data-label` class names.
- *
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-enabled|Highcharts-Demo:}
- *      Data labels enabled
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-datalabels-multiple|Highcharts-Demo:}
- *      Multiple data labels on a bar series
- * @see {@link https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/css/series-datalabels|Highcharts-Demo:}
- *      Style mode example
- *
- * @interface Highcharts.DataLabelsOptionsObject
+ * Formatted data label text
  */
 /**
  * Values for handling data labels that flow outside the plot area.
  *
  * @typedef {"allow"|"justify"} Highcharts.DataLabelsOverflowValue
  */
-import U from './Utilities.js';
-var animObject = U.animObject, arrayMax = U.arrayMax, clamp = U.clamp, defined = U.defined, extend = U.extend, isArray = U.isArray, objectEach = U.objectEach, pick = U.pick, relativeLength = U.relativeLength, splat = U.splat, stableSort = U.stableSort;
 import './Series.js';
-var format = H.format, merge = H.merge, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
+var Series = H.Series;
 /* eslint-disable valid-jsdoc */
 /**
  * General distribution algorithm for distributing labels of differing size
@@ -273,7 +229,7 @@ Series.prototype.drawDataLabels = function () {
         chart.options.plotOptions.series.dataLabels, chart.options.plotOptions &&
         chart.options.plotOptions[series.type] &&
         chart.options.plotOptions[series.type].dataLabels), seriesDlOptions);
-    H.fireEvent(this, 'drawDataLabels');
+    fireEvent(this, 'drawDataLabels');
     if (isArray(seriesDlOptions) ||
         seriesDlOptions.enabled ||
         series._hasPointLabels) {
@@ -396,7 +352,7 @@ Series.prototype.drawDataLabels = function () {
                         point.dataLabels = point.dataLabels || [];
                         dataLabel = point.dataLabels[i] = rotation ?
                             // Labels don't rotate, use text element
-                            renderer.text(labelText, 0, -9999)
+                            renderer.text(labelText, 0, -9999, labelOptions.useHTML)
                                 .addClass('highcharts-data-label') :
                             // We can use label
                             renderer.label(labelText, 0, -9999, labelOptions.shape, null, null, labelOptions.useHTML, null, 'data-label');
@@ -442,7 +398,7 @@ Series.prototype.drawDataLabels = function () {
             });
         });
     }
-    H.fireEvent(this, 'afterDrawDataLabels');
+    fireEvent(this, 'afterDrawDataLabels');
 };
 /**
  * Align each individual data label.
@@ -451,7 +407,7 @@ Series.prototype.drawDataLabels = function () {
  * @function Highcharts.Series#alignDataLabel
  * @param {Highcharts.Point} point
  * @param {Highcharts.SVGElement} dataLabel
- * @param {Highcharts.DataLabelsOptionsObject} options
+ * @param {Highcharts.DataLabelsOptions} options
  * @param {Highcharts.BBoxObject} alignTo
  * @param {boolean} [isNew]
  * @return {void}
@@ -499,11 +455,11 @@ Series.prototype.alignDataLabel = function (point, dataLabel, options, alignTo, 
             rotCorr = chart.renderer.rotCorr(baseline, rotation); // #3723
             alignAttr = {
                 x: (alignTo.x +
-                    options.x +
+                    (options.x || 0) +
                     alignTo.width / 2 +
                     rotCorr.x),
                 y: (alignTo.y +
-                    options.y +
+                    (options.y || 0) +
                     { top: 0, middle: 0.5, bottom: 1 }[options.verticalAlign] *
                         alignTo.height)
             };
@@ -622,7 +578,7 @@ Series.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isIns
  * @private
  * @function Highcharts.Series#justifyDataLabel
  * @param {Highcharts.SVGElement} dataLabel
- * @param {Highcharts.DataLabelsOptionsObject} options
+ * @param {Highcharts.DataLabelsOptions} options
  * @param {Highcharts.SVGAttributes} alignAttr
  * @param {Highcharts.BBoxObject} bBox
  * @param {Highcharts.BBoxObject} [alignTo]
@@ -631,57 +587,60 @@ Series.prototype.setDataLabelStartPos = function (point, dataLabel, isNew, isIns
  */
 Series.prototype.justifyDataLabel = function (dataLabel, options, alignAttr, bBox, alignTo, isNew) {
     var chart = this.chart, align = options.align, verticalAlign = options.verticalAlign, off, justified, padding = dataLabel.box ? 0 : (dataLabel.padding || 0);
+    var _a = options.x, x = _a === void 0 ? 0 : _a, _b = options.y, y = _b === void 0 ? 0 : _b;
     // Off left
     off = alignAttr.x + padding;
     if (off < 0) {
-        if (align === 'right') {
+        if (align === 'right' && x >= 0) {
             options.align = 'left';
             options.inside = true;
         }
         else {
-            options.x = -off;
+            x -= off;
         }
         justified = true;
     }
     // Off right
     off = alignAttr.x + bBox.width - padding;
     if (off > chart.plotWidth) {
-        if (align === 'left') {
+        if (align === 'left' && x <= 0) {
             options.align = 'right';
             options.inside = true;
         }
         else {
-            options.x = chart.plotWidth - off;
+            x += chart.plotWidth - off;
         }
         justified = true;
     }
     // Off top
     off = alignAttr.y + padding;
     if (off < 0) {
-        if (verticalAlign === 'bottom') {
+        if (verticalAlign === 'bottom' && y >= 0) {
             options.verticalAlign = 'top';
             options.inside = true;
         }
         else {
-            options.y = -off;
+            y -= off;
         }
         justified = true;
     }
     // Off bottom
     off = alignAttr.y + bBox.height - padding;
     if (off > chart.plotHeight) {
-        if (verticalAlign === 'top') {
+        if (verticalAlign === 'top' && y <= 0) {
             options.verticalAlign = 'bottom';
             options.inside = true;
         }
         else {
-            options.y = chart.plotHeight - off;
+            y += chart.plotHeight - off;
         }
         justified = true;
     }
     if (justified) {
+        options.x = x;
+        options.y = y;
         dataLabel.placed = !isNew;
-        dataLabel.align(options, null, alignTo);
+        dataLabel.align(options, void 0, alignTo);
     }
     return justified;
 };
@@ -738,7 +697,7 @@ if (seriesTypes.pie) {
      * @return {void}
      */
     seriesTypes.pie.prototype.drawDataLabels = function () {
-        var series = this, data = series.data, point, chart = series.chart, options = series.options.dataLabels, connectorPadding = options.connectorPadding, connectorWidth, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotLeft = chart.plotLeft, maxWidth = Math.round(chart.chartWidth / 3), connector, seriesCenter = series.center, radius = seriesCenter[2] / 2, centerY = seriesCenter[1], dataLabel, dataLabelWidth, 
+        var series = this, data = series.data, point, chart = series.chart, options = series.options.dataLabels || {}, connectorPadding = options.connectorPadding, connectorWidth, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotLeft = chart.plotLeft, maxWidth = Math.round(chart.chartWidth / 3), connector, seriesCenter = series.center, radius = seriesCenter[2] / 2, centerY = seriesCenter[1], dataLabel, dataLabelWidth, 
         // labelPos,
         labelPosition, labelHeight, 
         // divide the points into right and left halves for anti collision
@@ -784,7 +743,7 @@ if (seriesTypes.pie) {
                             point.dataLabel.css({
                                 // Use a fraction of the maxWidth to avoid
                                 // wrapping close to the end of the string.
-                                width: maxWidth * 0.7
+                                width: Math.round(maxWidth * 0.7) + 'px'
                             });
                             point.dataLabel.shortened = true;
                         }
@@ -884,15 +843,18 @@ if (seriesTypes.pie) {
                     visibility: visibility,
                     align: labelPosition.alignment
                 };
+                pointDataLabelsOptions = point.options.dataLabels || {};
                 dataLabel._pos = {
                     x: (x +
-                        options.x +
+                        pick(pointDataLabelsOptions.x, options.x) + // (#12985)
                         ({
                             left: connectorPadding,
                             right: -connectorPadding
                         }[labelPosition.alignment] || 0)),
                     // 10 is for the baseline (label vs text)
-                    y: y + options.y - 10
+                    y: (y +
+                        pick(pointDataLabelsOptions.y, options.y) - // (#12985)
+                        10)
                 };
                 // labelPos.x = x;
                 // labelPos.y = y;
@@ -1127,7 +1089,7 @@ if (seriesTypes.column) {
      * @function Highcharts.seriesTypes.column#alignDataLabel
      * @param {Highcharts.Point} point
      * @param {Highcharts.SVGElement} dataLabel
-     * @param {Highcharts.DataLabelsOptionsObject} options
+     * @param {Highcharts.DataLabelsOptions} options
      * @param {Highcharts.BBoxObject} alignTo
      * @param {boolean} [isNew]
      * @return {void}

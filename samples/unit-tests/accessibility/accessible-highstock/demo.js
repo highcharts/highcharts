@@ -11,7 +11,7 @@ QUnit.test('Basic stock chart', function (assert) {
     });
 
     assert.ok(
-        chart.series[0].markerGroup.element.getAttribute('aria-label'),
+        chart.series[0].graph.element.getAttribute('aria-label'),
         'There be ARIA on series'
     );
 

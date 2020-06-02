@@ -4,24 +4,23 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
-var Annotation = H.Annotation, MockPoint = Annotation.MockPoint, Tunnel = Annotation.types.tunnel;
+import MockPoint from '../MockPoint.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
+var Tunnel = Annotation.types.tunnel;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var createPathDGenerator = function (retracementIndex, isBackground) {
     return function () {
         var annotation = this.annotation, leftTop = this.anchor(annotation.startRetracements[retracementIndex]).absolutePosition, rightTop = this.anchor(annotation.endRetracements[retracementIndex]).absolutePosition, d = [
-            'M',
-            Math.round(leftTop.x),
-            Math.round(leftTop.y),
-            'L',
-            Math.round(rightTop.x),
-            Math.round(rightTop.y)
+            ['M', Math.round(leftTop.x), Math.round(leftTop.y)],
+            ['L', Math.round(rightTop.x), Math.round(rightTop.y)]
         ], rightBottom, leftBottom;
         if (isBackground) {
             rightBottom = this.anchor(annotation.endRetracements[retracementIndex - 1]).absolutePosition;
             leftBottom = this.anchor(annotation.startRetracements[retracementIndex - 1]).absolutePosition;
-            d.push('L', Math.round(rightBottom.x), Math.round(rightBottom.y), 'L', Math.round(leftBottom.x), Math.round(leftBottom.y));
+            d.push(['L', Math.round(rightBottom.x), Math.round(rightBottom.y)], ['L', Math.round(leftBottom.x), Math.round(leftBottom.y)]);
         }
         return d;
     };
@@ -80,7 +79,7 @@ H.extendAnnotation(Fibonacci, Tunnel, {
     },
     addLabels: function () {
         Fibonacci.levels.forEach(function (level, i) {
-            var options = this.options.typeOptions, label = this.initLabel(H.merge(options.labels[i], {
+            var options = this.options.typeOptions, label = this.initLabel(merge(options.labels[i], {
                 point: function (target) {
                     var point = MockPoint.pointToOptions(target.annotation.startRetracements[i]);
                     return point;

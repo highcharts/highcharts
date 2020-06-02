@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type StackingAxis from '../parts/StackingAxis';
 import H from '../parts/Globals.js';
 
 /**
@@ -21,9 +23,9 @@ declare global {
     namespace Highcharts {
         class VariwidePoint extends ColumnPoint {
             public crosshairWidth: number;
+            public isValid: () => boolean;
             public options: VariwidePointOptions;
             public series: VariwideSeries;
-            public isValid(): boolean;
         }
         class VariwideSeries extends ColumnSeries {
             public data: Array<VariwidePoint>;
@@ -49,7 +51,7 @@ declare global {
             variwide?: boolean;
             zData?: Array<number>;
         }
-        interface Point {
+        interface PointLike {
             crosshairWidth?: VariwidePoint['crosshairWidth'];
         }
         interface SeriesTypesDictionary {
@@ -72,16 +74,16 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     isNumber,
     pick,
+    seriesType,
     wrap
 } = U;
 
 import '../parts/AreaSeries.js';
 
-var addEvent = H.addEvent,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * @private
@@ -294,7 +296,7 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
         correctStackLabels: function (this: Highcharts.VariwideSeries): void {
             var series = this,
                 options = series.options,
-                yAxis = series.yAxis,
+                yAxis = series.yAxis as StackingAxis,
                 pointStack,
                 pointWidth,
                 stack,
@@ -305,7 +307,7 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
             ): void {
                 xValue = point.x;
                 pointWidth = (point.shapeArgs as any).width;
-                stack = yAxis.stacks[(
+                stack = yAxis.stacking.stacks[(
                     series.negStacks &&
                     (point.y as any) < (
                         options.startFromThreshold ?
@@ -315,16 +317,18 @@ seriesType<Highcharts.VariwideSeries>('variwide', 'column'
                         '-' :
                         ''
                 ) + series.stackKey];
-                pointStack = stack[xValue as any];
 
-                if (stack && pointStack && !point.isNull) {
-                    pointStack.setOffset(
-                        -(pointWidth / 2) || 0,
-                        pointWidth || 0,
-                        void 0,
-                        void 0,
-                        point.plotX
-                    );
+                if (stack) {
+                    pointStack = stack[xValue as any];
+                    if (pointStack && !point.isNull) {
+                        pointStack.setOffset(
+                            -(pointWidth / 2) || 0,
+                            pointWidth || 0,
+                            void 0,
+                            void 0,
+                            point.plotX
+                        );
+                    }
                 }
             });
         }
@@ -419,7 +423,7 @@ wrap(H.Tick.prototype, 'getLabelPosition', function (
     y: number,
     label: Highcharts.SVGElement,
     horiz: boolean,
-    labelOptions: Highcharts.DataLabelsOptionsObject,
+    labelOptions: Highcharts.DataLabelsOptions,
     tickmarkOffset: number,
     index: number
 ): Highcharts.PositionObject {

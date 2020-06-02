@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
 import H from '../../../parts/Globals.js';
 import U from '../../../parts/Utilities.js';
 var extend = U.extend;
@@ -54,7 +55,7 @@ declare global {
             public setExportButtonExpandedState(stateStr: string): void;
             isExportMenuShown: boolean;
         }
-        interface Chart {
+        interface ChartLike {
             highlightedExportItemIx?: number;
             /** @requires modules/accessibility */
             hideExportMenu(): void;
@@ -79,7 +80,7 @@ declare global {
  * @param {Highcharts.Chart} chart
  * @returns {Highcharts.SVGElement}
  */
-function getExportMenuButtonElement(chart: Highcharts.Chart): Highcharts.SVGElement|undefined {
+function getExportMenuButtonElement(chart: Chart): Highcharts.SVGElement|undefined {
     return chart.exportSVGElements && chart.exportSVGElements[0];
 }
 
@@ -201,9 +202,7 @@ H.Chart.prototype.highlightLastExportItem = function (): boolean {
  * @private
  * @param {Highcharts.Chart} chart
  */
-function exportingShouldHaveA11y(
-    chart: Highcharts.Chart
-): boolean {
+function exportingShouldHaveA11y(chart: Chart): boolean {
     const exportingOpts = chart.options.exporting,
         exportButton = getExportMenuButtonElement(chart);
 
@@ -266,7 +265,7 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
      * @private
      */
     onMenuShown: function (this: Highcharts.MenuComponent): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             menu = chart.exportContextMenu;
 
         if (menu) {
@@ -414,16 +413,6 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
                     ): number {
                         return component.onKbdClick(this);
                     }
-                ],
-
-                // ESC handler
-                [
-                    [keys.esc],
-                    function (
-                        this: Highcharts.KeyboardNavigationHandler
-                    ): number {
-                        return this.response.prev;
-                    }
                 ]
             ],
 
@@ -438,10 +427,12 @@ extend(MenuComponent.prototype, /** @lends Highcharts.MenuComponent */ {
 
             // Focus export menu button
             init: function (): void {
-                const exportBtn = this.exportButtonProxy,
-                    exportGroup = chart.exportingGroup as Highcharts.SVGElement;
+                const exportBtn = component.exportButtonProxy,
+                    exportGroup = chart.exportingGroup;
 
-                chart.setFocusToElement(exportGroup, exportBtn.element);
+                if (exportGroup && exportBtn) {
+                    chart.setFocusToElement(exportGroup, exportBtn);
+                }
             },
 
             // Hide the menu

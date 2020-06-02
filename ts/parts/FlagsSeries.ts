@@ -10,7 +10,20 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
+import SVGElement from './SVGElement.js';
+import SVGRenderer from './SVGRenderer.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    defined,
+    isNumber,
+    merge,
+    objectEach,
+    seriesType,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -58,11 +71,6 @@ declare global {
         interface Series {
             allowDG?: boolean;
         }
-        interface SymbolDictionary {
-            circlepin: SymbolFunction<SVGPathArray>;
-            flag: SymbolFunction<SVGPathArray>;
-            squarepin: SymbolFunction<SVGPathArray>;
-        }
         interface SeriesTypesDictionary {
             flags: typeof FlagsSeries;
         }
@@ -76,7 +84,7 @@ declare global {
             public series: FlagsSeries;
             public stackIndex?: number;
             public style?: CSSObject;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class FlagsSeries extends ColumnSeries {
             public allowDG: boolean;
@@ -97,25 +105,14 @@ declare global {
  * @typedef {"circlepin"|"flag"|"squarepin"} Highcharts.FlagsShapeValue
  */
 
-import U from './Utilities.js';
-const {
-    defined,
-    isNumber,
-    objectEach,
-    wrap
-} = U;
 
 import './Series.js';
-import './SvgRenderer.js';
+import './SVGRenderer.js';
 import onSeriesMixin from '../mixins/on-series.js';
 
-var addEvent = H.addEvent,
-    merge = H.merge,
-    noop = H.noop,
+var noop = H.noop,
     Renderer = H.Renderer,
     Series = H.Series,
-    seriesType = H.seriesType,
-    SVGRenderer = H.SVGRenderer,
     TrackerMixin = H.TrackerMixin,
     VMLRenderer = H.VMLRenderer,
     symbols = SVGRenderer.prototype.symbols;
@@ -153,7 +150,7 @@ seriesType<Highcharts.FlagsSeries>(
          * In case the flag is placed on a series, on what point key to place
          * it. Line and columns have one key, `y`. In range or OHLC-type series,
          * however, the flag can optionally be placed on the `open`, `high`,
-         *  `low` or `close` key.
+         * `low` or `close` key.
          *
          * @sample {highstock} stock/plotoptions/flags-onkey/
          *         Range series, flag on high
@@ -616,7 +613,7 @@ seriesType<Highcharts.FlagsSeries>(
                     this: Highcharts.FlagsSeries,
                     proceed
                 ): Highcharts.SVGElement {
-                    return H.SVGElement.prototype.on.apply(
+                    return SVGElement.prototype.on.apply(
                         // for HTML
                         proceed.apply(this, [].slice.call(arguments, 1)),
                         // and for SVG
@@ -694,8 +691,6 @@ seriesType<Highcharts.FlagsSeries>(
         animate: function (this: Highcharts.FlagsSeries, init?: boolean): void {
             if (init) {
                 this.setClip();
-            } else {
-                this.animate = null as any;
             }
         },
 
@@ -748,22 +743,25 @@ symbols.flag = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.Dictionary<number>
-): Highcharts.SVGPathArray {
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
     var anchorX = (options && options.anchorX) || x,
         anchorY = (options && options.anchorY) || y;
 
-    return symbols.circle(anchorX - 1, anchorY - 1, 2, 2).concat(
-        [
-            'M', anchorX, anchorY,
-            'L', x, y + h,
-            x, y,
-            x + w, y,
-            x + w, y + h,
-            x, y + h,
-            'Z'
-        ]
+    // To do: unwanted any cast because symbols.circle has wrong type, it
+    // actually returns an SVGPathArray
+    const path = symbols.circle(anchorX - 1, anchorY - 1, 2, 2) as any;
+    path.push(
+        ['M', anchorX, anchorY],
+        ['L', x, y + h],
+        ['L', x, y],
+        ['L', x + w, y],
+        ['L', x + w, y + h],
+        ['L', x, y + h],
+        ['Z']
     );
+
+    return path;
 };
 
 /**
@@ -772,19 +770,18 @@ symbols.flag = function (
  * @param {string} shape - circle or square
  * @return {void}
  */
-function createPinSymbol(shape: string): void {
+function createPinSymbol(shape: ('circle'|'square')): void {
     symbols[shape + 'pin'] = function (
         x: number,
         y: number,
         w: number,
         h: number,
-        options: Highcharts.Dictionary<number>
-    ): Highcharts.SVGPathArray {
+        options?: Highcharts.SymbolOptionsObject
+    ): SVGPath {
 
         var anchorX = options && options.anchorX,
             anchorY = options && options.anchorY,
-            path: Highcharts.SVGPathArray,
-            labelTopOrBottomY;
+            path: SVGPath;
 
         // For single-letter flags, make sure circular flags are not taller
         // than their width
@@ -793,30 +790,39 @@ function createPinSymbol(shape: string): void {
             w = h;
         }
 
-        path = (symbols[shape] as any)(x, y, w, h);
+        path = (symbols[shape])(x, y, w, h);
 
         if (anchorX && anchorY) {
             /**
-             * If the label is below the anchor, draw the connecting line
-             * from the top edge of the label
-             * otherwise start drawing from the bottom edge
+             * If the label is below the anchor, draw the connecting line from
+             * the top edge of the label, otherwise start drawing from the
+             * bottom edge
              */
-            labelTopOrBottomY = (y > anchorY) ? y : y + h;
-            path.push(
+            let labelX = anchorX;
+            if (shape === 'circle') {
+                labelX = x + w / 2;
+            } else {
+                const startSeg = path[0];
+                const endSeg = path[1];
+                if (startSeg[0] === 'M' && endSeg[0] === 'L') {
+                    labelX = (startSeg[1] + endSeg[1]) / 2;
+                }
+            }
+            const labelY = (y > anchorY) ? y : y + h;
+
+            path.push([
                 'M',
-                shape === 'circle' ?
-                    x + w / 2 :
-                    (path[1] as any) + (path[4] as any) / 2,
-                labelTopOrBottomY,
+                labelX,
+                labelY
+            ], [
                 'L',
                 anchorX,
                 anchorY
-            );
+            ]);
             path = path.concat(
-                symbols.circle(anchorX - 1, anchorY - 1, 2, 2) as any
+                symbols.circle(anchorX - 1, anchorY - 1, 2, 2)
             );
         }
-
         return path;
     };
 }
@@ -839,7 +845,10 @@ if ((Renderer as unknown) === VMLRenderer) {
  * specified, it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.flags
- * @excluding dataParser, dataURL
+ * @excluding animation, borderColor, borderRadius, borderWidth, colorByPoint,
+ *            connectNulls, dashStyle, dataGrouping, dataParser, dataURL,
+ *            gapSize, gapUnit, linecap, lineWidth, marker, pointPadding,
+ *            pointWidth, step, turboThreshold, useOhlcData
  * @product   highstock
  * @apioption series.flags
  */

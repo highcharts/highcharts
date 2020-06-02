@@ -12,15 +12,22 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
 import H from '../../../parts/Globals.js';
-var doc = H.win.document,
-    format = H.format;
-
+const {
+    doc
+} = H;
 import U from '../../../parts/Utilities.js';
-var extend = U.extend,
-    pick = U.pick;
+const {
+    extend,
+    format,
+    pick
+} = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
+import Announcer from '../utils/Announcer.js';
+import AnnotationsA11y from './AnnotationsA11y.js';
+const getAnnotationsInfoHTML = AnnotationsA11y.getAnnotationsInfoHTML;
 
 import ChartUtilities from '../utils/chartUtilities.js';
 var unhideChartElementFromAT = ChartUtilities.unhideChartElementFromAT,
@@ -43,12 +50,15 @@ declare global {
     namespace Highcharts {
         class InfoRegionsComponent extends AccessibilityComponent {
             public constructor();
+            public announcer: Announcer;
             public dataTableButtonId?: string;
             public dataTableDiv?: HTMLDOMElement;
             public linkedDescriptionElement: (HTMLDOMElement|undefined);
             public screenReaderSections: Dictionary<(
                 InfoRegionsComponentScreenReaderSectionObject
             )>;
+            sonifyButton?: HTMLDOMElement|SVGDOMElement|null;
+            public sonifyButtonId?: string;
             public viewDataTableButton?: (
                 ''|HTMLDOMElement|SVGDOMElement|null
             );
@@ -68,11 +78,13 @@ declare global {
             public getLinkedDescription(): string;
             public getLinkedDescriptionElement(): (HTMLDOMElement|undefined);
             public getLongdescText(): string;
+            public getSonifyButtonText(buttonId: string): string;
             public getSubtitleText(): string;
             public getTypeDescriptionText(): string;
             public init(): void;
             public initDataTableButton(tableButtonId: string): void;
             public initRegionsDefinitions(): void;
+            public initSonifyButton(sonifyButtonId: string): void;
             public onChartUpdate(): void;
             public onDataTableCreated(e: { html: string }): void;
             public setLinkedDescriptionAttrs(): void;
@@ -82,7 +94,7 @@ declare global {
             ): void;
             public updateScreenReaderSection(regionKey: string): void;
         }
-        interface Chart {
+        interface ChartLike {
             /** @requires modules/accessibility */
             getTypeDescription(types: Array<string>): string;
         }
@@ -108,7 +120,7 @@ declare global {
  * @private
  */
 function getTypeDescForMapChart(
-    chart: Highcharts.Chart,
+    chart: Chart,
     formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return formatContext.mapTitle ?
@@ -122,7 +134,7 @@ function getTypeDescForMapChart(
  * @private
  */
 function getTypeDescForCombinationChart(
-    chart: Highcharts.Chart,
+    chart: Chart,
     formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return chart.langFormat('accessibility.chartTypes.combinationChart',
@@ -133,7 +145,7 @@ function getTypeDescForCombinationChart(
  * @private
  */
 function getTypeDescForEmptyChart(
-    chart: Highcharts.Chart,
+    chart: Chart,
     formatContext: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
     return chart.langFormat('accessibility.chartTypes.emptyChart',
@@ -144,7 +156,7 @@ function getTypeDescForEmptyChart(
  * @private
  */
 function buildTypeDescriptionFromSeries(
-    chart: Highcharts.Chart,
+    chart: Chart,
     types: Array<string>,
     context: Highcharts.InfoRegionsComponentTypeDescFormatContextObject
 ): string {
@@ -170,7 +182,7 @@ function buildTypeDescriptionFromSeries(
 /**
  * @private
  */
-function getTableSummary(chart: Highcharts.Chart): string {
+function getTableSummary(chart: Chart): string {
     return chart.langFormat(
         'accessibility.table.tableSummary', { chart: chart }
     );
@@ -188,8 +200,8 @@ function stripEmptyHTMLTags(str: string): string {
  */
 function enableSimpleHTML(str: string): string {
     return str
-        .replace(/&lt;(h[1-7]|p|div)&gt;/g, '<$1>')
-        .replace(/&lt;&#x2F;(h[1-7]|p|div|a|button)&gt;/g, '</$1>')
+        .replace(/&lt;(h[1-7]|p|div|ul|ol|li)&gt;/g, '<$1>')
+        .replace(/&lt;&#x2F;(h[1-7]|p|div|ul|ol|li|a|button)&gt;/g, '</$1>')
         .replace(
             /&lt;(div|a|button) id=&quot;([a-zA-Z\-0-9#]*?)&quot;&gt;/g,
             '<$1 id="$2">'
@@ -256,8 +268,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
      * @private
      */
     init: function (this: Highcharts.InfoRegionsComponent): void {
-        var chart: Highcharts.Chart = this.chart as any,
-            component = this;
+        const chart = this.chart;
+        const component = this;
 
         this.initRegionsDefinitions();
 
@@ -277,6 +289,8 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 component.focusDataTable();
             }, 300);
         });
+
+        this.announcer = new Announcer(chart, 'assertive');
     },
 
 
@@ -295,9 +309,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     chart: Highcharts.AccessibilityChart
                 ): string {
                     var formatter: (
-                        Highcharts.ScreenReaderFormatterCallbackFunction<(
-                            Highcharts.Chart
-                        )>|undefined
+                        Highcharts.ScreenReaderFormatterCallbackFunction<Chart>|undefined
                     ) = chart.options.accessibility
                         .screenReaderSection.beforeChartFormatter;
                     return formatter ? formatter(chart) :
@@ -312,6 +324,9 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                     );
                 },
                 afterInserted: function (): void {
+                    if (typeof component.sonifyButtonId !== 'undefined') {
+                        component.initSonifyButton(component.sonifyButtonId);
+                    }
                     if (typeof component.dataTableButtonId !== 'undefined') {
                         component.initDataTableButton(component.dataTableButtonId);
                     }
@@ -342,9 +357,10 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
 
     /**
-     * Called on first render/updates to the chart, including options changes.
+     * Called on chart render. Have to update the sections on render, in order
+     * to get a11y info from series.
      */
-    onChartUpdate: function (this: Highcharts.InfoRegionsComponent): void {
+    onChartRender: function (this: Highcharts.InfoRegionsComponent): void {
         var component = this;
 
         this.linkedDescriptionElement = this.getLinkedDescriptionElement();
@@ -473,12 +489,20 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
     defaultBeforeChartFormatter: function (
         this: Highcharts.InfoRegionsComponent
     ): string {
-        var chart = this.chart,
+        const chart = this.chart,
             format = chart.options.accessibility
                 .screenReaderSection.beforeChartFormat,
             axesDesc = this.getAxesDescription(),
+            shouldHaveSonifyBtn = chart.sonify && chart.options.sonification?.enabled,
+            sonifyButtonId = 'highcharts-a11y-sonify-data-btn-' +
+                chart.index,
             dataTableButtonId = 'hc-linkto-highcharts-data-table-' +
                 chart.index,
+            annotationsList = getAnnotationsInfoHTML(chart as Highcharts.AnnotationChart),
+            annotationsTitleStr = chart.langFormat(
+                'accessibility.screenReaderSection.annotations.heading',
+                { chart: chart }
+            ),
             context = {
                 chartTitle: getChartTitle(chart),
                 typeDescription: this.getTypeDescriptionText(),
@@ -486,12 +510,18 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 chartLongdesc: this.getLongdescText(),
                 xAxisDescription: axesDesc.xAxis,
                 yAxisDescription: axesDesc.yAxis,
-                viewTableButton: chart.getCSV ?
-                    this.getDataTableButtonText(dataTableButtonId) : ''
+                playAsSoundButton: shouldHaveSonifyBtn ?
+                    this.getSonifyButtonText(sonifyButtonId) : '',
+                viewTableButton: chart.getCSV as any ?
+                    this.getDataTableButtonText(dataTableButtonId) : '',
+                annotationsTitle: annotationsList ? annotationsTitleStr : '',
+                annotationsList: annotationsList
             },
             formattedString = H.i18nFormat(format, context, chart);
 
         this.dataTableButtonId = dataTableButtonId;
+        this.sonifyButtonId = sonifyButtonId;
+
         return stringToSimpleHTML(formattedString);
     },
 
@@ -585,6 +615,30 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
     /**
      * @private
+     * @param {string} buttonId
+     * @return {string}
+     */
+    getSonifyButtonText: function (
+        this: Highcharts.InfoRegionsComponent,
+        buttonId: string
+    ): string {
+        const chart = this.chart;
+
+        if (chart.options.sonification?.enabled === false) {
+            return '';
+        }
+
+        const buttonText = chart.langFormat(
+            'accessibility.sonification.playAsSoundButtonText',
+            { chart: chart, chartTitle: getChartTitle(chart) }
+        );
+
+        return '<button id="' + buttonId + '">' + buttonText + '</button>';
+    },
+
+
+    /**
+     * @private
      * @return {string}
      */
     getSubtitleText: function (
@@ -647,6 +701,55 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
 
         if (table && table.focus) {
             table.focus();
+        }
+    },
+
+
+    /**
+     * @private
+     * @param {string} sonifyButtonId
+     */
+    initSonifyButton: function (
+        this: Highcharts.InfoRegionsComponent,
+        sonifyButtonId: string
+    ): void {
+        const el = this.sonifyButton = getElement(sonifyButtonId);
+        const chart = this.chart as Highcharts.SonifyableChart;
+        const defaultHandler = (e: Event): void => {
+            el?.setAttribute('aria-hidden', 'true');
+            el?.setAttribute('aria-label', '');
+            e.preventDefault();
+            e.stopPropagation();
+
+            const announceMsg = chart.langFormat(
+                'accessibility.sonification.playAsSoundClickAnnouncement',
+                { chart: chart }
+            );
+            this.announcer.announce(announceMsg);
+
+            setTimeout((): void => {
+                el?.removeAttribute('aria-hidden');
+                el?.removeAttribute('aria-label');
+
+                if (chart.sonify) {
+                    chart.sonify();
+                }
+            }, 1000); // Delay to let screen reader speak the button press
+        };
+
+        if (el && chart) {
+            setElAttrs(el, {
+                tabindex: '-1'
+            });
+
+            el.onclick = function (e): void {
+                const onPlayAsSoundClick = chart.options.accessibility?.screenReaderSection
+                    .onPlayAsSoundClick;
+
+                (onPlayAsSoundClick || defaultHandler).call(
+                    this, e, chart as Highcharts.AccessibilityChart
+                );
+            };
         }
     },
 
@@ -781,7 +884,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
         }
 
         // Use time range, not from-to?
-        if (axis.isDatetimeAxis && (axis.min === 0 || axis.dataMin === 0)) {
+        if (axis.dateTime && (axis.min === 0 || axis.dataMin === 0)) {
             return this.getAxisTimeLengthDesc(axis);
         }
 
@@ -871,7 +974,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             dateRangeFormat = chart.options.accessibility
                 .screenReaderSection.axisRangeDateFormat,
             format = function (axisKey: string): string {
-                return axis.isDatetimeAxis ? chart.time.dateFormat(
+                return axis.dateTime ? chart.time.dateFormat(
                     dateRangeFormat, (axis as any)[axisKey]
                 ) : (axis as any)[axisKey];
             };
@@ -885,6 +988,14 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
                 rangeTo: format('max')
             }
         );
+    },
+
+
+    /**
+     * Remove component traces
+     */
+    destroy: function (this: Highcharts.InfoRegionsComponent): void {
+        this.announcer?.destroy();
     }
 });
 

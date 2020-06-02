@@ -11,7 +11,25 @@
  * */
 
 'use strict';
+
+import type ColorAxis from '../parts-map/ColorAxis';
+import type RadialAxis from '../parts-more/RadialAxis';
+import type SVGPath from '../parts/SVGPath';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import U from '../parts/Utilities.js';
+const {
+    clamp,
+    extend,
+    isNumber,
+    merge,
+    pick,
+    pInt,
+    seriesType,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -39,24 +57,6 @@ declare global {
         interface SeriesTypesDictionary {
             solidgauge: typeof SolidGaugeSeries;
         }
-        interface SolidGaugeAxis extends RadialAxis {
-            dataClasses: ColorAxis['dataClasses'];
-            options: SolidGaugeAxisOptions;
-            stops: ColorAxis['stops'];
-            initDataClasses(userOptions: ColorAxisOptions): void;
-            initStops(userOptions: ColorAxisOptions): void;
-            toColor(
-                value: number,
-                point: SolidGaugePoint
-            ): (ColorType|undefined);
-        }
-        interface SolidGaugeAxisOptions extends YAxisOptions {
-            dataClassColor?: ColorAxisOptions['dataClassColor'];
-            dataClasses?: ColorAxisOptions['dataClasses'];
-            maxColor?: ColorAxisOptions['maxColor'];
-            minColor?: ColorAxisOptions['minColor'];
-            stops?: ColorAxisOptions['stops'];
-        }
         interface SolidGaugePointOptions extends GaugePointOptions {
             innerRadius?: (number|string);
             radius?: (number|string);
@@ -72,7 +72,6 @@ declare global {
         }
         interface SymbolOptionsObject {
             rounded?: boolean;
-            innerR?: number;
         }
     }
 }
@@ -87,23 +86,10 @@ declare global {
  * @type {boolean|undefined}
  */
 
-import colorModule from '../parts/Color.js';
-const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-const {
-    clamp,
-    extend,
-    isNumber,
-    pick,
-    pInt,
-    wrap
-} = utilitiesModule;
-
 import '../parts/Options.js';
 import '../parts-more/GaugeSeries.js';
 
-var Renderer = H.Renderer,
-    colorAxisMethods: Partial<Highcharts.SolidGaugeAxis>;
+const Renderer = H.Renderer;
 
 /**
  * Symbol definition of an arc with round edges.
@@ -139,146 +125,211 @@ wrap(
         w: number,
         h: number,
         options: Highcharts.SymbolOptionsObject
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var arc = proceed,
-            path = arc(x, y, w, h, options);
+            path: SVGPath = arc(x, y, w, h, options);
 
         if (options.rounded) {
             var r = options.r || w,
-                smallR = (r - (options.innerR as any)) / 2,
-                x1 = path[1],
-                y1 = path[2],
-                x2 = path[12],
-                y2 = path[13],
-                roundStart = ['A', smallR, smallR, 0, 1, 1, x1, y1],
-                roundEnd = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+                smallR = (r - (options.innerR || 0)) / 2,
+                outerArcStart = path[0],
+                innerArcStart = path[2];
 
-            // Insert rounded edge on end, and remove line.
-            path.splice.apply(path, [path.length - 1, 0].concat(roundStart));
-            // Insert rounded edge on end, and remove line.
-            path.splice.apply(path, [11, 3].concat(roundEnd));
+            if (outerArcStart[0] === 'M' && innerArcStart[0] === 'L') {
+                const x1 = outerArcStart[1],
+                    y1 = outerArcStart[2],
+                    x2 = innerArcStart[1],
+                    y2 = innerArcStart[2],
+                    roundStart: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x1, y1],
+                    roundEnd: SVGPath.Arc = ['A', smallR, smallR, 0, 1, 1, x2, y2];
+
+                // Replace the line segment and the last close segment
+                path[2] = roundEnd;
+                path[4] = roundStart;
+            }
         }
 
         return path;
     }
 );
 
-// These methods are defined in the ColorAxis object, and copied here.
-// If we implement an AMD system we should make ColorAxis a dependency.
-colorAxisMethods = {
+/* eslint-disable valid-jsdoc */
 
-
-    initDataClasses: function (
-        this: Highcharts.SolidGaugeAxis,
-        userOptions: Highcharts.ColorAxisOptions
-    ): void {
-        var chart = this.chart,
-            dataClasses: Array<Highcharts.ColorAxisDataClassesOptions>,
-            colorCounter = 0,
-            options = this.options;
-
-        this.dataClasses = dataClasses = [];
-
-        (userOptions.dataClasses as any).forEach(function (
-            dataClass: Highcharts.ColorAxisDataClassesOptions,
-            i: number
-        ): void {
-            var colors: (Array<string>|undefined);
-
-            dataClass = H.merge(dataClass);
-            dataClasses.push(dataClass);
-            if (!dataClass.color) {
-                if (options.dataClassColor === 'category') {
-                    colors = chart.options.colors;
-                    dataClass.color = (colors as any)[colorCounter++];
-                    // loop back to zero
-                    if (colorCounter === (colors as any).length) {
-                        colorCounter = 0;
-                    }
-                } else {
-                    dataClass.color = color(options.minColor).tweenTo(
-                        color(options.maxColor),
-                        i / ((userOptions.dataClasses as any).length - 1)
-                    );
-                }
-            }
-        });
-    },
-
-    initStops: function (
-        this: Highcharts.SolidGaugeAxis,
-        userOptions: Highcharts.ColorAxisOptions
-    ): void {
-        this.stops = userOptions.stops || [
-            [0, this.options.minColor as any],
-            [1, this.options.maxColor as any]
-        ];
-        this.stops.forEach(function (
-            stop: Highcharts.GradientColorStopObject
-        ): void {
-            stop.color = color(stop[1]);
-        });
-    },
-    // Translate from a value to a color
-    toColor: function (
-        this: Highcharts.SolidGaugeAxis,
+/**
+ * @private
+ */
+interface SolidGaugeAxis extends RadialAxis {
+    dataClasses: ColorAxis['dataClasses'];
+    options: SolidGaugeAxis.Options;
+    stops: ColorAxis['stops'];
+    initDataClasses(userOptions: ColorAxis.Options): void;
+    initStops(userOptions: ColorAxis.Options): void;
+    toColor(
         value: number,
         point: Highcharts.SolidGaugePoint
-    ): (Highcharts.ColorType|undefined) {
-        var pos: number,
-            stops = this.stops,
-            from: (number|Highcharts.GradientColorStopObject|undefined),
-            to: (number|Highcharts.GradientColorStopObject|undefined),
-            color: (Highcharts.ColorType|undefined),
-            dataClasses = this.dataClasses,
-            dataClass: (Highcharts.ColorAxisDataClassesOptions|undefined),
-            i: (number|undefined);
+    ): (Highcharts.ColorType|undefined);
+}
 
-        if (dataClasses) {
-            i = dataClasses.length;
-            while (i--) {
-                dataClass = dataClasses[i];
-                from = dataClass.from;
-                to = dataClass.to;
-                if (
-                    (typeof from === 'undefined' || value >= from) &&
-                    (typeof to === 'undefined' || value <= to)
-                ) {
-                    color = dataClass.color;
-                    if (point) {
-                        point.dataClass = i;
-                    }
-                    break;
-                }
-            }
+/**
+ * @private
+ */
+namespace SolidGaugeAxis {
 
-        } else {
+    /* *
+     *
+     *  Interfaces
+     *
+     * */
 
-            if (this.isLog) {
-                value = this.val2lin(value);
-            }
-            pos = 1 - ((this.max - value) / (this.max - this.min));
-            i = stops.length;
-            while (i--) {
-                if (pos > stops[i][0]) {
-                    break;
-                }
-            }
-            from = stops[i] || stops[i + 1];
-            to = stops[i + 1] || from;
-
-            // The position within the gradient
-            pos = (1 - ((to as any)[0] - pos) / (((to as any)[0] -
-                (from as any)[0]) || 1));
-
-            color = (from as any).color.tweenTo(
-                (to as any).color,
-                pos
-            );
-        }
-        return color;
+    export interface Options extends ColorAxis.Options {
+        dataClassColor?: ColorAxis.Options['dataClassColor'];
+        dataClasses?: ColorAxis.Options['dataClasses'];
+        maxColor?: ColorAxis.Options['maxColor'];
+        minColor?: ColorAxis.Options['minColor'];
+        stops?: ColorAxis.Options['stops'];
     }
-};
+
+    /* *
+     *
+     *  Constants
+     *
+     * */
+
+    /**
+     * These methods are defined in the ColorAxis object, and copied here.
+     * @private
+     *
+     * @todo
+     * If we implement an AMD system we should make ColorAxis a dependency.
+     */
+    const methods = {
+
+        initDataClasses: function (
+            this: SolidGaugeAxis,
+            userOptions: ColorAxis.Options
+        ): void {
+            var chart = this.chart,
+                dataClasses: Array<ColorAxis.DataClassesOptions>,
+                colorCounter = 0,
+                options = this.options;
+
+            this.dataClasses = dataClasses = [];
+
+            (userOptions.dataClasses as any).forEach(function (
+                dataClass: ColorAxis.DataClassesOptions,
+                i: number
+            ): void {
+                var colors: (Array<string>|undefined);
+
+                dataClass = merge(dataClass);
+                dataClasses.push(dataClass);
+                if (!dataClass.color) {
+                    if (options.dataClassColor === 'category') {
+                        colors = chart.options.colors;
+                        dataClass.color = (colors as any)[colorCounter++];
+                        // loop back to zero
+                        if (colorCounter === (colors as any).length) {
+                            colorCounter = 0;
+                        }
+                    } else {
+                        dataClass.color = color(options.minColor).tweenTo(
+                            color(options.maxColor),
+                            i / ((userOptions.dataClasses as any).length - 1)
+                        );
+                    }
+                }
+            });
+        },
+
+        initStops: function (
+            this: SolidGaugeAxis,
+            userOptions: ColorAxis.Options
+        ): void {
+            this.stops = userOptions.stops || [
+                [0, this.options.minColor as any],
+                [1, this.options.maxColor as any]
+            ];
+            this.stops.forEach(function (
+                stop: Highcharts.GradientColorStopObject
+            ): void {
+                stop.color = color(stop[1]);
+            });
+        },
+        // Translate from a value to a color
+        toColor: function (
+            this: SolidGaugeAxis,
+            value: number,
+            point: Highcharts.SolidGaugePoint
+        ): (Highcharts.ColorType|undefined) {
+            var pos: number,
+                stops = this.stops,
+                from: (number|Highcharts.GradientColorStopObject|undefined),
+                to: (number|Highcharts.GradientColorStopObject|undefined),
+                color: (Highcharts.ColorType|undefined),
+                dataClasses = this.dataClasses,
+                dataClass: (ColorAxis.DataClassesOptions|undefined),
+                i: (number|undefined);
+
+            if (dataClasses) {
+                i = dataClasses.length;
+                while (i--) {
+                    dataClass = dataClasses[i];
+                    from = dataClass.from;
+                    to = dataClass.to;
+                    if (
+                        (typeof from === 'undefined' || value >= from) &&
+                        (typeof to === 'undefined' || value <= to)
+                    ) {
+                        color = dataClass.color;
+                        if (point) {
+                            point.dataClass = i;
+                        }
+                        break;
+                    }
+                }
+
+            } else {
+
+                if (this.logarithmic) {
+                    value = this.val2lin(value);
+                }
+                pos = 1 - ((this.max - value) / (this.max - this.min));
+                i = stops.length;
+                while (i--) {
+                    if (pos > stops[i][0]) {
+                        break;
+                    }
+                }
+                from = stops[i] || stops[i + 1];
+                to = stops[i + 1] || from;
+
+                // The position within the gradient
+                pos = (1 - ((to as any)[0] - pos) / (((to as any)[0] -
+                    (from as any)[0]) || 1));
+
+                color = (from as any).color.tweenTo(
+                    (to as any).color,
+                    pos
+                );
+            }
+            return color;
+        }
+    };
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
+
+    /**
+     * @private
+     */
+    export function init(axis: RadialAxis): void {
+        extend(axis, methods);
+    }
+
+}
 
 /**
  * A solid gauge is a circular gauge where the value is indicated by a filled
@@ -387,18 +438,18 @@ var solidGaugeOptions: Highcharts.SolidGaugeSeriesOptions = {
 
 
 // The solidgauge series type
-H.seriesType<Highcharts.SolidGaugeSeries>(
+seriesType<Highcharts.SolidGaugeSeries>(
     'solidgauge',
     'gauge',
     solidGaugeOptions,
     {
-        drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
         // Extend the translate function to extend the Y axis with the necessary
         // decoration (#5895).
         translate: function (this: Highcharts.SolidGaugeSeries): void {
             var axis = this.yAxis;
 
-            extend(axis, colorAxisMethods);
+            SolidGaugeAxis.init(axis);
 
             // Prepare data classes
             if (!axis.dataClasses && axis.options.dataClasses) {
@@ -471,7 +522,7 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
                             ) * center[2]
                         ) / 200),
                         shapeArgs: (Highcharts.SVGAttributes|undefined),
-                        d: (string|Highcharts.SVGPathArray|undefined),
+                        d: (string|SVGPath|undefined),
                         toColor = yAxis.toColor(point.y as any, point),
                         axisMinAngle = Math.min(
                             yAxis.startAngleRad,
@@ -654,3 +705,5 @@ H.seriesType<Highcharts.SolidGaugeSeries>(
  */
 
 ''; // adds doclets above to transpiled file
+
+export default SolidGaugeAxis;

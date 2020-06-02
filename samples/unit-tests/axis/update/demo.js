@@ -175,7 +175,7 @@ QUnit.test('Update axis names (#3830)', function (assert) {
     assert.strictEqual(
         chart.xAxis[0].labelRotation,
         -90,
-        'Axis labels should not be rotated'
+        'Axis labels should be rotated to -90'
     );
 
     assert.ok(

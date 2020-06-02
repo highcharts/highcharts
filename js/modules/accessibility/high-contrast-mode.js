@@ -21,16 +21,16 @@ var whcm = {
      * @return {boolean} Returns true if the browser is in High Contrast mode.
      */
     isHighContrastModeActive: function () {
-        if (win.matchMedia &&
-            isMS &&
-            /Edge\/\d./i.test(win.navigator.userAgent)) {
-            // Use media query for Edge
+        // Use media query on Edge, but not on IE
+        var isEdge = /(Edg)/.test(win.navigator.userAgent);
+        if (win.matchMedia && isEdge) {
             return win.matchMedia('(-ms-high-contrast: active)').matches;
         }
+        // Test BG image for IE
         if (isMS && win.getComputedStyle) {
-            // Test BG image for IE
             var testDiv = doc.createElement('div');
-            testDiv.style.backgroundImage = 'url(#)';
+            var imageSrc = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+            testDiv.style.backgroundImage = "url(" + imageSrc + ")"; // #13071
             doc.body.appendChild(testDiv);
             var bi = (testDiv.currentStyle ||
                 win.getComputedStyle(testDiv)).backgroundImage;

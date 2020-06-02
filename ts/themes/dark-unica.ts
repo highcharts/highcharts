@@ -16,6 +16,8 @@
 
 // Load the fonts
 import Highcharts from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const { setOptions } = U;
 
 Highcharts.createElement('link', {
     href: 'https://fonts.googleapis.com/css?family=Unica+One',
@@ -224,4 +226,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-Highcharts.setOptions(Highcharts.theme);
+setOptions(Highcharts.theme);

@@ -9,11 +9,12 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
+var defined = U.defined, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../parts/Series.js';
-var noop = H.noop, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = H.Point.prototype;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointProto = Point.prototype;
 /**
  * The area range series is a carteseian series with higher and lower values for
  * each point along an X axis, where the area between the values is shaded.
@@ -79,8 +80,8 @@ seriesType('arearange', 'area', {
      * @private
      */
     dataLabels: {
-        align: null,
-        verticalAlign: null,
+        align: void 0,
+        verticalAlign: void 0,
         /**
          * X offset of the lower data labels relative to the point value.
          *
@@ -238,9 +239,10 @@ seriesType('arearange', 'area', {
         linePath = []
             .concat(lowerPath, higherPath);
         // For the area path, we need to change the 'move' statement
-        // into 'lineTo' or 'curveTo'
-        if (!this.chart.polar && higherAreaPath[0] === 'M') {
-            higherAreaPath[0] = 'L'; // this probably doesn't work for spline
+        // into 'lineTo'
+        if (!this.chart.polar && higherAreaPath[0] && higherAreaPath[0][0] === 'M') {
+            // This probably doesn't work for spline
+            higherAreaPath[0] = ['L', higherAreaPath[0][1], higherAreaPath[0][2]];
         }
         this.graphPath = linePath;
         this.areaPath = lowerPath.concat(higherAreaPath);

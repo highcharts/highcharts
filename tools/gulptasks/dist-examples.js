@@ -146,7 +146,7 @@ function convertURLToLocal(str) {
         str, 'src="https://code.highcharts.com/', URL_REPLACEMENT
     );
     str = StringLib.replaceAll(
-        str, '../../js/mapdata', 'src="https://code.highcharts.com/mapdata'
+        str, 'src="../../code/mapdata', 'src="https://code.highcharts.com/mapdata'
     );
 
     return str;

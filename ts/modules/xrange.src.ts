@@ -12,7 +12,26 @@
 
 'use strict';
 
+import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    correctFloat,
+    defined,
+    find,
+    isNumber,
+    isObject,
+    merge,
+    pick,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -22,6 +41,7 @@ declare global {
     namespace Highcharts {
         class XRangePoint extends ColumnPoint {
             public clipRectArgs?: RectangleObject;
+            public isValid: () => boolean;
             public len?: number;
             public options: XRangePointOptions;
             public partialFill: XRangePointOptions['partialFill'];
@@ -32,7 +52,6 @@ declare global {
             public x2?: number;
             public yCategory?: string;
             public init(): XRangePoint;
-            public isValid(): boolean;
             public resolveColor(): void;
         }
         class XRangeSeries extends ColumnSeries {
@@ -62,6 +81,7 @@ declare global {
             public getColumnMetrics(): ColumnMetricsObject;
             public translate(): void;
             public translatePoint(point: XRangePoint): void;
+            public init(): void;
         }
         interface SeriesTypesDictionary {
             xrange: typeof XRangeSeries;
@@ -102,26 +122,9 @@ declare global {
  * @requires modules/xrange
  */
 
-import colorModule from '../parts/Color.js';
-const color = colorModule.color;
-import utilitiesModule from '../parts/Utilities.js';
-const {
-    clamp,
-    correctFloat,
-    defined,
-    isNumber,
-    isObject,
-    pick
-} = utilitiesModule;
 
-var addEvent = H.addEvent,
-    columnType = H.seriesTypes.column,
-    find = H.find,
-    merge = H.merge,
-    seriesType = H.seriesType,
+var columnType = H.seriesTypes.column,
     seriesTypes = H.seriesTypes,
-    Axis = H.Axis,
-    Point = H.Point,
     Series = H.Series;
 
 /**
@@ -141,7 +144,7 @@ var addEvent = H.addEvent,
  */
 function getColorByCategory(
     series: Highcharts.Series,
-    point: Highcharts.Point
+    point: Point
 ): Highcharts.Dictionary<any> {
     var colors = series.options.colors || series.chart.options.colors,
         colorCount = colors ?
@@ -266,6 +269,17 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
         buildKDTree: H.noop as any,
 
         /* eslint-disable valid-jsdoc */
+
+        /**
+         * @private
+         * @function Highcarts.seriesTypes.xrange#init
+         * @return {void}
+         */
+        init: function (this: Highcharts.XRangeSeries): void {
+            seriesTypes.column.prototype.init.apply(this, arguments as any);
+
+            this.options.stacking = void 0; // #13161
+        },
 
         /**
          * Borrow the column series metrics, but with swapped axes. This gives
@@ -432,7 +446,8 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
                 dlLeft,
                 dlRight,
                 dlWidth,
-                clipRectWidth;
+                clipRectWidth,
+                tooltipYOffset;
 
             if (minPointLength) {
                 widthDifference = minPointLength - length;
@@ -499,6 +514,10 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             const tooltipPos: number[] = (point.tooltipPos as any);
             const xIndex = !inverted ? 0 : 1;
             const yIndex = !inverted ? 1 : 0;
+
+            tooltipYOffset = series.columnMetrics ?
+                series.columnMetrics.offset : -metrics.width / 2;
+
             // Limit position by the correct axis size (#9727)
             tooltipPos[xIndex] = clamp(
                 tooltipPos[xIndex] + (
@@ -510,7 +529,7 @@ seriesType<Highcharts.XRangeSeries>('xrange', 'column'
             );
             tooltipPos[yIndex] = clamp(
                 tooltipPos[yIndex] + (
-                    (!inverted ? -1 : 1) * (metrics.width / 2)
+                    (inverted ? -1 : 1) * tooltipYOffset
                 ),
                 0,
                 yAxis.len - 1

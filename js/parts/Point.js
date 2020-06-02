@@ -8,7 +8,9 @@
  *
  * */
 'use strict';
-import Highcharts from './Globals.js';
+import H from './Globals.js';
+import U from './Utilities.js';
+var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, fireEvent = U.fireEvent, format = U.format, getNestedProperty = U.getNestedProperty, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 /**
  * Function callback when a series point is clicked. Return false to cancel the
  * action.
@@ -53,11 +55,12 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointLabelObject#percentage
 * @type {number}
 */ /**
-* The related point.
+* The related point. The point name, if defined, is available through
+* `this.point.name`.
 * @name Highcharts.PointLabelObject#point
 * @type {Highcharts.Point}
 */ /**
-* The related series.
+* The related series. The series name is available through `this.series.name`.
 * @name Highcharts.PointLabelObject#series
 * @type {Highcharts.Series}
 */ /**
@@ -154,9 +157,7 @@ import Highcharts from './Globals.js';
 * @name Highcharts.PointUpdateEventObject#options
 * @type {Highcharts.PointOptionsType}
 */
-import U from './Utilities.js';
-var animObject = U.animObject, defined = U.defined, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, syncTimeout = U.syncTimeout, pick = U.pick, removeEvent = U.removeEvent;
-var H = Highcharts, fireEvent = H.fireEvent, format = H.format, uniqueKey = H.uniqueKey;
+''; // detach doclet above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Point object. The point objects are generated from the `series.data`
@@ -189,7 +190,7 @@ var Point = /** @class */ (function () {
          * @name Highcharts.Point#colorIndex
          * @type {number}
          */
-        this.colorIndex = 0;
+        this.colorIndex = void 0;
         this.formatPrefix = 'point';
         this.id = void 0;
         this.isNull = false;
@@ -278,7 +279,6 @@ var Point = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Point#animateBeforeDestroy
-     * @return {void}
      */
     Point.prototype.animateBeforeDestroy = function () {
         var point = this, animateParams = { x: point.startXPos, opacity: 0 }, isDataLabel, graphicalProps = point.getGraphicalProps();
@@ -339,7 +339,7 @@ var Point = /** @class */ (function () {
         // For higher dimension series types. For instance, for ranges, point.y
         // is mapped to point.low.
         if (pointValKey) {
-            point.y = point[pointValKey];
+            point.y = Point.prototype.getNestedProperty.call(point, pointValKey);
         }
         point.isNull = pick(point.isValid && !point.isValid(), point.x === null || !isNumber(point.y)); // #3571, check for NaN
         point.formatPrefix = point.isNull ? 'null' : 'point'; // #9233, #10874
@@ -377,7 +377,6 @@ var Point = /** @class */ (function () {
      *
      * @private
      * @function Highcharts.Point#destroy
-     * @return {void}
      */
     Point.prototype.destroy = function () {
         var point = this, series = point.series, chart = series.chart, dataSorting = series.options.dataSorting, hoverPoints = chart.hoverPoints, globalAnimation = point.series.chart.renderer.globalAnimation, animation = animObject(globalAnimation), prop;
@@ -386,16 +385,6 @@ var Point = /** @class */ (function () {
          * @private
          */
         function destroyPoint() {
-            if (hoverPoints) {
-                point.setState();
-                erase(hoverPoints, point);
-                if (!hoverPoints.length) {
-                    chart.hoverPoints = null;
-                }
-            }
-            if (point === chart.hoverPoint) {
-                point.onMouseOut();
-            }
             // Remove all events and elements
             if (point.graphic || point.dataLabel || point.dataLabels) {
                 removeEvent(point);
@@ -407,6 +396,16 @@ var Point = /** @class */ (function () {
         }
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
+        }
+        if (hoverPoints) {
+            point.setState();
+            erase(hoverPoints, point);
+            if (!hoverPoints.length) {
+                chart.hoverPoints = null;
+            }
+        }
+        if (point === chart.hoverPoint) {
+            point.onMouseOut();
         }
         // Remove properties after animation
         if (!dataSorting || !dataSorting.enabled) {
@@ -424,7 +423,6 @@ var Point = /** @class */ (function () {
      * @private
      * @function Highcharts.Point#destroyElements
      * @param {Highcharts.Dictionary<number>} [kinds]
-     * @return {void}
      */
     Point.prototype.destroyElements = function (kinds) {
         var point = this, props = point.getGraphicalProps(kinds);
@@ -554,6 +552,19 @@ var Point = /** @class */ (function () {
         };
     };
     /**
+     * Returns the value of the point property for a given value.
+     * @private
+     */
+    Point.prototype.getNestedProperty = function (key) {
+        if (!key) {
+            return;
+        }
+        if (key.indexOf('custom.') === 0) {
+            return getNestedProperty(key, this.options);
+        }
+        return this[key];
+    };
+    /**
      * In a series with `zones`, return the zone that the point belongs to.
      *
      * @function Highcharts.Point#getZone
@@ -659,7 +670,7 @@ var Point = /** @class */ (function () {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
-                        H.Point.prototype.setNestedProperty(ret, options[i], pointArrayMap[j]);
+                        Point.prototype.setNestedProperty(ret, options[i], pointArrayMap[j]);
                     }
                     else {
                         ret[pointArrayMap[j]] = options[i];
@@ -691,6 +702,8 @@ var Point = /** @class */ (function () {
      */
     Point.prototype.resolveColor = function () {
         var series = this.series, colors, optionsChart = series.chart.options.chart, colorCount = optionsChart.colorCount, styledMode = series.chart.styledMode, colorIndex;
+        // remove points nonZonedColor for later recalculation
+        delete this.nonZonedColor;
         /**
          * The point's current color.
          *
@@ -786,7 +799,4 @@ var Point = /** @class */ (function () {
     return Point;
 }());
 H.Point = Point;
-var pointModule = {
-    Point: Point
-};
-export default pointModule;
+export default Point;

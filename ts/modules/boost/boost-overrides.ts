@@ -11,7 +11,21 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../../parts/SVGPath';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
+import Point from '../../parts/Point.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    error,
+    getOptions,
+    isArray,
+    isNumber,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -25,7 +39,7 @@ declare global {
             val: unknown;
             value: unknown;
         }
-        interface Chart {
+        interface ChartLike {
             /** @requires modules/boost */
             getBoostClipRect(target: BoostTargetObject): BBoxObject;
             /** @requires modules/boost */
@@ -48,16 +62,9 @@ declare global {
     }
 }
 
-import U from '../../parts/Utilities.js';
-const {
-    isNumber,
-    wrap
-} = U;
-
-import '../../parts/Color.js';
 import '../../parts/Series.js';
 import '../../parts/Options.js';
-import '../../parts/Point.js';
+
 import '../../parts/Interaction.js';
 
 import butils from './boost-utils.js';
@@ -66,13 +73,9 @@ import boostableMap from './boostable-map.js';
 
 var boostEnabled = butils.boostEnabled,
     shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting,
-    Chart = H.Chart,
     Series = H.Series,
-    Point = H.Point,
     seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    pick = H.pick,
-    plotOptions: Highcharts.PlotOptions = H.getOptions().plotOptions as any;
+    plotOptions: Highcharts.PlotOptions = getOptions().plotOptions as any;
 
 /**
  * Returns true if the chart is in series boost mode.
@@ -113,7 +116,7 @@ Chart.prototype.isChartSeriesBoosting = function (): boolean {
  * @return {Highcharts.BBoxObject}
  */
 Chart.prototype.getBoostClipRect = function (
-    target: Highcharts.Chart
+    target: Chart
 ): Highcharts.BBoxObject {
     var clipBox = {
         x: this.plotLeft,
@@ -148,9 +151,9 @@ Chart.prototype.getBoostClipRect = function (
  *         A Point object as per https://api.highcharts.com/highcharts#Point
  */
 Series.prototype.getPoint = function (
-    boostPoint: (Highcharts.Dictionary<number>|Highcharts.Point)
-): Highcharts.Point {
-    var point: Highcharts.Point = boostPoint as any,
+    boostPoint: (Highcharts.Dictionary<number>|Point)
+): Point {
+    var point: Point = boostPoint as any,
         xData = (
             this.xData || (this.options as any).xData || this.processedXData ||
             false
@@ -175,6 +178,7 @@ Series.prototype.getPoint = function (
         point.plotX = boostPoint.plotX;
         point.plotY = boostPoint.plotY;
         point.index = boostPoint.i;
+        point.isInside = this.isPointInside(boostPoint);
     }
 
     return point;
@@ -186,7 +190,7 @@ Series.prototype.getPoint = function (
 wrap(Series.prototype, 'searchPoint', function (
     this: Highcharts.Series,
     proceed: Function
-): (Highcharts.Point|undefined) {
+): (Point|undefined) {
     return this.getPoint(
         proceed.apply(this, [].slice.call(arguments, 1))
     );
@@ -194,9 +198,9 @@ wrap(Series.prototype, 'searchPoint', function (
 
 // For inverted series, we need to swap X-Y values before running base methods
 wrap(Point.prototype, 'haloPath', function (
-    this: Highcharts.Point,
+    this: Point,
     proceed: Function
-): Highcharts.SVGPathArray {
+): SVGPath {
     var halo,
         point = this,
         series = point.series,
@@ -223,7 +227,7 @@ wrap(Point.prototype, 'haloPath', function (
 wrap(Series.prototype, 'markerAttribs', function (
     this: Highcharts.Series,
     proceed: Function,
-    point: Highcharts.Point
+    point: Point
 ): Highcharts.SVGAttributes {
     var attribs: Highcharts.SVGAttributes,
         series = this,
@@ -262,7 +266,7 @@ addEvent(Series, 'destroy', function (): void {
 
     if (chart.hoverPoints) {
         chart.hoverPoints = chart.hoverPoints.filter(function (
-            point: Highcharts.Point
+            point: Point
         ): boolean {
             return point.series === series;
         });
@@ -281,10 +285,11 @@ addEvent(Series, 'destroy', function (): void {
 wrap(Series.prototype, 'getExtremes', function (
     this: Highcharts.Series,
     proceed: Function
-): void {
+): Highcharts.DataExtremesObject {
     if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
         return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
+    return {};
 });
 
 /*
@@ -399,8 +404,8 @@ wrap(Series.prototype, 'processData', function (
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
             firstPoint = this.getFirstValidPoint(this.options.data as any);
-            if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
-                H.error(12, false, this.chart);
+            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
+                error(12, false, this.chart);
             }
             this.enterBoost();
         } else if (this.exitBoost) {
@@ -449,9 +454,8 @@ Series.prototype.enterBoost = function (): void {
     this.directTouch = false;
     this.stickyTracking = true;
 
-    // Once we've been in boost mode, we don't want animation when returning to
-    // vanilla mode.
-    this.animate = null as any;
+    // Prevent animation when zooming in on boosted series(#13421).
+    this.finishedAnimating = true;
 
     // Hide series label if any
     if (this.labelBySeries) {
@@ -524,7 +528,7 @@ Series.prototype.hasExtremes = function (checkX?: boolean): boolean {
 Series.prototype.destroyGraphics = function (this: Highcharts.Series): void {
     var series = this,
         points = this.points,
-        point: Highcharts.Point,
+        point: Point,
         i: number;
 
     if (points) {

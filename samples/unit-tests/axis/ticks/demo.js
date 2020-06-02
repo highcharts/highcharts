@@ -637,3 +637,90 @@ QUnit.test('No ticks on short axis (#3195)', function (assert) {
         "Grid lines is not visible"
     );
 });
+
+QUnit.test('The ticks should be visible when specified tick amount and chart height <200px', function (assert) {
+    var chart = Highcharts.chart('container', {
+        chart: {
+            height: 170
+        },
+        yAxis: {
+            tickAmount: 5
+        },
+        series: [{
+            data: [3, 5, 6, 7, 9, 5]
+        }]
+    });
+
+    var yAxis = chart.yAxis[0],
+        tickAmount = yAxis.tickPositions.length;
+
+    assert.strictEqual(
+        tickAmount,
+        5,
+        "The amount of tick should be 5."
+    );
+});
+
+QUnit.test('Ticks and setSize', assert => {
+    const clock = TestUtilities.lolexInstall();
+    const done = assert.async(2);
+
+    try {
+        const chart = Highcharts.chart('container', {
+
+            chart: {
+                width: 400,
+                height: 300,
+                animation: {
+                    duration: 100
+                }
+            },
+
+            series: [{
+                data: [30, 220]
+            }]
+        });
+
+        const pos100 = chart.yAxis[0].ticks[100].label.attr('y');
+        const pos200 = chart.yAxis[0].ticks[200].label.attr('y');
+
+        assert.strictEqual(
+            chart.yAxis[0].ticks[150],
+            undefined,
+            'There should be no tick on 150 initially with the current tick ' +
+            'position settings as of v8.1'
+        );
+        chart.setSize(undefined, 350);
+
+        setTimeout(() => {
+            const pos150 = chart.yAxis[0].ticks[150].label.attr('y');
+
+            assert.close(
+                pos150,
+                (pos100 + pos200) / 2,
+                1,
+                'The new tick should appear centered between the two existing ' +
+                'ticks (#13507)'
+            );
+            done();
+        }, 1);
+
+        setTimeout(() => {
+            chart.xAxis[0].update(undefined, false);
+            chart.setSize(500);
+
+            assert.strictEqual(
+                chart.xAxis[0].ticks[0].label.attr('opacity'),
+                1,
+                'The label should remain visible after the update sequence (#12137)'
+            );
+            done();
+        }, 2);
+
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+
+});

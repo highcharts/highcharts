@@ -52,16 +52,17 @@ declare global {
     }
 }
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import U from '../parts/Utilities.js';
 const {
     clamp,
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
 
-var defaultPlotOptions = H.defaultPlotOptions,
-    merge = H.merge,
-    noop = H.noop,
-    seriesType = H.seriesType,
+var noop = H.noop,
     seriesTypes = H.seriesTypes;
 
 var colProto = (seriesTypes.column as typeof Highcharts.ColumnSeries).prototype;
@@ -119,8 +120,8 @@ var columnRangeOptions: Highcharts.ColumnRangeSeriesOptions = {
  * @augments Highcharts.Series
  */
 seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
-    defaultPlotOptions.column,
-    defaultPlotOptions.arearange,
+    (defaultOptions.plotOptions as any).column,
+    (defaultOptions.plotOptions as any).arearange,
     columnRangeOptions
 ), {
 
@@ -188,15 +189,13 @@ seriesType<Highcharts.ColumnRangeSeries>('columnrange', 'arearange', merge(
             if (isRadial) {
 
                 start = (point.barX as any) + startAngleRad;
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: series.polarArc(
-                        y + height,
-                        y,
-                        start,
-                        start + point.pointWidth
-                    )
-                };
+                point.shapeType = 'arc';
+                point.shapeArgs = series.polarArc(
+                    y + height,
+                    y,
+                    start,
+                    start + point.pointWidth
+                );
             } else {
 
                 shapeArgs.height = height;

@@ -8,7 +8,15 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    correctFloat,
+    defined,
+    merge,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -101,16 +109,8 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    correctFloat,
-    defined
-} = U;
 
-
-var seriesType = H.seriesType,
-    noop = H.noop,
-    merge = H.merge,
+var noop = H.noop,
     SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema;
 
@@ -209,6 +209,7 @@ seriesType<Highcharts.MACDIndicator>(
         threshold: 0,
         groupPadding: 0.1,
         pointPadding: 0.1,
+        crisp: false,
         states: {
             hover: {
                 halo: {

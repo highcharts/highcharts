@@ -12,8 +12,8 @@
 'use strict';
 import HTMLUtilities from './htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
-import H from '../../../parts/Globals.js';
-var find = H.find;
+import U from '../../../parts/Utilities.js';
+var defined = U.defined, find = U.find;
 /* eslint-disable valid-jsdoc */
 /**
  * @return {string}
@@ -32,7 +32,7 @@ function getAxisDescription(axis) {
         axis.axisTitle && axis.axisTitle.textStr ||
         axis.options.id ||
         axis.categories && 'categories' ||
-        axis.isDatetimeAxis && 'Time' ||
+        axis.dateTime && 'Time' ||
         'values'));
 }
 /**
@@ -71,7 +71,6 @@ function getSeriesA11yElement(series) {
  * @private
  * @param {Highcharts.Chart} chart
  * @param {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement} element
- * @return {void}
  */
 function unhideChartElementFromAT(chart, element) {
     element.setAttribute('aria-hidden', false);
@@ -134,6 +133,46 @@ function getPointFromXY(series, x, y) {
         }
     }
 }
+/**
+ * Get relative position of point on an x/y axis from 0 to 1.
+ * @private
+ * @param {Highcharts.Axis} axis
+ * @param {Highcharts.Point} point
+ * @return {number}
+ */
+function getRelativePointAxisPosition(axis, point) {
+    if (!defined(axis.dataMin) || !defined(axis.dataMax)) {
+        return 0;
+    }
+    var axisStart = axis.toPixels(axis.dataMin);
+    var axisEnd = axis.toPixels(axis.dataMax);
+    // We have to use pixel position because of axis breaks, log axis etc.
+    var positionProp = axis.coll === 'xAxis' ? 'x' : 'y';
+    var pointPos = axis.toPixels(point[positionProp] || 0);
+    return (pointPos - axisStart) / (axisEnd - axisStart);
+}
+/**
+ * Get relative position of point on an x/y axis from 0 to 1.
+ * @private
+ * @param {Highcharts.Point} point
+ */
+function scrollToPoint(point) {
+    var xAxis = point.series.xAxis;
+    var yAxis = point.series.yAxis;
+    var axis = (xAxis === null || xAxis === void 0 ? void 0 : xAxis.scrollbar) ? xAxis : yAxis;
+    var scrollbar = axis === null || axis === void 0 ? void 0 : axis.scrollbar;
+    if (scrollbar && defined(scrollbar.to) && defined(scrollbar.from)) {
+        var range = scrollbar.to - scrollbar.from;
+        var pos = getRelativePointAxisPosition(axis, point);
+        scrollbar.updatePosition(pos - range / 2, pos + range / 2);
+        Highcharts.fireEvent(scrollbar, 'changed', {
+            from: scrollbar.from,
+            to: scrollbar.to,
+            trigger: 'scrollbar',
+            DOMEvent: null
+        });
+    }
+}
 var ChartUtilities = {
     getChartTitle: getChartTitle,
     getAxisDescription: getAxisDescription,
@@ -142,6 +181,7 @@ var ChartUtilities = {
     getSeriesFromName: getSeriesFromName,
     getSeriesA11yElement: getSeriesA11yElement,
     unhideChartElementFromAT: unhideChartElementFromAT,
-    hideSeriesFromAT: hideSeriesFromAT
+    hideSeriesFromAT: hideSeriesFromAT,
+    scrollToPoint: scrollToPoint
 };
 export default ChartUtilities;

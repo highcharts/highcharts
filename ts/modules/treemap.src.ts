@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 
 /**
@@ -44,6 +46,7 @@ declare global {
         class TreemapPoint extends ScatterPoint implements DrawPoint {
             public draw: typeof drawPoint;
             public drillId?: (boolean|string);
+            public isValid: () => boolean;
             public name: string;
             public node: TreemapNodeObject;
             public options: TreemapPointOptions;
@@ -55,7 +58,6 @@ declare global {
             public value: (number|null);
             public drawPoint(params: DrawPointParams): void;
             public getClassName(): string;
-            public isValid(): boolean;
             public shouldDraw(): boolean;
         }
         class TreemapSeries extends ScatterSeries implements TreeSeries {
@@ -102,7 +104,7 @@ declare global {
             public alignDataLabel(
                 point: TreemapPoint,
                 dataLabel: SVGElement,
-                labelOptions: DataLabelsOptionsObject
+                labelOptions: DataLabelsOptions
             ): void;
             public bindAxes(): void;
             public buildNode(
@@ -122,7 +124,7 @@ declare global {
             public drillToByGroup(point: TreemapPoint): (boolean|string);
             public drillToNode(id: string, redraw?: boolean): void;
             public drillUp(): void;
-            public getExtremes(): void;
+            public getExtremes(): DataExtremesObject;
             public getListOfParents(
                 data?: Array<TreemapPoint>,
                 existingIds?: Array<string>
@@ -287,23 +289,30 @@ declare global {
 
 import mixinTreeSeries from '../mixins/tree-series.js';
 import drawPoint from '../mixins/draw-point.js';
-import colorModule from '../parts/Color.js';
+import Color from '../parts/Color.js';
 const {
-    color
-} = colorModule;
-import utilitiesModule from '../parts/Utilities.js';
+    parse: color
+} = Color;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
 const {
+    addEvent,
     correctFloat,
     defined,
+    error,
     extend,
+    fireEvent,
     isArray,
     isNumber,
     isObject,
     isString,
+    merge,
     objectEach,
     pick,
+    seriesType,
     stableSort
-} = utilitiesModule;
+} = U;
 
 import '../parts/Options.js';
 import '../parts/Series.js';
@@ -311,13 +320,8 @@ import '../parts/Series.js';
 /* eslint-disable no-invalid-this */
 const AXIS_MAX = 100;
 
-var seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    merge = H.merge,
-    error = H.error,
+var seriesTypes = H.seriesTypes,
     noop = H.noop,
-    fireEvent = H.fireEvent,
     getColor = mixinTreeSeries.getColor,
     getLevelOptions = mixinTreeSeries.getLevelOptions,
     // @todo Similar to eachObject, this function is likely redundant
@@ -329,7 +333,7 @@ var seriesType = H.seriesType,
     eachObject = function (
         this: unknown,
         list: any,
-        func: Highcharts.ObjectEachCallbackFunction<unknown>,
+        func: Highcharts.ObjectEachCallbackFunction<any, unknown>,
         context?: unknown
     ): void {
         context = context || this;
@@ -975,7 +979,7 @@ seriesType<Highcharts.TreemapSeries>(
         },
         init: function (
             this: Highcharts.TreemapSeries,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.TreemapSeriesOptions
         ): void {
             var series = this,
@@ -1014,6 +1018,9 @@ seriesType<Highcharts.TreemapSeries>(
             );
 
             Series.prototype.init.call(series, chart, options);
+
+            // Treemap's opacity is a different option from other series
+            delete series.opacity;
 
             if (series.options.allowTraversingTree) {
                 series.eventsToUnbind.push(
@@ -1678,7 +1685,7 @@ seriesType<Highcharts.TreemapSeries>(
                 ): boolean {
                     return n.node.visible;
                 }),
-                options: Highcharts.DataLabelsOptionsObject,
+                options: Highcharts.DataLabelsOptions,
                 level: Highcharts.TreemapSeriesOptions;
 
             points.forEach(function (point: Highcharts.TreemapPoint): void {
@@ -1718,7 +1725,7 @@ seriesType<Highcharts.TreemapSeries>(
             this: Highcharts.TreemapSeries,
             point: Highcharts.TreemapPoint,
             dataLabel: Highcharts.SVGElement,
-            labelOptions: Highcharts.DataLabelsOptionsObject
+            labelOptions: Highcharts.DataLabelsOptions
         ): void {
             var style: Highcharts.SVGAttributes = labelOptions.style as any;
 
@@ -2130,15 +2137,18 @@ seriesType<Highcharts.TreemapSeries>(
             }
         },
         buildKDTree: noop as any,
-        drawLegendSymbol: H.LegendSymbolMixin.drawRectangle,
-        getExtremes: function (this: Highcharts.TreemapSeries): void {
-        // Get the extremes from the value data
-            Series.prototype.getExtremes.call(this, this.colorValueData);
-            this.valueMin = this.dataMin;
-            this.valueMax = this.dataMax;
+        drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+        getExtremes: function (
+            this: Highcharts.TreemapSeries
+        ): Highcharts.DataExtremesObject {
+            // Get the extremes from the value data
+            const { dataMin, dataMax } = Series.prototype.getExtremes
+                .call(this, this.colorValueData);
+            this.valueMin = dataMin;
+            this.valueMax = dataMax;
 
             // Get the extremes from the y data
-            Series.prototype.getExtremes.call(this);
+            return Series.prototype.getExtremes.call(this);
         },
         getExtremesFromAll: true,
 
@@ -2166,7 +2176,7 @@ seriesType<Highcharts.TreemapSeries>(
         setVisible: seriesTypes.pie.prototype.pointClass.prototype.setVisible,
         /* eslint-disable no-invalid-this, valid-jsdoc */
         getClassName: function (this: Highcharts.TreemapPoint): string {
-            var className = H.Point.prototype.getClassName.call(this),
+            var className = Point.prototype.getClassName.call(this),
                 series = this.series,
                 options = series.options;
 
@@ -2200,7 +2210,7 @@ seriesType<Highcharts.TreemapSeries>(
             this: Highcharts.TreemapPoint,
             state: string
         ): void {
-            H.Point.prototype.setState.call(this, state);
+            Point.prototype.setState.call(this, state);
 
             // Graphic does not exist when point is not visible.
             if (this.graphic) {
@@ -2216,7 +2226,7 @@ seriesType<Highcharts.TreemapSeries>(
     }
 );
 
-H.addEvent(H.Series, 'afterBindAxes', function (): void {
+addEvent(H.Series, 'afterBindAxes', function (): void {
     var series = this,
         xAxis = series.xAxis,
         yAxis = series.yAxis,
@@ -2250,6 +2260,7 @@ H.addEvent(H.Series, 'afterBindAxes', function (): void {
         }
     }
 });
+
 /* eslint-enable no-invalid-this, valid-jsdoc */
 
 /**
