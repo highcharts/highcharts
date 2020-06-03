@@ -2179,12 +2179,14 @@ class SVGElement {
         return this.attr(
             'class',
             ('' + this.attr('class'))
-            .replace(
-                isString(className) ? 
-                new RegExp(`(^| )${className}( |$)`) :
-                className, ' ')
-            .replace(/ +/g, ' ')
-            .trim()
+                .replace(
+                    isString(className) ?
+                        new RegExp(`(^| )${className}( |$)`) : // #12064, #13590
+                        className,
+                    ' '
+                )
+                .replace(/ +/g, ' ')
+                .trim()
         );
     }
 
