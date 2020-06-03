@@ -1442,7 +1442,7 @@ var Axis = /** @class */ (function () {
         // This applies only if tickInterval is not defined.
         minTickInterval = pick(options.minTickInterval, 
         // In datetime axes, don't go below the data interval, except when
-        // there are scatter-like series involved (#13669).
+        // there are scatter-like series involved (#13369).
         axis.dateTime &&
             !axis.series.some(function (s) { return s.noSharedTooltip; }) ?
             axis.closestPointRange : 0);
