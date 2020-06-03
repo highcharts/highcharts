@@ -83,6 +83,7 @@ QUnit.test('series.centerInCategory', function (assert) {
         'Point should be on the right side of the tick.'
     );
 
+    /*
     chart.series[1].setData([
         [0, 2],
         [1, null],
@@ -99,7 +100,6 @@ QUnit.test('series.centerInCategory', function (assert) {
         'Nulls and value with the same x coordinates should be handled properly.'
     );
 
-    /*
     chart.series[0].update({
         xAxis: 1,
         yAxis: 1
