@@ -354,12 +354,31 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             categoryMap: categoryMap,
             dateTimeValueAxisMap: dateTimeValueAxisMap
         };
+    }, 
+    // Create point array depends if xAxis is category
+    // or point.name is defined #13293
+    getPointArray = function (series, xAxis) {
+        var namedPoints = series.data.filter(function (d) { return d.name; });
+        if (namedPoints.length &&
+            xAxis &&
+            !xAxis.categories &&
+            !series.keyToAxis) {
+            if (series.pointArrayMap) {
+                var pointArrayMapCheck = series.pointArrayMap.filter(function (p) { return p === 'x'; });
+                if (pointArrayMapCheck.length) {
+                    series.pointArrayMap.unshift('x');
+                    return series.pointArrayMap;
+                }
+            }
+            return ['x', 'y'];
+        }
+        return series.pointArrayMap || ['y'];
     }, xAxisIndices = [];
     // Loop the series and index values
     i = 0;
     this.setUpKeyToAxis();
     this.series.forEach(function (series) {
-        var keys = series.options.keys, xAxis = series.xAxis, pointArrayMap = keys || series.pointArrayMap || ['y'], valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, xAxisIndex = xAxes.indexOf(xAxis), categoryAndDatetimeMap = getCategoryAndDateTimeMap(series, pointArrayMap), mockSeries, j;
+        var keys = series.options.keys, xAxis = series.xAxis, pointArrayMap = keys || getPointArray(series, xAxis), valueCount = pointArrayMap.length, xTaken = !series.requireSorting && {}, xAxisIndex = xAxes.indexOf(xAxis), categoryAndDatetimeMap = getCategoryAndDateTimeMap(series, pointArrayMap), mockSeries, j;
         if (series.options.includeInDataExport !== false &&
             !series.options.isInternal &&
             series.visible !== false // #55
@@ -407,7 +426,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                 // Pies, funnels, geo maps etc. use point name in X row
                 if (!xAxis ||
                     series.exportKey === 'name' ||
-                    (!hasParallelCoords && xAxis && xAxis.hasNames)) {
+                    (!hasParallelCoords && xAxis && xAxis.hasNames) && name) {
                     key = name;
                 }
                 if (xTaken) {

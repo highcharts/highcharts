@@ -527,6 +527,30 @@ Highcharts.Chart.prototype.getDataRows = function (
                 dateTimeValueAxisMap: dateTimeValueAxisMap
             };
         },
+        // Create point array depends if xAxis is category
+        // or point.name is defined #13293
+        getPointArray = function (
+            series: Highcharts.Series,
+            xAxis: Highcharts.Axis
+        ): string[] {
+            const namedPoints = series.data.filter((d): string | undefined => d.name);
+            if (
+                namedPoints.length &&
+                xAxis &&
+                !xAxis.categories &&
+                !series.keyToAxis
+            ) {
+                if (series.pointArrayMap) {
+                    const pointArrayMapCheck = series.pointArrayMap.filter((p): boolean => p === 'x');
+                    if (pointArrayMapCheck.length) {
+                        series.pointArrayMap.unshift('x');
+                        return series.pointArrayMap;
+                    }
+                }
+                return ['x', 'y'];
+            }
+            return series.pointArrayMap || ['y'];
+        },
         xAxisIndices: Array<Array<number>> = [];
 
     // Loop the series and index values
@@ -537,7 +561,7 @@ Highcharts.Chart.prototype.getDataRows = function (
     this.series.forEach(function (series: Highcharts.Series): void {
         var keys = series.options.keys,
             xAxis = series.xAxis,
-            pointArrayMap = keys || series.pointArrayMap || ['y'],
+            pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
             xTaken: (false|Highcharts.Dictionary<unknown>) =
                 !series.requireSorting && {},
@@ -633,7 +657,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                 if (
                     !xAxis ||
                     series.exportKey === 'name' ||
-                    (!hasParallelCoords && xAxis && xAxis.hasNames)
+                    (!hasParallelCoords && xAxis && xAxis.hasNames) && name
                 ) {
                     key = name as any;
                 }
