@@ -103,6 +103,18 @@ seriesType('column', 'line',
      * @apioption plotOptions.column.colors
      */
     /**
+     * When `true`, the columns will center in the category, ignoring null
+     * or missing points. When `false`, space will be reserved for null or
+     * missing points.
+     *
+     * @sample {highcharts} highcharts/series-column/centerincategory/
+     *         Center in category
+     *
+     * @since   8.0.1
+     * @product highcharts highstock gantt
+     */
+    centerInCategory: false,
+    /**
      * Padding between each value groups, in x axis units.
      *
      * @sample {highcharts} highcharts/plotoptions/column-grouppadding-default/
@@ -460,7 +472,7 @@ seriesType('column', 'line',
                             .ignoreHiddenSeries) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos) { // #642, #2086
-                    if (otherOptions.stacking) {
+                    if (otherOptions.stacking && otherOptions.stacking !== 'group') {
                         stackKey = otherSeries.stackKey;
                         if (typeof stackGroups[stackKey] ===
                             'undefined') {
@@ -490,7 +502,9 @@ seriesType('column', 'line',
         // Save it for reading in linked series (Error bars particularly)
         series.columnMetrics = {
             width: pointWidth,
-            offset: pointXOffset
+            offset: pointXOffset,
+            paddedWidth: pointOffsetWidth,
+            columnCount: columnCount
         };
         return series.columnMetrics;
     },
@@ -536,6 +550,69 @@ seriesType('column', 'line',
         };
     },
     /**
+     * Adjust for missing columns, according to the `centerInCategory`
+     * option. Missing columns are either single points or stacks where the
+     * point or points are either missing or null.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#adjustForMissingColumns
+     * @param {number} x
+     *        The x coordinate of the column, left side
+     * @param {number} pointWidth
+     *        The pointWidth, already computed upstream
+     * @param {Highcharts.ColumnPoint} point
+     *        The point instance
+     * @param {Highcharts.ColumnMetricsObject} metrics
+     *        The series-wide column metrics
+     * @return {number}
+     *        The adjusted x position, or the original if not adjusted
+     */
+    adjustForMissingColumns: function (x, pointWidth, point, metrics) {
+        var _this = this;
+        var stacking = this.options.stacking;
+        if (!point.isNull && metrics.columnCount > 1) {
+            var indexInCategory_1 = 0;
+            var totalInCategory_1 = 0;
+            // Loop over all the stacks on the Y axis. When stacking is
+            // enabled, these are real point stacks. When stacking is not
+            // enabled, but `centerInCategory` is true, there is one stack
+            // handling the grouping of points in each category. This is
+            // done in the `setGroupedPoints` function.
+            Highcharts.objectEach(this.yAxis.stacking && this.yAxis.stacking.stacks, function (stack) {
+                if (typeof point.x === 'number') {
+                    var stackItem = stack[point.x.toString()];
+                    if (stackItem) {
+                        var pointValues = stackItem.points[_this.index], total = stackItem.total;
+                        // If true `stacking` is enabled, count the
+                        // total number of non-null stacks in the
+                        // category, and note which index this point is
+                        // within those stacks.
+                        if (stacking) {
+                            if (pointValues) {
+                                indexInCategory_1 = totalInCategory_1;
+                            }
+                            if (stackItem.hasValidPoints) {
+                                totalInCategory_1++;
+                            }
+                            // If `stacking` is not enabled, look for the
+                            // index and total of the `group` stack.
+                        }
+                        else if (H.isArray(pointValues)) {
+                            indexInCategory_1 = pointValues[1];
+                            totalInCategory_1 = total || 0;
+                        }
+                    }
+                }
+            });
+            // Compute the adjusted x position
+            var boxWidth = (totalInCategory_1 - 1) * metrics.paddedWidth +
+                pointWidth;
+            x = (point.plotX || 0) + boxWidth / 2 - pointWidth -
+                indexInCategory_1 * metrics.paddedWidth;
+        }
+        return x;
+    },
+    /**
      * Translate each point to the plot area coordinate system and find
      * shape positions
      *
@@ -563,10 +640,10 @@ seriesType('column', 'line',
         Series.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
-            var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX, 
+            var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX || 0, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
-            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
+            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
@@ -599,6 +676,10 @@ seriesType('column', 'line',
                 pointWidth = barW =
                     Math.ceil(point.options.pointWidth);
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+            }
+            // Adjust for null or missing points
+            if (options.centerInCategory) {
+                barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
             }
             // Cache for access in polar
             point.barX = barX;

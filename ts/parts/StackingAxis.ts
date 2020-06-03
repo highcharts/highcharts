@@ -89,6 +89,7 @@ class StackingAxisAdditions {
             while (i--) {
                 actualSeries = axisSeries[reversedStacks ? i : len - i - 1];
                 actualSeries.setStackedPoints();
+                actualSeries.setGroupedPoints();
             }
 
             // Loop up again to compute percent and stream stack
