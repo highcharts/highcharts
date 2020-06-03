@@ -2178,12 +2178,15 @@ class SVGElement {
     public removeClass(className: (string|RegExp)): SVGElement {
         return this.attr(
             'class',
-            ('' + this.attr('class')).replace(
-                isString(className) ?
-                    new RegExp(` ?${className} ?`) : // #12064
-                    className,
-                ''
-            )
+            ('' + this.attr('class'))
+                .replace(
+                    isString(className) ?
+                        new RegExp(`(^| )${className}( |$)`) : // #12064, #13590
+                        className,
+                    ' '
+                )
+                .replace(/ +/g, ' ')
+                .trim()
         );
     }
 
