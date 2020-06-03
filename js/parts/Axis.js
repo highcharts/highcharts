@@ -1071,7 +1071,8 @@ var Axis = /** @class */ (function () {
             this.series.forEach(function (series) {
                 var seriesClosest = series.closestPointRange, visible = series.visible ||
                     !series.chart.options.chart.ignoreHiddenSeries;
-                if (defined(seriesClosest) &&
+                if (!series.noSharedTooltip &&
+                    defined(seriesClosest) &&
                     visible) {
                     ret = defined(ret) ?
                         Math.min(ret, seriesClosest) :
@@ -1439,7 +1440,12 @@ var Axis = /** @class */ (function () {
         }
         // Before normalizing the tick interval, handle minimum tick interval.
         // This applies only if tickInterval is not defined.
-        minTickInterval = pick(options.minTickInterval, (axis.dateTime && axis.closestPointRange));
+        minTickInterval = pick(options.minTickInterval, 
+        // In datetime axes, don't go below the data interval, except when
+        // there are scatter-like series involved (#13669).
+        axis.dateTime &&
+            !axis.series.some(function (s) { return s.noSharedTooltip; }) ?
+            axis.closestPointRange : 0);
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
         }
