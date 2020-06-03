@@ -4984,6 +4984,7 @@ class Axis implements AxisComposition, AxisLike {
                         !(series.chart.options.chart as any).ignoreHiddenSeries;
 
                 if (
+                    !series.noSharedTooltip &&
                     defined(seriesClosest) &&
                     visible
                 ) {
@@ -5496,7 +5497,11 @@ class Axis implements AxisComposition, AxisLike {
         // This applies only if tickInterval is not defined.
         minTickInterval = pick(
             options.minTickInterval,
-            (axis.dateTime && axis.closestPointRange) as number
+            // In datetime axes, don't go below the data interval, except when
+            // there are scatter-like series involved (#13669).
+            axis.dateTime &&
+            !axis.series.some((s): boolean|undefined => s.noSharedTooltip) ?
+                axis.closestPointRange : 0
         );
         if (!tickIntervalOption && axis.tickInterval < minTickInterval) {
             axis.tickInterval = minTickInterval;
