@@ -5498,7 +5498,7 @@ class Axis implements AxisComposition, AxisLike {
         minTickInterval = pick(
             options.minTickInterval,
             // In datetime axes, don't go below the data interval, except when
-            // there are scatter-like series involved (#13669).
+            // there are scatter-like series involved (#13369).
             axis.dateTime &&
             !axis.series.some((s): boolean|undefined => s.noSharedTooltip) ?
                 axis.closestPointRange : 0
