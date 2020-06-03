@@ -113,7 +113,7 @@ QUnit.test('Update to negative (#7113) + Empty pie look (#5526)', function (asse
         series: {
             data: []
         }
-    })
+    });
 
     var graph = chart.series[0].graph;
 

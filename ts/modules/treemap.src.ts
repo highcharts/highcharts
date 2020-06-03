@@ -1998,10 +1998,7 @@ seriesType<Highcharts.TreemapSeries>(
             id: string,
             redraw?: boolean
         ): void {
-            error(
-                'WARNING: treemap.drillToNode has been renamed to treemap.' +
-                'setRootNode, and will be removed in the next major version.'
-            );
+            error(32, false, void 0, { 'treemap.drillToNode': 'treemap.setRootNode' });
             this.setRootNode(id, redraw);
         },
         /**

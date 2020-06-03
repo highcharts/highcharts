@@ -370,4 +370,3 @@ QUnit.test("Highcharts in use with modules", function (assert) {
 
     addJQuery();
 });
-
