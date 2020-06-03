@@ -302,7 +302,27 @@ Chart.prototype.getStacks = function () {
 };
 // Stacking methods defined on the Axis prototype
 StackingAxis.compose(Axis);
-// Stacking methods defnied for Series prototype
+// Stacking methods defined for Series prototype
+/**
+ * Set grouped points in a stack-like object. When `centerInCategory` is true,
+ * and `stacking` is not enabled, we need a pseudo (horizontal) stack in order
+ * to handle grouping of points within the same category.
+ *
+ * @private
+ * @function Highcharts.Series#setStackedPoints
+ * @return {void}
+ */
+Series.prototype.setGroupedPoints = function () {
+    if (this.options.centerInCategory &&
+        (this.is('column') || this.is('columnrange')) &&
+        // With stacking enabled, we already have stacks that we can compute
+        // from
+        !this.options.stacking &&
+        // With only one series, we don't need to consider centerInCategory
+        this.chart.series.length > 1) {
+        Series.prototype.setStackedPoints.call(this, 'group');
+    }
+};
 /**
  * Adds series' points value to corresponding stack
  *

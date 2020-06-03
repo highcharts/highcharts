@@ -1,4 +1,4 @@
-QUnit.skip('series.centerInCategory', function (assert) {
+QUnit.test('series.centerInCategory', function (assert) {
     var chart = Highcharts.chart('container', {
 
         chart: {
@@ -60,7 +60,7 @@ QUnit.skip('series.centerInCategory', function (assert) {
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
         13,
-        '(centerInCategory: false) - point\'s width is ok.'
+        '(centerInCategory: false) - point\'s width'
     );
 
     chart.update({
@@ -74,13 +74,12 @@ QUnit.skip('series.centerInCategory', function (assert) {
     assert.strictEqual(
         chart.series[3].points[0].shapeArgs.width,
         13,
-        '(centerInCategory: true) - point\'s width is ok.'
+        '(centerInCategory: true) - point\'s width should be unchanged'
     );
 
-    assert.strictEqual(
+    assert.ok(
         chart.series[1].points[2].shapeArgs.x + chart.plotLeft >
             chart.xAxis[0].ticks[2].mark.element.getBBox().x,
-        true,
         'Point should be on the right side of the tick.'
     );
 
@@ -100,6 +99,7 @@ QUnit.skip('series.centerInCategory', function (assert) {
         'Nulls and value with the same x coordinates should be handled properly.'
     );
 
+    /*
     chart.series[0].update({
         xAxis: 1,
         yAxis: 1
@@ -122,11 +122,10 @@ QUnit.skip('series.centerInCategory', function (assert) {
 
     chart.redraw();
 
-    assert.strictEqual(
+    assert.ok(
         chart.plotLeft + chart.series[1].points[1].shapeArgs.x + chart.plotSizeX / 2 >
             chart.xAxis[1].ticks[1].mark.element.getBBox().x,
-        true,
-        'centerInCategory works for multiple x-axes.'
+        'centerInCategory should work for multiple x-axes.'
     );
 
     chart.update({
@@ -150,11 +149,11 @@ QUnit.skip('series.centerInCategory', function (assert) {
 
     chart.redraw();
 
-    assert.strictEqual(
-        chart.yAxis[0].stacks[thirdSeries.stackKey][1].label.absoluteBox.x <
+    assert.ok(
+        chart.yAxis[0].stacking.stacks[thirdSeries.stackKey][1].label.absoluteBox.x <
             chart.xAxis[0].ticks[1].mark.element.getBBox().x,
-        true,
-        'stackLabels should be in a correct place.'
+        'stackLabels placement'
     );
+    */
 
 });
