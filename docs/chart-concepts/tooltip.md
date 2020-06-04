@@ -44,7 +44,7 @@ tooltip: {
 Crosshairs
 ----------
 
-Crosshairs display a line connecting the points with their corresponding axis. Crosshairs are disabled by default in Highcharts, but enabled by default in Highstock. See the full set of options for [crosshairs](https://api.highcharts.com/highcharts/tooltip.crosshairs).
+Crosshairs display a line connecting the points with their corresponding axis. Crosshairs are disabled by default in Highcharts, but enabled by default in Highcharts Stock. See the full set of options for [crosshairs](https://api.highcharts.com/highcharts/tooltip.crosshairs).
 
 ![crosshairs.png](crosshairs.png)
 

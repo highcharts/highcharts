@@ -12,7 +12,9 @@ import H from '../parts/Globals.js';
 
 import U from '../parts/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    merge,
+    seriesType
 } = U;
 
 import multipleLinesMixin from '../mixins/multipe-lines.js';
@@ -76,8 +78,7 @@ declare global {
 
 var SMA = H.seriesTypes.sma,
     EMA = H.seriesTypes.ema,
-    ATR = H.seriesTypes.atr,
-    merge = H.merge;
+    ATR = H.seriesTypes.atr;
 
 /**
  * The Keltner Channels series type.
@@ -88,7 +89,7 @@ var SMA = H.seriesTypes.sma,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.KeltnerChannelsIndicator>(
+seriesType<Highcharts.KeltnerChannelsIndicator>(
     'keltnerchannels',
     'sma',
     /**
@@ -191,9 +192,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 }
             }, this.options);
         },
-        getValues: function<
-            TLinkedSeries extends Highcharts.KeltnerChannelsLinkedParentSeries
-        > (
+        getValues: function<TLinkedSeries extends Highcharts.Series> (
             series: TLinkedSeries,
             params: Highcharts.KeltnerChannelsIndicatorParamsOptions
         ): (Highcharts.IndicatorValuesObject<TLinkedSeries>|undefined) {
@@ -201,7 +200,7 @@ H.seriesType<Highcharts.KeltnerChannelsIndicator>(
                 periodATR: number = (params.periodATR as any),
                 multiplierATR: number = (params.multiplierATR as any),
                 index: number = (params.index as any),
-                yVal: Array<Array<number>> = series.yData,
+                yVal: Array<Array<number>> = series.yData as any,
                 yValLen: number = yVal ? yVal.length : 0,
                 // Keltner Channels array structure:
                 // 0-date, 1-top line, 2-middle line, 3-bottom line

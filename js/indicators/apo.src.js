@@ -7,9 +7,10 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+var error = U.error, seriesType = U.seriesType;
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
-var EMA = H.seriesTypes.ema, error = H.error, requiredIndicator = requiredIndicatorMixin;
+var EMA = H.seriesTypes.ema, requiredIndicator = requiredIndicatorMixin;
 /**
  * The APO series type.
  *
@@ -19,7 +20,7 @@ var EMA = H.seriesTypes.ema, error = H.error, requiredIndicator = requiredIndica
  *
  * @augments Highcharts.Series
  */
-H.seriesType('apo', 'ema', 
+seriesType('apo', 'ema', 
 /**
  * Absolute Price Oscillator. This series requires the `linkedTo` option to
  * be set and should be loaded after the `stock/indicators/indicators.js`

@@ -125,4 +125,4 @@ Use Cases
 API documentation
 -----------------
 
-For more details check the [API documentation](https://api.highcharts.com/highcharts/scatter.cluster).
+For more details check the [API documentation](https://api.highcharts.com/highcharts/series.scatter.cluster).

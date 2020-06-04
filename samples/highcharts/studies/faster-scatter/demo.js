@@ -104,7 +104,12 @@
                 // Math.round reduces rendering times by 20% in a 50,000 points chart
                 x = Math.round(group[j].plotX);
                 y = Math.round(group[j].plotY);
-                path.push('M', x - radius, y - radius, 'L', x + radius, y - radius, x + radius, y + radius, x - radius, y + radius);
+                path.push(
+                    ['M', x - radius, y - radius],
+                    ['L', x + radius, y - radius],
+                    ['L', x + radius, y + radius],
+                    ['L', x - radius, y + radius]
+                );
 
                 /* Note: using the symbol prototype gives  higher
                 processing times. The rendering time is slightly higher for

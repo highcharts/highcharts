@@ -46,11 +46,6 @@ QUnit.test('Too many points for a11y', function (assert) {
             accessibility: {
                 series: {
                     pointDescriptionEnabledThreshold: 1
-                },
-                keyboardNavigation: {
-                    seriesNavigation: {
-                        pointNavigationEnabledThreshold: 1
-                    }
                 }
             },
             series: [{

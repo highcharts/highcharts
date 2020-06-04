@@ -196,7 +196,8 @@ extend(RangeSelectorComponent.prototype, /** @lends Highcharts.RangeSelectorComp
                 [
                     [
                         keys.tab, keys.up, keys.down
-                    ], function (keyCode, e) {
+                    ],
+                    function (keyCode, e) {
                         var direction = (keyCode === keys.tab && e.shiftKey ||
                             keyCode === keys.up) ? -1 : 1;
                         return component.onInputKbdMove(this, direction);

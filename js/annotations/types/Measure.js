@@ -4,10 +4,11 @@
  *
  * */
 'use strict';
+import Annotation from '../../annotations/annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber;
-var Annotation = H.Annotation, ControlPoint = Annotation.ControlPoint, merge = H.merge;
+var extend = U.extend, isNumber = U.isNumber, merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var Measure = function () {
     Annotation.apply(this, arguments);
@@ -171,25 +172,27 @@ H.extendAnnotation(Measure, null, {
         }
         // horizontal line
         if (options.crosshairX.enabled) {
-            pathH = [
-                'M',
-                xAxisMin,
-                yAxisMin + ((yAxisMax - yAxisMin) / 2),
-                'L',
-                xAxisMax,
-                yAxisMin + ((yAxisMax - yAxisMin) / 2)
-            ];
+            pathH = [[
+                    'M',
+                    xAxisMin,
+                    yAxisMin + ((yAxisMax - yAxisMin) / 2)
+                ], [
+                    'L',
+                    xAxisMax,
+                    yAxisMin + ((yAxisMax - yAxisMin) / 2)
+                ]];
         }
         // vertical line
         if (options.crosshairY.enabled) {
-            pathV = [
-                'M',
-                xAxisMin + ((xAxisMax - xAxisMin) / 2),
-                yAxisMin,
-                'L',
-                xAxisMin + ((xAxisMax - xAxisMin) / 2),
-                yAxisMax
-            ];
+            pathV = [[
+                    'M',
+                    xAxisMin + ((xAxisMax - xAxisMin) / 2),
+                    yAxisMin
+                ], [
+                    'L',
+                    xAxisMin + ((xAxisMax - xAxisMin) / 2),
+                    yAxisMax
+                ]];
         }
         // Update existed crosshair
         if (this.shapes.length > 0) {

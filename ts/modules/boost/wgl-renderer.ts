@@ -11,6 +11,9 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
+import type Point from '../../parts/Point';
 import H from '../../parts/Globals.js';
 
 /**
@@ -107,18 +110,19 @@ declare global {
 
 import GLShader from './wgl-shader.js';
 import GLVertexBuffer from './wgl-vbuffer.js';
+import Color from '../../parts/Color.js';
+const color = Color.parse;
 import U from '../../parts/Utilities.js';
-var isNumber = U.isNumber,
-    objEach = U.objectEach;
-
-import '../../parts/Color.js';
+const {
+    isNumber,
+    isObject,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 var win = H.win,
-    doc = win.document,
-    merge = H.merge,
-    some = H.some,
-    Color = H.Color,
-    pick = H.pick;
+    doc = win.document;
 
 /* eslint-disable valid-jsdoc */
 
@@ -239,7 +243,7 @@ function GLRenderer(
      * Allocate a float buffer to fit all series
      * @private
      */
-    function allocateBuffer(chart: Highcharts.Chart): void {
+    function allocateBuffer(chart: Chart): void {
         var s = 0;
 
         if (!settings.usePreallocated) {
@@ -362,7 +366,7 @@ function GLRenderer(
             lastX: number = false as any,
             lastY: number = false as any,
             minVal: (number|undefined),
-            color: Highcharts.ColorRGBA,
+            pcolor: Highcharts.ColorRGBA,
             scolor: Highcharts.ColorRGBA,
             sdata = isStacked ? series.data : (xData || rawData),
             closestLeft = { x: Number.MAX_VALUE, y: 0 },
@@ -406,13 +410,12 @@ function GLRenderer(
         }
 
         if (zones) {
-            some(zones, function (
-                zone: Highcharts.SeriesZonesOptions
-            ): (boolean|undefined) {
+            zones.some(function (zone: Highcharts.SeriesZonesOptions): (boolean) {
                 if (typeof zone.value === 'undefined') {
-                    zoneDefColor = new H.Color(zone.color);
+                    zoneDefColor = new Color(zone.color);
                     return true;
                 }
+                return false;
             });
 
             if (!zoneDefColor) {
@@ -420,7 +423,7 @@ function GLRenderer(
                     (series.pointAttribs && series.pointAttribs().fill) ||
                     series.color
                 ) as any;
-                zoneDefColor = new H.Color(zoneDefColor as any);
+                zoneDefColor = new Color(zoneDefColor as any);
             }
         }
 
@@ -561,7 +564,7 @@ function GLRenderer(
                 });
             }
 
-            points.forEach(function (point: Highcharts.Point): void {
+            points.forEach(function (point: Point): void {
                 var plotY = point.plotY,
                     shapeArgs: Highcharts.SVGAttributes,
                     swidth,
@@ -582,10 +585,10 @@ function GLRenderer(
                     swidth = pointAttr['stroke-width'] || 0;
 
                     // Handle point colors
-                    color = H.color(pointAttr.fill).rgba as any;
-                    color[0] /= 255.0;
-                    color[1] /= 255.0;
-                    color[2] /= 255.0;
+                    pcolor = color(pointAttr.fill).rgba as any;
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
 
                     // So there are two ways of doing this. Either we can
                     // create a rectangle of two triangles, or we can do a
@@ -597,7 +600,7 @@ function GLRenderer(
                     // If there's stroking, we do an additional rect
                     if (series.type === 'treemap') {
                         swidth = swidth || 1;
-                        scolor = H.color(pointAttr.stroke).rgba as any;
+                        scolor = color(pointAttr.stroke).rgba as any;
 
                         scolor[0] /= 255.0;
                         scolor[1] /= 255.0;
@@ -634,7 +637,7 @@ function GLRenderer(
                         shapeArgs.y + swidth,
                         shapeArgs.width - (swidth * 2),
                         shapeArgs.height - (swidth * 2),
-                        color
+                        pcolor
                     );
                 }
             });
@@ -675,6 +678,17 @@ function GLRenderer(
             //     pcolor[1] /= 255.0;
             //     pcolor[2] /= 255.0;
             // }
+
+            // Handle the point.color option (#5999)
+            const pointOptions = rawData && rawData[i];
+            if (!useRaw && isObject(pointOptions, true)) {
+                if (pointOptions.color) {
+                    pcolor = color(pointOptions.color).rgba as any;
+                    pcolor[0] /= 255.0;
+                    pcolor[1] /= 255.0;
+                    pcolor[2] /= 255.0;
+                }
+            }
 
             if (useRaw) {
                 x = (d as any)[0];
@@ -800,21 +814,21 @@ function GLRenderer(
             // Note: Boost requires that zones are sorted!
             if (zones) {
                 pcolor = (zoneDefColor as any).rgba;
-                some(zones, function ( // eslint-disable-line no-loop-func
+                zones.some(function ( // eslint-disable-line no-loop-func
                     zone: Highcharts.SeriesZonesOptions,
                     i: number
-                ): (boolean|undefined) {
+                ): boolean {
                     var last: Highcharts.SeriesZonesOptions =
                             (zones as any)[i - 1];
 
                     if (typeof zone.value !== 'undefined' && y <= zone.value) {
                         if (!last || y >= (last.value as any)) {
-                            pcolor = H.color(zone.color).rgba as any;
+                            pcolor = color(zone.color).rgba as any;
 
                         }
-
                         return true;
                     }
+                    return false;
                 });
 
                 (pcolor as any)[0] /= 255.0;
@@ -944,7 +958,7 @@ function GLRenderer(
 
             // Uncomment this to support color axis.
             // if (caxis) {
-            //     color = H.color(caxis.toColor(y)).rgba;
+            //     pcolor = color(caxis.toColor(y)).rgba;
 
             //     inst.colorData.push(color[0] / 255.0);
             //     inst.colorData.push(color[1] / 255.0);
@@ -1101,7 +1115,7 @@ function GLRenderer(
         shader.setUniform('xAxisLen', axis.len);
         shader.setUniform('xAxisPos', axis.pos);
         shader.setUniform('xAxisCVSCoord', (!axis.horiz) as any);
-        shader.setUniform('xAxisIsLog', axis.isLog as any);
+        shader.setUniform('xAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('xAxisReversed', (!!axis.reversed) as any);
     }
 
@@ -1122,7 +1136,7 @@ function GLRenderer(
         shader.setUniform('yAxisLen', axis.len);
         shader.setUniform('yAxisPos', axis.pos);
         shader.setUniform('yAxisCVSCoord', (!axis.horiz) as any);
-        shader.setUniform('yAxisIsLog', axis.isLog as any);
+        shader.setUniform('yAxisIsLog', (!!axis.logarithmic) as any);
         shader.setUniform('yAxisReversed', (!!axis.reversed) as any);
     }
 
@@ -1142,7 +1156,7 @@ function GLRenderer(
      * This renders all pushed series.
      * @private
      */
-    function render(chart: Highcharts.Chart): (false|undefined) {
+    function render(chart: Chart): (false|undefined) {
 
         if (chart) {
             if (!chart.chartHeight || !chart.chartWidth) {
@@ -1213,7 +1227,7 @@ function GLRenderer(
                     (shapeOptions && shapeOptions.symbol) ||
                     (s.series.symbol as any)
                 ] || textureHandles.circle,
-                color;
+                scolor = [];
 
             if (
                 s.segments.length === 0 ||
@@ -1252,19 +1266,19 @@ function GLRenderer(
                 ).get();
             }
 
-            color = H.color(fillColor).rgba;
+            scolor = color(fillColor).rgba;
 
             if (!settings.useAlpha) {
-                color[3] = 1.0;
+                scolor[3] = 1.0;
             }
 
             // This is very much temporary
             if (
                 s.drawMode === 'lines' &&
                 settings.useAlpha &&
-                (color as any)[3] < 1
+                (scolor[3] as any) < 1
             ) {
-                (color as any)[3] /= 10;
+                (scolor[3] as any) /= 10;
             }
 
             // Blending
@@ -1303,13 +1317,13 @@ function GLRenderer(
             }
 
             // Set series specific uniforms
-            shader.setColor(color);
+            shader.setColor(scolor);
             setXAxis(s.series.xAxis);
             setYAxis(s.series.yAxis);
             setThreshold(hasThreshold, translatedThreshold as any);
 
             if (s.drawMode === 'points') {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 } else {
                     shader.setPointSize(1);
@@ -1343,7 +1357,7 @@ function GLRenderer(
             }
 
             if (s.hasMarkers && showMarkers) {
-                if (options.marker && options.marker.radius) {
+                if (options.marker && isNumber(options.marker.radius)) {
                     shader.setPointSize(options.marker.radius * 2.0);
                 } else {
                     shader.setPointSize(10);
@@ -1376,7 +1390,7 @@ function GLRenderer(
      * Render the data when ready
      * @private
      */
-    function renderWhenReady(chart: Highcharts.Chart): (false|undefined) {
+    function renderWhenReady(chart: Chart): (false|undefined) {
         clear();
 
         if (chart.renderer.forExport) {
@@ -1634,9 +1648,9 @@ function GLRenderer(
         shader.destroy();
         if (gl) {
 
-            objEach(textureHandles, function (key: string): void {
-                if (textureHandles[key].handle) {
-                    gl.deleteTexture(textureHandles[key].handle);
+            objectEach(textureHandles, function (texture): void {
+                if (texture.handle) {
+                    gl.deleteTexture(texture.handle);
                 }
             });
 

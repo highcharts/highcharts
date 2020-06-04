@@ -14,12 +14,14 @@
 
 import H from '../../parts/Globals.js';
 var win = H.win,
-    doc = win.document,
-    merge = H.merge,
-    fireEvent = H.fireEvent;
+    doc = win.document;
 
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    extend,
+    fireEvent,
+    merge
+} = U;
 
 import HTMLUtilities from './utils/htmlUtilities.js';
 var removeElement = HTMLUtilities.removeElement,

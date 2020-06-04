@@ -1400,14 +1400,12 @@ Highcharts.chart('container', {
                 property: 'innerArcLength',
                 operator: '>',
                 value: 16
-            }
+            },
+            rotationMode: 'circular'
         },
         levels: [{
             level: 2,
-            colorByPoint: true,
-            dataLabels: {
-                rotationMode: 'parallel'
-            }
+            colorByPoint: true
         },
         {
             level: 3,

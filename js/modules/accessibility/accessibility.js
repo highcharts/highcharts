@@ -13,9 +13,12 @@
 import ChartUtilities from './utils/chartUtilities.js';
 import H from '../../parts/Globals.js';
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import O from '../../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
-var extend = U.extend;
-var addEvent = H.addEvent, doc = H.win.document, merge = H.merge, fireEvent = H.fireEvent;
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
+var doc = H.win.document;
 import AccessibilityComponent from './AccessibilityComponent.js';
 import KeyboardNavigation from './KeyboardNavigation.js';
 import LegendComponent from './components/LegendComponent.js';
@@ -27,13 +30,13 @@ import InfoRegionsComponent from './components/InfoRegionsComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
-import defaultOptions from './options/options.js';
+import defaultOptionsA11Y from './options/options.js';
 import defaultLangOptions from './options/langOptions.js';
 import copyDeprecatedOptions from './options/deprecatedOptions.js';
 import './a11y-i18n.js';
 import './focusBorder.js';
 // Add default options
-merge(true, H.defaultOptions, defaultOptions, {
+merge(true, defaultOptions, defaultOptionsA11Y, {
     accessibility: {
         highContrastTheme: highContrastTheme
     },
@@ -98,11 +101,27 @@ Accessibility.prototype = {
             extend(this.components, a11yOptions.customComponents);
         }
         var components = this.components;
-        // Refactor to use Object.values if we polyfill
-        Object.keys(components).forEach(function (componentName) {
+        this.getComponentOrder().forEach(function (componentName) {
             components[componentName].initBase(chart);
             components[componentName].init();
         });
+    },
+    /**
+     * Get order to update components in.
+     * @private
+     */
+    getComponentOrder: function () {
+        if (!this.components) {
+            return []; // For zombie accessibility object on old browsers
+        }
+        if (!this.components.series) {
+            return Object.keys(this.components);
+        }
+        var componentsExceptSeries = Object.keys(this.components)
+            .filter(function (c) { return c !== 'series'; });
+        // Update series first, so that other components can read accessibility
+        // info on points.
+        return ['series'].concat(componentsExceptSeries);
     },
     /**
      * Update all components.
@@ -113,7 +132,7 @@ Accessibility.prototype = {
         // Update the chart type list as this is used by multiple modules
         chart.types = this.getChartTypes();
         // Update markup
-        Object.keys(components).forEach(function (componentName) {
+        this.getComponentOrder().forEach(function (componentName) {
             components[componentName].onChartUpdate();
             fireEvent(chart, 'afterA11yComponentUpdate', {
                 name: componentName,
@@ -127,7 +146,9 @@ Accessibility.prototype = {
             whcm.isHighContrastModeActive()) {
             whcm.setHighContrastTheme(chart);
         }
-        fireEvent(chart, 'afterA11yUpdate');
+        fireEvent(chart, 'afterA11yUpdate', {
+            accessibility: this
+        });
     },
     /**
      * Destroy all elements.
@@ -199,7 +220,7 @@ addEvent(H.Chart, 'render', function (e) {
     }
     var a11y = this.accessibility;
     if (a11y) {
-        Object.keys(a11y.components).forEach(function (componentName) {
+        a11y.getComponentOrder().forEach(function (componentName) {
             a11y.components[componentName].onChartRender();
         });
     }
@@ -226,7 +247,7 @@ addEvent(H.Chart, 'update', function (e) {
     this.a11yDirty = true;
 });
 // Mark dirty for update
-addEvent(H.Point, 'update', function () {
+addEvent(Point, 'update', function () {
     if (this.series.chart.accessibility) {
         this.series.chart.a11yDirty = true;
     }

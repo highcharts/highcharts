@@ -8,7 +8,13 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, fireEvent = U.fireEvent, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 /**
  * Formatter callback function.
  *
@@ -24,7 +30,7 @@ import H from '../parts/Globals.js';
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesPackedBubbleDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  */ /**
 * The color of the node.
@@ -44,15 +50,20 @@ import H from '../parts/Globals.js';
 * @type {string}
 * @since 7.0.0
 */
-import U from '../parts/Utilities.js';
-var clamp = U.clamp, defined = U.defined, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick;
 import '../parts/Axis.js';
-import '../parts/Color.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
 import '../modules/networkgraph/layouts.js';
 import '../modules/networkgraph/draggable-nodes.js';
-var seriesType = H.seriesType, Series = H.Series, Point = H.Point, addEvent = H.addEvent, fireEvent = H.fireEvent, Chart = H.Chart, color = H.Color, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
+var Series = H.Series, Reingold = H.layouts['reingold-fruchterman'], NetworkPoint = H.seriesTypes.bubble.prototype.pointClass, dragNodesMixin = H.dragNodesMixin;
+Chart.prototype.getSelectedParentNodes = function () {
+    var chart = this, series = chart.series, selectedParentsNodes = [];
+    series.forEach(function (series) {
+        if (series.parentNode && series.parentNode.selected) {
+            selectedParentsNodes.push(series.parentNode);
+        }
+    });
+    return selectedParentsNodes;
+};
 H.networkgraphIntegrations.packedbubble = {
     repulsiveForceFunction: function (d, k, node, repNode) {
         return Math.min(d, (node.marker.radius + repNode.marker.radius) / 2);
@@ -174,18 +185,6 @@ H.layouts.packedbubble = extendClass(Reingold, {
             }
         }
         Reingold.prototype.applyLimitBox.apply(this, arguments);
-    },
-    isStable: function () {
-        return Math.abs(this.systemTemperature -
-            this.prevSystemTemperature) < 0.00001 ||
-            this.temperature <= 0 ||
-            (
-            // In first iteration system does not move:
-            this.systemTemperature > 0 &&
-                (this.systemTemperature /
-                    this.nodes.length < 0.02 &&
-                    this.enableSimulation) // Use only when simulation is enabled
-            );
     }
 });
 /**
@@ -249,6 +248,7 @@ seriesType('packedbubble', 'bubble',
     maxSize: '50%',
     sizeBy: 'area',
     zoneAxis: 'y',
+    crisp: false,
     tooltip: {
         pointFormat: 'Value: {point.value}'
     },
@@ -278,6 +278,24 @@ seriesType('packedbubble', 'bubble',
      */
     useSimulation: true,
     /**
+     * Series options for parent nodes.
+     *
+     * @since next
+     *
+     * @private
+     */
+    parentNode: {
+        /**
+         * Allow this series' parent nodes to be selected
+         * by clicking on the graph.
+         *
+         * @since next
+         */
+        allowPointSelect: false
+    },
+    /**
+    /**
+     *
      * @declare Highcharts.SeriesPackedBubbleDataLabelsOptionsObject
      *
      * @private
@@ -313,10 +331,6 @@ seriesType('packedbubble', 'bubble',
          */
         // eslint-disable-next-line valid-jsdoc
         /**
-         * Callback to format data labels for _parentNodes_. The
-         * `parentNodeFormat` option takes precedence over the
-         * `parentNodeFormatter`.
-         *
          * @type  {Highcharts.SeriesPackedBubbleDataLabelsFormatterCallbackFunction}
          * @since 7.1.0
          */
@@ -324,10 +338,6 @@ seriesType('packedbubble', 'bubble',
             return this.name;
         },
         /**
-         * Options for a _parentNode_ label text.
-         *
-         * **Note:** Only SVG-based renderer supports this option.
-         *
          * @sample {highcharts} highcharts/series-packedbubble/packed-dashboard
          *         Dashboard with dataLabels on parentNodes
          *
@@ -359,7 +369,10 @@ seriesType('packedbubble', 'bubble',
          * @extends   plotOptions.series.dataLabels.textPath
          * @apioption plotOptions.packedbubble.dataLabels.textPath
          */
-        padding: 0
+        padding: 0,
+        style: {
+            transition: 'opacity 2000ms'
+        }
     },
     /**
      * Options for layout algorithm when simulation is enabled. Inside there
@@ -504,6 +517,7 @@ seriesType('packedbubble', 'bubble',
      */
     forces: ['barycenter', 'repulsive'],
     pointArrayMap: ['value'],
+    trackerGroups: ['group', 'dataLabelsGroup', 'parentNodesGroup'],
     pointValKey: 'value',
     isCartesian: false,
     requireSorting: false,
@@ -523,7 +537,8 @@ seriesType('packedbubble', 'bubble',
         var chart = series.chart, allDataPoints = [], i, j;
         for (i = 0; i < chart.series.length; i++) {
             series = chart.series[i];
-            if (series.visible ||
+            if (series.is('packedbubble') && // #13574
+                series.visible ||
                 !chart.options.chart.ignoreHiddenSeries) {
                 // add data to array only if series is visible
                 for (j = 0; j < series.yData.length; j++) {
@@ -569,7 +584,12 @@ seriesType('packedbubble', 'bubble',
                     });
                 }
             });
-            series.chart.hideOverlappingLabels(dataLabels);
+            // Only hide overlapping dataLabels for layouts that
+            // use simulation. Spiral packedbubble don't need
+            // additional dataLabel hiding on every simulation step
+            if (series.options.useSimulation) {
+                series.chart.hideOverlappingLabels(dataLabels);
+            }
         }
     },
     // Needed because of z-indexing issue if point is added in series.group
@@ -675,8 +695,7 @@ seriesType('packedbubble', 'bubble',
             return;
         }
         var series = this, chart = series.chart, parentAttribs = {}, nodeMarker = this.layout.options.parentNodeOptions.marker, parentOptions = {
-            fill: nodeMarker.fillColor ||
-                color(series.color).brighten(0.4).get(),
+            fill: nodeMarker.fillColor || color(series.color).brighten(0.4).get(),
             opacity: nodeMarker.fillOpacity,
             stroke: nodeMarker.lineColor || series.color,
             'stroke-width': nodeMarker.lineWidth
@@ -689,7 +708,7 @@ seriesType('packedbubble', 'bubble',
             });
         }
         this.calculateParentRadius();
-        parentAttribs = H.merge({
+        parentAttribs = merge({
             x: series.parentNode.plotX -
                 series.parentNodeRadius,
             y: series.parentNode.plotY -
@@ -710,7 +729,7 @@ seriesType('packedbubble', 'bubble',
      * @private
      */
     createParentNodes: function () {
-        var series = this, chart = series.chart, parentNodeLayout = series.parentNodeLayout, nodeAdded, parentNode = series.parentNode;
+        var series = this, chart = series.chart, parentNodeLayout = series.parentNodeLayout, nodeAdded, parentNode = series.parentNode, PackedBubblePoint = series.pointClass;
         series.parentNodeMass = 0;
         series.points.forEach(function (p) {
             series.parentNodeMass +=
@@ -725,7 +744,7 @@ seriesType('packedbubble', 'bubble',
         parentNodeLayout.setArea(0, 0, chart.plotWidth, chart.plotHeight);
         if (!nodeAdded) {
             if (!parentNode) {
-                parentNode = (new NetworkPoint()).init(this, {
+                parentNode = (new PackedBubblePoint()).init(this, {
                     mass: series.parentNodeRadius / 2,
                     marker: {
                         radius: series.parentNodeRadius
@@ -748,12 +767,41 @@ seriesType('packedbubble', 'bubble',
             parentNodeLayout.addElementsToCollection([parentNode], parentNodeLayout.nodes);
         }
     },
+    drawTracker: function () {
+        var series = this, chart = series.chart, pointer = chart.pointer, onMouseOver = function (e) {
+            var point = pointer.getPointFromEvent(e);
+            // undefined on graph in scatterchart
+            if (typeof point !== 'undefined') {
+                pointer.isDirectTouch = true;
+                point.onMouseOver(e);
+            }
+        }, parentNode = series.parentNode;
+        var dataLabels;
+        H.TrackerMixin.drawTrackerPoint.call(this);
+        // Add reference to the point
+        if (parentNode) {
+            dataLabels = (isArray(parentNode.dataLabels) ?
+                parentNode.dataLabels :
+                (parentNode.dataLabel ? [parentNode.dataLabel] : []));
+            if (parentNode.graphic) {
+                parentNode.graphic.element.point = parentNode;
+            }
+            dataLabels.forEach(function (dataLabel) {
+                if (dataLabel.div) {
+                    dataLabel.div.point = parentNode;
+                }
+                else {
+                    dataLabel.element.point = parentNode;
+                }
+            });
+        }
+    },
     /**
      * Function responsible for adding series layout, used for parent nodes.
      * @private
      */
     addSeriesLayout: function () {
-        var series = this, layoutOptions = series.options.layoutAlgorithm, graphLayoutsStorage = series.chart.graphLayoutsStorage, graphLayoutsLookup = series.chart.graphLayoutsLookup, parentNodeOptions = H.merge(layoutOptions, layoutOptions.parentNodeOptions, {
+        var series = this, layoutOptions = series.options.layoutAlgorithm, graphLayoutsStorage = series.chart.graphLayoutsStorage, graphLayoutsLookup = series.chart.graphLayoutsLookup, parentNodeOptions = merge(layoutOptions, layoutOptions.parentNodeOptions, {
             enableSimulation: series.layout.options.enableSimulation
         }), parentNodeLayout;
         parentNodeLayout = graphLayoutsStorage[layoutOptions.type + '-series'];
@@ -1155,7 +1203,7 @@ seriesType('packedbubble', 'bubble',
                             node.marker.radius -
                             point.marker.radius);
                         if (distanceR < 0) {
-                            node.series.addPoint(H.merge(point.options, {
+                            node.series.addPoint(merge(point.options, {
                                 plotX: point.plotX,
                                 plotY: point.plotY
                             }), false);
@@ -1197,6 +1245,29 @@ seriesType('packedbubble', 'bubble',
             this.series.layout.removeElementFromCollection(this, this.series.layout.nodes);
         }
         return Point.prototype.destroy.apply(this, arguments);
+    },
+    firePointEvent: function (eventType, eventArgs, defaultFunction) {
+        var point = this, series = this.series, seriesOptions = series.options;
+        if (this.isParentNode && seriesOptions.parentNode) {
+            var temp = seriesOptions.allowPointSelect;
+            seriesOptions.allowPointSelect = seriesOptions.parentNode.allowPointSelect;
+            Point.prototype.firePointEvent.apply(this, arguments);
+            seriesOptions.allowPointSelect = temp;
+        }
+        else {
+            Point.prototype.firePointEvent.apply(this, arguments);
+        }
+    },
+    select: function (selected, accumulate) {
+        var point = this, series = this.series, chart = series.chart;
+        if (point.isParentNode) {
+            chart.getSelectedPoints = chart.getSelectedParentNodes;
+            Point.prototype.select.apply(this, arguments);
+            chart.getSelectedPoints = H.Chart.prototype.getSelectedPoints;
+        }
+        else {
+            Point.prototype.select.apply(this, arguments);
+        }
     }
 });
 // Remove accumulated data points to redistribute all of them again
@@ -1214,7 +1285,7 @@ addEvent(Chart, 'beforeRedraw', function () {
  * @type      {Object}
  * @extends   series,plotOptions.packedbubble
  * @excluding dataParser, dataSorting, dataURL, dragDrop, stack
- * @product   highcharts highstock
+ * @product   highcharts
  * @requires  highcharts-more
  * @apioption series.packedbubble
  */

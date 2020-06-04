@@ -15,6 +15,11 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
     baseReporterDecorator(this);
     const LOG = logger.create('reporter.imagecapture');
     const gitSha = getLatestCommitShaSync();
+
+    // eslint-disable-next-line func-style
+    let fileWritingFinished = function () {};
+    let pendingFileWritings = 0;
+
     const {
         imageCapture = {
             resultsOutputPath: 'test/visual-test-results.json'
@@ -31,10 +36,12 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         svg = svg
             .replace(/>/g, '>\n')
 
-            // Don't introduce newlines inside tspans, it will make the text
+            // Don't introduce newlines inside tspans or links, it will make the text
             // render differently
             .replace(/<tspan([^>]*)>\n/g, '<tspan$1>')
-            .replace(/<\/tspan>\n/g, '</tspan>');
+            .replace(/<\/tspan>\n/g, '</tspan>')
+            .replace(/<a([^>]*)>\n/g, '<a$1>')
+            .replace(/<\/a>\n/g, '</a>');
 
         return svg;
     }
@@ -70,9 +77,13 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         encoder.finish();
 
         var buf = encoder.out.getData();
+        pendingFileWritings++;
         fs.writeFile(filename, buf, function (err) {
             if (err) {
                 throw err;
+            }
+            if (!--pendingFileWritings) {
+                fileWritingFinished();
             }
         });
     }
@@ -146,9 +157,13 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         const filename = info.filename;
         try {
             if (/\.svg$/.test(filename)) {
+                pendingFileWritings++;
                 fs.writeFile(filename, prettyXML(data), err => {
                     if (err) {
                         throw err;
+                    }
+                    if (!--pendingFileWritings) {
+                        fileWritingFinished();
                     }
                 });
 
@@ -166,6 +181,15 @@ function ImageCaptureReporter(baseReporterDecorator, config, logger, emitter) {
         }
 
     });
+
+    // wait for async file writes before exiting
+    this.onExit = function (done) {
+        if (pendingFileWritings) {
+            fileWritingFinished = done;
+        } else {
+            done();
+        }
+    };
 
 }
 /* eslint-enable require-jsdoc */

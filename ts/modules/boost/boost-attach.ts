@@ -11,7 +11,17 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
+import GLRenderer from './wgl-renderer.js';
 import H from '../../parts/Globals.js';
+const {
+    doc
+} = H;
+import U from '../../parts/Utilities.js';
+const {
+    error
+} = U;
 
 /**
  * Internal types
@@ -33,7 +43,7 @@ declare global {
             /** @requires modules/boost */
             boostResizeTarget(): void;
         }
-        interface Chart extends BoostTargetObject {
+        interface ChartLike extends BoostTargetObject {
         }
         interface Series extends BoostTargetObject {
         }
@@ -41,11 +51,8 @@ declare global {
 }
 
 import '../../parts/Series.js';
-import GLRenderer from './wgl-renderer.js';
 
-var win = H.win,
-    doc = win.document,
-    mainCanvas = doc.createElement('canvas');
+var mainCanvas = doc.createElement('canvas');
 
 /**
  * Create a canvas + context and attach it to the target
@@ -63,7 +70,7 @@ var win = H.win,
  * the canvas renderer
  */
 function createAndAttachRenderer(
-    chart: Highcharts.Chart,
+    chart: Chart,
     series: Highcharts.Series
 ): Highcharts.BoostGLRenderer {
     var width = chart.chartWidth,
@@ -210,7 +217,7 @@ function createAndAttachRenderer(
             // The OGL renderer couldn't be inited.
             // This likely means a shader error as we wouldn't get to this point
             // if there was no WebGL support.
-            H.error('[highcharts boost] - unable to init WebGL renderer');
+            error('[highcharts boost] - unable to init WebGL renderer');
         }
 
         // target.ogl.clear();

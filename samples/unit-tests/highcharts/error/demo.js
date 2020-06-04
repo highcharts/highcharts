@@ -4,13 +4,13 @@ QUnit.test('Error 19', function (assert) {
 
     var error = Highcharts.error;
 
-    Highcharts.error = function (code) {
+    Highcharts.addEvent(Highcharts.Chart, 'displayError', function (e) {
         assert.strictEqual(
-            code,
+            e.code,
             19,
             'Error 19 should be invoked'
         );
-    };
+    });
 
     var chart = Highcharts.chart('container', {
         chart: {

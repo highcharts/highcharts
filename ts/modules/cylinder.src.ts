@@ -14,6 +14,8 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -38,10 +40,10 @@ declare global {
             fillSetter(fill: ColorType): SVGElement;
         }
         interface CylinderPathsObject extends SVGPath3dObject {
-            back: SVGPathArray;
-            bottom: SVGPathArray;
-            front: SVGPathArray;
-            top: SVGPathArray;
+            back: SVGPath;
+            bottom: SVGPath;
+            front: SVGPath;
+            top: SVGPath;
             zIndexes: Dictionary<number>;
         }
         interface CylinderPointOptions extends ColumnPointOptions {
@@ -56,20 +58,20 @@ declare global {
         interface SVGRenderer {
             cylinder(shapeArgs: SVGAttributes): SVGElement;
             cylinderPath(shapeArgs: SVGAttributes): CylinderPathsObject;
-            getCurvedPath(points: Array<PositionObject>): SVGPathArray;
+            getCurvedPath(points: Array<PositionObject>): SVGPath;
             getCylinderBack(
-                topPath: SVGPathArray,
-                bottomPath: SVGPathArray
-            ): SVGPathArray;
+                topPath: SVGPath,
+                bottomPath: SVGPath
+            ): SVGPath;
             getCylinderEnd(
                 chart: Chart,
                 shapeArgs: SVGAttributes,
                 isBottom?: boolean
-            ): SVGPathArray;
+            ): SVGPath;
             getCylinderFront(
-                topPath: SVGPathArray,
-                bottomPath: SVGPathArray
-            ): SVGPathArray;
+                topPath: SVGPath,
+                bottomPath: SVGPath
+            ): SVGPath;
         }
         interface SeriesTypesDictionary {
             cylinder: typeof CylinderSeries;
@@ -77,23 +79,32 @@ declare global {
     }
 }
 
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
+
 import '../parts/ColumnSeries.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SVGRenderer.js';
 
 var charts = H.charts,
-    color = H.color,
     deg2rad = H.deg2rad,
     perspective = H.perspective,
-    seriesType = H.seriesType,
 
-    // Work on H.Renderer instead of H.SVGRenderer for VML support.
+    // Work on H.Renderer instead of SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,
     cuboidPath = RendererProto.cuboidPath,
     cylinderMethods;
+
+// Check if a path is simplified. The simplified path contains only lineTo
+// segments, whereas non-simplified contain curves.
+const isSimplified = (path: SVGPath): boolean =>
+    !path.some((seg): boolean => seg[0] === 'C');
+
 
 /**
   * The cylinder series type.
@@ -211,7 +222,7 @@ seriesType<Highcharts.CylinderSeries>(
  */
 
 // cylinder extends cuboid
-cylinderMethods = H.merge(RendererProto.elements3d.cuboid, {
+cylinderMethods = merge(RendererProto.elements3d.cuboid, {
     parts: ['top', 'bottom', 'front', 'back'],
     pathType: 'cylinder',
 
@@ -275,87 +286,92 @@ RendererProto.cylinderPath = function (
 
 // Returns cylinder Front path
 RendererProto.getCylinderFront = function (
-    topPath: Highcharts.SVGPathArray,
-    bottomPath: Highcharts.SVGPathArray
-): Highcharts.SVGPathArray {
-    var path = topPath.slice(0, (topPath as any).simplified ? 9 : 17);
+    topPath: SVGPath,
+    bottomPath: SVGPath
+): SVGPath {
+    const path = topPath.slice(0, 3);
 
-    path.push('L');
-    if ((bottomPath as any).simplified) {
-        path = path
-            .concat(bottomPath.slice(7, 9))
-            .concat(bottomPath.slice(3, 6))
-            .concat(bottomPath.slice(0, 3));
+    if (isSimplified(bottomPath)) {
 
-        // change 'M' into 'L'
-        path[path.length - 3] = 'L';
+        const move = bottomPath[0];
+        if (move[0] === 'M') {
+            path.push(bottomPath[2]);
+            path.push(bottomPath[1]);
+            path.push(['L', move[1], move[2]]);
+        }
+
     } else {
-        path.push(
-            bottomPath[15], bottomPath[16],
-            'C',
-            bottomPath[13], bottomPath[14],
-            bottomPath[11], bottomPath[12],
-            bottomPath[8], bottomPath[9],
-            'C',
-            bottomPath[6], bottomPath[7],
-            bottomPath[4], bottomPath[5],
-            bottomPath[1], bottomPath[2]
-        );
+        const move = bottomPath[0],
+            curve1 = bottomPath[1],
+            curve2 = bottomPath[2];
+        if (move[0] === 'M' && curve1[0] === 'C' && curve2[0] === 'C') {
+
+            path.push(['L', curve2[5], curve2[6]]);
+
+            path.push(['C', curve2[3], curve2[4], curve2[1], curve2[2], curve1[5], curve1[6]]);
+            path.push(['C', curve1[3], curve1[4], curve1[1], curve1[2], move[1], move[2]]);
+        }
     }
-    path.push('Z');
+    path.push(['Z']);
 
     return path;
 };
 
 // Returns cylinder Back path
 RendererProto.getCylinderBack = function (
-    topPath: Highcharts.SVGPathArray,
-    bottomPath: Highcharts.SVGPathArray
-): Highcharts.SVGPathArray {
-    var path: Highcharts.SVGPathArray = ['M'];
+    topPath: SVGPath,
+    bottomPath: SVGPath
+): SVGPath {
 
-    if ((topPath as any).simplified) {
-        path = path.concat(topPath.slice(7, 12));
+    const path: SVGPath = [];
 
-        // end at start
-        path.push(
-            'L',
-            topPath[1], topPath[2]
-        );
+    if (isSimplified(topPath)) {
+        const move = topPath[0],
+            line2 = topPath[2];
+
+        if (move[0] === 'M' && line2[0] === 'L') {
+            path.push(['M', line2[1], line2[2]]);
+            path.push(topPath[3]);
+
+            // End at start
+            path.push(['L', move[1], move[2]]);
+        }
     } else {
-        path = path.concat(topPath.slice(15));
+        if (topPath[2][0] === 'C') {
+            path.push(['M', topPath[2][5], topPath[2][6]]);
+        }
+        path.push(topPath[3], topPath[4]);
     }
 
-    path.push('L');
-    if ((bottomPath as any).simplified) {
-        path = path
-            .concat(bottomPath.slice(1, 3))
-            .concat(bottomPath.slice(9, 12))
-            .concat(bottomPath.slice(6, 9));
+    if (isSimplified(bottomPath)) {
+        const move = bottomPath[0];
+
+        if (move[0] === 'M') {
+            path.push(['L', move[1], move[2]]);
+            path.push(bottomPath[3]);
+            path.push(bottomPath[2]);
+        }
     } else {
-        path.push(
-            bottomPath[29], bottomPath[30],
-            'C',
-            bottomPath[27], bottomPath[28],
-            bottomPath[25], bottomPath[26],
-            bottomPath[22], bottomPath[23],
-            'C',
-            bottomPath[20], bottomPath[21],
-            bottomPath[18], bottomPath[19],
-            bottomPath[15], bottomPath[16]
-        );
+        const curve2 = bottomPath[2],
+            curve3 = bottomPath[3],
+            curve4 = bottomPath[4];
+        if (curve2[0] === 'C' && curve3[0] === 'C' && curve4[0] === 'C') {
+            path.push(['L', curve4[5], curve4[6]]);
+            path.push(['C', curve4[3], curve4[4], curve4[1], curve4[2], curve3[5], curve3[6]]);
+            path.push(['C', curve3[3], curve3[4], curve3[1], curve3[2], curve2[5], curve2[6]]);
+        }
     }
-    path.push('Z');
+    path.push(['Z']);
 
     return path;
 };
 
 // Retruns cylinder path for top or bottom
 RendererProto.getCylinderEnd = function (
-    chart: Highcharts.Chart,
+    chart: Chart,
     shapeArgs: Highcharts.SVGAttributes,
     isBottom?: boolean
-): Highcharts.SVGPathArray {
+): SVGPath {
     // A half of the smaller one out of width or depth (optional, because
     // there's no depth for a funnel that reuses the code)
     var depth = pick(shapeArgs.depth, shapeArgs.width),
@@ -437,7 +453,7 @@ RendererProto.getCylinderEnd = function (
         cosTheta = Math.cos(angleOffset),
         sinTheta = Math.sin(angleOffset),
         perspectivePoints,
-        path,
+        path: SVGPath,
         x, z;
 
     // rotete to match chart's beta and translate to the shape center
@@ -467,7 +483,6 @@ RendererProto.getCylinderEnd = function (
             perspectivePoints[6],
             perspectivePoints[9]
         ], true);
-        (path as any).simplified = true;
     } else {
         // or default curved path to imitate ellipse (2D circle)
         path = this.getCurvedPath(perspectivePoints);
@@ -481,21 +496,18 @@ RendererProto.getCylinderEnd = function (
 // (cp - control point, ep - end point)
 RendererProto.getCurvedPath = function (
     points: Array<Highcharts.PositionObject>
-): Highcharts.SVGPathArray {
-    var path: Highcharts.SVGPathArray = [
-            'M',
-            points[0].x as any, points[0].y as any
-        ],
+): SVGPath {
+    var path: SVGPath = [['M', points[0].x, points[0].y]],
         limit = points.length - 2,
         i;
 
     for (i = 1; i < limit; i += 3) {
-        path.push(
+        path.push([
             'C',
-            points[i].x as any, points[i].y as any,
-            points[i + 1].x as any, points[i + 1].y as any,
-            points[i + 2].x as any, points[i + 2].y as any
-        );
+            points[i].x, points[i].y,
+            points[i + 1].x, points[i + 1].y,
+            points[i + 2].x, points[i + 2].y
+        ]);
     }
     return path;
 };

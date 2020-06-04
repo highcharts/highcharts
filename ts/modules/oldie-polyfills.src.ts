@@ -54,6 +54,11 @@ interface ArraySomeCallbackFunction<T, TScope = any> {
 }
 
 /* eslint-disable no-extend-native */
+if (!String.prototype.trim) {
+    String.prototype.trim = function (): string {
+        return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    };
+}
 
 if (!Array.prototype.forEach) {
     Array.prototype.forEach = function<T, TScope = any> (
@@ -176,6 +181,24 @@ if (!Array.prototype.reduce) {
             );
         }
         return accumulator as any;
+    };
+}
+
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function (): Function {
+        const thatFunc = this;
+        const thatArg = arguments[0];
+        const args = Array.prototype.slice.call(arguments, 1);
+        if (typeof thatFunc !== 'function') {
+            // closest thing possible to the ECMAScript 5
+            // internal IsCallable function
+            throw new TypeError('Function.prototype.bind - ' +
+                'what is trying to be bound is not callable');
+        }
+        return function (): unknown {
+            const funcArgs = args.concat(Array.prototype.slice.call(arguments));
+            return thatFunc.apply(thatArg, funcArgs);
+        };
     };
 }
 

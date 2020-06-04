@@ -9,8 +9,11 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
-var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import U from './Utilities.js';
+var merge = U.merge, seriesType = U.seriesType;
+var seriesTypes = H.seriesTypes;
 /**
  * A candlestick chart is a style of financial chart used to describe price
  * movements over time.
@@ -59,7 +62,7 @@ var candlestickOptions = {
     /**
      * @extends plotOptions.ohlc.tooltip
      */
-    tooltip: defaultPlotOptions.ohlc.tooltip,
+    tooltip: defaultOptions.plotOptions.ohlc.tooltip,
     /**
      * @type    {number|null}
      * @product highstock
@@ -121,7 +124,7 @@ var candlestickOptions = {
  *
  * @augments Highcharts.seriesTypes.ohlc
  */
-seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, candlestickOptions), 
+seriesType('candlestick', 'ohlc', merge(defaultOptions.plotOptions.column, candlestickOptions), 
 /**
  * @lends seriesTypes.candlestick
  */
@@ -199,20 +202,26 @@ seriesType('candlestick', 'ohlc', merge(defaultPlotOptions.column, candlestickOp
                 // with all the values would lead to a crash when updating
                 // frequently (#5193).
                 path = [];
-                path.push('M', crispX - halfWidth, bottomBox, 'L', crispX - halfWidth, topBox, 'L', crispX + halfWidth, topBox, 'L', crispX + halfWidth, bottomBox, 'Z', // Ensure a nice rectangle #2602
-                'M', crispX, topBox, 'L', 
-                // #460, #2094
-                crispX, hasTopWhisker ?
-                    Math.round(reversedYAxis ?
-                        point.yBottom :
-                        point.plotHigh) :
-                    topBox, 'M', crispX, bottomBox, 'L', 
-                // #460, #2094
-                crispX, hasBottomWhisker ?
-                    Math.round(reversedYAxis ?
-                        point.plotHigh :
-                        point.yBottom) :
-                    bottomBox);
+                path.push(['M', crispX - halfWidth, bottomBox], ['L', crispX - halfWidth, topBox], ['L', crispX + halfWidth, topBox], ['L', crispX + halfWidth, bottomBox], ['Z'], // Ensure a nice rectangle #2602
+                ['M', crispX, topBox], [
+                    'L',
+                    // #460, #2094
+                    crispX,
+                    hasTopWhisker ?
+                        Math.round(reversedYAxis ?
+                            point.yBottom :
+                            point.plotHigh) :
+                        topBox
+                ], ['M', crispX, bottomBox], [
+                    'L',
+                    // #460, #2094
+                    crispX,
+                    hasBottomWhisker ?
+                        Math.round(reversedYAxis ?
+                            point.plotHigh :
+                            point.yBottom) :
+                        bottomBox
+                ]);
                 graphic[isNew ? 'attr' : 'animate']({ d: path })
                     .addClass(point.getClassName(), true);
             }

@@ -328,6 +328,9 @@ QUnit.test(
                     }
                 },
                 plotOptions: {
+                    series: {
+                        animation: true
+                    },
                     pie: {
                         depth: 35
                     }
@@ -348,5 +351,17 @@ QUnit.test(
             height < point.graphic.out.getBBox(true).height,
             'Updating series.depth should change slice\'s depth (#12515).'
         );
-    }
-);
+
+        assert.strictEqual(
+            chart.series[0].group.oldtranslateX,
+            chart.plotLeft,
+            'Updating series shouldn\'t change pie x position (#11928).'
+        );
+
+        assert.strictEqual(
+            chart.series[0].group.oldtranslateY,
+            chart.plotTop,
+            'Updating series shouldn\'t change pie y position (#11928).'
+        );
+
+    });

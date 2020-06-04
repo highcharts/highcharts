@@ -57,6 +57,9 @@
         "../../code/modules/bullet.d.ts",
         "../../code/modules/bullet.src.d.ts",
 
+        "../../code/modules/coloraxis.d.ts",
+        "../../code/modules/coloraxis.src.d.ts",
+
         "../../code/modules/current-date-indicator.d.ts",
         "../../code/modules/current-date-indicator.src.d.ts",
 
@@ -86,6 +89,9 @@
 
         "../../code/modules/drilldown.d.ts",
         "../../code/modules/drilldown.src.d.ts",
+
+        "../../code/modules/dumbbell.d.ts",
+        "../../code/modules/dumbbell.src.d.ts",
 
         "../../code/modules/export-data.d.ts",
         "../../code/modules/export-data.src.d.ts",
@@ -117,11 +123,11 @@
         "../../code/modules/item-series.d.ts",
         "../../code/modules/item-series.src.d.ts",
 
+        "../../code/modules/lollipop.d.ts",
+        "../../code/modules/lollipop.src.d.ts",
+
         "../../code/modules/map.d.ts",
         "../../code/modules/map.src.d.ts",
-
-        "../../code/modules/map-parser.d.ts",
-        "../../code/modules/map-parser.src.d.ts",
 
         "../../code/modules/marker-clusters.d.ts",
         "../../code/modules/marker-clusters.src.d.ts",
@@ -273,6 +279,9 @@
         "../../code/indicators/ichimoku-kinko-hyo.d.ts",
         "../../code/indicators/ichimoku-kinko-hyo.src.d.ts",
 
+        "../../code/indicators/indicators-all.d.ts",
+        "../../code/indicators/indicators-all.src.d.ts",
+
         "../../code/indicators/keltner-channels.d.ts",
         "../../code/indicators/keltner-channels.src.d.ts",
 
@@ -303,11 +312,17 @@
         "../../code/indicators/psar.d.ts",
         "../../code/indicators/psar.src.d.ts",
 
+        "../../code/indicators/regressions.d.ts",
+        "../../code/indicators/regressions.src.d.ts",
+
         "../../code/indicators/roc.d.ts",
         "../../code/indicators/roc.src.d.ts",
 
         "../../code/indicators/rsi.d.ts",
         "../../code/indicators/rsi.src.d.ts",
+
+        "../../code/indicators/slow-stochastic.d.ts",
+        "../../code/indicators/slow-stochastic.src.d.ts",
 
         "../../code/indicators/stochastic.d.ts",
         "../../code/indicators/stochastic.src.d.ts",
@@ -317,6 +332,9 @@
 
         "../../code/indicators/tema.d.ts",
         "../../code/indicators/tema.src.d.ts",
+
+        "../../code/indicators/trendline.d.ts",
+        "../../code/indicators/trendline.src.d.ts",
 
         "../../code/indicators/trix.d.ts",
         "../../code/indicators/trix.src.d.ts",

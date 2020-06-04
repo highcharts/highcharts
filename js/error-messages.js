@@ -104,6 +104,10 @@ H.errorMessages = {
         "text": "<h1>Non-unique point or node id</h1><p>This error occurs when using the same <code>id</code> for two or more points or nodes.</p>"
     },
     "32": {
+        "title": "Deprecated function or property",
+        "text": "<h1>Deprecated function or property</h1><p>This error occurs when using a deprecated function or property. Consult the <a href=\"https://api.highcharts.com/\">API documentation</a> for alternatives, if no replacement is mentioned by the error itself.</p>"
+    },
+    "33": {
         "title": "The requested legend does not exist",
         "text": "<h1>The requested legend does not exist</h1><p>This error happens when setting a series' <code>legend</code> property to point to a legend that does not exist.</p>"
     },
@@ -132,7 +136,8 @@ H.errorMessages = {
             "errors/29/readme.md",
             "errors/30/readme.md",
             "errors/31/readme.md",
-            "errors/32/readme.md"
+            "errors/32/readme.md",
+            "errors/33/readme.md"
         ]
     }
 };

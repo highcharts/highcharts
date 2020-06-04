@@ -332,13 +332,6 @@ QUnit.test("Highcharts in use with modules", function (assert) {
         true,
         "Heatmap is loaded."
     );
-    // Map Parser
-    require('../../../../code/modules/map-parser.src')(Highcharts);
-    assert.strictEqual(
-        !!Highcharts.Data.prototype.loadSVG,
-        true,
-        "Map Parser is loaded."
-    );
     // Map
     require('../../../../code/modules/map.src')(Highcharts);
     assert.strictEqual(
@@ -377,4 +370,3 @@ QUnit.test("Highcharts in use with modules", function (assert) {
 
     addJQuery();
 });
-

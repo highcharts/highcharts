@@ -11,8 +11,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, extend = U.extend, isArray = U.isArray;
+var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, error = U.error, extend = U.extend, isArray = U.isArray, seriesType = U.seriesType;
 /* eslint-disable require-jsdoc */
 // Utils
 function arrayExtremesOHLC(data) {
@@ -32,7 +33,7 @@ function arrayExtremesOHLC(data) {
     };
 }
 /* eslint-enable require-jsdoc */
-var abs = Math.abs, noop = H.noop, seriesType = H.seriesType, columnPrototype = H.seriesTypes.column.prototype;
+var abs = Math.abs, noop = H.noop, columnPrototype = H.seriesTypes.column.prototype;
 /**
  * The Volume By Price (VBP) series type.
  *
@@ -194,18 +195,19 @@ seriesType('vbp', 'sma',
     },
     // Initial animation
     animate: function (init) {
-        var series = this, attr = {};
-        if (H.svg && !init) {
-            attr.translateX = series.yAxis.pos;
-            series.group.animate(attr, extend(animObject(series.options.animation), {
+        var series = this, inverted = series.chart.inverted, group = series.group, attr = {}, translate, position;
+        if (!init && group) {
+            translate = inverted ? 'translateY' : 'translateX';
+            position = inverted ? series.yAxis.top : series.xAxis.left;
+            group['forceAnimate:' + translate] = true;
+            attr[translate] = position;
+            group.animate(attr, extend(animObject(series.options.animation), {
                 step: function (val, fx) {
                     series.group.attr({
                         scaleX: Math.max(0.001, fx.pos)
                     });
                 }
             }));
-            // Delete this function to allow it only once
-            series.animate = null;
         }
     },
     drawPoints: function () {
@@ -306,13 +308,13 @@ seriesType('vbp', 'sma',
         var indicator = this, xValues = series.processedXData, yValues = series.processedYData, chart = indicator.chart, ranges = params.ranges, VBP = [], xData = [], yData = [], isOHLC, volumeSeries, priceZones;
         // Checks if base series exists
         if (!series.chart) {
-            H.error('Base series not found! In case it has been removed, add ' +
+            error('Base series not found! In case it has been removed, add ' +
                 'a new one.', true, chart);
             return;
         }
         // Checks if volume series exists
         if (!(volumeSeries = (chart.get(params.volumeSeriesID)))) {
-            H.error('Series ' +
+            error('Series ' +
                 params.volumeSeriesID +
                 ' not found! Check `volumeSeriesID`.', true, chart);
             return;
@@ -320,7 +322,7 @@ seriesType('vbp', 'sma',
         // Checks if series data fits the OHLC format
         isOHLC = isArray(yValues[0]);
         if (isOHLC && yValues[0].length !== 4) {
-            H.error('Type of ' +
+            error('Type of ' +
                 series.name +
                 ' series is different than line, OHLC or candlestick.', true, chart);
             return;
@@ -434,14 +436,15 @@ seriesType('vbp', 'sma',
         var indicator = this, renderer = chart.renderer, zoneLinesSVG = indicator.zoneLinesSVG, zoneLinesPath = [], leftLinePos = 0, rightLinePos = chart.plotWidth, verticalOffset = chart.plotTop, verticalLinePos;
         zonesValues.forEach(function (value) {
             verticalLinePos = yAxis.toPixels(value) - verticalOffset;
-            zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([
-                'M',
-                leftLinePos,
-                verticalLinePos,
-                'L',
-                rightLinePos,
-                verticalLinePos
-            ], zonesStyles.lineWidth));
+            zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([[
+                    'M',
+                    leftLinePos,
+                    verticalLinePos
+                ], [
+                    'L',
+                    rightLinePos,
+                    verticalLinePos
+                ]], zonesStyles.lineWidth));
         });
         // Create zone lines one path or update it while animating
         if (zoneLinesSVG) {
@@ -471,7 +474,7 @@ seriesType('vbp', 'sma',
         if (this.negativeGraphic) {
             this.negativeGraphic = this.negativeGraphic.destroy();
         }
-        return H.Point.prototype.destroy.apply(this, arguments);
+        return Point.prototype.destroy.apply(this, arguments);
     }
 });
 /**

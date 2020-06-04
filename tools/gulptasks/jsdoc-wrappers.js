@@ -36,7 +36,7 @@ function jsDocWrappers() {
             'mv highcharts-ios-dev/api build/api/ios && ' +
             'rm -rf highcharts-ios-dev'
         ))
-        .then(() => logLib.warn('Done. Upload with gulp task "upload-api".'));
+        .then(() => logLib.warn('Done. Upload with gulp task "upload-wrapper-apidocs".'));
 }
 
 require('./jsdoc.js');

@@ -9,12 +9,14 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-import '../parts/Utilities.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import U from '../parts/Utilities.js';
+var seriesType = U.seriesType;
 import '../parts/Options.js';
 import '../parts/Series.js';
 import '../parts/Legend.js';
 import '../parts/ScatterSeries.js';
-var LegendSymbolMixin = H.LegendSymbolMixin, noop = H.noop, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * A polygon series can be used to draw any freeform shape in the cartesian
  * coordinate system. A fill is applied with the `color` option, and
@@ -54,8 +56,8 @@ seriesType('polygon', 'scatter', {
         var graphPath = Series.prototype.getGraphPath.call(this), i = graphPath.length + 1;
         // Close all segments
         while (i--) {
-            if ((i === graphPath.length || graphPath[i] === 'M') && i > 0) {
-                graphPath.splice(i, 0, 'z');
+            if ((i === graphPath.length || graphPath[i][0] === 'M') && i > 0) {
+                graphPath.splice(i, 0, ['Z']);
             }
         }
         this.areaPath = graphPath;

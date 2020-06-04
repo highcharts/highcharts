@@ -11,7 +11,9 @@
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
 const {
-    pick
+    merge,
+    pick,
+    seriesType
 } = U;
 
 /**
@@ -101,7 +103,7 @@ function getExtremeIndexInArray(arr: Array<number>, extreme: string): number {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.AroonIndicator>(
+seriesType<Highcharts.AroonIndicator>(
     'aroon',
     'sma',
     /**
@@ -168,7 +170,7 @@ H.seriesType<Highcharts.AroonIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    H.merge(multipleLinesMixin, {
+    merge(multipleLinesMixin, {
         nameBase: 'Aroon',
         pointArrayMap: ['y', 'aroonDown'],
         pointValKey: 'y',

@@ -8,7 +8,12 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+var win = H.win;
+import '../parts/Options.js';
+import U from '../parts/Utilities.js';
+var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
 /**
  * Result object of a map transformation.
  *
@@ -35,11 +40,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.MapLatLonObject#lon
 * @type {number}
 */
-import U from '../parts/Utilities.js';
-var extend = U.extend, wrap = U.wrap;
-import '../parts/Options.js';
-import '../parts/Chart.js';
-var Chart = H.Chart, format = H.format, merge = H.merge, win = H.win;
+''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Test for point in polygon. Polygon defined as array of [x,y] points.
@@ -82,14 +83,26 @@ function pointInPolygon(point, polygon) {
  *         An object with `x` and `y` properties.
  */
 Chart.prototype.transformFromLatLon = function (latLon, transform) {
-    if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+    /**
+     * Allows to manually load the proj4 library from Highcharts options
+     * instead of the `window`.
+     * In case of loading the library from a `script` tag,
+     * this option is not needed, it will be loaded from there by default.
+     *
+     * @type       {function}
+     * @product    highmaps
+     * @apioption  chart.proj4
+     */
+    var _a;
+    var proj4 = (((_a = this.userOptions.chart) === null || _a === void 0 ? void 0 : _a.proj4) || win.proj4);
+    if (!proj4) {
+        error(21, false, this);
         return {
             x: 0,
             y: null
         };
     }
-    var projected = win.proj4(transform.crs, [latLon.lon, latLon.lat]), cosAngle = transform.cosAngle ||
+    var projected = proj4(transform.crs, [latLon.lon, latLon.lat]), cosAngle = transform.cosAngle ||
         (transform.rotation && Math.cos(transform.rotation)), sinAngle = transform.sinAngle ||
         (transform.rotation && Math.sin(transform.rotation)), rotated = transform.rotation ? [
         projected[0] * cosAngle + projected[1] * sinAngle,
@@ -128,7 +141,7 @@ Chart.prototype.transformFromLatLon = function (latLon, transform) {
  */
 Chart.prototype.transformToLatLon = function (point, transform) {
     if (typeof win.proj4 === 'undefined') {
-        H.error(21, false, this);
+        error(21, false, this);
         return;
     }
     var normalized = {
@@ -170,7 +183,7 @@ Chart.prototype.transformToLatLon = function (point, transform) {
 Chart.prototype.fromPointToLatLon = function (point) {
     var transforms = this.mapTransforms, transform;
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return;
     }
     for (transform in transforms) {
@@ -203,7 +216,7 @@ Chart.prototype.fromPointToLatLon = function (point) {
 Chart.prototype.fromLatLonToPoint = function (latLon) {
     var transforms = this.mapTransforms, transform, coords;
     if (!transforms) {
-        H.error(22, false, this);
+        error(22, false, this);
         return {
             x: 0,
             y: null
@@ -253,14 +266,14 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  */
 H.geojson = function (geojson, hType, series) {
     var mapData = [], path = [], polygonToPath = function (polygon) {
-        var i, len = polygon.length;
-        path.push('M');
-        for (i = 0; i < len; i++) {
-            if (i === 1) {
-                path.push('L');
+        polygon.forEach(function (point, i) {
+            if (i === 0) {
+                path.push(['M', point[0], -point[1]]);
             }
-            path.push(polygon[i][0], -polygon[i][1]);
-        }
+            else {
+                path.push(['L', point[0], -point[1]]);
+            }
+        });
     };
     hType = hType || 'map';
     geojson.features.forEach(function (feature) {
@@ -269,13 +282,13 @@ H.geojson = function (geojson, hType, series) {
         if (hType === 'map' || hType === 'mapbubble') {
             if (type === 'Polygon') {
                 coordinates.forEach(polygonToPath);
-                path.push('Z');
+                path.push(['Z']);
             }
             else if (type === 'MultiPolygon') {
                 coordinates.forEach(function (items) {
                     items.forEach(polygonToPath);
                 });
-                path.push('Z');
+                path.push(['Z']);
             }
             if (path.length) {
                 point = { path: path };

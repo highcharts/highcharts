@@ -12,7 +12,36 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
+import chartNavigationMixin from '../mixins/navigation.js';
 import H from '../parts/Globals.js';
+const {
+    doc,
+    isTouchDevice,
+    win
+} = H;
+import O from '../parts/Options.js';
+const {
+    defaultOptions
+} = O;
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    css,
+    createElement,
+    discardElement,
+    extend,
+    find,
+    fireEvent,
+    isObject,
+    merge,
+    objectEach,
+    pick,
+    removeEvent,
+    uniqueKey
+} = U;
 
 /**
  * Internal types
@@ -20,7 +49,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             btnCount?: number;
             buttonOffset?: number;
             exportContextMenu?: ExportingDivElement;
@@ -32,7 +61,6 @@ declare global {
             exportMenuWidth?: number;
             exportSVGElements?: Array<SVGElement>;
             forExport?: boolean;
-            fullscreen?: FullScreen;
             isDirtyExporting?: boolean;
             isPrinting?: boolean;
             openMenu?: boolean;
@@ -167,6 +195,7 @@ declare global {
         }
         interface LangOptions {
             contextButtonTitle?: string;
+            exitFullscreen?: string;
             downloadJPEG?: string;
             downloadPDF?: string;
             downloadPNG?: string;
@@ -191,10 +220,6 @@ declare global {
             inlineBlacklist?: Array<RegExp>;
             inlineToAttributes?: Array<string>;
             unstyledElements?: Array<string>;
-        }
-        interface SymbolDictionary {
-            /** @requires modules/exporting */
-            menuball: SymbolFunction<Array<SVGElement>>;
         }
         interface XAxisOptions {
             internalKey?: string;
@@ -281,33 +306,8 @@ declare global {
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
 
-import U from '../parts/Utilities.js';
-const {
-    discardElement,
-    extend,
-    isObject,
-    objectEach,
-    pick,
-    removeEvent
-} = U;
-
-import '../parts/Options.js';
-import '../parts/Chart.js';
-import chartNavigationMixin from '../mixins/navigation.js';
-
 // create shortcuts
-var defaultOptions = H.defaultOptions,
-    doc = H.doc,
-    Chart = H.Chart,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
-    createElement = H.createElement,
-    css = H.css,
-    merge = H.merge,
-    isTouchDevice = H.isTouchDevice,
-    win = H.win,
-    userAgent = win.navigator.userAgent,
-    SVGRenderer = H.SVGRenderer,
+var userAgent = win.navigator.userAgent,
     symbols = H.Renderer.prototype.symbols,
     isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent),
     isFirefoxBrowser = /firefox/i.test(userAgent);
@@ -320,14 +320,24 @@ extend(defaultOptions.lang
     , {
 
         /**
-         * Exporting module only. View the chart in full screen.
+         * Exporting module only. The text for the menu item to view the chart
+         * in full screen.
          *
-         * @since    7.1.0
-         * @requires modules/exporting
+         * @since 8.0.1
          *
          * @private
          */
         viewFullscreen: 'View in full screen',
+
+        /**
+         * Exporting module only. The text for the menu item to exit the chart
+         * from full screen.
+         *
+         * @since 8.0.1
+         *
+         * @private
+         */
+        exitFullscreen: 'Exit from full screen',
 
 
         /**
@@ -1091,12 +1101,16 @@ defaultOptions.exporting = {
      * - **textKey:** If internationalization is required, the key to a language
      *   string
      *
+     * Custom text for the "exitFullScreen" can be set only in lang options
+     * (it is not a separate button).
+     *
      * @sample {highcharts} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highstock} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
      * @sample {highmaps} highcharts/exporting/menuitemdefinitions/
      *         Menu item definitions
+     *
      *
      * @type    {Highcharts.Dictionary<Highcharts.ExportingMenuObject>}
      * @default {"viewFullscreen": {}, "printChart": {}, "separator": {}, "downloadPNG": {}, "downloadJPEG": {}, "downloadPDF": {}, "downloadSVG": {}}
@@ -1110,7 +1124,7 @@ defaultOptions.exporting = {
         viewFullscreen: {
             textKey: 'viewFullscreen',
             onclick: function (): void {
-                this.fullscreen = new H.FullScreen(this.container);
+                this.fullscreen.toggle();
             }
         },
 
@@ -1291,7 +1305,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     sanitizeSVG: function (
-        this: Highcharts.Chart,
+        this: Chart,
         svg: string,
         options: Highcharts.Options
     ): string {
@@ -1360,7 +1374,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @requires modules/exporting
      */
-    getChartHTML: function (this: Highcharts.Chart): string {
+    getChartHTML: function (this: Chart): string {
         if (this.styledMode) {
             this.inlineStyles();
         }
@@ -1390,11 +1404,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     getSVG: function (
-        this: Highcharts.Chart,
+        this: Chart,
         chartOptions?: Highcharts.Options
     ): string {
         var chart = this,
-            chartCopy: Highcharts.Chart,
+            chartCopy: Chart,
             sandbox,
             svg,
             seriesOptions: Highcharts.SeriesOptions,
@@ -1468,7 +1482,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Assign an internal key to ensure a one-to-one mapping (#5924)
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
             if (!axis.userOptions.internalKey) { // #6444
-                axis.userOptions.internalKey = H.uniqueKey();
+                axis.userOptions.internalKey = uniqueKey();
             }
         });
 
@@ -1489,7 +1503,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
 
         // Reflect axis extremes in the export (#5924)
         chart.axes.forEach(function (axis: Highcharts.Axis): void {
-            var axisCopy = H.find(chartCopy.axes, function (
+            var axisCopy = find(chartCopy.axes, function (
                     copy: Highcharts.Axis
                 ): boolean {
                     return copy.options.internalKey ===
@@ -1535,7 +1549,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     getSVGForExport: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.ExportingOptions,
         chartOptions: Highcharts.Options
     ): string {
@@ -1571,7 +1585,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @requires modules/exporting
      */
-    getFilename: function (this: Highcharts.Chart): string {
+    getFilename: function (this: Chart): string {
         var s = this.userOptions.title && this.userOptions.title.text,
             filename: string = (this.options.exporting as any).filename;
 
@@ -1627,7 +1641,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     exportChart: function (
-        this: Highcharts.Chart,
+        this: Chart,
         exportingOptions: Highcharts.ExportingOptions,
         chartOptions: Highcharts.Options
     ): void {
@@ -1660,7 +1674,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     * @return {void}
     */
     moveContainers: function (
-        this: Highcharts.Chart,
+        this: Chart,
         moveTo: Highcharts.HTMLDOMElement
     ): void {
         const chart = this;
@@ -1685,9 +1699,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     *
     * @fires Highcharts.Chart#event:beforePrint
     */
-    beforePrint: function (
-        this: Highcharts.Chart
-    ): void {
+    beforePrint: function (this: Chart): void {
         const chart = this,
             body = doc.body,
             printMaxWidth: number =
@@ -1746,9 +1758,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
     *
     * @fires Highcharts.Chart#event:afterPrint
     */
-    afterPrint: function (
-        this: Highcharts.Chart
-    ): void {
+    afterPrint: function (this: Chart): void {
         const chart = this;
 
         if (!chart.printReverseInfo) {
@@ -1802,7 +1812,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @requires modules/exporting
      */
-    print: function (this: Highcharts.Chart): void {
+    print: function (this: Chart): void {
         var chart = this;
 
         if (chart.isPrinting) { // block the button while in printing mode
@@ -1853,7 +1863,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     contextMenu: function (
-        this: Highcharts.Chart,
+        this: Chart,
         className: string,
         items: Array<(string|Highcharts.ExportingMenuObject)>,
         x: number,
@@ -1919,7 +1929,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 }
                 chart.openMenu = false;
                 css(chart.renderTo, { overflow: 'hidden' }); // #10361
-                H.clearTimeout(menu.hideTimer as any);
+                U.clearTimeout(menu.hideTimer as any);
                 fireEvent(chart, 'exportMenuHidden');
             };
 
@@ -1929,7 +1939,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     menu.hideTimer = win.setTimeout(menu.hideMenu, 500);
                 }),
                 addEvent(menu, 'mouseenter', function (): void {
-                    H.clearTimeout(menu.hideTimer as any);
+                    U.clearTimeout(menu.hideTimer as any);
                 }),
 
                 // Hide it on clicking or touching outside the menu (#2258,
@@ -2053,7 +2063,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     addButton: function (
-        this: Highcharts.Chart,
+        this: Chart,
         options: Highcharts.ExportingButtonOptions
     ): void {
         var chart = this,
@@ -2227,10 +2237,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @requires modules/exporting
      */
     destroyExport: function (
-        this: Highcharts.Chart,
+        this: Chart,
         e?: Event
     ): void {
-        var chart: Highcharts.Chart = e ? (e.target as any) : this,
+        var chart: Chart = e ? (e.target as any) : this,
             exportSVGElements = chart.exportSVGElements,
             exportDivElements = chart.exportDivElements,
             exportEvents = chart.exportEvents,
@@ -2272,7 +2282,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             ): void {
 
                 // Remove the event handler
-                H.clearTimeout(elem.hideTimer as any); // #5427
+                U.clearTimeout(elem.hideTimer as any); // #5427
                 removeEvent(elem, 'mouseleave');
 
                 // Remove inline events
@@ -2414,7 +2424,7 @@ Chart.prototype.inlineStyles = function (): void {
          *        Style property name
          * @return {void}
          */
-        function filterStyles(val: string, prop: string): void {
+        function filterStyles(val: (string|number|boolean|undefined), prop: string): void {
 
             // Check against whitelist & blacklist
             blacklisted = whitelisted = false;
@@ -2450,8 +2460,13 @@ Chart.prototype.inlineStyles = function (): void {
                     defaultStyles[node.nodeName][prop] !== val
                 ) {
                     // Attributes
-                    if ((inlineToAttributes as any).indexOf(prop) !== -1) {
-                        node.setAttribute(hyphenate(prop), val);
+                    if (
+                        !inlineToAttributes ||
+                        inlineToAttributes.indexOf(prop) !== -1
+                    ) {
+                        if (val) {
+                            node.setAttribute(hyphenate(prop), val);
+                        }
                     // Styles
                     } else {
                         cssText += hyphenate(prop) + ':' + val + ';';
@@ -2549,14 +2564,14 @@ symbols.menu = function (
     y: number,
     width: number,
     height: number
-): Highcharts.SVGPathArray {
-    var arr: Highcharts.SVGPathArray = [
-        'M', x, y + 2.5,
-        'L', x + width, y + 2.5,
-        'M', x, y + height / 2 + 0.5,
-        'L', x + width, y + height / 2 + 0.5,
-        'M', x, y + height - 1.5,
-        'L', x + width, y + height - 1.5
+): SVGPath {
+    var arr: SVGPath = [
+        ['M', x, y + 2.5],
+        ['L', x + width, y + 2.5],
+        ['M', x, y + height / 2 + 0.5],
+        ['L', x + width, y + height / 2 + 0.5],
+        ['M', x, y + height - 1.5],
+        ['L', x + width, y + height - 1.5]
     ];
 
     return arr;
@@ -2567,8 +2582,8 @@ symbols.menuball = function (
     y: number,
     width: number,
     height: number
-): Array<Highcharts.SVGElement> {
-    var path: Array<Highcharts.SVGElement> = [],
+): SVGPath {
+    var path: SVGPath = [],
         h = (height / 3) - 2;
 
     path = path.concat(
@@ -2675,7 +2690,7 @@ addEvent(Chart, 'init', function (): void {
 
 /* eslint-enable no-invalid-this */
 
-Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
+Chart.prototype.callbacks.push(function (chart: Chart): void {
 
     chart.renderExporting();
 

@@ -87,6 +87,7 @@ declare global {
             seriesTypeDescriptions: (
                 LangAccessibilitySeriesTypeDescriptionsOptions
             );
+            sonification: LangAccessibilitySonificationOptions;
             svgContainerLabel: string;
             svgContainerTitle: string;
             table: LangAccessibilityTableOptions;
@@ -98,14 +99,22 @@ declare global {
             maxInputLabel: string;
             minInputLabel: string;
         }
+        interface LangAccessibilityAnnotationOptions {
+            heading: string;
+            descriptionSinglePoint: string;
+            descriptionMultiplePoints: string;
+            descriptionNoPoints: string;
+        }
         interface LangAccessibilityScreenReaderSectionOptions {
             afterRegionLabel: string;
+            annotations: LangAccessibilityAnnotationOptions;
             beforeRegionLabel: string;
             endOfChartMarker: string;
         }
         interface LangAccessibilitySeriesOptions {
             description: string;
             nullPointValue: string;
+            pointAnnotationsDescription: string;
             summary: LangAccessibilitySeriesSummaryOptions;
             xAxisDescription: string;
             yAxisDescription: string;
@@ -146,6 +155,10 @@ declare global {
             funnel: string;
             pyramid: string;
             waterfall: string;
+        }
+        interface LangAccessibilitySonificationOptions {
+            playAsSoundButtonText: string;
+            playAsSoundClickAnnouncement: string;
         }
         interface LangAccessibilityTableOptions {
             tableSummary: string;
@@ -229,11 +242,34 @@ var langOptions: Highcharts.LangOptions = {
             afterRegionLabel: '',
 
             /**
+             * Language options for annotation descriptions.
+             *
+             * @since 8.0.1
+             */
+            annotations: {
+                heading: 'Chart annotations summary',
+                descriptionSinglePoint: '{annotationText}. Related to {annotationPoint}',
+                descriptionMultiplePoints: '{annotationText}. Related to {annotationPoint}' +
+                    '{ Also related to, #each(additionalAnnotationPoints)}',
+                descriptionNoPoints: '{annotationText}'
+            },
+
+            /**
              * Label for the end of the chart. Announced by screen readers.
              *
              * @since 8.0.0
              */
             endOfChartMarker: 'End of interactive chart.'
+        },
+
+        /**
+         * Language options for sonification.
+         *
+         * @since 8.0.1
+         */
+        sonification: {
+            playAsSoundButtonText: 'Play as sound, {chartTitle}',
+            playAsSoundClickAnnouncement: 'Play'
         },
 
         /**
@@ -274,7 +310,7 @@ var langOptions: Highcharts.LangOptions = {
          * @since 8.0.0
          */
         table: {
-            viewAsDataTableButtonText: 'View as data table. {chartTitle}',
+            viewAsDataTableButtonText: 'View as data table, {chartTitle}',
             tableSummary: 'Table representation of chart.'
         },
 
@@ -449,8 +485,8 @@ var langOptions: Highcharts.LangOptions = {
             }, /* eslint-enable max-len */
 
             /**
-             * User supplied description text. This is added after the main
-             * summary if present.
+             * User supplied description text. This is added in the point
+             * comment description by default if present.
              *
              * @since 6.0.6
              */
@@ -477,8 +513,15 @@ var langOptions: Highcharts.LangOptions = {
              *
              * @since 8.0.0
              */
-            nullPointValue: 'No value'
+            nullPointValue: 'No value',
 
+            /**
+             * Description for annotations on a point, as it is made available
+             * to assistive technology.
+             *
+             * @since 8.0.1
+             */
+            pointAnnotationsDescription: '{Annotation: #each(annotations). }'
         }
     }
 };

@@ -4,6 +4,14 @@
  *
  * */
 
+import type SVGPath from '../parts/SVGPath';
+import geometry from './geometry.js';
+const {
+    getAngleBetweenPoints,
+    getCenterOfPoints,
+    getDistanceBetweenPoints
+} = geometry;
+
 /**
  * Internal types
  * @private
@@ -15,7 +23,7 @@ declare global {
         }
         interface GeometryIntersectionObject {
             center: PositionObject;
-            d: Array<SVGPathArray>;
+            d: SVGPath;
         }
         interface GeometryObject extends PositionObject {
             angle?: number;
@@ -25,12 +33,6 @@ declare global {
     }
 }
 
-import geometry from './geometry.js';
-const {
-    getAngleBetweenPoints,
-    getCenterOfPoints,
-    getDistanceBetweenPoints
-} = geometry;
 
 /**
  * @private
@@ -336,7 +338,7 @@ function getAreaOfIntersectionBetweenCircles(
             });
 
         const startPoint = intersectionPoints[intersectionPoints.length - 1];
-        const arcs: Array<Highcharts.SVGPathArray> = intersectionPoints
+        const arcs: SVGPath = intersectionPoints
             .reduce(function (
                 data,
                 p1: Highcharts.GeometryObject
@@ -402,7 +404,7 @@ function getAreaOfIntersectionBetweenCircles(
                 return data;
             }, {
                 startPoint: startPoint,
-                arcs: [] as Array<Highcharts.SVGPathArray>
+                arcs: [] as SVGPath
             }).arcs;
 
         if (arcs.length === 0) {

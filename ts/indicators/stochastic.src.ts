@@ -63,13 +63,16 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
+const {
+    isArray,
+    merge,
+    seriesType
+} = U;
 
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var merge = H.merge,
-    SMA = H.seriesTypes.sma,
+var SMA = H.seriesTypes.sma,
     getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
 /**
@@ -81,7 +84,7 @@ var merge = H.merge,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.StochasticIndicator>(
+seriesType<Highcharts.StochasticIndicator>(
     'stochastic',
     'sma',
     /**
@@ -149,7 +152,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
     /**
      * @lends Highcharts.Series#
      */
-    H.merge(multipleLinesMixin, {
+    merge(multipleLinesMixin, {
         nameComponents: ['periods'],
         nameBase: 'Stochastic',
         pointArrayMap: ['y', 'smoothed'],
@@ -215,7 +218,7 @@ H.seriesType<Highcharts.StochasticIndicator>(
                 slicedY = yVal.slice(i - periodK + 1, i + 1);
 
                 // Calculate %K
-                extremes = getArrayExtremes(slicedY, low, high);
+                extremes = getArrayExtremes(slicedY, low as any, high as any);
                 LL = extremes[0]; // Lowest low in %K periods
                 CL = yVal[i][close] - LL;
                 HL = extremes[1] - LL;

@@ -61,11 +61,13 @@
 
 'use strict';
 
-import H from '../../../parts/Globals.js';
-var error = H.error;
-
+import Axis from '../../../parts/Axis.js';
+import Chart from '../../../parts/Chart.js';
 import U from '../../../parts/Utilities.js';
-var pick = U.pick;
+const {
+    error,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -87,26 +89,6 @@ declare global {
 }
 
 /* eslint-disable valid-jsdoc */
-
-/**
- * Warn user that a deprecated option was used.
- * @private
- * @param {Highcharts.Chart} chart
- * @param {string} oldOption
- * @param {string} newOption
- * @return {void}
- */
-function warn(
-    chart: Highcharts.Chart,
-    oldOption: string,
-    newOption: string
-): void {
-    error(
-        'Highcharts: Deprecated option ' + oldOption +
-        ' used. This will be removed from future versions of Highcharts. Use ' +
-        newOption + ' instead.', false, chart
-    );
-}
 
 /**
  * Set a new option on a root prop, where the option is defined as an array of
@@ -137,7 +119,7 @@ function traverseSetOption<T>(
  * between, we can use this generic function for the copy and warn logic.
  */
 function deprecateFromOptionsMap(
-    chart: Highcharts.Chart,
+    chart: Chart,
     rootOldAsArray: Array<string>,
     rootNewAsArray: Array<string>,
     mapToNewOptions: Highcharts.Dictionary<Array<string>>
@@ -168,11 +150,14 @@ function deprecateFromOptionsMap(
                 mapToNewOptions[oldOptionKey],
                 val
             );
-            warn(
+            error(
+                32,
+                false,
                 chart,
-                rootOldAsArray.join('.') + '.' + oldOptionKey,
-                rootNewAsArray.join('.') + '.' +
-                mapToNewOptions[oldOptionKey].join('.')
+                {
+                    [`${rootOldAsArray.join('.')}.${oldOptionKey}`]:
+                        `${rootNewAsArray.join('.')}.${mapToNewOptions[oldOptionKey].join('.')}`
+                }
             );
         }
     });
@@ -181,7 +166,7 @@ function deprecateFromOptionsMap(
 /**
  * @private
  */
-function copyDeprecatedChartOptions(chart: Highcharts.Chart): void {
+function copyDeprecatedChartOptions(chart: Chart): void {
     var chartOptions = chart.options.chart || {},
         a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (
@@ -189,7 +174,7 @@ function copyDeprecatedChartOptions(chart: Highcharts.Chart): void {
     ): void {
         if ((chartOptions as any)[prop]) {
             (a11yOptions as any)[prop] = (chartOptions as any)[prop];
-            warn(chart, 'chart.' + prop, 'accessibility.' + prop);
+            error(32, false, chart, { [`chart.${prop}`]: `accessibility.${prop}` });
         }
     });
 }
@@ -197,13 +182,13 @@ function copyDeprecatedChartOptions(chart: Highcharts.Chart): void {
 /**
  * @private
  */
-function copyDeprecatedAxisOptions(chart: Highcharts.Chart): void {
-    chart.axes.forEach(function (axis: Highcharts.Axis): void {
+function copyDeprecatedAxisOptions(chart: Chart): void {
+    chart.axes.forEach(function (axis: Axis): void {
         var opts = axis.options;
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            warn(chart, 'axis.description', 'axis.accessibility.description');
+            error(32, false, chart, { 'axis.description': 'axis.accessibility.description' });
         }
     });
 }
@@ -211,7 +196,7 @@ function copyDeprecatedAxisOptions(chart: Highcharts.Chart): void {
 /**
  * @private
  */
-function copyDeprecatedSeriesOptions(chart: Highcharts.Chart): void {
+function copyDeprecatedSeriesOptions(chart: Chart): void {
     // Map of deprecated series options. New options are defined as
     // arrays of paths under series.options.
     var oldToNewSeriesOptions = {
@@ -240,10 +225,11 @@ function copyDeprecatedSeriesOptions(chart: Highcharts.Chart): void {
                     oldOption === 'skipKeyboardNavigation' ?
                         !optionVal : optionVal
                 );
-                warn(
+                error(
+                    32,
+                    false,
                     chart,
-                    'series.' + oldOption, 'series.' +
-                    (oldToNewSeriesOptions as any)[oldOption].join('.')
+                    { [`series.${oldOption}`]: `series.${(oldToNewSeriesOptions as any)[oldOption].join('.')}` }
                 );
             }
         });
@@ -254,7 +240,7 @@ function copyDeprecatedSeriesOptions(chart: Highcharts.Chart): void {
  * @private
  */
 function copyDeprecatedTopLevelAccessibilityOptions(
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     deprecateFromOptionsMap(
         chart,
@@ -285,7 +271,7 @@ function copyDeprecatedTopLevelAccessibilityOptions(
  * @private
  */
 function copyDeprecatedKeyboardNavigationOptions(
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     deprecateFromOptionsMap(
         chart,
@@ -301,7 +287,7 @@ function copyDeprecatedKeyboardNavigationOptions(
 /**
  * @private
  */
-function copyDeprecatedLangOptions(chart: Highcharts.Chart): void {
+function copyDeprecatedLangOptions(chart: Chart): void {
     deprecateFromOptionsMap(
         chart,
         ['lang', 'accessibility'],
@@ -331,7 +317,7 @@ function copyDeprecatedLangOptions(chart: Highcharts.Chart): void {
  *
  * @private
  */
-function copyDeprecatedOptions(chart: Highcharts.Chart): void {
+function copyDeprecatedOptions(chart: Chart): void {
     copyDeprecatedChartOptions(chart);
     copyDeprecatedAxisOptions(chart);
     if (chart.series) {

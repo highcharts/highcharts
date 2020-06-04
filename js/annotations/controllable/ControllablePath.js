@@ -4,11 +4,11 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
-import U from './../../parts/Utilities.js';
-var extend = U.extend;
 import controllableMixin from './controllableMixin.js';
+import H from './../../parts/Globals.js';
 import markerMixin from './markerMixin.js';
+import U from './../../parts/Utilities.js';
+var extend = U.extend, merge = U.merge;
 // See TRACKER_FILL in highcharts.src.js
 var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
 /* eslint-disable no-invalid-this, valid-jsdoc */
@@ -47,7 +47,7 @@ ControllablePath.attrsMap = {
     fill: 'fill',
     zIndex: 'zIndex'
 };
-H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts.AnnotationControllablePath# */ {
+merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highcharts.AnnotationControllablePath# */ {
     /**
      * @type 'path'
      */
@@ -60,29 +60,30 @@ H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highchar
      * A path's d attribute.
      */
     toD: function () {
-        var d = this.options.d;
-        if (d) {
-            return typeof d === 'function' ?
-                d.call(this) :
-                d;
+        var dOption = this.options.d;
+        if (dOption) {
+            return typeof dOption === 'function' ?
+                dOption.call(this) :
+                dOption;
         }
-        var points = this.points, len = points.length, showPath = len, point = points[0], position = showPath && this.anchor(point).absolutePosition, pointIndex = 0, dIndex = 2, command;
-        d = (position && ['M', position.x, position.y]);
-        while (++pointIndex < len && showPath) {
-            point = points[pointIndex];
-            command = point.command || 'L';
-            position = this.anchor(point).absolutePosition;
-            if (command === 'Z') {
-                d[++dIndex] = command;
-            }
-            else {
-                if (command !== points[pointIndex - 1].command) {
-                    d[++dIndex] = command;
+        var points = this.points, len = points.length, showPath = len, point = points[0], position = showPath && this.anchor(point).absolutePosition, pointIndex = 0, command, d = [];
+        if (position) {
+            d.push(['M', position.x, position.y]);
+            while (++pointIndex < len && showPath) {
+                point = points[pointIndex];
+                command = point.command || 'L';
+                position = this.anchor(point).absolutePosition;
+                if (command === 'M') {
+                    d.push([command, position.x, position.y]);
                 }
-                d[++dIndex] = position.x;
-                d[++dIndex] = position.y;
+                else if (command === 'L') {
+                    d.push([command, position.x, position.y]);
+                }
+                else if (command === 'Z') {
+                    d.push([command]);
+                }
+                showPath = point.series.visible;
             }
-            showPath = point.series.visible;
         }
         return showPath ?
             this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
@@ -94,14 +95,14 @@ H.merge(true, ControllablePath.prototype, controllableMixin, /** @lends Highchar
     render: function (parent) {
         var options = this.options, attrs = this.attrsFromOptions(options);
         this.graphic = this.annotation.chart.renderer
-            .path(['M', 0, 0])
+            .path([['M', 0, 0]])
             .attr(attrs)
             .add(parent);
         if (options.className) {
             this.graphic.addClass(options.className);
         }
         this.tracker = this.annotation.chart.renderer
-            .path(['M', 0, 0])
+            .path([['M', 0, 0]])
             .addClass('highcharts-tracker-line')
             .attr({
             zIndex: 2

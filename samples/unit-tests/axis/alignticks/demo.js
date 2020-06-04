@@ -31,37 +31,59 @@ QUnit.test('Align ticks on opposite axis (#150)', function (assert) {
 
     var chart = Highcharts.chart('container', {
 
-        chart: {
-            height: 200,
-            width: 400
-        },
+            chart: {
+                height: 200,
+                width: 400
+            },
 
-        title: {
-            text: ''
-        },
+            title: {
+                text: ''
+            },
 
-        series: [{
-            yAxis: 0,
-            data: [1, 2]
-        }, {
-            yAxis: 1,
-            data: [1, 2]
-        }],
+            series: [{
+                yAxis: 0,
+                data: [1, 2]
+            }, {
+                yAxis: 1,
+                data: [1, 2]
+            }],
 
-        yAxis: [{
-            opposite: true
-        }, {
-            min: -100,
-            max: 100
-        }]
-    });
+            yAxis: [{
+                opposite: true,
+                labels: {
+                    rotation: 270
+                }
+            }, {
+                min: -100,
+                max: 100,
+                labels: {
+                    rotation: 270
+                }
+            }]
+        }),
+        rightYAxis = chart.yAxis[0],
+        leftYAxis = chart.yAxis[1];
 
-    var gridNodes1 = chart.yAxis[0].gridGroup.element.childNodes;
-    var gridNodes2 = chart.yAxis[1].gridGroup.element.childNodes;
+    var gridNodes1 = leftYAxis.gridGroup.element.childNodes;
+    var gridNodes2 = rightYAxis.gridGroup.element.childNodes;
 
     assert.equal(
         gridNodes1[gridNodes1.length - 1].getAttribute('d'),
         gridNodes2[gridNodes2.length - 1].getAttribute('d'),
-        'Ticks are not aligned'
+        'Ticks should be aligned.'
+    );
+
+    assert.strictEqual(
+        leftYAxis.ticks[leftYAxis.tickPositions[1]].label.attr('text-anchor'),
+        'middle',
+        `Second label should be centered over the gridline -
+            left yAxis (#13204).`
+    );
+
+    assert.strictEqual(
+        rightYAxis.ticks[rightYAxis.tickPositions[1]].label.attr('text-anchor'),
+        'middle',
+        `Second label should be centered over the gridline -
+            right yAxis (#13204).`
     );
 });

@@ -5,7 +5,16 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
+
+import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    merge,
+    objectEach,
+    uniqueKey
+} = U;
 
 /**
  * Internal types.
@@ -30,16 +39,8 @@ declare global {
     }
 }
 
-
-import U from './../../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    objectEach
-} = U;
-
-import './../../parts/Chart.js';
-import './../../parts/SvgRenderer.js';
+import '../../parts/Chart.js';
+import '../../parts/SVGRenderer.js';
 
 /**
  * Options for configuring markers for annotations.
@@ -130,10 +131,10 @@ H.SVGRenderer.prototype.addMarker = function (
     options.children = markerOptions.children.map(function (
         child: Highcharts.SVGDefinitionObject
     ): Highcharts.SVGDefinitionObject {
-        return H.merge(attrs, child);
+        return merge(attrs, child);
     });
 
-    var marker = this.definition(H.merge(true, {
+    var marker = this.definition(merge(true, {
         markerWidth: 20,
         markerHeight: 20,
         refX: 0,
@@ -203,9 +204,9 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                     if (predefinedMarker) {
                         marker = item[markerType] = chart.renderer
                             .addMarker(
-                                (itemOptions.id || H.uniqueKey()) + '-' +
+                                (itemOptions.id || uniqueKey()) + '-' +
                                 predefinedMarker.id,
-                                H.merge(predefinedMarker, { color: color })
+                                merge(predefinedMarker, { color: color })
                             );
 
                         item.attr(markerType, marker.attr('id') as any);
@@ -218,9 +219,9 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
 };
 
 addEvent(H.Chart as any, 'afterGetContainer', function (this: Highcharts.AnnotationChart): void {
-    this.options.defs = H.merge(defaultMarkers, this.options.defs || {});
+    this.options.defs = merge(defaultMarkers, this.options.defs || {});
 
-    objectEach(this.options.defs, function (def: Highcharts.SVGDefinitionObject): void {
+    objectEach(this.options.defs, function (def): void {
         if (def.tagName === 'marker' && def.render !== false) {
             this.renderer.addMarker(def.id as any, def);
         }

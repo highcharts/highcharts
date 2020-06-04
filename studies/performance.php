@@ -8,7 +8,7 @@ $chartCount = $_GET ? $_GET['chartCount'] : 16;
 $pointsPerSeries = $_GET ? $_GET['pointsPerSeries'] : 16;
 $seriesPerChart = $_GET ? $_GET['seriesPerChart'] : 2;
 $chartWidth = $_GET ? $_GET['chartWidth'] : 250;
-$libSource = $_GET ? $_GET['libSource'] : 'http://code.highcharts.com/highcharts.js';
+$libSource = $_GET ? $_GET['libSource'] : 'https://code.highcharts.com/highcharts.js';
 
 
 $seriesTypeOptions = array(
@@ -26,11 +26,11 @@ $seriesCountOptions = array(1, 2, 4, 8, 16, 32);
 $pointCountOptions = array(2, 4, 8, 16, 32, 64, 128, 500, 1000, 2000, 4000);
 $chartWidthOptions = array(1000, 500, 250);
 $libSourceOptions = array(
-	'http://code.highcharts.com/2.2/highcharts.js',
-	'http://code.highcharts.com/2.3/highcharts.js',
-	'http://code.highcharts.com/highcharts.js',
-	'http://github.highcharts.com/master/highcharts.js',
-	'http://codev.highcharts.com/highcharts.js'
+	'https://code.highcharts.com/2.2/highcharts.js',
+	'https://code.highcharts.com/2.3/highcharts.js',
+	'https://code.highcharts.com/highcharts.js',
+	'https://github.highcharts.com/master/highcharts.js',
+	'https://codev.highcharts.com/highcharts.js'
 );
 
 
@@ -44,7 +44,7 @@ function randomData() {
 	return $arr;
 }
 
-?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+?><!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "https://www.w3.org/TR/html4/strict.dtd">
 <html>
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -52,7 +52,7 @@ function randomData() {
 		
 		
 		<!-- 1. Add these JavaScript inclusions in the head of your page -->
-		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 		<script type="text/javascript" src="<?php echo $libSource ?>"></script>
 		
 		<script type="text/javascript">

@@ -10,10 +10,8 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
-var clamp = U.clamp;
-var pick = H.pick;
+var clamp = U.clamp, error = U.error, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * A static shader mimicing axis translation functions found in parts/Axis
@@ -228,7 +226,7 @@ function GLShader(gl) {
      */
     function handleErrors() {
         if (errors.length) {
-            H.error('[highcharts boost] shader error - ' + errors.join('\n'));
+            error('[highcharts boost] shader error - ' + errors.join('\n'));
         }
     }
     /**

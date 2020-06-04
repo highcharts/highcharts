@@ -29,6 +29,8 @@ document.body.appendChild(demoHTML);
 
 var currentTests = [];
 
+Highcharts.useSerialIds(true);
+
 // Disable animation over all.
 Highcharts.setOptions({
     chart: {
@@ -54,6 +56,12 @@ Highcharts.setOptions({
                 normal: {
                     animation: false
                 }
+            },
+            label: {
+                // Disable it to avoid diff. Consider enabling it in the future,
+                // then it can be enabled in the clean-up commit right after a
+                // release.
+                enabled: false
             }
         },
         // We cannot use it in plotOptions.series because treemap

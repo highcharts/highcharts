@@ -13,6 +13,9 @@
  * */
 
 'use strict';
+
+import type Chart from '../parts/Chart';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -84,30 +87,31 @@ declare global {
             funnel3dPath(shapeArgs: SVGAttributes): Funnel3dPathsObject;
         }
         interface Funnel3dPathsObject extends SVGPath3dObject {
-            frontUpper: SVGPathArray;
-            backUpper: SVGPathArray;
-            rightUpper: SVGPathArray;
+            frontUpper: SVGPath;
+            backUpper: SVGPath;
+            rightUpper: SVGPath;
         }
     }
 }
 
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
+    error,
     extend,
+    merge,
     pick,
-    relativeLength
+    relativeLength,
+    seriesType
 } = U;
 
 import '../parts/ColumnSeries.js';
-import '../parts/SvgRenderer.js';
+import '../parts/SVGRenderer.js';
 
 var charts = H.charts,
-    color = H.color,
-    error = H.error,
-    merge = H.merge,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes,
-    // Use H.Renderer instead of H.SVGRenderer for VML support.
+    // Use H.Renderer instead of SVGRenderer for VML support.
     RendererProto = H.Renderer.prototype,
     //
     cuboidPath = RendererProto.cuboidPath,
@@ -417,7 +421,7 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
             this: Highcharts.Funnel3dSeries,
             point: Highcharts.Funnel3dPoint,
             dataLabel: Highcharts.SVGElement,
-            options: Highcharts.DataLabelsOptionsObject
+            options: Highcharts.DataLabelsOptions
         ): void {
             var series = this,
                 dlBoxRaw = point.dlBoxRaw,
@@ -558,7 +562,7 @@ seriesType<Highcharts.Funnel3dSeries>('funnel3d', 'column',
  * @apioption series.funnel3d.data.gradientForSides
  */
 
-funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
+funnel3dMethods = merge(RendererProto.elements3d.cuboid, {
     parts: [
         'top', 'bottom',
         'frontUpper', 'backUpper',
@@ -582,7 +586,7 @@ funnel3dMethods = H.merge(RendererProto.elements3d.cuboid, {
     ): Highcharts.SVGElement {
         var funnel3d = this,
             parts = funnel3d.parts,
-            chart: Highcharts.Chart =
+            chart: Chart =
                 H.charts[funnel3d.renderer.chartIndex] as any,
             filterId = 'group-opacity-' + opacity + '-' + chart.index;
 
@@ -890,14 +894,14 @@ RendererProto.funnel3dPath = function (
     }
 
     var renderer = this,
-        chart: Highcharts.Chart = charts[renderer.chartIndex] as any,
+        chart: Chart = charts[renderer.chartIndex] as any,
         // adjust angles for visible edges
         // based on alpha, selected through visual tests
         alphaCorrection = shapeArgs.alphaCorrection = 90 -
             Math.abs(((chart.options.chart as any).options3d.alpha % 180) - 90),
 
         // set zIndexes of parts based on cubiod logic, for consistency
-        cuboidData = cuboidPath.call(renderer, H.merge(shapeArgs, {
+        cuboidData = cuboidPath.call(renderer, merge(shapeArgs, {
             depth: shapeArgs.width,
             width: (shapeArgs.width + shapeArgs.bottom.width) / 2
         })),
@@ -907,14 +911,14 @@ RendererProto.funnel3dPath = function (
         //
         top = renderer.getCylinderEnd(
             chart,
-            H.merge(shapeArgs, {
+            merge(shapeArgs, {
                 x: shapeArgs.x - shapeArgs.width / 2,
                 z: shapeArgs.z - shapeArgs.width / 2,
                 alphaCorrection: alphaCorrection
             })
         ),
         bottomWidth = shapeArgs.bottom.width,
-        bottomArgs = H.merge<Highcharts.SVGAttributes>(shapeArgs, {
+        bottomArgs = merge<Highcharts.SVGAttributes>(shapeArgs, {
             width: bottomWidth,
             x: shapeArgs.x - bottomWidth / 2,
             z: shapeArgs.z - bottomWidth / 2,
@@ -933,7 +937,7 @@ RendererProto.funnel3dPath = function (
 
     if (hasMiddle) {
         middleWidth = shapeArgs.middle.width;
-        middleTopArgs = H.merge<Highcharts.SVGAttributes>(shapeArgs, {
+        middleTopArgs = merge<Highcharts.SVGAttributes>(shapeArgs, {
             y: shapeArgs.y + shapeArgs.middle.fraction * shapeArgs.height,
             width: middleWidth,
             x: shapeArgs.x - middleWidth / 2,
@@ -969,7 +973,7 @@ RendererProto.funnel3dPath = function (
     ret.rightUpper = renderer.getCylinderFront(
         renderer.getCylinderEnd(
             chart,
-            H.merge(shapeArgs, {
+            merge(shapeArgs, {
                 x: shapeArgs.x - shapeArgs.width / 2,
                 z: shapeArgs.z - shapeArgs.width / 2,
                 alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
@@ -978,7 +982,7 @@ RendererProto.funnel3dPath = function (
         ),
         renderer.getCylinderEnd(
             chart,
-            H.merge(middleTopArgs, {
+            merge(middleTopArgs, {
                 alphaCorrection: useAlphaCorrection ? -alphaCorrection : 0
             }),
             !hasMiddle
@@ -989,13 +993,13 @@ RendererProto.funnel3dPath = function (
         useAlphaCorrection = (Math.min(middleWidth, bottomWidth) /
             Math.max(middleWidth, bottomWidth)) !== 1;
 
-        H.merge(true, ret, {
+        merge(true, ret, {
             frontLower: renderer.getCylinderFront(middleBottom, bottom),
             backLower: renderer.getCylinderBack(middleBottom, bottom),
             rightLower: renderer.getCylinderFront(
                 renderer.getCylinderEnd(
                     chart,
-                    H.merge(bottomArgs, {
+                    merge(bottomArgs, {
                         alphaCorrection: useAlphaCorrection ?
                             -alphaCorrection : 0
                     }),
@@ -1003,7 +1007,7 @@ RendererProto.funnel3dPath = function (
                 ),
                 renderer.getCylinderEnd(
                     chart,
-                    H.merge(middleTopArgs, {
+                    merge(middleTopArgs, {
                         alphaCorrection: useAlphaCorrection ?
                             -alphaCorrection : 0
                     }),

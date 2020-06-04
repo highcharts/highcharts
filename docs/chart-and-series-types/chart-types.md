@@ -44,7 +44,7 @@ For more information on each chart type, see:
 *   [Treemap](https://highcharts.com/docs/chart-and-series-types/treemap)
 *   [Waterfall series](https://highcharts.com/docs/chart-and-series-types/waterfall-series)
 
-Highstock specific charts are:
+Highcharts Stock specific charts are:
 
 *   [Candlestick chart](https://highcharts.com/docs/chart-and-series-types/candlestick-chart)
 *   [OHLC chart](https://highcharts.com/docs/chart-and-series-types/ohlc-chart)

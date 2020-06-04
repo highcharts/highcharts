@@ -10,7 +10,35 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Axis from './Axis.js';
+import Chart from '../parts/Chart.js';
+import Color from './Color.js';
+const {
+    parse: color
+} = Color;
 import H from './Globals.js';
+import NavigatorAxis from './NavigatorAxis.js';
+import O from './Options.js';
+const { defaultOptions } = O;
+import Scrollbar from './Scrollbar.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    clamp,
+    correctFloat,
+    defined,
+    destroyObjectProperties,
+    erase,
+    extend,
+    find,
+    isArray,
+    isNumber,
+    merge,
+    pick,
+    removeEvent,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -18,17 +46,7 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Axis {
-            fake?: boolean;
-            previousZoom?: [(null|number), (null|number)];
-            toFixedRange(
-                pxMin?: number,
-                pxMax?: number,
-                fixedMin?: number,
-                fixedMax?: number
-            ): RangeObject;
-        }
-        interface Chart {
+        interface ChartLike {
             navigator?: Navigator;
             scrollbar?: Scrollbar;
             scroller?: Navigator;
@@ -66,15 +84,6 @@ declare global {
         interface Series {
             baseSeries?: Series;
             navigatorSeries?: Series;
-        }
-        interface SymbolDictionary {
-            'navigator-handle': (
-                x: number,
-                y: number,
-                w: number,
-                h: number,
-                options: NavigatorHandlesOptions
-            ) => SVGPathArray;
         }
         interface XAxisOptions {
             maxRange?: number;
@@ -126,8 +135,8 @@ declare global {
             public stickToMin?: boolean;
             public top: number;
             public unbindRedraw?: Function;
-            public xAxis: Axis;
-            public yAxis: Axis;
+            public xAxis: NavigatorAxis;
+            public yAxis: NavigatorAxis;
             public zoomedMax: number;
             public zoomedMin: number;
             public addBaseSeriesEvents(): void;
@@ -186,37 +195,10 @@ declare global {
     }
 }
 
-import U from './Utilities.js';
-const {
-    clamp,
-    correctFloat,
-    defined,
-    destroyObjectProperties,
-    erase,
-    extend,
-    isArray,
-    isNumber,
-    pick,
-    removeEvent,
-    splat
-} = U;
-
-import './Color.js';
-import './Axis.js';
-import './Chart.js';
 import './Series.js';
-import './Options.js';
-import './Scrollbar.js';
 
-var addEvent = H.addEvent,
-    Axis = H.Axis,
-    Chart = H.Chart,
-    color = H.color,
-    defaultOptions = H.defaultOptions,
-    hasTouch = H.hasTouch,
+var hasTouch = H.hasTouch,
     isTouchDevice = H.isTouchDevice,
-    merge = H.merge,
-    Scrollbar = H.Scrollbar,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
 
@@ -769,89 +751,23 @@ H.Renderer.prototype.symbols['navigator-handle'] = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.NavigatorHandlesOptions
-): Highcharts.SVGPathArray {
-    var halfWidth = (options.width as any) / 2,
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
+    var halfWidth = (options && options.width || 0) / 2,
         markerPosition = Math.round(halfWidth / 3) + 0.5,
-        height = options.height as any;
+        height = options && options.height || 0;
 
     return [
-        'M',
-        -halfWidth - 1, 0.5,
-        'L',
-        halfWidth, 0.5,
-        'L',
-        halfWidth, height + 0.5,
-        'L',
-        -halfWidth - 1, height + 0.5,
-        'L',
-        -halfWidth - 1, 0.5,
-        'M',
-        -markerPosition, 4,
-        'L',
-        -markerPosition, height - 3,
-        'M',
-        markerPosition - 1, 4,
-        'L',
-        markerPosition - 1, height - 3
+        ['M', -halfWidth - 1, 0.5],
+        ['L', halfWidth, 0.5],
+        ['L', halfWidth, height + 0.5],
+        ['L', -halfWidth - 1, height + 0.5],
+        ['L', -halfWidth - 1, 0.5],
+        ['M', -markerPosition, 4],
+        ['L', -markerPosition, height - 3],
+        ['M', markerPosition - 1, 4],
+        ['L', markerPosition - 1, height - 3]
     ];
-};
-
-/**
- * Add logic to normalize the zoomed range in order to preserve the pressed
- * state of range selector buttons
- *
- * @private
- * @function Highcharts.Axis#toFixedRange
- * @param {number} [pxMin]
- * @param {number} [pxMax]
- * @param {number} [fixedMin]
- * @param {number} [fixedMax]
- * @return {*}
- */
-Axis.prototype.toFixedRange = function (
-    this: Highcharts.Axis,
-    pxMin?: number,
-    pxMax?: number,
-    fixedMin?: number,
-    fixedMax?: number
-): Highcharts.RangeObject {
-    var fixedRange = this.chart && this.chart.fixedRange,
-        halfPointRange = (this.pointRange || 0) / 2,
-        newMin = pick<number|undefined, number>(
-            fixedMin, this.translate(pxMin as any, true, !this.horiz) as any
-        ),
-        newMax = pick<number|undefined, number>(
-            fixedMax, this.translate(pxMax as any, true, !this.horiz) as any
-        ),
-        changeRatio = fixedRange && (newMax - newMin) / fixedRange;
-
-    // Add/remove half point range to/from the extremes (#1172)
-    if (!defined(fixedMin)) {
-        newMin = correctFloat(newMin + halfPointRange);
-    }
-    if (!defined(fixedMax)) {
-        newMax = correctFloat(newMax - halfPointRange);
-    }
-
-    // If the difference between the fixed range and the actual requested range
-    // is too great, the user is dragging across an ordinal gap, and we need to
-    // release the range selector button.
-    if ((changeRatio as any) > 0.7 && (changeRatio as any) < 1.3) {
-        if (fixedMax) {
-            newMin = newMax - (fixedRange as any);
-        } else {
-            newMax = newMin + (fixedRange as any);
-        }
-    }
-    if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = void 0 as any;
-    }
-
-    return {
-        min: newMin,
-        max: newMax
-    };
 };
 
 /**
@@ -864,11 +780,52 @@ Axis.prototype.toFixedRange = function (
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
-function Navigator(this: Highcharts.Navigator, chart: Highcharts.Chart): any {
-    this.init(chart);
-}
+class Navigator {
+    public constructor(chart: Chart) {
+        this.init(chart);
+    }
 
-Navigator.prototype = {
+    public baseSeries: Array<Highcharts.Series> = void 0 as any;
+    public chart: Chart = void 0 as any;
+    public dragOffset?: number;
+    public eventsToUnbind?: Array<Function>;
+    public fixedExtreme?: (null|number);
+    public fixedWidth?: number;
+    public grabbedCenter?: number;
+    public grabbedLeft?: boolean;
+    public grabbedRight?: boolean;
+    public handles: Array<Highcharts.SVGElement> = void 0 as any;
+    public hasDragged?: boolean;
+    public hasNavigatorData?: boolean;
+    public height: number = void 0 as any;
+    public left: number = void 0 as any;
+    public mouseMoveHandler?: Function ;
+    public mouseUpHandler?: Function;
+    public navigatorEnabled: boolean = void 0 as any;
+    public navigatorGroup: Highcharts.SVGElement = void 0 as any;
+    public navigatorOptions: Highcharts.NavigatorOptions = void 0 as any;
+    public navigatorSeries: Highcharts.Series = void 0 as any;
+    public navigatorSize: number = void 0 as any;
+    public opposite: boolean = void 0 as any;
+    public otherHandlePos?: number;
+    public outline: Highcharts.SVGElement = void 0 as any;
+    public outlineHeight: number = void 0 as any;
+    public range: number = void 0 as any;
+    public rendered: boolean = void 0 as any;
+    public reversedExtremes?: boolean;
+    public scrollbar?: Highcharts.Scrollbar;
+    public scrollbarEnabled?: boolean;
+    public scrollbarHeight?: number;
+    public scrollbarOptions?: Highcharts.ScrollbarOptions;
+    public series?: Array<Highcharts.Series>;
+    public shades: Array<Highcharts.SVGElement> = void 0 as any;
+    public size: number = void 0 as any;
+    public top: number = void 0 as any;
+    public unbindRedraw?: Function;
+    public xAxis: NavigatorAxis = void 0 as any;
+    public yAxis: NavigatorAxis = void 0 as any;
+    public zoomedMax: number = void 0 as any;
+    public zoomedMin: number = void 0 as any;
 
     /**
      * Draw one of the handles on the side of the zoomed range in the navigator
@@ -888,11 +845,10 @@ Navigator.prototype = {
      * @param {string} verb
      *        use 'animate' or 'attr'
      */
-    drawHandle: function (
-        this: Highcharts.Navigator,
+    public drawHandle(
         x: number,
         index: number,
-        inverted: boolean,
+        inverted: boolean | undefined,
         verb: string
     ): void {
         var navigator = this,
@@ -910,7 +866,7 @@ Navigator.prototype = {
                 navigator.top + navigator.height / 2 - height / 2 - 1
             )
         });
-    },
+    }
 
     /**
      * Render outline around the zoomed range
@@ -930,8 +886,7 @@ Navigator.prototype = {
      * @param {string} verb
      *        use 'animate' or 'attr'
      */
-    drawOutline: function (
-        this: Highcharts.Navigator,
+    public drawOutline(
         zoomedMin: number,
         zoomedMax: number,
         inverted: (boolean|undefined),
@@ -943,12 +898,12 @@ Navigator.prototype = {
             halfOutline = outlineWidth / 2,
             outlineCorrection = (outlineWidth % 2) / 2, // #5800
             outlineHeight = navigator.outlineHeight,
-            scrollbarHeight = navigator.scrollbarHeight,
+            scrollbarHeight = navigator.scrollbarHeight || 0,
             navigatorSize = navigator.size,
-            left = navigator.left - (scrollbarHeight as any),
+            left = navigator.left - scrollbarHeight,
             navigatorTop = navigator.top,
             verticalMin,
-            path;
+            path: SVGPath;
 
         if (inverted) {
             left -= halfOutline;
@@ -956,71 +911,43 @@ Navigator.prototype = {
             zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
 
             path = [
-                'M',
-                left + outlineHeight,
-                // top edge
-                navigatorTop - (scrollbarHeight as any) - outlineCorrection,
-                'L',
-                left + outlineHeight,
-                verticalMin, // top right of zoomed range
-                'L',
-                left,
-                verticalMin, // top left of z.r.
-                'L',
-                left,
-                zoomedMax, // bottom left of z.r.
-                'L',
-                left + outlineHeight,
-                zoomedMax, // bottom right of z.r.
-                'L',
-                left + outlineHeight,
-                // bottom edge
-                navigatorTop + navigatorSize + (scrollbarHeight as any)
-            ].concat(maskInside ? [
-                'M',
-                left + outlineHeight,
-                verticalMin - halfOutline, // upper left of zoomed range
-                'L',
-                left + outlineHeight,
-                zoomedMax + halfOutline // upper right of z.r.
-            ] : []);
+                ['M', left + outlineHeight, navigatorTop - scrollbarHeight - outlineCorrection],
+                ['L', left + outlineHeight, verticalMin], // top right of zoomed range
+                ['L', left, verticalMin], // top left of z.r.
+                ['L', left, zoomedMax], // bottom left of z.r.
+                ['L', left + outlineHeight, zoomedMax], // bottom right of z.r.
+                ['L', left + outlineHeight, navigatorTop + navigatorSize + scrollbarHeight]
+            ];
+            if (maskInside) {
+                path.push(
+                    ['M', left + outlineHeight, verticalMin - halfOutline], // upper left of zoomed range
+                    ['L', left + outlineHeight, zoomedMax + halfOutline] // upper right of z.r.
+                );
+            }
         } else {
-            zoomedMin += left + (scrollbarHeight as any) - outlineCorrection;
-            zoomedMax += left + (scrollbarHeight as any) - outlineCorrection;
+            zoomedMin += left + scrollbarHeight - outlineCorrection;
+            zoomedMax += left + scrollbarHeight - outlineCorrection;
             navigatorTop += halfOutline;
 
             path = [
-                'M',
-                left,
-                navigatorTop, // left
-                'L',
-                zoomedMin,
-                navigatorTop, // upper left of zoomed range
-                'L',
-                zoomedMin,
-                navigatorTop + outlineHeight, // lower left of z.r.
-                'L',
-                zoomedMax,
-                navigatorTop + outlineHeight, // lower right of z.r.
-                'L',
-                zoomedMax,
-                navigatorTop, // upper right of z.r.
-                'L',
-                left + navigatorSize + (scrollbarHeight as any) * 2,
-                navigatorTop // right
-            ].concat(maskInside ? [
-                'M',
-                zoomedMin - halfOutline,
-                navigatorTop, // upper left of zoomed range
-                'L',
-                zoomedMax + halfOutline,
-                navigatorTop // upper right of z.r.
-            ] : []);
+                ['M', left, navigatorTop], // left
+                ['L', zoomedMin, navigatorTop], // upper left of zoomed range
+                ['L', zoomedMin, navigatorTop + outlineHeight], // lower left of z.r.
+                ['L', zoomedMax, navigatorTop + outlineHeight], // lower right of z.r.
+                ['L', zoomedMax, navigatorTop], // upper right of z.r.
+                ['L', left + navigatorSize + scrollbarHeight * 2, navigatorTop] // right
+            ];
+            if (maskInside) {
+                path.push(
+                    ['M', zoomedMin - halfOutline, navigatorTop], // upper left of zoomed range
+                    ['L', zoomedMax + halfOutline, navigatorTop] // upper right of z.r.
+                );
+            }
         }
         navigator.outline[verb]({
             d: path
         });
-    },
+    }
 
     /**
      * Render outline around the zoomed range
@@ -1040,8 +967,7 @@ Navigator.prototype = {
      * @param {string} verb
      *        use 'animate' or 'attr'
      */
-    drawMasks: function (
-        this: Highcharts.Navigator,
+    public drawMasks(
         zoomedMin: number,
         zoomedMax: number,
         inverted: (boolean|undefined),
@@ -1088,7 +1014,7 @@ Navigator.prototype = {
                 height: height[i]
             });
         });
-    },
+    }
 
     /**
      * Generate DOM elements for a navigator:
@@ -1104,7 +1030,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#renderElements
      */
-    renderElements: function (this: Highcharts.Navigator): void {
+    public renderElements(): void {
         var navigator = this,
             navigatorOptions = navigator.navigatorOptions,
             maskInside = navigatorOptions.maskInside,
@@ -1192,7 +1118,7 @@ Navigator.prototype = {
                 }
             });
         }
-    },
+    }
 
     /**
      * Update navigator
@@ -1203,10 +1129,7 @@ Navigator.prototype = {
      * @param {Highcharts.NavigatorOptions} options
      *        Options to merge in when updating navigator
      */
-    update: function (
-        this: Highcharts.Navigator,
-        options: Highcharts.NavigatorOptions
-    ): void {
+    public update(options: Highcharts.NavigatorOptions): void {
         // Remove references to old navigator series in base series
         (this.series || []).forEach(function (series: Highcharts.Series): void {
             if (series.baseSeries) {
@@ -1219,7 +1142,7 @@ Navigator.prototype = {
 
         merge(true, chartOptions.navigator, (this as any).options, options);
         this.init(this.chart);
-    },
+    }
 
     /**
      * Render the navigator
@@ -1236,8 +1159,7 @@ Navigator.prototype = {
      *        Pixel value maximum
      * @return {void}
      */
-    render: function (
-        this: Highcharts.Navigator,
+    public render(
         min: number,
         max: number,
         pxMin?: number,
@@ -1253,7 +1175,7 @@ Navigator.prototype = {
             navigatorSize,
             xAxis = navigator.xAxis,
             pointRange = xAxis.pointRange || 0,
-            scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis,
+            scrollbarXAxis = xAxis.navigatorAxis.fake ? chart.xAxis[0] : xAxis,
             navigatorEnabled = navigator.navigatorEnabled,
             zoomedMin,
             zoomedMax,
@@ -1416,7 +1338,7 @@ Navigator.prototype = {
             );
         }
         navigator.rendered = true;
-    },
+    }
 
     /**
      * Set up the mouse and touch events for the navigator
@@ -1424,7 +1346,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#addMouseEvents
      */
-    addMouseEvents: function (this: Highcharts.Navigator): void {
+    public addMouseEvents(): void {
         var navigator = this,
             chart = navigator.chart,
             container = chart.container,
@@ -1480,7 +1402,7 @@ Navigator.prototype = {
                 )
             );
         }
-    },
+    }
 
     /**
      * Generate events for handles and masks
@@ -1495,8 +1417,7 @@ Navigator.prototype = {
      *         An array of functions to remove navigator functions from the
      *         events again.
      */
-    getPartsEvents: function (
-        this: Highcharts.Navigator,
+    public getPartsEvents(
         eventName: string
     ): Array<Function> {
         var navigator = this,
@@ -1519,7 +1440,7 @@ Navigator.prototype = {
             });
         });
         return events;
-    },
+    }
 
     /**
      * Mousedown on a shaded mask, either:
@@ -1537,8 +1458,7 @@ Navigator.prototype = {
      * @param {number} index
      *        Index of a mask in Navigator.shades array
      */
-    shadesMousedown: function (
-        this: Highcharts.Navigator,
+    public shadesMousedown(
         e: Highcharts.PointerEventObject,
         index: number
     ): void {
@@ -1587,7 +1507,7 @@ Navigator.prototype = {
             if (left !== zoomedMin) { // it has actually moved
                 navigator.fixedWidth = range; // #1370
 
-                ext = xAxis.toFixedRange(
+                ext = xAxis.navigatorAxis.toFixedRange(
                     left,
                     left + range,
                     fixedMin,
@@ -1604,7 +1524,7 @@ Navigator.prototype = {
                 }
             }
         }
-    },
+    }
 
     /**
      * Mousedown on a handle mask.
@@ -1618,8 +1538,7 @@ Navigator.prototype = {
      *        Index of a handle in Navigator.handles array
      * @return {void}
      */
-    handlesMousedown: function (
-        this: Highcharts.Navigator,
+    public handlesMousedown(
         e: Highcharts.PointerEventObject,
         index: number
     ): void {
@@ -1645,7 +1564,7 @@ Navigator.prototype = {
         }
 
         chart.fixedRange = null as any;
-    },
+    }
     /**
      * Mouse move event based on x/y mouse position.
      *
@@ -1655,10 +1574,7 @@ Navigator.prototype = {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event
      */
-    onMouseMove: function (
-        this: Highcharts.Navigator,
-        e: Highcharts.PointerEventObject
-    ): void {
+    public onMouseMove(e: Highcharts.PointerEventObject): void {
         var navigator = this,
             chart = navigator.chart,
             left = navigator.left,
@@ -1737,7 +1653,7 @@ Navigator.prototype = {
                 }, 0);
             }
         }
-    },
+    }
 
     /**
      * Mouse up event based on x/y mouse position.
@@ -1748,10 +1664,7 @@ Navigator.prototype = {
      *        Mouse event
      * @return {void}
      */
-    onMouseUp: function (
-        this: Highcharts.Navigator,
-        e: Highcharts.PointerEventObject
-    ): void {
+    public onMouseUp(e: Highcharts.PointerEventObject): void {
         var navigator = this,
             chart = navigator.chart,
             xAxis = navigator.xAxis,
@@ -1796,7 +1709,7 @@ Navigator.prototype = {
                     (unionExtremes as any).dataMin;
             }
 
-            ext = xAxis.toFixedRange(
+            ext = xAxis.navigatorAxis.toFixedRange(
                 navigator.zoomedMin,
                 navigator.zoomedMax,
                 fixedMin,
@@ -1849,7 +1762,7 @@ Navigator.prototype = {
                 navigator.drawHandle(zoomedMax, 1, inverted, verb);
             }
         }
-    },
+    }
 
     /**
      * Removes the event handlers attached previously with addEvents.
@@ -1858,7 +1771,7 @@ Navigator.prototype = {
      * @function Highcharts.Navigator#removeEvents
      * @return {void}
      */
-    removeEvents: function (this: Highcharts.Navigator): void {
+    public removeEvents(): void {
         if (this.eventsToUnbind) {
             this.eventsToUnbind.forEach(function (unbind: Function): void {
                 unbind();
@@ -1866,7 +1779,7 @@ Navigator.prototype = {
             this.eventsToUnbind = void 0;
         }
         this.removeBaseSeriesEvents();
-    },
+    }
 
     /**
      * Remove data events.
@@ -1875,7 +1788,7 @@ Navigator.prototype = {
      * @function Highcharts.Navigator#removeBaseSeriesEvents
      * @return {void}
      */
-    removeBaseSeriesEvents: function (this: Highcharts.Navigator): void {
+    public removeBaseSeriesEvents(): void {
         var baseSeries = this.baseSeries || [];
 
         if (this.navigatorEnabled && baseSeries[0]) {
@@ -1894,7 +1807,7 @@ Navigator.prototype = {
                 );
             }
         }
-    },
+    }
 
     /**
      * Initialize the Navigator object
@@ -1904,7 +1817,7 @@ Navigator.prototype = {
      *
      * @param {Highcharts.Chart} chart
      */
-    init: function (this: Highcharts.Navigator, chart: Highcharts.Chart): void {
+    public init(chart: Chart): void {
         var chartOptions = chart.options,
             navigatorOptions =
                 chartOptions.navigator as Highcharts.NavigatorOptions,
@@ -1970,7 +1883,7 @@ Navigator.prototype = {
             } : {
                 offsets: [0, -scrollbarHeight, 0, scrollbarHeight],
                 height: height
-            }));
+            })) as NavigatorAxis;
 
             navigator.yAxis = new Axis(chart, merge(
                 navigatorOptions.yAxis as Highcharts.YAxisOptions,
@@ -1986,7 +1899,7 @@ Navigator.prototype = {
                 } : {
                     height: height
                 }
-            ));
+            )) as NavigatorAxis;
 
             // If we have a base series, initialize the navigator series
             if (baseSeries || (navigatorOptions.series as any).data) {
@@ -2022,6 +1935,10 @@ Navigator.prototype = {
         // in case of scrollbar only, fake an x axis to get translation
         } else {
             navigator.xAxis = {
+                chart,
+                navigatorAxis: {
+                    fake: true
+                },
                 translate: function (value: number, reverse?: boolean): void {
                     var axis = chart.xAxis[0],
                         ext = axis.getExtremes(),
@@ -2043,15 +1960,24 @@ Navigator.prototype = {
                         // from value to pixel
                         scrollTrackWidth * (value - (min as any)) / valueRange;
                 },
-                toPixels: function (value: number): number {
+                toPixels: function (
+                    this: NavigatorAxis,
+                    value: number
+                ): number {
                     return this.translate(value) as any;
                 },
-                toValue: function (value: number): number {
+                toValue: function (
+                    this: NavigatorAxis,
+                    value: number
+                ): number {
                     return this.translate(value, true) as any;
-                },
-                toFixedRange: Axis.prototype.toFixedRange,
-                fake: true
-            } as Highcharts.Axis;
+                }
+            } as unknown as NavigatorAxis;
+
+            navigator.xAxis.navigatorAxis.axis = navigator.xAxis;
+            navigator.xAxis.navigatorAxis.toFixedRange = (
+                NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(navigator.xAxis.navigatorAxis)
+            );
         }
 
 
@@ -2091,7 +2017,7 @@ Navigator.prototype = {
         navigator.addBaseSeriesEvents();
         // Add redraw events
         navigator.addChartEvents();
-    },
+    }
 
     /**
      * Get the union data extremes of the chart - the outer data extremes of the
@@ -2103,8 +2029,7 @@ Navigator.prototype = {
      *        as the param says.
      * @return {Highcharts.Dictionary<(number|undefined)>|undefined}
      */
-    getUnionExtremes: function (
-        this: Highcharts.Navigator,
+    public getUnionExtremes(
         returnFalseOnNoBaseSeries?: boolean
     ): (Highcharts.Dictionary<(number|undefined)>|undefined) {
         var baseAxis = this.chart.xAxis[0],
@@ -2138,7 +2063,7 @@ Navigator.prototype = {
             };
         }
         return ret;
-    },
+    }
 
     /**
      * Set the base series and update the navigator series from this. With a bit
@@ -2153,8 +2078,7 @@ Navigator.prototype = {
      *        Whether to redraw after update.
      * @return {void}
      */
-    setBaseSeries: function (
-        this: Highcharts.Navigator,
+    public setBaseSeries(
         baseSeriesOptions?: Highcharts.SeriesOptionsType,
         redraw?: boolean
     ): void {
@@ -2166,7 +2090,7 @@ Navigator.prototype = {
             chart.options && (chart.options.navigator as any).baseSeries ||
             (chart.series.length ?
                 // Find the first non-navigator series (#8430)
-                (H.find(chart.series, function (s: Highcharts.Series): boolean {
+                (find(chart.series, function (s: Highcharts.Series): boolean {
                     return !s.options.isInternal;
                 }) as any).index :
                 0
@@ -2196,10 +2120,10 @@ Navigator.prototype = {
         });
 
         // When run after render, this.xAxis already exists
-        if (this.xAxis && !this.xAxis.fake) {
+        if (this.xAxis && !this.xAxis.navigatorAxis.fake) {
             this.updateNavigatorSeries(true, redraw);
         }
-    },
+    }
 
     /**
      * Update series in the navigator from baseSeries, adding new if does not
@@ -2211,8 +2135,7 @@ Navigator.prototype = {
      * @param {boolean} [redraw]
      * @return {void}
      */
-    updateNavigatorSeries: function (
-        this: Highcharts.Navigator,
+    public updateNavigatorSeries(
         addEvents: boolean,
         redraw?: boolean
     ): void {
@@ -2232,7 +2155,7 @@ Navigator.prototype = {
                 xAxis: 'navigator-x-axis',
                 yAxis: 'navigator-y-axis',
                 showInLegend: false,
-                stacking: false, // #4823
+                stacking: void 0, // #4823
                 isInternal: true,
                 states: {
                     inactive: {
@@ -2389,7 +2312,7 @@ Navigator.prototype = {
         if (addEvents) {
             this.addBaseSeriesEvents();
         }
-    },
+    }
 
     /**
      * Add data events.
@@ -2399,7 +2322,7 @@ Navigator.prototype = {
      * @function Highcharts.Navigator#addBaseSeriesEvent
      * @return {void}
      */
-    addBaseSeriesEvents: function (this: Highcharts.Navigator): void {
+    public addBaseSeriesEvents(): void {
         var navigator = this,
             baseSeries = navigator.baseSeries || [];
 
@@ -2447,7 +2370,7 @@ Navigator.prototype = {
                 }
             });
         }, this);
-    },
+    }
 
     /**
      * Get minimum from all base series connected to the navigator
@@ -2456,8 +2379,7 @@ Navigator.prototype = {
      *         Minium from the current series
      * @return {number} Minimum from all series
      */
-    getBaseSeriesMin: function (
-        this: Highcharts.Navigator,
+    public getBaseSeriesMin(
         currentSeriesMin: number
     ): number {
         return this.baseSeries.reduce(
@@ -2467,7 +2389,7 @@ Navigator.prototype = {
             },
             currentSeriesMin
         );
-    },
+    }
 
     /**
      * Set the navigator x axis extremes to reflect the total. The navigator
@@ -2477,7 +2399,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#modifyNavigatorAxisExtremes
      */
-    modifyNavigatorAxisExtremes: function (this: Highcharts.Navigator): void {
+    public modifyNavigatorAxisExtremes(): void {
         var xAxis = this.xAxis,
             unionExtremes;
 
@@ -2494,7 +2416,7 @@ Navigator.prototype = {
                 xAxis.max = unionExtremes.dataMax as any;
             }
         }
-    },
+    }
 
     /**
      * Hook to modify the base axis extremes with information from the Navigator
@@ -2502,7 +2424,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#modifyBaseAxisExtremes
      */
-    modifyBaseAxisExtremes: function (this: Highcharts.Axis): void {
+    public modifyBaseAxisExtremes(this: Highcharts.Axis): void {
         var baseXAxis = this,
             navigator = baseXAxis.chart.navigator,
             baseExtremes = baseXAxis.getExtremes(),
@@ -2540,9 +2462,10 @@ Navigator.prototype = {
             if (stickToMax) {
                 newMax = baseDataMax + overscroll;
 
-                // if stickToMin is true, the new min value is set above
+                // If stickToMin is true, the new min value is set above
                 if (!stickToMin) {
                     newMin = Math.max(
+                        baseDataMin, // don't go below data extremes (#13184)
                         newMax - range,
                         (navigator as any).getBaseSeriesMin(
                             navigatorSeries && navigatorSeries.xData ?
@@ -2565,7 +2488,7 @@ Navigator.prototype = {
         // Reset
         (navigator as any).stickToMin =
             (navigator as any).stickToMax = null as any;
-    },
+    }
 
     /**
      * Handler for updated data on the base series. When data is modified, the
@@ -2575,7 +2498,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#updateDataHandler
      */
-    updatedDataHandler: function (this: Highcharts.Series): void {
+    public updatedDataHandler(this: Highcharts.Series): void {
         var navigator = this.chart.navigator as Highcharts.Navigator,
             baseSeries = this,
             navigatorSeries = this.navigatorSeries,
@@ -2604,7 +2527,7 @@ Navigator.prototype = {
                 false
             ); // #5414
         }
-    },
+    }
 
     /**
      * Add chart events, like redrawing navigator, when chart requires that.
@@ -2613,7 +2536,7 @@ Navigator.prototype = {
      * @function Highcharts.Navigator#addChartEvents
      * @return {void}
      */
-    addChartEvents: function (this: Highcharts.Navigator): void {
+    public addChartEvents(): void {
         if (!this.eventsToUnbind) {
             this.eventsToUnbind = [];
         }
@@ -2624,14 +2547,14 @@ Navigator.prototype = {
             addEvent(
                 this.chart,
                 'redraw',
-                function (this: Highcharts.Chart): void {
+                function (): void {
                     var navigator = this.navigator as Highcharts.Navigator,
                         xAxis = navigator && (
                             navigator.baseSeries &&
                             navigator.baseSeries[0] &&
                             navigator.baseSeries[0].xAxis ||
-                            navigator.scrollbar && this.xAxis[0]
-                        ); // #5709
+                            this.xAxis[0]
+                        ); // #5709, #13114
 
                     if (xAxis) {
                         navigator.render(xAxis.min as any, xAxis.max as any);
@@ -2642,7 +2565,7 @@ Navigator.prototype = {
             addEvent(
                 this.chart,
                 'getMargins',
-                function (this: Highcharts.Chart): void {
+                function (): void {
                     var chart = this,
                         navigator = chart.navigator as Highcharts.Navigator,
                         marginName = navigator.opposite ?
@@ -2662,7 +2585,7 @@ Navigator.prototype = {
                 }
             )
         );
-    },
+    }
 
     /**
      * Destroys allocated elements.
@@ -2670,7 +2593,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#destroy
      */
-    destroy: function (this: Highcharts.Navigator): void {
+    public destroy(): void {
 
         // Disconnect events added in addEvents
         this.removeEvents();
@@ -2709,67 +2632,18 @@ Navigator.prototype = {
             destroyObjectProperties(coll);
         }, this);
     }
-};
+}
+// End of prototype
 
 if (!H.Navigator) {
     H.Navigator = Navigator as any;
 
-    // For Stock charts, override selection zooming with some special features
-    // because X axis zooming is already allowed by the Navigator and Range
-    // selector.
-    addEvent(Axis, 'zoom', function (
-        this: Highcharts.Axis,
-        e: Highcharts.Dictionary<any>
-    ): void {
-        var chart = this.chart,
-            chartOptions = chart.options,
-            zoomType = (chartOptions.chart as any).zoomType,
-            pinchType = (chartOptions.chart as any).pinchType,
-            previousZoom,
-            navigator = chartOptions.navigator,
-            rangeSelector = chartOptions.rangeSelector;
-
-        if (this.isXAxis && ((navigator && navigator.enabled) ||
-                (rangeSelector && rangeSelector.enabled))) {
-
-            // For y only zooming, ignore the X axis completely
-            if (zoomType === 'y') {
-                e.zoomed = false;
-
-            // For xy zooming, record the state of the zoom before zoom
-            // selection, then when the reset button is pressed, revert to this
-            // state. This should apply only if the chart is initialized with a
-            // range (#6612), otherwise zoom all the way out.
-            } else if (
-                (
-                    (!isTouchDevice && zoomType === 'xy') ||
-                    (isTouchDevice && pinchType === 'xy')
-                ) &&
-                this.options.range
-            ) {
-
-                previousZoom = this.previousZoom;
-                if (defined(e.newMin)) {
-                    this.previousZoom = [this.min, this.max];
-                } else if (previousZoom) {
-                    e.newMin = previousZoom[0];
-                    e.newMax = previousZoom[1];
-                    delete this.previousZoom;
-                }
-            }
-
-        }
-        if (typeof e.zoomed !== 'undefined') {
-            e.preventDefault();
-        }
-    });
+    NavigatorAxis.compose(Axis);
 
     // For Stock charts. For x only zooming, do not to create the zoom button
     // because X axis zooming is already allowed by the Navigator and Range
     // selector. (#9285)
-    addEvent(Chart, 'beforeShowResetZoom', function (
-        this: Highcharts.Chart
-    ): (boolean|undefined) {
+    addEvent(Chart, 'beforeShowResetZoom', function (): (boolean|undefined) {
         var chartOptions = this.options,
             navigator = chartOptions.navigator,
             rangeSelector = chartOptions.rangeSelector;
@@ -2784,7 +2658,7 @@ if (!H.Navigator) {
     });
 
     // Initialize navigator for stock charts
-    addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'beforeRender', function (): void {
         var options = this.options;
 
         if ((options.navigator as any).enabled ||
@@ -2798,9 +2672,7 @@ if (!H.Navigator) {
     // the final top position of the navigator once the height of the chart,
     // including the legend, is determined. #367. We can't use Chart.getMargins,
     // because labels offsets are not calculated yet.
-    addEvent(Chart, 'afterSetChartSize', function (
-        this: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'afterSetChartSize', function (): void {
 
         var legend = this.legend,
             navigator = this.navigator,
@@ -2838,6 +2710,7 @@ if (!H.Navigator) {
                         (
                             legendOptions &&
                             legendOptions.verticalAlign === 'bottom' &&
+                            legendOptions.layout !== 'proximate' && // #13392
                             legendOptions.enabled &&
                             !legendOptions.floating
                         ) ?
@@ -2865,10 +2738,7 @@ if (!H.Navigator) {
     });
 
     // Merge options, if no scrolling exists yet
-    addEvent(Chart, 'update', function (
-        this: Highcharts.Chart,
-        e: Highcharts.Chart
-    ): void {
+    addEvent(Chart, 'update', function (e: Chart): void {
 
         var navigatorOptions = (e.options.navigator || {}),
             scrollbarOptions = (e.options.scrollbar || {});
@@ -2886,7 +2756,6 @@ if (!H.Navigator) {
 
     // Initialize navigator, if no scrolling exists yet
     addEvent(Chart, 'afterUpdate', function (
-        this: Highcharts.Chart,
         event: Highcharts.ChartAfterUpdateEventObject
     ): void {
 
@@ -2904,7 +2773,7 @@ if (!H.Navigator) {
     });
 
     // Handle adding new series
-    addEvent(Chart, 'afterAddSeries', function (this: Highcharts.Chart): void {
+    addEvent(Chart, 'afterAddSeries', function (): void {
         if (this.navigator) {
             // Recompute which series should be shown in navigator, and add them
             this.navigator.setBaseSeries(null as any, false);
@@ -2918,7 +2787,7 @@ if (!H.Navigator) {
         }
     });
 
-    Chart.prototype.callbacks.push(function (chart: Highcharts.Chart): void {
+    Chart.prototype.callbacks.push(function (chart: Chart): void {
         var extremes,
             navigator = chart.navigator as Highcharts.Navigator;
 
@@ -2929,3 +2798,7 @@ if (!H.Navigator) {
         }
     });
 }
+
+H.Navigator = Navigator;
+
+export default H.Navigator;

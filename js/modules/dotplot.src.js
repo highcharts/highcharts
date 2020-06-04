@@ -17,11 +17,10 @@
  *   Highcharts symbols.
  */
 'use strict';
-import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var extend = U.extend, objectEach = U.objectEach, pick = U.pick;
+var extend = U.extend, objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
 import '../parts/Series.js';
-var seriesType = H.seriesType;
 /**
  * @private
  * @class
@@ -39,6 +38,7 @@ seriesType('dotplot', 'column', {
         }
     }
 }, {
+    markerAttribs: void 0,
     drawPoints: function () {
         var series = this, renderer = series.chart.renderer, seriesMarkerOptions = this.options.marker, itemPaddingTranslated = this.yAxis.transA *
             series.options.itemPadding, borderWidth = this.borderWidth, crisp = borderWidth % 2 ? 0.5 : 1;
@@ -103,6 +103,6 @@ seriesType('dotplot', 'column', {
         });
     }
 });
-H.SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
-    return H.SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
+SVGRenderer.prototype.symbols.rect = function (x, y, w, h, options) {
+    return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };

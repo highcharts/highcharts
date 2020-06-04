@@ -17,10 +17,10 @@ WIP on vertical scrollable plot area (#9378). To do:
 - API and demos
  */
 'use strict';
+import Chart from './Chart.js';
 import H from './Globals.js';
 import U from './Utilities.js';
-var pick = U.pick;
-var addEvent = H.addEvent, Chart = H.Chart;
+var addEvent = U.addEvent, createElement = U.createElement, pick = U.pick, stop = U.stop;
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
  * the plot area of the chart. If the size gets smaller than this, typically
@@ -171,6 +171,7 @@ addEvent(Chart, 'render', function () {
  * @return {void}
  */
 Chart.prototype.setUpScrolling = function () {
+    var _this = this;
     var attribs = {
         WebkitOverflowScrolling: 'touch',
         overflowX: 'hidden',
@@ -183,10 +184,17 @@ Chart.prototype.setUpScrolling = function () {
         attribs.overflowY = 'auto';
     }
     // Add the necessary divs to provide scrolling
-    this.scrollingContainer = H.createElement('div', {
+    this.scrollingContainer = createElement('div', {
         'className': 'highcharts-scrolling'
     }, attribs, this.renderTo);
-    this.innerContainer = H.createElement('div', {
+    // On scroll, reset the chart position because it applies to the scrolled
+    // container
+    addEvent(this.scrollingContainer, 'scroll', function () {
+        if (_this.pointer) {
+            delete _this.pointer.chartPosition;
+        }
+    });
+    this.innerContainer = createElement('div', {
         'className': 'highcharts-inner-container'
     }, null, this.scrollingContainer);
     // Now move the container inside
@@ -242,10 +250,11 @@ Chart.prototype.moveFixedElements = function () {
  * @return {void}
  */
 Chart.prototype.applyFixed = function () {
+    var _a;
     var fixedRenderer, scrollableWidth, scrollableHeight, firstTime = !this.fixedDiv, scrollableOptions = this.options.chart.scrollablePlotArea;
     // First render
     if (firstTime) {
-        this.fixedDiv = H.createElement('div', {
+        this.fixedDiv = createElement('div', {
             className: 'highcharts-fixed'
         }, {
             position: 'absolute',
@@ -255,7 +264,7 @@ Chart.prototype.applyFixed = function () {
         }, null, true);
         this.renderTo.insertBefore(this.fixedDiv, this.renderTo.firstChild);
         this.renderTo.style.overflow = 'visible';
-        this.fixedRenderer = fixedRenderer = new H.Renderer(this.fixedDiv, this.chartWidth, this.chartHeight);
+        this.fixedRenderer = fixedRenderer = new H.Renderer(this.fixedDiv, this.chartWidth, this.chartHeight, (_a = this.options.chart) === null || _a === void 0 ? void 0 : _a.style);
         // Mask
         this.scrollableMask = fixedRenderer
             .path()
@@ -277,7 +286,7 @@ Chart.prototype.applyFixed = function () {
     // Increase the size of the scrollable renderer and background
     scrollableWidth = this.chartWidth + (this.scrollablePixelsX || 0);
     scrollableHeight = this.chartHeight + (this.scrollablePixelsY || 0);
-    H.stop(this.container);
+    stop(this.container);
     this.container.style.width = scrollableWidth + 'px';
     this.container.style.height = scrollableHeight + 'px';
     this.renderer.boxWrapper.attr({
@@ -289,9 +298,7 @@ Chart.prototype.applyFixed = function () {
         width: scrollableWidth,
         height: scrollableHeight
     });
-    if (this.scrollablePixelsY) {
-        this.scrollingContainer.style.height = this.chartHeight + 'px';
-    }
+    this.scrollingContainer.style.height = this.chartHeight + 'px';
     // Set scroll position
     if (firstTime) {
         if (scrollableOptions.scrollPositionX) {
@@ -312,41 +319,39 @@ Chart.prototype.applyFixed = function () {
     if (this.scrollablePixelsX) {
         d = [
             // Left side
-            'M', 0, maskTop,
-            'L', this.plotLeft - 1, maskTop,
-            'L', this.plotLeft - 1, maskBottom,
-            'L', 0, maskBottom,
-            'Z',
+            ['M', 0, maskTop],
+            ['L', this.plotLeft - 1, maskTop],
+            ['L', this.plotLeft - 1, maskBottom],
+            ['L', 0, maskBottom],
+            ['Z'],
             // Right side
-            'M', maskPlotRight, maskTop,
-            'L', this.chartWidth, maskTop,
-            'L', this.chartWidth, maskBottom,
-            'L', maskPlotRight, maskBottom,
-            'Z'
+            ['M', maskPlotRight, maskTop],
+            ['L', this.chartWidth, maskTop],
+            ['L', this.chartWidth, maskBottom],
+            ['L', maskPlotRight, maskBottom],
+            ['Z']
         ];
     }
     else if (this.scrollablePixelsY) {
         d = [
             // Top side
-            'M', maskLeft, 0,
-            'L', maskLeft, this.plotTop - 1,
-            'L', maskRight, this.plotTop - 1,
-            'L', maskRight, 0,
-            'Z',
+            ['M', maskLeft, 0],
+            ['L', maskLeft, this.plotTop - 1],
+            ['L', maskRight, this.plotTop - 1],
+            ['L', maskRight, 0],
+            ['Z'],
             // Bottom side
-            'M', maskLeft, maskPlotBottom,
-            'L', maskLeft, this.chartHeight,
-            'L', maskRight, this.chartHeight,
-            'L', maskRight, maskPlotBottom,
-            'Z'
+            ['M', maskLeft, maskPlotBottom],
+            ['L', maskLeft, this.chartHeight],
+            ['L', maskRight, this.chartHeight],
+            ['L', maskRight, maskPlotBottom],
+            ['Z']
         ];
     }
     else {
-        d = ['M', 0, 0];
+        d = [['M', 0, 0]];
     }
     if (this.redrawTrigger !== 'adjustHeight') {
-        this.scrollableMask.attr({
-            d: d
-        });
+        this.scrollableMask.attr({ d: d });
     }
 };

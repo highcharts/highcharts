@@ -12,7 +12,19 @@
 
 'use strict';
 
+import type Point from '../../parts/Point';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    defined,
+    extend,
+    isFunction,
+    pick,
+    setAnimation
+} = U;
 
 /**
  * Internal types
@@ -45,7 +57,7 @@ declare global {
         interface NetworkgraphSeriesOptions {
             layoutAlgorithm?: NetworkgraphLayoutAlgorithmOptions;
         }
-        interface Point {
+        interface PointLike {
             dispX?: number;
             dispY?: number;
             fromNode?: Point;
@@ -70,6 +82,7 @@ declare global {
             public enableSimulation?: boolean;
             public forcedStop?: boolean;
             public forces?: Array<string>;
+            public chart?: Chart;
             public initialRendering: boolean;
             public integration: NetworkgraphIntegrationObject;
             public k?: number;
@@ -119,11 +132,13 @@ declare global {
             public init(options: NetworkgraphLayoutAlgorithmOptions): void;
             public initPositions(): void;
             public isStable(): boolean;
+            public updateSimulation(enable?: boolean): void;
             public removeElementFromCollection<T>(
                 element: T, collection: Array<T>
             ): void
             public repulsiveForces(): void;
             public resetSimulation(): void;
+            public restartSimulation(): void;
             public setArea(x: number, y: number, w: number, h: number): void;
             public setCircularPositions(): void;
             public setDiffTemperature(): void;
@@ -141,21 +156,8 @@ declare global {
     }
 }
 
-import U from '../../parts/Utilities.js';
-const {
-    clamp,
-    defined,
-    extend,
-    pick,
-    setAnimation
-} = U;
-
-
 import './integrations.js';
 import './QuadTree.js';
-
-var addEvent = H.addEvent,
-    Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -193,6 +195,8 @@ extend(
             this.integration =
                 H.networkgraphIntegrations[options.integration as any];
 
+            this.enableSimulation = options.enableSimulation;
+
             this.attractiveForce = pick(
                 options.attractiveForce,
                 this.integration.attractiveForceFunction
@@ -205,6 +209,12 @@ extend(
 
             this.approximation = options.approximation;
         },
+        updateSimulation: function (
+            this: Highcharts.NetworkgraphLayout,
+            enable?: boolean
+        ): void {
+            this.enableSimulation = pick(enable, this.options.enableSimulation);
+        },
         start: function (this: Highcharts.NetworkgraphLayout): void {
             var layout = this,
                 series = this.series,
@@ -213,12 +223,14 @@ extend(
 
             layout.currentStep = 0;
             layout.forces = series[0] && series[0].forces || [];
+            layout.chart = series[0] && series[0].chart;
 
             if (layout.initialRendering) {
                 layout.initPositions();
 
                 // Render elements in initial positions:
                 series.forEach(function (s: Highcharts.Series): void {
+                    s.finishedAnimating = true; // #13169
                     s.render();
                 });
             }
@@ -226,7 +238,7 @@ extend(
             layout.setK();
             (layout.resetSimulation as any)(options);
 
-            if (options.enableSimulation) {
+            if (layout.enableSimulation) {
                 layout.step();
             }
         },
@@ -259,7 +271,7 @@ extend(
 
             layout.prevSystemTemperature = layout.systemTemperature;
             layout.systemTemperature = layout.getSystemTemperature();
-            if (options.enableSimulation) {
+            if (layout.enableSimulation) {
                 series.forEach(function (s: Highcharts.Series): void {
                     // Chart could be destroyed during the simulation
                     if (s.chart) {
@@ -346,6 +358,30 @@ extend(
             this.setDiffTemperature();
         },
 
+        restartSimulation: function (this: Highcharts.NetworkgraphLayout): void {
+
+            if (!this.simulation) {
+                // When dragging nodes, we don't need to calculate
+                // initial positions and rendering nodes:
+                this.setInitialRendering(false);
+                // Start new simulation:
+                if (!this.enableSimulation) {
+                    // Run only one iteration to speed things up:
+                    this.setMaxIterations(1);
+                } else {
+                    this.start();
+                }
+                if (this.chart) {
+                    this.chart.redraw();
+                }
+                // Restore defaults:
+                this.setInitialRendering(true);
+            } else {
+                // Extend current simulation:
+                this.resetSimulation();
+            }
+        },
+
         setMaxIterations: function (
             this: Highcharts.NetworkgraphLayout,
             maxIterations?: number
@@ -390,9 +426,9 @@ extend(
         ): void {
             var initialPositions = this.options.initialPositions;
 
-            if (H.isFunction(initialPositions)) {
+            if (isFunction(initialPositions)) {
                 initialPositions.call(this);
-                this.nodes.forEach(function (node: Highcharts.Point): void {
+                this.nodes.forEach(function (node: Point): void {
                     if (!defined(node.prevX)) {
                         node.prevX = node.plotX;
                     }
@@ -417,22 +453,18 @@ extend(
                 nodes = this.nodes,
                 nodesLength = nodes.length + 1,
                 angle = 2 * Math.PI / nodesLength,
-                rootNodes = nodes.filter(function (
-                    node: Highcharts.Point
-                ): boolean {
+                rootNodes = nodes.filter(function (node: Point): boolean {
                     return (node.linksTo as any).length === 0;
                 }),
-                sortedNodes = [] as Array<Highcharts.Point>,
+                sortedNodes = [] as Array<Point>,
                 visitedNodes = {} as Highcharts.Dictionary<boolean>,
                 radius = this.options.initialPositionRadius;
 
             /**
              * @private
              */
-            function addToNodes(node: Highcharts.Point): void {
-                (node.linksFrom as any).forEach(function (
-                    link: Highcharts.Point
-                ): void {
+            function addToNodes(node: Point): void {
+                (node.linksFrom as any).forEach(function (link: Point): void {
                     if (!visitedNodes[(link.toNode as any).id]) {
                         visitedNodes[(link.toNode as any).id] = true;
                         sortedNodes.push(link.toNode as any);
@@ -444,9 +476,7 @@ extend(
             // Start with identified root nodes an sort the nodes by their
             // hierarchy. In trees, this ensures that branches don't cross
             // eachother.
-            rootNodes.forEach(function (
-                rootNode: Highcharts.Point
-            ): void {
+            rootNodes.forEach(function (rootNode: Point): void {
                 sortedNodes.push(rootNode);
                 addToNodes(rootNode);
             });
@@ -457,7 +487,7 @@ extend(
 
             // Dangling, cyclic trees
             } else {
-                nodes.forEach(function (node: Highcharts.Point): void {
+                nodes.forEach(function (node: Point): void {
                     if (sortedNodes.indexOf(node) === -1) {
                         sortedNodes.push(node);
                     }
@@ -467,7 +497,7 @@ extend(
             // Initial positions are laid out along a small circle, appearing
             // as a cluster in the middle
             sortedNodes.forEach(function (
-                node: Highcharts.Point,
+                node: Point,
                 index: number
             ): void {
                 node.plotX = node.prevX = pick(
@@ -505,7 +535,7 @@ extend(
             // Initial positions:
             nodes.forEach(
                 function (
-                    node: Highcharts.Point,
+                    node: Point,
                     index: number
                 ): void {
                     node.plotX = node.prevX = pick(
@@ -542,7 +572,7 @@ extend(
                 cx = 0,
                 cy = 0;
 
-            this.nodes.forEach(function (node: Highcharts.Point): void {
+            this.nodes.forEach(function (node: Point): void {
                 cx += (node.plotX as any) * (node.mass as any);
                 cy += (node.plotY as any) * (node.mass as any);
 
@@ -560,7 +590,7 @@ extend(
         },
         barnesHutApproximation: function (
             this: Highcharts.NetworkgraphLayout,
-            node: Highcharts.Point,
+            node: Point,
             quadNode: Highcharts.QuadTreeNode
         ): (boolean|undefined) {
             var layout = this,
@@ -612,7 +642,7 @@ extend(
             var layout = this;
 
             if (layout.approximation === 'barnes-hut') {
-                layout.nodes.forEach(function (node: Highcharts.Point): void {
+                layout.nodes.forEach(function (node: Point): void {
                     layout.quadTree.visitNodeRecursive(
                         null,
                         function (
@@ -626,12 +656,8 @@ extend(
                     );
                 });
             } else {
-                layout.nodes.forEach(function (
-                    node: Highcharts.Point
-                ): void {
-                    layout.nodes.forEach(function (
-                        repNode: Highcharts.Point
-                    ): void {
+                layout.nodes.forEach(function (node: Point): void {
+                    layout.nodes.forEach(function (repNode: Point): void {
                         var force,
                             distanceR,
                             distanceXY;
@@ -671,9 +697,7 @@ extend(
                 distanceR,
                 force;
 
-            layout.links.forEach(function (
-                link: Highcharts.Point
-            ): void {
+            layout.links.forEach(function (link: Point): void {
                 if (link.fromNode && link.toNode) {
                     distanceXY = layout.getDistXY(
                         link.fromNode,
@@ -699,7 +723,7 @@ extend(
             var layout = this,
                 nodes = layout.nodes;
 
-            nodes.forEach(function (node: Highcharts.Point): void {
+            nodes.forEach(function (node: Point): void {
                 if ((node as any).fixedPosition) {
                     return;
                 }
@@ -805,7 +829,7 @@ extend(
         ): number {
             return this.nodes.reduce(function (
                 value: number,
-                node: Highcharts.Point
+                node: Point
             ): number {
                 return value + (node as any).temperature;
             }, 0);
@@ -827,8 +851,8 @@ extend(
         },
         getDistXY: function (
             this: Highcharts.NetworkgraphLayout,
-            nodeA: Highcharts.Point,
-            nodeB: (Highcharts.Point|Highcharts.QuadTreeNode)
+            nodeA: Point,
+            nodeB: (Point|Highcharts.QuadTreeNode)
         ): Highcharts.Dictionary<number> {
             var xDist = (nodeA.plotX as any) - (nodeB.plotX as any),
                 yDist = (nodeA.plotY as any) - (nodeB.plotY as any);
@@ -872,7 +896,7 @@ addEvent(Chart as any, 'render', function (
             (layout.maxIterations as any)-- &&
             isFinite(layout.temperature as any) &&
             !layout.isStable() &&
-            !layout.options.enableSimulation
+            !layout.enableSimulation
         ) {
             // Hook similar to build-in addEvent, but instead of
             // creating whole events logic, use just a function.
@@ -913,4 +937,29 @@ addEvent(Chart as any, 'render', function (
             });
         }
     }
+});
+
+// disable simulation before print if enabled
+addEvent(Chart as any, 'beforePrint', function (
+    this: Highcharts.PackedBubbleChart
+): void {
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout): void {
+            layout.updateSimulation(false);
+        });
+        this.redraw();
+    }
+});
+
+// re-enable simulation after print
+addEvent(Chart as any, 'afterPrint', function (
+    this: Highcharts.PackedBubbleChart
+): void {
+    if (this.graphLayoutsLookup) {
+        this.graphLayoutsLookup.forEach(function (layout): void {
+            // return to default simulation
+            layout.updateSimulation();
+        });
+    }
+    this.redraw();
 });

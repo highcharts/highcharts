@@ -6,10 +6,8 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var correctFloat = U.correctFloat, isArray = U.isArray;
-var seriesType = H.seriesType;
+var correctFloat = U.correctFloat, isArray = U.isArray, seriesType = U.seriesType;
 /**
  * The EMA series type.
  *

@@ -11,6 +11,7 @@
  */
 'use strict';
 import '../../annotations/annotations.src.js';
+import '../../annotations/types/BasicAnnotation.js';
 import '../../annotations/types/CrookedLine.js';
 import '../../annotations/types/ElliottWave.js';
 import '../../annotations/types/Tunnel.js';

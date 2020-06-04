@@ -1,3 +1,5 @@
-# The requested legend does not exist
+# Deprecated function or property
 
-This error happens when setting a series' `legend` property to point to a legend that does not exist.
+This error occurs when using a deprecated function or property. Consult the
+[API documentation](https://api.highcharts.com/) for alternatives, if no
+replacement is mentioned by the error itself.

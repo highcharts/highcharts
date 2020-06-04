@@ -8,7 +8,17 @@
  *
  * */
 'use strict';
+import Axis from './Axis.js';
 import H from './Globals.js';
+var charts = H.charts, doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
+import Legend from './Legend.js';
+import MSPointer from './MSPointer.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
+import Pointer from './Pointer.js';
+import Time from './Time.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent, animate = U.animate, animObject = U.animObject, attr = U.attr, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, error = U.error, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getStyle = U.getStyle, isArray = U.isArray, isFunction = U.isFunction, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout, uniqueKey = U.uniqueKey;
 /**
  * Callback for chart constructors.
  *
@@ -98,16 +108,7 @@ import H from './Globals.js';
 *        more operations on the chart, it is a good idea to set redraw to false
 *        and call {@link Chart#redraw} after.
 */
-import U from './Utilities.js';
-var animObject = U.animObject, attr = U.attr, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, numberFormat = U.numberFormat, objectEach = U.objectEach, pick = U.pick, pInt = U.pInt, relativeLength = U.relativeLength, removeEvent = U.removeEvent, setAnimation = U.setAnimation, splat = U.splat, syncTimeout = U.syncTimeout;
-import './Axis.js';
-import './Legend.js';
-import './Options.js';
-import './Pointer.js';
-var addEvent = H.addEvent, animate = H.animate, doc = H.doc, Axis = H.Axis, // @todo add as requirement
-createElement = H.createElement, defaultOptions = H.defaultOptions, charts = H.charts, css = H.css, find = H.find, fireEvent = H.fireEvent, Legend = H.Legend, // @todo add as requirement
-marginNames = H.marginNames, merge = H.merge, Pointer = H.Pointer, // @todo add as requirement
-seriesTypes = H.seriesTypes, win = H.win;
+var marginNames = H.marginNames;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * The Chart class. The recommended constructor is {@link Highcharts#chart}.
@@ -137,46 +138,48 @@ seriesTypes = H.seriesTypes, win = H.win;
  *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
  *        handler is equivalent.
  */
-var Chart = H.Chart = function () {
-    this.getArgs.apply(this, arguments);
-};
-/**
- * Factory function for basic charts.
- *
- * @example
- * // Render a chart in to div#container
- * var chart = Highcharts.chart('container', {
- *     title: {
- *         text: 'My chart'
- *     },
- *     series: [{
- *         data: [1, 3, 2, 4]
- *     }]
- * });
- *
- * @function Highcharts.chart
- *
- * @param {string|Highcharts.HTMLDOMElement} [renderTo]
- *        The DOM element to render to, or its id.
- *
- * @param {Highcharts.Options} options
- *        The chart options structure.
- *
- * @param {Highcharts.ChartCallbackFunction} [callback]
- *        Function to run when the chart has loaded and and all external images
- *        are loaded. Defining a
- *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
- *        handler is equivalent.
- *
- * @return {Highcharts.Chart}
- *         Returns the Chart object.
- */
-H.chart = function (a, b, c) {
-    return new Chart(a, b, c);
-};
-extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
-    // Hook for adding callbacks in modules
-    callbacks: [],
+var Chart = /** @class */ (function () {
+    function Chart(a, b, c) {
+        this.axes = void 0;
+        this.axisOffset = void 0;
+        this.bounds = void 0;
+        this.chartHeight = void 0;
+        this.chartWidth = void 0;
+        this.clipBox = void 0;
+        this.colorCounter = void 0;
+        this.container = void 0;
+        this.index = void 0;
+        this.isResizing = void 0;
+        this.labelCollectors = void 0;
+        this.legend = void 0;
+        this.margin = void 0;
+        this.numberFormatter = void 0;
+        this.options = void 0;
+        this.plotBox = void 0;
+        this.plotHeight = void 0;
+        this.plotLeft = void 0;
+        this.plotTop = void 0;
+        this.plotWidth = void 0;
+        this.pointCount = void 0;
+        this.pointer = void 0;
+        this.renderer = void 0;
+        this.renderTo = void 0;
+        this.series = void 0;
+        this.spacing = void 0;
+        this.spacingBox = void 0;
+        this.symbolCounter = void 0;
+        this.time = void 0;
+        this.titleOffset = void 0;
+        this.userOptions = void 0;
+        this.xAxis = void 0;
+        this.yAxis = void 0;
+        this.getArgs(a, b, c);
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
     /**
      * Handle the arguments passed to the constructor.
      *
@@ -184,23 +187,22 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#getArgs
      *
      * @param {...Array<*>} arguments
-     *        All arguments for the constructor.
-     *
-     * @return {Array<*>}
-     *         Passed arguments without renderTo.
+     * All arguments for the constructor.
      *
      * @fires Highcharts.Chart#event:init
      * @fires Highcharts.Chart#event:afterInit
      */
-    getArgs: function () {
-        var args = [].slice.call(arguments);
+    Chart.prototype.getArgs = function (a, b, c) {
         // Remove the optional first argument, renderTo, and
         // set it on this.
-        if (isString(args[0]) || args[0].nodeName) {
-            this.renderTo = args.shift();
+        if (isString(a) || a.nodeName) {
+            this.renderTo = a;
+            this.init(b, c);
         }
-        this.init(args[0], args[1]);
-    },
+        else {
+            this.init(a, b);
+        }
+    };
     /**
      * Overridable function that initializes the chart. The constructor's
      * arguments are passed on directly.
@@ -219,7 +221,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:init
      * @fires Highcharts.Chart#event:afterInit
      */
-    init: function (userOptions, callback) {
+    Chart.prototype.init = function (userOptions, callback) {
         // Handle regular options
         var options, 
         // skip merging data points to increase performance
@@ -228,6 +230,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(this, 'init', { args: arguments }, function () {
             userOptions.series = null;
             options = merge(defaultOptions, userOptions); // do the merge
+            var optionsChart = options.chart || {};
             // Override (by copy of user options) or clear tooltip options
             // in chart.options.plotOptions (#6218)
             objectEach(options.plotOptions, function (typeOptions, type) {
@@ -251,7 +254,6 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @type {Highcharts.Options}
              */
             this.userOptions = userOptions;
-            var optionsChart = options.chart;
             var chartEvents = optionsChart.events;
             this.margin = [];
             this.spacing = [];
@@ -299,7 +301,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              */
             this.time =
                 userOptions.time && Object.keys(userOptions.time).length ?
-                    new H.Time(userOptions.time) :
+                    new Time(userOptions.time) :
                     H.time;
             /**
              * Callback function to override the default function that formats
@@ -334,7 +336,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Chart event handlers
             if (chartEvents) {
                 objectEach(chartEvents, function (event, eventType) {
-                    if (H.isFunction(event)) {
+                    if (isFunction(event)) {
                         addEvent(chart, eventType, event);
                     }
                 });
@@ -362,64 +364,55 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             fireEvent(chart, 'afterInit');
             chart.firstRender();
         });
-    },
+    };
     /**
      * Internal function to unitialize an individual series.
      *
      * @private
      * @function Highcharts.Chart#initSeries
-     *
-     * @param {Highcharts.SeriesOptions} options
-     *
-     * @return {Highcharts.Series}
      */
-    initSeries: function (options) {
+    Chart.prototype.initSeries = function (options) {
         var chart = this, optionsChart = chart.options.chart, type = (options.type ||
             optionsChart.type ||
             optionsChart.defaultSeriesType), series, Constr = seriesTypes[type];
         // No such series type
         if (!Constr) {
-            H.error(17, true, chart, { missingModuleFor: type });
+            error(17, true, chart, { missingModuleFor: type });
         }
         series = new Constr();
         series.init(this, options);
         return series;
-    },
+    };
     /**
      * Internal function to set data for all series with enabled sorting.
      *
      * @private
      * @function Highcharts.Chart#setSeriesData
-     *
-     * @param {Highcharts.SeriesOptions} options
-     *
-     * @return {void}
      */
-    setSeriesData: function () {
+    Chart.prototype.setSeriesData = function () {
         this.getSeriesOrderByLinks().forEach(function (series) {
             // We need to set data for series with sorting after series init
             if (!series.points && !series.data && series.enabledDataSorting) {
                 series.setData(series.options.data, false);
             }
         });
-    },
+    };
     /**
      * Sort and return chart series in order depending on the number of linked
      * series.
      *
      * @private
      * @function Highcharts.Series#getSeriesOrderByLinks
-     *
      * @return {Array<Highcharts.Series>}
      */
-    getSeriesOrderByLinks: function () {
+    Chart.prototype.getSeriesOrderByLinks = function () {
         return this.series.concat().sort(function (a, b) {
             if (a.linkedSeries.length || b.linkedSeries.length) {
                 return b.linkedSeries.length - a.linkedSeries.length;
             }
             return 0;
         });
-    },
+    };
     /**
      * Order all series above a given index. When series are added and ordered
      * by configuration, only the last series is handled (#248, #1123, #2456,
@@ -428,10 +421,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @private
      * @function Highcharts.Series#orderSeries
      * @param {number} [fromIndex]
-     *        If this is given, only the series above this index are handled.
-     * @return {void}
+     * If this is given, only the series above this index are handled.
      */
-    orderSeries: function (fromIndex) {
+    Chart.prototype.orderSeries = function (fromIndex) {
         var series = this.series, i = fromIndex || 0;
         for (; i < series.length; i++) {
             if (series[i]) {
@@ -446,31 +438,36 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 series[i].name = series[i].getName();
             }
         }
-    },
+    };
     /**
      * Check whether a given point is within the plot area.
      *
      * @function Highcharts.Chart#isInsidePlot
      *
      * @param {number} plotX
-     *        Pixel x relative to the plot area.
+     * Pixel x relative to the plot area.
      *
      * @param {number} plotY
-     *        Pixel y relative to the plot area.
+     * Pixel y relative to the plot area.
      *
      * @param {boolean} [inverted]
-     *        Whether the chart is inverted.
+     * Whether the chart is inverted.
      *
      * @return {boolean}
-     *         Returns true if the given point is inside the plot area.
+     * Returns true if the given point is inside the plot area.
      */
-    isInsidePlot: function (plotX, plotY, inverted) {
-        var x = inverted ? plotY : plotX, y = inverted ? plotX : plotY;
-        return x >= 0 &&
-            x <= this.plotWidth &&
-            y >= 0 &&
-            y <= this.plotHeight;
-    },
+    Chart.prototype.isInsidePlot = function (plotX, plotY, inverted) {
+        var x = inverted ? plotY : plotX, y = inverted ? plotX : plotY, e = {
+            x: x,
+            y: y,
+            isInsidePlot: x >= 0 &&
+                x <= this.plotWidth &&
+                y >= 0 &&
+                y <= this.plotHeight
+        };
+        fireEvent(this, 'afterIsInsidePlot', e);
+        return e.isInsidePlot;
+    };
     /**
      * Redraw the chart after changes have been done to the data, axis extremes
      * chart size or chart elements. All methods for updating axes, series or
@@ -483,9 +480,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#redraw
      *
      * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
-     *        If or how to apply animation to the redraw.
-     *
-     * @return {void}
+     * If or how to apply animation to the redraw.
      *
      * @fires Highcharts.Chart#event:afterSetExtremes
      * @fires Highcharts.Chart#event:beforeRedraw
@@ -494,14 +489,17 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:render
      * @fires Highcharts.Chart#event:updatedData
      */
-    redraw: function (animation) {
+    Chart.prototype.redraw = function (animation) {
         fireEvent(this, 'beforeRedraw');
         var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legendUserOptions = chart.userOptions.legend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);
         }
-        setAnimation(animation, chart);
+        // Set the global animation. When chart.hasRendered is not true, the
+        // redraw call comes from a responsive rule and animation should not
+        // occur.
+        setAnimation(chart.hasRendered ? animation : false, chart);
         if (isHiddenChart) {
             chart.temporaryDisplay();
         }
@@ -555,8 +553,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (hasCartesianSeries) {
             // set axes scales
             axes.forEach(function (axis) {
-                axis.updateNames();
-                axis.setScale();
+                // Don't do setScale again if we're only resizing. Regression
+                // #13507. But we need it after chart.update (responsive), as
+                // axis is initialized again (#12137).
+                if (!chart.isResizing || !axis.tickPositions) {
+                    axis.updateNames();
+                    axis.setScale();
+                }
             });
         }
         chart.getMargins(); // #3098
@@ -616,7 +619,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         afterRedraw.forEach(function (callback) {
             callback.call();
         });
-    },
+    };
     /**
      * Get an axis, series or point object by `id` as given in the configuration
      * options. Returns `undefined` if no item is found.
@@ -627,12 +630,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#get
      *
      * @param {string} id
-     *        The id as given in the configuration options.
+     * The id as given in the configuration options.
      *
      * @return {Highcharts.Axis|Highcharts.Series|Highcharts.Point|undefined}
-     *         The retrieved item.
+     * The retrieved item.
      */
-    get: function (id) {
+    Chart.prototype.get = function (id) {
         var ret, series = this.series, i;
         /**
          * @private
@@ -653,19 +656,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             ret = find(series[i].points || [], itemById);
         }
         return ret;
-    },
+    };
     /**
      * Create the Axis instances based on the config options.
      *
      * @private
      * @function Highcharts.Chart#getAxes
-     *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:afterGetAxes
      * @fires Highcharts.Chart#event:getAxes
      */
-    getAxes: function () {
+    Chart.prototype.getAxes = function () {
         var chart = this, options = this.options, xAxisOptions = options.xAxis = splat(options.xAxis || {}), yAxisOptions = options.yAxis = splat(options.yAxis || {}), optionsArray;
         fireEvent(this, 'getAxes');
         // make sure the options are arrays and add some members
@@ -682,7 +682,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             new Axis(chart, axisOptions); // eslint-disable-line no-new
         });
         fireEvent(this, 'afterGetAxes');
-    },
+    };
     /**
      * Returns an array of all currently selected points in the chart. Points
      * can be selected by clicking or programmatically by the
@@ -697,7 +697,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {Array<Highcharts.Point>}
      *         The currently selected points.
      */
-    getSelectedPoints: function () {
+    Chart.prototype.getSelectedPoints = function () {
         var points = [];
         this.series.forEach(function (serie) {
             // For one-to-one points inspect series.data in order to retrieve
@@ -708,7 +708,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }));
         });
         return points;
-    },
+    };
     /**
      * Returns an array of all currently selected series in the chart. Series
      * can be selected either programmatically by the
@@ -725,11 +725,11 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @return {Array<Highcharts.Series>}
      *         The currently selected series.
      */
-    getSelectedSeries: function () {
+    Chart.prototype.getSelectedSeries = function () {
         return this.series.filter(function (serie) {
             return serie.selected;
         });
-    },
+    };
     /**
      * Set a new title or subtitle for the chart.
      *
@@ -749,31 +749,26 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @param {boolean} [redraw]
      *        Whether to redraw the chart or wait for a later call to
      *        `chart.redraw()`.
-     *
-     * @return {void}
      */
-    setTitle: function (titleOptions, subtitleOptions, redraw) {
+    Chart.prototype.setTitle = function (titleOptions, subtitleOptions, redraw) {
         this.applyDescription('title', titleOptions);
         this.applyDescription('subtitle', subtitleOptions);
         // The initial call also adds the caption. On update, chart.update will
         // relay to Chart.setCaption.
         this.applyDescription('caption', void 0);
         this.layOutTitles(redraw);
-    },
+    };
     /**
      * Apply a title, subtitle or caption for the chart
      *
      * @private
      * @function Highcharts.Chart#applyDescription
-     *
      * @param name {string}
-     *        Either title, subtitle or caption
+     * Either title, subtitle or caption
      * @param {Highcharts.TitleOptions|Highcharts.SubtitleOptions|Highcharts.CaptionOptions|undefined} explicitOptions
-     *        The options to set, will be merged with default options.
-     *
-     * @return {void}
+     * The options to set, will be merged with default options.
      */
-    applyDescription: function (name, explicitOptions) {
+    Chart.prototype.applyDescription = function (name, explicitOptions) {
         var chart = this;
         // Default style
         var style = name === 'title' ? {
@@ -833,7 +828,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              */
             this[name] = elem;
         }
-    },
+    };
     /**
      * Internal function to lay out the chart title, subtitle and caption, and
      * cache the full offset height for use in `getMargins`. The result is
@@ -843,12 +838,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#layOutTitles
      *
      * @param {boolean} [redraw=true]
-     *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:afterLayOutTitles
      */
-    layOutTitles: function (redraw) {
+    Chart.prototype.layOutTitles = function (redraw) {
         var titleOffset = [0, 0, 0], requiresDirtyBox, renderer = this.renderer, spacingBox = this.spacingBox;
         // Lay out the title and the subtitle respectively
         ['title', 'subtitle', 'caption'].forEach(function (key) {
@@ -906,7 +898,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 this.redraw();
             }
         }
-    },
+    };
     /**
      * Internal function to get the chart width and height according to options
      * and container size. Sets {@link Chart.chartWidth} and
@@ -914,17 +906,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#getChartSize
-     *
-     * @return {void}
      */
-    getChartSize: function () {
+    Chart.prototype.getChartSize = function () {
         var chart = this, optionsChart = chart.options.chart, widthOption = optionsChart.width, heightOption = optionsChart.height, renderTo = chart.renderTo;
         // Get inner width and height
         if (!defined(widthOption)) {
-            chart.containerWidth = H.getStyle(renderTo, 'width');
+            chart.containerWidth = getStyle(renderTo, 'width');
         }
         if (!defined(heightOption)) {
-            chart.containerHeight = H.getStyle(renderTo, 'height');
+            chart.containerHeight = getStyle(renderTo, 'height');
         }
         /**
          * The current pixel width of the chart.
@@ -945,7 +935,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             (chart.containerHeight > 1 ?
                 chart.containerHeight :
                 400));
-    },
+    };
     /**
      * If the renderTo element has no offsetWidth, most likely one or more of
      * its parents are hidden. Loop up the DOM tree to temporarily display the
@@ -956,11 +946,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#temporaryDisplay
      *
      * @param {boolean} [revert]
-     *        Revert to the saved original styles.
-     *
-     * @return {void}
+     * Revert to the saved original styles.
      */
-    temporaryDisplay: function (revert) {
+    Chart.prototype.temporaryDisplay = function (revert) {
         var node = this.renderTo, tempStyle;
         if (!revert) {
             while (node && node.style) {
@@ -971,7 +959,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     node.hcOrigDetached = true;
                     doc.body.appendChild(node);
                 }
-                if (H.getStyle(node, 'display', false) === 'none' ||
+                if (getStyle(node, 'display', false) === 'none' ||
                     node.hcOricDetached) {
                     node.hcOrigStyle = {
                         display: node.style.display,
@@ -985,7 +973,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     if (node !== this.renderTo) {
                         tempStyle.height = 0;
                     }
-                    H.css(node, tempStyle);
+                    css(node, tempStyle);
                     // If it still doesn't have an offset width after setting
                     // display to block, it probably has an !important priority
                     // #2631, 6803
@@ -1002,7 +990,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         else {
             while (node && node.style) {
                 if (node.hcOrigStyle) {
-                    H.css(node, node.hcOrigStyle);
+                    css(node, node.hcOrigStyle);
                     delete node.hcOrigStyle;
                 }
                 if (node.hcOrigDetached) {
@@ -1012,7 +1000,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 node = node.parentNode;
             }
         }
-    },
+    };
     /**
      * Set the {@link Chart.container|chart container's} class name, in
      * addition to `highcharts-container`.
@@ -1020,25 +1008,21 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#setClassName
      *
      * @param {string} [className]
-     *
-     * @return {void}
+     * The additional class name.
      */
-    setClassName: function (className) {
+    Chart.prototype.setClassName = function (className) {
         this.container.className = 'highcharts-container ' + (className || '');
-    },
+    };
     /**
      * Get the containing element, determine the size and create the inner
      * container div to hold the chart.
      *
      * @private
      * @function Highcharts.Chart#afterGetContainer
-     *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:afterGetContainer
      */
-    getContainer: function () {
-        var chart = this, container, options = chart.options, optionsChart = options.chart, chartWidth, chartHeight, renderTo = chart.renderTo, indexAttrName = 'data-highcharts-chart', oldChartIndex, Ren, containerId = H.uniqueKey(), containerStyle, key;
+    Chart.prototype.getContainer = function () {
+        var chart = this, container, options = chart.options, optionsChart = options.chart, chartWidth, chartHeight, renderTo = chart.renderTo, indexAttrName = 'data-highcharts-chart', oldChartIndex, Ren, containerId = uniqueKey(), containerStyle, key;
         if (!renderTo) {
             chart.renderTo = renderTo =
                 optionsChart.renderTo;
@@ -1049,7 +1033,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         }
         // Display an error if the renderTo is wrong
         if (!renderTo) {
-            H.error(13, true, chart);
+            error(13, true, chart);
         }
         // If the container already holds a chart, destroy it. The check for
         // hasRendered is there because web pages that are saved to disk from
@@ -1120,6 +1104,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
          * @type {Highcharts.SVGRenderer}
          */
         chart.renderer = new Ren(container, chartWidth, chartHeight, null, optionsChart.forExport, options.exporting && options.exporting.allowHTML, chart.styledMode);
+        // Set the initial animation from the options
+        setAnimation(void 0, chart);
         chart.setClassName(optionsChart.className);
         if (!chart.styledMode) {
             chart.renderer.setStyle(optionsChart.style);
@@ -1133,7 +1119,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Add a reference to the charts index
         chart.renderer.chartIndex = chart.index;
         fireEvent(this, 'afterGetContainer');
-    },
+    };
     /**
      * Calculate margins by rendering axis labels in a preliminary position.
      * Title, subtitle and legend have already been rendered at this stage, but
@@ -1141,11 +1127,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#getMargins
-     * @param {boolean} skipAxes
-     * @return {void}
      * @fires Highcharts.Chart#event:getMargins
      */
-    getMargins: function (skipAxes) {
+    Chart.prototype.getMargins = function (skipAxes) {
         var _a = this, spacing = _a.spacing, margin = _a.margin, titleOffset = _a.titleOffset;
         this.resetMargins();
         // Adjust for title and subtitle
@@ -1163,13 +1147,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         if (!skipAxes) {
             this.getAxisMargins();
         }
-    },
+    };
     /**
      * @private
      * @function Highcharts.Chart#getAxisMargins
-     * @return {void}
      */
-    getAxisMargins: function () {
+    Chart.prototype.getAxisMargins = function () {
         var chart = this, 
         // [top, right, bottom, left]
         axisOffset = chart.axisOffset = [0, 0, 0, 0], colorAxis = chart.colorAxis, margin = chart.margin, getOffset = function (axes) {
@@ -1193,7 +1176,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
         });
         chart.setChartSize();
-    },
+    };
     /**
      * Reflows the chart to its container. By default, the chart reflows
      * automatically to its container following a `window.resize` event, as per
@@ -1213,9 +1196,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *        Event arguments. Used primarily when the function is called
      *        internally as a response to window resize.
      */
-    reflow: function (e) {
+    Chart.prototype.reflow = function (e) {
         var chart = this, optionsChart = chart.options.chart, renderTo = chart.renderTo, hasUserSize = (defined(optionsChart.width) &&
-            defined(optionsChart.height)), width = optionsChart.width || H.getStyle(renderTo, 'width'), height = optionsChart.height || H.getStyle(renderTo, 'height'), target = e ? e.target : win;
+            defined(optionsChart.height)), width = optionsChart.width || getStyle(renderTo, 'width'), height = optionsChart.height || getStyle(renderTo, 'height'), target = e ? e.target : win;
         // Width and height checks for display:none. Target is doc in IE8 and
         // Opera, win in Firefox, Chrome and IE9.
         if (!hasUserSize &&
@@ -1225,7 +1208,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             (target === win || target === doc)) {
             if (width !== chart.containerWidth ||
                 height !== chart.containerHeight) {
-                H.clearTimeout(chart.reflowTimeout);
+                U.clearTimeout(chart.reflowTimeout);
                 // When called from window.resize, e is set, else it's called
                 // directly (#2224)
                 chart.reflowTimeout = syncTimeout(function () {
@@ -1239,17 +1222,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             chart.containerWidth = width;
             chart.containerHeight = height;
         }
-    },
+    };
     /**
      * Toggle the event handlers necessary for auto resizing, depending on the
      * `chart.reflow` option.
      *
      * @private
      * @function Highcharts.Chart#setReflow
-     * @param {boolean} [reflow]
-     * @return {void}
      */
-    setReflow: function (reflow) {
+    Chart.prototype.setReflow = function (reflow) {
         var chart = this;
         if (reflow !== false && !this.unbindReflow) {
             this.unbindReflow = addEvent(win, 'resize', function (e) {
@@ -1276,7 +1257,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             });
         }
         //*/
-    },
+    };
     /**
      * Resize the chart to a given width and height. In order to set the width
      * only, the height argument may be skipped. To set the height only, pass
@@ -1310,12 +1291,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @fires Highcharts.Chart#event:endResize
      * @fires Highcharts.Chart#event:resize
      */
-    setSize: function (width, height, animation) {
+    Chart.prototype.setSize = function (width, height, animation) {
         var chart = this, renderer = chart.renderer, globalAnimation;
         // Handle the isResizing counter
         chart.isResizing += 1;
         // set the animation for the current process
         setAnimation(animation, chart);
+        globalAnimation = renderer.globalAnimation;
         chart.oldChartHeight = chart.chartHeight;
         chart.oldChartWidth = chart.chartWidth;
         if (typeof width !== 'undefined') {
@@ -1328,14 +1310,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // Resize the container with the global animation applied if enabled
         // (#2503)
         if (!chart.styledMode) {
-            globalAnimation = renderer.globalAnimation;
             (globalAnimation ? animate : css)(chart.container, {
                 width: chart.chartWidth + 'px',
                 height: chart.chartHeight + 'px'
             }, globalAnimation);
         }
         chart.setChartSize(true);
-        renderer.setSize(chart.chartWidth, chart.chartHeight, animation);
+        renderer.setSize(chart.chartWidth, chart.chartHeight, globalAnimation);
         // handle axes
         chart.axes.forEach(function (axis) {
             axis.isDirty = true;
@@ -1345,7 +1326,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.isDirtyBox = true; // force redraw of plot and chart border
         chart.layOutTitles(); // #2857
         chart.getMargins();
-        chart.redraw(animation);
+        chart.redraw(globalAnimation);
         chart.oldChartHeight = null;
         fireEvent(chart, 'resize');
         // Fire endResize and set isResizing back. If animation is disabled,
@@ -1357,21 +1338,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 });
             }
         }, animObject(globalAnimation).duration || 0);
-    },
+    };
     /**
      * Set the public chart properties. This is done before and after the
      * pre-render to determine margin sizes.
      *
      * @private
      * @function Highcharts.Chart#setChartSize
-     *
-     * @param {boolean} skipAxes
-     *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:afterSetChartSize
      */
-    setChartSize: function (skipAxes) {
+    Chart.prototype.setChartSize = function (skipAxes) {
         var chart = this, inverted = chart.inverted, renderer = chart.renderer, chartWidth = chart.chartWidth, chartHeight = chart.chartHeight, optionsChart = chart.options.chart, spacing = chart.spacing, clipOffset = chart.clipOffset, clipX, clipY, plotLeft, plotTop, plotWidth, plotHeight, plotBorderWidth;
         /**
          * The current left position of the plot area in pixels.
@@ -1437,15 +1413,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             });
         }
         fireEvent(chart, 'afterSetChartSize', { skipAxes: skipAxes });
-    },
+    };
     /**
      * Initial margins before auto size margins are applied.
      *
      * @private
      * @function Highcharts.Chart#resetMargins
-     * @return {void}
      */
-    resetMargins: function () {
+    Chart.prototype.resetMargins = function () {
         fireEvent(this, 'resetMargins');
         var chart = this, chartOptions = chart.options.chart;
         // Create margin and spacing array
@@ -1467,17 +1442,16 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         });
         chart.axisOffset = [0, 0, 0, 0]; // top, right, bottom, left
         chart.clipOffset = [0, 0, 0, 0];
-    },
+    };
     /**
      * Internal function to draw or redraw the borders and backgrounds for chart
      * and plot area.
      *
      * @private
      * @function Highcharts.Chart#drawChartBox
-     * @return {void}
      * @fires Highcharts.Chart#event:afterDrawChartBox
      */
-    drawChartBox: function () {
+    Chart.prototype.drawChartBox = function () {
         var chart = this, optionsChart = chart.options.chart, renderer = chart.renderer, chartWidth = chart.chartWidth, chartHeight = chart.chartHeight, chartBackground = chart.chartBackground, plotBackground = chart.plotBackground, plotBorder = chart.plotBorder, chartBorderWidth, styledMode = chart.styledMode, plotBGImage = chart.plotBGImage, chartBackgroundColor = optionsChart.backgroundColor, plotBackgroundColor = optionsChart.plotBackgroundColor, plotBackgroundImage = optionsChart.plotBackgroundImage, mgn, bgAttr, plotLeft = chart.plotLeft, plotTop = chart.plotTop, plotWidth = chart.plotWidth, plotHeight = chart.plotHeight, plotBox = chart.plotBox, clipRect = chart.clipRect, clipBox = chart.clipBox, verb = 'animate';
         // Chart area
         if (!chartBackground) {
@@ -1578,7 +1552,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         // reset
         chart.isDirtyBox = false;
         fireEvent(this, 'afterDrawChartBox');
-    },
+    };
     /**
      * Detect whether a certain chart property is needed based on inspecting its
      * options and series. This mainly applies to the chart.inverted property,
@@ -1588,7 +1562,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      * @function Highcharts.Chart#propFromSeries
      * @return {void}
      */
-    propFromSeries: function () {
+    Chart.prototype.propFromSeries = function () {
         var chart = this, optionsChart = chart.options.chart, klass, seriesOptions = chart.options.series, i, value;
         /**
          * The flag is set to `true` if a series of the chart is inverted.
@@ -1618,7 +1592,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             // Set the chart property
             chart[key] = value;
         });
-    },
+    };
     /**
      * Internal function to link two or more series together, based on the
      * `linkedTo` option. This is done from `Chart.render`, and after
@@ -1626,10 +1600,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#linkSeries
-     * @return {void}
      * @fires Highcharts.Chart#event:afterLinkSeries
      */
-    linkSeries: function () {
+    Chart.prototype.linkSeries = function () {
         var chart = this, chartSeries = chart.series;
         // Reset links
         chartSeries.forEach(function (series) {
@@ -1657,28 +1630,26 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             }
         });
         fireEvent(this, 'afterLinkSeries');
-    },
+    };
     /**
      * Render series for the chart.
      *
      * @private
      * @function Highcharts.Chart#renderSeries
-     * @return {void}
      */
-    renderSeries: function () {
+    Chart.prototype.renderSeries = function () {
         this.series.forEach(function (serie) {
             serie.translate();
             serie.render();
         });
-    },
+    };
     /**
      * Render labels for the chart.
      *
      * @private
      * @function Highcharts.Chart#renderLabels
-     * @return {void}
      */
-    renderLabels: function () {
+    Chart.prototype.renderLabels = function () {
         var chart = this, labels = chart.options.labels;
         if (labels.items) {
             labels.items.forEach(function (label) {
@@ -1692,15 +1663,14 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                     .add();
             });
         }
-    },
+    };
     /**
      * Render all graphics for the chart. Runs internally on initialization.
      *
      * @private
      * @function Highcharts.Chart#render
-     * @return {void}
      */
-    render: function () {
+    Chart.prototype.render = function () {
         var chart = this, axes = chart.axes, colorAxis = chart.colorAxis, renderer = chart.renderer, correction = 0, // correction for X axis labels
         tempWidth, tempHeight, redoHorizontal, redoVertical, renderAxes = function (axes) {
             axes.forEach(function (axis) {
@@ -1782,7 +1752,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         chart.updateContainerScaling();
         // Set flag
         chart.hasRendered = true;
-    },
+    };
     /**
      * Set a new credits label for the chart.
      *
@@ -1791,15 +1761,12 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#addCredits
      *
-     * @param {Highcharts.CreditsOptions} credits
-     *        A configuration object for the new credits.
-     *
-     * @return {void}
+     * @param {Highcharts.CreditsOptions} [credits]
+     * A configuration object for the new credits.
      */
-    addCredits: function (credits) {
-        var chart = this;
-        credits = merge(true, this.options.credits, credits);
-        if (credits.enabled && !this.credits) {
+    Chart.prototype.addCredits = function (credits) {
+        var chart = this, creds = merge(true, this.options.credits, credits);
+        if (creds.enabled && !this.credits) {
             /**
              * The chart's credits label. The label has an `update` method that
              * allows setting new options as per the
@@ -1808,30 +1775,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
              * @name Highcharts.Chart#credits
              * @type {Highcharts.SVGElement}
              */
-            this.credits = this.renderer.text(credits.text + (this.mapCredits || ''), 0, 0)
+            this.credits = this.renderer.text(creds.text + (this.mapCredits || ''), 0, 0)
                 .addClass('highcharts-credits')
                 .on('click', function () {
-                if (credits.href) {
-                    win.location.href = credits.href;
+                if (creds.href) {
+                    win.location.href = creds.href;
                 }
             })
                 .attr({
-                align: credits.position.align,
+                align: creds.position.align,
                 zIndex: 8
             });
             if (!chart.styledMode) {
-                this.credits.css(credits.style);
+                this.credits.css(creds.style);
             }
             this.credits
                 .add()
-                .align(credits.position);
+                .align(creds.position);
             // Dynamically update
             this.credits.update = function (options) {
                 chart.credits = chart.credits.destroy();
                 chart.addCredits(options);
             };
         }
-    },
+    };
     /**
      * Handle scaling, #11329 - when there is scaling/transform on the container
      * or on a parent element, we need to take this into account. We calculate
@@ -1840,12 +1807,13 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#updateContainerScaling
-     * @return {void}
      */
-    updateContainerScaling: function () {
+    Chart.prototype.updateContainerScaling = function () {
         var container = this.container;
-        if (container.offsetWidth &&
-            container.offsetHeight &&
+        // #13342 - tooltip was not visible in Chrome, when chart
+        // updates height.
+        if (container.offsetWidth > 2 && // #13342
+            container.offsetHeight > 2 && // #13342
             container.getBoundingClientRect) {
             var bb = container.getBoundingClientRect(), scaleX = bb.width / container.offsetWidth, scaleY = bb.height / container.offsetHeight;
             if (scaleX !== 1 || scaleY !== 1) {
@@ -1855,7 +1823,7 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                 delete this.containerScaling;
             }
         }
-    },
+    };
     /**
      * Remove the chart and purge memory. This method is called internally
      * before adding a second chart into the same container, as well as on
@@ -1868,11 +1836,9 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @function Highcharts.Chart#destroy
      *
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:destroy
      */
-    destroy: function () {
+    Chart.prototype.destroy = function () {
         var chart = this, axes = chart.axes, series = chart.series, container = chart.container, i, parentNode = container && container.parentNode;
         // fire the chart.destoy event
         fireEvent(chart, 'destroy');
@@ -1927,17 +1893,15 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         objectEach(chart, function (val, key) {
             delete chart[key];
         });
-    },
+    };
     /**
      * Prepare for first rendering after all data are loaded.
      *
      * @private
      * @function Highcharts.Chart#firstRender
-     * @return {void}
-     *
      * @fires Highcharts.Chart#event:beforeRender
      */
-    firstRender: function () {
+    Chart.prototype.firstRender = function () {
         var chart = this, options = chart.options;
         // Hook for oldIE to check whether the chart is ready to render
         if (chart.isReadyToRender && !chart.isReadyToRender()) {
@@ -1966,25 +1930,30 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
         fireEvent(chart, 'beforeRender');
         // depends on inverted and on margins being set
         if (Pointer) {
-            /**
-             * The Pointer that keeps track of mouse and touch interaction.
-             *
-             * @memberof Highcharts.Chart
-             * @name pointer
-             * @type {Highcharts.Pointer}
-             * @instance
-             */
-            chart.pointer = new Pointer(chart, options);
+            if (!H.hasTouch && (win.PointerEvent || win.MSPointerEvent)) {
+                chart.pointer = new MSPointer(chart, options);
+            }
+            else {
+                /**
+                 * The Pointer that keeps track of mouse and touch interaction.
+                 *
+                 * @memberof Highcharts.Chart
+                 * @name pointer
+                 * @type {Highcharts.Pointer}
+                 * @instance
+                 */
+                chart.pointer = new Pointer(chart, options);
+            }
         }
         chart.render();
         // Fire the load event if there are no external images
-        if (!chart.renderer.imgCount && chart.onload) {
+        if (!chart.renderer.imgCount && !chart.hasLoaded) {
             chart.onload();
         }
         // If the chart was rendered outside the top container, put it back in
         // (#3679)
         chart.temporaryDisplay(true);
-    },
+    };
     /**
      * Internal function that runs on chart load, async if any images are loaded
      * in the chart. Runs the callbacks and triggers the `load` and `render`
@@ -1992,11 +1961,10 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#onload
-     * @return {void}
      * @fires Highcharts.Chart#event:load
      * @fires Highcharts.Chart#event:render
      */
-    onload: function () {
+    Chart.prototype.onload = function () {
         // Run callbacks, first the ones registered by modules, then user's one
         this.callbacks.concat([this.callback]).forEach(function (fn) {
             // Chart destroyed in its own callback (#3600)
@@ -2011,8 +1979,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             this.setReflow(this.options.chart.reflow);
         }
         // Don't run again
-        this.onload = null;
-    },
+        this.hasLoaded = true;
+    };
     /**
      * This method provides the logic for rendering the legend.
      * In its basic form it's simple new Legend() call. It is
@@ -2020,25 +1988,23 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
      *
      * @private
      * @function Highcharts.Chart#renderLegend
-     * @return {void}
      */
-    renderLegend: function () {
+    Chart.prototype.renderLegend = function () {
         /**
          * The overview of the chart's series.
          *
          * @name Highcharts.Chart#legend
          * @type {Highcharts.Legend}
          */
-        this.legend = new Legend(this, this.options.legend);
-    },
+        this.legend = new Legend(this, this.options.legend || {});
+    };
     /**
      * This method provides the logic for redrawing the legend.
      *
      * @private
      * @function Highcharts.Chart#redrawLegend
-     * @return {void}
      */
-    redrawLegend: function () {
+    Chart.prototype.redrawLegend = function () {
         var legend = this.legend;
         // handle added or removed series
         if (this.isDirtyLegend && legend && legend.options.enabled) {
@@ -2046,5 +2012,45 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
             legend.render();
             this.isDirtyLegend = false;
         }
-    }
-}); // end Chart
+    };
+    return Chart;
+}());
+// Hook for adding callbacks in modules
+Chart.prototype.callbacks = [];
+/**
+ * Factory function for basic charts.
+ *
+ * @example
+ * // Render a chart in to div#container
+ * var chart = Highcharts.chart('container', {
+ *     title: {
+ *         text: 'My chart'
+ *     },
+ *     series: [{
+ *         data: [1, 3, 2, 4]
+ *     }]
+ * });
+ *
+ * @function Highcharts.chart
+ *
+ * @param {string|Highcharts.HTMLDOMElement} [renderTo]
+ *        The DOM element to render to, or its id.
+ *
+ * @param {Highcharts.Options} options
+ *        The chart options structure.
+ *
+ * @param {Highcharts.ChartCallbackFunction} [callback]
+ *        Function to run when the chart has loaded and and all external images
+ *        are loaded. Defining a
+ *        [chart.events.load](https://api.highcharts.com/highcharts/chart.events.load)
+ *        handler is equivalent.
+ *
+ * @return {Highcharts.Chart}
+ *         Returns the Chart object.
+ */
+function chart(a, b, c) {
+    return new Chart(a, b, c);
+}
+H.chart = chart;
+H.Chart = Chart;
+export default Chart;

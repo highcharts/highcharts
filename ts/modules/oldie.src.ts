@@ -12,7 +12,41 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+const {
+    deg2rad,
+    doc,
+    noop,
+    svg,
+    win
+} = H;
+import Pointer from '../parts/Pointer.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    createElement,
+    css,
+    defined,
+    discardElement,
+    erase,
+    extend,
+    extendClass,
+    getOptions,
+    isArray,
+    isNumber,
+    isObject,
+    merge,
+    offset,
+    pick,
+    pInt,
+    uniqueKey
+} = U;
 
 /**
  * Internal types
@@ -20,7 +54,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             /** @requires highcharts/modules/oldies */
             ieSanitizeSVG(svg: string): string;
             /** @requires highcharts/modules/oldies */
@@ -33,15 +67,6 @@ declare global {
         interface GlobalOptions {
             /** @requires highcharts/modules/oldies */
             VMLRadialGradientURL?: string;
-        }
-        interface SymbolDictionary {
-            rect(
-                x: number,
-                y: number,
-                w: number,
-                h: number,
-                options: SVGAttributes
-            ): SVGPathArray;
         }
         interface SVGRenderer {
             /** @requires highcharts/modules/oldies */
@@ -176,7 +201,7 @@ declare global {
             public setAttr(key: string, value: string): void;
             public setSpanRotation(): void;
             public shadow(
-                shadowOptions: ShadowOptionsObject,
+                shadowOptions: Partial<ShadowOptionsObject>,
                 group: VMLElement,
                 cutOff: boolean
             ): VMLElement;
@@ -222,7 +247,7 @@ declare global {
             public isIE8: boolean;
             public isVML: true;
             public setSize: SVGRenderer['setSize'];
-            public symbols: SymbolDictionary;
+            public symbols: SVGRenderer['symbols'];
             public circle(obj: Dictionary<number>): VMLElement;
             public circle(x: number, y: number, r: number): VMLElement;
             public clipRect(size: SizeObject): VMLClipRectObject;
@@ -239,6 +264,7 @@ declare global {
                 wrapper: VMLElement
             ): T;
             public createElement(nodeName: string): VMLElement;
+            public crispPolyLine(points: SVGPath, width: number): SVGPath;
             public g(name: string): VMLElement;
             public image(
                 src: string,
@@ -274,6 +300,10 @@ declare global {
             type: string,
             fn: EventCallbackFunction<T>
         ): void;
+    }
+    interface CSSStyleSheet {
+        /** @deprecated */
+        cssText: string;
     }
     interface Document {
         /** @deprecated */
@@ -315,38 +345,9 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    defined,
-    discardElement,
-    erase,
-    extend,
-    extendClass,
-    isArray,
-    isNumber,
-    isObject,
-    offset,
-    pick,
-    pInt
-} = U;
-
-import '../parts/SvgRenderer.js';
-
 var VMLRenderer,
     VMLRendererExtension,
-    VMLElement: typeof Highcharts.VMLElement,
-    Chart = H.Chart,
-    createElement = H.createElement,
-    css = H.css,
-    deg2rad = H.deg2rad,
-    doc = H.doc,
-    merge = H.merge,
-    noop = H.noop,
-    svg = H.svg,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
-    win = H.win;
-
+    VMLElement: typeof Highcharts.VMLElement;
 
 /**
  * Path to the pattern image required by VML browsers in order to
@@ -358,13 +359,13 @@ var VMLRenderer,
  * @requires  modules/oldie
  * @apioption global.VMLRadialGradientURL
  */
-(H.getOptions().global as any).VMLRadialGradientURL =
+(getOptions().global as any).VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 
 
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = function (
+    H.getStyle = U.getStyle = function (
         el: Highcharts.HTMLDOMElement,
         prop: string
     ): number {
@@ -385,7 +386,7 @@ if (doc && !doc.defaultView) {
         if (alias) {
             el.style.zoom = 1 as any;
             return Math.max(
-                (el as any)[alias] - 2 * (H.getStyle(el, 'padding') as number),
+                (el as any)[alias] - 2 * (U.getStyle(el, 'padding') as number),
                 0
             );
         }
@@ -417,7 +418,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement, 'afterInit', function (
+    addEvent(SVGElement, 'afterInit', function (
         this: Highcharts.SVGElement
     ): void {
         if (this.element.nodeName === 'text') {
@@ -437,10 +438,8 @@ if (!svg) {
      * @param {boolean} [chartPosition=false]
      * @return {Highcharts.PointerEventObject}
      */
-    H.Pointer.prototype.normalize = function<
-        T extends Highcharts.PointerEventObject
-    > (
-        e: (T|PointerEvent),
+    Pointer.prototype.normalize = function<T extends Highcharts.PointerEventObject> (
+        e: (T|MouseEvent|PointerEvent|TouchEvent),
         chartPosition?: Highcharts.OffsetObject
     ): T {
 
@@ -457,8 +456,8 @@ if (!svg) {
         return extend(e, {
             // #2005, #2129: the second case is for IE10 quirks mode within
             // framesets
-            chartX: Math.round(Math.max(e.x, e.clientX - chartPosition.left)),
-            chartY: Math.round(e.y)
+            chartX: Math.round(Math.max((e as any).x, (e as any).clientX - chartPosition.left)),
+            chartY: Math.round((e as any).y)
         }) as T;
     };
 
@@ -494,9 +493,7 @@ if (!svg) {
      * @private
      * @function Highcharts.Chart#isReadyToRender
      */
-    Chart.prototype.isReadyToRender = function (
-        this: Highcharts.Chart
-    ): boolean {
+    Chart.prototype.isReadyToRender = function (): boolean {
         var chart = this;
 
         // Note: win == win.top is required
@@ -558,7 +555,7 @@ if (!svg) {
 
             // unique function string (#6746)
             if (!fn.hcKey) {
-                fn.hcKey = H.uniqueKey();
+                fn.hcKey = uniqueKey();
             }
 
             // Link wrapped fn with original fn, so we can get this in
@@ -929,10 +926,10 @@ if (!svg) {
         ): Highcharts.VMLElement {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function (): void {
-                var evt = win.event as Event;
+                var e = win.event as Event;
 
-                (evt.target as any) = evt.srcElement;
-                handler(evt);
+                (e.target as any) = e.srcElement;
+                handler(e);
             };
             return this;
         },
@@ -977,7 +974,7 @@ if (!svg) {
          */
         shadow: function (
             this: Highcharts.VMLElement,
-            shadowOptions: Highcharts.ShadowOptionsObject,
+            shadowOptions: Partial<Highcharts.ShadowOptionsObject>,
             group: Highcharts.VMLElement,
             cutOff: boolean
         ): Highcharts.VMLElement {
@@ -1358,6 +1355,9 @@ if (!svg) {
                 box,
                 css;
 
+            // Extended SVGRenderer member
+            this.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
+
             renderer.alignedObjects = [];
 
             boxWrapper = renderer.createElement('div')
@@ -1509,7 +1509,7 @@ if (!svg) {
             Highcharts.PatternObject
         )> (
             this: Highcharts.VMLRenderer,
-            color: T,
+            colorOption: T,
             elem: Highcharts.VMLDOMElement,
             prop: string,
             wrapper: Highcharts.VMLElement
@@ -1523,13 +1523,13 @@ if (!svg) {
 
             // Check for linear or radial gradient
             if (
-                color &&
-                (color as Highcharts.GradientColorObject).linearGradient
+                colorOption &&
+                (colorOption as Highcharts.GradientColorObject).linearGradient
             ) {
                 fillType = 'gradient';
             } else if (
-                color &&
-                (color as Highcharts.GradientColorObject).radialGradient
+                colorOption &&
+                (colorOption as Highcharts.GradientColorObject).radialGradient
             ) {
                 fillType = 'pattern';
             }
@@ -1544,10 +1544,10 @@ if (!svg) {
                         Highcharts.RadialGradientColorObject
                     ) = (
                         (
-                            color as Highcharts.GradientColorObject
+                            colorOption as Highcharts.GradientColorObject
                         ).linearGradient ||
                         (
-                            color as Highcharts.GradientColorObject
+                            colorOption as Highcharts.GradientColorObject
                         ).radialGradient
                     ) as any,
                     x1,
@@ -1559,7 +1559,7 @@ if (!svg) {
                     color1: (Highcharts.ColorString|undefined),
                     color2: (Highcharts.ColorString|undefined),
                     fillAttr = '',
-                    stops = (color as Highcharts.GradientColorObject).stops,
+                    stops = (colorOption as Highcharts.GradientColorObject).stops,
                     firstStop,
                     lastStop,
                     colors = [] as Array<Highcharts.ColorString>,
@@ -1600,7 +1600,7 @@ if (!svg) {
                     i: number
                 ): void {
                     if (regexRgba.test(stop[1])) {
-                        colorObject = H.color(stop[1]);
+                        colorObject = color(stop[1]);
                         stopColor = colorObject.get('rgb') as any;
                         stopOpacity = colorObject.get('a') as any;
                     } else {
@@ -1660,7 +1660,7 @@ if (!svg) {
                                 }
                                 fillAttr =
                                     'src="' + (
-                                        H.getOptions().global as any
+                                        getOptions().global as any
                                     ).VMLRadialGradientURL +
                                     '" ' +
                                     'size="' + sizex + ',' + sizey + '" ' +
@@ -1694,9 +1694,9 @@ if (!svg) {
 
             // If the color is an rgba color, split it and add a fill node
             // to hold the opacity component
-            } else if (regexRgba.test(color as any) && elem.tagName !== 'IMG') {
+            } else if (regexRgba.test(colorOption as any) && elem.tagName !== 'IMG') {
 
-                colorObject = H.color(color);
+                colorObject = color(colorOption);
 
                 (wrapper as any)[prop + '-opacitySetter'](
                     colorObject.get('a'),
@@ -1715,7 +1715,7 @@ if (!svg) {
                     propNodes[0].opacity = 1;
                     propNodes[0].type = 'solid';
                 }
-                ret = color;
+                ret = colorOption;
             }
 
             return ret;
@@ -2067,8 +2067,8 @@ if (!svg) {
                 y: number,
                 w: number,
                 h: number,
-                options: Highcharts.SVGAttributes
-            ): Highcharts.SVGPathArray {
+                options: Highcharts.SymbolOptionsObject
+            ): SVGPath {
                 return SVGRenderer.prototype.symbols[
                     !defined(options) || !options.r ? 'square' : 'callout'
                 ].call(0, x, y, w, h, options);

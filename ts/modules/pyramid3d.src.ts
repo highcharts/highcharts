@@ -41,11 +41,12 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 import '../parts/ColumnSeries.js';
-import '../parts/SvgRenderer.js';
-
-var seriesType = H.seriesType;
+import '../parts/SVGRenderer.js';
 
 /**
  * The pyramid3d series type.

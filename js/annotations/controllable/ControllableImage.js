@@ -4,10 +4,10 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
-import './../../parts/Utilities.js';
-import controllableMixin from './controllableMixin.js';
 import ControllableLabel from './ControllableLabel.js';
+import controllableMixin from './controllableMixin.js';
+import U from './../../parts/Utilities.js';
+var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable image class.
@@ -42,7 +42,7 @@ ControllableImage.attrsMap = {
     height: 'height',
     zIndex: 'zIndex'
 };
-H.merge(true, ControllableImage.prototype, controllableMixin, /** @lends Annotation.ControllableImage# */ {
+merge(true, ControllableImage.prototype, controllableMixin, /** @lends Annotation.ControllableImage# */ {
     /**
      * @type 'image'
      */

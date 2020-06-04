@@ -14,6 +14,8 @@
  * */
 
 'use strict';
+
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 
 /**
@@ -73,27 +75,27 @@ declare global {
     }
 }
 
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
     extend,
+    fireEvent,
     isNumber,
+    merge,
+    pick,
     wrap
 } = U;
 
-import '../parts/Color.js';
 import '../parts/Series.js';
 import '../parts/Options.js';
 
 var win = H.win,
     doc = win.document,
     noop = function (): void {},
-    Color = H.Color,
     Series = H.Series,
     seriesTypes = H.seriesTypes,
-    addEvent = H.addEvent,
-    fireEvent = H.fireEvent,
-    merge = H.merge,
-    pick = H.pick,
     CHUNK_SIZE = 50000,
     destroyLoadingDiv: number;
 
@@ -552,8 +554,7 @@ H.initCanvasBoost = function (): void {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: H.color('${palette.backgroundColor}')
-                            .setOpacity(0.75).get(),
+                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },
@@ -562,7 +563,7 @@ H.initCanvasBoost = function (): void {
                         opacity: 1
                     }
                 });
-                H.clearTimeout(destroyLoadingDiv);
+                U.clearTimeout(destroyLoadingDiv);
                 chart.showLoading('Drawing...');
                 chart.options.loading = loadingOptions; // reset
             }
@@ -839,14 +840,12 @@ H.initCanvasBoost = function (): void {
         sampling: true
     });
 
-    H.Chart.prototype.callbacks.push(function (
-        chart: Highcharts.Chart
-    ): void {
+    Chart.prototype.callbacks.push(function (chart: Chart): void {
 
         /**
          * @private
          */
-        function canvasToSVG(this: Highcharts.Chart): void {
+        function canvasToSVG(this: Chart): void {
             if (chart.boostCopy) {
                 chart.boostCopy();
             }
@@ -855,7 +854,7 @@ H.initCanvasBoost = function (): void {
         /**
          * @private
          */
-        function clear(this: Highcharts.Chart): void {
+        function clear(this: Chart): void {
             if (chart.renderTarget) {
                 chart.renderTarget.attr({ href: '' });
             }

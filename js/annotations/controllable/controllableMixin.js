@@ -4,7 +4,11 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
+import ControlPoint from './../ControlPoint.js';
+import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+var isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
 /**
  * An object which denots a controllable's anchor positions - relative and
  * absolute.
@@ -39,11 +43,7 @@ import H from './../../parts/Globals.js';
 * @name Highcharts.AnnotationControllable#points
 * @type {Array<Highcharts.Point>}
 */
-import U from './../../parts/Utilities.js';
-var isObject = U.isObject, isString = U.isString, splat = U.splat;
 import './../../parts/Tooltip.js';
-import ControlPoint from './../ControlPoint.js';
-import MockPoint from './../MockPoint.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * It provides methods for handling points, control points
@@ -116,7 +116,7 @@ var controllableMixin = {
     anchor: function (point) {
         var plotBox = point.series.getPlotBox(), box = point.mock ?
             point.toAnchor() :
-            H.Tooltip.prototype.getAnchor.call({
+            Tooltip.prototype.getAnchor.call({
                 chart: point.series.chart
             }, point), anchor = {
             x: box[0] + (this.options.x || 0),
@@ -126,7 +126,7 @@ var controllableMixin = {
         };
         return {
             relativePosition: anchor,
-            absolutePosition: H.merge(anchor, {
+            absolutePosition: merge(anchor, {
                 x: anchor.x + plotBox.translateX,
                 y: anchor.y + plotBox.translateY
             })
@@ -190,7 +190,7 @@ var controllableMixin = {
     addControlPoints: function () {
         var controlPointsOptions = this.options.controlPoints;
         (controlPointsOptions || []).forEach(function (controlPointOptions, i) {
-            var options = H.merge(this.options.controlPointOptions, controlPointOptions);
+            var options = merge(this.options.controlPointOptions, controlPointOptions);
             if (!options.index) {
                 options.index = i;
             }
@@ -360,7 +360,7 @@ var controllableMixin = {
      * @param {Object} newOptions
      */
     update: function (newOptions) {
-        var annotation = this.annotation, options = H.merge(true, this.options, newOptions), parentGroup = this.graphic.parentGroup;
+        var annotation = this.annotation, options = merge(true, this.options, newOptions), parentGroup = this.graphic.parentGroup;
         this.destroy();
         this.constructor(annotation, options);
         this.render(parentGroup);

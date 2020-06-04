@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../../parts/Point';
 import H from '../../parts/Globals.js';
 
 /**
@@ -143,7 +144,7 @@ H.networkgraphIntegrations = {
             yFactor = (yFactor - (this.box.top + this.box.height) / 2) *
                 (gravitationalConstant as any);
 
-            this.nodes.forEach(function (node: Highcharts.Point): void {
+            this.nodes.forEach(function (node: Point): void {
                 if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
                     (node.plotX as any) -=
                         xFactor / (node.mass as any) / (node.degree as any);
@@ -362,7 +363,7 @@ H.networkgraphIntegrations = {
                 xFactor = (this.barycenter as any).xFactor,
                 yFactor = (this.barycenter as any).yFactor;
 
-            this.nodes.forEach(function (node: Highcharts.Point): void {
+            this.nodes.forEach(function (node: Point): void {
                 if (!(node as Highcharts.DragNodesPoint).fixedPosition) {
                     var degree =
                             (node as Highcharts.NetworkgraphPoint).getDegree(),

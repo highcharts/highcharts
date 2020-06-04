@@ -9,11 +9,14 @@
  * */
 'use strict';
 import H from './Globals.js';
-import './Utilities.js';
-import './Legend.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import U from './Utilities.js';
+var seriesType = U.seriesType;
 import './AreaSeries.js';
 import './SplineSeries.js';
-var areaProto = H.seriesTypes.area.prototype, defaultPlotOptions = H.defaultPlotOptions, LegendSymbolMixin = H.LegendSymbolMixin, seriesType = H.seriesType;
+var areaProto = H.seriesTypes.area.prototype;
 /**
  * AreaSpline series type.
  *
@@ -38,7 +41,7 @@ seriesType('areaspline', 'spline',
  * @product   highcharts highstock
  * @apioption plotOptions.areaspline
  */
-defaultPlotOptions.area, {
+defaultOptions.plotOptions.area, {
     getStackPoints: areaProto.getStackPoints,
     getGraphPath: areaProto.getGraphPath,
     drawGraph: areaProto.drawGraph,
@@ -50,7 +53,7 @@ defaultPlotOptions.area, {
  *
  *
  * @extends   series,plotOptions.areaspline
- * @excluding dataParser, dataURL
+ * @excluding dataParser, dataURL, step
  * @product   highcharts highstock
  * @apioption series.areaspline
  */

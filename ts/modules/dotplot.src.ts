@@ -20,7 +20,15 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import type SVGPath from '../parts/SVGPath';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    objectEach,
+    pick,
+    seriesType
+} = U;
 
 declare global {
     namespace Highcharts {
@@ -50,16 +58,7 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    objectEach,
-    pick
-} = U;
-
 import '../parts/Series.js';
-
-var seriesType = H.seriesType;
 
 /**
  * @private
@@ -78,6 +77,7 @@ seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
         }
     }
 }, {
+    markerAttribs: void 0,
     drawPoints: function (this: Highcharts.DotplotSeries): void {
         var series = this,
             renderer = series.chart.renderer,
@@ -183,12 +183,12 @@ seriesType<Highcharts.DotplotSeries>('dotplot', 'column', {
     }
 });
 
-H.SVGRenderer.prototype.symbols.rect = function (
+SVGRenderer.prototype.symbols.rect = function (
     x: number,
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SymbolOptionsObject
-): Highcharts.SVGPathArray {
-    return H.SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
+    return SVGRenderer.prototype.symbols.callout(x, y, w, h, options);
 };

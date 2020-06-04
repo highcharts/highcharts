@@ -9,9 +9,11 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
 import U from '../parts/Utilities.js';
-var clamp = U.clamp, pick = U.pick;
-var defaultPlotOptions = H.defaultPlotOptions, merge = H.merge, noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var clamp = U.clamp, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
+var noop = H.noop, seriesTypes = H.seriesTypes;
 var colProto = seriesTypes.column.prototype;
 /**
  * The column range is a cartesian series type with higher and lower
@@ -60,7 +62,7 @@ var columnRangeOptions = {
  *
  * @augments Highcharts.Series
  */
-seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultPlotOptions.arearange, columnRangeOptions), {
+seriesType('columnrange', 'arearange', merge(defaultOptions.plotOptions.column, defaultOptions.plotOptions.arearange, columnRangeOptions), {
     // eslint-disable-next-line valid-jsdoc
     /**
      * Translate data points from raw values x and y to plotX and plotY
@@ -98,10 +100,8 @@ seriesType('columnrange', 'arearange', merge(defaultPlotOptions.column, defaultP
             }
             if (isRadial) {
                 start = point.barX + startAngleRad;
-                point.shapeType = 'path';
-                point.shapeArgs = {
-                    d: series.polarArc(y + height, y, start, start + point.pointWidth)
-                };
+                point.shapeType = 'arc';
+                point.shapeArgs = series.polarArc(y + height, y, start, start + point.pointWidth);
             }
             else {
                 shapeArgs.height = height;

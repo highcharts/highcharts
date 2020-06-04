@@ -8,6 +8,8 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -70,8 +72,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var defined = U.defined,
-    isArray = U.isArray;
+const {
+    defined,
+    isArray,
+    seriesType
+} = U;
 
 var SMA = H.seriesTypes.sma;
 
@@ -111,7 +116,7 @@ function destroyExtraLabels(
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.PivotPointsIndicator>(
+seriesType<Highcharts.PivotPointsIndicator>(
     'pivotpoints',
     'sma',
     /**
@@ -199,18 +204,18 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
         },
         getGraphPath: function (
             this: Highcharts.PivotPointsIndicator,
-            points: Array<Highcharts.Point>
-        ): Highcharts.SVGPathArray {
+            points: Array<Point>
+        ): SVGPath {
             var indicator = this,
                 pointsLength: number = points.length,
-                allPivotPoints: Array<Array<Highcharts.Point>> = (
+                allPivotPoints: Array<Array<Point>> = (
                     [[], [], [], [], [], [], [], [], []]
                 ),
-                path: Highcharts.SVGPathArray = [],
+                path: SVGPath = [],
                 endPoint: (number|undefined) = indicator.plotEndPoint,
                 pointArrayMapLength: number = indicator.pointArrayMap.length,
                 position: string,
-                point: Highcharts.Point,
+                point: Point,
                 i: number;
 
             while (pointsLength--) {
@@ -241,7 +246,7 @@ H.seriesType<Highcharts.PivotPointsIndicator>(
             }
 
             allPivotPoints.forEach(function (
-                pivotPoints: Array<Highcharts.Point>
+                pivotPoints: Array<Point>
             ): void {
                 path = path.concat(
                     SMA.prototype.getGraphPath.call(indicator, pivotPoints)

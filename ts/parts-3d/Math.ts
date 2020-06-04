@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 
 /**
@@ -18,7 +19,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             scale3d?: number;
         }
         interface Position3dObject extends PositionObject {
@@ -33,7 +34,8 @@ declare global {
         function perspective(
             points: Array<Position3dObject>,
             chart: Chart,
-            insidePlotArea?: boolean
+            insidePlotArea?: boolean,
+            useInvertedPersp?: boolean
         ): Array<Position3dObject>;
         function perspective3D(
             coordinate: Position3dObject,
@@ -167,7 +169,10 @@ H.perspective3D = function (
  * The chart
  *
  * @param {boolean} [insidePlotArea]
- * Wether to verifiy the points are inside the plotArea
+ * Whether to verifiy that the points are inside the plotArea
+ *
+ * @param {boolean} [useInvertedPersp]
+ * Whether to use inverted perspective in calculations
  *
  * @return {Array<Highcharts.Position3dObject>}
  * An array of transformed points
@@ -176,11 +181,16 @@ H.perspective3D = function (
  */
 H.perspective = function (
     points: Array<Highcharts.Position3dObject>,
-    chart: Highcharts.Chart,
-    insidePlotArea?: boolean
+    chart: Chart,
+    insidePlotArea?: boolean,
+    useInvertedPersp?: boolean
 ): Array<Highcharts.Position3dObject> {
     var options3d = (chart.options.chart as any).options3d,
-        inverted = insidePlotArea ? chart.inverted : false,
+        /* The useInvertedPersp argument is used for
+         * inverted charts with already inverted elements,
+         * such as dataLabels or tooltip positions.
+         */
+        inverted = pick(useInvertedPersp, insidePlotArea ? chart.inverted : false),
         origin = {
             x: chart.plotWidth / 2,
             y: chart.plotHeight / 2,
@@ -249,7 +259,7 @@ H.perspective = function (
  */
 H.pointCameraDistance = function (
     coordinates: Highcharts.Dictionary<number>,
-    chart: Highcharts.Chart
+    chart: Chart
 ): number {
     var options3d = (chart.options.chart as any).options3d,
         cameraPosition = {
@@ -258,10 +268,11 @@ H.pointCameraDistance = function (
             z: pick(options3d.depth, 1) * pick(options3d.viewDistance, 0) +
                 options3d.depth
         },
+        // Added support for objects with plotX or x coordinates.
         distance = Math.sqrt(
-            Math.pow(cameraPosition.x - coordinates.plotX, 2) +
-            Math.pow(cameraPosition.y - coordinates.plotY, 2) +
-            Math.pow(cameraPosition.z - coordinates.plotZ, 2)
+            Math.pow(cameraPosition.x - pick(coordinates.plotX, coordinates.x), 2) +
+            Math.pow(cameraPosition.y - pick(coordinates.plotY, coordinates.y), 2) +
+            Math.pow(cameraPosition.z - pick(coordinates.plotZ, coordinates.z), 2)
         );
 
     return distance;
@@ -307,7 +318,7 @@ H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
  * Related chart
  *
  * @param {boolean} [insidePlotArea]
- * Wether to verifiy the points are inside the plotArea
+ * Whether to verifiy that the points are inside the plotArea
  *
  * @return {number}
  * Calculated area
@@ -316,7 +327,7 @@ H.shapeArea = function (vertexes: Array<Highcharts.PositionObject>): number {
  */
 H.shapeArea3d = function (
     vertexes: Array<Highcharts.Position3dObject>,
-    chart: Highcharts.Chart,
+    chart: Chart,
     insidePlotArea?: boolean
 ): number {
     return H.shapeArea(H.perspective(vertexes, chart, insidePlotArea));

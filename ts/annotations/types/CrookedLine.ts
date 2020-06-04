@@ -5,7 +5,15 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
 import H from '../../parts/Globals.js';
+import MockPoint from '../MockPoint.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -35,17 +43,11 @@ declare global {
         interface AnnotationMockPointOptionsObject {
             controlPoint?: AnnotationControlPointOptionsObject;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             crookedLine: typeof AnnotationCrookedLine;
         }
     }
 }
-
-import '../../parts/Utilities.js';
-
-var Annotation = H.Annotation,
-    MockPoint = Annotation.MockPoint,
-    ControlPoint = Annotation.ControlPoint;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -96,7 +98,7 @@ H.extendAnnotation(
                     var controlPoint = new ControlPoint(
                         this.chart,
                         this,
-                        H.merge(
+                        merge(
                             this.options.controlPointOptions,
                             pointOptions.controlPoint
                         ),
@@ -114,7 +116,7 @@ H.extendAnnotation(
         addShapes: function (this: Highcharts.AnnotationCrookedLine): void {
             var typeOptions = this.options.typeOptions,
                 shape = this.initShape(
-                    H.merge(typeOptions.line, {
+                    merge(typeOptions.line, {
                         type: 'path',
                         points: this.points.map(function (
                             _point: Highcharts.AnnotationPointType,

@@ -23,13 +23,15 @@ import H from './Globals.js';
 * @name Highcharts.ColumnMetricsObject#offset
 * @type {number}
 */
+''; // detach doclets above
+import Color from './Color.js';
+var color = Color.parse;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
-var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, pick = U.pick;
-import './Color.js';
-import './Legend.js';
+var animObject = U.animObject, clamp = U.clamp, defined = U.defined, extend = U.extend, isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType;
 import './Series.js';
 import './Options.js';
-var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Series = H.Series, seriesType = H.seriesType, svg = H.svg;
+var noop = H.noop, Series = H.Series, svg = H.svg;
 /**
  * The column series type.
  *
@@ -49,8 +51,8 @@ seriesType('column', 'line',
  *         Column chart
  *
  * @extends      plotOptions.line
- * @excluding    connectNulls, dashStyle, gapSize, gapUnit, linecap,
- *               lineWidth, marker, connectEnds, step, useOhlcData
+ * @excluding    connectEnds, connectNulls, gapSize, gapUnit, linecap,
+ *               lineWidth, marker, step, useOhlcData
  * @product      highcharts highstock
  * @optionparent plotOptions.column
  */
@@ -101,22 +103,17 @@ seriesType('column', 'line',
      * @apioption plotOptions.column.colors
      */
     /**
-     * When true, each column edge is rounded to its nearest pixel in order
-     * to render sharp on screen. In some cases, when there are a lot of
-     * densely packed columns, this leads to visible difference in column
-     * widths or distance between columns. In these cases, setting `crisp`
-     * to `false` may look better, even though each column is rendered
-     * blurry.
+     * When `true`, the columns will center in the category, ignoring null
+     * or missing points. When `false`, space will be reserved for null or
+     * missing points.
      *
-     * @sample {highcharts} highcharts/plotoptions/column-crisp-false/
-     *         Crisp is false
+     * @sample {highcharts} highcharts/series-column/centerincategory/
+     *         Center in category
      *
-     * @since   5.0.10
+     * @since   8.0.1
      * @product highcharts highstock gantt
-     *
-     * @private
      */
-    crisp: true,
+    centerInCategory: false,
     /**
      * Padding between each value groups, in x axis units.
      *
@@ -337,9 +334,9 @@ seriesType('column', 'line',
         }
     },
     dataLabels: {
-        align: null,
-        verticalAlign: null,
-        y: null
+        align: void 0,
+        verticalAlign: void 0,
+        y: void 0
     },
     /**
      * When this is true, the series will not cause the Y axis to cross
@@ -372,6 +369,7 @@ seriesType('column', 'line',
      * distinguishing between values above and below a threshold. If `null`,
      * the columns extend from the padding Y axis minimum.
      *
+     * @type    {number|null}
      * @since   2.0
      * @product highcharts
      *
@@ -474,7 +472,7 @@ seriesType('column', 'line',
                             .ignoreHiddenSeries) &&
                     yAxis.len === otherYAxis.len &&
                     yAxis.pos === otherYAxis.pos) { // #642, #2086
-                    if (otherOptions.stacking) {
+                    if (otherOptions.stacking && otherOptions.stacking !== 'group') {
                         stackKey = otherSeries.stackKey;
                         if (typeof stackGroups[stackKey] ===
                             'undefined') {
@@ -489,7 +487,7 @@ seriesType('column', 'line',
                 }
             });
         }
-        var categoryWidth = Math.min(Math.abs(xAxis.transA) * (xAxis.ordinalSlope ||
+        var categoryWidth = Math.min(Math.abs(xAxis.transA) * ((xAxis.ordinal && xAxis.ordinal.slope) ||
             options.pointRange ||
             xAxis.closestPointRange ||
             xAxis.tickInterval ||
@@ -504,7 +502,9 @@ seriesType('column', 'line',
         // Save it for reading in linked series (Error bars particularly)
         series.columnMetrics = {
             width: pointWidth,
-            offset: pointXOffset
+            offset: pointXOffset,
+            paddedWidth: pointOffsetWidth,
+            columnCount: columnCount
         };
         return series.columnMetrics;
     },
@@ -550,6 +550,69 @@ seriesType('column', 'line',
         };
     },
     /**
+     * Adjust for missing columns, according to the `centerInCategory`
+     * option. Missing columns are either single points or stacks where the
+     * point or points are either missing or null.
+     *
+     * @private
+     * @function Highcharts.seriesTypes.column#adjustForMissingColumns
+     * @param {number} x
+     *        The x coordinate of the column, left side
+     * @param {number} pointWidth
+     *        The pointWidth, already computed upstream
+     * @param {Highcharts.ColumnPoint} point
+     *        The point instance
+     * @param {Highcharts.ColumnMetricsObject} metrics
+     *        The series-wide column metrics
+     * @return {number}
+     *        The adjusted x position, or the original if not adjusted
+     */
+    adjustForMissingColumns: function (x, pointWidth, point, metrics) {
+        var _this = this;
+        var stacking = this.options.stacking;
+        if (!point.isNull && metrics.columnCount > 1) {
+            var indexInCategory_1 = 0;
+            var totalInCategory_1 = 0;
+            // Loop over all the stacks on the Y axis. When stacking is
+            // enabled, these are real point stacks. When stacking is not
+            // enabled, but `centerInCategory` is true, there is one stack
+            // handling the grouping of points in each category. This is
+            // done in the `setGroupedPoints` function.
+            Highcharts.objectEach(this.yAxis.stacking && this.yAxis.stacking.stacks, function (stack) {
+                if (typeof point.x === 'number') {
+                    var stackItem = stack[point.x.toString()];
+                    if (stackItem) {
+                        var pointValues = stackItem.points[_this.index], total = stackItem.total;
+                        // If true `stacking` is enabled, count the
+                        // total number of non-null stacks in the
+                        // category, and note which index this point is
+                        // within those stacks.
+                        if (stacking) {
+                            if (pointValues) {
+                                indexInCategory_1 = totalInCategory_1;
+                            }
+                            if (stackItem.hasValidPoints) {
+                                totalInCategory_1++;
+                            }
+                            // If `stacking` is not enabled, look for the
+                            // index and total of the `group` stack.
+                        }
+                        else if (H.isArray(pointValues)) {
+                            indexInCategory_1 = pointValues[1];
+                            totalInCategory_1 = total || 0;
+                        }
+                    }
+                }
+            });
+            // Compute the adjusted x position
+            var boxWidth = (totalInCategory_1 - 1) * metrics.paddedWidth +
+                pointWidth;
+            x = (point.plotX || 0) + boxWidth / 2 - pointWidth -
+                indexInCategory_1 * metrics.paddedWidth;
+        }
+        return x;
+    },
+    /**
      * Translate each point to the plot area coordinate system and find
      * shape positions
      *
@@ -579,10 +642,10 @@ seriesType('column', 'line',
         series.points.forEach(function (point) {
             var yBottom = pick(point.yBottom, translatedThreshold, 0 // Handle the situation when the plot area is not
             // visible because of multiple legends.
-            ), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX, 
+            ), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX || 0, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
-            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = point.plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
+            plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
             // Handle options.minPointLength
             if (minPointLength && Math.abs(barH) < minPointLength) {
                 barH = minPointLength;
@@ -590,10 +653,12 @@ seriesType('column', 'line',
                     (yAxis.reversed && point.negative);
                 // Reverse zeros if there's no positive value in the series
                 // in visible range (#7046)
-                if (point.y === threshold &&
-                    series.dataMax <= threshold &&
+                if (isNumber(threshold) &&
+                    isNumber(dataMax) &&
+                    point.y === threshold &&
+                    dataMax <= threshold &&
                     // and if there's room for it (#7311)
-                    yAxis.min < threshold &&
+                    (yAxis.min || 0) < threshold &&
                     // if all points are the same value (i.e zero) not draw
                     // as negative points (#10646)
                     dataMin !== dataMax) {
@@ -613,6 +678,10 @@ seriesType('column', 'line',
                 pointWidth = barW =
                     Math.ceil(point.options.pointWidth);
                 barX -= Math.round((pointWidth - seriesPointWidth) / 2);
+            }
+            // Adjust for null or missing points
+            if (options.centerInCategory) {
+                barX = series.adjustForMissingColumns(barX, pointWidth, point, metrics);
             }
             // Cache for access in polar
             point.barX = barX;
@@ -801,38 +870,35 @@ seriesType('column', 'line',
      */
     animate: function (init) {
         var series = this, yAxis = this.yAxis, options = series.options, inverted = this.chart.inverted, attr = {}, translateProp = inverted ? 'translateX' : 'translateY', translateStart, translatedThreshold;
-        if (svg) { // VML is too slow anyway
-            if (init) {
-                attr.scaleY = 0.001;
-                translatedThreshold = clamp(yAxis.toPixels(options.threshold), yAxis.pos, yAxis.pos + yAxis.len);
-                if (inverted) {
-                    attr.translateX = translatedThreshold - yAxis.len;
-                }
-                else {
-                    attr.translateY = translatedThreshold;
-                }
-                // apply finnal clipping (used in Highstock) (#7083)
-                // animation is done by scaleY, so cliping is for panes
-                if (series.clipBox) {
-                    series.setClip();
-                }
-                series.group.attr(attr);
+        if (init) {
+            attr.scaleY = 0.001;
+            translatedThreshold = clamp(yAxis.toPixels(options.threshold), yAxis.pos, yAxis.pos + yAxis.len);
+            if (inverted) {
+                attr.translateX = translatedThreshold - yAxis.len;
             }
-            else { // run the animation
-                translateStart = series.group.attr(translateProp);
-                series.group.animate({ scaleY: 1 }, extend(animObject(series.options.animation), {
-                    // Do the scale synchronously to ensure smooth
-                    // updating (#5030, #7228)
-                    step: function (val, fx) {
-                        attr[translateProp] =
-                            translateStart +
-                                fx.pos * (yAxis.pos - translateStart);
+            else {
+                attr.translateY = translatedThreshold;
+            }
+            // apply finnal clipping (used in Highstock) (#7083)
+            // animation is done by scaleY, so cliping is for panes
+            if (series.clipBox) {
+                series.setClip();
+            }
+            series.group.attr(attr);
+        }
+        else { // run the animation
+            translateStart = series.group.attr(translateProp);
+            series.group.animate({ scaleY: 1 }, extend(animObject(series.options.animation), {
+                // Do the scale synchronously to ensure smooth
+                // updating (#5030, #7228)
+                step: function (val, fx) {
+                    if (series.group) {
+                        attr[translateProp] = translateStart +
+                            fx.pos * (yAxis.pos - translateStart);
                         series.group.attr(attr);
                     }
-                }));
-                // delete this function to allow it only once
-                series.animate = null;
-            }
+                }
+            }));
         }
     },
     /**

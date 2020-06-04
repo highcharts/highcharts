@@ -36,10 +36,11 @@ declare global {
 }
 
 import U from '../parts/Utilities.js';
-var isArray = U.isArray;
-
-var addEvent = H.addEvent,
-    merge = H.merge;
+const {
+    addEvent,
+    isArray,
+    merge
+} = U;
 
 /**
  * The line marks the last price from visible range of points.
@@ -168,16 +169,22 @@ addEvent(H.Series, 'afterRender', function (): void {
 
             yAxis.cross = serie.lastVisiblePrice;
             lastPoint = points[pLength - crop];
+
+            if (serie.crossLabel) {
+                serie.crossLabel.destroy();
+                // Set to undefined to avoid collision with
+                // the yAxis crosshair #11480
+                delete yAxis.crossLabel;
+            }
+
             // Save price
             yAxis.drawCrosshair((null as any), lastPoint);
 
             if (yAxis.cross) {
                 serie.lastVisiblePrice = yAxis.cross;
-                serie.lastVisiblePrice.y = lastPoint.y;
-            }
-
-            if (serie.crossLabel) {
-                serie.crossLabel.destroy();
+                if (typeof lastPoint.y === 'number') {
+                    serie.lastVisiblePrice.y = lastPoint.y;
+                }
             }
 
             serie.crossLabel = yAxis.crossLabel;

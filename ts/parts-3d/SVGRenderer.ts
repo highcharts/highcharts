@@ -12,7 +12,21 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Color from '../parts/Color.js';
+const color = Color.parse;
 import H from '../parts/Globals.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    animObject,
+    defined,
+    extend,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -21,11 +35,11 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         interface Arc3dPaths {
-            out: SVGPathArray;
-            inn: SVGPathArray;
-            side1: SVGPathArray;
-            side2: SVGPathArray;
-            top: SVGPathArray;
+            out: SVGPath;
+            inn: SVGPath;
+            side1: SVGPath;
+            side2: SVGPath;
+            top: SVGPath;
             zInn: number;
             zOut: number;
             zSide1: number;
@@ -51,12 +65,13 @@ declare global {
             fillSetter(this: SVGElement, fill: ColorType): SVGElement;
         }
         interface CuboidPathsObject extends SVGPath3dObject {
-            front: SVGPathArray;
+            front: SVGPath;
             isFront: number;
             isTop: number;
-            side: SVGPathArray;
-            top: SVGPathArray;
+            side: SVGPath;
+            top: SVGPath;
             zIndexes: Dictionary<number>;
+            forcedSides?: Array<string>;
         }
         interface Element3dMethodsObject {
             processParts: Function;
@@ -69,11 +84,11 @@ declare global {
             cuboid: CuboidMethodsObject;
         }
         interface SVGPath3dObject {
-            back?: SVGPathArray;
-            bottom?: SVGPathArray;
-            front?: SVGPathArray;
-            side?: SVGPathArray;
-            top?: SVGPathArray;
+            back?: SVGPath;
+            bottom?: SVGPath;
+            front?: SVGPath;
+            side?: SVGPath;
+            top?: SVGPath;
             zIndexes?: Dictionary<number>;
         }
         interface SVGElement {
@@ -96,35 +111,19 @@ declare global {
             toLinePath(
                 points: Array<PositionObject>,
                 closed?: boolean
-            ): SVGPathArray;
-            toLineSegments(points: Array<PositionObject>): SVGPathArray;
+            ): SVGPath;
+            toLineSegments(points: Array<PositionObject>): SVGPath;
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    animObject,
-    defined,
-    extend,
-    objectEach,
-    pick
-} = U;
-
-import '../parts/Color.js';
-import '../parts/SvgRenderer.js';
 
 var cos = Math.cos,
     PI = Math.PI,
     sin = Math.sin;
 
 var charts = H.charts,
-    color = H.color,
     deg2rad = H.deg2rad,
-    merge = H.merge,
     perspective = H.perspective,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
     // internal:
     dFactor: number,
     element3dMethods: Highcharts.Element3dMethodsObject,
@@ -151,8 +150,8 @@ function curveTo(
     end: number,
     dx: number,
     dy: number
-): Highcharts.SVGPathArray {
-    var result = [] as Highcharts.SVGPathArray,
+): SVGPath {
+    var result = [] as SVGPath,
         arcAngle = end - start;
 
     if ((end > start) && (end - start > Math.PI / 2 + 0.0001)) {
@@ -173,7 +172,7 @@ function curveTo(
         );
         return result;
     }
-    return [
+    return [[
         'C',
         cx + (rx * Math.cos(start)) -
             ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
@@ -186,27 +185,27 @@ function curveTo(
 
         cx + (rx * Math.cos(end)) + dx,
         cy + (ry * Math.sin(end)) + dy
-    ];
+    ]];
 }
 
 SVGRenderer.prototype.toLinePath = function (
     points: Array<Highcharts.PositionObject>,
     closed?: boolean
-): Highcharts.SVGPathArray {
-    var result = [] as Highcharts.SVGPathArray;
+): SVGPath {
+    var result: SVGPath = [];
 
     // Put "L x y" for each point
     points.forEach(function (point: Highcharts.PositionObject): void {
-        result.push('L', point.x, point.y);
+        result.push(['L', point.x, point.y]);
     });
 
     if (points.length) {
         // Set the first element to M
-        result[0] = 'M';
+        result[0][0] = 'M';
 
         // If it is a closed line, add Z
         if (closed) {
-            result.push('Z');
+            result.push(['Z']);
         }
     }
 
@@ -215,12 +214,12 @@ SVGRenderer.prototype.toLinePath = function (
 
 SVGRenderer.prototype.toLineSegments = function (
     points: Array<Highcharts.PositionObject>
-): Highcharts.SVGPathArray {
-    var result = [] as Highcharts.SVGPathArray,
+): SVGPath {
+    var result = [] as SVGPath,
         m = true;
 
     points.forEach(function (point: Highcharts.PositionObject): void {
-        result.push(m ? 'M' : 'L', point.x, point.y);
+        result.push(m ? ['M', point.x, point.y] : ['L', point.x, point.y]);
         m = !m;
     });
 
@@ -434,6 +433,9 @@ element3dMethods = {
         // store original destroy
         elem3d.originalDestroy = elem3d.destroy;
         elem3d.destroy = elem3d.destroyParts;
+        // Store information if any side of element was rendered by force.
+        elem3d.forcedSides = (paths as any).forcedSides;
+
     },
 
     /**
@@ -458,6 +460,13 @@ element3dMethods = {
             newAttr[prop] = val;
             optionsToApply[0] = newAttr;
         } else {
+            // It is needed to deal with the whole group zIndexing
+            // in case of graph rotation
+            if (hasZIndexes && hasZIndexes.group) {
+                this.attr({
+                    zIndex: hasZIndexes.group
+                });
+            }
             objectEach(values, function (partVal: any, part: string): void {
                 newAttr[part] = {};
                 newAttr[part][prop] = partVal;
@@ -512,7 +521,7 @@ element3dMethods = {
 };
 
 // CUBOID
-cuboidMethods = H.merge(element3dMethods, {
+cuboidMethods = merge(element3dMethods, {
     parts: ['front', 'top', 'side'],
     pathType: 'cuboid',
 
@@ -552,8 +561,8 @@ cuboidMethods = H.merge(element3dMethods, {
         complete?: Function
     ): Highcharts.SVGElement {
         if (defined(args.x) && defined(args.y)) {
-            var paths = (this.renderer as any)[this.pathType + 'Path'](args);
-
+            var paths = (this.renderer as any)[this.pathType + 'Path'](args),
+                forcedSides = paths.forcedSides;
             this.singleSetterForParts(
                 'd', null, paths, 'animate', duration, complete
             );
@@ -561,6 +570,12 @@ cuboidMethods = H.merge(element3dMethods, {
             this.attr({
                 zIndex: paths.zIndexes.group
             });
+
+            // If sides that are forced to render changed, recalculate colors.
+            if (forcedSides !== this.forcedSides) {
+                this.forcedSides = forcedSides;
+                cuboidMethods.fillSetter.call(this, this.fill);
+            }
         } else {
             SVGElement.prototype.animate.call(this, args, duration, complete);
         }
@@ -570,16 +585,23 @@ cuboidMethods = H.merge(element3dMethods, {
         this: Highcharts.SVGElement,
         fill: Highcharts.ColorType
     ): Highcharts.SVGElement {
-        this.singleSetterForParts('fill', null, {
+        var elem3d = this;
+        elem3d.forcedSides = elem3d.forcedSides || [];
+        elem3d.singleSetterForParts('fill', null, {
             front: fill,
-            top: color(fill).brighten(0.1).get(),
-            side: color(fill).brighten(-0.1).get()
+            // Do not change color if side was forced to render.
+            top: color(fill).brighten(
+                elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1
+            ).get(),
+            side: color(fill).brighten(
+                elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1
+            ).get()
         });
 
         // fill for animation getter (#6776)
-        this.color = this.fill = fill;
+        elem3d.color = elem3d.fill = fill;
 
-        return this;
+        return elem3d;
     }
 });
 
@@ -621,13 +643,16 @@ SVGRenderer.prototype.cuboid = function (
 };
 
 // Generates a cuboid path and zIndexes
-H.SVGRenderer.prototype.cuboidPath = function (
+SVGRenderer.prototype.cuboidPath = function (
     this: Highcharts.SVGRenderer,
     shapeArgs: Highcharts.SVGAttributes
 ): Highcharts.CuboidPathsObject {
     var x = shapeArgs.x,
         y = shapeArgs.y,
-        z = shapeArgs.z,
+        z = shapeArgs.z || 0,
+        // For side calculation (right/left)
+        // there is a need for height (and other shapeArgs arguments)
+        // to be at least 1px
         h = shapeArgs.height,
         w = shapeArgs.width,
         d = shapeArgs.depth,
@@ -649,7 +674,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
         alpha = options3d.alpha,
         // Priority for x axis is the biggest,
         // because of x direction has biggest influence on zIndex
-        incrementX = 10000,
+        incrementX = 1000000,
         // y axis has the smallest priority in case of our charts
         // (needs to be set because of stacking)
         incrementY = 10,
@@ -691,6 +716,8 @@ H.SVGRenderer.prototype.cuboidPath = function (
             z: z + d
         }],
 
+        forcedSides: Array<string> = [],
+
         pickShape;
 
     // apply perspective
@@ -700,29 +727,96 @@ H.SVGRenderer.prototype.cuboidPath = function (
      * helper method to decide which side is visible
      * @private
      */
+    function mapSidePath(i: number): Highcharts.Position3dObject {
+        // Added support for 0 value in columns, where height is 0
+        // but the shape is rendered.
+        // Height is used from 1st to 6th element of pArr
+        if (h === 0 && i > 1 && i < 6) { // [2, 3, 4, 5]
+            return {
+                x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y + 10,
+                z: pArr[i].z
+            };
+        }
+        // It is needed to calculate dummy sides (front/back) for breaking
+        // points in case of x and depth values. If column has side,
+        // it means that x values of front and back side are different.
+        if (pArr[0].x === pArr[7].x && i >= 4) { // [4, 5, 6, 7]
+            return {
+                x: pArr[i].x + 10,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y,
+                z: pArr[i].z
+            };
+        }
+        // Added dummy depth
+        if (d === 0 && i < 2 || i > 5) { // [0, 1, 6, 7]
+
+            return {
+                x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y,
+                z: pArr[i].z + 10
+            };
+        }
+        return pArr[i];
+    }
+
+    /**
+     * method creating the final side
+     * @private
+     */
     function mapPath(i: number): Highcharts.Position3dObject {
         return pArr[i];
     }
 
     /**
-     * First value - path with specific side
+     * First value - path with specific face
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
+     * Third value - string containing information about current side
+     * of cuboid for forcing side rendering.
      * @private
      */
     pickShape = function (
-        path1: Array<number>,
-        path2: Array<number>
+        verticesIndex1: Array<number>,
+        verticesIndex2: Array<number>,
+        side?: string
     ): Array<number|Array<number>> {
-        var ret = [[] as any, -1];
-
-        path1 = path1.map(mapPath) as any;
-        path2 = path2.map(mapPath) as any;
-        if (H.shapeArea(path1 as any) < 0) {
-            ret = [path1 as any, 0];
-        } else if (H.shapeArea(path2 as any) < 0) {
-            ret = [path2 as any, 1];
+        var ret = [[] as any, -1],
+            // An array of vertices for cuboid face
+            face1: Array<Highcharts.Position3dObject> =
+                verticesIndex1.map(mapPath),
+            face2: Array<Highcharts.Position3dObject> =
+                verticesIndex2.map(mapPath),
+            // dummy face is calculated the same way as standard face,
+            // but if cuboid height is 0 additional height is added so it is
+            // possible to use this vertices array for visible face calculation
+            dummyFace1: Array<Highcharts.Position3dObject> =
+                verticesIndex1.map(mapSidePath),
+            dummyFace2: Array<Highcharts.Position3dObject> =
+                verticesIndex2.map(mapSidePath);
+        if (H.shapeArea(face1) < 0) {
+            ret = [face1, 0];
+        } else if (H.shapeArea(face2) < 0) {
+            ret = [face2, 1];
+        } else if (side) {
+            forcedSides.push(side);
+            if (H.shapeArea(dummyFace1) < 0) {
+                ret = [face1, 0];
+            } else if (H.shapeArea(dummyFace2) < 0) {
+                ret = [face2, 1];
+            } else {
+                ret = [face1, 0]; // force side calculation.
+            }
         }
         return ret;
     };
@@ -730,7 +824,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
     // front or back
     front = [3, 2, 1, 0];
     back = [7, 6, 5, 4];
-    shape = pickShape(front, back);
+    shape = pickShape(front, back, 'front');
     path1 = shape[0] as any;
     isFront = shape[1] as any;
 
@@ -738,14 +832,14 @@ H.SVGRenderer.prototype.cuboidPath = function (
     // top or bottom
     top = [1, 6, 7, 0];
     bottom = [4, 5, 2, 3];
-    shape = pickShape(top, bottom);
+    shape = pickShape(top, bottom, 'top');
     path2 = shape[0] as any;
     isTop = shape[1] as any;
 
     // side
     right = [1, 2, 5, 6];
     left = [0, 7, 4, 3];
-    shape = pickShape(right, left);
+    shape = pickShape(right, left, 'side');
     path3 = shape[0] as any;
     isRight = shape[1] as any;
 
@@ -759,7 +853,9 @@ H.SVGRenderer.prototype.cuboidPath = function (
        correctly. */
 
     if (isRight === 1) {
-        zIndex += incrementX * (1000 - x);
+        // It is needed to connect value with current chart width
+        // for big chart size.
+        zIndex += incrementX * ((chart as any).plotWidth - x);
     } else if (!isRight) {
         zIndex += incrementX * x;
     }
@@ -784,6 +880,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
         zIndexes: {
             group: Math.round(zIndex)
         },
+        forcedSides: forcedSides,
 
         // additional info about zIndexes
         isFront: isFront,
@@ -792,7 +889,7 @@ H.SVGRenderer.prototype.cuboidPath = function (
 };
 
 // SECTORS //
-H.SVGRenderer.prototype.arc3d = function (
+SVGRenderer.prototype.arc3d = function (
     attribs: Highcharts.SVGAttributes
 ): Highcharts.SVGElement {
 
@@ -821,7 +918,7 @@ H.SVGRenderer.prototype.arc3d = function (
                 hasCA = true;
             }
         }
-        return hasCA ? ca : (false as any);
+        return hasCA ? [ca, params] : (false as any);
     }
 
     attribs = merge(attribs);
@@ -941,11 +1038,13 @@ H.SVGRenderer.prototype.arc3d = function (
         this: Highcharts.SVGElement,
         params?: (string|Highcharts.SVGAttributes)
     ): (number|string|Highcharts.SVGElement) {
-        var ca;
+        var ca, paramArr;
 
         if (typeof params === 'object') {
-            ca = suckOutCustom(params);
-            if (ca) {
+            paramArr = suckOutCustom(params);
+            if (paramArr) {
+                ca = paramArr[0];
+                arguments[0] = paramArr[1];
                 extend(wrapper.attribs, ca);
                 wrapper.setPaths(wrapper.attribs as any);
             }
@@ -961,7 +1060,7 @@ H.SVGRenderer.prototype.arc3d = function (
         animation?: (boolean|Highcharts.AnimationOptionsObject),
         complete?: Function
     ): Highcharts.SVGElement {
-        var ca,
+        var paramArr,
             from = this.attribs,
             to: Highcharts.SVGAttributes,
             anim,
@@ -977,15 +1076,15 @@ H.SVGRenderer.prototype.arc3d = function (
         anim = animObject(pick(animation, this.renderer.globalAnimation));
 
         if (anim.duration) {
-            ca = suckOutCustom(params);
+            paramArr = suckOutCustom(params);
             // Params need to have a property in order for the step to run
             // (#5765, #7097, #7437)
             wrapper[randomProp] = 0;
             params[randomProp] = 1;
             wrapper[randomProp + 'Setter'] = H.noop;
 
-            if (ca) {
-                to = ca;
+            if (paramArr) {
+                to = paramArr[0]; // custom attr
                 anim.step = function (a: unknown, fx: Highcharts.Fx): void {
 
                     /**
@@ -1056,8 +1155,8 @@ H.SVGRenderer.prototype.arc3d = function (
 SVGRenderer.prototype.arc3dPath = function (
     shapeArgs: Highcharts.SVGAttributes
 ): Highcharts.Arc3dPaths {
-    var cx = shapeArgs.x, // x coordinate of the center
-        cy = shapeArgs.y, // y coordinate of the center
+    var cx: number = shapeArgs.x, // x coordinate of the center
+        cy: number = shapeArgs.y, // y coordinate of the center
         start = shapeArgs.start, // start angle
         end = shapeArgs.end - 0.00001, // end angle
         r = shapeArgs.r, // radius
@@ -1079,14 +1178,16 @@ SVGRenderer.prototype.arc3dPath = function (
         dy = d * Math.sin(alpha); // distance between top and bottom in y
 
     // TOP
-    var top: Highcharts.SVGPathArray = ['M', cx + (rx * cs), cy + (ry * ss)];
+    var top: SVGPath = [
+        ['M', cx + (rx * cs), cy + (ry * ss)]
+    ];
 
     top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
-    top = top.concat([
+    top.push([
         'L', cx + (irx * ce), cy + (iry * se)
     ]);
     top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
-    top = top.concat(['Z']);
+    top.push(['Z']);
 
     // OUTSIDE
     var b = (beta > 0 ? Math.PI / 2 : 0),
@@ -1120,8 +1221,9 @@ SVGRenderer.prototype.arc3dPath = function (
     // changes clockwise (1->2, 2->3, n->1) and counterclockwise for negative
     // startAngle
 
-    var out: Highcharts.SVGPathArray =
-        ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+    var out: SVGPath = [
+        ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))]
+    ];
 
     out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
 
@@ -1129,24 +1231,24 @@ SVGRenderer.prototype.arc3dPath = function (
     // startAngle
     if (end > midEnd && start < midEnd) {
         // Go to outer side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
         ]);
         // Curve to the right edge of the slice (d)
         out = out.concat(curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
         // Go to the inner side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
         ]);
         // Curve to the true end of the slice
         out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
         // Go to the outer side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
         ]);
         // Go back to middle (d)
         out = out.concat(curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
         ]);
         // Go back to the left edge
@@ -1155,7 +1257,7 @@ SVGRenderer.prototype.arc3dPath = function (
     // But shape can cross also only (c) edge:
     } else if (end > PI - a && start < PI - a) {
         // Go to outer side
-        out = out.concat([
+        out.push([
             'L',
             cx + (rx * Math.cos(end2)) + dx,
             cy + (ry * Math.sin(end2)) + dy
@@ -1163,43 +1265,45 @@ SVGRenderer.prototype.arc3dPath = function (
         // Curve to the true end of the slice
         out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
         // Go to the inner side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
         ]);
         // Go back to the artifical end2
         out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
     }
 
-    out = out.concat([
+    out.push([
         'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
     ]);
     out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
-    out = out.concat(['Z']);
+    out.push(['Z']);
 
     // INSIDE
-    var inn: Highcharts.SVGPathArray = ['M', cx + (irx * cs), cy + (iry * ss)];
+    var inn: SVGPath = [
+        ['M', cx + (irx * cs), cy + (iry * ss)]
+    ];
 
     inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
-    inn = inn.concat([
+    inn.push([
         'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
     ]);
     inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
-    inn = inn.concat(['Z']);
+    inn.push(['Z']);
 
     // SIDES
-    var side1: Highcharts.SVGPathArray = [
-        'M', cx + (rx * cs), cy + (ry * ss),
-        'L', cx + (rx * cs) + dx, cy + (ry * ss) + dy,
-        'L', cx + (irx * cs) + dx, cy + (iry * ss) + dy,
-        'L', cx + (irx * cs), cy + (iry * ss),
-        'Z'
+    var side1: SVGPath = [
+        ['M', cx + (rx * cs), cy + (ry * ss)],
+        ['L', cx + (rx * cs) + dx, cy + (ry * ss) + dy],
+        ['L', cx + (irx * cs) + dx, cy + (iry * ss) + dy],
+        ['L', cx + (irx * cs), cy + (iry * ss)],
+        ['Z']
     ];
-    var side2: Highcharts.SVGPathArray = [
-        'M', cx + (rx * ce), cy + (ry * se),
-        'L', cx + (rx * ce) + dx, cy + (ry * se) + dy,
-        'L', cx + (irx * ce) + dx, cy + (iry * se) + dy,
-        'L', cx + (irx * ce), cy + (iry * se),
-        'Z'
+    var side2: SVGPath = [
+        ['M', cx + (rx * ce), cy + (ry * se)],
+        ['L', cx + (rx * ce) + dx, cy + (ry * se) + dy],
+        ['L', cx + (irx * ce) + dx, cy + (iry * se) + dy],
+        ['L', cx + (irx * ce), cy + (iry * se)],
+        ['Z']
     ];
 
     // correction for changed position of vanishing point caused by alpha and

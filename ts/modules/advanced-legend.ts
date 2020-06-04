@@ -9,7 +9,11 @@
  * */
 
 'use strict';
+
+import Chart from '../parts/Chart.js';
+import ColorAxis from '../parts-map/ColorAxis.js';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 
 /**
  * Internal types
@@ -18,7 +22,7 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
 
-        interface AdvancedLegendItem extends LegendItemObject{
+        interface AdvancedLegendItem extends LegendItemObject {
             parentLegendOptions: AdvancedLegendItemOptions;
             options: any;
             legendId?: string;
@@ -57,10 +61,7 @@ declare global {
         interface Series extends AdvancedLegendItem {
         }
 
-        interface Point extends AdvancedLegendItem {
-        }
-
-        interface ColorAxis extends AdvancedLegendItem {
+        interface PointLike extends AdvancedLegendItem {
         }
 
         interface BubbleLegend extends AdvancedLegendItem {
@@ -72,7 +73,7 @@ declare global {
             sublegends?: Array<AdvancedLegendItemOptions>;
         }
 
-        interface Chart {
+        interface ChartLike {
             isAdvancedLegendEnabled(): boolean;
             addLegend(options: AdvancedLegendOptions): void;
         }
@@ -138,8 +139,8 @@ var marginNames = H.marginNames,
  * @function Highcharts.Chart#isAdvancedLegendEnabled
  * @return {boolean}
  */
-H.Chart.prototype.isAdvancedLegendEnabled =
-    function (this: Highcharts.Chart): boolean {
+Chart.prototype.isAdvancedLegendEnabled =
+    function (this: Chart): boolean {
         return H.isArray((this.options as any).legend);
     };
 
@@ -558,7 +559,7 @@ extend(H.LegendAdapter.prototype, {
     },
 
     colorizeItem: function (this: Highcharts.LegendAdapter,
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
         visible: boolean): void {
         this.legends.forEach(function (legend): void {
             legend.colorizeItem(item, visible);
@@ -568,8 +569,8 @@ extend(H.LegendAdapter.prototype, {
     destroyItem: function (this: Highcharts.LegendAdapter,
         item: (
             Highcharts.BubbleLegend|
-            Highcharts.ColorAxis|
-            Highcharts.Point|
+            ColorAxis|
+            Point|
             Highcharts.Series
         )
     ): void {
@@ -811,9 +812,7 @@ addEvent(H.AdvancedLegend.prototype, 'afterSetOptions', function (): void {
 addEvent(H.AdvancedLegend.prototype, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: {
-        allItems: Array<(
-            Highcharts.Point|Highcharts.Series|Highcharts.AdvancedLegend
-        )>;
+        allItems: Array<(Point|Highcharts.Series|Highcharts.AdvancedLegend)>;
     }): void {
     var legend = this as Highcharts.AdvancedLegend;
     if (legend.options.sublegends) {
@@ -834,15 +833,15 @@ if (H.ColorAxis) {
      */
 
     // Provide the color axis with information about its target legend.
-    H.extend(H.ColorAxis.prototype, H.LegendItemMixin);
+    H.extend(ColorAxis.prototype, H.LegendItemMixin);
 
-    addEvent(H.ColorAxis.prototype, 'beforeBuildOptions',
-        function (this: Highcharts.AdvancedLegendItem): void {
-            H.LegendItemMixin.prototype.setTargetLegendOptions(this);
+    addEvent(ColorAxis, 'beforeBuildOptions',
+        function (this: ColorAxis): void {
+            H.LegendItemMixin.prototype.setTargetLegendOptions(this as any);
         });
 
     // Find out if there's a targed legend for color axis.
-    wrap(H.ColorAxis.prototype, 'shouldBeRendered', function (
+    wrap(ColorAxis.prototype, 'shouldBeRendered', function (
         this: Highcharts.AdvancedLegendItem,
         originalFunc,
         legend: Highcharts.Legend): boolean {

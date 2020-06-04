@@ -113,8 +113,11 @@ QUnit.test('Zoom and pan key', function (assert) {
     var chart = Highcharts.chart('container', {
             chart: {
                 type: 'line',
-                zoomType: 'x',
-                panning: true,
+                zoomType: 'xy',
+                panning: {
+                    enabled: true,
+                    type: 'xy'
+                },
                 panKey: 'shift'
             },
 
@@ -130,13 +133,16 @@ QUnit.test('Zoom and pan key', function (assert) {
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 reversed: true // #7857
             },
+            yAxis: {
+                startOnTick: false,
+                endOnTick: false
+            },
 
             series: [{
                 data: [29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4]
             }]
         }),
-        controller = new TestController(chart),
-        firstZoom = {};
+        controller = new TestController(chart);
 
     chart.setSize(600, 300);
 
@@ -167,18 +173,24 @@ QUnit.test('Zoom and pan key', function (assert) {
         'Zoomed max'
     );
 
-    firstZoom = chart.xAxis[0].getExtremes();
+    var xExtremes = chart.xAxis[0].getExtremes();
+    var yExtremes = chart.yAxis[0].getExtremes();
 
     // Pan
-    controller.pan([200, 100], [150, 100], { shiftKey: true });
+    controller.pan([200, 100], [150, 50], { shiftKey: true });
     assert.strictEqual(
-        chart.xAxis[0].min < firstZoom.min,
+        chart.xAxis[0].min < xExtremes.min,
         true,
-        'Has panned'
+        'Has panned horizontally'
+    );
+    assert.strictEqual(
+        chart.yAxis[0].min < yExtremes.min,
+        true,
+        'Has panned vertically'
     );
     assert.close(
         chart.xAxis[0].max - chart.xAxis[0].min,
-        firstZoom.max - firstZoom.min,
+        xExtremes.max - xExtremes.min,
         0.00001, // Roundoff error in Firefox
         'Has preserved range'
     );
@@ -198,7 +210,7 @@ QUnit.test('Zoom and pan key', function (assert) {
     );
     assert.close(
         chart.xAxis[0].max - chart.xAxis[0].min,
-        firstZoom.max - firstZoom.min,
+        xExtremes.max - xExtremes.min,
         0.00001, // Roundoff error in Firefox
         'Has preserved range'
     );
@@ -276,6 +288,56 @@ QUnit.test('Stock (ordinal axis) panning (#6276)', function (assert) {
         chart.xAxis[0].max - chart.xAxis[0].min,
         initialRange,
         'Has preserved range'
+    );
+});
+
+QUnit.test('Ordinal axis panning, when data is equally spaced (#13334).', function (assert) {
+    var chart = Highcharts.stockChart('container', {
+        xAxis: {
+            min: Date.UTC(2020, 1, 6),
+            max: Date.UTC(2020, 1, 9)
+        },
+        series: [{
+            data: [{
+                x: Date.UTC(2020, 1, 1),
+                y: 10
+            }, {
+                x: Date.UTC(2020, 1, 2),
+                y: 11
+            }, {
+                x: Date.UTC(2020, 1, 3),
+                y: 12
+            }, {
+                x: Date.UTC(2020, 1, 4),
+                y: 14
+            }, {
+                x: Date.UTC(2020, 1, 5),
+                y: 15
+            }, {
+                x: Date.UTC(2020, 1, 6),
+                y: 16
+            }, {
+                x: Date.UTC(2020, 1, 7),
+                y: 14
+            }, {
+                x: Date.UTC(2020, 1, 8),
+                y: 15
+            }, {
+                x: Date.UTC(2020, 1, 9),
+                y: 16
+            }]
+        }]
+    });
+
+    var controller = new TestController(chart),
+        initialMin = chart.xAxis[0].min;
+
+    controller.pan([100, 200], [200, 200]);
+
+    assert.notEqual(
+        initialMin,
+        chart.xAxis[0].min,
+        'Chart should pan horizontally.'
     );
 });
 

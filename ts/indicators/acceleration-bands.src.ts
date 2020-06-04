@@ -58,13 +58,14 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    correctFloat
+    correctFloat,
+    merge,
+    seriesType
 } = U;
 
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var SMA = H.seriesTypes.sma,
-    merge = H.merge;
+var SMA = H.seriesTypes.sma;
 
 /* eslint-disable valid-jsdoc */
 /**
@@ -101,7 +102,7 @@ function getPointLB(low: number, base: number): number {
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.ABandsIndicator>(
+seriesType<Highcharts.ABandsIndicator>(
     'abands',
     'sma',
     /**

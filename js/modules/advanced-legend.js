@@ -8,6 +8,8 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
+import ColorAxis from '../parts-map/ColorAxis.js';
 import H from '../parts/Globals.js';
 /*
  * Highcharts module that introduces multiple legends and sublegends.
@@ -30,7 +32,7 @@ var marginNames = H.marginNames, addEvent = H.addEvent, wrap = H.wrap, fireEvent
  * @function Highcharts.Chart#isAdvancedLegendEnabled
  * @return {boolean}
  */
-H.Chart.prototype.isAdvancedLegendEnabled =
+Chart.prototype.isAdvancedLegendEnabled =
     function () {
         return H.isArray(this.options.legend);
     };
@@ -560,12 +562,12 @@ if (H.ColorAxis) {
      * @apioption colorAxis.legendId
      */
     // Provide the color axis with information about its target legend.
-    H.extend(H.ColorAxis.prototype, H.LegendItemMixin);
-    addEvent(H.ColorAxis.prototype, 'beforeBuildOptions', function () {
+    H.extend(ColorAxis.prototype, H.LegendItemMixin);
+    addEvent(ColorAxis, 'beforeBuildOptions', function () {
         H.LegendItemMixin.prototype.setTargetLegendOptions(this);
     });
     // Find out if there's a targed legend for color axis.
-    wrap(H.ColorAxis.prototype, 'shouldBeRendered', function (originalFunc, legend) {
+    wrap(ColorAxis.prototype, 'shouldBeRendered', function (originalFunc, legend) {
         if (this.chart && !this.chart.isAdvancedLegendEnabled()) {
             return originalFunc.call(this, legend);
         }

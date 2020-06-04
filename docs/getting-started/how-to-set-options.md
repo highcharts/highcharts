@@ -92,7 +92,7 @@ options.series.push({
 ```
     
 
-*   Another fact that can come in handy when working on JavaScript objects, is that the dot notation and square bracket notation are equivalent, so you can access all members by their string names. Which in practice means that `options.renderTo` is always the same as: `options['renderTo']`
+*   Another fact that can come in handy when working on JavaScript objects, is that the dot notation and square bracket notation are equivalent, so you can access all members by their string names. Which in practice means that `options.charts.renderTo` is always the same as: `options['charts']['renderTo']`
 
 Global Options
 --------------
@@ -153,4 +153,4 @@ var chart2 = new Highcharts.Chart({
 
 Note: The themes supplied with Highcharts download use this function. See [Themes](https://highcharts.com/docs/chart-design-and-style/themes) for more information.
 
-For a full reference of the options available, see the [Highcharts options reference](https://api.highcharts.com/highcharts) or the [Highstock options reference](https://api.highcharts.com/highstock).
+For a full reference of the options available, see the [Highcharts options reference](https://api.highcharts.com/highcharts) or the [Highcharts Stock options reference](https://api.highcharts.com/highstock).

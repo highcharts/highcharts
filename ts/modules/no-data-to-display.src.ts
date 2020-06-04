@@ -34,7 +34,7 @@ declare global {
             position?: AlignObject;
             style?: CSSObject;
         }
-        interface Chart {
+        interface ChartLike {
             noDataLabel?: SVGElement;
             /** @requires modules/no-data-to-display */
             showNoData(str?: string): void;
@@ -48,14 +48,15 @@ declare global {
 
 import U from '../parts/Utilities.js';
 const {
-    extend
+    addEvent,
+    extend,
+    getOptions
 } = U;
 
 import '../parts/Series.js';
-import '../parts/Options.js';
 
 var chartPrototype = H.Chart.prototype,
-    defaultOptions = H.getOptions();
+    defaultOptions = getOptions();
 
 // Add language option
 extend(
@@ -260,7 +261,7 @@ chartPrototype.hasData = function (): (boolean|undefined) {
 /* eslint-disable no-invalid-this */
 
 // Add event listener to handle automatic show or hide no-data message.
-H.addEvent(H.Chart, 'render', function handleNoData(): void {
+addEvent(H.Chart, 'render', function handleNoData(): void {
     if (this.hasData()) {
         this.hideNoData();
     } else {

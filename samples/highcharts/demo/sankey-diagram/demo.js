@@ -5,13 +5,7 @@ Highcharts.chart('container', {
     },
     accessibility: {
         point: {
-            descriptionFormatter: function (point) {
-                var index = point.index + 1,
-                    from = point.from,
-                    to = point.to,
-                    weight = point.weight;
-                return index + '. ' + from + ' to ' + to + ', ' + weight + '.';
-            }
+            valueDescriptionFormat: '{index}. {point.from} to {point.to}, {point.weight}.'
         }
     },
     series: [{

@@ -4,9 +4,11 @@
  *
  * */
 'use strict';
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
-import '../../parts/Utilities.js';
-var Annotation = H.Annotation, CrookedLine = Annotation.types.crookedLine;
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
+var CrookedLine = Annotation.types.crookedLine;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var ElliottWave = function () {
     CrookedLine.apply(this, arguments);
@@ -14,7 +16,7 @@ var ElliottWave = function () {
 H.extendAnnotation(ElliottWave, CrookedLine, {
     addLabels: function () {
         this.getPointsOptions().forEach(function (point, i) {
-            var label = this.initLabel(H.merge(point.label, {
+            var label = this.initLabel(merge(point.label, {
                 text: this.options.typeOptions.labels[i],
                 point: function (target) {
                     return target.annotation.points[i];

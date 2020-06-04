@@ -10,13 +10,15 @@
  *
  * */
 'use strict';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var animObject = U.animObject, defined = U.defined, extend = U.extend, objectEach = U.objectEach, pick = U.pick;
-import '../parts/Color.js';
-import '../parts/SvgRenderer.js';
+var animObject = U.animObject, defined = U.defined, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 var cos = Math.cos, PI = Math.PI, sin = Math.sin;
-var charts = H.charts, color = H.color, deg2rad = H.deg2rad, merge = H.merge, perspective = H.perspective, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, 
+var charts = H.charts, deg2rad = H.deg2rad, perspective = H.perspective, 
 // internal:
 dFactor, element3dMethods, cuboidMethods;
 /*
@@ -41,32 +43,32 @@ function curveTo(cx, cy, rx, ry, start, end, dx, dy) {
         result = result.concat(curveTo(cx, cy, rx, ry, start - (Math.PI / 2), end, dx, dy));
         return result;
     }
-    return [
-        'C',
-        cx + (rx * Math.cos(start)) -
-            ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
-        cy + (ry * Math.sin(start)) +
-            ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
-        cx + (rx * Math.cos(end)) +
-            ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
-        cy + (ry * Math.sin(end)) -
-            ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
-        cx + (rx * Math.cos(end)) + dx,
-        cy + (ry * Math.sin(end)) + dy
-    ];
+    return [[
+            'C',
+            cx + (rx * Math.cos(start)) -
+                ((rx * dFactor * arcAngle) * Math.sin(start)) + dx,
+            cy + (ry * Math.sin(start)) +
+                ((ry * dFactor * arcAngle) * Math.cos(start)) + dy,
+            cx + (rx * Math.cos(end)) +
+                ((rx * dFactor * arcAngle) * Math.sin(end)) + dx,
+            cy + (ry * Math.sin(end)) -
+                ((ry * dFactor * arcAngle) * Math.cos(end)) + dy,
+            cx + (rx * Math.cos(end)) + dx,
+            cy + (ry * Math.sin(end)) + dy
+        ]];
 }
 SVGRenderer.prototype.toLinePath = function (points, closed) {
     var result = [];
     // Put "L x y" for each point
     points.forEach(function (point) {
-        result.push('L', point.x, point.y);
+        result.push(['L', point.x, point.y]);
     });
     if (points.length) {
         // Set the first element to M
-        result[0] = 'M';
+        result[0][0] = 'M';
         // If it is a closed line, add Z
         if (closed) {
-            result.push('Z');
+            result.push(['Z']);
         }
     }
     return result;
@@ -74,7 +76,7 @@ SVGRenderer.prototype.toLinePath = function (points, closed) {
 SVGRenderer.prototype.toLineSegments = function (points) {
     var result = [], m = true;
     points.forEach(function (point) {
-        result.push(m ? 'M' : 'L', point.x, point.y);
+        result.push(m ? ['M', point.x, point.y] : ['L', point.x, point.y]);
         m = !m;
     });
     return result;
@@ -198,6 +200,8 @@ element3dMethods = {
         // store original destroy
         elem3d.originalDestroy = elem3d.destroy;
         elem3d.destroy = elem3d.destroyParts;
+        // Store information if any side of element was rendered by force.
+        elem3d.forcedSides = paths.forcedSides;
     },
     /**
      * Single property setter that applies options to each part
@@ -210,6 +214,13 @@ element3dMethods = {
             optionsToApply[0] = newAttr;
         }
         else {
+            // It is needed to deal with the whole group zIndexing
+            // in case of graph rotation
+            if (hasZIndexes && hasZIndexes.group) {
+                this.attr({
+                    zIndex: hasZIndexes.group
+                });
+            }
             objectEach(values, function (partVal, part) {
                 newAttr[part] = {};
                 newAttr[part][prop] = partVal;
@@ -250,7 +261,7 @@ element3dMethods = {
     }
 };
 // CUBOID
-cuboidMethods = H.merge(element3dMethods, {
+cuboidMethods = merge(element3dMethods, {
     parts: ['front', 'top', 'side'],
     pathType: 'cuboid',
     attr: function (args, val, complete, continueAnimation) {
@@ -267,11 +278,16 @@ cuboidMethods = H.merge(element3dMethods, {
     },
     animate: function (args, duration, complete) {
         if (defined(args.x) && defined(args.y)) {
-            var paths = this.renderer[this.pathType + 'Path'](args);
+            var paths = this.renderer[this.pathType + 'Path'](args), forcedSides = paths.forcedSides;
             this.singleSetterForParts('d', null, paths, 'animate', duration, complete);
             this.attr({
                 zIndex: paths.zIndexes.group
             });
+            // If sides that are forced to render changed, recalculate colors.
+            if (forcedSides !== this.forcedSides) {
+                this.forcedSides = forcedSides;
+                cuboidMethods.fillSetter.call(this, this.fill);
+            }
         }
         else {
             SVGElement.prototype.animate.call(this, args, duration, complete);
@@ -279,14 +295,17 @@ cuboidMethods = H.merge(element3dMethods, {
         return this;
     },
     fillSetter: function (fill) {
-        this.singleSetterForParts('fill', null, {
+        var elem3d = this;
+        elem3d.forcedSides = elem3d.forcedSides || [];
+        elem3d.singleSetterForParts('fill', null, {
             front: fill,
-            top: color(fill).brighten(0.1).get(),
-            side: color(fill).brighten(-0.1).get()
+            // Do not change color if side was forced to render.
+            top: color(fill).brighten(elem3d.forcedSides.indexOf('top') >= 0 ? 0 : 0.1).get(),
+            side: color(fill).brighten(elem3d.forcedSides.indexOf('side') >= 0 ? 0 : -0.1).get()
         });
         // fill for animation getter (#6776)
-        this.color = this.fill = fill;
-        return this;
+        elem3d.color = elem3d.fill = fill;
+        return elem3d;
     }
 });
 // set them up
@@ -314,11 +333,15 @@ SVGRenderer.prototype.cuboid = function (shapeArgs) {
     return this.element3d('cuboid', shapeArgs);
 };
 // Generates a cuboid path and zIndexes
-H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
-    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z, h = shapeArgs.height, w = shapeArgs.width, d = shapeArgs.depth, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
+SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
+    var x = shapeArgs.x, y = shapeArgs.y, z = shapeArgs.z || 0, 
+    // For side calculation (right/left)
+    // there is a need for height (and other shapeArgs arguments)
+    // to be at least 1px
+    h = shapeArgs.height, w = shapeArgs.width, d = shapeArgs.depth, chart = charts[this.chartIndex], front, back, top, bottom, left, right, shape, path1, path2, path3, isFront, isTop, isRight, options3d = chart.options.chart.options3d, alpha = options3d.alpha, 
     // Priority for x axis is the biggest,
     // because of x direction has biggest influence on zIndex
-    incrementX = 10000, 
+    incrementX = 1000000, 
     // y axis has the smallest priority in case of our charts
     // (needs to be set because of stacking)
     incrementY = 10, incrementZ = 100, zIndex = 0, 
@@ -355,51 +378,113 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
             x: x,
             y: y,
             z: z + d
-        }], pickShape;
+        }], forcedSides = [], pickShape;
     // apply perspective
     pArr = perspective(pArr, chart, shapeArgs.insidePlotArea);
     /**
      * helper method to decide which side is visible
      * @private
      */
+    function mapSidePath(i) {
+        // Added support for 0 value in columns, where height is 0
+        // but the shape is rendered.
+        // Height is used from 1st to 6th element of pArr
+        if (h === 0 && i > 1 && i < 6) { // [2, 3, 4, 5]
+            return {
+                x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y + 10,
+                z: pArr[i].z
+            };
+        }
+        // It is needed to calculate dummy sides (front/back) for breaking
+        // points in case of x and depth values. If column has side,
+        // it means that x values of front and back side are different.
+        if (pArr[0].x === pArr[7].x && i >= 4) { // [4, 5, 6, 7]
+            return {
+                x: pArr[i].x + 10,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y,
+                z: pArr[i].z
+            };
+        }
+        // Added dummy depth
+        if (d === 0 && i < 2 || i > 5) { // [0, 1, 6, 7]
+            return {
+                x: pArr[i].x,
+                // when height is 0 instead of cuboid we render plane
+                // so it is needed to add fake 10 height to imitate cuboid
+                // for side calculation
+                y: pArr[i].y,
+                z: pArr[i].z + 10
+            };
+        }
+        return pArr[i];
+    }
+    /**
+     * method creating the final side
+     * @private
+     */
     function mapPath(i) {
         return pArr[i];
     }
     /**
-     * First value - path with specific side
+     * First value - path with specific face
      * Second  value - added information about side for later calculations.
      * Possible second values are 0 for path1, 1 for path2 and -1 for no path
      * chosen.
+     * Third value - string containing information about current side
+     * of cuboid for forcing side rendering.
      * @private
      */
-    pickShape = function (path1, path2) {
-        var ret = [[], -1];
-        path1 = path1.map(mapPath);
-        path2 = path2.map(mapPath);
-        if (H.shapeArea(path1) < 0) {
-            ret = [path1, 0];
+    pickShape = function (verticesIndex1, verticesIndex2, side) {
+        var ret = [[], -1], 
+        // An array of vertices for cuboid face
+        face1 = verticesIndex1.map(mapPath), face2 = verticesIndex2.map(mapPath), 
+        // dummy face is calculated the same way as standard face,
+        // but if cuboid height is 0 additional height is added so it is
+        // possible to use this vertices array for visible face calculation
+        dummyFace1 = verticesIndex1.map(mapSidePath), dummyFace2 = verticesIndex2.map(mapSidePath);
+        if (H.shapeArea(face1) < 0) {
+            ret = [face1, 0];
         }
-        else if (H.shapeArea(path2) < 0) {
-            ret = [path2, 1];
+        else if (H.shapeArea(face2) < 0) {
+            ret = [face2, 1];
+        }
+        else if (side) {
+            forcedSides.push(side);
+            if (H.shapeArea(dummyFace1) < 0) {
+                ret = [face1, 0];
+            }
+            else if (H.shapeArea(dummyFace2) < 0) {
+                ret = [face2, 1];
+            }
+            else {
+                ret = [face1, 0]; // force side calculation.
+            }
         }
         return ret;
     };
     // front or back
     front = [3, 2, 1, 0];
     back = [7, 6, 5, 4];
-    shape = pickShape(front, back);
+    shape = pickShape(front, back, 'front');
     path1 = shape[0];
     isFront = shape[1];
     // top or bottom
     top = [1, 6, 7, 0];
     bottom = [4, 5, 2, 3];
-    shape = pickShape(top, bottom);
+    shape = pickShape(top, bottom, 'top');
     path2 = shape[0];
     isTop = shape[1];
     // side
     right = [1, 2, 5, 6];
     left = [0, 7, 4, 3];
-    shape = pickShape(right, left);
+    shape = pickShape(right, left, 'side');
     path3 = shape[0];
     isRight = shape[1];
     /* New block used for calculating zIndex. It is basing on X, Y and Z
@@ -411,7 +496,9 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
        even for big changes in Y and Z parameters all columns will be drawn
        correctly. */
     if (isRight === 1) {
-        zIndex += incrementX * (1000 - x);
+        // It is needed to connect value with current chart width
+        // for big chart size.
+        zIndex += incrementX * (chart.plotWidth - x);
     }
     else if (!isRight) {
         zIndex += incrementX * x;
@@ -433,13 +520,14 @@ H.SVGRenderer.prototype.cuboidPath = function (shapeArgs) {
         zIndexes: {
             group: Math.round(zIndex)
         },
+        forcedSides: forcedSides,
         // additional info about zIndexes
         isFront: isFront,
         isTop: isTop
     }; // #4774
 };
 // SECTORS //
-H.SVGRenderer.prototype.arc3d = function (attribs) {
+SVGRenderer.prototype.arc3d = function (attribs) {
     var wrapper = this.g(), renderer = wrapper.renderer, customAttribs = ['x', 'y', 'r', 'innerR', 'start', 'end', 'depth'];
     /**
      * Get custom attributes. Don't mutate the original object and return an
@@ -456,7 +544,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
                 hasCA = true;
             }
         }
-        return hasCA ? ca : false;
+        return hasCA ? [ca, params] : false;
     }
     attribs = merge(attribs);
     attribs.alpha = (attribs.alpha || 0) * deg2rad;
@@ -538,10 +626,12 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     });
     // Override attr to remove shape attributes and use those to set child paths
     wrapper.attr = function (params) {
-        var ca;
+        var ca, paramArr;
         if (typeof params === 'object') {
-            ca = suckOutCustom(params);
-            if (ca) {
+            paramArr = suckOutCustom(params);
+            if (paramArr) {
+                ca = paramArr[0];
+                arguments[0] = paramArr[1];
                 extend(wrapper.attribs, ca);
                 wrapper.setPaths(wrapper.attribs);
             }
@@ -551,7 +641,7 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
     // Override the animate function by sucking out custom parameters related to
     // the shapes directly, and update the shapes from the animation step.
     wrapper.animate = function (params, animation, complete) {
-        var ca, from = this.attribs, to, anim, randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
+        var paramArr, from = this.attribs, to, anim, randomProp = 'data-' + Math.random().toString(26).substring(2, 9);
         // Attribute-line properties connected to 3D. These shouldn't have been
         // in the attribs collection in the first place.
         delete params.center;
@@ -560,14 +650,14 @@ H.SVGRenderer.prototype.arc3d = function (attribs) {
         delete params.beta;
         anim = animObject(pick(animation, this.renderer.globalAnimation));
         if (anim.duration) {
-            ca = suckOutCustom(params);
+            paramArr = suckOutCustom(params);
             // Params need to have a property in order for the step to run
             // (#5765, #7097, #7437)
             wrapper[randomProp] = 0;
             params[randomProp] = 1;
             wrapper[randomProp + 'Setter'] = H.noop;
-            if (ca) {
-                to = ca;
+            if (paramArr) {
+                to = paramArr[0]; // custom attr
                 anim.step = function (a, fx) {
                     /**
                      * @private
@@ -642,13 +732,15 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     dx = d * Math.sin(beta), // distance between top and bottom in x
     dy = d * Math.sin(alpha); // distance between top and bottom in y
     // TOP
-    var top = ['M', cx + (rx * cs), cy + (ry * ss)];
+    var top = [
+        ['M', cx + (rx * cs), cy + (ry * ss)]
+    ];
     top = top.concat(curveTo(cx, cy, rx, ry, start, end, 0, 0));
-    top = top.concat([
+    top.push([
         'L', cx + (irx * ce), cy + (iry * se)
     ]);
     top = top.concat(curveTo(cx, cy, irx, iry, end, start, 0, 0));
-    top = top.concat(['Z']);
+    top.push(['Z']);
     // OUTSIDE
     var b = (beta > 0 ? Math.PI / 2 : 0), a = (alpha > 0 ? 0 : Math.PI / 2);
     var start2 = start > -b ? start : (end > -b ? -b : start), end2 = end < PI - a ? end : (start < PI - a ? PI - a : end), midEnd = 2 * PI - a;
@@ -675,30 +767,32 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     // 1..n - rendering order for startAngle = 0, when set to e.g 90, order
     // changes clockwise (1->2, 2->3, n->1) and counterclockwise for negative
     // startAngle
-    var out = ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))];
+    var out = [
+        ['M', cx + (rx * cos(start2)), cy + (ry * sin(start2))]
+    ];
     out = out.concat(curveTo(cx, cy, rx, ry, start2, end2, 0, 0));
     // When shape is wide, it can cross both, (c) and (d) edges, when using
     // startAngle
     if (end > midEnd && start < midEnd) {
         // Go to outer side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(end2)) + dx, cy + (ry * sin(end2)) + dy
         ]);
         // Curve to the right edge of the slice (d)
         out = out.concat(curveTo(cx, cy, rx, ry, end2, midEnd, dx, dy));
         // Go to the inner side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
         ]);
         // Curve to the true end of the slice
         out = out.concat(curveTo(cx, cy, rx, ry, midEnd, end, 0, 0));
         // Go to the outer side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(end)) + dx, cy + (ry * sin(end)) + dy
         ]);
         // Go back to middle (d)
         out = out.concat(curveTo(cx, cy, rx, ry, end, midEnd, dx, dy));
-        out = out.concat([
+        out.push([
             'L', cx + (rx * cos(midEnd)), cy + (ry * sin(midEnd))
         ]);
         // Go back to the left edge
@@ -707,7 +801,7 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
     }
     else if (end > PI - a && start < PI - a) {
         // Go to outer side
-        out = out.concat([
+        out.push([
             'L',
             cx + (rx * Math.cos(end2)) + dx,
             cy + (ry * Math.sin(end2)) + dy
@@ -715,39 +809,41 @@ SVGRenderer.prototype.arc3dPath = function (shapeArgs) {
         // Curve to the true end of the slice
         out = out.concat(curveTo(cx, cy, rx, ry, end2, end, dx, dy));
         // Go to the inner side
-        out = out.concat([
+        out.push([
             'L', cx + (rx * Math.cos(end)), cy + (ry * Math.sin(end))
         ]);
         // Go back to the artifical end2
         out = out.concat(curveTo(cx, cy, rx, ry, end, end2, 0, 0));
     }
-    out = out.concat([
+    out.push([
         'L', cx + (rx * Math.cos(end2)) + dx, cy + (ry * Math.sin(end2)) + dy
     ]);
     out = out.concat(curveTo(cx, cy, rx, ry, end2, start2, dx, dy));
-    out = out.concat(['Z']);
+    out.push(['Z']);
     // INSIDE
-    var inn = ['M', cx + (irx * cs), cy + (iry * ss)];
+    var inn = [
+        ['M', cx + (irx * cs), cy + (iry * ss)]
+    ];
     inn = inn.concat(curveTo(cx, cy, irx, iry, start, end, 0, 0));
-    inn = inn.concat([
+    inn.push([
         'L', cx + (irx * Math.cos(end)) + dx, cy + (iry * Math.sin(end)) + dy
     ]);
     inn = inn.concat(curveTo(cx, cy, irx, iry, end, start, dx, dy));
-    inn = inn.concat(['Z']);
+    inn.push(['Z']);
     // SIDES
     var side1 = [
-        'M', cx + (rx * cs), cy + (ry * ss),
-        'L', cx + (rx * cs) + dx, cy + (ry * ss) + dy,
-        'L', cx + (irx * cs) + dx, cy + (iry * ss) + dy,
-        'L', cx + (irx * cs), cy + (iry * ss),
-        'Z'
+        ['M', cx + (rx * cs), cy + (ry * ss)],
+        ['L', cx + (rx * cs) + dx, cy + (ry * ss) + dy],
+        ['L', cx + (irx * cs) + dx, cy + (iry * ss) + dy],
+        ['L', cx + (irx * cs), cy + (iry * ss)],
+        ['Z']
     ];
     var side2 = [
-        'M', cx + (rx * ce), cy + (ry * se),
-        'L', cx + (rx * ce) + dx, cy + (ry * se) + dy,
-        'L', cx + (irx * ce) + dx, cy + (iry * se) + dy,
-        'L', cx + (irx * ce), cy + (iry * se),
-        'Z'
+        ['M', cx + (rx * ce), cy + (ry * se)],
+        ['L', cx + (rx * ce) + dx, cy + (ry * se) + dy],
+        ['L', cx + (irx * ce) + dx, cy + (iry * se) + dy],
+        ['L', cx + (irx * ce), cy + (iry * se)],
+        ['Z']
     ];
     // correction for changed position of vanishing point caused by alpha and
     // beta rotations

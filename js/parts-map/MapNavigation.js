@@ -8,11 +8,11 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+var doc = H.doc;
 import U from '../parts/Utilities.js';
-var extend = U.extend, objectEach = U.objectEach, pick = U.pick;
-import '../parts/Chart.js';
-var addEvent = H.addEvent, Chart = H.Chart, doc = H.doc, merge = H.merge;
+var addEvent = U.addEvent, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -109,13 +109,18 @@ MapNavigation.prototype.update = function (options) {
             })
                 .add();
             button.handler = buttonOptions.onclick;
-            button.align(extend(buttonOptions, {
-                width: button.width,
-                height: 2 * button.height
-            }), null, buttonOptions.alignTo);
             // Stop double click event (#4444)
             addEvent(button.element, 'dblclick', stopEvent);
             mapNavButtons.push(button);
+            // Align it after the plotBox is known (#12776)
+            var bo = buttonOptions;
+            var un = addEvent(chart, 'load', function () {
+                button.align(extend(bo, {
+                    width: button.width,
+                    height: 2 * button.height
+                }), null, bo.alignTo);
+                un();
+            });
         });
     }
     this.updateEvents(o);
@@ -247,11 +252,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             newExt.y <= yAxis.dataMin &&
             newExt.height >= yAxis.dataMax - yAxis.dataMin);
         // When mousewheel zooming, fix the point under the mouse
-        if (mouseX) {
-            xAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
+        if (mouseX && xAxis.mapAxis) {
+            xAxis.mapAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
         }
-        if (mouseY) {
-            yAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
+        if (mouseY && yAxis.mapAxis) {
+            yAxis.mapAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
         }
         // Zoom
         if (typeof howMuch !== 'undefined' && !zoomOut) {

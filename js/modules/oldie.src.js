@@ -10,11 +10,17 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+var deg2rad = H.deg2rad, doc = H.doc, noop = H.noop, svg = H.svg, win = H.win;
+import Pointer from '../parts/Pointer.js';
+import SVGElement from '../parts/SVGElement.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, offset = U.offset, pick = U.pick, pInt = U.pInt;
-import '../parts/SvgRenderer.js';
-var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElement = H.createElement, css = H.css, deg2rad = H.deg2rad, doc = H.doc, merge = H.merge, noop = H.noop, svg = H.svg, SVGElement = H.SVGElement, SVGRenderer = H.SVGRenderer, win = H.win;
+var addEvent = U.addEvent, createElement = U.createElement, css = U.css, defined = U.defined, discardElement = U.discardElement, erase = U.erase, extend = U.extend, extendClass = U.extendClass, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, merge = U.merge, offset = U.offset, pick = U.pick, pInt = U.pInt, uniqueKey = U.uniqueKey;
+var VMLRenderer, VMLRendererExtension, VMLElement;
 /**
  * Path to the pattern image required by VML browsers in order to
  * draw radial gradients.
@@ -25,11 +31,11 @@ var VMLRenderer, VMLRendererExtension, VMLElement, Chart = H.Chart, createElemen
  * @requires  modules/oldie
  * @apioption global.VMLRadialGradientURL
  */
-H.getOptions().global.VMLRadialGradientURL =
+getOptions().global.VMLRadialGradientURL =
     'http://code.highcharts.com/@product.version@/gfx/vml-radial-gradient.png';
 // Utilites
 if (doc && !doc.defaultView) {
-    H.getStyle = function (el, prop) {
+    H.getStyle = U.getStyle = function (el, prop) {
         var val, alias = {
             width: 'clientWidth',
             height: 'clientHeight'
@@ -43,7 +49,7 @@ if (doc && !doc.defaultView) {
         // Getting the rendered width and height
         if (alias) {
             el.style.zoom = 1;
-            return Math.max(el[alias] - 2 * H.getStyle(el, 'padding'), 0);
+            return Math.max(el[alias] - 2 * U.getStyle(el, 'padding'), 0);
         }
         val = el.currentStyle[prop.replace(/\-(\w)/g, function (a, b) {
             return b.toUpperCase();
@@ -62,7 +68,7 @@ if (!svg) {
     // This applies only to charts for export, where IE runs the SVGRenderer
     // instead of the VMLRenderer
     // (#1079, #1063)
-    H.addEvent(SVGElement, 'afterInit', function () {
+    addEvent(SVGElement, 'afterInit', function () {
         if (this.element.nodeName === 'text') {
             this.css({
                 position: 'absolute'
@@ -79,7 +85,7 @@ if (!svg) {
      * @param {boolean} [chartPosition=false]
      * @return {Highcharts.PointerEventObject}
      */
-    H.Pointer.prototype.normalize = function (e, chartPosition) {
+    Pointer.prototype.normalize = function (e, chartPosition) {
         e = e || win.event;
         if (!e.target) {
             e.target = e.srcElement;
@@ -173,7 +179,7 @@ if (!svg) {
             }
             // unique function string (#6746)
             if (!fn.hcKey) {
-                fn.hcKey = H.uniqueKey();
+                fn.hcKey = uniqueKey();
             }
             // Link wrapped fn with original fn, so we can get this in
             // removeEvent
@@ -446,9 +452,9 @@ if (!svg) {
         on: function (eventType, handler) {
             // simplest possible event model for internal use
             this.element['on' + eventType] = function () {
-                var evt = win.event;
-                evt.target = evt.srcElement;
-                handler(evt);
+                var e = win.event;
+                e.target = e.srcElement;
+                handler(e);
             };
             return this;
         },
@@ -712,6 +718,8 @@ if (!svg) {
          */
         init: function (container, width, height) {
             var renderer = this, boxWrapper, box, css;
+            // Extended SVGRenderer member
+            this.crispPolyLine = SVGRenderer.prototype.crispPolyLine;
             renderer.alignedObjects = [];
             boxWrapper = renderer.createElement('div')
                 .css({ position: 'relative' });
@@ -817,20 +825,20 @@ if (!svg) {
          *
          * @return {T}
          */
-        color: function (color, elem, prop, wrapper) {
+        color: function (colorOption, elem, prop, wrapper) {
             var renderer = this, colorObject, regexRgba = /^rgba/, markup, fillType, ret = 'none';
             // Check for linear or radial gradient
-            if (color &&
-                color.linearGradient) {
+            if (colorOption &&
+                colorOption.linearGradient) {
                 fillType = 'gradient';
             }
-            else if (color &&
-                color.radialGradient) {
+            else if (colorOption &&
+                colorOption.radialGradient) {
                 fillType = 'pattern';
             }
             if (fillType) {
-                var stopColor, stopOpacity, gradient = (color.linearGradient ||
-                    color.radialGradient), x1, y1, x2, y2, opacity1, opacity2, color1, color2, fillAttr = '', stops = color.stops, firstStop, lastStop, colors = [], addFillNode = function () {
+                var stopColor, stopOpacity, gradient = (colorOption.linearGradient ||
+                    colorOption.radialGradient), x1, y1, x2, y2, opacity1, opacity2, color1, color2, fillAttr = '', stops = colorOption.stops, firstStop, lastStop, colors = [], addFillNode = function () {
                     // Add the fill subnode. When colors attribute is used,
                     // the meanings of opacity and o:opacity2 are reversed.
                     markup = ['<fill colors="' + colors.join(',') +
@@ -857,7 +865,7 @@ if (!svg) {
                 // Compute the stops
                 stops.forEach(function (stop, i) {
                     if (regexRgba.test(stop[1])) {
-                        colorObject = H.color(stop[1]);
+                        colorObject = color(stop[1]);
                         stopColor = colorObject.get('rgb');
                         stopOpacity = colorObject.get('a');
                     }
@@ -904,7 +912,7 @@ if (!svg) {
                                 sizey *= radialReference[2] / bBox.height;
                             }
                             fillAttr =
-                                'src="' + H.getOptions().global.VMLRadialGradientURL +
+                                'src="' + getOptions().global.VMLRadialGradientURL +
                                     '" ' +
                                     'size="' + sizex + ',' + sizey + '" ' +
                                     'origin="0.5,0.5" ' +
@@ -935,8 +943,8 @@ if (!svg) {
                 // If the color is an rgba color, split it and add a fill node
                 // to hold the opacity component
             }
-            else if (regexRgba.test(color) && elem.tagName !== 'IMG') {
-                colorObject = H.color(color);
+            else if (regexRgba.test(colorOption) && elem.tagName !== 'IMG') {
+                colorObject = color(colorOption);
                 wrapper[prop + '-opacitySetter'](colorObject.get('a'), prop, elem);
                 ret = colorObject.get('rgb');
             }
@@ -947,7 +955,7 @@ if (!svg) {
                     propNodes[0].opacity = 1;
                     propNodes[0].type = 'solid';
                 }
-                ret = color;
+                ret = colorOption;
             }
             return ret;
         },

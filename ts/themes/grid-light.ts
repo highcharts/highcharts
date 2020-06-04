@@ -15,6 +15,8 @@
 /* global document */
 
 import Highcharts from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const { setOptions } = U;
 
 // Load the fonts
 Highcharts.createElement('link', {
@@ -81,4 +83,4 @@ Highcharts.theme = {
 };
 
 // Apply the theme
-Highcharts.setOptions(Highcharts.theme);
+setOptions(Highcharts.theme);

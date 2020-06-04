@@ -11,6 +11,7 @@ js/parts-more/**/*.js
 js/themes/**/*.js
 samples/data/**/*.js
 samples/highcharts/common-js/**/*.js
+samples/highcharts/esm/async-await/demo.js
 samples/cloud/**/**/*.js
 samples/static/*.js
 test/test-controller.js

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -114,7 +115,7 @@ wrap(
     function (
         this: Highcharts.PiePoint,
         proceed: Function
-    ): Highcharts.SVGPathArray {
+    ): SVGPath {
         var args = arguments;
 
         return this.series.chart.is3d() ? [] : proceed.call(this, args[1]);
@@ -213,8 +214,12 @@ wrap(seriesTypes.pie.prototype, 'animate', function (
             if (init) {
 
                 // Scale down the group and place it in the center
-                (group as any).oldtranslateX = (group as any).translateX;
-                (group as any).oldtranslateY = (group as any).translateY;
+                (group as any).oldtranslateX = pick(
+                    (group as any).oldtranslateX,
+                    (group as any).translateX);
+                (group as any).oldtranslateY = pick(
+                    (group as any).oldtranslateY,
+                    (group as any).translateY);
                 attribs = {
                     translateX: center[0],
                     translateY: center[1],
@@ -241,9 +246,6 @@ wrap(seriesTypes.pie.prototype, 'animate', function (
                 if (markerGroup) {
                     markerGroup.animate(attribs, animation);
                 }
-
-                // Delete this function to allow it only once
-                this.animate = null as any;
             }
 
         }

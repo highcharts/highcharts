@@ -9,11 +9,9 @@
  *
  * */
 'use strict';
-import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, objectEach = U.objectEach;
+var arrayMax = U.arrayMax, arrayMin = U.arrayMin, correctFloat = U.correctFloat, isNumber = U.isNumber, merge = U.merge, objectEach = U.objectEach, seriesType = U.seriesType;
 import derivedSeriesMixin from '../mixins/derived-series.js';
-var seriesType = H.seriesType, merge = H.merge;
 /* ************************************************************************** *
  *  HISTOGRAM
  * ************************************************************************** */
@@ -116,9 +114,12 @@ seriesType('histogram', 'column',
         // Float correction needed, because first frequency value is not
         // corrected when generating frequencies (within for loop).
         min = correctFloat(arrayMin(baseData)), frequencies = [], bins = {}, data = [], x, fitToBin;
-        binWidth = series.binWidth = series.options.pointRange = (correctFloat(isNumber(binWidth) ?
+        binWidth = series.binWidth = (correctFloat(isNumber(binWidth) ?
             (binWidth || 1) :
             (max - min) / binsNumber));
+        // #12077 negative pointRange causes wrong calculations,
+        // browser hanging.
+        series.options.pointRange = Math.max(binWidth, 0);
         // If binWidth is 0 then max and min are equaled,
         // increment the x with some positive value to quit the loop
         for (x = min; 
@@ -129,7 +130,11 @@ seriesType('histogram', 'column',
         x < max &&
             (series.userOptions.binWidth ||
                 correctFloat(max - x) >= binWidth ||
-                correctFloat(min + (frequencies.length * binWidth) - x) <= 0); x = correctFloat(x + binWidth)) {
+                // #13069 - Every add and subtract operation should
+                // be corrected, due to general problems with
+                // operations on float numbers in JS.
+                correctFloat(correctFloat(min + (frequencies.length * binWidth)) -
+                    x) <= 0); x = correctFloat(x + binWidth)) {
             frequencies.push(x);
             bins[x] = 0;
         }

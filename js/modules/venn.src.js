@@ -15,18 +15,20 @@
  *
  * */
 'use strict';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, animObject = U.animObject, extend = U.extend, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString, merge = U.merge, seriesType = U.seriesType;
 import draw from '../mixins/draw-point.js';
 import geometry from '../mixins/geometry.js';
-import GeometryCircleMixin from '../mixins/geometry-circles.js';
-var getAreaOfCircle = GeometryCircleMixin.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = GeometryCircleMixin.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = GeometryCircleMixin.getCircleCircleIntersection, getCirclesIntersectionPolygon = GeometryCircleMixin.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = GeometryCircleMixin.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = GeometryCircleMixin.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = GeometryCircleMixin.isPointInsideAllCircles, isPointInsideCircle = GeometryCircleMixin.isPointInsideCircle, isPointOutsideAllCircles = GeometryCircleMixin.isPointOutsideAllCircles;
-import NelderMeadModule from '../mixins/nelder-mead.js';
+import geometryCirclesModule from '../mixins/geometry-circles.js';
+var getAreaOfCircle = geometryCirclesModule.getAreaOfCircle, getAreaOfIntersectionBetweenCircles = geometryCirclesModule.getAreaOfIntersectionBetweenCircles, getCircleCircleIntersection = geometryCirclesModule.getCircleCircleIntersection, getCirclesIntersectionPolygon = geometryCirclesModule.getCirclesIntersectionPolygon, getOverlapBetweenCirclesByDistance = geometryCirclesModule.getOverlapBetweenCircles, isCircle1CompletelyOverlappingCircle2 = geometryCirclesModule.isCircle1CompletelyOverlappingCircle2, isPointInsideAllCircles = geometryCirclesModule.isPointInsideAllCircles, isPointInsideCircle = geometryCirclesModule.isPointInsideCircle, isPointOutsideAllCircles = geometryCirclesModule.isPointOutsideAllCircles;
+import nelderMeadModule from '../mixins/nelder-mead.js';
 // TODO: replace with individual imports
-var nelderMead = NelderMeadModule.nelderMead;
-import U from '../parts/Utilities.js';
-var animObject = U.animObject, isArray = U.isArray, isNumber = U.isNumber, isObject = U.isObject, isString = U.isString;
+var nelderMead = nelderMeadModule.nelderMead;
 import '../parts/Series.js';
-var addEvent = H.addEvent, color = H.Color, extend = H.extend, getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, merge = H.merge, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
+var getCenterOfPoints = geometry.getCenterOfPoints, getDistanceBetweenPoints = geometry.getDistanceBetweenPoints, seriesTypes = H.seriesTypes;
 var objectValues = function objectValues(obj) {
     return Object.keys(obj).map(function (x) {
         return obj[x];
@@ -724,6 +726,9 @@ var vennOptions = {
             color: '${palette.neutralColor20}',
             borderColor: '${palette.neutralColor100}',
             animation: false
+        },
+        inactive: {
+            opacity: 0.075
         }
     },
     tooltip: {
@@ -735,6 +740,11 @@ var vennSeries = {
     axisTypes: [],
     directTouch: true,
     pointArrayMap: ['value'],
+    init: function () {
+        seriesTypes.scatter.prototype.init.apply(this, arguments);
+        // Venn's opacity is a different option from other series
+        delete this.opacity;
+    },
     translate: function () {
         var chart = this.chart;
         this.processedXData = this.xData;
@@ -764,24 +774,20 @@ var vennSeries = {
                     };
                 }
                 else if (shape.d) {
-                    // TODO: find a better way to handle scaling of a path.
-                    var d = shape.d.reduce(function (path, arr) {
-                        if (arr[0] === 'M') {
-                            arr[1] = centerX + arr[1] * scale;
-                            arr[2] = centerY + arr[2] * scale;
+                    var d = shape.d;
+                    d.forEach(function (seg) {
+                        if (seg[0] === 'M') {
+                            seg[1] = centerX + seg[1] * scale;
+                            seg[2] = centerY + seg[2] * scale;
                         }
-                        else if (arr[0] === 'A') {
-                            arr[1] = arr[1] * scale;
-                            arr[2] = arr[2] * scale;
-                            arr[6] = centerX + arr[6] * scale;
-                            arr[7] = centerY + arr[7] * scale;
+                        else if (seg[0] === 'A') {
+                            seg[1] = seg[1] * scale;
+                            seg[2] = seg[2] * scale;
+                            seg[6] = centerX + seg[6] * scale;
+                            seg[7] = centerY + seg[7] * scale;
                         }
-                        return path.concat(arr);
-                    }, [])
-                        .join(' ');
-                    shapeArgs = {
-                        d: d
-                    };
+                    });
+                    shapeArgs = { d: d };
                 }
                 // Scale the position for the data label.
                 if (dataLabelPosition) {
@@ -901,19 +907,18 @@ var vennSeries = {
                     }
                 }
             }, series);
-            series.animate = null;
         }
     },
     utils: {
         addOverlapToSets: addOverlapToSets,
         geometry: geometry,
-        geometryCircles: GeometryCircleMixin,
+        geometryCircles: geometryCirclesModule,
         getLabelWidth: getLabelWidth,
         getMarginFromCircles: getMarginFromCircles,
         getDistanceBetweenCirclesByOverlap: getDistanceBetweenCirclesByOverlap,
         layoutGreedyVenn: layoutGreedyVenn,
         loss: loss,
-        nelderMead: NelderMeadModule,
+        nelderMead: nelderMeadModule,
         processVennData: processVennData,
         sortByTotalOverlap: sortByTotalOverlap
     }

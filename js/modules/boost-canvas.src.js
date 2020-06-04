@@ -13,13 +13,15 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import Color from '../parts/Color.js';
+var color = Color.parse;
 import U from '../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, wrap = U.wrap;
-import '../parts/Color.js';
+var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';
 import '../parts/Options.js';
-var win = H.win, doc = win.document, noop = function () { }, Color = H.Color, Series = H.Series, seriesTypes = H.seriesTypes, addEvent = H.addEvent, fireEvent = H.fireEvent, merge = H.merge, pick = H.pick, CHUNK_SIZE = 50000, destroyLoadingDiv;
+var win = H.win, doc = win.document, noop = function () { }, Series = H.Series, seriesTypes = H.seriesTypes, CHUNK_SIZE = 50000, destroyLoadingDiv;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Initialize the canvas boost.
@@ -289,8 +291,7 @@ H.initCanvasBoost = function () {
             if (rawData.length > 99999) {
                 chart.options.loading = merge(loadingOptions, {
                     labelStyle: {
-                        backgroundColor: H.color('${palette.backgroundColor}')
-                            .setOpacity(0.75).get(),
+                        backgroundColor: color('${palette.backgroundColor}').setOpacity(0.75).get(),
                         padding: '1em',
                         borderRadius: '0.5em'
                     },
@@ -299,7 +300,7 @@ H.initCanvasBoost = function () {
                         opacity: 1
                     }
                 });
-                H.clearTimeout(destroyLoadingDiv);
+                U.clearTimeout(destroyLoadingDiv);
                 chart.showLoading('Drawing...');
                 chart.options.loading = loadingOptions; // reset
             }
@@ -478,7 +479,7 @@ H.initCanvasBoost = function () {
         fill: true,
         sampling: true
     });
-    H.Chart.prototype.callbacks.push(function (chart) {
+    Chart.prototype.callbacks.push(function (chart) {
         /**
          * @private
          */

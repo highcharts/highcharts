@@ -5,7 +5,15 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
+import ControlPoint from '../ControlPoint.js';
+import MockPoint from '../MockPoint.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -31,17 +39,13 @@ declare global {
             height: number;
             heightControlPoint: AnnotationControlPointOptionsObject;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             tunnel: typeof AnnotationTunnel;
         }
     }
 }
-import '../../parts/Utilities.js';
 
-var Annotation = H.Annotation,
-    CrookedLine = Annotation.types.crookedLine,
-    ControlPoint = Annotation.ControlPoint,
-    MockPoint = Annotation.MockPoint;
+var CrookedLine = Annotation.types.crookedLine;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -87,7 +91,7 @@ H.extendAnnotation(
             this: Highcharts.AnnotationTunnel,
             pointOptions: Highcharts.AnnotationMockPointOptionsObject
         ): Highcharts.AnnotationMockPointOptionsObject {
-            var heightPointOptions = H.merge(pointOptions);
+            var heightPointOptions = merge(pointOptions);
 
             heightPointOptions.y += this.options.typeOptions.height;
 
@@ -101,7 +105,7 @@ H.extendAnnotation(
                 controlPoint = new ControlPoint(
                     this.chart,
                     this,
-                    H.merge(
+                    merge(
                         options.controlPointOptions,
                         options.typeOptions.heightControlPoint
                     ),
@@ -120,7 +124,7 @@ H.extendAnnotation(
 
         addLine: function (this: Highcharts.AnnotationTunnel): void {
             var line = this.initShape(
-                H.merge(this.options.typeOptions.line, {
+                merge(this.options.typeOptions.line, {
                     type: 'path',
                     points: [
                         this.points[0],
@@ -144,7 +148,7 @@ H.extendAnnotation(
         },
 
         addBackground: function (this: Highcharts.AnnotationTunnel): void {
-            var background = (this.initShape as any)(H.merge(
+            var background = (this.initShape as any)(merge(
                 this.options.typeOptions.background,
                 {
                     type: 'path',
@@ -157,7 +161,7 @@ H.extendAnnotation(
 
         /**
          * Translate start or end ("left" or "right") side of the tunnel.
-         *
+         * @private
          * @param {number} dx - the amount of x translation
          * @param {number} dy - the amount of y translation
          * @param {boolean} [end] - whether to translate start or end side
@@ -172,7 +176,7 @@ H.extendAnnotation(
 
         /**
          * Translate height of the tunnel.
-         *
+         * @private
          * @param {number} dh - the amount of height translation
          */
         translateHeight: function (this: Highcharts.AnnotationTunnel, dh: number): void {

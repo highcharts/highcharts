@@ -43,13 +43,13 @@ declare global {
             axisTypes: ColorSeries['axisTypes'];
             colorAttribs: ColorMapSeries['colorAttribs'];
             colorKey: ColorSeries['colorKey'];
-            getSymbol: Function;
+            getSymbol: () => void;
             parallelArrays: ColorMapSeries['parallelArrays'];
             pointArrayMap: ColorMapSeries['pointArrayMap'];
             pointAttribs: ColorMapSeries['pointAttribs'];
             trackerGroups: ColorMapSeries['trackerGroups'];
         }
-        interface Point {
+        interface PointLike {
             dataLabelOnNull?: ColorMapPoint['dataLabelOnNull'];
         }
         let colorMapPointMixin: ColorMapPointMixin;
@@ -57,8 +57,11 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
-var defined = U.defined;
+const {
+    defined
+} = U;
 
 var noop = H.noop,
     seriesTypes = H.seriesTypes;
@@ -95,7 +98,7 @@ H.colorMapPointMixin = {
      * @return {void}
      */
     setState: function (this: Highcharts.ColorMapPoint, state?: string): void {
-        H.Point.prototype.setState.call(this, state);
+        Point.prototype.setState.call(this, state);
         if (this.graphic) {
             this.graphic.attr({
                 zIndex: state === 'hover' ? 1 : 0

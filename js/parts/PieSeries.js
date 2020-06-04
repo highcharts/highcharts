@@ -9,15 +9,15 @@
  * */
 'use strict';
 import H from './Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from './Point.js';
 import U from './Utilities.js';
-var clamp = U.clamp, defined = U.defined, isNumber = U.isNumber, pick = U.pick, relativeLength = U.relativeLength, setAnimation = U.setAnimation;
+var addEvent = U.addEvent, clamp = U.clamp, defined = U.defined, fireEvent = U.fireEvent, isNumber = U.isNumber, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, setAnimation = U.setAnimation;
 import './ColumnSeries.js';
 import '../mixins/centered-series.js';
-import './Legend.js';
 import './Options.js';
-import './Point.js';
 import './Series.js';
-var addEvent = H.addEvent, CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, LegendSymbolMixin = H.LegendSymbolMixin, merge = H.merge, noop = H.noop, Point = H.Point, Series = H.Series, seriesType = H.seriesType, seriesTypes = H.seriesTypes, fireEvent = H.fireEvent;
+var CenteredSeriesMixin = H.CenteredSeriesMixin, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, noop = H.noop, Series = H.Series, seriesTypes = H.seriesTypes;
 /**
  * Pie series type.
  *
@@ -145,7 +145,7 @@ seriesType('pie', 'line',
     /**
      * @declare   Highcharts.SeriesPieDataLabelsOptionsObject
      * @extends   plotOptions.series.dataLabels
-     * @excluding align, allowOverlap, staggerLines, step
+     * @excluding align, allowOverlap, inside, staggerLines, step
      * @private
      */
     dataLabels: {
@@ -298,9 +298,9 @@ seriesType('pie', 'line',
          */
         softConnector: true,
         /**
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow
          *         Long labels truncated with an ellipsis
-         * @sample {highcharts} highcharts/plotOptions/pie-datalabels-overflow-wrap
+         * @sample {highcharts} highcharts/plotoptions/pie-datalabels-overflow-wrap
          *         Long labels are wrapped
          *
          * @type      {Highcharts.CSSObject}
@@ -583,8 +583,6 @@ seriesType('pie', 'line',
                     }, series.options.animation);
                 }
             });
-            // delete this function to allow it only once
-            series.animate = null;
         }
     },
     // Define hasData function for non-cartesian series.
@@ -776,25 +774,32 @@ seriesType('pie', 'line',
      * @function Highcharts.seriesTypes.pie#drawEmpty
      */
     drawEmpty: function () {
-        var centerX, centerY, options = this.options;
+        var centerX, centerY, start = this.startAngleRad, end = this.endAngleRad, options = this.options;
         // Draw auxiliary graph if there're no visible points.
         if (this.total === 0) {
             centerX = this.center[0];
             centerY = this.center[1];
-            if (!this.graph) { // Auxiliary graph doesn't exist yet.
-                this.graph = this.chart.renderer.circle(centerX, centerY, 0)
-                    .addClass('highcharts-graph')
+            if (!this.graph) {
+                this.graph = this.chart.renderer
+                    .arc(centerX, centerY, this.center[1] / 2, 0, start, end)
+                    .addClass('highcharts-empty-series')
                     .add(this.group);
             }
-            this.graph.animate({
-                'stroke-width': options.borderWidth,
-                cx: centerX,
-                cy: centerY,
-                r: this.center[2] / 2,
-                fill: options.fillColor || 'none',
-                stroke: options.color ||
-                    '${palette.neutralColor20}'
-            }, this.options.animation);
+            this.graph.attr({
+                d: Highcharts.SVGRenderer.prototype.symbols.arc(centerX, centerY, this.center[2] / 2, 0, {
+                    start: start,
+                    end: end,
+                    innerR: this.center[3] / 2
+                })
+            });
+            if (!this.chart.styledMode) {
+                this.graph.attr({
+                    'stroke-width': options.borderWidth,
+                    fill: options.fillColor || 'none',
+                    stroke: options.color ||
+                        '${palette.neutralColor20}'
+                });
+            }
         }
         else if (this.graph) { // Destroy the graph object.
             this.graph = this.graph.destroy();
@@ -878,6 +883,11 @@ seriesType('pie', 'line',
     drawPoints: function () {
         var renderer = this.chart.renderer;
         this.points.forEach(function (point) {
+            // When updating a series between 2d and 3d or cartesian and
+            // polar, the shape type changes.
+            if (point.graphic && point.hasNewShapeType()) {
+                point.graphic = point.graphic.destroy();
+            }
             if (!point.graphic) {
                 point.graphic = renderer[point.shapeType](point.shapeArgs)
                     .add(point.series.group);
@@ -1042,7 +1052,9 @@ seriesType('pie', 'line',
         // update userOptions.data
         series.options.data[series.data.indexOf(point)] =
             point.options;
-        point.graphic.animate(this.getTranslate());
+        if (point.graphic) {
+            point.graphic.animate(this.getTranslate());
+        }
         if (point.shadowGroup) {
             point.shadowGroup.animate(this.getTranslate());
         }
@@ -1079,7 +1091,7 @@ seriesType('pie', 'line',
     connectorShapes: {
         // only one available before v7.0.0
         fixedOffset: function (labelPosition, connectorPosition, options) {
-            var breakAt = connectorPosition.breakAt, touchingSliceAt = connectorPosition.touchingSliceAt, linePath = options.softConnector ? [
+            var breakAt = connectorPosition.breakAt, touchingSliceAt = connectorPosition.touchingSliceAt, lineSegment = options.softConnector ? [
                 'C',
                 // 1st control point (of the curve)
                 labelPosition.x +
@@ -1096,28 +1108,18 @@ seriesType('pie', 'line',
                 breakAt.y
             ];
             // assemble the path
-            return [
-                'M',
-                labelPosition.x,
-                labelPosition.y
-            ]
-                .concat(linePath)
-                .concat([
-                'L',
-                touchingSliceAt.x,
-                touchingSliceAt.y
+            return ([
+                ['M', labelPosition.x, labelPosition.y],
+                lineSegment,
+                ['L', touchingSliceAt.x, touchingSliceAt.y]
             ]);
         },
         straight: function (labelPosition, connectorPosition) {
             var touchingSliceAt = connectorPosition.touchingSliceAt;
             // direct line to the slice
             return [
-                'M',
-                labelPosition.x,
-                labelPosition.y,
-                'L',
-                touchingSliceAt.x,
-                touchingSliceAt.y
+                ['M', labelPosition.x, labelPosition.y],
+                ['L', touchingSliceAt.x, touchingSliceAt.y]
             ];
         },
         crookedLine: function (labelPosition, connectorPosition, options) {
@@ -1129,26 +1131,23 @@ seriesType('pie', 'line',
                 'L',
                 crookX,
                 labelPosition.y
-            ];
+            ], useCrook = true;
             // crookedLine formula doesn't make sense if the path overlaps
             // the label - use straight line instead in that case
             if (alignment === 'left' ?
                 (crookX > labelPosition.x || crookX < touchingSliceAt.x) :
                 (crookX < labelPosition.x || crookX > touchingSliceAt.x)) {
-                segmentWithCrook = []; // remove the crook
+                useCrook = false;
             }
             // assemble the path
-            return [
-                'M',
-                labelPosition.x,
-                labelPosition.y
-            ]
-                .concat(segmentWithCrook)
-                .concat([
-                'L',
-                touchingSliceAt.x,
-                touchingSliceAt.y
-            ]);
+            var path = [
+                ['M', labelPosition.x, labelPosition.y]
+            ];
+            if (useCrook) {
+                path.push(segmentWithCrook);
+            }
+            path.push(['L', touchingSliceAt.x, touchingSliceAt.y]);
+            return path;
         }
     },
     /**
@@ -1176,7 +1175,7 @@ seriesType('pie', 'line',
  * it is inherited from [chart.type](#chart.type).
  *
  * @extends   series,plotOptions.pie
- * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting
+ * @excluding dataParser, dataURL, stack, xAxis, yAxis, dataSorting, step
  * @product   highcharts
  * @apioption series.pie
  */

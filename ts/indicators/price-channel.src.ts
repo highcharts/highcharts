@@ -58,12 +58,15 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import U from '../parts/Utilities.js';
+const {
+    merge,
+    seriesType
+} = U;
 import reduceArrayMixin from '../mixins/reduce-array.js';
 import multipleLinesMixin from '../mixins/multipe-lines.js';
 
-var getArrayExtremes = reduceArrayMixin.getArrayExtremes,
-    merge = H.merge;
+var getArrayExtremes = reduceArrayMixin.getArrayExtremes;
 
 /**
  * The Price Channel series type.
@@ -74,7 +77,7 @@ var getArrayExtremes = reduceArrayMixin.getArrayExtremes,
  *
  * @augments Highcharts.Series
  */
-H.seriesType<Highcharts.PCIndicator>(
+seriesType<Highcharts.PCIndicator>(
     'pc',
     'sma',
     /**
@@ -176,7 +179,7 @@ H.seriesType<Highcharts.PCIndicator>(
             for (i = period; i <= yValLen; i++) {
                 date = xVal[i - 1];
                 slicedY = yVal.slice(i - period, i);
-                extremes = getArrayExtremes(slicedY, low, high);
+                extremes = getArrayExtremes(slicedY, low as any, high as any);
                 TL = extremes[1];
                 BL = extremes[0];
                 ML = (TL + BL) / 2;

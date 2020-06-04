@@ -10,7 +10,7 @@
 
 'use strict';
 
-import H from './Globals.js';
+import type SVGPath from './SVGPath';
 
 /**
  * Internal types
@@ -42,20 +42,19 @@ declare global {
                 points: Array<SplinePoint>,
                 point: SplinePoint,
                 i: number
-            ): SVGPathArray;
+            ): SVGPath.CurveTo;
         }
     }
 }
 
 import U from './Utilities.js';
 const {
-    pick
+    pick,
+    seriesType
 } = U;
 
 import './Options.js';
 import './Series.js';
-
-var seriesType = H.seriesType;
 
 /**
  * Spline series type.
@@ -113,21 +112,21 @@ seriesType<Highcharts.SplineSeries>(
             points: Array<Highcharts.SplinePoint>,
             point: Highcharts.SplinePoint,
             i: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath.CurveTo {
             var
                 // 1 means control points midway between points, 2 means 1/3
                 // from the point, 3 is 1/4 etc
                 smoothing = 1.5,
                 denom = smoothing + 1,
-                plotX = point.plotX,
-                plotY = point.plotY,
+                plotX = point.plotX || 0,
+                plotY = point.plotY || 0,
                 lastPoint = points[i - 1],
                 nextPoint = points[i + 1],
-                leftContX,
-                leftContY,
-                rightContX,
-                rightContY,
-                ret: Highcharts.SVGPathArray;
+                leftContX: number | undefined,
+                leftContY: number | undefined,
+                rightContX: number,
+                rightContY: number,
+                ret: SVGPath.CurveTo;
 
             /**
              * @private
@@ -142,28 +141,24 @@ seriesType<Highcharts.SplineSeries>(
 
             // Find control points
             if (doCurve(lastPoint) && doCurve(nextPoint)) {
-                var lastX = lastPoint.plotX,
-                    lastY = lastPoint.plotY,
-                    nextX = nextPoint.plotX,
-                    nextY = nextPoint.plotY,
+                var lastX = lastPoint.plotX || 0,
+                    lastY = lastPoint.plotY || 0,
+                    nextX = nextPoint.plotX || 0,
+                    nextY = nextPoint.plotY || 0,
                     correction = 0;
 
-                leftContX =
-                    (smoothing * (plotX as any) + (lastX as any)) / denom;
-                leftContY =
-                    (smoothing * (plotY as any) + (lastY as any)) / denom;
-                rightContX =
-                    (smoothing * (plotX as any) + (nextX as any)) / denom;
-                rightContY =
-                    (smoothing * (plotY as any) + (nextY as any)) / denom;
+                leftContX = (smoothing * plotX + lastX) / denom;
+                leftContY = (smoothing * plotY + lastY) / denom;
+                rightContX = (smoothing * plotX + nextX) / denom;
+                rightContY = (smoothing * plotY + nextY) / denom;
 
                 // Have the two control points make a straight line through main
                 // point
                 if (rightContX !== leftContX) { // #5016, division by zero
                     correction = (
                         ((rightContY - leftContY) *
-                        (rightContX - (plotX as any))) /
-                        (rightContX - leftContX) + (plotY as any) - rightContY
+                        (rightContX - plotX)) /
+                        (rightContX - leftContX) + plotY - rightContY
                     );
                 }
 
@@ -172,28 +167,23 @@ seriesType<Highcharts.SplineSeries>(
 
                 // to prevent false extremes, check that control points are
                 // between neighbouring points' y values
-                if (leftContY > (lastY as any) && leftContY > (plotY as any)) {
-                    leftContY = Math.max(lastY as any, plotY as any);
+                if (leftContY > lastY && leftContY > plotY) {
+                    leftContY = Math.max(lastY, plotY);
                     // mirror of left control point
-                    rightContY = 2 * (plotY as any) - leftContY;
-                } else if (
-                    leftContY < (lastY as any) &&
-                    leftContY < (plotY as any)
-                ) {
-                    leftContY = Math.min(lastY as any, plotY as any);
-                    rightContY = 2 * (plotY as any) - leftContY;
+                    rightContY = 2 * plotY - leftContY;
+
+                } else if (leftContY < lastY && leftContY < plotY) {
+                    leftContY = Math.min(lastY, plotY);
+                    rightContY = 2 * plotY - leftContY;
                 }
-                if (rightContY > (nextY as any) &&
-                    rightContY > (plotY as any)
-                ) {
-                    rightContY = Math.max(nextY as any, plotY as any);
-                    leftContY = 2 * (plotY as any) - rightContY;
-                } else if (
-                    rightContY < (nextY as any) &&
-                    rightContY < (plotY as any)
-                ) {
-                    rightContY = Math.min(nextY as any, plotY as any);
-                    leftContY = 2 * (plotY as any) - rightContY;
+
+                if (rightContY > nextY && rightContY > plotY) {
+                    rightContY = Math.max(nextY, plotY);
+                    leftContY = 2 * plotY - rightContY;
+
+                } else if (rightContY < nextY && rightContY < plotY) {
+                    rightContY = Math.min(nextY, plotY);
+                    leftContY = 2 * plotY - rightContY;
                 }
 
                 // record for drawing in next point
@@ -254,15 +244,16 @@ seriesType<Highcharts.SplineSeries>(
             // */
             ret = [
                 'C',
-                pick(lastPoint.rightContX, lastPoint.plotX),
-                pick(lastPoint.rightContY, lastPoint.plotY),
-                pick(leftContX, plotX),
-                pick(leftContY, plotY),
-                plotX as any,
-                plotY as any
+                pick(lastPoint.rightContX, lastPoint.plotX, 0),
+                pick(lastPoint.rightContY, lastPoint.plotY, 0),
+                pick(leftContX, plotX, 0),
+                pick(leftContY, plotY, 0),
+                plotX,
+                plotY
             ];
+
             // reset for updating series later
-            lastPoint.rightContX = lastPoint.rightContY = null as any;
+            lastPoint.rightContX = lastPoint.rightContY = void 0;
             return ret;
         }
 

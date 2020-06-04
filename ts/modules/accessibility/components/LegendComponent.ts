@@ -12,9 +12,16 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
+import type Point from '../../../parts/Point';
 import H from '../../../parts/Globals.js';
+import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
-var extend = U.extend;
+const {
+    addEvent,
+    extend,
+    fireEvent
+} = U;
 
 import AccessibilityComponent from '../AccessibilityComponent.js';
 import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
@@ -48,7 +55,7 @@ declare global {
             public onKbdNavigationInit(direction: number): void;
             public proxyLegendItem(
                 item: (
-                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                    Highcharts.BubbleLegend|Point|Highcharts.Series
                 )
             ): void;
             public proxyLegendItems(): void;
@@ -59,12 +66,12 @@ declare global {
         interface BubbleLegend {
             a11yProxyElement?: HTMLDOMElement;
         }
-        interface Chart {
+        interface ChartLike {
             highlightedLegendItemIx?: number;
             /** @requires modules/accessibility */
             highlightLegendItem(ix: number): boolean;
         }
-        interface Point {
+        interface PointLike {
             a11yProxyElement?: HTMLDOMElement;
         }
         interface Series {
@@ -92,7 +99,7 @@ function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
 /**
  * @private
  */
-function shouldDoLegendA11y(chart: Highcharts.Chart): boolean {
+function shouldDoLegendA11y(chart: Chart): boolean {
     var items = chart.legend && chart.legend.allItems,
         legendA11yOptions: Highcharts.LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
@@ -122,7 +129,7 @@ H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
 
     if (items[ix]) {
         if (items[oldIx]) {
-            H.fireEvent((items[oldIx].legendGroup as any).element, 'mouseout');
+            fireEvent((items[oldIx].legendGroup as any).element, 'mouseout');
         }
 
         scrollLegendToItem(this.legend, ix);
@@ -132,16 +139,16 @@ H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
             items[ix].a11yProxyElement
         );
 
-        H.fireEvent((items[ix].legendGroup as any).element, 'mouseover');
+        fireEvent((items[ix].legendGroup as any).element, 'mouseover');
         return true;
     }
     return false;
 };
 
 // Keep track of pressed state for legend items
-H.addEvent(H.Legend, 'afterColorizeItem', function (
+addEvent(Legend, 'afterColorizeItem', function (
     e: {
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series);
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series);
         visible: (boolean|undefined);
     }
 ): void {
@@ -176,7 +183,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     init: function (this: Highcharts.LegendComponent): void {
         var component = this;
 
-        this.addEvent(H.Legend, 'afterScroll', function (): void {
+        this.addEvent(Legend, 'afterScroll', function (): void {
             if (this.chart === component.chart) {
                 component.updateProxies();
             }
@@ -192,13 +199,16 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     ): void {
         var legend = this.chart.legend,
             items = legend.allItems || [],
-            curPage = legend.currentPage || 1;
+            curPage = legend.currentPage || 1,
+            clipHeight = legend.clipHeight || 0;
 
         items.forEach(function (
-            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
         ): void {
             var itemPage = item.pageIx || 0,
-                hide = itemPage !== curPage - 1;
+                y = item._legendItemPos ? item._legendItemPos[1] : 0,
+                h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0,
+                hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
 
             if (item.a11yProxyElement) {
                 item.a11yProxyElement.style.visibility = hide ?
@@ -269,7 +279,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             );
 
         items.forEach(function (
-            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
         ): void {
             if (item.legendItem && item.legendItem.element) {
                 component.proxyLegendItem(item);
@@ -280,11 +290,11 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * @private
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
      */
     proxyLegendItem: function (
         this: Highcharts.LegendComponent,
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
     ): void {
         var component = this,
             itemLabel = this.chart.langFormat(
@@ -411,13 +421,13 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
         var legendItem: (
-            Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+            Highcharts.BubbleLegend|Point|Highcharts.Series
         ) = this.chart.legend.allItems[
             this.highlightedLegendItemIx
         ];
 
         if (legendItem && legendItem.a11yProxyElement) {
-            H.fireEvent(legendItem.a11yProxyElement, 'click');
+            fireEvent(legendItem.a11yProxyElement, 'click');
         }
 
         return keyboardNavigationHandler.response.success;

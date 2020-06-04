@@ -13,14 +13,6 @@ const Path = require('path');
  *
  * */
 
-const BUILD_PROPERTIES_DATE_REGEXP = (
-    /highcharts\.product\.date\s*=\s*([^\s]*)/m
-);
-
-const BUILD_PROPERTIES_VERSION_REGEXP = (
-    /highcharts\.product\.version\s*=\s*([^\s]*)/m
-);
-
 const TARGET_FILE = Path.join('build', 'dist', 'products.js');
 
 /* *
@@ -42,26 +34,16 @@ function distProductsJS() {
 
         LogLib.message('Generating', TARGET_FILE + '...');
 
-        const buildProperties = Fs.readFileSync('build.properties');
-        const packageJson = JSON.stringify(
-            Fs.readFileSync('package.json').toString()
-        );
-
-        const buildPropertiesDate = BUILD_PROPERTIES_DATE_REGEXP
-            .exec(buildProperties);
-        BUILD_PROPERTIES_DATE_REGEXP.lastIndex = 0;
+        const buildProperties = require('../../build-properties.json');
+        const packageJson = require('../../package.json');
 
         const date = (
-            buildPropertiesDate && buildPropertiesDate[1] ||
+            buildProperties.date ||
             ''
         );
 
-        const buildPropertiesVersion = BUILD_PROPERTIES_VERSION_REGEXP
-            .exec(buildProperties);
-        BUILD_PROPERTIES_VERSION_REGEXP.lastIndex = 0;
-
         const nr = (
-            buildPropertiesVersion && buildPropertiesVersion[1] ||
+            buildProperties.version ||
             packageJson.version ||
             ''
         );
@@ -71,8 +53,8 @@ function distProductsJS() {
             (
                 'var products = ' + JSON.stringify({
                     Highcharts: { date, nr },
-                    Highstock: { date, nr },
-                    Highmaps: { date, nr },
+                    'Highcharts Stock': { date, nr },
+                    'Highcharts Maps': { date, nr },
                     'Highcharts Gantt': { date, nr }
                 }, undefined, '    ') + '\n'
             )

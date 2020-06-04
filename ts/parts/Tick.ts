@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -49,7 +50,7 @@ declare global {
             public labelPos?: PositionObject;
             public mark?: SVGElement;
             public movedLabel?: SVGElement;
-            public options: (Dictionary<any>|undefined);
+            public options?: AxisOptions;
             public parameters: TickParametersObject;
             public prevLabel?: SVGElement;
             public pos: number;
@@ -83,7 +84,7 @@ declare global {
                 tickWidth: number,
                 horiz: boolean,
                 renderer: Renderer
-            ): SVGPathArray;
+            ): SVGPath;
             public getPosition(
                 horiz: boolean,
                 tickPos: number,
@@ -142,14 +143,14 @@ const {
     defined,
     destroyObjectProperties,
     extend,
+    fireEvent,
     isNumber,
+    merge,
     objectEach,
     pick
 } = U;
 
-var fireEvent = H.fireEvent,
-    merge = H.merge,
-    deg2rad = H.deg2rad;
+var deg2rad = H.deg2rad;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -174,51 +175,108 @@ var fireEvent = H.fireEvent,
  * @param {object} [parameters]
  * Optional parameters for the tick.
  */
-H.Tick = function (
-    this: Highcharts.Tick,
-    axis: Highcharts.Axis,
-    pos: number,
-    type?: string,
-    noLabel?: boolean,
-    parameters?: Highcharts.TickParametersObject
-): any {
-    /**
-     * The related axis of the tick.
-     * @name Highcharts.Tick#axis
-     * @type {Highcharts.Axis}
-     */
-    this.axis = axis;
-    /**
-     * The logical position of the tick on the axis in terms of axis values.
-     * @name Highcharts.Tick#pos
-     * @type {number}
-     */
-    this.pos = pos;
-    /**
-     * The tick type, which can be `"minor"`, or an empty string.
-     * @name Highcharts.Tick#type
-     * @type {string}
-     */
-    this.type = type || '';
-    this.isNew = true;
-    this.isNewLabel = true;
-    this.parameters = parameters || {};
-    /**
-     * The mark offset of the tick on the axis. Usually `undefined`, numeric for
-     * grid axes.
-     * @name Highcharts.Tick#tickmarkOffset
-     * @type {number|undefined}
-     */
-    this.tickmarkOffset = this.parameters.tickmarkOffset;
+class Tick {
 
-    this.options = this.parameters.options;
-    if (!type && !noLabel) {
-        this.addLabel();
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+
+    public constructor(
+        axis: Highcharts.Axis,
+        pos: number,
+        type?: string,
+        noLabel?: boolean,
+        parameters?: Highcharts.TickParametersObject
+    ) {
+        /**
+         * The related axis of the tick.
+         * @name Highcharts.Tick#axis
+         * @type {Highcharts.Axis}
+         */
+        this.axis = axis;
+        /**
+         * The logical position of the tick on the axis in terms of axis values.
+         * @name Highcharts.Tick#pos
+         * @type {number}
+         */
+        this.pos = pos;
+        /**
+         * The tick type, which can be `"minor"`, or an empty string.
+         * @name Highcharts.Tick#type
+         * @type {string}
+         */
+        this.type = type || '';
+        this.parameters = parameters || {};
+        /**
+         * The mark offset of the tick on the axis. Usually `undefined`, numeric
+         * for grid axes.
+         * @name Highcharts.Tick#tickmarkOffset
+         * @type {number|undefined}
+         */
+        this.tickmarkOffset = this.parameters.tickmarkOffset;
+
+        this.options = this.parameters.options;
+
+        fireEvent(this, 'init');
+
+        if (!type && !noLabel) {
+            this.addLabel();
+        }
     }
-} as any;
 
-/** @lends Highcharts.Tick.prototype */
-H.Tick.prototype = {
+    /* *
+     *
+     *  Properties
+     *
+     * */
+
+    public axis: Highcharts.Axis;
+
+    public formatCtx!: Highcharts.AxisLabelsFormatterContextObject;
+
+    public gridLine?: Highcharts.SVGElement;
+
+    public isActive?: boolean;
+
+    public isFirst?: boolean;
+
+    public isNew: boolean = true;
+
+    public isNewLabel: boolean = true;
+
+    public isLast?: boolean;
+
+    public label?: Highcharts.SVGElement;
+
+    public labelPos?: Highcharts.PositionObject;
+
+    public mark?: Highcharts.SVGElement;
+
+    public movedLabel?: Highcharts.SVGElement;
+
+    public options?: Highcharts.AxisOptions;
+
+    public parameters: Highcharts.TickParametersObject;
+
+    public pos: number;
+
+    public rotation?: number;
+
+    public shortenLabel?: Function;
+
+    public slotWidth?: number;
+
+    public tickmarkOffset?: number;
+
+    public type: string;
+
+    /* *
+     *
+     *  Functions
+     *
+     * */
 
     /**
      * Write the tick label.
@@ -227,18 +285,19 @@ H.Tick.prototype = {
      * @function Highcharts.Tick#addLabel
      * @return {void}
      */
-    addLabel: function (this: Highcharts.Tick): void {
+    public addLabel(): void {
         var tick = this,
             axis = tick.axis,
             options = axis.options,
             chart = axis.chart,
             categories = axis.categories,
+            log = axis.logarithmic,
             names = axis.names,
             pos = tick.pos,
-            labelOptions = pick(
+            labelOptions: Highcharts.XAxisLabelsOptions = pick(
                 tick.options && tick.options.labels,
                 options.labels
-            ),
+            ) as any,
             str: string,
             tickPositions = axis.tickPositions,
             isFirst = pos === tickPositions[0],
@@ -259,7 +318,7 @@ H.Tick.prototype = {
 
         // Set the datetime label format. If a higher rank is set for this
         // position, use that. If not, use the general format.
-        if (axis.isDatetimeAxis && tickPositionInfo) {
+        if (axis.dateTime && tickPositionInfo) {
             dateTimeLabelFormats = chart.time.resolveDTLFormat(
                 (options.dateTimeLabelFormats as any)[
                     (
@@ -296,7 +355,7 @@ H.Tick.prototype = {
             isLast: isLast,
             dateTimeLabelFormat: dateTimeLabelFormat as any,
             tickPositionInfo: tickPositionInfo,
-            value: axis.isLog ? correctFloat(axis.lin2log(value)) : value,
+            value: log ? correctFloat(log.lin2log(value)) : value,
             pos: pos
         };
         str = (axis.labelFormatter as any).call(tick.formatCtx, this.formatCtx);
@@ -314,7 +373,7 @@ H.Tick.prototype = {
                     });
                     if (
                         (label as any).getBBox().width <
-                        axis.getSlotWidth(tick) - 2 *
+                        axis.getSlotWidth(tick as any) - 2 *
                             pick(labelOptions.padding, 5)
                     ) {
                         return;
@@ -332,6 +391,11 @@ H.Tick.prototype = {
         }
         // First call
         if (!defined(label) && !tick.movedLabel) {
+            /**
+             * The rendered text label of the tick.
+             * @name Highcharts.Tick#label
+             * @type {Highcharts.SVGElement|undefined}
+             */
             tick.label = label = tick.createLabel(
                 { x: 0, y: 0 },
                 str,
@@ -357,77 +421,7 @@ H.Tick.prototype = {
 
             label.textPxLength = label.getBBox().width;
         }
-    },
-
-    /**
-     * Try to replace the label if the same one already exists.
-     *
-     * @private
-     * @function Highcharts.Tick#moveLabel
-     * @param {string} str
-     * @param {Highcharts.XAxisLabelsOptions} labelOptions
-     *
-     * @return {void}
-     */
-    moveLabel: function (
-        this: Highcharts.Tick,
-        str: string,
-        labelOptions: Highcharts.XAxisLabelsOptions
-    ): void {
-        var tick = this,
-            label = tick.label,
-            moved = false,
-            xAxis = tick.axis,
-            chart = xAxis.chart,
-            labelPos,
-            reversed = xAxis.reversed,
-            inverted = chart.inverted,
-            xPos,
-            yPos;
-
-        if (label && label.textStr === str) {
-            tick.movedLabel = label;
-            moved = true;
-            delete tick.label;
-
-        } else { // Find a label with the same string
-            objectEach(xAxis.ticks, function (
-                currentTick: Highcharts.Tick
-            ): void {
-                if (
-                    !moved &&
-                    !currentTick.isNew &&
-                    currentTick !== tick &&
-                    currentTick.label &&
-                    currentTick.label.textStr === str
-                ) {
-                    tick.movedLabel = currentTick.label;
-                    moved = true;
-                    currentTick.labelPos = tick.movedLabel.xy;
-                    delete currentTick.label;
-                }
-            });
-        }
-
-        // Create new label if the actual one is moved
-        if (!moved && (tick.labelPos || label)) {
-            labelPos = tick.labelPos || (label as any).xy;
-            xPos = inverted ?
-                labelPos.x : (reversed ? 0 : xAxis.width + xAxis.left);
-            yPos = inverted ?
-                (reversed ? (xAxis.width + xAxis.left) : 0) : labelPos.y;
-
-            tick.movedLabel = tick.createLabel(
-                { x: xPos, y: yPos },
-                str,
-                labelOptions
-            );
-
-            if (tick.movedLabel) {
-                tick.movedLabel.attr({ opacity: 0 });
-            }
-        }
-    },
+    }
 
     /**
      * Render and return the label of the tick.
@@ -439,12 +433,11 @@ H.Tick.prototype = {
      * @param {Highcharts.XAxisLabelsOptions} labelOptions
      * @return {Highcharts.SVGElement|undefined}
      */
-    createLabel: function (
-        this: Highcharts.Tick,
+    public createLabel(
         xy: Highcharts.PositionObject,
         str: string,
         labelOptions: Highcharts.XAxisLabelsOptions
-    ): Highcharts.SVGElement|undefined {
+    ): (Highcharts.SVGElement|undefined) {
         var axis = this.axis,
             chart = axis.chart,
             label = defined(str) && labelOptions.enabled ?
@@ -469,184 +462,18 @@ H.Tick.prototype = {
         }
 
         return label;
-    },
+    }
 
     /**
-     * Replace labels with the moved ones to perform animation. Additionally
-     * destroy unused labels.
+     * Destructor for the tick prototype
      *
      * @private
-     * @function Highcharts.Tick#replaceMovedLabel
+     * @function Highcharts.Tick#destroy
      * @return {void}
      */
-    replaceMovedLabel: function (this: Highcharts.Tick): void {
-        var tick = this,
-            label = tick.label,
-            axis = tick.axis,
-            reversed = axis.reversed,
-            chart = tick.axis.chart,
-            inverted = chart.inverted,
-            x,
-            y;
-
-        // Animate and destroy
-        if (label && !tick.isNew) {
-            x = inverted ? label.xy.x : (
-                reversed ? axis.left : axis.width + axis.left
-            );
-            y = inverted ?
-                (reversed ? axis.width + axis.top : axis.top) :
-                label.xy.y;
-
-            label.animate(
-                { x: x, y: y, opacity: 0 },
-                void 0,
-                label.destroy
-            );
-
-            delete tick.label;
-        }
-
-        axis.isDirty = true;
-        tick.label = tick.movedLabel;
-        delete tick.movedLabel;
-    },
-
-    /**
-     * Get the offset height or width of the label
-     *
-     * @private
-     * @function Highcharts.Tick#getLabelSize
-     * @return {number}
-     */
-    getLabelSize: function (this: Highcharts.Tick): number {
-        return this.label ?
-            this.label.getBBox()[this.axis.horiz ? 'height' : 'width'] :
-            0;
-    },
-
-    /**
-     * Handle the label overflow by adjusting the labels to the left and right
-     * edge, or hide them if they collide into the neighbour label.
-     *
-     * @private
-     * @function Highcharts.Tick#handleOverflow
-     * @param {Highcharts.PositionObject} xy
-     * @return {void}
-     */
-    handleOverflow: function (
-        this: Highcharts.Tick,
-        xy: Highcharts.PositionObject
-    ): void {
-        var tick = this,
-            axis = this.axis,
-            labelOptions = axis.options.labels,
-            pxPos = xy.x,
-            chartWidth = axis.chart.chartWidth,
-            spacing = axis.chart.spacing,
-            leftBound = pick(
-                axis.labelLeft,
-                Math.min(axis.pos as any, spacing[3])
-            ),
-            rightBound = pick(
-                axis.labelRight,
-                Math.max(
-                    !axis.isRadial ? (axis.pos as any) + axis.len : 0,
-                    (chartWidth as any) - spacing[1]
-                )
-            ),
-            label = this.label,
-            rotation = this.rotation,
-            factor = ({
-                left: 0,
-                center: 0.5,
-                right: 1
-            } as Highcharts.Dictionary<number>)[
-                axis.labelAlign || (label as any).attr('align')
-            ],
-            labelWidth = (label as any).getBBox().width,
-            slotWidth = axis.getSlotWidth(tick),
-            modifiedSlotWidth = slotWidth,
-            xCorrection = factor,
-            goRight = 1,
-            leftPos,
-            rightPos,
-            textWidth,
-            css = {} as Highcharts.CSSObject;
-
-        // Check if the label overshoots the chart spacing box. If it does, move
-        // it. If it now overshoots the slotWidth, add ellipsis.
-        if (!rotation &&
-            pick((labelOptions as any).overflow, 'justify') === 'justify'
-        ) {
-            leftPos = pxPos - factor * labelWidth;
-            rightPos = pxPos + (1 - factor) * labelWidth;
-
-            if (leftPos < leftBound) {
-                modifiedSlotWidth =
-                    xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
-            } else if (rightPos > rightBound) {
-                modifiedSlotWidth =
-                    rightBound - xy.x + modifiedSlotWidth * factor;
-                goRight = -1;
-            }
-
-            modifiedSlotWidth = Math.min(slotWidth, modifiedSlotWidth); // #4177
-            if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
-                xy.x += (
-                    goRight *
-                    (
-                        slotWidth -
-                        modifiedSlotWidth -
-                        xCorrection * (
-                            slotWidth - Math.min(labelWidth, modifiedSlotWidth)
-                        )
-                    )
-                );
-            }
-            // If the label width exceeds the available space, set a text width
-            // to be picked up below. Also, if a width has been set before, we
-            // need to set a new one because the reported labelWidth will be
-            // limited by the box (#3938).
-            if (
-                labelWidth > modifiedSlotWidth ||
-                (axis.autoRotation && ((label as any).styles || {}).width)
-            ) {
-                textWidth = modifiedSlotWidth;
-            }
-
-        // Add ellipsis to prevent rotated labels to be clipped against the edge
-        // of the chart
-        } else if (
-            (rotation as any) < 0 &&
-            pxPos - factor * labelWidth < leftBound
-        ) {
-            textWidth = Math.round(
-                pxPos / Math.cos((rotation as any) * deg2rad) - leftBound
-            );
-        } else if (
-            (rotation as any) > 0 &&
-            pxPos + factor * labelWidth > rightBound
-        ) {
-            textWidth = Math.round(
-                ((chartWidth as any) - pxPos) /
-                Math.cos((rotation as any) * deg2rad)
-            );
-        }
-
-        if (textWidth) {
-            if (tick.shortenLabel) {
-                tick.shortenLabel();
-            } else {
-                css.width = Math.floor(textWidth);
-                if (!((labelOptions as any).style || {}).textOverflow) {
-                    css.textOverflow = 'ellipsis';
-                }
-                (label as any).css(css);
-
-            }
-        }
-    },
+    public destroy(): void {
+        destroyObjectProperties(this, this.axis);
+    }
 
     /**
      * Gets the x and y positions for ticks in terms of pixels.
@@ -671,8 +498,7 @@ H.Tick.prototype = {
      *
      * @fires Highcharts.Tick#event:afterGetPosition
      */
-    getPosition: function (
-        this: Highcharts.Tick,
+    public getPosition(
         horiz: boolean,
         tickPos: number,
         tickmarkOffset: number,
@@ -731,7 +557,7 @@ H.Tick.prototype = {
 
         return pos;
 
-    },
+    }
 
     /**
      * Get the x, y position of the tick label
@@ -739,8 +565,7 @@ H.Tick.prototype = {
      * @private
      * @return {Highcharts.PositionObject}
      */
-    getLabelPosition: function (
-        this: Highcharts.Tick,
+    public getLabelPosition(
         x: number,
         y: number,
         label: Highcharts.SVGElement,
@@ -816,7 +641,20 @@ H.Tick.prototype = {
         );
 
         return pos;
-    },
+    }
+
+    /**
+     * Get the offset height or width of the label
+     *
+     * @private
+     * @function Highcharts.Tick#getLabelSize
+     * @return {number}
+     */
+    public getLabelSize(): number {
+        return this.label ?
+            this.label.getBBox()[this.axis.horiz ? 'height' : 'width'] :
+            0;
+    }
 
     /**
      * Extendible method to return the path of the marker
@@ -824,24 +662,251 @@ H.Tick.prototype = {
      * @private
      *
      */
-    getMarkPath: function (
-        this: Highcharts.Tick,
+    public getMarkPath(
         x: number,
         y: number,
         tickLength: number,
         tickWidth: number,
         horiz: boolean,
         renderer: Highcharts.Renderer
-    ): Highcharts.SVGPathArray {
-        return renderer.crispLine([
+    ): SVGPath {
+        return renderer.crispLine([[
             'M',
             x,
-            y,
+            y
+        ], [
             'L',
             x + (horiz ? 0 : -tickLength),
             y + (horiz ? tickLength : 0)
-        ], tickWidth);
-    },
+        ]], tickWidth);
+    }
+
+    /**
+     * Handle the label overflow by adjusting the labels to the left and right
+     * edge, or hide them if they collide into the neighbour label.
+     *
+     * @private
+     * @function Highcharts.Tick#handleOverflow
+     * @param {Highcharts.PositionObject} xy
+     * @return {void}
+     */
+    public handleOverflow(xy: Highcharts.PositionObject): void {
+        var tick = this,
+            axis = this.axis,
+            labelOptions = axis.options.labels,
+            pxPos = xy.x,
+            chartWidth = axis.chart.chartWidth,
+            spacing = axis.chart.spacing,
+            leftBound = pick(
+                axis.labelLeft,
+                Math.min(axis.pos as any, spacing[3])
+            ),
+            rightBound = pick(
+                axis.labelRight,
+                Math.max(
+                    !axis.isRadial ? (axis.pos as any) + axis.len : 0,
+                    (chartWidth as any) - spacing[1]
+                )
+            ),
+            label = this.label,
+            rotation = this.rotation,
+            factor = ({
+                left: 0,
+                center: 0.5,
+                right: 1
+            } as Highcharts.Dictionary<number>)[
+                axis.labelAlign || (label as any).attr('align')
+            ],
+            labelWidth = (label as any).getBBox().width,
+            slotWidth = axis.getSlotWidth(tick as any),
+            modifiedSlotWidth = slotWidth,
+            xCorrection = factor,
+            goRight = 1,
+            leftPos,
+            rightPos,
+            textWidth,
+            css = {} as Highcharts.CSSObject;
+
+        // Check if the label overshoots the chart spacing box. If it does, move
+        // it. If it now overshoots the slotWidth, add ellipsis.
+        if (!rotation &&
+            pick((labelOptions as any).overflow, 'justify') === 'justify'
+        ) {
+            leftPos = pxPos - factor * labelWidth;
+            rightPos = pxPos + (1 - factor) * labelWidth;
+
+            if (leftPos < leftBound) {
+                modifiedSlotWidth =
+                    xy.x + modifiedSlotWidth * (1 - factor) - leftBound;
+            } else if (rightPos > rightBound) {
+                modifiedSlotWidth =
+                    rightBound - xy.x + modifiedSlotWidth * factor;
+                goRight = -1;
+            }
+
+            modifiedSlotWidth = Math.min(slotWidth, modifiedSlotWidth); // #4177
+            if (modifiedSlotWidth < slotWidth && axis.labelAlign === 'center') {
+                xy.x += (
+                    goRight *
+                    (
+                        slotWidth -
+                        modifiedSlotWidth -
+                        xCorrection * (
+                            slotWidth - Math.min(labelWidth, modifiedSlotWidth)
+                        )
+                    )
+                );
+            }
+            // If the label width exceeds the available space, set a text width
+            // to be picked up below. Also, if a width has been set before, we
+            // need to set a new one because the reported labelWidth will be
+            // limited by the box (#3938).
+            if (
+                labelWidth > modifiedSlotWidth ||
+                (axis.autoRotation && ((label as any).styles || {}).width)
+            ) {
+                textWidth = modifiedSlotWidth;
+            }
+
+        // Add ellipsis to prevent rotated labels to be clipped against the edge
+        // of the chart
+        } else if (
+            (rotation as any) < 0 &&
+            pxPos - factor * labelWidth < leftBound
+        ) {
+            textWidth = Math.round(
+                pxPos / Math.cos((rotation as any) * deg2rad) - leftBound
+            );
+        } else if (
+            (rotation as any) > 0 &&
+            pxPos + factor * labelWidth > rightBound
+        ) {
+            textWidth = Math.round(
+                ((chartWidth as any) - pxPos) /
+                Math.cos((rotation as any) * deg2rad)
+            );
+        }
+
+        if (textWidth) {
+            if (tick.shortenLabel) {
+                tick.shortenLabel();
+            } else {
+                css.width = Math.floor(textWidth) + 'px';
+                if (!((labelOptions as any).style || {}).textOverflow) {
+                    css.textOverflow = 'ellipsis';
+                }
+                (label as any).css(css);
+
+            }
+        }
+    }
+
+    /**
+     * Try to replace the label if the same one already exists.
+     *
+     * @private
+     * @function Highcharts.Tick#moveLabel
+     * @param {string} str
+     * @param {Highcharts.XAxisLabelsOptions} labelOptions
+     *
+     * @return {void}
+     */
+    public moveLabel(str: string, labelOptions: Highcharts.XAxisLabelsOptions): void {
+        var tick = this,
+            label = tick.label,
+            moved = false,
+            xAxis = tick.axis,
+            chart = xAxis.chart,
+            labelPos,
+            reversed = xAxis.reversed,
+            inverted = chart.inverted,
+            xPos,
+            yPos;
+
+        if (label && label.textStr === str) {
+            tick.movedLabel = label;
+            moved = true;
+            delete tick.label;
+
+        } else { // Find a label with the same string
+            objectEach(xAxis.ticks, function (currentTick: Tick): void {
+                if (
+                    !moved &&
+                    !currentTick.isNew &&
+                    currentTick !== tick &&
+                    currentTick.label &&
+                    currentTick.label.textStr === str
+                ) {
+                    tick.movedLabel = currentTick.label;
+                    moved = true;
+                    currentTick.labelPos = tick.movedLabel.xy;
+                    delete currentTick.label;
+                }
+            });
+        }
+
+        // Create new label if the actual one is moved
+        if (!moved && (tick.labelPos || label)) {
+            labelPos = tick.labelPos || (label as any).xy;
+            xPos = inverted ?
+                labelPos.x : (reversed ? 0 : xAxis.width + xAxis.left);
+            yPos = inverted ?
+                (reversed ? (xAxis.width + xAxis.left) : 0) : labelPos.y;
+
+            tick.movedLabel = tick.createLabel(
+                { x: xPos, y: yPos },
+                str,
+                labelOptions
+            );
+
+            if (tick.movedLabel) {
+                tick.movedLabel.attr({ opacity: 0 });
+            }
+        }
+    }
+
+    /**
+     * Put everything in place
+     *
+     * @private
+     * @param {number} index
+     * @param {boolean} [old]
+     *        Use old coordinates to prepare an animation into new position
+     * @param {number} [opacity]
+     * @return {voids}
+     */
+    public render(
+        index: number,
+        old?: boolean,
+        opacity?: number
+    ): void {
+        var tick = this,
+            axis = tick.axis,
+            horiz = axis.horiz,
+            pos = tick.pos,
+            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
+            xy = tick.getPosition(horiz as any, pos, tickmarkOffset, old),
+            x = xy.x,
+            y = xy.y,
+            reverseCrisp = ((horiz && x === (axis.pos as any) + axis.len) ||
+                (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
+
+        opacity = pick(opacity, 1);
+        this.isActive = true;
+
+        // Create the grid line
+        this.renderGridLine(old as any, opacity as any, reverseCrisp);
+
+        // create the tick mark
+        this.renderMark(xy, opacity as any, reverseCrisp);
+
+        // the label is created on init - now move it into place
+        this.renderLabel(xy, old as any, opacity as any, index as any);
+
+        tick.isNew = false;
+
+        fireEvent(this, 'afterRender');
+    }
 
     /**
      * Renders the gridLine.
@@ -852,8 +917,7 @@ H.Tick.prototype = {
      * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
      * @return {void}
      */
-    renderGridLine: function (
-        this: Highcharts.Tick,
+    public renderGridLine(
         old: boolean,
         opacity: number,
         reverseCrisp: number
@@ -920,7 +984,7 @@ H.Tick.prototype = {
                 });
             }
         }
-    },
+    }
 
     /**
      * Renders the tick mark.
@@ -931,8 +995,7 @@ H.Tick.prototype = {
      * @param {number} reverseCrisp  Modifier for avoiding overlapping 1 or -1
      * @return {void}
      */
-    renderMark: function (
-        this: Highcharts.Tick,
+    public renderMark(
         xy: Highcharts.PositionObject,
         opacity: number,
         reverseCrisp: number
@@ -992,7 +1055,7 @@ H.Tick.prototype = {
             });
 
         }
-    },
+    }
 
     /**
      * Renders the tick label.
@@ -1006,8 +1069,7 @@ H.Tick.prototype = {
      * @param {number} index  The index of the tick
      * @return {void}
      */
-    renderLabel: function (
-        this: Highcharts.Tick,
+    public renderLabel(
         xy: Highcharts.TickPositionObject,
         old: boolean,
         opacity: number,
@@ -1080,60 +1142,50 @@ H.Tick.prototype = {
                 tick.isNewLabel = true;
             }
         }
-    },
+    }
 
     /**
-     * Put everything in place
+     * Replace labels with the moved ones to perform animation. Additionally
+     * destroy unused labels.
      *
      * @private
-     * @param {number} index
-     * @param {boolean} [old]
-     *        Use old coordinates to prepare an animation into new position
-     * @param {number} [opacity]
-     * @return {voids}
-     */
-    render: function (
-        this: Highcharts.Tick,
-        index: number,
-        old?: boolean,
-        opacity?: number
-    ): void {
-        var tick = this,
-            axis = tick.axis,
-            horiz = axis.horiz,
-            pos = tick.pos,
-            tickmarkOffset = pick(tick.tickmarkOffset, axis.tickmarkOffset),
-            xy = tick.getPosition(horiz as any, pos, tickmarkOffset, old),
-            x = xy.x,
-            y = xy.y,
-            reverseCrisp = ((horiz && x === (axis.pos as any) + axis.len) ||
-                (!horiz && y === axis.pos)) ? -1 : 1; // #1480, #1687
-
-        opacity = pick(opacity, 1);
-        this.isActive = true;
-
-        // Create the grid line
-        this.renderGridLine(old as any, opacity as any, reverseCrisp);
-
-        // create the tick mark
-        this.renderMark(xy, opacity as any, reverseCrisp);
-
-        // the label is created on init - now move it into place
-        this.renderLabel(xy, old as any, opacity as any, index as any);
-
-        tick.isNew = false;
-
-        H.fireEvent(this, 'afterRender');
-    },
-
-    /**
-     * Destructor for the tick prototype
-     *
-     * @private
-     * @function Highcharts.Tick#destroy
+     * @function Highcharts.Tick#replaceMovedLabel
      * @return {void}
      */
-    destroy: function (this: Highcharts.Tick): void {
-        destroyObjectProperties(this, this.axis);
+    public replaceMovedLabel(): void {
+        var tick = this,
+            label = tick.label,
+            axis = tick.axis,
+            reversed = axis.reversed,
+            chart = tick.axis.chart,
+            inverted = chart.inverted,
+            x,
+            y;
+
+        // Animate and destroy
+        if (label && !tick.isNew) {
+            x = inverted ? label.xy.x : (
+                reversed ? axis.left : axis.width + axis.left
+            );
+            y = inverted ?
+                (reversed ? axis.width + axis.top : axis.top) :
+                label.xy.y;
+
+            label.animate(
+                { x: x, y: y, opacity: 0 },
+                void 0,
+                label.destroy
+            );
+
+            delete tick.label;
+        }
+
+        axis.isDirty = true;
+        tick.label = tick.movedLabel;
+        delete tick.movedLabel;
     }
-} as any;
+}
+
+H.Tick = Tick as typeof Highcharts.Tick;
+
+export default H.Tick;

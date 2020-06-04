@@ -5,7 +5,21 @@
  * */
 
 'use strict';
+
+import type Annotation from '../annotations.src';
+import type SVGPath from '../../parts/SVGPath';
+import controllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
+import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+const {
+    extend,
+    format,
+    isNumber,
+    merge,
+    pick
+} = U;
 
 /**
  * Internal types.
@@ -68,20 +82,10 @@ declare global
             negative?: boolean;
             ttBelow?: boolean;
         }
-        interface SymbolDictionary {
-            connector: SymbolFunction<SVGPathArray>;
-        }
     }
 }
 
-import U from './../../parts/Utilities.js';
-var extend = U.extend,
-    isNumber = U.isNumber,
-    pick = U.pick;
-
-import './../../parts/SvgRenderer.js';
-import controllableMixin from './controllableMixin.js';
-import MockPoint from './../MockPoint.js';
+import '../../parts/SVGRenderer.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -103,7 +107,7 @@ import MockPoint from './../MockPoint.js';
  */
 const ControllableLabel: typeof Highcharts.AnnotationControllableLabel = function (
     this: Highcharts.AnnotationControllableLabel,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsLabelOptions,
     index: number
 ): void {
@@ -256,7 +260,7 @@ ControllableLabel.attrsMap = {
     padding: 'padding'
 };
 
-H.merge(
+merge(
     true,
     ControllableLabel.prototype,
     controllableMixin,
@@ -359,7 +363,7 @@ H.merge(
 
             label.attr({
                 text: text ?
-                    H.format(
+                    format(
                         text,
                         point.getLabelConfig(),
                         this.annotation.chart
@@ -432,12 +436,12 @@ H.merge(
 
                 showItem =
                     point.series.visible &&
-                    MockPoint.prototype.isInsidePane.call(point);
+                    MockPoint.prototype.isInsidePlot.call(point);
 
             if (showItem) {
 
                 if (itemOptions.distance) {
-                    itemPosition = H.Tooltip.prototype.getPosition.call(
+                    itemPosition = Tooltip.prototype.getPosition.call(
                         {
                             chart: chart,
                             distance: pick(itemOptions.distance, 16)
@@ -516,17 +520,17 @@ H.SVGRenderer.prototype.symbols.connector = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SVGAttributes
-): Highcharts.SVGPathArray {
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
-        path: (Highcharts.SVGPathArray|undefined),
+        path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 
     if (isNumber(anchorX) && isNumber(anchorY)) {
 
-        path = ['M', anchorX, anchorY];
+        path = [['M', anchorX, anchorY]];
 
         // Prefer 45 deg connectors
         yOffset = y - anchorY;
@@ -539,19 +543,19 @@ H.SVGRenderer.prototype.symbols.connector = function (
 
         // Anchor below label
         if (anchorY > y + h) {
-            path.push('L', x + lateral, y + h);
+            path.push(['L', x + lateral, y + h]);
 
             // Anchor above label
         } else if (anchorY < y) {
-            path.push('L', x + lateral, y);
+            path.push(['L', x + lateral, y]);
 
             // Anchor left of label
         } else if (anchorX < x) {
-            path.push('L', x, y + h / 2);
+            path.push(['L', x, y + h / 2]);
 
             // Anchor right of label
         } else if (anchorX > x + w) {
-            path.push('L', x + w, y + h / 2);
+            path.push(['L', x + w, y + h / 2]);
         }
     }
 

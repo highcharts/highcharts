@@ -10,7 +10,24 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    fireEvent,
+    getNestedProperty,
+    isArray,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    seriesType,
+    splat
+} = U;
 
 declare global {
     namespace Highcharts {
@@ -21,7 +38,7 @@ declare global {
             public middleX: number;
             public middleY: number;
             public options: MapPointOptions;
-            public path: SVGPathArray;
+            public path: SVGPath;
             public properties?: object;
             public series: MapSeries;
             public value: (number|null);
@@ -65,7 +82,7 @@ declare global {
             public drawMapDataLabels(): void;
             public drawPoints(): void;
             public getBox(paths: Array<MapPointOptions>): void;
-            public getExtremes(): void;
+            public getExtremes(): DataExtremesObject;
             public hasData(): boolean;
             public pointAttribs(point: MapPoint, state?: string): SVGAttributes;
             public render(): void;
@@ -77,15 +94,13 @@ declare global {
             ): void;
             public setOptions(itemOptions: MapSeriesOptions): MapSeriesOptions;
             public translate(): void;
-            public translatePath(path: SVGPathArray): SVGPathArray;
+            public translatePath(path: SVGPath): SVGPath;
         }
         interface MapBaseTransObject {
             originX: number;
             originY: number;
             transAX: number;
             transAY: number;
-        }
-        interface MapChart extends Chart {
         }
         interface MapPointCacheObject {
             _foundBox?: boolean;
@@ -99,7 +114,7 @@ declare global {
         }
         interface MapPointOptions extends ScatterPointOptions {
             color?: ColorType;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             drilldown?: string;
             id?: string;
             labelrank?: number;
@@ -137,33 +152,15 @@ declare global {
     }
 }
 
-import '../parts/Color.js';
-import '../parts/Legend.js';
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts/ScatterSeries.js';
 import '../parts/Series.js';
 import './ColorMapSeriesMixin.js';
 
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    isArray,
-    isNumber,
-    objectEach,
-    pick,
-    splat
-} = U;
-
 var colorMapPointMixin = H.colorMapPointMixin,
     colorMapSeriesMixin = H.colorMapSeriesMixin,
-    LegendSymbolMixin = H.LegendSymbolMixin,
-    merge = H.merge,
     noop = H.noop,
-    fireEvent = H.fireEvent,
-    Point = H.Point,
     Series = H.Series,
-    seriesType = H.seriesType,
     seriesTypes = H.seriesTypes;
 
 /**
@@ -500,11 +497,15 @@ seriesType<Highcharts.MapSeries>(
                 if (point.path) {
                     if (typeof point.path === 'string') {
                         point.path = H.splitPath(point.path);
+
+                    // Legacy one-dimensional array
+                    } else if (point.path[0] as any === 'M') {
+                        point.path = SVGRenderer.prototype.pathToSegments(
+                            point.path as any
+                        );
                     }
 
-                    var path: Highcharts.SVGPathArray = point.path as any || [],
-                        i = path.length,
-                        even = false, // while loop reads from the end
+                    var path: SVGPath = point.path || [],
                         pointMaxX = -MAX_VALUE,
                         pointMinX = MAX_VALUE,
                         pointMaxY = -MAX_VALUE,
@@ -513,22 +514,16 @@ seriesType<Highcharts.MapSeries>(
 
                     // The first time a map point is used, analyze its box
                     if (!point._foundBox) {
-                        while (i--) {
-                            if (isNumber(path[i])) {
-                                if (even) { // even = x
-                                    pointMaxX =
-                                        Math.max(pointMaxX, path[i] as any);
-                                    pointMinX =
-                                        Math.min(pointMinX, path[i] as any);
-                                } else { // odd = Y
-                                    pointMaxY =
-                                        Math.max(pointMaxY, path[i] as any);
-                                    pointMinY =
-                                        Math.min(pointMinY, path[i] as any);
-                                }
-                                even = !even;
+                        path.forEach((seg): void => {
+                            const x = seg[seg.length - 2];
+                            const y = seg[seg.length - 1];
+                            if (typeof x === 'number' && typeof y === 'number') {
+                                pointMinX = Math.min(pointMinX, x);
+                                pointMaxX = Math.max(pointMaxX, x);
+                                pointMinY = Math.min(pointMinY, y);
+                                pointMaxY = Math.max(pointMaxY, y);
                             }
-                        }
+                        });
                         // Cache point bounding box for use to position data
                         // labels, bubbles etc
                         point._midX = (
@@ -602,31 +597,36 @@ seriesType<Highcharts.MapSeries>(
             return !!this.processedXData.length; // != 0
         },
 
-        getExtremes: function (this: Highcharts.MapSeries): void {
+        getExtremes: function (
+            this: Highcharts.MapSeries
+        ): Highcharts.DataExtremesObject {
             // Get the actual value extremes for colors
-            Series.prototype.getExtremes.call(this, this.valueData);
+            const { dataMin, dataMax } = Series.prototype.getExtremes
+                .call(this, this.valueData);
 
             // Recalculate box on updated data
             if (this.chart.hasRendered && this.isDirtyData) {
                 this.getBox(this.options.data as any);
             }
 
-            this.valueMin = this.dataMin;
-            this.valueMax = this.dataMax;
+            if (isNumber(dataMin)) {
+                this.valueMin = dataMin;
+            }
+            if (isNumber(dataMax)) {
+                this.valueMax = dataMax;
+            }
 
             // Extremes for the mock Y axis
-            this.dataMin = this.minY;
-            this.dataMax = this.maxY;
+            return { dataMin: this.minY, dataMax: this.maxY };
         },
 
         // Translate the path, so it automatically fits into the plot area box
         translatePath: function (
             this: Highcharts.MapSeries,
-            path: Highcharts.SVGPathArray
-        ): Highcharts.SVGPathArray {
+            path: SVGPath
+        ): SVGPath {
 
             var series = this,
-                even = false, // while loop reads from the end
                 xAxis = series.xAxis,
                 yAxis = series.yAxis,
                 xMin = xAxis.min,
@@ -635,24 +635,45 @@ seriesType<Highcharts.MapSeries>(
                 yMin = yAxis.min,
                 yTransA = yAxis.transA,
                 yMinPixelPadding = yAxis.minPixelPadding,
-                i: number,
-                ret: Highcharts.SVGPathArray = []; // Preserve the original
+                ret: SVGPath = []; // Preserve the original
 
             // Do the translation
             if (path) {
-                i = path.length;
-                while (i--) {
-                    if (isNumber(path[i])) {
-                        ret[i] = even ?
-                            ((path as any)[i] - (xMin as any)) *
-                            xTransA + xMinPixelPadding :
-                            ((path as any)[i] - (yMin as any)) *
-                            yTransA + yMinPixelPadding;
-                        even = !even;
-                    } else {
-                        ret[i] = path[i];
+                path.forEach((seg): void => {
+                    if (seg[0] === 'M') {
+                        ret.push([
+                            'M',
+                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        ]);
+                    } else if (seg[0] === 'L') {
+                        ret.push([
+                            'L',
+                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        ]);
+                    } else if (seg[0] === 'C') {
+                        ret.push([
+                            'C',
+                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                            (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                            (seg[5] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[6] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        ]);
+                    } else if (seg[0] === 'Q') {
+                        ret.push([
+                            'Q',
+                            (seg[1] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[2] - (yMin || 0)) * yTransA + yMinPixelPadding,
+                            (seg[3] - (xMin || 0)) * xTransA + xMinPixelPadding,
+                            (seg[4] - (yMin || 0)) * yTransA + yMinPixelPadding
+                        ]);
+                    } else if (seg[0] === 'Z') {
+                        ret.push(['Z']);
                     }
-                }
+                });
             }
 
             return ret;
@@ -725,7 +746,7 @@ seriesType<Highcharts.MapSeries>(
                                 typeof val[ix] !== 'undefined'
                             ) {
                                 if (pointArrayMap[j].indexOf('.') > 0) {
-                                    H.Point.prototype.setNestedProperty(
+                                    Point.prototype.setNestedProperty(
                                         data[i], val[ix], pointArrayMap[j]
                                     );
                                 } else {
@@ -783,11 +804,13 @@ seriesType<Highcharts.MapSeries>(
 
                 // Registered the point codes that actually hold data
                 if (data && joinBy[1]) {
+                    const joinKey = joinBy[1];
                     data.forEach(function (
-                        point: Highcharts.MapPointOptions
+                        pointOptions: Highcharts.MapPointOptions
                     ): void {
-                        if (mapMap[(point as any)[joinBy[1]]]) {
-                            dataUsed.push(mapMap[(point as any)[joinBy[1]]]);
+                        const mapKey = getNestedProperty(joinKey, pointOptions) as string;
+                        if (mapMap[mapKey]) {
+                            dataUsed.push(mapMap[mapKey]);
                         }
                     } as any);
                 }
@@ -798,10 +821,11 @@ seriesType<Highcharts.MapSeries>(
 
                     // Registered the point codes that actually hold data
                     if (joinBy[1]) {
+                        const joinKey = joinBy[1];
                         data.forEach(function (
-                            point: Highcharts.MapPointOptions
+                            pointOptions: Highcharts.MapPointOptions
                         ): void {
-                            dataUsed.push((point as any)[joinBy[1]]);
+                            dataUsed.push(getNestedProperty(joinKey, pointOptions) as Highcharts.MapPointOptions);
                         } as any);
                     }
 
@@ -1204,9 +1228,6 @@ seriesType<Highcharts.MapSeries>(
                         scaleX: 1,
                         scaleY: 1
                     }, animation);
-
-                    // Delete this function to allow it only once
-                    this.animate = null as any;
                 }
             }
         },
@@ -1254,8 +1275,6 @@ seriesType<Highcharts.MapSeries>(
                             }, animationOptions);
                     }
                 });
-
-                this.animate = null as any;
             }
 
         },
@@ -1301,9 +1320,11 @@ seriesType<Highcharts.MapSeries>(
                 joinBy = series.joinBy,
                 mapPoint;
 
-            if (series.mapData) {
-                mapPoint = typeof (point as any)[joinBy[1]] !== 'undefined' &&
-                    (series.mapMap as any)[(point as any)[joinBy[1]]];
+            if (series.mapData && series.mapMap) {
+                const joinKey = joinBy[1];
+                const mapKey = Point.prototype.getNestedProperty.call(point, joinKey) as string;
+                mapPoint = typeof mapKey !== 'undefined' &&
+                    series.mapMap[mapKey];
                 if (mapPoint) {
                     // This applies only to bubbles
                     if ((series as any).xyFromShape) {
@@ -1324,7 +1345,7 @@ seriesType<Highcharts.MapSeries>(
             this: Highcharts.MapPoint,
             e?: Highcharts.PointerEventObject
         ): void {
-            H.clearTimeout(this.colorInterval as any);
+            U.clearTimeout(this.colorInterval as any);
             if (this.value !== null || this.series.options.nullInteraction) {
                 (Point.prototype.onMouseOver as any).call(this, e);
             } else {
@@ -1448,7 +1469,7 @@ seriesType<Highcharts.MapSeries>(
  * @sample maps/series/data-datalabels/
  *         Disable data labels for individual areas
  *
- * @type      {Highcharts.DataLabelsOptionsObject}
+ * @type      {Highcharts.DataLabelsOptions}
  * @product   highmaps
  * @apioption series.map.data.dataLabels
  */

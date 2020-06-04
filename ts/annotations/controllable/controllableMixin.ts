@@ -5,7 +5,18 @@
  * */
 
 'use strict';
-import H from './../../parts/Globals.js';
+
+import type Annotation from '../annotations.src';
+import ControlPoint from './../ControlPoint.js';
+import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+const {
+    isObject,
+    isString,
+    merge,
+    splat
+} = U;
 
 /**
  * Internal types.
@@ -144,14 +155,7 @@ declare global {
  * @type {Array<Highcharts.Point>}
  */
 
-import U from './../../parts/Utilities.js';
-var isObject = U.isObject,
-    isString = U.isString,
-    splat = U.splat;
-
 import './../../parts/Tooltip.js';
-import ControlPoint from './../ControlPoint.js';
-import MockPoint from './../MockPoint.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -169,7 +173,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
      */
     init: function (
         this: Highcharts.AnnotationControllable,
-        annotation: Highcharts.Annotation,
+        annotation: Annotation,
         options: Highcharts.AnnotationControllableOptionsObject,
         index: number
     ): void {
@@ -259,7 +263,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
 
             box = point.mock ?
                 point.toAnchor() :
-                H.Tooltip.prototype.getAnchor.call({
+                Tooltip.prototype.getAnchor.call({
                     chart: point.series.chart
                 }, point),
 
@@ -272,7 +276,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
 
         return {
             relativePosition: anchor,
-            absolutePosition: H.merge(anchor, {
+            absolutePosition: merge(anchor, {
                 x: anchor.x + plotBox.translateX,
                 y: anchor.y + plotBox.translateY
             })
@@ -369,7 +373,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
                 controlPointOptions: Highcharts.AnnotationControlPointOptionsObject,
                 i: number
             ): void {
-                var options = H.merge(
+                var options = merge(
                     (this.options as any).controlPointOptions,
                     controlPointOptions
                 );
@@ -592,7 +596,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
         newOptions: Highcharts.AnnotationControllableOptionsObject
     ): void {
         var annotation = this.annotation,
-            options = H.merge(true, this.options, newOptions),
+            options = merge(true, this.options, newOptions),
             parentGroup = this.graphic.parentGroup;
 
         this.destroy();
@@ -601,5 +605,9 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
         this.redraw();
     }
 };
+
+namespace controllableMixin {
+    export type Type = Highcharts.AnnotationControllable;
+}
 
 export default controllableMixin;

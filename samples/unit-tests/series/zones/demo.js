@@ -1,4 +1,3 @@
-
 QUnit.test('Point markers fills should be taken from zones on hover.(#4670)', function (assert) {
     var chart = $('#container').highcharts({
         series: [{
@@ -302,5 +301,14 @@ QUnit.test('#9198 setData and zones', function (assert) {
         chart.series[0]['zone-graph-1'].attr('clip-path') !== 0,
         true,
         'Negative color is applied on the line and area.'
+    );
+
+    chart.series[0].update({
+        color: 'red'
+    });
+    assert.strictEqual(
+        chart.series[0].data[0].color,
+        'red',
+        'Points color is correctly updated when series is updated.'
     );
 });

@@ -9,7 +9,24 @@
  * */
 
 'use strict';
+
+import type Point from '../parts/Point';
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    extend,
+    fireEvent,
+    format,
+    isNumber,
+    pick,
+    setOptions,
+    syncTimeout
+} = U;
 
 /**
  * Internal types
@@ -17,7 +34,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             boxesToAvoid?: Array<LabelIntersectBoxObject>;
             labelSeries?: Array<Series>;
             labelSeriesMaxSum?: number;
@@ -34,7 +51,7 @@ declare global {
             right: number;
             top: number;
         }
-        interface Point {
+        interface PointLike {
             chartCenterY?: number;
             chartX?: number;
             chartY?: number;
@@ -58,6 +75,8 @@ declare global {
             connectorAllowed?: boolean;
             connectorNeighbourDistance?: number;
             enabled?: boolean;
+            format?: string;
+            formatter?: FormatterCallbackFunction<Series>;
             maxFontSize?: (number|null);
             minFontSize?: (number|null);
             onArea?: (boolean|null);
@@ -101,25 +120,14 @@ declare global {
  * https://jsfiddle.net/highcharts/y5A37/
  */
 
-import U from '../parts/Utilities.js';
-const {
-    animObject,
-    extend,
-    isNumber,
-    pick,
-    syncTimeout
-} = U;
+''; // detach doclets above
 
-import '../parts/Chart.js';
 import '../parts/Series.js';
 
-var labelDistance = 3,
-    addEvent = H.addEvent,
-    Series = H.Series,
-    SVGRenderer = H.SVGRenderer,
-    Chart = H.Chart;
+const labelDistance = 3,
+    Series = H.Series;
 
-H.setOptions({
+setOptions({
 
     /**
      * @optionparent plotOptions
@@ -172,6 +180,28 @@ H.setOptions({
                  * connector.
                  */
                 connectorNeighbourDistance: 24,
+
+                /**
+                 * A format string for the label, with support for a subset of
+                 * HTML. Variables are enclosed by curly brackets. Available
+                 * variables are `name`, `options.xxx`, `color` and other
+                 * members from the `series` object. Use this option also to set
+                 * a static text for the label.
+                 *
+                 * @type string
+                 * @since 8.1.0
+                 */
+                format: void 0,
+
+                /**
+                 * Callback function to format each of the series' labels. The
+                 * `this` keyword refers to the series object. By default the
+                 * `formatter` is undefined and the `series.name` is rendered.
+                 *
+                 * @type {Highcharts.FormatterCallbackFunction<Series>}
+                 * @since 8.1.0
+                 */
+                formatter: void 0,
 
                 /**
                  * For area-like series, allow the font size to vary so that
@@ -303,17 +333,17 @@ SVGRenderer.prototype.symbols.connector = function (
     y: number,
     w: number,
     h: number,
-    options: Highcharts.SymbolOptionsObject
-): Highcharts.SVGPathArray {
+    options?: Highcharts.SymbolOptionsObject
+): SVGPath {
     var anchorX = options && options.anchorX,
         anchorY = options && options.anchorY,
-        path: (Highcharts.SVGPathArray|undefined),
+        path: (SVGPath|undefined),
         yOffset: number,
         lateral = w / 2;
 
     if (isNumber(anchorX) && isNumber(anchorY)) {
 
-        path = ['M', anchorX, anchorY];
+        path = [['M', anchorX, anchorY]];
 
         // Prefer 45 deg connectors
         yOffset = y - anchorY;
@@ -326,19 +356,19 @@ SVGRenderer.prototype.symbols.connector = function (
 
         // Anchor below label
         if (anchorY > y + h) {
-            path.push('L', x + lateral, y + h);
+            path.push(['L', x + lateral, y + h]);
 
         // Anchor above label
         } else if (anchorY < y) {
-            path.push('L', x + lateral, y);
+            path.push(['L', x + lateral, y]);
 
         // Anchor left of label
         } else if (anchorX < x) {
-            path.push('L', x, y + h / 2);
+            path.push(['L', x, y + h / 2]);
 
         // Anchor right of label
         } else if (anchorX > x + w) {
-            path.push('L', x + w, y + h / 2);
+            path.push(['L', x + w, y + h / 2]);
         }
     }
     return path || [];
@@ -352,7 +382,7 @@ SVGRenderer.prototype.symbols.connector = function (
  * @function Highcharts.Series#getPointsOnGraph
  */
 Series.prototype.getPointsOnGraph = function (
-): (Array<Highcharts.Point>|undefined) {
+): (Array<Point>|undefined) {
 
     if (!this.xAxis && !this.yAxis) {
         return;
@@ -360,9 +390,9 @@ Series.prototype.getPointsOnGraph = function (
 
     var distance = 16,
         points = this.points,
-        point: Highcharts.Point,
-        last: Highcharts.Point,
-        interpolated: Array<Highcharts.Point> = [],
+        point: Point,
+        last: Point,
+        interpolated: Array<Point> = [],
         i: (number|undefined),
         deltaX: (number|undefined),
         deltaY: (number|undefined),
@@ -370,7 +400,7 @@ Series.prototype.getPointsOnGraph = function (
         len: (number|undefined),
         n: (number|undefined),
         j: (number|undefined),
-        d: (Highcharts.SVGPathArray|undefined),
+        d: (SVGPath|undefined),
         graph: Highcharts.SVGElement = this.graph || (this.area as any),
         node: SVGPathElement = graph.element as any,
         inverted = this.chart.inverted,
@@ -388,7 +418,7 @@ Series.prototype.getPointsOnGraph = function (
      * the plot area into a grid and only add one point per series (#9815).
      * @private
      */
-    function pushDiscrete(point: Highcharts.Point): void {
+    function pushDiscrete(point: Point): void {
         var cellSize = 8,
             key = Math.round((point.plotX as any) / cellSize) + ',' +
             Math.round((point.plotY as any) / cellSize);
@@ -541,7 +571,7 @@ Series.prototype.checkClearPoint = function (
         ),
         chart = this.chart,
         series: (Highcharts.Series|undefined),
-        points: (Array<Highcharts.Point>|undefined),
+        points: (Array<Point>|undefined),
         leastDistance = 16,
         withinRange: (boolean|undefined),
         xDist: (number|undefined),
@@ -765,7 +795,9 @@ Chart.prototype.drawSeriesLabels = function (): void {
         series: Highcharts.Series
     ): void {
 
-        if (!series.xAxis && !series.yAxis) {
+        const labelOptions = series.options.label;
+
+        if (!labelOptions || (!series.xAxis && !series.yAxis)) {
             return;
         }
 
@@ -776,9 +808,6 @@ Chart.prototype.drawSeriesLabels = function (): void {
             clearPoint,
             i: (number|undefined),
             best,
-            labelOptions: Highcharts.SeriesLabelOptionsObject = (
-                series.options.label as any
-            ),
             inverted = chart.inverted,
             paneLeft: number = (
                 inverted ? series.yAxis.pos : (series.xAxis.pos as any)
@@ -788,7 +817,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
             ),
             paneWidth = chart.inverted ? series.yAxis.len : series.xAxis.len,
             paneHeight = chart.inverted ? series.xAxis.len : series.yAxis.len,
-            points: Array<Highcharts.Point> = series.interpolatedPoints as any,
+            points: Array<Point> = series.interpolatedPoints as any,
             onArea = pick(labelOptions.onArea, !!series.area),
             label: Highcharts.SVGElement = series.labelBySeries as any,
             isNew = !label,
@@ -843,12 +872,20 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
         if (series.visible && !series.isSeriesBoosting && points) {
             if (!label) {
+
+                let labelText = series.name;
+                if (typeof labelOptions.format === 'string') {
+                    labelText = format(labelOptions.format, series, chart);
+                } else if (labelOptions.formatter) {
+                    labelText = labelOptions.formatter.call(series);
+                }
+
                 series.labelBySeries = label = chart.renderer
-                    .label(series.name, 0, -9999, 'connector')
+                    .label(labelText, 0, -9999, 'connector')
                     .addClass(
                         'highcharts-series-label ' +
                         'highcharts-series-label-' + series.index + ' ' +
-                        (series.options.className || '') +
+                        (series.options.className || '') + ' ' +
                         colorClass
                     );
 
@@ -857,7 +894,13 @@ Chart.prototype.drawSeriesLabels = function (): void {
                         color: onArea ?
                             chart.renderer.getContrast(series.color as any) :
                             (series.color as any)
-                    }, (series.options.label as any).style));
+                    }, labelOptions.style || {}));
+
+                    label.attr({
+                        opacity: chart.renderer.forExport ? 1 : 0,
+                        stroke: series.color,
+                        'stroke-width': 1
+                    });
                 }
 
                 // Adapt label sizes to the sum of the data
@@ -870,9 +913,6 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 label
                     .attr({
                         padding: 0,
-                        opacity: chart.renderer.forExport ? 1 : 0,
-                        stroke: series.color,
-                        'stroke-width': 1,
                         zIndex: 3
                     })
                     .add();
@@ -1005,12 +1045,12 @@ Chart.prototype.drawSeriesLabels = function (): void {
                 });
 
                 // Move it if needed
-                var dist = (Math.sqrt as any)(
-                    Math.pow(Math.abs(best.x - label.x), 2),
-                    Math.pow(Math.abs(best.y - label.y), 2)
+                var dist = Math.sqrt(
+                    Math.pow(Math.abs(best.x - (label.x || 0)), 2) +
+                    Math.pow(Math.abs(best.y - (label.y || 0)), 2)
                 );
 
-                if (dist) {
+                if (dist && series.labelBySeries) {
 
                     // Move fast and fade in - pure animation movement is
                     // distractive...
@@ -1031,25 +1071,24 @@ Chart.prototype.drawSeriesLabels = function (): void {
                         };
                         attr = {};
                     }
-                    (series.labelBySeries as any)
+
+                    // Default initial animation to a fraction of the series
+                    // animation (#9396)
+                    let animationOptions: Highcharts.AnimationOptionsObject|undefined;
+                    if (isNew) {
+                        animationOptions = animObject(series.options.animation);
+                        // @todo: Safely remove any cast after merging #13005
+                        (animationOptions.duration as any) *= 0.2;
+                    }
+
+                    series.labelBySeries
                         .attr(extend(attr, {
                             anchorX: best.connectorPoint &&
                                 (best.connectorPoint.plotX as any) + paneLeft,
                             anchorY: best.connectorPoint &&
                                 (best.connectorPoint.plotY as any) + paneTop
                         }))
-                        .animate(
-                            anim,
-                            isNew ?
-                                // Default initial animation to a fraction of
-                                // the series animation (#9396)
-                                (animObject(
-                                    series.options.animation as any
-                                ).duration as any) * 0.2 :
-                                // On updating, default to the general chart
-                                // animation
-                                chart.renderer.globalAnimation
-                        );
+                        .animate(anim, animationOptions);
 
                     // Record closest point to stick to for sync redraw
                     series.options.kdNow = true;
@@ -1059,11 +1098,13 @@ Chart.prototype.drawSeriesLabels = function (): void {
                         chartY: best.y
                     } as any, true);
 
-                    label.closest = [
-                        closest,
-                        best.x - (closest as any).plotX,
-                        best.y - (closest as any).plotY
-                    ];
+                    if (closest) {
+                        label.closest = [
+                            closest,
+                            best.x - (closest.plotX || 0),
+                            best.y - (closest.plotY || 0)
+                        ];
+                    }
 
                 }
 
@@ -1075,7 +1116,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
         }
     });
 
-    H.fireEvent(chart, 'afterDrawSeriesLabels');
+    fireEvent(chart, 'afterDrawSeriesLabels');
     // console.timeEnd('drawSeriesLabels');
 };
 
@@ -1087,71 +1128,74 @@ Chart.prototype.drawSeriesLabels = function (): void {
  * @private
  * @function drawLabels
  */
-function drawLabels(this: Highcharts.Chart, e: Event): void {
+function drawLabels(this: Chart, e: Event): void {
 
-    var chart = this,
-        delay = animObject(chart.renderer.globalAnimation).duration;
+    if (this.renderer) {
+        var chart = this,
+            delay = animObject(chart.renderer.globalAnimation).duration;
 
-    chart.labelSeries = [];
-    chart.labelSeriesMaxSum = 0;
+        chart.labelSeries = [];
+        chart.labelSeriesMaxSum = 0;
 
-    H.clearTimeout(chart.seriesLabelTimer as any);
+        U.clearTimeout(chart.seriesLabelTimer as any);
 
-    // Which series should have labels
-    chart.series.forEach(function (series: Highcharts.Series): void {
-        var options: Highcharts.SeriesLabelOptionsObject =
-                series.options.label as any,
-            label: Highcharts.SVGElement = series.labelBySeries as any,
-            closest = label && label.closest;
+        // Which series should have labels
+        chart.series.forEach(function (series: Highcharts.Series): void {
+            var options: Highcharts.SeriesLabelOptionsObject =
+                    series.options.label as any,
+                label: Highcharts.SVGElement = series.labelBySeries as any,
+                closest = label && label.closest;
 
-        if (
-            options.enabled &&
-            series.visible &&
-            (series.graph || series.area) &&
-            !series.isSeriesBoosting
-        ) {
-            (chart.labelSeries as any).push(series);
+            if (
+                options.enabled &&
+                series.visible &&
+                (series.graph || series.area) &&
+                !series.isSeriesBoosting
+            ) {
+                (chart.labelSeries as any).push(series);
 
-            if (options.minFontSize && options.maxFontSize) {
-                series.sum = (series.yData as any).reduce(function (
-                    pv: number,
-                    cv: number
-                ): number {
-                    return (pv || 0) + (cv || 0);
-                }, 0);
-                chart.labelSeriesMaxSum = Math.max(
-                    chart.labelSeriesMaxSum as any,
-                    series.sum as any
-                );
-            }
+                if (options.minFontSize && options.maxFontSize) {
+                    series.sum = (series.yData as any).reduce(function (
+                        pv: number,
+                        cv: number
+                    ): number {
+                        return (pv || 0) + (cv || 0);
+                    }, 0);
+                    chart.labelSeriesMaxSum = Math.max(
+                        chart.labelSeriesMaxSum as any,
+                        series.sum as any
+                    );
+                }
 
-            // The labels are processing heavy, wait until the animation is done
-            if (e.type === 'load') {
-                delay = Math.max(
-                    delay as any,
-                    animObject(series.options.animation).duration as any
-                );
-            }
+                // The labels are processing heavy, wait until the animation is
+                // done
+                if (e.type === 'load') {
+                    delay = Math.max(
+                        delay as any,
+                        animObject(series.options.animation).duration as any
+                    );
+                }
 
-            // Keep the position updated to the axis while redrawing
-            if (closest) {
-                if (typeof closest[0].plotX !== 'undefined') {
-                    label.animate({
-                        x: closest[0].plotX + closest[1],
-                        y: closest[0].plotY + closest[2]
-                    });
-                } else {
-                    label.attr({ opacity: 0 });
+                // Keep the position updated to the axis while redrawing
+                if (closest) {
+                    if (typeof closest[0].plotX !== 'undefined') {
+                        label.animate({
+                            x: closest[0].plotX + closest[1],
+                            y: closest[0].plotY + closest[2]
+                        });
+                    } else {
+                        label.attr({ opacity: 0 });
+                    }
                 }
             }
-        }
-    });
+        });
 
-    chart.seriesLabelTimer = syncTimeout(function (): void {
-        if (chart.series && chart.labelSeries) { // #7931, chart destroyed
-            chart.drawSeriesLabels();
-        }
-    }, chart.renderer.forExport || !delay ? 0 : delay);
+        chart.seriesLabelTimer = syncTimeout(function (): void {
+            if (chart.series && chart.labelSeries) { // #7931, chart destroyed
+                chart.drawSeriesLabels();
+            }
+        }, chart.renderer.forExport || !delay ? 0 : delay);
+    }
 
 }
 

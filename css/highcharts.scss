@@ -229,6 +229,13 @@ div.highcharts-tooltip {
     stroke-linecap: round;
     stroke-linejoin: round;
 }
+
+.highcharts-empty-series {
+    stroke-width: 1px;
+    fill: none;
+    stroke: $neutral-color-20;
+}
+
 .highcharts-state-hover .highcharts-graph {
     stroke-width: 3;
 }
@@ -282,6 +289,10 @@ g.highcharts-series,
     stroke-width: 1px;
     stroke: $background-color;
 }
+.highcharts-a11y-markers-hidden .highcharts-point:not(.highcharts-point-hover):not(.highcharts-a11y-marker-visible),
+.highcharts-a11y-marker-hidden {
+    opacity: 0;
+}
 .highcharts-point {
     stroke-width: 1px;
 }
@@ -302,6 +313,9 @@ g.highcharts-series,
 }
 .highcharts-data-label-connector {
     fill: none;
+}
+.highcharts-data-label-hidden {
+    pointer-events: none;
 }
 .highcharts-halo {
     fill-opacity: 0.25;
@@ -823,3 +837,4 @@ text.highcharts-drilldown-data-label,
 .highcharts-grid-axis .highcharts-axis-line {
     stroke-width: 1px;
 }
+

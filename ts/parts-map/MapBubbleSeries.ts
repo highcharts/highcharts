@@ -25,7 +25,7 @@ declare global {
                 options: MapBubblePointOptions,
                 x?: number
             ): MapBubblePoint;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class MapBubbleSeries extends BubbleSeries {
             public data: Array<MapBubblePoint>;
@@ -52,15 +52,17 @@ declare global {
     }
 }
 
-import '../parts/Utilities.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+const {
+    merge,
+    seriesType
+} = U;
+
 import '../parts/Options.js';
-import '../parts/Point.js';
 import '../parts-more/BubbleSeries.js';
 
-var merge = H.merge,
-    Point = H.Point,
-    seriesType = H.seriesType,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 // The mapbubble series type
 if (seriesTypes.bubble) {

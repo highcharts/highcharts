@@ -2,5 +2,6 @@
  resources:
    - https://code.jquery.com/qunit/qunit-2.0.1.js
    - https://code.jquery.com/qunit/qunit-2.0.1.css
+   - https://cdn.jsdelivr.net/gh/sinonjs/lolex/lolex.js
  js_wrap: b
 ...

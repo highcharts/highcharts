@@ -122,4 +122,7 @@ QUnit.test('Series.drawDataLabels', function (assert) {
         false,
         'Should destroy dataLabel when series.formatter returns a value not of type string'
     );
+
+    // Revert to prototype
+    delete renderer.label;
 });

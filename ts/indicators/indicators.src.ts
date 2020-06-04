@@ -8,6 +8,7 @@
 
 'use strict';
 
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
 
 /**
@@ -95,17 +96,17 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    error,
     extend,
     isArray,
     pick,
+    seriesType,
     splat
 } = U;
 
 import requiredIndicatorMixin from '../mixins/indicator-required.js';
 
-var error = H.error,
-    Series = H.Series,
-    seriesType = H.seriesType,
+var Series = H.Series,
     seriesTypes = H.seriesTypes,
     ohlcProto = H.seriesTypes.ohlc.prototype,
     generateMessage = requiredIndicatorMixin.generateMessage;
@@ -291,7 +292,7 @@ seriesType<Highcharts.SMAIndicator>(
         },
         init: function (
             this: Highcharts.SMAIndicator,
-            chart: Highcharts.Chart,
+            chart: Chart,
             options: Highcharts.SMAIndicatorOptions
         ): (Highcharts.SMAIndicator) {
             var indicator = this,

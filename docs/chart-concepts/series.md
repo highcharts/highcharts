@@ -7,7 +7,7 @@ What is a series?
 A series is a set of data, for example a line graph or one set of columns. All data plotted on a chart comes from the series object. The series object has the structure:
 ```js
 series: [{
-    name: ''
+    name: '',
     data: []
 }]
 ```
@@ -37,7 +37,7 @@ data: [[5, 2], [6, 3], [8, 2]]
 
 [Online example](https://jsfiddle.net/gh/get/jquery/1.7.1/highslide-software/highcharts.com/tree/master/samples/highcharts/series/data-array-of-arrays/)
 
-3.  A list of object with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highstock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
+3.  A list of object with named values. In this case the objects are point configuration objects as seen under options.point. The full list of available properties can be seen from the API, for [example for line series](https://api.highcharts.com/highcharts/series.line.data). Note that for this option to work in Highcharts Stock, the total number of points must not exceed the [turboThreshold](https://api.highcharts.com/highstock/series.line.turboThreshold), or the _turboThreshold_ setting must be increased. Example:
 
 ```js   
 data: [{

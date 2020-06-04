@@ -4,12 +4,13 @@
  *
  * */
 'use strict';
-import H from './../../parts/Globals.js';
-import U from './../../parts/Utilities.js';
-var extend = U.extend, isNumber = U.isNumber, pick = U.pick;
-import './../../parts/SvgRenderer.js';
 import controllableMixin from './controllableMixin.js';
+import H from './../../parts/Globals.js';
 import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+var extend = U.extend, format = U.format, isNumber = U.isNumber, merge = U.merge, pick = U.pick;
+import '../../parts/SVGRenderer.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * A controllable label class.
@@ -149,7 +150,7 @@ ControllableLabel.attrsMap = {
     borderRadius: 'r',
     padding: 'padding'
 };
-H.merge(true, ControllableLabel.prototype, controllableMixin, 
+merge(true, ControllableLabel.prototype, controllableMixin, 
 /** @lends Annotation.ControllableLabel# */ {
     /**
      * Translate the point of the label by deltaX and deltaY translations.
@@ -212,7 +213,7 @@ H.merge(true, ControllableLabel.prototype, controllableMixin,
         var options = this.options, text = this.text || options.format || options.text, label = this.graphic, point = this.points[0], show = false, anchor, attrs;
         label.attr({
             text: text ?
-                H.format(text, point.getLabelConfig(), this.annotation.chart) :
+                format(text, point.getLabelConfig(), this.annotation.chart) :
                 options.formatter.call(point, this)
         });
         anchor = this.anchor(point);
@@ -255,10 +256,10 @@ H.merge(true, ControllableLabel.prototype, controllableMixin,
      */
     position: function (anchor) {
         var item = this.graphic, chart = this.annotation.chart, point = this.points[0], itemOptions = this.options, anchorAbsolutePosition = anchor.absolutePosition, anchorRelativePosition = anchor.relativePosition, itemPosition, alignTo, itemPosRelativeX, itemPosRelativeY, showItem = point.series.visible &&
-            MockPoint.prototype.isInsidePane.call(point);
+            MockPoint.prototype.isInsidePlot.call(point);
         if (showItem) {
             if (itemOptions.distance) {
-                itemPosition = H.Tooltip.prototype.getPosition.call({
+                itemPosition = Tooltip.prototype.getPosition.call({
                     chart: chart,
                     distance: pick(itemOptions.distance, 16)
                 }, item.width, item.height, {
@@ -306,7 +307,7 @@ H.merge(true, ControllableLabel.prototype, controllableMixin,
 H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
     var anchorX = options && options.anchorX, anchorY = options && options.anchorY, path, yOffset, lateral = w / 2;
     if (isNumber(anchorX) && isNumber(anchorY)) {
-        path = ['M', anchorX, anchorY];
+        path = [['M', anchorX, anchorY]];
         // Prefer 45 deg connectors
         yOffset = y - anchorY;
         if (yOffset < 0) {
@@ -317,19 +318,19 @@ H.SVGRenderer.prototype.symbols.connector = function (x, y, w, h, options) {
         }
         // Anchor below label
         if (anchorY > y + h) {
-            path.push('L', x + lateral, y + h);
+            path.push(['L', x + lateral, y + h]);
             // Anchor above label
         }
         else if (anchorY < y) {
-            path.push('L', x + lateral, y);
+            path.push(['L', x + lateral, y]);
             // Anchor left of label
         }
         else if (anchorX < x) {
-            path.push('L', x, y + h / 2);
+            path.push(['L', x, y + h / 2]);
             // Anchor right of label
         }
         else if (anchorX > x + w) {
-            path.push('L', x + w, y + h / 2);
+            path.push(['L', x + w, y + h / 2]);
         }
     }
     return path || [];
