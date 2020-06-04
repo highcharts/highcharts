@@ -731,7 +731,7 @@ if (seriesTypes.boxplot) {
             axis: 'y',
             move: true,
             resize: true,
-            resizeSide: 'bottom',
+            resizeSide: 'draggableQ1',
             handlePositioner: function (
                 point: Highcharts.BoxPlotPoint
             ): Highcharts.PositionObject {
@@ -767,7 +767,7 @@ if (seriesTypes.boxplot) {
             axis: 'y',
             move: true,
             resize: true,
-            resizeSide: 'top',
+            resizeSide: 'draggableQ3',
             handlePositioner: function (
                 point: Highcharts.BoxPlotPoint
             ): Highcharts.PositionObject {
