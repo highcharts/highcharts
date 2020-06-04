@@ -5423,7 +5423,7 @@ null,
  * @apioption series.line.data.description
  */
 /**
- * An id for the point. This can be used after render time to get a
+ * An ID for the point. This can be used after render time to get a
  * pointer to the point object through `chart.get()`.
  *
  * @sample {highcharts} highcharts/point/id/

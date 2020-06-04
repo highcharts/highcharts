@@ -192,6 +192,13 @@ var Point = /** @class */ (function () {
          */
         this.colorIndex = void 0;
         this.formatPrefix = 'point';
+        /**
+         * An ID for the point instance. This is automatically generated if the
+         * point option is unset.
+         *
+         * @name Highcharts.Point#id
+         * @type {string}
+         */
         this.id = void 0;
         this.isNull = false;
         /**
@@ -625,7 +632,6 @@ var Point = /** @class */ (function () {
     Point.prototype.init = function (series, options, x) {
         this.series = series;
         this.applyOptions(options, x);
-        // Add a unique ID to the point if none is assigned
         this.id = defined(this.id) ? this.id : uniqueKey();
         this.resolveColor();
         series.chart.pointCount++;
