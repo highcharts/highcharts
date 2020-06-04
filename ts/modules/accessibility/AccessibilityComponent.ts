@@ -79,9 +79,10 @@ declare global {
                 el: (SVGElement|HTMLElement|HTMLDOMElement|SVGDOMElement),
                 eventObject: Event
             ): void;
-            public setProxyButtonStyle(
-                button: HTMLDOMElement,
-                bBox: (BBoxObject|Dictionary<number>)
+            public setProxyButtonStyle(button: HTMLDOMElement): void;
+            public updateProxyButtonPosition(
+                proxy: HTMLDOMElement,
+                posElement: Highcharts.SVGElement
             ): void;
         }
         interface AccessibilityChart {
@@ -335,8 +336,7 @@ AccessibilityComponent.prototype = {
             proxy = this.createElement('button'),
             attrs = merge({
                 'aria-label': svgEl.getAttribute('aria-label')
-            }, attributes),
-            bBox = this.getElementPosition(posElement || svgElement);
+            }, attributes);
 
         Object.keys(attrs).forEach(function (prop: string): void {
             if (attrs[prop] !== null) {
@@ -350,7 +350,8 @@ AccessibilityComponent.prototype = {
             this.addEvent(proxy, 'click', preClickEvent);
         }
 
-        this.setProxyButtonStyle(proxy, bBox);
+        this.setProxyButtonStyle(proxy);
+        this.updateProxyButtonPosition(proxy, posElement || svgElement);
         this.proxyMouseEventsForButton(svgEl, proxy);
 
         // Add to chart div and unhide from screen readers
@@ -396,13 +397,9 @@ AccessibilityComponent.prototype = {
 
     /**
      * @private
-     * @param {Highcharts.HTMLElement} button
-     * @param {Highcharts.BBoxObject} bBox
+     * @param {Highcharts.HTMLElement} button The proxy element.
      */
-    setProxyButtonStyle: function (
-        button: Highcharts.HTMLDOMElement,
-        bBox: Highcharts.BBoxObject
-    ): void {
+    setProxyButtonStyle: function (button: Highcharts.HTMLDOMElement): void {
         merge(true, button.style, {
             'border-width': 0,
             'background-color': 'transparent',
@@ -416,7 +413,22 @@ AccessibilityComponent.prototype = {
             padding: 0,
             margin: 0,
             display: 'block',
-            position: 'absolute',
+            position: 'absolute'
+        });
+    },
+
+
+    /**
+     * @private
+     * @param {Highcharts.HTMLElement} proxy The proxy to update position of.
+     * @param {Highcharts.SVGElement} posElement The element to overlay and take position from.
+     */
+    updateProxyButtonPosition: function (
+        proxy: Highcharts.HTMLDOMElement,
+        posElement: Highcharts.SVGElement
+    ): void {
+        const bBox = this.getElementPosition(posElement);
+        merge(true, proxy.style, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
             left: (bBox.x || 0) + 'px',

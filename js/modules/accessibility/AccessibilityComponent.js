@@ -200,7 +200,7 @@ AccessibilityComponent.prototype = {
     createProxyButton: function (svgElement, parentGroup, attributes, posElement, preClickEvent) {
         var svgEl = svgElement.element, proxy = this.createElement('button'), attrs = merge({
             'aria-label': svgEl.getAttribute('aria-label')
-        }, attributes), bBox = this.getElementPosition(posElement || svgElement);
+        }, attributes);
         Object.keys(attrs).forEach(function (prop) {
             if (attrs[prop] !== null) {
                 proxy.setAttribute(prop, attrs[prop]);
@@ -210,7 +210,8 @@ AccessibilityComponent.prototype = {
         if (preClickEvent) {
             this.addEvent(proxy, 'click', preClickEvent);
         }
-        this.setProxyButtonStyle(proxy, bBox);
+        this.setProxyButtonStyle(proxy);
+        this.updateProxyButtonPosition(proxy, posElement || svgElement);
         this.proxyMouseEventsForButton(svgEl, proxy);
         // Add to chart div and unhide from screen readers
         parentGroup.appendChild(proxy);
@@ -242,10 +243,9 @@ AccessibilityComponent.prototype = {
     },
     /**
      * @private
-     * @param {Highcharts.HTMLElement} button
-     * @param {Highcharts.BBoxObject} bBox
+     * @param {Highcharts.HTMLElement} button The proxy element.
      */
-    setProxyButtonStyle: function (button, bBox) {
+    setProxyButtonStyle: function (button) {
         merge(true, button.style, {
             'border-width': 0,
             'background-color': 'transparent',
@@ -259,7 +259,17 @@ AccessibilityComponent.prototype = {
             padding: 0,
             margin: 0,
             display: 'block',
-            position: 'absolute',
+            position: 'absolute'
+        });
+    },
+    /**
+     * @private
+     * @param {Highcharts.HTMLElement} proxy The proxy to update position of.
+     * @param {Highcharts.SVGElement} posElement The element to overlay and take position from.
+     */
+    updateProxyButtonPosition: function (proxy, posElement) {
+        var bBox = this.getElementPosition(posElement);
+        merge(true, proxy.style, {
             width: (bBox.width || 1) + 'px',
             height: (bBox.height || 1) + 'px',
             left: (bBox.x || 0) + 'px',

@@ -561,12 +561,21 @@ class Legend {
             legendGroup = item.legendGroup;
 
         if (legendGroup && legendGroup.element) {
-            legendGroup[defined(legendGroup.translateY) ? 'animate' : 'attr']({
+            const shouldAnimate = defined(legendGroup.translateY);
+
+            legendGroup[shouldAnimate ? 'animate' : 'attr']({
                 translateX: ltr ?
                     itemX :
                     legend.legendWidth - itemX - 2 * (symbolPadding as any) - 4,
                 translateY: itemY
             });
+
+            const animOptions = animObject(
+                pick(this.chart.renderer.globalAnimation, true)
+            );
+            syncTimeout((): void => {
+                fireEvent(this, 'afterPositionItem', { item });
+            }, shouldAnimate && animOptions.duration || 0);
         }
 
         if (checkbox) {
