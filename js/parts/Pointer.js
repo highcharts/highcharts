@@ -742,7 +742,8 @@ var Pointer = /** @class */ (function () {
         var ePos = (touches ?
             touches.length ?
                 touches.item(0) :
-                touches.changedTouches[0] :
+                (pick(// #13534
+                touches.changedTouches, e.changedTouches))[0] :
             e);
         // Get mouse position
         if (!chartPosition) {
