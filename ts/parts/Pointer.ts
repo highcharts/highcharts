@@ -1094,15 +1094,19 @@ class Pointer {
         chartPosition?: Highcharts.OffsetObject
     ): T {
         const touches = (e as TouchEvent).touches;
-
+    
         // iOS (#2757)
         const ePos = (
             touches ?
                 touches.length ?
                     touches.item(0) as Touch :
-                    touches.changedTouches[0] :
+                    (pick( // #13534
+                        touches.changedTouches,
+                        (e as TouchEvent).changedTouches)
+                    )[0] :
                 e as unknown as PointerEvent
         );
+
 
         // Get mouse position
         if (!chartPosition) {
