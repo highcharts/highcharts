@@ -473,7 +473,7 @@ if (seriesTypes.boxplot) {
             axis: 'y',
             move: true,
             resize: true,
-            resizeSide: 'bottom',
+            resizeSide: 'draggableQ1',
             handlePositioner: function (point) {
                 return {
                     x: point.shapeArgs.x,
@@ -504,7 +504,7 @@ if (seriesTypes.boxplot) {
             axis: 'y',
             move: true,
             resize: true,
-            resizeSide: 'top',
+            resizeSide: 'draggableQ3',
             handlePositioner: function (point) {
                 return {
                     x: point.shapeArgs.x,
