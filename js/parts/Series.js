@@ -2977,6 +2977,11 @@ null,
         // These may be modified by the event
         var typeOptions = e.plotOptions[this.type], userPlotOptions = (userOptions.plotOptions || {});
         // use copy to prevent undetected changes (#9762)
+        /**
+         * Contains series options by the user without defaults.
+         * @name Highcharts.Series#userOptions
+         * @type {Highcharts.SeriesOptionsType}
+         */
         this.userOptions = e.userOptions;
         options = merge(typeOptions, plotOptions.series, 
         // #3881, chart instance plotOptions[type] should trump

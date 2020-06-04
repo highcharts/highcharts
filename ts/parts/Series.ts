@@ -3806,6 +3806,11 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 );
 
             // use copy to prevent undetected changes (#9762)
+            /**
+             * Contains series options by the user without defaults.
+             * @name Highcharts.Series#userOptions
+             * @type {Highcharts.SeriesOptionsType}
+             */
             this.userOptions = e.userOptions;
 
             options = merge(
