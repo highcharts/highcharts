@@ -367,6 +367,13 @@ class Point {
 
     public formatPrefix: string = 'point';
 
+    /**
+     * An ID for the point instance. This is automatically generated if the
+     * point option is unset.
+     *
+     * @name Highcharts.Point#id
+     * @type {string}
+     */
     public id: string = void 0 as any;
 
     public isNew?: boolean;
@@ -923,7 +930,6 @@ class Point {
 
         this.applyOptions(options, x);
 
-        // Add a unique ID to the point if none is assigned
         this.id = defined(this.id) ? this.id : uniqueKey();
 
         this.resolveColor();
