@@ -202,13 +202,7 @@ var CenteredSeriesMixin = H.CenteredSeriesMixin,
     rad2deg = 180 / Math.PI,
     seriesTypes = H.seriesTypes,
     setTreeValues = mixinTreeSeries.setTreeValues,
-    updateRootId = function (series: any): string {
-        var rootId = mixinTreeSeries.updateRootId(series),
-            nodeMap = series.nodeMap;
-        // In sunburst the first level should be treated the same as
-        // the '' level (#12804).
-        return nodeMap && nodeMap[rootId].parent === '' ? '' : rootId;
-    };
+    updateRootId = mixinTreeSeries.updateRootId;
 
 // TODO introduce step, which should default to 1.
 var range = function range(from: unknown, to: unknown): Array<number> {

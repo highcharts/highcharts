@@ -131,6 +131,7 @@ declare global {
             ): TreemapListOfParentsObject;
             public getTree(): this['tree'];
             public hasData(): boolean;
+            public isDrillAllowed(targetNode: string): boolean;
             public init(chart: Chart, options: TreemapSeriesOptions): void;
             public onClickDrillToNode(event: { point: TreemapPoint }): void;
             public pointAttribs(
@@ -1913,7 +1914,8 @@ seriesType<Highcharts.TreemapSeries>(
                 drillId = point && point.drillId;
 
             // If a drill id is returned, add click event and cursor.
-            if (isString(drillId)) {
+            if (isString(drillId) &&
+                (series.isDrillAllowed ? series.isDrillAllowed(drillId) : true)) {
                 point.setState(''); // Remove hover
                 series.setRootNode(drillId, true, { trigger: 'click' });
             }
@@ -2079,6 +2081,31 @@ seriesType<Highcharts.TreemapSeries>(
             // Fire setRootNode event.
             fireEvent(series, 'setRootNode', eventArgs, defaultFn);
         },
+
+        /**
+         * Check if the drill up/down is allowed.
+         *
+         * @private
+         */
+        isDrillAllowed: function (
+            this: Highcharts.TreemapSeries,
+            targetNode: string
+        ): boolean {
+            var tree = this.tree,
+                firstChild = tree.children[0];
+
+            // The sunburst series looks exactly the same on the level ''
+            // and level 1 if there’s only one element on level 1. Disable
+            // drilling up/down when it doesn't perform any visual
+            // difference (#13388).
+            return !(
+                tree.children.length === 1 && (
+                    (this.rootNode === '' && targetNode === firstChild.id) ||
+                    (this.rootNode === firstChild.id && targetNode === '')
+                )
+            );
+        },
+
         renderTraverseUpButton: function (
             this: Highcharts.TreemapSeries,
             rootId: string
@@ -2093,7 +2120,10 @@ seriesType<Highcharts.TreemapSeries>(
                 attr,
                 states;
 
-            if (rootId === '') {
+            if (rootId === '' ||
+                (series.isDrillAllowed ?
+                    !(isString(node.parent) && series.isDrillAllowed(node.parent)) : false)
+            ) {
                 if (series.drillUpButton) {
                     series.drillUpButton =
                         series.drillUpButton.destroy() as any;
