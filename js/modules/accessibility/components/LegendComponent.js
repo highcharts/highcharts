@@ -10,17 +10,6 @@
  *
  * */
 'use strict';
-var __values = (this && this.__values) || function(o) {
-    var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
-    if (m) return m.call(o);
-    if (o && typeof o.length === "number") return {
-        next: function () {
-            if (o && i >= o.length) o = void 0;
-            return { value: o && o[i++], done: !o };
-        }
-    };
-    throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
-};
 import H from '../../../parts/Globals.js';
 import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
@@ -140,20 +129,11 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @private
      */
     updateProxiesPositions: function () {
-        var e_1, _a;
-        try {
-            for (var _b = __values(this.proxyElementsList), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = _c.value, element = _d.element, posElement = _d.posElement;
-                this.updateProxyButtonPosition(element, posElement);
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
+        var _this = this;
+        this.proxyElementsList.forEach(function (_a) {
+            var element = _a.element, posElement = _a.posElement;
+            return _this.updateProxyButtonPosition(element, posElement);
+        });
     },
     /**
      * @private

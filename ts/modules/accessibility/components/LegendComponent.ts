@@ -252,9 +252,8 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @private
      */
     updateProxiesPositions: function (this: Highcharts.LegendComponent): void {
-        for (const { element, posElement } of this.proxyElementsList) {
-            this.updateProxyButtonPosition(element, posElement);
-        }
+        this.proxyElementsList.forEach(({ element, posElement }): void =>
+            this.updateProxyButtonPosition(element, posElement));
     },
 
 
