@@ -129,11 +129,10 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @private
      */
     updateProxiesPositions: function () {
-        var _this = this;
-        this.proxyElementsList.forEach(function (_a) {
-            var element = _a.element, posElement = _a.posElement;
-            return _this.updateProxyButtonPosition(element, posElement);
-        });
+        for (var _i = 0, _a = this.proxyElementsList; _i < _a.length; _i++) {
+            var _b = _a[_i], element = _b.element, posElement = _b.posElement;
+            this.updateProxyButtonPosition(element, posElement);
+        }
     },
     /**
      * @private

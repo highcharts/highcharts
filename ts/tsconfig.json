@@ -3,7 +3,6 @@
         "allowJs": true,
         "allowSyntheticDefaultImports": true,
         "declaration": false,
-        "downlevelIteration": true,
         "esModuleInterop": true,
         "keyofStringsOnly": true,
         "noEmitOnError": true,
