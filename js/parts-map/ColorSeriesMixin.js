@@ -33,6 +33,7 @@ H.colorPointMixin = {
                 point[key][method]();
             }
         });
+        this.series.buildKDTree(); // rebuild kdtree #13195
     }
     /* eslint-enable valid-jsdoc */
 };
