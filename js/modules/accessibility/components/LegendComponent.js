@@ -95,7 +95,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
             }
         });
         this.addEvent(Legend, 'afterPositionItem', function (e) {
-            if (this.chart === component.chart) {
+            if (this.chart === component.chart && this.chart.renderer) {
                 component.updateProxyPositionForItem(e.item);
             }
         });
