@@ -12,22 +12,6 @@
  *
  * */
 'use strict';
-var __read = (this && this.__read) || function (o, n) {
-    var m = typeof Symbol === "function" && o[Symbol.iterator];
-    if (!m) return o;
-    var i = m.call(o), r, ar = [], e;
-    try {
-        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
-    }
-    catch (error) { e = { error: error }; }
-    finally {
-        try {
-            if (r && !r.done && (m = i["return"])) m.call(i);
-        }
-        finally { if (e) throw e.error; }
-    }
-    return ar;
-};
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import O from '../parts/Options.js';
@@ -726,10 +710,10 @@ Scatter.prototype.getRealExtremes = function () {
         xAxis.toValue(chart.plotLeft + chart.plotWidth) : 0, realMinY = yAxis ? yAxis.toValue(chart.plotTop) : 0, realMaxY = yAxis ?
         yAxis.toValue(chart.plotTop + chart.plotHeight) : 0;
     if (realMinX > realMaxX) {
-        _a = __read([realMinX, realMaxX], 2), realMaxX = _a[0], realMinX = _a[1];
+        _a = [realMinX, realMaxX], realMaxX = _a[0], realMinX = _a[1];
     }
     if (realMinY > realMaxY) {
-        _b = __read([realMinY, realMaxY], 2), realMaxY = _b[0], realMinY = _b[1];
+        _b = [realMinY, realMaxY], realMaxY = _b[0], realMinY = _b[1];
     }
     return {
         minX: realMinX,
@@ -760,10 +744,10 @@ Scatter.prototype.onDrillToCluster = function (event) {
             chart.pointer.zoomY = true;
             // Swap when minus values.
             if (minX > maxX) {
-                _a = __read([maxX, minX], 2), minX = _a[0], maxX = _a[1];
+                _a = [maxX, minX], minX = _a[0], maxX = _a[1];
             }
             if (minY > maxY) {
-                _b = __read([maxY, minY], 2), minY = _b[0], maxY = _b[1];
+                _b = [maxY, minY], minY = _b[0], maxY = _b[1];
             }
             chart.zoom({
                 originalEvent: e,
@@ -1027,7 +1011,7 @@ Scatter.prototype.markerClusterAlgorithms = {
     }
 };
 Scatter.prototype.preventClusterCollisions = function (props) {
-    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, _a = __read(props.key.split('-').map(parseFloat), 2), gridY = _a[0], gridX = _a[1], gridSize = props.gridSize, groupedData = props.groupedData, defaultRadius = props.defaultRadius, clusterRadius = props.clusterRadius, gridXPx = gridX * gridSize, gridYPx = gridY * gridSize, xPixel = xAxis.toPixels(props.x), yPixel = yAxis.toPixels(props.y), gridsToCheckCollision = [], pointsLen = 0, radius = 0, clusterMarkerOptions = (series.options.cluster || {}).marker, zoneOptions = (series.options.cluster || {}).zones, gridOffset = series.getGridOffset(), nextXPixel, nextYPixel, signX, signY, cornerGridX, cornerGridY, i, j, itemX, itemY, nextClusterPos, maxDist, keys, x, y;
+    var series = this, xAxis = series.xAxis, yAxis = series.yAxis, _a = props.key.split('-').map(parseFloat), gridY = _a[0], gridX = _a[1], gridSize = props.gridSize, groupedData = props.groupedData, defaultRadius = props.defaultRadius, clusterRadius = props.clusterRadius, gridXPx = gridX * gridSize, gridYPx = gridY * gridSize, xPixel = xAxis.toPixels(props.x), yPixel = yAxis.toPixels(props.y), gridsToCheckCollision = [], pointsLen = 0, radius = 0, clusterMarkerOptions = (series.options.cluster || {}).marker, zoneOptions = (series.options.cluster || {}).zones, gridOffset = series.getGridOffset(), nextXPixel, nextYPixel, signX, signY, cornerGridX, cornerGridY, i, j, itemX, itemY, nextClusterPos, maxDist, keys, x, y;
     // Distance to the grid start.
     xPixel -= gridOffset.plotLeft;
     yPixel -= gridOffset.plotTop;
@@ -1061,7 +1045,7 @@ Scatter.prototype.preventClusterCollisions = function (props) {
                 gridOffset.plotLeft;
             nextYPixel = yAxis.toPixels(groupedData[item].posY || 0) -
                 gridOffset.plotTop;
-            _a = __read(item.split('-').map(parseFloat), 2), itemY = _a[0], itemX = _a[1];
+            _a = item.split('-').map(parseFloat), itemY = _a[0], itemX = _a[1];
             if (zoneOptions) {
                 pointsLen = groupedData[item].length;
                 for (i = 0; i < zoneOptions.length; i++) {
