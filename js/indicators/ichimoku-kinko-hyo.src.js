@@ -7,7 +7,6 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
-/* eslint-enable @typescript-eslint/interface-name-prefix */
 import Color from '../parts/Color.js';
 var color = Color.parse;
 import U from '../parts/Utilities.js';

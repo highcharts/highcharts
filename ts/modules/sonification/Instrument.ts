@@ -298,7 +298,7 @@ Instrument.prototype.initAudioContext = function (
             H.audioContext &&
             H.audioContext.state === 'running'
         ) {
-            H.audioContext.suspend(); // Pause until we need it
+            void H.audioContext.suspend(); // Pause until we need it
         }
         return !!(
             H.audioContext &&
@@ -502,7 +502,7 @@ Instrument.prototype.preparePlay = function (
 ): void {
     this.setGain(0.001);
     if (H.audioContext.state === 'suspended') {
-        H.audioContext.resume();
+        void H.audioContext.resume();
     }
     if (this.oscillator && !this.oscillatorStarted) {
         this.oscillator.start();

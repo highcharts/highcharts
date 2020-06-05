@@ -191,7 +191,7 @@ Instrument.prototype.initAudioContext = function () {
         if (!hasOldContext &&
             H.audioContext &&
             H.audioContext.state === 'running') {
-            H.audioContext.suspend(); // Pause until we need it
+            void H.audioContext.suspend(); // Pause until we need it
         }
         return !!(H.audioContext &&
             H.audioContext.createOscillator &&
@@ -329,7 +329,7 @@ Instrument.prototype.oscillatorPlay = function (frequency) {
 Instrument.prototype.preparePlay = function () {
     this.setGain(0.001);
     if (H.audioContext.state === 'suspended') {
-        H.audioContext.resume();
+        void H.audioContext.resume();
     }
     if (this.oscillator && !this.oscillatorStarted) {
         this.oscillator.start();

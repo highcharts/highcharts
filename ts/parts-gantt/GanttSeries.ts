@@ -187,11 +187,11 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                 symbol: 'arrow-filled',
                 radius: 4,
                 fill: '#fa0',
-                align: 'left' as 'left'
+                align: 'left'
             },
             endMarker: {
                 enabled: false, // Only show arrow on the dependent task
-                align: 'right' as 'right'
+                align: 'right'
             }
         }
     }, { // props - series member overrides

@@ -12,8 +12,6 @@ import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
-/* eslint-disable @typescript-eslint/interface-name-prefix */
-
 /**
  * Internal types
  * @private
@@ -106,8 +104,6 @@ declare global {
         }
     }
 }
-
-/* eslint-enable @typescript-eslint/interface-name-prefix */
 
 import Color from '../parts/Color.js';
 const color = Color.parse;

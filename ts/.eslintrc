@@ -71,21 +71,32 @@
                 "allowTypedFunctionExpressions": false
             }
         ],
+        "@typescript-eslint/ban-types": 0, // @todo
+        "@typescript-eslint/class-name-casing": 0, // @todo
+        "@typescript-eslint/explicit-module-boundary-types": 0, // @todo
         "@typescript-eslint/indent": ["error", 4, { "FunctionExpression": { "parameters": 1 }}],
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-implied-eval": 0, // @todo
         "@typescript-eslint/no-inferrable-types": 0, // @todo ?
         "@typescript-eslint/no-namespace": 0,
         "@typescript-eslint/no-object-literal-type-assertion": 0,
         "@typescript-eslint/no-this-alias": 0, // @todo
         "@typescript-eslint/no-unnecessary-type-assertion": 0, // @todo
+        "@typescript-eslint/no-unsafe": 0, // @todo
+        "@typescript-eslint/no-unsafe-assignment": 0, // @todo
+        "@typescript-eslint/no-unsafe-call": 0, // @todo
+        "@typescript-eslint/no-unsafe-member-access": 0, // @todo
+        "@typescript-eslint/no-unsafe-return": 0, // @todo
         "@typescript-eslint/no-unused-vars": 0, // @todo
         "@typescript-eslint/no-use-before-define": 0,
         "@typescript-eslint/no-useless-constructor": 2,
         "@typescript-eslint/prefer-includes": 0, // @todo
         "@typescript-eslint/prefer-regexp-exec": 0, // @todo
         "@typescript-eslint/prefer-string-starts-ends-with": 0, // @todo
+        "@typescript-eslint/restrict-plus-operands": 0, // @todo
+        "@typescript-eslint/restrict-template-expressions": 0, // @todo
         "@typescript-eslint/unbound-method": 0, // @todo
         "node/no-missing-import": 0, // @todo
         "node/no-unsupported-features/es-syntax": 0, // @todo

@@ -88,7 +88,7 @@ declare global {
         jsPDF: typeof jsPDF;
         svg2pdf: Function;
     }
-    class jsPDF { // eslint-disable-line @typescript-eslint/class-name-casing
+    class jsPDF {
         constructor (a: string, b: string, c: Array<number>);
         output: Function;
     }
