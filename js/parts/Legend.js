@@ -308,17 +308,22 @@ var Legend = /** @class */ (function () {
         var _this = this;
         var legend = this, options = legend.options, symbolPadding = options.symbolPadding, ltr = !options.rtl, legendItemPos = item._legendItemPos, itemX = legendItemPos[0], itemY = legendItemPos[1], checkbox = item.checkbox, legendGroup = item.legendGroup;
         if (legendGroup && legendGroup.element) {
-            var shouldAnimate = defined(legendGroup.translateY);
-            legendGroup[shouldAnimate ? 'animate' : 'attr']({
+            var attribs = {
                 translateX: ltr ?
                     itemX :
                     legend.legendWidth - itemX - 2 * symbolPadding - 4,
                 translateY: itemY
-            });
-            var animOptions = animObject(pick(this.chart.renderer.globalAnimation, true));
-            syncTimeout(function () {
+            };
+            var complete = function () {
                 fireEvent(_this, 'afterPositionItem', { item: item });
-            }, shouldAnimate && animOptions.duration || 0);
+            };
+            if (defined(legendGroup.translateY)) {
+                legendGroup.animate(attribs, { complete: complete });
+            }
+            else {
+                legendGroup.attr(attribs);
+                complete();
+            }
         }
         if (checkbox) {
             checkbox.x = itemX;
