@@ -22,12 +22,7 @@ import '../parts/Series.js';
 import './treemap.src.js';
 var CenteredSeriesMixin = H.CenteredSeriesMixin, Series = H.Series, getCenter = CenteredSeriesMixin.getCenter, getColor = mixinTreeSeries.getColor, getLevelOptions = mixinTreeSeries.getLevelOptions, getStartAndEndRadians = CenteredSeriesMixin.getStartAndEndRadians, isBoolean = function (x) {
     return typeof x === 'boolean';
-}, noop = H.noop, rad2deg = 180 / Math.PI, seriesTypes = H.seriesTypes, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = function (series) {
-    var rootId = mixinTreeSeries.updateRootId(series), nodeMap = series.nodeMap;
-    // In sunburst the first level should be treated the same as
-    // the '' level (#12804).
-    return nodeMap && nodeMap[rootId].parent === '' ? '' : rootId;
-};
+}, noop = H.noop, rad2deg = 180 / Math.PI, seriesTypes = H.seriesTypes, setTreeValues = mixinTreeSeries.setTreeValues, updateRootId = mixinTreeSeries.updateRootId;
 // TODO introduce step, which should default to 1.
 var range = function range(from, to) {
     var result = [], i;
