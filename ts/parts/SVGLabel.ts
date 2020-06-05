@@ -83,7 +83,7 @@ class SVGLabel extends SVGElement {
         let hasBGImage;
         if (typeof shape === 'string') {
             hasBGImage = /^url\((.*?)\)$/.test(shape);
-            if (this.renderer.symbol(shape) || hasBGImage) {
+            if (this.renderer.symbols[shape] || hasBGImage) {
                 this.symbolKey = shape;
             }
         }

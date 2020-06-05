@@ -62,7 +62,7 @@ var SVGLabel = /** @class */ (function (_super) {
         var hasBGImage;
         if (typeof shape === 'string') {
             hasBGImage = /^url\((.*?)\)$/.test(shape);
-            if (_this.renderer.symbol(shape) || hasBGImage) {
+            if (_this.renderer.symbols[shape] || hasBGImage) {
                 _this.symbolKey = shape;
             }
         }
