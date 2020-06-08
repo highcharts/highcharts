@@ -78,6 +78,7 @@
         "@typescript-eslint/no-empty-function": 0, // @todo
         "@typescript-eslint/no-empty-interface": 0,
         "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-floating-promises": 0, // @todo
         "@typescript-eslint/no-implied-eval": 0, // @todo
         "@typescript-eslint/no-inferrable-types": 0, // @todo ?
         "@typescript-eslint/no-namespace": 0,
