@@ -287,6 +287,9 @@ SVGRenderer.prototype.addPattern = function (options, animation) {
         id = 'highcharts-pattern-' + this.idCounter + '-' + (this.chartIndex || 0);
         ++this.idCounter;
     }
+    if (this.forExport) {
+        id += '-export';
+    }
     // Do nothing if ID already exists
     this.defIds = this.defIds || [];
     if (this.defIds.indexOf(id) > -1) {
@@ -467,7 +470,7 @@ addEvent(SVGRenderer, 'complexColor', function (args) {
         // Add it. This function does nothing if an element with this ID
         // already exists.
         this.addPattern(pattern, !this.forExport && pick(pattern.animation, this.globalAnimation, { duration: 100 }));
-        value = "url(" + this.url + "#" + pattern.id + ")";
+        value = "url(" + this.url + "#" + (pattern.id + (this.forExport ? '-export' : '')) + ")";
     }
     else {
         // Not a full pattern definition, just add color
