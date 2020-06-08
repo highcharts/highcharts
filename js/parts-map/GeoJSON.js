@@ -15,6 +15,45 @@ import '../parts/Options.js';
 import U from '../parts/Utilities.js';
 var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
 /**
+ * Represents the loose structure of a geographic JSON file.
+ *
+ * @interface Highcharts.GeoJSON
+ */ /**
+* Full copyright note of the geographic data.
+* @name Highcharts.GeoJSON#copyright
+* @type {string|undefined}
+*/ /**
+* Short copyright note of the geographic data suitable for watermarks.
+* @name Highcharts.GeoJSON#copyrightShort
+* @type {string|undefined}
+*/ /**
+* Additional meta information based on the coordinate reference system.
+* @name Highcharts.GeoJSON#crs
+* @type {Highcharts.Dictionary<any>|undefined}
+*/ /**
+* Geographic data itself.
+* @name Highcharts.GeoJSON#features
+* @type {Array<Highcharts.Dictionary<any>>}
+*/ /**
+* Transformation information for Highcharts to be used when rendering multiple
+* maps in one chart.
+* @name Highcharts.GeoJSON#hc-transform
+* @type {Highcharts.Dictionary<Highcharts.Dictionary<any>>}
+*/ /**
+* Title of the geographic data.
+* @name Highcharts.GeoJSON#title
+* @type {string|undefined}
+*/ /**
+* Type of the geographic data. Type of an optimized map collection is
+* `FeatureCollection`.
+* @name Highcharts.GeoJSON#type
+* @type {string|undefined}
+*/ /**
+* Version of the geographic data.
+* @name Highcharts.GeoJSON#version
+* @type {string|undefined}
+*/
+/**
  * Result object of a map transformation.
  *
  * @interface Highcharts.MapCoordinateObject
@@ -251,7 +290,7 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  *
  * @function Highcharts.geojson
  *
- * @param {*} geojson
+ * @param {Highcharts.GeoJSON} geojson
  *        The GeoJSON structure to parse, represented as a JavaScript object
  *        rather than a JSON string.
  *

@@ -71,9 +71,23 @@ declare global {
             /** @requires modules/map */
             proj4?: any;
         }
+        interface GeoJSON {
+            copyright?: string;
+            copyrightShort?: string;
+            crs?: Record<string, any>;
+            features: Array<Record<string, any>>;
+            'hc-transform'?: Record<string, GeoJSONFeature>;
+            title?: string;
+            type?: string;
+            version?: string;
+        }
+        interface GeoJSONFeature {
+            [key: string]: any;
+            type: string;
+        }
         /** @requires modules/maps */
         function geojson(
-            geojson: any,
+            geojson: GeoJSON,
             hType?: string,
             series?: Series
         ): Array<any>;
@@ -82,6 +96,46 @@ declare global {
         proj4: any;
     }
 }
+
+/**
+ * Represents the loose structure of a geographic JSON file.
+ *
+ * @interface Highcharts.GeoJSON
+ *//**
+ * Full copyright note of the geographic data.
+ * @name Highcharts.GeoJSON#copyright
+ * @type {string|undefined}
+ *//**
+ * Short copyright note of the geographic data suitable for watermarks.
+ * @name Highcharts.GeoJSON#copyrightShort
+ * @type {string|undefined}
+ *//**
+ * Additional meta information based on the coordinate reference system.
+ * @name Highcharts.GeoJSON#crs
+ * @type {Highcharts.Dictionary<any>|undefined}
+ *//**
+ * Geographic data itself.
+ * @name Highcharts.GeoJSON#features
+ * @type {Array<Highcharts.Dictionary<any>>}
+ *//**
+ * Transformation information for Highcharts to be used when rendering multiple
+ * maps in one chart.
+ * @name Highcharts.GeoJSON#hc-transform
+ * @type {Highcharts.Dictionary<Highcharts.Dictionary<any>>}
+ *//**
+ * Title of the geographic data.
+ * @name Highcharts.GeoJSON#title
+ * @type {string|undefined}
+ *//**
+ * Type of the geographic data. Type of an optimized map collection is
+ * `FeatureCollection`.
+ * @name Highcharts.GeoJSON#type
+ * @type {string|undefined}
+ *//**
+ * Version of the geographic data.
+ * @name Highcharts.GeoJSON#version
+ * @type {string|undefined}
+ */
 
 /**
  * Result object of a map transformation.
@@ -399,7 +453,7 @@ Chart.prototype.fromLatLonToPoint = function (
  *
  * @function Highcharts.geojson
  *
- * @param {*} geojson
+ * @param {Highcharts.GeoJSON} geojson
  *        The GeoJSON structure to parse, represented as a JavaScript object
  *        rather than a JSON string.
  *
@@ -413,7 +467,7 @@ Chart.prototype.fromLatLonToPoint = function (
  *         An object ready for the `mapData` option.
  */
 H.geojson = function (
-    geojson: any,
+    geojson: Highcharts.GeoJSON,
     hType?: string,
     series?: Highcharts.Series
 ): Array<any> {
