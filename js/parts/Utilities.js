@@ -181,7 +181,9 @@ import H from './Globals.js';
  */
 /**
  * Generic dictionary in TypeScript notation.
+ * Use the native `Record<string, any>` instead.
  *
+ * @deprecated
  * @interface Highcharts.Dictionary<T>
  */ /**
 * @name Highcharts.Dictionary<T>#[key:string]
