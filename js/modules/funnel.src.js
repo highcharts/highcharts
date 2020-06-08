@@ -12,12 +12,12 @@
 /* eslint indent: 0 */
 'use strict';
 import Chart from '../parts/Chart.js';
+import H from '../parts/Globals.js';
+var noop = H.noop, seriesType = H.seriesType, seriesTypes = H.seriesTypes;
 import U from '../parts/Utilities.js';
-var isArray = U.isArray, pick = U.pick;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, isArray = U.isArray, pick = U.pick;
 import '../parts/Options.js';
 import '../parts/Series.js';
-// create shortcuts
-var seriesType = Highcharts.seriesType, seriesTypes = Highcharts.seriesTypes, fireEvent = Highcharts.fireEvent, addEvent = Highcharts.addEvent, noop = Highcharts.noop;
 /**
  * @private
  * @class
