@@ -17,8 +17,16 @@
 import type Point from '../parts/Point';
 import type SVGPath from '../parts/SVGPath';
 import Chart from '../parts/Chart.js';
+import H from '../parts/Globals.js';
+const {
+    noop,
+    seriesType,
+    seriesTypes
+} = H;
 import U from '../parts/Utilities.js';
 const {
+    addEvent,
+    fireEvent,
     isArray,
     pick
 } = U;
@@ -102,13 +110,6 @@ declare global {
 
 import '../parts/Options.js';
 import '../parts/Series.js';
-
-// create shortcuts
-var seriesType = Highcharts.seriesType,
-    seriesTypes = Highcharts.seriesTypes,
-    fireEvent = Highcharts.fireEvent,
-    addEvent = Highcharts.addEvent,
-    noop = Highcharts.noop;
 
 /**
  * @private
