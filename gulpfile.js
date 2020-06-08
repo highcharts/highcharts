@@ -66,6 +66,7 @@ Gulp.registry(new GulpForwardReference());
     'test-tree',
     'reset-visual-references',
     'tsdoc',
+    'tsdoc-debug',
     'tsdoc-next',
     'tsdoc-watch',
     'update',
