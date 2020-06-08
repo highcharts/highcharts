@@ -52,3 +52,26 @@ QUnit.test('Percentage inner size', function (assert) {
     );
 
 });
+
+QUnit.test('The inner size of a pie with an additional gauge series (#13629).', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+        series: [{
+            type: 'gauge',
+            data: [10]
+        }, {
+            type: 'pie',
+            innerSize: '50%',
+            startAngle: -90,
+            endAngle: 90,
+            center: ['50%', '60%'],
+            data: [1, 2, 3]
+        }]
+    });
+
+    assert.notEqual(
+        chart.series[1].center[3],
+        0,
+        'The innerSize is not equal 0.'
+    );
+});
