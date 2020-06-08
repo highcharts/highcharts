@@ -813,11 +813,6 @@ var Pointer = /** @class */ (function () {
         if (typeof e.button === 'undefined' ||
             ((e.buttons || e.button) & 1) === 1) {
             this.zoomOption(e);
-            // Prevent text selection while zooming (#13503). Older, dragging
-            // not always working in Firefox (#295)
-            if (e.preventDefault) {
-                e.preventDefault();
-            }
             this.dragStart(e);
         }
     };

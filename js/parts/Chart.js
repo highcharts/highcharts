@@ -1082,7 +1082,8 @@ var Chart = /** @class */ (function () {
                 textAlign: 'left',
                 lineHeight: 'normal',
                 zIndex: 0,
-                '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
+                '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
+                userSelect: 'none' // #13503
             }, optionsChart.style);
         }
         /**

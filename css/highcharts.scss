@@ -90,6 +90,7 @@ $indicator-negative-line: #F21313;
     -webkit-tap-highlight-color: rgba(0,0,0,0);
     font-family: $font-family;
     font-size: 12px;
+    user-select: none;
 }
 .highcharts-root {
     display: block;

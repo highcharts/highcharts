@@ -1506,7 +1506,8 @@ class Chart {
                 textAlign: 'left',
                 lineHeight: 'normal', // #427
                 zIndex: 0, // #1072
-                '-webkit-tap-highlight-color': 'rgba(0,0,0,0)'
+                '-webkit-tap-highlight-color': 'rgba(0,0,0,0)',
+                userSelect: 'none' // #13503
             }, optionsChart.style as any);
         }
 
