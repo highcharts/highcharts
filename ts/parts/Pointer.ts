@@ -1195,6 +1195,13 @@ class Pointer {
             ((e.buttons || e.button) & 1) === 1
         ) {
             this.zoomOption(e);
+
+            // Prevent text selection while zooming (#13659). Older, dragging
+            // not always working in Firefox (#295)
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+
             this.dragStart(e as Highcharts.PointerEventObject);
         }
     }
