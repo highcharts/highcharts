@@ -1097,7 +1097,7 @@ class SVGElement {
                 // Special handling of symbol attributes
                 if (
                     this.symbolName &&
-                    inArray(key, symbolCustomAttribs) !== -1
+                    symbolCustomAttribs.indexOf(key) !== -1
                 ) {
                     if (!hasSetSymbolSize) {
                         this.symbolAttr(hash as any);
