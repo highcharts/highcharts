@@ -544,12 +544,15 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                     if (axis.series.length &&
                         newMin !== extremes.min &&
                         newMax !== extremes.max &&
-                        isX ? true : (panningState &&
                         newMin >= paddedMin &&
-                        newMax <= paddedMax)) {
+                        newMax <= paddedMax) {
                         axis.setExtremes(newMin, newMax, false, false, { trigger: 'pan' });
                         if (!chart.resetZoomButton &&
                             !hasMapNavigation &&
+                            // Show reset zoom button only when both newMin and
+                            // newMax values are between padded axis range.
+                            newMin !== paddedMin &&
+                            newMax !== paddedMax &&
                             type.match('y')) {
                             chart.showResetZoom();
                             axis.displayBtn = false;
