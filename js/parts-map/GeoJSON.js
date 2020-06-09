@@ -27,6 +27,10 @@ var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap
 * @name Highcharts.GeoJSON#copyrightShort
 * @type {string|undefined}
 */ /**
+* Additional meta information based on the coordinate reference system.
+* @name Highcharts.GeoJSON#crs
+* @type {Highcharts.Dictionary<any>|undefined}
+*/ /**
 * Geographic data itself.
 * @name Highcharts.GeoJSON#features
 * @type {Array<Highcharts.Dictionary<any>>}
