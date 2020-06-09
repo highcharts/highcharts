@@ -731,7 +731,7 @@ if (seriesTypes.boxplot) {
             axis: 'y',
             move: true,
             resize: true,
-            resizeSide: 'draggableQ1',
+            resizeSide: 'bottom',
             handlePositioner: function (
                 point: Highcharts.BoxPlotPoint
             ): Highcharts.PositionObject {
@@ -767,7 +767,7 @@ if (seriesTypes.boxplot) {
             axis: 'y',
             move: true,
             resize: true,
-            resizeSide: 'draggableQ3',
+            resizeSide: 'top',
             handlePositioner: function (
                 point: Highcharts.BoxPlotPoint
             ): Highcharts.PositionObject {
@@ -2555,7 +2555,6 @@ Point.prototype.showDragHandles = function (): void {
             positioner = val.handlePositioner,
             pos,
             handle,
-            handleSide,
             path,
             // Run validation function on whether or not we allow individual
             // updating of this prop.
@@ -2589,8 +2588,6 @@ Point.prototype.showDragHandles = function (): void {
             // Find position and path of handle
             pos = positioner(point);
             handleAttrs.d = path = pathFormatter(point);
-            handleSide = typeof val.resizeSide === 'function' ?
-                val.resizeSide(point.options, point) : val.resizeSide;
             if (!path || pos.x < 0 || pos.y < 0) {
                 return;
             }
@@ -2601,9 +2598,9 @@ Point.prototype.showDragHandles = function (): void {
                 'ew-resize' : 'ns-resize';
 
             // Create and add the handle element if it doesn't exist
-            handle = (chart.dragHandles as any)[handleSide];
+            handle = (chart.dragHandles as any)[val.optionName];
             if (!handle) {
-                handle = (chart.dragHandles as any)[handleSide] = renderer
+                handle = (chart.dragHandles as any)[val.optionName] = renderer
                     .path()
                     .add((chart.dragHandles as any).group);
             }
