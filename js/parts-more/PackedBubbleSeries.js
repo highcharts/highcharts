@@ -280,7 +280,7 @@ seriesType('packedbubble', 'bubble',
     /**
      * Series options for parent nodes.
      *
-     * @since next
+     * @since 8.1.1
      *
      * @private
      */
@@ -289,7 +289,7 @@ seriesType('packedbubble', 'bubble',
          * Allow this series' parent nodes to be selected
          * by clicking on the graph.
          *
-         * @since next
+         * @since 8.1.1
          */
         allowPointSelect: false
     },

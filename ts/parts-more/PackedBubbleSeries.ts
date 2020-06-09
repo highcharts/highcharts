@@ -611,7 +611,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
         /**
          * Series options for parent nodes.
          *
-         * @since next
+         * @since 8.1.1
          *
          * @private
          */
@@ -620,7 +620,7 @@ seriesType<Highcharts.PackedBubbleSeries>(
              * Allow this series' parent nodes to be selected
              * by clicking on the graph.
              *
-             * @since next
+             * @since 8.1.1
              */
             allowPointSelect: false
         },

@@ -52,7 +52,7 @@ const HTTP_EXPIRES = {
  * @return {object} containing from and to parameters
  */
 function toS3FilePath(filePath, localPath, cdnPath, version = false) {
-    let toPath = filePath.replace(`${DIST_DIR}`, '').replace(`/${localPath}`, cdnPath).replace('/', '');
+    let toPath = filePath.replace(DIST_DIR, '').replace(localPath, cdnPath).replace('/', '');
     if (version) {
         toPath = toPath.replace('js-gzip/', `${version}/`).replace('gfx/', `${version}/gfx/`);
     } else {
