@@ -874,8 +874,11 @@ if (PieSeries) {
         animateDrillupFrom: ColumnSeries.prototype.animateDrillupFrom,
         animateDrilldown: function (init) {
             var level = this.chart.drilldownLevels[this.chart.drilldownLevels.length - 1], animationOptions = this.chart.options.drilldown.animation;
+            if (this.is('item')) {
+                animationOptions.duration = 0;
+            }
             // Unable to drill down in the horizontal item series #13372
-            if (this.is('item') && this.center) {
+            if (this.center) {
                 var animateFrom = level.shapeArgs, start = animateFrom.start, angle = animateFrom.end - start, startAngle = angle / this.points.length, styledMode = this.chart.styledMode;
                 if (!init) {
                     this.points.forEach(function (point, i) {
@@ -895,9 +898,6 @@ if (PieSeries) {
                     // Reset to prototype
                     delete this.animate;
                 }
-            }
-            else {
-                animationOptions.duration = 0;
             }
         }
     });

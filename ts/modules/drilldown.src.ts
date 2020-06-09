@@ -1279,8 +1279,11 @@ if (PieSeries) {
                 animationOptions =
                     (this.chart.options.drilldown as any).animation;
 
+            if (this.is('item')) {
+                animationOptions.duration = 0;
+            }
             // Unable to drill down in the horizontal item series #13372
-            if (this.is('item') && this.center) {
+            if (this.center) {
                 var animateFrom = level.shapeArgs,
                     start = (animateFrom as any).start,
                     angle = (animateFrom as any).end - start,
@@ -1314,8 +1317,6 @@ if (PieSeries) {
                     // Reset to prototype
                     delete this.animate;
                 }
-            } else {
-                animationOptions.duration = 0;
             }
         }
     });
