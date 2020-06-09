@@ -344,6 +344,7 @@ declare global {
             method: string,
             func: WrapProceedFunction
         ): void;
+        let garbageBin: (globalThis.HTMLElement|undefined);
         let timeUnits: Dictionary<number>;
     }
 }
@@ -2266,8 +2267,8 @@ const destroyObjectProperties = H.destroyObjectProperties =
  *
  * @return {void}
  */
-const discardElement = H.discardElement = function discardElement(element: Highcharts.HTMLDOMElement): void {
-    var garbageBin = (H as any).garbageBin;
+const discardElement = H.discardElement = function discardElement(element?: Highcharts.HTMLDOMElement): void {
+    var garbageBin = H.garbageBin;
 
     // create a garbage bin element, not part of the DOM
     if (!garbageBin) {
