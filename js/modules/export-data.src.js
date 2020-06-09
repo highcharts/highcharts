@@ -13,10 +13,11 @@
 // - Set up systematic tests for all series types, paired with tests of the data
 //   module importing the same data.
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
-var doc = H.doc, win = H.win;
+var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
 import U from '../parts/Utilities.js';
-var defined = U.defined, extend = U.extend, getOptions = U.getOptions, pick = U.pick, setOptions = U.setOptions;
+var addEvent = U.addEvent, defined = U.defined, extend = U.extend, find = U.find, fireEvent = U.fireEvent, getOptions = U.getOptions, isNumber = U.isNumber, pick = U.pick, setOptions = U.setOptions;
 /**
  * Function callback to execute while data rows are processed for exporting.
  * This allows the modification of data rows before processed into the final
@@ -42,7 +43,7 @@ var defined = U.defined, extend = U.extend, getOptions = U.getOptions, pick = U.
 */
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
-var seriesTypes = Highcharts.seriesTypes, downloadURL = Highcharts.downloadURL, fireEvent = Highcharts.fireEvent;
+var downloadURL = H.downloadURL;
 // Can we add this to utils? Also used in screen-reader.js
 /**
  * HTML encode some characters vulnerable for XSS.
@@ -261,7 +262,7 @@ setOptions({
 });
 /* eslint-disable no-invalid-this */
 // Add an event listener to handle the showTable option
-Highcharts.addEvent(Highcharts.Chart, 'render', function () {
+addEvent(Chart, 'render', function () {
     if (this.options &&
         this.options.exporting &&
         this.options.exporting.showTable &&
@@ -279,7 +280,7 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function () {
  * @private
  * @function Highcharts.Chart#setUpKeyToAxis
  */
-Highcharts.Chart.prototype.setUpKeyToAxis = function () {
+Chart.prototype.setUpKeyToAxis = function () {
     if (seriesTypes.arearange) {
         seriesTypes.arearange.prototype.keyToAxis = {
             low: 'y',
@@ -309,7 +310,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function () {
  *
  * @fires Highcharts.Chart#event:exportData
  */
-Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
+Chart.prototype.getDataRows = function (multiLevelHeaders) {
     var hasParallelCoords = this.hasParallelCoordinates, time = this.time, csvOptions = ((this.options.exporting && this.options.exporting.csv) || {}), xAxis, xAxes = this.xAxis, rows = {}, rowArr = [], dataRows, topLevelColumnTitles = [], columnTitles = [], columnTitleObj, i, x, xTitle, langOptions = this.options.lang, exportDataOptions = langOptions.exportData, categoryHeader = exportDataOptions.categoryHeader, categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader, 
     // Options
     columnHeaderFormatter = function (item, key, keyLength) {
@@ -344,7 +345,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
                 prop) + 'Axis', 
             // Points in parallel coordinates refers to all yAxis
             // not only `series.yAxis`
-            axis = Highcharts.isNumber(pIdx) ?
+            axis = isNumber(pIdx) ?
                 series.chart[axisName][pIdx] :
                 series[axisName];
             categoryMap[prop] = (axis && axis.categories) || [];
@@ -386,7 +387,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
             // Build a lookup for X axis index and the position of the first
             // series that belongs to that X axis. Includes -1 for non-axis
             // series types like pies.
-            if (!Highcharts.find(xAxisIndices, function (index) {
+            if (!find(xAxisIndices, function (index) {
                 return index[0] === xAxisIndex;
             })) {
                 xAxisIndices.push([xAxisIndex, i]);
@@ -529,7 +530,7 @@ Highcharts.Chart.prototype.getDataRows = function (multiLevelHeaders) {
  * @return {string}
  *         CSV representation of the data
  */
-Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
+Chart.prototype.getCSV = function (useLocalDecimalPoint) {
     var csv = '', rows = this.getDataRows(), csvOptions = this.options.exporting.csv, decimalPoint = pick(csvOptions.decimalPoint, csvOptions.itemDelimiter !== ',' && useLocalDecimalPoint ?
         (1.1).toLocaleString()[1] :
         '.'), 
@@ -580,7 +581,7 @@ Highcharts.Chart.prototype.getCSV = function (useLocalDecimalPoint) {
  *
  * @fires Highcharts.Chart#event:afterGetTable
  */
-Highcharts.Chart.prototype.getTable = function (useLocalDecimalPoint) {
+Chart.prototype.getTable = function (useLocalDecimalPoint) {
     var html = '<table id="highcharts-data-table-' + this.index + '">', options = this.options, decimalPoint = useLocalDecimalPoint ? (1.1).toLocaleString()[1] : '.', useMultiLevelHeaders = pick(options.exporting.useMultiLevelHeaders, true), rows = this.getDataRows(useMultiLevelHeaders), rowLength = 0, topHeaders = useMultiLevelHeaders ? rows.shift() : null, subHeaders = rows.shift(), 
     // Compare two rows for equality
     isRowEqual = function (row1, row2) {
@@ -750,7 +751,7 @@ function getBlobFromContent(content, type) {
  *
  * @requires modules/exporting
  */
-Highcharts.Chart.prototype.downloadCSV = function () {
+Chart.prototype.downloadCSV = function () {
     var csv = this.getCSV(true);
     downloadURL(getBlobFromContent(csv, 'text/csv') ||
         'data:text/csv,\uFEFF' + encodeURIComponent(csv), this.getFilename() + '.csv');
@@ -765,7 +766,7 @@ Highcharts.Chart.prototype.downloadCSV = function () {
  *
  * @requires modules/exporting
  */
-Highcharts.Chart.prototype.downloadXLS = function () {
+Chart.prototype.downloadXLS = function () {
     var uri = 'data:application/vnd.ms-excel;base64,', template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
         'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
         'xmlns="http://www.w3.org/TR/REC-html40">' +
@@ -795,7 +796,7 @@ Highcharts.Chart.prototype.downloadXLS = function () {
  *
  * @fires Highcharts.Chart#event:afterViewData
  */
-Highcharts.Chart.prototype.viewData = function () {
+Chart.prototype.viewData = function () {
     if (!this.dataTableDiv) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
