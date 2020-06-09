@@ -75,14 +75,13 @@ declare global {
             copyright?: string;
             copyrightShort?: string;
             crs?: Record<string, any>;
-            features: Array<Record<string, any>>;
-            'hc-transform'?: Record<string, GeoJSONFeature>;
+            features: Array<GeoJSONFeature>;
+            'hc-transform'?: Record<string, Record<string, any>>;
             title?: string;
             type?: string;
             version?: string;
         }
-        interface GeoJSONFeature {
-            [key: string]: any;
+        interface GeoJSONFeature extends Record<string, any> {
             type: string;
         }
         /** @requires modules/maps */
