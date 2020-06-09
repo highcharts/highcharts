@@ -309,14 +309,7 @@ AccessibilityComponent.prototype = {
      */
     cloneMouseEvent: function (e) {
         if (typeof win.MouseEvent === 'function') {
-            var evt_1 = new win.MouseEvent(e.type, e);
-            // This is a quick fix to a bug with using the drill-up button on
-            // touch devices. See highcharts/demo/column-drilldown. Without this
-            // fix, the button doesn't work, and throws errors. A proper fix
-            // would be to use the win.TouchEvent class with true type checking.
-            evt_1.touches = e.touches;
-            evt_1.changedTouches = e.changedTouches;
-            return evt_1;
+            return new win.MouseEvent(e.type, e);
         }
         // No MouseEvent support, try using initMouseEvent
         if (doc.createEvent) {
