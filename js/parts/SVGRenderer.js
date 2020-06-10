@@ -284,9 +284,6 @@ var SVGRenderer = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * @private
-     */
     function SVGRenderer(container, width, height, style, forExport, allowHTML, styledMode) {
         /* *
          *
@@ -294,11 +291,29 @@ var SVGRenderer = /** @class */ (function () {
          *
          * */
         this.alignedObjects = void 0;
+        /**
+         * The root `svg` node of the renderer.
+         *
+         * @name Highcharts.SVGRenderer#box
+         * @type {Highcharts.SVGDOMElement}
+         */
         this.box = void 0;
+        /**
+         * The wrapper for the root `svg` node of the renderer.
+         *
+         * @name Highcharts.SVGRenderer#boxWrapper
+         * @type {Highcharts.SVGElement}
+         */
         this.boxWrapper = void 0;
         this.cache = void 0;
         this.cacheKeys = void 0;
         this.chartIndex = void 0;
+        /**
+         * A pointer to the `defs` node of the root SVG.
+         *
+         * @name Highcharts.SVGRenderer#defs
+         * @type {Highcharts.SVGElement}
+         */
         this.defs = void 0;
         this.globalAnimation = void 0;
         this.gradients = void 0;
@@ -306,6 +321,13 @@ var SVGRenderer = /** @class */ (function () {
         this.imgCount = void 0;
         this.isSVG = void 0;
         this.style = void 0;
+        /**
+         * Page url used for internal references.
+         *
+         * @private
+         * @name Highcharts.SVGRenderer#url
+         * @type {string}
+         */
         this.url = void 0;
         this.width = void 0;
         this.init(container, width, height, style, forExport, allowHTML, styledMode);
@@ -366,28 +388,9 @@ var SVGRenderer = /** @class */ (function () {
         }
         // object properties
         renderer.isSVG = true;
-        /**
-         * The root `svg` node of the renderer.
-         *
-         * @name Highcharts.SVGRenderer#box
-         * @type {Highcharts.SVGDOMElement}
-         */
         this.box = element;
-        /**
-         * The wrapper for the root `svg` node of the renderer.
-         *
-         * @name Highcharts.SVGRenderer#boxWrapper
-         * @type {Highcharts.SVGElement}
-         */
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
-        /**
-         * Page url used for internal references.
-         *
-         * @private
-         * @name Highcharts.SVGRenderer#url
-         * @type {string}
-         */
         // #24, #672, #1070
         this.url = ((isFirefox || isWebKit) &&
             doc.getElementsByTagName('base').length) ?
@@ -402,12 +405,6 @@ var SVGRenderer = /** @class */ (function () {
         // Add description
         desc = this.createElement('desc').add();
         desc.element.appendChild(doc.createTextNode('Created with @product.name@ @product.version@'));
-        /**
-         * A pointer to the `defs` node of the root SVG.
-         *
-         * @name Highcharts.SVGRenderer#defs
-         * @type {Highcharts.SVGElement}
-         */
         renderer.defs = this.createElement('defs').add();
         renderer.allowHTML = allowHTML;
         renderer.forExport = forExport;

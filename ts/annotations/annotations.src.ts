@@ -286,9 +286,6 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      *
      * */
 
-    /**
-     * @private
-     */
     public constructor(
         chart: Highcharts.AnnotationChart,
         userOptions: Highcharts.AnnotationsOptions
