@@ -17,6 +17,7 @@
 'use strict';
 
 import type Point from '../parts/Point';
+import Axis from '../parts/Axis.js';
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 const {
@@ -480,7 +481,7 @@ Chart.prototype.getDataRows = function (
                 return categoryHeader;
             }
 
-            if (item instanceof Highcharts.Axis) {
+            if (item instanceof Axis) {
                 return (item.options.title && item.options.title.text) ||
                     (item.dateTime ? categoryDatetimeHeader : categoryHeader);
             }

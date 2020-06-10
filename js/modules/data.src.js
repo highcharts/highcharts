@@ -88,6 +88,7 @@ var addEvent = U.addEvent, defined = U.defined, extend = U.extend, fireEvent = U
  *         continue async.
  */
 import '../mixins/ajax.js';
+var ajax = H.ajax;
 // Utilities
 var win = H.win, doc = win.document;
 /**
@@ -1232,7 +1233,7 @@ var Data = /** @class */ (function () {
                             setTimeout(performFetch, updateIntervalMs);
                     }
                 }
-                Highcharts.ajax({
+                ajax({
                     url: url,
                     dataType: tp || 'json',
                     success: function (res) {
@@ -1305,7 +1306,7 @@ var Data = /** @class */ (function () {
                 worksheet,
                 'public/values?alt=json'
             ].join('/');
-            Highcharts.ajax({
+            ajax({
                 url: url,
                 dataType: 'json',
                 success: function (json) {

@@ -13,6 +13,7 @@
 // - Set up systematic tests for all series types, paired with tests of the data
 //   module importing the same data.
 'use strict';
+import Axis from '../parts/Axis.js';
 import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 var doc = H.doc, seriesTypes = H.seriesTypes, win = H.win;
@@ -323,7 +324,7 @@ Chart.prototype.getDataRows = function (multiLevelHeaders) {
         if (!item) {
             return categoryHeader;
         }
-        if (item instanceof Highcharts.Axis) {
+        if (item instanceof Axis) {
             return (item.options.title && item.options.title.text) ||
                 (item.dateTime ? categoryDatetimeHeader : categoryHeader);
         }
