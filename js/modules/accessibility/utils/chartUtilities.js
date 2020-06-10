@@ -13,7 +13,7 @@
 import HTMLUtilities from './htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString;
 import U from '../../../parts/Utilities.js';
-var defined = U.defined, find = U.find;
+var defined = U.defined, find = U.find, fireEvent = U.fireEvent;
 /* eslint-disable valid-jsdoc */
 /**
  * @return {string}
@@ -165,7 +165,7 @@ function scrollToPoint(point) {
         var range = scrollbar.to - scrollbar.from;
         var pos = getRelativePointAxisPosition(axis, point);
         scrollbar.updatePosition(pos - range / 2, pos + range / 2);
-        Highcharts.fireEvent(scrollbar, 'changed', {
+        fireEvent(scrollbar, 'changed', {
             from: scrollbar.from,
             to: scrollbar.to,
             trigger: 'scrollbar',

@@ -413,7 +413,7 @@ class NavigationBindings {
             })
         );
         navigation.eventsToUnbind.push(
-            addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (
+            addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (
                 e: Highcharts.PointerEventObject
             ): void {
                 navigation.bindingsContainerMouseMove(this, e);
