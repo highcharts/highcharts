@@ -182,7 +182,7 @@ var NavigationBindings = /** @class */ (function () {
                 navigation.bindingsChartClick(this, e);
             }
         }));
-        navigation.eventsToUnbind.push(addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
+        navigation.eventsToUnbind.push(addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
             navigation.bindingsContainerMouseMove(this, e);
         }));
     };
