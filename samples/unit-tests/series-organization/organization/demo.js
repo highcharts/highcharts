@@ -1,5 +1,5 @@
 QUnit.test('Organization data', assert => {
-    const chart = Highcharts.chart('container', {
+    let chart = Highcharts.chart('container', {
         series: [{
             type: 'organization',
             keys: ['from', 'to'],
@@ -18,6 +18,33 @@ QUnit.test('Organization data', assert => {
         chart.series[0].nodes[4].graphic.element.getAttribute('fill'),
         Highcharts.defaultOptions.colors[4],
         'The last element should be rendered and filled accoring to colorByPoint'
+    );
+
+    chart = Highcharts.chart('container', {
+        chart: {
+            inverted: true
+        },
+        series: [{
+            type: 'organization',
+            keys: ['from', 'to'],
+            data: [
+                ['Skill Cluster', 'Skill 1'],
+                ['Skill Cluster', 'Skill 2'],
+                ['Skill Cluster', 'Skill 3'],
+                ['Skill Cluster', 'Skill 4'],
+                ['Skill Cluster', 'Skill 5'],
+                ['Skill Cluster', 'Skill 6'],
+                ['Skill 2', 'Skill 6 3rd Level'],
+                ['Skill 6 3rd Level', 'Skill 7 4th Level'],
+                ['Skill 7 4th Level', 'Skill 8 5th Level']
+            ]
+        }]
+    });
+
+    assert.notEqual(
+        chart.series[0].nodes[8].dataLabel.y,
+        -9999,
+        'Node labels should be visible when not overlap (#13100).'
     );
 });
 

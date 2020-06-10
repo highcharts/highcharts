@@ -11,6 +11,8 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
 import H from '../../parts/Globals.js';
 
 /**
@@ -23,7 +25,7 @@ declare global {
             cancel(this: SonifyableChart, fadeOut?: boolean): void;
             chartSonify(
                 this: SonifyableChart,
-                options: SonifyChartOptionsObject
+                options?: SonificationOptions
             ): void;
             getCurrentPoints(this: SonifyableChart): Array<Point>;
             pause(this: SonifyableChart, fadeOut?: boolean): void;
@@ -40,11 +42,12 @@ declare global {
                 points: (Point|Array<Point>)
             ): void;
         }
-        interface SonifyChartOptionsObject {
+        interface SonificationOptions {
             afterSeriesWait?: number;
             dataExtremes?: Dictionary<RangeObject>;
             duration: number;
             earcons?: Array<EarconConfiguration>;
+            enabled?: boolean;
             instruments?: Array<PointInstrumentObject>;
             onEnd?: Function;
             onSeriesEnd?: Function;
@@ -163,7 +166,9 @@ declare global {
  * @type {Function|undefined}
  */
 
+''; // detach doclets above
 
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
     find,
@@ -242,7 +247,7 @@ function getTimeExtremes(
  * New extremes with data properties mapped to min/max objects.
  */
 function getExtremesForInstrumentProps(
-    chart: Highcharts.Chart,
+    chart: Chart,
     instruments: Array<Highcharts.PointInstrumentObject>,
     dataExtremes: Highcharts.Dictionary<Highcharts.RangeObject>
 ): Highcharts.Dictionary<Highcharts.RangeObject> {
@@ -283,7 +288,7 @@ function getExtremesForInstrumentProps(
  * Array of earcons to be played with this point.
  */
 function getPointEarcons(
-    point: Highcharts.Point,
+    point: Point,
     earconDefinitions: Array<Highcharts.EarconConfiguration>
 ): Array<Highcharts.Earcon> {
     return earconDefinitions.reduce(
@@ -360,9 +365,7 @@ function buildTimelinePathFromSeries(
 ): Highcharts.TimelinePath {
     // options.timeExtremes is internal and used so that the calculations from
     // chart.sonify can be reused.
-    var timeExtremes = options.timeExtremes || (getTimeExtremes as any)(
-            series, options.pointPlayTime, options.dataExtremes
-        ),
+    var timeExtremes = options.timeExtremes || getTimeExtremes(series, options.pointPlayTime),
         // Get time offset for a point, relative to duration
         pointToTime = function (point: Highcharts.SonifyablePoint): number {
             return utilities.virtualAxisTranslate(
@@ -422,7 +425,7 @@ function buildTimelinePathFromSeries(
         ): (boolean|undefined) {
             var eventObject = event.options && event.options.eventObject;
 
-            if (eventObject instanceof H.Point) {
+            if (eventObject instanceof Point) {
                 // Check for hidden series
                 if (
                     !eventObject.series.visible &&
@@ -447,7 +450,7 @@ function buildTimelinePathFromSeries(
             var eventObject = eventData.event && eventData.event.options &&
                     eventData.event.options.eventObject;
 
-            if (eventObject instanceof H.Point && options.onPointEnd) {
+            if (eventObject instanceof Point && options.onPointEnd) {
                 options.onPointEnd(eventData.event, eventObject);
             }
         },
@@ -495,6 +498,9 @@ function seriesSonify(
         chartSonification.timeline.pause();
     }
 
+    // Store reference to duration
+    chartSonification.duration = options.duration;
+
     // Create new timeline for this series, and play it.
     chartSonification.timeline = new H.sonification.Timeline({
         paths: [timelinePath]
@@ -512,7 +518,7 @@ function seriesSonify(
  * The series to return options for.
  * @param {Highcharts.RangeObject} dataExtremes
  * Pre-calculated data extremes for the chart.
- * @param {Highcharts.SonifyChartOptionsObject} chartSonifyOptions
+ * @param {Highcharts.SonificationOptions} chartSonifyOptions
  * Options passed in to chart.sonify.
  * @return {Partial<Highcharts.SonifySeriesOptionsObject>}
  * Options for buildTimelinePathFromSeries.
@@ -520,7 +526,7 @@ function seriesSonify(
 function buildSeriesOptions(
     series: Highcharts.SonifyableSeries,
     dataExtremes: Highcharts.Dictionary<Highcharts.RangeObject>,
-    chartSonifyOptions: Highcharts.SonifyChartOptionsObject
+    chartSonifyOptions: Highcharts.SonificationOptions
 ): Partial<Highcharts.SonifySeriesOptionsObject> {
     var seriesOptions: (
         Partial<Highcharts.SonifySeriesOptionsObject>|
@@ -965,18 +971,36 @@ function buildPathsFromOrder(
 
 
 /**
+ * @private
+ * @param {Highcharts.Chart} chart The chart to get options for.
+ * @param {Highcharts.SonificationOptions} userOptions
+ *  Options to merge with options on chart and default options.
+ * @returns {Highcharts.SonificationOptions} The merged options.
+ */
+function getChartSonifyOptions(
+    chart: Highcharts.SonifyableChart,
+    userOptions?: Highcharts.SonificationOptions
+): Highcharts.SonificationOptions {
+    return merge(
+        chart.options.sonification,
+        userOptions
+    );
+}
+
+
+/**
  * Options for sonifying a chart.
  *
  * @requires module:modules/sonification
  *
- * @interface Highcharts.SonifyChartOptionsObject
+ * @interface Highcharts.SonificationOptions
  *//**
  * Duration for sonifying the entire chart. The duration is distributed across
  * the different series intelligently, but does not take earcons into account.
  * It is also possible to set the duration explicitly per series, using
  * `seriesOptions`. Note that points may continue to play after the duration has
  * passed, but no new points will start playing.
- * @name Highcharts.SonifyChartOptionsObject#duration
+ * @name Highcharts.SonificationOptions#duration
  * @type {number}
  *//**
  * Define the order to play the series in. This can be given as a string, or an
@@ -988,7 +1012,7 @@ function buildPathsFromOrder(
  * designating a number of milliseconds to wait before continuing. Each element
  * of the array will be played in order. To play elements simultaneously, group
  * the elements in an array.
- * @name Highcharts.SonifyChartOptionsObject#order
+ * @name Highcharts.SonificationOptions#order
  * @type {string|Array<string|Highcharts.Earcon|Array<string|Highcharts.Earcon>>}
  *//**
  * The axis to use for when to play the points. Can be a string with a data
@@ -997,28 +1021,28 @@ function buildPathsFromOrder(
  * with the lowest numeric values are then played first, and the time between
  * points will be proportional to the distance between the numeric values. This
  * option can not be overridden per series.
- * @name Highcharts.SonifyChartOptionsObject#pointPlayTime
+ * @name Highcharts.SonificationOptions#pointPlayTime
  * @type {string|Function}
  *//**
  * Milliseconds of silent waiting to add between series. Note that waiting time
  * is considered part of the sonify duration.
- * @name Highcharts.SonifyChartOptionsObject#afterSeriesWait
+ * @name Highcharts.SonificationOptions#afterSeriesWait
  * @type {number|undefined}
  *//**
  * Options as given to `series.sonify` to override options per series. If the
  * option is supplied as an array of options objects, the `id` property of the
  * object should correspond to the series' id. If the option is supplied as a
  * single object, the options apply to all series.
- * @name Highcharts.SonifyChartOptionsObject#seriesOptions
+ * @name Highcharts.SonificationOptions#seriesOptions
  * @type {Object|Array<object>|undefined}
  *//**
  * The instrument definitions for the points in this chart.
- * @name Highcharts.SonifyChartOptionsObject#instruments
+ * @name Highcharts.SonificationOptions#instruments
  * @type {Array<Highcharts.PointInstrumentObject>|undefined}
  *//**
  * Earcons to add to the chart. Note that earcons can also be added per series
  * using `seriesOptions`.
- * @name Highcharts.SonifyChartOptionsObject#earcons
+ * @name Highcharts.SonificationOptions#earcons
  * @type {Array<Highcharts.EarconConfiguration>|undefined}
  *//**
  * Optionally provide the minimum/maximum data values for the points. If this is
@@ -1038,19 +1062,19 @@ function buildPathsFromOrder(
  *          // Properties used and not provided are calculated on demand
  *      }
  *  ```
- * @name Highcharts.SonifyChartOptionsObject#dataExtremes
+ * @name Highcharts.SonificationOptions#dataExtremes
  * @type {Highcharts.Dictionary<Highcharts.RangeObject>|undefined}
  *//**
  * Callback before a series is played.
- * @name Highcharts.SonifyChartOptionsObject#onSeriesStart
+ * @name Highcharts.SonificationOptions#onSeriesStart
  * @type {Function|undefined}
  *//**
  * Callback after a series has finished playing.
- * @name Highcharts.SonifyChartOptionsObject#onSeriesEnd
+ * @name Highcharts.SonificationOptions#onSeriesEnd
  * @type {Function|undefined}
  *//**
  * Callback after the chart has played.
- * @name Highcharts.SonifyChartOptionsObject#onEnd
+ * @name Highcharts.SonificationOptions#onEnd
  * @type {Function|undefined}
  */
 
@@ -1073,38 +1097,43 @@ function buildPathsFromOrder(
  *
  * @function Highcharts.Chart#sonify
  *
- * @param {Highcharts.SonifyChartOptionsObject} options
+ * @param {Highcharts.SonificationOptions} options
  *        The options for sonifying this chart.
  *
  * @return {void}
  */
 function chartSonify(
     this: Highcharts.SonifyableChart,
-    options: Highcharts.SonifyChartOptionsObject
+    options?: Highcharts.SonificationOptions
 ): void {
+    const opts = getChartSonifyOptions(this, options);
+
     // Only one timeline can play at a time.
     if (this.sonification.timeline) {
         this.sonification.timeline.pause();
     }
 
+    // Store reference to duration
+    this.sonification.duration = opts.duration;
+
     // Calculate data extremes for the props used
-    var dataExtremes = getExtremesForInstrumentProps(
-        this, options.instruments as any, options.dataExtremes as any
+    const dataExtremes = getExtremesForInstrumentProps(
+        this, opts.instruments as any, opts.dataExtremes as any
     );
 
     // Figure out ordering of series and custom paths
-    var order = buildPathOrder(options.order, this, function (
+    let order = buildPathOrder(opts.order, this, function (
         series: Highcharts.SonifyableSeries
     ): Partial<Highcharts.SonifySeriesOptionsObject> {
-        return buildSeriesOptions(series, dataExtremes, options);
+        return buildSeriesOptions(series, dataExtremes, opts);
     });
 
     // Add waits after simultaneous paths with series in them.
-    order = addAfterSeriesWaits(order, options.afterSeriesWait || 0);
+    order = addAfterSeriesWaits(order, opts.afterSeriesWait || 0);
 
     // We now have a list of either TimelinePath objects or series that need to
     // be converted to TimelinePath objects. Convert everything to paths.
-    var paths = buildPathsFromOrder(order, options.duration);
+    const paths = buildPathsFromOrder(order, opts.duration);
 
     // Sync simultaneous paths
     paths.forEach(function (
@@ -1116,7 +1145,7 @@ function chartSonify(
     // We have a set of paths. Create the timeline, and play it.
     this.sonification.timeline = new H.sonification.Timeline({
         paths: paths,
-        onEnd: options.onEnd
+        onEnd: opts.onEnd
     });
     this.sonification.timeline.play();
 }
@@ -1134,7 +1163,7 @@ function chartSonify(
  */
 function getCurrentPoints(
     this: Highcharts.SonifyableChart
-): Array<Highcharts.Point> {
+): Array<Point> {
     var cursorObj: Highcharts.Dictionary<Highcharts.TimelineEvent>;
 
     if (this.sonification.timeline) {
@@ -1146,7 +1175,7 @@ function getCurrentPoints(
             return cursorObj[path].eventObject;
         }).filter(function (eventObj: any): boolean {
             // Return the events that are points
-            return eventObj instanceof H.Point;
+            return eventObj instanceof Point;
         });
     }
     return [];
@@ -1167,12 +1196,12 @@ function getCurrentPoints(
  */
 function setCursor(
     this: Highcharts.SonifyableChart,
-    points: (Highcharts.Point|Array<Highcharts.Point>)
+    points: (Point|Array<Point>)
 ): void {
     var timeline: Highcharts.Timeline = this.sonification.timeline as any;
 
     if (timeline) {
-        splat(points).forEach(function (point: Highcharts.Point): void {
+        splat(points).forEach(function (point: Point): void {
             // We created the events with the ID of the points, which makes
             // this easy. Just call setCursor for each ID.
             timeline.setCursor(point.id);

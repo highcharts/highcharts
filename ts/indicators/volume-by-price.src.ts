@@ -12,6 +12,9 @@
 
 'use strict';
 
+import type { AxisType } from '../parts/axis/types';
+import type Chart from '../parts/Chart';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 
@@ -32,7 +35,7 @@ declare global {
             public drawPoints(): void;
             public drawZones(
                 chart: Chart,
-                yAxis: Axis,
+                yAxis: AxisType,
                 zonesValues: Array<number>,
                 zonesStyles: CSSObject
             ): void;
@@ -106,7 +109,7 @@ declare global {
             animationLimit?: number;
             crisp?: boolean;
             dataGrouping?: DataGroupingOptionsObject;
-            dataLabels?: DataLabelsOptionsObject;
+            dataLabels?: DataLabelsOptions;
             enableMouseTracking?: boolean;
             params?: VBPIndicatorParamsOptions;
             pointPadding?: number;
@@ -121,6 +124,7 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
@@ -295,7 +299,7 @@ seriesType<Highcharts.VBPIndicator>(
         crispCol: columnPrototype.crispCol,
         init: function (
             this: Highcharts.VBPIndicator,
-            chart: Highcharts.Chart
+            chart: Chart
         ): Highcharts.VBPIndicator {
             var indicator = this,
                 params: Highcharts.VBPIndicatorParamsOptions,
@@ -360,11 +364,18 @@ seriesType<Highcharts.VBPIndicator>(
             init: boolean
         ): void {
             var series = this,
-                attr: Highcharts.SVGAttributes = {};
+                inverted = series.chart.inverted,
+                group = series.group,
+                attr: Highcharts.SVGAttributes = {},
+                translate,
+                position;
 
-            if (H.svg && !init) {
-                attr.translateX = series.yAxis.pos;
-                (series.group as any).animate(
+            if (!init && group) {
+                translate = inverted ? 'translateY' : 'translateX';
+                position = inverted ? series.yAxis.top : series.xAxis.left;
+                group['forceAnimate:' + translate] = true;
+                attr[translate] = position;
+                group.animate(
                     attr,
                     extend(animObject(series.options.animation), {
                         step: function (val: any, fx: any): void {
@@ -375,8 +386,6 @@ seriesType<Highcharts.VBPIndicator>(
                     })
                 );
 
-                // Delete this function to allow it only once
-                (series.animate as any) = null;
             }
         },
         drawPoints: function (this: Highcharts.VBPIndicator): void {
@@ -457,8 +466,8 @@ seriesType<Highcharts.VBPIndicator>(
         translate: function (this: Highcharts.VBPIndicator): void {
             var indicator = this,
                 options: Highcharts.VBPIndicatorOptions = indicator.options,
-                chart: Highcharts.Chart = indicator.chart,
-                yAxis: Highcharts.Axis = indicator.yAxis,
+                chart: Chart = indicator.chart,
+                yAxis: AxisType = indicator.yAxis,
                 yAxisMin: number = (yAxis.min as any),
                 zoneLinesOptions: Highcharts.VBPIndicatorStyleOptions = (
                     indicator.options.zoneLines as any
@@ -788,15 +797,15 @@ seriesType<Highcharts.VBPIndicator>(
         // Function responsoble for drawing additional lines indicating zones
         drawZones: function (
             this: Highcharts.VBPIndicator,
-            chart: Highcharts.Chart,
-            yAxis: Highcharts.Axis,
+            chart: Chart,
+            yAxis: AxisType,
             zonesValues: Array<number>,
             zonesStyles: Highcharts.CSSObject
         ): void {
             var indicator = this,
                 renderer: Highcharts.Renderer = chart.renderer,
                 zoneLinesSVG: Highcharts.SVGElement = indicator.zoneLinesSVG,
-                zoneLinesPath: Highcharts.SVGPathArray = [],
+                zoneLinesPath: SVGPath = [],
                 leftLinePos = 0,
                 rightLinePos: number = chart.plotWidth,
                 verticalOffset: number = chart.plotTop,
@@ -804,14 +813,15 @@ seriesType<Highcharts.VBPIndicator>(
 
             zonesValues.forEach(function (value: number): void {
                 verticalLinePos = yAxis.toPixels(value) - verticalOffset;
-                zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([
+                zoneLinesPath = zoneLinesPath.concat(chart.renderer.crispLine([[
                     'M',
                     leftLinePos,
-                    verticalLinePos,
+                    verticalLinePos
+                ], [
                     'L',
                     rightLinePos,
                     verticalLinePos
-                ], (zonesStyles.lineWidth as any)));
+                ]], (zonesStyles.lineWidth as any)));
             });
 
             // Create zone lines one path or update it while animating
@@ -841,7 +851,7 @@ seriesType<Highcharts.VBPIndicator>(
             if (this.negativeGraphic) {
                 this.negativeGraphic = (this.negativeGraphic as any).destroy();
             }
-            return H.Point.prototype.destroy.apply(this, arguments);
+            return Point.prototype.destroy.apply(this, arguments);
         }
     }
 );

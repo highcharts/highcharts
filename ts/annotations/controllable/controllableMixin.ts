@@ -6,6 +6,18 @@
 
 'use strict';
 
+import type Annotation from '../annotations.src';
+import ControlPoint from './../ControlPoint.js';
+import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+const {
+    isObject,
+    isString,
+    merge,
+    splat
+} = U;
+
 /**
  * Internal types.
  * @private
@@ -143,18 +155,7 @@ declare global {
  * @type {Array<Highcharts.Point>}
  */
 
-import U from './../../parts/Utilities.js';
-const {
-    isObject,
-    isString,
-    merge,
-    splat
-} = U;
-
 import './../../parts/Tooltip.js';
-import ControlPoint from './../ControlPoint.js';
-import MockPoint from './../MockPoint.js';
-import Tooltip from '../../parts/Tooltip.js';
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -172,7 +173,7 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
      */
     init: function (
         this: Highcharts.AnnotationControllable,
-        annotation: Highcharts.Annotation,
+        annotation: Annotation,
         options: Highcharts.AnnotationControllableOptionsObject,
         index: number
     ): void {
@@ -604,5 +605,9 @@ var controllableMixin: Highcharts.AnnotationControllableMixin = {
         this.redraw();
     }
 };
+
+namespace controllableMixin {
+    export type Type = Highcharts.AnnotationControllable;
+}
 
 export default controllableMixin;

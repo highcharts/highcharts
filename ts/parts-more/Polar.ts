@@ -10,7 +10,26 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
+import type RadialAxis from './RadialAxis';
+import type SVGPath from '../parts/SVGPath';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import Pane from '../parts-more/Pane.js';
+import Pointer from '../parts/Pointer.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    animObject,
+    defined,
+    find,
+    isNumber,
+    pick,
+    splat,
+    uniqueKey,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -28,7 +47,7 @@ declare global {
             polarArc: PolarSeries['polarArc'];
             findAlignments: PolarSeries['findAlignments'];
         }
-        interface Point {
+        interface PointLike {
             rectPlotX?: PolarPoint['rectPlotX'];
             rectPlotY?: PolarPoint['rectPlotY'];
             ttBelow?: boolean;
@@ -85,8 +104,8 @@ declare global {
             ): SVGAttributes;
             findAlignments(
                 angle: number,
-                options: DataLabelsOptionsObject,
-            ): DataLabelsOptionsObject;
+                options: DataLabelsOptions,
+            ): DataLabelsOptions;
             searchPointByAngle(e: PointerEventObject): (Point|undefined);
             translate(): void;
             toXY(point: Point): void;
@@ -105,26 +124,12 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    defined,
-    find,
-    pick,
-    splat,
-    uniqueKey,
-    wrap
-} = U;
-
-import '../parts/Pointer.js';
 import '../parts/Series.js';
-import '../parts/Pointer.js';
 
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
 
-var Pointer = H.Pointer,
-    Series = H.Series,
+var Series = H.Series,
     seriesTypes = H.seriesTypes,
     seriesProto = Series.prototype as Highcharts.PolarSeries,
     pointerProto = Pointer.prototype,
@@ -141,7 +146,7 @@ var Pointer = H.Pointer,
 seriesProto.searchPointByAngle = function (
     this: Highcharts.PolarSeries,
     e: Highcharts.PointerEventObject
-): (Highcharts.Point|undefined) {
+): (Point|undefined) {
     var series = this,
         chart = series.chart,
         xAxis = series.xAxis,
@@ -338,7 +343,7 @@ if (seriesTypes.spline) {
             segment: Array<Highcharts.PolarPoint>,
             point: Highcharts.PolarPoint,
             i: number
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var ret,
                 connectors;
 
@@ -475,7 +480,7 @@ wrap(seriesProto, 'getGraphPath', function (
     this: Highcharts.PolarSeries,
     proceed: Function,
     points: Array<Highcharts.PolarPoint>
-): Highcharts.SVGPathArray {
+): SVGPath {
     var series = this,
         i,
         firstValid,
@@ -571,7 +576,7 @@ var polarAnimate = function (
             // Enable animation on polar charts only in SVG. In VML, the scaling
             // is different, plus animation would be so slow it would't matter.
             if (chart.renderer.isSVG) {
-                animation = H.animObject(animation);
+                animation = animObject(animation);
 
                 // A different animation needed for column like series
                 if (series.is('column')) {
@@ -598,8 +603,6 @@ var polarAnimate = function (
                                 }, series.options.animation);
                             }
                         });
-                        // Delete this function to allow it only once
-                        series.animate = null as any;
                     }
                 } else {
                     // Initialize the animation
@@ -627,8 +630,6 @@ var polarAnimate = function (
                         if (markerGroup) {
                             markerGroup.animate(attribs, animation);
                         }
-                        // Delete this function to allow it only once
-                        series.animate = null as any;
                     }
                 }
             }
@@ -743,7 +744,7 @@ if (seriesTypes.column) {
 
             if (chart.inverted) {
                 // Finding a correct threshold
-                if (H.isNumber(threshold)) {
+                if (isNumber(threshold)) {
                     thresholdAngleRad = yAxis.translate(threshold);
 
                     // Checks if threshold is outside the visible range
@@ -771,8 +772,8 @@ if (seriesTypes.column) {
                 if (chart.inverted) {
                     point.plotY = yAxis.translate(pointY);
 
-                    if (stacking) {
-                        stack = yAxis.stacks[(pointY < 0 ? '-' : '') +
+                    if (stacking && yAxis.stacking) {
+                        stack = yAxis.stacking.stacks[(pointY < 0 ? '-' : '') +
                             series.stackKey];
 
                         if (series.visible && stack && stack[pointX]) {
@@ -907,8 +908,8 @@ if (seriesTypes.column) {
     colProto.findAlignments = function (
         this: Highcharts.PolarSeries,
         angle: number,
-        options: Highcharts.DataLabelsOptionsObject
-    ): Highcharts.DataLabelsOptionsObject {
+        options: Highcharts.DataLabelsOptions
+    ): Highcharts.DataLabelsOptions {
         var align: Highcharts.AlignValue,
             verticalAlign: Highcharts.VerticalAlignValue;
 
@@ -950,7 +951,7 @@ if (seriesTypes.column) {
         proceed: Function,
         point: (Highcharts.ColumnPoint | Highcharts.PolarPoint),
         dataLabel: Highcharts.SVGElement,
-        options: Highcharts.DataLabelsOptionsObject,
+        options: Highcharts.DataLabelsOptions,
         alignTo: Highcharts.BBoxObject,
         isNew?: boolean
     ): void {
@@ -1078,7 +1079,7 @@ wrap(pointerProto, 'getCoordinates', function (
     return ret;
 });
 
-H.SVGRenderer.prototype.clipCircle = function (
+SVGRenderer.prototype.clipCircle = function (
     this: Highcharts.SVGRenderer,
     x: number,
     y: number,
@@ -1101,7 +1102,7 @@ H.SVGRenderer.prototype.clipCircle = function (
     return wrapper;
 };
 
-addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'getAxes', function (): void {
 
     if (!this.pane) {
         this.pane = [];
@@ -1109,16 +1110,14 @@ addEvent(H.Chart, 'getAxes', function (this: Highcharts.Chart): void {
     splat(this.options.pane).forEach(function (
         paneOptions: Highcharts.PaneOptions
     ): void {
-        new H.Pane( // eslint-disable-line no-new
+        new Pane( // eslint-disable-line no-new
             paneOptions,
             this
         );
     }, this);
 });
 
-addEvent(H.Chart, 'afterDrawChartBox', function (
-    this: Highcharts.Chart
-): void {
+addEvent(Chart, 'afterDrawChartBox', function (): void {
     (this.pane as any).forEach(function (pane: Highcharts.Pane): void {
         pane.render();
     });
@@ -1143,8 +1142,8 @@ addEvent(H.Series, 'afterInit', function (
  * responsiveness and chart.update.
  * @private
  */
-wrap(H.Chart.prototype, 'get', function (
-    this: Highcharts.Chart,
+wrap(Chart.prototype, 'get', function (
+    this: Chart,
     proceed: Function,
     id: string
 ): boolean {

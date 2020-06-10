@@ -4,6 +4,7 @@
  *
  * */
 
+import type Annotation from '../annotations/annotations.src';
 import H from '../parts/Globals.js';
 
 /**
@@ -54,13 +55,12 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    fireEvent,
     inArray,
     objectEach,
     pick,
     removeEvent
 } = U;
-
-var fireEvent = H.fireEvent;
 
 /* eslint-disable valid-jsdoc */
 
@@ -75,23 +75,35 @@ var fireEvent = H.fireEvent;
  * @mixin
  * @memberOf Annotation
  */
-var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
+const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
     /**
      * Add emitter events.
      */
     addEvents: function (this: Highcharts.AnnotationEventEmitter): void {
-        var emitter = this;
+        var emitter = this,
+            addMouseDownEvent = function (
+                element: (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement)
+            ): void {
+                addEvent(
+                    element,
+                    Highcharts.isTouchDevice ? 'touchstart' : 'mousedown',
+                    (e: Highcharts.AnnotationEventObject): void => {
+                        emitter.onMouseDown(e);
+                    }
+                );
+            };
 
-        addEvent(
-            emitter.graphic.element,
-            'mousedown',
-            function (e: Highcharts.AnnotationEventObject): void {
-                emitter.onMouseDown(e);
+        addMouseDownEvent(this.graphic.element);
+
+        (emitter.labels || []).forEach((label): void => {
+            if (label.options.useHTML && label.graphic.text) {
+                // Mousedown event bound to HTML element (#13070).
+                addMouseDownEvent(label.graphic.text.element);
             }
-        );
+        });
 
         objectEach(emitter.options.events, function (
-            event: Highcharts.EventCallbackFunction<Highcharts.Annotation>,
+            event: Highcharts.EventCallbackFunction<Annotation>,
             type: string
         ): void {
             var eventHandler = function (e: Highcharts.PointerEventObject): void {
@@ -113,10 +125,11 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
         if (emitter.options.draggable) {
 
-            addEvent(emitter, 'drag', emitter.onDrag);
+            addEvent(emitter, Highcharts.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
+
 
             if (!emitter.graphic.renderer.styledMode) {
-                emitter.graphic.css({
+                const cssPointer = {
                     cursor: ({
                         x: 'ew-resize',
                         y: 'ns-resize',
@@ -124,6 +137,14 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                     } as Highcharts.Dictionary<Highcharts.CursorValue>)[
                         emitter.options.draggable
                     ]
+                };
+
+                emitter.graphic.css(cssPointer);
+
+                (emitter.labels || []).forEach((label): void => {
+                    if (label.options.useHTML && label.graphic.text) {
+                        label.graphic.text.css(cssPointer);
+                    }
                 });
             }
         }
@@ -170,10 +191,9 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
 
         emitter.cancelClick = false;
         emitter.chart.hasDraggedAnnotation = true;
-
         emitter.removeDrag = addEvent(
             H.doc,
-            'mousemove',
+            Highcharts.isTouchDevice ? 'touchmove' : 'mousemove',
             function (e: Highcharts.AnnotationEventObject): void {
                 emitter.hasDragged = true;
 
@@ -187,10 +207,9 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 prevChartY = e.chartY;
             }
         );
-
         emitter.removeMouseUp = addEvent(
             H.doc,
-            'mouseup',
+            Highcharts.isTouchDevice ? 'touchend' : 'mouseup',
             function (e: Highcharts.AnnotationEventObject): void {
                 emitter.cancelClick = emitter.hasDragged;
                 emitter.hasDragged = false;
@@ -207,7 +226,7 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
      */
     onMouseUp: function (this: Highcharts.AnnotationEventEmitter, _e: Highcharts.AnnotationEventObject): void {
         var chart = this.chart,
-            annotation: Highcharts.Annotation = this.target as any || this,
+            annotation: Annotation = this.target as any || this,
             annotationsOptions = chart.options.annotations,
             index = chart.annotations.indexOf(annotation);
 
@@ -350,5 +369,9 @@ var eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
         this.hcEvents = null;
     }
 };
+
+namespace eventEmitterMixin {
+    export type Type = Highcharts.AnnotationEventEmitter;
+}
 
 export default eventEmitterMixin;

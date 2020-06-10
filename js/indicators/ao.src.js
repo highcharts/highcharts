@@ -65,6 +65,7 @@ seriesType('ao', 'sma',
     threshold: 0,
     groupPadding: 0.2,
     pointPadding: 0.2,
+    crisp: false,
     states: {
         hover: {
             halo: {

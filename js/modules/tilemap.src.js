@@ -51,13 +51,13 @@ H.tileShapeTypes = {
             }
             var hexagon = this.tileEdges;
             return [
-                'M', hexagon.x2 - size, hexagon.y1 + size,
-                'L', hexagon.x3 + size, hexagon.y1 + size,
-                hexagon.x4 + size * 1.5, hexagon.y2,
-                hexagon.x3 + size, hexagon.y3 - size,
-                hexagon.x2 - size, hexagon.y3 - size,
-                hexagon.x1 - size * 1.5, hexagon.y2,
-                'Z'
+                ['M', hexagon.x2 - size, hexagon.y1 + size],
+                ['L', hexagon.x3 + size, hexagon.y1 + size],
+                ['L', hexagon.x4 + size * 1.5, hexagon.y2],
+                ['L', hexagon.x3 + size, hexagon.y3 - size],
+                ['L', hexagon.x2 - size, hexagon.y3 - size],
+                ['L', hexagon.x1 - size * 1.5, hexagon.y2],
+                ['Z']
             ];
         },
         translate: function () {
@@ -103,13 +103,13 @@ H.tileShapeTypes = {
                 point.shapeType = 'path';
                 point.shapeArgs = {
                     d: [
-                        'M', x2, y1,
-                        'L', x3, y1,
-                        x4, y2,
-                        x3, y3,
-                        x2, y3,
-                        x1, y2,
-                        'Z'
+                        ['M', x2, y1],
+                        ['L', x3, y1],
+                        ['L', x4, y2],
+                        ['L', x3, y3],
+                        ['L', x2, y3],
+                        ['L', x1, y2],
+                        ['Z']
                     ]
                 };
             });
@@ -128,11 +128,11 @@ H.tileShapeTypes = {
             }
             var diamond = this.tileEdges;
             return [
-                'M', diamond.x2, diamond.y1 + size,
-                'L', diamond.x3 + size, diamond.y2,
-                diamond.x2, diamond.y3 - size,
-                diamond.x1 - size, diamond.y2,
-                'Z'
+                ['M', diamond.x2, diamond.y1 + size],
+                ['L', diamond.x3 + size, diamond.y2],
+                ['L', diamond.x2, diamond.y3 - size],
+                ['L', diamond.x1 - size, diamond.y2],
+                ['Z']
             ];
         },
         translate: function () {
@@ -173,11 +173,11 @@ H.tileShapeTypes = {
                 point.shapeType = 'path';
                 point.shapeArgs = {
                     d: [
-                        'M', x2, y1,
-                        'L', x3, y2,
-                        x2, y3,
-                        x1, y2,
-                        'Z'
+                        ['M', x2, y1],
+                        ['L', x3, y2],
+                        ['L', x2, y3],
+                        ['L', x1, y2],
+                        ['Z']
                     ]
                 };
             });
@@ -331,13 +331,16 @@ seriesType('tilemap', 'heatmap'
  *
  * @extends      plotOptions.heatmap
  * @since        6.0.0
- * @excluding    jitter, joinBy, shadow, allAreas, mapData, data,
+ * @excluding    jitter, joinBy, shadow, allAreas, mapData, marker, data,
  *               dataSorting
  * @product      highcharts highmaps
  * @requires     modules/tilemap.js
  * @optionparent plotOptions.tilemap
  */
 , {
+    // Remove marker from tilemap default options, as it was before
+    // heatmap refactoring.
+    marker: null,
     states: {
         hover: {
             halo: {
@@ -398,6 +401,24 @@ seriesType('tilemap', 'heatmap'
      */
     tileShape: 'hexagon'
 }, {
+    // Use drawPoints, markerAttribs, pointAttribs methods from the old
+    // heatmap implementation.
+    // TODO: Consider standarizing heatmap and tilemap into more
+    // consistent form.
+    markerAttribs: H.seriesTypes.scatter.prototype.markerAttribs,
+    pointAttribs: H.seriesTypes.column.prototype.pointAttribs,
+    // Revert the noop on getSymbol.
+    getSymbol: H.noop,
+    drawPoints: function () {
+        var _this = this;
+        // In styled mode, use CSS, otherwise the fill used in the style
+        // sheet will take precedence over the fill attribute.
+        H.seriesTypes.column.prototype.drawPoints.call(this);
+        this.points.forEach(function (point) {
+            point.graphic &&
+                point.graphic[_this.chart.styledMode ? 'css' : 'animate'](_this.colorAttribs(point));
+        });
+    },
     // Set tile shape object on series
     setOptions: function () {
         // Call original function

@@ -10,12 +10,13 @@
  *
  * */
 'use strict';
-import H from '../../parts/Globals.js';
-import '../../parts/Series.js';
 import GLRenderer from './wgl-renderer.js';
+import H from '../../parts/Globals.js';
+var doc = H.doc;
 import U from '../../parts/Utilities.js';
 var error = U.error;
-var win = H.win, doc = win.document, mainCanvas = doc.createElement('canvas');
+import '../../parts/Series.js';
+var mainCanvas = doc.createElement('canvas');
 /**
  * Create a canvas + context and attach it to the target
  *

@@ -11,9 +11,12 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var dateFormat = O.dateFormat;
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, merge = U.merge, wrap = U.wrap;
-var Axis = H.Axis, PlotLineOrBand = H.PlotLineOrBand;
+import PlotLineOrBand from '../parts/PlotLineOrBand.js';
+var Axis = H.Axis;
 var defaultConfig = {
     /**
      * Show an indicator on the axis for the current date and time. Can be a
@@ -51,7 +54,7 @@ var defaultConfig = {
          */
         format: '%a, %b %d %Y, %H:%M',
         formatter: function (value, format) {
-            return H.dateFormat(format, value);
+            return dateFormat(format, value);
         },
         rotation: 0,
         /**

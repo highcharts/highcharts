@@ -72,7 +72,7 @@ import H from '../parts/Globals.js';
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string|undefined}
@@ -82,7 +82,7 @@ import H from '../parts/Globals.js';
  * Context for the node formatter function.
  *
  * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  */ /**
 * The node object. The node name, if defined, is available through
 * `this.point.name`.
@@ -90,13 +90,13 @@ import H from '../parts/Globals.js';
 * @type {Highcharts.SankeyNodeObject}
 */
 import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined, find = U.find, isObject = U.isObject, merge = U.merge, pick = U.pick, relativeLength = U.relativeLength, seriesType = U.seriesType, stableSort = U.stableSort;
 import '../parts/Options.js';
 import '../mixins/nodes.js';
 import mixinTreeSeries from '../mixins/tree-series.js';
 var getLevelOptions = mixinTreeSeries.getLevelOptions;
-var Point = H.Point;
 // eslint-disable-next-line valid-jsdoc
 /**
  * @private
@@ -383,6 +383,7 @@ seriesType('sankey', 'column',
     // Create a single node that holds information on incoming and outgoing
     // links.
     createNode: H.NodesMixin.createNode,
+    searchPoint: H.noop,
     setData: H.NodesMixin.setData,
     destroy: H.NodesMixin.destroy,
     /* eslint-disable valid-jsdoc */
@@ -647,10 +648,10 @@ seriesType('sankey', 'column',
             return y;
         };
         var fromNode = point.fromNode, toNode = point.toNode, chart = this.chart, translationFactor = this.translationFactor, linkHeight = Math.max(point.weight * translationFactor, this.options.minLinkWidth), options = this.options, curvy = ((chart.inverted ? -this.colDistance : this.colDistance) *
-            options.curveFactor), fromY = getY(fromNode, 'linksFrom'), toY = getY(toNode, 'linksTo'), nodeLeft = fromNode.nodeX, nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft;
+            options.curveFactor), fromY = getY(fromNode, 'linksFrom'), toY = getY(toNode, 'linksTo'), nodeLeft = fromNode.nodeX, nodeW = this.nodeWidth, right = toNode.column * this.colDistance, outgoing = point.outgoing, straight = right > nodeLeft + nodeW;
         if (chart.inverted) {
             fromY = chart.plotSizeY - fromY;
-            toY = chart.plotSizeY - toY;
+            toY = (chart.plotSizeY || 0) - toY;
             right = chart.plotSizeX - right;
             nodeW = -nodeW;
             linkHeight = -linkHeight;
@@ -664,24 +665,30 @@ seriesType('sankey', 'column',
             toY + linkHeight
         ];
         // Links going from left to right
-        if (straight) {
+        if (straight && typeof toY === 'number') {
             point.shapeArgs = {
                 d: [
-                    'M', nodeLeft + nodeW, fromY,
-                    'C', nodeLeft + nodeW + curvy, fromY,
-                    right - curvy, toY,
-                    right, toY,
-                    'L',
-                    right + (outgoing ? nodeW : 0),
-                    toY + linkHeight / 2,
-                    'L',
-                    right,
-                    toY + linkHeight,
-                    'C', right - curvy, toY + linkHeight,
-                    nodeLeft + nodeW + curvy,
-                    fromY + linkHeight,
-                    nodeLeft + nodeW, fromY + linkHeight,
-                    'z'
+                    ['M', nodeLeft + nodeW, fromY],
+                    [
+                        'C',
+                        nodeLeft + nodeW + curvy,
+                        fromY,
+                        right - curvy,
+                        toY,
+                        right,
+                        toY
+                    ],
+                    ['L', right + (outgoing ? nodeW : 0), toY + linkHeight / 2],
+                    ['L', right, toY + linkHeight],
+                    [
+                        'C',
+                        right - curvy,
+                        toY + linkHeight,
+                        nodeLeft + nodeW + curvy,
+                        fromY + linkHeight,
+                        nodeLeft + nodeW, fromY + linkHeight
+                    ],
+                    ['Z']
                 ]
             };
             // Experimental: Circular links pointing backwards. In
@@ -692,27 +699,27 @@ seriesType('sankey', 'column',
             // - Automatically determine if the link should go up or
             //   down.
         }
-        else {
+        else if (typeof toY === 'number') {
             var bend = 20, vDist = chart.plotHeight - fromY - linkHeight, x1 = right - bend - linkHeight, x2 = right - bend, x3 = right, x4 = nodeLeft + nodeW, x5 = x4 + bend, x6 = x5 + linkHeight, fy1 = fromY, fy2 = fromY + linkHeight, fy3 = fy2 + bend, y4 = fy3 + vDist, y5 = y4 + bend, y6 = y5 + linkHeight, ty1 = toY, ty2 = ty1 + linkHeight, ty3 = ty2 + bend, cfy1 = fy2 - linkHeight * 0.7, cy2 = y5 + linkHeight * 0.7, cty1 = ty2 - linkHeight * 0.7, cx1 = x3 - linkHeight * 0.7, cx2 = x4 + linkHeight * 0.7;
             point.shapeArgs = {
                 d: [
-                    'M', x4, fy1,
-                    'C', cx2, fy1, x6, cfy1, x6, fy3,
-                    'L', x6, y4,
-                    'C', x6, cy2, cx2, y6, x4, y6,
-                    'L', x3, y6,
-                    'C', cx1, y6, x1, cy2, x1, y4,
-                    'L', x1, ty3,
-                    'C', x1, cty1, cx1, ty1, x3, ty1,
-                    'L', x3, ty2,
-                    'C', x2, ty2, x2, ty2, x2, ty3,
-                    'L', x2, y4,
-                    'C', x2, y5, x2, y5, x3, y5,
-                    'L', x4, y5,
-                    'C', x5, y5, x5, y5, x5, y4,
-                    'L', x5, fy3,
-                    'C', x5, fy2, x5, fy2, x4, fy2,
-                    'z'
+                    ['M', x4, fy1],
+                    ['C', cx2, fy1, x6, cfy1, x6, fy3],
+                    ['L', x6, y4],
+                    ['C', x6, cy2, cx2, y6, x4, y6],
+                    ['L', x3, y6],
+                    ['C', cx1, y6, x1, cy2, x1, y4],
+                    ['L', x1, ty3],
+                    ['C', x1, cty1, cx1, ty1, x3, ty1],
+                    ['L', x3, ty2],
+                    ['C', x2, ty2, x2, ty2, x2, ty3],
+                    ['L', x2, y4],
+                    ['C', x2, y5, x2, y5, x3, y5],
+                    ['L', x4, y5],
+                    ['C', x5, y5, x5, y5, x5, y4],
+                    ['L', x5, fy3],
+                    ['C', x5, fy2, x5, fy2, x4, fy2],
+                    ['Z']
                 ]
             };
         }
@@ -764,7 +771,7 @@ seriesType('sankey', 'column',
                 while (i--) {
                     if (column[i].getSum() * factor < minLinkWidth) {
                         column.splice(i, 1);
-                        remainingHeight -= minLinkWidth + series.nodePadding;
+                        remainingHeight -= minLinkWidth;
                         exceedsMinLinkWidth = true;
                     }
                 }

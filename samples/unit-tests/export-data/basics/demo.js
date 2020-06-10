@@ -964,3 +964,122 @@ QUnit.test('Parallel coordinates', function (assert) {
         'Value should not be translated (#11477)'
     );
 });
+
+QUnit.test('Descending categories', function (assert) {
+    var chart = Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            xAxis: {
+                type: 'category'
+            },
+            series: [{
+                name: "New",
+                data: [{
+                    name: "Category 1",
+                    y: 34
+                }]
+            },
+            {
+                name: "In Progress",
+                data: [{
+                    name: "Category 2",
+                    y: 16
+                },
+                {
+                    name: "Category 1",
+                    y: 66
+                }]
+            }
+            ],
+            exporting: {
+                showTable: true
+            }
+        }),
+        csv = chart.getCSV().split('\n');
+
+    assert.strictEqual(
+        csv[2],
+        '"Category 1",34,66',
+        'First point should be in Category 2 (#12767)'
+    );
+});
+
+QUnit.test('Point name (#13293)', function (assert) {
+    var chart = Highcharts.chart('container', {
+            series: [{
+                data: [{
+                    x: 1,
+                    y: 9,
+                    name: "Point2"
+                }, {
+                    x: 2,
+                    y: 6,
+                    name: "Point1"
+                }]
+            }, {
+                data: [{
+                    x: 20,
+                    y: 9
+                }, {
+                    x: 30,
+                    y: 6
+                }]
+            }],
+            exporting: {
+                showTable: true
+            }
+        }),
+        csv = '"Category","Series 1 (x)","Series 1 (y)","Series 2"\n' +
+        '"Point2",1,9\n' +
+        '"Point1",2,6\n' +
+        '20,,,9\n' +
+        '30,,,6';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'The first series should render point name, y and x value (#13293)'
+    );
+});
+
+QUnit.test('Point name with category (#13293)', function (assert) {
+    var chart = Highcharts.chart('container', {
+            xAxis: {
+                type: 'category'
+            },
+            series: [{
+                data: [{
+                    x: 1,
+                    y: 9,
+                    name: "Point2"
+                }, {
+                    x: 2,
+                    y: 6,
+                    name: "Point1"
+                }]
+            }, {
+                data: [{
+                    x: 20,
+                    y: 9
+                }, {
+                    x: 30,
+                    y: 6
+                }]
+            }],
+            exporting: {
+                showTable: true
+            }
+        }),
+        csv = '"Category","Series 1","Series 2"\n' +
+        '"Point2",9\n' +
+        '"Point1",6\n' +
+        '20,,9\n' +
+        '30,,6';
+
+    assert.strictEqual(
+        chart.getCSV(),
+        csv,
+        'The first series should render just a point name and y value (#13293)'
+    );
+});

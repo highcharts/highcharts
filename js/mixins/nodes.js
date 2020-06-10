@@ -4,9 +4,9 @@
  *
  * */
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 var defined = U.defined, extend = U.extend, find = U.find, pick = U.pick;
-var Point = H.Point;
 H.NodesMixin = {
     /* eslint-disable valid-jsdoc */
     /**
@@ -35,7 +35,7 @@ H.NodesMixin = {
             node.linksTo = [];
             node.linksFrom = [];
             node.formatPrefix = 'node';
-            node.name = node.name || node.options.id; // for use in formats
+            node.name = node.name || node.options.id || ''; // for use in formats
             // Mass is used in networkgraph:
             node.mass = pick(
             // Node:

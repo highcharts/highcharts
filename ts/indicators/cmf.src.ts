@@ -117,7 +117,7 @@ seriesType<Highcharts.CMFIndicator>('cmf', 'sma',
          * otherwise false.
          */
         isValid: function (this: Highcharts.CMFIndicator): boolean {
-            var chart: Highcharts.Chart = this.chart,
+            var chart = this.chart,
                 options: Highcharts.CMFIndicatorOptions = this.options,
                 series = this.linkedParent,
                 volumeSeries: Highcharts.Series = (

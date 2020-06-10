@@ -25,7 +25,7 @@ declare global {
             ): void;
             setNodeState(this: NodesPoint, state: string): void;
         }
-        interface Point {
+        interface PointLike {
             name?: string;
         }
         interface Series {
@@ -80,6 +80,7 @@ declare global {
     }
 }
 
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -87,8 +88,6 @@ const {
     find,
     pick
 } = U;
-
-var Point = H.Point;
 
 H.NodesMixin = {
 
@@ -131,7 +130,7 @@ H.NodesMixin = {
             node.linksTo = [];
             node.linksFrom = [];
             node.formatPrefix = 'node';
-            node.name = node.name || node.options.id; // for use in formats
+            node.name = node.name || node.options.id || ''; // for use in formats
             // Mass is used in networkgraph:
             node.mass = pick(
                 // Node:

@@ -15,6 +15,21 @@
 'use strict';
 
 import H from '../parts/Globals.js';
+const {
+    hasTouch
+} = H;
+import Axis from '../parts/Axis.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    clamp,
+    isNumber,
+    merge,
+    objectEach,
+    relativeLength,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -25,7 +40,7 @@ declare global {
         interface Axis {
             resizer?: AxisResizer;
         }
-        interface Chart {
+        interface ChartLike {
             activeResizer?: boolean;
         }
         interface XAxisOptions {
@@ -71,26 +86,22 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    clamp,
-    isNumber,
-    merge,
-    objectEach,
-    relativeLength,
-    wrap
-} = U;
+/* eslint-disable no-invalid-this, valid-jsdoc */
 
-import '../parts/Axis.js';
-import '../parts/Pointer.js';
-
-var hasTouch = H.hasTouch,
-    Axis = H.Axis,
-    Pointer = H.Pointer,
+/**
+ * The AxisResizer class.
+ *
+ * @private
+ * @class
+ * @name Highcharts.AxisResizer
+ *
+ * @param {Highcharts.Axis} axis
+ *        Main axis for the AxisResizer.
+ */
+class AxisResizer {
 
     // Default options for AxisResizer.
-    resizerOptions: Highcharts.YAxisOptions = {
+    public static resizerOptions: Highcharts.YAxisOptions = {
         /**
          * Minimal size of a resizable axis. Could be set as a percent
          * of plot area or pixel size.
@@ -250,32 +261,26 @@ var hasTouch = H.hasTouch,
              */
             y: 0
         }
-    };
+    }
 
-merge(true, Axis.prototype.defaultYAxisOptions, resizerOptions);
+    public constructor(
+        axis: Highcharts.Axis
+    ) {
+        this.init(axis);
+    }
+    /* eslint-enable no-invalid-this */
 
-/* eslint-disable no-invalid-this, valid-jsdoc */
+    public axis: Highcharts.Axis = void 0 as any;
+    public controlLine: Highcharts.SVGElement = void 0 as any;
+    public eventsToUnbind?: Array<Function>;
+    public grabbed?: boolean;
+    public hasDragged?: boolean;
+    public lastPos: number = void 0 as any;
+    public mouseDownHandler?: Function;
+    public mouseMoveHandler?: Function;
+    public mouseUpHandler?: Function;
+    public options: Highcharts.YAxisResizeOptions = void 0 as any;
 
-/**
- * The AxisResizer class.
- *
- * @private
- * @class
- * @name Highcharts.AxisResizer
- *
- * @param {Highcharts.Axis} axis
- *        Main axis for the AxisResizer.
- */
-H.AxisResizer = function (
-    this: Highcharts.AxisResizer,
-    axis: Highcharts.Axis
-): void {
-    this.init(axis);
-} as any;
-
-/* eslint-enable no-invalid-this */
-
-H.AxisResizer.prototype = {
     /**
      * Initialize the AxisResizer object.
      *
@@ -284,8 +289,7 @@ H.AxisResizer.prototype = {
      * @param {Highcharts.Axis} axis
      *        Main axis for the AxisResizer.
      */
-    init: function (
-        this: Highcharts.AxisResizer,
+    public init(
         axis: Highcharts.Axis,
         update?: boolean
     ): void {
@@ -297,19 +301,19 @@ H.AxisResizer.prototype = {
             // Add mouse events.
             this.addMouseEvents();
         }
-    },
+    }
 
     /**
      * Render the AxisResizer
      *
      * @function Highcharts.AxisResizer#render
      */
-    render: function (this: Highcharts.AxisResizer): void {
+    public render(): void {
         var resizer = this,
             axis = resizer.axis,
             chart = axis.chart,
             options = resizer.options,
-            x = options.x,
+            x = options.x || 0,
             y = options.y,
             // Normalize control line position according to the plot area
             pos = clamp(
@@ -347,21 +351,21 @@ H.AxisResizer.prototype = {
 
         attr.d = chart.renderer.crispLine(
             [
-                'M', axis.left + (x as any), pos,
-                'L', axis.left + axis.width + (x as any), pos
+                ['M', axis.left + x, pos],
+                ['L', axis.left + axis.width + x, pos]
             ],
             lineWidth
         );
 
         resizer.controlLine.attr(attr);
-    },
+    }
 
     /**
      * Set up the mouse and touch events for the control line.
      *
      * @function Highcharts.AxisResizer#addMouseEvents
      */
-    addMouseEvents: function (this: Highcharts.AxisResizer): void {
+    public addMouseEvents(): void {
         var resizer = this,
             ctrlLineElem = resizer.controlLine.element,
             container = resizer.axis.chart.container,
@@ -407,7 +411,7 @@ H.AxisResizer.prototype = {
         }
 
         resizer.eventsToUnbind = eventsToUnbind;
-    },
+    }
 
     /**
      * Mouse move event based on x/y mouse position.
@@ -417,10 +421,7 @@ H.AxisResizer.prototype = {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event.
      */
-    onMouseMove: function (
-        this: Highcharts.AxisResizer,
-        e: Highcharts.PointerEventObject
-    ): void {
+    public onMouseMove(e: Highcharts.PointerEventObject): void {
         /*
          * In iOS, a mousemove event with e.pageX === 0 is fired when holding
          * the finger down in the center of the scrollbar. This should
@@ -436,7 +437,7 @@ H.AxisResizer.prototype = {
                 );
             }
         }
-    },
+    }
 
     /**
      * Mouse up event based on x/y mouse position.
@@ -446,10 +447,7 @@ H.AxisResizer.prototype = {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event.
      */
-    onMouseUp: function (
-        this: Highcharts.AxisResizer,
-        e: Highcharts.PointerEventObject
-    ): void {
+    public onMouseUp(e: Highcharts.PointerEventObject): void {
         if (this.hasDragged) {
             this.updateAxes(
                 this.axis.chart.pointer.normalize(e).chartY -
@@ -460,7 +458,7 @@ H.AxisResizer.prototype = {
         // Restore runPointActions.
         this.grabbed = this.hasDragged = this.axis.chart.activeResizer =
             null as any;
-    },
+    }
 
     /**
      * Mousedown on a control line.
@@ -468,16 +466,13 @@ H.AxisResizer.prototype = {
      *
      * @function Highcharts.AxisResizer#onMouseDown
      */
-    onMouseDown: function (
-        this: Highcharts.AxisResizer,
-        e: Highcharts.PointerEventObject
-    ): void {
+    public onMouseDown(e: Highcharts.PointerEventObject): void {
         // Clear all hover effects.
         this.axis.chart.pointer.reset(false, 0);
 
         // Disable runPointActions.
         this.grabbed = this.axis.chart.activeResizer = true;
-    },
+    }
 
     /**
      * Update all connected axes after a change of control line position
@@ -486,7 +481,7 @@ H.AxisResizer.prototype = {
      *
      * @param {number} chartY
      */
-    updateAxes: function (this: Highcharts.AxisResizer, chartY: number): void {
+    public updateAxes(chartY: number): void {
         var resizer = this,
             chart = resizer.axis.chart,
             axes = resizer.options.controlledAxis,
@@ -645,7 +640,7 @@ H.AxisResizer.prototype = {
 
             chart.redraw(false);
         }
-    },
+    }
 
     /**
      * Destroy AxisResizer. Clear outside references, clear events,
@@ -653,7 +648,7 @@ H.AxisResizer.prototype = {
      *
      * @function Highcharts.AxisResizer#destroy
      */
-    destroy: function (this: Highcharts.AxisResizer): void {
+    public destroy(): void {
         var resizer = this,
             axis = resizer.axis;
 
@@ -675,13 +670,12 @@ H.AxisResizer.prototype = {
             (resizer as any)[key] = null;
         });
     }
-} as any;
+}
 
 // Keep resizer reference on axis update
-Axis.prototype.keepProps.push('resizer');
+Axis.keepProps.push('resizer');
 
 /* eslint-disable no-invalid-this */
-
 // Add new AxisResizer, update or remove it
 addEvent(Axis, 'afterRender', function (): void {
     var axis = this,
@@ -723,7 +717,7 @@ addEvent(Axis, 'destroy', function (e: Event): void {
 
 // Prevent any hover effects while dragging a control line of AxisResizer.
 wrap(Pointer.prototype, 'runPointActions', function (
-    this: Highcharts.Pointer,
+    this: Pointer,
     proceed: Function
 ): void {
     if (!this.chart.activeResizer) {
@@ -734,10 +728,15 @@ wrap(Pointer.prototype, 'runPointActions', function (
 // Prevent default drag action detection while dragging a control line of
 // AxisResizer. (#7563)
 wrap(Pointer.prototype, 'drag', function (
-    this: Highcharts.Pointer,
+    this: Pointer,
     proceed: Function
 ): void {
     if (!this.chart.activeResizer) {
         proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
 });
+
+merge(true, Axis.defaultYAxisOptions, AxisResizer.resizerOptions);
+
+H.AxisResizer = AxisResizer as any;
+export default H.AxisResizer;

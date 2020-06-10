@@ -12,11 +12,15 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
+import type Point from '../../../parts/Point';
 import H from '../../../parts/Globals.js';
+import Legend from '../../../parts/Legend.js';
 import U from '../../../parts/Utilities.js';
 const {
     addEvent,
     extend,
+    find,
     fireEvent
 } = U;
 
@@ -26,6 +30,8 @@ import KeyboardNavigationHandler from '../KeyboardNavigationHandler.js';
 import HTMLUtilities from '../utils/htmlUtilities.js';
 var stripHTMLTags = HTMLUtilities.stripHTMLTagsFromString,
     removeElement = HTMLUtilities.removeElement;
+
+type LegendItem = Highcharts.BubbleLegend|Point|Highcharts.Series;
 
 /**
  * Internal types.
@@ -38,6 +44,7 @@ declare global {
             public highlightedLegendItemIx: number;
             public legendProxyButtonClicked?: boolean;
             public legendProxyGroup: HTMLDOMElement;
+            public proxyElementsList: Array<A11yLegendProxyButtonReference>;
             public addLegendProxyGroup(): void;
             public getKeyboardNavigation(): KeyboardNavigationHandler;
             public init(): void;
@@ -50,25 +57,29 @@ declare global {
                 keyboardNavigationHandler: KeyboardNavigationHandler
             ): number;
             public onKbdNavigationInit(direction: number): void;
-            public proxyLegendItem(
-                item: (
-                    Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
-                )
-            ): void;
+            public proxyLegendItem(item: LegendItem): void;
             public proxyLegendItems(): void;
+            public recreateProxies(): void;
+            public removeProxies(): void;
             public shouldHaveLegendNavigation(): (boolean);
             public updateLegendItemProxyVisibility(): void;
-            public updateProxies(): void;
+            public updateProxiesPositions(): void;
+            public updateProxyPositionForItem(item: LegendItem): void;
+        }
+        interface A11yLegendProxyButtonReference {
+            item: LegendItem;
+            element: HTMLDOMElement;
+            posElement: SVGElement;
         }
         interface BubbleLegend {
             a11yProxyElement?: HTMLDOMElement;
         }
-        interface Chart {
+        interface ChartLike {
             highlightedLegendItemIx?: number;
             /** @requires modules/accessibility */
             highlightLegendItem(ix: number): boolean;
         }
-        interface Point {
+        interface PointLike {
             a11yProxyElement?: HTMLDOMElement;
         }
         interface Series {
@@ -96,7 +107,7 @@ function scrollLegendToItem(legend: Highcharts.Legend, itemIx: number): void {
 /**
  * @private
  */
-function shouldDoLegendA11y(chart: Highcharts.Chart): boolean {
+function shouldDoLegendA11y(chart: Chart): boolean {
     var items = chart.legend && chart.legend.allItems,
         legendA11yOptions: Highcharts.LegendAccessibilityOptions = (
             (chart.options.legend as any).accessibility || {}
@@ -143,9 +154,9 @@ H.Chart.prototype.highlightLegendItem = function (ix: number): boolean {
 };
 
 // Keep track of pressed state for legend items
-addEvent(H.Legend, 'afterColorizeItem', function (
+addEvent(Legend, 'afterColorizeItem', function (
     e: {
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series);
+        item: LegendItem;
         visible: (boolean|undefined);
     }
 ): void {
@@ -178,11 +189,22 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * @private
      */
     init: function (this: Highcharts.LegendComponent): void {
-        var component = this;
+        const component = this;
+        this.proxyElementsList = [];
+        this.recreateProxies();
 
-        this.addEvent(H.Legend, 'afterScroll', function (): void {
+        // Note: Chart could create legend dynamically, so events can not be
+        // tied to the component's chart's current legend.
+        this.addEvent(Legend, 'afterScroll', function (): void {
             if (this.chart === component.chart) {
-                component.updateProxies();
+                component.updateProxiesPositions();
+                component.updateLegendItemProxyVisibility();
+                this.chart.highlightLegendItem(component.highlightedLegendItemIx);
+            }
+        });
+        this.addEvent(Legend, 'afterPositionItem', function (e: Highcharts.Dictionary<any>): void {
+            if (this.chart === component.chart && this.chart.renderer) {
+                component.updateProxyPositionForItem(e.item);
             }
         });
     },
@@ -196,13 +218,14 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
     ): void {
         var legend = this.chart.legend,
             items = legend.allItems || [],
-            curPage = legend.currentPage || 1;
+            curPage = legend.currentPage || 1,
+            clipHeight = legend.clipHeight || 0;
 
-        items.forEach(function (
-            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
-        ): void {
+        items.forEach(function (item: LegendItem): void {
             var itemPage = item.pageIx || 0,
-                hide = itemPage !== curPage - 1;
+                y = item._legendItemPos ? item._legendItemPos[1] : 0,
+                h = item.legendItem ? Math.round(item.legendItem.getBBox().height) : 0,
+                hide = y + h - legend.pages[itemPage] > clipHeight || itemPage !== curPage - 1;
 
             if (item.a11yProxyElement) {
                 item.a11yProxyElement.style.visibility = hide ?
@@ -217,30 +240,60 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
      * of the proxy overlays.
      */
     onChartRender: function (this: Highcharts.LegendComponent): void {
-        var component = this;
-
-        // Ignore render after proxy clicked. No need to destroy it, and
-        // destroying also kills focus.
-        if (this.legendProxyButtonClicked) {
-            delete component.legendProxyButtonClicked;
-            return;
+        if (shouldDoLegendA11y(this.chart)) {
+            this.updateProxiesPositions();
+        } else {
+            this.removeProxies();
         }
-
-        this.updateProxies();
     },
 
 
     /**
      * @private
      */
-    updateProxies: function (this: Highcharts.LegendComponent): void {
-        removeElement(this.legendProxyGroup);
+    updateProxiesPositions: function (this: Highcharts.LegendComponent): void {
+        for (const { element, posElement } of this.proxyElementsList) {
+            this.updateProxyButtonPosition(element, posElement);
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    updateProxyPositionForItem: function (
+        this: Highcharts.LegendComponent,
+        item: LegendItem
+    ): void {
+        const proxyRef = find(this.proxyElementsList,
+            (ref: Highcharts.A11yLegendProxyButtonReference): boolean => ref.item === item);
+
+        if (proxyRef) {
+            this.updateProxyButtonPosition(proxyRef.element, proxyRef.posElement);
+        }
+    },
+
+
+    /**
+     * @private
+     */
+    recreateProxies: function (this: Highcharts.LegendComponent): void {
+        this.removeProxies();
 
         if (shouldDoLegendA11y(this.chart)) {
             this.addLegendProxyGroup();
             this.proxyLegendItems();
             this.updateLegendItemProxyVisibility();
         }
+    },
+
+
+    /**
+     * @private
+     */
+    removeProxies: function (this: Highcharts.LegendComponent): void {
+        removeElement(this.legendProxyGroup);
+        this.proxyElementsList = [];
     },
 
 
@@ -272,9 +325,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 this.chart.legend.allItems || []
             );
 
-        items.forEach(function (
-            item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
-        ): void {
+        items.forEach(function (item: LegendItem): void {
             if (item.legendItem && item.legendItem.element) {
                 component.proxyLegendItem(item);
             }
@@ -284,14 +335,17 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
 
     /**
      * @private
-     * @param {Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series} item
+     * @param {Highcharts.BubbleLegend|Point|Highcharts.Series} item
      */
     proxyLegendItem: function (
         this: Highcharts.LegendComponent,
-        item: (Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series)
+        item: LegendItem
     ): void {
-        var component = this,
-            itemLabel = this.chart.langFormat(
+        if (!item.legendItem || !item.legendGroup) {
+            return;
+        }
+
+        const itemLabel = this.chart.langFormat(
                 'accessibility.legend.legendItem',
                 {
                     chart: this.chart,
@@ -303,21 +357,22 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
                 'aria-pressed': !item.visible,
                 'aria-label': itemLabel
             },
-            // Keep track of when we should ignore next render
-            preClickEvent = function (): void {
-                component.legendProxyButtonClicked = true;
-            },
             // Considers useHTML
-            proxyPositioningElement = (item.legendGroup as any).div ?
+            proxyPositioningElement = item.legendGroup.div ?
                 item.legendItem : item.legendGroup;
 
         item.a11yProxyElement = this.createProxyButton(
-            item.legendItem as any,
+            item.legendItem,
             this.legendProxyGroup as any,
             attribs,
-            proxyPositioningElement,
-            preClickEvent
+            proxyPositioningElement
         );
+
+        this.proxyElementsList.push({
+            item: item,
+            element: item.a11yProxyElement,
+            posElement: proxyPositioningElement
+        });
     },
 
 
@@ -414,9 +469,7 @@ extend(LegendComponent.prototype, /** @lends Highcharts.LegendComponent */ {
         this: Highcharts.LegendComponent,
         keyboardNavigationHandler: Highcharts.KeyboardNavigationHandler
     ): number {
-        var legendItem: (
-            Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
-        ) = this.chart.legend.allItems[
+        var legendItem: LegendItem = this.chart.legend.allItems[
             this.highlightedLegendItemIx
         ];
 

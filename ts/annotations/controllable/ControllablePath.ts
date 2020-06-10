@@ -5,7 +5,17 @@
  * */
 
 'use strict';
+
+import type Annotation from '../annotations.src';
+import type SVGPath from '../../parts/SVGPath';
+import controllableMixin from './controllableMixin.js';
 import H from './../../parts/Globals.js';
+import markerMixin from './markerMixin.js';
+import U from './../../parts/Utilities.js';
+const {
+    extend,
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -50,7 +60,7 @@ declare global {
             public redraw(animation?: boolean): void;
             public render(parent: SVGElement): void;
             public shouldBeDrawn(): boolean;
-            public toD(): (SVGPathArray|null);
+            public toD(): (SVGPath|null);
         }
         interface SVGAnnotationElement extends SVGElement {
             markerEndSetter?: AnnotationMarkerMixin['markerEndSetter'];
@@ -59,15 +69,6 @@ declare global {
         }
     }
 }
-
-import U from './../../parts/Utilities.js';
-const {
-    extend,
-    merge
-} = U;
-
-import controllableMixin from './controllableMixin.js';
-import markerMixin from './markerMixin.js';
 
 // See TRACKER_FILL in highcharts.src.js
 var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
@@ -94,7 +95,7 @@ var TRACKER_FILL = 'rgba(192,192,192,' + (H.svg ? 0.0001 : 0.002) + ')';
  **/
 const ControllablePath: typeof Highcharts.AnnotationControllablePath = function (
     this: Highcharts.AnnotationControllablePath,
-    annotation: Highcharts.Annotation,
+    annotation: Annotation,
     options: Highcharts.AnnotationsShapeOptions,
     index: number
 ): void {
@@ -133,13 +134,13 @@ merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationContro
          * @return {Highcharts.SVGPathArray|null}
          * A path's d attribute.
          */
-        toD: function (this: Highcharts.AnnotationControllablePath): (Highcharts.SVGPathArray|null) {
-            var d = this.options.d;
+        toD: function (this: Highcharts.AnnotationControllablePath): (SVGPath|null) {
+            var dOption = this.options.d;
 
-            if (d) {
-                return typeof d === 'function' ?
-                    d.call(this) :
-                    d;
+            if (dOption) {
+                return typeof dOption === 'function' ?
+                    dOption.call(this) :
+                    dOption;
             }
 
             var points = this.points,
@@ -148,32 +149,31 @@ merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationContro
                 point = points[0],
                 position = showPath && this.anchor(point).absolutePosition,
                 pointIndex = 0,
-                dIndex = 2,
-                command;
+                command,
+                d: SVGPath = [];
 
-            d = (position && ['M', position.x, position.y]) as any;
+            if (position) {
+                d.push(['M', position.x, position.y]);
 
-            while (++pointIndex < len && showPath) {
-                point = points[pointIndex];
-                command = point.command || 'L';
-                position = this.anchor(point).absolutePosition;
+                while (++pointIndex < len && showPath) {
+                    point = points[pointIndex];
+                    command = point.command || 'L';
+                    position = this.anchor(point).absolutePosition;
 
-                if (command === 'Z') {
-                    (d as any)[++dIndex] = command;
-                } else {
-                    if (command !== points[pointIndex - 1].command) {
-                        (d as any)[++dIndex] = command;
+                    if (command === 'M') {
+                        d.push([command, position.x, position.y]);
+                    } else if (command === 'L') {
+                        d.push([command, position.x, position.y]);
+                    } else if (command === 'Z') {
+                        d.push([command]);
                     }
 
-                    (d as any)[++dIndex] = position.x;
-                    (d as any)[++dIndex] = position.y;
+                    showPath = point.series.visible;
                 }
-
-                showPath = point.series.visible;
             }
 
             return showPath ?
-                this.chart.renderer.crispLine(d as any, this.graphic.strokeWidth()) :
+                this.chart.renderer.crispLine(d, this.graphic.strokeWidth()) :
                 null;
         },
 
@@ -186,7 +186,7 @@ merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationContro
                 attrs = this.attrsFromOptions(options);
 
             this.graphic = this.annotation.chart.renderer
-                .path(['M', 0, 0])
+                .path([['M', 0, 0]])
                 .attr(attrs)
                 .add(parent);
 
@@ -195,7 +195,7 @@ merge<Highcharts.AnnotationControllablePath, Partial<Highcharts.AnnotationContro
             }
 
             this.tracker = this.annotation.chart.renderer
-                .path(['M', 0, 0])
+                .path([['M', 0, 0]])
                 .addClass('highcharts-tracker-line')
                 .attr({
                     zIndex: 2

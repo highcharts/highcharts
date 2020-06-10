@@ -8,11 +8,11 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+var doc = H.doc;
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
-import '../parts/Chart.js';
-var Chart = H.Chart, doc = H.doc;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -252,11 +252,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             newExt.y <= yAxis.dataMin &&
             newExt.height >= yAxis.dataMax - yAxis.dataMin);
         // When mousewheel zooming, fix the point under the mouse
-        if (mouseX) {
-            xAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
+        if (mouseX && xAxis.mapAxis) {
+            xAxis.mapAxis.fixTo = [mouseX - xAxis.pos, centerXArg];
         }
-        if (mouseY) {
-            yAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
+        if (mouseY && yAxis.mapAxis) {
+            yAxis.mapAxis.fixTo = [mouseY - yAxis.pos, centerYArg];
         }
         // Zoom
         if (typeof howMuch !== 'undefined' && !zoomOut) {

@@ -10,10 +10,8 @@
  *
  * */
 'use strict';
-import H from '../../../../parts/Globals.js';
-var numberFormat = H.numberFormat, format = H.format;
 import U from '../../../../parts/Utilities.js';
-var find = U.find, isNumber = U.isNumber, pick = U.pick, defined = U.defined;
+var find = U.find, format = U.format, isNumber = U.isNumber, numberFormat = U.numberFormat, pick = U.pick, defined = U.defined;
 import AnnotationsA11y from '../AnnotationsA11y.js';
 var getPointAnnotationTexts = AnnotationsA11y.getPointAnnotationTexts;
 import HTMLUtilities from '../../utils/htmlUtilities.js';
@@ -177,7 +175,7 @@ function getSeriesAxisDescriptionText(series, axisCollection) {
  * The description as string.
  */
 function getPointA11yTimeDescription(point) {
-    var series = point.series, chart = series.chart, a11yOptions = chart.options.accessibility.point || {}, hasDateXAxis = series.xAxis && series.xAxis.isDatetimeAxis;
+    var series = point.series, chart = series.chart, a11yOptions = chart.options.accessibility.point || {}, hasDateXAxis = series.xAxis && series.xAxis.dateTime;
     if (hasDateXAxis) {
         var tooltipDateFormat = Tooltip.prototype.getXDateFormat.call({
             getDateFormat: Tooltip.prototype.getDateFormat,
@@ -310,9 +308,11 @@ function describePointsInSeries(series) {
             var pointEl = point.graphic && point.graphic.element ||
                 shouldAddDummyPoint(point) && addDummyPointElement(point);
             if (pointEl) {
-                // We always set tabindex, as long as we are setting
-                // props.
+                // We always set tabindex, as long as we are setting props.
+                // When setting tabindex, also remove default outline to
+                // avoid ugly border on click.
                 pointEl.setAttribute('tabindex', '-1');
+                pointEl.style.outline = '0';
                 if (setScreenReaderProps) {
                     setPointScreenReaderAttribs(point, pointEl);
                 }
@@ -356,6 +356,7 @@ function describeSeriesElement(series, seriesElement) {
         seriesElement.setAttribute('role', 'region');
     } /* else do not add role */
     seriesElement.setAttribute('tabindex', '-1');
+    seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
     seriesElement.setAttribute('aria-label', escapeStringForHTML(stripHTMLTags(a11yOptions.series.descriptionFormatter &&
         a11yOptions.series.descriptionFormatter(series) ||
         defaultSeriesDescriptionFormatter(series))));

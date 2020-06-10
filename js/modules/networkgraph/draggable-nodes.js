@@ -9,10 +9,10 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent;
-var Chart = H.Chart;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 H.dragNodesMixin = {
     /**
@@ -45,7 +45,7 @@ H.dragNodesMixin = {
      */
     onMouseMove: function (point, event) {
         if (point.fixedPosition && point.inDragMode) {
-            var series = this, chart = series.chart, normalizedEvent = chart.pointer.normalize(event), diffX = point.fixedPosition.chartX - normalizedEvent.chartX, diffY = point.fixedPosition.chartY - normalizedEvent.chartY, newPlotX, newPlotY;
+            var series = this, chart = series.chart, normalizedEvent = chart.pointer.normalize(event), diffX = point.fixedPosition.chartX - normalizedEvent.chartX, diffY = point.fixedPosition.chartY - normalizedEvent.chartY, newPlotX, newPlotY, graphLayoutsLookup = chart.graphLayoutsLookup;
             // At least 5px to apply change (avoids simple click):
             if (Math.abs(diffX) > 5 || Math.abs(diffY) > 5) {
                 newPlotX = point.fixedPosition.plotX - diffX;
@@ -55,26 +55,9 @@ H.dragNodesMixin = {
                     point.plotY = newPlotY;
                     point.hasDragged = true;
                     this.redrawHalo(point);
-                    if (!series.layout.simulation) {
-                        // When dragging nodes, we don't need to calculate
-                        // initial positions and rendering nodes:
-                        series.layout.setInitialRendering(false);
-                        // Start new simulation:
-                        if (!series.layout.enableSimulation) {
-                            // Run only one iteration to speed things up:
-                            series.layout.setMaxIterations(1);
-                        }
-                        else {
-                            series.layout.start();
-                        }
-                        series.chart.redraw();
-                        // Restore defaults:
-                        series.layout.setInitialRendering(true);
-                    }
-                    else {
-                        // Extend current simulation:
-                        series.layout.resetSimulation();
-                    }
+                    graphLayoutsLookup.forEach(function (layout) {
+                        layout.restartSimulation();
+                    });
                 }
             }
         }

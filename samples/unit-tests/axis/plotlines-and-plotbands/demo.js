@@ -187,7 +187,7 @@ QUnit.test('General tests', function (assert) {
 
     assert.strictEqual(
         line[line.length - 1],
-        'z',
+        'Z',
         'Border should be rendered around the shape (#5909)'
     );
 
@@ -289,7 +289,7 @@ QUnit.test('#6433 - axis.update leaves empty plotbands\' groups', function (asse
     chart.xAxis[0].update({});
 
     assert.strictEqual(
-        document.getElementsByClassName('highcharts-plot-bands-0').length,
+        chart.container.getElementsByClassName('highcharts-plot-bands-0').length,
         1,
         'Just one plotband group'
     );
@@ -473,6 +473,49 @@ QUnit.test('#8356: support for plot lines & bands labels formatter.', function (
         plotBand.label &&
           plotBand.label.element.textContent.indexOf(formatterCallback()) > -1,
         "Plot band label is visible."
+    );
+
+});
+
+QUnit.test('#13375: Click event on dynamically added plotBands.', function (assert) {
+    var plotBandClicked,
+        chart = Highcharts.chart('container', {
+            series: []
+        });
+
+    chart.xAxis[0].addPlotBand({
+        from: 0,
+        to: 3,
+        id: 'plotband',
+        events: {
+            click: function () {
+                plotBandClicked = true;
+            }
+        }
+    });
+
+    chart.addSeries({
+        data: [1, 2, 3, 4]
+    });
+
+    const controller = new TestController(chart);
+    controller.triggerEvent(
+        'mouseover',
+        (chart.series[0].data[2].plotX) + chart.plotLeft - 20,
+        (chart.series[0].data[2].plotY) + chart.plotTop - 20,
+        {},
+        false
+    );
+    controller.click(
+        (chart.series[0].data[2].plotX) + chart.plotLeft - 20,
+        (chart.series[0].data[2].plotY) + chart.plotTop - 20,
+        {},
+        false
+    );
+
+    assert.ok(
+        plotBandClicked,
+        "Plot band click event was correctly triggered."
     );
 
 });

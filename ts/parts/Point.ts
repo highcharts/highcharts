@@ -10,7 +10,24 @@
 
 'use strict';
 
-import Highcharts from './Globals.js';
+import H from './Globals.js';
+import U from './Utilities.js';
+const {
+    animObject,
+    defined,
+    erase,
+    extend,
+    fireEvent,
+    format,
+    getNestedProperty,
+    isArray,
+    isNumber,
+    isObject,
+    syncTimeout,
+    pick,
+    removeEvent,
+    uniqueKey
+} = U;
 
 /**
  * Internal types
@@ -18,57 +35,6 @@ import Highcharts from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        class Point {
-            public constructor();
-            public color?: ColorType;
-            public colorIndex: number;
-            public formatPrefix: string;
-            public id: string;
-            public isNew?: boolean;
-            public isNull: boolean;
-            public marker?: PointMarkerOptionsObject;
-            public nonZonedColor?: (
-                ColorString|GradientColorObject|PatternObject
-            );
-            public options: PointOptionsObject;
-            public percentage?: number;
-            public series: Series;
-            public shapeArgs?: SVGAttributes;
-            public shapeType?: string;
-            public startXPos?: number;
-            public state?: string;
-            public total?: number;
-            public visible: boolean;
-            public x: (number|null);
-            public y?: (number|null);
-            public animateBeforeDestroy(): void;
-            public applyOptions(options: PointOptionsType, x?: number): Point;
-            public destroy(): void;
-            public destroyElements(kinds?: Dictionary<number>): void;
-            public getClassName(): string;
-            public getGraphicalProps(
-                kinds?: Dictionary<number>
-            ): PointGraphicalProps;
-            public firePointEvent(
-                eventType: string,
-                eventArgs?: (Dictionary<any>|Event),
-                defaultFunction?: (EventCallbackFunction<Point>|Function)
-            ): void;
-            public getLabelConfig(): PointLabelObject;
-            public getNestedProperty(key: string): unknown;
-            public getZone(): SeriesZonesOptions;
-            public hasNewShapeType (this: Point): boolean|undefined;
-            public init(
-                series: Series,
-                options: PointOptionsType,
-                x?: number
-            ): Point;
-            public isValid?(): boolean;
-            public optionsToObject(options: PointOptionsType): Dictionary<any>;
-            public resolveColor(): void;
-            public setNestedProperty<T>(object: T, value: any, key: string): T;
-            public tooltipFormatter(pointFormat: string): string;
-        }
         interface PointGraphicalProps {
             singular: Array<string>;
             plural: Array<string>;
@@ -95,7 +61,7 @@ declare global {
             x?: string;
             y?: (number|null);
             color?: ColorType;
-            colorIndex: number;
+            colorIndex?: number;
             key?: string;
             series: Series;
             point: Point;
@@ -194,8 +160,10 @@ declare global {
             number|string|Array<(number|string)>|PointOptionsObject|null
         );
         type PointStateValue = keyof PointStatesOptionsObject;
+        let Point: PointClass;
     }
 }
+type PointClass = typeof Point;
 
 /**
  * Function callback when a series point is clicked. Return false to cancel the
@@ -243,11 +211,12 @@ declare global {
  * @name Highcharts.PointLabelObject#percentage
  * @type {number}
  *//**
- * The related point.
+ * The related point. The point name, if defined, is available through
+ * `this.point.name`.
  * @name Highcharts.PointLabelObject#point
  * @type {Highcharts.Point}
  *//**
- * The related series.
+ * The related series. The series name is available through `this.series.name`.
  * @name Highcharts.PointLabelObject#series
  * @type {Highcharts.Series}
  *//**
@@ -355,26 +324,6 @@ declare global {
 
 ''; // detach doclet above
 
-import U from './Utilities.js';
-const {
-    animObject,
-    defined,
-    erase,
-    extend,
-    format,
-    getNestedProperty,
-    isArray,
-    isNumber,
-    isObject,
-    syncTimeout,
-    pick,
-    removeEvent,
-    uniqueKey
-} = U;
-
-var H = Highcharts,
-    fireEvent = H.fireEvent;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -412,7 +361,7 @@ class Point {
      * @name Highcharts.Point#colorIndex
      * @type {number}
      */
-    public colorIndex: number = 0;
+    public colorIndex?: number = void 0;
 
     public dataLabels?: Array<Highcharts.SVGElement>;
 
@@ -452,6 +401,8 @@ class Point {
      * @type {string}
      */
     public name: string = void 0 as any;
+
+    public nonZonedColor?: Highcharts.ColorType;
 
     /**
      * The point's options as applied in the initial configuration, or
@@ -531,7 +482,6 @@ class Point {
      *
      * @private
      * @function Highcharts.Point#animateBeforeDestroy
-     * @return {void}
      */
     public animateBeforeDestroy(): void {
         var point = this,
@@ -586,7 +536,7 @@ class Point {
         options: Highcharts.PointOptionsType,
         x?: number
     ): Point {
-        var point: Highcharts.Point = this as any,
+        var point = this,
             series = point.series,
             pointValKey = series.options.pointValKey || series.pointValKey;
 
@@ -652,7 +602,7 @@ class Point {
             }
         }
 
-        return point as any;
+        return point;
     }
 
     /**
@@ -661,10 +611,9 @@ class Point {
      *
      * @private
      * @function Highcharts.Point#destroy
-     * @return {void}
      */
     public destroy(): void {
-        var point: Highcharts.Point = this as any,
+        var point = this,
             series = point.series,
             chart = series.chart,
             dataSorting = series.options.dataSorting,
@@ -678,18 +627,6 @@ class Point {
          * @private
          */
         function destroyPoint(): void {
-            if (hoverPoints) {
-                point.setState();
-                erase(hoverPoints, point);
-                if (!hoverPoints.length) {
-                    chart.hoverPoints = null as any;
-                }
-
-            }
-            if (point === chart.hoverPoint) {
-                point.onMouseOut();
-            }
-
             // Remove all events and elements
             if (point.graphic || point.dataLabel || point.dataLabels) {
                 removeEvent(point);
@@ -703,6 +640,18 @@ class Point {
 
         if (point.legendItem) { // pies have legend items
             chart.legend.destroyItem(point);
+        }
+
+        if (hoverPoints) {
+            point.setState();
+            erase(hoverPoints, point);
+            if (!hoverPoints.length) {
+                chart.hoverPoints = null as any;
+            }
+
+        }
+        if (point === chart.hoverPoint) {
+            point.onMouseOut();
         }
 
         // Remove properties after animation
@@ -723,7 +672,6 @@ class Point {
      * @private
      * @function Highcharts.Point#destroyElements
      * @param {Highcharts.Dictionary<number>} [kinds]
-     * @return {void}
      */
     public destroyElements(kinds?: Highcharts.Dictionary<number>): void {
         var point = this,
@@ -765,10 +713,10 @@ class Point {
         eventType: string,
         eventArgs?: (Highcharts.Dictionary<any>|Event),
         defaultFunction?: (
-            Highcharts.EventCallbackFunction<Highcharts.Point>|Function
+            Highcharts.EventCallbackFunction<Point>|Function
         )
     ): void {
-        var point: Highcharts.Point = this as any,
+        var point = this,
             series = this.series,
             seriesOptions = series.options;
 
@@ -810,7 +758,7 @@ class Point {
      *         The class names.
      */
     public getClassName(): string {
-        const point: Highcharts.Point = this as any;
+        const point = this;
         return 'highcharts-point' +
             (point.selected ? ' highcharts-point-select' : '') +
             (point.negative ? ' highcharts-negative' : '') +
@@ -923,14 +871,14 @@ class Point {
         }
 
         // For resetting or reusing the point (#8100)
-        if (!(this as any).nonZonedColor) {
-            (this as any).nonZonedColor = this.color;
+        if (!this.nonZonedColor) {
+            this.nonZonedColor = this.color;
         }
 
         if (zone && zone.color && !this.options.color) {
             this.color = zone.color;
         } else {
-            this.color = (this as any).nonZonedColor;
+            this.color = this.nonZonedColor;
         }
 
         return zone;
@@ -943,7 +891,7 @@ class Point {
      * @return boolean|undefined
      */
     public hasNewShapeType(): boolean|undefined {
-        const point: Highcharts.Point = this as any;
+        const point = this;
         const oldShapeType = point.graphic &&
             (point.graphic.symbolName || point.graphic.element.nodeName);
         return oldShapeType !== this.shapeType;
@@ -1032,7 +980,7 @@ class Point {
                     if (pointArrayMap[j].indexOf('.') > 0) {
                         // Handle nested keys, e.g. ['color.pattern.image']
                         // Avoid function call unless necessary.
-                        H.Point.prototype.setNestedProperty(
+                        Point.prototype.setNestedProperty(
                             ret, (options as any)[i], pointArrayMap[j]
                         );
                     } else {
@@ -1073,6 +1021,9 @@ class Point {
             colorCount = optionsChart.colorCount,
             styledMode = series.chart.styledMode,
             colorIndex: number;
+
+        // remove points nonZonedColor for later recalculation
+        delete (this as any).nonZonedColor;
 
         /**
          * The point's current color.
@@ -1198,10 +1149,10 @@ class Point {
     }
 }
 
-H.Point = Point as any;
+interface Point extends Highcharts.PointLike {
+    // merge extensions with point class
+}
 
-const pointModule = {
-    Point
-};
+H.Point = Point;
 
-export default pointModule;
+export default Point;

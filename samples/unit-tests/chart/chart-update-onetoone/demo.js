@@ -151,6 +151,45 @@
 
 }());
 
+QUnit.test('Series update with ids', assert => {
+    const chart = Highcharts.chart('container', {
+        series: [{
+            id: 's1',
+            name: 'S1',
+            data: [1, 2, 3]
+        }, {
+            name: 'S2',
+            id: 's2',
+            data: [1.5, 2.5, 3.5]
+        }]
+    });
+
+    assert.deepEqual(
+        chart.series.map(s => s.name),
+        ['S1', 'S2'],
+        'Initial series names'
+    );
+
+    chart.update({
+        series: [{
+            name: 'S2',
+            id: 's2',
+            data: [1.5, 2.5, 3.5]
+        }, {
+            id: 's3',
+            name: 'S3',
+            data: [3, 2, 1]
+        }]
+    }, true, true);
+
+    assert.deepEqual(
+        chart.series.map(s => s.name),
+        ['S2', 'S3'],
+        'Updating with ids, cleanly update and replace (#13541)'
+    );
+
+});
+
 QUnit.test('Axis update', function (assert) {
     var chart = Highcharts.chart('container', {
         series: [{

@@ -42,7 +42,7 @@ declare global {
             public drawPoints(): void;
             public getRows(): number;
             public getSlots(): (Array<ItemGeometryObject>|undefined);
-            public translate(): void;
+            public translate(positions?: Array<number>): void;
         }
         interface ItemPointOptions extends PiePointOptions {
         }
@@ -62,7 +62,6 @@ declare global {
             row: ItemRowObject;
         }
         interface ItemSeriesOptions extends PieSeriesOptions {
-            crisp?: number;
             itemPadding?: number;
             layout?: string;
             marker?: ItemPointMarkerOptions;
@@ -72,10 +71,13 @@ declare global {
     }
 }
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import U from '../parts/Utilities.js';
 const {
     defined,
     extend,
+    fireEvent,
     isNumber,
     merge,
     objectEach,
@@ -85,8 +87,7 @@ const {
 
 import '../parts/Series.js';
 
-var fireEvent = H.fireEvent,
-    piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
+var piePoint = H.seriesTypes.pie.prototype.pointClass.prototype;
 
 /**
  * The item series type.
@@ -170,7 +171,7 @@ seriesType<Highcharts.ItemSeries>(
          * @extends plotOptions.series.marker
          */
         marker: merge(
-            (H.defaultOptions.plotOptions as any).line.marker,
+            (defaultOptions.plotOptions as any).line.marker,
             {
                 radius: null
             }
@@ -184,6 +185,7 @@ seriesType<Highcharts.ItemSeries>(
          * @type {number}
          */
         rows: void 0,
+        crisp: false,
         showInLegend: true,
         /**
          * In circular view, the start angle of the item layout, in degrees
@@ -197,7 +199,15 @@ seriesType<Highcharts.ItemSeries>(
     },
     // Prototype members
     {
-        translate: function (this: Highcharts.ItemSeries): void {
+        markerAttribs: void 0,
+        translate: function (this: Highcharts.ItemSeries,
+            positions?: Array<number>
+        ): void {
+
+            // Initialize chart without setting data, #13379.
+            if (this.total === 0) {
+                this.center = this.getCenter();
+            }
             if (!this.slots) {
                 this.slots = [];
             }
@@ -205,7 +215,7 @@ seriesType<Highcharts.ItemSeries>(
                 isNumber(this.options.startAngle) &&
                 isNumber(this.options.endAngle)
             ) {
-                H.seriesTypes.pie.prototype.translate.call(this);
+                H.seriesTypes.pie.prototype.translate.apply(this, arguments);
                 this.slots = this.getSlots();
             } else {
                 this.generatePoints();
@@ -241,10 +251,11 @@ seriesType<Highcharts.ItemSeries>(
                 testRows: (Array<Highcharts.ItemRowObject>|undefined),
                 rowsOption = this.options.rows,
                 // How many rows (arcs) should be used
-                rowFraction = (diameter - innerSize) / diameter;
+                rowFraction = (diameter - innerSize) / diameter,
+                isCircle: boolean = fullAngle % (2 * Math.PI) === 0;
 
             // Increase the itemSize until we find the best fit
-            while (itemCount > (this.total as any)) {
+            while (itemCount > (this.total as any) + (rows && isCircle ? rows.length : 0)) {
 
                 finalItemCount = itemCount;
 
@@ -304,7 +315,8 @@ seriesType<Highcharts.ItemSeries>(
             // the rows and remove the last slot until the count is correct.
             // For each iteration we sort the last slot by the angle, and
             // remove those with the highest angles.
-            var overshoot = (finalItemCount as any) - (this.total as any);
+            var overshoot = (finalItemCount as any) - (this.total as any) -
+                (isCircle ? rows.length : 0);
             /**
              * @private
              * @param {Highcharts.ItemRowContainerObject} item
@@ -488,7 +500,6 @@ seriesType<Highcharts.ItemSeries>(
                         y += padding;
                         width = Math.round(size - 2 * padding);
                         height = width;
-
                         if (series.options.crisp) {
                             x = Math.round(x) - crisp;
                             y = Math.round(y) + crisp;
@@ -565,7 +576,6 @@ seriesType<Highcharts.ItemSeries>(
                 (this.group as any).animate({
                     opacity: 1
                 }, this.options.animation);
-                this.animate = null as any;
             }
         }
     },

@@ -8,17 +8,19 @@
  *
  * */
 'use strict';
-import H from './Globals.js';
-import U from './Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
+import Axis from './Axis.js';
+import Chart from '../parts/Chart.js';
 import Color from './Color.js';
 var color = Color.parse;
+import H from './Globals.js';
+import NavigatorAxis from './NavigatorAxis.js';
+import O from './Options.js';
+var defaultOptions = O.defaultOptions;
 import Scrollbar from './Scrollbar.js';
-import './Axis.js';
-import './Chart.js';
+import U from './Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, correctFloat = U.correctFloat, defined = U.defined, destroyObjectProperties = U.destroyObjectProperties, erase = U.erase, extend = U.extend, find = U.find, isArray = U.isArray, isNumber = U.isNumber, merge = U.merge, pick = U.pick, removeEvent = U.removeEvent, splat = U.splat;
 import './Series.js';
-import './Options.js';
-var Axis = H.Axis, Chart = H.Chart, defaultOptions = H.defaultOptions, hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
+var hasTouch = H.hasTouch, isTouchDevice = H.isTouchDevice, Series = H.Series, seriesTypes = H.seriesTypes, defaultSeriesType, 
 // Finding the min or max of a set of variables where we don't know if they
 // are defined, is a pattern that is repeated several places in Highcharts.
 // Consider making this a global utility method.
@@ -494,67 +496,18 @@ extend(defaultOptions, {
  *         Path to be used in a handle
  */
 H.Renderer.prototype.symbols['navigator-handle'] = function (x, y, w, h, options) {
-    var halfWidth = options.width / 2, markerPosition = Math.round(halfWidth / 3) + 0.5, height = options.height;
+    var halfWidth = (options && options.width || 0) / 2, markerPosition = Math.round(halfWidth / 3) + 0.5, height = options && options.height || 0;
     return [
-        'M',
-        -halfWidth - 1, 0.5,
-        'L',
-        halfWidth, 0.5,
-        'L',
-        halfWidth, height + 0.5,
-        'L',
-        -halfWidth - 1, height + 0.5,
-        'L',
-        -halfWidth - 1, 0.5,
-        'M',
-        -markerPosition, 4,
-        'L',
-        -markerPosition, height - 3,
-        'M',
-        markerPosition - 1, 4,
-        'L',
-        markerPosition - 1, height - 3
+        ['M', -halfWidth - 1, 0.5],
+        ['L', halfWidth, 0.5],
+        ['L', halfWidth, height + 0.5],
+        ['L', -halfWidth - 1, height + 0.5],
+        ['L', -halfWidth - 1, 0.5],
+        ['M', -markerPosition, 4],
+        ['L', -markerPosition, height - 3],
+        ['M', markerPosition - 1, 4],
+        ['L', markerPosition - 1, height - 3]
     ];
-};
-/**
- * Add logic to normalize the zoomed range in order to preserve the pressed
- * state of range selector buttons
- *
- * @private
- * @function Highcharts.Axis#toFixedRange
- * @param {number} [pxMin]
- * @param {number} [pxMax]
- * @param {number} [fixedMin]
- * @param {number} [fixedMax]
- * @return {*}
- */
-Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
-    var fixedRange = this.chart && this.chart.fixedRange, halfPointRange = (this.pointRange || 0) / 2, newMin = pick(fixedMin, this.translate(pxMin, true, !this.horiz)), newMax = pick(fixedMax, this.translate(pxMax, true, !this.horiz)), changeRatio = fixedRange && (newMax - newMin) / fixedRange;
-    // Add/remove half point range to/from the extremes (#1172)
-    if (!defined(fixedMin)) {
-        newMin = correctFloat(newMin + halfPointRange);
-    }
-    if (!defined(fixedMax)) {
-        newMax = correctFloat(newMax - halfPointRange);
-    }
-    // If the difference between the fixed range and the actual requested range
-    // is too great, the user is dragging across an ordinal gap, and we need to
-    // release the range selector button.
-    if (changeRatio > 0.7 && changeRatio < 1.3) {
-        if (fixedMax) {
-            newMin = newMax - fixedRange;
-        }
-        else {
-            newMax = newMin + fixedRange;
-        }
-    }
-    if (!isNumber(newMin) || !isNumber(newMax)) { // #1195, #7411
-        newMin = newMax = void 0;
-    }
-    return {
-        min: newMin,
-        max: newMax
-    };
 };
 /**
  * The Navigator class
@@ -566,10 +519,32 @@ Axis.prototype.toFixedRange = function (pxMin, pxMax, fixedMin, fixedMax) {
  * @param {Highcharts.Chart} chart
  *        Chart object
  */
-function Navigator(chart) {
-    this.init(chart);
-}
-Navigator.prototype = {
+var Navigator = /** @class */ (function () {
+    function Navigator(chart) {
+        this.baseSeries = void 0;
+        this.chart = void 0;
+        this.handles = void 0;
+        this.height = void 0;
+        this.left = void 0;
+        this.navigatorEnabled = void 0;
+        this.navigatorGroup = void 0;
+        this.navigatorOptions = void 0;
+        this.navigatorSeries = void 0;
+        this.navigatorSize = void 0;
+        this.opposite = void 0;
+        this.outline = void 0;
+        this.outlineHeight = void 0;
+        this.range = void 0;
+        this.rendered = void 0;
+        this.shades = void 0;
+        this.size = void 0;
+        this.top = void 0;
+        this.xAxis = void 0;
+        this.yAxis = void 0;
+        this.zoomedMax = void 0;
+        this.zoomedMin = void 0;
+        this.init(chart);
+    }
     /**
      * Draw one of the handles on the side of the zoomed range in the navigator
      *
@@ -588,7 +563,7 @@ Navigator.prototype = {
      * @param {string} verb
      *        use 'animate' or 'attr'
      */
-    drawHandle: function (x, index, inverted, verb) {
+    Navigator.prototype.drawHandle = function (x, index, inverted, verb) {
         var navigator = this, height = navigator.navigatorOptions.handles.height;
         // Place it
         navigator.handles[index][verb](inverted ? {
@@ -598,7 +573,7 @@ Navigator.prototype = {
             translateX: Math.round(navigator.left + parseInt(x, 10)),
             translateY: Math.round(navigator.top + navigator.height / 2 - height / 2 - 1)
         });
-    },
+    };
     /**
      * Render outline around the zoomed range
      *
@@ -617,79 +592,49 @@ Navigator.prototype = {
      * @param {string} verb
      *        use 'animate' or 'attr'
      */
-    drawOutline: function (zoomedMin, zoomedMax, inverted, verb) {
+    Navigator.prototype.drawOutline = function (zoomedMin, zoomedMax, inverted, verb) {
         var navigator = this, maskInside = navigator.navigatorOptions.maskInside, outlineWidth = navigator.outline.strokeWidth(), halfOutline = outlineWidth / 2, outlineCorrection = (outlineWidth % 2) / 2, // #5800
-        outlineHeight = navigator.outlineHeight, scrollbarHeight = navigator.scrollbarHeight, navigatorSize = navigator.size, left = navigator.left - scrollbarHeight, navigatorTop = navigator.top, verticalMin, path;
+        outlineHeight = navigator.outlineHeight, scrollbarHeight = navigator.scrollbarHeight || 0, navigatorSize = navigator.size, left = navigator.left - scrollbarHeight, navigatorTop = navigator.top, verticalMin, path;
         if (inverted) {
             left -= halfOutline;
             verticalMin = navigatorTop + zoomedMax + outlineCorrection;
             zoomedMax = navigatorTop + zoomedMin + outlineCorrection;
             path = [
-                'M',
-                left + outlineHeight,
-                // top edge
-                navigatorTop - scrollbarHeight - outlineCorrection,
-                'L',
-                left + outlineHeight,
-                verticalMin,
-                'L',
-                left,
-                verticalMin,
-                'L',
-                left,
-                zoomedMax,
-                'L',
-                left + outlineHeight,
-                zoomedMax,
-                'L',
-                left + outlineHeight,
-                // bottom edge
-                navigatorTop + navigatorSize + scrollbarHeight
-            ].concat(maskInside ? [
-                'M',
-                left + outlineHeight,
-                verticalMin - halfOutline,
-                'L',
-                left + outlineHeight,
-                zoomedMax + halfOutline // upper right of z.r.
-            ] : []);
+                ['M', left + outlineHeight, navigatorTop - scrollbarHeight - outlineCorrection],
+                ['L', left + outlineHeight, verticalMin],
+                ['L', left, verticalMin],
+                ['L', left, zoomedMax],
+                ['L', left + outlineHeight, zoomedMax],
+                ['L', left + outlineHeight, navigatorTop + navigatorSize + scrollbarHeight]
+            ];
+            if (maskInside) {
+                path.push(['M', left + outlineHeight, verticalMin - halfOutline], // upper left of zoomed range
+                ['L', left + outlineHeight, zoomedMax + halfOutline] // upper right of z.r.
+                );
+            }
         }
         else {
             zoomedMin += left + scrollbarHeight - outlineCorrection;
             zoomedMax += left + scrollbarHeight - outlineCorrection;
             navigatorTop += halfOutline;
             path = [
-                'M',
-                left,
-                navigatorTop,
-                'L',
-                zoomedMin,
-                navigatorTop,
-                'L',
-                zoomedMin,
-                navigatorTop + outlineHeight,
-                'L',
-                zoomedMax,
-                navigatorTop + outlineHeight,
-                'L',
-                zoomedMax,
-                navigatorTop,
-                'L',
-                left + navigatorSize + scrollbarHeight * 2,
-                navigatorTop // right
-            ].concat(maskInside ? [
-                'M',
-                zoomedMin - halfOutline,
-                navigatorTop,
-                'L',
-                zoomedMax + halfOutline,
-                navigatorTop // upper right of z.r.
-            ] : []);
+                ['M', left, navigatorTop],
+                ['L', zoomedMin, navigatorTop],
+                ['L', zoomedMin, navigatorTop + outlineHeight],
+                ['L', zoomedMax, navigatorTop + outlineHeight],
+                ['L', zoomedMax, navigatorTop],
+                ['L', left + navigatorSize + scrollbarHeight * 2, navigatorTop] // right
+            ];
+            if (maskInside) {
+                path.push(['M', zoomedMin - halfOutline, navigatorTop], // upper left of zoomed range
+                ['L', zoomedMax + halfOutline, navigatorTop] // upper right of z.r.
+                );
+            }
         }
         navigator.outline[verb]({
             d: path
         });
-    },
+    };
     /**
      * Render outline around the zoomed range
      *
@@ -708,7 +653,7 @@ Navigator.prototype = {
      * @param {string} verb
      *        use 'animate' or 'attr'
      */
-    drawMasks: function (zoomedMin, zoomedMax, inverted, verb) {
+    Navigator.prototype.drawMasks = function (zoomedMin, zoomedMax, inverted, verb) {
         var navigator = this, left = navigator.left, top = navigator.top, navigatorHeight = navigator.height, height, width, x, y;
         // Determine rectangle position & size
         // According to (non)inverted position:
@@ -740,7 +685,7 @@ Navigator.prototype = {
                 height: height[i]
             });
         });
-    },
+    };
     /**
      * Generate DOM elements for a navigator:
      *
@@ -755,7 +700,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#renderElements
      */
-    renderElements: function () {
+    Navigator.prototype.renderElements = function () {
         var navigator = this, navigatorOptions = navigator.navigatorOptions, maskInside = navigatorOptions.maskInside, chart = navigator.chart, inverted = chart.inverted, renderer = chart.renderer, navigatorGroup, mouseCursor = {
             cursor: inverted ? 'ns-resize' : 'ew-resize'
         };
@@ -819,7 +764,7 @@ Navigator.prototype = {
                 }
             });
         }
-    },
+    };
     /**
      * Update navigator
      *
@@ -829,7 +774,7 @@ Navigator.prototype = {
      * @param {Highcharts.NavigatorOptions} options
      *        Options to merge in when updating navigator
      */
-    update: function (options) {
+    Navigator.prototype.update = function (options) {
         // Remove references to old navigator series in base series
         (this.series || []).forEach(function (series) {
             if (series.baseSeries) {
@@ -841,7 +786,7 @@ Navigator.prototype = {
         var chartOptions = this.chart.options;
         merge(true, chartOptions.navigator, this.options, options);
         this.init(this.chart);
-    },
+    };
     /**
      * Render the navigator
      *
@@ -857,8 +802,8 @@ Navigator.prototype = {
      *        Pixel value maximum
      * @return {void}
      */
-    render: function (min, max, pxMin, pxMax) {
-        var navigator = this, chart = navigator.chart, navigatorWidth, scrollbarLeft, scrollbarTop, scrollbarHeight = navigator.scrollbarHeight, navigatorSize, xAxis = navigator.xAxis, pointRange = xAxis.pointRange || 0, scrollbarXAxis = xAxis.fake ? chart.xAxis[0] : xAxis, navigatorEnabled = navigator.navigatorEnabled, zoomedMin, zoomedMax, rendered = navigator.rendered, inverted = chart.inverted, verb, newMin, newMax, currentRange, minRange = chart.xAxis[0].minRange, maxRange = chart.xAxis[0].options.maxRange;
+    Navigator.prototype.render = function (min, max, pxMin, pxMax) {
+        var navigator = this, chart = navigator.chart, navigatorWidth, scrollbarLeft, scrollbarTop, scrollbarHeight = navigator.scrollbarHeight, navigatorSize, xAxis = navigator.xAxis, pointRange = xAxis.pointRange || 0, scrollbarXAxis = xAxis.navigatorAxis.fake ? chart.xAxis[0] : xAxis, navigatorEnabled = navigator.navigatorEnabled, zoomedMin, zoomedMax, rendered = navigator.rendered, inverted = chart.inverted, verb, newMin, newMax, currentRange, minRange = chart.xAxis[0].minRange, maxRange = chart.xAxis[0].options.maxRange;
         // Don't redraw while moving the handles (#4703).
         if (this.hasDragged && !defined(pxMin)) {
             return;
@@ -965,14 +910,14 @@ Navigator.prototype = {
             navigator.zoomedMin / (navigatorSize || 1), navigator.zoomedMax / (navigatorSize || 1));
         }
         navigator.rendered = true;
-    },
+    };
     /**
      * Set up the mouse and touch events for the navigator
      *
      * @private
      * @function Highcharts.Navigator#addMouseEvents
      */
-    addMouseEvents: function () {
+    Navigator.prototype.addMouseEvents = function () {
         var navigator = this, chart = navigator.chart, container = chart.container, eventsToUnbind = [], mouseMoveHandler, mouseUpHandler;
         /**
          * Create mouse events' handlers.
@@ -1002,7 +947,7 @@ Navigator.prototype = {
                 chart.navigator.modifyNavigatorAxisExtremes();
             }));
         }
-    },
+    };
     /**
      * Generate events for handles and masks
      *
@@ -1016,7 +961,7 @@ Navigator.prototype = {
      *         An array of functions to remove navigator functions from the
      *         events again.
      */
-    getPartsEvents: function (eventName) {
+    Navigator.prototype.getPartsEvents = function (eventName) {
         var navigator = this, events = [];
         ['shades', 'handles'].forEach(function (name) {
             navigator[name].forEach(function (navigatorItem, index) {
@@ -1026,7 +971,7 @@ Navigator.prototype = {
             });
         });
         return events;
-    },
+    };
     /**
      * Mousedown on a shaded mask, either:
      *
@@ -1043,7 +988,7 @@ Navigator.prototype = {
      * @param {number} index
      *        Index of a mask in Navigator.shades array
      */
-    shadesMousedown: function (e, index) {
+    Navigator.prototype.shadesMousedown = function (e, index) {
         e = this.chart.pointer.normalize(e);
         var navigator = this, chart = navigator.chart, xAxis = navigator.xAxis, zoomedMin = navigator.zoomedMin, navigatorPosition = navigator.left, navigatorSize = navigator.size, range = navigator.range, chartX = e.chartX, fixedMax, fixedMin, ext, left;
         // For inverted chart, swap some options:
@@ -1077,14 +1022,14 @@ Navigator.prototype = {
             }
             if (left !== zoomedMin) { // it has actually moved
                 navigator.fixedWidth = range; // #1370
-                ext = xAxis.toFixedRange(left, left + range, fixedMin, fixedMax);
+                ext = xAxis.navigatorAxis.toFixedRange(left, left + range, fixedMin, fixedMax);
                 if (defined(ext.min)) { // #7411
                     chart.xAxis[0].setExtremes(Math.min(ext.min, ext.max), Math.max(ext.min, ext.max), true, null, // auto animation
                     { trigger: 'navigator' });
                 }
             }
         }
-    },
+    };
     /**
      * Mousedown on a handle mask.
      * Will store necessary information for drag&drop.
@@ -1097,7 +1042,7 @@ Navigator.prototype = {
      *        Index of a handle in Navigator.handles array
      * @return {void}
      */
-    handlesMousedown: function (e, index) {
+    Navigator.prototype.handlesMousedown = function (e, index) {
         e = this.chart.pointer.normalize(e);
         var navigator = this, chart = navigator.chart, baseXAxis = chart.xAxis[0], 
         // For reversed axes, min and max are changed,
@@ -1116,7 +1061,7 @@ Navigator.prototype = {
             navigator.fixedExtreme = reverse ? baseXAxis.max : baseXAxis.min;
         }
         chart.fixedRange = null;
-    },
+    };
     /**
      * Mouse move event based on x/y mouse position.
      *
@@ -1126,7 +1071,7 @@ Navigator.prototype = {
      * @param {Highcharts.PointerEventObject} e
      *        Mouse event
      */
-    onMouseMove: function (e) {
+    Navigator.prototype.onMouseMove = function (e) {
         var navigator = this, chart = navigator.chart, left = navigator.left, navigatorSize = navigator.navigatorSize, range = navigator.range, dragOffset = navigator.dragOffset, inverted = chart.inverted, chartX;
         // In iOS, a mousemove event with e.pageX === 0 is fired when holding
         // the finger down in the center of the scrollbar. This should be
@@ -1174,7 +1119,7 @@ Navigator.prototype = {
                 }, 0);
             }
         }
-    },
+    };
     /**
      * Mouse up event based on x/y mouse position.
      *
@@ -1184,7 +1129,7 @@ Navigator.prototype = {
      *        Mouse event
      * @return {void}
      */
-    onMouseUp: function (e) {
+    Navigator.prototype.onMouseUp = function (e) {
         var navigator = this, chart = navigator.chart, xAxis = navigator.xAxis, scrollbar = navigator.scrollbar, DOMEvent = e.DOMEvent || e, inverted = chart.inverted, verb = navigator.rendered && !navigator.hasDragged ?
             'animate' : 'attr', zoomedMax = Math.round(navigator.zoomedMax), zoomedMin = Math.round(navigator.zoomedMin), unionExtremes, fixedMin, fixedMax, ext;
         if (
@@ -1213,7 +1158,7 @@ Navigator.prototype = {
                     unionExtremes.dataMax :
                     unionExtremes.dataMin;
             }
-            ext = xAxis.toFixedRange(navigator.zoomedMin, navigator.zoomedMax, fixedMin, fixedMax);
+            ext = xAxis.navigatorAxis.toFixedRange(navigator.zoomedMin, navigator.zoomedMax, fixedMin, fixedMax);
             if (defined(ext.min)) {
                 chart.xAxis[0].setExtremes(Math.min(ext.min, ext.max), Math.max(ext.min, ext.max), true, 
                 // Run animation when clicking buttons, scrollbar track etc,
@@ -1247,7 +1192,7 @@ Navigator.prototype = {
                 navigator.drawHandle(zoomedMax, 1, inverted, verb);
             }
         }
-    },
+    };
     /**
      * Removes the event handlers attached previously with addEvents.
      *
@@ -1255,7 +1200,7 @@ Navigator.prototype = {
      * @function Highcharts.Navigator#removeEvents
      * @return {void}
      */
-    removeEvents: function () {
+    Navigator.prototype.removeEvents = function () {
         if (this.eventsToUnbind) {
             this.eventsToUnbind.forEach(function (unbind) {
                 unbind();
@@ -1263,7 +1208,7 @@ Navigator.prototype = {
             this.eventsToUnbind = void 0;
         }
         this.removeBaseSeriesEvents();
-    },
+    };
     /**
      * Remove data events.
      *
@@ -1271,7 +1216,7 @@ Navigator.prototype = {
      * @function Highcharts.Navigator#removeBaseSeriesEvents
      * @return {void}
      */
-    removeBaseSeriesEvents: function () {
+    Navigator.prototype.removeBaseSeriesEvents = function () {
         var baseSeries = this.baseSeries || [];
         if (this.navigatorEnabled && baseSeries[0]) {
             if (this.navigatorOptions.adaptToUpdatedData !== false) {
@@ -1284,7 +1229,7 @@ Navigator.prototype = {
                 removeEvent(baseSeries[0].xAxis, 'foundExtremes', this.modifyBaseAxisExtremes);
             }
         }
-    },
+    };
     /**
      * Initialize the Navigator object
      *
@@ -1293,7 +1238,7 @@ Navigator.prototype = {
      *
      * @param {Highcharts.Chart} chart
      */
-    init: function (chart) {
+    Navigator.prototype.init = function (chart) {
         var chartOptions = chart.options, navigatorOptions = chartOptions.navigator, navigatorEnabled = navigatorOptions.enabled, scrollbarOptions = chartOptions.scrollbar, scrollbarEnabled = scrollbarOptions.enabled, height = navigatorEnabled ? navigatorOptions.height : 0, scrollbarHeight = scrollbarEnabled ?
             scrollbarOptions.height :
             0;
@@ -1374,6 +1319,10 @@ Navigator.prototype = {
         }
         else {
             navigator.xAxis = {
+                chart: chart,
+                navigatorAxis: {
+                    fake: true
+                },
                 translate: function (value, reverse) {
                     var axis = chart.xAxis[0], ext = axis.getExtremes(), scrollTrackWidth = axis.len - 2 * scrollbarHeight, min = numExt('min', axis.options.min, ext.dataMin), valueRange = numExt('max', axis.options.max, ext.dataMax) - min;
                     return reverse ?
@@ -1387,10 +1336,10 @@ Navigator.prototype = {
                 },
                 toValue: function (value) {
                     return this.translate(value, true);
-                },
-                toFixedRange: Axis.prototype.toFixedRange,
-                fake: true
+                }
             };
+            navigator.xAxis.navigatorAxis.axis = navigator.xAxis;
+            navigator.xAxis.navigatorAxis.toFixedRange = (NavigatorAxis.AdditionsClass.prototype.toFixedRange.bind(navigator.xAxis.navigatorAxis));
         }
         // Initialize the scrollbar
         if (chart.options.scrollbar.enabled) {
@@ -1415,7 +1364,7 @@ Navigator.prototype = {
         navigator.addBaseSeriesEvents();
         // Add redraw events
         navigator.addChartEvents();
-    },
+    };
     /**
      * Get the union data extremes of the chart - the outer data extremes of the
      * base X axis and the navigator axis.
@@ -1426,7 +1375,7 @@ Navigator.prototype = {
      *        as the param says.
      * @return {Highcharts.Dictionary<(number|undefined)>|undefined}
      */
-    getUnionExtremes: function (returnFalseOnNoBaseSeries) {
+    Navigator.prototype.getUnionExtremes = function (returnFalseOnNoBaseSeries) {
         var baseAxis = this.chart.xAxis[0], navAxis = this.xAxis, navAxisOptions = navAxis.options, baseAxisOptions = baseAxis.options, ret;
         if (!returnFalseOnNoBaseSeries || baseAxis.dataMin !== null) {
             ret = {
@@ -1436,7 +1385,7 @@ Navigator.prototype = {
             };
         }
         return ret;
-    },
+    };
     /**
      * Set the base series and update the navigator series from this. With a bit
      * of modification we should be able to make this an API method to be called
@@ -1450,7 +1399,7 @@ Navigator.prototype = {
      *        Whether to redraw after update.
      * @return {void}
      */
-    setBaseSeries: function (baseSeriesOptions, redraw) {
+    Navigator.prototype.setBaseSeries = function (baseSeriesOptions, redraw) {
         var chart = this.chart, baseSeries = this.baseSeries = [];
         baseSeriesOptions = (baseSeriesOptions ||
             chart.options && chart.options.navigator.baseSeries ||
@@ -1474,10 +1423,10 @@ Navigator.prototype = {
             }
         });
         // When run after render, this.xAxis already exists
-        if (this.xAxis && !this.xAxis.fake) {
+        if (this.xAxis && !this.xAxis.navigatorAxis.fake) {
             this.updateNavigatorSeries(true, redraw);
         }
-    },
+    };
     /**
      * Update series in the navigator from baseSeries, adding new if does not
      * exist.
@@ -1488,7 +1437,7 @@ Navigator.prototype = {
      * @param {boolean} [redraw]
      * @return {void}
      */
-    updateNavigatorSeries: function (addEvents, redraw) {
+    Navigator.prototype.updateNavigatorSeries = function (addEvents, redraw) {
         var navigator = this, chart = navigator.chart, baseSeries = navigator.baseSeries, baseOptions, mergedNavSeriesOptions, chartNavigatorSeriesOptions = navigator.navigatorOptions.series, baseNavigatorOptions, navSeriesMixin = {
             enableMouseTracking: false,
             index: null,
@@ -1498,7 +1447,7 @@ Navigator.prototype = {
             xAxis: 'navigator-x-axis',
             yAxis: 'navigator-y-axis',
             showInLegend: false,
-            stacking: false,
+            stacking: void 0,
             isInternal: true,
             states: {
                 inactive: {
@@ -1609,7 +1558,7 @@ Navigator.prototype = {
         if (addEvents) {
             this.addBaseSeriesEvents();
         }
-    },
+    };
     /**
      * Add data events.
      * For example when main series is updated we need to recalculate extremes
@@ -1618,7 +1567,7 @@ Navigator.prototype = {
      * @function Highcharts.Navigator#addBaseSeriesEvent
      * @return {void}
      */
-    addBaseSeriesEvents: function () {
+    Navigator.prototype.addBaseSeriesEvents = function () {
         var navigator = this, baseSeries = navigator.baseSeries || [];
         // Bind modified extremes event to first base's xAxis only.
         // In event of > 1 base-xAxes, the navigator will ignore those.
@@ -1657,7 +1606,7 @@ Navigator.prototype = {
                 }
             });
         }, this);
-    },
+    };
     /**
      * Get minimum from all base series connected to the navigator
      * @private
@@ -1665,12 +1614,12 @@ Navigator.prototype = {
      *         Minium from the current series
      * @return {number} Minimum from all series
      */
-    getBaseSeriesMin: function (currentSeriesMin) {
+    Navigator.prototype.getBaseSeriesMin = function (currentSeriesMin) {
         return this.baseSeries.reduce(function (min, series) {
             // (#10193)
             return Math.min(min, series.xData ? series.xData[0] : min);
         }, currentSeriesMin);
-    },
+    };
     /**
      * Set the navigator x axis extremes to reflect the total. The navigator
      * extremes should always be the extremes of the union of all series in the
@@ -1679,7 +1628,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#modifyNavigatorAxisExtremes
      */
-    modifyNavigatorAxisExtremes: function () {
+    Navigator.prototype.modifyNavigatorAxisExtremes = function () {
         var xAxis = this.xAxis, unionExtremes;
         if (typeof xAxis.getExtremes !== 'undefined') {
             unionExtremes = this.getUnionExtremes(true);
@@ -1690,14 +1639,14 @@ Navigator.prototype = {
                 xAxis.max = unionExtremes.dataMax;
             }
         }
-    },
+    };
     /**
      * Hook to modify the base axis extremes with information from the Navigator
      *
      * @private
      * @function Highcharts.Navigator#modifyBaseAxisExtremes
      */
-    modifyBaseAxisExtremes: function () {
+    Navigator.prototype.modifyBaseAxisExtremes = function () {
         var baseXAxis = this, navigator = baseXAxis.chart.navigator, baseExtremes = baseXAxis.getExtremes(), baseMin = baseExtremes.min, baseMax = baseExtremes.max, baseDataMin = baseExtremes.dataMin, baseDataMax = baseExtremes.dataMax, range = baseMax - baseMin, stickToMin = navigator.stickToMin, stickToMax = navigator.stickToMax, overscroll = pick(baseXAxis.options.overscroll, 0), newMax, newMin, navigatorSeries = navigator.series && navigator.series[0], hasSetExtremes = !!baseXAxis.setExtremes, 
         // When the extremes have been set by range selector button, don't
         // stick to min or max. The range selector buttons will handle the
@@ -1715,9 +1664,10 @@ Navigator.prototype = {
             // as new data comes in
             if (stickToMax) {
                 newMax = baseDataMax + overscroll;
-                // if stickToMin is true, the new min value is set above
+                // If stickToMin is true, the new min value is set above
                 if (!stickToMin) {
-                    newMin = Math.max(newMax - range, navigator.getBaseSeriesMin(navigatorSeries && navigatorSeries.xData ?
+                    newMin = Math.max(baseDataMin, // don't go below data extremes (#13184)
+                    newMax - range, navigator.getBaseSeriesMin(navigatorSeries && navigatorSeries.xData ?
                         navigatorSeries.xData[0] :
                         -Number.MAX_VALUE));
                 }
@@ -1733,7 +1683,7 @@ Navigator.prototype = {
         // Reset
         navigator.stickToMin =
             navigator.stickToMax = null;
-    },
+    };
     /**
      * Handler for updated data on the base series. When data is modified, the
      * navigator series must reflect it. This is called from the Chart.redraw
@@ -1742,7 +1692,7 @@ Navigator.prototype = {
      * @private
      * @function Highcharts.Navigator#updateDataHandler
      */
-    updatedDataHandler: function () {
+    Navigator.prototype.updatedDataHandler = function () {
         var navigator = this.chart.navigator, baseSeries = this, navigatorSeries = this.navigatorSeries, xDataMin = navigator.getBaseSeriesMin(baseSeries.xData[0]);
         // If the scrollbar is scrolled all the way to the right, keep right as
         // new data  comes in.
@@ -1760,7 +1710,7 @@ Navigator.prototype = {
             navigatorSeries.options.pointStart = baseSeries.xData[0];
             navigatorSeries.setData(baseSeries.options.data, false, null, false); // #5414
         }
-    },
+    };
     /**
      * Add chart events, like redrawing navigator, when chart requires that.
      *
@@ -1768,7 +1718,7 @@ Navigator.prototype = {
      * @function Highcharts.Navigator#addChartEvents
      * @return {void}
      */
-    addChartEvents: function () {
+    Navigator.prototype.addChartEvents = function () {
         if (!this.eventsToUnbind) {
             this.eventsToUnbind = [];
         }
@@ -1779,7 +1729,7 @@ Navigator.prototype = {
             var navigator = this.navigator, xAxis = navigator && (navigator.baseSeries &&
                 navigator.baseSeries[0] &&
                 navigator.baseSeries[0].xAxis ||
-                navigator.scrollbar && this.xAxis[0]); // #5709
+                this.xAxis[0]); // #5709, #13114
             if (xAxis) {
                 navigator.render(xAxis.min, xAxis.max);
             }
@@ -1797,14 +1747,14 @@ Navigator.prototype = {
                     navigator.outlineHeight :
                     0) + navigator.navigatorOptions.margin;
         }));
-    },
+    };
     /**
      * Destroys allocated elements.
      *
      * @private
      * @function Highcharts.Navigator#destroy
      */
-    destroy: function () {
+    Navigator.prototype.destroy = function () {
         // Disconnect events added in addEvents
         this.removeEvents();
         if (this.xAxis) {
@@ -1836,43 +1786,13 @@ Navigator.prototype = {
         [this.handles].forEach(function (coll) {
             destroyObjectProperties(coll);
         }, this);
-    }
-};
+    };
+    return Navigator;
+}());
+// End of prototype
 if (!H.Navigator) {
     H.Navigator = Navigator;
-    // For Stock charts, override selection zooming with some special features
-    // because X axis zooming is already allowed by the Navigator and Range
-    // selector.
-    addEvent(Axis, 'zoom', function (e) {
-        var chart = this.chart, chartOptions = chart.options, zoomType = chartOptions.chart.zoomType, pinchType = chartOptions.chart.pinchType, previousZoom, navigator = chartOptions.navigator, rangeSelector = chartOptions.rangeSelector;
-        if (this.isXAxis && ((navigator && navigator.enabled) ||
-            (rangeSelector && rangeSelector.enabled))) {
-            // For y only zooming, ignore the X axis completely
-            if (zoomType === 'y') {
-                e.zoomed = false;
-                // For xy zooming, record the state of the zoom before zoom
-                // selection, then when the reset button is pressed, revert to this
-                // state. This should apply only if the chart is initialized with a
-                // range (#6612), otherwise zoom all the way out.
-            }
-            else if (((!isTouchDevice && zoomType === 'xy') ||
-                (isTouchDevice && pinchType === 'xy')) &&
-                this.options.range) {
-                previousZoom = this.previousZoom;
-                if (defined(e.newMin)) {
-                    this.previousZoom = [this.min, this.max];
-                }
-                else if (previousZoom) {
-                    e.newMin = previousZoom[0];
-                    e.newMax = previousZoom[1];
-                    delete this.previousZoom;
-                }
-            }
-        }
-        if (typeof e.zoomed !== 'undefined') {
-            e.preventDefault();
-        }
-    });
+    NavigatorAxis.compose(Axis);
     // For Stock charts. For x only zooming, do not to create the zoom button
     // because X axis zooming is already allowed by the Navigator and Range
     // selector. (#9285)
@@ -1924,6 +1844,7 @@ if (!H.Navigator) {
                             0) -
                         ((legendOptions &&
                             legendOptions.verticalAlign === 'bottom' &&
+                            legendOptions.layout !== 'proximate' && // #13392
                             legendOptions.enabled &&
                             !legendOptions.floating) ?
                             legend.legendHeight +
@@ -1987,3 +1908,5 @@ if (!H.Navigator) {
         }
     });
 }
+H.Navigator = Navigator;
+export default H.Navigator;

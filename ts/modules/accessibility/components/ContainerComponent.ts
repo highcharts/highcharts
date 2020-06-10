@@ -79,7 +79,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
     handleSVGTitleElement: function (
         this: Highcharts.ContainerComponent
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             titleId = 'highcharts-title-' + chart.index,
             titleContents = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerTitle', {
@@ -107,7 +107,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
      * @private
      */
     setSVGContainerLabel: function (this: Highcharts.ContainerComponent): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             svgContainerLabel = stripHTMLTags(chart.langFormat(
                 'accessibility.svgContainerLabel', {
                     chartTitle: getChartTitle(chart)
@@ -126,7 +126,7 @@ extend(ContainerComponent.prototype, /** @lends Highcharts.ContainerComponent */
     setGraphicContainerAttrs: function (
         this: Highcharts.ContainerComponent
     ): void {
-        var chart: Highcharts.Chart = this.chart as any,
+        var chart = this.chart,
             label = chart.langFormat('accessibility.graphicContainerLabel', {
                 chartTitle: getChartTitle(chart)
             });

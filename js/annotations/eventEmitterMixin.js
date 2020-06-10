@@ -5,8 +5,7 @@
  * */
 import H from '../parts/Globals.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, inArray = U.inArray, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
-var fireEvent = H.fireEvent;
+var addEvent = U.addEvent, fireEvent = U.fireEvent, inArray = U.inArray, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent;
 /* eslint-disable valid-jsdoc */
 /**
  * It provides methods for:
@@ -24,9 +23,17 @@ var eventEmitterMixin = {
      * Add emitter events.
      */
     addEvents: function () {
-        var emitter = this;
-        addEvent(emitter.graphic.element, 'mousedown', function (e) {
-            emitter.onMouseDown(e);
+        var emitter = this, addMouseDownEvent = function (element) {
+            addEvent(element, Highcharts.isTouchDevice ? 'touchstart' : 'mousedown', function (e) {
+                emitter.onMouseDown(e);
+            });
+        };
+        addMouseDownEvent(this.graphic.element);
+        (emitter.labels || []).forEach(function (label) {
+            if (label.options.useHTML && label.graphic.text) {
+                // Mousedown event bound to HTML element (#13070).
+                addMouseDownEvent(label.graphic.text.element);
+            }
         });
         objectEach(emitter.options.events, function (event, type) {
             var eventHandler = function (e) {
@@ -42,14 +49,20 @@ var eventEmitterMixin = {
             }
         });
         if (emitter.options.draggable) {
-            addEvent(emitter, 'drag', emitter.onDrag);
+            addEvent(emitter, Highcharts.isTouchDevice ? 'touchmove' : 'drag', emitter.onDrag);
             if (!emitter.graphic.renderer.styledMode) {
-                emitter.graphic.css({
+                var cssPointer_1 = {
                     cursor: {
                         x: 'ew-resize',
                         y: 'ns-resize',
                         xy: 'move'
                     }[emitter.options.draggable]
+                };
+                emitter.graphic.css(cssPointer_1);
+                (emitter.labels || []).forEach(function (label) {
+                    if (label.options.useHTML && label.graphic.text) {
+                        label.graphic.text.css(cssPointer_1);
+                    }
                 });
             }
         }
@@ -85,7 +98,7 @@ var eventEmitterMixin = {
         prevChartY = e.chartY;
         emitter.cancelClick = false;
         emitter.chart.hasDraggedAnnotation = true;
-        emitter.removeDrag = addEvent(H.doc, 'mousemove', function (e) {
+        emitter.removeDrag = addEvent(H.doc, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
             emitter.hasDragged = true;
             e = pointer.normalize(e);
             e.prevChartX = prevChartX;
@@ -94,7 +107,7 @@ var eventEmitterMixin = {
             prevChartX = e.chartX;
             prevChartY = e.chartY;
         });
-        emitter.removeMouseUp = addEvent(H.doc, 'mouseup', function (e) {
+        emitter.removeMouseUp = addEvent(H.doc, Highcharts.isTouchDevice ? 'touchend' : 'mouseup', function (e) {
             emitter.cancelClick = emitter.hasDragged;
             emitter.hasDragged = false;
             emitter.chart.hasDraggedAnnotation = false;

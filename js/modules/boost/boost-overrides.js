@@ -10,18 +10,18 @@
  *
  * */
 'use strict';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, error = U.error, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
-import '../../parts/Color.js';
+var addEvent = U.addEvent, error = U.error, getOptions = U.getOptions, isArray = U.isArray, isNumber = U.isNumber, pick = U.pick, wrap = U.wrap;
 import '../../parts/Series.js';
 import '../../parts/Options.js';
-import '../../parts/Point.js';
 import '../../parts/Interaction.js';
 import butils from './boost-utils.js';
 import boostable from './boostables.js';
 import boostableMap from './boostable-map.js';
-var boostEnabled = butils.boostEnabled, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, Chart = H.Chart, Series = H.Series, Point = H.Point, seriesTypes = H.seriesTypes, plotOptions = H.getOptions().plotOptions;
+var boostEnabled = butils.boostEnabled, shouldForceChartSeriesBoosting = butils.shouldForceChartSeriesBoosting, Series = H.Series, seriesTypes = H.seriesTypes, plotOptions = getOptions().plotOptions;
 /**
  * Returns true if the chart is in series boost mode.
  *
@@ -94,6 +94,7 @@ Series.prototype.getPoint = function (boostPoint) {
         point.plotX = boostPoint.plotX;
         point.plotY = boostPoint.plotY;
         point.index = boostPoint.i;
+        point.isInside = this.isPointInside(boostPoint);
     }
     return point;
 };
@@ -157,6 +158,7 @@ wrap(Series.prototype, 'getExtremes', function (proceed) {
     if (!this.isSeriesBoosting || (!this.hasExtremes || !this.hasExtremes())) {
         return proceed.apply(this, Array.prototype.slice.call(arguments, 1));
     }
+    return {};
 });
 /*
  * Override a bunch of methods the same way. If the number of points is
@@ -243,7 +245,7 @@ wrap(Series.prototype, 'processData', function (proceed) {
         if (this.isSeriesBoosting) {
             // Force turbo-mode:
             firstPoint = this.getFirstValidPoint(this.options.data);
-            if (!isNumber(firstPoint) && !H.isArray(firstPoint)) {
+            if (!isNumber(firstPoint) && !isArray(firstPoint)) {
                 error(12, false, this.chart);
             }
             this.enterBoost();
@@ -284,9 +286,8 @@ Series.prototype.enterBoost = function () {
     this.allowDG = false;
     this.directTouch = false;
     this.stickyTracking = true;
-    // Once we've been in boost mode, we don't want animation when returning to
-    // vanilla mode.
-    this.animate = null;
+    // Prevent animation when zooming in on boosted series(#13421).
+    this.finishedAnimating = true;
     // Hide series label if any
     if (this.labelBySeries) {
         this.labelBySeries = this.labelBySeries.destroy();

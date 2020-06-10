@@ -17,6 +17,12 @@ QUnit.test('Styled mode for pie type series', function (assert) {
     });
 
     assert.strictEqual(
+        chart.series[0].points[2].colorIndex,
+        2,
+        'The color index should be the same as the point index'
+    );
+
+    assert.strictEqual(
         chart.series[0].points[2].graphic.getStyle('fill'),
         startingColor,
         'Selected slice has the same color as before the selection (#6005)'

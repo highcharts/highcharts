@@ -5,7 +5,13 @@
  * */
 
 'use strict';
+
+import Annotation from '../annotations.src.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    merge
+} = U;
 
 /**
  * Internal types.
@@ -31,20 +37,13 @@ declare global {
         interface AnnotationMockPointOptionsObject {
             label?: AnnotationsLabelOptions;
         }
-        interface AnnotationTypesDictionary {
+        interface AnnotationTypesRegistry {
             elliottWave: typeof ElliottWave;
         }
     }
 }
 
-
-import U from '../../parts/Utilities.js';
-const {
-    merge
-} = U;
-
-var Annotation = H.Annotation,
-    CrookedLine = Annotation.types.crookedLine;
+var CrookedLine = Annotation.types.crookedLine;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 

@@ -12,7 +12,20 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+const { dateFormat } = O;
+import './TreeGridAxis.js';
+import U from '../parts/Utilities.js';
+const {
+    isNumber,
+    merge,
+    pick,
+    seriesType,
+    splat
+} = U;
 
 /**
  * Internal types
@@ -30,7 +43,7 @@ declare global {
                 options: GanttPointOptions,
                 x: number
             ): GanttPoint;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class GanttSeries extends XRangeSeries {
             public data: Array<GanttPoint>;
@@ -78,24 +91,12 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    isNumber,
-    merge,
-    pick,
-    seriesType,
-    splat
-} = U;
-
 import './CurrentDateIndicator.js';
-import './GridAxis.js';
 import '../modules/static-scale.src.js';
-import './TreeGrid.js';
 import './Pathfinder.js';
 import '../modules/xrange.src.js';
 
-var dateFormat = H.dateFormat,
-    seriesTypes = H.seriesTypes,
+var seriesTypes = H.seriesTypes,
     Series = H.Series,
     parent = seriesTypes.xrange;
 
@@ -260,7 +261,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
                 graphic = point.graphic,
                 state = point.selected && 'select',
                 cutOff = seriesOpts.stacking && !seriesOpts.borderRadius,
-                diamondShape: Highcharts.SVGPathArray;
+                diamondShape: SVGPath;
 
             if (point.options.milestone) {
                 if (isNumber(plotY) && point.y !== null && point.visible !== false) {
@@ -351,7 +352,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
             this: Highcharts.GanttPoint,
             options: Highcharts.GanttPointOptions,
             x: number
-        ): Highcharts.Point {
+        ): Point {
             var point = this,
                 retVal = merge(options) as any;
 
@@ -398,7 +399,7 @@ seriesType<Highcharts.GanttSeries>('gantt', 'xrange'
  * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data
- * @excluding className, color, colorIndex, connect, dataLabels, events, id,
+ * @excluding className, color, colorIndex, connect, dataLabels, events,
  *            partialFill, selected, x, x2
  * @product   gantt
  * @apioption series.gantt.data

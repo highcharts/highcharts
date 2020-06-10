@@ -7,10 +7,13 @@
  */
 
 'use strict';
-import H from '../parts/Globals.js';
 
-const addEvent = H.addEvent,
-    Chart = H.Chart;
+import Chart from '../parts/Chart.js';
+import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent
+} = U;
 
 /**
  * Internal types
@@ -18,7 +21,7 @@ const addEvent = H.addEvent,
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             fullscreen: Fullscreen;
         }
         class Fullscreen {
@@ -78,7 +81,7 @@ class Fullscreen {
      *
      * */
 
-    public constructor(chart: Highcharts.Chart) {
+    public constructor(chart: Chart) {
         /**
          * Chart managed by the fullscreen controller.
          * @name Highcharts.Fullscreen#chart
@@ -92,15 +95,11 @@ class Fullscreen {
          *
          * @name Highcharts.Fullscreen#isOpen
          * @type {boolean|undefined}
-         * @since next
+         * @since 8.0.1
          */
         this.isOpen = false;
 
-        if (!(chart.container.parentNode instanceof Element)) {
-            return;
-        }
-
-        const container = chart.container.parentNode;
+        const container = chart.renderTo;
 
         // Hold event and methods available only for a current browser.
         if (!this.browserProps) {
@@ -141,7 +140,7 @@ class Fullscreen {
     /** @private */
     public browserProps: Highcharts.Fullscreen['browserProps'];
 
-    public chart: Highcharts.Chart;
+    public chart: Chart;
 
     public isOpen: boolean;
 
@@ -158,7 +157,7 @@ class Fullscreen {
      * Stops displaying the chart in fullscreen mode.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function    Highcharts.Fullscreen#close
      * @return      {void}
@@ -194,7 +193,7 @@ class Fullscreen {
      * button's text will not be replaced - it's on the user side.
      * Exporting module required.
      *
-     * @since       next
+     * @since       8.0.1
      *
      * @function Highcharts.Fullscreen#open
      * @return      {void}
@@ -206,7 +205,7 @@ class Fullscreen {
 
         // Handle exitFullscreen() method when user clicks 'Escape' button.
         if (fullscreen.browserProps) {
-            fullscreen.unbindFullscreenEvent = H.addEvent(
+            fullscreen.unbindFullscreenEvent = addEvent(
                 chart.container.ownerDocument, // chart's document
                 fullscreen.browserProps.fullscreenChange,
                 function (): void {
@@ -221,21 +220,20 @@ class Fullscreen {
                 }
             );
 
-            if (chart.container.parentNode instanceof Element) {
-                const promise = chart.container.parentNode[
-                    fullscreen.browserProps.requestFullscreen
-                ]();
+            const promise = chart.renderTo[
+                fullscreen.browserProps.requestFullscreen
+            ]();
 
-                if (promise) {
-                    promise['catch'](function (): void { // eslint-disable-line dot-notation
-                        alert( // eslint-disable-line no-alert
-                            'Full screen is not supported inside a frame.'
-                        );
-                    });
-                }
+            if (promise) {
+                // No dot notation because of IE8 compatibility
+                promise['catch'](function (): void { // eslint-disable-line dot-notation
+                    alert( // eslint-disable-line no-alert
+                        'Full screen is not supported inside a frame.'
+                    );
+                });
             }
 
-            H.addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
+            addEvent(chart, 'destroy', fullscreen.unbindFullscreenEvent);
         }
     }
     /**
@@ -244,7 +242,7 @@ class Fullscreen {
      *
      * @private
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @requires modules/full-screen
      * @return {void}
@@ -278,7 +276,7 @@ class Fullscreen {
      * a drop down menu in the upper right corner accesses this function.
      * Exporting module required.
      *
-     * @since       next
+     * @since 8.0.1
      *
      * @sample      highcharts/members/chart-togglefullscreen/
      *              Toggle fullscreen mode from a HTML button
@@ -302,7 +300,7 @@ H.Fullscreen = Fullscreen;
 export default H.Fullscreen;
 
 // Initialize fullscreen
-addEvent(Chart, 'beforeRender', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'beforeRender', function (): void {
     /**
      * @name Highcharts.Chart#fullscreen
      * @type {Highcharts.Fullscreen}

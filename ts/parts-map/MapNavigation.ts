@@ -10,7 +10,19 @@
 
 'use strict';
 
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+const {
+    doc
+} = H;
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    extend,
+    merge,
+    objectEach,
+    pick
+} = U;
 
 /**
  * Internal types
@@ -19,10 +31,7 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         type ButtonRelativeToValue = ('plotBox'|'spacingBox');
-        interface Axis {
-            fixTo?: Array<number>;
-        }
-        interface Chart {
+        interface ChartLike {
             mapNavButtons?: Array<SVGElement>;
             mapNavigation?: MapNavigation;
         }
@@ -82,20 +91,6 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    extend,
-    merge,
-    objectEach,
-    pick
-} = U;
-
-import '../parts/Chart.js';
-
-var Chart = H.Chart,
-    doc = H.doc;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
 /**
@@ -126,7 +121,7 @@ function stopEvent(e: Event): void {
  */
 function MapNavigation(
     this: Highcharts.MapNavigation,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.init(chart);
 }
@@ -143,7 +138,7 @@ function MapNavigation(
  */
 MapNavigation.prototype.init = function (
     this: Highcharts.MapNavigation,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.chart = chart as Highcharts.MapNavigationChart;
     chart.mapNavButtons = [];
@@ -440,11 +435,11 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             );
 
         // When mousewheel zooming, fix the point under the mouse
-        if (mouseX) {
-            xAxis.fixTo = [mouseX - (xAxis.pos as any), (centerXArg as any)];
+        if (mouseX && xAxis.mapAxis) {
+            xAxis.mapAxis.fixTo = [mouseX - (xAxis.pos as any), (centerXArg as any)];
         }
-        if (mouseY) {
-            yAxis.fixTo = [mouseY - (yAxis.pos as any), (centerYArg as any)];
+        if (mouseY && yAxis.mapAxis) {
+            yAxis.mapAxis.fixTo = [mouseY - (yAxis.pos as any), (centerYArg as any)];
         }
 
         // Zoom

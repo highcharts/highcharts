@@ -6,6 +6,11 @@ QUnit.test('No inline CSS should be allowed (#6173)', function (assert) {
             styledMode: true
         },
 
+        // A11y uses outline:0 on points
+        accessibility: {
+            enabled: false
+        },
+
         title: {
             text: 'Styling axes'
         },

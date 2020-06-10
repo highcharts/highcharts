@@ -29,7 +29,8 @@ var whcm = {
         // Test BG image for IE
         if (isMS && win.getComputedStyle) {
             var testDiv = doc.createElement('div');
-            testDiv.style.backgroundImage = 'url(#)';
+            var imageSrc = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
+            testDiv.style.backgroundImage = "url(" + imageSrc + ")"; // #13071
             doc.body.appendChild(testDiv);
             var bi = (testDiv.currentStyle ||
                 win.getComputedStyle(testDiv)).backgroundImage;

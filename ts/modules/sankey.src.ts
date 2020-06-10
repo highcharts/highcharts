@@ -51,7 +51,7 @@ declare global {
                 x?: number
             ): SankeyPoint;
             public getClassName(): string;
-            public isValid(): boolean;
+            public isValid: () => boolean;
         }
         class SankeySeries extends ColumnSeries implements NodesSeries {
             public animate: Series['animate'];
@@ -102,7 +102,7 @@ declare global {
             (
                 this: (
                     SankeyDataLabelsFormatterContextObject|
-                    DataLabelsFormatterContextObject
+                    PointLabelObject
                 )
             ): (string|undefined);
         }
@@ -110,7 +110,7 @@ declare global {
             point: SankeyPoint;
         }
         interface SankeyDataLabelsOptionsObject
-            extends DataLabelsOptionsObject {
+            extends DataLabelsOptions {
             nodeFormat?: string;
             nodeFormatter?: SankeyDataLabelsFormatterCallbackFunction;
         }
@@ -234,7 +234,7 @@ declare global {
  *
  * @callback Highcharts.SeriesSankeyDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesSankeyDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string|undefined}
@@ -245,7 +245,7 @@ declare global {
  * Context for the node formatter function.
  *
  * @interface Highcharts.SeriesSankeyDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  *//**
  * The node object. The node name, if defined, is available through
  * `this.point.name`.
@@ -254,6 +254,7 @@ declare global {
  */
 
 import Color from '../parts/Color.js';
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     defined,
@@ -272,8 +273,6 @@ import mixinTreeSeries from '../mixins/tree-series.js';
 const {
     getLevelOptions
 } = mixinTreeSeries;
-
-var Point = H.Point;
 
 // eslint-disable-next-line valid-jsdoc
 /**
@@ -391,7 +390,7 @@ seriesType<Highcharts.SankeySeries>(
             nodeFormatter: function (
                 this: (
                     Highcharts.SankeyDataLabelsFormatterContextObject|
-                    Highcharts.DataLabelsFormatterContextObject
+                    Highcharts.PointLabelObject
                 )
             ): (string|undefined) {
                 return this.point.name;
@@ -611,6 +610,7 @@ seriesType<Highcharts.SankeySeries>(
         // Create a single node that holds information on incoming and outgoing
         // links.
         createNode: H.NodesMixin.createNode,
+        searchPoint: H.noop as any,
         setData: H.NodesMixin.setData,
         destroy: H.NodesMixin.destroy,
 
@@ -1034,11 +1034,11 @@ seriesType<Highcharts.SankeySeries>(
                 nodeW = this.nodeWidth,
                 right = (toNode.column as any) * this.colDistance,
                 outgoing = point.outgoing,
-                straight = right > nodeLeft;
+                straight = right > nodeLeft + nodeW;
 
             if (chart.inverted) {
                 fromY = (chart.plotSizeY as any) - fromY;
-                toY = (chart.plotSizeY as any) - toY;
+                toY = (chart.plotSizeY || 0) - toY;
                 right = (chart.plotSizeX as any) - right;
                 nodeW = -nodeW;
                 linkHeight = -linkHeight;
@@ -1054,24 +1054,30 @@ seriesType<Highcharts.SankeySeries>(
             ];
 
             // Links going from left to right
-            if (straight) {
+            if (straight && typeof toY === 'number') {
                 point.shapeArgs = {
                     d: [
-                        'M', nodeLeft + nodeW, fromY,
-                        'C', nodeLeft + nodeW + curvy, fromY,
-                        right - curvy, toY,
-                        right, toY,
-                        'L',
-                        right + (outgoing ? nodeW : 0),
-                        toY + linkHeight / 2,
-                        'L',
-                        right,
-                        toY + linkHeight,
-                        'C', right - curvy, toY + linkHeight,
-                        nodeLeft + nodeW + curvy,
-                        fromY + linkHeight,
-                        nodeLeft + nodeW, fromY + linkHeight,
-                        'z'
+                        ['M', nodeLeft + nodeW, fromY],
+                        [
+                            'C',
+                            nodeLeft + nodeW + curvy,
+                            fromY,
+                            right - curvy,
+                            toY,
+                            right,
+                            toY
+                        ],
+                        ['L', right + (outgoing ? nodeW : 0), toY + linkHeight / 2],
+                        ['L', right, toY + linkHeight],
+                        [
+                            'C',
+                            right - curvy,
+                            toY + linkHeight,
+                            nodeLeft + nodeW + curvy,
+                            fromY + linkHeight,
+                            nodeLeft + nodeW, fromY + linkHeight
+                        ],
+                        ['Z']
                     ]
                 };
 
@@ -1082,7 +1088,7 @@ seriesType<Highcharts.SankeySeries>(
             // - Make room for the link in the layout
             // - Automatically determine if the link should go up or
             //   down.
-            } else {
+            } else if (typeof toY === 'number') {
                 var bend = 20,
                     vDist = chart.plotHeight - fromY - linkHeight,
                     x1 = right - bend - linkHeight,
@@ -1108,23 +1114,23 @@ seriesType<Highcharts.SankeySeries>(
 
                 point.shapeArgs = {
                     d: [
-                        'M', x4, fy1,
-                        'C', cx2, fy1, x6, cfy1, x6, fy3,
-                        'L', x6, y4,
-                        'C', x6, cy2, cx2, y6, x4, y6,
-                        'L', x3, y6,
-                        'C', cx1, y6, x1, cy2, x1, y4,
-                        'L', x1, ty3,
-                        'C', x1, cty1, cx1, ty1, x3, ty1,
-                        'L', x3, ty2,
-                        'C', x2, ty2, x2, ty2, x2, ty3,
-                        'L', x2, y4,
-                        'C', x2, y5, x2, y5, x3, y5,
-                        'L', x4, y5,
-                        'C', x5, y5, x5, y5, x5, y4,
-                        'L', x5, fy3,
-                        'C', x5, fy2, x5, fy2, x4, fy2,
-                        'z'
+                        ['M', x4, fy1],
+                        ['C', cx2, fy1, x6, cfy1, x6, fy3],
+                        ['L', x6, y4],
+                        ['C', x6, cy2, cx2, y6, x4, y6],
+                        ['L', x3, y6],
+                        ['C', cx1, y6, x1, cy2, x1, y4],
+                        ['L', x1, ty3],
+                        ['C', x1, cty1, cx1, ty1, x3, ty1],
+                        ['L', x3, ty2],
+                        ['C', x2, ty2, x2, ty2, x2, ty3],
+                        ['L', x2, y4],
+                        ['C', x2, y5, x2, y5, x3, y5],
+                        ['L', x4, y5],
+                        ['C', x5, y5, x5, y5, x5, y4],
+                        ['L', x5, fy3],
+                        ['C', x5, fy2, x5, fy2, x4, fy2],
+                        ['Z']
                     ]
                 };
 
@@ -1185,7 +1191,7 @@ seriesType<Highcharts.SankeySeries>(
                     while (i--) {
                         if (column[i].getSum() * factor < minLinkWidth) {
                             column.splice(i, 1);
-                            remainingHeight -= minLinkWidth + series.nodePadding;
+                            remainingHeight -= minLinkWidth;
                             exceedsMinLinkWidth = true;
                         }
                     }

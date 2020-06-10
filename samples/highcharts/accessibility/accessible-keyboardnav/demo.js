@@ -8,10 +8,14 @@ Highcharts.chart('container', {
     },
 
     legend: {
-        useHTML: true
+        useHTML: true,
+        layout: 'proximate',
+        align: 'right'
     },
 
     series: [{
-        data: [74, 69.6, 63.7, 63.9, 43.7]
+        data: [74, 69.6, 63.7, 43.7]
+    }, {
+        data: [74, 63.7, 23.9, 13.7]
     }]
 });

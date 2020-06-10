@@ -20,7 +20,16 @@ WIP on vertical scrollable plot area (#9378). To do:
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
+import Chart from './Chart.js';
 import H from './Globals.js';
+import U from './Utilities.js';
+const {
+    addEvent,
+    createElement,
+    pick,
+    stop
+} = U;
 
 /**
  * Internal types
@@ -28,7 +37,7 @@ import H from './Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             fixedDiv?: HTMLDOMElement;
             fixedRenderer?: Renderer;
             innerContainer?: HTMLDOMElement;
@@ -42,16 +51,6 @@ declare global {
         }
     }
 }
-
-import U from './Utilities.js';
-const {
-    addEvent,
-    createElement,
-    pick,
-    stop
-} = U;
-
-var Chart = H.Chart;
 
 /**
  * Options for a scrollable plot area. This feature provides a minimum size for
@@ -126,10 +125,7 @@ var Chart = H.Chart;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-addEvent(Chart, 'afterSetChartSize', function (
-    this: Highcharts.Chart,
-    e: { skipAxes: boolean }
-): void {
+addEvent(Chart, 'afterSetChartSize', function (e: { skipAxes: boolean }): void {
 
     var scrollablePlotArea = (this.options.chart as any).scrollablePlotArea,
         scrollableMinWidth =
@@ -197,13 +193,13 @@ addEvent(Chart, 'afterSetChartSize', function (
                     // temporarily set it to the adjusted plot width.
                     axis.getPlotLinePath = function (
                         this: Highcharts.Axis
-                    ): Highcharts.SVGPathArray {
+                    ): SVGPath {
                         var marginName = (corrections as any)[axis.side].name,
                             correctionValue =
                                 (corrections as any)[axis.side].value,
                             // axis.right or axis.bottom
                             margin = (this as any)[marginName],
-                            path: Highcharts.SVGPathArray;
+                            path: SVGPath;
 
                         // Temporarily adjust
                         (this as any)[marginName] = margin - correctionValue;
@@ -226,7 +222,7 @@ addEvent(Chart, 'afterSetChartSize', function (
     }
 });
 
-addEvent(Chart, 'render', function (this: Highcharts.Chart): void {
+addEvent(Chart, 'render', function (): void {
     if (this.scrollablePixelsX || this.scrollablePixelsY) {
         if (this.setUpScrolling) {
             this.setUpScrolling();
@@ -243,7 +239,7 @@ addEvent(Chart, 'render', function (this: Highcharts.Chart): void {
  * @function Highcharts.Chart#setUpScrolling
  * @return {void}
  */
-Chart.prototype.setUpScrolling = function (this: Highcharts.Chart): void {
+Chart.prototype.setUpScrolling = function (): void {
 
     var attribs = {
         WebkitOverflowScrolling: 'touch',
@@ -287,7 +283,7 @@ Chart.prototype.setUpScrolling = function (this: Highcharts.Chart): void {
  * user scrolls the chart
  * @private
  */
-Chart.prototype.moveFixedElements = function (this: Highcharts.Chart): void {
+Chart.prototype.moveFixedElements = function (): void {
     var container = this.container,
         fixedRenderer = this.fixedRenderer,
         fixedSelectors = [
@@ -340,7 +336,7 @@ Chart.prototype.moveFixedElements = function (this: Highcharts.Chart): void {
  * @function Highcharts.Chart#applyFixed
  * @return {void}
  */
-Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
+Chart.prototype.applyFixed = function (): void {
     var fixedRenderer,
         scrollableWidth,
         scrollableHeight,
@@ -373,9 +369,9 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
         this.fixedRenderer = fixedRenderer = new H.Renderer(
             this.fixedDiv,
             this.chartWidth,
-            this.chartHeight
+            this.chartHeight,
+            this.options.chart?.style
         );
-
         // Mask
         this.scrollableMask = fixedRenderer
             .path()
@@ -417,9 +413,7 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
         height: scrollableHeight
     });
 
-    if (this.scrollablePixelsY) {
-        (this.scrollingContainer as any).style.height = this.chartHeight + 'px';
-    }
+    (this.scrollingContainer as any).style.height = this.chartHeight + 'px';
 
     // Set scroll position
     if (firstTime) {
@@ -446,48 +440,46 @@ Chart.prototype.applyFixed = function (this: Highcharts.Chart): void {
             (this.scrollablePixelsX || 0),
         maskPlotBottom = this.plotTop + this.plotHeight -
             (this.scrollablePixelsY || 0),
-        d;
+        d: SVGPath;
 
 
     if (this.scrollablePixelsX) {
         d = [
             // Left side
-            'M', 0, maskTop,
-            'L', this.plotLeft - 1, maskTop,
-            'L', this.plotLeft - 1, maskBottom,
-            'L', 0, maskBottom,
-            'Z',
+            ['M', 0, maskTop],
+            ['L', this.plotLeft - 1, maskTop],
+            ['L', this.plotLeft - 1, maskBottom],
+            ['L', 0, maskBottom],
+            ['Z'],
 
             // Right side
-            'M', maskPlotRight, maskTop,
-            'L', this.chartWidth, maskTop,
-            'L', this.chartWidth, maskBottom,
-            'L', maskPlotRight, maskBottom,
-            'Z'
+            ['M', maskPlotRight, maskTop],
+            ['L', this.chartWidth, maskTop],
+            ['L', this.chartWidth, maskBottom],
+            ['L', maskPlotRight, maskBottom],
+            ['Z']
         ];
     } else if (this.scrollablePixelsY) {
         d = [
             // Top side
-            'M', maskLeft, 0,
-            'L', maskLeft, this.plotTop - 1,
-            'L', maskRight, this.plotTop - 1,
-            'L', maskRight, 0,
-            'Z',
+            ['M', maskLeft, 0],
+            ['L', maskLeft, this.plotTop - 1],
+            ['L', maskRight, this.plotTop - 1],
+            ['L', maskRight, 0],
+            ['Z'],
 
             // Bottom side
-            'M', maskLeft, maskPlotBottom,
-            'L', maskLeft, this.chartHeight,
-            'L', maskRight, this.chartHeight,
-            'L', maskRight, maskPlotBottom,
-            'Z'
+            ['M', maskLeft, maskPlotBottom],
+            ['L', maskLeft, this.chartHeight],
+            ['L', maskRight, this.chartHeight],
+            ['L', maskRight, maskPlotBottom],
+            ['Z']
         ];
     } else {
-        d = ['M', 0, 0];
+        d = [['M', 0, 0]];
     }
 
     if (this.redrawTrigger !== 'adjustHeight') {
-        (this.scrollableMask as any).attr({
-            d: d
-        });
+        (this.scrollableMask as any).attr({ d });
     }
 };

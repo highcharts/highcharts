@@ -16,7 +16,26 @@
 
 'use strict';
 
-import Highcharts from '../parts/Globals.js';
+import type Point from '../parts/Point';
+import Chart from '../parts/Chart.js';
+import H from '../parts/Globals.js';
+const {
+    doc,
+    seriesTypes,
+    win
+} = H;
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    defined,
+    extend,
+    find,
+    fireEvent,
+    getOptions,
+    isNumber,
+    pick,
+    setOptions
+} = U;
 
 /**
  * Internal types
@@ -31,7 +50,7 @@ declare global {
             categoryMap: ExportingCategoryMap;
             dateTimeValueAxisMap: ExportingDateTimeMap;
         }
-        interface Chart {
+        interface ChartLike {
             dataTableDiv?: HTMLDivElement;
             /** @requires modules/export-data */
             downloadCSV(): void;
@@ -45,8 +64,6 @@ declare global {
             ): Array<Array<(number|string)>>;
             /** @requires modules/export-data */
             getTable(useLocalDecimalPoint?: boolean): string;
-            /** @requires modules/export-data */
-            openInCloud(): void;
             /** @requires modules/export-data */
             setUpKeyToAxis(): void;
             /** @requires modules/export-data */
@@ -75,10 +92,14 @@ declare global {
             options: SeriesOptions;
             pointArrayMap?: Array<string>;
         }
+        interface ExportDataOptions {
+            categoryHeader?: string;
+            categoryDatetimeHeader?: string;
+        }
         interface LangOptions {
             downloadCSV?: string;
             downloadXLS?: string;
-            openInCloud?: string;
+            exportData?: ExportDataOptions;
             viewData?: string;
         }
         interface Series {
@@ -119,24 +140,11 @@ declare global {
  * @type {Array<Array<string>>}
  */
 
-import U from '../parts/Utilities.js';
-const {
-    defined,
-    extend,
-    isObject,
-    pick
-} = U;
 
-import '../parts/Chart.js';
 import '../mixins/ajax.js';
 import '../mixins/download-url.js';
 
-var win = Highcharts.win,
-    doc = win.document,
-    seriesTypes = Highcharts.seriesTypes,
-    downloadURL = Highcharts.downloadURL,
-    fireEvent = Highcharts.fireEvent;
-
+const downloadURL = H.downloadURL;
 
 // Can we add this to utils? Also used in screen-reader.js
 /**
@@ -155,7 +163,7 @@ function htmlencode(html: string): string {
         .replace(/\//g, '&#x2F;');
 }
 
-Highcharts.setOptions({
+setOptions({
     /**
      * Callback that fires while exporting data. This allows the modification of
      * data rows before processed into the final format.
@@ -360,12 +368,22 @@ Highcharts.setOptions({
         downloadXLS: 'Download XLS',
 
         /**
-         * The text for the menu item.
+         * The text for exported table.
          *
-         * @since    6.1.0
+         * @since 8.1.0
          * @requires modules/export-data
          */
-        openInCloud: 'Open in Highcharts Cloud',
+        exportData: {
+            /**
+             * The category column title.
+             */
+            categoryHeader: 'Category',
+
+            /**
+             * The category column title when axis type set to "datetime".
+             */
+            categoryDatetimeHeader: 'DateTime'
+        },
 
         /**
          * The text for the menu item.
@@ -380,7 +398,7 @@ Highcharts.setOptions({
 /* eslint-disable no-invalid-this */
 
 // Add an event listener to handle the showTable option
-Highcharts.addEvent(Highcharts.Chart, 'render', function (): void {
+addEvent(Chart, 'render', function (): void {
     if (
         this.options &&
         this.options.exporting &&
@@ -401,9 +419,8 @@ Highcharts.addEvent(Highcharts.Chart, 'render', function (): void {
  *
  * @private
  * @function Highcharts.Chart#setUpKeyToAxis
- * @return {void}
  */
-Highcharts.Chart.prototype.setUpKeyToAxis = function (): void {
+Chart.prototype.setUpKeyToAxis = function (): void {
     if (seriesTypes.arearange) {
         seriesTypes.arearange.prototype.keyToAxis = {
             low: 'y',
@@ -434,7 +451,7 @@ Highcharts.Chart.prototype.setUpKeyToAxis = function (): void {
  *
  * @fires Highcharts.Chart#event:exportData
  */
-Highcharts.Chart.prototype.getDataRows = function (
+Chart.prototype.getDataRows = function (
     multiLevelHeaders?: boolean
 ): Array<Array<(number|string)>> {
     var hasParallelCoords = this.hasParallelCoordinates,
@@ -454,6 +471,10 @@ Highcharts.Chart.prototype.getDataRows = function (
         i: number,
         x,
         xTitle: string,
+        langOptions: Highcharts.LangOptions = this.options.lang as any,
+        exportDataOptions: Highcharts.ExportDataOptions = langOptions.exportData as any,
+        categoryHeader = exportDataOptions.categoryHeader as any,
+        categoryDatetimeHeader = exportDataOptions.categoryDatetimeHeader,
         // Options
         columnHeaderFormatter = function (
             item: (Highcharts.Axis|Highcharts.Series),
@@ -469,12 +490,12 @@ Highcharts.Chart.prototype.getDataRows = function (
             }
 
             if (!item) {
-                return 'Category';
+                return categoryHeader;
             }
 
             if (item instanceof Highcharts.Axis) {
                 return (item.options.title && item.options.title.text) ||
-                    (item.isDatetimeAxis ? 'DateTime' : 'Category');
+                    (item.dateTime ? categoryDatetimeHeader : categoryHeader);
             }
 
             if (multiLevelHeaders) {
@@ -504,7 +525,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     ) + 'Axis',
                     // Points in parallel coordinates refers to all yAxis
                     // not only `series.yAxis`
-                    axis = Highcharts.isNumber(pIdx) ?
+                    axis = isNumber(pIdx) ?
                         (series as any).chart[axisName][pIdx] :
                         (series as any)[axisName];
 
@@ -512,7 +533,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     axis && axis.categories
                 ) || [];
                 dateTimeValueAxisMap[prop] = (
-                    axis && axis.isDatetimeAxis
+                    axis && axis.dateTime
                 );
             });
 
@@ -520,6 +541,30 @@ Highcharts.Chart.prototype.getDataRows = function (
                 categoryMap: categoryMap,
                 dateTimeValueAxisMap: dateTimeValueAxisMap
             };
+        },
+        // Create point array depends if xAxis is category
+        // or point.name is defined #13293
+        getPointArray = function (
+            series: Highcharts.Series,
+            xAxis: Highcharts.Axis
+        ): string[] {
+            const namedPoints = series.data.filter((d): string | undefined => d.name);
+            if (
+                namedPoints.length &&
+                xAxis &&
+                !xAxis.categories &&
+                !series.keyToAxis
+            ) {
+                if (series.pointArrayMap) {
+                    const pointArrayMapCheck = series.pointArrayMap.filter((p): boolean => p === 'x');
+                    if (pointArrayMapCheck.length) {
+                        series.pointArrayMap.unshift('x');
+                        return series.pointArrayMap;
+                    }
+                }
+                return ['x', 'y'];
+            }
+            return series.pointArrayMap || ['y'];
         },
         xAxisIndices: Array<Array<number>> = [];
 
@@ -530,11 +575,12 @@ Highcharts.Chart.prototype.getDataRows = function (
 
     this.series.forEach(function (series: Highcharts.Series): void {
         var keys = series.options.keys,
-            pointArrayMap = keys || series.pointArrayMap || ['y'],
+            xAxis = series.xAxis,
+            pointArrayMap = keys || getPointArray(series, xAxis),
             valueCount = pointArrayMap.length,
             xTaken: (false|Highcharts.Dictionary<unknown>) =
                 !series.requireSorting && {},
-            xAxisIndex = xAxes.indexOf(series.xAxis),
+            xAxisIndex = xAxes.indexOf(xAxis),
             categoryAndDatetimeMap = getCategoryAndDateTimeMap(
                 series,
                 pointArrayMap
@@ -552,7 +598,7 @@ Highcharts.Chart.prototype.getDataRows = function (
             // series that belongs to that X axis. Includes -1 for non-axis
             // series types like pies.
             if (
-                !Highcharts.find(
+                !find(
                     xAxisIndices,
                     function (index: Array<number>): boolean {
                         return index[0] === xAxisIndex;
@@ -600,7 +646,7 @@ Highcharts.Chart.prototype.getDataRows = function (
                     prop: string,
                     val: number,
                     name: (string|undefined),
-                    point: (Highcharts.ExportDataPoint|Highcharts.Point);
+                    point: (Highcharts.ExportDataPoint|Point);
 
                 // In parallel coordinates chart, each data point is connected
                 // to a separate yAxis, conform this
@@ -623,7 +669,11 @@ Highcharts.Chart.prototype.getDataRows = function (
                 j = 0;
 
                 // Pies, funnels, geo maps etc. use point name in X row
-                if (!series.xAxis || series.exportKey === 'name') {
+                if (
+                    !xAxis ||
+                    series.exportKey === 'name' ||
+                    (!hasParallelCoords && xAxis && xAxis.hasNames) && name
+                ) {
                     key = name as any;
                 }
 
@@ -708,7 +758,7 @@ Highcharts.Chart.prototype.getDataRows = function (
             var category = row.name;
 
             if (xAxis && !defined(category)) {
-                if (xAxis.isDatetimeAxis) {
+                if (xAxis.dateTime) {
                     if (row.x instanceof Date) {
                         row.x = row.x.getTime();
                     }
@@ -751,7 +801,7 @@ Highcharts.Chart.prototype.getDataRows = function (
  * @return {string}
  *         CSV representation of the data
  */
-Highcharts.Chart.prototype.getCSV = function (
+Chart.prototype.getCSV = function (
     useLocalDecimalPoint?: boolean
 ): string {
     var csv = '',
@@ -819,7 +869,7 @@ Highcharts.Chart.prototype.getCSV = function (
  *
  * @fires Highcharts.Chart#event:afterGetTable
  */
-Highcharts.Chart.prototype.getTable = function (
+Chart.prototype.getTable = function (
     useLocalDecimalPoint?: boolean
 ): string {
     var html = '<table id="highcharts-data-table-' + this.index + '">',
@@ -1057,13 +1107,16 @@ function getBlobFromContent(
 
 
 /**
- * Call this on click of 'Download CSV' button
+ * Generates a data URL of CSV for local download in the browser. This is the
+ * default action for a click on the 'Download CSV' button.
  *
- * @private
+ * See {@link Highcharts.Chart#getCSV} to get the CSV data itself.
+ *
  * @function Highcharts.Chart#downloadCSV
- * @return {void}
+ *
+ * @requires modules/exporting
  */
-Highcharts.Chart.prototype.downloadCSV = function (): void {
+Chart.prototype.downloadCSV = function (): void {
     var csv = this.getCSV(true);
 
     downloadURL(
@@ -1074,13 +1127,16 @@ Highcharts.Chart.prototype.downloadCSV = function (): void {
 };
 
 /**
- * Call this on click of 'Download XLS' button
+ * Generates a data URL of an XLS document for local download in the browser.
+ * This is the default action for a click on the 'Download XLS' button.
  *
- * @private
+ * See {@link Highcharts.Chart#getTable} to get the table data itself.
+ *
  * @function Highcharts.Chart#downloadXLS
- * @return {void}
+ *
+ * @requires modules/exporting
  */
-Highcharts.Chart.prototype.downloadXLS = function (): void {
+Chart.prototype.downloadXLS = function (): void {
     var uri = 'data:application/vnd.ms-excel;base64,',
         template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" ' +
             'xmlns:x="urn:schemas-microsoft-com:office:excel" ' +
@@ -1114,11 +1170,10 @@ Highcharts.Chart.prototype.downloadXLS = function (): void {
  * Export-data module required. View the data in a table below the chart.
  *
  * @function Highcharts.Chart#viewData
- * @return {void}
  *
  * @fires Highcharts.Chart#event:afterViewData
  */
-Highcharts.Chart.prototype.viewData = function (): void {
+Chart.prototype.viewData = function (): void {
     if (!this.dataTableDiv) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
@@ -1134,88 +1189,9 @@ Highcharts.Chart.prototype.viewData = function (): void {
     fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 
-/**
- * Experimental function to send a chart's config to the Cloud for editing.
- *
- * Limitations
- * - All functions (formatters and callbacks) are removed since they're not
- *   JSON.
- *
- * @function Highcharts.Chart#openInCloud
- * @return {void}
- *
- * @todo
- * - Let the Cloud throw a friendly warning about unsupported structures like
- *   formatters.
- * - Dynamically updated charts probably fail, we need a generic
- *   Chart.getOptions function that returns all non-default options. Should also
- *   be used by the export module.
- */
-Highcharts.Chart.prototype.openInCloud = function (): void {
-
-    var options,
-        paramObj,
-        params: unknown;
-
-    /**
-     * Recursively remove function callbacks.
-     * @private
-     * @param {*} obj
-     *        Container of function callbacks
-     * @return {void}
-     */
-    function removeFunctions(obj: any): void {
-        Object.keys(obj).forEach(function (key: string): void {
-            if (typeof obj[key] === 'function') {
-                delete obj[key];
-            }
-            if (isObject(obj[key])) { // object and not an array
-                removeFunctions(obj[key]);
-            }
-        });
-    }
-
-    /**
-     * @private
-     * @return {void}
-     */
-    function openInCloud(): void {
-        var form = doc.createElement('form');
-
-        doc.body.appendChild(form);
-        form.method = 'post';
-        form.action = 'https://cloud-api.highcharts.com/openincloud';
-        form.target = '_blank';
-        var input = doc.createElement('input');
-
-        input.type = 'hidden';
-        input.name = 'chart';
-        input.value = params as any;
-        form.appendChild(input);
-        form.submit();
-        doc.body.removeChild(form);
-    }
-
-    options = Highcharts.merge(this.userOptions);
-    removeFunctions(options);
-
-    paramObj = {
-        name: (options.title && options.title.text) || 'Chart title',
-        options: options,
-        settings: {
-            constructor: 'Chart',
-            dataProvider: {
-                csv: this.getCSV()
-            }
-        }
-    };
-
-    params = JSON.stringify(paramObj);
-    openInCloud();
-};
 
 // Add "Download CSV" to the exporting menu.
-var exportingOptions = Highcharts.getOptions().exporting;
+var exportingOptions = getOptions().exporting;
 
 if (exportingOptions) {
 
@@ -1237,12 +1213,6 @@ if (exportingOptions) {
             onclick: function (): void {
                 this.viewData();
             }
-        },
-        openInCloud: {
-            textKey: 'openInCloud',
-            onclick: function (): void {
-                this.openInCloud();
-            }
         }
     } as Highcharts.Dictionary<Highcharts.ExportingMenuObject>);
 
@@ -1251,8 +1221,7 @@ if (exportingOptions) {
             'separator',
             'downloadCSV',
             'downloadXLS',
-            'viewData',
-            'openInCloud'
+            'viewData'
         );
     }
 }

@@ -9,13 +9,14 @@
  * */
 'use strict';
 import H from './Globals.js';
+import Color from './Color.js';
+var color = Color.parse;
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import U from './Utilities.js';
 var objectEach = U.objectEach, pick = U.pick, seriesType = U.seriesType;
-import './Color.js';
-import './Legend.js';
 import './Series.js';
 import './Options.js';
-var color = H.color, LegendSymbolMixin = H.LegendSymbolMixin, Series = H.Series;
+var Series = H.Series;
 /**
  * Area series type.
  *
@@ -142,7 +143,7 @@ seriesType('area', 'line',
      * * If `null`, the scaling behaves like a line series with fill between
      *   the graph and the Y axis minimum.
      * * If `Infinity` or `-Infinity`, the area between the graph and the
-     *   corresponing Y axis extreme is filled (since v6.1.0).
+     *   corresponding Y axis extreme is filled (since v6.1.0).
      *
      * @sample {highcharts} highcharts/plotoptions/area-threshold/
      *         A threshold of 100
@@ -168,7 +169,7 @@ seriesType('area', 'line',
      * @private
      */
     getStackPoints: function (points) {
-        var series = this, segment = [], keys = [], xAxis = this.xAxis, yAxis = this.yAxis, stack = yAxis.stacks[this.stackKey], pointMap = {}, seriesIndex = series.index, yAxisSeries = yAxis.series, seriesLength = yAxisSeries.length, visibleSeries, upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1, i;
+        var series = this, segment = [], keys = [], xAxis = this.xAxis, yAxis = this.yAxis, stack = yAxis.stacking.stacks[this.stackKey], pointMap = {}, seriesIndex = series.index, yAxisSeries = yAxis.series, seriesLength = yAxisSeries.length, visibleSeries, upOrDown = pick(yAxis.options.reversedStacks, true) ? 1 : -1, i;
         points = points || this.points;
         if (this.options.stacking) {
             for (i = 0; i < points.length; i++) {
@@ -281,7 +282,7 @@ seriesType('area', 'line',
      * @private
      */
     getGraphPath: function (points) {
-        var getGraphPath = Series.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
+        var getGraphPath = Series.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
         yAxis.getThreshold(options.threshold)), isNull, yBottom, connectNulls = pick(// #10574
         options.connectNulls, stacking === 'percent'), 
         // To display null points in underlying stacked series, this
@@ -358,8 +359,9 @@ seriesType('area', 'line',
         topPath = getGraphPath.call(this, graphPoints, true, true);
         bottomPoints.reversed = true;
         bottomPath = getGraphPath.call(this, bottomPoints, true, true);
-        if (bottomPath.length) {
-            bottomPath[0] = 'L';
+        var firstBottomPoint = bottomPath[0];
+        if (firstBottomPoint && firstBottomPoint[0] === 'M') {
+            bottomPath[0] = ['L', firstBottomPoint[1], firstBottomPoint[2]];
         }
         areaPath = topPath.concat(bottomPath);
         // TODO: don't set leftCliff and rightCliff when connectNulls?

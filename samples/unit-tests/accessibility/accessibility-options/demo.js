@@ -263,3 +263,214 @@ QUnit.test('exposeAsGroupOnly', function (assert) {
     assert.ok(isPointAriaHidden(point), 'Point is aria hidden');
     assert.ok(getSeriesAriaLabel(chart.series[0]), 'Series has aria');
 });
+
+QUnit.test('Focus border in wordcloud', function (assert) {
+    const chart = Highcharts.chart('container', {
+        chart: {
+            margin: 0
+        },
+        series: [{
+            type: 'wordcloud',
+            data: [
+                {
+                    name: 'Lorem',
+                    weight: 1
+                },
+                {
+                    name: 'ipsum',
+                    weight: 2
+                },
+                {
+                    name: 'test',
+                    weight: 1
+                }
+            ]
+        }]
+    });
+
+    const point = chart.series[0].points[2];
+    // Apply focus border.
+    chart.setFocusToElement(point.graphic);
+
+    const focusBorderX = chart.focusElement.focusBorder.attr('x'),
+        focusBorderWidth = chart.focusElement.focusBorder.attr('width'),
+        focusBorderY = chart.focusElement.focusBorder.attr('y'),
+        focusBorderHeight = chart.focusElement.focusBorder.attr('height'),
+        focusElementX = chart.focusElement.attr('x'),
+        focusElementY = chart.focusElement.attr('y'),
+        focusElementHeight = point.graphic.getBBox().height,
+        H = Highcharts;
+
+    assert.strictEqual(
+        focusBorderX + focusBorderWidth / 2,
+        focusElementX,
+        'should be correctly applied for text elements horizontally, #11397'
+    );
+
+    // Correct baseline position on Firefox.
+    assert.strictEqual(
+        focusBorderY + focusBorderHeight / 2,
+        H.isFirefox ? focusElementY - (focusElementHeight * 0.25) : focusElementY,
+        'should be correctly applied for text elements vertically, #11397'
+    );
+});
+
+QUnit.test('Focus border', function (assert) {
+    const H = Highcharts;
+    const ren = new H.Renderer(
+        document.getElementById('container'),
+        600,
+        400
+    );
+
+    const style = {
+        stroke: 'blue',
+        strokeWidth: 1
+    };
+
+    const regularText = ren.text('regular text', 50, 50)
+        .add();
+    regularText.addFocusBorder(2, style);
+
+    const wordcloudText = ren.text('wordcloud text', 100, 100)
+        .attr({
+            "alignment-baseline": "middle",
+            'text-anchor': 'middle'
+        })
+        .css({
+            color: 'red',
+            whiteSpace: "nowrap"
+        })
+        .add();
+    wordcloudText.addFocusBorder(2, style);
+
+    const regularRotatedText = ren.text('regular rotated text', 150, 150)
+        .attr({
+            rotation: 90
+        })
+        .add();
+    regularRotatedText.addFocusBorder(2, style);
+
+    const wordcloudRotatedText = ren.text('wordcloud rotated text', 200, 200)
+        .attr({
+            "alignment-baseline": "middle",
+            'text-anchor': 'middle',
+            rotation: 90
+        })
+        .css({
+            color: 'red',
+            whiteSpace: "nowrap"
+        })
+        .add();
+    wordcloudRotatedText.addFocusBorder(2, style);
+
+    const labelText = ren.label('label', 250, 250)
+        .css({
+            color: 'blue'
+        })
+        .add();
+    labelText.addFocusBorder(2, style);
+
+    const labelRotatedText = ren.label('rotated label', 300, 300)
+        .attr({
+            rotation: 90
+        })
+        .css({
+            color: 'blue'
+        })
+        .add();
+    labelRotatedText.addFocusBorder(2, style);
+
+    // Comparing the midpoint of the border with the midpoint of the text.
+    assert.close(
+        regularText.focusBorder.getBBox().x +
+        regularText.focusBorder.getBBox().width / 2,
+        regularText.attr('x') +
+        regularText.getBBox().width / 2,
+        0.1,
+        'should be correctly applied for text horizontally.'
+    );
+
+    assert.close(
+        regularText.focusBorder.getBBox().y +
+        regularText.focusBorder.getBBox().height / 2,
+        regularText.attr('y') -
+        regularText.getBBox().height / 2 * 0.5,
+        0.1,
+        'should be correctly applied for text vertically.'
+    );
+
+    assert.close(
+        regularRotatedText.focusBorder.getBBox().x +
+        regularRotatedText.focusBorder.getBBox().width / 2,
+        regularRotatedText.attr('x') +
+        regularRotatedText.getBBox().width / 2 * 0.5,
+        0.1,
+        'should be correctly applied for rotated text horizontally.'
+    );
+
+    assert.close(
+        regularRotatedText.focusBorder.getBBox().y +
+        regularRotatedText.focusBorder.getBBox().height / 2,
+        regularRotatedText.attr('y') +
+        regularRotatedText.getBBox().height / 2,
+        0.1,
+        'should be correctly applied for rotated text element vertically.'
+    );
+
+    assert.close(
+        wordcloudText.focusBorder.getBBox().x +
+        wordcloudText.focusBorder.getBBox().width / 2,
+        wordcloudText.attr('x') +
+        wordcloudText.getBBox().width * (H.isFirefox && wordcloudText.rotation ? 0.25 : 0),
+        0.1,
+        'should be correctly applied for wordcloud text element horizontally.'
+    );
+
+    assert.close(
+        wordcloudRotatedText.focusBorder.getBBox().y +
+        wordcloudRotatedText.focusBorder.getBBox().height / 2,
+        wordcloudRotatedText.attr('y') +
+        wordcloudRotatedText.getBBox().height * (H.isFirefox && !wordcloudRotatedText.rotation ? -0.25 : 0),
+        0.1,
+        'should be correctly for wordcloud text element vertically.'
+    );
+
+    assert.close(
+        labelText.focusBorder.getBBox().x +
+        labelText.focusBorder.getBBox().width / 2,
+        labelText.attr('x') +
+        labelText.getBBox().width / 2,
+        0.1,
+        'should be correctly for labels horizontally.'
+    );
+
+    assert.close(
+        labelText.focusBorder.getBBox().x +
+        labelText.focusBorder.getBBox().height / 2,
+        labelText.attr('y') +
+        labelText.getBBox().height / 2,
+        0.1,
+        'should be correctly for labels vertically.'
+    );
+
+    assert.close(
+        labelRotatedText.focusBorder.getBBox().x +
+        labelRotatedText.focusBorder.getBBox().width / 2,
+        labelRotatedText.attr('x') -
+        labelRotatedText.getBBox().height / 2,
+        0.1,
+        'should be correctly for rotated labels horizontally.'
+    );
+
+    assert.close(
+        labelRotatedText.focusBorder.getBBox().y +
+        labelRotatedText.focusBorder.getBBox().height / 2,
+        labelRotatedText.attr('y') +
+        labelRotatedText.getBBox().width / 2,
+        0.1,
+        'should be correctly for rotated labels vertically.'
+    );
+
+    ren.destroy();
+});

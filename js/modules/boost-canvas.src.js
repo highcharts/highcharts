@@ -13,6 +13,7 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
 import Color from '../parts/Color.js';
 var color = Color.parse;
@@ -478,7 +479,7 @@ H.initCanvasBoost = function () {
         fill: true,
         sampling: true
     });
-    H.Chart.prototype.callbacks.push(function (chart) {
+    Chart.prototype.callbacks.push(function (chart) {
         /**
          * @private
          */

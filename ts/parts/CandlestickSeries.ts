@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
 
 /**
@@ -45,14 +46,15 @@ declare global {
     }
 }
 
+import O from '../parts/Options.js';
+const { defaultOptions } = O;
 import U from './Utilities.js';
 const {
     merge,
     seriesType
 } = U;
 
-var defaultPlotOptions = H.defaultPlotOptions,
-    seriesTypes = H.seriesTypes;
+var seriesTypes = H.seriesTypes;
 
 /**
  * A candlestick chart is a style of financial chart used to describe price
@@ -108,7 +110,7 @@ var candlestickOptions = {
     /**
      * @extends plotOptions.ohlc.tooltip
      */
-    tooltip: (defaultPlotOptions.ohlc as any).tooltip,
+    tooltip: (defaultOptions.plotOptions as any).ohlc.tooltip,
 
     /**
      * @type    {number|null}
@@ -181,7 +183,7 @@ seriesType<Highcharts.CandlestickSeries>(
     'candlestick',
     'ohlc',
     merge(
-        defaultPlotOptions.column,
+        (defaultOptions.plotOptions as any).column,
         candlestickOptions
     ),
 
@@ -261,7 +263,7 @@ seriesType<Highcharts.CandlestickSeries>(
                     hasBottomWhisker,
                     crispCorr,
                     crispX,
-                    path: Highcharts.SVGPathArray,
+                    path: SVGPath,
                     halfWidth,
                     isNew = !graphic;
 
@@ -310,38 +312,37 @@ seriesType<Highcharts.CandlestickSeries>(
                     // frequently (#5193).
                     path = [];
                     path.push(
-                        'M',
-                        crispX - halfWidth, bottomBox,
-                        'L',
-                        crispX - halfWidth, topBox,
-                        'L',
-                        crispX + halfWidth, topBox,
-                        'L',
-                        crispX + halfWidth, bottomBox,
-                        'Z', // Ensure a nice rectangle #2602
-                        'M',
-                        crispX, topBox,
-                        'L',
-                        // #460, #2094
-                        crispX, hasTopWhisker ?
-                            Math.round(
-                                reversedYAxis ?
-                                    point.yBottom :
-                                    (point.plotHigh as any)
-                            ) :
-                            topBox,
-                        'M',
-                        crispX, bottomBox,
-                        'L',
-                        // #460, #2094
-                        crispX, hasBottomWhisker ?
-                            Math.round(
-                                reversedYAxis ?
-                                    (point.plotHigh as any) :
-                                    point.yBottom
-                            ) :
-                            bottomBox
-                    );
+                        ['M', crispX - halfWidth, bottomBox],
+                        ['L', crispX - halfWidth, topBox],
+                        ['L', crispX + halfWidth, topBox],
+                        ['L', crispX + halfWidth, bottomBox],
+                        ['Z'], // Ensure a nice rectangle #2602
+                        ['M', crispX, topBox],
+                        [
+                            'L',
+                            // #460, #2094
+                            crispX,
+                            hasTopWhisker ?
+                                Math.round(
+                                    reversedYAxis ?
+                                        point.yBottom :
+                                        (point.plotHigh as any)
+                                ) :
+                                topBox
+                        ],
+                        ['M', crispX, bottomBox],
+                        [
+                            'L',
+                            // #460, #2094
+                            crispX,
+                            hasBottomWhisker ?
+                                Math.round(
+                                    reversedYAxis ?
+                                        (point.plotHigh as any) :
+                                        point.yBottom
+                                ) :
+                                bottomBox
+                        ]);
 
                     graphic[isNew ? 'attr' : 'animate']({ d: path })
                         .addClass(point.getClassName(), true);

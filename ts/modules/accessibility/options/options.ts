@@ -12,12 +12,21 @@
 
 'use strict';
 
+import type Chart from '../../../parts/Chart';
+import type Point from '../../../parts/Point';
+
 /**
  * Internal types.
  * @private
  */
 declare global {
     namespace Highcharts {
+        interface AnnotationsAccessibilityOptionsObject {
+            description?: string;
+        }
+        interface AnnotationsLabelOptions {
+            accessibility?: AnnotationsAccessibilityOptionsObject;
+        }
         interface AccessibilityAnnouncementFormatter {
             (
                 updatedSeries: Array<Series>,
@@ -80,6 +89,7 @@ declare global {
             axisRangeDateFormat: string;
             beforeChartFormat: string;
             beforeChartFormatter?: ScreenReaderFormatterCallbackFunction<Chart>;
+            onPlayAsSoundClick?: ScreenReaderClickCallbackFunction;
             onViewDataTableClick?: ScreenReaderClickCallbackFunction;
         }
         interface AccessibilitySeriesOptions {
@@ -115,7 +125,7 @@ declare global {
             accessibility?: PointAccessibilityOptionsObject;
         }
         interface ScreenReaderClickCallbackFunction {
-            (evt: MouseEvent): void;
+            (evt: MouseEvent, chart?: AccessibilityChart): void;
         }
         interface ScreenReaderFormatterCallbackFunction<T> {
             (context: T): string;
@@ -252,6 +262,17 @@ var options: DeepPartial<Highcharts.Options> = {
              */
 
             /**
+             * Function to run upon clicking the "Play as sound" button in
+             * the screen reader region.
+             *
+             * By default Highcharts will call the `chart.sonify` function.
+             *
+             * @type      {Highcharts.ScreenReaderClickCallbackFunction}
+             * @since 8.0.1
+             * @apioption accessibility.screenReaderSection.onPlayAsSoundClick
+             */
+
+            /**
              * A formatter function to create the HTML contents of the hidden
              * screen reader information region before the chart. Receives one
              * argument, `chart`, referring to the chart object. Should return a
@@ -280,6 +301,7 @@ var options: DeepPartial<Highcharts.Options> = {
                 '<div>{typeDescription}</div>' +
                 '<div>{chartSubtitle}</div>' +
                 '<div>{chartLongdesc}</div>' +
+                '<div>{playAsSoundButton}</div>' +
                 '<div>{viewTableButton}</div>' +
                 '<div>{xAxisDescription}</div>' +
                 '<div>{yAxisDescription}</div>' +
@@ -365,25 +387,6 @@ var options: DeepPartial<Highcharts.Options> = {
          */
         point: {
             /**
-             * Format to use for describing the values of data points
-             * to assistive technology - including screen readers.
-             * The point context is available as `{point}`.
-             *
-             * Additionally, the series name, annotation info, and
-             * description added in `point.accessibility.description`
-             * is added by default if relevant. To override this, use the
-             * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
-             * option.
-             *
-             * @see [point.accessibility.description](#series.line.data.accessibility.description)
-             * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
-             *
-             * @type      {string}
-             * @since next
-             */
-            valueDescriptionFormat: '{index}. {xDescription}{separator}{value}.'
-
-            /**
              * Date format to use for points on datetime axes when describing
              * them to screen reader users.
              *
@@ -460,6 +463,25 @@ var options: DeepPartial<Highcharts.Options> = {
              * @since 8.0.0
              * @apioption accessibility.point.descriptionFormatter
              */
+
+            /**
+             * Format to use for describing the values of data points
+             * to assistive technology - including screen readers.
+             * The point context is available as `{point}`.
+             *
+             * Additionally, the series name, annotation info, and
+             * description added in `point.accessibility.description`
+             * is added by default if relevant. To override this, use the
+             * [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+             * option.
+             *
+             * @see [point.accessibility.description](#series.line.data.accessibility.description)
+             * @see [accessibility.point.descriptionFormatter](#accessibility.point.descriptionFormatter)
+             *
+             * @type      {string}
+             * @since 8.0.1
+             */
+            valueDescriptionFormat: '{index}. {xDescription}{separator}{value}.'
         },
 
         /**
@@ -863,6 +885,24 @@ var options: DeepPartial<Highcharts.Options> = {
      * @type       {boolean}
      * @since      7.1.0
      * @apioption  plotOptions.series.accessibility.keyboardNavigation.enabled
+     */
+
+    /**
+     * Accessibility options for an annotation label.
+     *
+     * @declare    Highcharts.AnnotationLabelAccessibilityOptionsObject
+     * @since 8.0.1
+     * @requires   modules/accessibility
+     * @apioption  annotations.labelOptions.accessibility
+     */
+
+    /**
+     * Description of an annotation label for screen readers and other assistive
+     * technology.
+     *
+     * @type       {string}
+     * @since 8.0.1
+     * @apioption  annotations.labelOptions.accessibility.description
      */
 
     /**

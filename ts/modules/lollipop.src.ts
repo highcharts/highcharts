@@ -10,7 +10,12 @@
 
 'use strict';
 
+import type Point from '../parts/Point';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+const {
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -40,11 +45,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    seriesType
-} = U;
 
 var areaProto = H.seriesTypes.area.prototype,
     colProto = H.seriesTypes.column.prototype;
@@ -90,16 +90,32 @@ seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
         }
     },
     tooltip: {
-        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low}</b><br/>'
+        pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.y}</b><br/>'
     }
 }, {
+    pointArrayMap: ['y'],
+    pointValKey: 'y',
+    toYData: function (point: Highcharts.LollipopPoint): Array<number> {
+        return [H.pick(point.y, point.low)];
+    },
     translatePoint: areaProto.translate,
     drawPoint: areaProto.drawPoints,
     drawDataLabels: colProto.drawDataLabels,
     setShapeArgs: colProto.translate
 }, {
     pointSetState: areaProto.pointClass.prototype.setState,
-    setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState
+    setState: H.seriesTypes.dumbbell.prototype.pointClass.prototype.setState,
+    init: function (
+        series: Highcharts.LollipopSeries,
+        options: Highcharts.LollipopPointOptions,
+        x?: number
+    ): Point {
+        if (H.isObject(options) && 'low' in options) {
+            options.y = options.low;
+            delete options.low;
+        }
+        return H.Point.prototype.init.apply(this, arguments);
+    }
 });
 
 /**
@@ -171,8 +187,16 @@ seriesType<Highcharts.LollipopSeries>('lollipop', 'dumbbell', {
  *
  * @type      {Array<number|Array<(number|string),(number|null)>|null|*>}
  * @extends   series.dumbbell.data
- * @excluding lowColor
+ * @excluding high, low, lowColor
  * @product   highcharts highstock
  * @apioption series.lollipop.data
  */
+
+/**
+* The y value of the point.
+*
+* @type      {number|null}
+* @product   highcharts highstock
+* @apioption series.line.data.y
+*/
 ''; // adds doclets above to transpiled file

@@ -11,6 +11,18 @@
 'use strict';
 
 import H from './Globals.js';
+import SVGElement from './SVGElement.js';
+import SVGRenderer from './SVGRenderer.js';
+import U from './Utilities.js';
+const {
+    attr,
+    createElement,
+    css,
+    defined,
+    extend,
+    pick,
+    pInt
+} = U;
 
 /**
  * Internal types
@@ -52,24 +64,9 @@ declare global {
     }
 }
 
-import U from './Utilities.js';
-const {
-    attr,
-    createElement,
-    css,
-    defined,
-    extend,
-    pick,
-    pInt
-} = U;
-
-import './SvgRenderer.js';
-
 var isFirefox = H.isFirefox,
     isMS = H.isMS,
     isWebKit = H.isWebKit,
-    SVGElement = H.SVGElement,
-    SVGRenderer = H.SVGRenderer,
     win = H.win;
 
 /* eslint-disable valid-jsdoc */
@@ -458,7 +455,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
         wrapper.alignSetter =
         wrapper.rotationSetter =
         function (
-            value: ('start'|'middle'|'end'),
+            value: string,
             key?: string
         ): void {
             if (key === 'align') {

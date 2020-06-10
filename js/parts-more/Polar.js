@@ -8,15 +8,17 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+import Pane from '../parts-more/Pane.js';
+import Pointer from '../parts/Pointer.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
 import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, defined = U.defined, find = U.find, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
-import '../parts/Pointer.js';
+var addEvent = U.addEvent, animObject = U.animObject, defined = U.defined, find = U.find, isNumber = U.isNumber, pick = U.pick, splat = U.splat, uniqueKey = U.uniqueKey, wrap = U.wrap;
 import '../parts/Series.js';
-import '../parts/Pointer.js';
 // Extensions for polar charts. Additionally, much of the geometry required for
 // polar charts is gathered in RadialAxes.js.
-var Pointer = H.Pointer, Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto, arearangeProto;
+var Series = H.Series, seriesTypes = H.seriesTypes, seriesProto = Series.prototype, pointerProto = Pointer.prototype, colProto, arearangeProto;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Search a k-d tree by the point angle, used for shared tooltips in polar
@@ -306,7 +308,7 @@ var polarAnimate = function (proceed, init) {
             // Enable animation on polar charts only in SVG. In VML, the scaling
             // is different, plus animation would be so slow it would't matter.
             if (chart.renderer.isSVG) {
-                animation = H.animObject(animation);
+                animation = animObject(animation);
                 // A different animation needed for column like series
                 if (series.is('column')) {
                     if (!init) {
@@ -329,8 +331,6 @@ var polarAnimate = function (proceed, init) {
                                 }, series.options.animation);
                             }
                         });
-                        // Delete this function to allow it only once
-                        series.animate = null;
                     }
                 }
                 else {
@@ -360,8 +360,6 @@ var polarAnimate = function (proceed, init) {
                         if (markerGroup) {
                             markerGroup.animate(attribs, animation);
                         }
-                        // Delete this function to allow it only once
-                        series.animate = null;
                     }
                 }
             }
@@ -421,7 +419,7 @@ if (seriesTypes.column) {
             threshold = options.threshold || 0;
             if (chart.inverted) {
                 // Finding a correct threshold
-                if (H.isNumber(threshold)) {
+                if (isNumber(threshold)) {
                     thresholdAngleRad = yAxis.translate(threshold);
                     // Checks if threshold is outside the visible range
                     if (defined(thresholdAngleRad)) {
@@ -445,8 +443,8 @@ if (seriesTypes.column) {
                 point.shapeType = 'arc';
                 if (chart.inverted) {
                     point.plotY = yAxis.translate(pointY);
-                    if (stacking) {
-                        stack = yAxis.stacks[(pointY < 0 ? '-' : '') +
+                    if (stacking && yAxis.stacking) {
+                        stack = yAxis.stacking.stacks[(pointY < 0 ? '-' : '') +
                             series.stackKey];
                         if (series.visible && stack && stack[pointX]) {
                             if (!point.isNull) {
@@ -679,7 +677,7 @@ wrap(pointerProto, 'getCoordinates', function (proceed, e) {
     }
     return ret;
 });
-H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
+SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
     var wrapper, id = uniqueKey(), clipPath = this.createElement('clipPath').attr({
         id: id
     }).add(this.defs);
@@ -690,16 +688,16 @@ H.SVGRenderer.prototype.clipCircle = function (x, y, r, innerR) {
     wrapper.clipPath = clipPath;
     return wrapper;
 };
-addEvent(H.Chart, 'getAxes', function () {
+addEvent(Chart, 'getAxes', function () {
     if (!this.pane) {
         this.pane = [];
     }
     splat(this.options.pane).forEach(function (paneOptions) {
-        new H.Pane(// eslint-disable-line no-new
+        new Pane(// eslint-disable-line no-new
         paneOptions, this);
     }, this);
 });
-addEvent(H.Chart, 'afterDrawChartBox', function () {
+addEvent(Chart, 'afterDrawChartBox', function () {
     this.pane.forEach(function (pane) {
         pane.render();
     });
@@ -719,7 +717,7 @@ addEvent(H.Series, 'afterInit', function () {
  * responsiveness and chart.update.
  * @private
  */
-wrap(H.Chart.prototype, 'get', function (proceed, id) {
+wrap(Chart.prototype, 'get', function (proceed, id) {
     return find(this.pane, function (pane) {
         return pane.options.id === id;
     }) || proceed.call(this, id);

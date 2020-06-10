@@ -10,6 +10,7 @@
  *
  * */
 'use strict';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, wrap = U.wrap;
@@ -69,7 +70,6 @@ function init() {
             }
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points || this.graph) {
-                this.animate = null;
                 this.destroyGraphics();
             }
             // If we're rendering per. series we should create the marker groups
@@ -241,7 +241,7 @@ function init() {
         sampling: true
     });
     // Take care of the canvas blitting
-    H.Chart.prototype.callbacks.push(function (chart) {
+    Chart.prototype.callbacks.push(function (chart) {
         /**
          * Convert chart-level canvas to image.
          * @private

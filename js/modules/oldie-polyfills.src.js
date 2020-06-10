@@ -14,6 +14,11 @@
 /* global document */
 'use strict';
 /* eslint-disable no-extend-native */
+if (!String.prototype.trim) {
+    String.prototype.trim = function () {
+        return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g, '');
+    };
+}
 if (!Array.prototype.forEach) {
     Array.prototype.forEach = function (fn, thisArg) {
         var i = 0, len = this.length;
@@ -95,6 +100,23 @@ if (!Array.prototype.reduce) {
             accumulator = func.call(context, accumulator, this[i], i, this);
         }
         return accumulator;
+    };
+}
+if (!Function.prototype.bind) {
+    Function.prototype.bind = function () {
+        var thatFunc = this;
+        var thatArg = arguments[0];
+        var args = Array.prototype.slice.call(arguments, 1);
+        if (typeof thatFunc !== 'function') {
+            // closest thing possible to the ECMAScript 5
+            // internal IsCallable function
+            throw new TypeError('Function.prototype.bind - ' +
+                'what is trying to be bound is not callable');
+        }
+        return function () {
+            var funcArgs = args.concat(Array.prototype.slice.call(arguments));
+            return thatFunc.apply(thatArg, funcArgs);
+        };
     };
 }
 if (!Object.keys) {

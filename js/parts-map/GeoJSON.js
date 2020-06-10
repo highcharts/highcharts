@@ -8,7 +8,12 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
 import H from '../parts/Globals.js';
+var win = H.win;
+import '../parts/Options.js';
+import U from '../parts/Utilities.js';
+var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
 /**
  * Result object of a map transformation.
  *
@@ -35,11 +40,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.MapLatLonObject#lon
 * @type {number}
 */
-import U from '../parts/Utilities.js';
-var error = U.error, extend = U.extend, format = U.format, merge = U.merge, wrap = U.wrap;
-import '../parts/Options.js';
-import '../parts/Chart.js';
-var Chart = H.Chart, win = H.win;
+''; // detach doclets above
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * Test for point in polygon. Polygon defined as array of [x,y] points.
@@ -265,14 +266,14 @@ Chart.prototype.fromLatLonToPoint = function (latLon) {
  */
 H.geojson = function (geojson, hType, series) {
     var mapData = [], path = [], polygonToPath = function (polygon) {
-        var i, len = polygon.length;
-        path.push('M');
-        for (i = 0; i < len; i++) {
-            if (i === 1) {
-                path.push('L');
+        polygon.forEach(function (point, i) {
+            if (i === 0) {
+                path.push(['M', point[0], -point[1]]);
             }
-            path.push(polygon[i][0], -polygon[i][1]);
-        }
+            else {
+                path.push(['L', point[0], -point[1]]);
+            }
+        });
     };
     hType = hType || 'map';
     geojson.features.forEach(function (feature) {
@@ -281,13 +282,13 @@ H.geojson = function (geojson, hType, series) {
         if (hType === 'map' || hType === 'mapbubble') {
             if (type === 'Polygon') {
                 coordinates.forEach(polygonToPath);
-                path.push('Z');
+                path.push(['Z']);
             }
             else if (type === 'MultiPolygon') {
                 coordinates.forEach(function (items) {
                     items.forEach(polygonToPath);
                 });
-                path.push('Z');
+                path.push(['Z']);
             }
             if (path.length) {
                 point = { path: path };

@@ -20,21 +20,21 @@ var each = H.each,
 
 H.SVGRenderer.prototype.symbols.target = function (x, y, w, h, bh, i, inverted) {
     return inverted ? [
-        'M', x, y,
-        'L', -w / 2, -h + bh,
-        -w / 2, -h,
-        x, -h + i,
-        w / 2, -h,
-        w / 2, -h + bh,
-        'Z'
+        ['M', x, y],
+        ['L', -w / 2, -h + bh],
+        ['L', -w / 2, -h],
+        ['L', x, -h + i],
+        ['L', w / 2, -h],
+        ['L', w / 2, -h + bh],
+        ['Z']
     ] : [
-        'M', x, y,
-        'L', -h + bh, w / 2,
-        -h, w / 2,
-        -h + i, y,
-        -h, -w / 2,
-        -h + bh, -w / 2,
-        'Z'
+        ['M', x, y],
+        ['L', -h + bh, w / 2],
+        ['L', -h, w / 2],
+        ['L', -h + i, y],
+        ['L', -h, -w / 2],
+        ['L', -h + bh, -w / 2],
+        ['Z']
     ];
 };
 
@@ -433,7 +433,13 @@ seriesType('lineargauge', 'column',
                     if (showLine) {
                         offsetOnPoint = xAxisLength - (onPoint ? pixelX - (inverted ? plotTop : plotLeft) : 0);
 
-                        linePath = inverted ? ['M', 0, 0, 'L', 0, offsetOnPoint] : ['M', 0, 0, 'L', offsetOnPoint, 0];
+                        linePath = inverted ? [
+                            ['M', 0, 0],
+                            ['L', 0, offsetOnPoint]
+                        ] : [
+                            ['M', 0, 0],
+                            ['L', offsetOnPoint, 0]
+                        ];
                         // linePath = renderer.crispLine(linePath, lineWidth || 1);
 
                         beginningAtrr.zIndex = lineZIndex;

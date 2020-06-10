@@ -4,6 +4,11 @@
  *
  * */
 'use strict';
+import ControlPoint from './../ControlPoint.js';
+import MockPoint from './../MockPoint.js';
+import Tooltip from '../../parts/Tooltip.js';
+import U from './../../parts/Utilities.js';
+var isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
 /**
  * An object which denots a controllable's anchor positions - relative and
  * absolute.
@@ -38,12 +43,7 @@
 * @name Highcharts.AnnotationControllable#points
 * @type {Array<Highcharts.Point>}
 */
-import U from './../../parts/Utilities.js';
-var isObject = U.isObject, isString = U.isString, merge = U.merge, splat = U.splat;
 import './../../parts/Tooltip.js';
-import ControlPoint from './../ControlPoint.js';
-import MockPoint from './../MockPoint.js';
-import Tooltip from '../../parts/Tooltip.js';
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * It provides methods for handling points, control points

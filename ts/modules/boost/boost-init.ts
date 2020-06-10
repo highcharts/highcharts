@@ -11,7 +11,15 @@
  * */
 
 'use strict';
+import Chart from '../../parts/Chart.js';
 import H from '../../parts/Globals.js';
+import U from '../../parts/Utilities.js';
+const {
+    addEvent,
+    extend,
+    fireEvent,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -19,7 +27,7 @@ import H from '../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             didBoost?: boolean;
             markerGroup?: Series['markerGroup'];
         }
@@ -30,14 +38,6 @@ declare global {
         }
     }
 }
-
-import U from '../../parts/Utilities.js';
-const {
-    addEvent,
-    extend,
-    fireEvent,
-    wrap
-} = U;
 
 import '../../parts/Series.js';
 
@@ -159,8 +159,6 @@ function init(): void {
 
             // If we are zooming out from SVG mode, destroy the graphics
             if (this.points || this.graph) {
-
-                this.animate = null as any;
                 this.destroyGraphics();
             }
 
@@ -396,9 +394,8 @@ function init(): void {
     });
 
     // Take care of the canvas blitting
-    H.Chart.prototype.callbacks.push(function (
-        this: Highcharts.Chart,
-        chart: Highcharts.Chart
+    Chart.prototype.callbacks.push(function (
+        chart: Chart
     ): void {
 
         /**

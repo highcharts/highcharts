@@ -1,0 +1,72 @@
+#table-intro-text {
+    font-family: Verdana, sans-serif;
+    color: #222;
+    width: 100%;
+    max-width: 950px;
+    margin: 30px auto;
+}
+
+#table-intro-text h1 {
+    font-size: 1.9em;
+    color: #363636;
+}
+
+.sparkline-container {
+    height: 80px; 
+    width: 170px;    
+    margin: 0 auto;
+}
+
+#table {
+    font-family: Verdana, sans-serif;
+    border-collapse: collapse;
+    margin: 10px auto;
+    text-align: center;
+    width: 100%;
+    max-width: 650px;
+    color: #333;
+}
+#table caption {
+    padding: 1.2em 1em;
+    font-size: 1.3em;
+    color: #555;
+}
+#table th {
+	font-weight: 400;
+    font-size: 1.1em;
+    padding: 0.8em;
+}
+#table th[scope="row"] {
+    text-align: left;
+}
+#table td {
+    padding: 0.3em 0.8em;
+}
+#table th, #table td {
+    border-right: 1px solid #f1f7ff;
+}
+#table tr:hover {
+    background: #f1f7ff;
+}
+
+@media screen and (max-width: 500px) {
+    #table th {
+        font-size: 0.8em;
+        font-weight: bold;
+        color: #444;
+        padding: 0.5em;
+    }
+
+    #table td {
+        padding: 0.3em 0.4em;
+    }
+
+    #table {
+        font-size: 0.8em;
+        overflow: scroll;
+    }
+
+    .sparkline-container {
+        width: 100px;
+    }
+}

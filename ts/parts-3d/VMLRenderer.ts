@@ -12,7 +12,12 @@
 
 'use strict';
 
+import Axis from '../parts/Axis.js';
 import H from '../parts/Globals.js';
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+const { setOptions } = U;
+import VMLAxis3D from './VMLAxis3D.js';
 
 /**
  * Internal types
@@ -20,11 +25,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface VMLAxis extends Axis {
-            backFrame?: VMLElement;
-            bottomFrame?: VMLElement;
-            sideFrame?: VMLElement;
-        }
         interface VMLElement {
             color?: (ColorString|GradientColorObject|PatternObject);
             front?: VMLElement;
@@ -44,21 +44,11 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent
-} = U;
-
-import '../parts/Axis.js';
-import '../parts/SvgRenderer.js';
-
-var Axis = H.Axis,
-    SVGRenderer = H.SVGRenderer,
-    VMLRenderer = H.VMLRenderer;
+var VMLRenderer = H.VMLRenderer;
 
 if (VMLRenderer) {
 
-    H.setOptions({ animate: false } as any);
+    setOptions({ animate: false } as any);
 
     VMLRenderer.prototype.face3d = SVGRenderer.prototype.face3d;
     VMLRenderer.prototype.polyhedron = SVGRenderer.prototype.polyhedron;
@@ -81,33 +71,8 @@ if (VMLRenderer) {
         return result as any;
     };
 
-    H.VMLRenderer.prototype.arc3dPath = H.SVGRenderer.prototype.arc3dPath;
+    H.VMLRenderer.prototype.arc3dPath = SVGRenderer.prototype.arc3dPath;
 
-    /* eslint-disable no-invalid-this */
-
-    addEvent(Axis, 'render', function (this: Highcharts.VMLAxis): void {
-
-        // VML doesn't support a negative z-index
-        if (this.sideFrame) {
-            this.sideFrame.css({ zIndex: 0 });
-            (this.sideFrame.front as any).attr({
-                fill: this.sideFrame.color
-            });
-        }
-        if (this.bottomFrame) {
-            this.bottomFrame.css({ zIndex: 1 });
-            (this.bottomFrame.front as any).attr({
-                fill: this.bottomFrame.color
-            });
-        }
-        if (this.backFrame) {
-            this.backFrame.css({ zIndex: 0 });
-            (this.backFrame.front as any).attr({
-                fill: this.backFrame.color
-            });
-        }
-    });
-
-    /* eslint-enable no-invalid-this */
+    VMLAxis3D.compose(Axis);
 
 }

@@ -11,15 +11,16 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import O from '../parts/Options.js';
+var dateFormat = O.dateFormat;
+import './TreeGridAxis.js';
 import U from '../parts/Utilities.js';
 var isNumber = U.isNumber, merge = U.merge, pick = U.pick, seriesType = U.seriesType, splat = U.splat;
 import './CurrentDateIndicator.js';
-import './GridAxis.js';
 import '../modules/static-scale.src.js';
-import './TreeGrid.js';
 import './Pathfinder.js';
 import '../modules/xrange.src.js';
-var dateFormat = H.dateFormat, seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
+var seriesTypes = H.seriesTypes, Series = H.Series, parent = seriesTypes.xrange;
 /**
  * @private
  * @class
@@ -231,7 +232,7 @@ seriesType('gantt', 'xrange'
  * @declare   Highcharts.GanttPointOptionsObject
  * @type      {Array<*>}
  * @extends   series.xrange.data
- * @excluding className, color, colorIndex, connect, dataLabels, events, id,
+ * @excluding className, color, colorIndex, connect, dataLabels, events,
  *            partialFill, selected, x, x2
  * @product   gantt
  * @apioption series.gantt.data

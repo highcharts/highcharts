@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -20,6 +21,7 @@ declare global {
     namespace Highcharts {
         class BoxPlotPoint extends ColumnPoint {
             public box: SVGElement;
+            public boxDashStyle: DashStyleValue;
             public fillColor: (ColorString|GradientColorObject|PatternObject);
             public high: number;
             public highPlot: number;
@@ -27,6 +29,7 @@ declare global {
             public lowPlot: number;
             public median: number;
             public medianColor: (ColorString|GradientColorObject);
+            public medianDashStyle: DashStyleValue;
             public medianPlot: number;
             public medianShape: SVGElement;
             public medianWidth: number;
@@ -44,6 +47,7 @@ declare global {
             public whiskerColor: (
                 ColorString|GradientColorObject|PatternObject
             );
+            public whiskerDashStyle: DashStyleValue;
             public whiskers: SVGElement;
             public whiskerLength: (number|string);
             public whiskerWidth: number;
@@ -68,14 +72,17 @@ declare global {
             q3?: BoxPlotPoint['q3'];
         }
         interface BoxPlotSeriesOptions extends ColumnSeriesOptions {
+            boxDashStyle?: BoxPlotPoint['boxDashStyle'];
             fillColor?: BoxPlotPoint['fillColor'];
             medianColor?: BoxPlotPoint['medianColor'];
+            medianDashStyle?: BoxPlotPoint['medianDashStyle'];
             medianWidth?: BoxPlotPoint['medianWidth'];
             states?: SeriesStatesOptionsObject<BoxPlotSeries>;
             stemColor?: BoxPlotPoint['stemColor'];
             stemDashStyle?: BoxPlotPoint['stemDashStyle'];
             stemWidth?: BoxPlotPoint['stemWidth'];
             whiskerColor?: BoxPlotPoint['whiskerColor'];
+            whiskerDashStyle?: BoxPlotPoint['whiskerDashStyle'];
             whiskerLength?: BoxPlotPoint['whiskerLength'];
             whiskerWidth?: BoxPlotPoint['whiskerWidth'];
         }
@@ -251,6 +258,36 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      */
 
     /**
+     * The dash style of the box.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since 8.1.0
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.boxDashStyle
+     */
+
+    /**
+     * The dash style of the median.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since 8.1.0
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.medianDashStyle
+     */
+
+    /**
      * The dash style of the stem, the vertical line extending from the
      * box to the whiskers.
      *
@@ -266,6 +303,21 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
      * @since     3.0
      * @product   highcharts
      * @apioption plotOptions.boxplot.stemDashStyle
+     */
+
+    /**
+     * The dash style of the whiskers.
+     *
+     * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+     *         Box plot styling
+     * @sample {highcharts} highcharts/css/boxplot/
+     *         Box plot in styled mode
+     *
+     * @type      {Highcharts.DashStyleValue}
+     * @default   Solid
+     * @since 8.1.0
+     * @product   highcharts
+     * @apioption plotOptions.boxplot.whiskerDashStyle
      */
 
     /**
@@ -374,6 +426,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     );
                 }
             });
+            point.plotHigh = point.highPlot; // For data label validation
         });
     },
 
@@ -393,10 +446,10 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
             highPlot,
             lowPlot,
             medianPlot,
-            medianPath: Highcharts.SVGPathArray,
+            medianPath: SVGPath,
             crispCorr,
             crispX = 0,
-            boxPath: Highcharts.SVGPathArray,
+            boxPath: SVGPath,
             width,
             left,
             right,
@@ -405,7 +458,6 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
             doQuartiles = series.doQuartiles !== false,
             pointWiskerLength,
             whiskerLength = series.options.whiskerLength;
-
 
         points.forEach(function (point: Highcharts.BoxPlotPoint): void {
 
@@ -421,7 +473,7 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
             if (typeof point.plotY !== 'undefined') {
 
                 // crisp vector coordinates
-                width = shapeArgs.width;
+                width = Math.round(shapeArgs.width);
                 left = Math.floor(shapeArgs.x);
                 right = left + width;
                 halfWidth = Math.round(width / 2);
@@ -463,8 +515,11 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                         options.stemWidth,
                         options.lineWidth
                     );
-                    stemAttr.dashstyle =
-                        point.stemDashStyle || options.stemDashStyle;
+                    stemAttr.dashstyle = (
+                        point.stemDashStyle ||
+                        options.stemDashStyle ||
+                        options.dashStyle
+                    );
                     point.stem.attr(stemAttr);
 
                     // Whiskers attributes
@@ -479,6 +534,11 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                             options.whiskerWidth,
                             options.lineWidth
                         );
+                        whiskersAttr.dashstyle = (
+                            point.whiskerDashStyle ||
+                            options.whiskerDashStyle ||
+                            options.dashStyle
+                        );
                         point.whiskers.attr(whiskersAttr);
                     }
 
@@ -490,9 +550,13 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                         );
                         boxAttr.stroke = options.lineColor || color;
                         boxAttr['stroke-width'] = options.lineWidth || 0;
+                        boxAttr.dashstyle = (
+                            point.boxDashStyle ||
+                            options.boxDashStyle ||
+                            options.dashStyle
+                        );
                         point.box.attr(boxAttr);
                     }
-
 
                     // Median attributes
                     medianAttr.stroke = (
@@ -505,29 +569,29 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                         options.medianWidth,
                         options.lineWidth
                     );
+                    medianAttr.dashstyle = (
+                        point.medianDashStyle ||
+                        options.medianDashStyle ||
+                        options.dashStyle
+                    );
                     point.medianShape.attr(medianAttr);
-
                 }
 
+                let d: SVGPath;
 
                 // The stem
                 crispCorr = (point.stem.strokeWidth() % 2) / 2;
                 crispX = left + halfWidth + crispCorr;
-                point.stem[verb]({
-                    d: [
+                d = [
                     // stem up
-                        'M',
-                        crispX, q3Plot,
-                        'L',
-                        crispX, highPlot,
+                    ['M', crispX, q3Plot],
+                    ['L', crispX, highPlot],
 
-                        // stem down
-                        'M',
-                        crispX, q1Plot,
-                        'L',
-                        crispX, lowPlot
-                    ]
-                });
+                    // stem down
+                    ['M', crispX, q1Plot],
+                    ['L', crispX, lowPlot]
+                ];
+                point.stem[verb]({ d });
 
                 // The box
                 if (doQuartiles) {
@@ -536,21 +600,15 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     q3Plot = Math.floor(q3Plot) + crispCorr;
                     left += crispCorr;
                     right += crispCorr;
-                    point.box[verb]({
-                        d: [
-                            'M',
-                            left, q3Plot,
-                            'L',
-                            left, q1Plot,
-                            'L',
-                            right, q1Plot,
-                            'L',
-                            right, q3Plot,
-                            'L',
-                            left, q3Plot,
-                            'z'
-                        ]
-                    });
+                    d = [
+                        ['M', left, q3Plot],
+                        ['L', left, q1Plot],
+                        ['L', right, q1Plot],
+                        ['L', right, q3Plot],
+                        ['L', left, q3Plot],
+                        ['Z']
+                    ];
+                    point.box[verb]({ d });
                 }
 
                 // The whiskers
@@ -561,25 +619,16 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                     pointWiskerLength = (/%$/).test(whiskerLength as any) ?
                         halfWidth * parseFloat(whiskerLength as any) / 100 :
                         (whiskerLength as any) / 2;
-                    point.whiskers[verb]({
-                        d: [
+                    d = [
                         // High whisker
-                            'M',
-                            crispX - pointWiskerLength,
-                            highPlot,
-                            'L',
-                            crispX + pointWiskerLength,
-                            highPlot,
+                        ['M', crispX - pointWiskerLength, highPlot],
+                        ['L', crispX + pointWiskerLength, highPlot],
 
-                            // Low whisker
-                            'M',
-                            crispX - pointWiskerLength,
-                            lowPlot,
-                            'L',
-                            crispX + pointWiskerLength,
-                            lowPlot
-                        ]
-                    });
+                        // Low whisker
+                        ['M', crispX - pointWiskerLength, lowPlot],
+                        ['L', crispX + pointWiskerLength, lowPlot]
+                    ];
+                    point.whiskers[verb]({ d });
                 }
 
                 // The median
@@ -587,16 +636,11 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
                 crispCorr = (point.medianShape.strokeWidth() % 2) / 2;
                 medianPlot = medianPlot + crispCorr;
 
-                point.medianShape[verb]({
-                    d: [
-                        'M',
-                        left,
-                        medianPlot,
-                        'L',
-                        right,
-                        medianPlot
-                    ]
-                });
+                d = [
+                    ['M', left, medianPlot],
+                    ['L', right, medianPlot]
+                ];
+                point.medianShape[verb]({ d });
             }
         });
 
@@ -720,6 +764,66 @@ seriesType<Highcharts.BoxPlotSeries>('boxplot', 'column', {
  * @type      {number}
  * @product   highcharts
  * @apioption series.boxplot.data.q3
+ */
+
+/**
+ * The dash style of the box.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since 8.1.0
+ * @product   highcharts
+ * @apioption series.boxplot.data.boxDashStyle
+ */
+
+/**
+ * The dash style of the median.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since 8.1.0
+ * @product   highcharts
+ * @apioption series.boxplot.data.medianDashStyle
+ */
+
+/**
+ * The dash style of the stem.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since 8.1.0
+ * @product   highcharts
+ * @apioption series.boxplot.data.stemDashStyle
+ */
+
+/**
+ * The dash style of the whiskers.
+ *
+ * @sample {highcharts} highcharts/plotoptions/box-plot-styling/
+ *         Box plot styling
+ * @sample {highcharts} highcharts/css/boxplot/
+ *         Box plot in styled mode
+ *
+ * @type      {Highcharts.DashStyleValue}
+ * @default   Solid
+ * @since 8.1.0
+ * @product   highcharts
+ * @apioption series.boxplot.data.whiskerDashStyle
  */
 
 ''; // adds doclets above to transpiled file

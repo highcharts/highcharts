@@ -176,3 +176,58 @@ QUnit.test('Hiding and showing annotations with linked points', function (assert
         'Annotation correctly hidden.'
     );
 });
+
+QUnit.test('Annotation\'s update methods', function (assert) {
+
+    var clock = TestUtilities.lolexInstall();
+
+    try {
+
+        var done = assert.async(),
+            chart = Highcharts.chart('container', {
+                annotations: [{
+                    labels: [{
+                        point: {
+                            xAxis: 0,
+                            yAxis: 0,
+                            x: 0,
+                            y: 5
+                        }
+                    }]
+                }],
+                series: [{
+                    data: [4, 3, 7, 8]
+                }]
+            });
+
+        chart.update({
+            annotations: [{
+                labelOptions: {
+                    format: 'Sample text'
+                }
+            }],
+            xAxis: {
+                title: 'Test'
+            }
+        }, null, null, { duration: 500 });
+
+        setTimeout(function () {
+            const x = chart.annotations[0].clipRect.attr('x'),
+                y = chart.annotations[0].clipRect.attr('y'),
+                width = chart.annotations[0].clipRect.attr('width'),
+                height = chart.annotations[0].clipRect.attr('height');
+
+            assert.equal(
+                isNaN(+x) || isNaN(+y) || isNaN(+width) || isNaN(+height),
+                false,
+                'Annotation\'s clipRect cannot have a NaN for numerical attributes'
+            );
+
+            done();
+        }, 250);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+    } finally {
+        TestUtilities.lolexUninstall(clock);
+    }
+});

@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Chart from '../../parts/Chart';
 import ChartUtilities from './utils/chartUtilities.js';
 import H from '../../parts/Globals.js';
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
@@ -56,7 +57,7 @@ declare global {
             options: Required<SeriesOptions>;
             points: Array<AccessibilityPoint>;
         }
-        interface Chart {
+        interface ChartLike {
             a11yDirty?: boolean;
             accessibility?: Accessibility;
             types?: Array<string>;
@@ -67,6 +68,9 @@ declare global {
     }
 }
 
+import O from '../../parts/Options.js';
+const { defaultOptions } = O;
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 const {
     addEvent,
@@ -88,7 +92,7 @@ import InfoRegionsComponent from './components/InfoRegionsComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
-import defaultOptions from './options/options.js';
+import defaultOptionsA11Y from './options/options.js';
 import defaultLangOptions from './options/langOptions.js';
 import copyDeprecatedOptions from './options/deprecatedOptions.js';
 import './a11y-i18n.js';
@@ -98,8 +102,8 @@ import './focusBorder.js';
 // Add default options
 merge(
     true,
-    H.defaultOptions,
     defaultOptions,
+    defaultOptionsA11Y,
     {
         accessibility: {
             highContrastTheme: highContrastTheme
@@ -131,7 +135,7 @@ H.AccessibilityComponent = AccessibilityComponent as any;
  */
 function Accessibility(
     this: Highcharts.Accessibility,
-    chart: Highcharts.Chart
+    chart: Chart
 ): void {
     this.init(chart);
 }
@@ -146,7 +150,7 @@ Accessibility.prototype = {
      */
     init: function (
         this: Highcharts.Accessibility,
-        chart: Highcharts.Chart
+        chart: Chart
     ): void {
         this.chart = chart as any;
 
@@ -265,7 +269,7 @@ Accessibility.prototype = {
      * Destroy all elements.
      */
     destroy: function (): void {
-        var chart: Highcharts.Chart = this.chart || {};
+        var chart: Chart = this.chart || {};
 
         // Destroy components
         var components = this.components;
@@ -374,7 +378,7 @@ addEvent(H.Chart as any, 'update', function (
 });
 
 // Mark dirty for update
-addEvent(H.Point, 'update', function (): void {
+addEvent(Point, 'update', function (): void {
     if (this.series.chart.accessibility) {
         this.series.chart.a11yDirty = true;
     }

@@ -11,6 +11,9 @@
  * */
 
 'use strict';
+
+import type Chart from '../../parts/Chart';
+import type Point from '../../parts/Point';
 import musicalFrequencies from './musicalFrequencies.js';
 import U from '../../parts/Utilities.js';
 const { clamp } = U;
@@ -203,7 +206,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
      * @return {Highcharts.RangeObject} Object with min and max properties
      */
     calculateDataExtremes: function (
-        chart: Highcharts.Chart,
+        chart: Chart,
         prop: string
     ): Highcharts.RangeObject {
         return chart.series.reduce(function (
@@ -212,7 +215,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
         ): Highcharts.RangeObject {
             // We use cropped points rather than series.data here, to allow
             // users to zoom in for better fidelity.
-            series.points.forEach(function (point: Highcharts.Point): void {
+            series.points.forEach(function (point: Point): void {
                 var val = typeof (point as any)[prop] !== 'undefined' ?
                     (point as any)[prop] : (point.options as any)[prop];
 
@@ -232,7 +235,7 @@ var utilities: Highcharts.SonificationUtilitiesObject = {
      * @private
      * @param {number} value
      * The relative data value to translate.
-     * @param {Highcharts.RangeObject} dataExtremes
+     * @param {Highcharts.RangeObject} DataExtremesObject
      * The possible extremes for this value.
      * @param {object} limits
      * Limits for the virtual axis.

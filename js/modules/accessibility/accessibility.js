@@ -13,6 +13,9 @@
 import ChartUtilities from './utils/chartUtilities.js';
 import H from '../../parts/Globals.js';
 import KeyboardNavigationHandler from './KeyboardNavigationHandler.js';
+import O from '../../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import Point from '../../parts/Point.js';
 import U from '../../parts/Utilities.js';
 var addEvent = U.addEvent, extend = U.extend, fireEvent = U.fireEvent, merge = U.merge;
 var doc = H.win.document;
@@ -27,13 +30,13 @@ import InfoRegionsComponent from './components/InfoRegionsComponent.js';
 import ContainerComponent from './components/ContainerComponent.js';
 import whcm from './high-contrast-mode.js';
 import highContrastTheme from './high-contrast-theme.js';
-import defaultOptions from './options/options.js';
+import defaultOptionsA11Y from './options/options.js';
 import defaultLangOptions from './options/langOptions.js';
 import copyDeprecatedOptions from './options/deprecatedOptions.js';
 import './a11y-i18n.js';
 import './focusBorder.js';
 // Add default options
-merge(true, H.defaultOptions, defaultOptions, {
+merge(true, defaultOptions, defaultOptionsA11Y, {
     accessibility: {
         highContrastTheme: highContrastTheme
     },
@@ -244,7 +247,7 @@ addEvent(H.Chart, 'update', function (e) {
     this.a11yDirty = true;
 });
 // Mark dirty for update
-addEvent(H.Point, 'update', function () {
+addEvent(Point, 'update', function () {
     if (this.series.chart.accessibility) {
         this.series.chart.a11yDirty = true;
     }

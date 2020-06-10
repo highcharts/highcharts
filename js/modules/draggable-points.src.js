@@ -11,6 +11,9 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import Point from '../parts/Point.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
 /**
  * Current drag and drop position.
  *
@@ -167,8 +170,7 @@ import H from '../parts/Globals.js';
 * @name Highcharts.PointDropEventObject#type
 * @type {"drop"}
 */
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, clamp = U.clamp, merge = U.merge, objectEach = U.objectEach, pick = U.pick;
+''; // detaches doclets above
 var seriesTypes = H.seriesTypes;
 /**
  * Flip a side property, used with resizeRect. If input side is "left", return
@@ -239,14 +241,14 @@ var horizHandleFormatter = function (point) {
     bottom = shapeArgs.height - top, centerY = shapeArgs.height / 2;
     return [
         // Top wick
-        'M', 0, top,
-        'L', 0, centerY - 5,
+        ['M', 0, top],
+        ['L', 0, centerY - 5],
         // Circle
-        'A', 1, 1, 0, 0, 0, 0, centerY + 5,
-        'A', 1, 1, 0, 0, 0, 0, centerY - 5,
+        ['A', 1, 1, 0, 0, 0, 0, centerY + 5],
+        ['A', 1, 1, 0, 0, 0, 0, centerY - 5],
         // Bottom wick
-        'M', 0, centerY + 5,
-        'L', 0, bottom
+        ['M', 0, centerY + 5],
+        ['L', 0, bottom]
     ];
 };
 // Line series - only draggableX/Y, no drag handles
@@ -322,18 +324,18 @@ var columnDragDropProps = seriesTypes.column.prototype.dragDropProps = {
         },
         // Horizontal handle
         handleFormatter: function (point) {
-            var shapeArgs = point.shapeArgs, radius = shapeArgs.r || 0, // Rounding of bar corners
-            centerX = shapeArgs.width / 2;
+            var shapeArgs = point.shapeArgs || {}, radius = shapeArgs.r || 0, // Rounding of bar corners
+            width = shapeArgs.width || 0, centerX = width / 2;
             return [
                 // Left wick
-                'M', radius, 0,
-                'L', centerX - 5, 0,
+                ['M', radius, 0],
+                ['L', centerX - 5, 0],
                 // Circle
-                'A', 1, 1, 0, 0, 0, centerX + 5, 0,
-                'A', 1, 1, 0, 0, 0, centerX - 5, 0,
+                ['A', 1, 1, 0, 0, 0, centerX + 5, 0],
+                ['A', 1, 1, 0, 0, 0, centerX - 5, 0],
                 // Right wick
-                'M', centerX + 5, 0,
-                'L', shapeArgs.width - radius, 0
+                ['M', centerX + 5, 0],
+                ['L', width - radius, 0]
             ];
         }
     }
@@ -660,9 +662,9 @@ if (seriesTypes.arearange) {
             point.graphic.getBBox().width / 2 + 1 :
             4;
         return [
-            'M', 0 - radius, 0,
-            'a', radius, radius, 0, 1, 0, radius * 2, 0,
-            'a', radius, radius, 0, 1, 0, radius * -2, 0
+            ['M', 0 - radius, 0],
+            ['a', radius, radius, 0, 1, 0, radius * 2, 0],
+            ['a', radius, radius, 0, 1, 0, radius * -2, 0]
         ];
     };
     seriesTypes.arearange.prototype.dragDropProps = {
@@ -738,15 +740,14 @@ if (seriesTypes.xrange) {
         var series = point.series, xAxis = series.xAxis, yAxis = series.yAxis, inverted = series.chart.inverted, 
         // Using toPixels handles axis.reversed, but doesn't take
         // chart.inverted into account.
-        newX = xAxis.toPixels(point[xProp], true), newY = yAxis.toPixels(point.y, true);
+        newX = xAxis.toPixels(point[xProp], true), newY = yAxis.toPixels(point.y, true), offsetY = series.columnMetrics ? series.columnMetrics.offset :
+            -point.shapeArgs.height / 2;
         // Handle chart inverted
         if (inverted) {
             newX = xAxis.len - newX;
-            newY = yAxis.len - newY - point.shapeArgs.height / 2;
+            newY = yAxis.len - newY;
         }
-        else {
-            newY -= point.shapeArgs.height / 2;
-        }
+        newY += offsetY; // (#12872)
         return {
             x: Math.round(newX),
             y: Math.round(newY)
@@ -1569,7 +1570,6 @@ function getNewPoints(dragDropData, newPos) {
  *        A chart with dragDropData.newPoints.
  * @param {boolean} [animate=true]
  *        Animate updating points?
- * @return {void}
  */
 function updatePoints(chart, animate) {
     var newPoints = chart.dragDropData.newPoints, animOptions = animate === false ? false : merge({
@@ -1603,7 +1603,6 @@ function updatePoints(chart, animate) {
  *        Difference in X position.
  * @param {number} dY
  *        Difference in Y position.
- * @return {void}
  */
 function resizeGuideBox(point, dX, dY) {
     var series = point.series, chart = series.chart, dragDropData = chart.dragDropData, resizeSide, newPoint, resizeProp = series.dragDropProps[dragDropData.updateProp];
@@ -1635,7 +1634,6 @@ function resizeGuideBox(point, dX, dY) {
  *        The mouse move event.
  * @param {Highcharts.Point} point
  *        The point that is dragged.
- * @return {void}
  */
 function dragMove(e, point) {
     var series = point.series, chart = series.chart, data = chart.dragDropData, options = merge(series.options.dragDrop, point.options.dragDrop), draggableX = options.draggableX, draggableY = options.draggableY, origin = data.origin, dX = e.chartX - origin.chartX, dY = e.chartY - origin.chartY, oldDx = dX, updateProp = data.updateProp;
@@ -1721,7 +1719,7 @@ H.Chart.prototype.setGuideBoxState = function (state, options) {
  * @return {Highcharts.Dictionary<number>}
  *         An object with updated data values.
  */
-H.Point.prototype.getDropValues = function (origin, newPos, updateProps) {
+Point.prototype.getDropValues = function (origin, newPos, updateProps) {
     var point = this, series = point.series, options = merge(series.options.dragDrop, point.options.dragDrop), result = {}, updateSingleProp, pointOrigin = origin.points[point.id];
     // Find out if we only have one prop to update
     for (var key in updateProps) {
@@ -1802,7 +1800,6 @@ H.Series.prototype.getGuideBox = function (points) {
  * @function mouseOut
  * @param {Highcharts.Point} point
  *        The point mousing out of.
- * @return {void}
  */
 function mouseOut(point) {
     var chart = point.series && point.series.chart, dragDropData = chart && chart.dragDropData;
@@ -1822,7 +1819,6 @@ function mouseOut(point) {
  * @function onResizeHandleMouseOut
  * @param {Highcharts.Point} point
  *        The point mousing out of.
- * @return {void}
  */
 function onResizeHandleMouseOut(point) {
     var chart = point.series.chart;
@@ -1845,7 +1841,6 @@ function onResizeHandleMouseOut(point) {
  *        The point mousing down on.
  * @param {string} updateProp
  *        The data property this resize handle is attached to for this point.
- * @return {void}
  */
 function onResizeHandleMouseDown(e, point, updateProp) {
     var chart = point.series.chart;
@@ -1872,7 +1867,7 @@ function onResizeHandleMouseDown(e, point, updateProp) {
  * @function Highcharts.Point#showDragHandles
  * @return {void}
  */
-H.Point.prototype.showDragHandles = function () {
+Point.prototype.showDragHandles = function () {
     var point = this, series = point.series, chart = series.chart, renderer = chart.renderer, options = merge(series.options.dragDrop, point.options.dragDrop);
     // Go through each updateProp and see if we are supposed to create a handle
     // for it.
@@ -2007,7 +2002,6 @@ function getFirstProp(obj) {
  * @function mouseOver
  * @param {Highcharts.Point} point
  *        The point mousing over.
- * @return {void}
  */
 function mouseOver(point) {
     var series = point.series, chart = series && series.chart, dragDropData = chart && chart.dragDropData, is3d = chart && chart.is3d && chart.is3d();
@@ -2035,7 +2029,6 @@ function mouseOver(point) {
  *        The mouse move event.
  * @param {Highcharts.Chart} chart
  *        The chart we are moving across.
- * @return {void}
  */
 function mouseMove(e, chart) {
     // Ignore if zoom/pan key is pressed
@@ -2089,7 +2082,6 @@ function mouseMove(e, chart) {
  *        The mouse up event.
  * @param {Highcharts.Chart} chart
  *        The chart we were dragging in.
- * @return {void}
  */
 function mouseUp(e, chart) {
     var dragDropData = chart.dragDropData;
@@ -2137,7 +2129,6 @@ function mouseUp(e, chart) {
  *        The mouse down event.
  * @param {Highcharts.Chart} chart
  *        The chart we are clicking.
- * @return {void}
  */
 function mouseDown(e, chart) {
     var dragPoint = chart.hoverPoint, dragDropOptions = merge(dragPoint && dragPoint.series.options.dragDrop, dragPoint && dragPoint.options.dragDrop), draggableX = dragDropOptions.draggableX || false, draggableY = dragDropOptions.draggableY || false;
@@ -2171,14 +2162,14 @@ function mouseDown(e, chart) {
 // series are finicky since the markers are not individual points. This logic
 // should preferably be improved in the future. Notice that the mouseOut event
 // below must have a shorter timeout to ensure event order.
-addEvent(H.Point, 'mouseOver', function () {
+addEvent(Point, 'mouseOver', function () {
     var point = this;
     setTimeout(function () {
         mouseOver(point);
     }, 12);
 });
 // Point mouseleave event. See above function for explanation of the timeout.
-addEvent(H.Point, 'mouseOut', function () {
+addEvent(Point, 'mouseOut', function () {
     var point = this;
     setTimeout(function () {
         if (point.series) {
@@ -2187,7 +2178,7 @@ addEvent(H.Point, 'mouseOut', function () {
     }, 10);
 });
 // Hide drag handles on a point if it is removed
-addEvent(H.Point, 'remove', function () {
+addEvent(Point, 'remove', function () {
     var chart = this.series.chart, dragHandles = chart.dragHandles;
     if (dragHandles && dragHandles.point === this.id) {
         chart.hideDragHandles();
@@ -2215,7 +2206,6 @@ H.Chart.prototype.zoomOrPanKeyPressed = function (e) {
  * @function addDragDropEvents
  * @param {Highcharts.Chart} chart
  *        The chart to add events to.
- * @return {void}
  */
 function addDragDropEvents(chart) {
     var container = chart.container, doc = H.doc;

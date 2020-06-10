@@ -380,4 +380,14 @@
             'Collapsed graphics should not be rendered (#12617)'
         );
     });
+
+    QUnit.test('No series', function (assert) {
+        Highcharts.ganttChart('container', {
+            title: {
+                text: 'Gantt'
+            }
+        });
+
+        assert.ok(true, "Gantt should be initialized with no errors (#13246).");
+    });
 }());

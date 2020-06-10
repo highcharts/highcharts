@@ -10,7 +10,13 @@
 
 'use strict';
 
-import H from '../parts/Globals.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+const {
+    extend,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -34,17 +40,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    extend,
-    pick,
-    wrap
-} = U;
-
-import '../parts/Pointer.js';
-
-var Pointer = H.Pointer;
 
 /* eslint-disable no-invalid-this */
 
@@ -115,7 +110,7 @@ extend(Pointer.prototype, {
 
 // The pinchType is inferred from mapNavigation options.
 wrap(Pointer.prototype, 'zoomOption', function (
-    this: Highcharts.Pointer,
+    this: Pointer,
     proceed: Function
 ): void {
 
@@ -139,7 +134,7 @@ wrap(
     Pointer.prototype,
     'pinchTranslate',
     function (
-        this: Highcharts.Pointer,
+        this: Pointer,
         proceed: Function,
         pinchDown: Array<any>,
         touches: Array<any>,

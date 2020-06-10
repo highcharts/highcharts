@@ -23,7 +23,7 @@ const commandLine = command => new Promise((resolve, reject) => {
 });
 const filesize = () => {
     const {
-        scripts
+        getBuildScripts
     } = require('../../build.js');
     const colors = require('colors');
     const {
@@ -38,7 +38,7 @@ const filesize = () => {
     const sourceFolder = './code/';
     // @todo Correct type names to classic and styled and rename the param to
     // 'mode'
-    const types = argv.type ? [argv.type] : ['classic', 'css'];
+    const types = argv.type ? [argv.type] : ['classic'];
     const filenames = argv.file ? argv.file.split(',') : ['highcharts.src.js'];
     const files = filenames.reduce((arr, name) => {
         const p = types.map(t => (t === 'css' ? 'js/' : '') + name);
@@ -70,8 +70,7 @@ const filesize = () => {
         ].join('\n'));
     };
 
-    const runFileSize = (obj, key) => Promise
-        .resolve(scripts())
+    const runFileSize = (obj, key) => getBuildScripts({ files }).fnFirstBuild()
         .then(() => compile(files, sourceFolder))
         .then(() => files.reduce(
             (o, n) => {

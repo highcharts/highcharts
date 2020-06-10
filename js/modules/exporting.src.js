@@ -10,7 +10,15 @@
  *
  * */
 'use strict';
+import Chart from '../parts/Chart.js';
+import chartNavigationMixin from '../mixins/navigation.js';
 import H from '../parts/Globals.js';
+var doc = H.doc, isTouchDevice = H.isTouchDevice, win = H.win;
+import O from '../parts/Options.js';
+var defaultOptions = O.defaultOptions;
+import SVGRenderer from '../parts/SVGRenderer.js';
+import U from '../parts/Utilities.js';
+var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
 /**
  * Gets fired after a chart is printed through the context menu item or the
  * Chart.print method.
@@ -77,13 +85,8 @@ import H from '../parts/Globals.js';
  *
  * @typedef {"image/png"|"image/jpeg"|"application/pdf"|"image/svg+xml"} Highcharts.ExportingMimeTypeValue
  */
-import U from '../parts/Utilities.js';
-var addEvent = U.addEvent, css = U.css, createElement = U.createElement, discardElement = U.discardElement, extend = U.extend, find = U.find, fireEvent = U.fireEvent, isObject = U.isObject, merge = U.merge, objectEach = U.objectEach, pick = U.pick, removeEvent = U.removeEvent, uniqueKey = U.uniqueKey;
-import '../parts/Options.js';
-import '../parts/Chart.js';
-import chartNavigationMixin from '../mixins/navigation.js';
 // create shortcuts
-var defaultOptions = H.defaultOptions, doc = H.doc, Chart = H.Chart, isTouchDevice = H.isTouchDevice, win = H.win, userAgent = win.navigator.userAgent, SVGRenderer = H.SVGRenderer, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
+var userAgent = win.navigator.userAgent, symbols = H.Renderer.prototype.symbols, isMSBrowser = /Edge\/|Trident\/|MSIE /.test(userAgent), isFirefoxBrowser = /firefox/i.test(userAgent);
 // Add language
 extend(defaultOptions.lang
 /**
@@ -94,7 +97,7 @@ extend(defaultOptions.lang
      * Exporting module only. The text for the menu item to view the chart
      * in full screen.
      *
-     * @since next
+     * @since 8.0.1
      *
      * @private
      */
@@ -103,7 +106,7 @@ extend(defaultOptions.lang
      * Exporting module only. The text for the menu item to exit the chart
      * from full screen.
      *
-     * @since next
+     * @since 8.0.1
      *
      * @private
      */
@@ -1796,8 +1799,11 @@ Chart.prototype.inlineStyles = function () {
                 if ((parentStyles[prop] !== val || node.nodeName === 'svg') &&
                     defaultStyles[node.nodeName][prop] !== val) {
                     // Attributes
-                    if (inlineToAttributes.indexOf(prop) !== -1) {
-                        node.setAttribute(hyphenate(prop), val);
+                    if (!inlineToAttributes ||
+                        inlineToAttributes.indexOf(prop) !== -1) {
+                        if (val) {
+                            node.setAttribute(hyphenate(prop), val);
+                        }
                         // Styles
                     }
                     else {
@@ -1872,12 +1878,12 @@ Chart.prototype.inlineStyles = function () {
 };
 symbols.menu = function (x, y, width, height) {
     var arr = [
-        'M', x, y + 2.5,
-        'L', x + width, y + 2.5,
-        'M', x, y + height / 2 + 0.5,
-        'L', x + width, y + height / 2 + 0.5,
-        'M', x, y + height - 1.5,
-        'L', x + width, y + height - 1.5
+        ['M', x, y + 2.5],
+        ['L', x + width, y + 2.5],
+        ['M', x, y + height / 2 + 0.5],
+        ['L', x + width, y + height / 2 + 0.5],
+        ['M', x, y + height - 1.5],
+        ['L', x + width, y + height - 1.5]
     ];
     return arr;
 };

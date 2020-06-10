@@ -11,12 +11,15 @@
  * */
 'use strict';
 import H from '../../parts/Globals.js';
+import Point from '../../parts/Point.js';
+import U from '../../parts/Utilities.js';
+var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
 /**
  * Formatter callback function.
  *
  * @callback Highcharts.SeriesNetworkgraphDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.DataLabelsFormatterContextObject} this
+ * @param {Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject|Highcharts.PointLabelObject} this
  *        Data label context to format
  *
  * @return {string}
@@ -26,7 +29,7 @@ import H from '../../parts/Globals.js';
  * Context for the formatter function.
  *
  * @interface Highcharts.SeriesNetworkgraphDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  * @since 7.0.0
  */ /**
 * The color of the node.
@@ -46,13 +49,12 @@ import H from '../../parts/Globals.js';
 * @type {string}
 * @since 7.0.0
 */
-import U from '../../parts/Utilities.js';
-var addEvent = U.addEvent, css = U.css, defined = U.defined, pick = U.pick, seriesType = U.seriesType;
+''; // detach doclets above
 import '../../parts/Options.js';
 import '../../mixins/nodes.js';
 import './layouts.js';
 import './draggable-nodes.js';
-var seriesTypes = H.seriesTypes, Point = H.Point, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
+var seriesTypes = H.seriesTypes, Series = H.Series, dragNodesMixin = H.dragNodesMixin;
 /**
  * @private
  * @class
@@ -213,6 +215,9 @@ seriesType('networkgraph', 'line',
         },
         textPath: {
             enabled: false
+        },
+        style: {
+            transition: 'opacity 2000ms'
         }
     },
     /**
@@ -598,28 +603,28 @@ seriesType('networkgraph', 'line',
      * @private
      */
     render: function () {
-        var points = this.points, hoverPoint = this.chart.hoverPoint, dataLabels = [];
+        var series = this, points = series.points, hoverPoint = series.chart.hoverPoint, dataLabels = [];
         // Render markers:
-        this.points = this.nodes;
+        series.points = series.nodes;
         seriesTypes.line.prototype.render.call(this);
-        this.points = points;
+        series.points = points;
         points.forEach(function (point) {
             if (point.fromNode && point.toNode) {
                 point.renderLink();
                 point.redrawLink();
             }
         });
-        if (hoverPoint && hoverPoint.series === this) {
-            this.redrawHalo(hoverPoint);
+        if (hoverPoint && hoverPoint.series === series) {
+            series.redrawHalo(hoverPoint);
         }
-        if (this.chart.hasRendered &&
-            !this.options.dataLabels.allowOverlap) {
-            this.nodes.concat(this.points).forEach(function (node) {
+        if (series.chart.hasRendered &&
+            !series.options.dataLabels.allowOverlap) {
+            series.nodes.concat(series.points).forEach(function (node) {
                 if (node.dataLabel) {
                     dataLabels.push(node.dataLabel);
                 }
             });
-            this.chart.hideOverlappingLabels(dataLabels);
+            series.chart.hideOverlappingLabels(dataLabels);
         }
     },
     // Networkgraph has two separate collecions of nodes and lines, render
@@ -795,9 +800,13 @@ seriesType('networkgraph', 'line',
                 });
             }
             this.graphic.animate(this.shapeArgs);
-            // Required for dataLabels:
-            this.plotX = (path[1] + path[4]) / 2;
-            this.plotY = (path[2] + path[5]) / 2;
+            // Required for dataLabels
+            var start = path[0];
+            var end = path[1];
+            if (start[0] === 'M' && end[0] === 'L') {
+                this.plotX = (start[1] + end[1]) / 2;
+                this.plotY = (start[2] + end[2]) / 2;
+            }
         }
     },
     /**
@@ -830,12 +839,8 @@ seriesType('networkgraph', 'line',
             right = this.fromNode;
         }
         return [
-            'M',
-            left.plotX,
-            left.plotY,
-            'L',
-            right.plotX,
-            right.plotY
+            ['M', left.plotX || 0, left.plotY || 0],
+            ['L', right.plotX || 0, right.plotY || 0]
         ];
         /*
         IDEA: different link shapes?

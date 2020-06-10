@@ -7,7 +7,6 @@ const gulp = require('gulp');
 const glob = require('glob');
 const fs = require('fs-extra');
 const log = require('./lib/log');
-const build = require('./lib/build');
 const {
     uploadFiles,
     getGitIgnoreMeProperties,
@@ -53,7 +52,7 @@ const HTTP_EXPIRES = {
  * @return {object} containing from and to parameters
  */
 function toS3FilePath(filePath, localPath, cdnPath, version = false) {
-    let toPath = filePath.replace(`${DIST_DIR}`, '').replace(`/${localPath}`, cdnPath).replace('/', '');
+    let toPath = filePath.replace(DIST_DIR, '').replace(localPath, cdnPath).replace('/', '');
     if (version) {
         toPath = toPath.replace('js-gzip/', `${version}/`).replace('gfx/', `${version}/gfx/`);
     } else {
@@ -73,9 +72,9 @@ function toS3FilePath(filePath, localPath, cdnPath, version = false) {
  * @return {Promise<*> | Promise | Promise} Promise to keep
  */
 function uploadProductPackage(productProps, options = {}) {
-    const { productName: localPath, name: prettyName, version, cdnpath } = productProps;
+    const { distpath: localPath, name: prettyName, version, cdnpath } = productProps;
     const promises = [];
-    const fromDir = `${DIST_DIR}/${localPath}`;
+    const fromDir = `${DIST_DIR}${localPath}`;
     const zipFilePaths = glob.sync(`${DIST_DIR}/${prettyName.replace(/ /g, '-')}-${version}.zip`);
 
     if (zipFilePaths.length < 1) {
@@ -170,8 +169,10 @@ function uploadProductPackage(productProps, options = {}) {
  */
 function distUploadCode() {
     const argv = require('yargs').argv;
-    const properties = build.getBuildProperties();
-    const products = ((argv.products && argv.products.split(',')) || Object.keys(properties)); // one or more of 'highcharts', 'highstock', 'highmaps', 'gantt', ...
+    const properties = require('../../build-properties.json');
+    const products = ((argv.products && argv.products.split(',')) || properties.products); // one or more of 'highcharts', 'highstock', 'highmaps', 'gantt', ...
+
+    console.log(products);
 
     let bucket = argv.bucket;
     if (argv.useGitIgnoreMe) {
@@ -187,11 +188,11 @@ function distUploadCode() {
         from: file,
         to: [...file.split('/')].pop()
     }));
-    const promises = products.map(productName => {
-        if (!properties[productName]) {
-            return Promise.reject(new Error(`Could not find entry in build.properties for: ${productName}`));
+    const promises = Object.keys(products).map(productName => {
+        if (!properties.products[productName]) {
+            return Promise.reject(new Error(`Could not find entry in build-properties.json for: ${productName}`));
         }
-        const productProps = Object.assign(properties[productName].product, { productName });
+        const productProps = { name: productName, ...products[productName], version: properties.version };
         return uploadProductPackage(productProps, { bucket });
     });
 
@@ -202,7 +203,7 @@ function distUploadCode() {
 distUploadCode.description = 'Uploads distribution files (zipped/binary) to code bucket.';
 distUploadCode.flags = {
     '--bucket': 'S3 bucket to upload to. Is overridden if --use-git-ignore-me is defined.',
-    '--products': 'Comma-separated list of products to upload. E.g highcharts,highmaps (optional - default is all products defined in build.properties).',
+    '--products': 'Comma-separated list of products to upload. E.g highcharts,highmaps (optional - default is all products defined in build-properties.json).',
     '--profile': 'AWS profile to load from AWS credentials file. If no profile is provided the default profile or ' +
         'standard AWS environment variables for credentials will be used. (optional)',
     '--use-git-ignore-me': 'Will look for bucket in git-ignore-me.properties file (fallback as previously used by ant build). Required if ---bucket not specified.'

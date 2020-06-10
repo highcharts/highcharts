@@ -23,7 +23,7 @@ To unleash the full power of HTML5, it is also possible to fully [disregard](htt
 
 ### Controling the size of the exported image
 
-Since Highcharts 3.0 and Highstock 1.3, the size of the exported image is computed based on a few rules:
+Since Highcharts 3.0 and Highcharts Stock 1.3, the size of the exported image is computed based on a few rules:
 
 *   If the [exporting.sourceWidth](https://api.highcharts.com/highcharts/exporting.sourceWidth) and [exporting.sourceHeight](https://api.highcharts.com/highcharts/exporting.sourceHeight) options are set, they take predence. This provides a convenient way of having separate sizes of the on-screen chart and the exported one.
 *   If not, and the [chart.width](https://api.highcharts.com/highcharts/chart.width) and [chart.height](https://api.highcharts.com/highcharts/chart.height) options are set, those are used for the exported chart.
@@ -47,7 +47,7 @@ Normally Highcharts sends data to the export server for saving a graph as an im
 |filename|The name of the exported file. Defaults to 'Chart'.|
 |scale|To scale the original SVG. For example, if the chart.width option in the chart configuration is set to 600 and the scale is set to 2, the output raster image will have a pixel width of 1200. So this is a convenient way of increasing the resolution without decreasing the font size and line widths in the chart. This is ignored if the -width parameter is set. For now we allow a maximum scaling of 4. This is for ensuring a good repsonse time. Scaling is a bit resource intensive.|
 |width|Set the exact pixel width of the exported image or pdf. This overrides the -scale parameter. The maximum allowed width is 2000px|
-|constr|The constructor name. Can be one of 'Chart' or 'StockChart'. This depends on whether you want to generate Highstock or basic Highcharts. Only applicable when using this in combination with the options parameter.|
+|constr|The constructor name. Can be one of 'Chart' or 'StockChart'. This depends on whether you want to generate Highcharts Stock or basic Highcharts. Only applicable when using this in combination with the options parameter.|
 |callback|String containing a callback JavaScript. The callback is a function which will be called in the constructor of Highcharts to be executed on chart load. All code of the callback must be enclosed by a function. Only applicable when using this in combination with theoptions parameter. Example of contents of the callback file:`function(chart) { chart.renderer.arc(200, 150, 100, 50, -Math.PI, 0).attr({ fill : '#FCFFC5', stroke : 'black', 'stroke-width' : 1 }).add(); }`|
 |resources|Stringified JSON which can contain three properties js and css. Example: `{"css": "g.highcharts-series path {stroke-width:2;stroke: pink}", "js": "document.body.style.webkitTransform = \"rotate(-10deg)\";" }`css: css inserted in the body of the page, js: javascript inserted in the body of the page|
 |async|Can be of true or false. Default is false. When setting async to true a download link is returned to the client, instead of an image. This download link can be reused for 30 seconds. After that, the file will be deleted from the server.|

@@ -29,7 +29,7 @@ declare global {
             public rotation?: (boolean|number);
             public series: WordcloudSeries;
             public weight: number;
-            public isValid(): boolean;
+            public isValid: () => boolean;
             public shouldDraw(): boolean;
         }
         class WordcloudSeries extends ColumnSeries {

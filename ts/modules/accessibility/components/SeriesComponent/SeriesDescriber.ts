@@ -12,6 +12,7 @@
 
 'use strict';
 
+import type Point from '../../../../parts/Point';
 import H from '../../../../parts/Globals.js';
 
 /**
@@ -20,20 +21,19 @@ import H from '../../../../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Point {
+        interface PointLike {
             /** @requires modules/accessibility */
             hasDummyGraphic?: boolean;
         }
     }
 }
 
-var numberFormat = H.numberFormat,
-    format = H.format;
-
 import U from '../../../../parts/Utilities.js';
 const {
     find,
+    format,
     isNumber,
+    numberFormat,
     pick,
     defined
 } = U;
@@ -79,15 +79,15 @@ declare global {
  * @private
  */
 function findFirstPointWithGraphic(
-    point: Highcharts.Point
-): (Highcharts.Point|null) {
+    point: Point
+): (Point|null) {
     const sourcePointIndex = point.index;
 
     if (!point.series || !point.series.data || !defined(sourcePointIndex)) {
         return null;
     }
 
-    return find(point.series.data, function (p: Highcharts.Point): boolean {
+    return find(point.series.data, function (p: Point): boolean {
         return !!(
             p &&
             typeof p.index !== 'undefined' &&
@@ -102,7 +102,7 @@ function findFirstPointWithGraphic(
 /**
  * @private
  */
-function shouldAddDummyPoint(point: Highcharts.Point): boolean {
+function shouldAddDummyPoint(point: Point): boolean {
     // Note: Sunburst series use isNull for hidden points on drilldown.
     // Ignore these.
     const isSunburst = point.series && point.series.is('sunburst'),
@@ -116,7 +116,7 @@ function shouldAddDummyPoint(point: Highcharts.Point): boolean {
  * @private
  */
 function makeDummyElement(
-    point: Highcharts.Point,
+    point: Point,
     pos: Highcharts.PositionObject
 ): Highcharts.SVGElement {
     var renderer = point.series.chart.renderer,
@@ -140,7 +140,7 @@ function makeDummyElement(
  * @return {Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined}
  */
 function addDummyPointElement(
-    point: Highcharts.Point
+    point: Point
 ): (Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement|undefined) {
     var series = point.series,
         firstPointWithGraphic = findFirstPointWithGraphic(point),
@@ -343,7 +343,7 @@ function getPointA11yTimeDescription(
     var series = point.series,
         chart = series.chart,
         a11yOptions = chart.options.accessibility.point || {},
-        hasDateXAxis = series.xAxis && series.xAxis.isDatetimeAxis;
+        hasDateXAxis = series.xAxis && series.xAxis.dateTime;
 
     if (hasDateXAxis) {
         var tooltipDateFormat = Tooltip.prototype.getXDateFormat.call(
@@ -460,7 +460,7 @@ function getPointValue(
  * @param {Highcharts.Point} point The data point to get the annotation info from.
  * @return {string} Annotation description
  */
-function getPointAnnotationDescription(point: Highcharts.Point): string {
+function getPointAnnotationDescription(point: Point): string {
     const chart = point.series.chart;
     const langKey = 'accessibility.series.pointAnnotationsDescription';
     const annotations = getPointAnnotationTexts(point as Highcharts.AnnotationPoint);
@@ -570,9 +570,11 @@ function describePointsInSeries(series: Highcharts.AccessibilitySeries): void {
                     shouldAddDummyPoint(point) && addDummyPointElement(point);
 
             if (pointEl) {
-                // We always set tabindex, as long as we are setting
-                // props.
+                // We always set tabindex, as long as we are setting props.
+                // When setting tabindex, also remove default outline to
+                // avoid ugly border on click.
                 pointEl.setAttribute('tabindex', '-1');
+                pointEl.style.outline = '0';
 
                 if (setScreenReaderProps) {
                     setPointScreenReaderAttribs(point, pointEl);
@@ -649,6 +651,7 @@ function describeSeriesElement(
     } /* else do not add role */
 
     seriesElement.setAttribute('tabindex', '-1');
+    seriesElement.style.outline = '0'; // Don't show browser outline on click, despite tabindex
     seriesElement.setAttribute(
         'aria-label',
         escapeStringForHTML(

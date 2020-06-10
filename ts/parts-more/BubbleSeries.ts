@@ -10,6 +10,7 @@
 
 'use strict';
 
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
 
 /**
@@ -23,7 +24,7 @@ declare global {
             public series: BubbleSeries;
             public haloPath(
                 size: number
-            ): (SVGElement|SVGPathArray|Array<SVGElement>);
+            ): SVGPath;
         }
         class BubbleSeries extends ScatterSeries {
             public alignDataLabel: ColumnSeries['alignDataLabel'];
@@ -99,6 +100,11 @@ declare global {
  * @typedef {"area"|"width"} Highcharts.BubbleSizeByValue
  */
 
+import Color from '../parts/Color.js';
+const {
+    parse: color
+} = Color;
+import Point from '../parts/Point.js';
 import U from '../parts/Utilities.js';
 const {
     arrayMax,
@@ -112,16 +118,12 @@ const {
 } = U;
 
 import '../parts/Axis.js';
-import '../parts/Color.js';
-import '../parts/Point.js';
 import '../parts/Series.js';
 import '../parts/ScatterSeries.js';
 import './BubbleLegend.js';
 
 var Axis = H.Axis,
-    color = H.color,
     noop = H.noop,
-    Point = H.Point,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -145,7 +147,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
 
     dataLabels: {
         formatter: function (
-            this: Highcharts.DataLabelsFormatterContextObject
+            this: Highcharts.PointLabelObject
         ): (number|null|undefined) { // #2945
             return (this.point as Highcharts.BubblePoint).z;
         },
@@ -518,32 +520,27 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
             this.points.length < (this.options.animationLimit as any) // #8099
         ) {
             this.points.forEach(function (point: Highcharts.BubblePoint): void {
-                var graphic = point.graphic,
-                    animationTarget;
+                const { graphic } = point;
 
                 if (graphic && graphic.width) { // URL symbols don't have width
-                    animationTarget = {
-                        x: graphic.x,
-                        y: graphic.y,
-                        width: graphic.width,
-                        height: graphic.height
-                    };
 
                     // Start values
-                    graphic.attr({
-                        x: point.plotX,
-                        y: point.plotY,
-                        width: 1,
-                        height: 1
-                    });
+                    if (!this.hasRendered) {
+                        graphic.attr({
+                            x: point.plotX,
+                            y: point.plotY,
+                            width: 1,
+                            height: 1
+                        });
+                    }
 
                     // Run animation
-                    graphic.animate(animationTarget, this.options.animation);
+                    graphic.animate(
+                        this.markerAttribs(point),
+                        this.options.animation
+                    );
                 }
             }, this);
-
-            // delete this function to allow it only once
-            this.animate = null as any;
         }
     },
 
@@ -612,9 +609,7 @@ seriesType<Highcharts.BubbleSeries>('bubble', 'scatter', {
     haloPath: function (
         this: Highcharts.BubblePoint,
         size: number
-    ): (Highcharts.SVGElement|
-        Highcharts.SVGPathArray|
-        Array<Highcharts.SVGElement>) {
+    ): SVGPath {
         return Point.prototype.haloPath.call(
             this,
             // #6067
@@ -727,7 +722,7 @@ Axis.prototype.beforePadding = function (this: Highcharts.Axis): void {
     });
 
     // Apply the padding to the min and max properties
-    if (activeSeries.length && range > 0 && !this.isLog) {
+    if (activeSeries.length && range > 0 && !this.logarithmic) {
         pxMax -= axisLength;
         transA *= (
             axisLength +

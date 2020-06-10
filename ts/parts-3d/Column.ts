@@ -10,7 +10,16 @@
 
 'use strict';
 
+import type Axis from '../parts/Axis';
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
+import StackItem from '../parts/Stacking.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types
@@ -42,7 +51,7 @@ declare global {
             groupZPadding?: number;
             inactiveOtherPoints?: boolean;
         }
-        interface DataLabelsOptionsObject {
+        interface DataLabelsOptions {
             outside3dPlot?: (boolean|null);
         }
         interface Series {
@@ -50,13 +59,6 @@ declare global {
         }
     }
 }
-
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    pick,
-    wrap
-} = U;
 
 import '../parts/Series.js';
 
@@ -108,6 +110,41 @@ var perspective = H.perspective,
  */
 
 /* eslint-disable no-invalid-this */
+
+/**
+ * @private
+ * @param {Highcharts.Chart} chart
+ * Chart with stacks
+ * @param {string} stacking
+ * Stacking option
+ * @return {Highcharts.Stack3dDictionary}
+ */
+function retrieveStacks(
+    chart: Chart,
+    stacking?: string
+): Highcharts.Stack3dDictionary {
+    const series = chart.series,
+        stacks = {} as Highcharts.Stack3dDictionary;
+
+    let stackNumber: number,
+        i = 1;
+
+    series.forEach(function (s: Highcharts.Series): void {
+        stackNumber = pick(
+            s.options.stack as any,
+            (stacking ? 0 : series.length - 1 - (s.index as any))
+        ); // #3841, #4532
+        if (!stacks[stackNumber]) {
+            stacks[stackNumber] = { series: [s], position: i };
+            i++;
+        } else {
+            stacks[stackNumber].series.push(s);
+        }
+    });
+
+    stacks.totalStacks = i + 1;
+    return stacks;
+}
 
 wrap(seriesTypes.column.prototype, 'translate', function (
     this: Highcharts.ColumnSeries,
@@ -312,9 +349,6 @@ wrap(seriesTypes.column.prototype, 'animate', function (
 
                 // redraw datalabels to the correct position
                 this.drawDataLabels();
-
-                // delete this function to allow it only once
-                series.animate = null as any;
             }
         }
     }
@@ -407,7 +441,7 @@ addEvent(Series, 'afterInit', function (): void {
 
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
-            var stacks = this.chart.retrieveStacks(stacking),
+            var stacks = retrieveStacks(this.chart, stacking),
                 stack: number = (seriesOptions.stack as any) || 0,
                 i; // position within the stack
 
@@ -518,7 +552,7 @@ wrap(Series.prototype, 'alignDataLabel', function (
     proceed: Function,
     point: Highcharts.ColumnPoint,
     dataLabel: Highcharts.SVGElement,
-    options: Highcharts.DataLabelsOptionsObject,
+    options: Highcharts.DataLabelsOptions,
     alignTo: Highcharts.BBoxObject
 ): void {
     const chart = this.chart;
@@ -570,16 +604,16 @@ wrap(Series.prototype, 'alignDataLabel', function (
 });
 
 // Added stackLabels position calculation for 3D charts.
-wrap(H.StackItem.prototype, 'getStackBox', function (
+wrap(StackItem.prototype, 'getStackBox', function (
     this: Highcharts.StackItem,
     proceed: Function,
-    chart: Highcharts.Chart,
+    chart: Chart,
     stackItem: Highcharts.StackItem,
     x: number,
     y: number,
     xWidth: number,
     h: number,
-    axis: Highcharts.Axis
+    axis: Axis
 ): void { // #3946
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
     // Only do this for 3D graph
@@ -634,7 +668,7 @@ wrap(H.StackItem.prototype, 'getStackBox', function (
 var defaultOptions = H.getOptions();
 defaultOptions.plotOptions.cylinder =
     merge(defaultOptions.plotOptions.column);
-var CylinderSeries = H.extendClass(seriesTypes.column, {
+var CylinderSeries = extendClass(seriesTypes.column, {
     type: 'cylinder'
 });
 seriesTypes.cylinder = CylinderSeries;

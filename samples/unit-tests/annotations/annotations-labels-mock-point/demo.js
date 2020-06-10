@@ -104,53 +104,53 @@ QUnit.test('Mock Point translations from x/y in the options to plotX/plotY', fun
     );
 
 
-    var isInsidePane = MockPoint.prototype.isInsidePane;
+    var isInsidePlot = MockPoint.prototype.isInsidePlot;
     var points = chart.series[2].points;
 
     assert.notOk(
-        isInsidePane.call(points[0]),
+        isInsidePlot.call(points[0]),
         'The real point is outside the pane area'
     );
 
     assert.ok(
-        isInsidePane.call(points[1]),
+        isInsidePlot.call(points[1]),
         'The real point is inside the pane area'
     );
 
     assert.ok(
-        isInsidePane.call(points[2]),
+        isInsidePlot.call(points[2]),
         'The real point without marker is inside the pane area'
     );
 
     assert.notOk(
-        isInsidePane.call(points[3]),
+        isInsidePlot.call(points[3]),
         'The real point without marker is outside the pane area'
     );
 
     chart.xAxis[0].setExtremes(109, 113);
 
     assert.notOk(
-        isInsidePane.call(points[0]),
+        isInsidePlot.call(points[0]),
         'After set extremes - the real point is outside the pane area'
     );
 
     assert.notOk(
-        isInsidePane.call(points[1]),
+        isInsidePlot.call(points[1]),
         'After set extremes - the real point is outside the pane area'
     );
 
     assert.notOk(
-        isInsidePane.call(points[2]),
+        isInsidePlot.call(points[2]),
         'After set extremes - the real point without marker is outside the pane area'
     );
 
     assert.ok(
-        isInsidePane.call(points[3]),
+        isInsidePlot.call(points[3]),
         'After set extreems - the real point without marker is inside the pane area'
     );
 
     assert.ok(
-        isInsidePane.call(points[4]),
+        isInsidePlot.call(points[4]),
         'After set extreems - the real point is inside the pane area'
     );
 });

@@ -9,8 +9,27 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * */
+
 'use strict';
+
+import type Annotation from './annotations.src';
+import type Chart from '../parts/Chart';
 import H from '../parts/Globals.js';
+import NavigationBindings from './navigationBindings.js';
+import Pointer from '../parts/Pointer.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    createElement,
+    defined,
+    getOptions,
+    isArray,
+    isObject,
+    isString,
+    objectEach,
+    pick,
+    wrap
+} = U;
 
 /**
  * Internal types.
@@ -18,9 +37,6 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface NavigationBindings {
-            popup: Popup;
-        }
         class Popup {
             public constructor(parentDiv: HTMLDOMElement, iconsURL: string);
             public annotations: PopupAnnotationsObject;
@@ -126,19 +142,6 @@ declare global {
     }
 }
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    createElement,
-    defined,
-    isArray,
-    isObject,
-    isString,
-    objectEach,
-    pick,
-    wrap
-} = U;
-
 var indexFilter = /\d/g,
     PREFIX = 'highcharts-',
     DIV = 'div',
@@ -157,7 +160,7 @@ var indexFilter = /\d/g,
 // onContainerMouseDown blocks internal popup events, due to e.preventDefault.
 // Related issue #4606
 
-wrap(H.Pointer.prototype, 'onContainerMouseDown', function (this: Highcharts.Pointer, proceed: Function, e): void {
+wrap(Pointer.prototype, 'onContainerMouseDown', function (this: Pointer, proceed: Function, e): void {
 
     var popupClass = e.target && e.target.className;
 
@@ -463,7 +466,7 @@ H.Popup.prototype = {
      * @return {Highcharts.Dictionary<string>} - elements translations.
      */
     getLangpack: function (this: Highcharts.Popup): Highcharts.Dictionary<string> {
-        return (H.getOptions().lang as any).navigation.popup;
+        return (getOptions().lang as any).navigation.popup;
     },
     annotations: {
         /**
@@ -659,7 +662,7 @@ H.Popup.prototype = {
                             parentDiv,
                             chart,
                             parentFullName,
-                            value,
+                            value as any,
                             storage,
                             false
                         );
@@ -1069,7 +1072,7 @@ H.Popup.prototype = {
                 addInput = this.addInput,
                 parentFullName;
 
-            objectEach(fields, function (value: string, fieldName: string): void {
+            objectEach(fields, function (value, fieldName): void {
                 // create name like params.styles.fontSize
                 parentFullName = parentNode + '.' + fieldName;
 
@@ -1101,16 +1104,16 @@ H.Popup.prototype = {
          * @private
          * @return {number} - Amount of indicators
          */
-        getAmount: function (this: Highcharts.Chart): number {
+        getAmount: function (this: Chart): number {
             var series = this.series,
                 counter = 0;
 
-            objectEach(series, function (serie: Highcharts.SMAIndicator): void {
+            series.forEach(function (serie): void {
                 var seriesOptions = serie.options;
 
                 if (
                     (serie as any).params ||
-                    seriesOptions && seriesOptions.params
+                    seriesOptions && (seriesOptions as any).params
                 ) {
                     counter++;
                 }
@@ -1263,8 +1266,8 @@ H.Popup.prototype = {
     }
 } as any;
 
-addEvent(H.NavigationBindings, 'showPopup', function (
-    this: Highcharts.NavigationBindings,
+addEvent(NavigationBindings, 'showPopup', function (
+    this: NavigationBindings,
     config: Highcharts.PopupConfigObject
 ): void {
     if (!this.popup) {
@@ -1289,7 +1292,7 @@ addEvent(H.NavigationBindings, 'showPopup', function (
     );
 });
 
-addEvent(H.NavigationBindings, 'closePopup', function (this: Highcharts.NavigationBindings): void {
+addEvent(NavigationBindings, 'closePopup', function (this: NavigationBindings): void {
     if (this.popup) {
         this.popup.closePopup();
     }

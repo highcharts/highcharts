@@ -13,7 +13,24 @@
  * */
 
 'use strict';
+
+import type SVGPath from '../parts/SVGPath';
 import H from '../parts/Globals.js';
+import LegendSymbolMixin from '../mixins/legend-symbol.js';
+import Point from '../parts/Point.js';
+import SVGElement from '../parts/SVGElement.js';
+import U from '../parts/Utilities.js';
+const {
+    addEvent,
+    arrayMax,
+    arrayMin,
+    defined,
+    isNumber,
+    merge,
+    objectEach,
+    pick,
+    seriesType
+} = U;
 
 /**
  * Internal types
@@ -22,15 +39,15 @@ import H from '../parts/Globals.js';
 declare global {
     namespace Highcharts {
         class TimelinePoint extends LinePoint {
+            public isValid: () => boolean;
             public label?: string;
             public options: TimelinePointOptions;
             public series: TimelineSeries;
             public userDLOptions?: TimelineDataLabelsOptionsObject;
             public alignConnector(): void;
             public drawConnector(): void;
-            public getConnectorPath(): SVGPathArray;
+            public getConnectorPath(): SVGPath;
             public init(): this;
-            public isValid(): boolean;
             public setState(): void;
             public setVisible(vis: boolean, redraw?: boolean): void;
         }
@@ -76,20 +93,20 @@ declare global {
         {
             (
                 this: (
-                    DataLabelsFormatterContextObject|
+                    PointLabelObject|
                     TimelineDataLabelsFormatterContextObject
                 )
             ): string;
         }
         interface TimelineDataLabelsFormatterContextObject
-            extends DataLabelsFormatterContextObject
+            extends PointLabelObject
         {
             key?: string;
             point: TimelinePoint;
             series: TimelineSeries;
         }
         interface TimelineDataLabelsOptionsObject
-            extends DataLabelsOptionsObject
+            extends DataLabelsOptions
         {
             alternate?: boolean;
             connectorColor?: ColorType;
@@ -122,7 +139,7 @@ declare global {
  *
  * @callback Highcharts.TimelineDataLabelsFormatterCallbackFunction
  *
- * @param {Highcharts.DataLabelsFormatterContextObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
+ * @param {Highcharts.PointLabelObject|Highcharts.TimelineDataLabelsFormatterContextObject} this
  *        Data label context to format
  *
  * @return {number|string|null|undefined}
@@ -131,7 +148,7 @@ declare global {
 
 /**
  * @interface Highcharts.TimelineDataLabelsFormatterContextObject
- * @extends Highcharts.DataLabelsFormatterContextObject
+ * @extends Highcharts.PointLabelObject
  *//**
  * @name Highcharts.TimelineDataLabelsFormatterContextObject#key
  * @type {string|undefined}
@@ -143,22 +160,7 @@ declare global {
  * @type {Highcharts.Series}
  */
 
-import U from '../parts/Utilities.js';
-const {
-    addEvent,
-    arrayMax,
-    arrayMin,
-    defined,
-    isNumber,
-    merge,
-    objectEach,
-    pick,
-    seriesType
-} = U;
-
-var LegendSymbolMixin = H.LegendSymbolMixin,
-    TrackerMixin = H.TrackerMixin,
-    Point = H.Point,
+var TrackerMixin = H.TrackerMixin,
     Series = H.Series,
     seriesTypes = H.seriesTypes;
 
@@ -293,7 +295,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
              */
             formatter: function (
                 this: (
-                    Highcharts.DataLabelsFormatterContextObject|
+                    Highcharts.PointLabelObject|
                     Highcharts.TimelineDataLabelsFormatterContextObject
                 )
             ): string {
@@ -415,7 +417,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                             if (this.targetPosition) {
                                 this.targetPosition = params;
                             }
-                            return H.SVGElement.prototype.animate.apply(
+                            return SVGElement.prototype.animate.apply(
                                 this,
                                 arguments
                             );
@@ -503,7 +505,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                         (distance - pad) * 2 - ((point.itemHeight as any) / 2)
                     );
                     styles = {
-                        width: targetDLWidth,
+                        width: targetDLWidth + 'px',
                         // Apply ellipsis when data label height is exceeded.
                         textOverflow: dataLabel.width / targetDLWidth *
                             dataLabel.height / 2 > availableSpace * multiplier ?
@@ -511,9 +513,11 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     };
                 } else {
                     styles = {
-                        width: userDLOptions.width ||
+                        width: (
+                            userDLOptions.width ||
                             dataLabelsOptions.width ||
                             availableSpace * multiplier - (pad * 2)
+                        ) + 'px'
                     };
                 }
                 dataLabel.css(styles);
@@ -671,7 +675,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
             // Call default markerAttribs method, when the xAxis type
             // is set to datetime.
-            if (series.xAxis.isDatetimeAxis) {
+            if (series.xAxis.dateTime) {
                 return seriesTypes.line.prototype.markerAttribs
                     .call(this, point, state);
             }
@@ -712,7 +716,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
             ['xAxis', 'yAxis'].forEach(function (axis: string): void {
                 // Initially set the linked xAxis type to category.
                 if (axis === 'xAxis' && !series[axis].userOptions.type) {
-                    series[axis].categories = series[axis].hasNames = true;
+                    series[axis].categories = series[axis].hasNames = true as any;
                 }
             });
         }
@@ -764,7 +768,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
         },
         getConnectorPath: function (
             this: Highcharts.TimelinePoint
-        ): Highcharts.SVGPathArray {
+        ): SVGPath {
             var point = this,
                 chart = point.series.chart,
                 xAxisLen = point.series.xAxis.len,
@@ -782,7 +786,7 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
                     (dl.alignAttr || dl)[direction[0]] <
                         point.series.yAxis.len / 2
                 ),
-                path: Highcharts.SVGPathArray;
+                path: SVGPath;
 
             // Recalculate coords when the chart is inverted.
             if (inverted) {
@@ -810,13 +814,9 @@ seriesType<Highcharts.TimelineSeries>('timeline', 'line',
 
             path = chart.renderer.crispLine(
                 [
-                    'M',
-                    coords.x1,
-                    coords.y1,
-                    'L',
-                    coords.x2,
-                    coords.y2
-                ] as Highcharts.SVGPathArray,
+                    ['M', coords.x1, coords.y1],
+                    ['L', coords.x2, coords.y2]
+                ] as SVGPath,
                 dl.options.connectorWidth
             );
 

@@ -18,7 +18,7 @@ import H from '../parts/Globals.js';
  */
 declare global {
     namespace Highcharts {
-        interface Chart {
+        interface ChartLike {
             errorElements?: Array<SVGElement>;
         }
         interface ChartOptions {
@@ -35,11 +35,9 @@ declare global {
 import U from '../parts/Utilities.js';
 const {
     addEvent,
-    isNumber
+    isNumber,
+    setOptions
 } = U;
-
-var setOptions = H.setOptions,
-    each = H.each;
 
 setOptions({
     /**
@@ -74,7 +72,7 @@ addEvent(H.Chart, 'displayError', function (
         chartHeight;
 
     if (chart.errorElements) {
-        each(chart.errorElements, function (el: Highcharts.SVGElement): void {
+        (chart.errorElements).forEach(function (el: Highcharts.SVGElement): void {
             if (el) {
                 el.destroy();
             }
@@ -125,7 +123,7 @@ addEvent(H.Chart, 'displayError', function (
             'debugger'
         ).css({
             color: '#ffffff',
-            width: chartWidth - 16,
+            width: (chartWidth - 16) + 'px',
             padding: 0
         }).attr({
             fill: 'rgba(255, 0, 0, 0.9)',
@@ -144,7 +142,7 @@ addEvent(H.Chart, 'beforeRedraw', function (): void {
     var errorElements = this.errorElements;
 
     if (errorElements && errorElements.length) {
-        each(errorElements, function (el: Highcharts.SVGElement): void {
+        errorElements.forEach(function (el: Highcharts.SVGElement): void {
             el.destroy();
         });
     }

@@ -62,19 +62,6 @@ import U from '../../../parts/Utilities.js';
 var error = U.error, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
- * Warn user that a deprecated option was used.
- * @private
- * @param {Highcharts.Chart} chart
- * @param {string} oldOption
- * @param {string} newOption
- * @return {void}
- */
-function warn(chart, oldOption, newOption) {
-    error('Highcharts: Deprecated option ' + oldOption +
-        ' used. This will be removed from future versions of Highcharts. Use ' +
-        newOption + ' instead.', false, chart);
-}
-/**
  * Set a new option on a root prop, where the option is defined as an array of
  * suboptions.
  * @private
@@ -106,11 +93,13 @@ function deprecateFromOptionsMap(chart, rootOldAsArray, rootNewAsArray, mapToNew
     }
     var rootOld = getChildProp(chart.options, rootOldAsArray), rootNew = getChildProp(chart.options, rootNewAsArray);
     Object.keys(mapToNewOptions).forEach(function (oldOptionKey) {
+        var _a;
         var val = rootOld[oldOptionKey];
         if (typeof val !== 'undefined') {
             traverseSetOption(rootNew, mapToNewOptions[oldOptionKey], val);
-            warn(chart, rootOldAsArray.join('.') + '.' + oldOptionKey, rootNewAsArray.join('.') + '.' +
-                mapToNewOptions[oldOptionKey].join('.'));
+            error(32, false, chart, (_a = {},
+                _a[rootOldAsArray.join('.') + "." + oldOptionKey] = rootNewAsArray.join('.') + "." + mapToNewOptions[oldOptionKey].join('.'),
+                _a));
         }
     });
 }
@@ -120,9 +109,10 @@ function deprecateFromOptionsMap(chart, rootOldAsArray, rootNewAsArray, mapToNew
 function copyDeprecatedChartOptions(chart) {
     var chartOptions = chart.options.chart || {}, a11yOptions = chart.options.accessibility || {};
     ['description', 'typeDescription'].forEach(function (prop) {
+        var _a;
         if (chartOptions[prop]) {
             a11yOptions[prop] = chartOptions[prop];
-            warn(chart, 'chart.' + prop, 'accessibility.' + prop);
+            error(32, false, chart, (_a = {}, _a["chart." + prop] = "accessibility." + prop, _a));
         }
     });
 }
@@ -135,7 +125,7 @@ function copyDeprecatedAxisOptions(chart) {
         if (opts && opts.description) {
             opts.accessibility = opts.accessibility || {};
             opts.accessibility.description = opts.description;
-            warn(chart, 'axis.description', 'axis.accessibility.description');
+            error(32, false, chart, { 'axis.description': 'axis.accessibility.description' });
         }
     });
 }
@@ -158,6 +148,7 @@ function copyDeprecatedSeriesOptions(chart) {
     chart.series.forEach(function (series) {
         // Handle series wide options
         Object.keys(oldToNewSeriesOptions).forEach(function (oldOption) {
+            var _a;
             var optionVal = series.options[oldOption];
             if (typeof optionVal !== 'undefined') {
                 // Set the new option
@@ -166,8 +157,7 @@ function copyDeprecatedSeriesOptions(chart) {
                 // value, since we set enabled rather than disabled
                 oldOption === 'skipKeyboardNavigation' ?
                     !optionVal : optionVal);
-                warn(chart, 'series.' + oldOption, 'series.' +
-                    oldToNewSeriesOptions[oldOption].join('.'));
+                error(32, false, chart, (_a = {}, _a["series." + oldOption] = "series." + oldToNewSeriesOptions[oldOption].join('.'), _a));
             }
         });
     });

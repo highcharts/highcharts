@@ -9,6 +9,7 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import StackItem from '../parts/Stacking.js';
 import U from '../parts/Utilities.js';
 var addEvent = U.addEvent, pick = U.pick, wrap = U.wrap;
 import '../parts/Series.js';
@@ -52,6 +53,30 @@ var perspective = H.perspective, Series = H.Series, seriesTypes = H.seriesTypes,
  * @apioption plotOptions.column.groupZPadding
  */
 /* eslint-disable no-invalid-this */
+/**
+ * @private
+ * @param {Highcharts.Chart} chart
+ * Chart with stacks
+ * @param {string} stacking
+ * Stacking option
+ * @return {Highcharts.Stack3dDictionary}
+ */
+function retrieveStacks(chart, stacking) {
+    var series = chart.series, stacks = {};
+    var stackNumber, i = 1;
+    series.forEach(function (s) {
+        stackNumber = pick(s.options.stack, (stacking ? 0 : series.length - 1 - s.index)); // #3841, #4532
+        if (!stacks[stackNumber]) {
+            stacks[stackNumber] = { series: [s], position: i };
+            i++;
+        }
+        else {
+            stacks[stackNumber].series.push(s);
+        }
+    });
+    stacks.totalStacks = i + 1;
+    return stacks;
+}
 wrap(seriesTypes.column.prototype, 'translate', function (proceed) {
     proceed.apply(this, [].slice.call(arguments, 1));
     // Do not do this if the chart is not 3D
@@ -198,8 +223,6 @@ wrap(seriesTypes.column.prototype, 'animate', function (proceed) {
                 });
                 // redraw datalabels to the correct position
                 this.drawDataLabels();
-                // delete this function to allow it only once
-                series.animate = null;
             }
         }
     }
@@ -259,7 +282,7 @@ addEvent(Series, 'afterInit', function () {
         var series = this, seriesOptions = this.options, grouping = seriesOptions.grouping, stacking = seriesOptions.stacking, reversedStacks = pick(this.yAxis.options.reversedStacks, true), z = 0;
         // @todo grouping === true ?
         if (!(typeof grouping !== 'undefined' && !grouping)) {
-            var stacks = this.chart.retrieveStacks(stacking), stack = seriesOptions.stack || 0, i; // position within the stack
+            var stacks = retrieveStacks(this.chart, stacking), stack = seriesOptions.stack || 0, i; // position within the stack
             for (i = 0; i < stacks[stack].series.length; i++) {
                 if (stacks[stack].series[i] === this) {
                     break;
@@ -372,7 +395,7 @@ wrap(Series.prototype, 'alignDataLabel', function (proceed, point, dataLabel, op
     proceed.apply(this, [].slice.call(arguments, 1));
 });
 // Added stackLabels position calculation for 3D charts.
-wrap(H.StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x, y, xWidth, h, axis) {
+wrap(StackItem.prototype, 'getStackBox', function (proceed, chart, stackItem, x, y, xWidth, h, axis) {
     var stackBox = proceed.apply(this, [].slice.call(arguments, 1));
     // Only do this for 3D graph
     if (chart.is3d() && stackItem.base) {
