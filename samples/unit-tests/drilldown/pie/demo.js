@@ -321,3 +321,111 @@ QUnit.test('Slice color after drilldown and select (#4359)', function (assert) {
     document.body.removeChild(container1);
     document.body.removeChild(container2);
 });
+
+QUnit.test('Pie animation duration should be possible to change (#13674)', function (assert) {
+
+    var clock = TestUtilities.lolexInstall();
+
+    try {
+        var chart = Highcharts.chart('container', {
+                chart: {
+                    type: 'pie'
+                },
+                series: [{
+                    name: 'Things',
+                    data: [{
+                        name: 'Animals',
+                        y: 5,
+                        drilldown: 'animals'
+                    }, {
+                        name: 'Fruits',
+                        y: 2,
+                        drilldown: 'fruits'
+                    }]
+                }],
+                drilldown: {
+                    animation: {
+                        duration: 1000
+                    },
+                    series: [{
+                        id: 'animals',
+                        data: [
+                            ['Cats', 4],
+                            ['Dogs', 2],
+                            ['Cows', 1],
+                            ['Sheep', 2],
+                            ['Pigs', 1]
+                        ]
+                    }, {
+                        id: 'fruits',
+                        data: [
+                            ['Apples', 4],
+                            ['Oranges', 2]
+                        ]
+                    }]
+                }
+            }),
+            point = chart.series[0].points[0],
+            initialPos,
+            previousPos,
+            done = assert.async();
+
+        point.doDrilldown();
+        initialPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+
+        assert.strictEqual(
+            chart.drilldownLevels[0].lowerSeries.data[0].color,
+            chart.options.colors[0],
+            'Color of the first slice is correct'
+        );
+
+        assert.strictEqual(
+            chart.drilldownLevels[0].lowerSeries.data[3].color,
+            chart.options.colors[3],
+            'Color of the fourth slice is correct'
+        );
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > initialPos,
+                true,
+                'Time 400- Point should start moving.'
+            );
+            previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+        }, 400);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > previousPos,
+                true,
+                'Time 800- Point should move.'
+            );
+            previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+        }, 800);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > previousPos,
+                true,
+                'Time 1200- Point should move.'
+            );
+            previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+        }, 1200);
+
+        setTimeout(function () {
+            assert.strictEqual(
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') === previousPos,
+                true,
+                'Time 1500- Point should stop.'
+            );
+            done();
+        }, 1500);
+
+        TestUtilities.lolexRunAndUninstall(clock);
+
+    } finally {
+
+        TestUtilities.lolexUninstall(clock);
+
+    }
+});
