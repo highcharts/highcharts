@@ -261,6 +261,7 @@ declare global {
  */
 
 import '../mixins/ajax.js';
+const ajax = H.ajax;
 
 // Utilities
 var win = H.win,
@@ -1640,7 +1641,7 @@ class Data {
                     }
                 }
 
-                Highcharts.ajax({
+                ajax({
                     url: url,
                     dataType: tp || 'json',
                     success: function (
@@ -1748,7 +1749,7 @@ class Data {
                 'public/values?alt=json'
             ].join('/');
 
-            Highcharts.ajax({
+            ajax({
                 url: url,
                 dataType: 'json',
                 success: function (json: Highcharts.JSONType): void {
