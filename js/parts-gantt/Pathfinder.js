@@ -434,7 +434,7 @@ Connection.prototype = {
      * @param {Highcharts.SVGAttributes} [attribs]
      *        SVG attributes for the path.
      *
-     * @param {Highcharts.AnimationOptionsObject} [animation]
+     * @param {Partial<Highcharts.AnimationOptionsObject>} [animation]
      *        Animation options for the rendering.
      */
     renderPath: function (path, attribs, animation) {

@@ -903,7 +903,7 @@ var ColorAxis = /** @class */ (function (_super) {
              * Animation for the marker as it moves between values. Set to
              * `false` to disable animation. Defaults to `{ duration: 50 }`.
              *
-             * @type    {boolean|Highcharts.AnimationOptionsObject}
+             * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
              * @product highcharts highstock highmaps
              */
             animation: {

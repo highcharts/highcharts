@@ -564,7 +564,7 @@ seriesType<Highcharts.SankeySeries>(
                 /**
                  * Animation when not hovering over the marker.
                  *
-                 * @type      {boolean|Highcharts.AnimationOptionsObject}
+                 * @type      {boolean|Partial<Highcharts.AnimationOptionsObject>}
                  * @apioption plotOptions.series.states.inactive.animation
                  */
                 animation: {

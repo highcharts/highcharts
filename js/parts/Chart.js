@@ -479,7 +479,7 @@ var Chart = /** @class */ (function () {
      *
      * @function Highcharts.Chart#redraw
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      * If or how to apply animation to the redraw.
      *
      * @fires Highcharts.Chart#event:afterSetExtremes
@@ -1289,7 +1289,7 @@ var Chart = /** @class */ (function () {
      *        be `undefined` in order to preserve the current value, or `null`
      *        in order to adapt to the height of the containing element.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation.
      *
      * @return {void}
@@ -1343,7 +1343,7 @@ var Chart = /** @class */ (function () {
                     chart.isResizing -= 1;
                 });
             }
-        }, animObject(globalAnimation).duration || 0);
+        }, animObject(globalAnimation).duration);
     };
     /**
      * Set the public chart properties. This is done before and after the

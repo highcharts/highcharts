@@ -85,7 +85,7 @@ var clusterDefaultOptions = {
     allowOverlap: true,
     /**
      * Options for the cluster marker animation.
-     * @type    {boolean|Highcharts.AnimationOptionsObject}
+     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
      * @default { "duration": 500 }
      */
     animation: {

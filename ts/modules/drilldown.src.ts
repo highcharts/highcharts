@@ -115,7 +115,7 @@ declare global {
                 CSSObject|DrilldownActiveDataLabelStyleOptions
             );
             allowPointDrilldown?: boolean;
-            animation?: (boolean|AnimationOptionsObject);
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             drillUpButton?: DrilldownDrillUpButtonOptions;
             series?: Array<SeriesOptionsType>;
         }
@@ -187,7 +187,7 @@ declare global {
             drilldown?: string;
         }
         interface SVGElement {
-            fadeIn(animation?: (boolean|AnimationOptionsObject)): void;
+            fadeIn(animation?: (boolean|Partial<AnimationOptionsObject>)): void;
         }
         interface Tick {
             drillable(): void;
@@ -455,7 +455,7 @@ defaultOptions.drilldown = {
      *   object. See
      *   [the easing demo](https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/plotoptions/series-animation-easing/).
      *
-     * @type    {boolean|Highcharts.AnimationOptionsObject}
+     * @type    {boolean|Partial<Highcharts.AnimationOptionsObject>}
      * @since   3.0.8
      * @product highcharts highmaps
      */
@@ -626,11 +626,11 @@ defaultOptions.drilldown = {
  *
  * @function Highcharts.SVGElement#fadeIn
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
  * The animation options for the element fade.
  */
 SVGRenderer.prototype.Element.prototype.fadeIn = function (
-    animation?: (boolean|Highcharts.AnimationOptionsObject)
+    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
 ): void {
     this
         .attr({

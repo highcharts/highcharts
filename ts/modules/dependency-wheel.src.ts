@@ -368,7 +368,7 @@ seriesType<Highcharts.DependencyWheelSeries>(
         ): void {
             if (!init) {
                 var duration = animObject(this.options.animation).duration,
-                    step = ((duration as any) / 2) / this.nodes.length;
+                    step = (duration / 2) / this.nodes.length;
                 this.nodes.forEach(function (
                     point: Highcharts.DependencyWheelPoint,
                     i: number

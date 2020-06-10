@@ -114,7 +114,7 @@ var addEvent = U.addEvent, animObject = U.animObject, erase = U.erase, getOption
 */ /**
 * Animation options for the image pattern loading.
 * @name Highcharts.PatternObject#animation
-* @type {boolean|Highcharts.AnimationOptionsObject|undefined}
+* @type {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined}
 */ /**
 * Optionally an index referencing which pattern to use. Highcharts adds
 * 10 default patterns to the `Highcharts.patterns` array. Additional
@@ -268,7 +268,7 @@ Point.prototype.calculatePatternDimensions = function (pattern) {
  * @param {Highcharts.PatternObject} options
  * The pattern options.
  *
- * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
  * The animation options.
  *
  * @return {Highcharts.SVGElement|undefined}

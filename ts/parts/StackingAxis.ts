@@ -13,8 +13,10 @@ import Axis from './Axis.js';
 import U from './Utilities.js';
 const {
     addEvent,
+    animObject,
     destroyObjectProperties,
     fireEvent,
+    getDeferTime,
     objectEach,
     pick
 } = U;
@@ -166,13 +168,18 @@ class StackingAxisAdditions {
         const chart = axis.chart;
         const renderer = chart.renderer;
         const stacks = stacking.stacks;
+        const stackLabelsAnim = axis.options.stackLabels.animation;
+        const deferTime = stackLabelsAnim && typeof stackLabelsAnim.defer === 'undefined' ?
+            getDeferTime(chart) : animObject(stackLabelsAnim).defer;
+        const durationTime = Math.min(deferTime, 200);
         const stackTotalGroup = stacking.stackTotalGroup = (
             stacking.stackTotalGroup ||
             renderer
                 .g('stack-labels')
                 .attr({
                     visibility: 'visible',
-                    zIndex: 6
+                    zIndex: 6,
+                    opacity: 0
                 })
                 .add()
         );
@@ -189,6 +196,12 @@ class StackingAxisAdditions {
             objectEach(type, function (stack: Highcharts.StackItem): void {
                 stack.render(stackTotalGroup);
             });
+        });
+        stackTotalGroup.animate({
+            opacity: 1
+        }, {
+            duration: durationTime,
+            defer: deferTime - durationTime
         });
     }
 

@@ -57,7 +57,7 @@ declare global {
             public setGanttPointAliases(options: GanttPointOptions): void;
             public translatePoint(point: GanttPoint): void;
         }
-        interface GanttAnimationOptionsObject extends AnimationOptionsObject {
+        interface GanttAnimationOptionsObject extends Partial<AnimationOptionsObject> {
             reversed?: boolean;
         }
         interface GanttConnectorsOptions extends ConnectorsOptions {

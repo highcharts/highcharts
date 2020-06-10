@@ -1074,7 +1074,7 @@ Chart.prototype.drawSeriesLabels = function (): void {
 
                     // Default initial animation to a fraction of the series
                     // animation (#9396)
-                    let animationOptions: Highcharts.AnimationOptionsObject|undefined;
+                    let animationOptions: Partial<Highcharts.AnimationOptionsObject>|undefined;
                     if (isNew) {
                         animationOptions = animObject(series.options.animation);
                         // @todo: Safely remove any cast after merging #13005
@@ -1172,7 +1172,7 @@ function drawLabels(this: Chart, e: Event): void {
                 if (e.type === 'load') {
                     delay = Math.max(
                         delay as any,
-                        animObject(series.options.animation).duration as any
+                        animObject(series.options.animation).duration
                     );
                 }
 

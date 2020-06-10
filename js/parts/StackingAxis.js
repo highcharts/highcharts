@@ -8,7 +8,7 @@
  *
  * */
 import U from './Utilities.js';
-var addEvent = U.addEvent, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, objectEach = U.objectEach, pick = U.pick;
+var addEvent = U.addEvent, animObject = U.animObject, destroyObjectProperties = U.destroyObjectProperties, fireEvent = U.fireEvent, getDeferTime = U.getDeferTime, objectEach = U.objectEach, pick = U.pick;
 /* eslint-disable valid-jsdoc */
 /**
  * Adds stacking support to axes.
@@ -111,12 +111,17 @@ var StackingAxisAdditions = /** @class */ (function () {
         var chart = axis.chart;
         var renderer = chart.renderer;
         var stacks = stacking.stacks;
+        var stackLabelsAnim = axis.options.stackLabels.animation;
+        var deferTime = stackLabelsAnim && typeof stackLabelsAnim.defer === 'undefined' ?
+            getDeferTime(chart) : animObject(stackLabelsAnim).defer;
+        var durationTime = Math.min(deferTime, 200);
         var stackTotalGroup = stacking.stackTotalGroup = (stacking.stackTotalGroup ||
             renderer
                 .g('stack-labels')
                 .attr({
                 visibility: 'visible',
-                zIndex: 6
+                zIndex: 6,
+                opacity: 0
             })
                 .add());
         // plotLeft/Top will change when y axis gets wider so we need to
@@ -128,6 +133,12 @@ var StackingAxisAdditions = /** @class */ (function () {
             objectEach(type, function (stack) {
                 stack.render(stackTotalGroup);
             });
+        });
+        stackTotalGroup.animate({
+            opacity: 1
+        }, {
+            duration: durationTime,
+            defer: deferTime - durationTime
         });
     };
     return StackingAxisAdditions;

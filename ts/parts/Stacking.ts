@@ -85,6 +85,7 @@ declare global {
             stackLabels?: YAxisStackLabelsOptions;
         }
         interface YAxisStackLabelsOptions {
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: AlignValue;
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);

@@ -50,7 +50,8 @@ declare global {
         interface AnimationOptionsObject {
             complete?: Function;
             curAnim?: Dictionary<boolean>;
-            duration?: number;
+            defer: number;
+            duration: number;
             easing?: (string|Function);
             step?: AnimationStepCallbackFunction;
         }
@@ -122,12 +123,12 @@ declare global {
         class Fx {
             public constructor(
                 elem: (HTMLDOMElement|SVGElement),
-                options: AnimationOptionsObject,
+                options: Partial<AnimationOptionsObject>,
                 prop: string
             );
             public elem: (HTMLElement|SVGElement);
             public end?: any;
-            public options: AnimationOptionsObject;
+            public options: Partial<AnimationOptionsObject>;
             public paths?: [SVGPath, SVGPath];
             public pos?: any;
             public prop: string;
@@ -154,7 +155,7 @@ declare global {
         function animate(
             el: (HTMLDOMElement|SVGElement),
             params: (CSSObject|SVGAttributes),
-            opt?: AnimationOptionsObject
+            opt?: Partial<AnimationOptionsObject>
         ): void;
         function animObject(
             animation?: (boolean|AnimationOptionsObject)
@@ -212,6 +213,7 @@ declare global {
             defaultFunction?: (EventCallbackFunction<T>|Function)
         ): void;
         function format(str: string, ctx: any, chart?: Chart): string;
+        function getDeferTime(chart: Chart): number;
         function getMagnitude(num: number): number;
         function getStyle(
             el: HTMLDOMElement,
@@ -326,7 +328,7 @@ declare global {
             pointProps?: Partial<TSeries['pointClass']['prototype']>
         ): typeof Series;
         function setAnimation(
-            animation: (boolean|AnimationOptionsObject|undefined),
+            animation: (boolean|Partial<AnimationOptionsObject>|undefined),
             chart: Chart
         ): void
         function splat(obj: any): Array<any>;
@@ -351,13 +353,17 @@ declare global {
 /**
  * An animation configuration. Animation configurations can also be defined as
  * booleans, where `false` turns off animation and `true` defaults to a duration
- * of 500ms.
+ * of 500ms and defer of 0ms.
  *
  * @interface Highcharts.AnimationOptionsObject
  *//**
  * A callback function to exectute when the animation finishes.
  * @name Highcharts.AnimationOptionsObject#complete
  * @type {Function|undefined}
+ *//**
+ * The animation defer in milliseconds.
+ * @name Highcharts.AnimationOptionsObject#defer
+ * @type {number|undefined}
  *//**
  * The animation duration in milliseconds.
  * @name Highcharts.AnimationOptionsObject#duration
@@ -792,7 +798,7 @@ class Fx {
      * @param {Highcharts.HTMLDOMElement|Highcharts.SVGElement} elem
      *        The element to animate.
      *
-     * @param {Highcharts.AnimationOptionsObject} options
+     * @param {Partial<Highcharts.AnimationOptionsObject>} options
      *        Animation options.
      *
      * @param {string} prop
@@ -800,7 +806,7 @@ class Fx {
      */
     public constructor(
         elem: (Highcharts.HTMLElement|Highcharts.SVGElement),
-        options: Highcharts.AnimationOptionsObject,
+        options: Partial<Highcharts.AnimationOptionsObject>,
         prop: string
     ) {
         this.options = options;
@@ -818,7 +824,7 @@ class Fx {
     public end?: number;
     public from?: number;
     public now?: number;
-    public options: Highcharts.AnimationOptionsObject;
+    public options: Partial<Highcharts.AnimationOptionsObject>;
     public paths?: [SVGPath, SVGPath];
     public pos?: number;
     public prop: string;
@@ -2307,7 +2313,7 @@ const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: 
  *
  * @function Highcharts.setAnimation
  *
- * @param {boolean|Highcharts.AnimationOptionsObject|undefined} animation
+ * @param {boolean|Partial<Highcharts.AnimationOptionsObject>|undefined} animation
  *        The animation object.
  *
  * @param {Highcharts.Chart} chart
@@ -2320,7 +2326,7 @@ const correctFloat = H.correctFloat = function correctFloat(num: number, prec?: 
  * so it should be moved to the SVGRenderer.
  */
 const setAnimation = H.setAnimation = function setAnimation(
-    animation: (boolean|Highcharts.AnimationOptionsObject|undefined),
+    animation: (boolean|Partial<Highcharts.AnimationOptionsObject>|undefined),
     chart: Chart
 ): void {
     chart.renderer.globalAnimation = pick(
@@ -2344,11 +2350,14 @@ const setAnimation = H.setAnimation = function setAnimation(
  *         An object with at least a duration property.
  */
 const animObject = H.animObject = function animObject(
-    animation?: (boolean|Highcharts.AnimationOptionsObject)
+    animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
 ): Highcharts.AnimationOptionsObject {
     return isObject(animation) ?
-        merge(animation as Highcharts.AnimationOptionsObject) as any :
-        { duration: animation as boolean ? 500 : 0 };
+        H.merge(
+            { duration: 500, defer: 0 },
+            animation as Highcharts.AnimationOptionsObject
+        ) as any :
+        { duration: animation as boolean ? 500 : 0, defer: 0 };
 };
 
 /**
@@ -2621,6 +2630,28 @@ const getStyle = H.getStyle = function (
         }
     }
     return style;
+};
+
+/**
+ * Get the defer as a number value from series animation options.
+ *
+ * @function Highcharts.getDeferTime
+ *
+ * @param {Highcharts.Chart} chart
+ *        The chart instance.
+ *
+ * @return {number}
+ *        The numeric value.
+ */
+const getDeferTime = H.getDeferTime = function (chart): number {
+    let maxDefer = 0;
+
+    chart.series.forEach((series): void => {
+        const seriesAnim = animObject(series.options.animation);
+
+        maxDefer = Math.max(seriesAnim.duration + seriesAnim.defer);
+    });
+    return maxDefer;
 };
 
 /**
@@ -3212,7 +3243,7 @@ const fireEvent = H.fireEvent = function<T> (
  *        Supports numeric as pixel-based CSS properties for HTML objects and
  *        attributes for SVGElements.
  *
- * @param {Highcharts.AnimationOptionsObject} [opt]
+ * @param {Partial<Highcharts.AnimationOptionsObject>} [opt]
  *        Animation options.
  *
  * @return {void}
@@ -3220,7 +3251,7 @@ const fireEvent = H.fireEvent = function<T> (
 const animate = H.animate = function (
     el: (Highcharts.HTMLDOMElement|Highcharts.SVGElement),
     params: (Highcharts.CSSObject|Highcharts.SVGAttributes),
-    opt?: Highcharts.AnimationOptionsObject
+    opt?: Partial<Highcharts.AnimationOptionsObject>
 ): void {
     var start,
         unit = '',
@@ -3528,6 +3559,7 @@ const utilitiesModule = {
     find,
     fireEvent,
     format,
+    getDeferTime,
     getMagnitude,
     getNestedProperty,
     getOptions,

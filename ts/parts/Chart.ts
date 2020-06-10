@@ -705,7 +705,7 @@ class Chart {
      *
      * @function Highcharts.Chart#redraw
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation]
      * If or how to apply animation to the redraw.
      *
      * @fires Highcharts.Chart#event:afterSetExtremes
@@ -715,7 +715,7 @@ class Chart {
      * @fires Highcharts.Chart#event:render
      * @fires Highcharts.Chart#event:updatedData
      */
-    public redraw(animation?: (boolean|Highcharts.AnimationOptionsObject)): void {
+    public redraw(animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)): void {
 
         fireEvent(this, 'beforeRedraw');
 
@@ -1776,7 +1776,7 @@ class Chart {
      *        be `undefined` in order to preserve the current value, or `null`
      *        in order to adapt to the height of the containing element.
      *
-     * @param {boolean|Highcharts.AnimationOptionsObject} [animation=true]
+     * @param {boolean|Partial<Highcharts.AnimationOptionsObject>} [animation=true]
      *        Whether and how to apply animation.
      *
      * @return {void}
@@ -1787,7 +1787,7 @@ class Chart {
     public setSize(
         width?: (number|null),
         height?: (number|null),
-        animation?: (boolean|Highcharts.AnimationOptionsObject)
+        animation?: (boolean|Partial<Highcharts.AnimationOptionsObject>)
     ): void {
         var chart = this,
             renderer = chart.renderer,
@@ -1852,7 +1852,7 @@ class Chart {
                     chart.isResizing -= 1;
                 });
             }
-        }, animObject(globalAnimation).duration || 0);
+        }, animObject(globalAnimation).duration);
     }
 
     /**

@@ -27,6 +27,7 @@ const {
     fireEvent,
     format,
     isArray,
+    isNumber,
     merge,
     objectEach,
     pick,
@@ -65,6 +66,7 @@ declare global {
             );
         }
         interface DataLabelsOptions {
+            animation?: (boolean|Partial<AnimationOptionsObject>);
             align?: AlignValue;
             allowOverlap?: boolean;
             backgroundColor?: (ColorString|GradientColorObject|PatternObject);
@@ -408,10 +410,13 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         pointOptions,
         hasRendered = series.hasRendered || 0,
         dataLabelsGroup: Highcharts.SVGElement,
-        seriesAnimDuration = animObject(seriesOptions.animation).duration,
-        fadeInDuration = Math.min(seriesAnimDuration as any, 200),
+        seriesAnim = animObject(seriesOptions.animation),
+        fadeInDuration = Math.min(seriesAnim.duration, 200),
+        dataLabelAnim = (seriesDlOptions as any).animation,
         defer = !chart.renderer.forExport && pick(
-            (seriesDlOptions as any).defer,
+            (seriesDlOptions as any).defer &&
+            dataLabelAnim && typeof dataLabelAnim.defer === 'undefined' ?
+                true : animObject(dataLabelAnim).defer,
             fadeInDuration > 0
         ),
         renderer = chart.renderer;
@@ -531,22 +536,28 @@ Series.prototype.drawDataLabels = function (this: Highcharts.Series): void {
         );
 
         if (defer) {
+            // If defer as true - get the value from the series.animation object
+            if (!isNumber(defer)) {
+                defer = seriesAnim.duration + seriesAnim.defer;
+            }
+
             dataLabelsGroup.attr({ opacity: +hasRendered }); // #3300
             if (!hasRendered) {
-                setTimeout(function (): void {
-                    var group = series.dataLabelsGroup;
-                    if (group) {
-                        if (series.visible) { // #2597, #3023, #3024
-                            dataLabelsGroup.show(true);
-                        }
-                        (group[
-                            seriesOptions.animation ? 'animate' : 'attr'
-                        ] as any)(
-                            { opacity: 1 },
-                            { duration: fadeInDuration }
-                        );
+                var group = series.dataLabelsGroup;
+                if (group) {
+                    if (series.visible) { // #2597, #3023, #3024
+                        dataLabelsGroup.show(true);
                     }
-                }, (seriesAnimDuration as any) - fadeInDuration);
+                    (group[
+                        seriesOptions.animation ? 'animate' : 'attr'
+                    ] as any)(
+                        { opacity: 1 },
+                        {
+                            duration: fadeInDuration,
+                            defer: defer - fadeInDuration
+                        }
+                    );
+                }
             }
         }
 

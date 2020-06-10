@@ -29,12 +29,14 @@ import Pointer from '../parts/Pointer.js';
 import U from '../parts/Utilities.js';
 const {
     addEvent,
+    animObject,
     defined,
     destroyObjectProperties,
     erase,
     extend,
     find,
     fireEvent,
+    getDeferTime,
     merge,
     pick,
     splat,
@@ -133,6 +135,7 @@ declare global {
             itemType?: string;
         }
         interface AnnotationsOptions extends AnnotationControllableOptionsObject {
+            animation: Partial<AnimationOptionsObject>;
             controlPointOptions: AnnotationControlPointOptionsObject;
             draggable: AnnotationDraggableValue;
             events: AnnotationsEventsOptions;
@@ -409,6 +412,8 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
     public coll: 'annotations' = 'annotations';
     public collection: ControllableMixin.Type['collection'] = void 0 as any;
     public controlPoints: Array<ControlPoint>;
+    public deferTime: number = void 0 as any;
+    public durationTime: number = void 0 as any;
     public graphic: Highcharts.SVGElement = void 0 as any;
     public group: Highcharts.SVGElement = void 0 as any;
     public isUpdating?: boolean;
@@ -438,11 +443,17 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
      * @private
      */
     public init(): void {
+        const chart = this.chart,
+            animOptions = this.options.animation;
+
         this.linkPoints();
         this.addControlPoints();
         this.addShapes();
         this.addLabels();
         this.setLabelCollector();
+        this.deferTime = animOptions && typeof animOptions.defer === 'undefined' ?
+            getDeferTime(chart) : animObject(animOptions).defer;
+        this.durationTime = Math.min(this.deferTime, 200);
     }
 
     public getLabelsAndShapesOptions(
@@ -632,6 +643,7 @@ class Annotation implements EventEmitterMixin.Type, ControllableMixin.Type {
         this.graphic = renderer
             .g('annotation')
             .attr({
+                opacity: 0,
                 zIndex: this.options.zIndex,
                 visibility: this.options.visible ?
                     'visible' :
@@ -994,6 +1006,35 @@ merge<Annotation>(
                  *         Set annotation visibility
                  */
                 visible: true,
+
+                /**
+                 * Enable or disable the initial animation when a series is
+                 * displayed for the `annotation`. The animation can also be set
+                 * as a configuration object. Please note that this option only
+                 * applies to the initial animation.
+                 * For other animations, see [chart.animation](#chart.animation)
+                 * and the animation parameter under the API methods.
+                 * The following properties are supported:
+                 *
+                 * - `defer`: The animation delay time in milliseconds.
+                 *
+                 * @sample {highcharts} highcharts/annotations/defer/
+                 *          Animation defer settings
+                 * @type {boolean|Partial<Highcharts.AnimationOptionsObject>}
+                 * @since next
+                 * @apioption annotations.animation
+                 */
+                animation: {},
+
+                /**
+                 * The animation delay time in milliseconds.
+                 * Set to `0` renders annotation immediately.
+                 * As `undefined` inherits defer time from the [series.animation.defer](#plotOptions.series.animation.defer).
+                 *
+                 * @type      {number}
+                 * @since     next
+                 * @apioption annotations.animation.defer
+                 */
 
                 /**
                  * Allow an annotation to be draggable by a user. Possible
@@ -1655,6 +1696,12 @@ extend(chartProto, /** @lends Highcharts.Chart# */ {
 
         this.annotations.forEach(function (annotation): void {
             annotation.redraw();
+            annotation.graphic.animate({
+                opacity: 1
+            }, {
+                defer: annotation.deferTime - annotation.durationTime,
+                duration: annotation.durationTime
+            });
         });
     }
 });
