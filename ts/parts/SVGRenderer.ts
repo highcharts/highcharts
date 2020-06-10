@@ -568,9 +568,6 @@ class SVGRenderer {
      *
      * */
 
-    /**
-     * @private
-     */
     public constructor(
         container: Highcharts.HTMLDOMElement,
         width: number,
@@ -590,12 +587,37 @@ class SVGRenderer {
      * */
 
     public alignedObjects: Array<SVGElement> = void 0 as any;
+
     public allowHTML?: boolean;
+
+    /**
+     * The root `svg` node of the renderer.
+     *
+     * @name Highcharts.SVGRenderer#box
+     * @type {Highcharts.SVGDOMElement}
+     */
     public box: globalThis.SVGElement = void 0 as any;
+
+    /**
+     * The wrapper for the root `svg` node of the renderer.
+     *
+     * @name Highcharts.SVGRenderer#boxWrapper
+     * @type {Highcharts.SVGElement}
+     */
     public boxWrapper: SVGElement = void 0 as any;
+
     public cache: Record<string, Highcharts.BBoxObject> = void 0 as any;
+
     public cacheKeys: Array<string> = void 0 as any;
+
     public chartIndex: number = void 0 as any;
+
+    /**
+     * A pointer to the `defs` node of the root SVG.
+     *
+     * @name Highcharts.SVGRenderer#defs
+     * @type {Highcharts.SVGElement}
+     */
     public defs: SVGElement = void 0 as any;
     public forExport?: boolean;
     public globalAnimation: Highcharts.AnimationOptionsObject = void 0 as any;
@@ -606,6 +628,14 @@ class SVGRenderer {
     public style: Highcharts.CSSObject = void 0 as any;
     public styledMode?: boolean;
     public unSubPixelFix?: Function;
+
+    /**
+     * Page url used for internal references.
+     *
+     * @private
+     * @name Highcharts.SVGRenderer#url
+     * @type {string}
+     */
     public url: string = void 0 as any;
     public width: number = void 0 as any;
 
@@ -684,29 +714,10 @@ class SVGRenderer {
         // object properties
         renderer.isSVG = true;
 
-        /**
-         * The root `svg` node of the renderer.
-         *
-         * @name Highcharts.SVGRenderer#box
-         * @type {Highcharts.SVGDOMElement}
-         */
         this.box = element as any;
-        /**
-         * The wrapper for the root `svg` node of the renderer.
-         *
-         * @name Highcharts.SVGRenderer#boxWrapper
-         * @type {Highcharts.SVGElement}
-         */
         this.boxWrapper = boxWrapper;
         renderer.alignedObjects = [];
 
-        /**
-         * Page url used for internal references.
-         *
-         * @private
-         * @name Highcharts.SVGRenderer#url
-         * @type {string}
-         */
         // #24, #672, #1070
         this.url = (
             (isFirefox || isWebKit) &&
@@ -727,12 +738,6 @@ class SVGRenderer {
             doc.createTextNode('Created with @product.name@ @product.version@')
         );
 
-        /**
-         * A pointer to the `defs` node of the root SVG.
-         *
-         * @name Highcharts.SVGRenderer#defs
-         * @type {Highcharts.SVGElement}
-         */
         renderer.defs = this.createElement('defs').add();
         renderer.allowHTML = allowHTML;
         renderer.forExport = forExport;

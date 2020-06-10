@@ -77,9 +77,6 @@ var Annotation = /** @class */ (function () {
      *  Constructors
      *
      * */
-    /**
-     * @private
-     */
     function Annotation(chart, userOptions) {
         /* *
          *
