@@ -797,7 +797,6 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
             ): void {
 
                 var axis = chart[isX ? 'xAxis' : 'yAxis'][0],
-                    axisOpt = axis.options,
                     horiz = axis.horiz,
                     mousePos = e[horiz ? 'chartX' : 'chartY'],
                     mouseDown = horiz ? 'mouseDownX' : 'mouseDownY',

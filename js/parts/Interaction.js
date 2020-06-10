@@ -490,7 +490,7 @@ extend(Chart.prototype, /** @lends Chart.prototype */ {
                 xy = [0];
             }
             xy.forEach(function (isX) {
-                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], axisOpt = axis.options, horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
+                var axis = chart[isX ? 'xAxis' : 'yAxis'][0], horiz = axis.horiz, mousePos = e[horiz ? 'chartX' : 'chartY'], mouseDown = horiz ? 'mouseDownX' : 'mouseDownY', startPos = chart[mouseDown], halfPointRange = (axis.pointRange || 0) / 2, pointRangeDirection = (axis.reversed && !chart.inverted) ||
                     (!axis.reversed && chart.inverted) ?
                     -1 :
                     1, extremes = axis.getExtremes(), panMin = axis.toValue(startPos - mousePos, true) +
