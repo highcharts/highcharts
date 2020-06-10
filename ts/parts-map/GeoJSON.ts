@@ -76,13 +76,26 @@ declare global {
             copyrightShort?: string;
             crs?: Record<string, any>;
             features: Array<GeoJSONFeature>;
-            'hc-transform'?: Record<string, Record<string, any>>;
+            'hc-transform'?: Record<string, GeoJSONTransform>;
             title?: string;
             type?: string;
             version?: string;
         }
         interface GeoJSONFeature extends Record<string, any> {
             type: string;
+        }
+        interface GeoJSONTransform {
+            crs?: string;
+            hitZone?: Record<string, any>;
+            jsonmarginX?: number;
+            jsonmarginY?: number;
+            jsonres?: number;
+            rotation?: number;
+            scale?: number;
+            xoffset?: number;
+            xspan?: number;
+            yoffset?: number;
+            yspan?: number;
         }
         /** @requires modules/maps */
         function geojson(
@@ -113,12 +126,12 @@ declare global {
  * @name Highcharts.GeoJSON#crs
  * @type {Highcharts.Dictionary<any>|undefined}
  *//**
- * Geographic data itself.
+ * Data sets of geographic features.
  * @name Highcharts.GeoJSON#features
- * @type {Array<Highcharts.Dictionary<any>>}
+ * @type {Array<Highcharts.GeoJSONFeature>}
  *//**
- * Transformation information for Highcharts to be used when rendering multiple
- * maps in one chart.
+ * Map projection for Highcharts to be used when rendering multiple maps in one
+ * chart.
  * @name Highcharts.GeoJSON#hc-transform
  * @type {Highcharts.Dictionary<Highcharts.Dictionary<any>>}
  *//**
@@ -134,6 +147,67 @@ declare global {
  * Version of the geographic data.
  * @name Highcharts.GeoJSON#version
  * @type {string|undefined}
+ */
+
+/**
+ * Data set of a geographic feature.
+ * @interface Highcharts.GeoJSONFeature
+ * @extends Highcharts.Dictionary<*>
+ *//**
+ * Data type of the geographic feature.
+ * @name Highcharts.GeoJSONFeature#type
+ * @type {string}
+ */
+
+/**
+ * Describes the map projection in a chart.
+ * @todo Øystein
+ * @interface Highcharts.GeoJSONTranslation
+ *//**
+ * Additional meta information based on the coordinate reference system.
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#crs
+ * @type {string|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#hitZone
+ * @type {Highcharts.Dictionary<*>|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#jsonmarginX
+ * @type {number|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#jsonmarginY
+ * @type {number|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#jsonres
+ * @type {number|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#rotation
+ * @type {number|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#scale
+ * @type {number|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#xoffset
+ * @type {number|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#xspan
+ * @type {number|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#yoffset
+ * @type {number|undefined}
+ *//**
+ * @todo Øystein
+ * @name Highcharts.GeoJSONTranslation#yspan
+ * @type {number|undefined}
  */
 
 /**
