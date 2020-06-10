@@ -4,15 +4,55 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Annotation from '../annotations.src.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
+import U from '../../parts/Utilities.js';
+var merge = U.merge;
 /* eslint-disable no-invalid-this */
-var BasicAnnotation = function () {
-    Annotation.apply(this, arguments);
-};
-H.extendAnnotation(BasicAnnotation, null, {
-    basicControlPoints: {
+var BasicAnnotation = /** @class */ (function (_super) {
+    __extends(BasicAnnotation, _super);
+    /* *
+     *
+     *  Constructors
+     *
+     * */
+    /** @private */
+    function BasicAnnotation(chart, options) {
+        return _super.call(this, chart, options) || this;
+    }
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    BasicAnnotation.prototype.addControlPoints = function () {
+        var options = this.options, controlPoints = BasicAnnotation.basicControlPoints, langKey = options.langKey, optionsGroup = options.labels || options.shapes;
+        optionsGroup.forEach(function (group) {
+            if (langKey) {
+                // @todo langKey === 'label' / 'circle' / 'rectangle' ???
+                group.controlPoints = controlPoints[langKey];
+            }
+        });
+    };
+    /* *
+     *
+     *  Static Properties
+     *
+     * */
+    BasicAnnotation.basicControlPoints = {
         label: [{
                 symbol: 'triangle-down',
                 positioner: function (target) {
@@ -117,15 +157,9 @@ H.extendAnnotation(BasicAnnotation, null, {
                     }
                 }
             }]
-    },
-    addControlPoints: function () {
-        var options = this.options, controlPoints = this.basicControlPoints, langKey = options.langKey, optionsGroup = options.labels || options.shapes;
-        optionsGroup.forEach(function (group) {
-            if (langKey) {
-                group.controlPoints = controlPoints[langKey];
-            }
-        });
-    }
-});
+    };
+    return BasicAnnotation;
+}(Annotation));
+BasicAnnotation.prototype.defaultOptions = merge(Annotation.prototype.defaultOptions, {});
 Annotation.types.basicAnnotation = BasicAnnotation;
 export default BasicAnnotation;
