@@ -29,7 +29,6 @@ var BasicAnnotation = /** @class */ (function (_super) {
      *  Constructors
      *
      * */
-    /** @private */
     function BasicAnnotation(chart, options) {
         return _super.call(this, chart, options) || this;
     }
