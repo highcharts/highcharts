@@ -83,8 +83,9 @@ var addEvent = U.addEvent, animObject = U.animObject, arrayMax = U.arrayMax, arr
 * @name Highcharts.AxisLabelsFormatterContextObject#pos
 * @type {number}
 */ /**
+* This can bei either a numeric value or a category name.
 * @name Highcharts.AxisLabelsFormatterContextObject#value
-* @type {number}
+* @type {number|string}
 */
 /**
  * Options for axes.
@@ -553,7 +554,7 @@ var Axis = /** @class */ (function () {
         var axis = this.axis, value = this.value, time = axis.chart.time, categories = axis.categories, dateTimeLabelFormat = this.dateTimeLabelFormat, lang = defaultOptions.lang, numericSymbols = lang.numericSymbols, numSymMagnitude = lang.numericSymbolMagnitude || 1000, i = numericSymbols && numericSymbols.length, multi, ret, formatOption = axis.options.labels.format, 
         // make sure the same symbol is added for all labels on a linear
         // axis
-        numericSymbolDetector = axis.logarithmic ?
+        numericSymbolDetector = axis.logarithmic && isNumber(value) ?
             Math.abs(value) :
             axis.tickInterval;
         var chart = this.chart;
@@ -562,12 +563,14 @@ var Axis = /** @class */ (function () {
             ret = format(formatOption, this, chart);
         }
         else if (categories) {
-            ret = value;
+            ret = value.toString();
         }
         else if (dateTimeLabelFormat) { // datetime axis
+            value = isNumber(value) ? value : NaN;
             ret = time.dateFormat(dateTimeLabelFormat, value);
         }
         else if (i && numericSymbolDetector >= 1000) {
+            value = isNumber(value) ? value : NaN;
             // Decide whether we should add a numeric symbol like k (thousands)
             // or M (millions). If we are to enable this in tooltip or other
             // places as well, we can move this logic to the numberFormatter and
@@ -584,12 +587,12 @@ var Axis = /** @class */ (function () {
                     (value * 10) % multi === 0 &&
                     numericSymbols[i] !== null &&
                     value !== 0) { // #5480
-                    ret = numberFormatter(value / multi, -1) +
-                        numericSymbols[i];
+                    ret = numberFormatter(value / multi, -1) + numericSymbols[i];
                 }
             }
         }
         if (typeof ret === 'undefined') {
+            value = isNumber(value) ? value : NaN;
             if (Math.abs(value) >= 10000) { // add thousands separators
                 ret = numberFormatter(value, -1);
             }
