@@ -37,6 +37,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-testresults',
     'dist-upload-code',
     'dist-upload-mapcollection',
+    'dist-upload-errors',
     'jsdoc',
     'jsdoc-classes',
     'jsdoc-clean',
