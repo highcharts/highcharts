@@ -1027,7 +1027,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
             prevAnnotation = navigation.activeAnnotation;
 
         if (originalClick) {
-            (originalClick as any).click.call(annotation, event);
+            originalClick.call(annotation, event);
         }
 
         if (prevAnnotation !== annotation) {

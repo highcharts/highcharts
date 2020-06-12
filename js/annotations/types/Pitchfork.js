@@ -4,37 +4,63 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Annotation from '../annotations.src.js';
-import H from '../../parts/Globals.js';
+import InfinityLine from './InfinityLine.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var InfinityLine = Annotation.types.infinityLine;
 /* eslint-disable no-invalid-this, valid-jsdoc */
-var Pitchfork = function () {
-    InfinityLine.apply(this, arguments);
-};
-Pitchfork.findEdgePoint = function (point, firstAnglePoint, secondAnglePoint) {
-    var angle = Math.atan2(secondAnglePoint.plotY - firstAnglePoint.plotY, secondAnglePoint.plotX - firstAnglePoint.plotX), distance = 1e7;
-    return {
-        x: point.plotX + distance * Math.cos(angle),
-        y: point.plotY + distance * Math.sin(angle)
+var Pitchfork = /** @class */ (function (_super) {
+    __extends(Pitchfork, _super);
+    /* *
+     *
+     * Constructors
+     *
+     * */
+    function Pitchfork(chart, options) {
+        return _super.call(this, chart, options) || this;
+    }
+    /* *
+     *
+     * Static Functions
+     *
+     * */
+    Pitchfork.outerLineEdgePoint = function (firstPointIndex) {
+        return function (target) {
+            var annotation = target.annotation, points = annotation.points;
+            return Pitchfork.findEdgePoint(points[firstPointIndex], points[0], new MockPoint(annotation.chart, target, annotation.midPointOptions()));
+        };
     };
-};
-Pitchfork.middleLineEdgePoint = function (target) {
-    var annotation = target.annotation, points = annotation.points;
-    return InfinityLine.findEdgePoint(points[0], new MockPoint(annotation.chart, target, annotation.midPointOptions()));
-};
-var outerLineEdgePoint = function (firstPointIndex) {
-    return function (target) {
+    Pitchfork.findEdgePoint = function (point, firstAnglePoint, secondAnglePoint) {
+        var angle = Math.atan2(secondAnglePoint.plotY - firstAnglePoint.plotY, secondAnglePoint.plotX - firstAnglePoint.plotX), distance = 1e7;
+        return {
+            x: point.plotX + distance * Math.cos(angle),
+            y: point.plotY + distance * Math.sin(angle)
+        };
+    };
+    Pitchfork.middleLineEdgePoint = function (target) {
         var annotation = target.annotation, points = annotation.points;
-        return Pitchfork.findEdgePoint(points[firstPointIndex], points[0], new MockPoint(annotation.chart, target, annotation.midPointOptions()));
+        return InfinityLine.findEdgePoint(points[0], new MockPoint(annotation.chart, target, annotation.midPointOptions()));
     };
-};
-Pitchfork.topLineEdgePoint = outerLineEdgePoint(1);
-Pitchfork.bottomLineEdgePoint = outerLineEdgePoint(0);
-H.extendAnnotation(Pitchfork, InfinityLine, {
-    midPointOptions: function () {
+    /* *
+     *
+     *  Functions
+     *
+     * */
+    Pitchfork.prototype.midPointOptions = function () {
         var points = this.points;
         return {
             x: (points[1].x + points[2].x) / 2,
@@ -42,12 +68,12 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
             xAxis: points[0].series.xAxis,
             yAxis: points[0].series.yAxis
         };
-    },
-    addShapes: function () {
+    };
+    Pitchfork.prototype.addShapes = function () {
         this.addLines();
         this.addBackgrounds();
-    },
-    addLines: function () {
+    };
+    Pitchfork.prototype.addLines = function () {
         this.initShape({
             type: 'path',
             points: [
@@ -69,8 +95,8 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
                 Pitchfork.bottomLineEdgePoint
             ]
         }, false);
-    },
-    addBackgrounds: function () {
+    };
+    Pitchfork.prototype.addBackgrounds = function () {
         var shapes = this.shapes, typeOptions = this.options.typeOptions;
         var innerBackground = this.initShape(merge(typeOptions.innerBackground, {
             type: 'path',
@@ -108,8 +134,17 @@ H.extendAnnotation(Pitchfork, InfinityLine, {
         }));
         typeOptions.innerBackground = innerBackground.options;
         typeOptions.outerBackground = outerBackground.options;
-    }
-}, 
+    };
+    /**
+     *
+     * Static Properties
+     *
+     */
+    Pitchfork.topLineEdgePoint = Pitchfork.outerLineEdgePoint(1);
+    Pitchfork.bottomLineEdgePoint = Pitchfork.outerLineEdgePoint(0);
+    return Pitchfork;
+}(InfinityLine));
+Pitchfork.prototype.defaultOptions = merge(InfinityLine.prototype.defaultOptions, 
 /**
  * A pitchfork annotation.
  *

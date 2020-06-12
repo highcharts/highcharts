@@ -4,12 +4,24 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Annotation from '../annotations.src.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
+import Tunnel from './Tunnel.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var Tunnel = Annotation.types.tunnel;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 var createPathDGenerator = function (retracementIndex, isBackground) {
     return function () {
@@ -25,27 +37,37 @@ var createPathDGenerator = function (retracementIndex, isBackground) {
         return d;
     };
 };
-var Fibonacci = function () {
-    this.startRetracements = [];
-    this.endRetracements = [];
-    Tunnel.apply(this, arguments);
-};
-Fibonacci.levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
-H.extendAnnotation(Fibonacci, Tunnel, {
-    linkPoints: function () {
-        Tunnel.prototype.linkPoints.call(this);
+var Fibonacci = /** @class */ (function (_super) {
+    __extends(Fibonacci, _super);
+    /* *
+     *
+     * Constructors
+     *
+     * */
+    function Fibonacci(chart, options) {
+        return _super.call(this, chart, options) || this;
+    }
+    /* *
+     *
+     * Functions
+     *
+     * */
+    Fibonacci.prototype.linkPoints = function () {
+        _super.prototype.linkPoints.call(this);
         this.linkRetracementsPoints();
         return;
-    },
-    linkRetracementsPoints: function () {
+    };
+    Fibonacci.prototype.linkRetracementsPoints = function () {
         var points = this.points, startDiff = points[0].y - points[3].y, endDiff = points[1].y - points[2].y, startX = points[0].x, endX = points[1].x;
         Fibonacci.levels.forEach(function (level, i) {
             var startRetracement = points[0].y - startDiff * level, endRetracement = points[1].y - endDiff * level;
+            this.startRetracements = this.startRetracements || [];
+            this.endRetracements = this.endRetracements || [];
             this.linkRetracementPoint(i, startX, startRetracement, this.startRetracements);
             this.linkRetracementPoint(i, endX, endRetracement, this.endRetracements);
         }, this);
-    },
-    linkRetracementPoint: function (pointIndex, x, y, retracements) {
+    };
+    Fibonacci.prototype.linkRetracementPoint = function (pointIndex, x, y, retracements) {
         var point = retracements[pointIndex], typeOptions = this.options.typeOptions;
         if (!point) {
             retracements[pointIndex] = new MockPoint(this.chart, this, {
@@ -60,8 +82,8 @@ H.extendAnnotation(Fibonacci, Tunnel, {
             point.options.y = y;
             point.refresh();
         }
-    },
-    addShapes: function () {
+    };
+    Fibonacci.prototype.addShapes = function () {
         Fibonacci.levels.forEach(function (_level, i) {
             this.initShape({
                 type: 'path',
@@ -76,8 +98,8 @@ H.extendAnnotation(Fibonacci, Tunnel, {
                 });
             }
         }, this);
-    },
-    addLabels: function () {
+    };
+    Fibonacci.prototype.addLabels = function () {
         Fibonacci.levels.forEach(function (level, i) {
             var options = this.options.typeOptions, label = this.initLabel(merge(options.labels[i], {
                 point: function (target) {
@@ -88,8 +110,16 @@ H.extendAnnotation(Fibonacci, Tunnel, {
             }));
             options.labels[i] = label.options;
         }, this);
-    }
-}, 
+    };
+    /* *
+     *
+     * Static properties
+     *
+     * */
+    Fibonacci.levels = [0, 0.236, 0.382, 0.5, 0.618, 0.786, 1];
+    return Fibonacci;
+}(Tunnel));
+Fibonacci.prototype.defaultOptions = merge(Tunnel.prototype.defaultOptions, 
 /**
  * A fibonacci annotation.
  *

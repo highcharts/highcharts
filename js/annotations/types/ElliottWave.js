@@ -4,28 +4,48 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Annotation from '../annotations.src.js';
-import H from '../../parts/Globals.js';
+import CrookedLine from './CrookedLine.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var CrookedLine = Annotation.types.crookedLine;
 /* eslint-disable no-invalid-this, valid-jsdoc */
-var ElliottWave = function () {
-    CrookedLine.apply(this, arguments);
-};
-H.extendAnnotation(ElliottWave, CrookedLine, {
-    addLabels: function () {
+var ElliottWave = /** @class */ (function (_super) {
+    __extends(ElliottWave, _super);
+    function ElliottWave(chart, options) {
+        return _super.call(this, chart, options) || this;
+    }
+    /* *
+     *
+     * Functions
+     *
+     * */
+    ElliottWave.prototype.addLabels = function () {
         this.getPointsOptions().forEach(function (point, i) {
-            var label = this.initLabel(merge(point.label, {
-                text: this.options.typeOptions.labels[i],
+            var typeOptions = this.options.typeOptions, label = this.initLabel(merge(point.label, {
+                text: typeOptions.labels[i],
                 point: function (target) {
                     return target.annotation.points[i];
                 }
             }), false);
             point.label = label.options;
         }, this);
-    }
-}, 
+    };
+    return ElliottWave;
+}(CrookedLine));
+ElliottWave.prototype.defaultOptions = merge(CrookedLine.prototype.defaultOptions, 
 /**
  * An elliott wave annotation.
  *
