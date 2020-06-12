@@ -385,6 +385,15 @@ var TreeGridAxis;
                     });
                 }
             });
+            // If staticScale is not defined on the yAxis
+            // and chart height is set, set axis.isDirty
+            // to ensure collapsing works (#13601)
+            addEvent(axis, 'afterBreaks', function () {
+                var _a;
+                if (axis.coll === 'yAxis' && !axis.staticScale && ((_a = axis.chart.userOptions.chart) === null || _a === void 0 ? void 0 : _a.height)) {
+                    axis.isDirty = true;
+                }
+            });
             userOptions = merge({
                 // Default options
                 grid: {
