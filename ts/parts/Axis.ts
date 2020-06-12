@@ -4251,7 +4251,7 @@ class Axis implements AxisComposition, AxisLike {
      */
     public defaultLabelFormatter(this: Highcharts.AxisLabelsFormatterContextObject<number>): string {
         var axis = this.axis,
-            value = this.value,
+            value = isNumber(this.value) ? this.value : NaN,
             time = axis.chart.time,
             categories = axis.categories,
             dateTimeLabelFormat = this.dateTimeLabelFormat,
@@ -4265,7 +4265,7 @@ class Axis implements AxisComposition, AxisLike {
 
             // make sure the same symbol is added for all labels on a linear
             // axis
-            numericSymbolDetector = axis.logarithmic && isNumber(value) ?
+            numericSymbolDetector = axis.logarithmic ?
                 Math.abs(value) :
                 axis.tickInterval;
         const chart = this.chart;
@@ -4275,14 +4275,12 @@ class Axis implements AxisComposition, AxisLike {
             ret = format(formatOption, this, chart);
 
         } else if (categories) {
-            ret = value.toString();
+            ret = `${this.value}`;
 
         } else if (dateTimeLabelFormat) { // datetime axis
-            value = isNumber(value) ? value : NaN;
             ret = time.dateFormat(dateTimeLabelFormat, value);
 
         } else if (i && numericSymbolDetector >= 1000) {
-            value = isNumber(value) ? value : NaN;
             // Decide whether we should add a numeric symbol like k (thousands)
             // or M (millions). If we are to enable this in tooltip or other
             // places as well, we can move this logic to the numberFormatter and
@@ -4306,7 +4304,6 @@ class Axis implements AxisComposition, AxisLike {
         }
 
         if (typeof ret === 'undefined') {
-            value = isNumber(value) ? value : NaN;
             if (Math.abs(value) >= 10000) { // add thousands separators
                 ret = numberFormatter(value, -1);
             } else { // small numbers

@@ -560,10 +560,10 @@ var Axis = /** @class */ (function () {
      * The formatted label content.
      */
     Axis.prototype.defaultLabelFormatter = function () {
-        var axis = this.axis, value = this.value, time = axis.chart.time, categories = axis.categories, dateTimeLabelFormat = this.dateTimeLabelFormat, lang = defaultOptions.lang, numericSymbols = lang.numericSymbols, numSymMagnitude = lang.numericSymbolMagnitude || 1000, i = numericSymbols && numericSymbols.length, multi, ret, formatOption = axis.options.labels.format, 
+        var axis = this.axis, value = isNumber(this.value) ? this.value : NaN, time = axis.chart.time, categories = axis.categories, dateTimeLabelFormat = this.dateTimeLabelFormat, lang = defaultOptions.lang, numericSymbols = lang.numericSymbols, numSymMagnitude = lang.numericSymbolMagnitude || 1000, i = numericSymbols && numericSymbols.length, multi, ret, formatOption = axis.options.labels.format, 
         // make sure the same symbol is added for all labels on a linear
         // axis
-        numericSymbolDetector = axis.logarithmic && isNumber(value) ?
+        numericSymbolDetector = axis.logarithmic ?
             Math.abs(value) :
             axis.tickInterval;
         var chart = this.chart;
@@ -572,14 +572,12 @@ var Axis = /** @class */ (function () {
             ret = format(formatOption, this, chart);
         }
         else if (categories) {
-            ret = value.toString();
+            ret = "" + this.value;
         }
         else if (dateTimeLabelFormat) { // datetime axis
-            value = isNumber(value) ? value : NaN;
             ret = time.dateFormat(dateTimeLabelFormat, value);
         }
         else if (i && numericSymbolDetector >= 1000) {
-            value = isNumber(value) ? value : NaN;
             // Decide whether we should add a numeric symbol like k (thousands)
             // or M (millions). If we are to enable this in tooltip or other
             // places as well, we can move this logic to the numberFormatter and
@@ -601,7 +599,6 @@ var Axis = /** @class */ (function () {
             }
         }
         if (typeof ret === 'undefined') {
-            value = isNumber(value) ? value : NaN;
             if (Math.abs(value) >= 10000) { // add thousands separators
                 ret = numberFormatter(value, -1);
             }
