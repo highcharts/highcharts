@@ -29,6 +29,15 @@ declare global {
         interface Series {
             zAxis?: ZAxis;
             translate3dPoints(): void;
+            zPadding: number;
+            rawPoints?: Array<Position3dObject>;
+        }
+        interface SeriesOptions {
+            depth?: number;
+            edgeColor?: ColorString;
+            edgeWidth?: number;
+            groupZPadding?: number;
+            inactiveOtherPoints?: boolean;
         }
     }
 }
@@ -53,6 +62,7 @@ addEvent(H.Series, 'afterTranslate', function (): void {
 // Translate the plotX, plotY properties and add plotZ.
 H.Series.prototype.translate3dPoints = function (): void {
     var series = this,
+        seriesOptions = series.options,
         chart = series.chart,
         zAxis: ZAxis = pick(series.zAxis, (chart.options.zAxis as any)[0]),
         rawPoints = [] as Array<Highcharts.Position3dObject>,
@@ -60,7 +70,12 @@ H.Series.prototype.translate3dPoints = function (): void {
         projectedPoints: Array<Highcharts.Position3dObject>,
         projectedPoint: Highcharts.Position3dObject,
         zValue: (number|null|undefined),
-        i: number;
+        i: number,
+        stack = seriesOptions.stacking ?
+            (seriesOptions.stack || 0) :
+            series.index; // #4743
+    series.zPadding = (stack as any) *
+        (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
 
     for (i = 0; i < series.data.length; i++) {
         rawPoint = series.data[i];
@@ -75,7 +90,8 @@ H.Series.prototype.translate3dPoints = function (): void {
                 (zValue as any) <= (zAxis.max as any)) :
                 false;
         } else {
-            rawPoint.plotZ = 0;
+            // add value of zPadding to final z position of calculated point.
+            rawPoint.plotZ = (series as any).zPadding;
         }
 
         rawPoint.axisXpos = rawPoint.plotX;
@@ -87,6 +103,7 @@ H.Series.prototype.translate3dPoints = function (): void {
             y: rawPoint.plotY as any,
             z: rawPoint.plotZ as any
         });
+        series.rawPoints = H.extend([], rawPoints);
     }
 
     projectedPoints = perspective(rawPoints, chart, true);

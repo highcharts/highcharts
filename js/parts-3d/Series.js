@@ -23,7 +23,11 @@ addEvent(H.Series, 'afterTranslate', function () {
 });
 // Translate the plotX, plotY properties and add plotZ.
 H.Series.prototype.translate3dPoints = function () {
-    var series = this, chart = series.chart, zAxis = pick(series.zAxis, chart.options.zAxis[0]), rawPoints = [], rawPoint, projectedPoints, projectedPoint, zValue, i;
+    var series = this, seriesOptions = series.options, chart = series.chart, zAxis = pick(series.zAxis, chart.options.zAxis[0]), rawPoints = [], rawPoint, projectedPoints, projectedPoint, zValue, i, stack = seriesOptions.stacking ?
+        (seriesOptions.stack || 0) :
+        series.index; // #4743
+    series.zPadding = stack *
+        (seriesOptions.depth || 0 + (seriesOptions.groupZPadding || 1));
     for (i = 0; i < series.data.length; i++) {
         rawPoint = series.data[i];
         if (zAxis && zAxis.translate) {
@@ -37,7 +41,8 @@ H.Series.prototype.translate3dPoints = function () {
                 false;
         }
         else {
-            rawPoint.plotZ = 0;
+            // add value of zPadding to final z position of calculated point.
+            rawPoint.plotZ = series.zPadding;
         }
         rawPoint.axisXpos = rawPoint.plotX;
         rawPoint.axisYpos = rawPoint.plotY;
@@ -47,6 +52,7 @@ H.Series.prototype.translate3dPoints = function () {
             y: rawPoint.plotY,
             z: rawPoint.plotZ
         });
+        series.rawPoints = H.extend([], rawPoints);
     }
     projectedPoints = perspective(rawPoints, chart, true);
     for (i = 0; i < series.data.length; i++) {

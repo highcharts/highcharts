@@ -282,9 +282,9 @@ seriesType('area', 'line',
      * @private
      */
     getGraphPath: function (points) {
-        var getGraphPath = Series.prototype.getGraphPath, graphPath, options = this.options, stacking = options.stacking, yAxis = this.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = this.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[this.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
+        var getGraphPath = Series.prototype.getGraphPath, graphPath, series = this, options = series.options, stacking = options.stacking, yAxis = series.yAxis, topPath, bottomPath, bottomPoints = [], graphPoints = [], seriesIndex = series.index, i, areaPath, plotX, stacks = yAxis.stacking.stacks[series.stackKey], threshold = options.threshold, translatedThreshold = Math.round(// #10909
         yAxis.getThreshold(options.threshold)), isNull, yBottom, connectNulls = pick(// #10574
-        options.connectNulls, stacking === 'percent'), 
+        options.connectNulls, stacking === 'percent'), rawPoints = series.rawPoints, 
         // To display null points in underlying stacked series, this
         // series graph must be broken, and the area also fall down to
         // fill the gap left by the null point. #2069
@@ -326,7 +326,7 @@ seriesType('area', 'line',
         points = points || this.points;
         // Fill in missing points
         if (stacking) {
-            points = this.getStackPoints(points);
+            points = series.getStackPoints(points);
         }
         for (i = 0; i < points.length; i++) {
             // Reset after series.update of stacking property (#12033)
@@ -345,11 +345,20 @@ seriesType('area', 'line',
                 // true
                 if (!(isNull && !stacking && connectNulls)) {
                     graphPoints.push(points[i]);
-                    bottomPoints.push({
-                        x: i,
-                        plotX: plotX,
-                        plotY: yBottom
-                    });
+                    if (this.chart.is3d() && rawPoints) {
+                        bottomPoints.push({
+                            x: rawPoints[i].x,
+                            y: yBottom,
+                            z: series.zPadding
+                        });
+                    }
+                    else {
+                        bottomPoints.push({
+                            x: i,
+                            plotX: plotX,
+                            plotY: yBottom
+                        });
+                    }
                 }
                 if (!connectNulls) {
                     addDummyPoints(i, i + 1, 'right');
@@ -357,6 +366,11 @@ seriesType('area', 'line',
             }
         }
         topPath = getGraphPath.call(this, graphPoints, true, true);
+        if (series.chart.is3d()) {
+            bottomPoints = H.perspective(bottomPoints, this.chart, true).map(function (point) {
+                return { plotX: point.x, plotY: point.y, plotZ: point.z };
+            });
+        }
         bottomPoints.reversed = true;
         bottomPath = getGraphPath.call(this, bottomPoints, true, true);
         var firstBottomPoint = bottomPath[0];

@@ -400,18 +400,19 @@ seriesType<Highcharts.AreaSeries>(
         ): SVGPath {
             var getGraphPath = Series.prototype.getGraphPath,
                 graphPath: SVGPath,
-                options = this.options,
+                series = this,
+                options = series.options,
                 stacking = options.stacking,
-                yAxis = this.yAxis as StackingAxis,
+                yAxis = series.yAxis as StackingAxis,
                 topPath: Highcharts.AreaPathObject,
                 bottomPath,
                 bottomPoints: Array<Highcharts.AreaPoint> = [],
                 graphPoints: Array<Highcharts.AreaPoint> = [],
-                seriesIndex = this.index,
+                seriesIndex = series.index,
                 i,
                 areaPath: Highcharts.AreaPathObject,
                 plotX: number|undefined,
-                stacks = yAxis.stacking.stacks[this.stackKey as any],
+                stacks = yAxis.stacking.stacks[series.stackKey as any],
                 threshold = options.threshold,
                 translatedThreshold = Math.round( // #10909
                     yAxis.getThreshold(options.threshold as any) as any
@@ -422,6 +423,7 @@ seriesType<Highcharts.AreaSeries>(
                     options.connectNulls,
                     stacking === 'percent'
                 ),
+                rawPoints = series.rawPoints,
 
                 // To display null points in underlying stacked series, this
                 // series graph must be broken, and the area also fall down to
@@ -482,7 +484,7 @@ seriesType<Highcharts.AreaSeries>(
 
             // Fill in missing points
             if (stacking) {
-                points = this.getStackPoints(points);
+                points = series.getStackPoints(points);
             }
 
             for (i = 0; i < points.length; i++) {
@@ -506,11 +508,19 @@ seriesType<Highcharts.AreaSeries>(
                     // true
                     if (!(isNull && !stacking && connectNulls)) {
                         graphPoints.push(points[i]);
-                        bottomPoints.push({ // @todo make real point object
-                            x: i,
-                            plotX: plotX,
-                            plotY: yBottom
-                        } as any);
+                        if (this.chart.is3d() && rawPoints) {
+                            bottomPoints.push({
+                                x: rawPoints[i].x,
+                                y: yBottom,
+                                z: (series as any).zPadding
+                            } as any);
+                        } else {
+                            bottomPoints.push({
+                                x: i,
+                                plotX: plotX,
+                                plotY: yBottom
+                            } as any);
+                        }
                     }
 
                     if (!connectNulls) {
@@ -520,6 +530,13 @@ seriesType<Highcharts.AreaSeries>(
             }
 
             topPath = getGraphPath.call(this, graphPoints, true, true);
+            if (series.chart.is3d()) {
+                bottomPoints = H.perspective(
+                    bottomPoints as any, this.chart, true
+                ).map(function (point): Highcharts.AreaPoint {
+                    return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
+                }) as any;
+            }
 
             (bottomPoints as any).reversed = true;
             bottomPath = getGraphPath.call(this, bottomPoints, true, true);
