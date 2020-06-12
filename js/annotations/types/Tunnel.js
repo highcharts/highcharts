@@ -4,13 +4,25 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Annotation from '../annotations.src.js';
 import ControlPoint from '../ControlPoint.js';
+import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
-import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
-var CrookedLine = Annotation.types.crookedLine;
 /* eslint-disable no-invalid-this, valid-jsdoc */
 /**
  * @private
@@ -18,35 +30,46 @@ var CrookedLine = Annotation.types.crookedLine;
 function getSecondCoordinate(p1, p2, x) {
     return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
 }
-var Tunnel = function () {
-    CrookedLine.apply(this, arguments);
-};
-H.extendAnnotation(Tunnel, CrookedLine, {
-    getPointsOptions: function () {
+var Tunnel = /** @class */ (function (_super) {
+    __extends(Tunnel, _super);
+    /* *
+     *
+     * Constructors
+     *
+     * */
+    function Tunnel(chart, options) {
+        return _super.call(this, chart, options) || this;
+    }
+    /* *
+     *
+     * Functions
+     *
+     * */
+    Tunnel.prototype.getPointsOptions = function () {
         var pointsOptions = CrookedLine.prototype.getPointsOptions.call(this);
         pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
         pointsOptions[3] = this.heightPointOptions(pointsOptions[0]);
         return pointsOptions;
-    },
-    getControlPointsOptions: function () {
+    };
+    Tunnel.prototype.getControlPointsOptions = function () {
         return this.getPointsOptions().slice(0, 2);
-    },
-    heightPointOptions: function (pointOptions) {
-        var heightPointOptions = merge(pointOptions);
-        heightPointOptions.y += this.options.typeOptions.height;
+    };
+    Tunnel.prototype.heightPointOptions = function (pointOptions) {
+        var heightPointOptions = merge(pointOptions), typeOptions = this.options.typeOptions;
+        heightPointOptions.y += typeOptions.height;
         return heightPointOptions;
-    },
-    addControlPoints: function () {
+    };
+    Tunnel.prototype.addControlPoints = function () {
         CrookedLine.prototype.addControlPoints.call(this);
-        var options = this.options, controlPoint = new ControlPoint(this.chart, this, merge(options.controlPointOptions, options.typeOptions.heightControlPoint), 2);
+        var options = this.options, typeOptions = options.typeOptions, controlPoint = new ControlPoint(this.chart, this, merge(options.controlPointOptions, typeOptions.heightControlPoint), 2);
         this.controlPoints.push(controlPoint);
-        options.typeOptions.heightControlPoint = controlPoint.options;
-    },
-    addShapes: function () {
+        typeOptions.heightControlPoint = controlPoint.options;
+    };
+    Tunnel.prototype.addShapes = function () {
         this.addLine();
         this.addBackground();
-    },
-    addLine: function () {
+    };
+    Tunnel.prototype.addLine = function () {
         var line = this.initShape(merge(this.options.typeOptions.line, {
             type: 'path',
             points: [
@@ -61,14 +84,14 @@ H.extendAnnotation(Tunnel, CrookedLine, {
             ]
         }), false);
         this.options.typeOptions.line = line.options;
-    },
-    addBackground: function () {
+    };
+    Tunnel.prototype.addBackground = function () {
         var background = this.initShape(merge(this.options.typeOptions.background, {
             type: 'path',
             points: this.points.slice()
         }));
         this.options.typeOptions.background = background.options;
-    },
+    };
     /**
      * Translate start or end ("left" or "right") side of the tunnel.
      * @private
@@ -76,22 +99,24 @@ H.extendAnnotation(Tunnel, CrookedLine, {
      * @param {number} dy - the amount of y translation
      * @param {boolean} [end] - whether to translate start or end side
      */
-    translateSide: function (dx, dy, end) {
+    Tunnel.prototype.translateSide = function (dx, dy, end) {
         var topIndex = Number(end), bottomIndex = topIndex === 0 ? 3 : 2;
         this.translatePoint(dx, dy, topIndex);
         this.translatePoint(dx, dy, bottomIndex);
-    },
+    };
     /**
      * Translate height of the tunnel.
      * @private
      * @param {number} dh - the amount of height translation
      */
-    translateHeight: function (dh) {
+    Tunnel.prototype.translateHeight = function (dh) {
         this.translatePoint(0, dh, 2);
         this.translatePoint(0, dh, 3);
         this.options.typeOptions.height = this.points[3].y - this.points[0].y;
-    }
-}, 
+    };
+    return Tunnel;
+}(CrookedLine));
+Tunnel.prototype.defaultOptions = merge(CrookedLine.prototype.defaultOptions, 
 /**
  * A tunnel annotation.
  *

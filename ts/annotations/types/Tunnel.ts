@@ -8,6 +8,7 @@
 
 import Annotation from '../annotations.src.js';
 import ControlPoint from '../ControlPoint.js';
+import CrookedLine from './CrookedLine.js';
 import MockPoint from '../MockPoint.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
@@ -21,17 +22,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AnnotationTunnel extends AnnotationCrookedLine {
-            public options: AnnotationTunnelOptionsObject;
-            public addBackground(): void;
-            public addControlPoints: () => void;
-            public addLine(): void;
-            public addShapes(): void;
-            public getControlPointsOptions(): Array<AnnotationMockPointOptionsObject>;
-            public heightPointOptions(pointOptions: AnnotationMockPointOptionsObject): AnnotationMockPointOptionsObject;
-            public translateHeight(dh: number): void;
-            public translateSide(dx: number, dy: number, end?: boolean): void;
-        }
         interface AnnotationTunnelOptionsObject extends AnnotationCrookedLineOptionsObject {
             typeOptions: AnnotationTunnelTypeOptionsObject;
         }
@@ -40,12 +30,10 @@ declare global {
             heightControlPoint: AnnotationControlPointOptionsObject;
         }
         interface AnnotationTypesRegistry {
-            tunnel: typeof AnnotationTunnel;
+            tunnel: typeof Tunnel;
         }
     }
 }
-
-var CrookedLine = Annotation.types.crookedLine;
 
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
@@ -60,133 +48,148 @@ function getSecondCoordinate(
     return (p2.y - p1.y) / (p2.x - p1.x) * (x - p1.x) + p1.y;
 }
 
-const Tunnel: typeof Highcharts.AnnotationTunnel = function (
-    this: Highcharts.AnnotationCrookedLine
-): void {
-    CrookedLine.apply(this, arguments as any);
-} as any;
+class Tunnel extends CrookedLine {
 
-H.extendAnnotation(
-    Tunnel,
-    CrookedLine,
-    {
-        getPointsOptions: function (
-            this: Highcharts.AnnotationTunnel
-        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
-            var pointsOptions = CrookedLine.prototype.getPointsOptions.call(this);
+    /* *
+     *
+     * Constructors
+     *
+     * */
 
-            pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
-            pointsOptions[3] = this.heightPointOptions(pointsOptions[0]);
+    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationTunnelOptionsObject) {
+        super(chart, options);
+    }
 
-            return pointsOptions;
-        },
+    /* *
+     *
+     * Functions
+     *
+     * */
 
-        getControlPointsOptions: function (
-            this: Highcharts.AnnotationTunnel
-        ): Array<Highcharts.AnnotationMockPointOptionsObject> {
-            return this.getPointsOptions().slice(0, 2);
-        },
+    public getPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+        var pointsOptions = CrookedLine.prototype.getPointsOptions.call(this);
 
-        heightPointOptions: function (
-            this: Highcharts.AnnotationTunnel,
-            pointOptions: Highcharts.AnnotationMockPointOptionsObject
-        ): Highcharts.AnnotationMockPointOptionsObject {
-            var heightPointOptions = merge(pointOptions);
+        pointsOptions[2] = this.heightPointOptions(pointsOptions[1]);
+        pointsOptions[3] = this.heightPointOptions(pointsOptions[0]);
 
-            heightPointOptions.y += this.options.typeOptions.height;
+        return pointsOptions;
+    }
 
-            return heightPointOptions;
-        },
+    public getControlPointsOptions(): Array<Highcharts.AnnotationMockPointOptionsObject> {
+        return this.getPointsOptions().slice(0, 2);
+    }
 
-        addControlPoints: function (this: Highcharts.AnnotationTunnel): void {
-            CrookedLine.prototype.addControlPoints.call(this);
+    public heightPointOptions(
+        pointOptions: Highcharts.AnnotationMockPointOptionsObject
+    ): Highcharts.AnnotationMockPointOptionsObject {
+        var heightPointOptions = merge(pointOptions),
+            typeOptions = this.options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject;
 
-            var options = this.options,
-                controlPoint = new ControlPoint(
-                    this.chart,
-                    this,
-                    merge(
-                        options.controlPointOptions,
-                        options.typeOptions.heightControlPoint
-                    ),
-                    2
-                );
+        heightPointOptions.y += typeOptions.height;
 
-            this.controlPoints.push(controlPoint);
+        return heightPointOptions;
+    }
 
-            options.typeOptions.heightControlPoint = controlPoint.options;
-        },
+    public addControlPoints(): void {
+        CrookedLine.prototype.addControlPoints.call(this);
 
-        addShapes: function (this: Highcharts.AnnotationTunnel): void {
-            this.addLine();
-            this.addBackground();
-        },
-
-        addLine: function (this: Highcharts.AnnotationTunnel): void {
-            var line = this.initShape(
-                merge(this.options.typeOptions.line, {
-                    type: 'path',
-                    points: [
-                        this.points[0],
-                        this.points[1],
-                        function (target: any): Highcharts.AnnotationMockPointOptionsObject {
-                            var pointOptions = MockPoint.pointToOptions(
-                                target.annotation.points[2]
-                            );
-
-                            pointOptions.command = 'M';
-
-                            return pointOptions;
-                        },
-                        this.points[3]
-                    ] as any
-                }),
-                false as any
+        var options = this.options,
+            typeOptions = options.typeOptions as Highcharts.AnnotationTunnelTypeOptionsObject,
+            controlPoint = new ControlPoint(
+                this.chart,
+                this,
+                merge(
+                    options.controlPointOptions,
+                    typeOptions.heightControlPoint
+                ),
+                2
             );
 
-            this.options.typeOptions.line = line.options;
-        },
+        this.controlPoints.push(controlPoint);
 
-        addBackground: function (this: Highcharts.AnnotationTunnel): void {
-            var background = (this.initShape as any)(merge(
-                this.options.typeOptions.background,
-                {
-                    type: 'path',
-                    points: this.points.slice() as any
-                }
-            ));
+        typeOptions.heightControlPoint = controlPoint.options;
+    }
 
-            this.options.typeOptions.background = background.options;
-        },
+    public addShapes(): void {
+        this.addLine();
+        this.addBackground();
+    }
 
-        /**
-         * Translate start or end ("left" or "right") side of the tunnel.
-         * @private
-         * @param {number} dx - the amount of x translation
-         * @param {number} dy - the amount of y translation
-         * @param {boolean} [end] - whether to translate start or end side
-         */
-        translateSide: function (this: Highcharts.AnnotationTunnel, dx: number, dy: number, end?: boolean): void {
-            var topIndex = Number(end),
-                bottomIndex = topIndex === 0 ? 3 : 2;
+    public addLine(): void {
+        var line = this.initShape(
+            merge(this.options.typeOptions.line, {
+                type: 'path',
+                points: [
+                    this.points[0],
+                    this.points[1],
+                    function (target: any): Highcharts.AnnotationMockPointOptionsObject {
+                        var pointOptions = MockPoint.pointToOptions(
+                            target.annotation.points[2]
+                        );
 
-            this.translatePoint(dx, dy, topIndex);
-            this.translatePoint(dx, dy, bottomIndex);
-        },
+                        pointOptions.command = 'M';
 
-        /**
-         * Translate height of the tunnel.
-         * @private
-         * @param {number} dh - the amount of height translation
-         */
-        translateHeight: function (this: Highcharts.AnnotationTunnel, dh: number): void {
-            this.translatePoint(0, dh, 2);
-            this.translatePoint(0, dh, 3);
+                        return pointOptions;
+                    },
+                    this.points[3]
+                ] as any
+            }),
+            false as any
+        );
 
-            this.options.typeOptions.height = (this.points[3].y as any) - (this.points[0].y as any);
-        }
-    },
+        this.options.typeOptions.line = line.options;
+    }
 
+    public addBackground(): void {
+        var background = (this.initShape as any)(merge(
+            this.options.typeOptions.background,
+            {
+                type: 'path',
+                points: this.points.slice() as any
+            }
+        ));
+
+        this.options.typeOptions.background = background.options;
+    }
+
+    /**
+     * Translate start or end ("left" or "right") side of the tunnel.
+     * @private
+     * @param {number} dx - the amount of x translation
+     * @param {number} dy - the amount of y translation
+     * @param {boolean} [end] - whether to translate start or end side
+     */
+    public translateSide(dx: number, dy: number, end?: boolean): void {
+        var topIndex = Number(end),
+            bottomIndex = topIndex === 0 ? 3 : 2;
+
+        this.translatePoint(dx, dy, topIndex);
+        this.translatePoint(dx, dy, bottomIndex);
+    }
+
+    /**
+     * Translate height of the tunnel.
+     * @private
+     * @param {number} dh - the amount of height translation
+     */
+    public translateHeight(dh: number): void {
+        this.translatePoint(0, dh, 2);
+        this.translatePoint(0, dh, 3);
+
+        this.options.typeOptions.height = (this.points[3].y as any) - (this.points[0].y as any);
+    }
+
+}
+
+/**
+ * @private
+ */
+interface Tunnel {
+    defaultOptions: CrookedLine['defaultOptions'];
+}
+
+Tunnel.prototype.defaultOptions = merge(
+    CrookedLine.prototype.defaultOptions,
     /**
      * A tunnel annotation.
      *
@@ -244,9 +247,9 @@ H.extendAnnotation(
                 },
                 events: {
                     drag: function (
-                        this: Highcharts.AnnotationTunnel,
+                        this: Tunnel,
                         e: Highcharts.AnnotationEventObject,
-                        target: Highcharts.AnnotationTunnel
+                        target: Tunnel
                     ): void {
                         if (
                             target.chart.isInsidePlot(
@@ -272,9 +275,9 @@ H.extendAnnotation(
         controlPointOptions: {
             events: {
                 drag: function (
-                    this: Highcharts.AnnotationTunnel,
+                    this: Tunnel,
                     e: Highcharts.AnnotationEventObject,
-                    target: Highcharts.AnnotationTunnel
+                    target: Tunnel
                 ): void {
                     if (
                         target.chart.isInsidePlot(
