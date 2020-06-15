@@ -685,7 +685,7 @@ extend(InfoRegionsComponent.prototype, /** @lends Highcharts.InfoRegionsComponen
             }
 
             e.html = e.html.replace('<table ',
-                '<table tabindex="0" summary="' + getTableSummary(chart) + '"');
+                '<table tabindex="-1" summary="' + getTableSummary(chart) + '"');
         }
     },
 
