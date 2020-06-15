@@ -512,7 +512,7 @@ seriesType<Highcharts.AreaSeries>(
                             bottomPoints.push({
                                 x: rawPoints[i].x,
                                 y: yBottom,
-                                z: (series as any).zPadding
+                                z: series.zPadding
                             } as any);
                         } else {
                             bottomPoints.push({
@@ -531,11 +531,20 @@ seriesType<Highcharts.AreaSeries>(
 
             topPath = getGraphPath.call(this, graphPoints, true, true);
             if (series.chart.is3d()) {
+                var options3d = (series as any).chart.options.chart.options3d;
                 bottomPoints = H.perspective(
                     bottomPoints as any, this.chart, true
                 ).map(function (point): Highcharts.AreaPoint {
                     return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
                 }) as any;
+                if (series.group && options3d) {
+                    series.group.attr({
+                        zIndex: Math.max(
+                            1,
+                            options3d.depth - Math.round(series.data[0].plotZ || 0)
+                        )
+                    });
+                }
             }
 
             (bottomPoints as any).reversed = true;

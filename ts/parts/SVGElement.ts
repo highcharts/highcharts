@@ -240,7 +240,7 @@ declare global {
             ): void;
             public xGetter(key: string): (number|string|null);
             public yGetter(key: string): (number|string|null);
-            public zIndexSetter(value: number, key: string): boolean;
+            public zIndexSetter(value?: number, key?: string): boolean;
         }
     }
 }
@@ -3015,7 +3015,6 @@ class SVGElement {
                 otherElement = childNodes[i];
                 otherZIndex = otherElement.getAttribute('data-z-index');
                 undefinedOtherZIndex = !defined(otherZIndex);
-
                 if (otherElement !== element) {
                     if (
                         // Negative zIndex versus no zIndex:

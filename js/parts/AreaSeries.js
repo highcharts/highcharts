@@ -367,9 +367,15 @@ seriesType('area', 'line',
         }
         topPath = getGraphPath.call(this, graphPoints, true, true);
         if (series.chart.is3d()) {
+            var options3d = series.chart.options.chart.options3d;
             bottomPoints = H.perspective(bottomPoints, this.chart, true).map(function (point) {
                 return { plotX: point.x, plotY: point.y, plotZ: point.z };
             });
+            if (series.group && options3d) {
+                series.group.attr({
+                    zIndex: Math.max(1, options3d.depth - Math.round(series.data[0].plotZ || 0))
+                });
+            }
         }
         bottomPoints.reversed = true;
         bottomPath = getGraphPath.call(this, bottomPoints, true, true);
