@@ -643,9 +643,9 @@ namespace TreeGridAxis {
 
             // If staticScale is not defined on the yAxis
             // and chart height is set, set axis.isDirty
-            // to ensure collapsing works (#13601)
+            // to ensure collapsing works (#12012)
             addEvent(axis, 'afterBreaks', function (): void {
-                if (axis.coll === 'yAxis' && !axis.staticScale && axis.chart.userOptions.chart?.height) {
+                if (axis.coll === 'yAxis' && !axis.staticScale && axis.chart.options.chart?.height) {
                     axis.isDirty = true;
                 }
             });
