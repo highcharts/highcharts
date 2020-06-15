@@ -2700,9 +2700,9 @@ const find = H.find = (Array.prototype as any).find ?
  * @return {Array<string>}
  *         An array of strings that represents all the properties.
  */
-H.keys = function (): Array<string> {
+H.keys = function (obj): Array<string> {
     error(32, false, void 0, { 'Highcharts.keys': 'Object.keys' });
-    return Object.keys.apply(arguments);
+    return Object.keys(obj);
 };
 
 /**

@@ -1914,9 +1914,9 @@ var find = H.find = Array.prototype.find ?
  * @return {Array<string>}
  *         An array of strings that represents all the properties.
  */
-H.keys = function () {
+H.keys = function (obj) {
     error(32, false, void 0, { 'Highcharts.keys': 'Object.keys' });
-    return Object.keys.apply(arguments);
+    return Object.keys(obj);
 };
 /**
  * Get the element's offset position, corrected for `overflow: auto`.
