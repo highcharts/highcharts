@@ -329,7 +329,10 @@ QUnit.test('Pie animation duration should be possible to change (#13674)', funct
     try {
         var chart = Highcharts.chart('container', {
                 chart: {
-                    type: 'pie'
+                    type: 'pie',
+                    animation: {
+                        duration: 1000
+                    }
                 },
                 series: [{
                     name: 'Things',
@@ -368,10 +371,12 @@ QUnit.test('Pie animation duration should be possible to change (#13674)', funct
             point = chart.series[0].points[0],
             initialPos,
             previousPos,
+            previousColor,
             done = assert.async();
 
         point.doDrilldown();
         initialPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+        previousColor = chart.options.colors[0];
 
         assert.strictEqual(
             chart.drilldownLevels[0].lowerSeries.data[0].color,
@@ -385,38 +390,73 @@ QUnit.test('Pie animation duration should be possible to change (#13674)', funct
             'Color of the fourth slice is correct'
         );
 
+        const tweeningGraphic = chart.drilldownLevels[0].lowerSeries.data[3].graphic;
+
         setTimeout(function () {
-            assert.strictEqual(
+            assert.ok(
                 chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > initialPos,
-                true,
-                'Time 400- Point should start moving.'
+                'Time 400 - Point should start moving.'
             );
+
+            assert.notEqual(
+                tweeningGraphic.attr('fill'),
+                previousColor,
+                'Time 400 - Fill color should be tweening'
+            );
+
             previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+            previousColor = tweeningGraphic.attr('fill');
         }, 400);
 
         setTimeout(function () {
-            assert.strictEqual(
+            assert.ok(
                 chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > previousPos,
-                true,
-                'Time 800- Point should move.'
+                'Time 800 - Point should move.'
             );
+
+            assert.notEqual(
+                tweeningGraphic.attr('fill'),
+                previousColor,
+                'Time 800 - Fill color should be tweening'
+            );
+
             previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+            previousColor = tweeningGraphic.attr('fill');
         }, 800);
 
         setTimeout(function () {
-            assert.strictEqual(
+            assert.ok(
                 chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') > previousPos,
-                true,
                 'Time 1200- Point should move.'
             );
+
+            assert.notEqual(
+                tweeningGraphic.attr('fill'),
+                previousColor,
+                'Time 1200 - Fill color should be tweening'
+            );
+
             previousPos = chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start');
+            previousColor = tweeningGraphic.attr('fill');
         }, 1200);
 
         setTimeout(function () {
             assert.strictEqual(
-                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start') === previousPos,
-                true,
-                'Time 1500- Point should stop.'
+                chart.drilldownLevels[0].lowerSeries.data[4].graphic.attr('start'),
+                previousPos,
+                'Time 1500 - Point should stop.'
+            );
+
+            assert.strictEqual(
+                tweeningGraphic.attr('fill'),
+                previousColor,
+                'Time 1500 - Fill color should be finished tweening'
+            );
+
+            assert.strictEqual(
+                Highcharts.color(tweeningGraphic.attr('fill')).get(),
+                Highcharts.color(chart.options.colors[3]).get(),
+                'Time 1500 - Fill color should match options after finished tweening'
             );
             done();
         }, 1500);
