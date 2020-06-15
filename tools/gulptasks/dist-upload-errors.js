@@ -43,6 +43,4 @@ async function uploadErrors() {
     log.success('Finished uploading errors');
 }
 
-uploadErrors();
-
 gulp.task('dist-upload-errors', uploadErrors);
