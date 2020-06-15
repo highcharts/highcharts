@@ -561,7 +561,7 @@ var Chart = /** @class */ (function () {
                 // Don't do setScale again if we're only resizing. Regression
                 // #13507. But we need it after chart.update (responsive), as
                 // axis is initialized again (#12137).
-                if (!chart.isResizing || !axis.tickPositions) {
+                if (!chart.isResizing || !isNumber(axis.min)) {
                     axis.updateNames();
                     axis.setScale();
                 }
