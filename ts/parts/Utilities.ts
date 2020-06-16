@@ -722,9 +722,14 @@ function error(
     chart?: Chart,
     params?: Record<string, string>
 ): void {
+    const severity = stop ? 'Highcharts error' : 'Highcharts warning';
+    if (code === 32) {
+        code = `${severity}: Deprecated member`;
+    }
+
     var isCode = isNumber(code),
         message = isCode ?
-            `Highcharts error #${code}: www.highcharts.com/errors/${code}/` :
+            `${severity} #${code}: www.highcharts.com/errors/${code}/` :
             code.toString(),
         defaultHandler = function (): void {
             if (stop) {
@@ -745,7 +750,7 @@ function error(
             message += '?';
         }
         objectEach(params, function (value, key): void {
-            additionalMessages += ('\n' + key + ': ' + value);
+            additionalMessages += `\n - ${key}: ${value}`;
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
             }
@@ -2650,7 +2655,7 @@ const getStyle = H.getStyle = function (
  *         The index within the array, or -1 if not found.
  */
 const inArray = H.inArray = function (item: any, arr: Array<any>, fromIndex?: number): number {
-    error(32, false, void 0, { 'Highcharts.inArray': 'Array.indexOf' });
+    error(32, false, void 0, { 'Highcharts.inArray': 'use Array.indexOf' });
     return arr.indexOf(item, fromIndex);
 };
 
@@ -2701,7 +2706,7 @@ const find = H.find = (Array.prototype as any).find ?
  *         An array of strings that represents all the properties.
  */
 H.keys = function (obj): Array<string> {
-    error(32, false, void 0, { 'Highcharts.keys': 'Object.keys' });
+    error(32, false, void 0, { 'Highcharts.keys': 'use Object.keys' });
     return Object.keys(obj);
 };
 
@@ -2899,7 +2904,7 @@ objectEach({
     some: 'some'
 } as Record<string, ('map'|'forEach'|'filter'|'reduce'|'some')>, function (val, key): void {
     (H as any)[key] = function (arr: Array<unknown>): any {
-        error(32, false, void 0, { [`Highcharts.${key}`]: `Array.${val}` });
+        error(32, false, void 0, { [`Highcharts.${key}`]: `use Array.${val}` });
         return (Array.prototype[val] as any).apply(
             arr,
             [].slice.call(arguments, 1)
