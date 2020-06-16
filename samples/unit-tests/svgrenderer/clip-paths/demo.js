@@ -9,7 +9,7 @@ QUnit.test(
                 chart.container.querySelectorAll('[clip-path],[CLIP-PATH]'),
                 function (clipPath) {
                     var p = clipPath.getAttribute('clip-path');
-                    if (p !== 'none' && Highcharts.inArray(p, clipPathList) < 0) {
+                    if (p !== 'none' && clipPathList.indexOf(p) < 0) {
                         clipPathList.push(p);
                     }
                 }
