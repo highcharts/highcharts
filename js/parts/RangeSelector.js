@@ -893,7 +893,8 @@ var RangeSelector = /** @class */ (function () {
                 value = (options.inputDateParser || Date.parse)(inputValue + 'GMT');
             }
             else {
-                value = (options.inputDateParser || Date.parse)(inputValue) - date.getTimezoneOffset() * 60 * 1000;
+                value = (options.inputDateParser || Date.parse)(inputValue) -
+                    date.getTimezoneOffset() * 60 * 1000;
             }
             if (value !== input.previousValue) {
                 input.previousValue = value;
