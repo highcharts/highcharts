@@ -256,6 +256,7 @@ class NavigationBindings {
         } as Record<string, Array<string>>,
         // Simple shapes:
         circle: ['shapes'],
+        rectangle: ['shapes'],
         verticalLine: [],
         label: ['labelOptions'],
         // Measure
@@ -266,8 +267,7 @@ class NavigationBindings {
         pitchfork: ['innerBackground', 'outerBackground'],
         rect: ['shapes'],
         // Crooked lines, elliots, arrows etc:
-        crookedLine: [],
-        basicAnnotation: []
+        crookedLine: []
     };
 
     // Define non editable fields per annotation, for example Rectangle inherits
@@ -714,6 +714,7 @@ class NavigationBindings {
             nestedEditables = editables.nestedOptions,
             getFieldType = this.utils.getFieldType,
             type = pick(
+                options.langKey,
                 options.type,
                 options.shapes && options.shapes[0] &&
                     options.shapes[0].type,
@@ -755,6 +756,7 @@ class NavigationBindings {
 
             if (
                 parentEditables &&
+                option &&
                 nonEditables.indexOf(key) === -1 &&
                 (
                     (
