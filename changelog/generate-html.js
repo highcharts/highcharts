@@ -53,19 +53,20 @@ function generateHTML() {
 
         var htmlContent = '';
 
-        function addLinkToIssues(textToken) {
-            if (typeof textToken !== 'undefined') {
-                var issues = textToken.match(/#[0-9]+/g);
-                if (issues !== null) {
-                    issues.forEach(issue => {
-                        var issued = issue.substring(1),
-                            issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
-                            formatIssue = '[' + issue + '](' + issueLink + ')';
-                        textToken = replaceString(textToken, issue, formatIssue);
-                    });
+        function addLinkToIssues(items) {
+            (items || []).forEach(item => {
+                if (typeof item.text === 'string') {
+                    var issues = item.text.match(/#[0-9]+/g);
+                    if (issues !== null) {
+                        issues.forEach(issue => {
+                            var issued = issue.substring(1),
+                                issueLink = 'https://github.com/highcharts/highcharts/issues/' + issued,
+                                formatIssue = '[' + issue + '](' + issueLink + ')';
+                            item.text = replaceString(item.text, issue, formatIssue);
+                        });
+                    }
                 }
-            }
-            return textToken;
+            });
         }
 
 
@@ -99,15 +100,15 @@ function generateHTML() {
                 }
                 switch (write) {
                     case 'New features':
-                        token.text = addLinkToIssues(token.text);
+                        addLinkToIssues(token.items);
                         changelog.features.push(token);
                         break;
                     case 'Upgrade notes':
-                        token.text = addLinkToIssues(token.text);
+                        addLinkToIssues(token.items);
                         changelog.upgradeNotes.push(token);
                         break;
                     case 'Bug fixes':
-                        token.text = addLinkToIssues(token.text);
+                        addLinkToIssues(token.items);
                         changelog.bugFixes.push(token);
                         break;
                     default:
