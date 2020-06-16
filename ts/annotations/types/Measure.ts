@@ -510,8 +510,8 @@ H.extendAnnotation(Measure, null,
                     width: number = inverted ? bck.height : bck.width as any,
                     height: number = inverted ? bck.width : bck.height as any,
                     selectType = options.selectType,
-                    top = inverted ? chart.plotLeft : chart.plotTop,
-                    left = inverted ? chart.plotTop : chart.plotLeft;
+                    top = inverted ? xAxis.left : yAxis.top, // #13664
+                    left = inverted ? yAxis.top : xAxis.left; // #13664
 
                 this.startXMin = options.point.x;
                 this.startYMin = options.point.y;

@@ -302,7 +302,8 @@ H.extendAnnotation(Measure, null, {
          * @private
          */
         init: function () {
-            var options = this.options.typeOptions, chart = this.chart, getPointPos = this.calculations.getPointPos, inverted = chart.inverted, xAxis = chart.xAxis[options.xAxis], yAxis = chart.yAxis[options.yAxis], bck = options.background, width = inverted ? bck.height : bck.width, height = inverted ? bck.width : bck.height, selectType = options.selectType, top = inverted ? chart.plotLeft : chart.plotTop, left = inverted ? chart.plotTop : chart.plotLeft;
+            var options = this.options.typeOptions, chart = this.chart, getPointPos = this.calculations.getPointPos, inverted = chart.inverted, xAxis = chart.xAxis[options.xAxis], yAxis = chart.yAxis[options.yAxis], bck = options.background, width = inverted ? bck.height : bck.width, height = inverted ? bck.width : bck.height, selectType = options.selectType, top = inverted ? xAxis.left : yAxis.top, // #13664
+            left = inverted ? yAxis.top : xAxis.left; // #13664
             this.startXMin = options.point.x;
             this.startYMin = options.point.y;
             if (isNumber(width)) {
