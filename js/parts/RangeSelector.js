@@ -886,9 +886,15 @@ var RangeSelector = /** @class */ (function () {
          * @private
          */
         function updateExtremes() {
-            var inputValue = input.value, value = (options.inputDateParser || Date.parse)(inputValue), chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
+            var inputValue = input.value, value, chartAxis = chart.xAxis[0], dataAxis = chart.scroller && chart.scroller.xAxis ?
                 chart.scroller.xAxis :
-                chartAxis, dataMin = dataAxis.dataMin, dataMax = dataAxis.dataMax;
+                chartAxis, dataMin = dataAxis.dataMin, dataMax = dataAxis.dataMax, date = new Date();
+            if (chart.time.useUTC) {
+                value = (options.inputDateParser || Date.parse)(inputValue + 'GMT');
+            }
+            else {
+                value = (options.inputDateParser || Date.parse)(inputValue) - date.getTimezoneOffset() * 60 * 1000;
+            }
             if (value !== input.previousValue) {
                 input.previousValue = value;
                 // If the value isn't parsed directly to a value by the
