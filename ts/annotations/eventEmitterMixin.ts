@@ -56,7 +56,6 @@ import U from '../parts/Utilities.js';
 const {
     addEvent,
     fireEvent,
-    inArray,
     objectEach,
     pick,
     removeEvent
@@ -116,7 +115,7 @@ const eventEmitterMixin: Highcharts.AnnotationEventEmitterMixin = {
                 }
             };
 
-            if (inArray(type, emitter.nonDOMEvents || []) === -1) {
+            if ((emitter.nonDOMEvents || []).indexOf(type) === -1) {
                 emitter.graphic.on(type, eventHandler);
             } else {
                 addEvent(emitter, type, eventHandler);
