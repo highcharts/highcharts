@@ -413,7 +413,7 @@ QUnit.test('Date objects as X values, column', function (assert) {
         path.splice(0, 1);
 
         assert.strictEqual(
-            Highcharts.inArray('M', path) > -1,
+            path.indexOf('M') > -1,
             true,
             'Line is broken'
         );
