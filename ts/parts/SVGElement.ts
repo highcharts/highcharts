@@ -34,7 +34,6 @@ const {
     erase,
     extend,
     fireEvent,
-    inArray,
     isArray,
     isFunction,
     isNumber,
