@@ -1275,14 +1275,21 @@ class RangeSelector {
          */
         function updateExtremes(): void {
             var inputValue = input.value,
-                value: (number|undefined) =
-                    (options.inputDateParser || Date.parse)(inputValue as any),
+                value: (number|undefined),
                 chartAxis = chart.xAxis[0],
                 dataAxis = chart.scroller && chart.scroller.xAxis ?
                     chart.scroller.xAxis :
                     chartAxis,
                 dataMin = dataAxis.dataMin,
-                dataMax = dataAxis.dataMax;
+                dataMax = dataAxis.dataMax,
+                date = new Date();
+
+            if (chart.time.useUTC) {
+                value = (options.inputDateParser || Date.parse)(inputValue as any + 'GMT');
+            } else {
+                value = (options.inputDateParser || Date.parse)(inputValue as any) -
+                    date.getTimezoneOffset() * 60 * 1000;
+            }
 
             if (value !== input.previousValue) {
                 input.previousValue = value;
