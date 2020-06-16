@@ -1262,7 +1262,7 @@ seriesType('treemap', 'scatter'
     },
     // TODO remove this function at a suitable version.
     drillToNode: function (id, redraw) {
-        error(32, false, void 0, { 'treemap.drillToNode': 'treemap.setRootNode' });
+        error(32, false, void 0, { 'treemap.drillToNode': 'use treemap.setRootNode' });
         this.setRootNode(id, redraw);
     },
     /**
