@@ -42,44 +42,10 @@ var SVGTextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
-    SVGTextBuilder.prototype.getLineHeight = function (tspan) {
-        var fontSizeStyle;
-        if (!this.renderer.styledMode) {
-            fontSizeStyle =
-                /(px|em)$/.test(tspan && tspan.style.fontSize) ?
-                    tspan.style.fontSize :
-                    (this.fontSize || this.renderer.style.fontSize || 12);
-        }
-        return this.textLineHeight ?
-            parseInt(this.textLineHeight.toString(), 10) :
-            this.renderer.fontMetrics(fontSizeStyle, 
-            // Get the computed size from parent if not explicit
-            (tspan.getAttribute('style') ? tspan : this.svgElement.element)).h;
-    };
     SVGTextBuilder.prototype.buildText = function () {
         var _this = this;
         var wrapper = this.svgElement;
-        var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, truncated = false, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box, unescapeEntities = function (inputStr, except) {
-            objectEach(renderer.escapes, function (value, key) {
-                if (!except || except.indexOf(value) === -1) {
-                    inputStr = inputStr.toString().replace(new RegExp(value, 'g'), key);
-                }
-            });
-            return inputStr;
-        }, parseAttribute = function (s, attr) {
-            var start, delimiter;
-            start = s.indexOf('<');
-            s = s.substring(start, s.indexOf('>') - start);
-            start = s.indexOf(attr + '=');
-            if (start !== -1) {
-                start = start + attr.length + 1;
-                delimiter = s.charAt(start);
-                if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
-                    s = s.substring(start + 1);
-                    return s.substring(0, s.indexOf(delimiter));
-                }
-            }
-        };
+        var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, truncated = false, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
         var regexMatchBreaks = /<br.*?>/g;
         // The buildText code is quite heavy, so if we're not changing something
         // that affects the text, skip it (#6113).
@@ -108,7 +74,7 @@ var SVGTextBuilder = /** @class */ (function () {
             !this.width &&
             (textStr.indexOf(' ') === -1 ||
                 (this.noWrap && !regexMatchBreaks.test(textStr)))) {
-            textNode.appendChild(doc.createTextNode(unescapeEntities(textStr)));
+            textNode.appendChild(doc.createTextNode(this.unescapeEntities(textStr)));
             // Complex strings, add more logic
         }
         else {
@@ -149,11 +115,11 @@ var SVGTextBuilder = /** @class */ (function () {
                     if (span !== '' || spans.length === 1) {
                         var attributes = {}, tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'), a, classAttribute, styleAttribute, // #390
                         hrefAttribute;
-                        classAttribute = parseAttribute(span, 'class');
+                        classAttribute = _this.parseAttribute(span, 'class');
                         if (classAttribute) {
                             attr(tspan, 'class', classAttribute);
                         }
-                        styleAttribute = parseAttribute(span, 'style');
+                        styleAttribute = _this.parseAttribute(span, 'style');
                         if (styleAttribute) {
                             styleAttribute = styleAttribute.replace(/(;| |^)color([ :])/, '$1fill$2');
                             attr(tspan, 'style', styleAttribute);
@@ -161,7 +127,7 @@ var SVGTextBuilder = /** @class */ (function () {
                         // For anchors, wrap the tspan in an <a> tag and apply
                         // the href attribute as is (#13559). Not for export
                         // (#1529)
-                        hrefAttribute = parseAttribute(span, 'href');
+                        hrefAttribute = _this.parseAttribute(span, 'href');
                         if (hrefAttribute && !forExport) {
                             if (
                             // Stop JavaScript links, vulnerable to XSS
@@ -177,7 +143,7 @@ var SVGTextBuilder = /** @class */ (function () {
                             }
                         }
                         // Strip away unsupported HTML tags (#7126)
-                        span = unescapeEntities(span.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' ');
+                        span = _this.unescapeEntities(span.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' ');
                         // Nested tags aren't supported, and cause crash in
                         // Safari (#1596)
                         if (span !== ' ') {
@@ -220,7 +186,7 @@ var SVGTextBuilder = /** @class */ (function () {
                     textNode.childNodes.length);
             });
             if (this.ellipsis && truncated) {
-                wrapper.attr('title', unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
+                wrapper.attr('title', this.unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
                 );
             }
             if (tempParent) {
@@ -282,6 +248,42 @@ var SVGTextBuilder = /** @class */ (function () {
             }
         }
         return truncated;
+    };
+    SVGTextBuilder.prototype.getLineHeight = function (tspan) {
+        var fontSizeStyle;
+        if (!this.renderer.styledMode) {
+            fontSizeStyle =
+                /(px|em)$/.test(tspan && tspan.style.fontSize) ?
+                    tspan.style.fontSize :
+                    (this.fontSize || this.renderer.style.fontSize || 12);
+        }
+        return this.textLineHeight ?
+            parseInt(this.textLineHeight.toString(), 10) :
+            this.renderer.fontMetrics(fontSizeStyle, 
+            // Get the computed size from parent if not explicit
+            (tspan.getAttribute('style') ? tspan : this.svgElement.element)).h;
+    };
+    SVGTextBuilder.prototype.parseAttribute = function (s, attr) {
+        var start, delimiter;
+        start = s.indexOf('<');
+        s = s.substring(start, s.indexOf('>') - start);
+        start = s.indexOf(attr + '=');
+        if (start !== -1) {
+            start = start + attr.length + 1;
+            delimiter = s.charAt(start);
+            if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
+                s = s.substring(start + 1);
+                return s.substring(0, s.indexOf(delimiter));
+            }
+        }
+    };
+    SVGTextBuilder.prototype.unescapeEntities = function (inputStr, except) {
+        objectEach(this.renderer.escapes, function (value, key) {
+            if (!except || except.indexOf(value) === -1) {
+                inputStr = inputStr.toString().replace(new RegExp(value, 'g'), key);
+            }
+        });
+        return inputStr;
     };
     return SVGTextBuilder;
 }());

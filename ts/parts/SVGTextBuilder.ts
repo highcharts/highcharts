@@ -10,8 +10,6 @@
 
 'use strict';
 
-import type SVGRenderer from './SVGRenderer';
-import SVGElement from './SVGElement.js';
 import H from './Globals.js';
 import U from './Utilities.js';
 const {
@@ -74,25 +72,6 @@ class SVGTextBuilder {
     public width?: number;
 
 
-    public getLineHeight(tspan: Highcharts.SVGDOMElement): number {
-        var fontSizeStyle;
-
-        if (!this.renderer.styledMode) {
-            fontSizeStyle =
-                /(px|em)$/.test(tspan && tspan.style.fontSize as any) ?
-                    tspan.style.fontSize :
-                    (this.fontSize || this.renderer.style.fontSize || 12);
-        }
-
-        return this.textLineHeight ?
-            parseInt(this.textLineHeight.toString(), 10) :
-            this.renderer.fontMetrics(
-                fontSizeStyle as any,
-                // Get the computed size from parent if not explicit
-                (tspan.getAttribute('style') ? tspan : this.svgElement.element) as any
-            ).h;
-    }
-
     public buildText(): void {
         const wrapper = this.svgElement;
         var textNode = wrapper.element,
@@ -107,44 +86,7 @@ class SVGTextBuilder {
             textCache,
             isSubsequentLine: number,
             i = childNodes.length,
-            tempParent = this.width && !wrapper.added && renderer.box,
-            unescapeEntities = function (
-                inputStr: string,
-                except?: Array<string>
-            ): string {
-                objectEach(renderer.escapes, function (
-                    value: string,
-                    key: string
-                ): void {
-                    if (!except || except.indexOf(value) === -1) {
-                        inputStr = inputStr.toString().replace(
-                            new RegExp(value, 'g'),
-                            key
-                        );
-                    }
-                });
-                return inputStr;
-            },
-            parseAttribute = function (
-                s: string,
-                attr: string
-            ): (string|undefined) {
-                var start,
-                    delimiter;
-
-                start = s.indexOf('<');
-                s = s.substring(start, s.indexOf('>') - start);
-
-                start = s.indexOf(attr + '=');
-                if (start !== -1) {
-                    start = start + attr.length + 1;
-                    delimiter = s.charAt(start);
-                    if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
-                        s = s.substring(start + 1);
-                        return s.substring(0, s.indexOf(delimiter));
-                    }
-                }
-            };
+            tempParent = this.width && !wrapper.added && renderer.box;
         const regexMatchBreaks = /<br.*?>/g;
 
         // The buildText code is quite heavy, so if we're not changing something
@@ -180,7 +122,9 @@ class SVGTextBuilder {
                 (this.noWrap && !regexMatchBreaks.test(textStr))
             )
         ) {
-            textNode.appendChild(doc.createTextNode(unescapeEntities(textStr)));
+            textNode.appendChild(
+                doc.createTextNode(this.unescapeEntities(textStr))
+            );
 
         // Complex strings, add more logic
         } else {
@@ -256,12 +200,12 @@ class SVGTextBuilder {
                             styleAttribute, // #390
                             hrefAttribute;
 
-                        classAttribute = parseAttribute(span, 'class');
+                        classAttribute = this.parseAttribute(span, 'class');
                         if (classAttribute) {
                             attr(tspan, 'class', classAttribute);
                         }
 
-                        styleAttribute = parseAttribute(span, 'style');
+                        styleAttribute = this.parseAttribute(span, 'style');
                         if (styleAttribute) {
                             styleAttribute = styleAttribute.replace(
                                 /(;| |^)color([ :])/,
@@ -273,7 +217,7 @@ class SVGTextBuilder {
                         // For anchors, wrap the tspan in an <a> tag and apply
                         // the href attribute as is (#13559). Not for export
                         // (#1529)
-                        hrefAttribute = parseAttribute(span, 'href');
+                        hrefAttribute = this.parseAttribute(span, 'href');
                         if (hrefAttribute && !forExport) {
                             if (
                                 // Stop JavaScript links, vulnerable to XSS
@@ -295,7 +239,7 @@ class SVGTextBuilder {
                         }
 
                         // Strip away unsupported HTML tags (#7126)
-                        span = unescapeEntities(
+                        span = this.unescapeEntities(
                             span.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' '
                         );
 
@@ -368,7 +312,7 @@ class SVGTextBuilder {
             if (this.ellipsis && truncated) {
                 wrapper.attr(
                     'title',
-                    unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
+                    this.unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
                 );
             }
             if (tempParent) {
@@ -383,7 +327,7 @@ class SVGTextBuilder {
     }
 
     // Constrain the line width, either by ellipsis or wrapping
-    public constrainLineWidth(
+    private constrainLineWidth(
         span: string,
         spans: string[],
         lineNo: number,
@@ -468,6 +412,64 @@ class SVGTextBuilder {
             }
         }
         return truncated;
+    }
+
+    private getLineHeight(tspan: Highcharts.SVGDOMElement): number {
+        var fontSizeStyle;
+
+        if (!this.renderer.styledMode) {
+            fontSizeStyle =
+                /(px|em)$/.test(tspan && tspan.style.fontSize as any) ?
+                    tspan.style.fontSize :
+                    (this.fontSize || this.renderer.style.fontSize || 12);
+        }
+
+        return this.textLineHeight ?
+            parseInt(this.textLineHeight.toString(), 10) :
+            this.renderer.fontMetrics(
+                fontSizeStyle as any,
+                // Get the computed size from parent if not explicit
+                (tspan.getAttribute('style') ? tspan : this.svgElement.element) as any
+            ).h;
+    }
+
+    private parseAttribute(
+        s: string,
+        attr: string
+    ): (string|undefined) {
+        var start,
+            delimiter;
+
+        start = s.indexOf('<');
+        s = s.substring(start, s.indexOf('>') - start);
+
+        start = s.indexOf(attr + '=');
+        if (start !== -1) {
+            start = start + attr.length + 1;
+            delimiter = s.charAt(start);
+            if (delimiter === '"' || delimiter === "'") { // eslint-disable-line quotes
+                s = s.substring(start + 1);
+                return s.substring(0, s.indexOf(delimiter));
+            }
+        }
+    }
+
+    private unescapeEntities(
+        inputStr: string,
+        except?: Array<string>
+    ): string {
+        objectEach(this.renderer.escapes, function (
+            value: string,
+            key: string
+        ): void {
+            if (!except || except.indexOf(value) === -1) {
+                inputStr = inputStr.toString().replace(
+                    new RegExp(value, 'g'),
+                    key
+                );
+            }
+        });
+        return inputStr;
     }
 }
 
