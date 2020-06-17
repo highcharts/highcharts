@@ -199,16 +199,29 @@ H.extendAnnotation(
         addControlPoints: function (this: Highcharts.AnnotationBasicAnnotation): void {
             const options = this.options,
                 controlPoints = this.basicControlPoints,
-                langKey = options.langKey,
                 optionsGroup = options.labels || options.shapes;
+            let annotationType: string;
+
+            (options.typeOptions as any) = {};
+
+            if (options.shapes) {
+                options.typeOptions.shapes = options.shapeOptions;
+
+                if (options.shapes[0].type === 'circle') {
+                    annotationType = 'cricle';
+                } else if (options.shapes[0].type === 'path') {
+                    annotationType = 'rectangle';
+                }
+            } else {
+                options.typeOptions.labelOptions = options.labelOptions;
+                annotationType = 'label';
+            }
 
             optionsGroup.forEach(function (
                 this: Highcharts.AnnotationsLabelsOptions[] | Highcharts.AnnotationsShapesOptions[],
                 group: Highcharts.AnnotationControllableOptionsObject
             ): void {
-                if (langKey) {
-                    group.controlPoints = (controlPoints as any)[langKey];
-                }
+                group.controlPoints = (controlPoints as any)[annotationType];
             });
         }
     }

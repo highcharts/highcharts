@@ -119,11 +119,24 @@ H.extendAnnotation(BasicAnnotation, null, {
             }]
     },
     addControlPoints: function () {
-        var options = this.options, controlPoints = this.basicControlPoints, langKey = options.langKey, optionsGroup = options.labels || options.shapes;
-        optionsGroup.forEach(function (group) {
-            if (langKey) {
-                group.controlPoints = controlPoints[langKey];
+        var options = this.options, controlPoints = this.basicControlPoints, optionsGroup = options.labels || options.shapes;
+        var annotationType;
+        options.typeOptions = {};
+        if (options.shapes) {
+            options.typeOptions.shapes = options.shapeOptions;
+            if (options.shapes[0].type === 'circle') {
+                annotationType = 'cricle';
             }
+            else if (options.shapes[0].type === 'path') {
+                annotationType = 'rectangle';
+            }
+        }
+        else {
+            options.typeOptions.labelOptions = options.labelOptions;
+            annotationType = 'label';
+        }
+        optionsGroup.forEach(function (group) {
+            group.controlPoints = controlPoints[annotationType];
         });
     }
 });

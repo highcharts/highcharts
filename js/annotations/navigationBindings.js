@@ -399,7 +399,7 @@ var NavigationBindings = /** @class */ (function () {
      *         Annotation options to be displayed in popup box
      */
     NavigationBindings.prototype.annotationToFields = function (annotation) {
-        var options = annotation.options, editables = NavigationBindings.annotationsEditable, nestedEditables = editables.nestedOptions, getFieldType = this.utils.getFieldType, type = pick(options.langKey, options.type, options.shapes && options.shapes[0] &&
+        var options = annotation.options, editables = NavigationBindings.annotationsEditable, nestedEditables = editables.nestedOptions, getFieldType = this.utils.getFieldType, type = pick(options.type, options.shapes && options.shapes[0] &&
             options.shapes[0].type, options.labels && options.labels[0] &&
             options.labels[0].itemType, 'label'), nonEditables = NavigationBindings.annotationsNonEditable[options.langKey] || [], visualOptions = {
             langKey: options.langKey,
@@ -612,7 +612,6 @@ var NavigationBindings = /** @class */ (function () {
         },
         // Simple shapes:
         circle: ['shapes'],
-        rectangle: ['shapes'],
         verticalLine: [],
         label: ['labelOptions'],
         // Measure
@@ -623,7 +622,8 @@ var NavigationBindings = /** @class */ (function () {
         pitchfork: ['innerBackground', 'outerBackground'],
         rect: ['shapes'],
         // Crooked lines, elliots, arrows etc:
-        crookedLine: []
+        crookedLine: [],
+        basicAnnotation: []
     };
     // Define non editable fields per annotation, for example Rectangle inherits
     // options from Measure, but crosshairs are not available
