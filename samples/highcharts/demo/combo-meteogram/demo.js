@@ -553,11 +553,15 @@ if (!location.hash) {
     location.hash = 'https://www.yr.no/place/' + place + '/forecast_hour_by_hour.xml';
 }
 
-// Then get the XML file through CORS proxy.
+// Then get the XML file through Highcharts' CORS proxy. Our proxy is limited to
+// this specific location. Useing the third party, rate limited cors.io service
+// for experimenting with other locations.
 url = location.hash.substr(1);
 $.ajax({
     dataType: 'xml',
-    url: 'https://cors-anywhere.herokuapp.com/' + url,
+    url: url === 'https://www.yr.no/place/United_Kingdom/England/London/forecast_hour_by_hour.xml' ?
+        'https://www.highcharts.com/samples/data/cors.php?url=' + url :
+        'https://cors.io/?' + url,
     success: function (xml) {
         window.meteogram = new Meteogram(xml, 'container');
     },
