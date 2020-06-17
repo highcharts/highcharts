@@ -26,6 +26,14 @@ declare global {
             plotZ?: number;
             z?: number;
         }
+        interface PointPosition {
+            x?: number;
+            plotX?: number;
+            y?: number;
+            plotY?: number;
+            plotZ?: number;
+            z?: number;
+        }
         interface Series {
             zAxis?: ZAxis;
             translate3dPoints(): void;
@@ -91,7 +99,7 @@ H.Series.prototype.translate3dPoints = function (): void {
                 false;
         } else {
             // add value of zPadding to final z position of calculated point.
-            rawPoint.plotZ = (series as any).zPadding;
+            rawPoint.plotZ = series.zPadding;
         }
 
         rawPoint.axisXpos = rawPoint.plotX;

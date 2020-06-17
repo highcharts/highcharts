@@ -954,6 +954,9 @@ namespace Chart3D {
             if (e.options.type === 'scatter') {
                 e.options.type = 'scatter3d';
             }
+            if (e.options.type === 'area') {
+                e.options.type = 'area3d';
+            }
         }
     }
 
@@ -1846,6 +1849,9 @@ namespace Chart3D {
 
                 if (type === 'scatter') {
                     s.type = 'scatter3d';
+                }
+                if (type === 'area') {
+                    s.type = 'area3d';
                 }
             });
         }

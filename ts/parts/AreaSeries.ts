@@ -508,19 +508,11 @@ seriesType<Highcharts.AreaSeries>(
                     // true
                     if (!(isNull && !stacking && connectNulls)) {
                         graphPoints.push(points[i]);
-                        if (this.chart.is3d() && rawPoints) {
-                            bottomPoints.push({
-                                x: rawPoints[i].x,
-                                y: yBottom,
-                                z: series.zPadding
-                            } as any);
-                        } else {
-                            bottomPoints.push({
-                                x: i,
-                                plotX: plotX,
-                                plotY: yBottom
-                            } as any);
-                        }
+                        bottomPoints.push({
+                            x: i,
+                            plotX: plotX,
+                            plotY: yBottom
+                        } as any);
                     }
 
                     if (!connectNulls) {
@@ -530,22 +522,6 @@ seriesType<Highcharts.AreaSeries>(
             }
 
             topPath = getGraphPath.call(this, graphPoints, true, true);
-            if (series.chart.is3d()) {
-                var options3d = (series as any).chart.options.chart.options3d;
-                bottomPoints = H.perspective(
-                    bottomPoints as any, this.chart, true
-                ).map(function (point): Highcharts.AreaPoint {
-                    return { plotX: point.x, plotY: point.y, plotZ: point.z } as any;
-                }) as any;
-                if (series.group && options3d) {
-                    series.group.attr({
-                        zIndex: Math.max(
-                            1,
-                            options3d.depth - Math.round(series.data[0].plotZ || 0)
-                        )
-                    });
-                }
-            }
 
             (bottomPoints as any).reversed = true;
             bottomPath = getGraphPath.call(this, bottomPoints, true, true);

@@ -678,6 +678,9 @@ var Chart3D;
             if (e.options.type === 'scatter') {
                 e.options.type = 'scatter3d';
             }
+            if (e.options.type === 'area') {
+                e.options.type = 'area3d';
+            }
         }
     }
     /**
@@ -1541,6 +1544,9 @@ var Chart3D;
                     options.chart.defaultSeriesType;
                 if (type === 'scatter') {
                     s.type = 'scatter3d';
+                }
+                if (type === 'area') {
+                    s.type = 'area3d';
                 }
             });
         }

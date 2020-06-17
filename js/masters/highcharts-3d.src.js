@@ -15,6 +15,7 @@ import '../parts-3d/ZAxis.js';
 import '../parts-3d/Axis3D.js';
 import '../parts-3d/Tick3D.js';
 import '../parts-3d/Series.js';
+import '../parts-3d/Area.js';
 import '../parts-3d/Column.js';
 import '../parts-3d/Pie.js';
 import '../parts-3d/Scatter.js';
