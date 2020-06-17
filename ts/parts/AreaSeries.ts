@@ -423,7 +423,6 @@ seriesType<Highcharts.AreaSeries>(
                     options.connectNulls,
                     stacking === 'percent'
                 ),
-                rawPoints = series.rawPoints,
 
                 // To display null points in underlying stacked series, this
                 // series graph must be broken, and the area also fall down to
@@ -508,7 +507,7 @@ seriesType<Highcharts.AreaSeries>(
                     // true
                     if (!(isNull && !stacking && connectNulls)) {
                         graphPoints.push(points[i]);
-                        bottomPoints.push({
+                        bottomPoints.push({ // @todo create real point object
                             x: i,
                             plotX: plotX,
                             plotY: yBottom
