@@ -3,3 +3,58 @@
     height: 400px;
     margin: 1em auto;
 }
+
+.chart-outer {
+    display: flex;
+  }
+  
+  .highcharts-data-table {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+  }
+  
+  #highcharts-data-table-0,
+  #highcharts-data-table-1 {
+    margin: 0;
+  }
+  
+  #container1,
+  #container2 {
+    height: 300px;
+    padding-right: 2em;
+    width: 50%;
+  }
+  
+  .highcharts-data-table table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    background: white;
+    min-width: 100%;
+    margin-top: 10px;
+    font-family: sans-serif;
+    font-size: 0.9em;
+  }
+  
+  .highcharts-data-table td,
+  .highcharts-data-table th,
+  .highcharts-data-table caption {
+    border: 1px solid silver;
+    padding: 0.5em;
+  }
+  
+  .highcharts-data-table thead tr,
+  .highcharts-data-table tr:nth-child(even) {
+    background: #f8f8f8;
+  }
+  
+  .highcharts-data-table tr:hover {
+    background: #eff;
+  }
+  
+  .highcharts-data-table caption {
+    border-bottom: none;
+    font-size: 1.1em;
+    font-weight: bold;
+  }
+  

@@ -1173,7 +1173,7 @@ chartProto.callbacks.push(function (chart) {
         chart.controlPointsGroup.destroy();
     });
     addEvent(chart, 'exportData', function (event) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         var annotations = chart.annotations, csvColumnHeaderFormatter = ((this.options.exporting &&
             this.options.exporting.csv) ||
             {}).columnHeaderFormatter, 
@@ -1194,7 +1194,7 @@ chartProto.callbacks.push(function (chart) {
                     topLevelColumnTitle: s
                 };
             }
-        }, startRowLength = event.dataRows[0].length, annotationSeparator = '; ', concatenatePointAnnotations = (_b = (_a = chart.options.exporting) === null || _a === void 0 ? void 0 : _a.csv) === null || _b === void 0 ? void 0 : _b.concatenatePointAnnotations;
+        }, startRowLength = event.dataRows[0].length, annotationSeparator = (_b = (_a = chart.options.exporting) === null || _a === void 0 ? void 0 : _a.csv) === null || _b === void 0 ? void 0 : _b.annotationSeparator, joinAnnotations = (_d = (_c = chart.options.exporting) === null || _c === void 0 ? void 0 : _c.csv) === null || _d === void 0 ? void 0 : _d.joinAnnotations;
         annotations.forEach(function (annotation) {
             if (annotation.options.labelOptions.includeInDataExport) {
                 annotation.labels.forEach(function (label) {
@@ -1224,7 +1224,7 @@ chartProto.callbacks.push(function (chart) {
                                         row.xValues &&
                                         xAxisIndex !== void 0 &&
                                         annotationX === row.xValues[xAxisIndex]) {
-                                        if (concatenatePointAnnotations &&
+                                        if (joinAnnotations &&
                                             row.length > startRowLength) {
                                             row[row.length - 1] +=
                                                 annotationSeparator + annotationText_1;

@@ -70,11 +70,12 @@ declare global {
             viewData(): void;
         }
         interface ExportingCsvOptions {
+            annotationSeparator?: string;
             columnHeaderFormatter?: (Function|null);
-            concatenatePointAnnotations?: boolean;
             dateFormat?: string;
             decimalPoint?: (string|null);
             itemDelimiter?: (string|null);
+            joinAnnotations?: boolean;
             lineDelimiter?: string;
         }
         interface ExportingOptions {
@@ -230,6 +231,15 @@ setOptions({
         csv: {
 
             /**
+            * The way to mark the separator for annotations
+            * combined in one export-data table cell.
+            *
+            * @since   next
+            * @requires modules/annotations
+            */
+            annotationSeparator: '; ',
+
+            /**
              * Formatter callback for the column headers. Parameters are:
              * - `item` - The series or axis object)
              * - `key` -  The point key, for example y or z
@@ -263,13 +273,13 @@ setOptions({
             * When several labels are assigned to a specific point,
             * they will be displayed in one field in the table.
             *
-            * @sample highcharts/export-data/concatenate-point-annotations/
+            * @sample highcharts/export-data/join-annotations/
             *         Concatenate point annotations.
             *
             * @since   next
             * @requires modules/annotations
             */
-            concatenatePointAnnotations: false,
+            joinAnnotations: false,
 
             /**
              * Which date format to use for exported dates on a datetime X axis.

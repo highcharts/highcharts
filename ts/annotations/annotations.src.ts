@@ -1739,8 +1739,8 @@ chartProto.callbacks.push(function (
                 }
             },
             startRowLength = event.dataRows[0].length,
-            annotationSeparator = '; ',
-            concatenatePointAnnotations = chart.options.exporting?.csv?.concatenatePointAnnotations;
+            annotationSeparator = chart.options.exporting?.csv?.annotationSeparator,
+            joinAnnotations = chart.options.exporting?.csv?.joinAnnotations;
 
         annotations.forEach((annotation): void => {
 
@@ -1781,7 +1781,7 @@ chartProto.callbacks.push(function (
                                         annotationX === row.xValues[xAxisIndex]
                                     ) {
                                         if (
-                                            concatenatePointAnnotations &&
+                                            joinAnnotations &&
                                             row.length > startRowLength
                                         ) {
                                             row[row.length - 1] +=
