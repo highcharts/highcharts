@@ -560,8 +560,8 @@ url = location.hash.substr(1);
 $.ajax({
     dataType: 'xml',
     url: url === 'https://www.yr.no/place/United_Kingdom/England/London/forecast_hour_by_hour.xml' ?
-        'https://www.highcharts.com/samples/data/cors.php?url=' + url :
-        'https://cors.io/?' + url,
+        'https://demo-live-data.highcharts.com/weather-forecast.xml' :
+        'https://cors-anywhere.herokuapp.com/' + url,
     success: function (xml) {
         window.meteogram = new Meteogram(xml, 'container');
     },
