@@ -18,7 +18,9 @@ declare global {
     namespace Highcharts {
         class AnnotationBasicAnnotation extends Annotation {
             public basicControlPoints: AnnotationBasicControlPoints
+            public basicType: string;
             addControlPoints: () => void;
+            init: () => void;
         }
 
         interface AnnotationBasicControlPoints {
@@ -199,23 +201,8 @@ H.extendAnnotation(
         addControlPoints: function (this: Highcharts.AnnotationBasicAnnotation): void {
             const options = this.options,
                 controlPoints = this.basicControlPoints,
+                annotationType = this.basicType,
                 optionsGroup = options.labels || options.shapes;
-            let annotationType: string;
-
-            (options.typeOptions as any) = {};
-
-            if (options.shapes) {
-                options.typeOptions.shapes = options.shapeOptions;
-
-                if (options.shapes[0].type === 'circle') {
-                    annotationType = 'cricle';
-                } else if (options.shapes[0].type === 'path') {
-                    annotationType = 'rectangle';
-                }
-            } else {
-                options.typeOptions.labelOptions = options.labelOptions;
-                annotationType = 'label';
-            }
 
             optionsGroup.forEach(function (
                 this: Highcharts.AnnotationsLabelsOptions[] | Highcharts.AnnotationsShapesOptions[],
@@ -223,6 +210,23 @@ H.extendAnnotation(
             ): void {
                 group.controlPoints = (controlPoints as any)[annotationType];
             });
+        },
+
+        init: function (this: Highcharts.AnnotationBasicAnnotation): void {
+            const options = this.options;
+
+            if (options.shapes) {
+                delete options.labelOptions;
+                if (options.shapes[0].type === 'circle') {
+                    this.basicType = 'circle';
+                } else if (options.shapes[0].type === 'path') {
+                    this.basicType = 'rectangle';
+                }
+            } else {
+                delete options.shapes;
+                this.basicType = 'label';
+            }
+            Annotation.prototype.init.apply(this, arguments);
         }
     }
 );

@@ -119,25 +119,27 @@ H.extendAnnotation(BasicAnnotation, null, {
             }]
     },
     addControlPoints: function () {
-        var options = this.options, controlPoints = this.basicControlPoints, optionsGroup = options.labels || options.shapes;
-        var annotationType;
-        options.typeOptions = {};
-        if (options.shapes) {
-            options.typeOptions.shapes = options.shapeOptions;
-            if (options.shapes[0].type === 'circle') {
-                annotationType = 'cricle';
-            }
-            else if (options.shapes[0].type === 'path') {
-                annotationType = 'rectangle';
-            }
-        }
-        else {
-            options.typeOptions.labelOptions = options.labelOptions;
-            annotationType = 'label';
-        }
+        var options = this.options, controlPoints = this.basicControlPoints, annotationType = this.basicType, optionsGroup = options.labels || options.shapes;
         optionsGroup.forEach(function (group) {
             group.controlPoints = controlPoints[annotationType];
         });
+    },
+    init: function () {
+        var options = this.options;
+        if (options.shapes) {
+            delete options.labelOptions;
+            if (options.shapes[0].type === 'circle') {
+                this.basicType = 'circle';
+            }
+            else if (options.shapes[0].type === 'path') {
+                this.basicType = 'rectangle';
+            }
+        }
+        else {
+            delete options.shapes;
+            this.basicType = 'label';
+        }
+        Annotation.prototype.init.apply(this, arguments);
     }
 });
 Annotation.types.basicAnnotation = BasicAnnotation;

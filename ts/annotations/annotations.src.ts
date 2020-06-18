@@ -169,11 +169,9 @@ declare global {
         interface AnnotationsTypeOptions {
             background?: AnnotationsShapeOptions;
             height?: number;
-            labelOptions?: Partial<AnnotationsShapeOptions>;
             line?: AnnotationsShapeOptions;
             point: AnnotationMockPointOptionsObject;
             points?: Array<AnnotationsTypePointsOptions>;
-            shapes?: AnnotationsShapeOptions;
             xAxis?: number;
             yAxis?: number;
         }
