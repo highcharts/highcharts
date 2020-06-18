@@ -413,7 +413,7 @@ class NavigationBindings {
             })
         );
         navigation.eventsToUnbind.push(
-            addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (
+            addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (
                 e: Highcharts.PointerEventObject
             ): void {
                 navigation.bindingsContainerMouseMove(this, e);
@@ -1028,7 +1028,7 @@ function selectableAnnotation(annotationType: typeof Annotation): void {
             prevAnnotation = navigation.activeAnnotation;
 
         if (originalClick) {
-            (originalClick as any).click.call(annotation, event);
+            originalClick.call(annotation, event);
         }
 
         if (prevAnnotation !== annotation) {

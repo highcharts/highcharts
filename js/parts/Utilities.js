@@ -351,8 +351,12 @@ var charts = H.charts, doc = H.doc, win = H.win;
  * @return {void}
  */
 function error(code, stop, chart, params) {
+    var severity = stop ? 'Highcharts error' : 'Highcharts warning';
+    if (code === 32) {
+        code = severity + ": Deprecated member";
+    }
     var isCode = isNumber(code), message = isCode ?
-        "Highcharts error #" + code + ": www.highcharts.com/errors/" + code + "/" :
+        severity + " #" + code + ": www.highcharts.com/errors/" + code + "/" :
         code.toString(), defaultHandler = function () {
         if (stop) {
             throw new Error(message);
@@ -370,7 +374,7 @@ function error(code, stop, chart, params) {
             message += '?';
         }
         objectEach(params, function (value, key) {
-            additionalMessages_1 += ('\n' + key + ': ' + value);
+            additionalMessages_1 += "\n - " + key + ": " + value;
             if (isCode) {
                 message += encodeURI(key) + '=' + encodeURI(value);
             }
@@ -1868,7 +1872,7 @@ var getStyle = H.getStyle = function (el, prop, toInt) {
  *         The index within the array, or -1 if not found.
  */
 var inArray = H.inArray = function (item, arr, fromIndex) {
-    error(32, false, void 0, { 'Highcharts.inArray': 'Array.indexOf' });
+    error(32, false, void 0, { 'Highcharts.inArray': 'use Array.indexOf' });
     return arr.indexOf(item, fromIndex);
 };
 /* eslint-disable valid-jsdoc */
@@ -1914,9 +1918,9 @@ var find = H.find = Array.prototype.find ?
  * @return {Array<string>}
  *         An array of strings that represents all the properties.
  */
-H.keys = function () {
-    error(32, false, void 0, { 'Highcharts.keys': 'Object.keys' });
-    return Object.keys.apply(arguments);
+H.keys = function (obj) {
+    error(32, false, void 0, { 'Highcharts.keys': 'use Object.keys' });
+    return Object.keys(obj);
 };
 /**
  * Get the element's offset position, corrected for `overflow: auto`.
@@ -2098,7 +2102,7 @@ objectEach({
 }, function (val, key) {
     H[key] = function (arr) {
         var _a;
-        error(32, false, void 0, (_a = {}, _a["Highcharts." + key] = "Array." + val, _a));
+        error(32, false, void 0, (_a = {}, _a["Highcharts." + key] = "use Array." + val, _a));
         return Array.prototype[val].apply(arr, [].slice.call(arguments, 1));
     };
 });

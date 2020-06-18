@@ -632,7 +632,7 @@ H.defaultOptions = {
          * @sample    maps/chart/topojson
          *            Loading topoJSON converted to geoJSON
          *
-         * @type      {string|Array<*>}
+         * @type      {string|Array<*>|Highcharts.GeoJSON}
          * @since     5.0.0
          * @product   highmaps
          * @apioption chart.map

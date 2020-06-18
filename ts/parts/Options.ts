@@ -78,7 +78,7 @@ declare global {
             height?: (null|number|string);
             ignoreHiddenSeries?: boolean;
             inverted?: boolean;
-            map?: string|Array<any>;
+            map?: string|Array<any>|Highcharts.GeoJSON;
             mapTransforms?: any;
             margin?: (number|Array<number>);
             marginBottom?: number;
@@ -1041,7 +1041,7 @@ H.defaultOptions = {
          * @sample    maps/chart/topojson
          *            Loading topoJSON converted to geoJSON
          *
-         * @type      {string|Array<*>}
+         * @type      {string|Array<*>|Highcharts.GeoJSON}
          * @since     5.0.0
          * @product   highmaps
          * @apioption chart.map

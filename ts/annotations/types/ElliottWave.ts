@@ -7,6 +7,7 @@
 'use strict';
 
 import Annotation from '../annotations.src.js';
+import CrookedLine from './CrookedLine.js';
 import H from '../../parts/Globals.js';
 import U from '../../parts/Utilities.js';
 const {
@@ -19,9 +20,6 @@ const {
  */
 declare global {
     namespace Highcharts {
-        class AnnotationElliottWave extends CrookedLine {
-            public options: AnnotationElliottWaveOptionsObject;
-        }
         interface AnnotationElliottWaveLabelOptionsObject extends AnnotationsLabelOptions {
             backgroundColor: ColorType;
             borderWidth: number;
@@ -43,36 +41,45 @@ declare global {
     }
 }
 
-var CrookedLine = Annotation.types.crookedLine;
-
 /* eslint-disable no-invalid-this, valid-jsdoc */
 
-const ElliottWave: typeof Highcharts.AnnotationElliottWave = function (this: Highcharts.AnnotationCrookedLine): void {
-    CrookedLine.apply(this, arguments as any);
-} as any;
+class ElliottWave extends CrookedLine {
+    public constructor(chart: Highcharts.AnnotationChart, options: Highcharts.AnnotationElliottWaveOptionsObject) {
+        super(chart, options);
+    }
 
-H.extendAnnotation(ElliottWave, CrookedLine,
-    {
-        addLabels: function (this: Highcharts.AnnotationElliottWave): void {
-            this.getPointsOptions().forEach(function (
-                this: Highcharts.AnnotationElliottWave,
-                point: Highcharts.AnnotationMockPointOptionsObject,
-                i: number
-            ): void {
-                var label = this.initLabel(merge(
+    /* *
+     *
+     * Functions
+     *
+     * */
+    public addLabels(): void {
+        this.getPointsOptions().forEach(function (
+            this: ElliottWave,
+            point: Highcharts.AnnotationMockPointOptionsObject,
+            i: number
+        ): void {
+            var typeOptions = this.options.typeOptions as Highcharts.AnnotationElliottWaveTypeOptionsObject,
+                label = this.initLabel(merge(
                     point.label, {
-                        text: this.options.typeOptions.labels[i],
+                        text: typeOptions.labels[i],
                         point: function (target: any): any {
                             return target.annotation.points[i];
                         }
                     }
                 ), false as any);
 
-                point.label = label.options;
-            }, this);
-        }
-    },
+            point.label = label.options;
+        }, this);
+    }
+}
 
+interface ElliottWave {
+    defaultOptions: CrookedLine['defaultOptions'];
+}
+
+ElliottWave.prototype.defaultOptions = merge(
+    CrookedLine.prototype.defaultOptions,
     /**
      * An elliott wave annotation.
      *
@@ -110,7 +117,8 @@ H.extendAnnotation(ElliottWave, CrookedLine,
             borderWidth: 0,
             y: -5
         }
-    });
+    }
+);
 
 Annotation.types.elliottWave = ElliottWave;
 

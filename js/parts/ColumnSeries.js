@@ -336,6 +336,12 @@ seriesType('column', 'line',
     dataLabels: {
         align: void 0,
         verticalAlign: void 0,
+        /**
+         * The y position offset of the label relative to the point in
+         * pixels.
+         *
+         * @type {number}
+         */
         y: void 0
     },
     /**

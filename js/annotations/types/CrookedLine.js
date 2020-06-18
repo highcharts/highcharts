@@ -4,44 +4,67 @@
  *
  * */
 'use strict';
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 import Annotation from '../annotations.src.js';
 import ControlPoint from '../ControlPoint.js';
-import H from '../../parts/Globals.js';
 import MockPoint from '../MockPoint.js';
 import U from '../../parts/Utilities.js';
 var merge = U.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc */
-var CrookedLine = function () {
-    Annotation.apply(this, arguments);
-};
-H.extendAnnotation(CrookedLine, null, {
+var CrookedLine = /** @class */ (function (_super) {
+    __extends(CrookedLine, _super);
+    /* *
+     *
+     * Constructors
+     *
+     * */
+    function CrookedLine(chart, options) {
+        return _super.call(this, chart, options) || this;
+    }
+    /* *
+     *
+     * Functions
+     *
+     * */
     /**
      * Overrides default setter to get axes from typeOptions.
      * @private
      */
-    setClipAxes: function () {
+    CrookedLine.prototype.setClipAxes = function () {
         this.clipXAxis = this.chart.xAxis[this.options.typeOptions.xAxis];
         this.clipYAxis = this.chart.yAxis[this.options.typeOptions.yAxis];
-    },
-    getPointsOptions: function () {
+    };
+    CrookedLine.prototype.getPointsOptions = function () {
         var typeOptions = this.options.typeOptions;
-        return typeOptions.points.map(function (pointOptions) {
+        return (typeOptions.points || []).map(function (pointOptions) {
             pointOptions.xAxis = typeOptions.xAxis;
             pointOptions.yAxis = typeOptions.yAxis;
             return pointOptions;
         });
-    },
-    getControlPointsOptions: function () {
+    };
+    CrookedLine.prototype.getControlPointsOptions = function () {
         return this.getPointsOptions();
-    },
-    addControlPoints: function () {
+    };
+    CrookedLine.prototype.addControlPoints = function () {
         this.getControlPointsOptions().forEach(function (pointOptions, i) {
             var controlPoint = new ControlPoint(this.chart, this, merge(this.options.controlPointOptions, pointOptions.controlPoint), i);
             this.controlPoints.push(controlPoint);
             pointOptions.controlPoint = controlPoint.options;
         }, this);
-    },
-    addShapes: function () {
+    };
+    CrookedLine.prototype.addShapes = function () {
         var typeOptions = this.options.typeOptions, shape = this.initShape(merge(typeOptions.line, {
             type: 'path',
             points: this.points.map(function (_point, i) {
@@ -51,8 +74,10 @@ H.extendAnnotation(CrookedLine, null, {
             })
         }), false);
         typeOptions.line = shape.options;
-    }
-}, 
+    };
+    return CrookedLine;
+}(Annotation));
+CrookedLine.prototype.defaultOptions = merge(Annotation.prototype.defaultOptions, 
 /**
  * A crooked line annotation.
  *

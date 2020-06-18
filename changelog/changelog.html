@@ -14,6 +14,38 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-v8.1.2"></a>
+              <a href="#highcharts-v8.1.2">Highcharts Basic v8.1.2 (2020-06-16)</a>
+            </p>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="heading-8-1-2-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#8-1-2-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="8-1-2-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #13708, a regression breaking <code>Highcharts.keys</code>.</li>
+                      <li>Fixed #13680, <code>chart.addSeries</code> failed after calling <code>chart.setSize</code> on a chart with no data.</li>
+                      <li>Fixed #13698, a11y not working properly with user tabindex.</li>
+                      <li>Fixed #13674, a regression in v8.1.1 causing pie drilldown animation not to work.</li>
+                      <li>Fixed #13576, a regression causing drag and drop to fail for some values in the boxplot series.</li>
+                      <li>Fixed #13681, reference to global Highcharts scope in module mode made some modules crash when loaded as ES modules.</li>
+                      <li>Fixed #13608, a regression causing parallel axes to lose their positions after update.</li>
+                      <li>Fixed #13629, the <code>innerSize</code> of a pie series was set to 0 when there was also an additional gauge series.</li>
+                      <li>Fixed #13327, pattern fill was incorrect after chart export in Safari.</li>
+                      <li>Fixed #13641, legend click on mobile sometimes failed with accessibility module enabled.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-v8.1.1"></a>
               <a href="#highcharts-v8.1.1">Highcharts Basic v8.1.1 (2020-06-09)</a>
             </p>
@@ -33,6 +65,8 @@
                 <div id="8-1-1-bug-fixes" class="collapse">
                   <div class="card-body">
                     <ul>
+                      <li>Fixed #13559, no JavaScript execution should be allowed from chart configuration strings, except from callbacks like event handlers and formatters. This prevents JavaScript from being injected from forms and other inputs relaying directly to text properties in the chart config.</li>
+                      <li>Fixed #13541, <code>chart.update</code> with <code>oneToOne</code> failed when removing and adding series, if all series had explicit id&#39;s.</li>
                       <li>Fixed issue with JS errors and malfunction on drill-up button on touch devices when the accessibility module was loaded.</li>
                       <li>Fixed #12804, in sunburst charts, the drill-up button was visible after drilling up to the top level.</li>
                       <li>Fixed #13554, a11y not supporting proximate legend layout.</li>
@@ -5428,6 +5462,13 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-stock-v8.1.2"></a>
+              <a href="#highcharts-stock-v8.1.2">Highcharts Stock v8.1.2 (2020-06-16)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 8.1.2 above also apply to Highcharts Stock 8.1.2.</li>
+            </ul>
+            <p class="release-header">
               <a id="highcharts-stock-v8.1.1"></a>
               <a href="#highcharts-stock-v8.1.1">Highcharts Stock v8.1.1 (2020-06-09)</a>
             </p>
@@ -8210,6 +8251,32 @@
           </div>
           <div class="changelog-container">
             <p class="release-header">
+              <a id="highcharts-maps-v8.1.2"></a>
+              <a href="#highcharts-maps-v8.1.2">Highcharts Maps v8.1.2 (2020-06-16)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 8.1.2 above also apply to Highcharts Maps 8.1.2.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="hm-heading-8-1-2-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#hm-8-1-2-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hm-8-1-2-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #13426, reset zoom button appeared while panning maps and the chart was not zoomed in.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <p class="release-header">
               <a id="highcharts-maps-v8.1.1"></a>
               <a href="#highcharts-maps-v8.1.1">Highcharts Maps v8.1.1 (2020-06-09)</a>
             </p>
@@ -9375,6 +9442,32 @@
             <h4 id="highcharts-gantt">Highcharts Gantt</h4>
           </div>
           <div class="changelog-container">
+            <p class="release-header">
+              <a id="highcharts-gantt-v8.1.2"></a>
+              <a href="#highcharts-gantt-v8.1.2">Highcharts Gantt v8.1.2 (2020-06-16)</a>
+            </p>
+            <ul>
+              <li>Most changes listed under Highcharts 8.1.2 above also apply to Highcharts Gantt 8.1.2.</li>
+            </ul>
+            <div id="accordion" class="card-group">
+              <div class="card">
+
+                <div id="hg-heading-8-1-2-bug-fixes" class="card-header">
+                  <h4 class="card-title">
+                    <a href="#hg-8-1-2-bug-fixes" data-toggle="collapse" data-parent="#accordion"> Bug fixes </a>
+                  </h4>
+                </div>
+                <div id="hg-8-1-2-bug-fixes" class="collapse">
+                  <div class="card-body">
+                    <ul>
+                      <li>Fixed #12012, collapse not working when chart had set height.</li>
+                    </ul>
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
             <p class="release-header">
               <a id="highcharts-gantt-v8.1.1"></a>
               <a href="#highcharts-gantt-v8.1.1">Highcharts Gantt v8.1.1 (2020-06-09)</a>

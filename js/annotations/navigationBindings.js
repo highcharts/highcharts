@@ -182,7 +182,7 @@ var NavigationBindings = /** @class */ (function () {
                 navigation.bindingsChartClick(this, e);
             }
         }));
-        navigation.eventsToUnbind.push(addEvent(chart.container, Highcharts.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
+        navigation.eventsToUnbind.push(addEvent(chart.container, H.isTouchDevice ? 'touchmove' : 'mousemove', function (e) {
             navigation.bindingsContainerMouseMove(this, e);
         }));
     };
@@ -677,7 +677,7 @@ function selectableAnnotation(annotationType) {
     function selectAndshowPopup(event) {
         var annotation = this, navigation = annotation.chart.navigationBindings, prevAnnotation = navigation.activeAnnotation;
         if (originalClick) {
-            originalClick.click.call(annotation, event);
+            originalClick.call(annotation, event);
         }
         if (prevAnnotation !== annotation) {
             // Select current:
