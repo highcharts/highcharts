@@ -6,6 +6,13 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ * @todo
+ * - In parseMarkup, use DOMParser then apply tag and attribute filter
+ * - Move the trucate function here
+ * - Discuss whether this should be a separate class, or just part of the
+ *   SVGElement
+ * - Apply filter for HTML
+ * - Set up XSS tests
  * */
 
 'use strict';
@@ -71,6 +78,21 @@ class SVGTextBuilder {
     public textOutline: any;
     public width?: number;
 
+    // Modify the DOM by adding line breaks as x/dy in SVG
+    public addLineBreaks(): void {
+        [].forEach.call(
+            this.svgElement.element.querySelectorAll('br'),
+            (br: SVGElement|HTMLElement): void => {
+                if (br.nextSibling) {
+                    attr(br.nextSibling as SVGElement, {
+                        dy: this.getLineHeight(br.nextSibling as SVGElement),
+                        x: attr(this.svgElement.element, 'x')
+                    });
+                }
+                br.remove();
+            }
+        );
+    }
 
     public buildText(): void {
         const wrapper = this.svgElement;
@@ -133,6 +155,17 @@ class SVGTextBuilder {
                 // attach it to the DOM to read offset width
                 tempParent.appendChild(textNode);
             }
+
+            const ast = this.parseMarkup(textStr);
+            this.modifyTree(ast);
+
+            renderer.addTree(ast, wrapper);
+
+            this.addLineBreaks();
+
+            truncated = this.constrainLineWidth();
+
+            /*
 
             if (hasMarkup) {
                 lines = renderer.styledMode ? (
@@ -308,6 +341,7 @@ class SVGTextBuilder {
                     textNode.childNodes.length
                 );
             });
+            */
 
             if (this.ellipsis && truncated) {
                 wrapper.attr(
@@ -327,78 +361,97 @@ class SVGTextBuilder {
     }
 
     // Constrain the line width, either by ellipsis or wrapping
-    private constrainLineWidth(
-        span: string,
-        spans: string[],
-        lineNo: number,
-        tspan: any,
-        parentX: string|null,
-        styleAttribute: any
-
-    ): boolean {
+    private constrainLineWidth(): boolean {
 
         let truncated = false;
-        if (this.width) {
-            var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-                hasWhiteSpace = !this.noWrap && (
-                    spans.length > 1 ||
-                    lineNo ||
-                    words.length > 1
-                ),
-                wrapLineNo = 0,
-                dy = this.getLineHeight(tspan);
+        const width = this.width || 0;
+        if (!width) {
+            return false;
+        }
+        const tspans = [].slice.call(
+            this.svgElement.element.getElementsByTagName('tspan')
+        );
 
+        tspans.forEach((tspan: Highcharts.SVGDOMElement): void => {
+            const text = tspan.textContent || '';
+            const words = text
+                .replace(/([^\^])-/g, '$1- ') // Split on hyphens
+                // .trim()
+                .split(' '); // #1273
+            const hasWhiteSpace = !this.noWrap && (
+                words.length > 1 || tspans.length > 1
+            );
+
+            /*
+            hasWhiteSpace = !noWrap && (
+                // Spans is spans within this line
+                spans.length > 1 || lineNo || words.length > 1
+            )
+            */
+            const dy = this.getLineHeight(tspan);
+
+            let wrapLineNo = 0;
             if (this.ellipsis) {
-                truncated = this.renderer.truncate(
-                    this.svgElement,
-                    tspan,
-                    span,
-                    void 0,
-                    0,
-                    // Target width
-                    Math.max(
+                if (text) {
+                    truncated = this.renderer.truncate(
+                        this.svgElement,
+                        tspan,
+                        text,
+                        void 0,
                         0,
-                        // Substract the font face to make room for the ellipsis
-                        // itself
-                        this.width - parseInt(this.fontSize || 12, 10)
-                    ),
-                    // Build the text to test for
-                    (text: string, currentIndex: number): string =>
-                        text.substring(0, currentIndex) + '\u2026'
-                );
+                        // Target width
+                        Math.max(
+                            0,
+                            // Substract the font face to make room for the
+                            // ellipsis itself
+                            width - parseInt(this.fontSize || 12, 10)
+                        ),
+                        // Build the text to test for
+                        (text: string, currentIndex: number): string =>
+                            text.substring(0, currentIndex) + '\u2026'
+                    );
+                }
             } else if (hasWhiteSpace) {
-
+                let lastTspan = tspan;
                 while (words.length) {
+
+                    let insertedTspan: SVGElement;
 
                     // For subsequent lines, create tspans with the same style
                     // attributes as the first tspan.
                     if (words.length && !this.noWrap && wrapLineNo > 0) {
+                        const styleAttribute = attr(tspan, 'style');
+                        const parentX = attr(this.svgElement.element, 'x');
 
-                        tspan = doc.createElementNS(SVG_NS, 'tspan');
-                        attr(tspan, { dy: dy, x: parentX });
+                        insertedTspan = doc.createElementNS(SVG_NS, 'tspan') as SVGElement;
+                        attr(insertedTspan, { dy: dy, x: parentX });
                         if (styleAttribute) { // #390
-                            attr(tspan, 'style', styleAttribute);
+                            attr(insertedTspan, 'style', styleAttribute);
                         }
                         // Start by appending the full remaining text
-                        tspan.appendChild(
+                        insertedTspan.appendChild(
                             doc.createTextNode(
                                 words.join(' ').replace(/- /g, '-')
                             )
                         );
-                        this.svgElement.element.appendChild(tspan);
+                        this.svgElement.element.insertBefore(
+                            insertedTspan,
+                            lastTspan.nextSibling
+                        );
+                        lastTspan = insertedTspan;
                     }
 
                     // For each line, truncate the remaining
                     // words into the line length.
                     this.renderer.truncate(
                         this.svgElement,
-                        tspan,
+                        lastTspan,
                         void 0,
                         words,
                         wrapLineNo === 0 ? (this.lineLength || 0) : 0,
-                        this.width,
+                        width,
                         // Build the text to test for
-                        function (text: string, currentIndex: number): string {
+                        function (t: string, currentIndex: number): string {
                             return words
                                 .slice(0, currentIndex)
                                 .join(' ')
@@ -410,7 +463,7 @@ class SVGTextBuilder {
                     wrapLineNo++;
                 }
             }
-        }
+        });
         return truncated;
     }
 
@@ -433,6 +486,51 @@ class SVGTextBuilder {
             ).h;
     }
 
+    // Transform HTML to SVG, validate
+    private modifyTree(
+        elements: Highcharts.SVGDefinitionObject[]
+    ): void {
+        elements.forEach((elem, i): void => {
+            const tagName = elem.tagName;
+            const styledMode = this.renderer.styledMode;
+
+            // Apply styling to text tags
+            if (tagName === 'b' || tagName === 'strong') {
+                if (styledMode) {
+                    elem.class = 'highcharts-strong';
+                } else {
+                    elem.style = 'font-weight:bold;' + (elem.style || '');
+                }
+            } else if (tagName === 'i' || tagName === 'em') {
+                if (styledMode) {
+                    elem.class = 'highcharts-emphasized';
+                } else {
+                    elem.style = 'font-style:italic;' + (elem.style || '');
+                }
+            }
+
+            // Modify attributes
+            if (isString(elem.style)) {
+                elem.style = elem.style.replace(
+                    /(;| |^)color([ :])/,
+                    '$1fill$2'
+                );
+            }
+
+            if (
+                isString(elem.href) &&
+                elem.href.split(':')[0].toLowerCase()
+                    .indexOf('javascript') !== -1
+            ) {
+                delete elem.href;
+            }
+
+            if (tagName !== 'a' && tagName !== 'br') {
+                elem.tagName = 'tspan';
+            }
+        });
+    }
+
     private parseAttribute(
         s: string,
         attr: string
@@ -452,6 +550,53 @@ class SVGTextBuilder {
                 return s.substring(0, s.indexOf(delimiter));
             }
         }
+    }
+
+    /*
+     * @param markup
+     */
+    private parseMarkup(markup: string): Highcharts.SVGDefinitionObject[] {
+        const allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong']
+            .join('|');
+        const allowedAttributes = ['class', 'href', 'style'];
+        const elements = markup
+            // Trim to prevent useless/costly process on the spaces
+            // (#5258)
+            .replace(/^\s+|\s+$/g, '')
+            .replace(/<br.*?>/g, '<br></br>')
+            .replace(new RegExp(`<(${allowedTags})( |>)`, 'gi'), '|||<$1$2')
+            .replace(new RegExp(`<\/(${allowedTags})>`, 'gi'), '</$1>|||')
+            .split('|||')
+            .filter((line): boolean => line !== '')
+            .map((s): Highcharts.SVGDefinitionObject => {
+                const obj: Highcharts.SVGDefinitionObject = {
+                    tagName: 'span'
+                };
+                const m = s.match(new RegExp(`^<(${allowedTags})( |>)`, 'i'));
+                if (m) {
+                    obj.tagName = m[1];
+                }
+
+                // When the allowed tags are handled, strip away all other tags
+                const textContent = this.unescapeEntities(
+                    s.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' '
+                );
+                if (textContent) {
+                    obj.textContent = textContent;
+                }
+
+                // Allowed attributes
+                allowedAttributes.forEach((attributeName): void => {
+                    const value = this.parseAttribute(s, attributeName);
+                    if (value) {
+                        obj[attributeName] = value;
+                    }
+                });
+
+                return obj;
+            });
+
+        return elements;
     }
 
     private unescapeEntities(

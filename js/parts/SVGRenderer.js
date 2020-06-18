@@ -439,22 +439,21 @@ var SVGRenderer = /** @class */ (function () {
         }
     };
     /**
-     * General method for adding a definition to the SVG `defs` tag. Can be used
-     * for gradients, fills, filters etc. Styled mode only. A hook for adding
-     * general definitions to the SVG's defs tag. Definitions can be referenced
-     * from the CSS by its `id`. Read more in
-     * [gradients, shadows and patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
-     * Styled mode only.
+     * Add a tree defined as a hierarchical JS structure to the DOM
      *
-     * @function Highcharts.SVGRenderer#definition
+     * @private
+     *
+     * @function Highcharts.SVGRenderer#addTree
      *
      * @param {Highcharts.SVGDefinitionObject} def
-     * A serialized form of an SVG definition, including children.
+     * A serialized form of an SVG subtree, including children.
+     * @param {SVGElement} parent
+     * The node where it should be added
      *
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
-    SVGRenderer.prototype.definition = function (def) {
+    SVGRenderer.prototype.addTree = function (def, parent) {
         var ren = this;
         /**
          * @private
@@ -475,7 +474,7 @@ var SVGRenderer = /** @class */ (function () {
                 });
                 node.attr(attr);
                 // Add to the tree
-                node.add(parent || ren.defs);
+                node.add(parent);
                 // Add text content
                 if (item.textContent) {
                     node.element.appendChild(doc.createTextNode(item.textContent));
@@ -487,7 +486,26 @@ var SVGRenderer = /** @class */ (function () {
             // Return last node added (on top level it's the only one)
             return ret;
         }
-        return recurse(def);
+        return recurse(def, parent);
+    };
+    /**
+     * General method for adding a definition to the SVG `defs` tag. Can be used
+     * for gradients, fills, filters etc. Styled mode only. A hook for adding
+     * general definitions to the SVG's defs tag. Definitions can be referenced
+     * from the CSS by its `id`. Read more in
+     * [gradients, shadows and patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
+     * Styled mode only.
+     *
+     * @function Highcharts.SVGRenderer#definition
+     *
+     * @param {Highcharts.SVGDefinitionObject} def
+     * A serialized form of an SVG definition, including children.
+     *
+     * @return {Highcharts.SVGElement}
+     * The inserted node.
+     */
+    SVGRenderer.prototype.definition = function (def) {
+        return this.addTree(def, this.defs);
     };
     /**
      * Get the global style setting for the renderer.
@@ -622,7 +640,7 @@ var SVGRenderer = /** @class */ (function () {
                 tspan.appendChild(doc.createTextNode(s));
             }
         }, getSubStringLength = function (charEnd, concatenatedEnd) {
-            // charEnd is useed when finding the character-by-character
+            // charEnd is used when finding the character-by-character
             // break for ellipsis, concatenatedEnd is used for word-by-word
             // break for word wrapping.
             var end = concatenatedEnd || charEnd;

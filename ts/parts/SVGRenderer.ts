@@ -143,6 +143,10 @@ declare global {
             public unSubPixelFix?: Function;
             public url: string;
             public width: number;
+            public addTree(
+                def: SVGDefinitionObject|Array<SVGDefinitionObject>,
+                parent: SVGElement
+            ): SVGElement;
             public arc(attribs: SVGAttributes): SVGElement;
             public arc(
                 x?: number,
@@ -261,7 +265,7 @@ declare global {
             ): SVGElement;
             public truncate(
                 wrapper: SVGElement,
-                tspan: HTMLDOMElement,
+                tspan: HTMLDOMElement|SVGDOMElement,
                 text: (string|undefined),
                 words: (Array<string>|undefined),
                 startAt: number,
@@ -779,22 +783,27 @@ class SVGRenderer {
     }
 
     /**
-     * General method for adding a definition to the SVG `defs` tag. Can be used
-     * for gradients, fills, filters etc. Styled mode only. A hook for adding
-     * general definitions to the SVG's defs tag. Definitions can be referenced
-     * from the CSS by its `id`. Read more in
-     * [gradients, shadows and patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
-     * Styled mode only.
+     * Add a tree defined as a hierarchical JS structure to the DOM
      *
-     * @function Highcharts.SVGRenderer#definition
+     * @private
+     *
+     * @function Highcharts.SVGRenderer#addTree
      *
      * @param {Highcharts.SVGDefinitionObject} def
-     * A serialized form of an SVG definition, including children.
+     * A serialized form of an SVG subtree, including children.
+     * @param {SVGElement} parent
+     * The node where it should be added
      *
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
-    public definition(def: Highcharts.SVGDefinitionObject): SVGElement {
+    public addTree(
+        def: (
+            Highcharts.SVGDefinitionObject|
+            Array<Highcharts.SVGDefinitionObject>
+        ),
+        parent: SVGElement
+    ): SVGElement {
         var ren = this;
 
         /**
@@ -829,8 +838,9 @@ class SVGRenderer {
                 });
                 node.attr(attr);
 
+
                 // Add to the tree
-                node.add(parent || ren.defs);
+                node.add(parent);
 
                 // Add text content
                 if (item.textContent) {
@@ -848,7 +858,27 @@ class SVGRenderer {
             // Return last node added (on top level it's the only one)
             return ret;
         }
-        return recurse(def);
+        return recurse(def, parent);
+    }
+
+    /**
+     * General method for adding a definition to the SVG `defs` tag. Can be used
+     * for gradients, fills, filters etc. Styled mode only. A hook for adding
+     * general definitions to the SVG's defs tag. Definitions can be referenced
+     * from the CSS by its `id`. Read more in
+     * [gradients, shadows and patterns](https://www.highcharts.com/docs/chart-design-and-style/gradients-shadows-and-patterns).
+     * Styled mode only.
+     *
+     * @function Highcharts.SVGRenderer#definition
+     *
+     * @param {Highcharts.SVGDefinitionObject} def
+     * A serialized form of an SVG definition, including children.
+     *
+     * @return {Highcharts.SVGElement}
+     * The inserted node.
+     */
+    public definition(def: Highcharts.SVGDefinitionObject): SVGElement {
+        return this.addTree(def, this.defs);
     }
 
     /**
@@ -991,7 +1021,7 @@ class SVGRenderer {
      */
     public truncate(
         wrapper: SVGElement,
-        tspan: Highcharts.HTMLDOMElement,
+        tspan: Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement,
         text: (string|undefined),
         words: (Array<string>|undefined),
         startAt: number,
@@ -1020,7 +1050,7 @@ class SVGRenderer {
                 charEnd: number,
                 concatenatedEnd?: number
             ): number {
-                // charEnd is useed when finding the character-by-character
+                // charEnd is used when finding the character-by-character
                 // break for ellipsis, concatenatedEnd is used for word-by-word
                 // break for word wrapping.
                 var end = concatenatedEnd || charEnd;
@@ -1043,10 +1073,10 @@ class SVGRenderer {
                         }
 
                     // Legacy
-                    } else if ((renderer as any).getSpanWidth) { // #9058 jsdom
+                    } else if (renderer.getSpanWidth) { // #9058 jsdom
                         updateTSpan(getString(text || words, charEnd));
                         lengths[end] = startAt +
-                            renderer.getSpanWidth(wrapper, tspan);
+                            renderer.getSpanWidth(wrapper, tspan as any);
                     }
                 }
                 return lengths[end];

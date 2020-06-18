@@ -6,6 +6,13 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ * @todo
+ * - In parseMarkup, use DOMParser then apply tag and attribute filter
+ * - Move the trucate function here
+ * - Discuss whether this should be a separate class, or just part of the
+ *   SVGElement
+ * - Apply filter for HTML
+ * - Set up XSS tests
  * */
 'use strict';
 import H from './Globals.js';
@@ -42,8 +49,20 @@ var SVGTextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
-    SVGTextBuilder.prototype.buildText = function () {
+    // Modify the DOM by adding line breaks as x/dy in SVG
+    SVGTextBuilder.prototype.addLineBreaks = function () {
         var _this = this;
+        [].forEach.call(this.svgElement.element.querySelectorAll('br'), function (br) {
+            if (br.nextSibling) {
+                attr(br.nextSibling, {
+                    dy: _this.getLineHeight(br.nextSibling),
+                    x: attr(_this.svgElement.element, 'x')
+                });
+            }
+            br.remove();
+        });
+    };
+    SVGTextBuilder.prototype.buildText = function () {
         var wrapper = this.svgElement;
         var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, truncated = false, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
         var regexMatchBreaks = /<br.*?>/g;
@@ -82,28 +101,59 @@ var SVGTextBuilder = /** @class */ (function () {
                 // attach it to the DOM to read offset width
                 tempParent.appendChild(textNode);
             }
+            var ast = this.parseMarkup(textStr);
+            this.modifyTree(ast);
+            renderer.addTree(ast, wrapper);
+            this.addLineBreaks();
+            truncated = this.constrainLineWidth();
+            /*
+
             if (hasMarkup) {
-                lines = renderer.styledMode ? (textStr
-                    .replace(/<(b|strong)>/g, '<span class="highcharts-strong">')
-                    .replace(/<(i|em)>/g, '<span class="highcharts-emphasized">')) : (textStr
-                    .replace(/<(b|strong)>/g, '<span style="font-weight:bold">')
-                    .replace(/<(i|em)>/g, '<span style="font-style:italic">'));
-                lines = lines
+                lines = renderer.styledMode ? (
+                    textStr
+                        .replace(
+                            /<(b|strong)>/g,
+                            '<span class="highcharts-strong">'
+                        )
+                        .replace(
+                            /<(i|em)>/g,
+                            '<span class="highcharts-emphasized">'
+                        )
+                ) : (
+                    textStr
+                        .replace(
+                            /<(b|strong)>/g,
+                            '<span style="font-weight:bold">'
+                        )
+                        .replace(
+                            /<(i|em)>/g,
+                            '<span style="font-style:italic">'
+                        )
+                ) as any;
+
+                lines = (lines as any)
                     .replace(/<a/g, '<span')
                     .replace(/<\/(b|strong|i|em|a)>/g, '</span>')
                     .split(regexMatchBreaks);
-            }
-            else {
+
+            } else {
                 lines = [textStr];
             }
+
+
             // Trim empty lines (#5261)
-            lines = lines.filter(function (line) {
+            lines = lines.filter(function (line: string): boolean {
                 return line !== '';
             });
+
+
             // build the lines
-            lines.forEach(function (line, lineNo) {
-                var spans, spanNo = 0;
-                _this.lineLength = 0;
+            lines.forEach((line: string, lineNo: number): void => {
+                var spans: string[],
+                    spanNo = 0;
+
+                this.lineLength = 0;
+
                 line = line
                     // Trim to prevent useless/costly process on the spaces
                     // (#5258)
@@ -111,80 +161,128 @@ var SVGTextBuilder = /** @class */ (function () {
                     .replace(/<span/g, '|||<span')
                     .replace(/<\/span>/g, '</span>|||');
                 spans = line.split('|||');
-                spans.forEach(function (span) {
+
+                spans.forEach((span: string): void => {
                     if (span !== '' || spans.length === 1) {
-                        var attributes = {}, tspan = doc.createElementNS(renderer.SVG_NS, 'tspan'), a, classAttribute, styleAttribute, // #390
-                        hrefAttribute;
-                        classAttribute = _this.parseAttribute(span, 'class');
+                        var attributes = {} as Highcharts.SVGAttributes,
+                            tspan = doc.createElementNS(
+                                renderer.SVG_NS,
+                                'tspan'
+                            ) as any,
+                            a,
+                            classAttribute,
+                            styleAttribute, // #390
+                            hrefAttribute;
+
+                        classAttribute = this.parseAttribute(span, 'class');
                         if (classAttribute) {
                             attr(tspan, 'class', classAttribute);
                         }
-                        styleAttribute = _this.parseAttribute(span, 'style');
+
+                        styleAttribute = this.parseAttribute(span, 'style');
                         if (styleAttribute) {
-                            styleAttribute = styleAttribute.replace(/(;| |^)color([ :])/, '$1fill$2');
+                            styleAttribute = styleAttribute.replace(
+                                /(;| |^)color([ :])/,
+                                '$1fill$2'
+                            );
                             attr(tspan, 'style', styleAttribute);
                         }
+
                         // For anchors, wrap the tspan in an <a> tag and apply
                         // the href attribute as is (#13559). Not for export
                         // (#1529)
-                        hrefAttribute = _this.parseAttribute(span, 'href');
+                        hrefAttribute = this.parseAttribute(span, 'href');
                         if (hrefAttribute && !forExport) {
                             if (
-                            // Stop JavaScript links, vulnerable to XSS
-                            hrefAttribute.split(':')[0].toLowerCase()
-                                .indexOf('javascript') === -1) {
-                                a = doc.createElementNS(renderer.SVG_NS, 'a');
+                                // Stop JavaScript links, vulnerable to XSS
+                                hrefAttribute.split(':')[0].toLowerCase()
+                                    .indexOf('javascript') === -1
+                            ) {
+                                a = doc.createElementNS(
+                                    renderer.SVG_NS,
+                                    'a'
+                                ) as any;
                                 attr(a, 'href', hrefAttribute);
                                 attr(tspan, 'class', 'highcharts-anchor');
                                 a.appendChild(tspan);
+
                                 if (!renderer.styledMode) {
                                     css(tspan, { cursor: 'pointer' });
                                 }
                             }
                         }
+
                         // Strip away unsupported HTML tags (#7126)
-                        span = _this.unescapeEntities(span.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' ');
+                        span = this.unescapeEntities(
+                            span.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' '
+                        );
+
                         // Nested tags aren't supported, and cause crash in
                         // Safari (#1596)
                         if (span !== ' ') {
+
                             // add the text node
                             tspan.appendChild(doc.createTextNode(span));
+
                             // First span in a line, align it to the left
                             if (!spanNo) {
                                 if (lineNo && parentX !== null) {
                                     attributes.x = parentX;
                                 }
-                            }
-                            else {
+                            } else {
                                 attributes.dx = 0; // #16
                             }
+
                             // add attributes
                             attr(tspan, attributes);
+
                             // Append it
                             textNode.appendChild(a || tspan);
+
                             // first span on subsequent line, add the line
                             // height
                             if (!spanNo && isSubsequentLine) {
+
                                 // allow getting the right offset height in
                                 // exporting in IE
                                 if (!svg && forExport) {
                                     css(tspan, { display: 'block' });
                                 }
+
                                 // Set the line height based on the font size of
                                 // either the text element or the tspan element
-                                attr(tspan, 'dy', _this.getLineHeight(tspan));
+                                attr(
+                                    tspan,
+                                    'dy',
+                                    this.getLineHeight(tspan)
+                                );
                             }
+
                             // Check width and apply soft breaks or ellipsis
-                            truncated = _this.constrainLineWidth(span, spans, lineNo, tspan, parentX, styleAttribute);
+                            truncated = this.constrainLineWidth(
+                                span,
+                                spans,
+                                lineNo,
+                                tspan,
+                                parentX,
+                                styleAttribute
+                            );
+
                             spanNo++;
                         }
+
                     }
+
                 });
+
                 // To avoid beginning lines that doesn't add to the textNode
                 // (#6144)
-                isSubsequentLine = (isSubsequentLine ||
-                    textNode.childNodes.length);
+                isSubsequentLine = (
+                    isSubsequentLine ||
+                    textNode.childNodes.length
+                );
             });
+            */
             if (this.ellipsis && truncated) {
                 wrapper.attr('title', this.unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
                 );
@@ -199,54 +297,77 @@ var SVGTextBuilder = /** @class */ (function () {
         }
     };
     // Constrain the line width, either by ellipsis or wrapping
-    SVGTextBuilder.prototype.constrainLineWidth = function (span, spans, lineNo, tspan, parentX, styleAttribute) {
+    SVGTextBuilder.prototype.constrainLineWidth = function () {
+        var _this = this;
         var truncated = false;
-        if (this.width) {
-            var words = span.replace(/([^\^])-/g, '$1- ').split(' '), // #1273
-            hasWhiteSpace = !this.noWrap && (spans.length > 1 ||
-                lineNo ||
-                words.length > 1), wrapLineNo = 0, dy = this.getLineHeight(tspan);
-            if (this.ellipsis) {
-                truncated = this.renderer.truncate(this.svgElement, tspan, span, void 0, 0, 
-                // Target width
-                Math.max(0, 
-                // Substract the font face to make room for the ellipsis
-                // itself
-                this.width - parseInt(this.fontSize || 12, 10)), 
-                // Build the text to test for
-                function (text, currentIndex) {
-                    return text.substring(0, currentIndex) + '\u2026';
-                });
+        var width = this.width || 0;
+        if (!width) {
+            return false;
+        }
+        var tspans = [].slice.call(this.svgElement.element.getElementsByTagName('tspan'));
+        tspans.forEach(function (tspan) {
+            var text = tspan.textContent || '';
+            var words = text
+                .replace(/([^\^])-/g, '$1- ') // Split on hyphens
+                // .trim()
+                .split(' '); // #1273
+            var hasWhiteSpace = !_this.noWrap && (words.length > 1 || tspans.length > 1);
+            /*
+            hasWhiteSpace = !noWrap && (
+                // Spans is spans within this line
+                spans.length > 1 || lineNo || words.length > 1
+            )
+            */
+            var dy = _this.getLineHeight(tspan);
+            var wrapLineNo = 0;
+            if (_this.ellipsis) {
+                if (text) {
+                    truncated = _this.renderer.truncate(_this.svgElement, tspan, text, void 0, 0, 
+                    // Target width
+                    Math.max(0, 
+                    // Substract the font face to make room for the
+                    // ellipsis itself
+                    width - parseInt(_this.fontSize || 12, 10)), 
+                    // Build the text to test for
+                    function (text, currentIndex) {
+                        return text.substring(0, currentIndex) + '\u2026';
+                    });
+                }
             }
             else if (hasWhiteSpace) {
+                var lastTspan = tspan;
                 while (words.length) {
+                    var insertedTspan = void 0;
                     // For subsequent lines, create tspans with the same style
                     // attributes as the first tspan.
-                    if (words.length && !this.noWrap && wrapLineNo > 0) {
-                        tspan = doc.createElementNS(SVG_NS, 'tspan');
-                        attr(tspan, { dy: dy, x: parentX });
+                    if (words.length && !_this.noWrap && wrapLineNo > 0) {
+                        var styleAttribute = attr(tspan, 'style');
+                        var parentX = attr(_this.svgElement.element, 'x');
+                        insertedTspan = doc.createElementNS(SVG_NS, 'tspan');
+                        attr(insertedTspan, { dy: dy, x: parentX });
                         if (styleAttribute) { // #390
-                            attr(tspan, 'style', styleAttribute);
+                            attr(insertedTspan, 'style', styleAttribute);
                         }
                         // Start by appending the full remaining text
-                        tspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
-                        this.svgElement.element.appendChild(tspan);
+                        insertedTspan.appendChild(doc.createTextNode(words.join(' ').replace(/- /g, '-')));
+                        _this.svgElement.element.insertBefore(insertedTspan, lastTspan.nextSibling);
+                        lastTspan = insertedTspan;
                     }
                     // For each line, truncate the remaining
                     // words into the line length.
-                    this.renderer.truncate(this.svgElement, tspan, void 0, words, wrapLineNo === 0 ? (this.lineLength || 0) : 0, this.width, 
+                    _this.renderer.truncate(_this.svgElement, lastTspan, void 0, words, wrapLineNo === 0 ? (_this.lineLength || 0) : 0, width, 
                     // Build the text to test for
-                    function (text, currentIndex) {
+                    function (t, currentIndex) {
                         return words
                             .slice(0, currentIndex)
                             .join(' ')
                             .replace(/- /g, '-');
                     });
-                    this.lineLength = this.svgElement.actualWidth;
+                    _this.lineLength = _this.svgElement.actualWidth;
                     wrapLineNo++;
                 }
             }
-        }
+        });
         return truncated;
     };
     SVGTextBuilder.prototype.getLineHeight = function (tspan) {
@@ -263,6 +384,43 @@ var SVGTextBuilder = /** @class */ (function () {
             // Get the computed size from parent if not explicit
             (tspan.getAttribute('style') ? tspan : this.svgElement.element)).h;
     };
+    // Transform HTML to SVG, validate
+    SVGTextBuilder.prototype.modifyTree = function (elements) {
+        var _this = this;
+        elements.forEach(function (elem, i) {
+            var tagName = elem.tagName;
+            var styledMode = _this.renderer.styledMode;
+            // Apply styling to text tags
+            if (tagName === 'b' || tagName === 'strong') {
+                if (styledMode) {
+                    elem.class = 'highcharts-strong';
+                }
+                else {
+                    elem.style = 'font-weight:bold;' + (elem.style || '');
+                }
+            }
+            else if (tagName === 'i' || tagName === 'em') {
+                if (styledMode) {
+                    elem.class = 'highcharts-emphasized';
+                }
+                else {
+                    elem.style = 'font-style:italic;' + (elem.style || '');
+                }
+            }
+            // Modify attributes
+            if (isString(elem.style)) {
+                elem.style = elem.style.replace(/(;| |^)color([ :])/, '$1fill$2');
+            }
+            if (isString(elem.href) &&
+                elem.href.split(':')[0].toLowerCase()
+                    .indexOf('javascript') !== -1) {
+                delete elem.href;
+            }
+            if (tagName !== 'a' && tagName !== 'br') {
+                elem.tagName = 'tspan';
+            }
+        });
+    };
     SVGTextBuilder.prototype.parseAttribute = function (s, attr) {
         var start, delimiter;
         start = s.indexOf('<');
@@ -276,6 +434,47 @@ var SVGTextBuilder = /** @class */ (function () {
                 return s.substring(0, s.indexOf(delimiter));
             }
         }
+    };
+    /*
+     * @param markup
+     */
+    SVGTextBuilder.prototype.parseMarkup = function (markup) {
+        var _this = this;
+        var allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong']
+            .join('|');
+        var allowedAttributes = ['class', 'href', 'style'];
+        var elements = markup
+            // Trim to prevent useless/costly process on the spaces
+            // (#5258)
+            .replace(/^\s+|\s+$/g, '')
+            .replace(/<br.*?>/g, '<br></br>')
+            .replace(new RegExp("<(" + allowedTags + ")( |>)", 'gi'), '|||<$1$2')
+            .replace(new RegExp("</(" + allowedTags + ")>", 'gi'), '</$1>|||')
+            .split('|||')
+            .filter(function (line) { return line !== ''; })
+            .map(function (s) {
+            var obj = {
+                tagName: 'span'
+            };
+            var m = s.match(new RegExp("^<(" + allowedTags + ")( |>)", 'i'));
+            if (m) {
+                obj.tagName = m[1];
+            }
+            // When the allowed tags are handled, strip away all other tags
+            var textContent = _this.unescapeEntities(s.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' ');
+            if (textContent) {
+                obj.textContent = textContent;
+            }
+            // Allowed attributes
+            allowedAttributes.forEach(function (attributeName) {
+                var value = _this.parseAttribute(s, attributeName);
+                if (value) {
+                    obj[attributeName] = value;
+                }
+            });
+            return obj;
+        });
+        return elements;
     };
     SVGTextBuilder.prototype.unescapeEntities = function (inputStr, except) {
         objectEach(this.renderer.escapes, function (value, key) {
