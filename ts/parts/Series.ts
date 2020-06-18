@@ -227,6 +227,7 @@ declare global {
             public redrawPoints(): void;
             public removeEvents(keepEventsForUpdate?: boolean): void;
             public render(): void;
+            public renderAsLegendItem(): void;
             public searchKDTree(
                 point: KDPointSearchObject,
                 compareX?: boolean,
@@ -7135,6 +7136,8 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 0;
         },
 
+        
+
         /**
          * @private
          * @function Highcharts.Series#isPointInside
@@ -7154,7 +7157,10 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 point.plotX <= this.xAxis.len;
 
             return isInside;
-        }
+        },
+
+        // Rendering of series' and point's as legend items is very similar.
+        renderAsLegendItem: H.Point.prototype.renderAsLegendItem
     }
 ) as any; // end Series prototype
 

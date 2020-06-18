@@ -1008,6 +1008,147 @@ class Point {
         return ret;
     }
 
+    public renderAsLegendItem(
+        // TODO: fix TS
+        this: any // Highcharts.Series | Highcharts.Point
+    ): void {
+        var item = this,
+            legend = item.legend,
+            chart = legend.chart,
+            renderer = chart.renderer,
+            options = legend.options,
+            horizontal = options.layout === 'horizontal',
+            symbolWidth = legend.symbolWidth,
+            symbolPadding = options.symbolPadding,
+            itemStyle = legend.itemStyle,
+            itemHiddenStyle = legend.itemHiddenStyle,
+            itemDistance = horizontal ? pick(options.itemDistance, 20) : 0,
+            ltr = !options.rtl,
+            bBox,
+            li = item.legendItem,
+            isSeries = !(item as any).series,
+            series = !isSeries && (item as any).series.drawLegendSymbol ?
+                (item as any).series :
+                item,
+            seriesOptions = series.options,
+            showCheckbox = legend.createCheckboxForItem &&
+                seriesOptions &&
+                seriesOptions.showCheckbox,
+            // full width minus text width
+            itemExtraWidth = symbolWidth + (symbolPadding as any) +
+                itemDistance + (showCheckbox ? 20 : 0),
+            useHTML = options.useHTML,
+            itemClassName = item.options.className;
+
+        if (!li) { // generate it once, later move it
+
+            // Generate the group box, a group to hold the symbol and text. Text
+            // is to be appended in Legend class.
+            item.legendGroup = renderer
+                .g('legend-item')
+                .addClass(
+                    'highcharts-' + series.type + '-series ' +
+                    'highcharts-color-' + (item as any).colorIndex +
+                    (itemClassName ? ' ' + itemClassName : '') +
+                    (
+                        isSeries ?
+                            ' highcharts-series-' + (item as any).index :
+                            ''
+                    )
+                )
+                .attr({ zIndex: 1 })
+                .add(legend.scrollGroup);
+
+            // Generate the list item text and add it to the group
+            item.legendItem = li = renderer.text(
+                '',
+                ltr ?
+                    symbolWidth + (symbolPadding as any) :
+                    -(symbolPadding as any),
+                legend.baseline || 0,
+                useHTML
+            );
+
+            if (!chart.styledMode) {
+                // merge to prevent modifying original (#1021)
+                li.css(H.merge(
+                    (item as any).visible ?
+                        (itemStyle as any) :
+                        (itemHiddenStyle as any)
+                ));
+            }
+
+            li
+                .attr({
+                    align: ltr ? 'left' : 'right',
+                    zIndex: 2
+                })
+                .add(item.legendGroup);
+
+            if (!legend.fontMetrics) {
+                legend.fontMetrics = renderer.fontMetrics(
+                    chart.styledMode ? 12 : (itemStyle as any).fontSize as any,
+                    li
+                );
+            }
+
+            // Get the baseline for the first item - the font size is equal for
+            // all
+            if (!legend.baseline) {
+                legend.baseline =
+                    legend.fontMetrics.f + 3 + legend.itemMarginTop;
+                li.attr('y', (legend.baseline as any));
+            }
+
+            // Draw the legend symbol inside the group box
+            legend.symbolHeight =
+                options.symbolHeight || (legend.fontMetrics as any).f;
+            series.drawLegendSymbol(legend, item);
+
+            if (legend.setItemEvents) {
+                legend.setItemEvents(item, li, useHTML);
+            }
+
+        }
+
+        // Add the HTML checkbox on top
+        if (showCheckbox && !item.checkbox) {
+            legend.createCheckboxForItem(item);
+        }
+
+        // Colorize the items
+        legend.colorizeItem(item, item.visible);
+
+        // Take care of max width and text overflow (#6659)
+        if (chart.styledMode || !(itemStyle as any).width) {
+            li.css({
+                width: (
+                    options.itemWidth ||
+                    legend.widthOption ||
+                    (chart.spacingBox as any).width
+                ) - itemExtraWidth
+            });
+        }
+
+        // Always update the text
+        legend.setText(item);
+
+        // calculate the positions for the next line
+        bBox = li.getBBox();
+
+        item.itemWidth = item.checkboxOffset =
+            options.itemWidth ||
+            item.legendItemWidth ||
+            bBox.width + itemExtraWidth;
+        legend.maxItemWidth = Math.max(
+            legend.maxItemWidth, (item.itemWidth as any)
+        );
+        legend.totalItemWidth += item.itemWidth as any;
+        legend.itemHeight = item.itemHeight = Math.round(
+            item.legendItemHeight || bBox.height || legend.symbolHeight
+        );
+    }
+
     /**
      * @private
      * @function Highcharts.Point#resolveColor

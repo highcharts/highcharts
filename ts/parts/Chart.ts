@@ -784,7 +784,7 @@ class Chart {
                     if ((serie as Partial<Highcharts.PieSeries>).updateTotals) {
                         (serie as Highcharts.PieSeries).updateTotals();
                     }
-                    redrawLegend = true;
+                    chart.isDirtyLegend = true;
                 } else if (
                     legendUserOptions &&
                     (
@@ -792,7 +792,7 @@ class Chart {
                         legendUserOptions.labelFormat
                     )
                 ) {
-                    redrawLegend = true; // #2165
+                    chart.isDirtyLegend = true; // #2165
                 }
             }
             if (serie.isDirtyData) {
@@ -801,12 +801,7 @@ class Chart {
         });
 
         // handle added or removed series
-        if (redrawLegend && legend && legend.options.enabled) {
-            // draw legend graphics
-            legend.render();
-
-            chart.isDirtyLegend = false;
-        }
+        chart.redrawLegend();
 
         // reset stacks
         if (hasStackedSeries) {
@@ -1601,8 +1596,8 @@ class Chart {
         }
 
         // Adjust for legend
-        if (this.legend && this.legend.display) {
-            this.legend.adjustMargins(margin, spacing);
+        if (this.legend && (this.legend as Highcharts.Legend).display) {
+            (this.legend as Highcharts.Legend).adjustMargins(margin, spacing);
         }
 
         fireEvent(this, 'getMargins');
@@ -2349,13 +2344,7 @@ class Chart {
         // Title
         chart.setTitle();
 
-        /**
-         * The overview of the chart's series.
-         *
-         * @name Highcharts.Chart#legend
-         * @type {Highcharts.Legend}
-         */
-        chart.legend = new Legend(chart, options.legend as any);
+        chart.renderLegend();
 
         // Get stacks
         if (chart.getStacks) {
@@ -2450,6 +2439,43 @@ class Chart {
         chart.hasRendered = true;
 
     }
+
+
+     /**
+     * This method provides the logic for rendering the legend.
+     * In its basic form it's simple new Legend() call. It is
+     * redefined in Advanced Legend Module.
+     *
+     * @private
+     * @function Highcharts.Chart#renderLegend
+     * @return {void}
+     */
+    public renderLegend(): void {
+        /**
+         * The overview of the chart's series.
+         *
+         * @name Highcharts.Chart#legend
+         * @type {Highcharts.Legend}
+         */
+        this.legend = new Legend(this, this.options.legend as any);
+    }
+
+    /**
+     * This method provides the logic for redrawing the legend.
+     *
+     * @private
+     * @function Highcharts.Chart#redrawLegend
+     * @return {void}
+     */
+    public redrawLegend(): void {
+        var legend = this.legend as Highcharts.Legend;
+        // handle added or removed series
+        if (this.isDirtyLegend && legend && legend.options.enabled) {
+            // draw legend graphics
+            legend.render();
+            this.isDirtyLegend = false;
+        }
+    }	    
 
     /**
      * Set a new credits label for the chart.
