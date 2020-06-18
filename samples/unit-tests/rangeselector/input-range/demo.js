@@ -333,3 +333,21 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
         'Extremes are updated.'
     );
 });
+
+QUnit.test('Range selector value on change should change properly (#13205)', function (assert) {
+    const newDate = new Date(),
+        date = '2020-04-02 00:00:00.000',
+        defaultInputDateParser = Highcharts.RangeSelector.prototype.defaultInputDateParser,
+        offset = newDate.getTimezoneOffset();
+
+    assert.strictEqual(
+        Math.abs(offset * 60 * 1000),
+        defaultInputDateParser(date, false) - Date.parse(date),
+        'When useUTC: false- function returns correct values.'
+    );
+    assert.strictEqual(
+        Math.abs(offset * 60 * 1000),
+        defaultInputDateParser(date, true) - Date.parse(date),
+        'When useUTC: true- function returns correct values.'
+    );
+});
