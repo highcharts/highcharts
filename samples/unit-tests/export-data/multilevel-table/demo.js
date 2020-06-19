@@ -220,11 +220,9 @@ QUnit.test('Internationalize export-data table words.', function (assert) {
             name: 'Test series',
             data: [5, 10, 8],
             xAxis: 1
-        }],
-        exporting: {
-            showTable: true
-        }
+        }]
     });
+    chart.viewData();
 
     assert.equal(
         chart.getTable()
@@ -235,5 +233,149 @@ QUnit.test('Internationalize export-data table words.', function (assert) {
         '<th scope="col" class="text">DateTime</th><th scope="col" class="text">Test series</th></tr></thead><tbody><tr><th scope="row" class="text">First</th><td class="number">4</td><td class="text">1970-01-01 00:00:00</td>' +
         '<td class="number">5</td></tr><tr><th scope="row" class="text">Second</th><td class="number">3</td><td class="text">1970-01-01 00:00:00</td><td class="number">10</td></tr><tr><th scope="row" class="text">Third</th><td class="number">5</td><td class="text">1970-01-01 00:00:00</td><td class="number">8</td></tr></tbody></table>',
         'Table should look like this.'
+    );
+});
+
+QUnit.test('Annotation labels in export-data table.', function (assert) {
+
+    var chart = Highcharts.chart('container', {
+
+        title: {
+            text: 'Annotation labels in export-data table.'
+        },
+
+        series: [{
+            data: [29, {
+                y: 71,
+                id: 'pointI'
+            }, 106, 129, 144]
+        }, {
+            data: [2, 11, 60, {
+                y: 44,
+                id: 'pointII'
+            }, 44]
+        }],
+
+        annotations: [{
+            labels: [{
+                point: 'pointI',
+                text: 'Annotation I for pointI'
+            }, {
+                point: 'pointII',
+                text: 'Annotation II for pointII'
+            }, {
+                point: {
+                    xAxis: 0,
+                    x: 1.5,
+                    yAxis: 0,
+                    y: 50
+                },
+                text: 'Annotation I connected with axis'
+            }, {
+                point: {
+                    xAxis: 0,
+                    x: 1,
+                    yAxis: 0,
+                    y: 50
+                },
+                text: 'Annotation II connected with axis'
+            }, {
+                point: {
+                    x: 1,
+                    y: 50
+                },
+                text: 'Freestanding annotation'
+            }, {
+                point: {
+                    xAxis: 0,
+                    x: 2.5,
+                    yAxis: 0,
+                    y: 50
+                },
+                text: 'Annotation I connected with axis, and having the same point as other annotation.'
+            }]
+        }]
+    });
+
+    // Enhancement #12789
+    assert.equal(
+        chart.getTable()
+            // Remove the extra attributes from accessibility module, needed if
+            // running as "gulp test".
+            .replace(/<table[^>]+>/g, '<table>'),
+        '<table><caption class="highcharts-table-caption">Annotation labels in export-data table.</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Series 1</th><th scope="col" class="text">Series 2</th><th scope="col" class="text">Annotations 1</th><th scope="col" class="text">Annotations 2</th></tr></thead>' +
+        '<tbody><tr><th scope="row" class="number">0</th><td class="number">29</td><td class="number">2</td><td class="empty"></td><td class="empty"></td></tr><tr><th scope="row" class="number">1</th><td class="number">71</td><td class="number">11</td><td class="text">Annotation I for pointI</td><td class="text">Annotation II connected with axis</td></tr><tr>' +
+        '<th scope="row" class="number">2</th><td class="number">106</td><td class="number">60</td><td class="empty"></td><td class="empty"></td></tr><tr><th scope="row" class="number">3</th><td class="number">129</td><td class="number">44</td><td class="text">Annotation II for pointII</td><td class="empty"></td></tr><tr><th scope="row" class="number">4</th>' +
+        '<td class="number">144</td><td class="number">44</td><td class="empty"></td><td class="empty"></td></tr><tr><th scope="row" class="number">1.5</th><td class="empty"></td><td class="empty"></td><td class="text">Annotation I connected with axis</td><td class="empty"></td></tr><tr><th scope="row" class="empty"></th><td class="empty"></td><td class="empty"></td>' +
+        '<td class="text">Freestanding annotation</td><td class="empty"></td></tr><tr><th scope="row" class="number">2.5</th><td class="empty"></td><td class="empty"></td><td class="text">Annotation I connected with axis, and having the same point as other annotation.</td><td class="empty"></td></tr></tbody></table>',
+        'Table should look like this with annotations (12789).'
+    );
+
+    chart.update({
+        annotations: [{
+            labelOptions: {
+                includeInDataExport: true
+            },
+            labels: [{
+                point: 'pointI',
+                text: 'This is my annotation I'
+            }]
+        }, {
+            labelOptions: {
+                includeInDataExport: false
+            },
+            labels: [{
+                point: 'pointII',
+                text: 'This is my annotation II'
+            }]
+        }]
+    });
+
+    // Enhancement #12789
+    assert.equal(
+        chart.getTable()
+            // Remove the extra attributes from accessibility module, needed if
+            // running as "gulp test".
+            .replace(/<table[^>]+>/g, '<table>'),
+        '<table><caption class="highcharts-table-caption">Annotation labels in export-data table.</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Series 1</th><th scope="col" class="text">Series 2</th><th scope="col" class="text">Annotations 1</th></tr></thead>' +
+        '<tbody><tr><th scope="row" class="number">0</th><td class="number">29</td><td class="number">2</td><td class="empty"></td></tr><tr><th scope="row" class="number">1</th><td class="number">71</td><td class="number">11</td><td class="text">This is my annotation I</td></tr><tr><th scope="row" class="number">2</th>' +
+        '<td class="number">106</td><td class="number">60</td><td class="empty"></td></tr><tr><th scope="row" class="number">3</th><td class="number">129</td><td class="number">44</td><td class="empty"></td></tr><tr><th scope="row" class="number">4</th><td class="number">144</td><td class="number">44</td><td class="empty"></td></tr></tbody></table>',
+        'Table should look like this with includeInDataExport set (12789).'
+    );
+
+    chart.update({
+        annotations: [{
+            labels: [{
+                point: 'pointI',
+                text: 'This is my annotation I for point I',
+                y: -50
+            }, {
+                point: 'pointI',
+                text: 'This is my annotation II for point I'
+            }, {
+                point: 'pointII',
+                text: 'This is my annotation I for point II'
+            }]
+        }],
+
+        exporting: {
+            csv: {
+                joinAnnotations: true,
+                annotationSeparator: ' / '
+            }
+        }
+    });
+
+    // Enhancement #12789
+    assert.equal(
+        chart.getTable()
+            // Remove the extra attributes from accessibility module, needed if
+            // running as "gulp test".
+            .replace(/<table[^>]+>/g, '<table>'),
+        '<table><caption class="highcharts-table-caption">Annotation labels in export-data table.</caption><thead><tr><th scope="col" class="text">Category</th><th scope="col" class="text">Series 1</th><th scope="col" class="text">Series 2</th><th scope="col" class="text">Annotations 1</th></tr></thead>' +
+        '<tbody><tr><th scope="row" class="number">0</th><td class="number">29</td><td class="number">2</td><td class="empty"></td></tr><tr><th scope="row" class="number">1</th><td class="number">71</td><td class="number">11</td><td class="text">This is my annotation I for point I / This is my annotation II for point I</td></tr><tr>' +
+        '<th scope="row" class="number">2</th><td class="number">106</td><td class="number">60</td><td class="empty"></td></tr><tr><th scope="row" class="number">3</th><td class="number">129</td><td class="number">44</td><td class="text">This is my annotation I for point II</td></tr><tr><th scope="row" class="number">4</th>' +
+        '<td class="number">144</td><td class="number">44</td><td class="empty"></td></tr></tbody></table>',
+        'Table should look like this with set joinAnnotations and annotationSeparator (12789).'
     );
 });
