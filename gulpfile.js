@@ -40,6 +40,7 @@ Gulp.registry(new GulpForwardReference());
     'dist-upload-errors',
     'dist-upload-samples-data',
     'dist-upload-studies',
+    'dist-upload-more',
     'jsdoc',
     'jsdoc-classes',
     'jsdoc-clean',
