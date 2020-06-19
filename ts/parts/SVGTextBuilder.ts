@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * @todo
- * - Move the trucate function here
+ * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
  *   SVGElement
  * - Apply filter for HTML, including enableSimpleHTML option (or similar)
@@ -71,7 +71,6 @@ class SVGTextBuilder {
 
     public ellipsis: boolean;
     public fontSize: any;
-    public lineLength?: number;
     public noWrap: boolean;
     public renderer: Highcharts.Renderer;
     public svgElement: Highcharts.SVGElement;
@@ -84,7 +83,7 @@ class SVGTextBuilder {
         [].forEach.call(
             this.svgElement.element.querySelectorAll('br'),
             (br: SVGElement|HTMLElement): void => {
-                if (br.nextSibling) {
+                if (br.nextSibling && br.previousSibling) { // #5261
                     attr(br.nextSibling as SVGElement, {
                         dy: this.getLineHeight(br.nextSibling as SVGElement),
                         x: attr(this.svgElement.element, 'x')
@@ -365,6 +364,7 @@ class SVGTextBuilder {
     private constrainLineWidth(): boolean {
 
         let truncated = false;
+        let lineLength = 0;
         const width = this.width || 0;
         if (!width) {
             return false;
@@ -392,6 +392,12 @@ class SVGTextBuilder {
             const dy = this.getLineHeight(tspan);
 
             let wrapLineNo = 0;
+
+            // First tspan after a <br>
+            if (tspan.getAttribute('x') !== null) {
+                lineLength = 0;
+            }
+
             if (this.ellipsis) {
                 if (text) {
                     truncated = this.renderer.truncate(
@@ -449,7 +455,7 @@ class SVGTextBuilder {
                         lastTspan,
                         void 0,
                         words,
-                        wrapLineNo === 0 ? (this.lineLength || 0) : 0,
+                        wrapLineNo === 0 ? (lineLength || 0) : 0,
                         width,
                         // Build the text to test for
                         function (t: string, currentIndex: number): string {
@@ -460,7 +466,7 @@ class SVGTextBuilder {
                         }
                     );
 
-                    this.lineLength = this.svgElement.actualWidth;
+                    lineLength = this.svgElement.actualWidth;
                     wrapLineNo++;
                 }
             }
@@ -615,49 +621,6 @@ class SVGTextBuilder {
         );
 
         return tree;
-
-        /*
-        const allowedTagsJoined = allowedTags.join('|');
-        const elements = markup
-            // Trim to prevent useless/costly process on the spaces
-            // (#5258)
-            .replace(/^\s+|\s+$/g, '')
-            .replace(/<br.*?>/g, '<br></br>')
-            .replace(new RegExp(`<(${allowedTagsJoined})( |>)`, 'gi'), '|||<$1$2')
-            .replace(new RegExp(`<\/(${allowedTagsJoined})>`, 'gi'), '</$1>|||')
-            .split('|||')
-            .filter((line): boolean => line !== '')
-            .map((s): Highcharts.SVGDefinitionObject => {
-                const obj: Highcharts.SVGDefinitionObject = {
-                    tagName: 'span'
-                };
-                const m = s.match(new RegExp(`^<(${allowedTags})( |>)`, 'i'));
-                if (m) {
-                    obj.tagName = m[1];
-                }
-
-                // When the allowed tags are handled, strip away all other tags
-                const textContent = this.unescapeEntities(
-                    s.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' '
-                );
-                if (textContent) {
-                    obj.textContent = textContent;
-                }
-
-                // Allowed attributes
-                allowedAttributes.forEach((attributeName): void => {
-                    const value = this.parseAttribute(s, attributeName);
-                    if (value) {
-                        obj[attributeName] = value;
-                    }
-                });
-
-                return obj;
-            });
-
-
-        return elements;
-        */
     }
 
     private unescapeEntities(

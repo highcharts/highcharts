@@ -7,7 +7,7 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * @todo
- * - Move the trucate function here
+ * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
  *   SVGElement
  * - Apply filter for HTML, including enableSimpleHTML option (or similar)
@@ -54,7 +54,7 @@ var SVGTextBuilder = /** @class */ (function () {
     SVGTextBuilder.prototype.addLineBreaks = function () {
         var _this = this;
         [].forEach.call(this.svgElement.element.querySelectorAll('br'), function (br) {
-            if (br.nextSibling) {
+            if (br.nextSibling && br.previousSibling) { // #5261
                 attr(br.nextSibling, {
                     dy: _this.getLineHeight(br.nextSibling),
                     x: attr(_this.svgElement.element, 'x')
@@ -301,6 +301,7 @@ var SVGTextBuilder = /** @class */ (function () {
     SVGTextBuilder.prototype.constrainLineWidth = function () {
         var _this = this;
         var truncated = false;
+        var lineLength = 0;
         var width = this.width || 0;
         if (!width) {
             return false;
@@ -321,6 +322,10 @@ var SVGTextBuilder = /** @class */ (function () {
             */
             var dy = _this.getLineHeight(tspan);
             var wrapLineNo = 0;
+            // First tspan after a <br>
+            if (tspan.getAttribute('x') !== null) {
+                lineLength = 0;
+            }
             if (_this.ellipsis) {
                 if (text) {
                     truncated = _this.renderer.truncate(_this.svgElement, tspan, text, void 0, 0, 
@@ -356,7 +361,7 @@ var SVGTextBuilder = /** @class */ (function () {
                     }
                     // For each line, truncate the remaining
                     // words into the line length.
-                    _this.renderer.truncate(_this.svgElement, lastTspan, void 0, words, wrapLineNo === 0 ? (_this.lineLength || 0) : 0, width, 
+                    _this.renderer.truncate(_this.svgElement, lastTspan, void 0, words, wrapLineNo === 0 ? (lineLength || 0) : 0, width, 
                     // Build the text to test for
                     function (t, currentIndex) {
                         return words
@@ -364,7 +369,7 @@ var SVGTextBuilder = /** @class */ (function () {
                             .join(' ')
                             .replace(/- /g, '-');
                     });
-                    _this.lineLength = _this.svgElement.actualWidth;
+                    lineLength = _this.svgElement.actualWidth;
                     wrapLineNo++;
                 }
             }
@@ -479,48 +484,6 @@ var SVGTextBuilder = /** @class */ (function () {
         };
         doc.body.childNodes.forEach(function (childNode) { return validateChildNodes(childNode, tree); });
         return tree;
-        /*
-        const allowedTagsJoined = allowedTags.join('|');
-        const elements = markup
-            // Trim to prevent useless/costly process on the spaces
-            // (#5258)
-            .replace(/^\s+|\s+$/g, '')
-            .replace(/<br.*?>/g, '<br></br>')
-            .replace(new RegExp(`<(${allowedTagsJoined})( |>)`, 'gi'), '|||<$1$2')
-            .replace(new RegExp(`<\/(${allowedTagsJoined})>`, 'gi'), '</$1>|||')
-            .split('|||')
-            .filter((line): boolean => line !== '')
-            .map((s): Highcharts.SVGDefinitionObject => {
-                const obj: Highcharts.SVGDefinitionObject = {
-                    tagName: 'span'
-                };
-                const m = s.match(new RegExp(`^<(${allowedTags})( |>)`, 'i'));
-                if (m) {
-                    obj.tagName = m[1];
-                }
-
-                // When the allowed tags are handled, strip away all other tags
-                const textContent = this.unescapeEntities(
-                    s.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' '
-                );
-                if (textContent) {
-                    obj.textContent = textContent;
-                }
-
-                // Allowed attributes
-                allowedAttributes.forEach((attributeName): void => {
-                    const value = this.parseAttribute(s, attributeName);
-                    if (value) {
-                        obj[attributeName] = value;
-                    }
-                });
-
-                return obj;
-            });
-
-
-        return elements;
-        */
     };
     SVGTextBuilder.prototype.unescapeEntities = function (inputStr, except) {
         objectEach(this.renderer.escapes, function (value, key) {
