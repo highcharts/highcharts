@@ -350,6 +350,8 @@ extend(defaultOptions, {
         /**
          * A custom callback function to parse values entered in the input boxes
          * and return a valid JavaScript time as milliseconds since 1970.
+         * The first argument passed is a value to parse,
+         * second is a boolean indicating use of the UTC time.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
@@ -881,9 +883,7 @@ var RangeSelector = /** @class */ (function () {
         if (useUTC) {
             return Date.parse(inputDate + 'GMT');
         }
-        else {
-            return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
-        }
+        return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
     };
     /**
      * Draw either the 'from' or the 'to' HTML input box of the range selector
