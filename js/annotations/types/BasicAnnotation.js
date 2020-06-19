@@ -50,7 +50,7 @@ var BasicAnnotation = /** @class */ (function (_super) {
             if (options.shapes[0].type === 'circle') {
                 this.basicType = 'circle';
             }
-            else if (options.shapes[0].type === 'path') {
+            else {
                 this.basicType = 'rectangle';
             }
         }

@@ -227,7 +227,7 @@ class BasicAnnotation extends Annotation {
             delete options.labelOptions;
             if (options.shapes[0].type === 'circle') {
                 this.basicType = 'circle';
-            } else if (options.shapes[0].type === 'path') {
+            } else {
                 this.basicType = 'rectangle';
             }
         } else {
