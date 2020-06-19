@@ -61,7 +61,7 @@ declare global {
             (e: Event): (boolean|undefined);
         }
         interface RangeSelectorParseCallbackFunction {
-            (value: string): number;
+            (value: string, useUTC: boolean): number;
         }
         interface RangeSelectorButtonPositionOptions {
             align?: AlignValue;
@@ -526,6 +526,8 @@ extend(defaultOptions, {
         /**
          * A custom callback function to parse values entered in the input boxes
          * and return a valid JavaScript time as milliseconds since 1970.
+         * The first argument passed is a value to parse,
+         * second is a boolean indicating use of the UTC time.
          *
          * @sample {highstock} stock/rangeselector/input-format/
          *         Milliseconds in the range selector
