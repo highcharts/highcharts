@@ -7,12 +7,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * @todo
- * - In parseMarkup, use DOMParser then apply tag and attribute filter
  * - Move the trucate function here
  * - Discuss whether this should be a separate class, or just part of the
  *   SVGElement
- * - Apply filter for HTML
+ * - Apply filter for HTML, including enableSimpleHTML option (or similar)
  * - Set up XSS tests
+ * - Make allowedTags and allowedAttributes configurable
+ * - Rename SVGDefinitionObject to something more general
  * */
 'use strict';
 import H from './Globals.js';
@@ -439,42 +440,87 @@ var SVGTextBuilder = /** @class */ (function () {
      * @param markup
      */
     SVGTextBuilder.prototype.parseMarkup = function (markup) {
-        var _this = this;
-        var allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong']
-            .join('|');
+        var allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong', '#text'];
         var allowedAttributes = ['class', 'href', 'style'];
-        var elements = markup
+        var tree = [];
+        var doc = new DOMParser().parseFromString(markup, 'text/html');
+        var validateChildNodes = function (node, addTo) {
+            var _a;
+            var tagName = node.nodeName.toLowerCase();
+            // Add allowed tags
+            if (allowedTags.indexOf(tagName) !== -1) {
+                var textContent_1 = (_a = node.textContent) === null || _a === void 0 ? void 0 : _a.toString();
+                var astNode_1 = {
+                    tagName: tagName,
+                    textContent: textContent_1
+                };
+                // Add allowed attributes
+                allowedAttributes.forEach(function (name) {
+                    if (node.getAttribute) {
+                        var value = node.getAttribute(name);
+                        if (value !== null) {
+                            astNode_1[name] = value;
+                        }
+                    }
+                });
+                // Handle children
+                if (node.childNodes.length) {
+                    var children_1 = [];
+                    node.childNodes.forEach(function (childNode) {
+                        if (childNode.nodeName !== '#text' ||
+                            childNode.textContent !== textContent_1) {
+                            validateChildNodes(childNode, children_1);
+                        }
+                    });
+                    astNode_1.children = children_1;
+                }
+                addTo.push(astNode_1);
+            }
+        };
+        doc.body.childNodes.forEach(function (childNode) { return validateChildNodes(childNode, tree); });
+        return tree;
+        /*
+        const allowedTagsJoined = allowedTags.join('|');
+        const elements = markup
             // Trim to prevent useless/costly process on the spaces
             // (#5258)
             .replace(/^\s+|\s+$/g, '')
             .replace(/<br.*?>/g, '<br></br>')
-            .replace(new RegExp("<(" + allowedTags + ")( |>)", 'gi'), '|||<$1$2')
-            .replace(new RegExp("</(" + allowedTags + ")>", 'gi'), '</$1>|||')
+            .replace(new RegExp(`<(${allowedTagsJoined})( |>)`, 'gi'), '|||<$1$2')
+            .replace(new RegExp(`<\/(${allowedTagsJoined})>`, 'gi'), '</$1>|||')
             .split('|||')
-            .filter(function (line) { return line !== ''; })
-            .map(function (s) {
-            var obj = {
-                tagName: 'span'
-            };
-            var m = s.match(new RegExp("^<(" + allowedTags + ")( |>)", 'i'));
-            if (m) {
-                obj.tagName = m[1];
-            }
-            // When the allowed tags are handled, strip away all other tags
-            var textContent = _this.unescapeEntities(s.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' ');
-            if (textContent) {
-                obj.textContent = textContent;
-            }
-            // Allowed attributes
-            allowedAttributes.forEach(function (attributeName) {
-                var value = _this.parseAttribute(s, attributeName);
-                if (value) {
-                    obj[attributeName] = value;
+            .filter((line): boolean => line !== '')
+            .map((s): Highcharts.SVGDefinitionObject => {
+                const obj: Highcharts.SVGDefinitionObject = {
+                    tagName: 'span'
+                };
+                const m = s.match(new RegExp(`^<(${allowedTags})( |>)`, 'i'));
+                if (m) {
+                    obj.tagName = m[1];
                 }
+
+                // When the allowed tags are handled, strip away all other tags
+                const textContent = this.unescapeEntities(
+                    s.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' '
+                );
+                if (textContent) {
+                    obj.textContent = textContent;
+                }
+
+                // Allowed attributes
+                allowedAttributes.forEach((attributeName): void => {
+                    const value = this.parseAttribute(s, attributeName);
+                    if (value) {
+                        obj[attributeName] = value;
+                    }
+                });
+
+                return obj;
             });
-            return obj;
-        });
+
+
         return elements;
+        */
     };
     SVGTextBuilder.prototype.unescapeEntities = function (inputStr, except) {
         objectEach(this.renderer.escapes, function (value, key) {

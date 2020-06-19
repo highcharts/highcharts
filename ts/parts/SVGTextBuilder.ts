@@ -7,12 +7,13 @@
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
  * @todo
- * - In parseMarkup, use DOMParser then apply tag and attribute filter
  * - Move the trucate function here
  * - Discuss whether this should be a separate class, or just part of the
  *   SVGElement
- * - Apply filter for HTML
+ * - Apply filter for HTML, including enableSimpleHTML option (or similar)
  * - Set up XSS tests
+ * - Make allowedTags and allowedAttributes configurable
+ * - Rename SVGDefinitionObject to something more general
  * */
 
 'use strict';
@@ -556,16 +557,74 @@ class SVGTextBuilder {
      * @param markup
      */
     private parseMarkup(markup: string): Highcharts.SVGDefinitionObject[] {
-        const allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong']
-            .join('|');
+        const allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong', '#text'];
         const allowedAttributes = ['class', 'href', 'style'];
+
+        const tree: Highcharts.SVGDefinitionObject[] = [];
+        const doc = new DOMParser().parseFromString(markup, 'text/html');
+
+        const validateChildNodes = (
+            node: ChildNode,
+            addTo: Highcharts.SVGDefinitionObject[]
+        ): void => {
+            const tagName = node.nodeName.toLowerCase();
+
+            // Add allowed tags
+            if (allowedTags.indexOf(tagName) !== -1) {
+                const textContent = node.textContent?.toString();
+                const astNode: Highcharts.SVGDefinitionObject = {
+                    tagName,
+                    textContent
+                };
+
+                // Add allowed attributes
+                allowedAttributes.forEach((name): void => {
+                    if ((node as any).getAttribute) {
+                        const value = (node as any).getAttribute(name);
+                        if (value !== null) {
+                            astNode[name] = value;
+                        }
+                    }
+                });
+
+                // Handle children
+                if (node.childNodes.length) {
+                    const children: Highcharts.SVGDefinitionObject[] = [];
+                    node.childNodes.forEach(
+                        (childNode): void => {
+                            if (
+                                childNode.nodeName !== '#text' ||
+                                childNode.textContent !== textContent
+                            ) {
+                                validateChildNodes(
+                                    childNode,
+                                    children
+                                );
+                            }
+                        }
+                    );
+                    astNode.children = children;
+                }
+
+                addTo.push(astNode);
+            }
+        };
+
+        doc.body.childNodes.forEach(
+            (childNode): void => validateChildNodes(childNode, tree)
+        );
+
+        return tree;
+
+        /*
+        const allowedTagsJoined = allowedTags.join('|');
         const elements = markup
             // Trim to prevent useless/costly process on the spaces
             // (#5258)
             .replace(/^\s+|\s+$/g, '')
             .replace(/<br.*?>/g, '<br></br>')
-            .replace(new RegExp(`<(${allowedTags})( |>)`, 'gi'), '|||<$1$2')
-            .replace(new RegExp(`<\/(${allowedTags})>`, 'gi'), '</$1>|||')
+            .replace(new RegExp(`<(${allowedTagsJoined})( |>)`, 'gi'), '|||<$1$2')
+            .replace(new RegExp(`<\/(${allowedTagsJoined})>`, 'gi'), '</$1>|||')
             .split('|||')
             .filter((line): boolean => line !== '')
             .map((s): Highcharts.SVGDefinitionObject => {
@@ -596,7 +655,9 @@ class SVGTextBuilder {
                 return obj;
             });
 
+
         return elements;
+        */
     }
 
     private unescapeEntities(
