@@ -2997,7 +2997,8 @@ null,
         this.tooltipOptions = merge(defaultOptions.tooltip, // 1
         defaultOptions.plotOptions.series &&
             defaultOptions.plotOptions.series.tooltip, // 2
-        defaultOptions.plotOptions[this.type].tooltip, // 3
+        defaultOptions.plotOptions[this.type] && 
+            defaultOptions.plotOptions[this.type].tooltip, // 3
         chartOptions.tooltip.userOptions, // 4
         plotOptions.series &&
             plotOptions.series.tooltip, // 5
