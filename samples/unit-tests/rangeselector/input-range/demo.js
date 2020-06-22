@@ -339,15 +339,28 @@ QUnit.test('Range selector value on change should change properly (#13205)', fun
         date = '2020-04-02 00:00:00.000',
         defaultInputDateParser = Highcharts.RangeSelector.prototype.defaultInputDateParser,
         offset = newDate.getTimezoneOffset();
+    if (Highcharts.isSafari) {
+        assert.strictEqual(
+            0,
+            defaultInputDateParser(date.split(' ').join('T'), false) - Date.parse(date.split(' ').join('T')),
+            'Safari- When useUTC: false- function returns correct values.'
+        );
+        assert.strictEqual(
+            0,
+            defaultInputDateParser(date.split(' ').join('T'), true) - Date.parse(date.split(' ').join('T')),
+            'Safari- When useUTC: true- function returns correct values.'
+        );
+    } else {
+        assert.strictEqual(
+            Math.abs(offset * 60 * 1000),
+            defaultInputDateParser(date, false) - Date.parse(date),
+            'When useUTC: false- function returns correct values.'
+        );
+        assert.strictEqual(
+            Math.abs(offset * 60 * 1000),
+            defaultInputDateParser(date, true) - Date.parse(date),
+            'When useUTC: true- function returns correct values.'
+        );
+    }
 
-    assert.strictEqual(
-        Math.abs(offset * 60 * 1000),
-        defaultInputDateParser(date, false) - Date.parse(date),
-        'When useUTC: false- function returns correct values.'
-    );
-    assert.strictEqual(
-        Math.abs(offset * 60 * 1000),
-        defaultInputDateParser(date, true) - Date.parse(date),
-        'When useUTC: true- function returns correct values.'
-    );
 });
