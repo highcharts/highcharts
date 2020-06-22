@@ -1255,8 +1255,15 @@ class RangeSelector {
      */
     public defaultInputDateParser(inputDate: string, useUTC: boolean): number {
         var date = new Date();
+
         if (useUTC) {
+            if (H.isSafari) {
+                return Date.parse(inputDate.split(' ').join('T'));
+            }
             return Date.parse(inputDate + 'GMT');
+        }
+        if (H.isSafari) {
+            return Date.parse(inputDate.split(' ').join('T'));
         }
         return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
     }
