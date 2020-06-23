@@ -880,14 +880,14 @@ var RangeSelector = /** @class */ (function () {
      */
     RangeSelector.prototype.defaultInputDateParser = function (inputDate, useUTC) {
         var date = new Date();
-        if (useUTC) {
-            if (H.isSafari) {
-                return Date.parse(inputDate.split(' ').join('T'));
-            }
-            return Date.parse(inputDate + 'GMT');
-        }
         if (H.isSafari) {
             return Date.parse(inputDate.split(' ').join('T'));
+        }
+        if (H.isFirefox) {
+            return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
+        }
+        if (useUTC) {
+            return Date.parse(inputDate + 'Z');
         }
         return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
     };
