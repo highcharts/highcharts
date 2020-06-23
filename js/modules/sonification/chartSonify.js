@@ -421,7 +421,8 @@ function buildPathOrder(orderOptions, chart, seriesOptionsCallback) {
     if (orderOptions === 'sequential' || orderOptions === 'simultaneous') {
         // Just add the series from the chart
         order = chart.series.reduce(function (seriesList, series) {
-            if (series.visible) {
+            var _a;
+            if (series.visible && ((_a = series.options.sonification) === null || _a === void 0 ? void 0 : _a.enabled) !== false) {
                 seriesList.push({
                     series: series,
                     seriesOptions: seriesOptionsCallback(series)

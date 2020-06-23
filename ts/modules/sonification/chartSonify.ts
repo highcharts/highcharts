@@ -672,7 +672,7 @@ function buildPathOrder(
             seriesList: Array<Highcharts.SonifySeriesOrderObject>,
             series: Highcharts.SonifyableSeries
         ): Array<Highcharts.SonifySeriesOrderObject> {
-            if (series.visible) {
+            if (series.visible && series.options.sonification?.enabled !== false) {
                 seriesList.push({
                     series: series,
                     seriesOptions: seriesOptionsCallback(series)
