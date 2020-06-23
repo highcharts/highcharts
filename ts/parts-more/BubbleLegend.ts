@@ -93,6 +93,7 @@ declare global {
         }
         interface ChartLike {
             getVisibleBubbleSeriesIndex(): number;
+            getLegendForBubbleLegend(): Legend;
         }
         interface Legend {
             bubbleLegend?: BubbleLegend;
@@ -1022,7 +1023,7 @@ class BubbleLegend {
     public predictBubbleSizes(): [number, number] {
         var chart = this.chart,
             fontMetrics = this.fontMetrics,
-            legendOptions = chart.legend.options,
+            legendOptions = this.legend.options,
             floating = legendOptions.floating,
             horizontal = legendOptions.layout === 'horizontal',
             lastLineHeight = horizontal ? chart.legend.lastLineHeight : 0,
@@ -1106,6 +1107,44 @@ class BubbleLegend {
                 bubbleSeries.maxPxSize
             );
             legend.render();
+        }
+    }
+
+    /**
+     * Logic for rendering bubble legend as a legend item.
+     *
+     * @private
+     * @function Highcharts.BubbleLegend#renderAsLegendItem
+     * @return {void}
+     */
+    public renderAsLegendItem(this: any): void { // TODO: fix TS
+
+        this.legendGroup = this.chart.renderer
+            .g('legend-item')
+            .addClass('highcharts-bubble-legend ')
+            .attr({
+                zIndex: 1
+            })
+            .add(this.legend.scrollGroup);
+
+        // Baseline has to be set if the bubble legend
+        // is the first legend item.
+        if (!this.legend.baseline) {
+            this.legend.baseline = 0;
+        }
+
+        this.drawLegendSymbol(this.legend);
+
+        // Bubble legend item size depends on bubble series point sizes.
+        // Legend is rendered before series thus bubble legend item
+        // doesn't have any size initially and is updated as soon as
+        // bubble series is rendered.
+        this.itemWidth = 0;
+        this.itemHeight = 0;
+        if (this.legendItem) {
+            this.itemWidth = this.legend.maxItemWidth = this.legendItemWidth;
+            this.itemHeight = Math.round(this.legendItemHeight);
+            this.maxItemWidth = Math.max(this.maxItemWidth, this.itemWidth);
         }
     }
 }
@@ -1260,6 +1299,20 @@ Legend.prototype.retranslateItems = function (
             lines[actualLine].height / 2;
     });
 };
+
+/**
+ * Get the legend in which the bubble legend shoud be renderd in.
+ * Created to be overwritten by other modules (e.g. Advanced Legend)
+ *
+ * @private
+ * @function Highcharts.Legend#getLegendForBubbleLegend
+ * @return {void}
+ */
+H.Chart.prototype.getLegendForBubbleLegend = function (): Highcharts.Legend {
+    // there's only one legend without advanced legend module
+    return this.legend;
+};
+
 
 // Toggle bubble legend depending on the visible status of bubble series.
 addEvent(Series, 'legendItemClick', function (this: Highcharts.Series): void {

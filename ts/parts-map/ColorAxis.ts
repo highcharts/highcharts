@@ -30,6 +30,7 @@ const {
     addEvent,
     erase,
     extend,
+    fireEvent,
     Fx,
     isNumber,
     merge,
@@ -84,6 +85,7 @@ declare global {
             public setOptions(userOptions: DeepPartial<ColorAxis.Options>): void;
             public setState(state?: string): void;
             public setTickPositions(): void;
+            public shouldBeRendered(legend: any): boolean;
             public toColor(
                 value: number,
                 point: Point
@@ -631,30 +633,29 @@ class ColorAxis extends Axis implements AxisLike {
      * Build options to keep layout params on init and update.
      * @private
      */
-    public static buildOptions(
-        chart: Chart,
-        options: ColorAxis.Options,
-        userOptions: ColorAxis.Options
-    ): ColorAxis.Options {
-        var legend = chart.options.legend || {},
+    // TODO: fix TS
+    public static buildOptions (this: any, chart: any, userOptions: any): any  
+    { /*Highcharts.ColorAxisOptions*/
+        var legend: any = (this as any).legendOptions ||
+            this.chart.options.legend,
             horiz = userOptions.layout ?
                 userOptions.layout !== 'vertical' :
-                legend.layout !== 'vertical';
+                (legend && legend.layout !== 'vertical');
 
-        return merge<ColorAxis.Options>(
-            options,
+        return merge(
+            this.defaultColorAxisOptions,
             {
                 side: horiz ? 2 : 1,
                 reversed: !horiz
-            },
+            } as any, //Highcharts.ColorAxisOptions,
             userOptions,
             {
                 opposite: !horiz,
                 showEmpty: false,
                 title: null as any,
-                visible: (legend as any).enabled &&
+                visible: legend && ((legend as any).enabled !== false) &&
                     (userOptions ? userOptions.visible !== false : true)
-            }
+            } as any //Highcharts.ColorAxisOptions
         );
     }
 
@@ -717,13 +718,17 @@ class ColorAxis extends Axis implements AxisLike {
         userOptions: ColorAxis.Options
     ): void {
         const axis = this as unknown as Highcharts.ColorAxis;
-        const options = ColorAxis.buildOptions( // Build the options
-            chart,
-            ColorAxis.defaultOptions,
-            userOptions
-        );
 
         axis.coll = 'colorAxis';
+        this.userOptions = userOptions;
+        this.chart = chart;
+
+        fireEvent(this, 'beforeBuildOptions');
+        const options = ColorAxis.buildOptions.call( // Build the options
+            this,
+            chart,
+            userOptions
+        );
 
         super.init(chart, options);
 
@@ -820,9 +825,10 @@ class ColorAxis extends Axis implements AxisLike {
     public initStops(): void {
         const axis = this;
 
+        // TODO: remove default colors
         axis.stops = axis.options.stops || [
-            [0, axis.options.minColor as any],
-            [1, axis.options.maxColor as any]
+            [0, axis.options.minColor as any || '#c0ffee'],
+            [1, axis.options.maxColor as any || '#bada55']
         ];
         axis.stops.forEach(function (
             stop: Highcharts.GradientColorStopObject
@@ -857,7 +863,7 @@ class ColorAxis extends Axis implements AxisLike {
             width,
             height;
 
-        if (symbol) {
+        if (symbol && symbol.element) {
             this.left = x = symbol.attr('x') as any;
             this.top = y = symbol.attr('y') as any;
             this.width = width = symbol.attr('width') as any;
@@ -1026,11 +1032,13 @@ class ColorAxis extends Axis implements AxisLike {
         const horiz = axis.horiz;
         const width = pick(
             legendOptions.symbolWidth,
-            horiz ? ColorAxis.defaultLegendLength : 12
+            // TODO: fix TS
+            horiz ? (legend.widthOption || ColorAxis.defaultLegendLength) : 12
         );
         const height = pick(
             legendOptions.symbolHeight,
-            horiz ? 12 : ColorAxis.defaultLegendLength
+            horiz ? 12 :
+                    (legend.heightOption || ColorAxis.defaultLegendLength)
         );
         const labelPadding = pick(
             (legendOptions as any).labelPadding,
@@ -1047,7 +1055,7 @@ class ColorAxis extends Axis implements AxisLike {
             width,
             height
         ).attr({
-            zIndex: 1
+            zIndex: 0 // make sure that rect is always beneath the ticks
         }).add(item.legendGroup);
 
         // Set how much space this legend item takes up
@@ -1276,7 +1284,7 @@ class ColorAxis extends Axis implements AxisLike {
         const axis = this,
             chart = axis.chart,
             legend = chart.legend,
-            updatedOptions = ColorAxis.buildOptions(chart, {}, newOptions);
+            updatedOptions = ColorAxis.buildOptions.call(this, chart, newOptions);
 
         this.series.forEach(function (series: Highcharts.Series): void {
             // Needed for Axis.update when choropleth colors change
@@ -1291,6 +1299,7 @@ class ColorAxis extends Axis implements AxisLike {
 
         // Keep the options structure updated for export. Unlike xAxis and
         // yAxis, the colorAxis is not an array. (#3207)
+        // TODO: there can be multipe color axes if advanced legend module is used.
         (chart.options as any)[axis.coll] =
             merge(axis.userOptions, updatedOptions);
 
@@ -1336,6 +1345,22 @@ class ColorAxis extends Axis implements AxisLike {
     }
 
     /**
+     * Decide if color axis should be rendered or not. This code
+     * is isolated to be overridden by the Advanced Legend module.
+     * @private
+     * @function Highcharts.ColorAxis#shouldBeRendered
+     * @param {Highcharts.AdvancedLegend} [redraw=true]
+     *        Target (parent) legend
+     * @return {boolean}
+     */
+    public shouldBeRendered(
+        this: Highcharts.ColorAxis,
+        legend?: Highcharts.Legend
+    ): boolean {
+        return !!(this.options && this.options.showInLegend);
+    }
+
+    /**
      * Get the legend item symbols for data classes.
      * @private
      */
@@ -1376,13 +1401,17 @@ class ColorAxis extends Axis implements AxisLike {
                 if (typeof to !== 'undefined') {
                     name += numberFormatter(to, valueDecimals) + valueSuffix;
                 }
-                // Add a mock object to the legend items
+                // Create item that is renderable in legend
                 legendItems.push(extend(
                     {
                         chart: chart,
                         name: name,
                         options: {},
                         drawLegendSymbol: LegendSymbolMixin.drawRectangle,
+                        renderAsLegendItem: function (): void {
+                            // Same logic as for points and series.
+                            H.Point.prototype.renderAsLegendItem.call(this);
+                        },
                         visible: true,
                         setState: noop,
                         isDataClass: true,
@@ -1408,6 +1437,45 @@ class ColorAxis extends Axis implements AxisLike {
         }
         return legendItems;
     }
+
+    // Render color axis in legend.
+    // TODO: fix TS
+    public renderAsLegendItem(this: any): void {
+        if (!this.legendGroup) {
+            this.legendGroup = this.chart.renderer
+                .g('legend-item')
+                .addClass('highcharts-coloraxis')
+                .attr({
+                    zIndex: 1
+                })
+                .add(this.legend.scrollGroup);
+        }
+
+        this.legend.baseline = 15;
+
+        // Always create a new symbol.
+        if (this.legendSymbol) {
+            this.legendSymbol.destroy();
+        }
+        this.drawLegendSymbol(this.legend, this);
+        this.itemWidth = this.legendItemWidth;
+        this.itemHeight = this.legendItemHeight;
+        this.legend.maxItemWidth =
+            Math.max(this.legend.maxItemWidth, this.itemWidth as number);
+
+        this.legend.totalItemWidth += this.itemWidth as number;
+        this.legend.itemHeight = this.itemHeight as number;
+
+        // Fake legend item is required for now -
+        // for color axis only legend symbol is used.
+        this.legendItem = this.chart.renderer.text('', 0, 0) as any;
+
+        if (this.visible && this.legendColor && this.legendSymbol) {
+            this.legendSymbol.attr({
+                fill: this.legendColor
+            });
+        }
+    };
 
 }
 
@@ -1490,7 +1558,7 @@ addEvent(Legend, 'afterGetAllItems', function (
     colorAxes.forEach(function (colorAxis: Highcharts.ColorAxis): void {
         options = colorAxis.options;
 
-        if (options && options.showInLegend) {
+        if (colorAxis.shouldBeRendered(this)) {
             // Data classes
             if (options.dataClasses && options.visible) {
                 colorAxisItems = colorAxisItems.concat(
@@ -1519,8 +1587,12 @@ addEvent(Legend, 'afterGetAllItems', function (
                     }
                 }
             });
+            for (i = 0; i < colorAxisItems.length; i++) {
+                e.allItems.push(colorAxisItems[i]);
+            }
+            colorAxisItems = [];
         }
-    });
+    }, this);
 
     i = colorAxisItems.length;
     while (i--) {
