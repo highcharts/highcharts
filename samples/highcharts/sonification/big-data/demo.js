@@ -16,25 +16,21 @@ Highcharts.chart('container', {
         cursor: 'pointer',
         events: {
             click: function () {
-                // Sonify the series when clicked
-                this.sonify({
-                    duration: 3000,
-                    pointPlayTime: 'x',
-                    instruments: [{
-                        instrument: 'triangleMajor',
-                        instrumentMapping: {
-                            volume: 0.6,
-                            duration: 50,
-                            pan: 'x',
-                            frequency: 'y'
-                        },
-                        instrumentOptions: {
-                            minFrequency: 200,
-                            maxFrequency: 2000
-                        }
-                    }]
-                });
+                this.sonify();
             }
+        },
+        sonification: {
+            duration: 3000,
+            instruments: [{
+                instrument: 'triangleMajor',
+                minFrequency: 200,
+                maxFrequency: 2000,
+                mapping: {
+                    volume: 0.6,
+                    duration: 50,
+                    pan: 'x'
+                }
+            }]
         }
     }]
 });
