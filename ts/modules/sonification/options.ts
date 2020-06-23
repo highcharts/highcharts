@@ -19,7 +19,10 @@
 declare global {
     namespace Highcharts {
         interface Options {
-            sonification?: SonificationOptions;
+            sonification?: ChartSonificationOptions;
+        }
+        interface SeriesOptions {
+            sonification?: SeriesSonificationOptions;
         }
     }
 }
@@ -30,21 +33,19 @@ const options = {
         enabled: false,
         duration: 2000,
         afterSeriesWait: 1000,
+        masterVolume: 0.7,
         order: 'sequential',
-        pointPlayTime: 'x',
-        instruments: [{
+        defaultInstrumentOptions: {
             instrument: 'sineMusical',
-            instrumentMapping: {
-                duration: 400,
-                frequency: 'y',
-                volume: 0.7
-            },
             // Start at G4 note, end at C6
-            instrumentOptions: {
-                minFrequency: 392,
-                maxFrequency: 1046
+            minFrequency: 392,
+            maxFrequency: 1046,
+            mapping: {
+                pointPlayTime: 'x',
+                duration: 400,
+                frequency: 'y'
             }
-        }]
+        }
     }
 };
 
