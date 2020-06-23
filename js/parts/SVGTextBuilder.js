@@ -6,6 +6,8 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ *
+ * https://jsfiddle.net/highcharts/abr5czg7/
  * @todo
  * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
@@ -477,7 +479,9 @@ var SVGTextBuilder = /** @class */ (function () {
                             validateChildNodes(childNode, children_1);
                         }
                     });
-                    astNode_1.children = children_1;
+                    if (children_1.length) {
+                        astNode_1.children = children_1;
+                    }
                 }
                 addTo.push(astNode_1);
             }

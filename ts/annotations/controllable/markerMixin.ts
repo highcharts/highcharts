@@ -209,7 +209,7 @@ var markerMixin: Highcharts.AnnotationMarkerMixin = {
                                 merge(predefinedMarker, { color: color })
                             );
 
-                        item.attr(markerType, marker.attr('id') as any);
+                        item.attr(markerType, marker.getAttribute('id'));
                     }
                 }
             };

@@ -789,7 +789,7 @@ class SVGRenderer {
      *
      * @function Highcharts.SVGRenderer#addTree
      *
-     * @param {Highcharts.SVGDefinitionObject} def
+     * @param {Highcharts.SVGDefinitionObject} tree
      * A serialized form of an SVG subtree, including children.
      * @param {SVGElement} parent
      * The node where it should be added
@@ -798,59 +798,69 @@ class SVGRenderer {
      * The inserted node.
      */
     public addTree(
-        def: (
+        tree: (
             Highcharts.SVGDefinitionObject|
             Array<Highcharts.SVGDefinitionObject>
         ),
         parent: SVGElement
     ): SVGElement {
-        var ren = this;
+        const ren = this;
+        const NS = parent.element.namespaceURI || SVG_NS;
 
         /**
          * @private
-         * @param {Highcharts.SVGDefinitionObject} config - SVG definition
-         * @param {Highcharts.SVGElement} [parent] - parent node
+         * @param {Highcharts.SVGDefinitionObject} subtree - SVG definition
+         * @param {Element} [parentNode] - parent node
          */
         function recurse(
-            config: (
+            subtree: (
                 Highcharts.SVGDefinitionObject|
                 Array<Highcharts.SVGDefinitionObject>
             ),
-            parent?: SVGElement
+            parentNode: Element
         ): SVGElement {
             var ret: any;
 
-            splat(config).forEach(function (
+            splat(subtree).forEach(function (
                 item: Highcharts.SVGDefinitionObject
             ): void {
-                var node = ren.createElement(item.tagName as any),
-                    attr: Highcharts.SVGAttributes = {};
+                const textNode = item.textContent ?
+                    doc.createTextNode(item.textContent) :
+                    void 0;
+                let node;
 
-                // Set attributes
-                objectEach(item, function (val, key): void {
-                    if (
-                        key !== 'tagName' &&
-                        key !== 'children' &&
-                        key !== 'textContent'
-                    ) {
-                        attr[key] = val;
+                if (item.tagName === '#text') {
+                    node = textNode;
+
+                } else if (item.tagName) {
+                    node = doc.createElementNS(NS, item.tagName);
+                    const attribs: Highcharts.SVGAttributes = {};
+
+                    // Set attributes
+                    objectEach(item, function (val, key): void {
+                        if (
+                            key !== 'tagName' &&
+                            key !== 'children' &&
+                            key !== 'textContent'
+                        ) {
+                            attribs[key] = val;
+                        }
+                    });
+                    attr(node as any, attribs);
+
+                    // Add text content
+                    if (textNode) {
+                        node.appendChild(textNode);
                     }
-                });
-                node.attr(attr);
 
-
-                // Add to the tree
-                node.add(parent);
-
-                // Add text content
-                if (item.textContent) {
-                    node.element.appendChild(
-                        doc.createTextNode(item.textContent)
-                    );
+                    // Recurse
+                    recurse(item.children || [], node);
                 }
 
-                // Recurse
-                recurse(item.children || [], node);
+                // Add to the tree
+                if (node) {
+                    parentNode.appendChild(node);
+                }
 
                 ret = node;
             });
@@ -858,7 +868,7 @@ class SVGRenderer {
             // Return last node added (on top level it's the only one)
             return ret;
         }
-        return recurse(def, parent);
+        return recurse(tree, parent.element);
     }
 
     /**

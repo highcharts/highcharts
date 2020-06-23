@@ -445,7 +445,7 @@ var SVGRenderer = /** @class */ (function () {
      *
      * @function Highcharts.SVGRenderer#addTree
      *
-     * @param {Highcharts.SVGDefinitionObject} def
+     * @param {Highcharts.SVGDefinitionObject} tree
      * A serialized form of an SVG subtree, including children.
      * @param {SVGElement} parent
      * The node where it should be added
@@ -453,40 +453,53 @@ var SVGRenderer = /** @class */ (function () {
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
-    SVGRenderer.prototype.addTree = function (def, parent) {
+    SVGRenderer.prototype.addTree = function (tree, parent) {
         var ren = this;
+        var NS = parent.element.namespaceURI || SVG_NS;
         /**
          * @private
-         * @param {Highcharts.SVGDefinitionObject} config - SVG definition
-         * @param {Highcharts.SVGElement} [parent] - parent node
+         * @param {Highcharts.SVGDefinitionObject} subtree - SVG definition
+         * @param {Element} [parentNode] - parent node
          */
-        function recurse(config, parent) {
+        function recurse(subtree, parentNode) {
             var ret;
-            splat(config).forEach(function (item) {
-                var node = ren.createElement(item.tagName), attr = {};
-                // Set attributes
-                objectEach(item, function (val, key) {
-                    if (key !== 'tagName' &&
-                        key !== 'children' &&
-                        key !== 'textContent') {
-                        attr[key] = val;
-                    }
-                });
-                node.attr(attr);
-                // Add to the tree
-                node.add(parent);
-                // Add text content
-                if (item.textContent) {
-                    node.element.appendChild(doc.createTextNode(item.textContent));
+            splat(subtree).forEach(function (item) {
+                var textNode = item.textContent ?
+                    doc.createTextNode(item.textContent) :
+                    void 0;
+                var node;
+                if (item.tagName === '#text') {
+                    node = textNode;
                 }
-                // Recurse
-                recurse(item.children || [], node);
+                else if (item.tagName) {
+                    node = doc.createElementNS(NS, item.tagName);
+                    var attribs_1 = {};
+                    // Set attributes
+                    objectEach(item, function (val, key) {
+                        if (key !== 'tagName' &&
+                            key !== 'children' &&
+                            key !== 'textContent') {
+                            attribs_1[key] = val;
+                        }
+                    });
+                    attr(node, attribs_1);
+                    // Add text content
+                    if (textNode) {
+                        node.appendChild(textNode);
+                    }
+                    // Recurse
+                    recurse(item.children || [], node);
+                }
+                // Add to the tree
+                if (node) {
+                    parentNode.appendChild(node);
+                }
                 ret = node;
             });
             // Return last node added (on top level it's the only one)
             return ret;
         }
-        return recurse(def, parent);
+        return recurse(tree, parent.element);
     };
     /**
      * General method for adding a definition to the SVG `defs` tag. Can be used

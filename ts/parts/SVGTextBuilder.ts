@@ -6,6 +6,8 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ *
+ * https://jsfiddle.net/highcharts/abr5czg7/
  * @todo
  * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
@@ -562,7 +564,7 @@ class SVGTextBuilder {
     /*
      * @param markup
      */
-    private parseMarkup(markup: string): Highcharts.SVGDefinitionObject[] {
+    public parseMarkup(markup: string): Highcharts.SVGDefinitionObject[] {
         const allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong', '#text'];
         const allowedAttributes = ['class', 'href', 'style'];
 
@@ -609,7 +611,9 @@ class SVGTextBuilder {
                             }
                         }
                     );
-                    astNode.children = children;
+                    if (children.length) {
+                        astNode.children = children;
+                    }
                 }
 
                 addTo.push(astNode);

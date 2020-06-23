@@ -139,7 +139,7 @@ var markerMixin = {
                     marker = item[markerType] = chart.renderer
                         .addMarker((itemOptions.id || uniqueKey()) + '-' +
                         predefinedMarker.id, merge(predefinedMarker, { color: color }));
-                    item.attr(markerType, marker.attr('id'));
+                    item.attr(markerType, marker.getAttribute('id'));
                 }
             }
         };
