@@ -267,7 +267,7 @@ class NavigationBindings {
         rect: ['shapes'],
         // Crooked lines, elliots, arrows etc:
         crookedLine: [],
-        basicAnnotation: []
+        basicAnnotation: ['shapes', 'labelOptions']
     };
 
     // Define non editable fields per annotation, for example Rectangle inherits
@@ -755,6 +755,7 @@ class NavigationBindings {
 
             if (
                 parentEditables &&
+                option &&
                 nonEditables.indexOf(key) === -1 &&
                 (
                     (

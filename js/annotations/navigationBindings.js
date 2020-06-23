@@ -427,6 +427,7 @@ var NavigationBindings = /** @class */ (function () {
         function traverse(option, key, parentEditables, parent) {
             var nextParent;
             if (parentEditables &&
+                option &&
                 nonEditables.indexOf(key) === -1 &&
                 ((parentEditables.indexOf &&
                     parentEditables.indexOf(key)) >= 0 ||
@@ -622,7 +623,7 @@ var NavigationBindings = /** @class */ (function () {
         rect: ['shapes'],
         // Crooked lines, elliots, arrows etc:
         crookedLine: [],
-        basicAnnotation: []
+        basicAnnotation: ['shapes', 'labelOptions']
     };
     // Define non editable fields per annotation, for example Rectangle inherits
     // options from Measure, but crosshairs are not available

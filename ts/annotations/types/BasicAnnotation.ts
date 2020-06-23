@@ -210,17 +210,31 @@ class BasicAnnotation extends Annotation {
     public addControlPoints(): void {
         const options = this.options,
             controlPoints = BasicAnnotation.basicControlPoints,
-            langKey = options.langKey,
+            annotationType = this.basicType,
             optionsGroup = options.labels || options.shapes;
 
         optionsGroup.forEach(function (
             group: Highcharts.AnnotationControllableOptionsObject
         ): void {
-            if (langKey) {
-                // @todo langKey === 'label' / 'circle' / 'rectangle' ???
-                group.controlPoints = (controlPoints as any)[langKey];
-            }
+            group.controlPoints = (controlPoints as any)[annotationType];
         });
+    }
+
+    public init(): void {
+        const options = this.options;
+
+        if (options.shapes) {
+            delete options.labelOptions;
+            if (options.shapes[0].type === 'circle') {
+                this.basicType = 'circle';
+            } else {
+                this.basicType = 'rectangle';
+            }
+        } else {
+            delete options.shapes;
+            this.basicType = 'label';
+        }
+        Annotation.prototype.init.apply(this, arguments);
     }
 
 }
@@ -230,6 +244,7 @@ class BasicAnnotation extends Annotation {
  */
 interface BasicAnnotation {
     defaultOptions: Annotation['defaultOptions'];
+    basicType: string;
 }
 
 BasicAnnotation.prototype.defaultOptions = merge(
