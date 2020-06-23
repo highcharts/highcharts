@@ -690,7 +690,8 @@ function chartOptionsToSonifySeriesOptions(series) {
         onPointEnd: seriesEvents.onPointEnd,
         onPointStart: seriesEvents.onPointStart,
         onStart: seriesEvents.onSeriesStart,
-        instruments: getSeriesInstrumentOptions(series) // Deals with chart-level defaults
+        instruments: getSeriesInstrumentOptions(series),
+        earcons: seriesOpts.earcons || chartOpts.earcons
     });
 }
 /**
