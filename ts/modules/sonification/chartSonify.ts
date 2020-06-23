@@ -47,6 +47,7 @@ declare global {
             onSeriesStart?: Function;
         }
         interface SeriesSonificationOptions {
+            earcons?: Array<EarconConfiguration>;
             enabled?: boolean;
             events?: SeriesSonificationEventsOptions;
             duration?: number;
@@ -67,6 +68,7 @@ declare global {
             dataExtremes?: Dictionary<RangeObject>;
             defaultInstrumentOptions?: DefaultSonificationInstrumentOptions;
             duration: number;
+            earcons?: Array<EarconConfiguration>;
             enabled?: boolean;
             events?: ChartSonificationEventsOptions;
             masterVolume?: number;
@@ -1105,7 +1107,8 @@ function chartOptionsToSonifySeriesOptions(
             onPointEnd: seriesEvents.onPointEnd,
             onPointStart: seriesEvents.onPointStart,
             onStart: seriesEvents.onSeriesStart,
-            instruments: getSeriesInstrumentOptions(series) // Deals with chart-level defaults
+            instruments: getSeriesInstrumentOptions(series), // Deals with chart-level defaults
+            earcons: seriesOpts.earcons || chartOpts.earcons
         }
     );
 }

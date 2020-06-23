@@ -32,7 +32,7 @@ const options = {
     sonification: {
         enabled: false,
         duration: 2000,
-        afterSeriesWait: 1000,
+        afterSeriesWait: 900,
         masterVolume: 0.7,
         order: 'sequential',
         defaultInstrumentOptions: {
