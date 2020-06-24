@@ -6,8 +6,9 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ * Renderer: http://jsfiddle.net/highcharts/p9Lkm5j1/
+ * Pen test: https://jsfiddle.net/highcharts/abr5czg7/
  *
- * https://jsfiddle.net/highcharts/abr5czg7/
  * @todo
  * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
@@ -419,11 +420,6 @@ var SVGTextBuilder = /** @class */ (function () {
             if (isString(elem.style)) {
                 elem.style = elem.style.replace(/(;| |^)color([ :])/, '$1fill$2');
             }
-            if (isString(elem.href) &&
-                elem.href.split(':')[0].toLowerCase()
-                    .indexOf('javascript') !== -1) {
-                delete elem.href;
-            }
             if (tagName !== 'a' && tagName !== 'br') {
                 elem.tagName = 'tspan';
             }
@@ -461,15 +457,31 @@ var SVGTextBuilder = /** @class */ (function () {
                     tagName: tagName,
                     textContent: textContent_1
                 };
+                var attributes = node.attributes;
                 // Add allowed attributes
-                allowedAttributes.forEach(function (name) {
-                    if (node.getAttribute) {
-                        var value = node.getAttribute(name);
-                        if (value !== null) {
-                            astNode_1[name] = value;
+                /*
+                allowedAttributes.forEach((name): void => {
+                    if ((node as any).getAttribute) {
+                        const value = (node as any).getAttribute(name);
+                        if (
+                            typeof value === 'string' &&
+                            value.split(':')[0].toLowerCase()
+                                .indexOf('javascript') === -1
+                        ) {
+                            astNode[name] = value;
                         }
                     }
                 });
+                */
+                if (attributes) {
+                    [].forEach.call(attributes, function (attrib) {
+                        if (allowedAttributes.indexOf(attrib.name) !== -1 &&
+                            attrib.value.split(':')[0].toLowerCase()
+                                .indexOf('javascript') === -1) {
+                            astNode_1[attrib.name] = attrib.value;
+                        }
+                    });
+                }
                 // Handle children
                 if (node.childNodes.length) {
                     var children_1 = [];

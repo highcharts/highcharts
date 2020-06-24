@@ -6,8 +6,9 @@
  *
  *  !!!!!!! SOURCE GETS TRANSPILED BY TYPESCRIPT. EDIT TS FILE ONLY. !!!!!!!
  *
+ * Renderer: http://jsfiddle.net/highcharts/p9Lkm5j1/
+ * Pen test: https://jsfiddle.net/highcharts/abr5czg7/
  *
- * https://jsfiddle.net/highcharts/abr5czg7/
  * @todo
  * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
@@ -526,14 +527,6 @@ class SVGTextBuilder {
                 );
             }
 
-            if (
-                isString(elem.href) &&
-                elem.href.split(':')[0].toLowerCase()
-                    .indexOf('javascript') !== -1
-            ) {
-                delete elem.href;
-            }
-
             if (tagName !== 'a' && tagName !== 'br') {
                 elem.tagName = 'tspan';
             }
@@ -584,16 +577,34 @@ class SVGTextBuilder {
                     tagName,
                     textContent
                 };
+                const attributes = (node as any).attributes;
 
                 // Add allowed attributes
+                /*
                 allowedAttributes.forEach((name): void => {
                     if ((node as any).getAttribute) {
                         const value = (node as any).getAttribute(name);
-                        if (value !== null) {
+                        if (
+                            typeof value === 'string' &&
+                            value.split(':')[0].toLowerCase()
+                                .indexOf('javascript') === -1
+                        ) {
                             astNode[name] = value;
                         }
                     }
                 });
+                */
+                if (attributes) {
+                    [].forEach.call(attributes, (attrib: any): void => {
+                        if (
+                            allowedAttributes.indexOf(attrib.name) !== -1 &&
+                            attrib.value.split(':')[0].toLowerCase()
+                                .indexOf('javascript') === -1
+                        ) {
+                            astNode[attrib.name] = attrib.value;
+                        }
+                    });
+                }
 
                 // Handle children
                 if (node.childNodes.length) {
