@@ -12,11 +12,14 @@
  * @todo
  * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
- *   SVGElement
+ *   SVGElement. Maybe rename to TextBuilder, since HTML also uses it.
  * - Apply filter for HTML, including enableSimpleHTML option (or similar)
  * - Set up XSS tests
- * - Make allowedTags and allowedAttributes configurable
- * - Rename SVGDefinitionObject to something more general
+ * - Go over the code base and look for assignments of innerHTML, setAttribute
+ *   etc to look for unfiltered inputs from config.
+ * - Rename the type SVGDefinitionObject to something more general (NodeTree for
+ *   ex)
+ * - Events to allow implementers to override the filter?
  * */
 'use strict';
 import H from './Globals.js';
@@ -443,15 +446,21 @@ var SVGTextBuilder = /** @class */ (function () {
      * @param markup
      */
     SVGTextBuilder.prototype.parseMarkup = function (markup) {
-        var allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong', '#text'];
-        var allowedAttributes = ['class', 'href', 'style'];
+        ;
         var tree = [];
         var doc = new DOMParser().parseFromString(markup, 'text/html');
+        var validateDirective = function (attrib) {
+            if (['background', 'dynsrc', 'href', 'lowsrc', 'src']
+                .indexOf(attrib.name) !== -1) {
+                return /^(http|\/)/.test(attrib.value);
+            }
+            return true;
+        };
         var validateChildNodes = function (node, addTo) {
             var _a;
             var tagName = node.nodeName.toLowerCase();
             // Add allowed tags
-            if (allowedTags.indexOf(tagName) !== -1) {
+            if (SVGTextBuilder.allowedTags.indexOf(tagName) !== -1) {
                 var textContent_1 = (_a = node.textContent) === null || _a === void 0 ? void 0 : _a.toString();
                 var astNode_1 = {
                     tagName: tagName,
@@ -459,25 +468,11 @@ var SVGTextBuilder = /** @class */ (function () {
                 };
                 var attributes = node.attributes;
                 // Add allowed attributes
-                /*
-                allowedAttributes.forEach((name): void => {
-                    if ((node as any).getAttribute) {
-                        const value = (node as any).getAttribute(name);
-                        if (
-                            typeof value === 'string' &&
-                            value.split(':')[0].toLowerCase()
-                                .indexOf('javascript') === -1
-                        ) {
-                            astNode[name] = value;
-                        }
-                    }
-                });
-                */
                 if (attributes) {
                     [].forEach.call(attributes, function (attrib) {
-                        if (allowedAttributes.indexOf(attrib.name) !== -1 &&
-                            attrib.value.split(':')[0].toLowerCase()
-                                .indexOf('javascript') === -1) {
+                        if (SVGTextBuilder.allowedAttributes
+                            .indexOf(attrib.name) !== -1 &&
+                            validateDirective(attrib)) {
                             astNode_1[attrib.name] = attrib.value;
                         }
                     });
@@ -509,6 +504,23 @@ var SVGTextBuilder = /** @class */ (function () {
         });
         return inputStr;
     };
+    SVGTextBuilder.allowedTags = [
+        'a',
+        'b',
+        'br',
+        'div',
+        'em',
+        'i',
+        'img',
+        'p',
+        'span',
+        'strong',
+        'table',
+        'td',
+        'tr',
+        '#text'
+    ];
+    SVGTextBuilder.allowedAttributes = ['class', 'href', 'id', 'src', 'style'];
     return SVGTextBuilder;
 }());
 export default SVGTextBuilder;

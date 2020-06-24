@@ -12,11 +12,14 @@
  * @todo
  * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
- *   SVGElement
+ *   SVGElement. Maybe rename to TextBuilder, since HTML also uses it.
  * - Apply filter for HTML, including enableSimpleHTML option (or similar)
  * - Set up XSS tests
- * - Make allowedTags and allowedAttributes configurable
- * - Rename SVGDefinitionObject to something more general
+ * - Go over the code base and look for assignments of innerHTML, setAttribute
+ *   etc to look for unfiltered inputs from config.
+ * - Rename the type SVGDefinitionObject to something more general (NodeTree for
+ *   ex)
+ * - Events to allow implementers to override the filter?
  * */
 
 'use strict';
@@ -57,6 +60,24 @@ declare global {
  * @name Highcharts.SVGTextBuilder
  */
 class SVGTextBuilder {
+
+    public static allowedTags = [
+        'a',
+        'b',
+        'br',
+        'div',
+        'em',
+        'i',
+        'img',
+        'p',
+        'span',
+        'strong',
+        'table',
+        'td',
+        'tr',
+        '#text'
+    ];
+    public static allowedAttributes = ['class', 'href', 'id', 'src', 'style'];
 
     public constructor(svgElement: Highcharts.SVGElement) {
         const textStyles = svgElement.styles;
@@ -558,11 +579,24 @@ class SVGTextBuilder {
      * @param markup
      */
     public parseMarkup(markup: string): Highcharts.SVGDefinitionObject[] {
-        const allowedTags = ['a', 'b', 'br', 'em', 'i', 'span', 'strong', '#text'];
-        const allowedAttributes = ['class', 'href', 'style'];
+
+        interface Attribute {
+            name: string;
+            value: string;
+        };
 
         const tree: Highcharts.SVGDefinitionObject[] = [];
         const doc = new DOMParser().parseFromString(markup, 'text/html');
+
+        const validateDirective = (attrib: Attribute): boolean => {
+            if (
+                ['background', 'dynsrc', 'href', 'lowsrc', 'src']
+                    .indexOf(attrib.name) !== -1
+            ) {
+                return /^(http|\/)/.test(attrib.value);
+            }
+            return true;
+        };
 
         const validateChildNodes = (
             node: ChildNode,
@@ -571,7 +605,7 @@ class SVGTextBuilder {
             const tagName = node.nodeName.toLowerCase();
 
             // Add allowed tags
-            if (allowedTags.indexOf(tagName) !== -1) {
+            if (SVGTextBuilder.allowedTags.indexOf(tagName) !== -1) {
                 const textContent = node.textContent?.toString();
                 const astNode: Highcharts.SVGDefinitionObject = {
                     tagName,
@@ -580,26 +614,12 @@ class SVGTextBuilder {
                 const attributes = (node as any).attributes;
 
                 // Add allowed attributes
-                /*
-                allowedAttributes.forEach((name): void => {
-                    if ((node as any).getAttribute) {
-                        const value = (node as any).getAttribute(name);
-                        if (
-                            typeof value === 'string' &&
-                            value.split(':')[0].toLowerCase()
-                                .indexOf('javascript') === -1
-                        ) {
-                            astNode[name] = value;
-                        }
-                    }
-                });
-                */
                 if (attributes) {
-                    [].forEach.call(attributes, (attrib: any): void => {
+                    [].forEach.call(attributes, (attrib: Attribute): void => {
                         if (
-                            allowedAttributes.indexOf(attrib.name) !== -1 &&
-                            attrib.value.split(':')[0].toLowerCase()
-                                .indexOf('javascript') === -1
+                            SVGTextBuilder.allowedAttributes
+                                .indexOf(attrib.name) !== -1 &&
+                            validateDirective(attrib)
                         ) {
                             astNode[attrib.name] = attrib.value;
                         }
