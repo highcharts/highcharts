@@ -1301,7 +1301,7 @@ var Axis = /** @class */ (function () {
         }
         else {
             // Adjust to hard threshold
-            if (!softThreshold && defined(threshold)) {
+            if (softThreshold && defined(threshold)) {
                 if (axis.dataMin >= threshold) {
                     thresholdMin = threshold;
                     minPadding = 0;

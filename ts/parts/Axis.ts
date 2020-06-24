@@ -5313,7 +5313,7 @@ class Axis implements AxisComposition, AxisLike {
         } else {
 
             // Adjust to hard threshold
-            if (!softThreshold && defined(threshold)) {
+            if (softThreshold && defined(threshold)) {
                 if ((axis.dataMin as any) >= (threshold as any)) {
                     thresholdMin = threshold;
                     minPadding = 0;
