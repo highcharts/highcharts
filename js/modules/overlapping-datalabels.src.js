@@ -166,7 +166,6 @@ Chart.prototype.hideOverlappingLabels = function (labels) {
                             label.css({ pointerEvents: newOpacity ? 'auto' : 'none' });
                         }
                         label.visibility = newOpacity ? 'inherit' : 'hidden';
-                        label.placed = !!newOpacity;
                     };
                     isLabelAffected = true;
                     // Animate or set the opacity
