@@ -883,9 +883,6 @@ var RangeSelector = /** @class */ (function () {
         if (H.isSafari) {
             return Date.parse(inputDate.split(' ').join('T'));
         }
-        if (H.isFirefox) {
-            return Date.parse(inputDate) - date.getTimezoneOffset() * 60 * 1000;
-        }
         if (useUTC) {
             return Date.parse(inputDate + 'Z');
         }
