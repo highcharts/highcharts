@@ -29,10 +29,10 @@ var attr = U.attr, isString = U.isString, objectEach = U.objectEach, pick = U.pi
  * SVG Text Builder
  * @private
  * @class
- * @name Highcharts.SVGTextBuilder
+ * @name Highcharts.TextBuilder
  */
-var SVGTextBuilder = /** @class */ (function () {
-    function SVGTextBuilder(svgElement) {
+var TextBuilder = /** @class */ (function () {
+    function TextBuilder(svgElement) {
         var textStyles = svgElement.styles;
         this.renderer = svgElement.renderer;
         this.svgElement = svgElement;
@@ -43,7 +43,7 @@ var SVGTextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
-    SVGTextBuilder.prototype.buildText = function () {
+    TextBuilder.prototype.buildText = function () {
         var wrapper = this.svgElement;
         var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
         var regexMatchBreaks = /<br.*?>/g;
@@ -107,7 +107,7 @@ var SVGTextBuilder = /** @class */ (function () {
             }
         }
     };
-    SVGTextBuilder.prototype.modifyDOM = function () {
+    TextBuilder.prototype.modifyDOM = function () {
         var _this = this;
         // Add line breaks by replacing the br tags with x and dy attributes on
         // the next tspan
@@ -189,7 +189,7 @@ var SVGTextBuilder = /** @class */ (function () {
             }
         });
     };
-    SVGTextBuilder.prototype.getLineHeight = function (tspan) {
+    TextBuilder.prototype.getLineHeight = function (tspan) {
         var fontSizeStyle;
         if (!this.renderer.styledMode) {
             fontSizeStyle =
@@ -204,7 +204,7 @@ var SVGTextBuilder = /** @class */ (function () {
             (tspan.getAttribute('style') ? tspan : this.svgElement.element)).h;
     };
     // Transform HTML to SVG, validate
-    SVGTextBuilder.prototype.modifyTree = function (elements) {
+    TextBuilder.prototype.modifyTree = function (elements) {
         var _this = this;
         elements.forEach(function (elem, i) {
             var tagName = elem.tagName;
@@ -235,7 +235,7 @@ var SVGTextBuilder = /** @class */ (function () {
             }
         });
     };
-    SVGTextBuilder.prototype.parseAttribute = function (s, attr) {
+    TextBuilder.prototype.parseAttribute = function (s, attr) {
         var start, delimiter;
         start = s.indexOf('<');
         s = s.substring(start, s.indexOf('>') - start);
@@ -252,7 +252,7 @@ var SVGTextBuilder = /** @class */ (function () {
     /*
      * @param markup
      */
-    SVGTextBuilder.prototype.parseMarkup = function (markup) {
+    TextBuilder.prototype.parseMarkup = function (markup) {
         var tree = [];
         var doc = new DOMParser().parseFromString(markup, 'text/html');
         var validateDirective = function (attrib) {
@@ -266,7 +266,7 @@ var SVGTextBuilder = /** @class */ (function () {
             var _a;
             var tagName = node.nodeName.toLowerCase();
             // Add allowed tags
-            if (SVGTextBuilder.allowedTags.indexOf(tagName) !== -1) {
+            if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
                 var textContent_1 = (_a = node.textContent) === null || _a === void 0 ? void 0 : _a.toString();
                 var astNode_1 = {
                     tagName: tagName,
@@ -276,7 +276,7 @@ var SVGTextBuilder = /** @class */ (function () {
                 // Add allowed attributes
                 if (attributes) {
                     [].forEach.call(attributes, function (attrib) {
-                        if (SVGTextBuilder.allowedAttributes
+                        if (TextBuilder.allowedAttributes
                             .indexOf(attrib.name) !== -1 &&
                             validateDirective(attrib)) {
                             astNode_1[attrib.name] = attrib.value;
@@ -308,7 +308,7 @@ var SVGTextBuilder = /** @class */ (function () {
      * character by character to the given length. If not, the text is
      * word-wrapped line by line.
      */
-    SVGTextBuilder.prototype.truncate = function (tspan, text, words, startAt, width, getString) {
+    TextBuilder.prototype.truncate = function (tspan, text, words, startAt, width, getString) {
         var svgElement = this.svgElement;
         var renderer = svgElement.renderer, rotation = svgElement.rotation;
         // Cache the lengths to avoid checking the same twice
@@ -403,7 +403,7 @@ var SVGTextBuilder = /** @class */ (function () {
         svgElement.actualWidth = actualWidth;
         svgElement.rotation = rotation; // Apply rotation again.
     };
-    SVGTextBuilder.prototype.unescapeEntities = function (inputStr, except) {
+    TextBuilder.prototype.unescapeEntities = function (inputStr, except) {
         objectEach(this.renderer.escapes, function (value, key) {
             if (!except || except.indexOf(value) === -1) {
                 inputStr = inputStr.toString().replace(new RegExp(value, 'g'), key);
@@ -411,7 +411,7 @@ var SVGTextBuilder = /** @class */ (function () {
         });
         return inputStr;
     };
-    SVGTextBuilder.allowedTags = [
+    TextBuilder.allowedTags = [
         'a',
         'b',
         'br',
@@ -427,7 +427,7 @@ var SVGTextBuilder = /** @class */ (function () {
         'tr',
         '#text'
     ];
-    SVGTextBuilder.allowedAttributes = ['class', 'href', 'id', 'src', 'style'];
-    return SVGTextBuilder;
+    TextBuilder.allowedAttributes = ['class', 'href', 'id', 'src', 'style'];
+    return TextBuilder;
 }());
-export default SVGTextBuilder;
+export default TextBuilder;

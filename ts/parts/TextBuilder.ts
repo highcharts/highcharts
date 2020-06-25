@@ -41,9 +41,9 @@ const {
  * SVG Text Builder
  * @private
  * @class
- * @name Highcharts.SVGTextBuilder
+ * @name Highcharts.TextBuilder
  */
-class SVGTextBuilder {
+class TextBuilder {
 
     public static allowedTags = [
         'a',
@@ -412,7 +412,7 @@ class SVGTextBuilder {
             const tagName = node.nodeName.toLowerCase();
 
             // Add allowed tags
-            if (SVGTextBuilder.allowedTags.indexOf(tagName) !== -1) {
+            if (TextBuilder.allowedTags.indexOf(tagName) !== -1) {
                 const textContent = node.textContent?.toString();
                 const astNode: Highcharts.NodeTreeObject = {
                     tagName,
@@ -424,7 +424,7 @@ class SVGTextBuilder {
                 if (attributes) {
                     [].forEach.call(attributes, (attrib: Attribute): void => {
                         if (
-                            SVGTextBuilder.allowedAttributes
+                            TextBuilder.allowedAttributes
                                 .indexOf(attrib.name) !== -1 &&
                             validateDirective(attrib)
                         ) {
@@ -610,4 +610,4 @@ class SVGTextBuilder {
     }
 }
 
-export default SVGTextBuilder;
+export default TextBuilder;

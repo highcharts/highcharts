@@ -15,7 +15,7 @@ import Color from './Color.js';
 import H from './Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGLabel from './SVGLabel.js';
-import SVGTextBuilder from './SVGTextBuilder.js';
+import TextBuilder from './TextBuilder.js';
 import U from './Utilities.js';
 const {
     addEvent,
@@ -1022,7 +1022,7 @@ class SVGRenderer {
      */
     public buildText(wrapper: SVGElement): void {
 
-        const builder = new SVGTextBuilder(wrapper);
+        const builder = new TextBuilder(wrapper);
 
         builder.buildText();
     }

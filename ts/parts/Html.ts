@@ -14,7 +14,7 @@ import H from './Globals.js';
 import SVGElement from './SVGElement.js';
 import SVGRenderer from './SVGRenderer.js';
 import U from './Utilities.js';
-import SVGTextBuilder from './SVGTextBuilder.js';
+import TextBuilder from './TextBuilder.js';
 const {
     attr,
     createElement,
@@ -440,7 +440,7 @@ extend(SVGRenderer.prototype, /** @lends SVGRenderer.prototype */ {
                 delete this.bBox;
                 delete this.oldTextWidth;
 
-                const builder = new SVGTextBuilder(this);
+                const builder = new TextBuilder(this);
                 const tree = builder.parseMarkup(pick(value, ''));
 
                 element.innerHTML = '';
