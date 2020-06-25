@@ -10,16 +10,17 @@
  * Pen test: https://jsfiddle.net/highcharts/abr5czg7/
  *
  * @todo
- * - Move the truncate function here
  * - Discuss whether this should be a separate class, or just part of the
  *   SVGElement. Maybe rename to TextBuilder, since HTML also uses it.
- * - Apply filter for HTML, including enableSimpleHTML option (or similar)
  * - Set up XSS tests
  * - Go over the code base and look for assignments of innerHTML, setAttribute
- *   etc to look for unfiltered inputs from config.
+ *   etc to look for unfiltered inputs from config. Attributes set directly from
+ *   API may be vulnerable to javascript: directive.
  * - Rename the type SVGDefinitionObject to something more general (NodeTree for
  *   ex)
  * - Events to allow implementers to override the filter?
+ * - Test legacy browsers. IE8 doesn't have DOMParser, IE9 doesn't do DOMParser
+ *   with HTML.
  * */
 
 'use strict';
@@ -28,30 +29,15 @@ import H from './Globals.js';
 import U from './Utilities.js';
 const {
     doc,
-    svg,
     SVG_NS
 } = H;
 
 const {
     attr,
-    css,
     isString,
     objectEach,
     pick
 } = U;
-
-/**
- * Internal types
- * @private
- * /
-declare global {
-    namespace Highcharts {
-        class SVGTextBuilder {
-            public svgElement: Highcharts.SVGElement;
-        }
-    }
-}
-*/
 
 /**
  * SVG Text Builder
@@ -189,184 +175,6 @@ class SVGTextBuilder {
 
             truncated = this.constrainLineWidth();
 
-            /*
-
-            if (hasMarkup) {
-                lines = renderer.styledMode ? (
-                    textStr
-                        .replace(
-                            /<(b|strong)>/g,
-                            '<span class="highcharts-strong">'
-                        )
-                        .replace(
-                            /<(i|em)>/g,
-                            '<span class="highcharts-emphasized">'
-                        )
-                ) : (
-                    textStr
-                        .replace(
-                            /<(b|strong)>/g,
-                            '<span style="font-weight:bold">'
-                        )
-                        .replace(
-                            /<(i|em)>/g,
-                            '<span style="font-style:italic">'
-                        )
-                ) as any;
-
-                lines = (lines as any)
-                    .replace(/<a/g, '<span')
-                    .replace(/<\/(b|strong|i|em|a)>/g, '</span>')
-                    .split(regexMatchBreaks);
-
-            } else {
-                lines = [textStr];
-            }
-
-
-            // Trim empty lines (#5261)
-            lines = lines.filter(function (line: string): boolean {
-                return line !== '';
-            });
-
-
-            // build the lines
-            lines.forEach((line: string, lineNo: number): void => {
-                var spans: string[],
-                    spanNo = 0;
-
-                this.lineLength = 0;
-
-                line = line
-                    // Trim to prevent useless/costly process on the spaces
-                    // (#5258)
-                    .replace(/^\s+|\s+$/g, '')
-                    .replace(/<span/g, '|||<span')
-                    .replace(/<\/span>/g, '</span>|||');
-                spans = line.split('|||');
-
-                spans.forEach((span: string): void => {
-                    if (span !== '' || spans.length === 1) {
-                        var attributes = {} as Highcharts.SVGAttributes,
-                            tspan = doc.createElementNS(
-                                renderer.SVG_NS,
-                                'tspan'
-                            ) as any,
-                            a,
-                            classAttribute,
-                            styleAttribute, // #390
-                            hrefAttribute;
-
-                        classAttribute = this.parseAttribute(span, 'class');
-                        if (classAttribute) {
-                            attr(tspan, 'class', classAttribute);
-                        }
-
-                        styleAttribute = this.parseAttribute(span, 'style');
-                        if (styleAttribute) {
-                            styleAttribute = styleAttribute.replace(
-                                /(;| |^)color([ :])/,
-                                '$1fill$2'
-                            );
-                            attr(tspan, 'style', styleAttribute);
-                        }
-
-                        // For anchors, wrap the tspan in an <a> tag and apply
-                        // the href attribute as is (#13559). Not for export
-                        // (#1529)
-                        hrefAttribute = this.parseAttribute(span, 'href');
-                        if (hrefAttribute && !forExport) {
-                            if (
-                                // Stop JavaScript links, vulnerable to XSS
-                                hrefAttribute.split(':')[0].toLowerCase()
-                                    .indexOf('javascript') === -1
-                            ) {
-                                a = doc.createElementNS(
-                                    renderer.SVG_NS,
-                                    'a'
-                                ) as any;
-                                attr(a, 'href', hrefAttribute);
-                                attr(tspan, 'class', 'highcharts-anchor');
-                                a.appendChild(tspan);
-
-                                if (!renderer.styledMode) {
-                                    css(tspan, { cursor: 'pointer' });
-                                }
-                            }
-                        }
-
-                        // Strip away unsupported HTML tags (#7126)
-                        span = this.unescapeEntities(
-                            span.replace(/<[a-zA-Z\/](.|\n)*?>/g, '') || ' '
-                        );
-
-                        // Nested tags aren't supported, and cause crash in
-                        // Safari (#1596)
-                        if (span !== ' ') {
-
-                            // add the text node
-                            tspan.appendChild(doc.createTextNode(span));
-
-                            // First span in a line, align it to the left
-                            if (!spanNo) {
-                                if (lineNo && parentX !== null) {
-                                    attributes.x = parentX;
-                                }
-                            } else {
-                                attributes.dx = 0; // #16
-                            }
-
-                            // add attributes
-                            attr(tspan, attributes);
-
-                            // Append it
-                            textNode.appendChild(a || tspan);
-
-                            // first span on subsequent line, add the line
-                            // height
-                            if (!spanNo && isSubsequentLine) {
-
-                                // allow getting the right offset height in
-                                // exporting in IE
-                                if (!svg && forExport) {
-                                    css(tspan, { display: 'block' });
-                                }
-
-                                // Set the line height based on the font size of
-                                // either the text element or the tspan element
-                                attr(
-                                    tspan,
-                                    'dy',
-                                    this.getLineHeight(tspan)
-                                );
-                            }
-
-                            // Check width and apply soft breaks or ellipsis
-                            truncated = this.constrainLineWidth(
-                                span,
-                                spans,
-                                lineNo,
-                                tspan,
-                                parentX,
-                                styleAttribute
-                            );
-
-                            spanNo++;
-                        }
-
-                    }
-
-                });
-
-                // To avoid beginning lines that doesn't add to the textNode
-                // (#6144)
-                isSubsequentLine = (
-                    isSubsequentLine ||
-                    textNode.childNodes.length
-                );
-            });
-            */
-
             if (this.ellipsis && truncated) {
                 wrapper.attr(
                     'title',
@@ -407,12 +215,6 @@ class SVGTextBuilder {
                 words.length > 1 || tspans.length > 1
             );
 
-            /*
-            hasWhiteSpace = !noWrap && (
-                // Spans is spans within this line
-                spans.length > 1 || lineNo || words.length > 1
-            )
-            */
             const dy = this.getLineHeight(tspan);
 
             let wrapLineNo = 0;
@@ -424,8 +226,7 @@ class SVGTextBuilder {
 
             if (this.ellipsis) {
                 if (text) {
-                    truncated = this.renderer.truncate(
-                        this.svgElement,
+                    truncated = this.truncate(
                         tspan,
                         text,
                         void 0,
@@ -474,8 +275,7 @@ class SVGTextBuilder {
 
                     // For each line, truncate the remaining
                     // words into the line length.
-                    this.renderer.truncate(
-                        this.svgElement,
+                    this.truncate(
                         lastTspan,
                         void 0,
                         words,
@@ -583,7 +383,7 @@ class SVGTextBuilder {
         interface Attribute {
             name: string;
             value: string;
-        };
+        }
 
         const tree: Highcharts.SVGDefinitionObject[] = [];
         const doc = new DOMParser().parseFromString(markup, 'text/html');
@@ -656,6 +456,134 @@ class SVGTextBuilder {
         );
 
         return tree;
+    }
+
+    /*
+     * Truncate the text node contents to a given length. Used when the css
+     * width is set. If the `textOverflow` is `ellipsis`, the text is truncated
+     * character by character to the given length. If not, the text is
+     * word-wrapped line by line.
+     */
+    private truncate(
+        tspan: Highcharts.HTMLDOMElement|Highcharts.SVGDOMElement,
+        text: (string|undefined),
+        words: (Array<string>|undefined),
+        startAt: number,
+        width: number,
+        getString: Function
+    ): boolean {
+        const svgElement = this.svgElement;
+        const { renderer, rotation } = svgElement;
+        // Cache the lengths to avoid checking the same twice
+        const lengths = [] as Array<number>;
+
+        // Word wrap can not be truncated to shorter than one word, ellipsis
+        // text can be completely blank.
+        let minIndex = words ? 1 : 0;
+        let maxIndex = (text || words || '').length;
+        let currentIndex = maxIndex;
+        let str;
+        let actualWidth: number;
+
+        const updateTSpan = function (s: string): void {
+            if (tspan.firstChild) {
+                tspan.removeChild(tspan.firstChild);
+            }
+            if (s) {
+                tspan.appendChild(doc.createTextNode(s));
+            }
+        };
+        const getSubStringLength = function (
+            charEnd: number,
+            concatenatedEnd?: number
+        ): number {
+            // charEnd is used when finding the character-by-character
+            // break for ellipsis, concatenatedEnd is used for word-by-word
+            // break for word wrapping.
+            var end = concatenatedEnd || charEnd;
+
+            if (typeof lengths[end] === 'undefined') {
+                // Modern browsers
+                if ((tspan as any).getSubStringLength) {
+                    // Fails with DOM exception on unit-tests/legend/members
+                    // of unknown reason. Desired width is 0, text content
+                    // is "5" and end is 1.
+                    try {
+                        lengths[end] = startAt +
+                            (tspan as any).getSubStringLength(
+                                0,
+                                words ? end + 1 : end
+                            );
+
+                    } catch (e) {
+                        '';
+                    }
+
+                // Legacy
+                } else if (renderer.getSpanWidth) { // #9058 jsdom
+                    updateTSpan(getString(text || words, charEnd));
+                    lengths[end] = startAt +
+                        renderer.getSpanWidth(svgElement, tspan as any);
+                }
+            }
+            return lengths[end];
+        };
+
+        svgElement.rotation = 0; // discard rotation when computing box
+        actualWidth = getSubStringLength((tspan.textContent as any).length);
+
+        const truncated = startAt + actualWidth > width;
+        if (truncated) {
+
+            // Do a binary search for the index where to truncate the text
+            while (minIndex <= maxIndex) {
+                currentIndex = Math.ceil((minIndex + maxIndex) / 2);
+
+                // When checking words for word-wrap, we need to build the
+                // string and measure the subStringLength at the concatenated
+                // word length.
+                if (words) {
+                    str = getString(words, currentIndex);
+                }
+                actualWidth = getSubStringLength(
+                    currentIndex,
+                    str && str.length - 1
+                );
+
+                if (minIndex === maxIndex) {
+                    // Complete
+                    minIndex = maxIndex + 1;
+                } else if (actualWidth > width) {
+                    // Too large. Set max index to current.
+                    maxIndex = currentIndex - 1;
+                } else {
+                    // Within width. Set min index to current.
+                    minIndex = currentIndex;
+                }
+            }
+            // If max index was 0 it means the shortest possible text was also
+            // too large. For ellipsis that means only the ellipsis, while for
+            // word wrap it means the whole first word.
+            if (maxIndex === 0) {
+                // Remove ellipsis
+                updateTSpan('');
+
+            // If the new text length is one less than the original, we don't
+            // need the ellipsis
+            } else if (!(text && maxIndex === text.length - 1)) {
+                updateTSpan(str || getString(text || words, currentIndex));
+            }
+        }
+
+        // When doing line wrapping, prepare for the next line by removing the
+        // items from this line.
+        if (words) {
+            words.splice(0, currentIndex);
+        }
+
+        svgElement.actualWidth = actualWidth;
+        svgElement.rotation = rotation; // Apply rotation again.
+        return truncated;
     }
 
     private unescapeEntities(
