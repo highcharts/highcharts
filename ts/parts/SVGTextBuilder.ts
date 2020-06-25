@@ -88,22 +88,6 @@ class SVGTextBuilder {
     public textOutline: any;
     public width?: number;
 
-    // Modify the DOM by adding line breaks as x/dy in SVG
-    public addLineBreaks(): void {
-        [].forEach.call(
-            this.svgElement.element.querySelectorAll('br'),
-            (br: SVGElement|HTMLElement): void => {
-                if (br.nextSibling && br.previousSibling) { // #5261
-                    attr(br.nextSibling as SVGElement, {
-                        dy: this.getLineHeight(br.nextSibling as SVGElement),
-                        x: attr(this.svgElement.element, 'x')
-                    });
-                }
-                br.remove();
-            }
-        );
-    }
-
     public buildText(): void {
         const wrapper = this.svgElement;
         var textNode = wrapper.element,
@@ -113,7 +97,6 @@ class SVGTextBuilder {
             hasMarkup = textStr.indexOf('<') !== -1,
             lines: Array<string>,
             childNodes = textNode.childNodes,
-            truncated = false,
             parentX = attr(textNode, 'x'),
             textCache,
             isSubsequentLine: number,
@@ -166,19 +149,31 @@ class SVGTextBuilder {
                 tempParent.appendChild(textNode);
             }
 
-            const ast = this.parseMarkup(textStr);
-            this.modifyTree(ast);
+            // Step 1. Parse the markup safely and directly into a tree
+            // structure.
+            const tree = this.parseMarkup(textStr);
 
-            renderer.addTree(ast, wrapper);
+            // Step 2. Do as many as we can of the modifications to the tree
+            // structure before it is added to the DOM
+            this.modifyTree(tree);
 
-            this.addLineBreaks();
+            renderer.addTree(tree, wrapper);
 
-            truncated = this.constrainLineWidth();
+            // Step 3. Some modifications can't be done until the structure is
+            // in the DOM, because we need to read computed metrics.
+            this.modifyDOM();
 
-            if (this.ellipsis && truncated) {
+            // Add title if an ellipsis was added
+            if (
+                this.ellipsis &&
+                (textNode.textContent || '').indexOf('\u2026') !== -1
+            ) {
                 wrapper.attr(
                     'title',
-                    this.unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
+                    this.unescapeEntities(
+                        wrapper.textStr || '',
+                        ['&lt;', '&gt;']
+                    ) // #7179
                 );
             }
             if (tempParent) {
@@ -192,18 +187,33 @@ class SVGTextBuilder {
         }
     }
 
-    // Constrain the line width, either by ellipsis or wrapping
-    private constrainLineWidth(): boolean {
 
-        let truncated = false;
-        let lineLength = 0;
-        const width = this.width || 0;
-        if (!width) {
-            return false;
-        }
+    private modifyDOM(): void {
+
+        // Add line breaks by replacing the br tags with x and dy attributes on
+        // the next tspan
+        [].forEach.call(
+            this.svgElement.element.querySelectorAll('br'),
+            (br: SVGElement|HTMLElement): void => {
+                if (br.nextSibling && br.previousSibling) { // #5261
+                    attr(br.nextSibling as SVGElement, {
+                        dy: this.getLineHeight(br.nextSibling as SVGElement),
+                        x: attr(this.svgElement.element, 'x')
+                    });
+                }
+                br.remove();
+            }
+        );
+
+        // Constrain the line width, either by ellipsis or wrapping
         const tspans = [].slice.call(
             this.svgElement.element.getElementsByTagName('tspan')
         );
+        let lineLength = 0;
+        const width = this.width || 0;
+        if (!width) {
+            return;
+        }
 
         tspans.forEach((tspan: Highcharts.SVGDOMElement): void => {
             const text = tspan.textContent || '';
@@ -226,7 +236,7 @@ class SVGTextBuilder {
 
             if (this.ellipsis) {
                 if (text) {
-                    truncated = this.truncate(
+                    this.truncate(
                         tspan,
                         text,
                         void 0,
@@ -295,7 +305,6 @@ class SVGTextBuilder {
                 }
             }
         });
-        return truncated;
     }
 
     private getLineHeight(tspan: Highcharts.SVGDOMElement): number {
@@ -471,7 +480,7 @@ class SVGTextBuilder {
         startAt: number,
         width: number,
         getString: Function
-    ): boolean {
+    ): void {
         const svgElement = this.svgElement;
         const { renderer, rotation } = svgElement;
         // Cache the lengths to avoid checking the same twice
@@ -532,8 +541,7 @@ class SVGTextBuilder {
         svgElement.rotation = 0; // discard rotation when computing box
         actualWidth = getSubStringLength((tspan.textContent as any).length);
 
-        const truncated = startAt + actualWidth > width;
-        if (truncated) {
+        if (startAt + actualWidth > width) {
 
             // Do a binary search for the index where to truncate the text
             while (minIndex <= maxIndex) {
@@ -583,7 +591,6 @@ class SVGTextBuilder {
 
         svgElement.actualWidth = actualWidth;
         svgElement.rotation = rotation; // Apply rotation again.
-        return truncated;
     }
 
     private unescapeEntities(

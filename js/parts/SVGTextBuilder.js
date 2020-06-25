@@ -45,22 +45,9 @@ var SVGTextBuilder = /** @class */ (function () {
         this.noWrap = Boolean(textStyles && textStyles.whiteSpace === 'nowrap');
         this.fontSize = textStyles && textStyles.fontSize;
     }
-    // Modify the DOM by adding line breaks as x/dy in SVG
-    SVGTextBuilder.prototype.addLineBreaks = function () {
-        var _this = this;
-        [].forEach.call(this.svgElement.element.querySelectorAll('br'), function (br) {
-            if (br.nextSibling && br.previousSibling) { // #5261
-                attr(br.nextSibling, {
-                    dy: _this.getLineHeight(br.nextSibling),
-                    x: attr(_this.svgElement.element, 'x')
-                });
-            }
-            br.remove();
-        });
-    };
     SVGTextBuilder.prototype.buildText = function () {
         var wrapper = this.svgElement;
-        var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, truncated = false, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
+        var textNode = wrapper.element, renderer = wrapper.renderer, forExport = renderer.forExport, textStr = pick(wrapper.textStr, '').toString(), hasMarkup = textStr.indexOf('<') !== -1, lines, childNodes = textNode.childNodes, parentX = attr(textNode, 'x'), textCache, isSubsequentLine, i = childNodes.length, tempParent = this.width && !wrapper.added && renderer.box;
         var regexMatchBreaks = /<br.*?>/g;
         // The buildText code is quite heavy, so if we're not changing something
         // that affects the text, skip it (#6113).
@@ -97,12 +84,19 @@ var SVGTextBuilder = /** @class */ (function () {
                 // attach it to the DOM to read offset width
                 tempParent.appendChild(textNode);
             }
-            var ast = this.parseMarkup(textStr);
-            this.modifyTree(ast);
-            renderer.addTree(ast, wrapper);
-            this.addLineBreaks();
-            truncated = this.constrainLineWidth();
-            if (this.ellipsis && truncated) {
+            // Step 1. Parse the markup safely and directly into a tree
+            // structure.
+            var tree = this.parseMarkup(textStr);
+            // Step 2. Do as many as we can of the modifications to the tree
+            // structure before it is added to the DOM
+            this.modifyTree(tree);
+            renderer.addTree(tree, wrapper);
+            // Step 3. Some modifications can't be done until the structure is
+            // in the DOM, because we need to read computed metrics.
+            this.modifyDOM();
+            // Add title if an ellipsis was added
+            if (this.ellipsis &&
+                (textNode.textContent || '').indexOf('\u2026') !== -1) {
                 wrapper.attr('title', this.unescapeEntities(wrapper.textStr || '', ['&lt;', '&gt;']) // #7179
                 );
             }
@@ -115,16 +109,26 @@ var SVGTextBuilder = /** @class */ (function () {
             }
         }
     };
-    // Constrain the line width, either by ellipsis or wrapping
-    SVGTextBuilder.prototype.constrainLineWidth = function () {
+    SVGTextBuilder.prototype.modifyDOM = function () {
         var _this = this;
-        var truncated = false;
+        // Add line breaks by replacing the br tags with x and dy attributes on
+        // the next tspan
+        [].forEach.call(this.svgElement.element.querySelectorAll('br'), function (br) {
+            if (br.nextSibling && br.previousSibling) { // #5261
+                attr(br.nextSibling, {
+                    dy: _this.getLineHeight(br.nextSibling),
+                    x: attr(_this.svgElement.element, 'x')
+                });
+            }
+            br.remove();
+        });
+        // Constrain the line width, either by ellipsis or wrapping
+        var tspans = [].slice.call(this.svgElement.element.getElementsByTagName('tspan'));
         var lineLength = 0;
         var width = this.width || 0;
         if (!width) {
-            return false;
+            return;
         }
-        var tspans = [].slice.call(this.svgElement.element.getElementsByTagName('tspan'));
         tspans.forEach(function (tspan) {
             var text = tspan.textContent || '';
             var words = text
@@ -140,7 +144,7 @@ var SVGTextBuilder = /** @class */ (function () {
             }
             if (_this.ellipsis) {
                 if (text) {
-                    truncated = _this.truncate(tspan, text, void 0, 0, 
+                    _this.truncate(tspan, text, void 0, 0, 
                     // Target width
                     Math.max(0, 
                     // Substract the font face to make room for the
@@ -186,7 +190,6 @@ var SVGTextBuilder = /** @class */ (function () {
                 }
             }
         });
-        return truncated;
     };
     SVGTextBuilder.prototype.getLineHeight = function (tspan) {
         var fontSizeStyle;
@@ -357,8 +360,7 @@ var SVGTextBuilder = /** @class */ (function () {
         };
         svgElement.rotation = 0; // discard rotation when computing box
         actualWidth = getSubStringLength(tspan.textContent.length);
-        var truncated = startAt + actualWidth > width;
-        if (truncated) {
+        if (startAt + actualWidth > width) {
             // Do a binary search for the index where to truncate the text
             while (minIndex <= maxIndex) {
                 currentIndex = Math.ceil((minIndex + maxIndex) / 2);
@@ -402,7 +404,6 @@ var SVGTextBuilder = /** @class */ (function () {
         }
         svgElement.actualWidth = actualWidth;
         svgElement.rotation = rotation; // Apply rotation again.
-        return truncated;
     };
     SVGTextBuilder.prototype.unescapeEntities = function (inputStr, except) {
         objectEach(this.renderer.escapes, function (value, key) {

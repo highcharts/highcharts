@@ -170,7 +170,7 @@ QUnit.test('Crossing over DST with hourly ticks (#6278)', function (assert) {
     var chart = Highcharts.chart('container', {
 
         chart: {
-            width: 600
+            width: 700
         },
         tooltip: {
             borderColor: 'black',
