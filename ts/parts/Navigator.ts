@@ -583,8 +583,6 @@ extend(defaultOptions, {
                 enabled: false
             },
 
-            softThreshold: false,
-
             /**
              * Since Highstock v8, default value is the same as default
              * `pointRange` defined for a specific type (e.g. `null` for
