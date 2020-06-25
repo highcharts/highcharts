@@ -130,18 +130,18 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
  * Serialized form of an SVG definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
  *
- * @interface Highcharts.SVGDefinitionObject
+ * @interface Highcharts.NodeTreeObject
  */ /**
-* @name Highcharts.SVGDefinitionObject#[key:string]
-* @type {boolean|number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+* @name Highcharts.NodeTreeObject#[key:string]
+* @type {boolean|number|string|Array<Highcharts.NodeTreeObject>|undefined}
 */ /**
-* @name Highcharts.SVGDefinitionObject#children
-* @type {Array<Highcharts.SVGDefinitionObject>|undefined}
+* @name Highcharts.NodeTreeObject#children
+* @type {Array<Highcharts.NodeTreeObject>|undefined}
 */ /**
-* @name Highcharts.SVGDefinitionObject#tagName
+* @name Highcharts.NodeTreeObject#tagName
 * @type {string|undefined}
 */ /**
-* @name Highcharts.SVGDefinitionObject#textContent
+* @name Highcharts.NodeTreeObject#textContent
 * @type {string|undefined}
 */
 /**
@@ -445,7 +445,7 @@ var SVGRenderer = /** @class */ (function () {
      *
      * @function Highcharts.SVGRenderer#addTree
      *
-     * @param {Highcharts.SVGDefinitionObject} tree
+     * @param {Highcharts.NodeTreeObject} tree
      * A serialized form of an SVG subtree, including children.
      * @param {SVGElement} parent
      * The node where it should be added
@@ -458,7 +458,7 @@ var SVGRenderer = /** @class */ (function () {
         var NS = parent.element.namespaceURI || SVG_NS;
         /**
          * @private
-         * @param {Highcharts.SVGDefinitionObject} subtree - SVG definition
+         * @param {Highcharts.NodeTreeObject} subtree - SVG definition
          * @param {Element} [parentNode] - parent node
          */
         function recurse(subtree, parentNode) {
@@ -511,7 +511,7 @@ var SVGRenderer = /** @class */ (function () {
      *
      * @function Highcharts.SVGRenderer#definition
      *
-     * @param {Highcharts.SVGDefinitionObject} def
+     * @param {Highcharts.NodeTreeObject} def
      * A serialized form of an SVG definition, including children.
      *
      * @return {Highcharts.SVGElement}

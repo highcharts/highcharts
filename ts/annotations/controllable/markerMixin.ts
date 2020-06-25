@@ -31,7 +31,7 @@ declare global {
             afterGetContainer(): void;
         }
         interface Options {
-            defs?: Dictionary<SVGDefinitionObject>;
+            defs?: Dictionary<NodeTreeObject>;
         }
         interface SVGRenderer {
             addMarker(id: string, markerOptions: SVGAttributes): SVGElement;
@@ -72,13 +72,13 @@ import '../../parts/SVGRenderer.js';
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
  *
- * @type         {Highcharts.Dictionary<Highcharts.SVGDefinitionObject>}
+ * @type         {Highcharts.Dictionary<Highcharts.NodeTreeObject>}
  * @since        6.0.0
  * @optionparent defs
  */
-var defaultMarkers: Highcharts.Dictionary<Highcharts.SVGDefinitionObject> = {
+var defaultMarkers: Highcharts.Dictionary<Highcharts.NodeTreeObject> = {
     /**
-     * @type {Highcharts.SVGDefinitionObject}
+     * @type {Highcharts.NodeTreeObject}
      */
     arrow: {
         tagName: 'marker',
@@ -98,7 +98,7 @@ var defaultMarkers: Highcharts.Dictionary<Highcharts.SVGDefinitionObject> = {
         }]
     },
     /**
-     * @type {Highcharts.SVGDefinitionObject}
+     * @type {Highcharts.NodeTreeObject}
      */
     'reverse-arrow': {
         tagName: 'marker',
@@ -121,7 +121,7 @@ H.SVGRenderer.prototype.addMarker = function (
     id: string,
     markerOptions: Highcharts.SVGAttributes
 ): Highcharts.SVGElement {
-    var options: Highcharts.SVGDefinitionObject = { id: id } as any;
+    var options: Highcharts.NodeTreeObject = { id: id } as any;
 
     var attrs: Highcharts.SVGAttributes = {
         stroke: markerOptions.color || 'none',
@@ -129,8 +129,8 @@ H.SVGRenderer.prototype.addMarker = function (
     };
 
     options.children = markerOptions.children.map(function (
-        child: Highcharts.SVGDefinitionObject
-    ): Highcharts.SVGDefinitionObject {
+        child: Highcharts.NodeTreeObject
+    ): Highcharts.NodeTreeObject {
         return merge(attrs, child);
     });
 

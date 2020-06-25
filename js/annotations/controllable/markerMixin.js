@@ -39,13 +39,13 @@ import '../../parts/SVGRenderer.js';
  * @sample highcharts/css/annotations-markers/
  *         Define markers in a styled mode
  *
- * @type         {Highcharts.Dictionary<Highcharts.SVGDefinitionObject>}
+ * @type         {Highcharts.Dictionary<Highcharts.NodeTreeObject>}
  * @since        6.0.0
  * @optionparent defs
  */
 var defaultMarkers = {
     /**
-     * @type {Highcharts.SVGDefinitionObject}
+     * @type {Highcharts.NodeTreeObject}
      */
     arrow: {
         tagName: 'marker',
@@ -65,7 +65,7 @@ var defaultMarkers = {
             }]
     },
     /**
-     * @type {Highcharts.SVGDefinitionObject}
+     * @type {Highcharts.NodeTreeObject}
      */
     'reverse-arrow': {
         tagName: 'marker',

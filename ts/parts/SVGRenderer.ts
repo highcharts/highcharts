@@ -75,9 +75,9 @@ declare global {
             height: number;
             width: number;
         }
-        interface SVGDefinitionObject {
-            [key: string]: (boolean|number|string|Array<SVGDefinitionObject>|undefined);
-            children?: Array<SVGDefinitionObject>;
+        interface NodeTreeObject {
+            [key: string]: (boolean|number|string|Array<NodeTreeObject>|undefined);
+            children?: Array<NodeTreeObject>;
             tagName?: string;
             textContent?: string;
         }
@@ -144,7 +144,7 @@ declare global {
             public url: string;
             public width: number;
             public addTree(
-                def: SVGDefinitionObject|Array<SVGDefinitionObject>,
+                def: NodeTreeObject|Array<NodeTreeObject>,
                 parent: SVGElement
             ): SVGElement;
             public arc(attribs: SVGAttributes): SVGElement;
@@ -184,7 +184,7 @@ declare global {
                 width: number,
                 roundingFunction?: ('round'|'floor'|'ceil')
             ): SVGPath;
-            public definition(def: SVGDefinitionObject): SVGElement;
+            public definition(def: NodeTreeObject): SVGElement;
             public destroy(): null;
             public g(name?: string): SVGElement;
             public getContrast(rgba: ColorString): ColorString;
@@ -389,18 +389,18 @@ declare global {
  * Serialized form of an SVG definition, including children. Some key
  * property names are reserved: tagName, textContent, and children.
  *
- * @interface Highcharts.SVGDefinitionObject
+ * @interface Highcharts.NodeTreeObject
  *//**
- * @name Highcharts.SVGDefinitionObject#[key:string]
- * @type {boolean|number|string|Array<Highcharts.SVGDefinitionObject>|undefined}
+ * @name Highcharts.NodeTreeObject#[key:string]
+ * @type {boolean|number|string|Array<Highcharts.NodeTreeObject>|undefined}
  *//**
- * @name Highcharts.SVGDefinitionObject#children
- * @type {Array<Highcharts.SVGDefinitionObject>|undefined}
+ * @name Highcharts.NodeTreeObject#children
+ * @type {Array<Highcharts.NodeTreeObject>|undefined}
  *//**
- * @name Highcharts.SVGDefinitionObject#tagName
+ * @name Highcharts.NodeTreeObject#tagName
  * @type {string|undefined}
  *//**
- * @name Highcharts.SVGDefinitionObject#textContent
+ * @name Highcharts.NodeTreeObject#textContent
  * @type {string|undefined}
  */
 
@@ -780,7 +780,7 @@ class SVGRenderer {
      *
      * @function Highcharts.SVGRenderer#addTree
      *
-     * @param {Highcharts.SVGDefinitionObject} tree
+     * @param {Highcharts.NodeTreeObject} tree
      * A serialized form of an SVG subtree, including children.
      * @param {SVGElement} parent
      * The node where it should be added
@@ -790,8 +790,8 @@ class SVGRenderer {
      */
     public addTree(
         tree: (
-            Highcharts.SVGDefinitionObject|
-            Array<Highcharts.SVGDefinitionObject>
+            Highcharts.NodeTreeObject|
+            Array<Highcharts.NodeTreeObject>
         ),
         parent: SVGElement
     ): SVGElement {
@@ -800,20 +800,20 @@ class SVGRenderer {
 
         /**
          * @private
-         * @param {Highcharts.SVGDefinitionObject} subtree - SVG definition
+         * @param {Highcharts.NodeTreeObject} subtree - SVG definition
          * @param {Element} [parentNode] - parent node
          */
         function recurse(
             subtree: (
-                Highcharts.SVGDefinitionObject|
-                Array<Highcharts.SVGDefinitionObject>
+                Highcharts.NodeTreeObject|
+                Array<Highcharts.NodeTreeObject>
             ),
             parentNode: Element
         ): SVGElement {
             var ret: any;
 
             splat(subtree).forEach(function (
-                item: Highcharts.SVGDefinitionObject
+                item: Highcharts.NodeTreeObject
             ): void {
                 const textNode = item.textContent ?
                     doc.createTextNode(item.textContent) :
@@ -872,13 +872,13 @@ class SVGRenderer {
      *
      * @function Highcharts.SVGRenderer#definition
      *
-     * @param {Highcharts.SVGDefinitionObject} def
+     * @param {Highcharts.NodeTreeObject} def
      * A serialized form of an SVG definition, including children.
      *
      * @return {Highcharts.SVGElement}
      * The inserted node.
      */
-    public definition(def: Highcharts.SVGDefinitionObject): SVGElement {
+    public definition(def: Highcharts.NodeTreeObject): SVGElement {
         return this.addTree(def, this.defs);
     }
 

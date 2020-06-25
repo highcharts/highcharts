@@ -59,7 +59,7 @@ declare global {
         }
         interface AnnotationChartOptionsObject extends Options {
             annotations: Array<AnnotationsOptions>;
-            defs: Dictionary<SVGDefinitionObject>;
+            defs: Dictionary<NodeTreeObject>;
             navigation: NavigationOptions;
         }
         interface AnnotationControllableLabel {

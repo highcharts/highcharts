@@ -16,8 +16,6 @@
  * - Go over the code base and look for assignments of innerHTML, setAttribute
  *   etc to look for unfiltered inputs from config. Attributes set directly from
  *   API may be vulnerable to javascript: directive.
- * - Rename the type SVGDefinitionObject to something more general (NodeTree for
- *   ex)
  * - Events to allow implementers to override the filter?
  * - Test legacy browsers. IE8 doesn't have DOMParser, IE9 doesn't do DOMParser
  *   with HTML.

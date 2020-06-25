@@ -16,8 +16,6 @@
  * - Go over the code base and look for assignments of innerHTML, setAttribute
  *   etc to look for unfiltered inputs from config. Attributes set directly from
  *   API may be vulnerable to javascript: directive.
- * - Rename the type SVGDefinitionObject to something more general (NodeTree for
- *   ex)
  * - Events to allow implementers to override the filter?
  * - Test legacy browsers. IE8 doesn't have DOMParser, IE9 doesn't do DOMParser
  *   with HTML.
@@ -328,7 +326,7 @@ class SVGTextBuilder {
 
     // Transform HTML to SVG, validate
     private modifyTree(
-        elements: Highcharts.SVGDefinitionObject[]
+        elements: Highcharts.NodeTreeObject[]
     ): void {
         elements.forEach((elem, i): void => {
             const tagName = elem.tagName;
@@ -387,14 +385,14 @@ class SVGTextBuilder {
     /*
      * @param markup
      */
-    public parseMarkup(markup: string): Highcharts.SVGDefinitionObject[] {
+    public parseMarkup(markup: string): Highcharts.NodeTreeObject[] {
 
         interface Attribute {
             name: string;
             value: string;
         }
 
-        const tree: Highcharts.SVGDefinitionObject[] = [];
+        const tree: Highcharts.NodeTreeObject[] = [];
         const doc = new DOMParser().parseFromString(markup, 'text/html');
 
         const validateDirective = (attrib: Attribute): boolean => {
@@ -409,14 +407,14 @@ class SVGTextBuilder {
 
         const validateChildNodes = (
             node: ChildNode,
-            addTo: Highcharts.SVGDefinitionObject[]
+            addTo: Highcharts.NodeTreeObject[]
         ): void => {
             const tagName = node.nodeName.toLowerCase();
 
             // Add allowed tags
             if (SVGTextBuilder.allowedTags.indexOf(tagName) !== -1) {
                 const textContent = node.textContent?.toString();
-                const astNode: Highcharts.SVGDefinitionObject = {
+                const astNode: Highcharts.NodeTreeObject = {
                     tagName,
                     textContent
                 };
@@ -437,7 +435,7 @@ class SVGTextBuilder {
 
                 // Handle children
                 if (node.childNodes.length) {
-                    const children: Highcharts.SVGDefinitionObject[] = [];
+                    const children: Highcharts.NodeTreeObject[] = [];
                     node.childNodes.forEach(
                         (childNode): void => {
                             if (
