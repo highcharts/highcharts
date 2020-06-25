@@ -786,7 +786,7 @@ seriesType('pie', 'line',
                     .add(this.group);
             }
             this.graph.attr({
-                d: Highcharts.SVGRenderer.prototype.symbols.arc(centerX, centerY, this.center[2] / 2, 0, {
+                d: H.SVGRenderer.prototype.symbols.arc(centerX, centerY, this.center[2] / 2, 0, {
                     start: start,
                     end: end,
                     innerR: this.center[3] / 2
