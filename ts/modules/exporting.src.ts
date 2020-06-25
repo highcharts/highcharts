@@ -1323,7 +1323,8 @@ extend(Chart.prototype, /** @lends Highcharts.Chart.prototype */ {
                             'width="' + (options.chart as any).width + '" ' +
                             'height="' + (options.chart as any).height + '">' +
                     '<body xmlns="http://www.w3.org/1999/xhtml">' +
-                    html +
+                    // Some tags needs to be closed in xhtml (#13726)
+                    html.replace(/(<(?:img|br).*?(?=\>))>/g, '$1 />') +
                     '</body>' +
                     '</foreignObject>';
                 svg = svg.replace('</svg>', html + '</svg>');
