@@ -1069,7 +1069,7 @@ seriesType<Highcharts.PieSeries>(
                 }
 
                 this.graph.attr({
-                    d: Highcharts.SVGRenderer.prototype.symbols.arc(
+                    d: H.SVGRenderer.prototype.symbols.arc(
                         centerX,
                         centerY,
                         this.center[2] / 2,
