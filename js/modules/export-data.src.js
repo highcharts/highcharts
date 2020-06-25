@@ -258,7 +258,14 @@ setOptions({
          * @since    6.0.0
          * @requires modules/export-data
          */
-        viewData: 'View data table'
+        viewData: 'View data table',
+        /**
+         * The text for the menu item.
+         *
+         * @since    6.0.0
+         * @requires modules/export-data
+         */
+        hideData: 'Hide data table'
     }
 });
 /* eslint-disable no-invalid-this */
@@ -798,14 +805,33 @@ Chart.prototype.downloadXLS = function () {
  * @fires Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function () {
+    var _a;
+    var exportDivElements = this.exportDivElements, menuItems = (_a = exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.buttons) === null || _a === void 0 ? void 0 : _a.contextButton.menuItems, lang = this.options.lang, isTableVisible;
     if (!this.dataTableDiv) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
         // Insert after the chart container
         this.renderTo.parentNode.insertBefore(this.dataTableDiv, this.renderTo.nextSibling);
     }
-    this.dataTableDiv.innerHTML = this.getTable();
-    fireEvent(this, 'afterViewData', this.dataTableDiv);
+    // Toggle data table
+    if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
+        this.dataTableDiv.innerHTML = this.getTable();
+        fireEvent(this, 'afterViewData', this.dataTableDiv);
+        this.dataTableDiv.style.display = 'block';
+        isTableVisible = true;
+    }
+    else {
+        this.dataTableDiv.style.display = 'none';
+        isTableVisible = false;
+    }
+    if ((exportingOptions === null || exportingOptions === void 0 ? void 0 : exportingOptions.menuItemDefinitions) && (lang === null || lang === void 0 ? void 0 : lang.viewData) &&
+        lang.hideData &&
+        menuItems &&
+        exportDivElements &&
+        exportDivElements.length) {
+        exportDivElements[menuItems.indexOf('viewData')]
+            .innerHTML = isTableVisible ? lang.hideData : lang.viewData;
+    }
 };
 // Add "Download CSV" to the exporting menu.
 var exportingOptions = getOptions().exporting;

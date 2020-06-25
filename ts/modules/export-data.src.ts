@@ -101,6 +101,7 @@ declare global {
             downloadXLS?: string;
             exportData?: ExportDataOptions;
             viewData?: string;
+            hideData?: string;
         }
         interface Series {
             exportKey?: string;
@@ -379,7 +380,14 @@ setOptions({
          * @since    6.0.0
          * @requires modules/export-data
          */
-        viewData: 'View data table'
+        viewData: 'View data table',
+        /**
+         * The text for the menu item.
+         *
+         * @since    6.0.0
+         * @requires modules/export-data
+         */
+        hideData: 'Hide data table'
     }
 });
 
@@ -1162,6 +1170,11 @@ Chart.prototype.downloadXLS = function (): void {
  * @fires Highcharts.Chart#event:afterViewData
  */
 Chart.prototype.viewData = function (): void {
+    var exportDivElements = this.exportDivElements,
+        menuItems = exportingOptions?.buttons?.contextButton.menuItems,
+        lang = this.options.lang,
+        isTableVisible;
+
     if (!this.dataTableDiv) {
         this.dataTableDiv = doc.createElement('div');
         this.dataTableDiv.className = 'highcharts-data-table';
@@ -1172,9 +1185,28 @@ Chart.prototype.viewData = function (): void {
             this.renderTo.nextSibling
         );
     }
+    // Toggle data table
+    if (this.dataTableDiv.style.display === '' || this.dataTableDiv.style.display === 'none') {
+        this.dataTableDiv.innerHTML = this.getTable();
+        fireEvent(this, 'afterViewData', this.dataTableDiv);
+        this.dataTableDiv.style.display = 'block';
+        isTableVisible = true;
+    } else {
+        this.dataTableDiv.style.display = 'none';
+        isTableVisible = false;
+    }
+    if (
+        exportingOptions?.menuItemDefinitions &&
+        lang?.viewData &&
+        lang.hideData &&
+        menuItems &&
+        exportDivElements &&
+        exportDivElements.length
+    ) {
+        exportDivElements[menuItems.indexOf('viewData')]
+            .innerHTML = isTableVisible ? lang.hideData : lang.viewData;
+    }
 
-    this.dataTableDiv.innerHTML = this.getTable();
-    fireEvent(this, 'afterViewData', this.dataTableDiv);
 };
 
 
