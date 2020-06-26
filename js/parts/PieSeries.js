@@ -9,6 +9,7 @@
  * */
 'use strict';
 import H from './Globals.js';
+import SVGRenderer from './SVGRenderer.js';
 import LegendSymbolMixin from '../mixins/legend-symbol.js';
 import Point from './Point.js';
 import U from './Utilities.js';
@@ -786,7 +787,7 @@ seriesType('pie', 'line',
                     .add(this.group);
             }
             this.graph.attr({
-                d: H.SVGRenderer.prototype.symbols.arc(centerX, centerY, this.center[2] / 2, 0, {
+                d: SVGRenderer.prototype.symbols.arc(centerX, centerY, this.center[2] / 2, 0, {
                     start: start,
                     end: end,
                     innerR: this.center[3] / 2
