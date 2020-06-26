@@ -1012,8 +1012,8 @@ Scatter.prototype.animateClusterPoint = function (
                         ) {
                             oldPointObj.point.dataLabel.show();
                             oldPointObj.point.dataLabel.animate({
-                                x: newX - (oldPointObj.point.graphic.radius || 0),
-                                y: newY - (oldPointObj.point.graphic.radius || 0),
+                                x: newPointObj.point.dataLabel.alignAttr.x,
+                                y: newPointObj.point.dataLabel.alignAttr.y,
                                 opacity: 0.4
                             }, animation);
                         }
