@@ -12,6 +12,7 @@
 
 import type SVGPath from '../parts/SVGPath';
 import H from './Globals.js';
+import SVGRenderer from './SVGRenderer.js';
 
 /**
  * Internal types
@@ -1069,7 +1070,7 @@ seriesType<Highcharts.PieSeries>(
                 }
 
                 this.graph.attr({
-                    d: H.SVGRenderer.prototype.symbols.arc(
+                    d: SVGRenderer.prototype.symbols.arc(
                         centerX,
                         centerY,
                         this.center[2] / 2,
