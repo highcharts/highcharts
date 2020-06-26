@@ -936,8 +936,8 @@ Scatter.prototype.animateClusterPoint = function (
                 });
 
                 newPointObj.point.graphic.animate({
-                    x: newX - newPointObj.point.graphic.radius,
-                    y: newY - newPointObj.point.graphic.radius
+                    x: newX - (newPointObj.point.graphic.radius || 0),
+                    y: newY - (newPointObj.point.graphic.radius || 0)
                 }, animation, function (): void {
                     isCbHandled = true;
 
@@ -993,8 +993,8 @@ Scatter.prototype.animateClusterPoint = function (
                         isOldPointGrahic = true;
                         oldPointObj.point.graphic.show();
                         oldPointObj.point.graphic.animate({
-                            x: newX - oldPointObj.point.graphic.radius,
-                            y: newY - oldPointObj.point.graphic.radius,
+                            x: newX - (oldPointObj.point.graphic.radius || 0),
+                            y: newY - (oldPointObj.point.graphic.radius || 0),
                             opacity: 0.4
                         }, animation, function (): void {
                             isCbHandled = true;
@@ -1012,8 +1012,8 @@ Scatter.prototype.animateClusterPoint = function (
                         ) {
                             oldPointObj.point.dataLabel.show();
                             oldPointObj.point.dataLabel.animate({
-                                x: newPointObj.point.dataLabel.alignAttr.x,
-                                y: newPointObj.point.dataLabel.alignAttr.y,
+                                x: newX - (oldPointObj.point.graphic.radius || 0),
+                                y: newY - (oldPointObj.point.graphic.radius || 0),
                                 opacity: 0.4
                             }, animation);
                         }
