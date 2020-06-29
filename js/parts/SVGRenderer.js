@@ -147,7 +147,7 @@ var addEvent = U.addEvent, attr = U.attr, createElement = U.createElement, css =
  * Array of path commands, that will go into the `d` attribute of an SVG
  * element.
  *
- * @typedef {Array<Array<Highcharts.SVGPathCommand,number?,number?,number?,number?,number?,number?,number?>>} Highcharts.SVGPathArray
+ * @typedef {Array<(Array<Highcharts.SVGPathCommand>|Array<Highcharts.SVGPathCommand,number>|Array<Highcharts.SVGPathCommand,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number,number,number>|Array<Highcharts.SVGPathCommand,number,number,number,number,number,number,number>)>} Highcharts.SVGPathArray
  */
 /**
  * Possible path commands in an SVG path array. Valid values are `A`, `C`, `H`,
