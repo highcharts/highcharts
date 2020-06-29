@@ -802,6 +802,7 @@ var Pointer = /** @class */ (function () {
      * @param {global.MouseEvent} e
      */
     Pointer.prototype.onContainerMouseDown = function (e) {
+        var isPrimaryButton = ((e.buttons || e.button) & 1) === 1;
         // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
         // #11635, Firefox does not reliable fire move event after click scroll
@@ -811,8 +812,13 @@ var Pointer = /** @class */ (function () {
         }
         // #11635, limiting to primary button (incl. IE 8 support)
         if (typeof e.button === 'undefined' ||
-            ((e.buttons || e.button) & 1) === 1) {
+            isPrimaryButton) {
             this.zoomOption(e);
+            // #295, #13737 solve conflict between container drag and chart zoom
+            if (isPrimaryButton &&
+                e.preventDefault) {
+                e.preventDefault();
+            }
             this.dragStart(e);
         }
     };
