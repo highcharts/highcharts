@@ -1178,6 +1178,8 @@ class Pointer {
      * @param {global.MouseEvent} e
      */
     public onContainerMouseDown(e: MouseEvent): void {
+        const isPrimaryButton = ((e.buttons || e.button) & 1) === 1;
+
         // Normalize before the 'if' for the legacy IE (#7850)
         e = this.normalize(e);
 
@@ -1192,9 +1194,18 @@ class Pointer {
         // #11635, limiting to primary button (incl. IE 8 support)
         if (
             typeof e.button === 'undefined' ||
-            ((e.buttons || e.button) & 1) === 1
+            isPrimaryButton
         ) {
             this.zoomOption(e);
+
+            // #295, #13737 solve conflict between container drag and chart zoom
+            if (
+                isPrimaryButton &&
+                e.preventDefault
+            ) {
+                e.preventDefault();
+            }
+
             this.dragStart(e as Highcharts.PointerEventObject);
         }
     }
