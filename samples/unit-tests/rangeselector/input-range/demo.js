@@ -335,7 +335,11 @@ QUnit.test('Set extremes on inputs blur (#4710)', function (assert) {
 });
 
 QUnit.test('Range selector value on change should change properly (#13205)', function (assert) {
-    const date = '2020-04-02T00:00:00.000',
+    const now = new Date(),
+        year = now.getFullYear(),
+        month = now.getMonth() < 11 ? `0${now.getMonth()}` : now.getMonth(),
+        day = now.getDate() < 11 ? `0${now.getDate()}` : now.getDate(),
+        date = `${year}-${month}-${day}T00:00:00.000`,
         defaultInputDateParser = Highcharts.RangeSelector.prototype.defaultInputDateParser;
 
     assert.strictEqual(
