@@ -723,7 +723,6 @@ class Chart {
             axes = chart.axes,
             series = chart.series,
             pointer = chart.pointer,
-            legend = chart.legend,
             legendUserOptions = chart.userOptions.legend,
             redrawLegend = chart.isDirtyLegend,
             hasStackedSeries: (boolean|undefined),

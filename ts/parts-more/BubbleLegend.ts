@@ -1352,7 +1352,7 @@ wrap(Chart.prototype, 'drawChartBox', function (
     callback: Chart.CallbackFunction
 ): void {
     var chart = this,
-        legend = chart.legend,
+        legend = chart.getLegendForBubbleLegend(),
         bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0,
         bubbleLegendOptions: Highcharts.BubbleLegendOptions,
         bubbleSizes;

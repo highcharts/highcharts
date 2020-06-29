@@ -491,7 +491,7 @@ var Chart = /** @class */ (function () {
      */
     Chart.prototype.redraw = function (animation) {
         fireEvent(this, 'beforeRedraw');
-        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legend = chart.legend, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
+        var chart = this, axes = chart.axes, series = chart.series, pointer = chart.pointer, legendUserOptions = chart.userOptions.legend, redrawLegend = chart.isDirtyLegend, hasStackedSeries, hasDirtyStacks, hasCartesianSeries = chart.hasCartesianSeries, isDirtyBox = chart.isDirtyBox, i, serie, renderer = chart.renderer, isHiddenChart = renderer.isHidden(), afterRedraw = [];
         // Handle responsive rules, not only on resize (#6130)
         if (chart.setResponsive) {
             chart.setResponsive(false);

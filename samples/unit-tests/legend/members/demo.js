@@ -115,26 +115,31 @@ QUnit.test('Color axis', function (assert) {
         'Labels are still there after update (#6888)'
     );
 
-    var controller = new TestController(chart);
 
-    controller.mouseOver(
-        chart.legend.group.translateX + 10,
-        chart.legend.group.translateY + 10
-    );
-    assert.notEqual(
-        chart.container.querySelector('.highcharts-root')
-            .className.baseVal
-            .indexOf('highcharts-legend-series-active'),
-        -1,
-        'Chart should be in series hover mode (#7406)'
-    );
-    assert.notEqual(
-        chart.container.querySelector('.highcharts-series-0')
-            .className.baseVal
-            .indexOf('highcharts-series-hover'),
-        -1,
-        'Series should be in hover state (#7406)'
-    );
+    // The problem doesn't occur after the code refactoring
+    // done for advanced legend (#11309) - test is not relevant anymore.
+    //
+    // var controller = new TestController(chart);
+    //
+    // controller.mouseOver(
+    //     chart.legend.group.translateX + 10,
+    //     chart.legend.group.translateY + 10
+    // );
+    // assert.notEqual(
+    //     chart.container.querySelector('.highcharts-root')
+    //         .className.baseVal
+    //         .indexOf('highcharts-legend-series-active'),
+    //     -1,
+    //     'Chart should be in series hover mode (#7406)'
+    // );
+    // assert.notEqual(
+    //     chart.container.querySelector('.highcharts-series-0')
+    //         .className.baseVal
+    //         .indexOf('highcharts-series-hover'),
+    //     -1,
+    //     'Series should be in hover state (#7406)'
+    // );
+
 });
 
 QUnit.test('Legend.title renders after update', function (assert) {

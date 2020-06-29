@@ -211,6 +211,7 @@ var Legend = /** @class */ (function () {
         this.pages = [];
         this.proximate = options.layout === 'proximate' && !this.chart.inverted;
         this.baseline = void 0; // #12705: baseline has to be reset on every update
+        this.fontMetrics = void 0;
         fireEvent(this, 'afterSetOptions');
     };
     /**

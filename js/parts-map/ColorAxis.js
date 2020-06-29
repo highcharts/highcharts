@@ -98,7 +98,7 @@ var ColorAxis = /** @class */ (function (_super) {
             this.chart.options.legend, horiz = userOptions.layout ?
             userOptions.layout !== 'vertical' :
             (legend && legend.layout !== 'vertical');
-        return merge(this.defaultColorAxisOptions, {
+        return merge(ColorAxis.defaultOptions, {
             side: horiz ? 2 : 1,
             reversed: !horiz
         }, //Highcharts.ColorAxisOptions,
@@ -206,10 +206,9 @@ var ColorAxis = /** @class */ (function (_super) {
      */
     ColorAxis.prototype.initStops = function () {
         var axis = this;
-        // TODO: remove default colors
         axis.stops = axis.options.stops || [
-            [0, axis.options.minColor || '#c0ffee'],
-            [1, axis.options.maxColor || '#bada55']
+            [0, axis.options.minColor],
+            [1, axis.options.maxColor]
         ];
         axis.stops.forEach(function (stop) {
             stop.color = color(stop[1]);
@@ -1198,10 +1197,6 @@ addEvent(Legend, 'afterGetAllItems', function (e) {
             colorAxisItems = [];
         }
     }, this);
-    i = colorAxisItems.length;
-    while (i--) {
-        e.allItems.unshift(colorAxisItems[i]);
-    }
 });
 addEvent(Legend, 'afterColorizeItem', function (e) {
     if (e.visible && e.item.legendColor) {

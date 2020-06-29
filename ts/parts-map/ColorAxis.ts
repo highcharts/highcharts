@@ -643,7 +643,7 @@ class ColorAxis extends Axis implements AxisLike {
                 (legend && legend.layout !== 'vertical');
 
         return merge(
-            this.defaultColorAxisOptions,
+            ColorAxis.defaultOptions,
             {
                 side: horiz ? 2 : 1,
                 reversed: !horiz
@@ -825,10 +825,9 @@ class ColorAxis extends Axis implements AxisLike {
     public initStops(): void {
         const axis = this;
 
-        // TODO: remove default colors
         axis.stops = axis.options.stops || [
-            [0, axis.options.minColor as any || '#c0ffee'],
-            [1, axis.options.maxColor as any || '#bada55']
+            [0, axis.options.minColor as any],
+            [1, axis.options.maxColor as any]
         ];
         axis.stops.forEach(function (
             stop: Highcharts.GradientColorStopObject
@@ -1594,10 +1593,6 @@ addEvent(Legend, 'afterGetAllItems', function (
         }
     }, this);
 
-    i = colorAxisItems.length;
-    while (i--) {
-        e.allItems.unshift(colorAxisItems[i]);
-    }
 });
 
 addEvent(Legend, 'afterColorizeItem', function (

@@ -897,7 +897,7 @@ addEvent(Series, 'legendItemClick', function () {
 // If ranges are not specified, determine ranges from rendered bubble series
 // and render legend again.
 wrap(Chart.prototype, 'drawChartBox', function (proceed, options, callback) {
-    var chart = this, legend = chart.legend, bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0, bubbleLegendOptions, bubbleSizes;
+    var chart = this, legend = chart.getLegendForBubbleLegend(), bubbleSeries = chart.getVisibleBubbleSeriesIndex() >= 0, bubbleLegendOptions, bubbleSizes;
     if (legend && legend.options.enabled && legend.bubbleLegend &&
         legend.options.bubbleLegend.autoRanges && bubbleSeries) {
         bubbleLegendOptions = legend.bubbleLegend.options;

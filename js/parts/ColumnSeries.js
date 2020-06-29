@@ -646,7 +646,9 @@ seriesType('column', 'line',
         Series.prototype.translate.apply(series);
         // Record the new values
         series.points.forEach(function (point) {
-            var yBottom = pick(point.yBottom, translatedThreshold), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX || 0, 
+            var yBottom = pick(point.yBottom, translatedThreshold, 0 // Handle the situation when the plot area is not
+            // visible because of multiple legends.
+            ), safeDistance = 999 + Math.abs(yBottom), pointWidth = seriesPointWidth, plotX = point.plotX || 0, 
             // Don't draw too far outside plot area (#1303, #2241,
             // #4264)
             plotY = clamp(point.plotY, -safeDistance, yAxis.len + safeDistance), barX = plotX + seriesXOffset, barW = seriesBarW, barY = Math.min(plotY, yBottom), up, barH = Math.max(plotY, yBottom) - barY;
