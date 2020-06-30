@@ -73,7 +73,7 @@ declare global {
             eventObject?: TimelineEventObject;
             id?: string;
             onEnd?: Function;
-            playOptions?: PointSonifyOptionsObject;
+            playOptions?: PointSonifyOptionsObject|Partial<EarconOptionsObject>;
             time?: number;
         }
         interface TimelineOptionsObject {

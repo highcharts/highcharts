@@ -415,6 +415,32 @@ function makeInstrumentCopies(
 
 
 /**
+ * Utility function to apply a master volume to a list of instrument
+ * options.
+ * @private
+ * @param {Array<Highcharts.PointInstrumentObject>} instruments
+ * The instrument options. Only options with Instrument object instances
+ * will be affected.
+ * @param {number} masterVolume
+ * The master volume multiplier to apply to the instruments.
+ * @return {Array<Highcharts.PointInstrumentObject>}
+ * Array of instrument options.
+ */
+function applyMasterVolumeToInstruments(
+    instruments: Array<Highcharts.PointInstrumentObject>,
+    masterVolume: number
+): Array<Highcharts.PointInstrumentObject> {
+    instruments.forEach((instrOpts): void => {
+        const instr = instrOpts.instrument;
+        if (typeof instr !== 'string') {
+            instr.setMasterVolume(masterVolume);
+        }
+    });
+    return instruments;
+}
+
+
+/**
  * Create a TimelinePath from a series. Takes the same options as seriesSonify.
  * To intuitively allow multiple series to play simultaneously we make copies of
  * the instruments for each series.
@@ -445,9 +471,11 @@ function buildTimelinePathFromSeries(
         dataExtremes = getExtremesForInstrumentProps(
             series.chart, options.instruments, options.dataExtremes as any
         ),
+        masterVolume = pick(options.masterVolume, 1),
         // Make copies of the instruments used for this series, to allow
         // multiple series with the same instrument to play together
-        instruments = makeInstrumentCopies(options.instruments),
+        instrumentCopies = makeInstrumentCopies(options.instruments),
+        instruments = applyMasterVolumeToInstruments(instrumentCopies, masterVolume),
         // Go through the points, convert to events, optionally add Earcons
         timelineEvents = series.points.reduce(function (
             events: Array<Highcharts.TimelineEvent>,
@@ -463,8 +491,9 @@ function buildTimelinePathFromSeries(
                     time: time,
                     id: point.id,
                     playOptions: {
-                        instruments: instruments,
-                        dataExtremes: dataExtremes
+                        instruments,
+                        dataExtremes,
+                        masterVolume
                     }
                 }),
                 // Earcons
@@ -473,7 +502,10 @@ function buildTimelinePathFromSeries(
                 ): Highcharts.TimelineEvent {
                     return new H.sonification.TimelineEvent({
                         eventObject: earcon,
-                        time: time
+                        time: time,
+                        playOptions: {
+                            volume: masterVolume
+                        }
                     });
                 })
             );
@@ -620,7 +652,8 @@ function buildChartSonifySeriesOptions(
             instruments: chartSonifyOptions.instruments || configOptions.instruments,
             onStart: chartSonifyOptions.onSeriesStart || configOptions.onStart,
             onEnd: chartSonifyOptions.onSeriesEnd || configOptions.onEnd,
-            earcons: chartSonifyOptions.earcons || configOptions.earcons
+            earcons: chartSonifyOptions.earcons || configOptions.earcons,
+            masterVolume: pick(chartSonifyOptions.masterVolume, configOptions.masterVolume)
         },
         // Merge in the specific series options by ID if any are passed in
         isArray(additionalSeriesOptions) ? (
@@ -1100,7 +1133,8 @@ function chartOptionsToSonifySeriesOptions(
             onStart: chartEvents.onSeriesStart,
             onPointEnd: chartEvents.onPointEnd,
             onPointStart: chartEvents.onPointStart,
-            pointPlayTime: chartOpts.defaultInstrumentOptions?.mapping?.pointPlayTime
+            pointPlayTime: chartOpts.defaultInstrumentOptions?.mapping?.pointPlayTime,
+            masterVolume: chartOpts.masterVolume
         },
         { // Series options
             onEnd: seriesEvents.onSeriesEnd,
@@ -1129,8 +1163,7 @@ function getSeriesSonifyOptions(
     const seriesOpts = series.options.sonification;
     return merge(
         {
-            duration: seriesOpts?.duration || chartOpts?.duration,
-            masterVolume: chartOpts?.masterVolume
+            duration: seriesOpts?.duration || chartOpts?.duration
         },
         chartOptionsToSonifySeriesOptions(series),
         options

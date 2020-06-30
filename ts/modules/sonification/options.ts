@@ -33,7 +33,7 @@ const options = {
         enabled: false,
         duration: 2000,
         afterSeriesWait: 900,
-        masterVolume: 0.7,
+        masterVolume: 1,
         order: 'sequential',
         defaultInstrumentOptions: {
             instrument: 'sineMusical',
