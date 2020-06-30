@@ -688,7 +688,6 @@ var ColorAxis = /** @class */ (function (_super) {
             });
         }
     };
-    ;
     /* *
      *
      *  Static Functions

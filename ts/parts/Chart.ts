@@ -2440,7 +2440,7 @@ class Chart {
     }
 
 
-     /**
+    /**
      * This method provides the logic for rendering the legend.
      * In its basic form it's simple new Legend() call. It is
      * redefined in Advanced Legend Module.
@@ -2474,7 +2474,7 @@ class Chart {
             legend.render();
             this.isDirtyLegend = false;
         }
-    }	    
+    }
 
     /**
      * Set a new credits label for the chart.

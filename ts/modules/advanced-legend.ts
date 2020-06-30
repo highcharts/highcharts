@@ -10,6 +10,13 @@
 
 'use strict';
 import H from '../parts/Globals.js';
+import type Point from '../parts/Point';
+import U from '../parts/Utilities.js';
+const {
+    defined,
+    pick,
+    extend
+} = U;
 
 /**
  * Internal types
@@ -23,7 +30,7 @@ declare global {
             options: any;
             legendId?: string;
             // TODO: fix TS
-            chart: any //Chart;
+            chart: any; // Chart;
         }
 
         interface AdvancedLegendItemOptions {
@@ -81,7 +88,7 @@ declare global {
         // }
 
         // TODO: fix TS
-        interface AdvancedLegendChart  { //extends Chart {
+        interface AdvancedLegendChart { // extends Chart {
             legendAdapter: LegendAdapter;
             legend: any;
         }
@@ -116,16 +123,6 @@ declare global {
  *
  */
 
-import U from '../parts/Utilities.js';
-const {
-    defined,
-    pick,
-    extend
-} = U;
-
-import '../parts/Chart.js';
-import '../parts/Series.js';
-import '../parts/Legend.js';
 
 var marginNames = H.marginNames,
     addEvent = H.addEvent,
@@ -232,7 +229,7 @@ H.extend(H.AdvancedLegend.prototype, {
      */
 
     getAllItems: function ( // TODO: fix TS
-        //this: any //Highcharts.AdvancedLegend
+    // this: any //Highcharts.AdvancedLegend
     ): Array<Highcharts.AdvancedLegendItem> {
         var allItems: Array<Highcharts.AdvancedLegendItem> = [],
             legend = this as any;
@@ -388,7 +385,7 @@ H.extend(H.AdvancedLegend.prototype, {
         }
 
         allItems.forEach(function (
-            item: any, //Highcharts.AdvancedLegendItem
+            item: any, // Highcharts.AdvancedLegendItem
             i: number
         ): void {
             var y = (item._legendItemPos as any)[1],
@@ -509,7 +506,7 @@ extend(H.LegendAdapter.prototype, {
             titleMarginBottom: number;
 
         if ((chart as any).options.title) { // TODO: fix TS
-            titleMarginOption = (chart as any).options.title.margin; 
+            titleMarginOption = (chart as any).options.title.margin;
         }
 
         titleMargin = titleMarginOption !== undefined ?
@@ -564,8 +561,7 @@ extend(H.LegendAdapter.prototype, {
     },
 
     colorizeItem: function (this: Highcharts.LegendAdapter,
-        // TODO: fix TS
-        item: (Highcharts.BubbleLegend/*|Highcharts.Point*/|Highcharts.Series),
+        item: (Highcharts.BubbleLegend|Point|Highcharts.Series),
         visible: boolean): void {
         this.legends.forEach(function (legend): void {
             legend.colorizeItem(item, visible);
@@ -576,8 +572,7 @@ extend(H.LegendAdapter.prototype, {
         item: (
             Highcharts.BubbleLegend|
             Highcharts.ColorAxis|
-            // TODO: fix TS
-            //Highcharts.Point| 
+            Point|
             Highcharts.Series
         )
     ): void {
@@ -641,7 +636,7 @@ wrap(H.Chart.prototype, 'renderLegend', function (
     }
     // Create multiple legends.
     this.legend = [];
-    
+
     ((this as any).options as Highcharts.AdvancedLegendChartOptions)
         .legend.forEach(function (legendOptions, index): void {
             legendOptions.index = index;
@@ -820,8 +815,7 @@ addEvent(H.AdvancedLegend.prototype, 'afterGetAllItems', function (
     this: Highcharts.Legend,
     e: {
         allItems: Array<(
-            // TODO: fix TS
-            /*Highcharts.Point|*/Highcharts.Series|Highcharts.AdvancedLegend
+            Point|Highcharts.Series|Highcharts.AdvancedLegend
         )>;
     }): void {
     var legend = this as Highcharts.AdvancedLegend;
@@ -837,10 +831,11 @@ wrap(H.Chart.prototype, 'get', function (
     this: Highcharts.AdvancedLegendChart,
     originalFunc,
     id
-): void {
+): any { // TODO: fix TS
     var legend;
-    if(H.isArray(this.legend)) {
-        legend = (this.legend as any).find((legend: any) => legend.id === id);
+    if (H.isArray(this.legend)) {
+        legend = (this.legend as any)
+            .find((legend: any): boolean => legend.id === id);
     }
     return legend || originalFunc.call(this, id);
 });
@@ -915,7 +910,7 @@ if (H.BubbleLegend) {
         if (!(this as any).isAdvancedLegendEnabled()) { // TODO: fix TS
             return originalFunc.call(this);
         }
-        
+
         this.legendAdapter.render();
         (this as any).isDirtyLegend = false; // TODO: fix TS
     });

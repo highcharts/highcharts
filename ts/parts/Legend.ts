@@ -1046,9 +1046,9 @@ class Legend {
      */
     public getSeriesItems( // TODO: fix TS
         this: Highcharts.Legend, series: Highcharts.Series
-    ): Array<(any /*Highcharts.Point|Highcharts.Series*/)> {
+    ): Array<(Point|Highcharts.Series)> {
         var seriesOptions = series && series.options,
-            items = [] as Array<(any /*Highcharts.Point|Highcharts.Series*/)>;
+            items = [] as Array<(Point|Highcharts.Series)>;
 
         // Handle showInLegend. If the series is linked to another series,
         // defaults to false.
@@ -1211,8 +1211,7 @@ class Legend {
      */
     public render(this: Highcharts.Legend): void {
         var allItems: Array<(
-                any // TODO: fix TS
-                //Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                Highcharts.BubbleLegend|Point|Highcharts.Series
             )>,
             padding = this.padding,
             allowedWidth: number;
@@ -1382,7 +1381,7 @@ class Legend {
      * @function Highcharts.renderLegendGroup
      * @return {void}
      */
-    public renderLegendGroup (this: Highcharts.Legend): void {
+    public renderLegendGroup(this: Highcharts.Legend): void {
         var renderer = this.chart.renderer;
         if (!this.group) {
             /**
@@ -1411,7 +1410,7 @@ class Legend {
      * @function Highcharts.getSpaceHeight
      * @return {number}
      */
-    public getSpaceHeight (this: Highcharts.Legend): number {
+    public getSpaceHeight(this: Highcharts.Legend): number {
         var options = this.options;
         return this.heightOption || ((this.chart.spacingBox as any).height +
             (options.verticalAlign === 'top' ?
@@ -1427,7 +1426,7 @@ class Legend {
      * @param {number} legendHeight
      * @return {number}
      */
-    public handleOverflow (
+    public handleOverflow(
         legendHeight: number
     ): number {
         var legend = this as any, // TODO: fix TS
@@ -1578,7 +1577,7 @@ class Legend {
      * @function Highcharts.Legend#handleOverflow
      * @param {number} legendHeight
      * @return {number}
-     */    
+     */
     createPages(clipHeight: number): void {
         var lastY: number,
             allItems = this.allItems,
@@ -1588,8 +1587,7 @@ class Legend {
         // defines the scroll top for each page (#2098)
         allItems.forEach(function (
             item: (
-                any // TODO: fix TS
-                //Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series
+                Highcharts.BubbleLegend|Point|Highcharts.Series
             ),
             i: number
         ): void {
@@ -1636,9 +1634,8 @@ class Legend {
     sortItems(this: Highcharts.Legend): void {
         // sort by legendIndex
         stableSort(this.allItems, function (
-            // TODO: fix TS
-            a: (any /*Highcharts.Point|Highcharts.Series*/),
-            b: (any /*Highcharts.Point|Highcharts.Series*/)
+            a: (Point|Highcharts.Series),
+            b: (Point|Highcharts.Series)
         ): number {
             return ((a.options && a.options.legendIndex) || 0) -
                 ((b.options && b.options.legendIndex) || 0);
@@ -1659,7 +1656,7 @@ class Legend {
     renderItems(this: Highcharts.Legend): void {
         this.allItems.forEach(function (
             item: any // Highcharts.LegendItemObject // TODO: fix TS
-        ): void {  
+        ): void {
             item.legend = this;
             item.renderAsLegendItem();
         }, this);
@@ -1674,8 +1671,7 @@ class Legend {
      */
     layoutItems(this: Highcharts.Legend): void {
         this.allItems.forEach(function (
-            // TODO: fix TS
-            item: (any /*Highcharts.BubbleLegend|Highcharts.Point|Highcharts.Series*/)
+            item: (Highcharts.BubbleLegend|Point|Highcharts.Series)
         ): void {
             this.layoutItem(item);
         }, this);
@@ -1699,7 +1695,7 @@ class Legend {
         this.legendHeight += this.padding;
     }
 
-        /**
+    /**
      * Create a border and background for the legend.
      *
      * @private

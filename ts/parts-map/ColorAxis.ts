@@ -634,8 +634,7 @@ class ColorAxis extends Axis implements AxisLike {
      * @private
      */
     // TODO: fix TS
-    public static buildOptions (this: any, chart: any, userOptions: any): any  
-    { /*Highcharts.ColorAxisOptions*/
+    public static buildOptions(this: any, chart: any, userOptions: any): any {
         var legend: any = (this as any).legendOptions ||
             this.chart.options.legend,
             horiz = userOptions.layout ?
@@ -647,7 +646,7 @@ class ColorAxis extends Axis implements AxisLike {
             {
                 side: horiz ? 2 : 1,
                 reversed: !horiz
-            } as any, //Highcharts.ColorAxisOptions,
+            } as any, // Highcharts.ColorAxisOptions,
             userOptions,
             {
                 opposite: !horiz,
@@ -655,7 +654,7 @@ class ColorAxis extends Axis implements AxisLike {
                 title: null as any,
                 visible: legend && ((legend as any).enabled !== false) &&
                     (userOptions ? userOptions.visible !== false : true)
-            } as any //Highcharts.ColorAxisOptions
+            } as any // Highcharts.ColorAxisOptions
         );
     }
 
@@ -1037,7 +1036,7 @@ class ColorAxis extends Axis implements AxisLike {
         const height = pick(
             legendOptions.symbolHeight,
             horiz ? 12 :
-                    (legend.heightOption || ColorAxis.defaultLegendLength)
+                (legend.heightOption || ColorAxis.defaultLegendLength)
         );
         const labelPadding = pick(
             (legendOptions as any).labelPadding,
@@ -1298,7 +1297,8 @@ class ColorAxis extends Axis implements AxisLike {
 
         // Keep the options structure updated for export. Unlike xAxis and
         // yAxis, the colorAxis is not an array. (#3207)
-        // TODO: there can be multipe color axes if advanced legend module is used.
+        // TODO: there can be multipe color axes if advanced legend module
+        // is used.
         (chart.options as any)[axis.coll] =
             merge(axis.userOptions, updatedOptions);
 
@@ -1474,7 +1474,7 @@ class ColorAxis extends Axis implements AxisLike {
                 fill: this.legendColor
             });
         }
-    };
+    }
 
 }
 

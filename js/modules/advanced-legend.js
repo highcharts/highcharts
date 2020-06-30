@@ -9,6 +9,8 @@
  * */
 'use strict';
 import H from '../parts/Globals.js';
+import U from '../parts/Utilities.js';
+var defined = U.defined, pick = U.pick, extend = U.extend;
 /*
  * Highcharts module that introduces multiple legends and sublegends.
  *
@@ -16,11 +18,6 @@ import H from '../parts/Globals.js';
  * - allow referring the legend by index
  *
  */
-import U from '../parts/Utilities.js';
-var defined = U.defined, pick = U.pick, extend = U.extend;
-import '../parts/Chart.js';
-import '../parts/Series.js';
-import '../parts/Legend.js';
 var marginNames = H.marginNames, addEvent = H.addEvent, wrap = H.wrap, fireEvent = H.fireEvent, merge = H.merge;
 /* eslint-disable no-invalid-this, valid-jsdoc, no-undefined */
 /**
@@ -108,7 +105,7 @@ H.extend(H.AdvancedLegend.prototype, {
      * @fires Highcharts.AdvancedLegend#event:afterGetAllItems
      */
     getAllItems: function ( // TODO: fix TS
-    //this: any //Highcharts.AdvancedLegend
+    // this: any //Highcharts.AdvancedLegend
     ) {
         var allItems = [], legend = this;
         this.chart.series.forEach(function (series) {
@@ -225,7 +222,7 @@ H.extend(H.AdvancedLegend.prototype, {
         if (clipHeight < 1) {
             return;
         }
-        allItems.forEach(function (item, //Highcharts.AdvancedLegendItem
+        allItems.forEach(function (item, // Highcharts.AdvancedLegendItem
         i) {
             var y = item._legendItemPos[1], h = item.legendItem ?
                 Math.round(item.legendItem.getBBox().height) :
@@ -356,9 +353,7 @@ extend(H.LegendAdapter.prototype, {
             }
         }, this);
     },
-    colorizeItem: function (
-    // TODO: fix TS
-    item, visible) {
+    colorizeItem: function (item, visible) {
         this.legends.forEach(function (legend) {
             legend.colorizeItem(item, visible);
         });
@@ -561,7 +556,8 @@ addEvent(H.AdvancedLegend.prototype, 'afterGetAllItems', function (e) {
 wrap(H.Chart.prototype, 'get', function (originalFunc, id) {
     var legend;
     if (H.isArray(this.legend)) {
-        legend = this.legend.find(function (legend) { return legend.id === id; });
+        legend = this.legend
+            .find(function (legend) { return legend.id === id; });
     }
     return legend || originalFunc.call(this, id);
 });

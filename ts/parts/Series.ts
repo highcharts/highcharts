@@ -7136,7 +7136,6 @@ H.Series = seriesType<Highcharts.LineSeries>(
                 0;
         },
 
-        
 
         /**
          * @private
